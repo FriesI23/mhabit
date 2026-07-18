@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import '../common/consts.dart';
+import '../common/types.dart';
 import '../common/utils.dart';
 import '../logging/helper.dart';
 import '../storage/db/handlers/habit.dart';
@@ -23,13 +24,16 @@ class HabitImport {
   final HabitDBHelper helper;
   final RecordDBHelper recordDBHelper;
 
+  final Map<String, GroupUUID>? _groupUuidMapping;
   final Iterable<Object?> _jsonData;
 
   const HabitImport(
     this.helper,
     this.recordDBHelper, {
     Iterable<Object?> data = const [],
-  }) : _jsonData = data;
+    Map<String, GroupUUID>? groupUuidMapping,
+  }) : _jsonData = data,
+       _groupUuidMapping = groupUuidMapping;
 
   int get habitsCount => _jsonData.length;
 
@@ -39,9 +43,15 @@ class HabitImport {
   }) async {
     final habitUUID = genHabitUUID();
     var habitDBCell = habitExportData.toHabitDBCell();
+
+    // Resolve group_id through the old→new UUID mapping.
+    final oldGroupId = habitDBCell.groupId;
+    final newGroupId = _groupUuidMapping?[oldGroupId];
+
     habitDBCell = habitDBCell.copyWith(
       uuid: habitUUID,
       type: habitDBCell.type ?? defaultHabitType.dbCode,
+      groupId: newGroupId ?? oldGroupId,
     );
     final dbid = await helper.insertNewHabit(habitDBCell);
     if (withRecords) {

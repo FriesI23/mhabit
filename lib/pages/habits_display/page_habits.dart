@@ -590,7 +590,10 @@ class HabitsTabPageState extends State<HabitsTabPage>
         .read<HabitFileExportRunner>()
         .exportMultiHabitsData(
           habitUUIDList,
-          withRecords: confirmResult == ExporterConfirmResultType.withRecords,
+          withRecords: confirmResult.contains(
+            ExporterConfirmResultType.records,
+          ),
+          withGroups: confirmResult.contains(ExporterConfirmResultType.groups),
         );
 
     if (!context.mounted || filePath == null) return;

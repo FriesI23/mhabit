@@ -408,7 +408,8 @@ class _PageState extends State<_Page>
     fileExporter = context.read<HabitFileExportRunner>();
     final filePath = await fileExporter.exportHabitData(
       widget.habitUUID,
-      withRecords: confirmResult == ExporterConfirmResultType.withRecords,
+      withRecords: confirmResult.contains(ExporterConfirmResultType.records),
+      withGroups: confirmResult.contains(ExporterConfirmResultType.groups),
     );
     if (!context.mounted || filePath == null) return;
     trySaveFiles(

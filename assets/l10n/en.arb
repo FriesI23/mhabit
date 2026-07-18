@@ -775,6 +775,28 @@
     },
     "appSetting_importDialog_confirmSubtitle": "Note: Import doesn't delete existing habits.",
     "@appSetting_importDialog_confirmSubtitle": {},
+    "appSetting_importDialog_option_includeHabits": "Include habits",
+    "@appSetting_importDialog_option_includeHabits": {},
+    "appSetting_importDialog_option_includeGroups": "Include groups",
+    "@appSetting_importDialog_option_includeGroups": {},
+    "appSetting_importDialog_tile_includeHabits": "Include {count} habits",
+    "@appSetting_importDialog_tile_includeHabits": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "appSetting_importDialog_tile_includeGroups": "Include {count} groups",
+    "@appSetting_importDialog_tile_includeGroups": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "3"
+            }
+        }
+    },
     "appSetting_importConfirmDialog_sourceLabel": "Source: {provider}",
     "@appSetting_importConfirmDialog_sourceLabel": {
         "placeholders": {
@@ -809,8 +831,17 @@
             }
         }
     },
-    "appSetting_importDialog_completeTitle": "Complete import {count}",
+    "appSetting_importDialog_completeTitle": "Complete import {count} habits",
     "@appSetting_importDialog_completeTitle": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_importDialog_completeTitleGroups": "Completed import {count} groups",
+    "@appSetting_importDialog_completeTitleGroups": {
         "placeholders": {
             "count": {
                 "type": "int",
@@ -1440,6 +1471,26 @@
     },
     "exportConfirmDialog_option_includeRecords": "include records",
     "@exportConfirmDialog_option_includeRecords": {},
+    "exportConfirmDialog_option_includeGroups": "include groups",
+    "@exportConfirmDialog_option_includeGroups": {},
+    "exportConfirmDialog_tile_includeRecords": "Include {count} records",
+    "@exportConfirmDialog_tile_includeRecords": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "exportConfirmDialog_tile_includeGroups": "Include {count} groups",
+    "@exportConfirmDialog_tile_includeGroups": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "3"
+            }
+        }
+    },
     "exportConfirmDialog_cancel_buttonText": "cancel",
     "@exportConfirmDialog_cancel_buttonText": {},
     "exportConfirmDialog_confirm_buttonText": "export",

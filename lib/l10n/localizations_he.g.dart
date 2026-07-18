@@ -927,6 +927,22 @@ class L10nHe extends L10n {
       'הערה: הייבוא אינו מוחק הרגלים קיימים.';
 
   @override
+  String get appSetting_importDialog_option_includeHabits => 'Include habits';
+
+  @override
+  String get appSetting_importDialog_option_includeGroups => 'Include groups';
+
+  @override
+  String appSetting_importDialog_tile_includeHabits(int count) {
+    return 'Include $count habits';
+  }
+
+  @override
+  String appSetting_importDialog_tile_includeGroups(int count) {
+    return 'Include $count groups';
+  }
+
+  @override
   String appSetting_importConfirmDialog_sourceLabel(String provider) {
     return 'Source: $provider';
   }
@@ -964,6 +980,11 @@ class L10nHe extends L10n {
   @override
   String appSetting_importDialog_completeTitle(int count) {
     return 'השלמת הייבוא של $count';
+  }
+
+  @override
+  String appSetting_importDialog_completeTitleGroups(int count) {
+    return 'Completed import $count groups';
   }
 
   @override
@@ -1738,6 +1759,19 @@ class L10nHe extends L10n {
 
   @override
   String get exportConfirmDialog_option_includeRecords => 'לכלול רשומות';
+
+  @override
+  String get exportConfirmDialog_option_includeGroups => 'include groups';
+
+  @override
+  String exportConfirmDialog_tile_includeRecords(int count) {
+    return 'Include $count records';
+  }
+
+  @override
+  String exportConfirmDialog_tile_includeGroups(int count) {
+    return 'Include $count groups';
+  }
 
   @override
   String get exportConfirmDialog_cancel_buttonText => 'ביטול';

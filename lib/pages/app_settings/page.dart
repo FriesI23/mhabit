@@ -45,8 +45,10 @@ import '../../providers/app_ui/habits_record_scroll_behavior.dart';
 import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_reminder.dart';
 import '../../providers/workflow/app_settings.dart';
+import '../../providers/workflow/group_manager.dart';
 import '../../providers/workflow/habits_file_exporter.dart';
 import '../../providers/workflow/habits_file_importer.dart';
+import '../../providers/workflow/habits_manager.dart';
 import '../../providers/workflow/thirdparty_file_importer.dart';
 import '../../storage/db_helper_provider.dart';
 import '../../storage/profile_provider.dart';
@@ -235,16 +237,28 @@ class _PageState extends State<_Page> with XShare {
 
   void _onExportAllTilePressed(BuildContext context) async {
     if (!context.mounted) return;
+    final habitAccess = context.read<HabitExportAccess>();
+    final groupAccess = context.read<GroupExportAccess>();
+    final habitCount = (await habitAccess.loadHabitExportData(
+      withRecords: false,
+    )).length;
+    final groupCount = (await groupAccess.loadGroupExportData()).length;
+    if (!context.mounted) return;
     final confirmResult = await showExporterConfirmDialog(
       context: context,
       exportAll: true,
+      exportHabitsNumber: habitCount,
+      exportGroupsNumber: groupCount,
     );
 
     if (!context.mounted || confirmResult == null) return;
     final filePath = await context
         .read<HabitFileExportRunner>()
         .exportAllHabitsData(
-          withRecords: confirmResult == ExporterConfirmResultType.withRecords,
+          withRecords: confirmResult.contains(
+            ExporterConfirmResultType.records,
+          ),
+          withGroups: confirmResult.contains(ExporterConfirmResultType.groups),
         );
     if (!context.mounted || filePath == null) return;
     trySaveFiles(
@@ -302,14 +316,20 @@ class _PageState extends State<_Page> with XShare {
     if (!mounted || rawJsonData.isEmpty) return;
     final Map<String, Object?> jsonData = jsonDecode(rawJsonData);
     final habitsData = jsonData["habits"] as Iterable<Object?>? ?? const [];
+    final groupsData = jsonData["groups"] as Iterable<Object?>?;
 
     final fileImporter = context.read<HabitFileImportRunner>();
     final habitCount = fileImporter.importHabitsDataDryRun(habitsData);
+    final groupCount = groupsData != null
+        ? fileImporter.importGroupsDataDryRun(groupsData)
+        : 0;
     showAppSettingImportHabitsConfirmDialog(
       context: context,
       habitsData: habitsData,
       habitCount: habitCount,
       importer: fileImporter,
+      groupsData: groupsData,
+      groupCount: groupCount,
     );
   }
 

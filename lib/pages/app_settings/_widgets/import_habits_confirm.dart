@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../common/types.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/app_event.dart';
 import '../../../providers/workflow/app_event.dart';
@@ -26,6 +27,8 @@ Future<void> showAppSettingImportHabitsConfirmDialog({
   required int habitCount,
   required HabitFileImportRunner importer,
   String? providerName,
+  Iterable<Object?>? groupsData,
+  int groupCount = 0,
 }) async {
   return showDialog(
     context: context,
@@ -36,6 +39,8 @@ Future<void> showAppSettingImportHabitsConfirmDialog({
         data: habitsData,
         habitCount: habitCount,
         providerName: providerName,
+        groupsData: groupsData,
+        groupCount: groupCount,
       ),
     ),
   );
@@ -45,12 +50,16 @@ class AppSettingImportHabitsConfirmDialog extends StatefulWidget {
   final Iterable<Object?> data;
   final int habitCount;
   final String? providerName;
+  final Iterable<Object?>? groupsData;
+  final int groupCount;
 
   const AppSettingImportHabitsConfirmDialog({
     super.key,
     required this.data,
     this.habitCount = 0,
     this.providerName,
+    this.groupsData,
+    this.groupCount = 0,
   });
 
   @override
@@ -61,27 +70,29 @@ class _AppSettingImportHabitsConfirmDialog
     extends State<AppSettingImportHabitsConfirmDialog> {
   bool _confirmed = false;
   bool _completed = false;
-  int completeCount = 0;
-  int failedCount = 0;
-  int totalCount = 0;
+  bool _importHabits = true;
+  bool _importGroups = true;
+  int _habitComplete = 0, _habitFailed = 0, _habitTotal = 0;
+  int _groupComplete = 0, _groupFailed = 0, _groupTotal = 0;
 
-  int get currentCount => completeCount + failedCount;
-
-  void confirmed() {
-    _confirmed = true;
-  }
+  int get _currentCount =>
+      _habitComplete + _habitFailed + _groupComplete + _groupFailed;
+  int get _totalCount => _habitTotal + _groupTotal;
 
   void _whenHabitLoad(int count, int failed, int total) {
     if (!mounted) return;
     setState(() {
-      completeCount = count;
-      failedCount = failed;
-      totalCount = total;
+      _habitComplete = count;
+      _habitFailed = failed;
+      _habitTotal = total;
     });
   }
 
   void _whenAllHabitsLoad(int count, int failed, int total) {
     if (!mounted) return;
+    _habitComplete = count;
+    _habitFailed = failed;
+    _habitTotal = total;
     context.read<AppEventBus>().push(
       const ReloadDataEvent(
         msg: "appt_settings.import._whenAllHabitsLoad",
@@ -96,32 +107,59 @@ class _AppSettingImportHabitsConfirmDialog
     });
   }
 
-  void _onConfirmButtonPressed() {
+  void _onConfirmButtonPressed() async {
     if (!mounted || _confirmed) return;
     final dataImporter = context.read<HabitFileImportRunner>();
     if (!dataImporter.mounted) return;
+
+    final importGroups = _importGroups && widget.groupsData != null;
+    final importHabits = _importHabits;
+
+    setState(() {
+      _confirmed = true;
+      if (importGroups) _groupTotal = widget.groupCount;
+      if (importHabits) _habitTotal = widget.habitCount;
+    });
+
+    // Step 1: Import groups first to build the UUID mapping.
+    Map<String, GroupUUID>? groupMapping;
+    if (importGroups) {
+      try {
+        groupMapping = await dataImporter.importGroupsData(widget.groupsData!);
+        _groupComplete = widget.groupCount;
+      } catch (_) {
+        _groupFailed = widget.groupCount;
+      }
+      if (mounted) setState(() {});
+    }
+
+    // Step 2: Import habits with the group UUID mapping.
     final task = dataImporter.importHabitsData(
-      widget.data,
+      importHabits ? widget.data : [],
       whenloadHabit: _whenHabitLoad,
       whenloadAllHabits: _whenAllHabitsLoad,
+      groupUuidMapping: groupMapping,
     );
     if (task == null) {
+      if (!mounted) return;
       Navigator.of(context).maybePop();
       return;
     }
-    setState(confirmed);
   }
 
   Widget _buildConfirmContent(BuildContext context, L10n? l10n) {
+    final hasGroups =
+        widget.groupsData != null && widget.groupsData!.isNotEmpty;
+
     final subtitle =
         l10n?.appSetting_importDialog_confirmSubtitle ??
         'Note: Import doesn\'t delete existing habits.';
 
-    if (widget.providerName != null) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (widget.providerName != null) ...[
           Text(
             l10n?.appSetting_importConfirmDialog_sourceLabel(
                   widget.providerName!,
@@ -130,12 +168,41 @@ class _AppSettingImportHabitsConfirmDialog
             style: Theme.of(context).textTheme.bodySmall,
           ),
           const SizedBox(height: 4),
-          Text(subtitle),
         ],
-      );
-    }
-
-    return Text(subtitle);
+        const SizedBox(height: 8),
+        CheckboxListTile(
+          title: l10n != null
+              ? Text(
+                  l10n.appSetting_importDialog_tile_includeHabits(
+                    widget.habitCount,
+                  ),
+                )
+              : Text('Include ${widget.habitCount} habits'),
+          value: _importHabits,
+          onChanged: _confirmed
+              ? null
+              : (v) => setState(() => _importHabits = v!),
+          dense: true,
+        ),
+        if (hasGroups)
+          CheckboxListTile(
+            title: l10n != null
+                ? Text(
+                    l10n.appSetting_importDialog_tile_includeGroups(
+                      widget.groupCount,
+                    ),
+                  )
+                : Text('Include ${widget.groupCount} groups'),
+            value: _importGroups,
+            onChanged: _confirmed
+                ? null
+                : (v) => setState(() => _importGroups = v!),
+            dense: true,
+          ),
+        const SizedBox(height: 4),
+        Text(subtitle),
+      ],
+    );
   }
 
   @override
@@ -144,17 +211,27 @@ class _AppSettingImportHabitsConfirmDialog
 
     Widget buildTitle(BuildContext context) {
       if (_completed) {
-        return Text(
-          l10n?.appSetting_importDialog_completeTitle(totalCount) ??
-              "Completed  $completeCount/$failedCount/$totalCount",
-        );
+        final parts = <String>[];
+        if (_habitTotal > 0) {
+          parts.add(
+            l10n?.appSetting_importDialog_completeTitle(_habitComplete) ??
+                'Completed import $_habitComplete habits',
+          );
+        }
+        if (_groupTotal > 0) {
+          parts.add(
+            l10n?.appSetting_importDialog_completeTitleGroups(_groupComplete) ??
+                'Completed import $_groupComplete groups',
+          );
+        }
+        return Text(parts.join('\n'));
       } else if (_confirmed) {
         return Text(
           l10n?.appSetting_importDialog_importingTitle(
-                currentCount,
-                totalCount,
+                _currentCount,
+                _totalCount,
               ) ??
-              "Imported $completeCount/$failedCount/$totalCount",
+              "Importing $_currentCount/$_totalCount",
         );
       } else {
         return Text(
@@ -172,7 +249,7 @@ class _AppSettingImportHabitsConfirmDialog
         secondChild: Padding(
           padding: const EdgeInsetsDirectional.symmetric(vertical: 20),
           child: LinearProgressIndicator(
-            value: totalCount > 0 ? currentCount / totalCount : null,
+            value: _totalCount > 0 ? _currentCount / _totalCount : null,
           ),
         ),
         crossFadeState: !_confirmed

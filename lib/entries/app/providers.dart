@@ -110,6 +110,12 @@ class AppProviders extends SingleChildStatelessWidget {
       update: (context, db, previous) =>
           (previous ?? GroupManager())..updateDBHelper(db),
     ),
+    ProxyProvider<GroupManager, GroupExportAccess>(
+      update: (context, value, previous) => value,
+    ),
+    ProxyProvider<GroupManager, GroupImportAccess>(
+      update: (context, value, previous) => value,
+    ),
   ];
 
   Iterable<SingleChildWidget> _buildAppSyncProviders() => [
@@ -153,9 +159,15 @@ class AppProviders extends SingleChildStatelessWidget {
       create: (context) => HabitFileExportRunner(),
       update: (context, value, previous) => previous..attachAccess(value),
     ),
+    ViewModelProxyProvider<GroupExportAccess, HabitFileExportRunner>(
+      update: (context, value, previous) => previous..attachGroupAccess(value),
+    ),
     ViewModelProxyProvider<HabitImportAccess, HabitFileImportRunner>(
       create: (context) => HabitFileImportRunner(),
       update: (context, value, previous) => previous..attachAccess(value),
+    ),
+    ViewModelProxyProvider<GroupImportAccess, HabitFileImportRunner>(
+      update: (context, value, previous) => previous..attachGroupAccess(value),
     ),
     ChangeNotifierProvider<ThirdPartyImportOwner>(
       create: (context) => ThirdPartyImportOwner(),

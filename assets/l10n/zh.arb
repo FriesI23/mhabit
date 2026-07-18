@@ -567,6 +567,26 @@
         }
     },
     "appSetting_importDialog_confirmSubtitle": "注意：导入不会删除现有的习惯。",
+    "appSetting_importDialog_option_includeHabits": "包含习惯",
+    "appSetting_importDialog_option_includeGroups": "包含分组",
+    "appSetting_importDialog_tile_includeHabits": "包含 {count} 个习惯",
+    "@appSetting_importDialog_tile_includeHabits": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "appSetting_importDialog_tile_includeGroups": "包含 {count} 个分组",
+    "@appSetting_importDialog_tile_includeGroups": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "3"
+            }
+        }
+    },
     "appSetting_importConfirmDialog_sourceLabel": "来源: {provider}",
     "@appSetting_importConfirmDialog_sourceLabel": {
         "placeholders": {
@@ -597,6 +617,15 @@
     },
     "appSetting_importDialog_completeTitle": "完成导入 {count} 个习惯",
     "@appSetting_importDialog_completeTitle": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_importDialog_completeTitleGroups": "完成导入 {count} 个分组",
+    "@appSetting_importDialog_completeTitleGroups": {
         "placeholders": {
             "count": {
                 "type": "int",
@@ -1069,6 +1098,25 @@
         }
     },
     "exportConfirmDialog_option_includeRecords": "包含习惯记录",
+    "exportConfirmDialog_option_includeGroups": "包含分组",
+    "exportConfirmDialog_tile_includeRecords": "包含 {count} 条记录",
+    "@exportConfirmDialog_tile_includeRecords": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "exportConfirmDialog_tile_includeGroups": "导出 {count} 个分组",
+    "@exportConfirmDialog_tile_includeGroups": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "3"
+            }
+        }
+    },
     "exportConfirmDialog_cancel_buttonText": "取消",
     "exportConfirmDialog_confirm_buttonText": "导出",
     "debug_logLevelTile_title": "日志级别",

@@ -20,9 +20,21 @@ import '../../common/utils.dart';
 import '../../extensions/group_icon_extensions.dart';
 import '../../logging/helper.dart';
 import '../../models/group.dart';
+import '../../models/group_export.dart';
+import '../../models/group_import.dart';
 import '../../models/habit_color.dart';
 import '../../models/habit_group.dart';
 import '../../storage/db_helper_provider.dart';
+
+abstract interface class GroupExportAccess {
+  Future<Iterable<GroupExportData>> loadGroupExportData();
+}
+
+abstract interface class GroupImportAccess {
+  Future<Map<String, GroupUUID>> importGroupsData(Iterable<Object?> jsonData);
+
+  int getImportGroupsCount(Iterable<Object?> jsonData);
+}
 
 /// Manages Group CRUD at the business-logic layer.
 ///
@@ -31,7 +43,9 @@ import '../../storage/db_helper_provider.dart';
 /// they need current data.
 ///
 /// Sync writes to mh_sync are deferred to Parse 2.
-class GroupManager with DBHelperLoadedMixin {
+class GroupManager
+    with DBHelperLoadedMixin
+    implements GroupExportAccess, GroupImportAccess {
   Future<List<GroupDBCell>> loadAllActiveGroups() =>
       groupDBHelper.loadAllActiveGroups();
 
@@ -128,4 +142,20 @@ class GroupManager with DBHelperLoadedMixin {
   Future<void> deleteGroup(String uuid) async {
     await groupDBHelper.deleteGroup(uuid);
   }
+
+  //#region import and export
+  @override
+  Future<Iterable<GroupExportData>> loadGroupExportData() async {
+    final groups = await groupDBHelper.loadAllActiveGroups();
+    return groups.map(GroupExportData.fromGroupDBCell);
+  }
+
+  @override
+  Future<Map<String, GroupUUID>> importGroupsData(Iterable<Object?> jsonData) =>
+      GroupImport(groupDBHelper, data: jsonData).importGroups();
+
+  @override
+  int getImportGroupsCount(Iterable<Object?> jsonData) =>
+      GroupImport(groupDBHelper, data: jsonData).groupsCount;
+  //#endregion
 }

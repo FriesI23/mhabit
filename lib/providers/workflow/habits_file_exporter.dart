@@ -21,21 +21,28 @@ import 'package:path/path.dart' as path;
 
 import '../../common/types.dart';
 import '../../logging/helper.dart';
+import '../../models/group_export.dart';
 import '../../models/habit_export.dart';
 import '../../utils/app_clock.dart';
 import '../../utils/app_path_provider.dart';
+import 'group_manager.dart';
 import 'habits_manager.dart';
 
 class HabitFileExportRunner extends ChangeNotifier {
   static const defaultExportFileNamePrefix = "export-habits";
   final AppPathProvider _pathProvider;
   late HabitExportAccess _access;
+  GroupExportAccess? _groupAccess;
 
   HabitFileExportRunner({AppPathProvider? pathProvider})
     : _pathProvider = pathProvider ?? AppPathProvider();
 
   void attachAccess(HabitExportAccess newAccess) {
     _access = newAccess;
+  }
+
+  void attachGroupAccess(GroupExportAccess newAccess) {
+    _groupAccess = newAccess;
   }
 
   String _getExportDataFileName({
@@ -57,6 +64,7 @@ class HabitFileExportRunner extends ChangeNotifier {
 
   Map<String, Object?> formatExportJsonData({
     Iterable<HabitExportData>? habits,
+    Iterable<GroupExportData>? groups,
   }) {
     final result = <String, Object?>{};
     if (habits != null) {
@@ -66,12 +74,20 @@ class HabitFileExportRunner extends ChangeNotifier {
       }
       result["habits"] = habitsData;
     }
+    if (groups != null) {
+      final groupsData = <Map<String, Object?>>[];
+      for (var group in groups) {
+        groupsData.add(group.toJson());
+      }
+      result["groups"] = groupsData;
+    }
     return result;
   }
 
   Future<String?> exportHabitData(
     HabitUUID habitUUID, {
-    withRecords = true,
+    bool withRecords = true,
+    bool withGroups = true,
     bool listen = true,
   }) async {
     final result = await _access.loadHabitExportData(
@@ -80,7 +96,11 @@ class HabitFileExportRunner extends ChangeNotifier {
     );
     if (result.isEmpty) return null;
 
-    final data = formatExportJsonData(habits: result);
+    final groupExportData = withGroups
+        ? await _groupAccess?.loadGroupExportData()
+        : null;
+
+    final data = formatExportJsonData(habits: result, groups: groupExportData);
     final jsonData = jsonEncode(data);
     final fileName = _getExportDataFileName();
     final filePath = await _writeDataToTmpDir(fileName, jsonData);
@@ -96,7 +116,8 @@ class HabitFileExportRunner extends ChangeNotifier {
 
   Future<String?> exportMultiHabitsData(
     List<HabitUUID> uuidList, {
-    withRecords = true,
+    bool withRecords = true,
+    bool withGroups = true,
     bool listen = true,
   }) async {
     final result = await _access.loadHabitExportData(
@@ -105,7 +126,11 @@ class HabitFileExportRunner extends ChangeNotifier {
     );
     if (result.isEmpty) return null;
 
-    final data = formatExportJsonData(habits: result);
+    final groupExportData = withGroups
+        ? await _groupAccess?.loadGroupExportData()
+        : null;
+
+    final data = formatExportJsonData(habits: result, groups: groupExportData);
     final jsonData = jsonEncode(data);
     final fileName = _getExportDataFileName();
     final filePath = await _writeDataToTmpDir(fileName, jsonData);
@@ -121,13 +146,20 @@ class HabitFileExportRunner extends ChangeNotifier {
 
   Future<String?> exportAllHabitsData({
     bool withRecords = true,
+    bool withGroups = true,
     bool listen = true,
   }) async {
     final habitExportData = await _access.loadHabitExportData(
       withRecords: withRecords,
     );
+    final groupExportData = withGroups
+        ? await _groupAccess?.loadGroupExportData()
+        : null;
 
-    final data = formatExportJsonData(habits: habitExportData);
+    final data = formatExportJsonData(
+      habits: habitExportData,
+      groups: groupExportData,
+    );
     final jsonData = jsonEncode(data);
     final fileName = _getExportDataFileName(prefix: "export-all");
     final filePath = await _writeDataToTmpDir(fileName, jsonData);

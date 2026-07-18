@@ -96,5 +96,104 @@ void main() {
         expect(habitColor, isA<BuiltInHabitColor>());
       },
     );
+
+    test('round-trips groupId through fromHabitDBCell → toJson →'
+        ' fromJson → toHabitDBCell', () {
+      const cell = HabitDBCell(
+        type: 1,
+        uuid: 'group-export-roundtrip',
+        status: 1,
+        name: 'Habit With Group',
+        desc: '',
+        color: 1,
+        dailyGoal: 1,
+        dailyGoalUnit: 'times',
+        freqType: 1,
+        freqCustom: '{}',
+        startDate: 1,
+        targetDays: 1,
+        sortPosition: 1,
+        groupId: 'test-group-uuid-123',
+      );
+
+      final exportData = HabitExportData.fromHabitDBCell(cell);
+      final json = exportData.toJson();
+      final roundTripped = HabitExportData.fromJson(json);
+      final backToCell = roundTripped.toHabitDBCell();
+
+      expect(backToCell.groupId, 'test-group-uuid-123');
+    });
+
+    test('groupId null is excluded from JSON (includeIfNull: false)', () {
+      const cell = HabitDBCell(
+        type: 1,
+        uuid: 'no-group-export',
+        status: 1,
+        name: 'Habit Without Group',
+        desc: '',
+        color: 1,
+        dailyGoal: 1,
+        dailyGoalUnit: 'times',
+        freqType: 1,
+        freqCustom: '{}',
+        startDate: 1,
+        targetDays: 1,
+        sortPosition: 1,
+      );
+
+      final exportData = HabitExportData.fromHabitDBCell(cell);
+      final json = exportData.toJson();
+
+      expect(json.containsKey('group_id'), isFalse);
+
+      final roundTripped = HabitExportData.fromJson(json);
+      final backToCell = roundTripped.toHabitDBCell();
+      expect(backToCell.groupId, isNull);
+    });
+
+    test('deserializes group_id from raw JSON map', () {
+      final json = {
+        'type': 1,
+        'uuid': 'from-json-group',
+        'status': 1,
+        'name': 'From JSON',
+        'color': 1,
+        'daily_goal': 1,
+        'daily_goal_unit': 'times',
+        'freq_type': 1,
+        'start_date': 1,
+        'target_days': 1,
+        'sort_position': 1,
+        'group_id': 'imported-group-uuid',
+      };
+
+      final data = HabitExportData.fromJson(json);
+      expect(data.groupId, 'imported-group-uuid');
+
+      final cell = data.toHabitDBCell();
+      expect(cell.groupId, 'imported-group-uuid');
+    });
+
+    test('deserializes without group_id as null (backward compat)', () {
+      final json = {
+        'type': 1,
+        'uuid': 'no-group-backward',
+        'status': 1,
+        'name': 'Old Export',
+        'color': 1,
+        'daily_goal': 1,
+        'daily_goal_unit': 'times',
+        'freq_type': 1,
+        'start_date': 1,
+        'target_days': 1,
+        'sort_position': 1,
+      };
+
+      final data = HabitExportData.fromJson(json);
+      expect(data.groupId, isNull);
+
+      final cell = data.toHabitDBCell();
+      expect(cell.groupId, isNull);
+    });
   });
 }

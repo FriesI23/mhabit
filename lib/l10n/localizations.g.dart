@@ -1628,6 +1628,30 @@ abstract class L10n {
   /// **'Note: Import doesn\'t delete existing habits.'**
   String get appSetting_importDialog_confirmSubtitle;
 
+  /// No description provided for @appSetting_importDialog_option_includeHabits.
+  ///
+  /// In en, this message translates to:
+  /// **'Include habits'**
+  String get appSetting_importDialog_option_includeHabits;
+
+  /// No description provided for @appSetting_importDialog_option_includeGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Include groups'**
+  String get appSetting_importDialog_option_includeGroups;
+
+  /// No description provided for @appSetting_importDialog_tile_includeHabits.
+  ///
+  /// In en, this message translates to:
+  /// **'Include {count} habits'**
+  String appSetting_importDialog_tile_includeHabits(int count);
+
+  /// No description provided for @appSetting_importDialog_tile_includeGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Include {count} groups'**
+  String appSetting_importDialog_tile_includeGroups(int count);
+
   /// No description provided for @appSetting_importConfirmDialog_sourceLabel.
   ///
   /// In en, this message translates to:
@@ -1682,8 +1706,14 @@ abstract class L10n {
   /// No description provided for @appSetting_importDialog_completeTitle.
   ///
   /// In en, this message translates to:
-  /// **'Complete import {count}'**
+  /// **'Complete import {count} habits'**
   String appSetting_importDialog_completeTitle(int count);
+
+  /// No description provided for @appSetting_importDialog_completeTitleGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed import {count} groups'**
+  String appSetting_importDialog_completeTitleGroups(int count);
 
   /// No description provided for @appSetting_importDialog_complete_closeLabel.
   ///
@@ -2812,6 +2842,24 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'include records'**
   String get exportConfirmDialog_option_includeRecords;
+
+  /// No description provided for @exportConfirmDialog_option_includeGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'include groups'**
+  String get exportConfirmDialog_option_includeGroups;
+
+  /// No description provided for @exportConfirmDialog_tile_includeRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'Include {count} records'**
+  String exportConfirmDialog_tile_includeRecords(int count);
+
+  /// No description provided for @exportConfirmDialog_tile_includeGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Include {count} groups'**
+  String exportConfirmDialog_tile_includeGroups(int count);
 
   /// No description provided for @exportConfirmDialog_cancel_buttonText.
   ///

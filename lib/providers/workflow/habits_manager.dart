@@ -337,6 +337,7 @@ abstract interface class HabitImportAccess {
   List<Future<void>> importHabitsData(
     Iterable<Object?> jsonData, {
     bool withRecords = true,
+    Map<String, GroupUUID>? groupUuidMapping,
   });
 
   int getImportHabitsCount(Iterable<Object?> jsonData);
@@ -816,8 +817,15 @@ class HabitsManager
   HabitExporter getExporter({List<HabitUUID>? uuidList}) =>
       HabitExporter(habitDBHelper, recordDBHelper, uuidList: uuidList);
 
-  HabitImport getImporter(Iterable<Object?> jsonData) =>
-      HabitImport(habitDBHelper, recordDBHelper, data: jsonData);
+  HabitImport getHabitImporter(
+    Iterable<Object?> jsonData, {
+    Map<String, GroupUUID>? groupUuidMapping,
+  }) => HabitImport(
+    habitDBHelper,
+    recordDBHelper,
+    data: jsonData,
+    groupUuidMapping: groupUuidMapping,
+  );
 
   @override
   Future<Iterable<HabitExportData>> loadHabitExportData({
@@ -829,10 +837,14 @@ class HabitsManager
   List<Future<void>> importHabitsData(
     Iterable<Object?> jsonData, {
     bool withRecords = true,
-  }) => getImporter(jsonData).importData(withRecords: withRecords);
+    Map<String, GroupUUID>? groupUuidMapping,
+  }) => getHabitImporter(
+    jsonData,
+    groupUuidMapping: groupUuidMapping,
+  ).importData(withRecords: withRecords);
 
   @override
   int getImportHabitsCount(Iterable<Object?> jsonData) =>
-      getImporter(jsonData).habitsCount;
+      getHabitImporter(jsonData).habitsCount;
   //#endregion
 }

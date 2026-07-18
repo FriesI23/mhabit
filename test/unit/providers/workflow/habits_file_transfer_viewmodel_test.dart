@@ -48,6 +48,7 @@ final class _FakeHabitImportAccess implements HabitImportAccess {
   int dryRunCount;
   List<Object?>? lastJsonData;
   bool? lastWithRecords;
+  Map<String, String>? lastGroupUuidMapping;
 
   @override
   int getImportHabitsCount(Iterable<Object?> jsonData) {
@@ -59,9 +60,11 @@ final class _FakeHabitImportAccess implements HabitImportAccess {
   List<Future<void>> importHabitsData(
     Iterable<Object?> jsonData, {
     bool withRecords = true,
+    Map<String, String>? groupUuidMapping,
   }) {
     lastJsonData = jsonData.toList(growable: false);
     lastWithRecords = withRecords;
+    lastGroupUuidMapping = groupUuidMapping;
     return importResult;
   }
 }

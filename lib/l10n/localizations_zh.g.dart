@@ -897,6 +897,22 @@ class L10nZh extends L10n {
   String get appSetting_importDialog_confirmSubtitle => '注意：导入不会删除现有的习惯。';
 
   @override
+  String get appSetting_importDialog_option_includeHabits => '包含习惯';
+
+  @override
+  String get appSetting_importDialog_option_includeGroups => '包含分组';
+
+  @override
+  String appSetting_importDialog_tile_includeHabits(int count) {
+    return '包含 $count 个习惯';
+  }
+
+  @override
+  String appSetting_importDialog_tile_includeGroups(int count) {
+    return '包含 $count 个分组';
+  }
+
+  @override
   String appSetting_importConfirmDialog_sourceLabel(String provider) {
     return '来源: $provider';
   }
@@ -930,6 +946,11 @@ class L10nZh extends L10n {
   @override
   String appSetting_importDialog_completeTitle(int count) {
     return '完成导入 $count 个习惯';
+  }
+
+  @override
+  String appSetting_importDialog_completeTitleGroups(int count) {
+    return '完成导入 $count 个分组';
   }
 
   @override
@@ -1661,6 +1682,19 @@ class L10nZh extends L10n {
 
   @override
   String get exportConfirmDialog_option_includeRecords => '包含习惯记录';
+
+  @override
+  String get exportConfirmDialog_option_includeGroups => '包含分组';
+
+  @override
+  String exportConfirmDialog_tile_includeRecords(int count) {
+    return '包含 $count 条记录';
+  }
+
+  @override
+  String exportConfirmDialog_tile_includeGroups(int count) {
+    return '导出 $count 个分组';
+  }
 
   @override
   String get exportConfirmDialog_cancel_buttonText => '取消';
@@ -2748,6 +2782,22 @@ class L10nZhHant extends L10nZh {
   String get appSetting_importDialog_confirmSubtitle => '注意：匯入不會刪除現有的習慣。';
 
   @override
+  String get appSetting_importDialog_option_includeHabits => '包含習慣';
+
+  @override
+  String get appSetting_importDialog_option_includeGroups => '包含分組';
+
+  @override
+  String appSetting_importDialog_tile_includeHabits(int count) {
+    return '包含 $count 個習慣';
+  }
+
+  @override
+  String appSetting_importDialog_tile_includeGroups(int count) {
+    return '包含 $count 個分組';
+  }
+
+  @override
   String appSetting_importConfirmDialog_sourceLabel(String provider) {
     return '來源: $provider';
   }
@@ -2780,7 +2830,7 @@ class L10nZhHant extends L10nZh {
 
   @override
   String appSetting_importDialog_completeTitle(int count) {
-    return '完成匯入 $count 個';
+    return '完成匯入 $count 個習慣';
   }
 
   @override
@@ -3223,6 +3273,19 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get exportConfirmDialog_option_includeRecords => '包含記錄';
+
+  @override
+  String get exportConfirmDialog_option_includeGroups => '包含分組';
+
+  @override
+  String exportConfirmDialog_tile_includeRecords(int count) {
+    return '包含 $count 筆記錄';
+  }
+
+  @override
+  String exportConfirmDialog_tile_includeGroups(int count) {
+    return '匯出 $count 個分組';
+  }
 
   @override
   String get exportConfirmDialog_cancel_buttonText => '取消';

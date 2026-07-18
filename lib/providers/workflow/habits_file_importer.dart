@@ -16,16 +16,23 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
+import '../../common/types.dart';
 import '../support/commons.dart';
+import 'group_manager.dart';
 import 'habits_manager.dart';
 
 class HabitFileImportRunner extends ChangeNotifier implements ProviderMounted {
   // inside status
   bool _mounted = true;
   late HabitImportAccess _access;
+  GroupImportAccess? _groupAccess;
 
   void attachAccess(HabitImportAccess newAccess) {
     _access = newAccess;
+  }
+
+  void attachGroupAccess(GroupImportAccess newAccess) {
+    _groupAccess = newAccess;
   }
 
   @override
@@ -40,13 +47,17 @@ class HabitFileImportRunner extends ChangeNotifier implements ProviderMounted {
     void Function(int count, int failed, int total)? whenloadHabit,
     void Function(int count, int failed, int total)? whenloadAllHabits,
     bool listen = true,
+    Map<String, GroupUUID>? groupUuidMapping,
   }) {
     void onAllFutureComplated(int count, int failed, int total) {
       whenloadAllHabits?.call(count, failed, total);
       if (listen) notifyListeners();
     }
 
-    final futures = _access.importHabitsData(jsonData);
+    final futures = _access.importHabitsData(
+      jsonData,
+      groupUuidMapping: groupUuidMapping,
+    );
     if (futures.isEmpty) return null;
 
     final completer = Completer<int>();
@@ -74,6 +85,19 @@ class HabitFileImportRunner extends ChangeNotifier implements ProviderMounted {
 
   int importHabitsDataDryRun(Iterable<Object?> jsonData) {
     return _access.getImportHabitsCount(jsonData);
+  }
+
+  int importGroupsDataDryRun(Iterable<Object?> jsonData) {
+    return _groupAccess?.getImportGroupsCount(jsonData) ?? 0;
+  }
+
+  Future<Map<String, GroupUUID>> importGroupsData(
+    Iterable<Object?> jsonData, {
+    bool listen = true,
+  }) async {
+    final mapping = await _groupAccess?.importGroupsData(jsonData) ?? {};
+    if (listen) notifyListeners();
+    return mapping;
   }
 
   @override
