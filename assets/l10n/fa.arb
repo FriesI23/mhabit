@@ -687,5 +687,9 @@
     "groupManage_deleteDialog_confirm": "حذف",
     "@groupManage_deleteDialog_confirm": {
         "description": "Confirm button text for delete dialog"
+    },
+    "groupManage_name_label": "بر اساس نام",
+    "@groupManage_name_label": {
+        "description": "Label for the group name input field"
     }
 }

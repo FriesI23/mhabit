@@ -44,6 +44,7 @@ import '../../../providers/workflow/app_sync.dart';
 import '../../../providers/workflow/group_manager.dart';
 import '../../../providers/workflow/habits_manager.dart';
 import '../../../storage/db/handlers/habit.dart';
+import '../helpers.dart';
 import 'habit_group_sorter.dart';
 import 'habits_display_reload_bridge.dart';
 
@@ -165,6 +166,11 @@ class HabitSummaryViewModel extends ChangeNotifier
   void attachGroupManager(GroupManager gm) {
     _groupManager = gm;
   }
+
+  List<HabitGroupData> groupList() => _groupCollection?.toList() ?? [];
+
+  String? getGroupName(GroupUUID? uuid) =>
+      _groupCollection?.getByUUID(uuid)?.name;
 
   void updateGroupingEnabled(bool value) {
     _groupingEnabled = value;
@@ -1048,6 +1054,72 @@ class HabitSummaryViewModel extends ChangeNotifier
     resortData(listen: false);
     exitEditMode();
     return result;
+  }
+
+  Future<int> executeBatchGroupModify({
+    required List<HabitGroupModifyItem> affectedHabits,
+    required GroupUUID? targetGroupId,
+    bool listen = true,
+  }) async {
+    final changedUUIDs = <String>[];
+    final changedGroupIds = <GroupUUID?>[];
+    for (final h in affectedHabits) {
+      if (h.oldGroupId != targetGroupId) {
+        changedUUIDs.add(h.uuid);
+        changedGroupIds.add(targetGroupId);
+      }
+    }
+
+    if (changedUUIDs.isEmpty) return 0;
+
+    await _access.updateHabitGroupIds(changedUUIDs, changedGroupIds);
+
+    for (final h in affectedHabits) {
+      if (h.oldGroupId != targetGroupId) {
+        final data = getHabit(h.uuid);
+        if (data != null) {
+          data.groupId = targetGroupId;
+        }
+      }
+    }
+    resortData(listen: listen);
+
+    return changedUUIDs.length;
+  }
+
+  Future<bool> undoBatchGroupModify({
+    required Map<String, GroupUUID?> oldGroupIds,
+    required Map<String, GroupUUID?> newGroupIds,
+    bool listen = true,
+  }) async {
+    // Verify no concurrent modification has changed any habit's group.
+    final currentHabits = await _access.loadHabitSummaryCollectionData(
+      habitUUIDs: oldGroupIds.keys.toList(),
+    );
+    for (final data in currentHabits.values) {
+      if (data.groupId != newGroupIds[data.uuid]) return false;
+    }
+
+    final revertUUIDs = <String>[];
+    final revertGroupIds = <GroupUUID?>[];
+    for (final entry in oldGroupIds.entries) {
+      if (entry.value != newGroupIds[entry.key]) {
+        revertUUIDs.add(entry.key);
+        revertGroupIds.add(entry.value);
+      }
+    }
+
+    if (revertUUIDs.isEmpty) return true;
+    await _access.updateHabitGroupIds(revertUUIDs, revertGroupIds);
+
+    for (final (i, uuid) in revertUUIDs.indexed) {
+      final data = getHabit(uuid);
+      if (data != null) {
+        data.groupId = revertGroupIds[i];
+      }
+    }
+    resortData(listen: listen);
+    return true;
   }
   //#endregion
 

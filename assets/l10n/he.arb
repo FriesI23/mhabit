@@ -1130,5 +1130,9 @@
     "groupManage_deleteDialog_cancel": "ביטול",
     "@groupManage_deleteDialog_cancel": {
         "description": "Cancel button text for delete dialog"
+    },
+    "groupManage_name_label": "לפי שם",
+    "@groupManage_name_label": {
+        "description": "Label for the group name input field"
     }
 }

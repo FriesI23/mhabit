@@ -800,6 +800,118 @@ abstract class L10n {
   /// **'Flat'**
   String get habitDisplay_groupTypeDialog_none;
 
+  /// No description provided for @habitDisplay_editPopMenu_groupModify.
+  ///
+  /// In en, this message translates to:
+  /// **'Modify Group'**
+  String get habitDisplay_editPopMenu_groupModify;
+
+  /// No description provided for @habitDisplay_groupModifyDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Modify Group'**
+  String get habitDisplay_groupModifyDialog_title;
+
+  /// No description provided for @habitDisplay_groupModifyDialog_removeGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Group'**
+  String get habitDisplay_groupModifyDialog_removeGroup;
+
+  /// No description provided for @habitDisplay_groupModifyDialog_emptyGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'No groups available'**
+  String get habitDisplay_groupModifyDialog_emptyGroups;
+
+  /// No description provided for @habitDisplay_groupModifyDialog_alreadyInGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected habits are already in this group'**
+  String get habitDisplay_groupModifyDialog_alreadyInGroup;
+
+  /// No description provided for @habitDisplay_groupModifyDialog_createGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Group'**
+  String get habitDisplay_groupModifyDialog_createGroup;
+
+  /// No description provided for @habitDisplay_groupModifyDialog_saveAndApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Save & Apply'**
+  String get habitDisplay_groupModifyDialog_saveAndApply;
+
+  /// No description provided for @habitDisplay_groupModifyConfirm_titleNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to Group'**
+  String get habitDisplay_groupModifyConfirm_titleNew;
+
+  /// No description provided for @habitDisplay_groupModifyConfirm_titleMixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Group Change'**
+  String get habitDisplay_groupModifyConfirm_titleMixed;
+
+  /// No description provided for @habitDisplay_groupModifyConfirm_bodyNewGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'{groupName} habits will be moved to this group'**
+  String habitDisplay_groupModifyConfirm_bodyNewGroup(String groupName);
+
+  /// No description provided for @habitDisplay_groupModifyConfirm_bodyRemoveGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Habits will have their group removed'**
+  String get habitDisplay_groupModifyConfirm_bodyRemoveGroup;
+
+  /// No description provided for @habitDisplay_groupModifyConfirm_bodyChangeStat.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1 {{count} habit will change from \"{fromGroup}\" to \"{toGroup}\"} other {{count} habits will change from \"{fromGroup}\" to \"{toGroup}\"}}'**
+  String habitDisplay_groupModifyConfirm_bodyChangeStat(
+    int count,
+    String fromGroup,
+    String toGroup,
+  );
+
+  /// No description provided for @habitDisplay_groupModifyConfirm_bodyAddStat.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1 {{count} uncategorized habit will be added to \"{toGroup}\"} other {{count} uncategorized habits will be added to \"{toGroup}\"}}'**
+  String habitDisplay_groupModifyConfirm_bodyAddStat(int count, String toGroup);
+
+  /// No description provided for @habitDisplay_groupModifyConfirm_bodyRemoveStat.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1 {{count} habit will have its group removed} other {{count} habits will have their groups removed}}'**
+  String habitDisplay_groupModifyConfirm_bodyRemoveStat(int count);
+
+  /// No description provided for @habitDisplay_groupModifyConfirm_nameSeparator.
+  ///
+  /// In en, this message translates to:
+  /// **', '**
+  String get habitDisplay_groupModifyConfirm_nameSeparator;
+
+  /// No description provided for @habitDisplay_groupModify_snackbarText.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1 {Moved habit to \"{groupName}\"} other {Moved {count} habits to \"{groupName}\"}}'**
+  String habitDisplay_groupModify_snackbarText(int count, String groupName);
+
+  /// No description provided for @habitDisplay_groupModify_snackbarTextRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1 {Removed group from habit} other {Removed groups from {count} habits}}'**
+  String habitDisplay_groupModify_snackbarTextRemoved(int count);
+
+  /// No description provided for @habitDisplay_groupModify_undoFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Group has been modified elsewhere, cannot undo'**
+  String get habitDisplay_groupModify_undoFailed;
+
   /// No description provided for @habitDisplay_sort_reverseText.
   ///
   /// In en, this message translates to:
@@ -2807,6 +2919,12 @@ abstract class L10n {
   /// **'Enabled'**
   String get common_enable_text;
 
+  /// No description provided for @common_dontShowAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t show again'**
+  String get common_dontShowAgain;
+
   /// No description provided for @calendarPicker_clip_today.
   ///
   /// In en, this message translates to:
@@ -3256,6 +3374,18 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Name must be ≤ {max} characters'**
   String groupManage_nameTooLong(int max);
+
+  /// Label for the group name input field
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get groupManage_name_label;
+
+  /// Label for the group description input field
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get groupManage_desc_label;
 
   /// Validation warning when group description exceeds recommended length
   ///

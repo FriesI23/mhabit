@@ -290,6 +290,88 @@
     "habitDisplay_groupTypeDialog_confirm": "确定",
     "habitDisplay_groupTypeDialog_cancel": "取消",
     "habitDisplay_groupTypeDialog_none": "平铺",
+    "habitDisplay_editPopMenu_groupModify": "修改分组",
+    "habitDisplay_groupModifyDialog_title": "修改分组",
+    "habitDisplay_groupModifyDialog_removeGroup": "移除分组",
+    "habitDisplay_groupModifyDialog_emptyGroups": "暂无分组",
+    "habitDisplay_groupModifyDialog_alreadyInGroup": "所选习惯已在该分组中",
+    "habitDisplay_groupModifyDialog_createGroup": "创建分组",
+    "habitDisplay_groupModifyDialog_saveAndApply": "保存并应用",
+    "habitDisplay_groupModifyConfirm_titleNew": "确认移动至分组",
+    "habitDisplay_groupModifyConfirm_titleMixed": "确认修改分组",
+    "habitDisplay_groupModifyConfirm_bodyNewGroup": "以下习惯将移动至「{groupName}」",
+    "@habitDisplay_groupModifyConfirm_bodyNewGroup": {
+        "placeholders": {
+            "groupName": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyRemoveGroup": "移除以下习惯的分组",
+    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count} 个习惯将由「{fromGroup}」修改至「{toGroup}」",
+    "@habitDisplay_groupModifyConfirm_bodyChangeStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits changing group"
+            },
+            "fromGroup": {
+                "type": "String",
+                "description": "Old group name"
+            },
+            "toGroup": {
+                "type": "String",
+                "description": "New group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyAddStat": "{count} 个习惯将由未分类新增至「{toGroup}」",
+    "@habitDisplay_groupModifyConfirm_bodyAddStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits being added"
+            },
+            "toGroup": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyRemoveStat": "{count} 个习惯将移除分组",
+    "@habitDisplay_groupModifyConfirm_bodyRemoveStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits being removed"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_nameSeparator": "、",
+    "habitDisplay_groupModify_snackbarText": "已移动 {count} 个习惯至「{groupName}」",
+    "@habitDisplay_groupModify_snackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of modified habits"
+            },
+            "groupName": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModify_snackbarTextRemoved": "已移除 {count} 个习惯的分组",
+    "@habitDisplay_groupModify_snackbarTextRemoved": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits"
+            }
+        }
+    },
+    "habitDisplay_groupModify_undoFailed": "分组已被其他操作修改，无法撤销",
     "habitDisplay_sort_reverseText": "反向排序",
     "habitDisplay_sortDirection_asc": "(正序)",
     "habitDisplay_sortDirection_Desc": "(反序)",
@@ -1076,6 +1158,7 @@
     "common_errorPage_title": "啊呀，崩溃了！",
     "common_errorPage_copied": "已复制崩溃信息",
     "common_enable_text": "启用",
+    "common_dontShowAgain": "不再提示",
     "calendarPicker_clip_today": "今天",
     "calendarPicker_clip_tomorrow": "明天",
     "calendarPicker_clip_after7Days": "下{date}",
@@ -1293,6 +1376,14 @@
                 "type": "int"
             }
         }
+    },
+    "groupManage_name_label": "名称",
+    "@groupManage_name_label": {
+        "description": "Label for the group name input field"
+    },
+    "groupManage_desc_label": "描述",
+    "@groupManage_desc_label": {
+        "description": "Label for the group description input field"
     },
     "groupManage_descTooLong": "描述不应超过 {max} 个字符",
     "@groupManage_descTooLong": {

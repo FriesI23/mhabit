@@ -166,10 +166,6 @@ class GroupManageViewModel extends ChangeNotifier
       );
     }
 
-    // Cancel any previous session so run() can start fresh.
-    _pageLoad.cancel(logName: "$runtimeType.loadGroups.cancel");
-    if (listen) notifyListeners();
-
     return _pageLoad.run(
       logName: "$runtimeType.loadGroups",
       alreadyLoadingEx: ["groups already loading"],
@@ -207,8 +203,6 @@ class GroupManageViewModel extends ChangeNotifier
     );
   }
 
-  /// Looks up a single [HabitGroupData] by UUID from [GroupManager].
-  ///
   /// Used by dialogs that need the domain model for editing/updating.
   Future<HabitGroupData?> loadGroupDataByUUID(String uuid) =>
       _groupManager?.loadGroupDataByUUID(uuid) ?? Future.value(null);

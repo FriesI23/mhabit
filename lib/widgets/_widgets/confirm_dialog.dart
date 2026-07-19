@@ -26,15 +26,58 @@ Future<bool?> showConfirmDialog({
   WidgetBuilder? subtitleBuilder,
   WidgetBuilder? cancelTextBuilder,
   WidgetBuilder? confirmTextBuilder,
+  bool skipOnConfirm = false,
+  bool skipInitiallyEnabled = false,
+  ValueChanged<bool>? onSkipChanged,
+  String? skipLabel,
 }) async {
+  final effectiveTitle = titleBuilder?.call(context) ?? title;
+  final effectiveSubtitle = subtitleBuilder?.call(context) ?? subtitle;
+  final effectiveCancelText = cancelTextBuilder?.call(context) ?? cancelText;
+  final effectiveConfirmText = confirmTextBuilder?.call(context) ?? confirmText;
+
+  if (!skipOnConfirm) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => ConfirmDialog(
+        title: effectiveTitle,
+        subtitle: effectiveSubtitle,
+        cancelText: effectiveCancelText,
+        confirmText: effectiveConfirmText,
+      ),
+    );
+  }
+
+  final l10n = L10n.of(context);
   return showDialog<bool>(
     context: context,
-    builder: (context) => ConfirmDialog(
-      title: titleBuilder?.call(context) ?? title,
-      subtitle: subtitleBuilder?.call(context) ?? subtitle,
-      cancelText: cancelTextBuilder?.call(context) ?? cancelText,
-      confirmText: confirmTextBuilder?.call(context) ?? confirmText,
-    ),
+    builder: (context) {
+      var skipValue = skipInitiallyEnabled;
+      return StatefulBuilder(
+        builder: (context, setState) => ConfirmDialog(
+          title: effectiveTitle,
+          subtitle: effectiveSubtitle,
+          cancelText: effectiveCancelText,
+          confirmText: effectiveConfirmText,
+          leadingAction: CheckboxListTile(
+            value: skipValue,
+            onChanged: (v) {
+              setState(() => skipValue = v ?? false);
+              onSkipChanged?.call(v ?? false);
+            },
+            title: Text(
+              skipLabel ?? l10n?.common_dontShowAgain ?? "Don't show again",
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            contentPadding: EdgeInsets.zero,
+            dense: true,
+            visualDensity: VisualDensity.compact,
+            controlAffinity: ListTileControlAffinity.leading,
+          ),
+        ),
+      );
+    },
   );
 }
 
@@ -69,6 +112,7 @@ class ConfirmDialog extends StatelessWidget {
   final Widget? subtitle;
   final Widget? cancelText;
   final Widget? confirmText;
+  final Widget? leadingAction;
 
   const ConfirmDialog({
     super.key,
@@ -76,27 +120,40 @@ class ConfirmDialog extends StatelessWidget {
     this.subtitle,
     this.cancelText,
     this.confirmText,
+    this.leadingAction,
   });
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: title,
-      content: subtitle,
+      content: subtitle != null || leadingAction != null
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [?subtitle, ?leadingAction],
+            )
+          : null,
       actions: [
-        if (cancelText != null)
-          TextButton(
-            onPressed: () {
-              Navigator.maybePop(context, false);
-            },
-            child: cancelText!,
-          ),
-        if (confirmText != null)
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-            child: confirmText!,
+        if (cancelText != null || confirmText != null)
+          Wrap(
+            alignment: WrapAlignment.end,
+            children: [
+              if (cancelText != null)
+                TextButton(
+                  onPressed: () {
+                    Navigator.maybePop(context, false);
+                  },
+                  child: cancelText!,
+                ),
+              if (confirmText != null)
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: confirmText!,
+                ),
+            ],
           ),
       ],
     );

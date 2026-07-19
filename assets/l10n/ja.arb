@@ -1067,5 +1067,9 @@
     "groupManage_deleteDialog_cancel": "キャンセル",
     "@groupManage_deleteDialog_cancel": {
         "description": "Cancel button text for delete dialog"
+    },
+    "groupManage_name_label": "名前順",
+    "@groupManage_name_label": {
+        "description": "Label for the group name input field"
     }
 }

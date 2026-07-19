@@ -16,9 +16,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../common/consts.dart';
+import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
 import '../../models/habit_display.dart';
+import '../../models/habit_group.dart';
 import '../../models/habit_group_display.dart';
 import '../../providers/app_ui/app_developer.dart';
 import '../../widgets/widgets.dart';
@@ -67,7 +68,7 @@ class _PageState extends State<_Page> {
     final vm = context.read<GroupManageViewModel>();
     if (!(mounted && vm.mounted)) return;
     if (!vm.hasLoad) {
-      await vm.loadGroups(listen: false);
+      await vm.loadGroups();
     }
   }
 
@@ -228,14 +229,16 @@ class _PageState extends State<_Page> {
               if (snapshot.hasError) {
                 return Center(child: Text('${snapshot.error}'));
               }
-              final vm = context.watch<GroupManageViewModel>();
-              // Show spinner only on first load before any data is cached;
-              // on subsequent reloads, always render from cached state.
-              if (!vm.hasLoaded && !vm.hasLoad) {
-                return const Center(child: CircularProgressIndicator());
-              }
               return EnhancedSafeArea.edgeToEdgeSafe(
-                child: _buildContent(context, vm),
+                child: _GroupManageBody(
+                  onGroupTap: _onGroupTap,
+                  onGroupLongPress: _onGroupLongPress,
+                  onEdit: _openEditDialog,
+                  onDelete: _onSingleDelete,
+                  onSortOpen: _openSortSelector,
+                  onBatchDelete: _onBatchDelete,
+                  debugMenuBuilder: _buildDevelopMenu,
+                ),
               );
             },
           ),
@@ -256,80 +259,71 @@ class _PageState extends State<_Page> {
     );
   }
 
-  SliverAppBar _buildSliverAppBar(BuildContext context) {
-    final vm = context.watch<GroupManageViewModel>();
-    final l10n = L10n.of(context);
-    if (vm.selectionMode) {
-      return SliverAppBar(
-        pinned: true,
-        forceElevated: true,
-        scrolledUnderElevation: _kCommonEvalation,
-        shadowColor: Theme.of(context).colorScheme.shadow,
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: vm.exitSelectionMode,
-        ),
-        title: Text(
-          l10n?.groupManage_selectionAppbar_title(vm.selectedCount) ??
-              '${vm.selectedCount} selected',
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete_outline),
-            onPressed: vm.selectedCount > 0 ? _onBatchDelete : null,
-          ),
-        ],
-      );
-    }
-    return SliverAppBar(
-      floating: true,
-      snap: true,
-      pinned: true,
-      title: Text(l10n?.groupManage_appbar_title ?? 'Manage Groups'),
-      leading: const PageBackButton(reason: PageBackReason.back),
-      actions: [
-        IconButton(icon: const Icon(Icons.sort), onPressed: _openSortSelector),
-      ],
+  Widget _buildDevelopMenu(BuildContext context) {
+    return Selector<AppDeveloperViewModel, bool>(
+      selector: (context, vm) => vm.showDebugMenuOnDisplayView,
+      builder: (context, showMenu, child) {
+        if (!showMenu) return const SizedBox.shrink();
+        return _GroupManageDevelopMenu(
+          mode: _debugForceEditMode,
+          onChanged: (mode) => setState(() => _debugForceEditMode = mode),
+        );
+      },
     );
   }
+}
 
-  Widget _buildContent(BuildContext context, GroupManageViewModel vm) {
-    // Only show empty state after data has actually loaded; before that
-    // (first visit) the FutureBuilder already shows a spinner.
-    if (vm.hasLoaded && vm.groups.isEmpty) {
-      return _buildEmptyState(context);
+class _GroupManageBody extends StatelessWidget {
+  const _GroupManageBody({
+    required this.onGroupTap,
+    required this.onGroupLongPress,
+    required this.onEdit,
+    required this.onDelete,
+    required this.onSortOpen,
+    required this.onBatchDelete,
+    required this.debugMenuBuilder,
+  });
+
+  final void Function(String uuid) onGroupTap;
+  final void Function(String uuid) onGroupLongPress;
+  final void Function(String uuid) onEdit;
+  final void Function(String uuid) onDelete;
+  final VoidCallback onSortOpen;
+  final VoidCallback onBatchDelete;
+  final WidgetBuilder debugMenuBuilder;
+
+  @override
+  Widget build(BuildContext context) {
+    final (hasLoaded, groupsEmpty) = context
+        .select<GroupManageViewModel, (bool, bool)>(
+          (vm) => (vm.hasLoaded, vm.groups.isEmpty),
+        );
+
+    if (groupsEmpty) {
+      return !hasLoaded
+          ? const Center(child: CircularProgressIndicator())
+          : _buildEmptyState(context);
     }
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isWide = constraints.maxWidth >= kHabitLargeScreenAdaptWidth;
+
+    return AppUiLayoutBuilder(
+      ignoreWidth: false,
+      ignoreHeight: true,
+      builder: (context, layoutType, child) {
         return CustomScrollView(
           slivers: [
-            _buildSliverAppBar(context),
-            if (isWide)
-              SliverPadding(
-                padding: const EdgeInsets.all(16),
-                sliver: GroupManageGrid(
-                  groups: vm.groups,
-                  selectedUUIDs: vm.selectedUUIDs,
-                  selectionMode: vm.selectionMode,
-                  onTap: _onGroupTap,
-                  onLongPress: _onGroupLongPress,
-                  onEdit: _openEditDialog,
-                  onDelete: _onSingleDelete,
-                ),
-              )
-            else
-              GroupManageList(
-                groups: vm.groups,
-                selectedUUIDs: vm.selectedUUIDs,
-                selectionMode: vm.selectionMode,
-                onTap: _onGroupTap,
-                onLongPress: _onGroupLongPress,
-                onEdit: _openEditDialog,
-                onDelete: _onSingleDelete,
-              ),
+            _GroupManageSliverAppBar(
+              onSortOpen: onSortOpen,
+              onBatchDelete: onBatchDelete,
+            ),
+            _GroupManageContent(
+              layoutType: layoutType,
+              onGroupTap: onGroupTap,
+              onGroupLongPress: onGroupLongPress,
+              onEdit: onEdit,
+              onDelete: onDelete,
+            ),
             if (kDebugMode)
-              SliverToBoxAdapter(child: _buildDevelopMenu(context)),
+              SliverToBoxAdapter(child: debugMenuBuilder(context)),
           ],
         );
       },
@@ -359,18 +353,107 @@ class _PageState extends State<_Page> {
       ),
     );
   }
+}
 
-  Widget _buildDevelopMenu(BuildContext context) {
-    return Selector<AppDeveloperViewModel, bool>(
-      selector: (context, vm) => vm.showDebugMenuOnDisplayView,
-      builder: (context, showMenu, child) {
-        if (!showMenu) return const SizedBox.shrink();
-        return _GroupManageDevelopMenu(
-          mode: _debugForceEditMode,
-          onChanged: (mode) => setState(() => _debugForceEditMode = mode),
+class _GroupManageSliverAppBar extends StatelessWidget {
+  const _GroupManageSliverAppBar({
+    required this.onSortOpen,
+    required this.onBatchDelete,
+  });
+
+  final VoidCallback onSortOpen;
+  final VoidCallback onBatchDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final (selectionMode, selectedCount) = context
+        .select<GroupManageViewModel, (bool, int)>(
+          (vm) => (vm.selectionMode, vm.selectedCount),
         );
-      },
+    final l10n = L10n.of(context);
+
+    if (selectionMode) {
+      return SliverAppBar(
+        pinned: true,
+        forceElevated: true,
+        scrolledUnderElevation: _kCommonEvalation,
+        shadowColor: Theme.of(context).colorScheme.shadow,
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () =>
+              context.read<GroupManageViewModel>().exitSelectionMode(),
+        ),
+        title: Text(
+          l10n?.groupManage_selectionAppbar_title(selectedCount) ??
+              '$selectedCount selected',
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete_outline),
+            onPressed: selectedCount > 0 ? onBatchDelete : null,
+          ),
+        ],
+      );
+    }
+    return SliverAppBar(
+      floating: true,
+      snap: true,
+      pinned: true,
+      title: Text(l10n?.groupManage_appbar_title ?? 'Manage Groups'),
+      leading: const PageBackButton(reason: PageBackReason.back),
+      actions: [
+        IconButton(icon: const Icon(Icons.sort), onPressed: onSortOpen),
+      ],
     );
+  }
+}
+
+class _GroupManageContent extends StatelessWidget {
+  const _GroupManageContent({
+    required this.layoutType,
+    required this.onGroupTap,
+    required this.onGroupLongPress,
+    required this.onEdit,
+    required this.onDelete,
+  });
+
+  final UiLayoutType layoutType;
+  final void Function(String uuid) onGroupTap;
+  final void Function(String uuid) onGroupLongPress;
+  final void Function(String uuid) onEdit;
+  final void Function(String uuid) onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final (groups, selectedUUIDs, selectionMode) = context
+        .select<
+          GroupManageViewModel,
+          (List<HabitGroupData>, Set<String>, bool)
+        >((vm) => (vm.groups, vm.selectedUUIDs, vm.selectionMode));
+
+    return switch (layoutType) {
+      UiLayoutType.l => SliverPadding(
+        padding: const EdgeInsets.all(16),
+        sliver: GroupManageGrid(
+          groups: groups,
+          selectedUUIDs: selectedUUIDs,
+          selectionMode: selectionMode,
+          onTap: onGroupTap,
+          onLongPress: onGroupLongPress,
+          onEdit: onEdit,
+          onDelete: onDelete,
+        ),
+      ),
+      UiLayoutType.s => GroupManageList(
+        groups: groups,
+        selectedUUIDs: selectedUUIDs,
+        selectionMode: selectionMode,
+        onTap: onGroupTap,
+        onLongPress: onGroupLongPress,
+        onEdit: onEdit,
+        onDelete: onDelete,
+      ),
+    };
   }
 }
 

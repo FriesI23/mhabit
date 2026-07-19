@@ -380,6 +380,100 @@
     "@habitDisplay_groupTypeDialog_cancel": {},
     "habitDisplay_groupTypeDialog_none": "Flat",
     "@habitDisplay_groupTypeDialog_none": {},
+    "habitDisplay_editPopMenu_groupModify": "Modify Group",
+    "@habitDisplay_editPopMenu_groupModify": {},
+    "habitDisplay_groupModifyDialog_title": "Modify Group",
+    "@habitDisplay_groupModifyDialog_title": {},
+    "habitDisplay_groupModifyDialog_removeGroup": "Remove Group",
+    "@habitDisplay_groupModifyDialog_removeGroup": {},
+    "habitDisplay_groupModifyDialog_emptyGroups": "No groups available",
+    "@habitDisplay_groupModifyDialog_emptyGroups": {},
+    "habitDisplay_groupModifyDialog_alreadyInGroup": "Selected habits are already in this group",
+    "@habitDisplay_groupModifyDialog_alreadyInGroup": {},
+    "habitDisplay_groupModifyDialog_createGroup": "Create Group",
+    "@habitDisplay_groupModifyDialog_createGroup": {},
+    "habitDisplay_groupModifyDialog_saveAndApply": "Save & Apply",
+    "@habitDisplay_groupModifyDialog_saveAndApply": {},
+    "habitDisplay_groupModifyConfirm_titleNew": "Move to Group",
+    "@habitDisplay_groupModifyConfirm_titleNew": {},
+    "habitDisplay_groupModifyConfirm_titleMixed": "Confirm Group Change",
+    "@habitDisplay_groupModifyConfirm_titleMixed": {},
+    "habitDisplay_groupModifyConfirm_bodyNewGroup": "{groupName} habits will be moved to this group",
+    "@habitDisplay_groupModifyConfirm_bodyNewGroup": {
+        "placeholders": {
+            "groupName": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyRemoveGroup": "Habits will have their group removed",
+    "@habitDisplay_groupModifyConfirm_bodyRemoveGroup": {},
+    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {{count} habit will change from \"{fromGroup}\" to \"{toGroup}\"} other {{count} habits will change from \"{fromGroup}\" to \"{toGroup}\"}}",
+    "@habitDisplay_groupModifyConfirm_bodyChangeStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits changing group"
+            },
+            "fromGroup": {
+                "type": "String",
+                "description": "Old group name"
+            },
+            "toGroup": {
+                "type": "String",
+                "description": "New group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyAddStat": "{count, plural, =1 {{count} uncategorized habit will be added to \"{toGroup}\"} other {{count} uncategorized habits will be added to \"{toGroup}\"}}",
+    "@habitDisplay_groupModifyConfirm_bodyAddStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits being added"
+            },
+            "toGroup": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyRemoveStat": "{count, plural, =1 {{count} habit will have its group removed} other {{count} habits will have their groups removed}}",
+    "@habitDisplay_groupModifyConfirm_bodyRemoveStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits being removed"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_nameSeparator": ", ",
+    "@habitDisplay_groupModifyConfirm_nameSeparator": {},
+    "habitDisplay_groupModify_snackbarText": "{count, plural, =1 {Moved habit to \"{groupName}\"} other {Moved {count} habits to \"{groupName}\"}}",
+    "@habitDisplay_groupModify_snackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of modified habits"
+            },
+            "groupName": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModify_snackbarTextRemoved": "{count, plural, =1 {Removed group from habit} other {Removed groups from {count} habits}}",
+    "@habitDisplay_groupModify_snackbarTextRemoved": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits"
+            }
+        }
+    },
+    "habitDisplay_groupModify_undoFailed": "Group has been modified elsewhere, cannot undo",
+    "@habitDisplay_groupModify_undoFailed": {},
     "habitDisplay_sort_reverseText": "Reverse",
     "@habitDisplay_sort_reverseText": {},
     "habitDisplay_sortDirection_asc": "(Asc)",
@@ -1445,6 +1539,8 @@
     "@common_errorPage_copied": {},
     "common_enable_text": "Enabled",
     "@common_enable_text": {},
+    "common_dontShowAgain": "Don't show again",
+    "@common_dontShowAgain": {},
     "calendarPicker_clip_today": "Today",
     "@calendarPicker_clip_today": {},
     "calendarPicker_clip_tomorrow": "Tomorrow",
@@ -1707,6 +1803,14 @@
                 "type": "int"
             }
         }
+    },
+    "groupManage_name_label": "Name",
+    "@groupManage_name_label": {
+        "description": "Label for the group name input field"
+    },
+    "groupManage_desc_label": "Description",
+    "@groupManage_desc_label": {
+        "description": "Label for the group description input field"
     },
     "groupManage_descTooLong": "Description should be ≤ {max} characters",
     "@groupManage_descTooLong": {

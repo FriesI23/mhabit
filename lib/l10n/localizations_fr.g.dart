@@ -432,6 +432,114 @@ class L10nFr extends L10n {
   String get habitDisplay_groupTypeDialog_none => 'Flat';
 
   @override
+  String get habitDisplay_editPopMenu_groupModify => 'Modify Group';
+
+  @override
+  String get habitDisplay_groupModifyDialog_title => 'Modify Group';
+
+  @override
+  String get habitDisplay_groupModifyDialog_removeGroup => 'Remove Group';
+
+  @override
+  String get habitDisplay_groupModifyDialog_emptyGroups =>
+      'No groups available';
+
+  @override
+  String get habitDisplay_groupModifyDialog_alreadyInGroup =>
+      'Selected habits are already in this group';
+
+  @override
+  String get habitDisplay_groupModifyDialog_createGroup => 'Create Group';
+
+  @override
+  String get habitDisplay_groupModifyDialog_saveAndApply => 'Save & Apply';
+
+  @override
+  String get habitDisplay_groupModifyConfirm_titleNew => 'Move to Group';
+
+  @override
+  String get habitDisplay_groupModifyConfirm_titleMixed =>
+      'Confirm Group Change';
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyNewGroup(String groupName) {
+    return '$groupName habits will be moved to this group';
+  }
+
+  @override
+  String get habitDisplay_groupModifyConfirm_bodyRemoveGroup =>
+      'Habits will have their group removed';
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyChangeStat(
+    int count,
+    String fromGroup,
+    String toGroup,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count habits will change from \"$fromGroup\" to \"$toGroup\"',
+      one: '$count habit will change from \"$fromGroup\" to \"$toGroup\"',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyAddStat(
+    int count,
+    String toGroup,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count uncategorized habits will be added to \"$toGroup\"',
+      one: '$count uncategorized habit will be added to \"$toGroup\"',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyRemoveStat(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count habits will have their groups removed',
+      one: '$count habit will have its group removed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get habitDisplay_groupModifyConfirm_nameSeparator => ', ';
+
+  @override
+  String habitDisplay_groupModify_snackbarText(int count, String groupName) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Moved $count habits to \"$groupName\"',
+      one: 'Moved habit to \"$groupName\"',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String habitDisplay_groupModify_snackbarTextRemoved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Removed groups from $count habits',
+      one: 'Removed group from habit',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get habitDisplay_groupModify_undoFailed =>
+      'Group has been modified elsewhere, cannot undo';
+
+  @override
   String get habitDisplay_sort_reverseText => 'Inversé';
 
   @override
@@ -1759,6 +1867,9 @@ class L10nFr extends L10n {
   String get common_enable_text => 'Enabled';
 
   @override
+  String get common_dontShowAgain => 'Don\'t show again';
+
+  @override
   String get calendarPicker_clip_today => 'Aujourd’hui';
 
   @override
@@ -2029,6 +2140,12 @@ class L10nFr extends L10n {
   String groupManage_nameTooLong(int max) {
     return 'Name must be ≤ $max characters';
   }
+
+  @override
+  String get groupManage_name_label => 'Par nom';
+
+  @override
+  String get groupManage_desc_label => 'Description';
 
   @override
   String groupManage_descTooLong(int max) {

@@ -63,8 +63,8 @@ import '../habit_detail/page.dart' as habit_detail;
 import '../habit_edit/page.dart' as habit_edit;
 import '../habits_status_changer/page.dart' as habits_status_changer;
 import '_providers/habit_summary.dart';
-import '_widgets/habit_display_group_type_picker.dart';
 import 'extensions.dart';
+import 'helpers.dart';
 import 'widgets.dart';
 
 class HabitsTabPage extends StatefulWidget {
@@ -715,6 +715,138 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
   void _onAppbarDeleteActionPressed() => _openHabitDeleteConfirmDialog(context);
 
+  void _openHabitGroupModifyDialog() async {
+    if (!mounted) return;
+
+    final vm = context.read<HabitSummaryViewModel>();
+    final selectedData = vm.getSelectedHabitsData().nonNulls.toList();
+    if (selectedData.isEmpty) return;
+
+    final selectorResult = await showHabitGroupModifySelector(
+      context: context,
+      selectedHabitsData: selectedData,
+    );
+    if (selectorResult == null || !mounted) return;
+
+    switch (selectorResult) {
+      case GroupModifySelectorCancelled():
+        return;
+      case GroupModifySelectorRemoveGroup():
+        return;
+      case GroupModifySelectorSelected(
+        :final groupId,
+        :final affectedHabits,
+        :final targetGroupName,
+      ):
+        await _executeBatchGroupModify(
+          affectedHabits: affectedHabits,
+          targetGroupId: groupId,
+          targetGroupName: targetGroupName,
+        );
+    }
+  }
+
+  Future<void> _executeBatchGroupModify({
+    required List<HabitGroupModifyItem> affectedHabits,
+    required GroupUUID? targetGroupId,
+    required String? targetGroupName,
+  }) async {
+    if (!mounted) return;
+
+    // Snapshot old group IDs for undo validation.
+    final oldGroupIds = <String, GroupUUID?>{
+      for (final h in affectedHabits) h.uuid: h.oldGroupId,
+    };
+    final newGroupIds = <String, GroupUUID?>{
+      for (final h in affectedHabits) h.uuid: targetGroupId,
+    };
+
+    final vm = context.read<HabitSummaryViewModel>();
+    final count = await vm.executeBatchGroupModify(
+      affectedHabits: affectedHabits,
+      targetGroupId: targetGroupId,
+    );
+
+    if (!mounted || count == 0) return;
+    vm.exitEditMode();
+    context.read<AppEventBus>().push(
+      const ReloadDataEvent(
+        msg: "habit_display._executeBatchGroupModify",
+        trace: {
+          AppEventPageSource.habitDisplay: {
+            AppEventFunctionSource.habitChanged,
+          },
+        },
+      ),
+    );
+    context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce(
+      delay: kAppUndoDialogShowDuration * 2,
+    );
+
+    final l10n = L10n.of(context);
+    final snackBar = buildSnackBarWithUndo(
+      context,
+      content: Text(
+        targetGroupId != null
+            ? (l10n?.habitDisplay_groupModify_snackbarText(
+                    count,
+                    targetGroupName ?? '',
+                  ) ??
+                  '')
+            : (l10n?.habitDisplay_groupModify_snackbarTextRemoved(count) ?? ''),
+      ),
+      showDuration: kAppUndoDialogShowDuration,
+      onPressed: () => _undoBatchGroupModify(
+        oldGroupIds: oldGroupIds,
+        newGroupIds: newGroupIds,
+      ),
+    );
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(snackBar);
+  }
+
+  Future<void> _undoBatchGroupModify({
+    required Map<String, GroupUUID?> oldGroupIds,
+    required Map<String, GroupUUID?> newGroupIds,
+  }) async {
+    if (!mounted) return;
+
+    final vm = context.read<HabitSummaryViewModel>();
+    final success = await vm.undoBatchGroupModify(
+      oldGroupIds: oldGroupIds,
+      newGroupIds: newGroupIds,
+    );
+
+    if (!mounted) return;
+
+    if (!success) {
+      final l10n = L10n.of(context);
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              l10n?.habitDisplay_groupModify_undoFailed ??
+                  'Group has been modified elsewhere, cannot undo',
+            ),
+          ),
+        );
+      return;
+    }
+
+    context.read<AppEventBus>().push(
+      const ReloadDataEvent(
+        msg: "habit_display._undoBatchGroupModify",
+        trace: {
+          AppEventPageSource.habitDisplay: {
+            AppEventFunctionSource.habitChanged,
+          },
+        },
+      ),
+    );
+  }
+
   void _onAppbarCloneActionPressed() => _enterHabitEditPage(
     formBuilder: (dbCell) => HabitForm.fromHabitDBCell(
       dbCell.copyWith(
@@ -982,6 +1114,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
                     onClone: _onAppbarCloneActionPressed,
                     onExportAll: _onAppbarExportAllActionPressed,
                     onDelete: _onAppbarDeleteActionPressed,
+                    onGroupModify: _openHabitGroupModifyDialog,
                   ),
                 )
               : Selector<AppExperimentalFeatureViewModel, bool>(

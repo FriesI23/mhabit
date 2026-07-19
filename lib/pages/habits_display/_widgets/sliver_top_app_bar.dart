@@ -100,6 +100,7 @@ class SliverEditTopAppBarAction extends StatelessWidget {
   final VoidCallback? onClone;
   final void Function(BuildContext context)? onExportAll;
   final VoidCallback? onDelete;
+  final VoidCallback? onGroupModify;
 
   const SliverEditTopAppBarAction({
     super.key,
@@ -110,6 +111,7 @@ class SliverEditTopAppBarAction extends StatelessWidget {
     this.onClone,
     this.onExportAll,
     this.onDelete,
+    this.onGroupModify,
   });
 
   @override
@@ -154,6 +156,10 @@ class SliverEditTopAppBarAction extends StatelessWidget {
         EditModeActionItemConfig.delete(
           text: l10n?.habitDisplay_editPopMenu_delete ?? 'Delete',
           callback: onDelete,
+        ),
+        EditModeActionItemConfig.groupModify(
+          text: l10n?.habitDisplay_editPopMenu_groupModify ?? 'Modify Group',
+          callback: onGroupModify,
         ),
       ],
     );

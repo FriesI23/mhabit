@@ -412,6 +412,79 @@ class L10nZh extends L10n {
   String get habitDisplay_groupTypeDialog_none => '平铺';
 
   @override
+  String get habitDisplay_editPopMenu_groupModify => '修改分组';
+
+  @override
+  String get habitDisplay_groupModifyDialog_title => '修改分组';
+
+  @override
+  String get habitDisplay_groupModifyDialog_removeGroup => '移除分组';
+
+  @override
+  String get habitDisplay_groupModifyDialog_emptyGroups => '暂无分组';
+
+  @override
+  String get habitDisplay_groupModifyDialog_alreadyInGroup => '所选习惯已在该分组中';
+
+  @override
+  String get habitDisplay_groupModifyDialog_createGroup => '创建分组';
+
+  @override
+  String get habitDisplay_groupModifyDialog_saveAndApply => '保存并应用';
+
+  @override
+  String get habitDisplay_groupModifyConfirm_titleNew => '确认移动至分组';
+
+  @override
+  String get habitDisplay_groupModifyConfirm_titleMixed => '确认修改分组';
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyNewGroup(String groupName) {
+    return '以下习惯将移动至「$groupName」';
+  }
+
+  @override
+  String get habitDisplay_groupModifyConfirm_bodyRemoveGroup => '移除以下习惯的分组';
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyChangeStat(
+    int count,
+    String fromGroup,
+    String toGroup,
+  ) {
+    return '$count 个习惯将由「$fromGroup」修改至「$toGroup」';
+  }
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyAddStat(
+    int count,
+    String toGroup,
+  ) {
+    return '$count 个习惯将由未分类新增至「$toGroup」';
+  }
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyRemoveStat(int count) {
+    return '$count 个习惯将移除分组';
+  }
+
+  @override
+  String get habitDisplay_groupModifyConfirm_nameSeparator => '、';
+
+  @override
+  String habitDisplay_groupModify_snackbarText(int count, String groupName) {
+    return '已移动 $count 个习惯至「$groupName」';
+  }
+
+  @override
+  String habitDisplay_groupModify_snackbarTextRemoved(int count) {
+    return '已移除 $count 个习惯的分组';
+  }
+
+  @override
+  String get habitDisplay_groupModify_undoFailed => '分组已被其他操作修改，无法撤销';
+
+  @override
   String get habitDisplay_sort_reverseText => '反向排序';
 
   @override
@@ -1653,6 +1726,9 @@ class L10nZh extends L10n {
   String get common_enable_text => '启用';
 
   @override
+  String get common_dontShowAgain => '不再提示';
+
+  @override
   String get calendarPicker_clip_today => '今天';
 
   @override
@@ -1911,6 +1987,12 @@ class L10nZh extends L10n {
   String groupManage_nameTooLong(int max) {
     return '名称不能超过 $max 个字符';
   }
+
+  @override
+  String get groupManage_name_label => '名称';
+
+  @override
+  String get groupManage_desc_label => '描述';
 
   @override
   String groupManage_descTooLong(int max) {
@@ -2290,6 +2372,79 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get habitDisplay_groupTypeDialog_none => '平鋪';
+
+  @override
+  String get habitDisplay_editPopMenu_groupModify => '修改分組';
+
+  @override
+  String get habitDisplay_groupModifyDialog_title => '修改分組';
+
+  @override
+  String get habitDisplay_groupModifyDialog_removeGroup => '移除分組';
+
+  @override
+  String get habitDisplay_groupModifyDialog_emptyGroups => '暫無分組';
+
+  @override
+  String get habitDisplay_groupModifyDialog_alreadyInGroup => '所選習慣已在該分組中';
+
+  @override
+  String get habitDisplay_groupModifyDialog_createGroup => '建立分組';
+
+  @override
+  String get habitDisplay_groupModifyDialog_saveAndApply => '儲存並套用';
+
+  @override
+  String get habitDisplay_groupModifyConfirm_titleNew => '確認移動至分組';
+
+  @override
+  String get habitDisplay_groupModifyConfirm_titleMixed => '確認修改分組';
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyNewGroup(String groupName) {
+    return '以下習慣將移動至「$groupName」';
+  }
+
+  @override
+  String get habitDisplay_groupModifyConfirm_bodyRemoveGroup => '移除以下習慣的分組';
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyChangeStat(
+    int count,
+    String fromGroup,
+    String toGroup,
+  ) {
+    return '$count 個習慣將由「$fromGroup」修改至「$toGroup」';
+  }
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyAddStat(
+    int count,
+    String toGroup,
+  ) {
+    return '$count 個習慣將由未分類新增至「$toGroup」';
+  }
+
+  @override
+  String habitDisplay_groupModifyConfirm_bodyRemoveStat(int count) {
+    return '$count 個習慣將移除分組';
+  }
+
+  @override
+  String get habitDisplay_groupModifyConfirm_nameSeparator => '、';
+
+  @override
+  String habitDisplay_groupModify_snackbarText(int count, String groupName) {
+    return '已移動 $count 個習慣至「$groupName」';
+  }
+
+  @override
+  String habitDisplay_groupModify_snackbarTextRemoved(int count) {
+    return '已移除 $count 個習慣的分組';
+  }
+
+  @override
+  String get habitDisplay_groupModify_undoFailed => '分組已被其他操作修改，無法撤銷';
 
   @override
   String get habitDisplay_sort_reverseText => '反向';
@@ -3243,6 +3398,9 @@ class L10nZhHant extends L10nZh {
   String get common_errorPage_copied => '已複製當機資訊';
 
   @override
+  String get common_dontShowAgain => '不再提示';
+
+  @override
   String get calendarPicker_clip_today => '今天';
 
   @override
@@ -3464,6 +3622,12 @@ class L10nZhHant extends L10nZh {
   String groupManage_nameTooLong(int max) {
     return '名稱不能超過 $max 個字元';
   }
+
+  @override
+  String get groupManage_name_label => '名稱';
+
+  @override
+  String get groupManage_desc_label => '描述';
 
   @override
   String groupManage_descTooLong(int max) {

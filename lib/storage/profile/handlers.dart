@@ -13,6 +13,7 @@
 // limitations under the License.
 
 export 'handlers/app_experimental_feature.dart';
+export 'handlers/app_flags.dart';
 export 'handlers/app_language.dart';
 export 'handlers/app_last_changelog_version.dart';
 export 'handlers/app_launch_entry.dart';

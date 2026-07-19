@@ -1112,5 +1112,9 @@
     "groupManage_deleteDialog_cancel": "mégse",
     "@groupManage_deleteDialog_cancel": {
         "description": "Cancel button text for delete dialog"
+    },
+    "groupManage_name_label": "Név",
+    "@groupManage_name_label": {
+        "description": "Label for the group name input field"
     }
 }

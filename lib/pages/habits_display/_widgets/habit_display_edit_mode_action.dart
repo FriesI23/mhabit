@@ -25,6 +25,7 @@ enum EditModeActionItemCell {
   exportall,
   selectall,
   clone,
+  groupModify,
 }
 
 class EditModeActionItemConfig
@@ -92,6 +93,16 @@ class EditModeActionItemConfig
     super.text = '',
     super.callback,
   }) : super(type: EditModeActionItemCell.clone, icon: Icons.copy_rounded);
+
+  const EditModeActionItemConfig.groupModify({
+    super.status = AppbarActionShowStatus.popupitem,
+    super.visible = true,
+    super.text = '',
+    super.callback,
+  }) : super(
+         type: EditModeActionItemCell.groupModify,
+         icon: MdiIcons.folderMove,
+       );
 
   @override
   bool shouldShow(AppbarActionShowStatus s) {

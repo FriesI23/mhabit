@@ -43,10 +43,17 @@ import 'enhanced_safe_area.dart';
 /// close button.  [sheetActionsAlign] and [sheetTitleAlignment] control
 /// layout in the sheet scaffold.
 ///
+/// [builder] wraps the sheet/dialog and receives `(context, buildBody)` where
+/// [buildBody] is a [WidgetBuilder] that constructs the full body (title +
+/// content + actions) using the context it receives.  The builder controls
+/// *when* [buildBody] is called — typically inside a [Provider] scope so that
+/// [contentBuilder] and [actionsBuilder] have access to the Provider tree.
+///
 /// Mode‑specific parameters use `sheet*` / `dialog*` prefixes.
 Future<T?> showAdaptiveContentSheet<T>({
   required BuildContext context,
   required WidgetBuilder contentBuilder,
+  Widget Function(BuildContext context, WidgetBuilder buildBody)? builder,
   WidgetBuilder? pinnedContentBuilder,
   Widget? title,
   List<Widget>? actions,
@@ -103,28 +110,22 @@ Future<T?> showAdaptiveContentSheet<T>({
           _ => true,
         };
 
-  final actionsList = actionsBuilder?.call(context, useDialog) ?? actions;
+  final resolvedBuilder = builder;
 
-  return switch (useDialog) {
-    true => showDialog<T>(
-      context: context,
-      builder: (dialogContext) => _AdaptiveAlertDialog(
+  Widget buildBody(BuildContext ctx) {
+    final bodyActions = actionsBuilder?.call(ctx, useDialog) ?? actions;
+    return switch (useDialog) {
+      true => _AdaptiveAlertDialog(
         title: title,
         width: dialogWidth,
         maxContentHeight: dialogMaxContentHeight,
         showScrollbar: dialogShowScrollbar,
         showCloseButton: showCloseButton,
-        actions: actionsList,
+        actions: bodyActions,
         pinnedContentBuilder: pinnedContentBuilder,
-        child: contentBuilder(dialogContext),
+        child: contentBuilder(ctx),
       ),
-    ),
-    false => showModalBottomSheet<T>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      showDragHandle: sheetShowDragHandle,
-      builder: (sheetContext) => _AdaptiveSheet(
+      false => _AdaptiveSheet(
         title: title,
         initialChildSize: sheetInitialChildSize,
         minChildSize: sheetMinChildSize,
@@ -132,12 +133,30 @@ Future<T?> showAdaptiveContentSheet<T>({
         scrollPhysics: sheetScrollPhysics,
         padding: sheetPadding,
         sheetShowCloseButton: sheetShowCloseButton ?? showCloseButton,
-        actions: actionsList,
+        actions: bodyActions,
         actionsAlign: sheetActionsAlign,
         titleAlignment: sheetTitleAlignment,
         pinnedContentBuilder: pinnedContentBuilder,
-        child: contentBuilder(sheetContext),
+        child: contentBuilder(ctx),
       ),
+    };
+  }
+
+  return switch (useDialog) {
+    true => showDialog<T>(
+      context: context,
+      builder: (ctx) => resolvedBuilder != null
+          ? resolvedBuilder(ctx, buildBody)
+          : buildBody(ctx),
+    ),
+    false => showModalBottomSheet<T>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      showDragHandle: sheetShowDragHandle,
+      builder: (ctx) => resolvedBuilder != null
+          ? resolvedBuilder(ctx, buildBody)
+          : buildBody(ctx),
     ),
   };
 }

@@ -1113,5 +1113,9 @@
     "groupManage_deleteDialog_cancel": "İptal",
     "@groupManage_deleteDialog_cancel": {
         "description": "Cancel button text for delete dialog"
+    },
+    "groupManage_name_label": "Ada göre",
+    "@groupManage_name_label": {
+        "description": "Label for the group name input field"
     }
 }

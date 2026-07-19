@@ -734,5 +734,9 @@
     "groupManage_deleteDialog_confirm": "Elimina",
     "@groupManage_deleteDialog_confirm": {
         "description": "Confirm button text for delete dialog"
+    },
+    "groupManage_name_label": "Per Nome",
+    "@groupManage_name_label": {
+        "description": "Label for the group name input field"
     }
 }
