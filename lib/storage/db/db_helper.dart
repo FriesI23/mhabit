@@ -75,8 +75,8 @@ class _DBHelper implements DBHelper {
   Future<void> _onCreate(Database db, int version) async {
     await db.execute(await getSqlFromFile(Assets.sql.mhHabits));
     await db.execute(await getSqlFromFile(Assets.sql.mhRecords));
-    await db.execute(await getSqlFromFile(Assets.sql.mhSync));
     await db.execute(await getSqlFromFile(Assets.sql.mhGroups));
+    await db.execute(await getSqlFromFile(Assets.sql.mhSync));
     final indexesBatch = db.batch();
     await Future.wait([
           getSqlFromFile(Assets.sql.indexes),

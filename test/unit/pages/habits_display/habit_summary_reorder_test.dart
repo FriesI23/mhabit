@@ -118,6 +118,27 @@ final class _ReorderTestGroupManager extends GroupManager {
   Future<List<GroupDBCell>> loadAllActiveGroups() async => _groups;
 }
 
+base class _ThrowingSortAccess extends _ReorderTestAccess {
+  _ThrowingSortAccess(super.seed);
+
+  @override
+  Future<List<HabitUUID>> fixAndSaveSortPositions(
+    List<HabitSummaryData> habits, {
+    required num increaseStep,
+    required int decimalPlaces,
+  }) async => throw Exception('sort write failed');
+}
+
+base class _ThrowingGroupAccess extends _ReorderTestAccess {
+  _ThrowingGroupAccess(super.seed);
+
+  @override
+  Future<void> updateHabitGroupIds(
+    List<HabitUUID> uuids,
+    List<String?> groupIds,
+  ) async => throw Exception('group write failed');
+}
+
 HabitSummaryData _h({
   required int id,
   required String uuid,
@@ -703,5 +724,132 @@ void main() {
 
       vm.dispose();
     });
+
+    // ── error propagation ──────────────────────────────────────
+    // Verifies that DB-write failures in onHabitReorderComplate /
+    // onCrossGroupHabitMove are thrown (not silently swallowed),
+    // so callers can handle them (e.g. requestReload + SnackBar).
+    //
+    // The in-memory mutation happens before DB writes; even on
+    // failure the list order and groupId have already changed.
+    // This is the existing behavior — the fix that prevents
+    // silent inconsistency lives in finishReorder at the widget
+    // layer (then/catchError).
+
+    test(
+      'onHabitReorderComplate propagates error on DB write failure',
+      () async {
+        final access = _ThrowingSortAccess([
+          _h(id: 1, uuid: 'a', sortPostion: 1),
+          _h(id: 2, uuid: 'b', sortPostion: 2),
+          _h(id: 3, uuid: 'c', sortPostion: 3),
+        ]);
+        final vm = HabitSummaryViewModel()
+          ..attachAccess(access)
+          ..attachGroupManager(_ReorderTestGroupManager([]));
+
+        await vm.loadData(listen: false);
+        vm.updateHabitDisplayFilter(const HabitsDisplayFilter.withDefault());
+        vm.resortData();
+
+        // before: [a, b, c]
+        expect(_habitUuids(vm), ['a', 'b', 'c']);
+
+        await expectLater(
+          vm.onHabitReorderComplate(0, 2),
+          throwsA(
+            isA<Exception>().having(
+              (e) => e.toString(),
+              'message',
+              contains('sort write failed'),
+            ),
+          ),
+        );
+
+        // Memory already mutated despite DB failure (existing behavior).
+        expect(_habitUuids(vm), ['b', 'c', 'a']);
+
+        vm.dispose();
+      },
+    );
+
+    test(
+      'onCrossGroupHabitMove propagates error on sort write failure',
+      () async {
+        final access = _ThrowingSortAccess([
+          _h(id: 1, uuid: 'a', sortPostion: 10, groupId: 'g1'),
+          _h(id: 2, uuid: 'b', sortPostion: 20, groupId: 'g2'),
+          _h(id: 3, uuid: 'c', sortPostion: 30, groupId: 'g2'),
+        ]);
+        final vm = HabitSummaryViewModel()
+          ..attachAccess(access)
+          ..attachGroupManager(
+            _ReorderTestGroupManager([
+              _g(uuid: 'g1', name: 'G1'),
+              _g(uuid: 'g2', name: 'G2'),
+            ]),
+          );
+
+        await vm.loadData(listen: false);
+        vm.updateGroupingEnabled(true);
+        vm.resortData();
+
+        // before: [H(G1), a(g1), H(G2), b(g2), c(g2)]
+        expect(_habitUuids(vm), ['a', 'b', 'c']);
+
+        await expectLater(
+          vm.onCrossGroupHabitMove(1, 3, 'g2'),
+          throwsA(
+            isA<Exception>().having(
+              (e) => e.toString(),
+              'message',
+              contains('sort write failed'),
+            ),
+          ),
+        );
+
+        // Memory mutated: a moved in the list, groupId unchanged
+        // (updateHabitGroupIds never reached).
+        expect(_habitUuids(vm), containsAllInOrder(['b', 'a', 'c']));
+
+        vm.dispose();
+      },
+    );
+
+    test(
+      'onCrossGroupHabitMove propagates error on group write failure',
+      () async {
+        final access = _ThrowingGroupAccess([
+          _h(id: 1, uuid: 'a', sortPostion: 10, groupId: 'g1'),
+          _h(id: 2, uuid: 'b', sortPostion: 20, groupId: 'g2'),
+          _h(id: 3, uuid: 'c', sortPostion: 30, groupId: 'g2'),
+        ]);
+        final vm = HabitSummaryViewModel()
+          ..attachAccess(access)
+          ..attachGroupManager(
+            _ReorderTestGroupManager([
+              _g(uuid: 'g1', name: 'G1'),
+              _g(uuid: 'g2', name: 'G2'),
+            ]),
+          );
+
+        await vm.loadData(listen: false);
+        vm.updateGroupingEnabled(true);
+        vm.resortData();
+
+        await expectLater(
+          vm.onCrossGroupHabitMove(1, 3, 'g2'),
+          throwsA(
+            isA<Exception>().having(
+              (e) => e.toString(),
+              'message',
+              contains('group write failed'),
+            ),
+          ),
+        );
+
+        vm.dispose();
+      },
+    );
   });
 }

@@ -954,26 +954,41 @@ class HabitsTabPageState extends State<HabitsTabPage>
   bool _onHabitListReorderComplete(int index, int dropIndex, Object? slot) {
     if (!mounted) return false;
 
-    final viewmodel = context.read<HabitSummaryViewModel>();
-
-    void finishReorder(Future<void> task) {
-      viewmodel.exitEditMode(listen: false);
-      task.whenComplete(() {
-        if (!mounted) return;
-        context.read<AppEventBus>().push(
-          const ReloadDataEvent(
-            msg: "habit_display._onHabitListReorderComplete",
-            trace: {
-              AppEventPageSource.habitDisplay: {
-                AppEventFunctionSource.habitChanged,
+    void finishReorder(Future<void> task) => task
+        .then((_) {
+          if (!mounted) return;
+          context.read<HabitSummaryViewModel>().exitEditMode(listen: false);
+          context.read<AppEventBus>().push(
+            const ReloadDataEvent(
+              msg: "habit_display._onHabitListReorderComplete",
+              trace: {
+                AppEventPageSource.habitDisplay: {
+                  AppEventFunctionSource.habitChanged,
+                },
               },
-            },
-          ),
-        );
-        context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce();
-      });
-    }
+            ),
+          );
+          context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce();
+        })
+        .catchError((Object e, StackTrace s) {
+          if (!mounted) return;
+          context.read<HabitSummaryViewModel>().requestReload();
+          appLog.habit.error(
+            "HabitsTabPage.finishReorder",
+            error: e,
+            stackTrace: s,
+          );
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              buildSnackBarWithDismiss(
+                context,
+                content: const Text('Reorder failed, please try again'),
+              ),
+            );
+        });
 
+    final viewmodel = context.read<HabitSummaryViewModel>();
     if (index != dropIndex) {
       final groupingEnabled = context
           .read<HabitsGroupingViewModel>()
