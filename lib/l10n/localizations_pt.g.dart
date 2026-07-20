@@ -2160,6 +2160,18 @@ class L10nPt extends L10n {
   String get groupManage_modifyDateTile_title => 'Alterado';
 
   @override
+  String get groupManage_icon_label => 'Icon';
+
+  @override
+  String get groupManage_icon_none => 'None';
+
+  @override
+  String get groupManage_color_label => 'Por cor';
+
+  @override
+  String get groupManage_color_none => 'None';
+
+  @override
   String get appSetting_manageGroups_subtitleText =>
       'Create, edit, and delete habit groups';
 }

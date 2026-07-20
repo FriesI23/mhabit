@@ -2145,6 +2145,18 @@ class L10nFa extends L10n {
   String get groupManage_modifyDateTile_title => 'ویرایش شده';
 
   @override
+  String get groupManage_icon_label => 'Icon';
+
+  @override
+  String get groupManage_icon_none => 'ندارد';
+
+  @override
+  String get groupManage_color_label => 'بر اساس رنگ';
+
+  @override
+  String get groupManage_color_none => 'ندارد';
+
+  @override
   String get appSetting_manageGroups_subtitleText =>
       'Create, edit, and delete habit groups';
 }

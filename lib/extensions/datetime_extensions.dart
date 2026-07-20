@@ -99,3 +99,14 @@ extension DateTimeWeekday on DateTime {
     );
   }
 }
+
+/// Null-safe comparison for two [DateTime?] values, placing `null` after
+/// all non-null values.
+extension CompareNullableDateTime on DateTime? {
+  int compareToNullable(DateTime? other) {
+    if (this == null && other == null) return 0;
+    if (this == null) return 1;
+    if (other == null) return -1;
+    return this!.compareTo(other);
+  }
+}

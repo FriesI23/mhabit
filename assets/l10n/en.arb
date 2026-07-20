@@ -1843,6 +1843,22 @@
     "@groupManage_modifyDateTile_title": {
         "description": "Label shown for the group modification date in the edit dialog"
     },
+    "groupManage_icon_label": "Icon",
+    "@groupManage_icon_label": {
+        "description": "Section label for the icon picker in group create/edit forms"
+    },
+    "groupManage_icon_none": "None",
+    "@groupManage_icon_none": {
+        "description": "Tooltip for the 'no icon' option in the group icon picker"
+    },
+    "groupManage_color_label": "Color",
+    "@groupManage_color_label": {
+        "description": "Section label for the color picker in group create/edit forms"
+    },
+    "groupManage_color_none": "None",
+    "@groupManage_color_none": {
+        "description": "Tooltip for the 'no color' option in the group color picker"
+    },
     "appSetting_manageGroups_subtitleText": "Create, edit, and delete habit groups",
     "@appSetting_manageGroups_subtitleText": {
         "description": "Subtitle for the Manage Groups tile in Settings"

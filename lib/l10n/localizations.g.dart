@@ -3417,6 +3417,30 @@ abstract class L10n {
   /// **'Modified'**
   String get groupManage_modifyDateTile_title;
 
+  /// Section label for the icon picker in group create/edit forms
+  ///
+  /// In en, this message translates to:
+  /// **'Icon'**
+  String get groupManage_icon_label;
+
+  /// Tooltip for the 'no icon' option in the group icon picker
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get groupManage_icon_none;
+
+  /// Section label for the color picker in group create/edit forms
+  ///
+  /// In en, this message translates to:
+  /// **'Color'**
+  String get groupManage_color_label;
+
+  /// Tooltip for the 'no color' option in the group color picker
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get groupManage_color_none;
+
   /// Subtitle for the Manage Groups tile in Settings
   ///
   /// In en, this message translates to:

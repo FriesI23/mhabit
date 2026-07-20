@@ -2170,6 +2170,18 @@ class L10nUk extends L10n {
   String get groupManage_modifyDateTile_title => 'Змінено';
 
   @override
+  String get groupManage_icon_label => 'Icon';
+
+  @override
+  String get groupManage_icon_none => 'нульовий';
+
+  @override
+  String get groupManage_color_label => 'За кольором';
+
+  @override
+  String get groupManage_color_none => 'нульовий';
+
+  @override
   String get appSetting_manageGroups_subtitleText =>
       'Create, edit, and delete habit groups';
 }

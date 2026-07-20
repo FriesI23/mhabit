@@ -876,6 +876,9 @@ class WebDavSyncGroupData implements JsonAdaptor {
   ///
   /// Color encoding reuses the HabitColor sync codec extensions
   /// (`_syncColorCode` / `_syncCustomColor` / `_syncCustomColorTinted`).
+  /// When the group has no color (both [GroupDBCell.color] and
+  /// [GroupDBCell.customColor] are `null`), all three wire color fields
+  /// are left `null` — groups may legitimately have no color, unlike habits.
   factory WebDavSyncGroupData.fromGroupDBCell(
     GroupDBCell cell, {
     String? etag,
@@ -884,13 +887,15 @@ class WebDavSyncGroupData implements JsonAdaptor {
     String? sessionId,
     Map<String, dynamic>? unknown,
   }) {
-    final groupColor = HabitColor.fromRaw(
-      colorType: cell.customColor != null
-          ? HabitColorType.cc1
-          : HabitColorType.getFromDBCode(cell.color ?? 0)!,
-      customColor: cell.customColor,
-      customColorTinted: cell.customColorTinted,
-    );
+    final groupColor = cell.color == null && cell.customColor == null
+        ? null
+        : HabitColor.fromRaw(
+            colorType: cell.customColor != null
+                ? HabitColorType.cc1
+                : HabitColorType.getFromDBCode(cell.color!)!,
+            customColor: cell.customColor,
+            customColorTinted: cell.customColorTinted,
+          );
     return WebDavSyncGroupData(
       schemaVersion: currentSchemaVersion,
       uuid: cell.uuid,
@@ -899,9 +904,9 @@ class WebDavSyncGroupData implements JsonAdaptor {
       name: cell.name,
       desc: cell.desc,
       icon: cell.icon,
-      color: groupColor._syncColorCode,
-      customColor: groupColor._syncCustomColor,
-      customColorTinted: groupColor._syncCustomColorTinted,
+      color: groupColor?._syncColorCode,
+      customColor: groupColor?._syncCustomColor,
+      customColorTinted: groupColor?._syncCustomColorTinted,
       status: cell.status,
       sessionId: sessionId,
       etag: etag,
@@ -921,13 +926,15 @@ class WebDavSyncGroupData implements JsonAdaptor {
 
   /// Converts to [GroupDBCell] for writing to the local DB.
   GroupDBCell toGroupDBCell() {
-    final groupColor = HabitColor.fromRaw(
-      colorType: customColor != null
-          ? HabitColorType.cc1
-          : HabitColorType.getFromDBCode(color ?? 0)!,
-      customColor: customColor,
-      customColorTinted: customColorTinted,
-    );
+    final groupColor = color == null && customColor == null
+        ? null
+        : HabitColor.fromRaw(
+            colorType: customColor != null
+                ? HabitColorType.cc1
+                : HabitColorType.getFromDBCode(color!)!,
+            customColor: customColor,
+            customColorTinted: customColorTinted,
+          );
     return GroupDBCell(
       uuid: uuid,
       createT: createT,
@@ -935,9 +942,9 @@ class WebDavSyncGroupData implements JsonAdaptor {
       name: name,
       desc: desc,
       icon: icon,
-      color: groupColor.dbColorType.dbCode,
-      customColor: groupColor.dbCustomColor,
-      customColorTinted: groupColor.dbCustomColorTinted,
+      color: groupColor?.dbColorType.dbCode,
+      customColor: groupColor?.dbCustomColor,
+      customColorTinted: groupColor?.dbCustomColorTinted,
       status: status,
     );
   }

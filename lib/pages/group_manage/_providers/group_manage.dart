@@ -19,6 +19,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../common/consts.dart';
 import '../../../common/types.dart';
+import '../../../extensions/habit_group_extensions.dart';
 import '../../../logging/helper.dart';
 import '../../../models/app_event.dart';
 import '../../../models/habit_color.dart';
@@ -174,10 +175,6 @@ class GroupManageViewModel extends ChangeNotifier
           return loadingFailed(loading, ["viewmodel disposed"]);
         }
         if (loading.isCanceled) return loadingCancelled(loading);
-
-        // Reset session overrides — always start from global config.
-        _sortType = null;
-        _sortDirection = null;
 
         // Load groups via GroupManager → GroupCollection.
         _groupCollection = await _groupManager?.tryLoadGroupCollection();
@@ -380,23 +377,11 @@ class _GroupsSortableCache {
     required HabitDisplaySortDirection sortDirection,
   }) {
     final groups = List.of(collection.toList());
-    groups.sort((a, b) {
-      if (sortType == HabitDisplayGroupType.colorType) {
-        final aHasColor = a.color != null;
-        final bHasColor = b.color != null;
-        if (aHasColor != bHasColor) return aHasColor ? -1 : 1;
-      }
-      final cmp = switch (sortType) {
-        HabitDisplayGroupType.name => a.name.compareTo(b.name),
-        HabitDisplayGroupType.colorType => a.name.compareTo(b.name),
-        HabitDisplayGroupType.createDate => 0, // No createT on HabitGroupData
-      };
-      return sortDirection == HabitDisplaySortDirection.desc ? -cmp : cmp;
-    });
+    final sorted = groups.sortedBy(sortType, sortDirection);
     return _GroupsSortableCache(
       sortType: sortType,
       sortDirection: sortDirection,
-      lastSortedDataCache: groups,
+      lastSortedDataCache: sorted,
     );
   }
 }

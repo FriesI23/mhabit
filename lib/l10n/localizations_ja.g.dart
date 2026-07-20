@@ -2102,6 +2102,18 @@ class L10nJa extends L10n {
   String get groupManage_modifyDateTile_title => '修正日';
 
   @override
+  String get groupManage_icon_label => 'Icon';
+
+  @override
+  String get groupManage_icon_none => 'なし';
+
+  @override
+  String get groupManage_color_label => '色順';
+
+  @override
+  String get groupManage_color_none => 'なし';
+
+  @override
   String get appSetting_manageGroups_subtitleText =>
       'Create, edit, and delete habit groups';
 }

@@ -24,10 +24,8 @@ import '../../models/habit_group_display.dart';
 import '../../providers/app_ui/app_developer.dart';
 import '../../widgets/widgets.dart';
 import '_providers/group_manage.dart';
-import '_widgets/group_edit_dialog.dart';
-import '_widgets/group_manage_grid.dart';
-import '_widgets/group_manage_list.dart';
 import 'providers.dart';
+import 'widgets.dart';
 
 Future<void> naviToGroupManagePage({required BuildContext context}) async {
   return Navigator.of(context).push<void>(
@@ -61,6 +59,7 @@ enum GroupEditForceMode { defaultMode, forceSheet, forceDialog }
 class _PageState extends State<_Page> {
   ScaffoldMessengerState? _snackbarMessenger;
   GroupEditForceMode _debugForceEditMode = GroupEditForceMode.defaultMode;
+  bool _skipDeleteConfirm = false;
 
   @visibleForTesting
   Future<void> loadData() async {
@@ -146,6 +145,8 @@ class _PageState extends State<_Page> {
     required BuildContext context,
     required int count,
   }) async {
+    if (_skipDeleteConfirm) return true;
+
     final l10n = L10n.of(context);
     final result = await showConfirmDialog(
       context: context,
@@ -157,6 +158,8 @@ class _PageState extends State<_Page> {
       cancelText: Text(l10n?.groupManage_deleteDialog_cancel ?? 'Cancel'),
       confirmText: Text(l10n?.groupManage_deleteDialog_confirm ?? 'Delete'),
       skipOnConfirm: true,
+      skipInitiallyEnabled: _skipDeleteConfirm,
+      onSkipChanged: (v) => _skipDeleteConfirm = v,
     );
     return result ?? false;
   }

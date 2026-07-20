@@ -13,8 +13,8 @@
 // limitations under the License.
 
 import '../../../common/consts.dart';
+import '../../../extensions/habit_group_extensions.dart';
 import '../../../extensions/iterable_extensions.dart';
-import '../../../models/habit_color.dart';
 import '../../../models/habit_display.dart';
 import '../../../models/habit_group.dart';
 import '../../../models/habit_group_display.dart';
@@ -108,22 +108,7 @@ List<HabitGroupData> _orderGroups(
   List<HabitGroupData> groups,
   HabitDisplayGroupType groupType,
   HabitDisplaySortDirection direction,
-) {
-  final sorted = groups.toList();
-  final comparator = switch (groupType) {
-    HabitDisplayGroupType.name =>
-      (HabitGroupData a, HabitGroupData b) => a.name.compareTo(b.name),
-    HabitDisplayGroupType.colorType =>
-      (HabitGroupData a, HabitGroupData b) =>
-          a.color.compareToNullable(b.color),
-    HabitDisplayGroupType.createDate => null,
-  };
-  if (comparator != null) sorted.sort(comparator);
-  if (direction == HabitDisplaySortDirection.desc) {
-    return sorted.reversed.toList();
-  }
-  return sorted;
-}
+) => groups.sortedBy(groupType, direction);
 
 /// Applies [options] keyword/status/type filtering to [sorted].
 ///

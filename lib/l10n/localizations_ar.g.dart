@@ -2130,6 +2130,18 @@ class L10nAr extends L10n {
   String get groupManage_modifyDateTile_title => 'عدلت';
 
   @override
+  String get groupManage_icon_label => 'Icon';
+
+  @override
+  String get groupManage_icon_none => 'خالي';
+
+  @override
+  String get groupManage_color_label => 'باللون';
+
+  @override
+  String get groupManage_color_none => 'خالي';
+
+  @override
   String get appSetting_manageGroups_subtitleText =>
       'Create, edit, and delete habit groups';
 }

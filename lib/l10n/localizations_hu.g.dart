@@ -2173,6 +2173,18 @@ class L10nHu extends L10n {
   String get groupManage_modifyDateTile_title => 'Módosítva';
 
   @override
+  String get groupManage_icon_label => 'Icon';
+
+  @override
+  String get groupManage_icon_none => 'null';
+
+  @override
+  String get groupManage_color_label => 'Szín';
+
+  @override
+  String get groupManage_color_none => 'null';
+
+  @override
   String get appSetting_manageGroups_subtitleText =>
       'Create, edit, and delete habit groups';
 }

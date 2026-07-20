@@ -2020,6 +2020,18 @@ class L10nZh extends L10n {
   String get groupManage_modifyDateTile_title => '修改日期';
 
   @override
+  String get groupManage_icon_label => '图标';
+
+  @override
+  String get groupManage_icon_none => '无';
+
+  @override
+  String get groupManage_color_label => '颜色';
+
+  @override
+  String get groupManage_color_none => '无';
+
+  @override
   String get appSetting_manageGroups_subtitleText => '创建、编辑和删除习惯分组';
 }
 
@@ -3667,6 +3679,18 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get groupManage_modifyDateTile_title => '修改日期';
+
+  @override
+  String get groupManage_icon_label => '圖示';
+
+  @override
+  String get groupManage_icon_none => '無';
+
+  @override
+  String get groupManage_color_label => '依顏色';
+
+  @override
+  String get groupManage_color_none => '無';
 
   @override
   String get appSetting_manageGroups_subtitleText => '建立、編輯和刪除習慣分組';

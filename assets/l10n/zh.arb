@@ -1416,6 +1416,22 @@
     "@groupManage_modifyDateTile_title": {
         "description": "Label shown for the group modification date in the edit dialog"
     },
+    "groupManage_icon_label": "图标",
+    "@groupManage_icon_label": {
+        "description": "Section label for the icon picker in group create/edit forms"
+    },
+    "groupManage_icon_none": "无",
+    "@groupManage_icon_none": {
+        "description": "Tooltip for the 'no icon' option in the group icon picker"
+    },
+    "groupManage_color_label": "颜色",
+    "@groupManage_color_label": {
+        "description": "Section label for the color picker in group create/edit forms"
+    },
+    "groupManage_color_none": "无",
+    "@groupManage_color_none": {
+        "description": "Tooltip for the 'no color' option in the group color picker"
+    },
     "appSetting_manageGroups_subtitleText": "创建、编辑和删除习惯分组",
     "@appSetting_manageGroups_subtitleText": {
         "description": "Subtitle for the Manage Groups tile in Settings"

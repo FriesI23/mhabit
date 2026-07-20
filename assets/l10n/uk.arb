@@ -1124,5 +1124,17 @@
     "groupManage_modifyDateTile_title": "Змінено",
     "@groupManage_modifyDateTile_title": {
         "description": "Label shown for the group modification date in the edit dialog"
+    },
+    "groupManage_icon_none": "нульовий",
+    "@groupManage_icon_none": {
+        "description": "Tooltip for the 'no icon' option in the group icon picker"
+    },
+    "groupManage_color_label": "За кольором",
+    "@groupManage_color_label": {
+        "description": "Section label for the color picker in group create/edit forms"
+    },
+    "groupManage_color_none": "нульовий",
+    "@groupManage_color_none": {
+        "description": "Tooltip for the 'no color' option in the group color picker"
     }
 }

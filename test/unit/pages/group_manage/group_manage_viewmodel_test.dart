@@ -497,7 +497,7 @@ void main() {
     );
 
     test(
-      'loadGroups: populates groups and resets session sort overrides',
+      'loadGroups: populates groups and preserves session sort overrides',
       () async {
         await manager.createGroup(name: 'Zeta');
 
@@ -509,8 +509,8 @@ void main() {
 
         await vm.loadGroups(listen: false);
 
-        expect(vm.sortType, isNull);
-        expect(vm.sortDirection, isNull);
+        expect(vm.sortType, HabitDisplayGroupType.name);
+        expect(vm.sortDirection, HabitDisplaySortDirection.desc);
         expect(vm.groups.length, 1);
         expect(vm.groups.single.name, 'Zeta');
       },

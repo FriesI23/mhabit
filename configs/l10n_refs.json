@@ -15,5 +15,8 @@
     "groupManage_name_label": "habitDisplay_groupType_name",
     "groupManage_desc_label": "groupManage_descTooLong",
     "groupManage_createDateTile_title": "habitDetail_createDateTile_title",
-    "groupManage_modifyDateTile_title": "habitDetail_modifyDateTile_title"
+    "groupManage_modifyDateTile_title": "habitDetail_modifyDateTile_title",
+    "groupManage_icon_none": "habitDetail_descDailyGoal_unitEmptyText",
+    "groupManage_color_none": "habitDetail_descDailyGoal_unitEmptyText",
+    "groupManage_color_label": "habitDisplay_groupType_colorType"
 }

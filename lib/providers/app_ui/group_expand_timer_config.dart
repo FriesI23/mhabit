@@ -14,11 +14,35 @@
 
 import 'package:flutter/foundation.dart';
 
+import '../../common/enums.dart';
 import '../../logging/helper.dart';
 import '../../storage/profile/handlers.dart';
 import '../../storage/profile_provider.dart';
 
-enum GroupExpandTimerSpeed { defaultSpeed, fast, slow }
+enum GroupExpandTimerSpeed implements EnumWithDBCode<GroupExpandTimerSpeed> {
+  /// Default platform-specific duration.
+  defaultSpeed(code: 0),
+
+  /// 200 ms.
+  fast(code: 1),
+
+  /// 800 ms.
+  slow(code: 2);
+
+  /// Persistent code — stored to [SharedPreferences] instead of [index]
+  /// so that enum reordering/new members don't silently break stored values.
+  final int code;
+
+  const GroupExpandTimerSpeed({required this.code});
+
+  @override
+  int get dbCode => code;
+
+  static GroupExpandTimerSpeed? getFromDBCode(
+    int dbCode, {
+    GroupExpandTimerSpeed? withDefault,
+  }) => GroupExpandTimerSpeed.values.byDBCode(dbCode, withDefault: withDefault);
+}
 
 const kGroupExpandTimerSpeedOptions = GroupExpandTimerSpeed.values;
 
@@ -46,12 +70,9 @@ class GroupExpandTimerConfigViewModel extends ChangeNotifier
 
   GroupExpandTimerSpeed get speed {
     final stored = _handler?.get();
-    if (stored == null ||
-        stored < 0 ||
-        stored >= GroupExpandTimerSpeed.values.length) {
-      return GroupExpandTimerSpeed.defaultSpeed;
-    }
-    return GroupExpandTimerSpeed.values[stored];
+    if (stored == null) return GroupExpandTimerSpeed.defaultSpeed;
+    return GroupExpandTimerSpeed.getFromDBCode(stored) ??
+        GroupExpandTimerSpeed.defaultSpeed;
   }
 
   int get expandDelayMs => _speedToMs(speed, defaultTargetPlatform);
@@ -62,7 +83,7 @@ class GroupExpandTimerConfigViewModel extends ChangeNotifier
       beforeVal: this.speed,
       afterVal: speed,
     );
-    await _handler?.set(speed.index);
+    await _handler?.set(speed.code);
     notifyListeners();
   }
 }

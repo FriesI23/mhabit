@@ -749,5 +749,17 @@
     "groupManage_modifyDateTile_title": "Modifiziert",
     "@groupManage_modifyDateTile_title": {
         "description": "Label shown for the group modification date in the edit dialog"
+    },
+    "groupManage_icon_none": "null",
+    "@groupManage_icon_none": {
+        "description": "Tooltip for the 'no icon' option in the group icon picker"
+    },
+    "groupManage_color_label": "Nach Farbe",
+    "@groupManage_color_label": {
+        "description": "Section label for the color picker in group create/edit forms"
+    },
+    "groupManage_color_none": "null",
+    "@groupManage_color_none": {
+        "description": "Tooltip for the 'no color' option in the group color picker"
     }
 }

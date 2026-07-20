@@ -76,6 +76,7 @@
     "groupManage_descTooLong",
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
+    "groupManage_icon_label",
     "appSetting_manageGroups_subtitleText"
   ],
 
@@ -544,6 +545,10 @@
     "groupManage_sectionTitle_text",
     "groupManage_createDateTile_title",
     "groupManage_modifyDateTile_title",
+    "groupManage_icon_label",
+    "groupManage_icon_none",
+    "groupManage_color_label",
+    "groupManage_color_none",
     "appSetting_manageGroups_subtitleText"
   ],
 
@@ -744,6 +749,7 @@
     "groupManage_descTooLong",
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
+    "groupManage_icon_label",
     "appSetting_manageGroups_subtitleText"
   ],
 
@@ -870,6 +876,7 @@
     "groupManage_descTooLong",
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
+    "groupManage_icon_label",
     "appSetting_manageGroups_subtitleText"
   ],
 
@@ -1412,6 +1419,10 @@
     "groupManage_sectionTitle_text",
     "groupManage_createDateTile_title",
     "groupManage_modifyDateTile_title",
+    "groupManage_icon_label",
+    "groupManage_icon_none",
+    "groupManage_color_label",
+    "groupManage_color_none",
     "appSetting_manageGroups_subtitleText"
   ],
 
@@ -1630,6 +1641,7 @@
     "groupManage_descTooLong",
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
+    "groupManage_icon_label",
     "appSetting_manageGroups_subtitleText"
   ],
 
@@ -1793,6 +1805,7 @@
     "groupManage_descTooLong",
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
+    "groupManage_icon_label",
     "appSetting_manageGroups_subtitleText"
   ],
 
@@ -1855,6 +1868,7 @@
     "groupManage_descTooLong",
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
+    "groupManage_icon_label",
     "appSetting_manageGroups_subtitleText"
   ],
 
@@ -1935,6 +1949,7 @@
     "groupManage_descTooLong",
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
+    "groupManage_icon_label",
     "appSetting_manageGroups_subtitleText"
   ],
 
@@ -2130,6 +2145,7 @@
     "groupManage_descTooLong",
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
+    "groupManage_icon_label",
     "appSetting_manageGroups_subtitleText"
   ],
 
@@ -2226,6 +2242,7 @@
     "groupManage_descTooLong",
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
+    "groupManage_icon_label",
     "appSetting_manageGroups_subtitleText"
   ],
 
@@ -2768,6 +2785,10 @@
     "groupManage_sectionTitle_text",
     "groupManage_createDateTile_title",
     "groupManage_modifyDateTile_title",
+    "groupManage_icon_label",
+    "groupManage_icon_none",
+    "groupManage_color_label",
+    "groupManage_color_none",
     "appSetting_manageGroups_subtitleText"
   ],
 
@@ -2868,6 +2889,7 @@
     "groupManage_descTooLong",
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
+    "groupManage_icon_label",
     "appSetting_manageGroups_subtitleText"
   ],
 
@@ -3099,6 +3121,9 @@
     "groupManage_descTooLong",
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
+    "groupManage_icon_label",
+    "groupManage_icon_none",
+    "groupManage_color_none",
     "appSetting_manageGroups_subtitleText"
   ],
 
@@ -3199,6 +3224,7 @@
     "groupManage_descTooLong",
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
+    "groupManage_icon_label",
     "appSetting_manageGroups_subtitleText"
   ],
 
@@ -3278,6 +3304,7 @@
     "groupManage_descTooLong",
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
+    "groupManage_icon_label",
     "appSetting_manageGroups_subtitleText"
   ],
 
@@ -3358,6 +3385,7 @@
     "groupManage_descTooLong",
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
+    "groupManage_icon_label",
     "appSetting_manageGroups_subtitleText"
   ],
 
@@ -3438,6 +3466,7 @@
     "groupManage_descTooLong",
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
+    "groupManage_icon_label",
     "appSetting_manageGroups_subtitleText"
   ],
 

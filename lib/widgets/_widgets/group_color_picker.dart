@@ -100,7 +100,7 @@ class GroupColorPicker extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'Color',
+          L10n.of(context)?.groupManage_color_label ?? 'Color',
           style: theme.textTheme.labelMedium?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -115,8 +115,9 @@ class GroupColorPicker extends StatelessWidget {
               final resolvedColor = color != null && customColors != null
                   ? customColors.getColor(color, brightness: theme.brightness)
                   : null;
-              final background =
-                  resolvedColor ?? theme.colorScheme.outlineVariant;
+              final background = color != null
+                  ? (resolvedColor ?? theme.colorScheme.outlineVariant)
+                  : theme.colorScheme.primary;
               final onColor = color != null && customColors != null
                   ? customColors.getOnColor(color, brightness: theme.brightness)
                   : null;
@@ -125,7 +126,7 @@ class GroupColorPicker extends StatelessWidget {
                       (color as BuiltInHabitColor).colorType,
                       L10n.of(context),
                     )
-                  : 'None';
+                  : (L10n.of(context)?.groupManage_color_none ?? 'None');
               return ColorSwatchButton(
                 background: background,
                 onColor: onColor ?? theme.colorScheme.onSurfaceVariant,

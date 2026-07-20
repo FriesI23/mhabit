@@ -119,15 +119,8 @@ class GroupEditFormState extends State<GroupEditForm> {
   /// Validates the form and either calls [GroupEditForm.onSave] (when
   /// provided) or pops the navigator with [GroupEditFormResult].
   void save() {
-    final state = _formKey.currentState;
-    if (state == null || !state.validate()) return;
-
-    final result = GroupEditFormResult(
-      name: _nameCtrl.text.trim(),
-      desc: _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
-      icon: _selectedIcon,
-      color: _selectedColor,
-    );
+    final result = buildResult();
+    if (result == null) return;
 
     final onSave = widget.onSave;
     if (onSave != null) {

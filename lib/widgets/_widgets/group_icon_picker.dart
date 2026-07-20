@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 
 import '../../extensions/group_icon_extensions.dart';
+import '../../l10n/localizations.dart';
 import '../../models/habit_group.dart';
 
 /// A horizontal wrap of tappable icon buttons for selecting a [GroupIcon].
@@ -47,7 +48,7 @@ class GroupIconPicker extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'Icon',
+          L10n.of(context)?.groupManage_icon_label ?? 'Icon',
           style: theme.textTheme.labelMedium?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -62,7 +63,9 @@ class GroupIconPicker extends StatelessWidget {
               onPressed: () => onSelected(icon),
               icon: Icon(icon?.iconData ?? Icons.block),
               isSelected: isSelected,
-              tooltip: icon == null ? 'None' : null,
+              tooltip: icon == null
+                  ? (L10n.of(context)?.groupManage_icon_none ?? 'None')
+                  : null,
               style: IconButton.styleFrom(
                 backgroundColor: isSelected
                     ? theme.colorScheme.primaryContainer
