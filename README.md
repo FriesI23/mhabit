@@ -61,6 +61,7 @@ Moreover, this app is completely open source.
 - Adapts to `Material3` and `Dynamic Color` for Android 12 and later versions.
 - Adapts to landscape and large screen devices.
 - Supports network sync via WebDAV.
+- Organize habits into customizable groups with drag-and-drop sorting.
 - No ADs.
 
 For more information, please visit our [**Wiki**][wiki].
@@ -76,7 +77,7 @@ For more information, please visit our [**Wiki**][wiki].
 
 | status | progress       | desc. |
 | ------ | -------------- | ----- |
-| 🟨     | Group          |       |
+| ✅     | Group          |       |
 | 🟨     | Android Widget |       |
 | 🟨     | iOS Widget     |       |
 

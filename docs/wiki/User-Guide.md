@@ -7,6 +7,7 @@ Contributions to this guide are welcome via [README#Contributing][readme-contrib
 ## History
 
 - _\[2025-07-31\]_: Initialize documentation, based on [**88efd12**][commit-88efd12] with version 'v1.16.22+91'.
+- _\[2026-07-20\]_: Added habit grouping support.
 
 ## "Table Habit" Screen
 
@@ -160,6 +161,29 @@ Editing can be entered by clicking `Edit` button on either the “Selection Mode
 ![habit-edit-01](./images/user-guide/habit-edit-01.png)
 
 The edit page uses the same process as creating, see ["Create New Habit"](#create-new-habit) for all field definitions.
+
+## Habit Groups
+
+Habits can be organized into **groups** for a cleaner view. Enable grouping
+from the main menu (⋮) on the "Table Habit" screen, then choose a grouping
+criterion (name, color, or creation date). Ungrouped habits automatically
+appear under "Uncategorized" at the bottom. Each group header shows the group
+name, icon, color, and habit count — tap to collapse or expand. When grouping
+is enabled and sort mode is "My Order", you can long-press and drag habits to
+reorder within a group or move them between groups.
+
+![habit-groups-01](./images/user-guide/habit-groups-01.jpg)
+
+### Manage Groups
+
+Open **Settings → Groups** to create, edit, or delete groups. Deleting a
+group does **not** delete the habits inside — they simply become uncategorized.
+In **Selection Mode** on the main screen, you can also select multiple habits
+and use the overflow menu (⋮) to move them all to a different group at once.
+
+![habit-group-mgr-01](./images/user-guide/habit-group-mgr-01.jpg)
+
+![habit-group-mgr-02](./images/user-guide/habit-group-mgr-02.jpg)
 
 ## Advanced settings
 
