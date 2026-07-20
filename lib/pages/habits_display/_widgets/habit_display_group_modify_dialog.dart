@@ -139,12 +139,11 @@ Future<void> _handleSaveAndApply(
   final result = formState.buildResult();
   if (result == null) return;
 
-  // Build a handler that treats the new group as the target so the confirm
-  // dialog shows the correct affected habits and source groups.
-  final handler = HabitGroupModifyHandler(
+  // Build a handler that treats the not-yet-created group as the target
+  // so the confirm dialog shows the correct affected habits and source groups.
+  final handler = HabitGroupModifyHandler.forNewGroup(
     selectedData: vm.selectedData,
     getGroupName: vm.getGroupName,
-    targetGroupId: '__new__', // sentinel – none of the habits have this ID
   );
 
   if (!vm.skipConfirm) {

@@ -40,17 +40,27 @@ class HabitGroupModifyHandler {
   final List<HabitSummaryData> selectedData;
   final String? Function(GroupUUID?) getGroupName;
   final GroupUUID? targetGroupId;
+  final bool _isNewGroup;
 
   HabitGroupModifyHandler({
     required this.selectedData,
     required this.getGroupName,
     required this.targetGroupId,
-  });
+  }) : _isNewGroup = false;
+
+  /// For a group that has not yet been created.
+  HabitGroupModifyHandler.forNewGroup({
+    required this.selectedData,
+    required this.getGroupName,
+  }) : targetGroupId = null,
+       _isNewGroup = true;
 
   /// Whether all selected habits are already in the target group
-  /// (or already removed from any group, when [targetGroupId] is `null`).
-  bool get allAlreadyInTarget =>
-      affectedHabits.every((h) => h.oldGroupId == targetGroupId);
+  /// (or already removed from any group, when target is `null`).
+  bool get allAlreadyInTarget {
+    if (_isNewGroup) return false;
+    return affectedHabits.every((h) => h.oldGroupId == targetGroupId);
+  }
 
   late final List<HabitGroupModifyItem> affectedHabits = _buildAffectedHabits();
 

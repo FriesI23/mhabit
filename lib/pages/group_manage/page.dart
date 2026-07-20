@@ -581,9 +581,12 @@ class _GroupSortPickerDialogState extends State<_GroupSortPickerDialog> {
 
   String _sortTypeLabel(HabitDisplayGroupType type, L10n? l10n) {
     return switch (type) {
-      HabitDisplayGroupType.name => 'Name',
-      HabitDisplayGroupType.colorType => 'Color',
-      HabitDisplayGroupType.createDate => 'Created date',
+      HabitDisplayGroupType.name =>
+        l10n?.habitDisplay_groupType_name ?? 'By Name',
+      HabitDisplayGroupType.colorType =>
+        l10n?.habitDisplay_groupType_colorType ?? 'By Color',
+      HabitDisplayGroupType.createDate =>
+        l10n?.habitDisplay_groupType_createDate ?? 'By Creation Date',
     };
   }
 
