@@ -667,25 +667,34 @@ class _PageState extends State<_Page> with XShare {
           ),
         ),
       ),
-      Selector<GroupExpandTimerConfigViewModel, GroupExpandTimerSpeed>(
-        selector: (context, vm) => vm.speed,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, value, child) => L10nBuilder(
-          builder: (context, l10n) => LayoutBuilder(
-            builder: (context, constraints) => AppSettingExpandTimerDelayTile(
-              isLargeScreen:
-                  constraints.maxWidth >= kHabitLargeScreenAdaptWidth,
-              speed: value,
-              title: l10n != null
-                  ? Text(l10n.appSetting_expandTimerDelayTile_titleText)
-                  : null,
-              subtitle: l10n != null
-                  ? Text(l10n.appSetting_expandTimerDelayTile_subtitleText)
-                  : null,
-              onSelected: _onExpandTimerDelaySelected,
+      ExperimentalFeatureGate.basic(
+        selector: (context, vm) => vm.habitGrouping,
+        enabledBuilder: (context) =>
+            Selector<GroupExpandTimerConfigViewModel, GroupExpandTimerSpeed>(
+              selector: (context, vm) => vm.speed,
+              shouldRebuild: (previous, next) => previous != next,
+              builder: (context, value, child) => L10nBuilder(
+                builder: (context, l10n) => LayoutBuilder(
+                  builder: (context, constraints) =>
+                      AppSettingExpandTimerDelayTile(
+                        isLargeScreen:
+                            constraints.maxWidth >= kHabitLargeScreenAdaptWidth,
+                        speed: value,
+                        title: l10n != null
+                            ? Text(
+                                l10n.appSetting_expandTimerDelayTile_titleText,
+                              )
+                            : null,
+                        subtitle: l10n != null
+                            ? Text(
+                                l10n.appSetting_expandTimerDelayTile_subtitleText,
+                              )
+                            : null,
+                        onSelected: _onExpandTimerDelaySelected,
+                      ),
+                ),
+              ),
             ),
-          ),
-        ),
       ),
     ];
 
@@ -910,7 +919,11 @@ class _PageState extends State<_Page> with XShare {
           child: ListView(
             children: [
               ...buildSyncSubGroup(context),
-              ...buildGroupsSubGroup(context),
+              ExperimentalFeatureGate.basic(
+                selector: (context, vm) => vm.habitGrouping,
+                enabledBuilder: (context) =>
+                    Column(children: [...buildGroupsSubGroup(context)]),
+              ),
               ...buildDisplaySubGroup(context),
               ...buildOperationSubGroup(context),
               ...buildReminderSubGroup(context),

@@ -18,9 +18,9 @@ import '../../../common/consts.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_display.dart';
 import '../../../models/habit_group_display.dart';
-import '../../../providers/app_ui/habits_grouping.dart';
 import '../../../storage/profile/handlers/display_group_mode.dart';
 import '../../../widgets/widgets.dart';
+import '../_providers/habits_grouping.dart';
 
 Future<DisplayGroupModeOption?> showHabitDisplayGroupTypePickerDialog({
   required BuildContext context,

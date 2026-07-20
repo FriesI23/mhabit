@@ -29,7 +29,9 @@ class AppExperimentalFeatureViewModel extends ChangeNotifier
     _handlers
       ..clear()
       ..[HabitSearchExperimentalFeature] = profile
-          .getHandler<HabitSearchExperimentalFeature>();
+          .getHandler<HabitSearchExperimentalFeature>()
+      ..[HabitGroupingExperimentalFeature] = profile
+          .getHandler<HabitGroupingExperimentalFeature>();
   }
 
   Iterable<AppExperimentalFeature> get allFeatures => _handlers.values.nonNulls;
@@ -49,4 +51,9 @@ class AppExperimentalFeatureViewModel extends ChangeNotifier
 
   Future<void> setHabitSearch(bool vlaue, {bool listen = true}) =>
       _setBool<HabitSearchExperimentalFeature>(vlaue, listen: listen);
+
+  bool get habitGrouping => _getBool<HabitGroupingExperimentalFeature>();
+
+  Future<void> setHabitGrouping(bool value, {bool listen = true}) =>
+      _setBool<HabitGroupingExperimentalFeature>(value, listen: listen);
 }

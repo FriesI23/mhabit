@@ -15,20 +15,34 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' show IconData;
 
-import '../../common/consts.dart';
-import '../../l10n/localizations.dart';
-import '../../logging/helper.dart';
-import '../../models/habit_display.dart';
-import '../../models/habit_group_display.dart';
-import '../../storage/profile/handlers.dart';
-import '../../storage/profile_provider.dart';
-import '../../theme/icon.dart';
+import '../../../common/consts.dart';
+import '../../../l10n/localizations.dart';
+import '../../../logging/helper.dart';
+import '../../../models/habit_display.dart';
+import '../../../models/habit_group_display.dart';
+import '../../../providers/support/commons.dart';
+import '../../../storage/profile/handlers.dart';
+import '../../../storage/profile_provider.dart';
+import '../../../theme/icon.dart';
 
 class HabitsGroupingViewModel extends ChangeNotifier
-    with ProfileHandlerLoadedMixin {
+    with ProfileHandlerLoadedMixin
+    implements ProviderMounted {
   DisplayGroupModeProfileHandler? _groupMode;
+  bool _experimentalEnabled = true;
+  bool _mounted = true;
 
   HabitsGroupingViewModel();
+
+  @override
+  bool get mounted => _mounted;
+
+  @override
+  void dispose() {
+    if (!mounted) return;
+    _mounted = false;
+    super.dispose();
+  }
 
   @override
   void updateProfile(ProfileViewModel newProfile) {
@@ -36,10 +50,20 @@ class HabitsGroupingViewModel extends ChangeNotifier
     _groupMode = newProfile.getHandler<DisplayGroupModeProfileHandler>();
   }
 
-  HabitDisplayGroupType? get groupType => _groupMode?.groupType;
+  void updateExperimentalGrouping(bool enabled) =>
+      _experimentalEnabled = enabled;
+
+  void requestReload() {
+    if (mounted) notifyListeners();
+  }
+
+  HabitDisplayGroupType? get groupType =>
+      _experimentalEnabled ? _groupMode?.groupType : null;
+
   HabitDisplaySortDirection get groupDirection =>
       _groupMode?.groupDirection ?? defaultGroupSortDirection;
-  bool get isGroupingEnabled => _groupMode?.groupType != null;
+
+  bool get isGroupingEnabled => groupType != null;
 
   Future<void> setGroupMode({
     required HabitDisplayGroupType groupType,

@@ -20,10 +20,11 @@ import '../../../models/habit_display.dart';
 import '../../../models/habit_group_display.dart';
 import '../../../providers/app_ui/app_theme.dart';
 import '../../../providers/app_ui/habits_filter.dart';
-import '../../../providers/app_ui/habits_grouping.dart';
 import '../../../providers/app_ui/habits_sort.dart';
 import '../../../theme/color.dart';
 import '../../../theme/icon.dart';
+import '../../../widgets/widgets.dart';
+import '../_providers/habits_grouping.dart';
 
 Future<HabitDisplayMainMenuDialogOpr?> showHabitDisplayMainMenuDialog({
   required BuildContext context,
@@ -128,12 +129,15 @@ class _HabitDisplayMainMenuDialog extends State<HabitDisplayMainMenuDialog> {
               HabitDisplayMainMenuDialogOpr.showSortMenu,
             ),
           ),
-          _GroupingTypeListTile(
-            groupType: widget.groupType,
-            groupDirection: widget.groupDirection,
-            onPressed: () => _naviPopWithOp(
-              context,
-              HabitDisplayMainMenuDialogOpr.showGroupMenu,
+          ExperimentalFeatureGate.basic(
+            selector: (context, vm) => vm.habitGrouping,
+            enabledBuilder: (context) => _GroupingTypeListTile(
+              groupType: widget.groupType,
+              groupDirection: widget.groupDirection,
+              onPressed: () => _naviPopWithOp(
+                context,
+                HabitDisplayMainMenuDialogOpr.showGroupMenu,
+              ),
             ),
           ),
           const Divider(),

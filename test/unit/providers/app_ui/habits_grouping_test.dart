@@ -17,7 +17,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_group_display.dart';
-import 'package:mhabit/providers/app_ui/habits_grouping.dart';
+import 'package:mhabit/pages/habits_display/_providers/habits_grouping.dart';
 import 'package:mhabit/storage/profile/handlers.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

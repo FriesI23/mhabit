@@ -98,6 +98,25 @@ final class _PageState extends State<_Page> {
       ),
     ];
 
+    List<Widget> buildHabitGroupingWidgets(BuildContext context) => [
+      Selector<AppExperimentalFeatureViewModel, bool>(
+        selector: (context, vm) => vm.habitGrouping,
+        builder: (context, value, child) => SwitchListTile(
+          title: const Text("Habit Grouping"),
+          subtitle: const Text(
+            "Enable habit grouping and categorization features",
+          ),
+          value: value,
+          onChanged: (value) async {
+            await vm?.setHabitGrouping(value);
+            if (vm?.habitGrouping == true) {
+              setState(() => showWarningBanner = true);
+            }
+          },
+        ),
+      ),
+    ];
+
     return Scaffold(
       appBar: AppBar(
         leading: const PageBackButton(reason: PageBackReason.back),
@@ -126,6 +145,7 @@ final class _PageState extends State<_Page> {
             ),
           ),
           if (vm != null) ...buildHabitSearchWidgets(context),
+          if (vm != null) ...buildHabitGroupingWidgets(context),
         ],
       ),
     );

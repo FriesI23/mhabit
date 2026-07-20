@@ -16,9 +16,9 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
+import '../../providers/app_ui/app_experimental_feature.dart';
 import '../../providers/app_ui/app_first_day.dart';
 import '../../providers/app_ui/habits_filter.dart';
-import '../../providers/app_ui/habits_grouping.dart';
 import '../../providers/app_ui/habits_sort.dart';
 import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_sync.dart';
@@ -27,6 +27,7 @@ import '../../providers/workflow/habits_manager.dart';
 import '../../storage/profile_provider.dart';
 import '../../widgets/provider.dart';
 import '_providers/habit_summary.dart';
+import '_providers/habits_grouping.dart';
 import '_providers/habits_today.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
@@ -120,6 +121,14 @@ class PageProviders extends SingleChildStatelessWidget {
         create: (context) => HabitsGroupingViewModel(),
         update: (context, profile, previous) =>
             previous..updateProfile(profile),
+      ),
+      ViewModelProxyProvider<
+        AppExperimentalFeatureViewModel,
+        HabitsGroupingViewModel
+      >(
+        update: (context, experimental, previous) =>
+            previous..updateExperimentalGrouping(experimental.habitGrouping),
+        post: (t, _, vm) => vm.requestReload(),
       ),
       ..._buildPageViewModel(),
       ..._buildTodayViewModel(),

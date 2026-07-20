@@ -1175,15 +1175,18 @@ class _OtherInfo extends StatelessWidget {
       ),
       contentChildren: [
         if (groupId != null)
-          HabitOtherInfoTile(
-            title: Text(l10n?.habitDetail_groupTile_title ?? 'Group'),
-            subTitle: Text(
-              viewmodel.groupDisplayInfo?.name ??
-                  l10n?.habitGroup_uncategorized ??
-                  '<nogroup>',
-            ),
-            leading: Icon(
-              viewmodel.groupDisplayInfo?.icon?.iconData ?? defaultGroupIcon,
+          ExperimentalFeatureGate.basic(
+            selector: (context, vm) => vm.habitGrouping,
+            enabledBuilder: (context) => HabitOtherInfoTile(
+              title: Text(l10n?.habitDetail_groupTile_title ?? 'Group'),
+              subTitle: Text(
+                viewmodel.groupDisplayInfo?.name ??
+                    l10n?.habitGroup_uncategorized ??
+                    '<nogroup>',
+              ),
+              leading: Icon(
+                viewmodel.groupDisplayInfo?.icon?.iconData ?? defaultGroupIcon,
+              ),
             ),
           ),
         if (viewmodel.habitType != null)

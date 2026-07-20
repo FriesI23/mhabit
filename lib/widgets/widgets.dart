@@ -31,6 +31,7 @@ export '_widgets/date_changer.dart';
 export '_widgets/date_picker.dart';
 export '_widgets/enhanced_safe_area.dart';
 export '_widgets/expanded_section.dart';
+export '_widgets/experimental_feature_gate.dart';
 export '_widgets/filterable_menu_field.dart';
 export '_widgets/fixed_page_place_holder.dart';
 export '_widgets/group_color_picker.dart';

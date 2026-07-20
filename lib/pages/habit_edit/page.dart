@@ -457,8 +457,13 @@ class _PageState extends State<_Page> {
               children: [
                 buildColorField(context),
                 kHabitDivider,
-                const _GroupField(),
-                kHabitDivider,
+                ExperimentalFeatureGate.basic(
+                  selector: (context, vm) => vm.habitGrouping,
+                  enabledBuilder: (context) => const Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [_GroupField(), kHabitDivider],
+                  ),
+                ),
                 buildHabitTypeField(context),
                 kHabitDivider,
                 const _DailyGoalField(),
