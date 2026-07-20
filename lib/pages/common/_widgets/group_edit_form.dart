@@ -14,16 +14,21 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
 import '../../../common/rules.dart';
 import '../../../extensions/custom_color_extensions.dart';
 import '../../../l10n/localizations.dart';
+import '../../../models/custom_date_format.dart';
 import '../../../models/habit_color.dart';
 import '../../../models/habit_group.dart';
+import '../../../providers/app_ui/app_custom_date_format.dart';
 import '../../../theme/color.dart' show CustomColors;
+import '../../../theme/icon.dart';
 import '../../../widgets/rules.dart';
 import '../../../widgets/widgets.dart';
+import '../../habit_detail/_widgets/habit_other_info_tile.dart';
 
 /// Form-only result returned by [GroupEditForm].
 ///
@@ -218,6 +223,11 @@ class GroupEditFormState extends State<GroupEditForm> {
             onColorSelected: (color) => setState(() => _selectedColor = color),
             onCustomColorTap: _openCustomColorPicker,
           ),
+          if (widget.existingGroup != null) ...[
+            const SizedBox(height: 12),
+            const HabitDivider(),
+            _ReadOnlyGroupInfo(group: widget.existingGroup!),
+          ],
         ],
       ),
     );
@@ -251,5 +261,54 @@ class GroupEditFormState extends State<GroupEditForm> {
         if (selected is CustomHabitColor) _lastCustomColor = selected;
       });
     }
+  }
+}
+
+/// Read-only info section shown below the editable fields when editing an
+/// existing group (hidden during creation).
+///
+/// Displays [HabitGroupData.createT] and [HabitGroupData.modifyT] using the
+/// same tile + icon style as the habit detail [_OtherInfo] section.
+class _ReadOnlyGroupInfo extends StatelessWidget {
+  final HabitGroupData group;
+
+  const _ReadOnlyGroupInfo({required this.group});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    final localeName = l10n?.localeName;
+    final createT = group.createT;
+    final modifyT = group.modifyT;
+
+    if (createT == null && modifyT == null) return const SizedBox.shrink();
+
+    return Selector<AppCustomDateYmdHmsConfigViewModel, CustomDateYmdHmsConfig>(
+      selector: (_, vm) => vm.config,
+      builder: (context, config, _) {
+        final fmt = config.getFormatter(localeName);
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (createT != null)
+              HabitOtherInfoTile(
+                title: Text(
+                  l10n?.groupManage_createDateTile_title ?? 'Created',
+                ),
+                subTitle: Text(fmt.format(createT)),
+                leading: const Icon(HabitCalIcons.calendarcreate),
+              ),
+            if (modifyT != null)
+              HabitOtherInfoTile(
+                title: Text(
+                  l10n?.groupManage_modifyDateTile_title ?? 'Modified',
+                ),
+                subTitle: Text(fmt.format(modifyT)),
+                leading: const Icon(HabitCalIcons.calendarmodify),
+              ),
+          ],
+        );
+      },
+    );
   }
 }

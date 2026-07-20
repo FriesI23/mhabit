@@ -542,6 +542,8 @@
     "groupManage_descTooLong",
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
+    "groupManage_createDateTile_title",
+    "groupManage_modifyDateTile_title",
     "appSetting_manageGroups_subtitleText"
   ],
 
@@ -1408,6 +1410,8 @@
     "groupManage_descTooLong",
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
+    "groupManage_createDateTile_title",
+    "groupManage_modifyDateTile_title",
     "appSetting_manageGroups_subtitleText"
   ],
 
@@ -2827,6 +2831,8 @@
     "groupManage_descTooLong",
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
+    "groupManage_createDateTile_title",
+    "groupManage_modifyDateTile_title",
     "appSetting_manageGroups_subtitleText"
   ],
 

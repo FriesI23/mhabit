@@ -15,6 +15,7 @@
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../common/consts.dart';
 import '../common/enums.dart';
 import '../common/types.dart';
 import '../extensions/group_icon_extensions.dart';
@@ -75,6 +76,13 @@ class HabitGroupData {
 
   final GroupStatus status;
 
+  /// When the group was created, or `null` when unavailable
+  /// (e.g. group not yet persisted).
+  final DateTime? createT;
+
+  /// When the group was last modified, or `null` when unavailable.
+  final DateTime? modifyT;
+
   const HabitGroupData({
     required this.uuid,
     required this.name,
@@ -82,6 +90,8 @@ class HabitGroupData {
     this.icon,
     this.color,
     this.status = GroupStatus.active,
+    this.createT,
+    this.modifyT,
   });
 
   /// Builds from a raw DB cell, converting colour fields, icon code point,
@@ -94,6 +104,12 @@ class HabitGroupData {
       icon: cell.icon?.toGroupIcon,
       color: _buildColor(cell),
       status: GroupStatus.getFromDBCode(cell.status ?? 1) ?? GroupStatus.active,
+      createT: cell.createT != null
+          ? DateTime.fromMillisecondsSinceEpoch(cell.createT! * onSecondMS)
+          : null,
+      modifyT: cell.modifyT != null
+          ? DateTime.fromMillisecondsSinceEpoch(cell.modifyT! * onSecondMS)
+          : null,
     );
   }
 
@@ -125,7 +141,9 @@ class HabitGroupData {
 
   @override
   String toString() =>
-      'HabitGroupData(uuid: $uuid, name: $name, icon: $icon, color: $color)';
+      'HabitGroupData('
+      'uuid: $uuid, name: $name, icon: $icon, color: $color, '
+      'createT: $createT, modifyT: $modifyT)';
 }
 
 /// Domain-layer collection of [HabitGroupData] that converts raw [GroupDBCell]

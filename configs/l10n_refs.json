@@ -13,5 +13,7 @@
     "groupManage_deleteDialog_confirm": "habitDisplay_editPopMenu_delete",
     "groupManage_deleteDialog_cancel": "confirmDialog_cancel_text",
     "groupManage_name_label": "habitDisplay_groupType_name",
-    "groupManage_desc_label": "groupManage_descTooLong"
+    "groupManage_desc_label": "groupManage_descTooLong",
+    "groupManage_createDateTile_title": "habitDetail_createDateTile_title",
+    "groupManage_modifyDateTile_title": "habitDetail_modifyDateTile_title"
 }

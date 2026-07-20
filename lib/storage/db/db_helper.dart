@@ -89,6 +89,7 @@ class _DBHelper implements DBHelper {
         })
         .whenComplete(indexesBatch.commit);
     await db.execute(CustomSql.autoUpdateHabitsModifyTimeTrigger);
+    await db.execute(CustomSql.autoUpdateGroupsModifyTimeTrigger);
     await db.execute(CustomSql.autoUpdateRecordsModifyTimeTrigger);
     await db.execute(CustomSql.autoAddSortPostionWhenAddNewHabit);
     await db.execute(CustomSql.autoUpdateSyncModifyTimeTrigger);
@@ -184,6 +185,7 @@ class _DBHelper implements DBHelper {
 
       // 2. Create mh_groups table
       await db.execute(await getSqlFromFile(Assets.sql.mhGroups));
+      await db.execute(CustomSql.autoUpdateGroupsModifyTimeTrigger);
 
       // 2a. ALTER mh_groups ADD tint columns (for DBs created before
       // custom_color / custom_color_tinted were added to mh_groups.sql)

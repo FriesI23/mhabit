@@ -18,12 +18,17 @@ import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_color_type.dart';
 import 'package:mhabit/models/habit_group.dart';
 import 'package:mhabit/pages/common/_widgets/group_edit_form.dart';
+import 'package:mhabit/providers/app_ui/app_custom_date_format.dart';
 import 'package:mhabit/widgets/widgets.dart';
+import 'package:provider/provider.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(
     theme: ThemeData(extensions: const []),
-    home: Scaffold(body: child),
+    home: ChangeNotifierProvider<AppCustomDateYmdHmsConfigViewModel>(
+      create: (_) => AppCustomDateYmdHmsConfigViewModel(),
+      child: Scaffold(body: child),
+    ),
   );
 }
 
@@ -31,6 +36,8 @@ Widget _wrap(Widget child) {
 HabitGroupData _existingGroup({
   String name = 'Existing',
   String desc = 'A description',
+  DateTime? createT,
+  DateTime? modifyT,
 }) {
   return HabitGroupData(
     uuid: 'g-1',
@@ -38,6 +45,8 @@ HabitGroupData _existingGroup({
     desc: desc,
     icon: GroupIcon.star,
     color: const HabitColor.builtIn(HabitColorType.cc1),
+    createT: createT,
+    modifyT: modifyT,
   );
 }
 
@@ -163,6 +172,69 @@ void main() {
       final buttons = tester.widgetList<IconButton>(find.byType(IconButton));
       final selected = buttons.where((b) => b.isSelected == true);
       expect(selected.length, greaterThanOrEqualTo(1));
+    });
+  });
+
+  group('GroupEditForm read-only info', () {
+    testWidgets('hides date info when creating (no existingGroup)', (
+      tester,
+    ) async {
+      final formKey = GlobalKey<GroupEditFormState>();
+      await tester.pumpWidget(_wrap(GroupEditForm(key: formKey)));
+
+      // Neither created nor modified labels should be present.
+      expect(find.text('Created'), findsNothing);
+      expect(find.text('Modified'), findsNothing);
+    });
+
+    testWidgets('hides date info when timestamps are null', (tester) async {
+      final formKey = GlobalKey<GroupEditFormState>();
+      final existing = _existingGroup(); // createT/modifyT both null
+      await tester.pumpWidget(
+        _wrap(GroupEditForm(key: formKey, existingGroup: existing)),
+      );
+
+      expect(find.text('Created'), findsNothing);
+      expect(find.text('Modified'), findsNothing);
+    });
+
+    testWidgets('shows created date when createT is set', (tester) async {
+      final formKey = GlobalKey<GroupEditFormState>();
+      final testTime = DateTime.fromMillisecondsSinceEpoch(1753000000 * 1000);
+      final existing = _existingGroup(createT: testTime);
+      await tester.pumpWidget(
+        _wrap(GroupEditForm(key: formKey, existingGroup: existing)),
+      );
+
+      expect(find.text('Created'), findsOneWidget);
+      expect(find.text('Modified'), findsNothing);
+    });
+
+    testWidgets('shows modified date when modifyT is set', (tester) async {
+      final formKey = GlobalKey<GroupEditFormState>();
+      final testTime = DateTime.fromMillisecondsSinceEpoch(1753100000 * 1000);
+      final existing = _existingGroup(modifyT: testTime);
+      await tester.pumpWidget(
+        _wrap(GroupEditForm(key: formKey, existingGroup: existing)),
+      );
+
+      expect(find.text('Created'), findsNothing);
+      expect(find.text('Modified'), findsOneWidget);
+    });
+
+    testWidgets('shows both dates when both timestamps are set', (
+      tester,
+    ) async {
+      final formKey = GlobalKey<GroupEditFormState>();
+      final createT = DateTime.fromMillisecondsSinceEpoch(1753000000 * 1000);
+      final modifyT = DateTime.fromMillisecondsSinceEpoch(1753100000 * 1000);
+      final existing = _existingGroup(createT: createT, modifyT: modifyT);
+      await tester.pumpWidget(
+        _wrap(GroupEditForm(key: formKey, existingGroup: existing)),
+      );
+
+      expect(find.text('Created'), findsOneWidget);
+      expect(find.text('Modified'), findsOneWidget);
     });
   });
 }

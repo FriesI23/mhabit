@@ -3324,8 +3324,8 @@ abstract class L10n {
   /// Content body for the delete confirmation dialog
   ///
   /// In en, this message translates to:
-  /// **'Associated habits will become uncategorized. This action cannot be undone after the undo timer expires.'**
-  String get groupManage_deleteDialog_content;
+  /// **'{count, plural, =1 {Habits in this group will become uncategorized.} other {Habits in these {count} groups will become uncategorized.}}'**
+  String groupManage_deleteDialog_content(int count);
 
   /// Confirm button text for delete dialog
   ///
@@ -3404,6 +3404,18 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Groups'**
   String get groupManage_sectionTitle_text;
+
+  /// Label shown for the group creation date in the edit dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get groupManage_createDateTile_title;
+
+  /// Label shown for the group modification date in the edit dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Modified'**
+  String get groupManage_modifyDateTile_title;
 
   /// Subtitle for the Manage Groups tile in Settings
   ///

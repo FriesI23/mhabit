@@ -262,6 +262,10 @@ class GroupManageViewModel extends ChangeNotifier
     if (!_selectionMode) return;
     if (_selectedGroupUUIDs.contains(uuid)) {
       _selectedGroupUUIDs.remove(uuid);
+      if (_selectedGroupUUIDs.isEmpty) {
+        exitSelectionMode();
+        return;
+      }
     } else {
       _selectedGroupUUIDs.add(uuid);
     }

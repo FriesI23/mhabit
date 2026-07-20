@@ -1763,9 +1763,15 @@
     "@groupManage_deleteDialog_title": {
         "description": "Title for the delete confirmation dialog"
     },
-    "groupManage_deleteDialog_content": "Associated habits will become uncategorized. This action cannot be undone after the undo timer expires.",
+    "groupManage_deleteDialog_content": "{count, plural, =1 {Habits in this group will become uncategorized.} other {Habits in these {count} groups will become uncategorized.}}",
     "@groupManage_deleteDialog_content": {
-        "description": "Content body for the delete confirmation dialog"
+        "description": "Content body for the delete confirmation dialog",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of groups being deleted"
+            }
+        }
     },
     "groupManage_deleteDialog_confirm": "Delete",
     "@groupManage_deleteDialog_confirm": {
@@ -1828,6 +1834,14 @@
     "groupManage_sectionTitle_text": "Groups",
     "@groupManage_sectionTitle_text": {
         "description": "Section header text for Groups in Settings page"
+    },
+    "groupManage_createDateTile_title": "Created",
+    "@groupManage_createDateTile_title": {
+        "description": "Label shown for the group creation date in the edit dialog"
+    },
+    "groupManage_modifyDateTile_title": "Modified",
+    "@groupManage_modifyDateTile_title": {
+        "description": "Label shown for the group modification date in the edit dialog"
     },
     "appSetting_manageGroups_subtitleText": "Create, edit, and delete habit groups",
     "@appSetting_manageGroups_subtitleText": {

@@ -24,6 +24,7 @@ class GroupManageGrid extends StatefulWidget {
   final List<HabitGroupData> groups;
   final Set<String> selectedUUIDs;
   final bool selectionMode;
+  final int selectedCount;
   final void Function(String uuid) onTap;
   final void Function(String uuid) onLongPress;
   final void Function(String uuid) onEdit;
@@ -34,6 +35,7 @@ class GroupManageGrid extends StatefulWidget {
     required this.groups,
     required this.selectedUUIDs,
     required this.selectionMode,
+    required this.selectedCount,
     required this.onTap,
     required this.onLongPress,
     required this.onEdit,
@@ -58,6 +60,10 @@ class _GroupManageGridState extends State<GroupManageGrid> {
   void didUpdateWidget(covariant GroupManageGrid oldWidget) {
     super.didUpdateWidget(oldWidget);
     _diffLists(oldWidget.groups, widget.groups);
+    if (oldWidget.selectionMode != widget.selectionMode ||
+        oldWidget.selectedCount != widget.selectedCount) {
+      setState(() {});
+    }
   }
 
   void _diffLists(List<HabitGroupData> oldList, List<HabitGroupData> newList) {

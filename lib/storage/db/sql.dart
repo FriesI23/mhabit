@@ -48,6 +48,17 @@ BEGIN
 END
 """;
 
+  static const String autoUpdateGroupsModifyTimeTrigger =
+      """
+CREATE TRIGGER auto_update_mh_groups_modify_t
+AFTER UPDATE ON ${TableName.groups}
+BEGIN
+  UPDATE ${TableName.groups}
+  SET modify_t = (cast(strftime('%s','now') as int))
+  WHERE uuid = NEW.uuid;
+END
+""";
+
   static const String rmAutoAddSortPostionWhenAddNewHabitTrigger = """
 DROP TRIGGER IF EXISTS auto_insert_mh_habits_sort_position;
 """;

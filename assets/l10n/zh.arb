@@ -1336,9 +1336,15 @@
     "@groupManage_deleteDialog_title": {
         "description": "Title for the delete confirmation dialog"
     },
-    "groupManage_deleteDialog_content": "关联的习惯将变为未分类。撤销计时器超时后此操作不可恢复。",
+    "groupManage_deleteDialog_content": "{count, plural, =1 {该分组内的习惯将变为未分类。} other {{count} 个分组内的习惯将变为未分类。}}",
     "@groupManage_deleteDialog_content": {
-        "description": "Content body for the delete confirmation dialog"
+        "description": "Content body for the delete confirmation dialog",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of groups being deleted"
+            }
+        }
     },
     "groupManage_deleteDialog_confirm": "删除",
     "@groupManage_deleteDialog_confirm": {
@@ -1401,6 +1407,14 @@
     "groupManage_sectionTitle_text": "分组",
     "@groupManage_sectionTitle_text": {
         "description": "Section header text for Groups in Settings page"
+    },
+    "groupManage_createDateTile_title": "创建日期",
+    "@groupManage_createDateTile_title": {
+        "description": "Label shown for the group creation date in the edit dialog"
+    },
+    "groupManage_modifyDateTile_title": "修改日期",
+    "@groupManage_modifyDateTile_title": {
+        "description": "Label shown for the group modification date in the edit dialog"
     },
     "appSetting_manageGroups_subtitleText": "创建、编辑和删除习惯分组",
     "@appSetting_manageGroups_subtitleText": {

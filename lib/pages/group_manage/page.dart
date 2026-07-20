@@ -125,11 +125,7 @@ class _PageState extends State<_Page> {
 
   Future<void> _onSingleDelete(String uuid) async {
     final vm = context.read<GroupManageViewModel>();
-    final confirmed = await _confirmDelete(
-      context: context,
-      isBatch: false,
-      count: 1,
-    );
+    final confirmed = await _confirmDelete(context: context, count: 1);
     if (!confirmed || !mounted) return;
     await vm.deleteSingleGroup(uuid);
     if (mounted) _showDeleteUndoSnackBar(context);
@@ -139,7 +135,6 @@ class _PageState extends State<_Page> {
     final vm = context.read<GroupManageViewModel>();
     final confirmed = await _confirmDelete(
       context: context,
-      isBatch: true,
       count: vm.selectedCount,
     );
     if (!confirmed || !mounted) return;
@@ -149,29 +144,19 @@ class _PageState extends State<_Page> {
 
   Future<bool> _confirmDelete({
     required BuildContext context,
-    required bool isBatch,
     required int count,
   }) async {
     final l10n = L10n.of(context);
-    final result = await showDialog<bool>(
+    final result = await showConfirmDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n?.groupManage_deleteDialog_title ?? 'Delete Group'),
-        content: Text(
-          l10n?.groupManage_deleteDialog_content ??
-              'Associated habits will become uncategorized and this cannot be undone.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n?.groupManage_deleteDialog_cancel ?? 'Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n?.groupManage_deleteDialog_confirm ?? 'Delete'),
-          ),
-        ],
+      title: Text(l10n?.groupManage_deleteDialog_title ?? 'Delete Group'),
+      subtitle: Text(
+        l10n?.groupManage_deleteDialog_content(count) ??
+            'Habits in this group will become uncategorized.',
       ),
+      cancelText: Text(l10n?.groupManage_deleteDialog_cancel ?? 'Cancel'),
+      confirmText: Text(l10n?.groupManage_deleteDialog_confirm ?? 'Delete'),
+      skipOnConfirm: true,
     );
     return result ?? false;
   }
@@ -425,11 +410,14 @@ class _GroupManageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (groups, selectedUUIDs, selectionMode) = context
-        .select<
-          GroupManageViewModel,
-          (List<HabitGroupData>, Set<String>, bool)
-        >((vm) => (vm.groups, vm.selectedUUIDs, vm.selectionMode));
+    // selectedCount is the watch trigger (int changes → new tuple → rebuild).
+    // selectedUUIDs is obtained via read — no separate subscription needed.
+    final (groups, selectionMode, _) = context
+        .select<GroupManageViewModel, (List<HabitGroupData>, bool, int)>(
+          (vm) => (vm.groups, vm.selectionMode, vm.selectedCount),
+        );
+    final selectedUUIDs = context.read<GroupManageViewModel>().selectedUUIDs;
+    final selectedCount = selectedUUIDs.length;
 
     return switch (layoutType) {
       UiLayoutType.l => SliverPadding(
@@ -438,6 +426,7 @@ class _GroupManageContent extends StatelessWidget {
           groups: groups,
           selectedUUIDs: selectedUUIDs,
           selectionMode: selectionMode,
+          selectedCount: selectedCount,
           onTap: onGroupTap,
           onLongPress: onGroupLongPress,
           onEdit: onEdit,
@@ -448,6 +437,7 @@ class _GroupManageContent extends StatelessWidget {
         groups: groups,
         selectedUUIDs: selectedUUIDs,
         selectionMode: selectionMode,
+        selectedCount: selectedCount,
         onTap: onGroupTap,
         onLongPress: onGroupLongPress,
         onEdit: onEdit,

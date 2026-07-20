@@ -2088,8 +2088,15 @@ class L10nCs extends L10n {
   String get groupManage_deleteDialog_title => 'Delete Group';
 
   @override
-  String get groupManage_deleteDialog_content =>
-      'Associated habits will become uncategorized. This action cannot be undone after the undo timer expires.';
+  String groupManage_deleteDialog_content(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Habits in these $count groups will become uncategorized.',
+      one: 'Habits in this group will become uncategorized.',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get groupManage_deleteDialog_confirm => 'Delete';
@@ -2133,6 +2140,12 @@ class L10nCs extends L10n {
 
   @override
   String get groupManage_sectionTitle_text => 'Groups';
+
+  @override
+  String get groupManage_createDateTile_title => 'Created';
+
+  @override
+  String get groupManage_modifyDateTile_title => 'Modified';
 
   @override
   String get appSetting_manageGroups_subtitleText =>

@@ -1960,7 +1960,15 @@ class L10nZh extends L10n {
   String get groupManage_deleteDialog_title => '删除分组';
 
   @override
-  String get groupManage_deleteDialog_content => '关联的习惯将变为未分类。撤销计时器超时后此操作不可恢复。';
+  String groupManage_deleteDialog_content(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 个分组内的习惯将变为未分类。',
+      one: '该分组内的习惯将变为未分类。',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get groupManage_deleteDialog_confirm => '删除';
@@ -2004,6 +2012,12 @@ class L10nZh extends L10n {
 
   @override
   String get groupManage_sectionTitle_text => '分组';
+
+  @override
+  String get groupManage_createDateTile_title => '创建日期';
+
+  @override
+  String get groupManage_modifyDateTile_title => '修改日期';
 
   @override
   String get appSetting_manageGroups_subtitleText => '创建、编辑和删除习惯分组';
@@ -3598,7 +3612,15 @@ class L10nZhHant extends L10nZh {
   String get groupManage_deleteDialog_title => '刪除分組';
 
   @override
-  String get groupManage_deleteDialog_content => '關聯的習慣將變為未分類。撤銷計時器逾時後此操作不可復原。';
+  String groupManage_deleteDialog_content(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 個分組內的習慣將變為未分類。',
+      one: '該分組內的習慣將變為未分類。',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get groupManage_deleteDialog_confirm => '刪除';
@@ -3639,6 +3661,12 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get groupManage_sectionTitle_text => '分組';
+
+  @override
+  String get groupManage_createDateTile_title => '建立日期';
+
+  @override
+  String get groupManage_modifyDateTile_title => '修改日期';
 
   @override
   String get appSetting_manageGroups_subtitleText => '建立、編輯和刪除習慣分組';
