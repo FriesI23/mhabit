@@ -2,17 +2,15 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.25.5+170-pre
+## 1.25.7+172
 
+- Feature: sync Android animation scale with Flutter settings (#608)
+- Feature: changelog first-open dialog and banner integration (#610)
+- Feature: import habits and records from Loop Habit Tracker (uhabit) CSV export (#612)
 - Feature: implement adaptive content sheets and enhance dialog localization (#613)
 - Feature: preserve unknown sync fields across habit round-trips for forward compatibility (#614)
 - Fix: changelog version matching not handling pre-release suffix in CHANGELOG headings
-
-## 1.25.4+169-pre
-
-- Feature: import habits and records from Loop Habit Tracker (uhabit) CSV export (#612)
-- Feature: changelog first-open dialog and banner integration (#610)
-- Feature: sync Android animation scale with Flutter settings (#608)
+- Fix: replace regex-based beta heading matching with AST prefix matching for improved reliability (#615)
 - Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate (#611)
 
 ## 1.25.3+168

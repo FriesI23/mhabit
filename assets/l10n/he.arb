@@ -543,6 +543,9 @@
     "appSetting_export_subtitleText": "ההרגלים מיוצאים בתבנית הקובץ JSON, ניתן לייבא קובץ זה בחזרה.",
     "appSetting_import_titleText": "ייבוא",
     "appSetting_import_subtitleText": "ייבוא הרגלים מקובץ json.",
+    "appSetting_thirdPartyImport_titleText": "ייבוא מצד שלישי",
+    "appSetting_thirdPartyImport_subtitleText": "ייבוא הרגלים מיישומים אחרים למעקב הרגלים",
+    "appSetting_thirdPartyImport_provider_loopName": "‏„Loop” לניהול הרגלים",
     "appSetting_importDialog_confirmTitle": "לאשר את הייבוא של {count} הרגלים?",
     "@appSetting_importDialog_confirmTitle": {
         "placeholders": {
@@ -553,6 +556,19 @@
         }
     },
     "appSetting_importDialog_confirmSubtitle": "הערה: הייבוא אינו מוחק הרגלים קיימים.",
+    "appSetting_importConfirmDialog_sourceLabel": "מקור: {provider}",
+    "@appSetting_importConfirmDialog_sourceLabel": {
+        "placeholders": {
+            "provider": {
+                "type": "String",
+                "description": "Third-party provider display name"
+            }
+        }
+    },
+    "appSetting_thirdPartyImport_error_fileReadError": "נכשלה קריאת הקובץ שנבחר.",
+    "appSetting_thirdPartyImport_error_noHabitsFound": "לא נמצאו הרגלים בקובץ שיובא.",
+    "appSetting_thirdPartyImport_error_parseError": "נכשל פענוח הקובץ שיובא.",
+    "appSetting_thirdPartyImport_error_unknown": "אירעה שגיאה לא צפויה במהלך הייבוא.",
     "appSetting_importDialog_confirm_confirmText": "אישור",
     "appSetting_importDialog_confirm_cancelText": "ביטול",
     "appSetting_importDialog_importingTitle": "יובאו {completeCount}‏/{totalCount}",
@@ -1100,7 +1116,7 @@
     "channelDesc_appSyncing": "משמשת להצגת התקדמות הסנכרון ותוצאות שאינן כישלון",
     "channelName_appSyncFailed": "הסנכרון נכשל",
     "channelDesc_appSyncFailed": "משמשת להתרעה על סנכרון שנכשל",
-    "changelog_banner_title": "What's New in v{version}",
+    "changelog_banner_title": "מה חדש בגרסה {version}",
     "@changelog_banner_title": {
         "description": "Title in the MaterialBanner showing the current version changelog on first open after upgrade.",
         "placeholders": {
@@ -1110,16 +1126,16 @@
             }
         }
     },
-    "changelog_banner_action": "CLOSE",
+    "changelog_banner_action": "סגירה",
     "@changelog_banner_action": {
         "description": "Dismiss button label on the changelog MaterialBanner."
     },
-    "changelog_banner_view": "VIEW",
+    "changelog_banner_view": "הצגה",
     "@changelog_banner_view": {
         "description": "View button label on the changelog MaterialBanner that opens the full changelog dialog."
     },
-    "changelog_dialog_title": "Changelog",
-    "changelog_view_full": "View Full Changelog",
+    "changelog_dialog_title": "יומן שינויים",
+    "changelog_view_full": "הצגת יומן השינויים המלא",
     "@changelog_view_full": {
         "description": "Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content."
     },

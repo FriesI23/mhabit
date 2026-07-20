@@ -1011,15 +1011,15 @@ class L10nHe extends L10n {
   String get appSetting_import_subtitleText => 'ייבוא הרגלים מקובץ json.';
 
   @override
-  String get appSetting_thirdPartyImport_titleText => 'Import from third-party';
+  String get appSetting_thirdPartyImport_titleText => 'ייבוא מצד שלישי';
 
   @override
   String get appSetting_thirdPartyImport_subtitleText =>
-      'Import habits from other habit tracker apps';
+      'ייבוא הרגלים מיישומים אחרים למעקב הרגלים';
 
   @override
   String get appSetting_thirdPartyImport_provider_loopName =>
-      'Loop Habit Tracker';
+      '‏„Loop” לניהול הרגלים';
 
   @override
   String get appSetting_thirdPartyImport_provider_versionHint =>
@@ -1052,24 +1052,24 @@ class L10nHe extends L10n {
 
   @override
   String appSetting_importConfirmDialog_sourceLabel(String provider) {
-    return 'Source: $provider';
+    return 'מקור: $provider';
   }
 
   @override
   String get appSetting_thirdPartyImport_error_fileReadError =>
-      'Failed to read the selected file.';
+      'נכשלה קריאת הקובץ שנבחר.';
 
   @override
   String get appSetting_thirdPartyImport_error_noHabitsFound =>
-      'No habits found in the import file.';
+      'לא נמצאו הרגלים בקובץ שיובא.';
 
   @override
   String get appSetting_thirdPartyImport_error_parseError =>
-      'Failed to parse import file';
+      'נכשל פענוח הקובץ שיובא.';
 
   @override
   String get appSetting_thirdPartyImport_error_unknown =>
-      'An unexpected error occurred during import.';
+      'אירעה שגיאה לא צפויה במהלך הייבוא.';
 
   @override
   String get appSetting_importDialog_confirm_confirmText => 'אישור';
@@ -2026,20 +2026,20 @@ class L10nHe extends L10n {
 
   @override
   String changelog_banner_title(String version) {
-    return 'What\'s New in v$version';
+    return 'מה חדש בגרסה $version';
   }
 
   @override
-  String get changelog_banner_action => 'CLOSE';
+  String get changelog_banner_action => 'סגירה';
 
   @override
-  String get changelog_banner_view => 'VIEW';
+  String get changelog_banner_view => 'הצגה';
 
   @override
-  String get changelog_dialog_title => 'Changelog';
+  String get changelog_dialog_title => 'יומן שינויים';
 
   @override
-  String get changelog_view_full => 'View Full Changelog';
+  String get changelog_view_full => 'הצגת יומן השינויים המלא';
 
   @override
   String get habitGroup_uncategorized => 'No Group';

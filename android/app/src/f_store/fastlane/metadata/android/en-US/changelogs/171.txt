@@ -1,0 +1,1 @@
+- Fix: replace regex-based beta heading matching with AST prefix matching for improved reliability (#615)

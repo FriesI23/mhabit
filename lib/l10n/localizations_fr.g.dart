@@ -24,7 +24,7 @@ class L10nFr extends L10n {
   String get habitEdit_colorPicker_title => 'Choisir une couleur';
 
   @override
-  String get habitEdit_colorPicker_historySectionLabel => 'Recently used';
+  String get habitEdit_colorPicker_historySectionLabel => 'Utilisés récemment';
 
   @override
   String habitEdit_colorPicker_customSectionLabel(String tinted) {
@@ -37,24 +37,24 @@ class L10nFr extends L10n {
   }
 
   @override
-  String get habitEdit_colorPicker_cancel => 'Cancel';
+  String get habitEdit_colorPicker_cancel => 'Annuler';
 
   @override
   String get habitEdit_colorPicker_tintToggleLabel => 'Tint to theme';
 
   @override
-  String get habitEdit_colorPicker_tintedLabel => 'Tinted';
+  String get habitEdit_colorPicker_tintedLabel => 'Teinté';
 
   @override
-  String get habitEdit_colorPicker_untintedLabel => 'Not tinted';
+  String get habitEdit_colorPicker_untintedLabel => 'Non teinté';
 
   @override
   String get habitEdit_colorPicker_tintToggleOnHint =>
-      'Tinting may shift the final color away from the one you picked.';
+      'La coloration peut modifier la couleur finale par rapport à celle que vous avez choisie.';
 
   @override
   String get habitEdit_colorPicker_tintToggleOffHint =>
-      'Some colors may reduce text readability in light or dark theme.';
+      'Certaines couleurs peuvent réduire la lisibilité du texte en mode clair ou sombre.';
 
   @override
   String get habitEdit_habitTypeDialog_title => 'Type d’habitude';
@@ -278,7 +278,7 @@ class L10nFr extends L10n {
 
   @override
   String habitDisplay_notFoundImage_text_02(String keyword) {
-    return 'No matching habits for \"$keyword\"';
+    return 'Aucune habitude correspondante pour \"$keyword\"';
   }
 
   @override
@@ -328,7 +328,7 @@ class L10nFr extends L10n {
 
   @override
   String habitDisplay_deleteSingleHabitSuccSnackbarText(String name) {
-    return 'Deleted habit: \"$name\"';
+    return 'Habitude supprimée : \"$name\"';
   }
 
   @override
@@ -344,7 +344,7 @@ class L10nFr extends L10n {
 
   @override
   String get habitDisplay_exportAllHabitsSuccSnackbarText =>
-      'Exported All Habits';
+      'Toutes les habitudes sont exportées';
 
   @override
   String get habitDisplay_editPopMenu_selectAll => 'Tout sélectionner';
@@ -579,14 +579,14 @@ class L10nFr extends L10n {
   String get habitDisplay_debug_debugSubgroup_title => '🛠️Débogage';
 
   @override
-  String get habitDisplay_searchBar_hintText => 'Search habits';
+  String get habitDisplay_searchBar_hintText => 'Rechercher une habitude';
 
   @override
   String get habitDisplay_searchFilter_ongoing => 'En cours';
 
   @override
   String get habitDisplay_searchFilter_ongoing_desc =>
-      'Shows habits that are currently active and ongoing (not archived or deleted).';
+      'Affiche les habitudes actuellement actives et en cours (non archivées ni supprimées).';
 
   @override
   String get habitDisplay_searchFilter_completed => 'Complétées';
@@ -596,13 +596,13 @@ class L10nFr extends L10n {
       'Type d’habitude';
 
   @override
-  String get habitDisplay_searchFilter_tooltips => 'Show Filters';
+  String get habitDisplay_searchFilter_tooltips => 'Afficher les filtres';
 
   @override
-  String get habitDisplay_searchFilter_clearFilter => 'Clear Filters';
+  String get habitDisplay_searchFilter_clearFilter => 'Supprimer les filtres';
 
   @override
-  String get habitDisplay_tab_habits_label => 'Habits';
+  String get habitDisplay_tab_habits_label => 'Habitudes';
 
   @override
   String get habitDisplay_tab_today_label => 'Aujourd’hui';
@@ -611,7 +611,7 @@ class L10nFr extends L10n {
   String get habitToday_appBar_title => 'Aujourd’hui';
 
   @override
-  String get habitToday_image_desc => 'YOU MADE IT';
+  String get habitToday_image_desc => 'Vous avez réussi !';
 
   @override
   String habitToday_card_subtitle_text(int days) {
@@ -619,10 +619,10 @@ class L10nFr extends L10n {
   }
 
   @override
-  String get habitToday_card_donePlusButton_label => 'Done+';
+  String get habitToday_card_donePlusButton_label => 'Fait +';
 
   @override
-  String get habitToday_card_skipPlusButton_label => 'Skip+';
+  String get habitToday_card_skipPlusButton_label => 'Passer +';
 
   @override
   String get habitDetail_editButton_tooltip => 'Éditer';
@@ -817,10 +817,10 @@ class L10nFr extends L10n {
       'revenir à aujourd’hui';
 
   @override
-  String get common_loadError_text => 'Failed to load';
+  String get common_loadError_text => 'Échec du chargement';
 
   @override
-  String get common_loadError_retryText => 'Essayez une nouvelle fois';
+  String get common_loadError_retryText => 'Essayez encore';
 
   @override
   String get habitDetail_notFoundText => 'Échec du chargement de l’habitude';
@@ -923,15 +923,15 @@ class L10nFr extends L10n {
   String get appSetting_expandTimerDelay_slow => 'Slow';
 
   @override
-  String get appSetting_appThemeColorTile_titleText => 'Theme Color';
+  String get appSetting_appThemeColorTile_titleText => 'Couleur du thème';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText =>
-      'Choose Theme Color';
+      'Choisissez la couleur du thème';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_android =>
-      'Use wallpaper\'s main color (Android 12+)';
+      'Utiliser la couleur principale du fond d\'écran (Android 12+)';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_linux =>
@@ -939,7 +939,7 @@ class L10nFr extends L10n {
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_macos =>
-      'Use system theme color';
+      'Utiliser la couleur du thème du système';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_windows =>
@@ -958,18 +958,18 @@ class L10nFr extends L10n {
 
   @override
   String appSetting_changeLanguage_followSystem_text(String localeName) {
-    return 'Follow System ($localeName)';
+    return 'Langue par défaut du système';
   }
 
   @override
   String get appSetting_changeLanguage_followSystem_noLocale_text =>
-      'Follow System';
+      'Langue du système';
 
   @override
-  String get appSetting_changeLanguageTile_titleText => 'Language';
+  String get appSetting_changeLanguageTile_titleText => 'Langue';
 
   @override
-  String get appSetting_changeLanguageDialog_titleText => 'Select Language';
+  String get appSetting_changeLanguageDialog_titleText => 'Choisir la langue';
 
   @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
@@ -1028,11 +1028,12 @@ class L10nFr extends L10n {
       'Importer les habitudes à partir d’un fichier au format JSON.';
 
   @override
-  String get appSetting_thirdPartyImport_titleText => 'Import from third-party';
+  String get appSetting_thirdPartyImport_titleText =>
+      'Importer depuis une source tierce';
 
   @override
   String get appSetting_thirdPartyImport_subtitleText =>
-      'Import habits from other habit tracker apps';
+      'Importer des habitudes depuis d\'autres applications de suivi des habitudes';
 
   @override
   String get appSetting_thirdPartyImport_provider_loopName =>
@@ -1074,19 +1075,19 @@ class L10nFr extends L10n {
 
   @override
   String get appSetting_thirdPartyImport_error_fileReadError =>
-      'Failed to read the selected file.';
+      'Impossible de lire le fichier sélectionné.';
 
   @override
   String get appSetting_thirdPartyImport_error_noHabitsFound =>
-      'No habits found in the import file.';
+      'Aucune habitude trouvée dans le fichier.';
 
   @override
   String get appSetting_thirdPartyImport_error_parseError =>
-      'Failed to parse import file';
+      'Échec de l\'analyse du fichier';
 
   @override
   String get appSetting_thirdPartyImport_error_unknown =>
-      'An unexpected error occurred during import.';
+      'Une erreur inattendue s\'est produite lors de l\'importation.';
 
   @override
   String get appSetting_importDialog_confirm_confirmText => 'Confirmer';
@@ -1176,37 +1177,37 @@ class L10nFr extends L10n {
       'Échec du vidage du cache';
 
   @override
-  String get appSetting_debugger_titleText => 'Debug Info';
+  String get appSetting_debugger_titleText => 'Informations de débogage';
 
   @override
   String get appSetting_about_titleText => 'À propos';
 
   @override
   String get appSetting_experimentalFeatureTile_titleText =>
-      'Experimental Features';
+      'Fonctionnalités expérimentales';
 
   @override
-  String get appSetting_synSubgroupText => 'Sync';
+  String get appSetting_synSubgroupText => 'Synchronisation';
 
   @override
-  String get appSetting_syncOption_titleText => 'Sync Options';
+  String get appSetting_syncOption_titleText => 'Options de synchronisation';
 
   @override
   String get appSetting_notify_titleTile => 'Notifications';
 
   @override
   String get appSetting_notify_subtitleTile =>
-      'Manage notification preferences';
+      'Gérer les préférences de notification';
 
   @override
   String get appSetting_notify_subtitleTile_android =>
-      'Tap to open system notification settings';
+      'Appuyez pour ouvrir les paramètres de notification du système';
 
   @override
   String get appSync_nowTile_titleText => 'Synchroniser maintenant';
 
   @override
-  String get appSync_nowTile_titleText_syncing => 'Syncing';
+  String get appSync_nowTile_titleText_syncing => 'Synchronisation';
 
   @override
   String appSync_nowTile_dateFormat(DateTime ymd, DateTime jms) {
@@ -1219,23 +1220,24 @@ class L10nFr extends L10n {
   }
 
   @override
-  String get appSync_nowTile_text_noDate => 'Last Sync: N/A';
+  String get appSync_nowTile_text_noDate => 'Dernière synchronisation: N/A';
 
   @override
   String appSync_nowTile_text(String dateStr) {
-    return 'Last Sync: $dateStr';
+    return 'Dernière synchronisation : $dateStr';
   }
 
   @override
-  String get appSync_nowTile_errorText_noDate => 'Last Sync (Error): N/A';
+  String get appSync_nowTile_errorText_noDate =>
+      'Dernière synchronisation (Erreur): N/A';
 
   @override
   String appSync_nowTile_errorText(String dateStr) {
-    return 'Last Sync (Error): $dateStr';
+    return 'Dernière synchronisation (Erreur) : $dateStr';
   }
 
   @override
-  String get appSync_nowTile_syncingText => 'Syncing...';
+  String get appSync_nowTile_syncingText => 'Synchronisation...';
 
   @override
   String appSync_nowTile_syncingText_withPrt(num prt) {
@@ -1246,26 +1248,27 @@ class L10nFr extends L10n {
         );
     final String prtString = prtNumberFormat.format(prt);
 
-    return 'Syncing: $prtString';
+    return 'Synchronisation : $prtString';
   }
 
   @override
-  String get appSync_nowTile_cancellingText => 'Canceling...';
+  String get appSync_nowTile_cancellingText => 'Annulation...';
 
   @override
-  String get appSync_nowTile_cancelText_noDate => 'Last Sync (Cancelled): N/A';
+  String get appSync_nowTile_cancelText_noDate =>
+      'Dernière synchronisation (Annulée): N/A';
 
   @override
   String appSync_nowTile_cancelText(String dateStr) {
-    return 'Last Sync (Cancelled): $dateStr';
+    return 'Dernière synchronisation (Annulée): $dateStr';
   }
 
   @override
-  String get appSync_failedTile_titleText => 'Check Failure Logs';
+  String get appSync_failedTile_titleText => 'Vérifier les journaux d\'erreurs';
 
   @override
   String appSync_failedTile_errorText(String info) {
-    return '[Error]: $info';
+    return '[Erreur]: $info';
   }
 
   @override
@@ -1310,25 +1313,28 @@ class L10nFr extends L10n {
   }
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_titleText => 'New Location';
+  String get appSync_webdav_newServerConfirmDialog_titleText =>
+      'Nouveau serveur';
 
   @override
   String get appSync_webdav_newServerConfirmDialog_subtitleText =>
-      'Syncing will create necessary directories and upload local habits to the server. Continue?';
+      'La synchronisation créera les répertoires nécessaires et téléchargera les habitudes locales vers le serveur. Continuer ?';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_confirmText => 'Sync Now!';
+  String get appSync_webdav_newServerConfirmDialog_confirmText =>
+      'Synchroniser maintenant !';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_titleText => 'Confirm Sync';
+  String get appSync_webdav_oldServerConfirmDialog_titleText =>
+      'Confirmer la synchronisation';
 
   @override
   String get appSync_webdav_oldServerConfirmDialog_subtitleText =>
-      'Directory isn\'t empty. Syncing will merge server and local habits. Continue?';
+      'Le répertoire n\'est pas vide. La synchronisation fusionnera les habitudes du serveur et locales. Continuer ?';
 
   @override
   String get appSync_webdav_oldServerConfirmDialog_confirmText =>
-      'Confirm Merge';
+      'Confirmer la fusion';
 
   @override
   String get appSync_exportAllLogsTile_titleText => 'Export Failed Sync Logs';

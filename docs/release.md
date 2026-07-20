@@ -1,12 +1,7 @@
-# Release: v1.25.5+170-pre
-
-## ✨ New Features
-
-- Implement adaptive content sheets and enhance dialog localization (#613)
-- Preserve unknown sync fields across habit round-trips for forward compatibility (#614)
+# Release: v1.25.7+172
 
 ## 🐛 Bug Fixes
 
-- Fix changelog version matching not handling pre-release suffix in CHANGELOG headings
+- Replace regex-based beta heading matching with AST prefix matching for improved reliability (#615)
 
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.25.4+169-pre...v1.25.5+170-pre)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.25.3+168...v1.25.7+172)

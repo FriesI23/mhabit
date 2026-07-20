@@ -8,6 +8,12 @@
     "habitEdit_saveButton_text": "Sauvegarder",
     "habitEdit_habitName_hintText": "Nom de l’habitude…",
     "habitEdit_colorPicker_title": "Choisir une couleur",
+    "habitEdit_colorPicker_historySectionLabel": "Utilisés récemment",
+    "habitEdit_colorPicker_cancel": "Annuler",
+    "habitEdit_colorPicker_tintedLabel": "Teinté",
+    "habitEdit_colorPicker_untintedLabel": "Non teinté",
+    "habitEdit_colorPicker_tintToggleOnHint": "La coloration peut modifier la couleur finale par rapport à celle que vous avez choisie.",
+    "habitEdit_colorPicker_tintToggleOffHint": "Certaines couleurs peuvent réduire la lisibilité du texte en mode clair ou sombre.",
     "habitEdit_habitTypeDialog_title": "Type d’habitude",
     "habitEdit_habitType_positiveText": "Positive",
     "habitEdit_habitType_negativeText": "Négative",
@@ -182,6 +188,16 @@
     "@habitDisplay_notFoundImage_text_01": {
         "description": "Displayed when no habits match the current search"
     },
+    "habitDisplay_notFoundImage_text_02": "Aucune habitude correspondante pour \"{keyword}\"",
+    "@habitDisplay_notFoundImage_text_02": {
+        "description": "Displayed when no habits match the specified keyword",
+        "placeholders": {
+            "keyword": {
+                "type": "String",
+                "description": "Search keyword"
+            }
+        }
+    },
     "habitDisplay_archiveHabitsConfirmDialog_title": "Archiver les habitudes sélectionnées ?",
     "habitDisplay_archiveHabitsConfirmDialog_confirm": "Confirmer",
     "habitDisplay_archiveHabitsConfirmDialog_cancel": "Annuler",
@@ -218,6 +234,16 @@
             }
         }
     },
+    "habitDisplay_deleteSingleHabitSuccSnackbarText": "Habitude supprimée : \"{name}\"",
+    "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "description": "Habit name."
+            }
+        }
+    },
+    "habitDisplay_exportAllHabitsSuccSnackbarText": "Toutes les habitudes sont exportées",
     "habitDisplay_editPopMenu_selectAll": "Tout sélectionner",
     "habitDisplay_editPopMenu_export": "Exporter",
     "habitDisplay_editPopMenu_delete": "Supprimer",
@@ -255,11 +281,28 @@
     "habitDisplay_sortTypeDialog_confirm": "Confirmer",
     "habitDisplay_sortTypeDialog_cancel": "Annuler",
     "habitDisplay_debug_debugSubgroup_title": "🛠️Débogage",
+    "habitDisplay_searchBar_hintText": "Rechercher une habitude",
     "habitDisplay_searchFilter_ongoing": "En cours",
+    "habitDisplay_searchFilter_ongoing_desc": "Affiche les habitudes actuellement actives et en cours (non archivées ni supprimées).",
     "habitDisplay_searchFilter_completed": "Complétées",
     "habitDisplay_searchFilter_habitType_groupTitle": "Type d’habitude",
+    "habitDisplay_searchFilter_tooltips": "Afficher les filtres",
+    "habitDisplay_searchFilter_clearFilter": "Supprimer les filtres",
+    "habitDisplay_tab_habits_label": "Habitudes",
     "habitDisplay_tab_today_label": "Aujourd’hui",
     "habitToday_appBar_title": "Aujourd’hui",
+    "habitToday_image_desc": "Vous avez réussi !",
+    "@habitToday_image_desc": {
+        "description": "Celebratory text shown when the user completes all their habit tasks for today"
+    },
+    "habitToday_card_donePlusButton_label": "Fait +",
+    "@habitToday_card_donePlusButton_label": {
+        "description": "Button label for completing today's habit with dialog"
+    },
+    "habitToday_card_skipPlusButton_label": "Passer +",
+    "@habitToday_card_skipPlusButton_label": {
+        "description": "Button label for skipping today's habit with dialog"
+    },
     "habitDetail_editButton_tooltip": "Éditer",
     "habitDetail_editPopMenu_unarchive": "Désarchiver",
     "habitDetail_editPopMenu_archive": "Archiver",
@@ -367,7 +410,8 @@
     "habitDetail_editHeatmapCal_dateButtonText": "date",
     "habitDetail_editHeatmapCal_valueButtonText": "valeur",
     "habitDetail_editHeatmapCal_backToToday_tooltipText": "revenir à aujourd’hui",
-    "common_loadError_retryText": "Essayez une nouvelle fois",
+    "common_loadError_text": "Échec du chargement",
+    "common_loadError_retryText": "Essayez encore",
     "habitDetail_notFoundText": "Échec du chargement de l’habitude",
     "habitDetail_notFoundRetryText": "Essayez une nouvelle fois",
     "habitDetail_changeGoal_title": "Modifier l’objectif",
@@ -423,9 +467,25 @@
     "appSetting_changeRecordStatusOpTile_subtitleText": "Modifier le type de clic permettant de changer le statut des entrées journalières sur la page principale.",
     "appSetting_openRecordStatusDialogOpTile_titleText": "Ouvrir le détail de l’entrée",
     "appSetting_openRecordStatusDialogOpTile_subtitleText": "Modifier le type de clic permettant d’ouvrir la boîte de dialgue détaillée des entrées journalières sur la page principale.",
+    "appSetting_appThemeColorTile_titleText": "Couleur du thème",
+    "appSetting_appThemeColorChosenDiloag_titleText": "Choisissez la couleur du thème",
+    "appSetting_appThemeColorChosenDialog_subTitleText_android": "Utiliser la couleur principale du fond d'écran (Android 12+)",
+    "appSetting_appThemeColorChosenDialog_subTitleText_macos": "Utiliser la couleur du thème du système",
     "appSetting_firstDayOfWeek_titleText": "Premier jour de la semaine",
     "appSetting_firstDayOfWeekDialog_titleText": "Afficher le premier jour de la semaine",
     "appSetting_firstDayOfWeekDialog_defaultText": " (par défaut)",
+    "appSetting_changeLanguage_followSystem_text": "Langue par défaut du système",
+    "@appSetting_changeLanguage_followSystem_text": {
+        "placeholders": {
+            "localeName": {
+                "type": "String",
+                "example": "English"
+            }
+        }
+    },
+    "appSetting_changeLanguage_followSystem_noLocale_text": "Langue du système",
+    "appSetting_changeLanguageTile_titleText": "Langue",
+    "appSetting_changeLanguageDialog_titleText": "Choisir la langue",
     "appSetting_dateDisplayFormat_titleText": "Format de l’affichage des dates ({formatTemplate})",
     "@appSetting_dateDisplayFormat_titleText": {
         "placeholders": {
@@ -452,6 +512,8 @@
     "appSetting_export_subtitleText": "Exporter les habitudes au format JSON. Ce fichier peut être importé.",
     "appSetting_import_titleText": "Importer",
     "appSetting_import_subtitleText": "Importer les habitudes à partir d’un fichier au format JSON.",
+    "appSetting_thirdPartyImport_titleText": "Importer depuis une source tierce",
+    "appSetting_thirdPartyImport_subtitleText": "Importer des habitudes depuis d'autres applications de suivi des habitudes",
     "appSetting_importDialog_confirmTitle": "Confirmer l’import de {count} habitudes ?",
     "@appSetting_importDialog_confirmTitle": {
         "placeholders": {
@@ -462,6 +524,10 @@
         }
     },
     "appSetting_importDialog_confirmSubtitle": "Note: l’import ne supprime pas les habitudes existantes.",
+    "appSetting_thirdPartyImport_error_fileReadError": "Impossible de lire le fichier sélectionné.",
+    "appSetting_thirdPartyImport_error_noHabitsFound": "Aucune habitude trouvée dans le fichier.",
+    "appSetting_thirdPartyImport_error_parseError": "Échec de l'analyse du fichier",
+    "appSetting_thirdPartyImport_error_unknown": "Une erreur inattendue s'est produite lors de l'importation.",
     "appSetting_importDialog_confirm_confirmText": "Confirmer",
     "appSetting_importDialog_confirm_cancelText": "Annuler",
     "appSetting_importDialog_importingTitle": "{completeCount}/{totalCount} importées",
@@ -504,8 +570,77 @@
     "appSetting_clearCache_snackBar_partSuccText": "Échec du vidage partiel du cache",
     "appSetting_clearCache_snackBar_succText": "Cache vidé avec succès",
     "appSetting_clearCache_snackBar_failText": "Échec du vidage du cache",
+    "appSetting_debugger_titleText": "Informations de débogage",
     "appSetting_about_titleText": "À propos",
+    "appSetting_experimentalFeatureTile_titleText": "Fonctionnalités expérimentales",
+    "appSetting_synSubgroupText": "Synchronisation",
+    "appSetting_syncOption_titleText": "Options de synchronisation",
+    "appSetting_notify_titleTile": "Notifications",
+    "appSetting_notify_subtitleTile": "Gérer les préférences de notification",
+    "appSetting_notify_subtitleTile_android": "Appuyez pour ouvrir les paramètres de notification du système",
     "appSync_nowTile_titleText": "Synchroniser maintenant",
+    "appSync_nowTile_titleText_syncing": "Synchronisation",
+    "appSync_nowTile_text_noDate": "Dernière synchronisation: N/A",
+    "appSync_nowTile_text": "Dernière synchronisation : {dateStr}",
+    "@appSync_nowTile_text": {
+        "placeholders": {
+            "dateStr": {
+                "type": "String",
+                "description": "Last sync date."
+            }
+        }
+    },
+    "appSync_nowTile_errorText_noDate": "Dernière synchronisation (Erreur): N/A",
+    "appSync_nowTile_errorText": "Dernière synchronisation (Erreur) : {dateStr}",
+    "@appSync_nowTile_errorText": {
+        "placeholders": {
+            "dateStr": {
+                "type": "String",
+                "description": "Last sync date."
+            }
+        }
+    },
+    "appSync_nowTile_syncingText": "Synchronisation...",
+    "appSync_nowTile_syncingText_withPrt": "Synchronisation : {prt}",
+    "@appSync_nowTile_syncingText_withPrt": {
+        "placeholders": {
+            "prt": {
+                "type": "num",
+                "description": "Current sync progress percentage (0-100).",
+                "format": "decimalPercentPattern",
+                "optionalParameters": {
+                    "decimalDigits": 2
+                }
+            }
+        }
+    },
+    "appSync_nowTile_cancellingText": "Annulation...",
+    "appSync_nowTile_cancelText_noDate": "Dernière synchronisation (Annulée): N/A",
+    "appSync_nowTile_cancelText": "Dernière synchronisation (Annulée): {dateStr}",
+    "@appSync_nowTile_cancelText": {
+        "placeholders": {
+            "dateStr": {
+                "type": "String",
+                "description": "Last sync date."
+            }
+        }
+    },
+    "appSync_failedTile_titleText": "Vérifier les journaux d'erreurs",
+    "appSync_failedTile_errorText": "[Erreur]: {info}",
+    "@appSync_failedTile_errorText": {
+        "placeholders": {
+            "info": {
+                "type": "String",
+                "description": "Error information."
+            }
+        }
+    },
+    "appSync_webdav_newServerConfirmDialog_titleText": "Nouveau serveur",
+    "appSync_webdav_newServerConfirmDialog_subtitleText": "La synchronisation créera les répertoires nécessaires et téléchargera les habitudes locales vers le serveur. Continuer ?",
+    "appSync_webdav_newServerConfirmDialog_confirmText": "Synchroniser maintenant !",
+    "appSync_webdav_oldServerConfirmDialog_titleText": "Confirmer la synchronisation",
+    "appSync_webdav_oldServerConfirmDialog_subtitleText": "Le répertoire n'est pas vide. La synchronisation fusionnera les habitudes du serveur et locales. Continuer ?",
+    "appSync_webdav_oldServerConfirmDialog_confirmText": "Confirmer la fusion",
     "appSync_serverEditor_usernameTile_titleText": "Nom d'utilisateur",
     "appSync_serverEditor_passwordTile_titleText": "Mot de passe",
     "appAbout_appbarTile_titleText": "À propos",

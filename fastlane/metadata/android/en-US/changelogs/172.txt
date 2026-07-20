@@ -1,0 +1,8 @@
+- Feature: sync animation scale with Flutter settings (#608)
+- Feature: changelog first-open dialog & banner (#610)
+- Feature: import habits from Loop Habit Tracker CSV (#612)
+- Feature: adaptive content sheets & enhanced dialog localization (#613)
+- Feature: preserve unknown sync fields for forward compat (#614)
+- Fix: changelog pre-release suffix heading matching
+- Fix: regex-based beta heading matching replaced with AST prefix matching (#615)
+- Update Hebrew translation via Weblate (#611)

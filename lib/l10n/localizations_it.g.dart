@@ -364,7 +364,7 @@ class L10nIt extends L10n {
   String get habitDisplay_archiveButton_tooltip => 'Archivia';
 
   @override
-  String get habitDisplay_unarchiveButton_tooltip => 'Rimuovi dall\'archivio';
+  String get habitDisplay_unarchiveButton_tooltip => 'Ripristina';
 
   @override
   String get habitDisplay_settingButton_tooltip => 'Impostazioni';
@@ -376,7 +376,7 @@ class L10nIt extends L10n {
   String get habitDisplay_statsMenu_completedTileText => 'Completate';
 
   @override
-  String get habitDisplay_statsMenu_inProgresTileText => 'In Svolgimento';
+  String get habitDisplay_statsMenu_inProgresTileText => 'In Corso';
 
   @override
   String get habitDisplay_statsMenu_archivedTileText => 'Archiviate';

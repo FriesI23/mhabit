@@ -1,3 +1,4 @@
+- Feature: sync Android animation scale with Flutter settings (#608)
 - Feature: changelog first-open dialog and banner integration (#610)
 - Feature: import habits and records from Loop Habit Tracker (uhabit) CSV export (#612)
 - Feature: implement adaptive content sheets and enhance dialog localization (#613)
