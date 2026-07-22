@@ -38,7 +38,8 @@ SYNC_RULES_FILE ?= docs/rules/rules.md
 
 .PHONY: help init bootstrap \
 	normalize-l10n build-runner format fix gen-icons test gen \
-	verify-generated verify-submodules aio aio-full sync-rules unsync-rules
+	verify-generated verify-submodules aio aio-full sync-rules unsync-rules \
+	gen-screenshot-data
 
 help:
 	@echo Standardized automation entrypoints
@@ -57,7 +58,7 @@ help:
 	@echo   aio               Run generation, fixes, and generation verification
 	@echo   aio-full          Run aio plus the root app and internal package test suites
 	@echo "  sync-rules        Distribute rule references to AI tools (SYNC_RULES_FILE=docs/rules/rules.md)"
-	@echo "  unsync-rules      Remove AI tool rules and clean up .git/info/exclude"
+	@echo "  gen-screenshot-data  Generate seed JSON for screenshots (all langs)"
 
 init:
 	@git config --local core.hooksPath .githooks
@@ -108,6 +109,9 @@ sync-rules:
 
 unsync-rules:
 	$(call run_script,sync-rules,uninstall)
+
+gen-screenshot-data:
+	@$(LOCAL_DART) run tools/bin/gen_screenshot_data.dart --all-langs
 
 aio:
 	@$(SUBMAKE) gen

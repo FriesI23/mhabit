@@ -1,6 +1,14 @@
 <!-- omit from toc -->
 <p align="center">
-  <img src="assets/logo/icon-1024x1024.png" alt="Table Habit Logo" width="120" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-hero-showcase-dark.png" />
+    <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-hero-showcase.png" />
+    <img src="docs/README/images/feature-hero-showcase.png" alt="Table Habit — cross-platform habit tracker" width="800" />
+  </picture>
+</p>
+
+<p align="center">
+  <img src="assets/logo/icon-1024x1024.png" alt="Table Habit Logo" width="96" />
 </p>
 <h1 align="center">Table Habit</h1>
 <p align="center"><strong>Track micro habits. Grow every day.</strong></p>
@@ -53,31 +61,80 @@ Linux — **no ads, no account required**. See the translation badge above for s
 
 <table>
   <tr>
-    <td width="50%">📊 <strong>Smart Scoring</strong><br/>A unique habit scoring system that quantifies your consistency — not just streaks. Supports both "do" and "don't" habits with rich growth curves and charts.</td>
-    <td width="50%">🔄 <strong>WebDAV Sync — Own Your Data</strong><br/>Sync across all devices via any WebDAV-compatible server (Nextcloud, Koofr, self-hosted). No vendor lock-in, no third-party cloud dependency.</td>
-  </tr>
-  <tr>
-    <td>🎨 <strong>Deep Customization</strong><br/>Per-habit custom colors with built-in swatches and color picker. Habit grouping with drag-and-drop reorder. Material 3 + Dynamic Color theming.</td>
-    <td>🌍 <strong>Truly Global</strong><br/>Community-driven translations via Weblate with full RTL support (Arabic, Hebrew, Persian). Your language, your habits.</td>
-  </tr>
-  <tr>
-    <td>🔓 <strong>100% Open Source · Privacy First</strong><br/>Apache 2.0. No ads, no telemetry, no account. Import from Loop Habit Tracker. Export/import via human-readable JSON — your data is always yours.</td>
-    <td>🖥️ <strong>Every Platform You Use</strong><br/>Android, iOS, macOS, Windows, Linux. Native distribution on Google Play, App Store, F-Droid, Flathub, Microsoft Store, and more.</td>
+    <td width="50%">
+      <h3>📊 Smart Scoring — Not Just Streaks</h3>
+      <p>A unique habit scoring system that quantifies your consistency. Growth
+      curves show your progress over time — not just "did I do it today," but
+      <em>how well</em> you're building the habit. Supports both "do" and "don't"
+      habits with separate scoring models.</p>
+    </td>
+    <td width="50%" align="center">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-growth-chart-dark.webp" />
+        <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-growth-chart.webp" />
+        <img src="docs/README/images/feature-growth-chart.webp" alt="Habit scoring growth chart" width="360" />
+      </picture>
+    </td>
   </tr>
 </table>
 
-## Screenshots
-
-<table align="center">
+<table>
   <tr>
-    <td align="center"><img src="docs/README/images/create-new-habit.gif" alt="Table Habit - Create a new habit screen" width="280" /></td>
-    <td align="center"><img src="docs/README/images/check-habit-detail.gif" alt="Table Habit - Habit detail with scoring chart" width="280" /></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="docs/README/images/habit-display-page.gif" alt="Table Habit - Main habit display page" width="280" /></td>
-    <td align="center"><img src="docs/README/images/habit-display-op.gif" alt="Table Habit - Habit display operations and filtering" width="280" /></td>
+    <td width="50%" align="center">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-sync-settings-dark.png" />
+        <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-sync-settings.png" />
+        <img src="docs/README/images/feature-sync-settings.png" alt="WebDAV sync configuration" width="360" />
+      </picture>
+    </td>
+    <td width="50%">
+      <h3>🔄 WebDAV Sync — Own Your Data</h3>
+      <p>Sync across all devices via any WebDAV-compatible server: Nextcloud,
+      Koofr, or self-hosted. No vendor lock-in, no third-party cloud
+      dependency. Your habit data stays yours — always.</p>
+    </td>
   </tr>
 </table>
+
+<table>
+  <tr>
+    <td width="50%">
+      <h3>🎨 Deep Customization</h3>
+      <p>Per-habit custom colors with built-in swatches and a full color picker.
+      Habit grouping with collapsible sections and drag-and-drop reorder.
+      Material 3 + Dynamic Color theming that adapts to your device wallpaper.</p>
+    </td>
+    <td width="50%" align="center">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-customization-dark.png" />
+        <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-customization.png" />
+        <img src="docs/README/images/feature-customization.png" alt="Custom colors and habit grouping" width="360" />
+      </picture>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-offline-empty-dark.png" />
+        <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-offline-empty.png" />
+        <img src="docs/README/images/feature-offline-empty.png" alt="Offline-first — no account needed" width="360" />
+      </picture>
+    </td>
+    <td width="50%">
+      <h3>🔓 100% Open Source · Privacy First</h3>
+      <p>Apache 2.0. No ads, no telemetry, no account required. Import from
+      Loop Habit Tracker. Export/import via human-readable JSON — your data is
+      always yours. Fully functional offline.</p>
+    </td>
+  </tr>
+</table>
+
+|     |     |
+| --- | --- |
+| 🌍 **Truly Global** — Community-driven translations via Weblate with full RTL support (Arabic, Hebrew, Persian). 18+ languages and growing. | 🖥️ **Every Platform You Use** — Android, iOS, macOS, Windows, Linux. Native distribution on Google Play, App Store, F-Droid, Flathub, Microsoft Store, and more. |
 
 ## Installation
 
