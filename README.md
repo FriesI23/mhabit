@@ -46,7 +46,11 @@ Linux — **no ads, no account required**. See the translation badge above for s
   <a href="https://github.com/FriesI23/mhabit/releases/latest"><img src="https://raw.githubusercontent.com/Kunzisoft/Github-badge/4711835e032fe2735dc80c1329beb4685899aa91/get-it-on-github.svg" alt="Download Table Habit from GitHub Releases" height="60"></a>
 </p>
 
-|                   |                                                                                                              |
+
+<details>
+<summary><b>✨ Specs</b> — Free · Offline-first · WebDAV Sync</summary>
+
+| Feature | Description |
 | ----------------- | ------------------------------------------------------------------------------------------------------------ |
 | **Price**         | Free — no ads, no in-app purchases                                                                           |
 | **License**       | Apache 2.0                                                                                                   |
@@ -57,84 +61,54 @@ Linux — **no ads, no account required**. See the translation badge above for s
 | **Account**       | Not required — no sign-up, no telemetry                                                                      |
 | **Tech Stack**    | Flutter · Dart · SQLite · Provider                                                                           |
 
+</details>
+
 ## Why Table Habit?
 
-<table>
-  <tr>
-    <td width="50%">
-      <h3>📊 Smart Scoring — Not Just Streaks</h3>
-      <p>A unique habit scoring system that quantifies your consistency. Growth
-      curves show your progress over time — not just "did I do it today," but
-      <em>how well</em> you're building the habit. Supports both "do" and "don't"
-      habits with separate scoring models.</p>
-    </td>
-    <td width="50%" align="center">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-growth-chart-dark.webp" />
-        <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-growth-chart.webp" />
-        <img src="docs/README/images/feature-growth-chart.webp" alt="Habit scoring growth chart" width="360" />
-      </picture>
-    </td>
-  </tr>
-</table>
+### 📊 Smart Scoring — Not Just Streaks
 
-<table>
-  <tr>
-    <td width="50%" align="center">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-sync-settings-dark.png" />
-        <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-sync-settings.png" />
-        <img src="docs/README/images/feature-sync-settings.png" alt="WebDAV sync configuration" width="360" />
-      </picture>
-    </td>
-    <td width="50%">
-      <h3>🔄 WebDAV Sync — Own Your Data</h3>
-      <p>Sync across all devices via any WebDAV-compatible server: Nextcloud,
-      Koofr, or self-hosted. No vendor lock-in, no third-party cloud
-      dependency. Your habit data stays yours — always.</p>
-    </td>
-  </tr>
-</table>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-growth-chart-dark.webp" />
+  <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-growth-chart.webp" />
+  <img src="docs/README/images/feature-growth-chart.webp" alt="Habit scoring growth chart" align="right" height="180" />
+</picture>
 
-<table>
-  <tr>
-    <td width="50%">
-      <h3>🎨 Deep Customization</h3>
-      <p>Per-habit custom colors with built-in swatches and a full color picker.
-      Habit grouping with collapsible sections and drag-and-drop reorder.
-      Material 3 + Dynamic Color theming that adapts to your device wallpaper.</p>
-    </td>
-    <td width="50%" align="center">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-customization-dark.png" />
-        <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-customization.png" />
-        <img src="docs/README/images/feature-customization.png" alt="Custom colors and habit grouping" width="360" />
-      </picture>
-    </td>
-  </tr>
-</table>
+Quantifies your consistency beyond daily check-ins. Growth curves show your long-term progress with separate scoring models for "do" and "don't" habits.
 
-<table>
-  <tr>
-    <td width="50%" align="center">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-offline-empty-dark.png" />
-        <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-offline-empty.png" />
-        <img src="docs/README/images/feature-offline-empty.png" alt="Offline-first — no account needed" width="360" />
-      </picture>
-    </td>
-    <td width="50%">
-      <h3>🔓 100% Open Source · Privacy First</h3>
-      <p>Apache 2.0. No ads, no telemetry, no account required. Import from
-      Loop Habit Tracker. Export/import via human-readable JSON — your data is
-      always yours. Fully functional offline.</p>
-    </td>
-  </tr>
-</table>
+### 🔄 WebDAV Sync — Own Your Data
 
-|     |     |
-| --- | --- |
-| 🌍 **Truly Global** — Community-driven translations via Weblate with full RTL support (Arabic, Hebrew, Persian). 18+ languages and growing. | 🖥️ **Every Platform You Use** — Android, iOS, macOS, Windows, Linux. Native distribution on Google Play, App Store, F-Droid, Flathub, Microsoft Store, and more. |
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-sync-settings-dark.png" />
+  <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-sync-settings.png" />
+  <img src="docs/README/images/feature-sync-settings.png" alt="WebDAV sync configuration" align="right" height="180" />
+</picture>
+
+Sync seamlessly across devices via Nextcloud, Koofr, or self-hosted servers. Zero vendor lock-in and complete data privacy — your habit data always stays yours.
+
+### 🎨 Deep Customization
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-customization-dark.png" />
+  <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-customization.png" />
+  <img src="docs/README/images/feature-customization.png" alt="Custom colors and habit grouping" align="right" height="180" />
+</picture>
+
+Per-habit custom colors with built-in swatches and a full color picker. Collapsible habit grouping with drag-and-drop reorder, plus Material 3 + Dynamic Color theming.
+
+### 🔓 100% Open Source · Privacy First
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-offline-empty-dark.png" />
+  <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-offline-empty.png" />
+  <img src="docs/README/images/feature-offline-empty.png" alt="Offline-first — no account needed" align="right" height="180" />
+</picture>
+
+Apache 2.0 licensed. No ads, no telemetry, no account required. Native JSON import/export, Loop Habit Tracker migration, and fully functional offline.
+
+### 🌍 Global & Cross-Platform
+
+- **🌍 Truly Global:** Community-driven translations via Weblate with full RTL support (Arabic, Hebrew, Persian). 18+ languages and growing.
+- **🖥️ Cross-Platform:** Android, iOS, macOS, Windows, Linux. Available on Google Play, App Store, F-Droid, Flathub, and Microsoft Store.
 
 ## Installation
 
@@ -190,12 +164,16 @@ the `weblate-translation` branch.
 
 | Status | Feature                       | Notes                                             |
 | :----: | ----------------------------- | ------------------------------------------------- |
-|   ✅   | **Habit Groups**              | Drag-and-drop reorder, collapsible groups (v1.26) |
-|   ✅   | **Custom Colors**             | Per-habit swatches + color picker (v1.25)         |
-|   ✅   | **Loop Habit Tracker Import** | CSV import from Loop Habit Tracker (v1.25)        |
+|   ✅   | **Custom Colors**             | Per-habit swatches + color picker ([v1.25.1+164]) |
+|   ✅   | **Loop Habit Tracker Import** | CSV import from Loop Habit Tracker ([v1.25.7+172])|
+|   ✅   | **Habit Groups**              | Drag-and-drop reorder, collapsible ([v1.26.1+174])|
 |   🟨   | **Android Widget**            | In progress                                       |
 |   🟨   | **iOS Widget**                | In progress                                       |
 |   ⬜   | **More Sync Backends**        | Beyond WebDAV — planned                           |
+
+[v1.25.1+164]: https://github.com/FriesI23/mhabit/releases/tag/v1.25.1+164
+[v1.25.7+172]: https://github.com/FriesI23/mhabit/releases/tag/v1.25.7+172
+[v1.26.1+174]: https://github.com/FriesI23/mhabit/releases/tag/v1.26.1+174
 
 ## Contributing
 
