@@ -65,45 +65,52 @@ Linux — **no ads, no account required**. See the translation badge above for s
 
 ## Why Table Habit?
 
-### 📊 Smart Scoring — Not Just Streaks
+<!-- 核心功能图集 (2x2 画廊) -->
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-growth-chart-dark.webp" />
+    <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-growth-chart.webp" />
+    <img src="docs/README/images/feature-growth-chart.webp" alt="Habit scoring growth chart" height="320" />
+  </picture>
+  &nbsp;&nbsp;
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-sync-settings-dark.png" />
+    <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-sync-settings.png" />
+    <img src="docs/README/images/feature-sync-settings.png" alt="WebDAV sync configuration" height="320" />
+  </picture>
+</p>
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-growth-chart-dark.webp" />
-  <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-growth-chart.webp" />
-  <img src="docs/README/images/feature-growth-chart.webp" alt="Habit scoring growth chart" align="right" height="180" />
-</picture>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-customization-dark.png" />
+    <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-customization.png" />
+    <img src="docs/README/images/feature-customization.png" alt="Custom colors and habit grouping" height="320" />
+  </picture>
+  &nbsp;&nbsp;
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-offline-empty-dark.png" />
+    <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-offline-empty.png" />
+    <img src="docs/README/images/feature-offline-empty.png" alt="Offline-first — no account needed" height="320" />
+  </picture>
+</p>
 
-Quantifies your consistency beyond daily check-ins. Growth curves show your long-term progress with separate scoring models for "do" and "don't" habits.
+* **📊 Smart Scoring — Not Just Streaks**
+  Quantifies your consistency beyond daily check-ins. Growth curves show your long-term progress with separate scoring models for "do" and "don't" habits.
 
-### 🔄 WebDAV Sync — Own Your Data
+* **🔄 WebDAV Sync — Own Your Data**
+  Sync seamlessly across devices via Nextcloud, Koofr, or self-hosted servers. Zero vendor lock-in and complete data privacy — your habit data always stays yours.
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-sync-settings-dark.png" />
-  <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-sync-settings.png" />
-  <img src="docs/README/images/feature-sync-settings.png" alt="WebDAV sync configuration" align="right" height="180" />
-</picture>
+* **🎨 Deep Customization**
+  Per-habit custom colors with built-in swatches and a full color picker. Collapsible habit grouping with drag-and-drop reorder, plus Material 3 + Dynamic Color theming.
 
-Sync seamlessly across devices via Nextcloud, Koofr, or self-hosted servers. Zero vendor lock-in and complete data privacy — your habit data always stays yours.
+* **🔓 100% Open Source · Privacy First**
+  Apache 2.0 licensed. No ads, no telemetry, no account required. Native JSON import/export, Loop Habit Tracker migration, and fully functional offline.
 
-### 🎨 Deep Customization
+* **🌍 Truly Global**
+  Community-driven translations via Weblate with full RTL support (Arabic, Hebrew, Persian). 18+ languages and growing.
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-customization-dark.png" />
-  <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-customization.png" />
-  <img src="docs/README/images/feature-customization.png" alt="Custom colors and habit grouping" align="right" height="180" />
-</picture>
-
-Per-habit custom colors with built-in swatches and a full color picker. Collapsible habit grouping with drag-and-drop reorder, plus Material 3 + Dynamic Color theming.
-
-### 🔓 100% Open Source · Privacy First
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-offline-empty-dark.png" />
-  <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-offline-empty.png" />
-  <img src="docs/README/images/feature-offline-empty.png" alt="Offline-first — no account needed" align="right" height="180" />
-</picture>
-
-Apache 2.0 licensed. No ads, no telemetry, no account required. Native JSON import/export, Loop Habit Tracker migration, and fully functional offline.
+* **🖥️ Cross-Platform**
+  Android, iOS, macOS, Windows, Linux. Available on Google Play, App Store, F-Droid, Flathub, and Microsoft Store.
 
 ### 🌍 Global & Cross-Platform
 
