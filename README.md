@@ -65,36 +65,42 @@ Linux — **no ads, no account required**. See the translation badge above for s
 
 ## Why Table Habit?
 
-<!-- 核心功能图集 (2x2 画廊) -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-growth-chart-dark.webp" />
     <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-growth-chart.webp" />
-    <img src="docs/README/images/feature-growth-chart.webp" alt="Habit scoring growth chart" height="320" />
+    <img src="docs/README/images/feature-growth-chart.webp" alt="Habit scoring growth chart" style="width:32%; height:auto" />
   </picture>
-  &nbsp;&nbsp;
+  &nbsp;
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-sync-settings-dark.png" />
     <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-sync-settings.png" />
-    <img src="docs/README/images/feature-sync-settings.png" alt="WebDAV sync configuration" height="320" />
+    <img src="docs/README/images/feature-sync-settings.png" alt="WebDAV sync configuration" style="width:32%; height:auto" />
   </picture>
-  &nbsp;&nbsp;
+  &nbsp;
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-customization-01-dark.png" />
     <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-customization-01.png" />
-    <img src="docs/README/images/feature-customization-01.png" alt="Custom colors and habit grouping" height="320" />
+    <img src="docs/README/images/feature-customization-01.png" alt="Custom colors and habit grouping" style="width:32%; height:auto" />
   </picture>
-  &nbsp;&nbsp;
+</p>
+<p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-customization-02-dark.png" />
     <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-customization-02.png" />
-    <img src="docs/README/images/feature-customization-02.png" alt="Habit group management" height="320" />
+    <img src="docs/README/images/feature-customization-02.png" alt="Collapsible habit group on home page" style="width:32%; height:auto" />
   </picture>
-  &nbsp;&nbsp;
+  &nbsp;
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-offline-empty-dark.png" />
     <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-offline-empty.png" />
-    <img src="docs/README/images/feature-offline-empty.png" alt="Offline-first — no account needed" height="320" />
+    <img src="docs/README/images/feature-offline-empty.png" alt="Offline-first — no account needed" style="width:32%; height:auto" />
+  </picture>
+  &nbsp;
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-edit-habit-dark.png" />
+    <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-edit-habit.png" />
+    <img src="docs/README/images/feature-edit-habit.png" alt="Habit edit screen" style="width:32%; height:auto" />
   </picture>
 </p>
 

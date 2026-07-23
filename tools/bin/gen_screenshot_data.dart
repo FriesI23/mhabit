@@ -349,7 +349,7 @@ CliArgs _parseArgs(List<String> args, ScreenshotConfig config) {
     ..addOption('count', help: 'Generate for seeds 0..N-1 (overrides --seed).');
   final opts = parser.parse(args);
 
-  (int, bool) _resolveSeed(String? arg) {
+  (int, bool) resolveSeed(String? arg) {
     if (arg == null || arg.isEmpty) return (Random().nextInt(999999), false);
     final parsed = int.tryParse(arg);
     if (parsed != null) return (parsed, true);
@@ -359,7 +359,7 @@ CliArgs _parseArgs(List<String> args, ScreenshotConfig config) {
     return (Random().nextInt(999999), false);
   }
 
-  var _explicitSeed = false;
+  var explicitSeed = false;
 
   List<int> resolveSeeds() {
     final countArg = opts['count'] as String?;
@@ -367,8 +367,8 @@ CliArgs _parseArgs(List<String> args, ScreenshotConfig config) {
       final n = int.tryParse(countArg);
       if (n != null && n > 0) return List.generate(n, (i) => i);
     }
-    final (seed, explicit) = _resolveSeed(opts['seed'] as String?);
-    _explicitSeed = explicit;
+    final (seed, explicit) = resolveSeed(opts['seed'] as String?);
+    explicitSeed = explicit;
     return [seed];
   }
 
@@ -401,7 +401,7 @@ CliArgs _parseArgs(List<String> args, ScreenshotConfig config) {
     langs: langs,
     seeds: resolveSeeds(),
     noRepeat: opts['no-repeat'] as bool,
-    explicitSeed: _explicitSeed,
+    explicitSeed: explicitSeed,
   );
 }
 
