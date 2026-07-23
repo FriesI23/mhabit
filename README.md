@@ -33,24 +33,24 @@ micro habits with a unique scoring system, rich growth charts, and
 Linux — **no ads, no account required**. See the translation badge above for supported languages. Licensed under Apache 2.0.
 
 <p align="center">
-  <a href="https://play.google.com/store/apps/details?id=io.github.friesi23.mhabit"><img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" alt="Get Table Habit on Google Play" height="60"></a>
-  &nbsp;
-  <a href="https://apps.apple.com/app/table-habit/id6744886469"><img src="docs/README/images/apple-get-it-on.svg" alt="Get Table Habit on the App Store" height="60"></a>
+  <a href="https://github.com/FriesI23/mhabit/releases/latest"><img src="https://raw.githubusercontent.com/Kunzisoft/Github-badge/4711835e032fe2735dc80c1329beb4685899aa91/get-it-on-github.svg" alt="Download Table Habit from GitHub Releases" height="60"></a>
   &nbsp;
   <a href="https://f-droid.org/packages/io.github.friesi23.mhabit"><img src="https://f-droid.org/badge/get-it-on.png" alt="Get Table Habit on F-Droid" height="60"></a>
   &nbsp;
   <a href="https://flathub.org/apps/io.github.friesi23.mhabit"><img src="docs/README/images/flathub-get-it-on.svg" alt="Get Table Habit on Flathub" height="60"></a>
+</p>
+<p align="center">
+  <a href="https://play.google.com/store/apps/details?id=io.github.friesi23.mhabit"><img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" alt="Get Table Habit on Google Play" height="60"></a>
+  &nbsp;
+  <a href="https://apps.apple.com/app/table-habit/id6744886469"><img src="docs/README/images/apple-get-it-on.svg" alt="Get Table Habit on the App Store" height="60"></a>
   &nbsp;
   <a href="https://apps.microsoft.com/detail/9NG22PL73NGZ"><img src="docs/README/images/msstore-get-it-on.svg" alt="Get Table Habit on Microsoft Store" height="60"></a>
-  &nbsp;
-  <a href="https://github.com/FriesI23/mhabit/releases/latest"><img src="https://raw.githubusercontent.com/Kunzisoft/Github-badge/4711835e032fe2735dc80c1329beb4685899aa91/get-it-on-github.svg" alt="Download Table Habit from GitHub Releases" height="60"></a>
 </p>
-
 
 <details>
 <summary><b>✨ Specs</b> — Free · Offline-first · WebDAV Sync</summary>
 
-| Feature | Description |
+| Feature           | Description                                                                                                  |
 | ----------------- | ------------------------------------------------------------------------------------------------------------ |
 | **Price**         | Free — no ads, no in-app purchases                                                                           |
 | **License**       | Apache 2.0                                                                                                   |
@@ -104,22 +104,22 @@ Linux — **no ads, no account required**. See the translation badge above for s
   </picture>
 </p>
 
-* **📊 Smart Scoring — Not Just Streaks**
+- **📊 Smart Scoring — Not Just Streaks**
   Quantifies your consistency beyond daily check-ins. Growth curves show your long-term progress with separate scoring models for "do" and "don't" habits.
 
-* **🔄 WebDAV Sync — Own Your Data**
+- **🔄 WebDAV Sync — Own Your Data**
   Sync seamlessly across devices via Nextcloud, Koofr, or self-hosted servers. Zero vendor lock-in and complete data privacy — your habit data always stays yours.
 
-* **🎨 Deep Customization**
+- **🎨 Deep Customization**
   Per-habit custom colors with built-in swatches and a full color picker. Collapsible habit grouping with drag-and-drop reorder, plus Material 3 + Dynamic Color theming.
 
-* **🔓 100% Open Source · Privacy First**
+- **🔓 100% Open Source · Privacy First**
   Apache 2.0 licensed. No ads, no telemetry, no account required. Native JSON import/export, Loop Habit Tracker migration, and fully functional offline.
 
-* **🌍 Truly Global**
+- **🌍 Truly Global**
   Community-driven translations via Weblate with full RTL support (Arabic, Hebrew, Persian). 18+ languages and growing.
 
-* **🖥️ Cross-Platform**
+- **🖥️ Cross-Platform**
   Android, iOS, macOS, Windows, Linux. Available on Google Play, App Store, F-Droid, Flathub, and Microsoft Store.
 
 ### 🌍 Global & Cross-Platform
@@ -179,14 +179,14 @@ the `weblate-translation` branch.
 
 ## Roadmap
 
-| Status | Feature                       | Notes                                             |
-| :----: | ----------------------------- | ------------------------------------------------- |
-|   ✅   | **Custom Colors**             | Per-habit swatches + color picker ([v1.25.1+164]) |
-|   ✅   | **Loop Habit Tracker Import** | CSV import from Loop Habit Tracker ([v1.25.7+172])|
-|   ✅   | **Habit Groups**              | Drag-and-drop reorder, collapsible ([v1.26.1+174])|
-|   🟨   | **Android Widget**            | In progress                                       |
-|   🟨   | **iOS Widget**                | In progress                                       |
-|   ⬜   | **More Sync Backends**        | Beyond WebDAV — planned                           |
+| Status | Feature                       | Notes                                              |
+| :----: | ----------------------------- | -------------------------------------------------- |
+|   ✅   | **Custom Colors**             | Per-habit swatches + color picker ([v1.25.1+164])  |
+|   ✅   | **Loop Habit Tracker Import** | CSV import from Loop Habit Tracker ([v1.25.7+172]) |
+|   ✅   | **Habit Groups**              | Drag-and-drop reorder, collapsible ([v1.26.1+174]) |
+|   🟨   | **Android Widget**            | In progress                                        |
+|   🟨   | **iOS Widget**                | In progress                                        |
+|   ⬜   | **More Sync Backends**        | Beyond WebDAV — planned                            |
 
 [v1.25.1+164]: https://github.com/FriesI23/mhabit/releases/tag/v1.25.1+164
 [v1.25.7+172]: https://github.com/FriesI23/mhabit/releases/tag/v1.25.7+172
