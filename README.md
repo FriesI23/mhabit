@@ -1,4 +1,10 @@
-<!-- omit from toc -->
+<!-- <p align="center">
+  <img src="assets/logo/icon-1024x1024.png" alt="Table Habit Logo" width="96" />
+</p>  -->
+
+<h1 align="center">Table Habit</h1>
+<p align="center"><em>Track micro habits. Grow every day.</em></p>
+
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-hero-showcase-dark.png" />
@@ -6,12 +12,6 @@
     <img src="docs/README/images/feature-hero-showcase.png" alt="Table Habit — cross-platform habit tracker" width="800" />
   </picture>
 </p>
-
-<p align="center">
-  <img src="assets/logo/icon-1024x1024.png" alt="Table Habit Logo" width="96" />
-</p>
-<h1 align="center">Table Habit</h1>
-<p align="center"><strong>Track micro habits. Grow every day.</strong></p>
 
 <p align="center">
   <a href="https://github.com/FriesI23/mhabit/releases"><img src="https://img.shields.io/github/v/release/FriesI23/mhabit?style=flat-square&label=stable&color=success" alt="Stable version"></a>
