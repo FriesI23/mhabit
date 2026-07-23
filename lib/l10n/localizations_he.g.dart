@@ -409,10 +409,10 @@ class L10nHe extends L10n {
   String get habitDisplay_groupType_colorType => 'לפי צבע';
 
   @override
-  String get habitDisplay_groupType_createDate => 'By Creation Date';
+  String get habitDisplay_groupType_createDate => 'לפי תאריך יצירה';
 
   @override
-  String get habitDisplay_groupTypeDialog_title => 'Group Sort';
+  String get habitDisplay_groupTypeDialog_title => 'מיון בתוך הקבוצה';
 
   @override
   String get habitDisplay_groupTypeDialog_confirm => 'אישור';
@@ -421,46 +421,44 @@ class L10nHe extends L10n {
   String get habitDisplay_groupTypeDialog_cancel => 'ביטול';
 
   @override
-  String get habitDisplay_groupTypeDialog_none => 'Flat';
+  String get habitDisplay_groupTypeDialog_none => 'שטוח';
 
   @override
-  String get habitDisplay_editPopMenu_groupModify => 'Modify Group';
+  String get habitDisplay_editPopMenu_groupModify => 'שינוי קבוצה';
 
   @override
-  String get habitDisplay_groupModifyDialog_title => 'Modify Group';
+  String get habitDisplay_groupModifyDialog_title => 'שינוי קבוצה';
 
   @override
-  String get habitDisplay_groupModifyDialog_removeGroup => 'Remove Group';
+  String get habitDisplay_groupModifyDialog_removeGroup => 'הסרת קבוצה';
 
   @override
-  String get habitDisplay_groupModifyDialog_emptyGroups =>
-      'No groups available';
+  String get habitDisplay_groupModifyDialog_emptyGroups => 'אין קבוצות זמינות';
 
   @override
   String get habitDisplay_groupModifyDialog_alreadyInGroup =>
-      'Selected habits are already in this group';
+      'ההרגלים שנבחרו כבר משויכים לקבוצה זו';
 
   @override
-  String get habitDisplay_groupModifyDialog_createGroup => 'Create Group';
+  String get habitDisplay_groupModifyDialog_createGroup => 'יצירת קבוצה';
 
   @override
-  String get habitDisplay_groupModifyDialog_saveAndApply => 'Save & Apply';
+  String get habitDisplay_groupModifyDialog_saveAndApply => 'שמירה והחלה';
 
   @override
-  String get habitDisplay_groupModifyConfirm_titleNew => 'Move to Group';
+  String get habitDisplay_groupModifyConfirm_titleNew => 'העברה לקבוצה';
 
   @override
-  String get habitDisplay_groupModifyConfirm_titleMixed =>
-      'Confirm Group Change';
+  String get habitDisplay_groupModifyConfirm_titleMixed => 'אישור שינוי קבוצה';
 
   @override
   String habitDisplay_groupModifyConfirm_bodyNewGroup(String groupName) {
-    return '$groupName habits will be moved to this group';
+    return 'ההרגלים של „$groupName” יועברו לקבוצה זו';
   }
 
   @override
   String get habitDisplay_groupModifyConfirm_bodyRemoveGroup =>
-      'Habits will have their group removed';
+      'תימחק הקבוצה שאליה משויכים ההרגלים';
 
   @override
   String habitDisplay_groupModifyConfirm_bodyChangeStat(
@@ -471,8 +469,8 @@ class L10nHe extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count habits will change from \"$fromGroup\" to \"$toGroup\"',
-      one: '$count habit will change from \"$fromGroup\" to \"$toGroup\"',
+      other: '$count הרגלים יועברו מהקבוצה „$fromGroup” לקבוצה „$toGroup”',
+      one: 'ההרגל יועבר מהקבוצה  „$fromGroup” לקבוצה „$toGroup”',
     );
     return '$_temp0';
   }
@@ -503,7 +501,7 @@ class L10nHe extends L10n {
   }
 
   @override
-  String get habitDisplay_groupModifyConfirm_nameSeparator => ', ';
+  String get habitDisplay_groupModifyConfirm_nameSeparator => ',‏ ';
 
   @override
   String habitDisplay_groupModify_snackbarText(int count, String groupName) {
@@ -529,7 +527,7 @@ class L10nHe extends L10n {
 
   @override
   String get habitDisplay_groupModify_undoFailed =>
-      'Group has been modified elsewhere, cannot undo';
+      'הקבוצה השתנתה במקום אחר, לא ניתן להחזיר לאחור';
 
   @override
   String get habitDisplay_sort_reverseText => 'היפוך';
@@ -894,20 +892,21 @@ class L10nHe extends L10n {
       'שינוי אופן הפתיחה של חלוניות נפתחות עם פירוט על הרשומות היומיות בעמוד הראשי.';
 
   @override
-  String get appSetting_expandTimerDelayTile_titleText => 'Group expand delay';
+  String get appSetting_expandTimerDelayTile_titleText =>
+      'השהיה לפני הרחבת קבוצות';
 
   @override
   String get appSetting_expandTimerDelayTile_subtitleText =>
       'Set how long to hover over a collapsed group header before it auto-expands during drag-and-drop.';
 
   @override
-  String get appSetting_expandTimerDelay_default => 'Default';
+  String get appSetting_expandTimerDelay_default => 'ברירת מחדל';
 
   @override
-  String get appSetting_expandTimerDelay_fast => 'Fast';
+  String get appSetting_expandTimerDelay_fast => 'מהיר';
 
   @override
-  String get appSetting_expandTimerDelay_slow => 'Slow';
+  String get appSetting_expandTimerDelay_slow => 'איטי';
 
   @override
   String get appSetting_appThemeColorTile_titleText => 'צבע נושא';
@@ -1035,19 +1034,19 @@ class L10nHe extends L10n {
       'הערה: הייבוא אינו מוחק הרגלים קיימים.';
 
   @override
-  String get appSetting_importDialog_option_includeHabits => 'Include habits';
+  String get appSetting_importDialog_option_includeHabits => 'לכלול הרגלים';
 
   @override
-  String get appSetting_importDialog_option_includeGroups => 'Include groups';
+  String get appSetting_importDialog_option_includeGroups => 'לכלול קבוצות';
 
   @override
   String appSetting_importDialog_tile_includeHabits(int count) {
-    return 'Include $count habits';
+    return 'לכלול $count הרגלים';
   }
 
   @override
   String appSetting_importDialog_tile_includeGroups(int count) {
-    return 'Include $count groups';
+    return 'לכלול $count קבוצות';
   }
 
   @override
@@ -1087,12 +1086,12 @@ class L10nHe extends L10n {
 
   @override
   String appSetting_importDialog_completeTitle(int count) {
-    return 'השלמת הייבוא של $count';
+    return 'השלמת הייבוא של $count הרגלים';
   }
 
   @override
   String appSetting_importDialog_completeTitleGroups(int count) {
-    return 'Completed import $count groups';
+    return 'הושלם הייבוא של $count קבוצות';
   }
 
   @override
@@ -1837,7 +1836,7 @@ class L10nHe extends L10n {
   String get common_enable_text => 'מופעל';
 
   @override
-  String get common_dontShowAgain => 'Don\'t show again';
+  String get common_dontShowAgain => 'לא להציג שוב';
 
   @override
   String get calendarPicker_clip_today => 'היום';
@@ -1872,16 +1871,16 @@ class L10nHe extends L10n {
   String get exportConfirmDialog_option_includeRecords => 'לכלול רשומות';
 
   @override
-  String get exportConfirmDialog_option_includeGroups => 'include groups';
+  String get exportConfirmDialog_option_includeGroups => 'לכלול קבוצות';
 
   @override
   String exportConfirmDialog_tile_includeRecords(int count) {
-    return 'Include $count records';
+    return 'לכלול $count רשומות';
   }
 
   @override
   String exportConfirmDialog_tile_includeGroups(int count) {
-    return 'Include $count groups';
+    return 'לכלול $count קבוצות';
   }
 
   @override
@@ -2042,42 +2041,42 @@ class L10nHe extends L10n {
   String get changelog_view_full => 'הצגת יומן השינויים המלא';
 
   @override
-  String get habitGroup_uncategorized => 'No Group';
+  String get habitGroup_uncategorized => 'ללא קבוצה';
 
   @override
-  String get habitDetail_groupTile_title => 'Group';
+  String get habitDetail_groupTile_title => 'קבוצה';
 
   @override
-  String get habitEdit_groupTile_title => 'Group';
+  String get habitEdit_groupTile_title => 'קבוצה';
 
   @override
-  String get habitEdit_groupPicker_hintText => 'Search or create group';
+  String get habitEdit_groupPicker_hintText => 'חיפוש או יצירת קבוצת הרגלים';
 
   @override
-  String get habitEdit_groupPicker_noGroup => 'No Group';
+  String get habitEdit_groupPicker_noGroup => 'אין קבוצות';
 
   @override
   String habitEdit_groupPicker_createGroup(String name) {
-    return 'Create \"$name\"';
+    return 'יצירת „$name”';
   }
 
   @override
-  String get habitEdit_groupPicker_loading => 'Loading groups…';
+  String get habitEdit_groupPicker_loading => 'הקבוצות נטענות…';
 
   @override
-  String get groupManage_appbar_title => 'Manage Groups';
+  String get groupManage_appbar_title => 'ניהול קבוצות';
 
   @override
   String groupManage_selectionAppbar_title(int count) {
-    return '$count selected';
+    return 'נבחרו $count';
   }
 
   @override
   String get groupManage_emptyState_text =>
-      'No groups yet\nTap + to create your first group';
+      'עדיין אין קבוצות\nיש ללחוץ על „+” בשביל ליצור את הקבוצה הראשונה שלך';
 
   @override
-  String get groupManage_deleteDialog_title => 'Delete Group';
+  String get groupManage_deleteDialog_title => 'מחיקת קבוצה';
 
   @override
   String groupManage_deleteDialog_content(int count) {
@@ -2097,19 +2096,19 @@ class L10nHe extends L10n {
   String get groupManage_deleteDialog_cancel => 'ביטול';
 
   @override
-  String get groupManage_deleted_snackbarText => 'Group deleted';
+  String get groupManage_deleted_snackbarText => 'הקבוצה נמחקה';
 
   @override
-  String get groupManage_undo_snackbarAction => 'Undo';
+  String get groupManage_undo_snackbarAction => 'החזרה';
 
   @override
-  String get groupManage_editDialog_title => 'Edit Group';
+  String get groupManage_editDialog_title => 'עריכת קבוצה';
 
   @override
-  String get groupManage_createDialog_title => 'Create Group';
+  String get groupManage_createDialog_title => 'יצירת קבוצה';
 
   @override
-  String get groupManage_nameRequired => 'Name is required';
+  String get groupManage_nameRequired => 'נדרש שם';
 
   @override
   String groupManage_nameTooLong(int max) {
@@ -2117,10 +2116,10 @@ class L10nHe extends L10n {
   }
 
   @override
-  String get groupManage_name_label => 'לפי שם';
+  String get groupManage_name_label => 'שם';
 
   @override
-  String get groupManage_desc_label => 'Description';
+  String get groupManage_desc_label => 'תיאור';
 
   @override
   String groupManage_descTooLong(int max) {
@@ -2128,10 +2127,10 @@ class L10nHe extends L10n {
   }
 
   @override
-  String get groupManage_sortTile_text => 'Sort Groups';
+  String get groupManage_sortTile_text => 'מיון קבוצות';
 
   @override
-  String get groupManage_sectionTitle_text => 'Groups';
+  String get groupManage_sectionTitle_text => 'קבוצות';
 
   @override
   String get groupManage_createDateTile_title => 'תאריך יצירה';
@@ -2140,18 +2139,18 @@ class L10nHe extends L10n {
   String get groupManage_modifyDateTile_title => 'תאריך שינוי';
 
   @override
-  String get groupManage_icon_label => 'Icon';
+  String get groupManage_icon_label => 'סמל';
 
   @override
-  String get groupManage_icon_none => 'אין נתונים';
+  String get groupManage_icon_none => 'ללא';
 
   @override
-  String get groupManage_color_label => 'לפי צבע';
+  String get groupManage_color_label => 'צבע';
 
   @override
-  String get groupManage_color_none => 'אין נתונים';
+  String get groupManage_color_none => 'ללא';
 
   @override
   String get appSetting_manageGroups_subtitleText =>
-      'Create, edit, and delete habit groups';
+      'יצירה, עריכה ומחיקה של קבוצות הרגלים';
 }

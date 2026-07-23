@@ -286,8 +286,49 @@
     "habitDisplay_mainMenu_settingTileText": "הגדרות",
     "habitDisplay_groupType_name": "לפי שם",
     "habitDisplay_groupType_colorType": "לפי צבע",
+    "habitDisplay_groupType_createDate": "לפי תאריך יצירה",
+    "habitDisplay_groupTypeDialog_title": "מיון בתוך הקבוצה",
     "habitDisplay_groupTypeDialog_confirm": "אישור",
     "habitDisplay_groupTypeDialog_cancel": "ביטול",
+    "habitDisplay_groupTypeDialog_none": "שטוח",
+    "habitDisplay_editPopMenu_groupModify": "שינוי קבוצה",
+    "habitDisplay_groupModifyDialog_title": "שינוי קבוצה",
+    "habitDisplay_groupModifyDialog_removeGroup": "הסרת קבוצה",
+    "habitDisplay_groupModifyDialog_emptyGroups": "אין קבוצות זמינות",
+    "habitDisplay_groupModifyDialog_alreadyInGroup": "ההרגלים שנבחרו כבר משויכים לקבוצה זו",
+    "habitDisplay_groupModifyDialog_createGroup": "יצירת קבוצה",
+    "habitDisplay_groupModifyDialog_saveAndApply": "שמירה והחלה",
+    "habitDisplay_groupModifyConfirm_titleNew": "העברה לקבוצה",
+    "habitDisplay_groupModifyConfirm_titleMixed": "אישור שינוי קבוצה",
+    "habitDisplay_groupModifyConfirm_bodyNewGroup": "ההרגלים של „{groupName}” יועברו לקבוצה זו",
+    "@habitDisplay_groupModifyConfirm_bodyNewGroup": {
+        "placeholders": {
+            "groupName": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyRemoveGroup": "תימחק הקבוצה שאליה משויכים ההרגלים",
+    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {ההרגל יועבר מהקבוצה  „{fromGroup}” לקבוצה „{toGroup}”} other {{count} הרגלים יועברו מהקבוצה „{fromGroup}” לקבוצה „{toGroup}”}}",
+    "@habitDisplay_groupModifyConfirm_bodyChangeStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits changing group"
+            },
+            "fromGroup": {
+                "type": "String",
+                "description": "Old group name"
+            },
+            "toGroup": {
+                "type": "String",
+                "description": "New group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_nameSeparator": ",‏ ",
+    "habitDisplay_groupModify_undoFailed": "הקבוצה השתנתה במקום אחר, לא ניתן להחזיר לאחור",
     "habitDisplay_sort_reverseText": "היפוך",
     "habitDisplay_sortDirection_asc": "(עולה)",
     "habitDisplay_sortDirection_Desc": "(יורד)",
@@ -496,6 +537,13 @@
     "appSetting_changeRecordStatusOpTile_subtitleText": "שינוי אופן הלחיצה לשינוי המצב של הרשומות היומיות בעמוד הראשי.",
     "appSetting_openRecordStatusDialogOpTile_titleText": "פתיחת רשומה מפורטת",
     "appSetting_openRecordStatusDialogOpTile_subtitleText": "שינוי אופן הפתיחה של חלוניות נפתחות עם פירוט על הרשומות היומיות בעמוד הראשי.",
+    "appSetting_expandTimerDelayTile_titleText": "השהיה לפני הרחבת קבוצות",
+    "@appSetting_expandTimerDelayTile_titleText": {
+        "description": "Title for the group expand timer delay setting tile"
+    },
+    "appSetting_expandTimerDelay_default": "ברירת מחדל",
+    "appSetting_expandTimerDelay_fast": "מהיר",
+    "appSetting_expandTimerDelay_slow": "איטי",
     "appSetting_appThemeColorTile_titleText": "צבע נושא",
     "appSetting_appThemeColorChosenDiloag_titleText": "בחירת צבע נושא",
     "appSetting_appThemeColorChosenDialog_subTitleText_android": "שימוש בצבע הראשי של הרקע (אנדרואיד 12‏+)",
@@ -556,6 +604,26 @@
         }
     },
     "appSetting_importDialog_confirmSubtitle": "הערה: הייבוא אינו מוחק הרגלים קיימים.",
+    "appSetting_importDialog_option_includeHabits": "לכלול הרגלים",
+    "appSetting_importDialog_option_includeGroups": "לכלול קבוצות",
+    "appSetting_importDialog_tile_includeHabits": "לכלול {count} הרגלים",
+    "@appSetting_importDialog_tile_includeHabits": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "appSetting_importDialog_tile_includeGroups": "לכלול {count} קבוצות",
+    "@appSetting_importDialog_tile_includeGroups": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "3"
+            }
+        }
+    },
     "appSetting_importConfirmDialog_sourceLabel": "מקור: {provider}",
     "@appSetting_importConfirmDialog_sourceLabel": {
         "placeholders": {
@@ -586,6 +654,15 @@
     },
     "appSetting_importDialog_completeTitle": "השלמת הייבוא של {count} הרגלים",
     "@appSetting_importDialog_completeTitle": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_importDialog_completeTitleGroups": "הושלם הייבוא של {count} קבוצות",
+    "@appSetting_importDialog_completeTitleGroups": {
         "placeholders": {
             "count": {
                 "type": "int",
@@ -1036,6 +1113,7 @@
     "common_errorPage_title": "אופס, קרסנו!",
     "common_errorPage_copied": "מידע הקריסה הועתק",
     "common_enable_text": "מופעל",
+    "common_dontShowAgain": "לא להציג שוב",
     "calendarPicker_clip_today": "היום",
     "calendarPicker_clip_tomorrow": "מחר",
     "calendarPicker_clip_after7Days": "{date} הבא",
@@ -1058,6 +1136,25 @@
         }
     },
     "exportConfirmDialog_option_includeRecords": "לכלול רשומות",
+    "exportConfirmDialog_option_includeGroups": "לכלול קבוצות",
+    "exportConfirmDialog_tile_includeRecords": "לכלול {count} רשומות",
+    "@exportConfirmDialog_tile_includeRecords": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "exportConfirmDialog_tile_includeGroups": "לכלול {count} קבוצות",
+    "@exportConfirmDialog_tile_includeGroups": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "3"
+            }
+        }
+    },
     "exportConfirmDialog_cancel_buttonText": "ביטול",
     "exportConfirmDialog_confirm_buttonText": "ייצוא",
     "debug_logLevelTile_title": "רמת תיעוד ביומן",
@@ -1139,87 +1236,6 @@
     "@changelog_view_full": {
         "description": "Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content."
     },
-    "groupManage_deleteDialog_confirm": "מחיקה",
-    "@groupManage_deleteDialog_confirm": {
-        "description": "Confirm button text for delete dialog"
-    },
-    "groupManage_deleteDialog_cancel": "ביטול",
-    "@groupManage_deleteDialog_cancel": {
-        "description": "Cancel button text for delete dialog"
-    },
-    "groupManage_name_label": "שם",
-    "@groupManage_name_label": {
-        "description": "Label for the group name input field"
-    },
-    "groupManage_createDateTile_title": "תאריך יצירה",
-    "@groupManage_createDateTile_title": {
-        "description": "Label shown for the group creation date in the edit dialog"
-    },
-    "groupManage_modifyDateTile_title": "תאריך שינוי",
-    "@groupManage_modifyDateTile_title": {
-        "description": "Label shown for the group modification date in the edit dialog"
-    },
-    "groupManage_icon_none": "ללא",
-    "@groupManage_icon_none": {
-        "description": "Tooltip for the 'no icon' option in the group icon picker"
-    },
-    "groupManage_color_label": "צבע",
-    "@groupManage_color_label": {
-        "description": "Section label for the color picker in group create/edit forms"
-    },
-    "groupManage_color_none": "ללא",
-    "@groupManage_color_none": {
-        "description": "Tooltip for the 'no color' option in the group color picker"
-    },
-    "habitDisplay_groupType_createDate": "לפי תאריך יצירה",
-    "habitDisplay_groupTypeDialog_title": "מיון בתוך הקבוצה",
-    "habitDisplay_groupTypeDialog_none": "שטוח",
-    "habitDisplay_editPopMenu_groupModify": "שינוי קבוצה",
-    "habitDisplay_groupModifyDialog_title": "שינוי קבוצה",
-    "habitDisplay_groupModifyDialog_removeGroup": "הסרת קבוצה",
-    "habitDisplay_groupModifyDialog_emptyGroups": "אין קבוצות זמינות",
-    "habitDisplay_groupModifyDialog_createGroup": "יצירת קבוצה",
-    "habitDisplay_groupModifyDialog_saveAndApply": "שמירה והחלה",
-    "habitDisplay_groupModifyConfirm_titleNew": "העברה לקבוצה",
-    "habitDisplay_groupModifyConfirm_bodyRemoveGroup": "תימחק הקבוצה שאליה משויכים ההרגלים",
-    "appSetting_expandTimerDelayTile_titleText": "השהיה לפני הרחבת קבוצות",
-    "@appSetting_expandTimerDelayTile_titleText": {
-        "description": "Title for the group expand timer delay setting tile"
-    },
-    "appSetting_expandTimerDelay_default": "ברירת מחדל",
-    "appSetting_expandTimerDelay_fast": "מהיר",
-    "appSetting_expandTimerDelay_slow": "איטי",
-    "appSetting_importDialog_option_includeHabits": "לכלול הרגלים",
-    "appSetting_importDialog_option_includeGroups": "לכלול קבוצות",
-    "appSetting_importDialog_tile_includeHabits": "לכלול {count} הרגלים",
-    "@appSetting_importDialog_tile_includeHabits": {
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "example": "5"
-            }
-        }
-    },
-    "appSetting_importDialog_tile_includeGroups": "לכלול {count} קבוצות",
-    "@appSetting_importDialog_tile_includeGroups": {
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "example": "3"
-            }
-        }
-    },
-    "appSetting_importDialog_completeTitleGroups": "הושלם הייבוא של {count} קבוצות",
-    "@appSetting_importDialog_completeTitleGroups": {
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "example": "1"
-            }
-        }
-    },
-    "common_dontShowAgain": "לא להציג שוב",
-    "exportConfirmDialog_option_includeGroups": "לכלול קבוצות",
     "habitGroup_uncategorized": "ללא קבוצה",
     "@habitGroup_uncategorized": {
         "description": "Virtual group name for habits without a group"
@@ -1235,6 +1251,10 @@
     "habitEdit_groupPicker_hintText": "חיפוש או יצירת קבוצת הרגלים",
     "@habitEdit_groupPicker_hintText": {
         "description": "Placeholder text for the group picker search field"
+    },
+    "habitEdit_groupPicker_noGroup": "אין קבוצות",
+    "@habitEdit_groupPicker_noGroup": {
+        "description": "Option text for selecting no group"
     },
     "habitEdit_groupPicker_createGroup": "יצירת „{name}”",
     "@habitEdit_groupPicker_createGroup": {
@@ -1254,85 +1274,6 @@
     "@groupManage_appbar_title": {
         "description": "Title for the Group management page AppBar"
     },
-    "groupManage_deleteDialog_title": "מחיקת קבוצה",
-    "@groupManage_deleteDialog_title": {
-        "description": "Title for the delete confirmation dialog"
-    },
-    "groupManage_undo_snackbarAction": "החזרה",
-    "@groupManage_undo_snackbarAction": {
-        "description": "SnackBar undo button text"
-    },
-    "groupManage_deleted_snackbarText": "הקבוצה נמחקה",
-    "@groupManage_deleted_snackbarText": {
-        "description": "SnackBar text after successful group deletion"
-    },
-    "groupManage_editDialog_title": "עריכת קבוצה",
-    "@groupManage_editDialog_title": {
-        "description": "Title for the group edit dialog"
-    },
-    "groupManage_createDialog_title": "יצירת קבוצה",
-    "@groupManage_createDialog_title": {
-        "description": "Title for the group creation dialog"
-    },
-    "groupManage_nameRequired": "נדרש שם",
-    "@groupManage_nameRequired": {
-        "description": "Validation error when group name is empty"
-    },
-    "groupManage_desc_label": "תיאור",
-    "@groupManage_desc_label": {
-        "description": "Label for the group description input field"
-    },
-    "groupManage_sortTile_text": "מיון קבוצות",
-    "@groupManage_sortTile_text": {
-        "description": "Label for the sort selector entry"
-    },
-    "groupManage_sectionTitle_text": "קבוצות",
-    "@groupManage_sectionTitle_text": {
-        "description": "Section header text for Groups in Settings page"
-    },
-    "groupManage_icon_label": "סמל",
-    "@groupManage_icon_label": {
-        "description": "Section label for the icon picker in group create/edit forms"
-    },
-    "appSetting_manageGroups_subtitleText": "יצירה, עריכה ומחיקה של קבוצות הרגלים",
-    "@appSetting_manageGroups_subtitleText": {
-        "description": "Subtitle for the Manage Groups tile in Settings"
-    },
-    "habitDisplay_groupModifyDialog_alreadyInGroup": "ההרגלים שנבחרו כבר משויכים לקבוצה זו",
-    "habitDisplay_groupModifyConfirm_titleMixed": "אישור שינוי קבוצה",
-    "habitDisplay_groupModifyConfirm_bodyNewGroup": "ההרגלים של „{groupName}” יועברו לקבוצה זו",
-    "@habitDisplay_groupModifyConfirm_bodyNewGroup": {
-        "placeholders": {
-            "groupName": {
-                "type": "String",
-                "description": "Target group name"
-            }
-        }
-    },
-    "habitDisplay_groupModifyConfirm_nameSeparator": ",‏ ",
-    "habitDisplay_groupModify_undoFailed": "הקבוצה השתנתה במקום אחר, לא ניתן להחזיר לאחור",
-    "exportConfirmDialog_tile_includeRecords": "לכלול {count} רשומות",
-    "@exportConfirmDialog_tile_includeRecords": {
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "example": "5"
-            }
-        }
-    },
-    "exportConfirmDialog_tile_includeGroups": "לכלול {count} קבוצות",
-    "@exportConfirmDialog_tile_includeGroups": {
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "example": "3"
-            }
-        }
-    },
-    "habitEdit_groupPicker_noGroup": "אין קבוצות",
-    "@habitEdit_groupPicker_noGroup": {
-        "description": "Option text for selecting no group"
-    },
     "groupManage_selectionAppbar_title": "נבחרו {count}",
     "@groupManage_selectionAppbar_title": {
         "description": "AppBar title in selection mode, {count} = number of selected groups",
@@ -1346,21 +1287,80 @@
     "@groupManage_emptyState_text": {
         "description": "Empty state text shown when no groups exist"
     },
-    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {ההרגל יועבר מהקבוצה  „{fromGroup}” לקבוצה „{toGroup}”} other {{count} הרגלים יועברו מהקבוצה „{fromGroup}” לקבוצה „{toGroup}”}}",
-    "@habitDisplay_groupModifyConfirm_bodyChangeStat": {
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "description": "Number of habits changing group"
-            },
-            "fromGroup": {
-                "type": "String",
-                "description": "Old group name"
-            },
-            "toGroup": {
-                "type": "String",
-                "description": "New group name"
-            }
-        }
+    "groupManage_deleteDialog_title": "מחיקת קבוצה",
+    "@groupManage_deleteDialog_title": {
+        "description": "Title for the delete confirmation dialog"
+    },
+    "groupManage_deleteDialog_confirm": "מחיקה",
+    "@groupManage_deleteDialog_confirm": {
+        "description": "Confirm button text for delete dialog"
+    },
+    "groupManage_deleteDialog_cancel": "ביטול",
+    "@groupManage_deleteDialog_cancel": {
+        "description": "Cancel button text for delete dialog"
+    },
+    "groupManage_deleted_snackbarText": "הקבוצה נמחקה",
+    "@groupManage_deleted_snackbarText": {
+        "description": "SnackBar text after successful group deletion"
+    },
+    "groupManage_undo_snackbarAction": "החזרה",
+    "@groupManage_undo_snackbarAction": {
+        "description": "SnackBar undo button text"
+    },
+    "groupManage_editDialog_title": "עריכת קבוצה",
+    "@groupManage_editDialog_title": {
+        "description": "Title for the group edit dialog"
+    },
+    "groupManage_createDialog_title": "יצירת קבוצה",
+    "@groupManage_createDialog_title": {
+        "description": "Title for the group creation dialog"
+    },
+    "groupManage_nameRequired": "נדרש שם",
+    "@groupManage_nameRequired": {
+        "description": "Validation error when group name is empty"
+    },
+    "groupManage_name_label": "שם",
+    "@groupManage_name_label": {
+        "description": "Label for the group name input field"
+    },
+    "groupManage_desc_label": "תיאור",
+    "@groupManage_desc_label": {
+        "description": "Label for the group description input field"
+    },
+    "groupManage_sortTile_text": "מיון קבוצות",
+    "@groupManage_sortTile_text": {
+        "description": "Label for the sort selector entry"
+    },
+    "groupManage_sectionTitle_text": "קבוצות",
+    "@groupManage_sectionTitle_text": {
+        "description": "Section header text for Groups in Settings page"
+    },
+    "groupManage_createDateTile_title": "תאריך יצירה",
+    "@groupManage_createDateTile_title": {
+        "description": "Label shown for the group creation date in the edit dialog"
+    },
+    "groupManage_modifyDateTile_title": "תאריך שינוי",
+    "@groupManage_modifyDateTile_title": {
+        "description": "Label shown for the group modification date in the edit dialog"
+    },
+    "groupManage_icon_label": "סמל",
+    "@groupManage_icon_label": {
+        "description": "Section label for the icon picker in group create/edit forms"
+    },
+    "groupManage_icon_none": "ללא",
+    "@groupManage_icon_none": {
+        "description": "Tooltip for the 'no icon' option in the group icon picker"
+    },
+    "groupManage_color_label": "צבע",
+    "@groupManage_color_label": {
+        "description": "Section label for the color picker in group create/edit forms"
+    },
+    "groupManage_color_none": "ללא",
+    "@groupManage_color_none": {
+        "description": "Tooltip for the 'no color' option in the group color picker"
+    },
+    "appSetting_manageGroups_subtitleText": "יצירה, עריכה ומחיקה של קבוצות הרגלים",
+    "@appSetting_manageGroups_subtitleText": {
+        "description": "Subtitle for the Manage Groups tile in Settings"
     }
 }
