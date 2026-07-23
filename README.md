@@ -44,6 +44,8 @@ Linux — **no ads, no account required**. See the translation badge above for s
   &nbsp;
   <a href="https://apps.apple.com/app/table-habit/id6744886469"><img src="docs/README/images/apple-get-it-on.svg" alt="Get Table Habit on the App Store" height="60"></a>
   &nbsp;
+  <a href="https://testflight.apple.com/join/aJ5PWqaR"><img src="docs/README/images/testflight-get-it-on.svg" alt="Join Table Habit TestFlight beta" height="60"></a>
+  &nbsp;
   <a href="https://apps.microsoft.com/detail/9NG22PL73NGZ"><img src="docs/README/images/msstore-get-it-on.svg" alt="Get Table Habit on Microsoft Store" height="60"></a>
 </p>
 
