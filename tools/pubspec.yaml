@@ -12,3 +12,4 @@ dependencies:
   dart_style: ^3.1.7
   icon_font_generator: ^4.1.0
   path: ^1.8.2
+  yaml: ^3.1.3

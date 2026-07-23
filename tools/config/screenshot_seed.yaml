@@ -1,0 +1,1303 @@
+# Screenshot seed data configuration for mhabit.
+#
+# Usage:
+#   dart run tools/bin/gen_screenshot_data.dart --langs en,zh
+#   dart run tools/bin/gen_screenshot_data.dart --all-langs
+#   dart run tools/bin/gen_screenshot_data.dart --no-repeat --seed s05
+
+seed: 42
+
+seeds:
+  s01: 52
+  s02: 94
+  s03: 136
+  s04: 178
+  s05: 220
+  s06: 262
+  s07: 304
+  s08: 346
+  s09: 388
+  s10: 430
+  s11: 472
+  s12: 514
+  s13: 556
+  s14: 598
+  s15: 640
+  s16: 682
+  s17: 724
+  s18: 766
+  s19: 808
+  s20: 850
+  s21: 892
+  s22: 934
+  s23: 976
+  s24: 1018
+
+selection:
+  habits: 10
+  groups: 3
+
+groups:
+  - uuid: "group-health-0000-0000-000000000001"
+    color: 1
+    icon: 59078
+    weight: 2.5
+    en: { name: "Health", desc: "Physical and mental well-being." }
+    zh: { name: "健康", desc: "身体与心理健康。" }
+
+  - uuid: "group-learn-0000-0000-000000000001"
+    color: 4
+    icon: 58713
+    weight: 2.5
+    en: { name: "Learning", desc: "Knowledge and skill development." }
+    zh: { name: "学习", desc: "知识学习与技能发展。" }
+
+  - uuid: "group-life-0000-0000-000000000001"
+    color: 8
+    icon: 58136
+    weight: 3.0
+    en: { name: "Life", desc: "Daily routines and personal growth." }
+    zh: { name: "生活", desc: "日常规律与个人成长。" }
+
+  - uuid: "group-work-0000-0000-000000000001"
+    color: 3
+    icon: 59124
+    weight: 2.5
+    en: { name: "Work", desc: "Productivity and professional habits." }
+    zh: { name: "工作", desc: "效率与职业习惯。" }
+
+  - uuid: "group-social-0000-0000-000000000001"
+    color: 5
+    icon: 58877
+    weight: 2.0
+    en: { name: "Social", desc: "Relationships and communication." }
+    zh: { name: "社交", desc: "人际关系与沟通。" }
+
+  - uuid: "group-creative-0000-0000-000000000001"
+    color: 9
+    icon: 58389
+    weight: 2.0
+    en: { name: "Creative", desc: "Art, music, and self-expression." }
+    zh: { name: "创意", desc: "艺术、音乐与自我表达。" }
+
+  - uuid: "group-finance-0000-0000-000000000001"
+    color: 2
+    icon: 57409
+    weight: 2.0
+    en: { name: "Finance", desc: "Money management and saving." }
+    zh: { name: "理财", desc: "理财与储蓄。" }
+
+  - uuid: "group-mind-0000-0000-000000000001"
+    color: 6
+    icon: 58735
+    weight: 2.5
+    en: { name: "Mindfulness", desc: "Present awareness and calm." }
+    zh: { name: "正念", desc: "当下觉知与平静。" }
+
+  - uuid: "group-food-0000-0000-000000000001"
+    color: 7
+    icon: 61585
+    weight: 2.0
+    en: { name: "Nutrition", desc: "Healthy eating and meal prep." }
+    zh: { name: "饮食", desc: "健康饮食与备餐。" }
+
+  - uuid: "group-fitness-0000-0000-000000000001"
+    color: 10
+    icon: 57997
+    weight: 2.0
+    en: { name: "Fitness", desc: "Exercise and physical training." }
+    zh: { name: "健身", desc: "运动与体能训练。" }
+
+  - uuid: "group-read-0000-0000-000000000001"
+    color: 1
+    icon: 61585
+    weight: 1.5
+    en: { name: "Reading", desc: "Books and knowledge intake." }
+    zh: { name: "阅读", desc: "书籍与知识摄入。" }
+
+  - uuid: "group-write-0000-0000-000000000001"
+    color: 3
+    icon: 58877
+    weight: 1.5
+    en: { name: "Writing", desc: "Journaling and creative writing." }
+    zh: { name: "写作", desc: "日记与创意写作。" }
+
+  - uuid: "group-music-0000-0000-000000000001"
+    color: 5
+    icon: 58389
+    weight: 1.5
+    en: { name: "Music", desc: "Playing and appreciating music." }
+    zh: { name: "音乐", desc: "演奏与欣赏音乐。" }
+
+  - uuid: "group-travel-0000-0000-000000000001"
+    color: 7
+    icon: 58136
+    weight: 1.0
+    en: { name: "Travel", desc: "Exploring places and cultures." }
+    zh: { name: "旅行", desc: "探索地方与文化。" }
+
+  - uuid: "group-garden-0000-0000-000000000001"
+    color: 8
+    icon: 61585
+    weight: 1.0
+    en: { name: "Gardening", desc: "Growing plants and nature." }
+    zh: { name: "园艺", desc: "种植与亲近自然。" }
+
+  - uuid: "group-cook-0000-0000-000000000001"
+    color: 4
+    icon: 61585
+    weight: 1.5
+    en: { name: "Cooking", desc: "Preparing meals and recipes." }
+    zh: { name: "烹饪", desc: "备餐与学习菜谱。" }
+
+  - uuid: "group-tech-0000-0000-000000000001"
+    color: 6
+    icon: 59124
+    weight: 1.5
+    en: { name: "Tech", desc: "Staying current with tech." }
+    zh: { name: "科技", desc: "技术更新与学习。" }
+
+  - uuid: "group-eco-0000-0000-000000000001"
+    color: 9
+    icon: 61585
+    weight: 1.0
+    en: { name: "Environment", desc: "Sustainable living choices." }
+    zh: { name: "环保", desc: "可持续生活。" }
+
+  - uuid: "group-community-0000-0000-000000000001"
+    color: 2
+    icon: 58877
+    weight: 1.5
+    en: { name: "Community", desc: "Giving back locally." }
+    zh: { name: "社区", desc: "回馈社区。" }
+
+  - uuid: "group-rest-0000-0000-000000000001"
+    color: 10
+    icon: 58735
+    weight: 2.0
+    en: { name: "Rest", desc: "Sleep and recovery." }
+    zh: { name: "休息", desc: "睡眠与恢复。" }
+
+habits:
+  - type: 1
+    color: 1
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 120
+    strategy: "curve_up"
+    group_uuid: "group-health-0000-0000-000000000001"
+    en: { name: "Morning Run", desc: "Run 5 km every morning." }
+    zh: { name: "晨跑", desc: "每天早上跑步 5 公里。" }
+
+  - type: 2
+    color: 2
+    daily_goal: 0
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 120
+    strategy: "curve_down"
+    group_uuid: "group-health-0000-0000-000000000001"
+    en: { name: "Late Night", desc: "Avoid staying up past midnight." }
+    zh: { name: "熬夜", desc: "避免午夜后还不睡觉。" }
+
+  - type: 1
+    color: 3
+    daily_goal: 1
+    daily_goal_unit: "分钟"
+    target_days: 66
+    days_back: 90
+    strategy: "consistent_85"
+    group_uuid: "group-health-0000-0000-000000000001"
+    en: { name: "Meditation", desc: "10-minute guided meditation." }
+    zh: { name: "冥想", desc: "10 分钟正念冥想。" }
+
+  - type: 1
+    color: 1
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 90
+    strategy: "consistent_85"
+    group_uuid: "group-health-0000-0000-000000000001"
+    en: { name: "Wake Up Early", desc: "Get out of bed by 6:30 AM." }
+    zh: { name: "早起", desc: "早上 6:30 前起床。" }
+
+  - type: 1
+    color: 2
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 40
+    strategy: "consistent_90"
+    group_uuid: "group-health-0000-0000-000000000001"
+    en: { name: "Push-ups", desc: "Do 20 push-ups every morning." }
+    zh: { name: "俯卧撑", desc: "每天早上做 20 个俯卧撑。" }
+
+  - type: 2
+    color: 3
+    daily_goal: 0
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 60
+    strategy: "sporadic_30"
+    group_uuid: "group-health-0000-0000-000000000001"
+    en: { name: "No Snacks", desc: "Avoid unhealthy snacks." }
+    zh: { name: "不吃零食", desc: "不吃不健康的零食。" }
+
+  - type: 1
+    color: 2
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 85
+    strategy: "consistent_90"
+    group_uuid: "group-health-0000-0000-000000000001"
+    en: { name: "Walk 10K", desc: "Walk 10,000 steps daily." }
+    zh: { name: "日行万步", desc: "每天走一万步。" }
+
+  - type: 1
+    color: 5
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 65
+    strategy: "improving_4080"
+    group_uuid: "group-health-0000-0000-000000000001"
+    en: { name: "Cold Shower", desc: "End shower with cold water." }
+    zh: { name: "冷水澡", desc: "淋浴结束冲冷水。" }
+
+  - type: 1
+    color: 4
+    daily_goal: 1
+    daily_goal_unit: "页"
+    target_days: 100
+    days_back: 90
+    strategy: "improving_5080"
+    group_uuid: "group-learn-0000-0000-000000000001"
+    en: { name: "Reading", desc: "Read 10 pages every day." }
+    zh: { name: "阅读", desc: "每天读 10 页书。" }
+
+  - type: 1
+    color: 5
+    daily_goal: 1
+    daily_goal_unit: "个"
+    target_days: 66
+    days_back: 60
+    strategy: "consistent_90"
+    group_uuid: "group-learn-0000-0000-000000000001"
+    en: { name: "Flossing", desc: "Floss teeth before bed." }
+    zh: { name: "使用牙线", desc: "刷牙前用牙线。" }
+
+  - type: 1
+    color: 6
+    daily_goal: 30
+    daily_goal_unit: "分钟"
+    target_days: 66
+    days_back: 80
+    strategy: "variable_70"
+    group_uuid: "group-learn-0000-0000-000000000001"
+    en: { name: "Exercise", desc: "30 min gym or home workout." }
+    zh: { name: "锻炼", desc: "30 分钟运动。" }
+
+  - type: 2
+    color: 7
+    daily_goal: 0
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 50
+    strategy: "sporadic_30"
+    group_uuid: "group-learn-0000-0000-000000000001"
+    en: { name: "Social Media", desc: "Limit mindless scrolling." }
+    zh: { name: "刷社交媒体", desc: "控制刷手机时间。" }
+
+  - type: 1
+    color: 4
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 100
+    days_back: 80
+    strategy: "improving_5080"
+    group_uuid: "group-learn-0000-0000-000000000001"
+    en: { name: "Study Language", desc: "Practice language 15 min." }
+    zh: { name: "学语言", desc: "练习外语 15 分钟。" }
+
+  - type: 1
+    color: 5
+    daily_goal: 1
+    daily_goal_unit: "个"
+    target_days: 66
+    days_back: 45
+    strategy: "variable_70"
+    group_uuid: "group-learn-0000-0000-000000000001"
+    en: { name: "Code Practice", desc: "Solve one coding problem." }
+    zh: { name: "编程练习", desc: "解决一道编程题。" }
+
+  - type: 1
+    color: 6
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 50
+    strategy: "consistent_80"
+    group_uuid: "group-learn-0000-0000-000000000001"
+    en: { name: "Podcast", desc: "Listen to educational podcast." }
+    zh: { name: "听播客", desc: "听知识播客。" }
+
+  - type: 1
+    color: 9
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 90
+    days_back: 75
+    strategy: "improving_5080"
+    group_uuid: "group-learn-0000-0000-000000000001"
+    en: { name: "Memorize", desc: "Memorize one new fact." }
+    zh: { name: "记忆训练", desc: "记住新知识点。" }
+
+  - type: 1
+    color: 3
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 30
+    strategy: "recent_95"
+    group_uuid: "group-learn-0000-0000-000000000001"
+    en: { name: "Take Notes", desc: "Write a note about learning." }
+    zh: { name: "学习笔记", desc: "写下学习笔记。" }
+
+  - type: 1
+    color: 8
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 70
+    strategy: "consistent_80"
+    group_uuid: "group-life-0000-0000-000000000001"
+    en: { name: "Drink Water", desc: "Drink 8 glasses of water." }
+    zh: { name: "喝水", desc: "喝完 8 杯水。" }
+
+  - type: 1
+    color: 9
+    daily_goal: 1
+    daily_goal_unit: "杯"
+    target_days: 66
+    days_back: 40
+    strategy: "improving_4080"
+    group_uuid: "group-life-0000-0000-000000000001"
+    en: { name: "Journaling", desc: "Write a short journal entry." }
+    zh: { name: "写日记", desc: "写一小段日记。" }
+
+  - type: 1
+    color: 10
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 30
+    strategy: "recent_95"
+    group_uuid: "group-life-0000-0000-000000000001"
+    en: { name: "Stretching", desc: "5-min full-body stretch." }
+    zh: { name: "拉伸", desc: "5 分钟全身拉伸。" }
+
+  - type: 1
+    color: 8
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 20
+    strategy: "recent_95"
+    group_uuid: "group-life-0000-0000-000000000001"
+    en: { name: "Make Bed", desc: "Make the bed after waking." }
+    zh: { name: "整理床铺", desc: "起床后整理床铺。" }
+
+  - type: 2
+    color: 9
+    daily_goal: 0
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 100
+    strategy: "curve_down"
+    group_uuid: "group-life-0000-0000-000000000001"
+    en: { name: "No Phone Bed", desc: "Put phone away before sleep." }
+    zh: { name: "睡前不用手机", desc: "睡前放下手机。" }
+
+  - type: 1
+    color: 10
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 55
+    strategy: "improving_4080"
+    group_uuid: "group-life-0000-0000-000000000001"
+    en: { name: "Gratitude", desc: "Write 3 things you're grateful for." }
+    zh: { name: "感恩日记", desc: "写下 3 件感恩的事。" }
+
+  - type: 1
+    color: 4
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 50
+    strategy: "consistent_85"
+    group_uuid: "group-life-0000-0000-000000000001"
+    en: { name: "Tidy Desk", desc: "Clear desk before leaving." }
+    zh: { name: "整理桌面", desc: "离开前整理桌面。" }
+
+  - type: 1
+    color: 1
+    daily_goal: 1
+    daily_goal_unit: "分钟"
+    target_days: 80
+    days_back: 70
+    strategy: "improving_5080"
+    group_uuid: "group-work-0000-0000-000000000001"
+    en: { name: "Deep Work", desc: "90 min focused work." }
+    zh: { name: "深度工作", desc: "90 分钟专注工作。" }
+
+  - type: 1
+    color: 2
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 35
+    strategy: "variable_70"
+    group_uuid: "group-work-0000-0000-000000000001"
+    en: { name: "Inbox Zero", desc: "Clear inbox to zero." }
+    zh: { name: "清空收件箱", desc: "清空邮件收件箱。" }
+
+  - type: 1
+    color: 3
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 50
+    strategy: "consistent_80"
+    group_uuid: "group-work-0000-0000-000000000001"
+    en: { name: "Plan Tomorrow", desc: "Write top 3 tasks for tomorrow." }
+    zh: { name: "计划明日", desc: "写下明天 3 件要事。" }
+
+  - type: 1
+    color: 4
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 45
+    strategy: "consistent_85"
+    group_uuid: "group-work-0000-0000-000000000001"
+    en: { name: "Task Batching", desc: "Group similar tasks together." }
+    zh: { name: "任务批处理", desc: "集中处理相似任务。" }
+
+  - type: 2
+    color: 5
+    daily_goal: 0
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 60
+    strategy: "sporadic_30"
+    group_uuid: "group-work-0000-0000-000000000001"
+    en: { name: "No Meeting Day", desc: "Keep one day meeting-free." }
+    zh: { name: "无会议日", desc: "每周一天无会议。" }
+
+  - type: 1
+    color: 6
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 35
+    strategy: "consistent_90"
+    group_uuid: "group-work-0000-0000-000000000001"
+    en: { name: "Review Goals", desc: "Review weekly goals 5 min." }
+    zh: { name: "回顾目标", desc: "花 5 分钟回顾目标。" }
+
+  - type: 1
+    color: 4
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 25
+    strategy: "sporadic_30"
+    group_uuid: "group-social-0000-0000-000000000001"
+    en: { name: "Call Family", desc: "Call a family member." }
+    zh: { name: "联系家人", desc: "给家人打电话。" }
+
+  - type: 1
+    color: 5
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 40
+    strategy: "consistent_85"
+    group_uuid: "group-social-0000-0000-000000000001"
+    en: { name: "Reply Messages", desc: "Reply pending messages." }
+    zh: { name: "回复消息", desc: "回复未处理消息。" }
+
+  - type: 1
+    color: 7
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 30
+    strategy: "recent_95"
+    group_uuid: "group-social-0000-0000-000000000001"
+    en: { name: "Compliment", desc: "Give genuine compliment." }
+    zh: { name: "赞美他人", desc: "真诚赞美他人。" }
+
+  - type: 1
+    color: 9
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 50
+    strategy: "consistent_80"
+    group_uuid: "group-social-0000-0000-000000000001"
+    en: { name: "Lunch Together", desc: "Have lunch with colleague." }
+    zh: { name: "一起午餐", desc: "和同事一起吃午餐。" }
+
+  - type: 1
+    color: 10
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 40
+    strategy: "variable_70"
+    group_uuid: "group-social-0000-0000-000000000001"
+    en: { name: "Send Thanks", desc: "Send thank-you message." }
+    zh: { name: "发送感谢", desc: "发感谢信息。" }
+
+  - type: 2
+    color: 1
+    daily_goal: 0
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 55
+    strategy: "sporadic_30"
+    group_uuid: "group-social-0000-0000-000000000001"
+    en: { name: "No Interrupt", desc: "Let others finish speaking." }
+    zh: { name: "不打断别人", desc: "等别人说完再回应。" }
+
+  - type: 1
+    color: 8
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 30
+    strategy: "variable_70"
+    group_uuid: "group-creative-0000-0000-000000000001"
+    en: { name: "Sketch", desc: "Draw for 10 minutes." }
+    zh: { name: "速写", desc: "随手画 10 分钟。" }
+
+  - type: 1
+    color: 3
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 100
+    days_back: 70
+    strategy: "improving_5080"
+    group_uuid: "group-creative-0000-0000-000000000001"
+    en: { name: "Write Fiction", desc: "Write 200 words of fiction." }
+    zh: { name: "写小说", desc: "写 200 字小说。" }
+
+  - type: 1
+    color: 6
+    daily_goal: 20
+    daily_goal_unit: "分钟"
+    target_days: 66
+    days_back: 45
+    strategy: "consistent_80"
+    group_uuid: "group-creative-0000-0000-000000000001"
+    en: { name: "Practice Music", desc: "Practice instrument 20 min." }
+    zh: { name: "练乐器", desc: "练习乐器 20 分钟。" }
+
+  - type: 1
+    color: 7
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 25
+    strategy: "variable_70"
+    group_uuid: "group-creative-0000-0000-000000000001"
+    en: { name: "Photo Walk", desc: "Take one interesting photo." }
+    zh: { name: "摄影漫步", desc: "拍一张有趣照片。" }
+
+  - type: 1
+    color: 1
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 60
+    strategy: "consistent_90"
+    group_uuid: "group-finance-0000-0000-000000000001"
+    en: { name: "Track Expenses", desc: "Log every expense daily." }
+    zh: { name: "记账", desc: "记录每笔支出。" }
+
+  - type: 1
+    color: 1
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 45
+    strategy: "consistent_85"
+    group_uuid: "group-finance-0000-0000-000000000001"
+    en: { name: "Save Money", desc: "Transfer to savings account." }
+    zh: { name: "储蓄", desc: "转入储蓄账户。" }
+
+  - type: 1
+    color: 3
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 40
+    strategy: "consistent_80"
+    group_uuid: "group-finance-0000-0000-000000000001"
+    en: { name: "Review Budget", desc: "Review monthly budget." }
+    zh: { name: "审视预算", desc: "审视月度预算。" }
+
+  - type: 2
+    color: 2
+    daily_goal: 0
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 55
+    strategy: "sporadic_30"
+    group_uuid: "group-finance-0000-0000-000000000001"
+    en: { name: "No Impulse Buy", desc: "Wait 24h before purchase." }
+    zh: { name: "不冲动消费", desc: "购物前等 24 小时。" }
+
+  - type: 1
+    color: 4
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 35
+    strategy: "improving_4080"
+    group_uuid: "group-finance-0000-0000-000000000001"
+    en: { name: "Invest Learn", desc: "Read about investing." }
+    zh: { name: "学习投资", desc: "阅读投资文章。" }
+
+  - type: 1
+    color: 6
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 50
+    strategy: "consistent_90"
+    group_uuid: "group-mind-0000-0000-000000000001"
+    en: { name: "Deep Breath", desc: "5 deep breaths before work." }
+    zh: { name: "深呼吸", desc: "工作前 5 次深呼吸。" }
+
+  - type: 1
+    color: 7
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 40
+    strategy: "improving_5080"
+    group_uuid: "group-mind-0000-0000-000000000001"
+    en: { name: "Body Scan", desc: "3-min body scan meditation." }
+    zh: { name: "身体扫描", desc: "3 分钟身体扫描。" }
+
+  - type: 1
+    color: 8
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 30
+    strategy: "variable_70"
+    group_uuid: "group-mind-0000-0000-000000000001"
+    en: { name: "Gratitude Walk", desc: "Notice 3 beautiful things." }
+    zh: { name: "感恩散步", desc: "留意 3 件美好事物。" }
+
+  - type: 2
+    color: 2
+    daily_goal: 0
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 45
+    strategy: "sporadic_30"
+    group_uuid: "group-mind-0000-0000-000000000001"
+    en: { name: "No Multitask", desc: "Focus on one task at a time." }
+    zh: { name: "不一心多用", desc: "一次只做一件事。" }
+
+  - type: 1
+    color: 10
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 50
+    strategy: "consistent_85"
+    group_uuid: "group-mind-0000-0000-000000000001"
+    en: { name: "Evening Reflect", desc: "Reflect on the day 5 min." }
+    zh: { name: "晚间反思", desc: "睡前回顾今天。" }
+
+  - type: 1
+    color: 2
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 55
+    strategy: "consistent_85"
+    group_uuid: "group-food-0000-0000-000000000001"
+    en: { name: "Eat Veggies", desc: "Veggies in every meal." }
+    zh: { name: "吃蔬菜", desc: "每餐都有蔬菜。" }
+
+  - type: 2
+    color: 2
+    daily_goal: 0
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 60
+    strategy: "sporadic_30"
+    group_uuid: "group-food-0000-0000-000000000001"
+    en: { name: "No Sugary Drink", desc: "Replace with water or tea." }
+    zh: { name: "不喝含糖饮料", desc: "用白水代替含糖饮料。" }
+
+  - type: 1
+    color: 4
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 35
+    strategy: "consistent_80"
+    group_uuid: "group-food-0000-0000-000000000001"
+    en: { name: "Meal Prep Sunday", desc: "Prep meals for the week." }
+    zh: { name: "周日备餐", desc: "为本周备餐。" }
+
+  - type: 1
+    color: 5
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 40
+    strategy: "variable_70"
+    group_uuid: "group-food-0000-0000-000000000001"
+    en: { name: "Track Calories", desc: "Log food intake daily." }
+    zh: { name: "记录热量", desc: "记录每日饮食。" }
+
+  - type: 1
+    color: 6
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 25
+    strategy: "recent_95"
+    group_uuid: "group-food-0000-0000-000000000001"
+    en: { name: "Try Recipe", desc: "Cook one new recipe." }
+    zh: { name: "尝试菜谱", desc: "尝试新菜谱。" }
+
+  - type: 1
+    color: 7
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 55
+    strategy: "improving_5080"
+    group_uuid: "group-fitness-0000-0000-000000000001"
+    en: { name: "Plank", desc: "Hold plank 60 seconds." }
+    zh: { name: "平板支撑", desc: "平板支撑 60 秒。" }
+
+  - type: 1
+    color: 8
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 50
+    strategy: "consistent_85"
+    group_uuid: "group-fitness-0000-0000-000000000001"
+    en: { name: "Stretch Routine", desc: "Full-body stretch 10 min." }
+    zh: { name: "拉伸练习", desc: "全身拉伸 10 分钟。" }
+
+  - type: 1
+    color: 9
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 40
+    strategy: "variable_70"
+    group_uuid: "group-fitness-0000-0000-000000000001"
+    en: { name: "Jump Rope", desc: "Jump rope 5 minutes." }
+    zh: { name: "跳绳", desc: "跳绳 5 分钟。" }
+
+  - type: 1
+    color: 10
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 60
+    strategy: "consistent_90"
+    group_uuid: "group-fitness-0000-0000-000000000001"
+    en: { name: "Stairs", desc: "Take stairs not lift." }
+    zh: { name: "走楼梯", desc: "用楼梯代替电梯。" }
+
+  - type: 1
+    color: 2
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 45
+    strategy: "consistent_80"
+    group_uuid: "group-fitness-0000-0000-000000000001"
+    en: { name: "Evening Walk", desc: "Walk 20 min after dinner." }
+    zh: { name: "晚间散步", desc: "晚饭后散步 20 分钟。" }
+
+  - type: 1
+    color: 3
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 50
+    strategy: "consistent_90"
+    group_uuid: "group-read-0000-0000-000000000001"
+    en: { name: "Read Fiction", desc: "Read fiction 20 min." }
+    zh: { name: "读小说", desc: "读小说 20 分钟。" }
+
+  - type: 1
+    color: 4
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 45
+    strategy: "consistent_85"
+    group_uuid: "group-read-0000-0000-000000000001"
+    en: { name: "Read News", desc: "Catch up on world news." }
+    zh: { name: "读新闻", desc: "了解世界新闻。" }
+
+  - type: 1
+    color: 5
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 40
+    strategy: "improving_5080"
+    group_uuid: "group-read-0000-0000-000000000001"
+    en: { name: "Read Biography", desc: "Read biography chapter." }
+    zh: { name: "读传记", desc: "读传记一章。" }
+
+  - type: 1
+    color: 1
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 55
+    strategy: "variable_70"
+    group_uuid: "group-read-0000-0000-000000000001"
+    en: { name: "Book Club", desc: "Discuss book with group." }
+    zh: { name: "读书会", desc: "和读书会讨论。" }
+
+  - type: 1
+    color: 6
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 50
+    strategy: "improving_5080"
+    group_uuid: "group-write-0000-0000-000000000001"
+    en: { name: "Morning Pages", desc: "Write 3 pages stream-of-consciousness." }
+    zh: { name: "晨间写作", desc: "写 3 页意识流。" }
+
+  - type: 1
+    color: 7
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 40
+    strategy: "consistent_85"
+    group_uuid: "group-write-0000-0000-000000000001"
+    en: { name: "Blog Post", desc: "Draft one blog post." }
+    zh: { name: "写博客", desc: "写一篇博客草稿。" }
+
+  - type: 1
+    color: 8
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 30
+    strategy: "variable_70"
+    group_uuid: "group-write-0000-0000-000000000001"
+    en: { name: "Poetry", desc: "Write one short poem." }
+    zh: { name: "写诗", desc: "写一首短诗。" }
+
+  - type: 1
+    color: 9
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 45
+    strategy: "consistent_80"
+    group_uuid: "group-write-0000-0000-000000000001"
+    en: { name: "Letter Writing", desc: "Write a handwritten letter." }
+    zh: { name: "写信", desc: "手写一封信。" }
+
+  - type: 1
+    color: 10
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 50
+    strategy: "consistent_85"
+    group_uuid: "group-music-0000-0000-000000000001"
+    en: { name: "Listen Album", desc: "Listen to full album." }
+    zh: { name: "听专辑", desc: "听完一张专辑。" }
+
+  - type: 1
+    color: 1
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 40
+    strategy: "improving_5080"
+    group_uuid: "group-music-0000-0000-000000000001"
+    en: { name: "Learn Song", desc: "Learn to play new song." }
+    zh: { name: "学新歌", desc: "学弹一首新歌。" }
+
+  - type: 1
+    color: 2
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 30
+    strategy: "variable_70"
+    group_uuid: "group-music-0000-0000-000000000001"
+    en: { name: "Music Theory", desc: "Study 10 min music theory." }
+    zh: { name: "乐理学习", desc: "学 10 分钟乐理。" }
+
+  - type: 1
+    color: 3
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 25
+    strategy: "recent_95"
+    group_uuid: "group-music-0000-0000-000000000001"
+    en: { name: "Sing", desc: "Sing for 5 minutes." }
+    zh: { name: "唱歌", desc: "唱歌 5 分钟。" }
+
+  - type: 1
+    color: 4
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 40
+    strategy: "consistent_80"
+    group_uuid: "group-travel-0000-0000-000000000001"
+    en: { name: "Plan Trip", desc: "Research next destination." }
+    zh: { name: "规划旅行", desc: "研究下个目的地。" }
+
+  - type: 1
+    color: 5
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 30
+    strategy: "recent_95"
+    group_uuid: "group-travel-0000-0000-000000000001"
+    en: { name: "Photo Album", desc: "Organize travel photos." }
+    zh: { name: "整理照片", desc: "整理旅行照片。" }
+
+  - type: 1
+    color: 6
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 35
+    strategy: "variable_70"
+    group_uuid: "group-travel-0000-0000-000000000001"
+    en: { name: "Local Explore", desc: "Visit local landmark." }
+    zh: { name: "本地探索", desc: "探索本地景点。" }
+
+  - type: 1
+    color: 7
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 50
+    strategy: "consistent_85"
+    group_uuid: "group-garden-0000-0000-000000000001"
+    en: { name: "Water Plants", desc: "Water all plants today." }
+    zh: { name: "浇花", desc: "给所有植物浇水。" }
+
+  - type: 1
+    color: 8
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 30
+    strategy: "recent_95"
+    group_uuid: "group-garden-0000-0000-000000000001"
+    en: { name: "Prune", desc: "Prune dead leaves." }
+    zh: { name: "修剪", desc: "修剪枯叶。" }
+
+  - type: 1
+    color: 9
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 40
+    strategy: "improving_4080"
+    group_uuid: "group-garden-0000-0000-000000000001"
+    en: { name: "New Plant", desc: "Learn about one plant." }
+    zh: { name: "新植物", desc: "了解一种植物。" }
+
+  - type: 1
+    color: 10
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 50
+    strategy: "improving_5080"
+    group_uuid: "group-cook-0000-0000-000000000001"
+    en: { name: "Cook Dinner", desc: "Cook dinner from scratch." }
+    zh: { name: "做晚餐", desc: "从头做晚餐。" }
+
+  - type: 1
+    color: 2
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 40
+    strategy: "consistent_85"
+    group_uuid: "group-cook-0000-0000-000000000001"
+    en: { name: "Bake", desc: "Bake bread or pastry." }
+    zh: { name: "烘焙", desc: "烤面包或点心。" }
+
+  - type: 1
+    color: 3
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 35
+    strategy: "variable_70"
+    group_uuid: "group-cook-0000-0000-000000000001"
+    en: { name: "Spice Learn", desc: "Learn about one spice." }
+    zh: { name: "认识香料", desc: "认识一种香料。" }
+
+  - type: 1
+    color: 4
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 25
+    strategy: "recent_95"
+    group_uuid: "group-cook-0000-0000-000000000001"
+    en: { name: "Food Photo", desc: "Take photo of meal." }
+    zh: { name: "美食摄影", desc: "拍美食照片。" }
+
+  - type: 1
+    color: 5
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 50
+    strategy: "improving_5080"
+    group_uuid: "group-tech-0000-0000-000000000001"
+    en: { name: "Learn Framework", desc: "Study new framework 30 min." }
+    zh: { name: "学框架", desc: "学新框架 30 分钟。" }
+
+  - type: 1
+    color: 6
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 40
+    strategy: "consistent_85"
+    group_uuid: "group-tech-0000-0000-000000000001"
+    en: { name: "Tech Article", desc: "Read one tech article." }
+    zh: { name: "读技术文章", desc: "读一篇技术文章。" }
+
+  - type: 1
+    color: 7
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 30
+    strategy: "variable_70"
+    group_uuid: "group-tech-0000-0000-000000000001"
+    en: { name: "Side Project", desc: "Work on side project." }
+    zh: { name: "副项目", desc: "推进副项目。" }
+
+  - type: 1
+    color: 8
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 45
+    strategy: "consistent_80"
+    group_uuid: "group-tech-0000-0000-000000000001"
+    en: { name: "Clean Desktop", desc: "Organize digital files." }
+    zh: { name: "整理桌面", desc: "整理电脑文件。" }
+
+  - type: 1
+    color: 9
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 50
+    strategy: "consistent_85"
+    group_uuid: "group-eco-0000-0000-000000000001"
+    en: { name: "Recycle", desc: "Sort recyclables properly." }
+    zh: { name: "分类回收", desc: "正确分类回收物。" }
+
+  - type: 1
+    color: 10
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 30
+    strategy: "recent_95"
+    group_uuid: "group-eco-0000-0000-000000000001"
+    en: { name: "No Plastic Bag", desc: "Bring reusable bag." }
+    zh: { name: "不用塑料袋", desc: "自带购物袋。" }
+
+  - type: 1
+    color: 1
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 40
+    strategy: "improving_4080"
+    group_uuid: "group-eco-0000-0000-000000000001"
+    en: { name: "Save Energy", desc: "Turn off unused lights." }
+    zh: { name: "节约能源", desc: "关掉不用的灯。" }
+
+  - type: 1
+    color: 2
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 45
+    strategy: "consistent_80"
+    group_uuid: "group-community-0000-0000-000000000001"
+    en: { name: "Volunteer", desc: "Spend 30 min volunteering." }
+    zh: { name: "志愿服务", desc: "志愿服务 30 分钟。" }
+
+  - type: 1
+    color: 3
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 35
+    strategy: "variable_70"
+    group_uuid: "group-community-0000-0000-000000000001"
+    en: { name: "Neighbor Chat", desc: "Chat with a neighbor." }
+    zh: { name: "邻里聊天", desc: "和邻居聊天。" }
+
+  - type: 1
+    color: 4
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 30
+    strategy: "recent_95"
+    group_uuid: "group-community-0000-0000-000000000001"
+    en: { name: "Donate", desc: "Donate unused items." }
+    zh: { name: "捐赠", desc: "捐赠闲置物品。" }
+
+  - type: 1
+    color: 5
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 40
+    strategy: "improving_5080"
+    group_uuid: "group-community-0000-0000-000000000001"
+    en: { name: "Community Event", desc: "Attend local event." }
+    zh: { name: "社区活动", desc: "参加本地活动。" }
+
+  - type: 1
+    color: 6
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 60
+    strategy: "consistent_90"
+    group_uuid: "group-rest-0000-0000-000000000001"
+    en: { name: "Sleep Early", desc: "Go to bed before 10:30 PM." }
+    zh: { name: "早睡", desc: "晚上 10:30 前睡觉。" }
+
+  - type: 1
+    color: 7
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 50
+    strategy: "consistent_85"
+    group_uuid: "group-rest-0000-0000-000000000001"
+    en: { name: "No Screen Hour", desc: "No screens 1h before bed." }
+    zh: { name: "无屏幕时间", desc: "睡前 1 小时不看屏幕。" }
+
+  - type: 1
+    color: 8
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 40
+    strategy: "improving_5080"
+    group_uuid: "group-rest-0000-0000-000000000001"
+    en: { name: "Power Nap", desc: "Take 20-min power nap." }
+    zh: { name: "小睡", desc: "小睡 20 分钟。" }
+
+  - type: 2
+    color: 2
+    daily_goal: 0
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 55
+    strategy: "sporadic_30"
+    group_uuid: "group-rest-0000-0000-000000000001"
+    en: { name: "No Weekend Work", desc: "Keep weekend work-free." }
+    zh: { name: "周末不工作", desc: "周末不工作。" }
+
+  - type: 1
+    color: 9
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 45
+    strategy: "consistent_80"
+    group_uuid: "group-rest-0000-0000-000000000001"
+    en: { name: "Relax Music", desc: "Listen to relaxing music 15 min." }
+    zh: { name: "放松音乐", desc: "听放松音乐 15 分钟。" }
+
+  - type: 1
+    color: 1
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 50
+    strategy: "consistent_85"
+    group_uuid: "group-health-0000-0000-000000000001"
+    en: { name: "Sunlight", desc: "Get 10 min morning sunlight." }
+    zh: { name: "晒太阳", desc: "早上晒 10 分钟太阳。" }
+
+  - type: 1
+    color: 3
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 40
+    strategy: "improving_4080"
+    group_uuid: "group-learn-0000-0000-000000000001"
+    en: { name: "Debate", desc: "Practice debating a topic." }
+    zh: { name: "辩论练习", desc: "练习辩论一个话题。" }
+
+  - type: 1
+    color: 5
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 35
+    strategy: "variable_70"
+    group_uuid: "group-life-0000-0000-000000000001"
+    en: { name: "Smile", desc: "Smile at 3 strangers today." }
+    zh: { name: "微笑", desc: "今天对 3 个陌生人微笑。" }
+
+  - type: 1
+    color: 7
+    daily_goal: 1
+    daily_goal_unit: "次"
+    target_days: 66
+    days_back: 45
+    strategy: "consistent_80"
+    group_uuid: "group-work-0000-0000-000000000001"
+    en: { name: "Stand Meeting", desc: "Do a standing meeting." }
+    zh: { name: "站立会议", desc: "站立进行会议。" }
+

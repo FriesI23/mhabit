@@ -67,6 +67,9 @@ coverage/html/
 # coverage
 coverage/
 
+# temp generated files
+temp/
+
 # key
 *.key
 *.jks
