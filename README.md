@@ -78,13 +78,17 @@ Linux — **no ads, no account required**. See the translation badge above for s
     <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-sync-settings.png" />
     <img src="docs/README/images/feature-sync-settings.png" alt="WebDAV sync configuration" height="320" />
   </picture>
-</p>
-
-<p align="center">
+  &nbsp;&nbsp;
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-customization-dark.png" />
-    <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-customization.png" />
-    <img src="docs/README/images/feature-customization.png" alt="Custom colors and habit grouping" height="320" />
+    <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-customization-01-dark.png" />
+    <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-customization-01.png" />
+    <img src="docs/README/images/feature-customization-01.png" alt="Custom colors and habit grouping" height="320" />
+  </picture>
+  &nbsp;&nbsp;
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/README/images/feature-customization-02-dark.png" />
+    <source media="(prefers-color-scheme: light)" srcset="docs/README/images/feature-customization-02.png" />
+    <img src="docs/README/images/feature-customization-02.png" alt="Habit group management" height="320" />
   </picture>
   &nbsp;&nbsp;
   <picture>
