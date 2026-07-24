@@ -58,6 +58,7 @@ HabitGroupData _group({
     desc: '',
     icon: icon,
     color: const HabitColor.builtIn(HabitColorType.cc1),
+    sortPosition: 9e999,
   );
 }
 

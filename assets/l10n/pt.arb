@@ -641,5 +641,9 @@
     "groupManage_color_label": "Por cor",
     "@groupManage_color_label": {
         "description": "Section label for the color picker in group create/edit forms"
+    },
+    "habitDisplay_groupType_manual": "Pela minha ordem",
+    "@habitDisplay_groupType_manual": {
+        "description": "Group sort type: manual ordering via drag-and-drop"
     }
 }

@@ -47,6 +47,7 @@ HabitGroupData _existingGroup({
     color: const HabitColor.builtIn(HabitColorType.cc1),
     createT: createT,
     modifyT: modifyT,
+    sortPosition: 9e999,
   );
 }
 

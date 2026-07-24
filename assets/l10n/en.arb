@@ -1864,5 +1864,9 @@
     "appSetting_manageGroups_subtitleText": "Create, edit, and delete habit groups",
     "@appSetting_manageGroups_subtitleText": {
         "description": "Subtitle for the Manage Groups tile in Settings"
+    },
+    "habitDisplay_groupType_manual": "Manual",
+    "@habitDisplay_groupType_manual": {
+        "description": "Group sort type: manual ordering via drag-and-drop"
     }
 }

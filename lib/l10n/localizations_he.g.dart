@@ -2156,4 +2156,7 @@ class L10nHe extends L10n {
   @override
   String get appSetting_manageGroups_subtitleText =>
       'יצירה, עריכה ומחיקה של קבוצות הרגלים';
+
+  @override
+  String get habitDisplay_groupType_manual => 'סדר מותאם אישית';
 }

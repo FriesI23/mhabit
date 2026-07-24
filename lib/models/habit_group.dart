@@ -83,6 +83,9 @@ class HabitGroupData {
   /// When the group was last modified, or `null` when unavailable.
   final DateTime? modifyT;
 
+  /// Manual sort position.
+  final GroupSortPosition sortPosition;
+
   const HabitGroupData({
     required this.uuid,
     required this.name,
@@ -92,6 +95,7 @@ class HabitGroupData {
     this.status = GroupStatus.active,
     this.createT,
     this.modifyT,
+    required this.sortPosition,
   });
 
   /// Builds from a raw DB cell, converting colour fields, icon code point,
@@ -110,6 +114,7 @@ class HabitGroupData {
       modifyT: cell.modifyT != null
           ? DateTime.fromMillisecondsSinceEpoch(cell.modifyT! * onSecondMS)
           : null,
+      sortPosition: cell.sortPosition!,
     );
   }
 

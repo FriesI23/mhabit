@@ -139,6 +139,10 @@ List<HabitGroupData> _orderGroups(
     direction,
     habitByGroup: habitByGroup,
   ),
+  HabitDisplayGroupType.manual => groups.sortedBy(
+    HabitGroupOrderType.manual,
+    direction,
+  ),
 };
 
 /// Sorts [groups] by the number of habits in each group.

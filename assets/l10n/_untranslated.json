@@ -1428,7 +1428,8 @@
     "groupManage_icon_none",
     "groupManage_color_label",
     "groupManage_color_none",
-    "appSetting_manageGroups_subtitleText"
+    "appSetting_manageGroups_subtitleText",
+    "habitDisplay_groupType_manual"
   ],
 
   "fa": [
@@ -2750,7 +2751,8 @@
     "groupManage_icon_none",
     "groupManage_color_label",
     "groupManage_color_none",
-    "appSetting_manageGroups_subtitleText"
+    "appSetting_manageGroups_subtitleText",
+    "habitDisplay_groupType_manual"
   ],
 
   "pl": [

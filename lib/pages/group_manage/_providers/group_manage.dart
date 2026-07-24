@@ -71,10 +71,9 @@ class GroupManageViewModel extends ChangeNotifier
   HabitDisplayGroupType get effectiveSortType {
     if (_sortType != null) return _sortType!;
     final profileType = _groupModeHandler?.groupType;
-    if (profileType != null) {
-      final isKnown = HabitGroupOrderType.fromGroupType(profileType) != null;
-      assert(!isKnown, 'Unsupported group sort type: $profileType');
-      if (isKnown) return profileType;
+    if (profileType != null &&
+        HabitGroupOrderType.fromGroupType(profileType) != null) {
+      return profileType;
     }
     return defaultGroupType;
   }
@@ -243,6 +242,7 @@ class GroupManageViewModel extends ChangeNotifier
     HabitDisplayGroupType.name,
     HabitDisplayGroupType.colorType,
     HabitDisplayGroupType.createDate,
+    HabitDisplayGroupType.manual,
   ];
 
   void _pushGroupChanged(String? uuid, GroupChangeType changeType) {

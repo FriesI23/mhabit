@@ -32,6 +32,7 @@ class GroupDBCellKey {
   static const String customColor = 'custom_color';
   static const String customColorTinted = 'custom_color_tinted';
   static const String status = 'status';
+  static const String sortPosition = 'sort_position';
 
   /// `color`/`customColor`/`customColorTinted` always travel together as one
   /// semantic unit — mirrors [HabitDBCellKey.colorKeys].
@@ -70,6 +71,8 @@ class GroupDBCell with DBCell {
   final int? customColorTinted;
   @JsonKey(name: GroupDBCellKey.status)
   final int? status;
+  @JsonKey(name: GroupDBCellKey.sortPosition)
+  final GroupSortPosition? sortPosition;
 
   const GroupDBCell({
     this.id,
@@ -83,6 +86,7 @@ class GroupDBCell with DBCell {
     this.customColor,
     this.customColorTinted,
     this.status,
+    this.sortPosition,
   });
 
   factory GroupDBCell.fromJson(Map<String, Object?> cell) =>

@@ -1362,5 +1362,9 @@
     "appSetting_manageGroups_subtitleText": "יצירה, עריכה ומחיקה של קבוצות הרגלים",
     "@appSetting_manageGroups_subtitleText": {
         "description": "Subtitle for the Manage Groups tile in Settings"
+    },
+    "habitDisplay_groupType_manual": "סדר מותאם אישית",
+    "@habitDisplay_groupType_manual": {
+        "description": "Group sort type: manual ordering via drag-and-drop"
     }
 }

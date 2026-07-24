@@ -48,6 +48,9 @@ extension HabitGroupSortExtension on List<HabitGroupData> {
       HabitGroupOrderType.createDate =>
         (HabitGroupData a, HabitGroupData b) =>
             b.createT.compareToNullable(a.createT),
+      HabitGroupOrderType.manual =>
+        (HabitGroupData a, HabitGroupData b) =>
+            a.sortPosition.compareTo(b.sortPosition),
     };
     sorted.sort(comparator);
     if (direction == HabitDisplaySortDirection.desc) {

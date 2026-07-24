@@ -315,4 +315,141 @@ void main() {
       expect(rows[1]['custom_color_tinted'], 0);
     });
   });
+
+  group('DB v7→v8 migration — sort_position column', () {
+    const v7CreateGroupsTable =
+        '''
+CREATE TABLE IF NOT EXISTS ${TableName.groups} (
+    id_ INTEGER PRIMARY KEY AUTOINCREMENT,
+    create_t INTEGER NOT NULL DEFAULT (cast(strftime('%s','now') as int)),
+    modify_t INTEGER NOT NULL DEFAULT (cast(strftime('%s','now') as int)),
+    uuid TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
+    desc TEXT,
+    icon INTEGER,
+    color INTEGER,
+    custom_color INTEGER,
+    custom_color_tinted INTEGER,
+    status INTEGER NOT NULL DEFAULT 1
+)
+''';
+
+    test('ALTER TABLE adds sort_position column', () async {
+      final db = await databaseFactory.openDatabase(
+        inMemoryDatabasePath,
+        options: OpenDatabaseOptions(
+          version: 7,
+          onCreate: (db, version) async {
+            await db.execute(v7CreateGroupsTable);
+          },
+        ),
+      );
+      addTearDown(db.close);
+
+      // Verify v7 schema does not have sort_position
+      var tableInfo = await db.rawQuery(
+        'PRAGMA table_info(${TableName.groups})',
+      );
+      expect(
+        tableInfo.any((col) => col['name'] == 'sort_position'),
+        isFalse,
+        reason: 'v7 schema should not have sort_position column',
+      );
+
+      // Apply v8 migration
+      tableInfo = await db.rawQuery('PRAGMA table_info(${TableName.groups})');
+      if (!tableInfo.any((col) => col['name'] == 'sort_position')) {
+        await db.execute('ALTER TABLE mh_groups ADD COLUMN sort_position REAL');
+      }
+
+      // Verify column now exists
+      tableInfo = await db.rawQuery('PRAGMA table_info(${TableName.groups})');
+      final sortPosCol = tableInfo.firstWhere(
+        (col) => col['name'] == 'sort_position',
+      );
+      expect(sortPosCol['type'], 'REAL');
+      expect(sortPosCol['notnull'], 0, reason: 'column should be nullable');
+    });
+
+    test('reapplying migration is safe (PRAGMA guard)', () async {
+      final db = await databaseFactory.openDatabase(
+        inMemoryDatabasePath,
+        options: OpenDatabaseOptions(
+          version: 7,
+          onCreate: (db, version) async {
+            await db.execute(v7CreateGroupsTable);
+          },
+        ),
+      );
+      addTearDown(db.close);
+
+      Future<void> applyMigration() async {
+        final tableInfo = await db.rawQuery(
+          'PRAGMA table_info(${TableName.groups})',
+        );
+        if (!tableInfo.any((col) => col['name'] == 'sort_position')) {
+          await db.execute(
+            'ALTER TABLE mh_groups ADD COLUMN sort_position REAL',
+          );
+        }
+      }
+
+      await applyMigration();
+      await expectLater(
+        applyMigration,
+        returnsNormally,
+        reason:
+            'second migration pass should be a no-op, not throw duplicate column',
+      );
+    });
+
+    test('existing data survives migration', () async {
+      final db = await databaseFactory.openDatabase(
+        inMemoryDatabasePath,
+        options: OpenDatabaseOptions(
+          version: 7,
+          onCreate: (db, version) async {
+            await db.execute(v7CreateGroupsTable);
+          },
+        ),
+      );
+      addTearDown(db.close);
+
+      // Insert a group in v7 schema
+      await db.insert(TableName.groups, {
+        'uuid': 'legacy-group-001',
+        'name': 'Legacy Group',
+        'desc': 'Created before sort_position existed',
+        'status': 1,
+      });
+
+      // Apply v8 migration
+      final tableInfo = await db.rawQuery(
+        'PRAGMA table_info(${TableName.groups})',
+      );
+      if (!tableInfo.any((col) => col['name'] == 'sort_position')) {
+        await db.execute('ALTER TABLE mh_groups ADD COLUMN sort_position REAL');
+      }
+
+      // Insert a new group with sort_position
+      await db.insert(TableName.groups, {
+        'uuid': 'new-group-002',
+        'name': 'New Group',
+        'status': 1,
+        'sort_position': 2.5,
+      });
+
+      // Query both groups back
+      final rows = await db.query(TableName.groups, orderBy: 'uuid ASC');
+      expect(rows.length, 2);
+
+      // Legacy group: sort_position is null
+      expect(rows[0]['name'], 'Legacy Group');
+      expect(rows[0]['sort_position'], isNull);
+
+      // New group: sort_position is preserved
+      expect(rows[1]['name'], 'New Group');
+      expect(rows[1]['sort_position'], 2.5);
+    });
+  });
 }

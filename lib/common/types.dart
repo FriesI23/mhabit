@@ -32,6 +32,7 @@ typedef GroupUUID = String;
 typedef GroupColor = HabitColor;
 typedef HabitDailyGoal = num;
 typedef HabitSortPostion = num;
+typedef GroupSortPosition = num;
 typedef HabitRecordDate = HabitDate;
 typedef HabitStartDate = HabitDate;
 

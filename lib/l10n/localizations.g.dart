@@ -3452,6 +3452,12 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Create, edit, and delete habit groups'**
   String get appSetting_manageGroups_subtitleText;
+
+  /// Group sort type: manual ordering via drag-and-drop
+  ///
+  /// In en, this message translates to:
+  /// **'Manual'**
+  String get habitDisplay_groupType_manual;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

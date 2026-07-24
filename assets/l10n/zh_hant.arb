@@ -1158,5 +1158,9 @@
     "appSetting_manageGroups_subtitleText": "建立、編輯和刪除習慣分組",
     "@appSetting_manageGroups_subtitleText": {
         "description": "Subtitle for the Manage Groups tile in Settings"
+    },
+    "habitDisplay_groupType_manual": "自訂順序",
+    "@habitDisplay_groupType_manual": {
+        "description": "Group sort type: manual ordering via drag-and-drop"
     }
 }

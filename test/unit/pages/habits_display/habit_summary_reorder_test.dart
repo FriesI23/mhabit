@@ -165,7 +165,12 @@ HabitSummaryData _h({
 }
 
 GroupDBCell _g({required String uuid, required String name}) {
-  return GroupDBCell(uuid: uuid, name: name, status: GroupStatus.active.code);
+  return GroupDBCell(
+    uuid: uuid,
+    name: name,
+    status: GroupStatus.active.code,
+    sortPosition: 1,
+  );
 }
 
 List<HabitUUID> _habitUuids(HabitSummaryViewModel vm) => vm.currentHabitList

@@ -14,6 +14,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/_app_sync_tasks/webdav_app_sync_models.dart';
+import 'package:mhabit/models/group.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/storage/db/handlers/habit.dart';
 
@@ -532,6 +533,63 @@ void main() {
       final restoredJson = restored.toJson();
       expect(restoredJson['x_group_id'], 'g-full');
       expect(restoredJson['custom_attr'], [1, 2, 3]);
+    });
+  });
+
+  group('WebDavSyncGroupData sortPosition', () {
+    test('fromGroupDBCell passes sortPosition through', () {
+      const cell = GroupDBCell(
+        uuid: 'g-sync-sort',
+        name: 'Sync Sort',
+        sortPosition: 2.5,
+      );
+
+      final data = WebDavSyncGroupData.fromGroupDBCell(cell);
+      expect(data.sortPosition, 2.5);
+    });
+
+    test('fromGroupDBCell with null sortPosition', () {
+      const cell = GroupDBCell(uuid: 'g-sync-null', name: 'No Sort');
+
+      final data = WebDavSyncGroupData.fromGroupDBCell(cell);
+      expect(data.sortPosition, isNull);
+    });
+
+    test('toGroupDBCell passes sortPosition through', () {
+      final data = WebDavSyncGroupData(
+        uuid: 'g-cell-sort',
+        name: 'Cell Sort',
+        sortPosition: 7.5,
+      );
+
+      final cell = data.toGroupDBCell();
+      expect(cell.sortPosition, 7.5);
+    });
+
+    test('toGroupDBCell with null sortPosition', () {
+      final data = WebDavSyncGroupData(uuid: 'g-cell-null', name: 'No Sort');
+
+      final cell = data.toGroupDBCell();
+      expect(cell.sortPosition, isNull);
+    });
+
+    test('JSON round-trip preserves sortPosition', () {
+      final original = WebDavSyncGroupData(
+        uuid: 'g-json-rt',
+        name: 'JSON RT',
+        sortPosition: 3.75,
+      );
+
+      final json = original.toJson();
+      final restored = WebDavSyncGroupData.fromJson(json);
+      expect(restored.sortPosition, 3.75);
+    });
+
+    test('fromJson tolerates missing sort_position key', () {
+      final json = {'uuid': 'g-old-json', 'name': 'Old JSON'};
+
+      final data = WebDavSyncGroupData.fromJson(json);
+      expect(data.sortPosition, isNull);
     });
   });
 }

@@ -605,6 +605,8 @@ class _GroupSortPickerDialogState extends State<_GroupSortPickerDialog> {
         throw UnsupportedError(
           'habitCount sort is not available on the group management page',
         ),
+      HabitDisplayGroupType.manual =>
+        l10n?.habitDisplay_groupType_manual ?? 'Manual',
     };
   }
 }

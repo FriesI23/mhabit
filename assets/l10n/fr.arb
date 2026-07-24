@@ -847,5 +847,9 @@
     "groupManage_color_none": "null",
     "@groupManage_color_none": {
         "description": "Tooltip for the 'no color' option in the group color picker"
+    },
+    "habitDisplay_groupType_manual": "Ordre personnel",
+    "@habitDisplay_groupType_manual": {
+        "description": "Group sort type: manual ordering via drag-and-drop"
     }
 }

@@ -1091,5 +1091,9 @@
     "groupManage_color_none": "なし",
     "@groupManage_color_none": {
         "description": "Tooltip for the 'no color' option in the group color picker"
+    },
+    "habitDisplay_groupType_manual": "自分の順序",
+    "@habitDisplay_groupType_manual": {
+        "description": "Group sort type: manual ordering via drag-and-drop"
     }
 }

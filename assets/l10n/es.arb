@@ -1002,5 +1002,9 @@
     "groupManage_color_none": "vacío",
     "@groupManage_color_none": {
         "description": "Tooltip for the 'no color' option in the group color picker"
+    },
+    "habitDisplay_groupType_manual": "Orden propio",
+    "@habitDisplay_groupType_manual": {
+        "description": "Group sort type: manual ordering via drag-and-drop"
     }
 }

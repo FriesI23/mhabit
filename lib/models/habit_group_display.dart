@@ -20,7 +20,8 @@ enum HabitDisplayGroupType implements EnumWithDBCode {
   name(code: 1),
   colorType(code: 2),
   createDate(code: 3),
-  habitCount(code: 4);
+  habitCount(code: 4),
+  manual(code: 5);
 
   final int _code;
 
@@ -39,6 +40,7 @@ enum HabitDisplayGroupType implements EnumWithDBCode {
     HabitDisplayGroupType.colorType,
     HabitDisplayGroupType.createDate,
     HabitDisplayGroupType.habitCount,
+    HabitDisplayGroupType.manual,
   ];
 }
 
@@ -52,7 +54,8 @@ enum HabitDisplayGroupType implements EnumWithDBCode {
 enum HabitGroupOrderType {
   name,
   colorType,
-  createDate;
+  createDate,
+  manual;
 
   /// Maps a [HabitDisplayGroupType] to its corresponding
   /// [HabitGroupOrderType].
@@ -66,5 +69,6 @@ enum HabitGroupOrderType {
         HabitDisplayGroupType.colorType => HabitGroupOrderType.colorType,
         HabitDisplayGroupType.createDate => HabitGroupOrderType.createDate,
         HabitDisplayGroupType.habitCount => null,
+        HabitDisplayGroupType.manual => HabitGroupOrderType.manual,
       };
 }

@@ -92,6 +92,7 @@ class _DBHelper implements DBHelper {
     await db.execute(CustomSql.autoUpdateGroupsModifyTimeTrigger);
     await db.execute(CustomSql.autoUpdateRecordsModifyTimeTrigger);
     await db.execute(CustomSql.autoAddSortPostionWhenAddNewHabit);
+    await db.execute(CustomSql.autoAddSortPostionWhenAddNewGroup);
     await db.execute(CustomSql.autoUpdateSyncModifyTimeTrigger);
   }
 
@@ -186,6 +187,7 @@ class _DBHelper implements DBHelper {
       // 2. Create mh_groups table
       await db.execute(await getSqlFromFile(Assets.sql.mhGroups));
       await db.execute(CustomSql.autoUpdateGroupsModifyTimeTrigger);
+      await db.execute(CustomSql.autoAddSortPostionWhenAddNewGroup);
 
       // 2a. ALTER mh_groups ADD tint columns (for DBs created before
       // custom_color / custom_color_tinted were added to mh_groups.sql)
@@ -221,6 +223,22 @@ class _DBHelper implements DBHelper {
           "ADD COLUMN ${SyncDbCellKey.groupUUID} TEXT",
         );
       }
+    }
+    if (oldVersion < 8) {
+      final columns = await db.rawQuery("PRAGMA table_info('mh_groups')");
+      final hasSortPosition = columns.any((c) => c['name'] == 'sort_position');
+      if (!hasSortPosition) {
+        await db.execute(
+          "ALTER TABLE mh_groups ADD COLUMN sort_position REAL NOT NULL DEFAULT 9e999",
+        );
+        // Backfill existing groups: sort_position ← id_
+        await db.execute(
+          "UPDATE mh_groups SET sort_position = id_ WHERE sort_position = 9e999",
+        );
+      }
+      await db
+          .execute(CustomSql.rmAutoAddSortPostionWhenAddNewGroupTrigger)
+          .then((_) => db.execute(CustomSql.autoAddSortPostionWhenAddNewGroup));
     }
   }
 

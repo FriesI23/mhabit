@@ -334,5 +334,81 @@ void main() {
         expect(sync[SyncDbCellKey.lastMark2], 'etag-after-upload');
       },
     );
+
+    test(
+      'updateSelectedGroupsSortPosition: batch writes sort_position and bumps sync dirty',
+      () async {
+        await helper.insertNewGroup(
+          const GroupDBCell(uuid: 'sort-pos-1', name: 'A', status: 1),
+        );
+        await helper.insertNewGroup(
+          const GroupDBCell(uuid: 'sort-pos-2', name: 'B', status: 1),
+        );
+        await helper.insertNewGroup(
+          const GroupDBCell(uuid: 'sort-pos-3', name: 'C', status: 1),
+        );
+
+        var sync1 = await loadSyncRow('sort-pos-1');
+        expect(sync1[SyncDbCellKey.dirty], 1);
+
+        await helper.updateSelectedGroupsSortPosition(
+          ['sort-pos-1', 'sort-pos-2', 'sort-pos-3'],
+          [3.0, 1.0, 2.0],
+        );
+
+        final g1 = await helper.loadGroupByUUID('sort-pos-1');
+        expect(g1!.sortPosition, 3.0);
+        final g2 = await helper.loadGroupByUUID('sort-pos-2');
+        expect(g2!.sortPosition, 1.0);
+        final g3 = await helper.loadGroupByUUID('sort-pos-3');
+        expect(g3!.sortPosition, 2.0);
+
+        sync1 = await loadSyncRow('sort-pos-1');
+        expect(sync1[SyncDbCellKey.dirty], 2);
+        expect(sync1[SyncDbCellKey.dirtyTotal], 2);
+        final sync2 = await loadSyncRow('sort-pos-2');
+        expect(sync2[SyncDbCellKey.dirty], 2);
+        expect(sync2[SyncDbCellKey.dirtyTotal], 2);
+        final sync3 = await loadSyncRow('sort-pos-3');
+        expect(sync3[SyncDbCellKey.dirty], 2);
+        expect(sync3[SyncDbCellKey.dirtyTotal], 2);
+      },
+    );
+
+    test(
+      'updateSelectedGroupsSortPosition: idempotent re-write bumps dirty again',
+      () async {
+        await helper.insertNewGroup(
+          const GroupDBCell(uuid: 'sort-idempotent', name: 'X', status: 1),
+        );
+
+        await helper.updateSelectedGroupsSortPosition(
+          ['sort-idempotent'],
+          [5.0],
+        );
+        var sync = await loadSyncRow('sort-idempotent');
+        expect(sync[SyncDbCellKey.dirty], 2);
+
+        await helper.updateSelectedGroupsSortPosition(
+          ['sort-idempotent'],
+          [5.0],
+        );
+        sync = await loadSyncRow('sort-idempotent');
+        expect(sync[SyncDbCellKey.dirty], 3);
+      },
+    );
+
+    test('updateSelectedGroupsSortPosition: empty list is a no-op', () async {
+      await helper.insertNewGroup(
+        const GroupDBCell(uuid: 'sort-empty', name: 'X', status: 1),
+      );
+
+      await helper.updateSelectedGroupsSortPosition([], []);
+
+      final g = await helper.loadGroupByUUID('sort-empty');
+      expect(g!.sortPosition, 1);
+      final sync = await loadSyncRow('sort-empty');
+      expect(sync[SyncDbCellKey.dirty], 1);
+    });
   });
 }

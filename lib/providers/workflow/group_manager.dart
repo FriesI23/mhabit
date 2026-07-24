@@ -88,7 +88,8 @@ class GroupManager
       status: 1,
     );
     await groupDBHelper.insertNewGroup(cell);
-    return HabitGroupData.fromDBQueryCell(cell);
+    final savedCell = await loadGroupByUUID(uuid);
+    return HabitGroupData.fromDBQueryCell(savedCell!);
   }
 
   Future<void> updateGroup(GroupDBCell group) async {
@@ -141,6 +142,20 @@ class GroupManager
 
   Future<void> deleteGroup(String uuid) async {
     await groupDBHelper.deleteGroup(uuid);
+  }
+
+  // FIXME: Implement Weight Reassignment algorithm when Group
+  // drag-and-drop is implemented.  Use makeUniqueAndIncreasing (from
+  // iterable_extensions.dart) to compute new positions, compare in memory,
+  // then call groupDBHelper.updateSelectedGroupsSortPosition() for the
+  // batch DB write.
+  // Reference: HabitsManager.fixAndSaveSortPositions().
+  Future<List<String>> fixAndSaveSortPositions(
+    List<HabitGroupData> items, {
+    required num increaseStep,
+    required int decimalPlaces,
+  }) {
+    throw UnimplementedError('Will be implemented in Parse 12');
   }
 
   //#region import and export

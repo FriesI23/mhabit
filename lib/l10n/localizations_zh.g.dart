@@ -2036,6 +2036,9 @@ class L10nZh extends L10n {
 
   @override
   String get appSetting_manageGroups_subtitleText => '创建、编辑和删除习惯分组';
+
+  @override
+  String get habitDisplay_groupType_manual => '自定义';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -3700,4 +3703,7 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get appSetting_manageGroups_subtitleText => '建立、編輯和刪除習慣分組';
+
+  @override
+  String get habitDisplay_groupType_manual => '自訂順序';
 }

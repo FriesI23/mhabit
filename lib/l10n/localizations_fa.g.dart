@@ -2162,4 +2162,7 @@ class L10nFa extends L10n {
   @override
   String get appSetting_manageGroups_subtitleText =>
       'Create, edit, and delete habit groups';
+
+  @override
+  String get habitDisplay_groupType_manual => 'ترتیب من';
 }

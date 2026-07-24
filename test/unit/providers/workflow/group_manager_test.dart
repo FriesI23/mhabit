@@ -255,5 +255,27 @@ void main() {
       expect(data.desc.length, 300);
       expect(data.desc, startsWith('BBB'));
     });
+
+    test(
+      'importGroupsData: imported groups get DB default sortPosition',
+      () async {
+        final mapping = await manager.importGroupsData([
+          <String, dynamic>{
+            'uuid': 'old-uuid-1',
+            'name': 'Imported Group',
+            'sort_position': 3.75, // ignored — not metadata
+          },
+        ]);
+
+        expect(mapping, hasLength(1));
+        final newUuid = mapping['old-uuid-1'];
+        expect(newUuid, isNotNull);
+
+        final cell = await manager.loadGroupByUUID(newUuid!);
+        expect(cell, isNotNull);
+        // Import no longer preserves sortPosition; DB trigger sets it to id_.
+        expect(cell!.sortPosition, 1);
+      },
+    );
   });
 }
