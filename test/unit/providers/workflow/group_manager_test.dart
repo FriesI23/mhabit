@@ -277,5 +277,99 @@ void main() {
         expect(cell!.sortPosition, 1);
       },
     );
+
+    // ── fixAndSaveSortPositions ──────────────────────────────────────
+
+    test('fixAndSaveSortPositions: empty list returns empty', () async {
+      final result = await manager.fixAndSaveSortPositions(
+        [],
+        increaseStep: 0.000001,
+        decimalPlaces: 6,
+      );
+      expect(result, isEmpty);
+    });
+
+    test('fixAndSaveSortPositions: single item returns empty', () async {
+      final g = await manager.createGroup(name: 'Solo');
+      final result = await manager.fixAndSaveSortPositions(
+        [g],
+        increaseStep: 0.000001,
+        decimalPlaces: 6,
+      );
+      expect(result, isEmpty);
+    });
+
+    test(
+      'fixAndSaveSortPositions: already-ordered items return empty',
+      () async {
+        final g1 = await manager.createGroup(name: 'A');
+        final g2 = await manager.createGroup(name: 'B');
+        final g3 = await manager.createGroup(name: 'C');
+        // sortPositions are naturally increasing (id-based).
+
+        final result = await manager.fixAndSaveSortPositions(
+          [g1, g2, g3],
+          increaseStep: 0.000001,
+          decimalPlaces: 6,
+        );
+        expect(result, isEmpty);
+      },
+    );
+
+    test(
+      'fixAndSaveSortPositions: resolves duplicate sort positions',
+      () async {
+        final g1 = await manager.createGroup(name: 'A');
+        final g2 = await manager.createGroup(name: 'B');
+        // Force both to the same sort_position.
+        await manager.groupDBHelper.updateSelectedGroupsSortPosition(
+          [g1.uuid, g2.uuid],
+          [10.0, 10.0],
+        );
+
+        // Re-read to get updated sortPosition values.
+        final r1 = await manager.loadGroupDataByUUID(g1.uuid);
+        final r2 = await manager.loadGroupDataByUUID(g2.uuid);
+        expect(r1!.sortPosition, 10.0);
+        expect(r2!.sortPosition, 10.0);
+
+        final result = await manager.fixAndSaveSortPositions(
+          [r1, r2],
+          increaseStep: 0.000001,
+          decimalPlaces: 6,
+        );
+        expect(result, isNotEmpty);
+
+        // Verify DB was updated.
+        final c1 = await manager.loadGroupByUUID(g1.uuid);
+        final c2 = await manager.loadGroupByUUID(g2.uuid);
+        expect(c1!.sortPosition, isNot(c2!.sortPosition));
+      },
+    );
+
+    test('fixAndSaveSortPositions: re-sorts out-of-order items', () async {
+      final g1 = await manager.createGroup(name: 'A');
+      final g2 = await manager.createGroup(name: 'B');
+      final g3 = await manager.createGroup(name: 'C');
+      // g2, g3, g1 is out of order (sortPositions are 1,2,3 but we
+      // passed them in reverse).
+      final result = await manager.fixAndSaveSortPositions(
+        [g3, g2, g1],
+        increaseStep: 0.000001,
+        decimalPlaces: 6,
+      );
+      // The items need re-assignment because g3.sortPosition > g1.sortPosition
+      // but g3 comes first in the desired order, so g3..sortPosition must be
+      // the smallest.
+      expect(result, isNotEmpty);
+      expect(result.length, greaterThanOrEqualTo(1));
+
+      // Verify DB now has monotonically increasing values in g3,g2,g1 order.
+      final c3 = await manager.loadGroupByUUID(g3.uuid);
+      final c2 = await manager.loadGroupByUUID(g2.uuid);
+      final c1 = await manager.loadGroupByUUID(g1.uuid);
+      expect(c3!.sortPosition! < c2!.sortPosition!, isTrue);
+      expect(c2.sortPosition! < c1!.sortPosition!, isTrue);
+    });
   });
 }

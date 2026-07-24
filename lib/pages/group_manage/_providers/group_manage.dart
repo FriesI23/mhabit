@@ -367,6 +367,36 @@ class GroupManageViewModel extends ChangeNotifier
     _pushGroupChanged(uuid, GroupChangeType.updated);
     requestReload();
   }
+
+  /// Persists reorder results after a drag-and-drop completes on the
+  /// management page and notifies the home page to refresh.
+  Future<void> onGroupReorderComplete(List<String> newOrder) async {
+    if (_groupCollection == null) return;
+
+    final allGroups = _groupCollection!.toList();
+    final uuidToGroup = {for (final g in allGroups) g.uuid: g};
+    final ordered = newOrder
+        .map((uuid) => uuidToGroup[uuid])
+        .whereType<HabitGroupData>()
+        .toList();
+
+    if (ordered.isEmpty) return;
+
+    final gm = _groupManager;
+    if (gm == null) return;
+
+    await gm.fixAndSaveSortPositions(
+      ordered,
+      increaseStep: sortPositionConflictIncreaseStep,
+      decimalPlaces: sortPositionConflictDecimalPlaces,
+    );
+
+    _appEventBus?.push(
+      const GroupChangedEvent(msg: "group_manage.onGroupReorderComplete"),
+    );
+
+    requestReload();
+  }
 }
 
 /// Simple sortable cache for groups (no grouping/search/filter — groups are

@@ -18,6 +18,7 @@ import '../../common/rules.dart';
 import '../../common/types.dart';
 import '../../common/utils.dart';
 import '../../extensions/group_icon_extensions.dart';
+import '../../extensions/iterable_extensions.dart';
 import '../../logging/helper.dart';
 import '../../models/group.dart';
 import '../../models/group_export.dart';
@@ -144,18 +145,39 @@ class GroupManager
     await groupDBHelper.deleteGroup(uuid);
   }
 
-  // FIXME: Implement Weight Reassignment algorithm when Group
-  // drag-and-drop is implemented.  Use makeUniqueAndIncreasing (from
-  // iterable_extensions.dart) to compute new positions, compare in memory,
-  // then call groupDBHelper.updateSelectedGroupsSortPosition() for the
-  // batch DB write.
-  // Reference: HabitsManager.fixAndSaveSortPositions().
   Future<List<String>> fixAndSaveSortPositions(
     List<HabitGroupData> items, {
     required num increaseStep,
     required int decimalPlaces,
-  }) {
-    throw UnimplementedError('Will be implemented in Parse 12');
+  }) async {
+    final posList = items
+        .map((e) => e.sortPosition)
+        .makeUniqueAndIncreasing(
+          increaseStep,
+          isSorted: false,
+          decimalPlaces: decimalPlaces,
+        );
+
+    final changedUUIDs = <String>[];
+    final changedPositions = <num>[];
+
+    for (var i = 0; i < items.length; i++) {
+      final group = items[i];
+      final pos = posList[i];
+      if (group.sortPosition != pos) {
+        changedUUIDs.add(group.uuid);
+        changedPositions.add(pos);
+      }
+    }
+
+    if (changedUUIDs.isNotEmpty) {
+      await groupDBHelper.updateSelectedGroupsSortPosition(
+        changedUUIDs,
+        changedPositions.cast<GroupSortPosition>(),
+      );
+    }
+
+    return changedUUIDs;
   }
 
   //#region import and export
