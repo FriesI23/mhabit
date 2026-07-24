@@ -258,10 +258,10 @@ class GroupManageViewModel extends ChangeNotifier
     );
   }
 
-  void enterSelectionMode(String initialUUID) {
+  void enterSelectionMode(String initialUUID, {bool listen = true}) {
     _selectionMode = true;
     _selectedGroupUUIDs.add(initialUUID);
-    notifyListeners();
+    if (listen) notifyListeners();
   }
 
   void exitSelectionMode() {

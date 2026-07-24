@@ -46,7 +46,7 @@ void main() {
       expect(sorted[2].uuid, 'b');
     });
 
-    test('sorts descending by sortPosition', () {
+    test('desc direction is ignored for manual sort', () {
       final groups = [
         _g(uuid: 'b', sortPosition: 3.0),
         _g(uuid: 'c', sortPosition: 1.0),
@@ -58,9 +58,9 @@ void main() {
         HabitDisplaySortDirection.desc,
       );
 
-      expect(sorted[0].uuid, 'b');
+      expect(sorted[0].uuid, 'c');
       expect(sorted[1].uuid, 'a');
-      expect(sorted[2].uuid, 'c');
+      expect(sorted[2].uuid, 'b');
     });
 
     test('default sortPosition (9e999) sorts after explicit values', () {

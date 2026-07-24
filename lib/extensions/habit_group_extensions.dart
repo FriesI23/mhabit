@@ -53,7 +53,8 @@ extension HabitGroupSortExtension on List<HabitGroupData> {
             a.sortPosition.compareTo(b.sortPosition),
     };
     sorted.sort(comparator);
-    if (direction == HabitDisplaySortDirection.desc) {
+    if (direction == HabitDisplaySortDirection.desc &&
+        type != HabitGroupOrderType.manual) {
       return sorted.reversed.toList();
     }
     return sorted;

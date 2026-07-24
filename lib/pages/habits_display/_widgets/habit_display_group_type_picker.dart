@@ -111,7 +111,9 @@ class _HabitDisplayGroupTypePickerDialog
                   : const Text("Reverse"),
             ),
             value: crtGroupDirection == HabitDisplaySortDirection.desc,
-            enabled: crtGroupType != null,
+            enabled:
+                crtGroupType != null &&
+                crtGroupType != HabitDisplayGroupType.manual,
             controlAffinity: ListTileControlAffinity.leading,
             onChanged: (value) {
               final newGroupDirection = value == true

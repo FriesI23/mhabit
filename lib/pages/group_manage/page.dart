@@ -566,16 +566,18 @@ class _GroupSortPickerDialogState extends State<_GroupSortPickerDialog> {
             title: Text(l10n?.habitDisplay_sort_reverseText ?? 'Reverse'),
             value: crtSortDirection == HabitDisplaySortDirection.desc,
             controlAffinity: ListTileControlAffinity.leading,
-            onChanged: (value) {
-              setState(() {
-                _crtSortOption = (
-                  crtSortType,
-                  value == true
-                      ? HabitDisplaySortDirection.desc
-                      : HabitDisplaySortDirection.asc,
-                );
-              });
-            },
+            onChanged: crtSortType == HabitDisplayGroupType.manual
+                ? null
+                : (value) {
+                    setState(() {
+                      _crtSortOption = (
+                        crtSortType,
+                        value == true
+                            ? HabitDisplaySortDirection.desc
+                            : HabitDisplaySortDirection.asc,
+                      );
+                    });
+                  },
           ),
         ],
       ),
