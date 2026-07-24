@@ -62,8 +62,23 @@ class GroupManageViewModel extends ChangeNotifier
   HabitDisplayGroupType? get sortType => _sortType;
   HabitDisplaySortDirection? get sortDirection => _sortDirection;
 
-  HabitDisplayGroupType get effectiveSortType =>
-      _sortType ?? _groupModeHandler?.groupType ?? defaultGroupType;
+  /// Effective sort type for the management page.
+  ///
+  /// Falls back through session → global profile → [defaultGroupType].
+  /// When the global profile is set to an extrinsic type (e.g.
+  /// [HabitDisplayGroupType.habitCount]) that has no Group-intrinsic
+  /// equivalent, skips it and falls through to [defaultGroupType].
+  HabitDisplayGroupType get effectiveSortType {
+    if (_sortType != null) return _sortType!;
+    final profileType = _groupModeHandler?.groupType;
+    if (profileType != null) {
+      final isKnown = HabitGroupOrderType.fromGroupType(profileType) != null;
+      assert(!isKnown, 'Unsupported group sort type: $profileType');
+      if (isKnown) return profileType;
+    }
+    return defaultGroupType;
+  }
+
   HabitDisplaySortDirection get effectiveSortDirection =>
       _sortDirection ??
       _groupModeHandler?.groupDirection ??
@@ -377,7 +392,9 @@ class _GroupsSortableCache {
     required HabitDisplaySortDirection sortDirection,
   }) {
     final groups = List.of(collection.toList());
-    final sorted = groups.sortedBy(sortType, sortDirection);
+    final orderType =
+        HabitGroupOrderType.fromGroupType(sortType) ?? defaultGroupOrderType;
+    final sorted = groups.sortedBy(orderType, sortDirection);
     return _GroupsSortableCache(
       sortType: sortType,
       sortDirection: sortDirection,

@@ -15,12 +15,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../common/consts.dart';
-import '../../../l10n/localizations.dart';
 import '../../../models/habit_display.dart';
 import '../../../models/habit_group_display.dart';
 import '../../../storage/profile/handlers/display_group_mode.dart';
 import '../../../widgets/widgets.dart';
-import '../_providers/habits_grouping.dart';
 
 Future<DisplayGroupModeOption?> showHabitDisplayGroupTypePickerDialog({
   required BuildContext context,
@@ -166,8 +164,8 @@ class _NoneGroupingRadioListTile extends StatelessWidget {
             ? Text(l10n.habitDisplay_groupTypeDialog_none)
             : const Text('Flat'),
       ),
-      secondary: Icon(
-        HabitsGroupingViewModel.getIcon(null, groupDirection),
+      secondary: GroupingIcon(
+        direction: groupDirection,
         color: colorScheme.outline,
       ),
       value: null,
@@ -187,16 +185,8 @@ class _GroupTypeRadioListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RadioListTile<HabitDisplayGroupType?>(
-      title: Text(
-        HabitsGroupingViewModel.getTitle(
-          groupType,
-          null,
-          l10n: L10n.of(context),
-        ),
-      ),
-      secondary: Icon(
-        HabitsGroupingViewModel.getIcon(groupType, groupDirection),
-      ),
+      title: GroupingTitle(groupType: groupType),
+      secondary: GroupingIcon(groupType: groupType, direction: groupDirection),
       value: groupType,
     );
   }

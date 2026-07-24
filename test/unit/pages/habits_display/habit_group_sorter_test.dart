@@ -593,4 +593,105 @@ void main() {
       expect(result.whereType<HabitSummaryDataSortCache>(), isEmpty);
     });
   });
+
+  group('orderGroupsByHabitCount', () {
+    test('asc: most habits first', () {
+      final groups = [
+        _group(uuid: 'g1', name: 'A'),
+        _group(uuid: 'g2', name: 'B'),
+        _group(uuid: 'g3', name: 'C'),
+      ];
+      final habitByGroup = {
+        'g1': [_habit(uuid: 'h1a', groupId: 'g1')],
+        'g2': [
+          _habit(uuid: 'h2a', groupId: 'g2'),
+          _habit(uuid: 'h2b', groupId: 'g2'),
+          _habit(uuid: 'h2c', groupId: 'g2'),
+        ],
+        'g3': [
+          _habit(uuid: 'h3a', groupId: 'g3'),
+          _habit(uuid: 'h3b', groupId: 'g3'),
+        ],
+      };
+
+      final result = orderGroupsByHabitCount(
+        groups,
+        HabitDisplaySortDirection.asc,
+        habitByGroup: habitByGroup,
+      );
+
+      // g2(3) > g3(2) > g1(1)
+      expect(result.map((g) => g.uuid), ['g2', 'g3', 'g1']);
+    });
+
+    test('desc: fewest habits first', () {
+      final groups = [
+        _group(uuid: 'g1', name: 'A'),
+        _group(uuid: 'g2', name: 'B'),
+        _group(uuid: 'g3', name: 'C'),
+      ];
+      final habitByGroup = {
+        'g1': [_habit(uuid: 'h1a', groupId: 'g1')],
+        'g2': [
+          _habit(uuid: 'h2a', groupId: 'g2'),
+          _habit(uuid: 'h2b', groupId: 'g2'),
+          _habit(uuid: 'h2c', groupId: 'g2'),
+        ],
+        'g3': [
+          _habit(uuid: 'h3a', groupId: 'g3'),
+          _habit(uuid: 'h3b', groupId: 'g3'),
+        ],
+      };
+
+      final result = orderGroupsByHabitCount(
+        groups,
+        HabitDisplaySortDirection.desc,
+        habitByGroup: habitByGroup,
+      );
+
+      // g1(1) < g3(2) < g2(3)
+      expect(result.map((g) => g.uuid), ['g1', 'g3', 'g2']);
+    });
+
+    test('missing habitByGroup entries count as zero', () {
+      final groups = [
+        _group(uuid: 'g1', name: 'A'),
+        _group(uuid: 'g2', name: 'B'),
+      ];
+      // g1 has no entry → count 0
+      final habitByGroup = {
+        'g2': [_habit(uuid: 'h2a', groupId: 'g2')],
+      };
+
+      final result = orderGroupsByHabitCount(
+        groups,
+        HabitDisplaySortDirection.asc,
+        habitByGroup: habitByGroup,
+      );
+
+      // g2(1) > g1(0)
+      expect(result.map((g) => g.uuid), ['g2', 'g1']);
+    });
+
+    test('null habitByGroup treats all counts as zero', () {
+      final groups = [
+        _group(uuid: 'g1', name: 'A'),
+        _group(uuid: 'g2', name: 'B'),
+      ];
+
+      final result = orderGroupsByHabitCount(
+        groups,
+        HabitDisplaySortDirection.asc,
+      );
+
+      // All zero → stable (original order)
+      expect(result.map((g) => g.uuid), ['g1', 'g2']);
+    });
+
+    test('empty groups returns empty list', () {
+      final result = orderGroupsByHabitCount([], HabitDisplaySortDirection.asc);
+
+      expect(result, isEmpty);
+    });
+  });
 }

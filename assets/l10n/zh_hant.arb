@@ -261,6 +261,7 @@
     "habitDisplay_groupType_name": "依名稱",
     "habitDisplay_groupType_colorType": "依顏色",
     "habitDisplay_groupType_createDate": "建立日期",
+    "habitDisplay_groupType_habitCount": "習慣數量",
     "habitDisplay_groupTypeDialog_title": "分組排序",
     "habitDisplay_groupTypeDialog_confirm": "確認",
     "habitDisplay_groupTypeDialog_cancel": "取消",

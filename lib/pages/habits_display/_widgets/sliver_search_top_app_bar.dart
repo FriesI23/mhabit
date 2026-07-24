@@ -383,7 +383,6 @@ class _AppBar extends StatelessWidget {
             scrolledUnderElevation: scrolledUnderElevation,
             shadowColor: shawdowColor,
             title: searchBar,
-            actionsPadding: kSearchAppBarActionPadding,
             bottom: bottom,
             actions: [infoButton, menuButton],
           ),
@@ -398,7 +397,6 @@ class _AppBar extends StatelessWidget {
             shadowColor: shawdowColor,
             leading: infoButton,
             title: Text(l10n?.appName ?? appName),
-            actionsPadding: kSearchAppBarActionPadding,
             bottom: bottom,
             actions: [
               if (searchBar != null)

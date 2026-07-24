@@ -286,6 +286,7 @@
     "habitDisplay_groupType_name": "名称",
     "habitDisplay_groupType_colorType": "颜色",
     "habitDisplay_groupType_createDate": "创建日期",
+    "habitDisplay_groupType_habitCount": "习惯数量",
     "habitDisplay_groupTypeDialog_title": "分组排序",
     "habitDisplay_groupTypeDialog_confirm": "确定",
     "habitDisplay_groupTypeDialog_cancel": "取消",

@@ -372,6 +372,8 @@
     "@habitDisplay_groupType_colorType": {},
     "habitDisplay_groupType_createDate": "By Creation Date",
     "@habitDisplay_groupType_createDate": {},
+    "habitDisplay_groupType_habitCount": "By Habit Count",
+    "@habitDisplay_groupType_habitCount": {},
     "habitDisplay_groupTypeDialog_title": "Group Sort",
     "@habitDisplay_groupTypeDialog_title": {},
     "habitDisplay_groupTypeDialog_confirm": "confirm",

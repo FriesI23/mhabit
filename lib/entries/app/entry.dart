@@ -253,6 +253,7 @@ class _AppEntry extends StatelessWidget {
                       )
                     : getSystemLightColor(),
                 useMaterial3: true,
+                appBarTheme: kAppBarTheme,
                 extensions: [customColor],
               );
             },
@@ -276,6 +277,7 @@ class _AppEntry extends StatelessWidget {
                       )
                     : getSystemDarkColor(),
                 useMaterial3: true,
+                appBarTheme: kAppBarTheme,
                 extensions: [customColor],
               );
             },

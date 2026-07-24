@@ -14,12 +14,14 @@
 
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_group_display.dart';
 import 'package:mhabit/pages/habits_display/_providers/habits_grouping.dart';
 import 'package:mhabit/storage/profile/handlers.dart';
 import 'package:mhabit/storage/profile_provider.dart';
+import 'package:mhabit/widgets/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<ProfileViewModel> _loadProfile() async {
@@ -201,61 +203,77 @@ void main() {
         profile.dispose();
       },
     );
+  });
 
-    test('getIcon returns hideGroupingIcon when groupType is null', () async {
-      final icon = HabitsGroupingViewModel.getIcon(
-        null,
-        HabitDisplaySortDirection.asc,
+  group('GroupingIcon', () {
+    testWidgets('renders Icon when groupType is null', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: GroupingIcon(
+            groupType: null,
+            direction: HabitDisplaySortDirection.asc,
+          ),
+        ),
       );
-      expect(icon, isNotNull);
+      expect(find.byType(Icon), findsOneWidget);
     });
 
-    test('getIcon returns ascending icons for each type', () async {
+    testWidgets('renders Icon for each group type (asc)', (tester) async {
       for (final groupType in HabitDisplayGroupType.values) {
-        final icon = HabitsGroupingViewModel.getIcon(
-          groupType,
-          HabitDisplaySortDirection.asc,
+        await tester.pumpWidget(
+          MaterialApp(
+            home: GroupingIcon(
+              groupType: groupType,
+              direction: HabitDisplaySortDirection.asc,
+            ),
+          ),
         );
-        expect(icon, isNotNull);
+        expect(find.byType(Icon), findsOneWidget);
       }
     });
 
-    test('getIcon returns descending icons for each type', () async {
+    testWidgets('renders Icon for each group type (desc)', (tester) async {
       for (final groupType in HabitDisplayGroupType.values) {
-        final icon = HabitsGroupingViewModel.getIcon(
-          groupType,
-          HabitDisplaySortDirection.desc,
+        await tester.pumpWidget(
+          MaterialApp(
+            home: GroupingIcon(
+              groupType: groupType,
+              direction: HabitDisplaySortDirection.desc,
+            ),
+          ),
         );
-        expect(icon, isNotNull);
+        expect(find.byType(Icon), findsOneWidget);
+      }
+    });
+  });
+
+  group('GroupingTitle', () {
+    testWidgets('renders "Flat" when groupType is null', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(home: GroupingTitle(groupType: null)),
+      );
+      expect(find.text('Flat'), findsOneWidget);
+    });
+
+    testWidgets('renders text for each group type', (tester) async {
+      for (final groupType in HabitDisplayGroupType.values) {
+        await tester.pumpWidget(
+          MaterialApp(home: GroupingTitle(groupType: groupType)),
+        );
+        expect(find.byType(Text), findsOneWidget);
       }
     });
 
-    test(
-      'getTitle returns "Flat" (default fallback) when groupType is null',
-      () async {
-        final title = HabitsGroupingViewModel.getTitle(null, null);
-        expect(title, 'Flat');
-      },
-    );
-
-    test('getTitle returns type-specific text for each group type', () async {
-      for (final groupType in HabitDisplayGroupType.values) {
-        final title = HabitsGroupingViewModel.getTitle(groupType, null);
-        expect(title, isNotEmpty);
-        // Should not contain fallback text.
-        expect(title, isNot(contains('Grouping')));
-      }
+    testWidgets('appends direction when direction is provided', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: GroupingTitle(
+            groupType: HabitDisplayGroupType.name,
+            groupDirection: HabitDisplaySortDirection.desc,
+          ),
+        ),
+      );
+      expect(find.textContaining('(Desc)'), findsOneWidget);
     });
-
-    test(
-      'getTitle appends direction text when direction is provided',
-      () async {
-        final title = HabitsGroupingViewModel.getTitle(
-          HabitDisplayGroupType.name,
-          HabitDisplaySortDirection.desc,
-        );
-        expect(title, contains('(Desc)'));
-      },
-    );
   });
 }

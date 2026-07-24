@@ -424,6 +424,9 @@ class L10nPl extends L10n {
   String get habitDisplay_groupType_createDate => 'By Creation Date';
 
   @override
+  String get habitDisplay_groupType_habitCount => 'By Habit Count';
+
+  @override
   String get habitDisplay_groupTypeDialog_title => 'Group Sort';
 
   @override

@@ -390,7 +390,17 @@ class _GroupManageSliverAppBar extends StatelessWidget {
       title: Text(l10n?.groupManage_appbar_title ?? 'Manage Groups'),
       leading: const PageBackButton(reason: PageBackReason.back),
       actions: [
-        IconButton(icon: const Icon(Icons.sort), onPressed: onSortOpen),
+        Selector<
+          GroupManageViewModel,
+          (HabitDisplayGroupType, HabitDisplaySortDirection)
+        >(
+          selector: (context, vm) =>
+              (vm.effectiveSortType, vm.effectiveSortDirection),
+          builder: (context, sort, child) => IconButton(
+            icon: GroupTypeSortIcon(groupType: sort.$1, direction: sort.$2),
+            onPressed: onSortOpen,
+          ),
+        ),
       ],
     );
   }
@@ -542,7 +552,10 @@ class _GroupSortPickerDialogState extends State<_GroupSortPickerDialog> {
                 for (final sortType in GroupManageViewModel.supportedSortTypes)
                   RadioListTile<HabitDisplayGroupType>(
                     title: Text(_sortTypeLabel(sortType, l10n)),
-                    secondary: Icon(_sortTypeIcon(sortType)),
+                    secondary: GroupTypeSortIcon(
+                      groupType: sortType,
+                      direction: crtSortDirection,
+                    ),
                     value: sortType,
                   ),
               ],
@@ -587,14 +600,11 @@ class _GroupSortPickerDialogState extends State<_GroupSortPickerDialog> {
         l10n?.habitDisplay_groupType_colorType ?? 'By Color',
       HabitDisplayGroupType.createDate =>
         l10n?.habitDisplay_groupType_createDate ?? 'By Creation Date',
-    };
-  }
-
-  IconData _sortTypeIcon(HabitDisplayGroupType type) {
-    return switch (type) {
-      HabitDisplayGroupType.name => Icons.sort_by_alpha,
-      HabitDisplayGroupType.colorType => Icons.palette_outlined,
-      HabitDisplayGroupType.createDate => Icons.calendar_today,
+      HabitDisplayGroupType
+          .habitCount => // unreachable (filtered by supportedSortTypes)
+        throw UnsupportedError(
+          'habitCount sort is not available on the group management page',
+        ),
     };
   }
 }

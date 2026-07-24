@@ -400,6 +400,9 @@ class L10nZh extends L10n {
   String get habitDisplay_groupType_createDate => '创建日期';
 
   @override
+  String get habitDisplay_groupType_habitCount => '习惯数量';
+
+  @override
   String get habitDisplay_groupTypeDialog_title => '分组排序';
 
   @override
@@ -2386,6 +2389,9 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get habitDisplay_groupType_createDate => '建立日期';
+
+  @override
+  String get habitDisplay_groupType_habitCount => '習慣數量';
 
   @override
   String get habitDisplay_groupTypeDialog_title => '分組排序';

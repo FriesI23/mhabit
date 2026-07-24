@@ -111,6 +111,7 @@ const appLocalizationsDelegates = <LocalizationsDelegate>[
 const defaultSortType = HabitDisplaySortType.manual;
 const defaultSortDirection = HabitDisplaySortDirection.asc;
 const defaultGroupType = HabitDisplayGroupType.createDate;
+const defaultGroupOrderType = HabitGroupOrderType.createDate;
 const defaultGroupSortDirection = HabitDisplaySortDirection.asc;
 const defaultHabitsRecordScrollBehavior = HabitsRecordScrollBehavior.scrollable;
 const defaultFirstDay = DateTime.monday;

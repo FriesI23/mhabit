@@ -776,6 +776,12 @@ abstract class L10n {
   /// **'By Creation Date'**
   String get habitDisplay_groupType_createDate;
 
+  /// No description provided for @habitDisplay_groupType_habitCount.
+  ///
+  /// In en, this message translates to:
+  /// **'By Habit Count'**
+  String get habitDisplay_groupType_habitCount;
+
   /// No description provided for @habitDisplay_groupTypeDialog_title.
   ///
   /// In en, this message translates to:

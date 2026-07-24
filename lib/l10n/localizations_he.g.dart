@@ -412,6 +412,9 @@ class L10nHe extends L10n {
   String get habitDisplay_groupType_createDate => 'לפי תאריך יצירה';
 
   @override
+  String get habitDisplay_groupType_habitCount => 'By Habit Count';
+
+  @override
   String get habitDisplay_groupTypeDialog_title => 'מיון בתוך הקבוצה';
 
   @override

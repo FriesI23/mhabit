@@ -343,12 +343,13 @@ class _GroupingTypeListTile extends StatelessWidget {
     final l10n = L10n.of(context);
     return ListTile(
       iconColor: Theme.of(context).colorScheme.onSurfaceVariant,
-      leading: Icon(HabitsGroupingViewModel.getIcon(groupType, groupDirection)),
+      leading: GroupingIcon(groupType: groupType, direction: groupDirection),
       title: l10n != null
           ? Text(l10n.habitDisplay_groupTypeDialog_title)
           : const Text("Group Sort"),
-      subtitle: Text(
-        HabitsGroupingViewModel.getTitle(groupType, groupDirection, l10n: l10n),
+      subtitle: GroupingTitle(
+        groupType: groupType,
+        groupDirection: groupDirection,
       ),
       trailing: const Icon(Icons.arrow_right_outlined),
       onTap: onPressed,
