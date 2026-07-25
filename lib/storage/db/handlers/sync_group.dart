@@ -145,7 +145,7 @@ class SyncGroupDBHelper {
       sessionId: ((syncDirty ?? 0) > 0 || loadedConfigId != configId)
           ? sessionId
           : syncSessionId,
-      etag: syncEtag,
+      etag: (loadedConfigId != configId) ? null : syncEtag,
     );
   }
 

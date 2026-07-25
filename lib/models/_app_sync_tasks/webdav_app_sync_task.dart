@@ -388,7 +388,10 @@ class WebDavAppSyncTaskExecutor
   }
 
   Future<WebDavAppSyncTaskResult> doExec() async {
-    await groupSyncSubTask.run(this);
+    // FIXME: When a strict-sync mode is introduced, group failures here
+    // (e.g. 412 Precondition Failed when switching servers) should block
+    // the entire sync rather than being swallowed.
+    final groupResults = await groupSyncSubTask.run(this);
     if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
 
     final serverHabitsMetaFuture = fetchHabitsMetaFromServerTask.run(this);
@@ -456,7 +459,10 @@ class WebDavAppSyncTaskExecutor
         appLog.debugger.debug("$k \n--> $v || ${v.error.trace}\n---------");
       });
     }
-    return WebDavAppSyncTaskResult.multi(results: resultMap);
+    return WebDavAppSyncTaskResult.multi(
+      results: resultMap,
+      groupResults: groupResults,
+    );
   }
 }
 
