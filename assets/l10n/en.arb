@@ -1861,6 +1861,10 @@
     "@groupManage_color_none": {
         "description": "Tooltip for the 'no color' option in the group color picker"
     },
+    "groupHeader_menu_manage": "Manage",
+    "@groupHeader_menu_manage": {
+        "description": "Menu item on Group header long-press to navigate to the group management page"
+    },
     "appSetting_manageGroups_subtitleText": "Create, edit, and delete habit groups",
     "@appSetting_manageGroups_subtitleText": {
         "description": "Subtitle for the Manage Groups tile in Settings"

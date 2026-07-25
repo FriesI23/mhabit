@@ -2154,6 +2154,9 @@ class L10nHe extends L10n {
   String get groupManage_color_none => 'ללא';
 
   @override
+  String get groupHeader_menu_manage => 'Manage';
+
+  @override
   String get appSetting_manageGroups_subtitleText =>
       'יצירה, עריכה ומחיקה של קבוצות הרגלים';
 

@@ -2188,6 +2188,9 @@ class L10nHu extends L10n {
   String get groupManage_color_none => 'null';
 
   @override
+  String get groupHeader_menu_manage => 'Manage';
+
+  @override
   String get appSetting_manageGroups_subtitleText =>
       'Create, edit, and delete habit groups';
 

@@ -27,7 +27,13 @@ import '_providers/group_manage.dart';
 import 'providers.dart';
 import 'widgets.dart';
 
-Future<void> naviToGroupManagePage({required BuildContext context}) async {
+Future<void> naviToGroupManagePage({
+  required BuildContext context,
+  String? initialGroupUUID,
+}) async {
+  // TODO(slice4): pass initialGroupUUID through GroupManagePage →
+  // PageProviders → VM so _PageState can consume it post-frame to
+  // enter manual sort + selection mode.
   return Navigator.of(context).push<void>(
     MaterialPageRoute(builder: (context) => const GroupManagePage()),
   );

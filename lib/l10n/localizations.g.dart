@@ -3447,6 +3447,12 @@ abstract class L10n {
   /// **'None'**
   String get groupManage_color_none;
 
+  /// Menu item on Group header long-press to navigate to the group management page
+  ///
+  /// In en, this message translates to:
+  /// **'Manage'**
+  String get groupHeader_menu_manage;
+
   /// Subtitle for the Manage Groups tile in Settings
   ///
   /// In en, this message translates to:
