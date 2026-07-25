@@ -2186,6 +2186,18 @@ class L10nRu extends L10n {
   String get groupManage_color_none => 'null';
 
   @override
+  String get groupManage_reorder_tooltip => 'Reorder groups';
+
+  @override
+  String get groupManage_menu_edit => 'Редактировать';
+
+  @override
+  String get groupManage_menu_delete => 'Удалить';
+
+  @override
+  String get groupManage_selectAll => 'Выбрать всё';
+
+  @override
   String get groupHeader_menu_manage => 'Manage';
 
   @override

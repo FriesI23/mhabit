@@ -2117,6 +2117,18 @@ class L10nJa extends L10n {
   String get groupManage_color_none => 'なし';
 
   @override
+  String get groupManage_reorder_tooltip => 'Reorder groups';
+
+  @override
+  String get groupManage_menu_edit => '編集';
+
+  @override
+  String get groupManage_menu_delete => '削除';
+
+  @override
+  String get groupManage_selectAll => 'すべて選択';
+
+  @override
   String get groupHeader_menu_manage => 'Manage';
 
   @override

@@ -31,20 +31,24 @@ Future<void> naviToGroupManagePage({
   required BuildContext context,
   String? initialGroupUUID,
 }) async {
-  // TODO(slice4): pass initialGroupUUID through GroupManagePage →
-  // PageProviders → VM so _PageState can consume it post-frame to
-  // enter manual sort + selection mode.
   return Navigator.of(context).push<void>(
-    MaterialPageRoute(builder: (context) => const GroupManagePage()),
+    MaterialPageRoute(
+      builder: (context) => GroupManagePage(initialGroupUUID: initialGroupUUID),
+    ),
   );
 }
 
 class GroupManagePage extends StatelessWidget {
-  const GroupManagePage({super.key});
+  final String? initialGroupUUID;
+
+  const GroupManagePage({super.key, this.initialGroupUUID});
 
   @override
   Widget build(BuildContext context) {
-    return const PageProviders(child: _Page());
+    return PageProviders(
+      initialGroupUUID: initialGroupUUID,
+      child: const _Page(),
+    );
   }
 }
 
@@ -212,34 +216,64 @@ class _PageState extends State<_Page> {
 
   @override
   Widget build(BuildContext context) {
-    return ColorfulNavibar(
-      child: Scaffold(
-        body: Selector<GroupManageViewModel, (bool, bool)>(
-          selector: (context, vm) => (vm.hasLoad, vm.consumeForceReloadFlag()),
-          shouldRebuild: (previous, next) => previous.$1 != next.$1 || next.$2,
-          builder: (context, _, child) => FutureBuilder(
-            future: loadData(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Center(child: Text('${snapshot.error}'));
-              }
-              return EnhancedSafeArea.edgeToEdgeSafe(
-                child: _GroupManageBody(
-                  onGroupTap: _onGroupTap,
-                  onGroupLongPress: _onGroupLongPress,
-                  onEdit: _openEditDialog,
-                  onDelete: _onSingleDelete,
-                  onSortOpen: _openSortSelector,
-                  onBatchDelete: _onBatchDelete,
-                  debugMenuBuilder: _buildDevelopMenu,
-                ),
-              );
-            },
+    // Process initialGroupUUID from Slice 3 navigation.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final vm = context.read<GroupManageViewModel>();
+      final uuid = vm.consumeInitialGroupUUID();
+      if (uuid != null) vm.enterManualAndSelect(uuid);
+    });
+
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        final vm = context.read<GroupManageViewModel>();
+        if (vm.selectionMode) {
+          vm.exitSelectionMode();
+        } else {
+          Navigator.of(context).pop();
+        }
+      },
+      child: ColorfulNavibar(
+        child: Scaffold(
+          body: Selector<GroupManageViewModel, (bool, bool)>(
+            selector: (context, vm) =>
+                (vm.hasLoad, vm.consumeForceReloadFlag()),
+            shouldRebuild: (previous, next) =>
+                previous.$1 != next.$1 || next.$2,
+            builder: (context, _, child) => FutureBuilder(
+              future: loadData(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(child: Text('${snapshot.error}'));
+                }
+                return EnhancedSafeArea.edgeToEdgeSafe(
+                  child: _GroupManageBody(
+                    onGroupTap: _onGroupTap,
+                    onGroupLongPress: _onGroupLongPress,
+                    onEdit: _openEditDialog,
+                    onDelete: _onSingleDelete,
+                    onSortOpen: _openSortSelector,
+                    onBatchDelete: _onBatchDelete,
+                    onEditSingle: _onEditSingleSelected,
+                    debugMenuBuilder: _buildDevelopMenu,
+                  ),
+                );
+              },
+            ),
           ),
+          floatingActionButton: _buildFab(context),
         ),
-        floatingActionButton: _buildFab(context),
       ),
     );
+  }
+
+  void _onEditSingleSelected() {
+    final vm = context.read<GroupManageViewModel>();
+    if (vm.selectedCount != 1) return;
+    final uuid = vm.selectedUUIDs.first;
+    _openEditDialog(uuid);
   }
 
   Widget? _buildFab(BuildContext context) {
@@ -276,6 +310,7 @@ class _GroupManageBody extends StatelessWidget {
     required this.onSortOpen,
     required this.onBatchDelete,
     required this.debugMenuBuilder,
+    this.onEditSingle,
   });
 
   final void Function(String uuid) onGroupTap;
@@ -285,6 +320,7 @@ class _GroupManageBody extends StatelessWidget {
   final VoidCallback onSortOpen;
   final VoidCallback onBatchDelete;
   final WidgetBuilder debugMenuBuilder;
+  final VoidCallback? onEditSingle;
 
   @override
   Widget build(BuildContext context) {
@@ -308,6 +344,7 @@ class _GroupManageBody extends StatelessWidget {
             _GroupManageSliverAppBar(
               onSortOpen: onSortOpen,
               onBatchDelete: onBatchDelete,
+              onEditSingle: onEditSingle,
             ),
             _GroupManageContent(
               layoutType: layoutType,
@@ -353,10 +390,12 @@ class _GroupManageSliverAppBar extends StatelessWidget {
   const _GroupManageSliverAppBar({
     required this.onSortOpen,
     required this.onBatchDelete,
+    this.onEditSingle,
   });
 
   final VoidCallback onSortOpen;
   final VoidCallback onBatchDelete;
+  final VoidCallback? onEditSingle;
 
   @override
   Widget build(BuildContext context) {
@@ -367,6 +406,9 @@ class _GroupManageSliverAppBar extends StatelessWidget {
     final l10n = L10n.of(context);
 
     if (selectionMode) {
+      final effectiveSortType = context
+          .read<GroupManageViewModel>()
+          .effectiveSortType;
       return SliverAppBar(
         pinned: true,
         forceElevated: true,
@@ -382,6 +424,29 @@ class _GroupManageSliverAppBar extends StatelessWidget {
               '$selectedCount selected',
         ),
         actions: [
+          if (selectedCount == 1 && onEditSingle != null)
+            IconButton(
+              icon: const Icon(Icons.edit_outlined),
+              tooltip: l10n?.habitEdit_saveButton_text ?? 'Edit',
+              onPressed: onEditSingle,
+            ),
+          IconButton(
+            icon: const Icon(Icons.select_all),
+            tooltip: l10n?.groupManage_selectAll ?? 'Select all',
+            onPressed: () => context.read<GroupManageViewModel>().selectAll(),
+          ),
+          if (effectiveSortType != HabitDisplayGroupType.manual)
+            IconButton(
+              icon: const Icon(Icons.reorder),
+              tooltip: l10n?.groupManage_reorder_tooltip ?? 'Reorder groups',
+              onPressed: () {
+                final vm = context.read<GroupManageViewModel>();
+                vm.setSortOptions(
+                  HabitDisplayGroupType.manual,
+                  HabitDisplaySortDirection.asc,
+                );
+              },
+            ),
           IconButton(
             icon: const Icon(Icons.delete_outline),
             onPressed: selectedCount > 0 ? onBatchDelete : null,
@@ -396,6 +461,20 @@ class _GroupManageSliverAppBar extends StatelessWidget {
       title: Text(l10n?.groupManage_appbar_title ?? 'Manage Groups'),
       leading: const PageBackButton(reason: PageBackReason.back),
       actions: [
+        IconButton(
+          icon: const Icon(Icons.reorder),
+          tooltip: l10n?.groupManage_reorder_tooltip ?? 'Reorder groups',
+          onPressed: () {
+            final vm = context.read<GroupManageViewModel>();
+            if (vm.effectiveSortType != HabitDisplayGroupType.manual) {
+              vm.setSortOptions(
+                HabitDisplayGroupType.manual,
+                HabitDisplaySortDirection.asc,
+              );
+            }
+            if (!vm.selectionMode) vm.enterSelectionModeWithoutNotification();
+          },
+        ),
         Selector<
           GroupManageViewModel,
           (HabitDisplayGroupType, HabitDisplaySortDirection)

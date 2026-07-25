@@ -2145,6 +2145,18 @@ class L10nAr extends L10n {
   String get groupManage_color_none => 'خالي';
 
   @override
+  String get groupManage_reorder_tooltip => 'Reorder groups';
+
+  @override
+  String get groupManage_menu_edit => 'تعديل';
+
+  @override
+  String get groupManage_menu_delete => 'حذف';
+
+  @override
+  String get groupManage_selectAll => 'اختيار الكل';
+
+  @override
   String get groupHeader_menu_manage => 'Manage';
 
   @override

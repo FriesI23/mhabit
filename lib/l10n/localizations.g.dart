@@ -3447,6 +3447,30 @@ abstract class L10n {
   /// **'None'**
   String get groupManage_color_none;
 
+  /// Tooltip for the reorder button that enters manual sort + selection mode
+  ///
+  /// In en, this message translates to:
+  /// **'Reorder groups'**
+  String get groupManage_reorder_tooltip;
+
+  /// Menu item label for editing a group
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get groupManage_menu_edit;
+
+  /// Menu item label for deleting a group
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get groupManage_menu_delete;
+
+  /// Button in selection mode AppBar to select or deselect all groups
+  ///
+  /// In en, this message translates to:
+  /// **'Select all'**
+  String get groupManage_selectAll;
+
   /// Menu item on Group header long-press to navigate to the group management page
   ///
   /// In en, this message translates to:

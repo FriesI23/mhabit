@@ -2035,6 +2035,18 @@ class L10nZh extends L10n {
   String get groupManage_color_none => '无';
 
   @override
+  String get groupManage_reorder_tooltip => '排序分组';
+
+  @override
+  String get groupManage_menu_edit => '编辑';
+
+  @override
+  String get groupManage_menu_delete => '删除';
+
+  @override
+  String get groupManage_selectAll => '全选';
+
+  @override
   String get groupHeader_menu_manage => '管理';
 
   @override
@@ -3703,6 +3715,21 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get groupManage_color_none => '無';
+
+  @override
+  String get groupManage_reorder_tooltip => '排序分組';
+
+  @override
+  String get groupManage_menu_edit => '編輯';
+
+  @override
+  String get groupManage_menu_delete => '刪除';
+
+  @override
+  String get groupManage_selectAll => '全選';
+
+  @override
+  String get groupHeader_menu_manage => '管理';
 
   @override
   String get appSetting_manageGroups_subtitleText => '建立、編輯和刪除習慣分組';

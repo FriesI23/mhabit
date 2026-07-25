@@ -40,6 +40,9 @@ import '../../../storage/profile_provider.dart';
 class GroupManageViewModel extends ChangeNotifier
     with ProfileHandlerLoadedMixin
     implements ProviderMounted, AppEventLoaded {
+  GroupManageViewModel({String? initialGroupUUID})
+    : _initialGroupUUID = initialGroupUUID;
+
   // dependencies
   GroupManager? _groupManager;
   DisplayGroupModeProfileHandler? _groupModeHandler;
@@ -95,6 +98,26 @@ class GroupManageViewModel extends ChangeNotifier
   final _pageLoad = PageLoadRuntime();
   bool _nextRefreshForceReload = false;
   bool _mounted = true;
+
+  // Slice 3/4: initial group UUID from home page long-press menu
+  String? _initialGroupUUID;
+
+  String? consumeInitialGroupUUID() {
+    final uuid = _initialGroupUUID;
+    _initialGroupUUID = null;
+    return uuid;
+  }
+
+  /// Enters manual sort + selection mode with [uuid] selected.
+  /// Used when navigating from the home page Group header long-press menu.
+  void enterManualAndSelect(String uuid) {
+    _sortType = HabitDisplayGroupType.manual;
+    _sortDirection = HabitDisplaySortDirection.asc;
+    _resortData();
+    _selectionMode = true;
+    _selectedGroupUUIDs.add(uuid);
+    notifyListeners();
+  }
 
   @override
   bool get mounted => _mounted;
@@ -264,6 +287,13 @@ class GroupManageViewModel extends ChangeNotifier
     if (listen) notifyListeners();
   }
 
+  /// Enter selection mode without selecting any item.
+  /// Used by the AppBar reorder button.
+  void enterSelectionModeWithoutNotification() {
+    _selectionMode = true;
+    notifyListeners();
+  }
+
   void exitSelectionMode() {
     _selectionMode = false;
     _selectedGroupUUIDs.clear();
@@ -281,6 +311,15 @@ class GroupManageViewModel extends ChangeNotifier
     } else {
       _selectedGroupUUIDs.add(uuid);
     }
+    notifyListeners();
+  }
+
+  void selectAll() {
+    if (!_selectionMode) return;
+    final all = groups.map((g) => g.uuid).toSet();
+    _selectedGroupUUIDs
+      ..clear()
+      ..addAll(all);
     notifyListeners();
   }
 

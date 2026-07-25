@@ -2176,6 +2176,18 @@ class L10nDe extends L10n {
   String get groupManage_color_none => 'null';
 
   @override
+  String get groupManage_reorder_tooltip => 'Reorder groups';
+
+  @override
+  String get groupManage_menu_edit => 'Bearbeiten';
+
+  @override
+  String get groupManage_menu_delete => 'Löschen';
+
+  @override
+  String get groupManage_selectAll => 'Alle Auswählen';
+
+  @override
   String get groupHeader_menu_manage => 'Manage';
 
   @override

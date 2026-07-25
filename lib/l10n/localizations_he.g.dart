@@ -2154,6 +2154,18 @@ class L10nHe extends L10n {
   String get groupManage_color_none => 'ללא';
 
   @override
+  String get groupManage_reorder_tooltip => 'Reorder groups';
+
+  @override
+  String get groupManage_menu_edit => 'עריכה';
+
+  @override
+  String get groupManage_menu_delete => 'מחיקה';
+
+  @override
+  String get groupManage_selectAll => 'לבחור הכול';
+
+  @override
   String get groupHeader_menu_manage => 'Manage';
 
   @override

@@ -2185,6 +2185,18 @@ class L10nUk extends L10n {
   String get groupManage_color_none => 'нульовий';
 
   @override
+  String get groupManage_reorder_tooltip => 'Reorder groups';
+
+  @override
+  String get groupManage_menu_edit => 'Редагувати';
+
+  @override
+  String get groupManage_menu_delete => 'Видалити';
+
+  @override
+  String get groupManage_selectAll => 'Виберіть усі';
+
+  @override
   String get groupHeader_menu_manage => 'Manage';
 
   @override

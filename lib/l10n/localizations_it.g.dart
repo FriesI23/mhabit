@@ -2181,6 +2181,18 @@ class L10nIt extends L10n {
   String get groupManage_color_none => 'vuoto';
 
   @override
+  String get groupManage_reorder_tooltip => 'Reorder groups';
+
+  @override
+  String get groupManage_menu_edit => 'Modifica';
+
+  @override
+  String get groupManage_menu_delete => 'Elimina';
+
+  @override
+  String get groupManage_selectAll => 'Seleziona tutto';
+
+  @override
   String get groupHeader_menu_manage => 'Manage';
 
   @override

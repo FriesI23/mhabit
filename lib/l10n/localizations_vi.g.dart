@@ -2186,6 +2186,18 @@ class L10nVi extends L10n {
   String get groupManage_color_none => 'vô giá trị';
 
   @override
+  String get groupManage_reorder_tooltip => 'Reorder groups';
+
+  @override
+  String get groupManage_menu_edit => 'Chỉnh sửa';
+
+  @override
+  String get groupManage_menu_delete => 'Xóa';
+
+  @override
+  String get groupManage_selectAll => 'Chọn tất cả';
+
+  @override
   String get groupHeader_menu_manage => 'Manage';
 
   @override

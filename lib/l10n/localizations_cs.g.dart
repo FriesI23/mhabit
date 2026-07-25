@@ -2163,6 +2163,18 @@ class L10nCs extends L10n {
   String get groupManage_color_none => 'None';
 
   @override
+  String get groupManage_reorder_tooltip => 'Reorder groups';
+
+  @override
+  String get groupManage_menu_edit => 'Edit';
+
+  @override
+  String get groupManage_menu_delete => 'Delete';
+
+  @override
+  String get groupManage_selectAll => 'Select all';
+
+  @override
   String get groupHeader_menu_manage => 'Manage';
 
   @override

@@ -2160,6 +2160,18 @@ class L10nFa extends L10n {
   String get groupManage_color_none => 'ندارد';
 
   @override
+  String get groupManage_reorder_tooltip => 'Reorder groups';
+
+  @override
+  String get groupManage_menu_edit => 'ویرایش';
+
+  @override
+  String get groupManage_menu_delete => 'حذف';
+
+  @override
+  String get groupManage_selectAll => 'انتخاب همه';
+
+  @override
   String get groupHeader_menu_manage => 'Manage';
 
   @override

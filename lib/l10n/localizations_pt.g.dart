@@ -2175,6 +2175,18 @@ class L10nPt extends L10n {
   String get groupManage_color_none => 'None';
 
   @override
+  String get groupManage_reorder_tooltip => 'Reorder groups';
+
+  @override
+  String get groupManage_menu_edit => 'Editar';
+
+  @override
+  String get groupManage_menu_delete => 'Apagar';
+
+  @override
+  String get groupManage_selectAll => 'Selecionar todos';
+
+  @override
   String get groupHeader_menu_manage => 'Manage';
 
   @override

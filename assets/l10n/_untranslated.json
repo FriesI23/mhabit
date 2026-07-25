@@ -78,6 +78,7 @@
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
     "groupManage_icon_label",
+    "groupManage_reorder_tooltip",
     "groupHeader_menu_manage",
     "appSetting_manageGroups_subtitleText"
   ],
@@ -552,6 +553,10 @@
     "groupManage_icon_none",
     "groupManage_color_label",
     "groupManage_color_none",
+    "groupManage_reorder_tooltip",
+    "groupManage_menu_edit",
+    "groupManage_menu_delete",
+    "groupManage_selectAll",
     "groupHeader_menu_manage",
     "appSetting_manageGroups_subtitleText"
   ],
@@ -755,6 +760,7 @@
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
     "groupManage_icon_label",
+    "groupManage_reorder_tooltip",
     "groupHeader_menu_manage",
     "appSetting_manageGroups_subtitleText"
   ],
@@ -884,6 +890,7 @@
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
     "groupManage_icon_label",
+    "groupManage_reorder_tooltip",
     "groupHeader_menu_manage",
     "appSetting_manageGroups_subtitleText"
   ],
@@ -1432,6 +1439,10 @@
     "groupManage_icon_none",
     "groupManage_color_label",
     "groupManage_color_none",
+    "groupManage_reorder_tooltip",
+    "groupManage_menu_edit",
+    "groupManage_menu_delete",
+    "groupManage_selectAll",
     "groupHeader_menu_manage",
     "appSetting_manageGroups_subtitleText",
     "habitDisplay_groupType_manual"
@@ -1654,6 +1665,7 @@
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
     "groupManage_icon_label",
+    "groupManage_reorder_tooltip",
     "groupHeader_menu_manage",
     "appSetting_manageGroups_subtitleText"
   ],
@@ -1820,6 +1832,7 @@
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
     "groupManage_icon_label",
+    "groupManage_reorder_tooltip",
     "groupHeader_menu_manage",
     "appSetting_manageGroups_subtitleText"
   ],
@@ -1835,6 +1848,7 @@
     "groupManage_deleteDialog_content",
     "groupManage_nameTooLong",
     "groupManage_descTooLong",
+    "groupManage_reorder_tooltip",
     "groupHeader_menu_manage"
   ],
 
@@ -1917,6 +1931,7 @@
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
     "groupManage_icon_label",
+    "groupManage_reorder_tooltip",
     "groupHeader_menu_manage",
     "appSetting_manageGroups_subtitleText"
   ],
@@ -2115,6 +2130,7 @@
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
     "groupManage_icon_label",
+    "groupManage_reorder_tooltip",
     "groupHeader_menu_manage",
     "appSetting_manageGroups_subtitleText"
   ],
@@ -2214,6 +2230,7 @@
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
     "groupManage_icon_label",
+    "groupManage_reorder_tooltip",
     "groupHeader_menu_manage",
     "appSetting_manageGroups_subtitleText"
   ],
@@ -2762,6 +2779,10 @@
     "groupManage_icon_none",
     "groupManage_color_label",
     "groupManage_color_none",
+    "groupManage_reorder_tooltip",
+    "groupManage_menu_edit",
+    "groupManage_menu_delete",
+    "groupManage_selectAll",
     "groupHeader_menu_manage",
     "appSetting_manageGroups_subtitleText",
     "habitDisplay_groupType_manual"
@@ -2866,6 +2887,7 @@
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
     "groupManage_icon_label",
+    "groupManage_reorder_tooltip",
     "groupHeader_menu_manage",
     "appSetting_manageGroups_subtitleText"
   ],
@@ -3102,6 +3124,7 @@
     "groupManage_icon_label",
     "groupManage_icon_none",
     "groupManage_color_none",
+    "groupManage_reorder_tooltip",
     "groupHeader_menu_manage",
     "appSetting_manageGroups_subtitleText"
   ],
@@ -3205,6 +3228,7 @@
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
     "groupManage_icon_label",
+    "groupManage_reorder_tooltip",
     "groupHeader_menu_manage",
     "appSetting_manageGroups_subtitleText"
   ],
@@ -3287,6 +3311,7 @@
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
     "groupManage_icon_label",
+    "groupManage_reorder_tooltip",
     "groupHeader_menu_manage",
     "appSetting_manageGroups_subtitleText"
   ],
@@ -3370,6 +3395,7 @@
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
     "groupManage_icon_label",
+    "groupManage_reorder_tooltip",
     "groupHeader_menu_manage",
     "appSetting_manageGroups_subtitleText"
   ],
@@ -3453,6 +3479,7 @@
     "groupManage_sortTile_text",
     "groupManage_sectionTitle_text",
     "groupManage_icon_label",
+    "groupManage_reorder_tooltip",
     "groupHeader_menu_manage",
     "appSetting_manageGroups_subtitleText"
   ],
@@ -3538,7 +3565,6 @@
     "channelDesc_appSyncing",
     "channelName_appSyncFailed",
     "channelDesc_appSyncFailed",
-    "groupManage_deleteDialog_cancel",
-    "groupHeader_menu_manage"
+    "groupManage_deleteDialog_cancel"
   ]
 }
