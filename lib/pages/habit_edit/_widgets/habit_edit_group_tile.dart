@@ -108,16 +108,9 @@ class _HabitEditGroupDesktopTile extends StatelessWidget {
     final menuOffset = Offset(startPadding + leadingWidth, 0);
     final hasGroup = currentGroup != null;
 
-    final menuStyle = MenuStyle(
-      shape: WidgetStatePropertyAll(
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    );
-
     return FilterableMenuField<String>(
       label: groupName ?? '',
       alignmentOffset: menuOffset,
-      menuStyle: menuStyle,
       builder: (context, textCtrl, focusNode, menuCtrl) {
         return ListTile(
           leading: Icon(

@@ -166,7 +166,8 @@ class GroupManageViewModel extends ChangeNotifier
   void updateAppEvent(AppEventBus newAppEvent) {
     _groupEventSub?.cancel();
     _reloadDataSub?.cancel();
-    _groupEventSub = newAppEvent.on<GroupChangedEvent>().listen((_) {
+    _groupEventSub = newAppEvent.on<GroupChangedEvent>().listen((event) {
+      if (event.isInTrace(AppEventPageSource.groupManage)) return;
       appLog.habit.debug("GroupManage.reload", ex: ["GroupChangedEvent"]);
       requestReload();
     });
@@ -430,11 +431,13 @@ class GroupManageViewModel extends ChangeNotifier
       decimalPlaces: sortPositionConflictDecimalPlaces,
     );
 
+    notifyListeners();
     _appEventBus?.push(
-      const GroupChangedEvent(msg: "group_manage.onGroupReorderComplete"),
+      const GroupChangedEvent(
+        msg: "group_manage.onGroupReorderComplete",
+        trace: {AppEventPageSource.groupManage: {}},
+      ),
     );
-
-    requestReload();
   }
 }
 

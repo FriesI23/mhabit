@@ -14,6 +14,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/utils.dart';
@@ -207,13 +208,6 @@ class _PageState extends State<_Page> {
     }
   }
 
-  void _onGroupLongPress(String uuid) {
-    final vm = context.read<GroupManageViewModel>();
-    if (!vm.selectionMode) {
-      vm.enterSelectionMode(uuid);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     // Process initialGroupUUID from Slice 3 navigation.
@@ -251,7 +245,6 @@ class _PageState extends State<_Page> {
                 return EnhancedSafeArea.edgeToEdgeSafe(
                   child: _GroupManageBody(
                     onGroupTap: _onGroupTap,
-                    onGroupLongPress: _onGroupLongPress,
                     onEdit: _openEditDialog,
                     onDelete: _onSingleDelete,
                     onSortOpen: _openSortSelector,
@@ -304,7 +297,6 @@ class _PageState extends State<_Page> {
 class _GroupManageBody extends StatelessWidget {
   const _GroupManageBody({
     required this.onGroupTap,
-    required this.onGroupLongPress,
     required this.onEdit,
     required this.onDelete,
     required this.onSortOpen,
@@ -314,7 +306,6 @@ class _GroupManageBody extends StatelessWidget {
   });
 
   final void Function(String uuid) onGroupTap;
-  final void Function(String uuid) onGroupLongPress;
   final void Function(String uuid) onEdit;
   final void Function(String uuid) onDelete;
   final VoidCallback onSortOpen;
@@ -329,10 +320,8 @@ class _GroupManageBody extends StatelessWidget {
           (vm) => (vm.hasLoaded, vm.groups.isEmpty),
         );
 
-    if (groupsEmpty) {
-      return !hasLoaded
-          ? const Center(child: CircularProgressIndicator())
-          : _buildEmptyState(context);
+    if (!hasLoaded && groupsEmpty) {
+      return const Center(child: CircularProgressIndicator());
     }
 
     return AppUiLayoutBuilder(
@@ -346,15 +335,21 @@ class _GroupManageBody extends StatelessWidget {
               onBatchDelete: onBatchDelete,
               onEditSingle: onEditSingle,
             ),
-            _GroupManageContent(
-              layoutType: layoutType,
-              onGroupTap: onGroupTap,
-              onGroupLongPress: onGroupLongPress,
-              onEdit: onEdit,
-              onDelete: onDelete,
-            ),
-            if (kDebugMode)
-              SliverToBoxAdapter(child: debugMenuBuilder(context)),
+            if (groupsEmpty)
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: _buildEmptyState(context),
+              )
+            else ...[
+              _GroupManageContent(
+                layoutType: layoutType,
+                onGroupTap: onGroupTap,
+                onEdit: onEdit,
+                onDelete: onDelete,
+              ),
+              if (kDebugMode)
+                SliverToBoxAdapter(child: debugMenuBuilder(context)),
+            ],
           ],
         );
       },
@@ -437,7 +432,7 @@ class _GroupManageSliverAppBar extends StatelessWidget {
           ),
           if (effectiveSortType != HabitDisplayGroupType.manual)
             IconButton(
-              icon: const Icon(Icons.reorder),
+              icon: const Icon(Icons.drag_indicator),
               tooltip: l10n?.groupManage_reorder_tooltip ?? 'Reorder groups',
               onPressed: () {
                 final vm = context.read<GroupManageViewModel>();
@@ -461,18 +456,26 @@ class _GroupManageSliverAppBar extends StatelessWidget {
       title: Text(l10n?.groupManage_appbar_title ?? 'Manage Groups'),
       leading: const PageBackButton(reason: PageBackReason.back),
       actions: [
-        IconButton(
-          icon: const Icon(Icons.reorder),
-          tooltip: l10n?.groupManage_reorder_tooltip ?? 'Reorder groups',
-          onPressed: () {
-            final vm = context.read<GroupManageViewModel>();
-            if (vm.effectiveSortType != HabitDisplayGroupType.manual) {
-              vm.setSortOptions(
-                HabitDisplayGroupType.manual,
-                HabitDisplaySortDirection.asc,
-              );
-            }
-            if (!vm.selectionMode) vm.enterSelectionModeWithoutNotification();
+        Selector<GroupManageViewModel, bool>(
+          selector: (context, vm) => vm.groups.isNotEmpty,
+          builder: (context, hasGroups, child) {
+            if (!hasGroups) return const SizedBox.shrink();
+            return IconButton(
+              icon: const Icon(MdiIcons.sortVariant),
+              tooltip: l10n?.groupManage_reorder_tooltip ?? 'Reorder groups',
+              onPressed: () {
+                final vm = context.read<GroupManageViewModel>();
+                if (vm.effectiveSortType != HabitDisplayGroupType.manual) {
+                  vm.setSortOptions(
+                    HabitDisplayGroupType.manual,
+                    HabitDisplaySortDirection.asc,
+                  );
+                }
+                if (!vm.selectionMode) {
+                  vm.enterSelectionModeWithoutNotification();
+                }
+              },
+            );
           },
         ),
         Selector<
@@ -495,14 +498,12 @@ class _GroupManageContent extends StatelessWidget {
   const _GroupManageContent({
     required this.layoutType,
     required this.onGroupTap,
-    required this.onGroupLongPress,
     required this.onEdit,
     required this.onDelete,
   });
 
   final UiLayoutType layoutType;
   final void Function(String uuid) onGroupTap;
-  final void Function(String uuid) onGroupLongPress;
   final void Function(String uuid) onEdit;
   final void Function(String uuid) onDelete;
 
@@ -526,7 +527,6 @@ class _GroupManageContent extends StatelessWidget {
           selectionMode: selectionMode,
           selectedCount: selectedCount,
           onTap: onGroupTap,
-          onLongPress: onGroupLongPress,
           onEdit: onEdit,
           onDelete: onDelete,
         ),
@@ -537,7 +537,6 @@ class _GroupManageContent extends StatelessWidget {
         selectionMode: selectionMode,
         selectedCount: selectedCount,
         onTap: onGroupTap,
-        onLongPress: onGroupLongPress,
         onEdit: onEdit,
         onDelete: onDelete,
       ),

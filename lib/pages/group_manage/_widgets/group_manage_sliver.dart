@@ -38,7 +38,18 @@ class _GroupManageDragHandler {
     Widget child,
     int index,
     Animation<double> animation,
-  ) => Material(type: MaterialType.transparency, child: child);
+  ) {
+    return Builder(
+      builder: (context) => Material(
+        elevation: 8,
+        shadowColor: Colors.black38,
+        borderRadius: const BorderRadius.all(Radius.circular(12.0)),
+        surfaceTintColor: Colors.transparent,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        child: child,
+      ),
+    );
+  }
 
   _GroupManageDragHandler({required List<HabitGroupData> initialGroups}) {
     items = List.of(initialGroups);
@@ -62,10 +73,13 @@ class _GroupManageDragHandler {
     bool isManual,
     bool selectionMode,
   ) {
-    // Selection mode entry is handled by the page's onLongPress callback.
-    // Handle-click drag (ReorderableGridDragStartListener) triggers this
-    // without entering selection mode; long-press drag enters selection
-    // via the InkWell.onLongPress path before the drag begins.
+    // Enter selection mode simultaneously when the drag starts (via either
+    // drag-handle click or long-press).  Use [listen: false] to avoid a
+    // [notifyListeners] during the drag setup, which would interfere with
+    // the drag animation.
+    if (!selectionMode && isManual && index < items.length) {
+      vm.enterSelectionMode(items[index].uuid);
+    }
   }
 
   void onReorder(int oldIndex, int newIndex, GroupManageViewModel vm) {
@@ -82,7 +96,6 @@ class GroupManageGrid extends StatefulWidget {
   final bool selectionMode;
   final int selectedCount;
   final void Function(String uuid) onTap;
-  final void Function(String uuid) onLongPress;
   final void Function(String uuid) onEdit;
   final void Function(String uuid) onDelete;
 
@@ -93,7 +106,6 @@ class GroupManageGrid extends StatefulWidget {
     required this.selectionMode,
     required this.selectedCount,
     required this.onTap,
-    required this.onLongPress,
     required this.onEdit,
     required this.onDelete,
   });
@@ -129,7 +141,9 @@ class _GroupManageGridState extends State<GroupManageGrid> {
         selectionMode: widget.selectionMode,
         showDragHandle: showHandle,
         onTap: widget.onTap,
-        onLongPress: widget.onLongPress,
+        // Long-press drag is handled by the package's
+        // [ReorderableGridDelayedDragStartListener]; selection mode entry is
+        // handled in [_GroupManageDragHandler.onReorderStart] instead.
         onEdit: widget.onEdit,
         onDelete: widget.onDelete,
       ),
@@ -156,7 +170,6 @@ class GroupManageList extends StatefulWidget {
   final bool selectionMode;
   final int selectedCount;
   final void Function(String uuid) onTap;
-  final void Function(String uuid) onLongPress;
   final void Function(String uuid) onEdit;
   final void Function(String uuid) onDelete;
 
@@ -167,7 +180,6 @@ class GroupManageList extends StatefulWidget {
     required this.selectionMode,
     required this.selectedCount,
     required this.onTap,
-    required this.onLongPress,
     required this.onEdit,
     required this.onDelete,
   });
@@ -203,9 +215,9 @@ class _GroupManageListState extends State<GroupManageList> {
         selectionMode: widget.selectionMode,
         showDragHandle: showHandle,
         onTap: () => widget.onTap(_handler.items[index].uuid),
-        onLongPress: isManual
-            ? () => widget.onLongPress(_handler.items[index].uuid)
-            : () => widget.onLongPress(_handler.items[index].uuid),
+        // Long-press drag is handled by the package's
+        // [ReorderableGridDelayedDragStartListener]; selection mode entry is
+        // handled in [_GroupManageDragHandler.onReorderStart] instead.
         onEdit: () => widget.onEdit(_handler.items[index].uuid),
         onDelete: () => widget.onDelete(_handler.items[index].uuid),
       ),
@@ -227,7 +239,6 @@ class _GroupGridCard extends StatelessWidget {
   final bool selectionMode;
   final bool showDragHandle;
   final void Function(String uuid) onTap;
-  final void Function(String uuid)? onLongPress;
   final void Function(String uuid) onEdit;
   final void Function(String uuid) onDelete;
 
@@ -239,7 +250,6 @@ class _GroupGridCard extends StatelessWidget {
     required this.selectionMode,
     this.showDragHandle = false,
     required this.onTap,
-    this.onLongPress,
     required this.onEdit,
     required this.onDelete,
   });
@@ -342,9 +352,7 @@ class _GroupGridCard extends StatelessWidget {
         child: InkWell(
           borderRadius: _shape.borderRadius.resolve(null),
           onTap: () => onTap(group.uuid),
-          onLongPress: (selectionMode && !showDragHandle || onLongPress == null)
-              ? null
-              : () => onLongPress!(group.uuid),
+
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Column(
@@ -499,7 +507,6 @@ class _GroupManageTile extends StatelessWidget {
   final bool selectionMode;
   final bool showDragHandle;
   final VoidCallback? onTap;
-  final VoidCallback? onLongPress;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
@@ -511,7 +518,6 @@ class _GroupManageTile extends StatelessWidget {
     this.selectionMode = false,
     this.showDragHandle = false,
     this.onTap,
-    this.onLongPress,
     this.onEdit,
     this.onDelete,
   });
@@ -577,7 +583,6 @@ class _GroupManageTile extends StatelessWidget {
         subtitle: _buildSubtitle(),
         trailing: _buildTrailing(context),
         onTap: onTap,
-        onLongPress: onLongPress,
       ),
     );
   }
