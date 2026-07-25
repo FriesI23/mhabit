@@ -25,69 +25,50 @@ import '../../../theme/color.dart' show CustomColors;
 import '../../../widgets/widgets.dart';
 import '../_providers/group_manage.dart';
 
-mixin _GroupManageSliverMixin<T extends StatefulWidget> on State<T> {
-  late List<HabitGroupData> _items;
+/// Owns local item list and drag callbacks shared by [GroupManageGrid] and
+/// [GroupManageList].  States create one instance and delegate to it.
+class _GroupManageDragHandler {
+  static const scrollDirection = Axis.vertical;
 
-  void sliverRemoveItem(
+  static bool isSameItem(HabitGroupData a, HabitGroupData b) =>
+      a.uuid == b.uuid;
+
+  static Widget proxyDecorator(
+    Widget child,
     int index,
-    Widget Function(BuildContext, Animation<double>) builder,
-  );
+    Animation<double> animation,
+  ) => Material(type: MaterialType.transparency, child: child);
 
-  void sliverInsertItem(int index);
+  _GroupManageDragHandler({required List<HabitGroupData> initialGroups}) {
+    items = List.of(initialGroups);
+  }
 
-  Widget buildAnimatedItem(HabitGroupData group, Animation<double> animation);
+  late List<HabitGroupData> items;
 
-  void handleGroupsUpdate(
-    List<HabitGroupData> oldList,
-    List<HabitGroupData> newList,
+  void syncGroups(
+    List<HabitGroupData> oldGroups,
+    List<HabitGroupData> newGroups,
   ) {
-    _diffLists(oldList, newList);
-    _syncOrder(newList);
+    if (oldGroups != newGroups) items = List.of(newGroups);
   }
 
-  void _diffLists(List<HabitGroupData> oldList, List<HabitGroupData> newList) {
-    final oldUUIDs = oldList.map((g) => g.uuid).toSet();
-    final newUUIDs = newList.map((g) => g.uuid).toSet();
+  List<HabitGroupData> resolveNonDraggable(bool isManual) =>
+      isManual ? [] : List.of(items);
 
-    for (final entry in _items.asMap().entries.toList().reversed) {
-      if (newUUIDs.contains(entry.value.uuid)) continue;
-      final i = entry.key;
-      final removed = _items.removeAt(i);
-      sliverRemoveItem(
-        i,
-        (context, animation) => buildAnimatedItem(removed, animation),
-      );
-    }
-
-    for (final entry in newList.asMap().entries) {
-      if (oldUUIDs.contains(entry.value.uuid)) continue;
-      final i = entry.key;
-      _items.insert(i, entry.value);
-      sliverInsertItem(i);
-    }
-
-    final newByUUID = {for (final g in newList) g.uuid: g};
-    _items.asMap().forEach((i, item) {
-      final updated = newByUUID[item.uuid];
-      if (updated != null) _items[i] = updated;
-    });
+  void onReorderStart(
+    int index,
+    GroupManageViewModel vm,
+    bool isManual,
+    bool selectionMode,
+  ) {
+    if (isManual && !selectionMode) vm.enterSelectionMode(items[index].uuid);
   }
 
-  void _syncOrder(List<HabitGroupData> newOrder) {
-    if (_items.length != newOrder.length) {
-      _items = List.of(newOrder);
-      return;
-    }
-    for (var i = 0; i < _items.length; i++) {
-      if (_items[i].uuid != newOrder[i].uuid) {
-        final newByUUID = {for (final g in newOrder) g.uuid: g};
-        _items = List.generate(
-          newOrder.length,
-          (i) => newByUUID[newOrder[i].uuid]!,
-        );
-        return;
-      }
-    }
+  void onReorder(int oldIndex, int newIndex, GroupManageViewModel vm) {
+    final item = items.removeAt(oldIndex);
+    items.insert(newIndex, item);
+    if (vm.selectionMode) vm.exitSelectionMode();
+    vm.onGroupReorderComplete(items.map((g) => g.uuid).toList());
   }
 }
 
@@ -117,68 +98,51 @@ class GroupManageGrid extends StatefulWidget {
   State<GroupManageGrid> createState() => _GroupManageGridState();
 }
 
-class _GroupManageGridState extends State<GroupManageGrid>
-    with _GroupManageSliverMixin {
-  final _gridKey = GlobalKey<SliverAnimatedGridState>();
-
-  @override
-  void sliverRemoveItem(
-    int index,
-    Widget Function(BuildContext, Animation<double>) builder,
-  ) => _gridKey.currentState?.removeItem(index, builder);
-
-  @override
-  void sliverInsertItem(int index) => _gridKey.currentState?.insertItem(index);
-
-  @override
-  Widget buildAnimatedItem(HabitGroupData group, Animation<double> animation) =>
-      SizeTransition(
-        sizeFactor: animation,
-        child: FadeTransition(
-          opacity: animation,
-          child: _GroupGridCard(
-            group: group,
-            selectedUUIDs: widget.selectedUUIDs,
-            selectionMode: widget.selectionMode,
-            onTap: widget.onTap,
-            onLongPress: widget.onLongPress,
-            onEdit: widget.onEdit,
-            onDelete: widget.onDelete,
-          ),
-        ),
-      );
-
-  @override
-  void initState() {
-    super.initState();
-    _items = List.of(widget.groups);
-  }
+class _GroupManageGridState extends State<GroupManageGrid> {
+  late final _handler = _GroupManageDragHandler(initialGroups: widget.groups);
 
   @override
   void didUpdateWidget(covariant GroupManageGrid oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final groupsChanged = oldWidget.groups != widget.groups;
-    if (groupsChanged) handleGroupsUpdate(oldWidget.groups, widget.groups);
-    if (groupsChanged ||
-        oldWidget.selectionMode != widget.selectionMode ||
-        oldWidget.selectedCount != widget.selectedCount) {
-      setState(() {});
-    }
+    _handler.syncGroups(oldWidget.groups, widget.groups);
   }
 
   @override
-  Widget build(BuildContext context) => SliverAnimatedGrid(
-    key: _gridKey,
-    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-      maxCrossAxisExtent: 300,
-      mainAxisExtent: 100,
-      crossAxisSpacing: 8,
-      mainAxisSpacing: 8,
-    ),
-    initialItemCount: _items.length,
-    itemBuilder: (context, index, animation) =>
-        buildAnimatedItem(_items[index], animation),
-  );
+  Widget build(BuildContext context) {
+    final vm = context.read<GroupManageViewModel>();
+    final isManual = vm.effectiveSortType == HabitDisplayGroupType.manual;
+
+    return SliverReorderableAnimatedList<HabitGroupData>.grid(
+      scrollDirection: _GroupManageDragHandler.scrollDirection,
+      items: _handler.items,
+      isSameItem: _GroupManageDragHandler.isSameItem,
+      itemBuilder: (context, index) => _GroupGridCard(
+        key: ValueKey(_handler.items[index].uuid),
+        group: _handler.items[index],
+        selectedUUIDs: widget.selectedUUIDs,
+        selectionMode: widget.selectionMode,
+        onTap: widget.onTap,
+        onLongPress: isManual && !widget.selectionMode
+            ? null
+            : widget.onLongPress,
+        onEdit: widget.onEdit,
+        onDelete: widget.onDelete,
+      ),
+      sliverGridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 300,
+        mainAxisExtent: 100,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+      ),
+      proxyDecorator: _GroupManageDragHandler.proxyDecorator,
+      onReorderStart: (index) =>
+          _handler.onReorderStart(index, vm, isManual, widget.selectionMode),
+      onReorder: (oldIndex, newIndex) => setState(() {
+        _handler.onReorder(oldIndex, newIndex, vm);
+      }),
+      nonDraggableItems: _handler.resolveNonDraggable(isManual),
+    );
+  }
 }
 
 class GroupManageList extends StatefulWidget {
@@ -208,25 +172,12 @@ class GroupManageList extends StatefulWidget {
 }
 
 class _GroupManageListState extends State<GroupManageList> {
-  late List<HabitGroupData> _items;
-
-  @override
-  void initState() {
-    super.initState();
-    _items = List.of(widget.groups);
-  }
+  late final _handler = _GroupManageDragHandler(initialGroups: widget.groups);
 
   @override
   void didUpdateWidget(covariant GroupManageList oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Sync local items when the VM provides a genuinely different list.
-    if (oldWidget.groups != widget.groups) {
-      _items = List.of(widget.groups);
-    }
-    if (oldWidget.selectionMode != widget.selectionMode ||
-        oldWidget.selectedCount != widget.selectedCount) {
-      setState(() {});
-    }
+    _handler.syncGroups(oldWidget.groups, widget.groups);
   }
 
   @override
@@ -235,38 +186,28 @@ class _GroupManageListState extends State<GroupManageList> {
     final isManual = vm.effectiveSortType == HabitDisplayGroupType.manual;
 
     return SliverReorderableAnimatedList<HabitGroupData>(
-      scrollDirection: Axis.vertical,
-      items: _items,
-      isSameItem: (a, b) => a.uuid == b.uuid,
+      scrollDirection: _GroupManageDragHandler.scrollDirection,
+      items: _handler.items,
+      isSameItem: _GroupManageDragHandler.isSameItem,
       itemBuilder: (context, index) => _GroupManageTile(
-        key: ValueKey(_items[index].uuid),
-        group: _items[index],
-        isSelected: widget.selectedUUIDs.contains(_items[index].uuid),
+        key: ValueKey(_handler.items[index].uuid),
+        group: _handler.items[index],
+        isSelected: widget.selectedUUIDs.contains(_handler.items[index].uuid),
         selectionMode: widget.selectionMode,
-        onTap: () => widget.onTap(_items[index].uuid),
+        onTap: () => widget.onTap(_handler.items[index].uuid),
         onLongPress: isManual && !widget.selectionMode
             ? null
-            : () => widget.onLongPress(_items[index].uuid),
-        onEdit: () => widget.onEdit(_items[index].uuid),
-        onDelete: () => widget.onDelete(_items[index].uuid),
+            : () => widget.onLongPress(_handler.items[index].uuid),
+        onEdit: () => widget.onEdit(_handler.items[index].uuid),
+        onDelete: () => widget.onDelete(_handler.items[index].uuid),
       ),
-      proxyDecorator: (child, _, _) =>
-          Material(type: MaterialType.transparency, child: child),
-      onReorderStart: (index) {
-        if (isManual && !widget.selectionMode) {
-          vm.enterSelectionMode(_items[index].uuid);
-        }
-      },
-      onReorder: (oldIndex, newIndex) {
-        // Match the package example: mutate source list + setState
-        // atomically, then persist to VM asynchronously.
-        final item = _items.removeAt(oldIndex);
-        _items.insert(newIndex, item);
-        if (vm.selectionMode) vm.exitSelectionMode();
-        setState(() {});
-        vm.onGroupReorderComplete(_items.map((g) => g.uuid).toList());
-      },
-      nonDraggableItems: isManual ? [] : List.of(_items),
+      proxyDecorator: _GroupManageDragHandler.proxyDecorator,
+      onReorderStart: (index) =>
+          _handler.onReorderStart(index, vm, isManual, widget.selectionMode),
+      onReorder: (oldIndex, newIndex) => setState(() {
+        _handler.onReorder(oldIndex, newIndex, vm);
+      }),
+      nonDraggableItems: _handler.resolveNonDraggable(isManual),
     );
   }
 }
@@ -276,16 +217,17 @@ class _GroupGridCard extends StatelessWidget {
   final Set<String> selectedUUIDs;
   final bool selectionMode;
   final void Function(String uuid) onTap;
-  final void Function(String uuid) onLongPress;
+  final void Function(String uuid)? onLongPress;
   final void Function(String uuid) onEdit;
   final void Function(String uuid) onDelete;
 
   const _GroupGridCard({
+    super.key,
     required this.group,
     required this.selectedUUIDs,
     required this.selectionMode,
     required this.onTap,
-    required this.onLongPress,
+    this.onLongPress,
     required this.onEdit,
     required this.onDelete,
   });
@@ -390,7 +332,9 @@ class _GroupGridCard extends StatelessWidget {
       child: InkWell(
         borderRadius: _shape.borderRadius.resolve(null),
         onTap: () => onTap(group.uuid),
-        onLongPress: selectionMode ? null : () => onLongPress(group.uuid),
+        onLongPress: (selectionMode || onLongPress == null)
+            ? null
+            : () => onLongPress!(group.uuid),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Column(
