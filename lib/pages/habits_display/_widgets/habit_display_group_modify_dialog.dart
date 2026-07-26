@@ -255,10 +255,11 @@ Future<GroupModifySelectorResult?> showHabitGroupModifySelector({
     builder: (context, buildBody) => _GroupModifySelectorScope(
       selectedData: selectedHabitsData,
       bodyBuilder: (ctx) => Consumer<HabitGroupModifyViewModel>(
-        builder: (context, vm, _) => PopScopeGate<HabitGroupModifyViewModel>(
-          onCannotPop: (_, vm, _) => vm.switchToSelectMode(),
-          child: buildBody(ctx),
-        ),
+        builder: (context, vm, _) =>
+            PopScopeConsumer<HabitGroupModifyViewModel>(
+              onCannotPop: (_, vm, _) => vm.switchToSelectMode(),
+              child: buildBody(ctx),
+            ),
       ),
     ),
     contentBuilder: (_) => const _GroupModifySelectorContent(),

@@ -216,7 +216,7 @@ class _PageState extends State<_Page> {
 
   @override
   Widget build(BuildContext context) =>
-      PopScopeGate<AppSyncServerFormViewModel>(
+      PopScopeConsumer<AppSyncServerFormViewModel>(
         onCannotPop: (ctx, vm, result) => cancelConfirmProcess(result),
         child: AnimatedSwitcher(
           transitionBuilder: (child, animation) =>

@@ -242,7 +242,7 @@ class _PageState extends State<_Page> {
     );
 
     return ColorfulNavibar(
-      child: PopScopeGate<HabitSummaryViewModel>(
+      child: PopScopeConsumer<HabitSummaryViewModel>(
         onCannotPop: (ctx, vm, result) async {
           if (await _handleWillPop() && ctx.mounted) {
             Navigator.of(ctx).popOrExit(result);

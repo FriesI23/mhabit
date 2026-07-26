@@ -329,7 +329,7 @@ class _PageState extends State<_Page> {
     );
 
     final div = buildDivider(context);
-    return PopScopeGate<HabitStatusChangerViewModel>(
+    return PopScopeConsumer<HabitStatusChangerViewModel>(
       onCannotPop: (ctx, vm, result) =>
           _onClosePageButtonPressed(defaultConfirmResult: true, result: result),
       child: PageScaffold(

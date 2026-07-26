@@ -19,32 +19,33 @@ import 'package:provider/provider.dart';
 
 /// Interface for ViewModels whose pop-ability depends on internal state.
 ///
-/// Implement this on a [ChangeNotifier]-based ViewModel so [PopScopeGate]
-/// can read [canPop] reactively via [context.select].
+/// Implement this on a [ChangeNotifier]-based ViewModel so
+/// [PopScopeConsumer] can read [canPop] reactively via [context.select].
 ///
 /// When [canPop] is `true`, the system back gesture triggers a normal
 /// pop — this satisfies Android's predictive back gesture requirements.
-/// When `false`, the pop is intercepted and [PopScopeGate.onCannotPop]
+/// When `false`, the pop is intercepted and [PopScopeConsumer.onCannotPop]
 /// is called instead.
 abstract interface class PopScopeHandler {
   /// Whether the enclosing route can currently be popped by the system.
   bool get canPop;
 }
 
-/// A [PopScope] wrapper driven by a [PopScopeHandler] ViewModel from the
-/// [Provider] tree.
+/// A [PopScope] wrapper that reads a [PopScopeHandler] ViewModel from the
+/// [Provider] tree — analogous to [Consumer] but specialized for pop-scope
+/// interception.
 ///
-/// Uses [context.select] to read [PopScopeHandler.canPop] reactively
-/// (rebuilding only [PopScope], not [child]).  When a pop is blocked
-/// because [PopScopeHandler.canPop] is `false`, the [onCannotPop]
-/// callback is invoked with the current [BuildContext] and the resolved
-/// ViewModel instance.
+/// Uses [context.select] under the hood to read [PopScopeHandler.canPop]
+/// reactively (rebuilding only [PopScope], not [child]).  When a pop is
+/// blocked because [PopScopeHandler.canPop] is `false`, the [onCannotPop]
+/// callback is invoked with the current [BuildContext], the resolved
+/// ViewModel instance, and the pop result.
 ///
 /// When [PopScopeHandler.canPop] is `true`, the system back gesture
 /// triggers a normal pop — this satisfies Android's predictive back
 /// gesture requirements.  When `false`, the pop is intercepted and
 /// [onCannotPop] is called instead.
-class PopScopeGate<T extends PopScopeHandler> extends StatelessWidget {
+class PopScopeConsumer<T extends PopScopeHandler> extends StatelessWidget {
   /// The subtree wrapped by the [PopScope].
   ///
   /// This widget is held as a field so Flutter can skip rebuilding it
@@ -62,7 +63,7 @@ class PopScopeGate<T extends PopScopeHandler> extends StatelessWidget {
   final FutureOr<void> Function(BuildContext context, T vm, dynamic result)?
   onCannotPop;
 
-  const PopScopeGate({super.key, required this.child, this.onCannotPop});
+  const PopScopeConsumer({super.key, required this.child, this.onCannotPop});
 
   @override
   Widget build(BuildContext context) {

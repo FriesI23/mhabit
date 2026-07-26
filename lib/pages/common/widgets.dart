@@ -30,7 +30,7 @@ export '_widgets/loglevel_changer_tile.dart';
 export '_widgets/not_found_image.dart';
 export '_widgets/notification_activated.dart';
 export '_widgets/notification_pending_requests.dart';
-export '_widgets/pop_scope_gate.dart';
+export '_widgets/pop_scope_consumer.dart';
 export '_widgets/sync_loading_indicator.dart';
 export '_widgets/sync_now_tile.dart';
 export '_widgets/today_done_image.dart';
