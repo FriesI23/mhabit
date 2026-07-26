@@ -46,7 +46,6 @@ class GroupManageViewModel extends ChangeNotifier
   // dependencies
   GroupManager? _groupManager;
   DisplayGroupModeProfileHandler? _groupModeHandler;
-  AppEventBus? _appEventBus;
 
   // data
   GroupCollection? _groupCollection;
@@ -134,6 +133,9 @@ class GroupManageViewModel extends ChangeNotifier
   // undo
   List<String> _lastDeletedUUIDs = [];
 
+  /// Snapshot of the last batch of deleted UUIDs, for undo event firing.
+  List<String> get lastDeletedUUIDs => List.unmodifiable(_lastDeletedUUIDs);
+
   // event subscriptions
   StreamSubscription<GroupChangedEvent>? _groupEventSub;
   StreamSubscription<ReloadDataEvent>? _reloadDataSub;
@@ -156,10 +158,6 @@ class GroupManageViewModel extends ChangeNotifier
 
   void attachGroupManager(GroupManager value) {
     _groupManager = value;
-  }
-
-  void attachAppEventBus(AppEventBus value) {
-    _appEventBus = value;
   }
 
   @override
@@ -269,19 +267,6 @@ class GroupManageViewModel extends ChangeNotifier
     HabitDisplayGroupType.manual,
   ];
 
-  void _pushGroupChanged(String? uuid, GroupChangeType changeType) {
-    _appEventBus?.push(
-      GroupChangedEvent(
-        msg: "GroupManage",
-        groupUUID: uuid,
-        changeType: changeType,
-        trace: {
-          AppEventPageSource.groupManage: {AppEventFunctionSource.groupChanged},
-        },
-      ),
-    );
-  }
-
   void enterSelectionMode(String initialUUID, {bool listen = true}) {
     _selectionMode = true;
     _selectedGroupUUIDs.add(initialUUID);
@@ -331,7 +316,6 @@ class GroupManageViewModel extends ChangeNotifier
     if (!mounted) return;
     _lastDeletedUUIDs = [uuid];
     exitSelectionMode();
-    _pushGroupChanged(uuid, GroupChangeType.deleted);
     requestReload();
   }
 
@@ -343,9 +327,6 @@ class GroupManageViewModel extends ChangeNotifier
     }
     _lastDeletedUUIDs = uuids;
     exitSelectionMode();
-    for (final uuid in uuids) {
-      _pushGroupChanged(uuid, GroupChangeType.deleted);
-    }
     requestReload();
   }
 
@@ -360,9 +341,6 @@ class GroupManageViewModel extends ChangeNotifier
       if (lookup.contains(uuid)) continue;
       await _groupManager?.restoreGroup(uuid);
       if (!mounted) return;
-    }
-    for (final uuid in uuids) {
-      _pushGroupChanged(uuid, GroupChangeType.created);
     }
     requestReload();
   }
@@ -382,7 +360,6 @@ class GroupManageViewModel extends ChangeNotifier
       color: color,
     );
     if (!mounted) return result;
-    _pushGroupChanged(result.uuid, GroupChangeType.created);
     requestReload();
     return result;
   }
@@ -404,7 +381,6 @@ class GroupManageViewModel extends ChangeNotifier
       color: color,
     );
     if (!mounted) return;
-    _pushGroupChanged(uuid, GroupChangeType.updated);
     requestReload();
   }
 
@@ -432,12 +408,6 @@ class GroupManageViewModel extends ChangeNotifier
     );
 
     notifyListeners();
-    _appEventBus?.push(
-      const GroupChangedEvent(
-        msg: "group_manage.onGroupReorderComplete",
-        trace: {AppEventPageSource.groupManage: {}},
-      ),
-    );
   }
 }
 

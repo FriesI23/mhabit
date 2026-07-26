@@ -19,10 +19,12 @@ import 'package:provider/provider.dart';
 
 import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
+import '../../models/app_event.dart';
 import '../../models/habit_display.dart';
 import '../../models/habit_group.dart';
 import '../../models/habit_group_display.dart';
 import '../../providers/app_ui/app_developer.dart';
+import '../../providers/workflow/app_event.dart';
 import '../../widgets/widgets.dart';
 import '../common/widgets.dart';
 import '_providers/group_manage.dart';
@@ -105,12 +107,26 @@ class _PageState extends State<_Page> {
       forceDialog: _debugForceEditMode == GroupEditForceMode.forceDialog,
     );
     if (result == null || !mounted) return;
-    await vm.createGroup(
+    final group = await vm.createGroup(
       name: result.name,
       desc: result.desc,
       icon: result.icon,
       color: result.color,
     );
+    if (mounted) {
+      context.read<AppEventBus>().push(
+        GroupChangedEvent(
+          msg: "group_manage._openCreateDialog",
+          groupUUID: group.uuid,
+          changeType: GroupChangeType.created,
+          trace: {
+            AppEventPageSource.groupManage: {
+              AppEventFunctionSource.groupChanged,
+            },
+          },
+        ),
+      );
+    }
   }
 
   Future<void> _openEditDialog(String uuid) async {
@@ -132,6 +148,20 @@ class _PageState extends State<_Page> {
       icon: result.icon,
       color: result.color,
     );
+    if (mounted) {
+      context.read<AppEventBus>().push(
+        GroupChangedEvent(
+          msg: "group_manage._openEditDialog",
+          groupUUID: uuid,
+          changeType: GroupChangeType.updated,
+          trace: {
+            AppEventPageSource.groupManage: {
+              AppEventFunctionSource.groupChanged,
+            },
+          },
+        ),
+      );
+    }
   }
 
   Future<void> _onSingleDelete(String uuid) async {
@@ -139,7 +169,21 @@ class _PageState extends State<_Page> {
     final confirmed = await _confirmDelete(context: context, count: 1);
     if (!confirmed || !mounted) return;
     await vm.deleteSingleGroup(uuid);
-    if (mounted) _showDeleteUndoSnackBar(context);
+    if (mounted) {
+      context.read<AppEventBus>().push(
+        GroupChangedEvent(
+          msg: "group_manage._onSingleDelete",
+          groupUUID: uuid,
+          changeType: GroupChangeType.deleted,
+          trace: {
+            AppEventPageSource.groupManage: {
+              AppEventFunctionSource.groupChanged,
+            },
+          },
+        ),
+      );
+      _showDeleteUndoSnackBar(context);
+    }
   }
 
   Future<void> _onBatchDelete() async {
@@ -149,8 +193,26 @@ class _PageState extends State<_Page> {
       count: vm.selectedCount,
     );
     if (!confirmed || !mounted) return;
+    final deletedUUIDs = List<String>.of(vm.selectedUUIDs);
     await vm.deleteSelectedGroups();
-    if (mounted) _showDeleteUndoSnackBar(context);
+    if (mounted) {
+      final bus = context.read<AppEventBus>();
+      for (final uuid in deletedUUIDs) {
+        bus.push(
+          GroupChangedEvent(
+            msg: "group_manage._onBatchDelete",
+            groupUUID: uuid,
+            changeType: GroupChangeType.deleted,
+            trace: {
+              AppEventPageSource.groupManage: {
+                AppEventFunctionSource.groupChanged,
+              },
+            },
+          ),
+        );
+      }
+      _showDeleteUndoSnackBar(context);
+    }
   }
 
   Future<bool> _confirmDelete({
@@ -184,7 +246,24 @@ class _PageState extends State<_Page> {
         label: l10n?.groupManage_undo_snackbarAction ?? 'Undo',
         onPressed: () {
           if (!mounted) return;
-          context.read<GroupManageViewModel>().undoLastDelete();
+          final vm = context.read<GroupManageViewModel>();
+          final uuids = vm.lastDeletedUUIDs;
+          vm.undoLastDelete();
+          final bus = context.read<AppEventBus>();
+          for (final uuid in uuids) {
+            bus.push(
+              GroupChangedEvent(
+                msg: "group_manage._showDeleteUndoSnackBar",
+                groupUUID: uuid,
+                changeType: GroupChangeType.created,
+                trace: {
+                  AppEventPageSource.groupManage: {
+                    AppEventFunctionSource.groupChanged,
+                  },
+                },
+              ),
+            );
+          }
         },
       ),
       duration: kAppUndoDialogShowDuration,

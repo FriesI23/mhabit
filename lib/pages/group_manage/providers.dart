@@ -42,9 +42,7 @@ class PageProviders extends SingleChildStatelessWidget {
             previous..attachGroupManager(value),
       ),
       ViewModelProxyProvider<AppEventBus, GroupManageViewModel>(
-        update: (context, value, previous) => previous
-          ..updateAppEvent(value)
-          ..attachAppEventBus(value),
+        update: (context, value, previous) => previous..updateAppEvent(value),
       ),
     ],
     child: child,

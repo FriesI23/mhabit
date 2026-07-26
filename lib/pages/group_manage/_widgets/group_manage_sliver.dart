@@ -20,8 +20,10 @@ import '../../../common/consts.dart' show defaultGroupIcon;
 import '../../../extensions/custom_color_extensions.dart';
 import '../../../extensions/group_icon_extensions.dart';
 import '../../../l10n/localizations.dart';
+import '../../../models/app_event.dart';
 import '../../../models/habit_group.dart';
 import '../../../models/habit_group_display.dart';
+import '../../../providers/workflow/app_event.dart';
 import '../../../theme/color.dart' show CustomColors;
 import '../../../widgets/widgets.dart';
 import '../_providers/group_manage.dart';
@@ -158,6 +160,16 @@ class _GroupManageGridState extends State<GroupManageGrid> {
           _handler.onReorderStart(index, vm, isManual, widget.selectionMode),
       onReorder: (oldIndex, newIndex) => setState(() {
         _handler.onReorder(oldIndex, newIndex, vm);
+        context.read<AppEventBus>().push(
+          const GroupChangedEvent(
+            msg: "group_manage.onGroupReorderComplete",
+            trace: {
+              AppEventPageSource.groupManage: {
+                AppEventFunctionSource.groupChanged,
+              },
+            },
+          ),
+        );
       }),
       nonDraggableItems: _handler.resolveNonDraggable(isManual),
     );
@@ -226,6 +238,16 @@ class _GroupManageListState extends State<GroupManageList> {
           _handler.onReorderStart(index, vm, isManual, widget.selectionMode),
       onReorder: (oldIndex, newIndex) => setState(() {
         _handler.onReorder(oldIndex, newIndex, vm);
+        context.read<AppEventBus>().push(
+          const GroupChangedEvent(
+            msg: "group_manage.onGroupReorderComplete",
+            trace: {
+              AppEventPageSource.groupManage: {
+                AppEventFunctionSource.groupChanged,
+              },
+            },
+          ),
+        );
       }),
       nonDraggableItems: _handler.resolveNonDraggable(isManual),
     );
