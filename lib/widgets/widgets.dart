@@ -38,7 +38,6 @@ export '_widgets/group_color_picker.dart';
 export '_widgets/group_header.dart';
 export '_widgets/group_icon_picker.dart';
 export '_widgets/group_title_list_tile.dart';
-export '_widgets/group_type_sort_icon.dart';
 export '_widgets/habit_calendar_space_bar.dart';
 export '_widgets/habit_color_wheel_editor.dart';
 export '_widgets/habit_daily_status_container.dart';

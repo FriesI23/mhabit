@@ -18,10 +18,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_group_display.dart';
+import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/pages/habits_display/_providers/habits_grouping.dart';
 import 'package:mhabit/storage/profile/handlers.dart';
 import 'package:mhabit/storage/profile_provider.dart';
-import 'package:mhabit/widgets/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<ProfileViewModel> _loadProfile() async {

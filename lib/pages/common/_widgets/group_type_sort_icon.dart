@@ -14,11 +14,11 @@
 
 import 'package:flutter/widgets.dart';
 
-import '../../common/consts.dart';
-import '../../l10n/localizations.dart';
-import '../../models/habit_display.dart';
-import '../../models/habit_group_display.dart';
-import '../../theme/icon.dart';
+import '../../../common/consts.dart';
+import '../../../l10n/localizations.dart';
+import '../../../models/habit_display.dart';
+import '../../../models/habit_group_display.dart';
+import '../../../theme/icon.dart';
 
 /// A pre-configured [Icon] for a group sort type and direction.
 class GroupTypeSortIcon extends StatelessWidget {

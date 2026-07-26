@@ -24,6 +24,7 @@ import '../../models/habit_group.dart';
 import '../../models/habit_group_display.dart';
 import '../../providers/app_ui/app_developer.dart';
 import '../../widgets/widgets.dart';
+import '../common/widgets.dart';
 import '_providers/group_manage.dart';
 import 'providers.dart';
 import 'widgets.dart';
