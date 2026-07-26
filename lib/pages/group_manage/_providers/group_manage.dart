@@ -26,6 +26,7 @@ import '../../../models/habit_color.dart';
 import '../../../models/habit_display.dart';
 import '../../../models/habit_group.dart';
 import '../../../models/habit_group_display.dart';
+import '../../../pages/common/widgets.dart';
 import '../../../providers/support/commons.dart';
 import '../../../providers/support/page_load_runtime.dart';
 import '../../../providers/workflow/app_event.dart';
@@ -39,7 +40,7 @@ import '../../../storage/profile_provider.dart';
 /// value falls back to the global [DisplayGroupModeProfileHandler] config.
 class GroupManageViewModel extends ChangeNotifier
     with ProfileHandlerLoadedMixin
-    implements ProviderMounted, AppEventLoaded {
+    implements ProviderMounted, AppEventLoaded, PopScopeHandler {
   GroupManageViewModel({String? initialGroupUUID})
     : _initialGroupUUID = initialGroupUUID;
 
@@ -271,6 +272,9 @@ class GroupManageViewModel extends ChangeNotifier
     _selectedGroupUUIDs.clear();
     notifyListeners();
   }
+
+  @override
+  bool get canPop => !_selectionMode;
 
   void toggleSelection(String uuid) {
     if (!_selectionMode) return;
