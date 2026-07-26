@@ -40,6 +40,7 @@ jobs:
       - name: Released - Basic
         uses: ncipollo/release-action@v1
         with:
+          name: "[WIP] ${{ github.ref_name }}"
           draft: true
           prerelease: ${{ steps.pre-release.outputs.pre-release }}
           bodyFile: "docs/release.md"
@@ -54,7 +55,7 @@ jobs:
       - build-ios
       - build-macos-dmg
       - build-windows-msix
-      - build-linux-flatpak
+      - publish-linux
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -84,6 +85,11 @@ jobs:
             echo "Deleting release: $tag"
             gh release delete "$tag" --yes
           done
+      - name: Remove WIP from release title
+        env:
+          GH_TOKEN: ${{ secrets.APP_RELEASE_TOKEN }}
+        run: |
+          gh release edit "${GITHUB_REF_NAME}" --title "${GITHUB_REF_NAME}"
 
   build-android:
     name: Build android APK
@@ -109,6 +115,7 @@ jobs:
           allowUpdates: true
           omitBodyDuringUpdate: true
           omitDraftDuringUpdate: true
+          omitNameDuringUpdate: true
           omitPrereleaseDuringUpdate: true
           artifacts: >
             ${{ steps.build.outputs.apk-path }},
@@ -143,6 +150,7 @@ jobs:
           allowUpdates: true
           omitBodyDuringUpdate: true
           omitDraftDuringUpdate: true
+          omitNameDuringUpdate: true
           omitPrereleaseDuringUpdate: true
           artifacts: >
             ${{ steps.build.outputs.ipa-path }}
@@ -192,6 +200,7 @@ jobs:
           allowUpdates: true
           omitBodyDuringUpdate: true
           omitDraftDuringUpdate: true
+          omitNameDuringUpdate: true
           omitPrereleaseDuringUpdate: true
           artifacts: >
             ${{ steps.build.outputs.dmg-path }}
@@ -227,6 +236,7 @@ jobs:
           allowUpdates: true
           omitBodyDuringUpdate: true
           omitDraftDuringUpdate: true
+          omitNameDuringUpdate: true
           omitPrereleaseDuringUpdate: true
           artifacts: >
             ${{ steps.build.outputs.msix-path }}
@@ -293,6 +303,7 @@ jobs:
           allowUpdates: true
           omitBodyDuringUpdate: true
           omitDraftDuringUpdate: true
+          omitNameDuringUpdate: true
           omitPrereleaseDuringUpdate: true
           artifacts: >
             ${{ env.FLATPAK_BUNDLE }}
