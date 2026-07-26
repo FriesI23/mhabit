@@ -37,10 +37,10 @@ class L10nUk extends L10n {
   }
 
   @override
-  String get habitEdit_colorPicker_cancel => 'Cancel';
+  String get habitEdit_colorPicker_cancel => 'Скасувати';
 
   @override
-  String get habitEdit_colorPicker_tintToggleLabel => 'Tint to theme';
+  String get habitEdit_colorPicker_tintToggleLabel => 'Відтінок до теми';
 
   @override
   String get habitEdit_colorPicker_tintedLabel => 'Tinted';
@@ -50,11 +50,11 @@ class L10nUk extends L10n {
 
   @override
   String get habitEdit_colorPicker_tintToggleOnHint =>
-      'Tinting may shift the final color away from the one you picked.';
+      'Тонування може призвести до того, що кінцевий колір буде відрізнятися від обраного вами.';
 
   @override
   String get habitEdit_colorPicker_tintToggleOffHint =>
-      'Some colors may reduce text readability in light or dark theme.';
+      'Деякі кольори можуть погіршити читабельність тексту у світлій або темній темі.';
 
   @override
   String get habitEdit_habitTypeDialog_title => 'Тип звички';
@@ -413,13 +413,13 @@ class L10nUk extends L10n {
   String get habitDisplay_groupType_colorType => 'За кольором';
 
   @override
-  String get habitDisplay_groupType_createDate => 'By Creation Date';
+  String get habitDisplay_groupType_createDate => 'За датою створення';
 
   @override
   String get habitDisplay_groupType_habitCount => 'By Habit Count';
 
   @override
-  String get habitDisplay_groupTypeDialog_title => 'Group Sort';
+  String get habitDisplay_groupTypeDialog_title => 'Сортування за групами';
 
   @override
   String get habitDisplay_groupTypeDialog_confirm => 'підтвердити';
@@ -431,43 +431,44 @@ class L10nUk extends L10n {
   String get habitDisplay_groupTypeDialog_none => 'Flat';
 
   @override
-  String get habitDisplay_editPopMenu_groupModify => 'Modify Group';
+  String get habitDisplay_editPopMenu_groupModify => 'Змінити групу';
 
   @override
-  String get habitDisplay_groupModifyDialog_title => 'Modify Group';
+  String get habitDisplay_groupModifyDialog_title => 'Змінити групу';
 
   @override
-  String get habitDisplay_groupModifyDialog_removeGroup => 'Remove Group';
+  String get habitDisplay_groupModifyDialog_removeGroup => 'Видалити групу';
 
   @override
   String get habitDisplay_groupModifyDialog_emptyGroups =>
-      'No groups available';
+      'Немає доступних груп';
 
   @override
   String get habitDisplay_groupModifyDialog_alreadyInGroup =>
-      'Selected habits are already in this group';
+      'Вибрані звички вже є в цій групі';
 
   @override
-  String get habitDisplay_groupModifyDialog_createGroup => 'Create Group';
+  String get habitDisplay_groupModifyDialog_createGroup => 'Створити групу';
 
   @override
-  String get habitDisplay_groupModifyDialog_saveAndApply => 'Save & Apply';
+  String get habitDisplay_groupModifyDialog_saveAndApply =>
+      'Зберегти та застосувати';
 
   @override
-  String get habitDisplay_groupModifyConfirm_titleNew => 'Move to Group';
+  String get habitDisplay_groupModifyConfirm_titleNew => 'Перемістити до групи';
 
   @override
   String get habitDisplay_groupModifyConfirm_titleMixed =>
-      'Confirm Group Change';
+      'Підтвердити зміну групи';
 
   @override
   String habitDisplay_groupModifyConfirm_bodyNewGroup(String groupName) {
-    return '$groupName habits will be moved to this group';
+    return 'Звички $groupName будуть переміщені до цієї групи';
   }
 
   @override
   String get habitDisplay_groupModifyConfirm_bodyRemoveGroup =>
-      'Habits will have their group removed';
+      'Звички будуть видалені з групи';
 
   @override
   String habitDisplay_groupModifyConfirm_bodyChangeStat(
@@ -478,8 +479,10 @@ class L10nUk extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count habits will change from \"$fromGroup\" to \"$toGroup\"',
-      one: '$count habit will change from \"$fromGroup\" to \"$toGroup\"',
+      other: '$count звичок зміняться з \"$fromGroup\" на \"$toGroup\"',
+      many: '$count звичок зміняться з \"$fromGroup\" на \"$toGroup\"',
+      few: '$count звички зміняться з \"$fromGroup\" на \"$toGroup\"',
+      one: '$count звичка зміниться з \"$fromGroup\" на \"$toGroup\"',
     );
     return '$_temp0';
   }
@@ -492,8 +495,10 @@ class L10nUk extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count uncategorized habits will be added to \"$toGroup\"',
-      one: '$count uncategorized habit will be added to \"$toGroup\"',
+      other: '$count некатегоризованих звичок буде додано до \"$toGroup\"',
+      many: '$count некатегоризованих звичок буде додано до \"$toGroup\"',
+      few: '$count некатегоризовані звички будуть додані до \"$toGroup\"',
+      one: '$count некатегоризована звичка буде додана до \"$toGroup\"',
     );
     return '$_temp0';
   }
@@ -536,7 +541,7 @@ class L10nUk extends L10n {
 
   @override
   String get habitDisplay_groupModify_undoFailed =>
-      'Group has been modified elsewhere, cannot undo';
+      'Група була змінена в іншому місці, скасувати неможливо';
 
   @override
   String get habitDisplay_sort_reverseText => 'Зворотний';
@@ -813,7 +818,7 @@ class L10nUk extends L10n {
       'повернутися до сьогоднішнього дня';
 
   @override
-  String get common_loadError_text => 'Failed to load';
+  String get common_loadError_text => 'Не вдалося завантажити';
 
   @override
   String get common_loadError_retryText => 'Спробуйте знову';
@@ -902,20 +907,21 @@ class L10nUk extends L10n {
       'Змініть поведінку клацання, щоб відкрити докладне спливаюче вікно щоденних записів на головній сторінці.';
 
   @override
-  String get appSetting_expandTimerDelayTile_titleText => 'Group expand delay';
+  String get appSetting_expandTimerDelayTile_titleText =>
+      'Затримка розгортання групи';
 
   @override
   String get appSetting_expandTimerDelayTile_subtitleText =>
-      'Set how long to hover over a collapsed group header before it auto-expands during drag-and-drop.';
+      'Встановіть, як довго слід наводити курсор на згорнутий заголовок групи, перш ніж він автоматично розгорнеться під час перетягування.';
 
   @override
-  String get appSetting_expandTimerDelay_default => 'Default';
+  String get appSetting_expandTimerDelay_default => 'За замовчуванням';
 
   @override
-  String get appSetting_expandTimerDelay_fast => 'Fast';
+  String get appSetting_expandTimerDelay_fast => 'Швидко';
 
   @override
-  String get appSetting_expandTimerDelay_slow => 'Slow';
+  String get appSetting_expandTimerDelay_slow => 'Повільно';
 
   @override
   String get appSetting_appThemeColorTile_titleText => 'Колір теми';
@@ -1024,19 +1030,20 @@ class L10nUk extends L10n {
       'Імпортуйте звички з файлу json.';
 
   @override
-  String get appSetting_thirdPartyImport_titleText => 'Import from third-party';
+  String get appSetting_thirdPartyImport_titleText =>
+      'Імпорт від третьої сторони';
 
   @override
   String get appSetting_thirdPartyImport_subtitleText =>
-      'Import habits from other habit tracker apps';
+      'Імпортувати звички з інших додатків для відстеження звичок';
 
   @override
   String get appSetting_thirdPartyImport_provider_loopName =>
-      'Loop Habit Tracker';
+      'Трекер звичок Loop';
 
   @override
   String get appSetting_thirdPartyImport_provider_versionHint =>
-      'Supports CSV (tested up to <ver/>)';
+      'Підтримує формат CSV (перевірено до версії <ver/>)';
 
   @override
   String appSetting_importDialog_confirmTitle(int count) {
@@ -1048,41 +1055,41 @@ class L10nUk extends L10n {
       'Примітка. Імпорт не видаляє наявні звички.';
 
   @override
-  String get appSetting_importDialog_option_includeHabits => 'Include habits';
+  String get appSetting_importDialog_option_includeHabits => 'Включити звички';
 
   @override
-  String get appSetting_importDialog_option_includeGroups => 'Include groups';
+  String get appSetting_importDialog_option_includeGroups => 'Включити групи';
 
   @override
   String appSetting_importDialog_tile_includeHabits(int count) {
-    return 'Include $count habits';
+    return 'Включити $count звичок';
   }
 
   @override
   String appSetting_importDialog_tile_includeGroups(int count) {
-    return 'Include $count groups';
+    return 'Включити $count груп';
   }
 
   @override
   String appSetting_importConfirmDialog_sourceLabel(String provider) {
-    return 'Source: $provider';
+    return 'Джерело: $provider';
   }
 
   @override
   String get appSetting_thirdPartyImport_error_fileReadError =>
-      'Failed to read the selected file.';
+      'Не вдалося прочитати вибраний файл.';
 
   @override
   String get appSetting_thirdPartyImport_error_noHabitsFound =>
-      'No habits found in the import file.';
+      'У файлі імпорту не знайдено жодних звичок.';
 
   @override
   String get appSetting_thirdPartyImport_error_parseError =>
-      'Failed to parse import file';
+      'Не вдалося проаналізувати файл імпорту';
 
   @override
   String get appSetting_thirdPartyImport_error_unknown =>
-      'An unexpected error occurred during import.';
+      'Під час імпорту сталася несподівана помилка.';
 
   @override
   String get appSetting_importDialog_confirm_confirmText => 'підтвердити';
@@ -1095,17 +1102,17 @@ class L10nUk extends L10n {
     int completeCount,
     int totalCount,
   ) {
-    return 'Імпортні $completeCount/$totalCount';
+    return 'Імпортовано $completeCount/$totalCount';
   }
 
   @override
   String appSetting_importDialog_completeTitle(int count) {
-    return 'Повний імпорт $count';
+    return 'Повний імпорт $count звичок';
   }
 
   @override
   String appSetting_importDialog_completeTitleGroups(int count) {
-    return 'Completed import $count groups';
+    return 'Імпорт $count груп завершено';
   }
 
   @override
@@ -1866,7 +1873,7 @@ class L10nUk extends L10n {
   String get common_enable_text => 'Увімкнено';
 
   @override
-  String get common_dontShowAgain => 'Don\'t show again';
+  String get common_dontShowAgain => 'Більше не показувати';
 
   @override
   String get calendarPicker_clip_today => 'Сьогодні';
@@ -1901,16 +1908,16 @@ class L10nUk extends L10n {
   String get exportConfirmDialog_option_includeRecords => 'включити записи';
 
   @override
-  String get exportConfirmDialog_option_includeGroups => 'include groups';
+  String get exportConfirmDialog_option_includeGroups => 'включити групи';
 
   @override
   String exportConfirmDialog_tile_includeRecords(int count) {
-    return 'Include $count records';
+    return 'Включити $count записів';
   }
 
   @override
   String exportConfirmDialog_tile_includeGroups(int count) {
-    return 'Include $count groups';
+    return 'Включити $count груп';
   }
 
   @override
@@ -2075,27 +2082,27 @@ class L10nUk extends L10n {
   String get changelog_view_full => 'View Full Changelog';
 
   @override
-  String get habitGroup_uncategorized => 'No Group';
+  String get habitGroup_uncategorized => 'Без групи';
 
   @override
-  String get habitDetail_groupTile_title => 'Group';
+  String get habitDetail_groupTile_title => 'Група';
 
   @override
-  String get habitEdit_groupTile_title => 'Group';
+  String get habitEdit_groupTile_title => 'Група';
 
   @override
-  String get habitEdit_groupPicker_hintText => 'Search or create group';
+  String get habitEdit_groupPicker_hintText => 'Знайти або створити групу';
 
   @override
-  String get habitEdit_groupPicker_noGroup => 'No Group';
+  String get habitEdit_groupPicker_noGroup => 'Без групи';
 
   @override
   String habitEdit_groupPicker_createGroup(String name) {
-    return 'Create \"$name\"';
+    return 'Створити «$name»';
   }
 
   @override
-  String get habitEdit_groupPicker_loading => 'Loading groups…';
+  String get habitEdit_groupPicker_loading => 'Завантаження груп…';
 
   @override
   String get groupManage_appbar_title => 'Manage Groups';
