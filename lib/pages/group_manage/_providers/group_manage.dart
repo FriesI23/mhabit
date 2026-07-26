@@ -96,27 +96,12 @@ class GroupManageViewModel extends ChangeNotifier
   // loading lifecycle
   final _pageLoad = PageLoadRuntime();
   bool _nextRefreshForceReload = false;
+  bool _firstLoadCompleted = false;
   bool _mounted = true;
 
-  // Initial group UUID, set via navigation from the home page long-press menu.
-  String? _initialGroupUUID;
-
-  String? consumeInitialGroupUUID() {
-    final uuid = _initialGroupUUID;
-    _initialGroupUUID = null;
-    return uuid;
-  }
-
-  /// Enters manual sort + selection mode with [uuid] selected.
-  /// Used when navigating from the home page Group header long-press menu.
-  void enterManualAndSelect(String uuid) {
-    _sortType = HabitDisplayGroupType.manual;
-    _sortDirection = HabitDisplaySortDirection.asc;
-    _resortData();
-    _selectionMode = true;
-    _selectedGroupUUIDs.add(uuid);
-    notifyListeners();
-  }
+  /// Set via navigation from the home page Group header long-press menu.
+  /// Consumed on the first successful [loadGroups] call.
+  final String? _initialGroupUUID;
 
   @override
   bool get mounted => _mounted;
@@ -220,6 +205,15 @@ class GroupManageViewModel extends ChangeNotifier
         if (loading.isCanceled) return loadingCancelled(loading);
         if (loading.isCompleted) return;
 
+        // On first successful load, enter manual-sort + selection mode
+        // when navigated from the home page Group header long-press menu.
+        if (!_firstLoadCompleted && _initialGroupUUID != null) {
+          _firstLoadCompleted = true;
+          _sortType = HabitDisplayGroupType.manual;
+          _sortDirection = HabitDisplaySortDirection.asc;
+          _selectionMode = true;
+          _selectedGroupUUIDs.add(_initialGroupUUID);
+        }
         _resortData();
 
         loading.complete();

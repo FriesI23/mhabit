@@ -290,14 +290,6 @@ class _PageState extends State<_Page> {
 
   @override
   Widget build(BuildContext context) {
-    // Process initialGroupUUID passed via navigation.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      final vm = context.read<GroupManageViewModel>();
-      final uuid = vm.consumeInitialGroupUUID();
-      if (uuid != null) vm.enterManualAndSelect(uuid);
-    });
-
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
