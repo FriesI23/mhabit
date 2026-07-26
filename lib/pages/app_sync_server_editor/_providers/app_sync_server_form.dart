@@ -19,11 +19,12 @@ import 'package:flutter/foundation.dart';
 import '../../../logging/helper.dart';
 import '../../../models/app_sync_server.dart';
 import '../../../models/app_sync_server_form.dart';
+import '../../../pages/common/widgets.dart';
 import '../../../providers/support/commons.dart';
 import '../../../providers/workflow/app_sync.dart';
 
 class AppSyncServerFormViewModel extends ChangeNotifier
-    implements ProviderMounted {
+    implements ProviderMounted, PopScopeHandler {
   final AppSyncServer? initServerConfig;
 
   bool _mounted = true;
@@ -57,6 +58,9 @@ class AppSyncServerFormViewModel extends ChangeNotifier
   bool get pwdLoaded => _pwdLoaded;
 
   bool get edited => _edited;
+
+  @override
+  bool get canPop => !edited;
 
   bool get canSave => _form.canSave();
 

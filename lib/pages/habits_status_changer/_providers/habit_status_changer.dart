@@ -31,6 +31,7 @@ import '../../../models/habit_date.dart';
 import '../../../models/habit_form.dart';
 import '../../../models/habit_repo_actions.dart';
 import '../../../models/habit_summary.dart';
+import '../../../pages/common/widgets.dart';
 import '../../../providers/support/commons.dart';
 import '../../../providers/support/page_load_runtime.dart';
 import '../../../providers/workflow/habits_manager.dart';
@@ -59,7 +60,7 @@ enum RecordStatusChangerStatus {
 
 class HabitStatusChangerViewModel
     with ChangeNotifier
-    implements ProviderMounted {
+    implements ProviderMounted, PopScopeHandler {
   // data
   final List<HabitUUID> _selectedUUIDList;
   late HabitStatusChangerForm _form;
@@ -196,6 +197,9 @@ class HabitStatusChangerViewModel
     return _form.selectStatus != null &&
         _form.selectStatus != getDefaultChangerStatus(_form);
   }
+
+  @override
+  bool get canPop => !canSave;
 
   Iterable<HabitSummaryRecord> get selectDateRecords => _habitDataController
       .habits

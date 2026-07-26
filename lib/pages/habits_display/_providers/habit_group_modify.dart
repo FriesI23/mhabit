@@ -22,7 +22,7 @@ import '../../../logging/helper.dart';
 import '../../../models/app_event.dart';
 import '../../../models/habit_group.dart';
 import '../../../models/habit_summary.dart';
-import '../../../pages/common/_widgets/group_edit_form.dart';
+import '../../../pages/common/widgets.dart';
 import '../../../providers/app_ui/app_caches.dart';
 import '../../../providers/support/commons.dart';
 import '../../../providers/support/page_load_runtime.dart';
@@ -41,7 +41,7 @@ import '../helpers.dart';
 /// when groups are created / updated / deleted elsewhere while the dialog
 /// is open (same pattern as [GroupManageViewModel]).
 class HabitGroupModifyViewModel extends ChangeNotifier
-    implements ProviderMounted {
+    implements ProviderMounted, PopScopeHandler {
   final List<HabitSummaryData> _selectedData;
 
   GroupManager? _groupManager;
@@ -96,6 +96,9 @@ class HabitGroupModifyViewModel extends ChangeNotifier
   FormMode get mode => _mode;
   bool get isCreateMode => _mode == FormMode.create;
   bool get isSelectMode => _mode == FormMode.select;
+
+  @override
+  bool get canPop => isSelectMode;
 
   List<HabitGroupData> get groups => _groups;
   GroupUUID? get selectedGroupId => _selectedGroupId;

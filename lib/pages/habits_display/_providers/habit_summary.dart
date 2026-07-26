@@ -37,6 +37,7 @@ import '../../../models/habit_score.dart';
 import '../../../models/habit_stat.dart';
 import '../../../models/habit_status.dart';
 import '../../../models/habit_summary.dart';
+import '../../../pages/common/widgets.dart';
 import '../../../providers/support/commons.dart';
 import '../../../providers/support/page_load_runtime.dart';
 import '../../../providers/workflow/app_event.dart';
@@ -62,7 +63,7 @@ extension HabitSummaryDataExntesion on HabitSummaryData {
 
 class HabitSummaryViewModel extends ChangeNotifier
     with PinnedAppbarMixin
-    implements ProviderMounted, AppEventLoaded {
+    implements ProviderMounted, AppEventLoaded, PopScopeHandler {
   // data
   final _data = HabitSummaryDataCollection();
   var _sortableCache = const _HabitsSortableCache(
@@ -127,6 +128,7 @@ class HabitSummaryViewModel extends ChangeNotifier
 
   bool get isCalendarExpanded => _isCalandarExpanded;
 
+  @override
   bool get canPop => !isInEditMode && !isInSearchMode && !isCalendarExpanded;
 
   void toggleCalendarStatus({bool listen = true}) => isCalendarExpanded

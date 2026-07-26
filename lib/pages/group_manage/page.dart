@@ -294,17 +294,8 @@ class _PageState extends State<_Page> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop) return;
-        final vm = context.read<GroupManageViewModel>();
-        if (vm.selectionMode) {
-          vm.exitSelectionMode();
-        } else {
-          Navigator.of(context).pop();
-        }
-      },
+    return PopScopeConsumer<GroupManageViewModel>(
+      onCannotPop: (_, vm, _) => vm.exitSelectionMode(),
       child: ColorfulNavibar(
         child: Scaffold(
           body: Selector<GroupManageViewModel, (bool, bool)>(

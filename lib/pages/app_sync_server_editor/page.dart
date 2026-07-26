@@ -24,6 +24,7 @@ import '../../models/app_sync_server_form.dart';
 import '../../providers/app_ui/app_developer.dart';
 import '../../providers/workflow/app_sync.dart';
 import '../../widgets/widgets.dart';
+import '../common/widgets.dart';
 import '_providers/app_sync_server_form.dart';
 import 'widgets.dart';
 
@@ -215,16 +216,8 @@ class _PageState extends State<_Page> {
 
   @override
   Widget build(BuildContext context) =>
-      Selector<AppSyncServerFormViewModel, bool>(
-        selector: (context, vm) => shouldShowCancelConfirmDialog(vm),
-        builder: (context, value, child) => PopScope<AppSyncServerEditorResult>(
-          canPop: !value,
-          child: child!,
-          onPopInvokedWithResult: (didPop, result) async {
-            if (didPop) return;
-            await cancelConfirmProcess(result);
-          },
-        ),
+      PopScopeConsumer<AppSyncServerFormViewModel>(
+        onCannotPop: (ctx, vm, result) => cancelConfirmProcess(result),
         child: AnimatedSwitcher(
           transitionBuilder: (child, animation) =>
               FadeTransition(opacity: animation, child: child),
