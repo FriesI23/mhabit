@@ -164,10 +164,8 @@ class WebDavAppSyncTaskMultiResult extends WebDavAppSyncTaskResult {
     this.groupResults = const {},
   }) : super._(status: WebDavAppSyncTaskResultStatus.multi);
 
-  Iterable<WebDavAppSyncTaskResult> get _allResults => [
-    ...habitResults.values,
-    ...groupResults.values,
-  ];
+  Iterable<WebDavAppSyncTaskResult> get _allResults =>
+      habitResults.values.followedBy(groupResults.values);
 
   @override
   bool get isSuccessed {
