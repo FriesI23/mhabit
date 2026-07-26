@@ -165,7 +165,12 @@ HabitSummaryData _h({
 }
 
 GroupDBCell _g({required String uuid, required String name}) {
-  return GroupDBCell(uuid: uuid, name: name, status: GroupStatus.active.code);
+  return GroupDBCell(
+    uuid: uuid,
+    name: name,
+    status: GroupStatus.active.code,
+    sortPosition: 1,
+  );
 }
 
 List<HabitUUID> _habitUuids(HabitSummaryViewModel vm) => vm.currentHabitList
@@ -847,6 +852,154 @@ void main() {
             ),
           ),
         );
+
+        vm.dispose();
+      },
+    );
+  });
+
+  group('HabitSummary group collapse / expand', () {
+    HabitSummaryViewModel vmWithGroups(
+      List<GroupDBCell> groups,
+      List<HabitSummaryData> habits,
+    ) {
+      final access = _ReorderTestAccess(habits);
+      return HabitSummaryViewModel()
+        ..attachAccess(access)
+        ..attachGroupManager(_ReorderTestGroupManager(groups));
+    }
+
+    test('areAllGroupsCollapsed: true when all groups are collapsed', () async {
+      final vm = vmWithGroups(
+        [_g(uuid: 'g1', name: 'G1'), _g(uuid: 'g2', name: 'G2')],
+        [
+          _h(id: 1, uuid: 'a', sortPostion: 1, groupId: 'g1'),
+          _h(id: 2, uuid: 'b', sortPostion: 2, groupId: 'g2'),
+        ],
+      );
+
+      await vm.loadData(listen: false);
+      vm.updateGroupingEnabled(true);
+      vm.resortData();
+
+      // Collapse both named groups and the ungrouped section
+      vm.toggleGroup('g1');
+      vm.toggleGroup('g2');
+      vm.toggleGroup(null);
+
+      expect(vm.areAllGroupsCollapsed, isTrue);
+
+      vm.dispose();
+    });
+
+    test('areAllGroupsCollapsed: false when some groups expanded', () async {
+      final vm = vmWithGroups(
+        [_g(uuid: 'g1', name: 'G1'), _g(uuid: 'g2', name: 'G2')],
+        [_h(id: 1, uuid: 'a', sortPostion: 1, groupId: 'g1')],
+      );
+
+      await vm.loadData(listen: false);
+      vm.updateGroupingEnabled(true);
+      vm.resortData();
+
+      // Only collapse G1 — G2 and ungrouped remain visible
+      vm.toggleGroup('g1');
+
+      expect(vm.areAllGroupsCollapsed, isFalse);
+
+      vm.dispose();
+    });
+
+    test(
+      'areAllGroupsCollapsed: false when only ungrouped section exists',
+      () async {
+        final vm = vmWithGroups(
+          [],
+          [_h(id: 1, uuid: 'a', sortPostion: 1)], // no group
+        );
+
+        await vm.loadData(listen: false);
+        vm.updateGroupingEnabled(true);
+        vm.resortData();
+
+        // No named groups, only "ungrouped" (null UUID).  Nothing collapsed
+        // yet — so it should be false after the initial expand-all.
+        expect(vm.areAllGroupsCollapsed, isFalse);
+
+        vm.dispose();
+      },
+    );
+
+    test('toggleAllGroups: expands all when currently collapsed', () async {
+      final vm = vmWithGroups(
+        [_g(uuid: 'g1', name: 'G1')],
+        [_h(id: 1, uuid: 'a', sortPostion: 1, groupId: 'g1')],
+      );
+
+      await vm.loadData(listen: false);
+      vm.updateGroupingEnabled(true);
+      vm.resortData();
+
+      // Collapse all first
+      vm.toggleGroup('g1');
+      vm.toggleGroup(null);
+      expect(vm.areAllGroupsCollapsed, isTrue);
+
+      // Toggle → should expand all
+      vm.toggleAllGroups();
+      expect(vm.areAllGroupsCollapsed, isFalse);
+
+      vm.dispose();
+    });
+
+    test('toggleAllGroups: collapses all when any is expanded', () async {
+      final vm = vmWithGroups(
+        [_g(uuid: 'g1', name: 'G1'), _g(uuid: 'g2', name: 'G2')],
+        [
+          _h(id: 1, uuid: 'a', sortPostion: 1, groupId: 'g1'),
+          _h(id: 2, uuid: 'b', sortPostion: 2, groupId: 'g2'),
+        ],
+      );
+
+      await vm.loadData(listen: false);
+      vm.updateGroupingEnabled(true);
+      vm.resortData();
+
+      // Only G1 collapsed — some expanded
+      vm.toggleGroup('g1');
+      expect(vm.areAllGroupsCollapsed, isFalse);
+
+      // Toggle → should collapse all
+      vm.toggleAllGroups();
+      expect(vm.areAllGroupsCollapsed, isTrue);
+
+      vm.dispose();
+    });
+
+    test(
+      'toggleAllGroups: null-group UUID (ungrouped) participates in collapse',
+      () async {
+        final vm = vmWithGroups(
+          [],
+          [_h(id: 1, uuid: 'a', sortPostion: 1)], // ungrouped only
+        );
+
+        await vm.loadData(listen: false);
+        vm.updateGroupingEnabled(true);
+        vm.resortData();
+
+        // Initially all expanded
+        expect(vm.areAllGroupsCollapsed, isFalse);
+
+        // Collapse all — ungrouped (null UUID) should also be collapsed
+        vm.toggleAllGroups();
+        expect(vm.areAllGroupsCollapsed, isTrue);
+        expect(vm.isGroupCollapsed(null), isTrue);
+
+        // Expand all
+        vm.toggleAllGroups();
+        expect(vm.areAllGroupsCollapsed, isFalse);
+        expect(vm.isGroupCollapsed(null), isFalse);
 
         vm.dispose();
       },

@@ -14,31 +14,46 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
+import '../../models/app_event.dart';
 import '../../models/habit_display.dart';
 import '../../models/habit_group.dart';
 import '../../models/habit_group_display.dart';
 import '../../providers/app_ui/app_developer.dart';
+import '../../providers/workflow/app_event.dart';
 import '../../widgets/widgets.dart';
+import '../common/widgets.dart';
+import '../habits_display/_widgets/habit_display_group_type_picker.dart';
 import '_providers/group_manage.dart';
 import 'providers.dart';
 import 'widgets.dart';
 
-Future<void> naviToGroupManagePage({required BuildContext context}) async {
+Future<void> naviToGroupManagePage({
+  required BuildContext context,
+  String? initialGroupUUID,
+}) async {
   return Navigator.of(context).push<void>(
-    MaterialPageRoute(builder: (context) => const GroupManagePage()),
+    MaterialPageRoute(
+      builder: (context) => GroupManagePage(initialGroupUUID: initialGroupUUID),
+    ),
   );
 }
 
 class GroupManagePage extends StatelessWidget {
-  const GroupManagePage({super.key});
+  final String? initialGroupUUID;
+
+  const GroupManagePage({super.key, this.initialGroupUUID});
 
   @override
   Widget build(BuildContext context) {
-    return const PageProviders(child: _Page());
+    return PageProviders(
+      initialGroupUUID: initialGroupUUID,
+      child: const _Page(),
+    );
   }
 }
 
@@ -73,15 +88,18 @@ class _PageState extends State<_Page> {
 
   Future<void> _openSortSelector() async {
     final vm = context.read<GroupManageViewModel>();
-    final result = await showDialog<SortMenuOption>(
+    final result = await showHabitDisplayGroupTypePickerDialog(
       context: context,
-      builder: (context) => _GroupSortPickerDialog(
-        sortType: vm.effectiveSortType,
-        sortDirection: vm.effectiveSortDirection,
+      groupType: vm.effectiveSortType,
+      groupDirection: vm.effectiveSortDirection,
+      title: L10n.of(context)?.groupManage_sortTile_text ?? 'Sort Groups',
+      filter: GroupTypePickerFilter.hidden(
+        showNone: false,
+        hiddenTypes: {HabitDisplayGroupType.habitCount},
       ),
     );
-    if (result != null && mounted) {
-      vm.setSortOptions(result.$1, result.$2);
+    if (result != null && result.$1 != null && mounted) {
+      vm.setSortOptions(result.$1!, result.$2 ?? HabitDisplaySortDirection.asc);
     }
   }
 
@@ -93,12 +111,26 @@ class _PageState extends State<_Page> {
       forceDialog: _debugForceEditMode == GroupEditForceMode.forceDialog,
     );
     if (result == null || !mounted) return;
-    await vm.createGroup(
+    final group = await vm.createGroup(
       name: result.name,
       desc: result.desc,
       icon: result.icon,
       color: result.color,
     );
+    if (mounted) {
+      context.read<AppEventBus>().push(
+        GroupChangedEvent(
+          msg: "group_manage._openCreateDialog",
+          groupUUID: group.uuid,
+          changeType: GroupChangeType.created,
+          trace: {
+            AppEventPageSource.groupManage: {
+              AppEventFunctionSource.groupChanged,
+            },
+          },
+        ),
+      );
+    }
   }
 
   Future<void> _openEditDialog(String uuid) async {
@@ -120,6 +152,20 @@ class _PageState extends State<_Page> {
       icon: result.icon,
       color: result.color,
     );
+    if (mounted) {
+      context.read<AppEventBus>().push(
+        GroupChangedEvent(
+          msg: "group_manage._openEditDialog",
+          groupUUID: uuid,
+          changeType: GroupChangeType.updated,
+          trace: {
+            AppEventPageSource.groupManage: {
+              AppEventFunctionSource.groupChanged,
+            },
+          },
+        ),
+      );
+    }
   }
 
   Future<void> _onSingleDelete(String uuid) async {
@@ -127,7 +173,21 @@ class _PageState extends State<_Page> {
     final confirmed = await _confirmDelete(context: context, count: 1);
     if (!confirmed || !mounted) return;
     await vm.deleteSingleGroup(uuid);
-    if (mounted) _showDeleteUndoSnackBar(context);
+    if (mounted) {
+      context.read<AppEventBus>().push(
+        GroupChangedEvent(
+          msg: "group_manage._onSingleDelete",
+          groupUUID: uuid,
+          changeType: GroupChangeType.deleted,
+          trace: {
+            AppEventPageSource.groupManage: {
+              AppEventFunctionSource.groupChanged,
+            },
+          },
+        ),
+      );
+      _showDeleteUndoSnackBar(context);
+    }
   }
 
   Future<void> _onBatchDelete() async {
@@ -137,8 +197,26 @@ class _PageState extends State<_Page> {
       count: vm.selectedCount,
     );
     if (!confirmed || !mounted) return;
+    final deletedUUIDs = List<String>.of(vm.selectedUUIDs);
     await vm.deleteSelectedGroups();
-    if (mounted) _showDeleteUndoSnackBar(context);
+    if (mounted) {
+      final bus = context.read<AppEventBus>();
+      for (final uuid in deletedUUIDs) {
+        bus.push(
+          GroupChangedEvent(
+            msg: "group_manage._onBatchDelete",
+            groupUUID: uuid,
+            changeType: GroupChangeType.deleted,
+            trace: {
+              AppEventPageSource.groupManage: {
+                AppEventFunctionSource.groupChanged,
+              },
+            },
+          ),
+        );
+      }
+      _showDeleteUndoSnackBar(context);
+    }
   }
 
   Future<bool> _confirmDelete({
@@ -172,7 +250,24 @@ class _PageState extends State<_Page> {
         label: l10n?.groupManage_undo_snackbarAction ?? 'Undo',
         onPressed: () {
           if (!mounted) return;
-          context.read<GroupManageViewModel>().undoLastDelete();
+          final vm = context.read<GroupManageViewModel>();
+          final uuids = vm.lastDeletedUUIDs;
+          vm.undoLastDelete();
+          final bus = context.read<AppEventBus>();
+          for (final uuid in uuids) {
+            bus.push(
+              GroupChangedEvent(
+                msg: "group_manage._showDeleteUndoSnackBar",
+                groupUUID: uuid,
+                changeType: GroupChangeType.created,
+                trace: {
+                  AppEventPageSource.groupManage: {
+                    AppEventFunctionSource.groupChanged,
+                  },
+                },
+              ),
+            );
+          }
         },
       ),
       duration: kAppUndoDialogShowDuration,
@@ -197,43 +292,57 @@ class _PageState extends State<_Page> {
     }
   }
 
-  void _onGroupLongPress(String uuid) {
-    final vm = context.read<GroupManageViewModel>();
-    if (!vm.selectionMode) {
-      vm.enterSelectionMode(uuid);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return ColorfulNavibar(
-      child: Scaffold(
-        body: Selector<GroupManageViewModel, (bool, bool)>(
-          selector: (context, vm) => (vm.hasLoad, vm.consumeForceReloadFlag()),
-          shouldRebuild: (previous, next) => previous.$1 != next.$1 || next.$2,
-          builder: (context, _, child) => FutureBuilder(
-            future: loadData(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Center(child: Text('${snapshot.error}'));
-              }
-              return EnhancedSafeArea.edgeToEdgeSafe(
-                child: _GroupManageBody(
-                  onGroupTap: _onGroupTap,
-                  onGroupLongPress: _onGroupLongPress,
-                  onEdit: _openEditDialog,
-                  onDelete: _onSingleDelete,
-                  onSortOpen: _openSortSelector,
-                  onBatchDelete: _onBatchDelete,
-                  debugMenuBuilder: _buildDevelopMenu,
-                ),
-              );
-            },
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        final vm = context.read<GroupManageViewModel>();
+        if (vm.selectionMode) {
+          vm.exitSelectionMode();
+        } else {
+          Navigator.of(context).pop();
+        }
+      },
+      child: ColorfulNavibar(
+        child: Scaffold(
+          body: Selector<GroupManageViewModel, (bool, bool)>(
+            selector: (context, vm) =>
+                (vm.hasLoad, vm.consumeForceReloadFlag()),
+            shouldRebuild: (previous, next) =>
+                previous.$1 != next.$1 || next.$2,
+            builder: (context, _, child) => FutureBuilder(
+              future: loadData(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(child: Text('${snapshot.error}'));
+                }
+                return EnhancedSafeArea.edgeToEdgeSafe(
+                  child: _GroupManageBody(
+                    onGroupTap: _onGroupTap,
+                    onEdit: _openEditDialog,
+                    onDelete: _onSingleDelete,
+                    onSortOpen: _openSortSelector,
+                    onBatchDelete: _onBatchDelete,
+                    onEditSingle: _onEditSingleSelected,
+                    debugMenuBuilder: _buildDevelopMenu,
+                  ),
+                );
+              },
+            ),
           ),
+          floatingActionButton: _buildFab(context),
         ),
-        floatingActionButton: _buildFab(context),
       ),
     );
+  }
+
+  void _onEditSingleSelected() {
+    final vm = context.read<GroupManageViewModel>();
+    if (vm.selectedCount != 1) return;
+    final uuid = vm.selectedUUIDs.first;
+    _openEditDialog(uuid);
   }
 
   Widget? _buildFab(BuildContext context) {
@@ -264,21 +373,21 @@ class _PageState extends State<_Page> {
 class _GroupManageBody extends StatelessWidget {
   const _GroupManageBody({
     required this.onGroupTap,
-    required this.onGroupLongPress,
     required this.onEdit,
     required this.onDelete,
     required this.onSortOpen,
     required this.onBatchDelete,
     required this.debugMenuBuilder,
+    this.onEditSingle,
   });
 
   final void Function(String uuid) onGroupTap;
-  final void Function(String uuid) onGroupLongPress;
   final void Function(String uuid) onEdit;
   final void Function(String uuid) onDelete;
   final VoidCallback onSortOpen;
   final VoidCallback onBatchDelete;
   final WidgetBuilder debugMenuBuilder;
+  final VoidCallback? onEditSingle;
 
   @override
   Widget build(BuildContext context) {
@@ -287,10 +396,8 @@ class _GroupManageBody extends StatelessWidget {
           (vm) => (vm.hasLoaded, vm.groups.isEmpty),
         );
 
-    if (groupsEmpty) {
-      return !hasLoaded
-          ? const Center(child: CircularProgressIndicator())
-          : _buildEmptyState(context);
+    if (!hasLoaded && groupsEmpty) {
+      return const Center(child: CircularProgressIndicator());
     }
 
     return AppUiLayoutBuilder(
@@ -302,16 +409,23 @@ class _GroupManageBody extends StatelessWidget {
             _GroupManageSliverAppBar(
               onSortOpen: onSortOpen,
               onBatchDelete: onBatchDelete,
+              onEditSingle: onEditSingle,
             ),
-            _GroupManageContent(
-              layoutType: layoutType,
-              onGroupTap: onGroupTap,
-              onGroupLongPress: onGroupLongPress,
-              onEdit: onEdit,
-              onDelete: onDelete,
-            ),
-            if (kDebugMode)
-              SliverToBoxAdapter(child: debugMenuBuilder(context)),
+            if (groupsEmpty)
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: _buildEmptyState(context),
+              )
+            else ...[
+              _GroupManageContent(
+                layoutType: layoutType,
+                onGroupTap: onGroupTap,
+                onEdit: onEdit,
+                onDelete: onDelete,
+              ),
+              if (kDebugMode)
+                SliverToBoxAdapter(child: debugMenuBuilder(context)),
+            ],
           ],
         );
       },
@@ -347,10 +461,12 @@ class _GroupManageSliverAppBar extends StatelessWidget {
   const _GroupManageSliverAppBar({
     required this.onSortOpen,
     required this.onBatchDelete,
+    this.onEditSingle,
   });
 
   final VoidCallback onSortOpen;
   final VoidCallback onBatchDelete;
+  final VoidCallback? onEditSingle;
 
   @override
   Widget build(BuildContext context) {
@@ -361,6 +477,9 @@ class _GroupManageSliverAppBar extends StatelessWidget {
     final l10n = L10n.of(context);
 
     if (selectionMode) {
+      final effectiveSortType = context
+          .read<GroupManageViewModel>()
+          .effectiveSortType;
       return SliverAppBar(
         pinned: true,
         forceElevated: true,
@@ -376,6 +495,29 @@ class _GroupManageSliverAppBar extends StatelessWidget {
               '$selectedCount selected',
         ),
         actions: [
+          if (selectedCount == 1 && onEditSingle != null)
+            IconButton(
+              icon: const Icon(Icons.edit_outlined),
+              tooltip: l10n?.habitEdit_saveButton_text ?? 'Edit',
+              onPressed: onEditSingle,
+            ),
+          IconButton(
+            icon: const Icon(Icons.select_all),
+            tooltip: l10n?.groupManage_selectAll ?? 'Select all',
+            onPressed: () => context.read<GroupManageViewModel>().selectAll(),
+          ),
+          if (effectiveSortType != HabitDisplayGroupType.manual)
+            IconButton(
+              icon: const Icon(Icons.drag_indicator),
+              tooltip: l10n?.groupManage_reorder_tooltip ?? 'Reorder groups',
+              onPressed: () {
+                final vm = context.read<GroupManageViewModel>();
+                vm.setSortOptions(
+                  HabitDisplayGroupType.manual,
+                  HabitDisplaySortDirection.asc,
+                );
+              },
+            ),
           IconButton(
             icon: const Icon(Icons.delete_outline),
             onPressed: selectedCount > 0 ? onBatchDelete : null,
@@ -390,7 +532,39 @@ class _GroupManageSliverAppBar extends StatelessWidget {
       title: Text(l10n?.groupManage_appbar_title ?? 'Manage Groups'),
       leading: const PageBackButton(reason: PageBackReason.back),
       actions: [
-        IconButton(icon: const Icon(Icons.sort), onPressed: onSortOpen),
+        Selector<GroupManageViewModel, bool>(
+          selector: (context, vm) => vm.groups.isNotEmpty,
+          builder: (context, hasGroups, child) {
+            if (!hasGroups) return const SizedBox.shrink();
+            return IconButton(
+              icon: const Icon(MdiIcons.sortVariant),
+              tooltip: l10n?.groupManage_reorder_tooltip ?? 'Reorder groups',
+              onPressed: () {
+                final vm = context.read<GroupManageViewModel>();
+                if (vm.effectiveSortType != HabitDisplayGroupType.manual) {
+                  vm.setSortOptions(
+                    HabitDisplayGroupType.manual,
+                    HabitDisplaySortDirection.asc,
+                  );
+                }
+                if (!vm.selectionMode) {
+                  vm.enterSelectionModeWithoutNotification();
+                }
+              },
+            );
+          },
+        ),
+        Selector<
+          GroupManageViewModel,
+          (HabitDisplayGroupType, HabitDisplaySortDirection)
+        >(
+          selector: (context, vm) =>
+              (vm.effectiveSortType, vm.effectiveSortDirection),
+          builder: (context, sort, child) => IconButton(
+            icon: GroupTypeSortIcon(groupType: sort.$1, direction: sort.$2),
+            onPressed: onSortOpen,
+          ),
+        ),
       ],
     );
   }
@@ -400,14 +574,12 @@ class _GroupManageContent extends StatelessWidget {
   const _GroupManageContent({
     required this.layoutType,
     required this.onGroupTap,
-    required this.onGroupLongPress,
     required this.onEdit,
     required this.onDelete,
   });
 
   final UiLayoutType layoutType;
   final void Function(String uuid) onGroupTap;
-  final void Function(String uuid) onGroupLongPress;
   final void Function(String uuid) onEdit;
   final void Function(String uuid) onDelete;
 
@@ -431,7 +603,6 @@ class _GroupManageContent extends StatelessWidget {
           selectionMode: selectionMode,
           selectedCount: selectedCount,
           onTap: onGroupTap,
-          onLongPress: onGroupLongPress,
           onEdit: onEdit,
           onDelete: onDelete,
         ),
@@ -442,7 +613,6 @@ class _GroupManageContent extends StatelessWidget {
         selectionMode: selectionMode,
         selectedCount: selectedCount,
         onTap: onGroupTap,
-        onLongPress: onGroupLongPress,
         onEdit: onEdit,
         onDelete: onDelete,
       ),
@@ -486,115 +656,5 @@ class _GroupManageDevelopMenu extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-typedef SortMenuOption = (HabitDisplayGroupType, HabitDisplaySortDirection);
-
-class _GroupSortPickerDialog extends StatefulWidget {
-  final SortMenuOption initSortOption;
-
-  const _GroupSortPickerDialog({
-    required HabitDisplayGroupType sortType,
-    required HabitDisplaySortDirection sortDirection,
-  }) : initSortOption = (sortType, sortDirection);
-
-  @override
-  State<_GroupSortPickerDialog> createState() => _GroupSortPickerDialogState();
-}
-
-class _GroupSortPickerDialogState extends State<_GroupSortPickerDialog> {
-  late SortMenuOption _crtSortOption;
-
-  @override
-  void initState() {
-    super.initState();
-    _crtSortOption = widget.initSortOption;
-  }
-
-  void _onRadioTapChanged(HabitDisplayGroupType? value) {
-    if (value == null) return;
-    setState(() {
-      _crtSortOption = (value, _crtSortOption.$2);
-    });
-  }
-
-  HabitDisplayGroupType get crtSortType => _crtSortOption.$1;
-  HabitDisplaySortDirection get crtSortDirection => _crtSortOption.$2;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = L10n.of(context);
-
-    return AlertDialog(
-      scrollable: true,
-      title: Text(l10n?.groupManage_sortTile_text ?? 'Sort Groups'),
-      contentPadding: const EdgeInsets.only(bottom: 24, top: 24),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          RadioGroup<HabitDisplayGroupType>(
-            groupValue: crtSortType,
-            onChanged: _onRadioTapChanged,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                for (final sortType in GroupManageViewModel.supportedSortTypes)
-                  RadioListTile<HabitDisplayGroupType>(
-                    title: Text(_sortTypeLabel(sortType, l10n)),
-                    secondary: Icon(_sortTypeIcon(sortType)),
-                    value: sortType,
-                  ),
-              ],
-            ),
-          ),
-          const Divider(),
-          CheckboxListTile(
-            title: Text(l10n?.habitDisplay_sort_reverseText ?? 'Reverse'),
-            value: crtSortDirection == HabitDisplaySortDirection.desc,
-            controlAffinity: ListTileControlAffinity.leading,
-            onChanged: (value) {
-              setState(() {
-                _crtSortOption = (
-                  crtSortType,
-                  value == true
-                      ? HabitDisplaySortDirection.desc
-                      : HabitDisplaySortDirection.asc,
-                );
-              });
-            },
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(l10n?.habitDisplay_sortTypeDialog_cancel ?? 'Cancel'),
-        ),
-        TextButton(
-          onPressed: () => Navigator.pop(context, _crtSortOption),
-          child: Text(l10n?.habitDisplay_sortTypeDialog_confirm ?? 'Confirm'),
-        ),
-      ],
-    );
-  }
-
-  String _sortTypeLabel(HabitDisplayGroupType type, L10n? l10n) {
-    return switch (type) {
-      HabitDisplayGroupType.name =>
-        l10n?.habitDisplay_groupType_name ?? 'By Name',
-      HabitDisplayGroupType.colorType =>
-        l10n?.habitDisplay_groupType_colorType ?? 'By Color',
-      HabitDisplayGroupType.createDate =>
-        l10n?.habitDisplay_groupType_createDate ?? 'By Creation Date',
-    };
-  }
-
-  IconData _sortTypeIcon(HabitDisplayGroupType type) {
-    return switch (type) {
-      HabitDisplayGroupType.name => Icons.sort_by_alpha,
-      HabitDisplayGroupType.colorType => Icons.palette_outlined,
-      HabitDisplayGroupType.createDate => Icons.calendar_today,
-    };
   }
 }

@@ -412,6 +412,9 @@ class L10nHe extends L10n {
   String get habitDisplay_groupType_createDate => 'לפי תאריך יצירה';
 
   @override
+  String get habitDisplay_groupType_habitCount => 'By Habit Count';
+
+  @override
   String get habitDisplay_groupTypeDialog_title => 'מיון בתוך הקבוצה';
 
   @override
@@ -2151,6 +2154,30 @@ class L10nHe extends L10n {
   String get groupManage_color_none => 'ללא';
 
   @override
+  String get groupManage_reorder_tooltip => 'Reorder groups';
+
+  @override
+  String get groupManage_menu_edit => 'עריכה';
+
+  @override
+  String get groupManage_menu_delete => 'מחיקה';
+
+  @override
+  String get groupManage_selectAll => 'לבחור הכול';
+
+  @override
+  String get groupHeader_menu_manage => 'Manage';
+
+  @override
+  String get groupHeader_menu_collapseAll => 'Collapse all';
+
+  @override
+  String get groupHeader_menu_expandAll => 'Expand all';
+
+  @override
   String get appSetting_manageGroups_subtitleText =>
       'יצירה, עריכה ומחיקה של קבוצות הרגלים';
+
+  @override
+  String get habitDisplay_groupType_manual => 'סדר מותאם אישית';
 }

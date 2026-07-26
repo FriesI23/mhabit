@@ -641,5 +641,21 @@
     "groupManage_color_label": "Por cor",
     "@groupManage_color_label": {
         "description": "Section label for the color picker in group create/edit forms"
+    },
+    "groupManage_menu_edit": "Editar",
+    "@groupManage_menu_edit": {
+        "description": "Menu item label for editing a group"
+    },
+    "groupManage_menu_delete": "Apagar",
+    "@groupManage_menu_delete": {
+        "description": "Menu item label for deleting a group"
+    },
+    "groupManage_selectAll": "Selecionar todos",
+    "@groupManage_selectAll": {
+        "description": "Button in selection mode AppBar to select or deselect all groups"
+    },
+    "habitDisplay_groupType_manual": "Pela minha ordem",
+    "@habitDisplay_groupType_manual": {
+        "description": "Group sort type: manual ordering via drag-and-drop"
     }
 }

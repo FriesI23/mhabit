@@ -21,6 +21,7 @@ import '../../../extensions/async_extensions.dart';
 import '../../../extensions/custom_color_extensions.dart';
 import '../../../extensions/group_icon_extensions.dart';
 import '../../../l10n/localizations.dart';
+import '../../../models/app_event.dart';
 import '../../../models/habit_color.dart';
 import '../../../models/habit_group.dart';
 import '../../../models/habit_summary.dart';
@@ -119,13 +120,27 @@ Future<void> _handleSaveOnly(
   if (formState == null) return;
   final result = formState.buildResult();
   if (result == null) return;
-  await vm.createGroup(
+  final group = await vm.createGroup(
     name: result.name,
     desc: result.desc,
     icon: result.icon,
     color: result.color,
   );
-  if (context.mounted) vm.switchToSelectMode();
+  if (context.mounted) {
+    context.read<AppEventBus>().push(
+      GroupChangedEvent(
+        msg: "habitDisplay._handleSaveOnly",
+        groupUUID: group.uuid,
+        changeType: GroupChangeType.created,
+        trace: {
+          AppEventPageSource.habitDisplay: {
+            AppEventFunctionSource.groupChanged,
+          },
+        },
+      ),
+    );
+    vm.switchToSelectMode();
+  }
 }
 
 /// Handles "Save & Apply" in create mode: validates the form, shows a
@@ -166,6 +181,17 @@ Future<void> _handleSaveAndApply(
     color: result.color,
   );
   if (!context.mounted) return;
+
+  context.read<AppEventBus>().push(
+    GroupChangedEvent(
+      msg: "habitDisplay._handleSaveAndApply",
+      groupUUID: group.uuid,
+      changeType: GroupChangeType.created,
+      trace: {
+        AppEventPageSource.habitDisplay: {AppEventFunctionSource.groupChanged},
+      },
+    ),
+  );
 
   Navigator.of(context).pop<GroupModifySelectorResult?>(
     GroupModifySelectorSelected(

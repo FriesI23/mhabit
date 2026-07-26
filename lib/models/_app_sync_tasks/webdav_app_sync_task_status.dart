@@ -123,10 +123,13 @@ class WebDavAppSyncTaskResult implements AppSyncTaskResult {
 
   factory WebDavAppSyncTaskResult.multi({
     required Map<WebDavAppSyncHabitInfo, WebDavAppSyncTaskResult> results,
+    Map<WebDavAppSyncGroupInfo, WebDavAppSyncTaskResult> groupResults =
+        const {},
     Object? error,
     StackTrace? trace,
   }) => WebDavAppSyncTaskMultiResult(
     habitResults: results,
+    groupResults: groupResults,
     error: error,
     trace: trace,
   );
@@ -152,30 +155,36 @@ class WebDavAppSyncTaskResult implements AppSyncTaskResult {
 
 class WebDavAppSyncTaskMultiResult extends WebDavAppSyncTaskResult {
   final Map<WebDavAppSyncHabitInfo, WebDavAppSyncTaskResult> habitResults;
+  final Map<WebDavAppSyncGroupInfo, WebDavAppSyncTaskResult> groupResults;
 
   const WebDavAppSyncTaskMultiResult({
     super.error,
     super.trace,
     this.habitResults = const {},
+    this.groupResults = const {},
   }) : super._(status: WebDavAppSyncTaskResultStatus.multi);
+
+  Iterable<WebDavAppSyncTaskResult> get _allResults =>
+      habitResults.values.followedBy(groupResults.values);
 
   @override
   bool get isSuccessed {
-    final result = habitResults.values.every((e) => e.isSuccessed);
+    final result = _allResults.every((e) => e.isSuccessed);
     return result || super.isSuccessed;
   }
 
   @override
   bool get isCancelled {
+    final all = _allResults.toList();
     final result =
-        habitResults.values.every((e) => e.isCancelled || e.isSuccessed) &&
-        habitResults.values.any((e) => e.isCancelled);
+        all.every((e) => e.isCancelled || e.isSuccessed) &&
+        all.any((e) => e.isCancelled);
     return result || super.isCancelled;
   }
 
   @override
   bool get isTimeout {
-    final result = habitResults.values.every((e) => e.isTimeout);
+    final result = _allResults.every((e) => e.isTimeout);
     return result || super.isTimeout;
   }
 
@@ -193,6 +202,8 @@ class WebDavAppSyncTaskMultiResult extends WebDavAppSyncTaskResult {
 
     return "WebDavAppSyncTaskMultiResult("
         "error=${error.error}, habits=(all=${habitResults.length}, "
-        "${counterMap.entries.map((e) => "${e.key}=${e.value}").join(", ")}))";
+        "${counterMap.entries.map((e) => "${e.key}=${e.value}").join(", ")}), "
+        "groups=(all=${groupResults.length})"
+        ")";
   }
 }

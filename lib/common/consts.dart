@@ -57,7 +57,9 @@ const String appSyncFailedZipFile = "app_sync_failed.zip";
 /// - add sync_extras column
 /// ## version 7
 /// - add mh_groups table and mh_habits.group_id column
-const int appDBVersion = 7;
+/// ## version 8
+/// - add mh_groups.sort_position column (manual group sort)
+const int appDBVersion = 8;
 //#endregion
 
 //#region app-theme
@@ -111,6 +113,7 @@ const appLocalizationsDelegates = <LocalizationsDelegate>[
 const defaultSortType = HabitDisplaySortType.manual;
 const defaultSortDirection = HabitDisplaySortDirection.asc;
 const defaultGroupType = HabitDisplayGroupType.createDate;
+const defaultGroupOrderType = HabitGroupOrderType.createDate;
 const defaultGroupSortDirection = HabitDisplaySortDirection.asc;
 const defaultHabitsRecordScrollBehavior = HabitsRecordScrollBehavior.scrollable;
 const defaultFirstDay = DateTime.monday;

@@ -18,6 +18,7 @@ import '../../common/rules.dart';
 import '../../common/types.dart';
 import '../../common/utils.dart';
 import '../../extensions/group_icon_extensions.dart';
+import '../../extensions/iterable_extensions.dart';
 import '../../logging/helper.dart';
 import '../../models/group.dart';
 import '../../models/group_export.dart';
@@ -42,7 +43,7 @@ abstract interface class GroupImportAccess {
 /// cache (typically in a page ViewModel) and call [loadAllActiveGroups] when
 /// they need current data.
 ///
-/// Sync writes to mh_sync are deferred to Parse 2.
+/// Sync writes to mh_sync are deferred to the sync module.
 class GroupManager
     with DBHelperLoadedMixin
     implements GroupExportAccess, GroupImportAccess {
@@ -88,7 +89,8 @@ class GroupManager
       status: 1,
     );
     await groupDBHelper.insertNewGroup(cell);
-    return HabitGroupData.fromDBQueryCell(cell);
+    final savedCell = await loadGroupByUUID(uuid);
+    return HabitGroupData.fromDBQueryCell(savedCell!);
   }
 
   Future<void> updateGroup(GroupDBCell group) async {
@@ -141,6 +143,41 @@ class GroupManager
 
   Future<void> deleteGroup(String uuid) async {
     await groupDBHelper.deleteGroup(uuid);
+  }
+
+  Future<List<String>> fixAndSaveSortPositions(
+    List<HabitGroupData> items, {
+    required num increaseStep,
+    required int decimalPlaces,
+  }) async {
+    final posList = items
+        .map((e) => e.sortPosition)
+        .makeUniqueAndIncreasing(
+          increaseStep,
+          isSorted: false,
+          decimalPlaces: decimalPlaces,
+        );
+
+    final changedUUIDs = <String>[];
+    final changedPositions = <num>[];
+
+    for (var i = 0; i < items.length; i++) {
+      final group = items[i];
+      final pos = posList[i];
+      if (group.sortPosition != pos) {
+        changedUUIDs.add(group.uuid);
+        changedPositions.add(pos);
+      }
+    }
+
+    if (changedUUIDs.isNotEmpty) {
+      await groupDBHelper.updateSelectedGroupsSortPosition(
+        changedUUIDs,
+        changedPositions.cast<GroupSortPosition>(),
+      );
+    }
+
+    return changedUUIDs;
   }
 
   //#region import and export

@@ -40,10 +40,12 @@ import '../../../storage/profile_provider.dart';
 class GroupManageViewModel extends ChangeNotifier
     with ProfileHandlerLoadedMixin
     implements ProviderMounted, AppEventLoaded {
+  GroupManageViewModel({String? initialGroupUUID})
+    : _initialGroupUUID = initialGroupUUID;
+
   // dependencies
   GroupManager? _groupManager;
   DisplayGroupModeProfileHandler? _groupModeHandler;
-  AppEventBus? _appEventBus;
 
   // data
   GroupCollection? _groupCollection;
@@ -62,8 +64,22 @@ class GroupManageViewModel extends ChangeNotifier
   HabitDisplayGroupType? get sortType => _sortType;
   HabitDisplaySortDirection? get sortDirection => _sortDirection;
 
-  HabitDisplayGroupType get effectiveSortType =>
-      _sortType ?? _groupModeHandler?.groupType ?? defaultGroupType;
+  /// Effective sort type for the management page.
+  ///
+  /// Falls back through session → global profile → [defaultGroupType].
+  /// When the global profile is set to an extrinsic type (e.g.
+  /// [HabitDisplayGroupType.habitCount]) that has no Group-intrinsic
+  /// equivalent, skips it and falls through to [defaultGroupType].
+  HabitDisplayGroupType get effectiveSortType {
+    if (_sortType != null) return _sortType!;
+    final profileType = _groupModeHandler?.groupType;
+    if (profileType != null &&
+        HabitGroupOrderType.fromGroupType(profileType) != null) {
+      return profileType;
+    }
+    return defaultGroupType;
+  }
+
   HabitDisplaySortDirection get effectiveSortDirection =>
       _sortDirection ??
       _groupModeHandler?.groupDirection ??
@@ -80,7 +96,12 @@ class GroupManageViewModel extends ChangeNotifier
   // loading lifecycle
   final _pageLoad = PageLoadRuntime();
   bool _nextRefreshForceReload = false;
+  bool _firstLoadCompleted = false;
   bool _mounted = true;
+
+  /// Set via navigation from the home page Group header long-press menu.
+  /// Consumed on the first successful [loadGroups] call.
+  final String? _initialGroupUUID;
 
   @override
   bool get mounted => _mounted;
@@ -96,6 +117,9 @@ class GroupManageViewModel extends ChangeNotifier
 
   // undo
   List<String> _lastDeletedUUIDs = [];
+
+  /// Snapshot of the last batch of deleted UUIDs, for undo event firing.
+  List<String> get lastDeletedUUIDs => List.unmodifiable(_lastDeletedUUIDs);
 
   // event subscriptions
   StreamSubscription<GroupChangedEvent>? _groupEventSub;
@@ -121,15 +145,12 @@ class GroupManageViewModel extends ChangeNotifier
     _groupManager = value;
   }
 
-  void attachAppEventBus(AppEventBus value) {
-    _appEventBus = value;
-  }
-
   @override
   void updateAppEvent(AppEventBus newAppEvent) {
     _groupEventSub?.cancel();
     _reloadDataSub?.cancel();
-    _groupEventSub = newAppEvent.on<GroupChangedEvent>().listen((_) {
+    _groupEventSub = newAppEvent.on<GroupChangedEvent>().listen((event) {
+      if (event.isInTrace(AppEventPageSource.groupManage)) return;
       appLog.habit.debug("GroupManage.reload", ex: ["GroupChangedEvent"]);
       requestReload();
     });
@@ -184,6 +205,15 @@ class GroupManageViewModel extends ChangeNotifier
         if (loading.isCanceled) return loadingCancelled(loading);
         if (loading.isCompleted) return;
 
+        // On first successful load, enter manual-sort + selection mode
+        // when navigated from the home page Group header long-press menu.
+        if (!_firstLoadCompleted && _initialGroupUUID != null) {
+          _firstLoadCompleted = true;
+          _sortType = HabitDisplayGroupType.manual;
+          _sortDirection = HabitDisplaySortDirection.asc;
+          _selectionMode = true;
+          _selectedGroupUUIDs.add(_initialGroupUUID);
+        }
         _resortData();
 
         loading.complete();
@@ -223,29 +253,16 @@ class GroupManageViewModel extends ChangeNotifier
     );
   }
 
-  /// Sort types that have a meaningful Group-level interpretation.
-  static const List<HabitDisplayGroupType> supportedSortTypes = [
-    HabitDisplayGroupType.name,
-    HabitDisplayGroupType.colorType,
-    HabitDisplayGroupType.createDate,
-  ];
-
-  void _pushGroupChanged(String? uuid, GroupChangeType changeType) {
-    _appEventBus?.push(
-      GroupChangedEvent(
-        msg: "GroupManage",
-        groupUUID: uuid,
-        changeType: changeType,
-        trace: {
-          AppEventPageSource.groupManage: {AppEventFunctionSource.groupChanged},
-        },
-      ),
-    );
-  }
-
-  void enterSelectionMode(String initialUUID) {
+  void enterSelectionMode(String initialUUID, {bool listen = true}) {
     _selectionMode = true;
     _selectedGroupUUIDs.add(initialUUID);
+    if (listen) notifyListeners();
+  }
+
+  /// Enter selection mode without selecting any item.
+  /// Used by the AppBar reorder button.
+  void enterSelectionModeWithoutNotification() {
+    _selectionMode = true;
     notifyListeners();
   }
 
@@ -269,6 +286,15 @@ class GroupManageViewModel extends ChangeNotifier
     notifyListeners();
   }
 
+  void selectAll() {
+    if (!_selectionMode) return;
+    final all = groups.map((g) => g.uuid).toSet();
+    _selectedGroupUUIDs
+      ..clear()
+      ..addAll(all);
+    notifyListeners();
+  }
+
   bool isSelected(String uuid) => _selectedGroupUUIDs.contains(uuid);
 
   Future<void> deleteSingleGroup(String uuid) async {
@@ -276,7 +302,6 @@ class GroupManageViewModel extends ChangeNotifier
     if (!mounted) return;
     _lastDeletedUUIDs = [uuid];
     exitSelectionMode();
-    _pushGroupChanged(uuid, GroupChangeType.deleted);
     requestReload();
   }
 
@@ -288,9 +313,6 @@ class GroupManageViewModel extends ChangeNotifier
     }
     _lastDeletedUUIDs = uuids;
     exitSelectionMode();
-    for (final uuid in uuids) {
-      _pushGroupChanged(uuid, GroupChangeType.deleted);
-    }
     requestReload();
   }
 
@@ -305,9 +327,6 @@ class GroupManageViewModel extends ChangeNotifier
       if (lookup.contains(uuid)) continue;
       await _groupManager?.restoreGroup(uuid);
       if (!mounted) return;
-    }
-    for (final uuid in uuids) {
-      _pushGroupChanged(uuid, GroupChangeType.created);
     }
     requestReload();
   }
@@ -327,7 +346,6 @@ class GroupManageViewModel extends ChangeNotifier
       color: color,
     );
     if (!mounted) return result;
-    _pushGroupChanged(result.uuid, GroupChangeType.created);
     requestReload();
     return result;
   }
@@ -349,8 +367,33 @@ class GroupManageViewModel extends ChangeNotifier
       color: color,
     );
     if (!mounted) return;
-    _pushGroupChanged(uuid, GroupChangeType.updated);
     requestReload();
+  }
+
+  /// Persists reorder results after a drag-and-drop completes on the
+  /// management page and notifies the home page to refresh.
+  Future<void> onGroupReorderComplete(List<String> newOrder) async {
+    if (_groupCollection == null) return;
+
+    final allGroups = _groupCollection!.toList();
+    final uuidToGroup = {for (final g in allGroups) g.uuid: g};
+    final ordered = newOrder
+        .map((uuid) => uuidToGroup[uuid])
+        .whereType<HabitGroupData>()
+        .toList();
+
+    if (ordered.isEmpty) return;
+
+    final gm = _groupManager;
+    if (gm == null) return;
+
+    await gm.fixAndSaveSortPositions(
+      ordered,
+      increaseStep: sortPositionConflictIncreaseStep,
+      decimalPlaces: sortPositionConflictDecimalPlaces,
+    );
+
+    notifyListeners();
   }
 }
 
@@ -377,7 +420,9 @@ class _GroupsSortableCache {
     required HabitDisplaySortDirection sortDirection,
   }) {
     final groups = List.of(collection.toList());
-    final sorted = groups.sortedBy(sortType, sortDirection);
+    final orderType =
+        HabitGroupOrderType.fromGroupType(sortType) ?? defaultGroupOrderType;
+    final sorted = groups.sortedBy(orderType, sortDirection);
     return _GroupsSortableCache(
       sortType: sortType,
       sortDirection: sortDirection,

@@ -15,35 +15,89 @@
 import 'package:flutter/material.dart';
 
 import '../../../common/consts.dart';
-import '../../../l10n/localizations.dart';
 import '../../../models/habit_display.dart';
 import '../../../models/habit_group_display.dart';
 import '../../../storage/profile/handlers/display_group_mode.dart';
 import '../../../widgets/widgets.dart';
-import '../_providers/habits_grouping.dart';
+import '../../common/widgets.dart';
+
+/// Configures which options are shown in the group-type picker dialog.
+abstract interface class GroupTypePickerFilter {
+  const GroupTypePickerFilter();
+
+  static const defaultFilter = _DefaultGroupTypePickerFilter();
+
+  factory GroupTypePickerFilter.hidden({
+    bool showNone = true,
+    Set<HabitDisplayGroupType> hiddenTypes = const {},
+  }) => _HiddenTypeGroupTypePickerFilter(
+    showNone: showNone,
+    hiddenTypes: hiddenTypes,
+  );
+
+  bool get showNone;
+  bool showType(HabitDisplayGroupType type);
+}
+
+class _DefaultGroupTypePickerFilter extends GroupTypePickerFilter {
+  const _DefaultGroupTypePickerFilter();
+
+  @override
+  bool get showNone => true;
+
+  @override
+  bool showType(HabitDisplayGroupType type) => true;
+}
+
+class _HiddenTypeGroupTypePickerFilter extends GroupTypePickerFilter {
+  final Set<HabitDisplayGroupType> _hiddenTypes;
+
+  const _HiddenTypeGroupTypePickerFilter({
+    bool showNone = true,
+    Set<HabitDisplayGroupType> hiddenTypes = const {},
+  }) : _showNone = showNone,
+       _hiddenTypes = hiddenTypes;
+
+  final bool _showNone;
+
+  @override
+  bool get showNone => _showNone;
+
+  @override
+  bool showType(HabitDisplayGroupType type) => !_hiddenTypes.contains(type);
+}
 
 Future<DisplayGroupModeOption?> showHabitDisplayGroupTypePickerDialog({
   required BuildContext context,
   HabitDisplayGroupType? groupType,
   HabitDisplaySortDirection? groupDirection,
+  String? title,
+  GroupTypePickerFilter? filter,
 }) async {
   return showDialog<DisplayGroupModeOption>(
     context: context,
     builder: (context) => HabitDisplayGroupTypePickerDialog(
       groupType: groupType,
       groupDirection: groupDirection,
+      title: title,
+      filter: filter,
     ),
   );
 }
 
 class HabitDisplayGroupTypePickerDialog extends StatefulWidget {
   final DisplayGroupModeOption initGroupOption;
+  final String? title;
+  final GroupTypePickerFilter filter;
 
   const HabitDisplayGroupTypePickerDialog({
     super.key,
     HabitDisplayGroupType? groupType,
     HabitDisplaySortDirection? groupDirection,
-  }) : initGroupOption = (groupType, groupDirection);
+    this.title,
+    GroupTypePickerFilter? filter,
+  }) : initGroupOption = (groupType, groupDirection),
+       filter = filter ?? GroupTypePickerFilter.defaultFilter;
 
   @override
   State<StatefulWidget> createState() => _HabitDisplayGroupTypePickerDialog();
@@ -74,19 +128,22 @@ class _HabitDisplayGroupTypePickerDialog
   @override
   Widget build(BuildContext context) {
     Iterable<Widget> buildGroupTypeRadioListTiles(BuildContext context) =>
-        HabitDisplayGroupType.menuOrderedList.map(
-          (groupType) => _GroupTypeRadioListTile(
-            groupType: groupType,
-            groupDirection: crtShowDirectionWithDefault,
-          ),
-        );
+        HabitDisplayGroupType.menuOrderedList
+            .where(widget.filter.showType)
+            .map(
+              (groupType) => _GroupTypeRadioListTile(
+                groupType: groupType,
+                groupDirection: crtShowDirectionWithDefault,
+              ),
+            );
 
     return AlertDialog(
       scrollable: true,
       title: L10nBuilder(
-        builder: (context, l10n) => l10n != null
-            ? Text(l10n.habitDisplay_groupTypeDialog_title)
-            : const Text('Group Sort'),
+        builder: (context, l10n) => Text(
+          widget.title ??
+              (l10n?.habitDisplay_groupTypeDialog_title ?? 'Group Sort'),
+        ),
       ),
       contentPadding: const EdgeInsets.only(bottom: 24, top: 24),
       content: Column(
@@ -98,9 +155,10 @@ class _HabitDisplayGroupTypePickerDialog
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _NoneGroupingRadioListTile(
-                  groupDirection: crtShowDirectionWithDefault,
-                ),
+                if (widget.filter.showNone)
+                  _NoneGroupingRadioListTile(
+                    groupDirection: crtShowDirectionWithDefault,
+                  ),
                 ...buildGroupTypeRadioListTiles(context),
               ],
             ),
@@ -113,7 +171,9 @@ class _HabitDisplayGroupTypePickerDialog
                   : const Text("Reverse"),
             ),
             value: crtGroupDirection == HabitDisplaySortDirection.desc,
-            enabled: crtGroupType != null,
+            enabled:
+                crtGroupType != null &&
+                crtGroupType != HabitDisplayGroupType.manual,
             controlAffinity: ListTileControlAffinity.leading,
             onChanged: (value) {
               final newGroupDirection = value == true
@@ -166,8 +226,8 @@ class _NoneGroupingRadioListTile extends StatelessWidget {
             ? Text(l10n.habitDisplay_groupTypeDialog_none)
             : const Text('Flat'),
       ),
-      secondary: Icon(
-        HabitsGroupingViewModel.getIcon(null, groupDirection),
+      secondary: GroupingIcon(
+        direction: groupDirection,
         color: colorScheme.outline,
       ),
       value: null,
@@ -187,16 +247,8 @@ class _GroupTypeRadioListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RadioListTile<HabitDisplayGroupType?>(
-      title: Text(
-        HabitsGroupingViewModel.getTitle(
-          groupType,
-          null,
-          l10n: L10n.of(context),
-        ),
-      ),
-      secondary: Icon(
-        HabitsGroupingViewModel.getIcon(groupType, groupDirection),
-      ),
+      title: GroupingTitle(groupType: groupType),
+      secondary: GroupingIcon(groupType: groupType, direction: groupDirection),
       value: groupType,
     );
   }

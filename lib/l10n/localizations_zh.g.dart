@@ -400,6 +400,9 @@ class L10nZh extends L10n {
   String get habitDisplay_groupType_createDate => '创建日期';
 
   @override
+  String get habitDisplay_groupType_habitCount => '习惯数量';
+
+  @override
   String get habitDisplay_groupTypeDialog_title => '分组排序';
 
   @override
@@ -2032,7 +2035,31 @@ class L10nZh extends L10n {
   String get groupManage_color_none => '无';
 
   @override
+  String get groupManage_reorder_tooltip => '排序分组';
+
+  @override
+  String get groupManage_menu_edit => '编辑';
+
+  @override
+  String get groupManage_menu_delete => '删除';
+
+  @override
+  String get groupManage_selectAll => '全选';
+
+  @override
+  String get groupHeader_menu_manage => '管理';
+
+  @override
+  String get groupHeader_menu_collapseAll => '折叠全部';
+
+  @override
+  String get groupHeader_menu_expandAll => '展开全部';
+
+  @override
   String get appSetting_manageGroups_subtitleText => '创建、编辑和删除习惯分组';
+
+  @override
+  String get habitDisplay_groupType_manual => '自定义';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -2386,6 +2413,9 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get habitDisplay_groupType_createDate => '建立日期';
+
+  @override
+  String get habitDisplay_groupType_habitCount => '習慣數量';
 
   @override
   String get habitDisplay_groupTypeDialog_title => '分組排序';
@@ -3693,5 +3723,29 @@ class L10nZhHant extends L10nZh {
   String get groupManage_color_none => '無';
 
   @override
+  String get groupManage_reorder_tooltip => '排序分組';
+
+  @override
+  String get groupManage_menu_edit => '編輯';
+
+  @override
+  String get groupManage_menu_delete => '刪除';
+
+  @override
+  String get groupManage_selectAll => '全選';
+
+  @override
+  String get groupHeader_menu_manage => '管理';
+
+  @override
+  String get groupHeader_menu_collapseAll => '折疊全部';
+
+  @override
+  String get groupHeader_menu_expandAll => '展開全部';
+
+  @override
   String get appSetting_manageGroups_subtitleText => '建立、編輯和刪除習慣分組';
+
+  @override
+  String get habitDisplay_groupType_manual => '自訂順序';
 }

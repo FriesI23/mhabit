@@ -32,3 +32,7 @@ const double kSearchAppBarHeight = 64.0;
 const EdgeInsetsGeometry kSearchAppBarActionPadding = EdgeInsets.only(
   right: 4.0,
 );
+
+const kAppBarTheme = AppBarThemeData(
+  actionsPadding: kSearchAppBarActionPadding,
+);

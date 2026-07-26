@@ -417,6 +417,9 @@ class L10nTr extends L10n {
   String get habitDisplay_groupType_createDate => 'By Creation Date';
 
   @override
+  String get habitDisplay_groupType_habitCount => 'By Habit Count';
+
+  @override
   String get habitDisplay_groupTypeDialog_title => 'Group Sort';
 
   @override
@@ -2181,6 +2184,30 @@ class L10nTr extends L10n {
   String get groupManage_color_none => 'boş';
 
   @override
+  String get groupManage_reorder_tooltip => 'Reorder groups';
+
+  @override
+  String get groupManage_menu_edit => 'Düzenle';
+
+  @override
+  String get groupManage_menu_delete => 'Sil';
+
+  @override
+  String get groupManage_selectAll => 'Hepsini Seç';
+
+  @override
+  String get groupHeader_menu_manage => 'Manage';
+
+  @override
+  String get groupHeader_menu_collapseAll => 'Collapse all';
+
+  @override
+  String get groupHeader_menu_expandAll => 'Expand all';
+
+  @override
   String get appSetting_manageGroups_subtitleText =>
       'Create, edit, and delete habit groups';
+
+  @override
+  String get habitDisplay_groupType_manual => 'Benim sıralamam';
 }

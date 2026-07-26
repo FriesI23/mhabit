@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/foundation.dart';
+
 import '../../../common/consts.dart';
 import '../../../extensions/habit_group_extensions.dart';
 import '../../../extensions/iterable_extensions.dart';
@@ -28,6 +30,7 @@ import '../../../models/habit_summary.dart';
 /// - [HabitDisplayGroupType.name]: by group name, alphabetically.
 /// - [HabitDisplayGroupType.colorType]: by each group's [HabitGroupData.color].
 /// - [HabitDisplayGroupType.createDate]: by the order in [groups].
+/// - [HabitDisplayGroupType.habitCount]: by the number of habits in each group.
 ///
 /// [groupDirection] controls the order direction for groups.
 /// Within each group, habits are sorted by [sortType]/[sortDirection].
@@ -54,7 +57,12 @@ List<HabitSortCache<dynamic>> buildGroupedSortCacheList({
   }
 
   // Sort groups according to groupType, then apply groupDirection.
-  final orderedGroups = _orderGroups(groups, groupType, groupDirection);
+  final orderedGroups = _orderGroups(
+    groups,
+    groupType,
+    groupDirection,
+    habitByGroup: habitByGroup,
+  );
 
   for (final group in orderedGroups) {
     final gid = group.uuid;
@@ -104,11 +112,67 @@ List<HabitSortCache<dynamic>> buildGroupedSortCacheList({
 }
 
 /// Returns [groups] sorted according to [groupType] and [direction].
+///
+/// For extrinsic types (e.g. [HabitDisplayGroupType.habitCount]) that
+/// require data beyond [HabitGroupData] fields, [habitByGroup] is used;
+/// for all intrinsic types, delegates to [HabitGroupSortExtension.sortedBy].
 List<HabitGroupData> _orderGroups(
   List<HabitGroupData> groups,
   HabitDisplayGroupType groupType,
-  HabitDisplaySortDirection direction,
-) => groups.sortedBy(groupType, direction);
+  HabitDisplaySortDirection direction, {
+  Map<String?, List<HabitSummaryData>>? habitByGroup,
+}) => switch (groupType) {
+  HabitDisplayGroupType.name => groups.sortedBy(
+    HabitGroupOrderType.name,
+    direction,
+  ),
+  HabitDisplayGroupType.colorType => groups.sortedBy(
+    HabitGroupOrderType.colorType,
+    direction,
+  ),
+  HabitDisplayGroupType.createDate => groups.sortedBy(
+    HabitGroupOrderType.createDate,
+    direction,
+  ),
+  HabitDisplayGroupType.habitCount => orderGroupsByHabitCount(
+    groups,
+    direction,
+    habitByGroup: habitByGroup,
+  ),
+  HabitDisplayGroupType.manual => groups.sortedBy(
+    HabitGroupOrderType.manual,
+    direction,
+  ),
+};
+
+/// Sorts [groups] by the number of habits in each group.
+///
+/// The default asc direction puts the group with most habits first.
+/// [habitByGroup] maps group UUIDs to their habits; missing entries
+/// are treated as zero.
+@visibleForTesting
+List<HabitGroupData> orderGroupsByHabitCount(
+  List<HabitGroupData> groups,
+  HabitDisplaySortDirection direction, {
+  Map<String?, List<HabitSummaryData>>? habitByGroup,
+}) {
+  final effectiveMap = habitByGroup ?? const {};
+  final count = {
+    for (final g in groups) g.uuid: (effectiveMap[g.uuid]?.length ?? 0),
+  };
+  // Comparator is intentionally reversed (b, a) so that the default
+  // asc direction puts the group with most habits first.
+  final sorted = groups.toList()
+    ..sort((a, b) {
+      final ca = count[b.uuid] ?? 0;
+      final cb = count[a.uuid] ?? 0;
+      return ca.compareTo(cb);
+    });
+  if (direction == HabitDisplaySortDirection.desc) {
+    return sorted.reversed.toList();
+  }
+  return sorted;
+}
 
 /// Applies [options] keyword/status/type filtering to [sorted].
 ///

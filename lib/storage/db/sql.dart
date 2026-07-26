@@ -74,6 +74,21 @@ BEGIN
 END
 """;
 
+  static const String rmAutoAddSortPostionWhenAddNewGroupTrigger = """
+DROP TRIGGER IF EXISTS auto_insert_mh_groups_sort_position;
+""";
+
+  static const String autoAddSortPostionWhenAddNewGroup =
+      """
+CREATE TRIGGER auto_insert_mh_groups_sort_position
+AFTER INSERT ON ${TableName.groups}
+BEGIN
+  UPDATE ${TableName.groups}
+  SET sort_position = NEW.id_
+  WHERE uuid = NEW.uuid AND sort_position = 9e999;
+END
+""";
+
   static const String autoUpdateSyncModifyTimeTrigger =
       """
 CREATE TRIGGER auto_update_mh_sync_modify_t
@@ -193,6 +208,31 @@ END
       )
       ..write(", ${SyncDbCellKey.dirty} = ${SyncDbCellKey.dirty} + 1")
       ..write(" WHERE ${SyncDbCellKey.groupUUID} = ?");
+
+    return sql.toString();
+  }
+
+  /// required arguments: [groupUUIDList]
+  static String increaseMultiGroupsSyncDirtySql({
+    required int count,
+    ConflictAlgorithm? conflictAlgorithm,
+  }) {
+    final sql = StringBuffer();
+    sql.write("UPDATE");
+    if (conflictAlgorithm != null) {
+      sql
+        ..write(" ")
+        ..write(buildConflictAlgorithm(conflictAlgorithm));
+    }
+    sql
+      ..write(" ${TableName.sync}")
+      ..write(
+        " SET ${SyncDbCellKey.dirtyTotal} "
+        "= COALESCE(${SyncDbCellKey.dirtyTotal}, 0) + 1",
+      )
+      ..write(", ${SyncDbCellKey.dirty} = ${SyncDbCellKey.dirty} + 1")
+      ..write(" WHERE ${SyncDbCellKey.groupUUID}")
+      ..write(" IN (${List.generate(count, (index) => '?').join(', ')})");
 
     return sql.toString();
   }

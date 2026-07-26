@@ -211,6 +211,39 @@ void main() {
         expect(names.last, 'B-NoColor');
       },
     );
+
+    test(
+      'effectiveSortType: falls back to profile name when session is null',
+      () async {
+        await manager.createGroup(name: 'A');
+
+        final handler = profile.getHandler<DisplayGroupModeProfileHandler>();
+        await handler?.set((HabitDisplayGroupType.name, null));
+        vm.updateProfile(profile);
+
+        await vm.loadGroups(listen: false);
+
+        expect(vm.sortType, isNull);
+        expect(vm.effectiveSortType, HabitDisplayGroupType.name);
+      },
+    );
+
+    test(
+      'effectiveSortType: skips habitCount and falls back to default',
+      () async {
+        await manager.createGroup(name: 'A');
+
+        final handler = profile.getHandler<DisplayGroupModeProfileHandler>();
+        await handler?.set((HabitDisplayGroupType.habitCount, null));
+        vm.updateProfile(profile);
+
+        await vm.loadGroups(listen: false);
+
+        expect(vm.sortType, isNull);
+        // habitCount is extrinsic → fromGroupType returns null → skip to default
+        expect(vm.effectiveSortType, defaultGroupType);
+      },
+    );
   });
 
   group('GroupManageViewModel event-driven reload', () {

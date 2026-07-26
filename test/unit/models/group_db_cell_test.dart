@@ -14,6 +14,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/group.dart';
+import 'package:mhabit/models/habit_group.dart';
 
 GroupDBCell _buildCell({
   int id = 1,
@@ -27,6 +28,7 @@ GroupDBCell _buildCell({
   int? customColor,
   int? customColorTinted,
   int status = 1,
+  num? sortPosition,
 }) {
   return GroupDBCell(
     id: id,
@@ -40,6 +42,7 @@ GroupDBCell _buildCell({
     customColor: customColor,
     customColorTinted: customColorTinted,
     status: status,
+    sortPosition: sortPosition,
   );
 }
 
@@ -114,6 +117,67 @@ void main() {
       expect(json['color'], 1);
       expect(json['custom_color'], 0xFFAABBCC);
       expect(json['custom_color_tinted'], 0xFFDDEEFF);
+    });
+
+    test('sortPosition non-null is included in JSON', () {
+      final cell = _buildCell(sortPosition: 3.5);
+      final json = cell.toJson();
+
+      expect(json.containsKey('sort_position'), isTrue);
+      expect(json['sort_position'], 3.5);
+    });
+
+    test('sortPosition null is excluded from JSON (includeIfNull: false)', () {
+      final cell = _buildCell(sortPosition: null);
+      final json = cell.toJson();
+
+      expect(json.containsKey('sort_position'), isFalse);
+    });
+
+    test('sortPosition round-trips through toJson/fromJson', () {
+      final cell = _buildCell(sortPosition: 7.25);
+      final json = cell.toJson();
+      final restored = GroupDBCell.fromJson(json);
+
+      expect(restored.sortPosition, 7.25);
+    });
+
+    test('sortPosition defaults to null when missing from JSON', () {
+      final json = {'uuid': 'no-sort', 'name': 'No Sort'};
+      final cell = GroupDBCell.fromJson(json);
+
+      expect(cell.sortPosition, isNull);
+    });
+
+    test('sortPosition in existing _buildCell ensures backward compat', () {
+      final cell = _buildCell();
+      expect(cell.sortPosition, isNull);
+    });
+
+    test('sortPosition as integer works correctly (num type)', () {
+      final cell = _buildCell(sortPosition: 5);
+      final json = cell.toJson();
+      final restored = GroupDBCell.fromJson(json);
+
+      expect(restored.sortPosition, 5);
+      expect(restored.sortPosition, isA<num>());
+    });
+  });
+
+  group('HabitGroupData.sortPosition fromDBQueryCell', () {
+    test('reads sortPosition from GroupDBCell', () {
+      final cell = _buildCell(sortPosition: 4.5);
+      final data = HabitGroupData.fromDBQueryCell(cell);
+
+      expect(data.sortPosition, 4.5);
+    });
+
+    test('throws when GroupDBCell.sortPosition is null', () {
+      final cell = _buildCell(sortPosition: null);
+      expect(
+        () => HabitGroupData.fromDBQueryCell(cell),
+        throwsA(isA<TypeError>()),
+      );
     });
   });
 }

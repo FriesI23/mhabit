@@ -1091,5 +1091,21 @@
     "groupManage_color_none": "なし",
     "@groupManage_color_none": {
         "description": "Tooltip for the 'no color' option in the group color picker"
+    },
+    "groupManage_menu_edit": "編集",
+    "@groupManage_menu_edit": {
+        "description": "Menu item label for editing a group"
+    },
+    "groupManage_menu_delete": "削除",
+    "@groupManage_menu_delete": {
+        "description": "Menu item label for deleting a group"
+    },
+    "groupManage_selectAll": "すべて選択",
+    "@groupManage_selectAll": {
+        "description": "Button in selection mode AppBar to select or deselect all groups"
+    },
+    "habitDisplay_groupType_manual": "自分の順序",
+    "@habitDisplay_groupType_manual": {
+        "description": "Group sort type: manual ordering via drag-and-drop"
     }
 }

@@ -23,13 +23,16 @@ import '../../widgets/provider.dart';
 import '_providers/group_manage.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
-  const PageProviders({super.key, super.child});
+  final String? initialGroupUUID;
+
+  const PageProviders({super.key, super.child, this.initialGroupUUID});
 
   @override
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
     providers: [
       ChangeNotifierProvider<GroupManageViewModel>(
-        create: (context) => GroupManageViewModel(),
+        create: (context) =>
+            GroupManageViewModel(initialGroupUUID: initialGroupUUID),
       ),
       ViewModelProxyProvider<ProfileViewModel, GroupManageViewModel>(
         update: (context, value, previous) => previous..updateProfile(value),
@@ -39,9 +42,7 @@ class PageProviders extends SingleChildStatelessWidget {
             previous..attachGroupManager(value),
       ),
       ViewModelProxyProvider<AppEventBus, GroupManageViewModel>(
-        update: (context, value, previous) => previous
-          ..updateAppEvent(value)
-          ..attachAppEventBus(value),
+        update: (context, value, previous) => previous..updateAppEvent(value),
       ),
     ],
     child: child,

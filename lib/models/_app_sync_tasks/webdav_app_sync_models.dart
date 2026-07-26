@@ -780,6 +780,7 @@ class WebDavSyncGroupKey {
   static const String customColor = 'custom_color';
   static const String customColorTinted = 'custom_color_tinted';
   static const String status = 'status';
+  static const String sortPosition = 'sort_position';
   static const String sessionId = 'sessionId';
   static const String schemaVersion = '_schema_version';
   static const String convertType = '_convert_type';
@@ -796,6 +797,7 @@ enum WebDavSyncGroupKeys {
   customColor(WebDavSyncGroupKey.customColor),
   customColorTinted(WebDavSyncGroupKey.customColorTinted),
   status(WebDavSyncGroupKey.status),
+  sortPosition(WebDavSyncGroupKey.sortPosition),
   sessionId(WebDavSyncGroupKey.sessionId),
   schemaVersion(WebDavSyncGroupKey.schemaVersion),
   convertType(WebDavSyncGroupKey.convertType);
@@ -843,6 +845,8 @@ class WebDavSyncGroupData implements JsonAdaptor {
   final int? customColorTinted;
   @JsonKey(name: WebDavSyncGroupKey.status)
   final int? status;
+  @JsonKey(name: WebDavSyncGroupKey.sortPosition)
+  final GroupSortPosition? sortPosition;
   @JsonKey(name: WebDavSyncGroupKey.sessionId)
   final String? sessionId;
 
@@ -865,6 +869,7 @@ class WebDavSyncGroupData implements JsonAdaptor {
     this.customColor,
     this.customColorTinted,
     this.status,
+    this.sortPosition,
     this.sessionId,
     this.etag,
     this.dirty,
@@ -908,6 +913,7 @@ class WebDavSyncGroupData implements JsonAdaptor {
       customColor: groupColor?._syncCustomColor,
       customColorTinted: groupColor?._syncCustomColorTinted,
       status: cell.status,
+      sortPosition: cell.sortPosition,
       sessionId: sessionId,
       etag: etag,
       dirty: dirty,
@@ -946,6 +952,7 @@ class WebDavSyncGroupData implements JsonAdaptor {
       customColor: groupColor?.dbCustomColor,
       customColorTinted: groupColor?.dbCustomColorTinted,
       status: status,
+      sortPosition: sortPosition,
     );
   }
 

@@ -336,6 +336,7 @@ abstract class _$WebDavSyncGroupDataCWProxy {
     int? customColor,
     int? customColorTinted,
     int? status,
+    GroupSortPosition? sortPosition,
     String? sessionId,
     String? etag,
     int? dirty,
@@ -371,6 +372,7 @@ class _$WebDavSyncGroupDataCWProxyImpl implements _$WebDavSyncGroupDataCWProxy {
     Object? customColor = const $CopyWithPlaceholder(),
     Object? customColorTinted = const $CopyWithPlaceholder(),
     Object? status = const $CopyWithPlaceholder(),
+    Object? sortPosition = const $CopyWithPlaceholder(),
     Object? sessionId = const $CopyWithPlaceholder(),
     Object? etag = const $CopyWithPlaceholder(),
     Object? dirty = const $CopyWithPlaceholder(),
@@ -423,6 +425,10 @@ class _$WebDavSyncGroupDataCWProxyImpl implements _$WebDavSyncGroupDataCWProxy {
           ? _value.status
           // ignore: cast_nullable_to_non_nullable
           : status as int?,
+      sortPosition: sortPosition == const $CopyWithPlaceholder()
+          ? _value.sortPosition
+          // ignore: cast_nullable_to_non_nullable
+          : sortPosition as GroupSortPosition?,
       sessionId: sessionId == const $CopyWithPlaceholder()
           ? _value.sessionId
           // ignore: cast_nullable_to_non_nullable
@@ -559,6 +565,7 @@ WebDavSyncGroupData _$WebDavSyncGroupDataFromJson(Map<String, dynamic> json) =>
       customColor: (json['custom_color'] as num?)?.toInt(),
       customColorTinted: (json['custom_color_tinted'] as num?)?.toInt(),
       status: (json['status'] as num?)?.toInt(),
+      sortPosition: json['sort_position'] as num?,
       sessionId: json['sessionId'] as String?,
     );
 
@@ -576,6 +583,7 @@ Map<String, dynamic> _$WebDavSyncGroupDataToJson(
   'custom_color': instance.customColor,
   'custom_color_tinted': instance.customColorTinted,
   'status': instance.status,
+  'sort_position': instance.sortPosition,
   'sessionId': instance.sessionId,
 };
 

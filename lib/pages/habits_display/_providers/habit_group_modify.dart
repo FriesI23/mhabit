@@ -46,7 +46,6 @@ class HabitGroupModifyViewModel extends ChangeNotifier
 
   GroupManager? _groupManager;
   AppCachesViewModel? _appCaches;
-  AppEventBus? _appEventBus;
 
   //#region lifecycle
 
@@ -131,15 +130,15 @@ class HabitGroupModifyViewModel extends ChangeNotifier
   ///
   /// Mirrors [GroupManageViewModel.updateAppEvent].
   void attachAppEventBus(AppEventBus bus) {
-    _appEventBus = bus;
     _groupEventSub?.cancel();
     _reloadDataSub?.cancel();
-    _groupEventSub = bus.on<GroupChangedEvent>().listen((_) {
+    _groupEventSub = bus.on<GroupChangedEvent>().listen((event) {
+      if (event.isInTrace(AppEventPageSource.habitDisplay)) return;
       appLog.habit.debug("HabitGroupModify.reload", ex: ["GroupChangedEvent"]);
       requestReload();
     });
     _reloadDataSub = bus.on<ReloadDataEvent>().listen((event) {
-      if (event.isInTrace(AppEventPageSource.groupManage)) return;
+      if (event.isInTrace(AppEventPageSource.habitDisplay)) return;
       appLog.habit.debug(
         "HabitGroupModify.reload",
         ex: ["ReloadDataEvent", event],
@@ -152,21 +151,6 @@ class HabitGroupModifyViewModel extends ChangeNotifier
     _nextRefreshForceReload = true;
     _pageLoad.cancel(logName: "$runtimeType.requestReload");
     notifyListeners();
-  }
-
-  void _pushGroupChanged(String? uuid, GroupChangeType changeType) {
-    _appEventBus?.push(
-      GroupChangedEvent(
-        msg: "HabitGroupModify",
-        groupUUID: uuid,
-        changeType: changeType,
-        trace: {
-          AppEventPageSource.habitDisplay: {
-            AppEventFunctionSource.groupChanged,
-          },
-        },
-      ),
-    );
   }
 
   //#endregion
@@ -218,7 +202,6 @@ class HabitGroupModifyViewModel extends ChangeNotifier
       color: color,
     );
     if (!mounted) return result;
-    _pushGroupChanged(result.uuid, GroupChangeType.created);
     _selectedGroupId = result.uuid;
     requestReload();
     return result;

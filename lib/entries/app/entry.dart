@@ -152,6 +152,19 @@ class _AppEntry extends StatelessWidget {
     }
   }
 
+  static MenuThemeData? get _mobileMenuTheme => switch (defaultTargetPlatform) {
+    TargetPlatform.iOS || TargetPlatform.android => const MenuThemeData(
+      style: MenuStyle(
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
+        ),
+      ),
+    ),
+    _ => null,
+  };
+
   Color? getThemeColor(
     AppThemeColor themeColor, {
     Color? themeMainColor,
@@ -253,6 +266,8 @@ class _AppEntry extends StatelessWidget {
                       )
                     : getSystemLightColor(),
                 useMaterial3: true,
+                appBarTheme: kAppBarTheme,
+                menuTheme: _mobileMenuTheme,
                 extensions: [customColor],
               );
             },
@@ -276,6 +291,8 @@ class _AppEntry extends StatelessWidget {
                       )
                     : getSystemDarkColor(),
                 useMaterial3: true,
+                appBarTheme: kAppBarTheme,
+                menuTheme: _mobileMenuTheme,
                 extensions: [customColor],
               );
             },

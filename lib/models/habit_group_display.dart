@@ -19,7 +19,9 @@ import '../common/enums.dart';
 enum HabitDisplayGroupType implements EnumWithDBCode {
   name(code: 1),
   colorType(code: 2),
-  createDate(code: 3);
+  createDate(code: 3),
+  habitCount(code: 4),
+  manual(code: 5);
 
   final int _code;
 
@@ -37,5 +39,36 @@ enum HabitDisplayGroupType implements EnumWithDBCode {
     HabitDisplayGroupType.name,
     HabitDisplayGroupType.colorType,
     HabitDisplayGroupType.createDate,
+    HabitDisplayGroupType.habitCount,
+    HabitDisplayGroupType.manual,
   ];
+}
+
+/// Group-intrinsic ordering types for [HabitGroupData] sorting.
+///
+/// Unlike [HabitDisplayGroupType] which includes extrinsic types such as
+/// [HabitDisplayGroupType.habitCount], this enum only covers sort types
+/// that can be computed from [HabitGroupData] fields alone.
+///
+/// Use [fromGroupType] to safely convert a [HabitDisplayGroupType].
+enum HabitGroupOrderType {
+  name,
+  colorType,
+  createDate,
+  manual;
+
+  /// Maps a [HabitDisplayGroupType] to its corresponding
+  /// [HabitGroupOrderType].
+  ///
+  /// Returns `null` for extrinsic types (e.g.
+  /// [HabitDisplayGroupType.habitCount]) that require data beyond
+  /// [HabitGroupData] itself.
+  static HabitGroupOrderType? fromGroupType(HabitDisplayGroupType type) =>
+      switch (type) {
+        HabitDisplayGroupType.name => HabitGroupOrderType.name,
+        HabitDisplayGroupType.colorType => HabitGroupOrderType.colorType,
+        HabitDisplayGroupType.createDate => HabitGroupOrderType.createDate,
+        HabitDisplayGroupType.habitCount => null,
+        HabitDisplayGroupType.manual => HabitGroupOrderType.manual,
+      };
 }

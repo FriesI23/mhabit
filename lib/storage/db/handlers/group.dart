@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:collection/collection.dart';
+import 'package:sqflite/sqflite.dart';
+
+import '../../../common/types.dart';
 import '../../../models/group.dart';
 import '../db_helper.dart';
 import '../sql.dart';
@@ -105,5 +109,37 @@ class GroupDBHelper extends DBHelperHandler {
     );
     if (result.isEmpty) return null;
     return GroupDBCell.fromJson(result.first);
+  }
+
+  /// Batch-updates [GroupDBCellKey.sortPosition] for the given groups.
+  ///
+  /// [uuidList] and [posList] must have the same length.
+  /// Each row also bumps the sync dirty flag.
+  Future<void> updateSelectedGroupsSortPosition(
+    List<String> uuidList,
+    List<GroupSortPosition> posList,
+  ) async {
+    assert(uuidList.length == posList.length, true);
+
+    db.transaction((db) async {
+      final batch = db.batch();
+      uuidList.forEachIndexed((index, uuid) {
+        batch.update(
+          table,
+          {GroupDBCellKey.sortPosition: posList[index]},
+          where: "${GroupDBCellKey.uuid} = ?",
+          whereArgs: [uuid],
+          conflictAlgorithm: ConflictAlgorithm.rollback,
+        );
+      });
+      batch.rawUpdate(
+        CustomSql.increaseMultiGroupsSyncDirtySql(
+          count: uuidList.length,
+          conflictAlgorithm: ConflictAlgorithm.rollback,
+        ),
+        uuidList,
+      );
+      await batch.commit();
+    }, exclusive: true);
   }
 }

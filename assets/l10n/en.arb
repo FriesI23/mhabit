@@ -372,6 +372,8 @@
     "@habitDisplay_groupType_colorType": {},
     "habitDisplay_groupType_createDate": "By Creation Date",
     "@habitDisplay_groupType_createDate": {},
+    "habitDisplay_groupType_habitCount": "By Habit Count",
+    "@habitDisplay_groupType_habitCount": {},
     "habitDisplay_groupTypeDialog_title": "Group Sort",
     "@habitDisplay_groupTypeDialog_title": {},
     "habitDisplay_groupTypeDialog_confirm": "confirm",
@@ -1859,8 +1861,40 @@
     "@groupManage_color_none": {
         "description": "Tooltip for the 'no color' option in the group color picker"
     },
+    "groupManage_reorder_tooltip": "Reorder groups",
+    "@groupManage_reorder_tooltip": {
+        "description": "Tooltip for the reorder button that enters manual sort + selection mode"
+    },
+    "groupManage_menu_edit": "Edit",
+    "@groupManage_menu_edit": {
+        "description": "Menu item label for editing a group"
+    },
+    "groupManage_menu_delete": "Delete",
+    "@groupManage_menu_delete": {
+        "description": "Menu item label for deleting a group"
+    },
+    "groupManage_selectAll": "Select all",
+    "@groupManage_selectAll": {
+        "description": "Button in selection mode AppBar to select or deselect all groups"
+    },
+    "groupHeader_menu_manage": "Manage",
+    "@groupHeader_menu_manage": {
+        "description": "Menu item on Group header long-press to navigate to the group management page"
+    },
+    "groupHeader_menu_collapseAll": "Collapse all",
+    "@groupHeader_menu_collapseAll": {
+        "description": "Menu item on Group header long-press to collapse all groups"
+    },
+    "groupHeader_menu_expandAll": "Expand all",
+    "@groupHeader_menu_expandAll": {
+        "description": "Menu item on Group header long-press to expand all groups"
+    },
     "appSetting_manageGroups_subtitleText": "Create, edit, and delete habit groups",
     "@appSetting_manageGroups_subtitleText": {
         "description": "Subtitle for the Manage Groups tile in Settings"
+    },
+    "habitDisplay_groupType_manual": "Manual",
+    "@habitDisplay_groupType_manual": {
+        "description": "Group sort type: manual ordering via drag-and-drop"
     }
 }

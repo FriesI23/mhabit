@@ -192,6 +192,19 @@ class HabitSummaryViewModel extends ChangeNotifier
     if (_collapsedGroupUUIDs.remove(groupUUID)) resortData();
   }
 
+  bool get areAllGroupsCollapsed {
+    final allUUIDs = {...?_groupCollection?.toList().map((g) => g.uuid), null};
+    return allUUIDs.isNotEmpty && allUUIDs.every(_collapsedGroupUUIDs.contains);
+  }
+
+  void toggleAllGroups() {
+    final allUUIDs = {...?_groupCollection?.toList().map((g) => g.uuid), null};
+    allUUIDs.every(_collapsedGroupUUIDs.contains)
+        ? _collapsedGroupUUIDs.clear()
+        : _collapsedGroupUUIDs.addAll(allUUIDs);
+    resortData();
+  }
+
   @override
   void dispose() {
     if (!_mounted) return;

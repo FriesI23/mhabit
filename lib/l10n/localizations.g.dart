@@ -776,6 +776,12 @@ abstract class L10n {
   /// **'By Creation Date'**
   String get habitDisplay_groupType_createDate;
 
+  /// No description provided for @habitDisplay_groupType_habitCount.
+  ///
+  /// In en, this message translates to:
+  /// **'By Habit Count'**
+  String get habitDisplay_groupType_habitCount;
+
   /// No description provided for @habitDisplay_groupTypeDialog_title.
   ///
   /// In en, this message translates to:
@@ -3441,11 +3447,59 @@ abstract class L10n {
   /// **'None'**
   String get groupManage_color_none;
 
+  /// Tooltip for the reorder button that enters manual sort + selection mode
+  ///
+  /// In en, this message translates to:
+  /// **'Reorder groups'**
+  String get groupManage_reorder_tooltip;
+
+  /// Menu item label for editing a group
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get groupManage_menu_edit;
+
+  /// Menu item label for deleting a group
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get groupManage_menu_delete;
+
+  /// Button in selection mode AppBar to select or deselect all groups
+  ///
+  /// In en, this message translates to:
+  /// **'Select all'**
+  String get groupManage_selectAll;
+
+  /// Menu item on Group header long-press to navigate to the group management page
+  ///
+  /// In en, this message translates to:
+  /// **'Manage'**
+  String get groupHeader_menu_manage;
+
+  /// Menu item on Group header long-press to collapse all groups
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse all'**
+  String get groupHeader_menu_collapseAll;
+
+  /// Menu item on Group header long-press to expand all groups
+  ///
+  /// In en, this message translates to:
+  /// **'Expand all'**
+  String get groupHeader_menu_expandAll;
+
   /// Subtitle for the Manage Groups tile in Settings
   ///
   /// In en, this message translates to:
   /// **'Create, edit, and delete habit groups'**
   String get appSetting_manageGroups_subtitleText;
+
+  /// Group sort type: manual ordering via drag-and-drop
+  ///
+  /// In en, this message translates to:
+  /// **'Manual'**
+  String get habitDisplay_groupType_manual;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

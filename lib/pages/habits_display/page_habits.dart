@@ -58,6 +58,7 @@ import '../../widgets/widgets.dart';
 import '../app_settings/page.dart' as app_settings;
 import '../common/debug.dart';
 import '../common/widgets.dart';
+import '../group_manage/page.dart' as group_manage;
 import '../habit_detail/page.dart' as habit_detail;
 import '../habit_edit/page.dart' as habit_edit;
 import '../habits_status_changer/page.dart' as habits_status_changer;
@@ -1482,21 +1483,89 @@ class _HabitListItemMeasurer extends StatelessWidget {
   }
 }
 
-class _GroupHeaderTile extends StatelessWidget {
+class _GroupHeaderTile extends StatefulWidget {
   final GroupHeaderSortCache header;
 
   const _GroupHeaderTile({required this.header});
 
   @override
+  State<_GroupHeaderTile> createState() => _GroupHeaderTileState();
+}
+
+class _GroupHeaderTileState extends State<_GroupHeaderTile> {
+  final _menuController = MenuController();
+
+  bool get _canOpen => widget.header.groupUUID != null;
+
+  void _openMenu({Offset? position}) {
+    if (!_canOpen) return;
+    _menuController.open(position: position);
+  }
+
+  void _handleSecondaryTapDown(TapDownDetails details) {
+    if (!_canOpen) return;
+    _menuController.open(position: details.localPosition);
+  }
+
+  void _handleLongPressStart(LongPressStartDetails details) {
+    _openMenu(position: details.localPosition);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
     final isExpanded = context.select<HabitSummaryViewModel, bool>(
-      (vm) => !vm.isGroupCollapsed(header.groupUUID),
+      (vm) => !vm.isGroupCollapsed(widget.header.groupUUID),
     );
-    return GroupHeader(
-      header: header,
-      isExpanded: isExpanded,
-      onTap: () =>
-          context.read<HabitSummaryViewModel>().toggleGroup(header.groupUUID),
+    final allCollapsed = context.select<HabitSummaryViewModel, bool>(
+      (vm) => vm.areAllGroupsCollapsed,
+    );
+    return GestureDetector(
+      onSecondaryTapDown: _handleSecondaryTapDown,
+      onLongPressStart: _handleLongPressStart,
+      child: MenuAnchor(
+        controller: _menuController,
+        menuChildren: [
+          MenuItemButton(
+            leadingIcon: const Icon(Icons.drag_handle),
+            onPressed: () {
+              if (!mounted) return;
+              group_manage.naviToGroupManagePage(
+                context: context,
+                initialGroupUUID: widget.header.groupUUID,
+              );
+            },
+            child: Text(l10n?.groupHeader_menu_manage ?? 'Manage'),
+          ),
+          MenuItemButton(
+            leadingIcon: Icon(
+              allCollapsed ? Icons.unfold_more : Icons.unfold_less,
+            ),
+            onPressed: () {
+              if (!mounted) return;
+              context.read<HabitSummaryViewModel>().toggleAllGroups();
+            },
+            child: Text(
+              allCollapsed
+                  ? (l10n?.groupHeader_menu_expandAll ?? 'Expand all')
+                  : (l10n?.groupHeader_menu_collapseAll ?? 'Collapse all'),
+            ),
+          ),
+        ],
+        child: GroupHeader(
+          header: widget.header,
+          isExpanded: isExpanded,
+          onTap: () {
+            if (_menuController.isOpen) {
+              _menuController.close();
+              return;
+            }
+            context.read<HabitSummaryViewModel>().toggleGroup(
+              widget.header.groupUUID,
+            );
+          },
+        ),
+      ),
     );
   }
 }

@@ -286,6 +286,7 @@
     "habitDisplay_groupType_name": "名称",
     "habitDisplay_groupType_colorType": "颜色",
     "habitDisplay_groupType_createDate": "创建日期",
+    "habitDisplay_groupType_habitCount": "习惯数量",
     "habitDisplay_groupTypeDialog_title": "分组排序",
     "habitDisplay_groupTypeDialog_confirm": "确定",
     "habitDisplay_groupTypeDialog_cancel": "取消",
@@ -1432,8 +1433,40 @@
     "@groupManage_color_none": {
         "description": "Tooltip for the 'no color' option in the group color picker"
     },
+    "groupManage_reorder_tooltip": "排序分组",
+    "@groupManage_reorder_tooltip": {
+        "description": "Tooltip for the reorder button that enters manual sort + selection mode"
+    },
+    "groupManage_menu_edit": "编辑",
+    "@groupManage_menu_edit": {
+        "description": "Menu item label for editing a group"
+    },
+    "groupManage_menu_delete": "删除",
+    "@groupManage_menu_delete": {
+        "description": "Menu item label for deleting a group"
+    },
+    "groupManage_selectAll": "全选",
+    "@groupManage_selectAll": {
+        "description": "Button in selection mode AppBar to select or deselect all groups"
+    },
+    "groupHeader_menu_manage": "管理",
+    "@groupHeader_menu_manage": {
+        "description": "Menu item on Group header long-press to navigate to the group management page"
+    },
+    "groupHeader_menu_collapseAll": "折叠全部",
+    "@groupHeader_menu_collapseAll": {
+        "description": "Menu item on Group header long-press to collapse all groups"
+    },
+    "groupHeader_menu_expandAll": "展开全部",
+    "@groupHeader_menu_expandAll": {
+        "description": "Menu item on Group header long-press to expand all groups"
+    },
     "appSetting_manageGroups_subtitleText": "创建、编辑和删除习惯分组",
     "@appSetting_manageGroups_subtitleText": {
         "description": "Subtitle for the Manage Groups tile in Settings"
+    },
+    "habitDisplay_groupType_manual": "自定义",
+    "@habitDisplay_groupType_manual": {
+        "description": "Group sort type: manual ordering via drag-and-drop"
     }
 }

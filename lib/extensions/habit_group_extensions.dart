@@ -23,26 +23,38 @@ import 'datetime_extensions.dart';
 extension HabitGroupSortExtension on List<HabitGroupData> {
   /// Returns a new list sorted by [type] in [direction].
   ///
-  /// For [HabitDisplayGroupType.colorType], missing colours sort after all
-  /// present colours.  For [HabitDisplayGroupType.createDate], groups with a
+  /// For [HabitGroupOrderType.colorType], missing colours sort after all
+  /// present colours.  For [HabitGroupOrderType.createDate], groups with a
   /// null [HabitGroupData.createT] sort after those with a known date.
+  ///
+  /// Only covers [HabitGroupOrderType] — group-intrinsic sorts that can be
+  /// computed from [HabitGroupData] fields alone. Extrinsic types such as
+  /// [HabitDisplayGroupType.habitCount] must be routed through
+  /// [buildGroupedSortCacheList] or a similar context-aware dispatcher.
   List<HabitGroupData> sortedBy(
-    HabitDisplayGroupType type,
+    HabitGroupOrderType type,
     HabitDisplaySortDirection direction,
   ) {
     final sorted = toList();
     final comparator = switch (type) {
-      HabitDisplayGroupType.name =>
+      // FIXME: uses Unicode code-unit ordering, not natural-language sorting.
+      HabitGroupOrderType.name =>
         (HabitGroupData a, HabitGroupData b) => a.name.compareTo(b.name),
-      HabitDisplayGroupType.colorType =>
+      HabitGroupOrderType.colorType =>
         (HabitGroupData a, HabitGroupData b) =>
             a.color.compareToNullable(b.color),
-      HabitDisplayGroupType.createDate =>
+      // Comparator is intentionally reversed (b, a) so that the default
+      // asc direction puts the newest group first.
+      HabitGroupOrderType.createDate =>
         (HabitGroupData a, HabitGroupData b) =>
-            a.createT.compareToNullable(b.createT),
+            b.createT.compareToNullable(a.createT),
+      HabitGroupOrderType.manual =>
+        (HabitGroupData a, HabitGroupData b) =>
+            a.sortPosition.compareTo(b.sortPosition),
     };
     sorted.sort(comparator);
-    if (direction == HabitDisplaySortDirection.desc) {
+    if (direction == HabitDisplaySortDirection.desc &&
+        type != HabitGroupOrderType.manual) {
       return sorted.reversed.toList();
     }
     return sorted;

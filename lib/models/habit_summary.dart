@@ -752,6 +752,7 @@ extension HabitSummarySortExtension on Iterable<HabitSummaryData> {
       _compareWithFallback(
         a,
         b,
+        // FIXME: uses Unicode code-unit ordering, not natural-language sorting.
         primaryResult: a.name.compareTo(b.name),
         fallbackComparator: _compareByDescendingStartDate,
       );
