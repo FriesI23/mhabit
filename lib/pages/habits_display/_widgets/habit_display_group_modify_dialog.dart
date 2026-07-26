@@ -25,7 +25,7 @@ import '../../../models/app_event.dart';
 import '../../../models/habit_color.dart';
 import '../../../models/habit_group.dart';
 import '../../../models/habit_summary.dart';
-import '../../../pages/common/_widgets/group_edit_form.dart';
+import '../../../pages/common/widgets.dart';
 import '../../../providers/app_ui/app_caches.dart';
 import '../../../providers/app_ui/custom_color_history.dart';
 import '../../../providers/workflow/app_event.dart';
@@ -255,11 +255,8 @@ Future<GroupModifySelectorResult?> showHabitGroupModifySelector({
     builder: (context, buildBody) => _GroupModifySelectorScope(
       selectedData: selectedHabitsData,
       bodyBuilder: (ctx) => Consumer<HabitGroupModifyViewModel>(
-        builder: (context, vm, _) => PopScope(
-          canPop: vm.isSelectMode,
-          onPopInvokedWithResult: (didPop, _) {
-            if (!didPop) vm.switchToSelectMode();
-          },
+        builder: (context, vm, _) => PopScopeGate<HabitGroupModifyViewModel>(
+          onCannotPop: (_, vm, _) => vm.switchToSelectMode(),
           child: buildBody(ctx),
         ),
       ),

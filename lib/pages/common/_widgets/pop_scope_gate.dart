@@ -54,12 +54,13 @@ class PopScopeGate<T extends PopScopeHandler> extends StatelessWidget {
   /// Called when a system back gesture was attempted while
   /// [PopScopeHandler.canPop] is `false`.
   ///
-  /// Receives both the current [BuildContext] and the resolved ViewModel
-  /// instance of type [T].  Typical usage: exit a selection sub-mode,
-  /// show a confirmation dialog, navigate, etc.  The system will retry
-  /// the pop on the next back gesture once [PopScopeHandler.canPop]
-  /// becomes `true`.
-  final FutureOr<void> Function(BuildContext context, T vm)? onCannotPop;
+  /// Receives the current [BuildContext], the resolved ViewModel instance
+  /// of type [T], and the `result` from [PopScope.onPopInvokedWithResult].
+  /// Typical usage: exit a selection sub-mode, show a confirmation
+  /// dialog, navigate, etc.  The system will retry the pop on the next
+  /// back gesture once [PopScopeHandler.canPop] becomes `true`.
+  final FutureOr<void> Function(BuildContext context, T vm, dynamic result)?
+  onCannotPop;
 
   const PopScopeGate({super.key, required this.child, this.onCannotPop});
 
@@ -71,7 +72,7 @@ class PopScopeGate<T extends PopScopeHandler> extends StatelessWidget {
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
         final vm = context.read<T>();
-        onCannotPop?.call(context, vm);
+        onCannotPop?.call(context, vm, result);
       },
       child: child,
     );

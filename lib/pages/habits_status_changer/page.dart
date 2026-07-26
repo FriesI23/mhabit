@@ -329,15 +329,9 @@ class _PageState extends State<_Page> {
     );
 
     final div = buildDivider(context);
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) return;
-        await _onClosePageButtonPressed(
-          defaultConfirmResult: true,
-          result: result,
-        );
-      },
+    return PopScopeGate<HabitStatusChangerViewModel>(
+      onCannotPop: (ctx, vm, result) =>
+          _onClosePageButtonPressed(defaultConfirmResult: true, result: result),
       child: PageScaffold(
         appbar: HabitStatusChangerAppbar(
           title: L10nBuilder(
