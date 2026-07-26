@@ -253,14 +253,6 @@ class GroupManageViewModel extends ChangeNotifier
     );
   }
 
-  /// Sort types that have a meaningful Group-level interpretation.
-  static const List<HabitDisplayGroupType> supportedSortTypes = [
-    HabitDisplayGroupType.name,
-    HabitDisplayGroupType.colorType,
-    HabitDisplayGroupType.createDate,
-    HabitDisplayGroupType.manual,
-  ];
-
   void enterSelectionMode(String initialUUID, {bool listen = true}) {
     _selectionMode = true;
     _selectedGroupUUIDs.add(initialUUID);

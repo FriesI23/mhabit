@@ -27,6 +27,7 @@ import '../../providers/app_ui/app_developer.dart';
 import '../../providers/workflow/app_event.dart';
 import '../../widgets/widgets.dart';
 import '../common/widgets.dart';
+import '../habits_display/_widgets/habit_display_group_type_picker.dart';
 import '_providers/group_manage.dart';
 import 'providers.dart';
 import 'widgets.dart';
@@ -87,15 +88,18 @@ class _PageState extends State<_Page> {
 
   Future<void> _openSortSelector() async {
     final vm = context.read<GroupManageViewModel>();
-    final result = await showDialog<SortMenuOption>(
+    final result = await showHabitDisplayGroupTypePickerDialog(
       context: context,
-      builder: (context) => _GroupSortPickerDialog(
-        sortType: vm.effectiveSortType,
-        sortDirection: vm.effectiveSortDirection,
+      groupType: vm.effectiveSortType,
+      groupDirection: vm.effectiveSortDirection,
+      title: L10n.of(context)?.groupManage_sortTile_text ?? 'Sort Groups',
+      filter: GroupTypePickerFilter.hidden(
+        showNone: false,
+        hiddenTypes: {HabitDisplayGroupType.habitCount},
       ),
     );
-    if (result != null && mounted) {
-      vm.setSortOptions(result.$1, result.$2);
+    if (result != null && result.$1 != null && mounted) {
+      vm.setSortOptions(result.$1!, result.$2 ?? HabitDisplaySortDirection.asc);
     }
   }
 
@@ -652,119 +656,5 @@ class _GroupManageDevelopMenu extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-typedef SortMenuOption = (HabitDisplayGroupType, HabitDisplaySortDirection);
-
-class _GroupSortPickerDialog extends StatefulWidget {
-  final SortMenuOption initSortOption;
-
-  const _GroupSortPickerDialog({
-    required HabitDisplayGroupType sortType,
-    required HabitDisplaySortDirection sortDirection,
-  }) : initSortOption = (sortType, sortDirection);
-
-  @override
-  State<_GroupSortPickerDialog> createState() => _GroupSortPickerDialogState();
-}
-
-class _GroupSortPickerDialogState extends State<_GroupSortPickerDialog> {
-  late SortMenuOption _crtSortOption;
-
-  @override
-  void initState() {
-    super.initState();
-    _crtSortOption = widget.initSortOption;
-  }
-
-  void _onRadioTapChanged(HabitDisplayGroupType? value) {
-    if (value == null) return;
-    setState(() {
-      _crtSortOption = (value, _crtSortOption.$2);
-    });
-  }
-
-  HabitDisplayGroupType get crtSortType => _crtSortOption.$1;
-  HabitDisplaySortDirection get crtSortDirection => _crtSortOption.$2;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = L10n.of(context);
-
-    return AlertDialog(
-      scrollable: true,
-      title: Text(l10n?.groupManage_sortTile_text ?? 'Sort Groups'),
-      contentPadding: const EdgeInsets.only(bottom: 24, top: 24),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          RadioGroup<HabitDisplayGroupType>(
-            groupValue: crtSortType,
-            onChanged: _onRadioTapChanged,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                for (final sortType in GroupManageViewModel.supportedSortTypes)
-                  RadioListTile<HabitDisplayGroupType>(
-                    title: Text(_sortTypeLabel(sortType, l10n)),
-                    secondary: GroupTypeSortIcon(
-                      groupType: sortType,
-                      direction: crtSortDirection,
-                    ),
-                    value: sortType,
-                  ),
-              ],
-            ),
-          ),
-          const Divider(),
-          CheckboxListTile(
-            title: Text(l10n?.habitDisplay_sort_reverseText ?? 'Reverse'),
-            value: crtSortDirection == HabitDisplaySortDirection.desc,
-            controlAffinity: ListTileControlAffinity.leading,
-            onChanged: crtSortType == HabitDisplayGroupType.manual
-                ? null
-                : (value) {
-                    setState(() {
-                      _crtSortOption = (
-                        crtSortType,
-                        value == true
-                            ? HabitDisplaySortDirection.desc
-                            : HabitDisplaySortDirection.asc,
-                      );
-                    });
-                  },
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(l10n?.habitDisplay_sortTypeDialog_cancel ?? 'Cancel'),
-        ),
-        TextButton(
-          onPressed: () => Navigator.pop(context, _crtSortOption),
-          child: Text(l10n?.habitDisplay_sortTypeDialog_confirm ?? 'Confirm'),
-        ),
-      ],
-    );
-  }
-
-  String _sortTypeLabel(HabitDisplayGroupType type, L10n? l10n) {
-    return switch (type) {
-      HabitDisplayGroupType.name =>
-        l10n?.habitDisplay_groupType_name ?? 'By Name',
-      HabitDisplayGroupType.colorType =>
-        l10n?.habitDisplay_groupType_colorType ?? 'By Color',
-      HabitDisplayGroupType.createDate =>
-        l10n?.habitDisplay_groupType_createDate ?? 'By Creation Date',
-      HabitDisplayGroupType
-          .habitCount => // unreachable (filtered by supportedSortTypes)
-        throw UnsupportedError(
-          'habitCount sort is not available on the group management page',
-        ),
-      HabitDisplayGroupType.manual =>
-        l10n?.habitDisplay_groupType_manual ?? 'Manual',
-    };
   }
 }

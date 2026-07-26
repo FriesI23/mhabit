@@ -58,10 +58,7 @@ class GroupTypeSortIcon extends StatelessWidget {
       HabitDisplaySortDirection.asc => HabitSortIcons.sortascending,
       HabitDisplaySortDirection.desc => HabitSortIcons.sortdescending,
     },
-    HabitDisplayGroupType.manual => switch (direction) {
-      HabitDisplaySortDirection.asc => HabitSortIcons.sortascending,
-      HabitDisplaySortDirection.desc => HabitSortIcons.sortdescending,
-    },
+    HabitDisplayGroupType.manual => HabitSortIcons.sort,
   };
 }
 
@@ -156,9 +153,8 @@ class GroupingTitle extends StatelessWidget {
       HabitDisplayGroupType.habitCount => withDirection(
         l10n?.habitDisplay_groupType_habitCount ?? 'By Habit Count',
       ),
-      HabitDisplayGroupType.manual => withDirection(
+      HabitDisplayGroupType.manual =>
         l10n?.habitDisplay_groupType_manual ?? 'Manual',
-      ),
     };
   }
 }
