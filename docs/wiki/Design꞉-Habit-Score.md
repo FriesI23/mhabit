@@ -132,7 +132,7 @@ When the number exceeds the **Overage Threshold**, take the maximum value ($100 
 
 ## 4. Example
 
-![Habit Score](images/Habit-Score/habit-score-01.png)
+![Habit Score](images/habit-score/habit-score-01.png)
 
 <!-- refs -->
 
