@@ -8,6 +8,10 @@
     "habitEdit_saveButton_text": "Зберегти",
     "habitEdit_habitName_hintText": "Назва звички...",
     "habitEdit_colorPicker_title": "Оберіть колір",
+    "habitEdit_colorPicker_cancel": "Скасувати",
+    "habitEdit_colorPicker_tintToggleLabel": "Відтінок до теми",
+    "habitEdit_colorPicker_tintToggleOnHint": "Тонування може призвести до того, що кінцевий колір буде відрізнятися від обраного вами.",
+    "habitEdit_colorPicker_tintToggleOffHint": "Деякі кольори можуть погіршити читабельність тексту у світлій або темній темі.",
     "habitEdit_habitTypeDialog_title": "Тип звички",
     "habitEdit_habitType_positiveText": "Позитивна",
     "habitEdit_habitType_negativeText": "Негативна",
@@ -270,8 +274,60 @@
     "habitDisplay_mainMenu_settingTileText": "Налаштування",
     "habitDisplay_groupType_name": "По імені",
     "habitDisplay_groupType_colorType": "За кольором",
+    "habitDisplay_groupType_createDate": "За датою створення",
+    "habitDisplay_groupTypeDialog_title": "Сортування за групами",
     "habitDisplay_groupTypeDialog_confirm": "підтвердити",
     "habitDisplay_groupTypeDialog_cancel": "скасувати",
+    "habitDisplay_editPopMenu_groupModify": "Змінити групу",
+    "habitDisplay_groupModifyDialog_title": "Змінити групу",
+    "habitDisplay_groupModifyDialog_removeGroup": "Видалити групу",
+    "habitDisplay_groupModifyDialog_emptyGroups": "Немає доступних груп",
+    "habitDisplay_groupModifyDialog_alreadyInGroup": "Вибрані звички вже є в цій групі",
+    "habitDisplay_groupModifyDialog_createGroup": "Створити групу",
+    "habitDisplay_groupModifyDialog_saveAndApply": "Зберегти та застосувати",
+    "habitDisplay_groupModifyConfirm_titleNew": "Перемістити до групи",
+    "habitDisplay_groupModifyConfirm_titleMixed": "Підтвердити зміну групи",
+    "habitDisplay_groupModifyConfirm_bodyNewGroup": "Звички {groupName} будуть переміщені до цієї групи",
+    "@habitDisplay_groupModifyConfirm_bodyNewGroup": {
+        "placeholders": {
+            "groupName": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyRemoveGroup": "Звички будуть видалені з групи",
+    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {{count} звичка зміниться з \"{fromGroup}\" на \"{toGroup}\"} few {{count} звички зміняться з \"{fromGroup}\" на \"{toGroup}\"} many {{count} звичок зміняться з \"{fromGroup}\" на \"{toGroup}\"} other {{count} звичок зміняться з \"{fromGroup}\" на \"{toGroup}\"}}",
+    "@habitDisplay_groupModifyConfirm_bodyChangeStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits changing group"
+            },
+            "fromGroup": {
+                "type": "String",
+                "description": "Old group name"
+            },
+            "toGroup": {
+                "type": "String",
+                "description": "New group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyAddStat": "{count, plural, =1 {{count} некатегоризована звичка буде додана до \"{toGroup}\"} few {{count} некатегоризовані звички будуть додані до \"{toGroup}\"} many {{count} некатегоризованих звичок буде додано до \"{toGroup}\"} other {{count} некатегоризованих звичок буде додано до \"{toGroup}\"}}",
+    "@habitDisplay_groupModifyConfirm_bodyAddStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits being added"
+            },
+            "toGroup": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModify_undoFailed": "Група була змінена в іншому місці, скасувати неможливо",
     "habitDisplay_sort_reverseText": "Зворотний",
     "habitDisplay_sortDirection_asc": "(Asc)",
     "habitDisplay_sortDirection_Desc": "(опис)",
@@ -423,6 +479,7 @@
     "habitDetail_editHeatmapCal_dateButtonText": "дата",
     "habitDetail_editHeatmapCal_valueButtonText": "значення",
     "habitDetail_editHeatmapCal_backToToday_tooltipText": "повернутися до сьогоднішнього дня",
+    "common_loadError_text": "Не вдалося завантажити",
     "common_loadError_retryText": "Спробуйте знову",
     "habitDetail_notFoundText": "Завантажити звичку не вдалося",
     "habitDetail_notFoundRetryText": "Спробуйте знову",
@@ -479,6 +536,14 @@
     "appSetting_changeRecordStatusOpTile_subtitleText": "Змініть поведінку кліків, щоб змінити статус щоденних записів на головній сторінці.",
     "appSetting_openRecordStatusDialogOpTile_titleText": "Відкрийте докладний запис",
     "appSetting_openRecordStatusDialogOpTile_subtitleText": "Змініть поведінку клацання, щоб відкрити докладне спливаюче вікно щоденних записів на головній сторінці.",
+    "appSetting_expandTimerDelayTile_titleText": "Затримка розгортання групи",
+    "@appSetting_expandTimerDelayTile_titleText": {
+        "description": "Title for the group expand timer delay setting tile"
+    },
+    "appSetting_expandTimerDelayTile_subtitleText": "Встановіть, як довго слід наводити курсор на згорнутий заголовок групи, перш ніж він автоматично розгорнеться під час перетягування.",
+    "appSetting_expandTimerDelay_default": "За замовчуванням",
+    "appSetting_expandTimerDelay_fast": "Швидко",
+    "appSetting_expandTimerDelay_slow": "Повільно",
     "appSetting_appThemeColorTile_titleText": "Колір теми",
     "appSetting_appThemeColorChosenDiloag_titleText": "Виберіть колір теми",
     "appSetting_appThemeColorChosenDialog_subTitleText_android": "Використовувати основний колір шпалер (Android 12+)",
@@ -526,6 +591,10 @@
     "appSetting_export_subtitleText": "Експортовані звички у форматі JSON. Цей файл можна імпортувати назад.",
     "appSetting_import_titleText": "Імпорт",
     "appSetting_import_subtitleText": "Імпортуйте звички з файлу json.",
+    "appSetting_thirdPartyImport_titleText": "Імпорт від третьої сторони",
+    "appSetting_thirdPartyImport_subtitleText": "Імпортувати звички з інших додатків для відстеження звичок",
+    "appSetting_thirdPartyImport_provider_loopName": "Трекер звичок Loop",
+    "appSetting_thirdPartyImport_provider_versionHint": "Підтримує формат CSV (перевірено до версії <ver/>)",
     "appSetting_importDialog_confirmTitle": "Підтвердити імпорт {count} звичок?",
     "@appSetting_importDialog_confirmTitle": {
         "placeholders": {
@@ -536,6 +605,39 @@
         }
     },
     "appSetting_importDialog_confirmSubtitle": "Примітка. Імпорт не видаляє наявні звички.",
+    "appSetting_importDialog_option_includeHabits": "Включити звички",
+    "appSetting_importDialog_option_includeGroups": "Включити групи",
+    "appSetting_importDialog_tile_includeHabits": "Включити {count} звичок",
+    "@appSetting_importDialog_tile_includeHabits": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "appSetting_importDialog_tile_includeGroups": "Включити {count} груп",
+    "@appSetting_importDialog_tile_includeGroups": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "3"
+            }
+        }
+    },
+    "appSetting_importConfirmDialog_sourceLabel": "Джерело: {provider}",
+    "@appSetting_importConfirmDialog_sourceLabel": {
+        "placeholders": {
+            "provider": {
+                "type": "String",
+                "description": "Third-party provider display name"
+            }
+        }
+    },
+    "appSetting_thirdPartyImport_error_fileReadError": "Не вдалося прочитати вибраний файл.",
+    "appSetting_thirdPartyImport_error_noHabitsFound": "У файлі імпорту не знайдено жодних звичок.",
+    "appSetting_thirdPartyImport_error_parseError": "Не вдалося проаналізувати файл імпорту",
+    "appSetting_thirdPartyImport_error_unknown": "Під час імпорту сталася несподівана помилка.",
     "appSetting_importDialog_confirm_confirmText": "підтвердити",
     "appSetting_importDialog_confirm_cancelText": "скасувати",
     "appSetting_importDialog_importingTitle": "Імпортовано {completeCount}/{totalCount}",
@@ -553,6 +655,15 @@
     },
     "appSetting_importDialog_completeTitle": "Повний імпорт {count} звичок",
     "@appSetting_importDialog_completeTitle": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_importDialog_completeTitleGroups": "Імпорт {count} груп завершено",
+    "@appSetting_importDialog_completeTitleGroups": {
         "placeholders": {
             "count": {
                 "type": "int",
@@ -1002,6 +1113,7 @@
     "common_errorPage_title": "Ой, збій!",
     "common_errorPage_copied": "Скопійовано інформацію про збій",
     "common_enable_text": "Увімкнено",
+    "common_dontShowAgain": "Більше не показувати",
     "calendarPicker_clip_today": "Сьогодні",
     "calendarPicker_clip_tomorrow": "Завтра",
     "calendarPicker_clip_after7Days": "Далі {date}",
@@ -1024,6 +1136,25 @@
         }
     },
     "exportConfirmDialog_option_includeRecords": "включити записи",
+    "exportConfirmDialog_option_includeGroups": "включити групи",
+    "exportConfirmDialog_tile_includeRecords": "Включити {count} записів",
+    "@exportConfirmDialog_tile_includeRecords": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "exportConfirmDialog_tile_includeGroups": "Включити {count} груп",
+    "@exportConfirmDialog_tile_includeGroups": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "3"
+            }
+        }
+    },
     "exportConfirmDialog_cancel_buttonText": "скасувати",
     "exportConfirmDialog_confirm_buttonText": "експорт",
     "debug_logLevelTile_title": "Рівень реєстрації",
@@ -1105,6 +1236,40 @@
     "@changelog_view_full": {
         "description": "Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content."
     },
+    "habitGroup_uncategorized": "Без групи",
+    "@habitGroup_uncategorized": {
+        "description": "Virtual group name for habits without a group"
+    },
+    "habitDetail_groupTile_title": "Група",
+    "@habitDetail_groupTile_title": {
+        "description": "Title for the group info tile on the habit detail page"
+    },
+    "habitEdit_groupTile_title": "Група",
+    "@habitEdit_groupTile_title": {
+        "description": "Title for the group selector tile on the habit edit page"
+    },
+    "habitEdit_groupPicker_hintText": "Знайти або створити групу",
+    "@habitEdit_groupPicker_hintText": {
+        "description": "Placeholder text for the group picker search field"
+    },
+    "habitEdit_groupPicker_noGroup": "Без групи",
+    "@habitEdit_groupPicker_noGroup": {
+        "description": "Option text for selecting no group"
+    },
+    "habitEdit_groupPicker_createGroup": "Створити «{name}»",
+    "@habitEdit_groupPicker_createGroup": {
+        "description": "Button text to create a new group with the given name",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "Work"
+            }
+        }
+    },
+    "habitEdit_groupPicker_loading": "Завантаження груп…",
+    "@habitEdit_groupPicker_loading": {
+        "description": "Placeholder text shown in the group picker while groups are loading"
+    },
     "groupManage_deleteDialog_confirm": "Видалити",
     "@groupManage_deleteDialog_confirm": {
         "description": "Confirm button text for delete dialog"
@@ -1136,170 +1301,5 @@
     "groupManage_color_none": "нульовий",
     "@groupManage_color_none": {
         "description": "Tooltip for the 'no color' option in the group color picker"
-    },
-    "habitEdit_colorPicker_cancel": "Скасувати",
-    "habitEdit_colorPicker_tintToggleLabel": "Відтінок до теми",
-    "habitEdit_colorPicker_tintToggleOnHint": "Тонування може призвести до того, що кінцевий колір буде відрізнятися від обраного вами.",
-    "habitEdit_colorPicker_tintToggleOffHint": "Деякі кольори можуть погіршити читабельність тексту у світлій або темній темі.",
-    "habitDisplay_groupType_createDate": "За датою створення",
-    "habitDisplay_groupTypeDialog_title": "Сортування за групами",
-    "habitDisplay_editPopMenu_groupModify": "Змінити групу",
-    "habitDisplay_groupModifyDialog_title": "Змінити групу",
-    "habitDisplay_groupModifyDialog_removeGroup": "Видалити групу",
-    "habitDisplay_groupModifyDialog_emptyGroups": "Немає доступних груп",
-    "habitDisplay_groupModifyDialog_alreadyInGroup": "Вибрані звички вже є в цій групі",
-    "habitDisplay_groupModifyDialog_createGroup": "Створити групу",
-    "habitDisplay_groupModifyDialog_saveAndApply": "Зберегти та застосувати",
-    "habitDisplay_groupModifyConfirm_titleNew": "Перемістити до групи",
-    "habitDisplay_groupModifyConfirm_titleMixed": "Підтвердити зміну групи",
-    "habitDisplay_groupModifyConfirm_bodyNewGroup": "Звички {groupName} будуть переміщені до цієї групи",
-    "@habitDisplay_groupModifyConfirm_bodyNewGroup": {
-        "placeholders": {
-            "groupName": {
-                "type": "String",
-                "description": "Target group name"
-            }
-        }
-    },
-    "habitDisplay_groupModifyConfirm_bodyRemoveGroup": "Звички будуть видалені з групи",
-    "habitDisplay_groupModify_undoFailed": "Група була змінена в іншому місці, скасувати неможливо",
-    "common_loadError_text": "Не вдалося завантажити",
-    "appSetting_expandTimerDelayTile_titleText": "Затримка розгортання групи",
-    "@appSetting_expandTimerDelayTile_titleText": {
-        "description": "Title for the group expand timer delay setting tile"
-    },
-    "appSetting_expandTimerDelayTile_subtitleText": "Встановіть, як довго слід наводити курсор на згорнутий заголовок групи, перш ніж він автоматично розгорнеться під час перетягування.",
-    "appSetting_expandTimerDelay_default": "За замовчуванням",
-    "appSetting_expandTimerDelay_fast": "Швидко",
-    "appSetting_expandTimerDelay_slow": "Повільно",
-    "appSetting_thirdPartyImport_titleText": "Імпорт від третьої сторони",
-    "appSetting_thirdPartyImport_subtitleText": "Імпортувати звички з інших додатків для відстеження звичок",
-    "appSetting_thirdPartyImport_provider_loopName": "Трекер звичок Loop",
-    "appSetting_thirdPartyImport_provider_versionHint": "Підтримує формат CSV (перевірено до версії <ver/>)",
-    "appSetting_importDialog_option_includeHabits": "Включити звички",
-    "appSetting_importDialog_option_includeGroups": "Включити групи",
-    "appSetting_importDialog_tile_includeHabits": "Включити {count} звичок",
-    "@appSetting_importDialog_tile_includeHabits": {
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "example": "5"
-            }
-        }
-    },
-    "appSetting_importDialog_tile_includeGroups": "Включити {count} груп",
-    "@appSetting_importDialog_tile_includeGroups": {
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "example": "3"
-            }
-        }
-    },
-    "appSetting_importConfirmDialog_sourceLabel": "Джерело: {provider}",
-    "@appSetting_importConfirmDialog_sourceLabel": {
-        "placeholders": {
-            "provider": {
-                "type": "String",
-                "description": "Third-party provider display name"
-            }
-        }
-    },
-    "appSetting_thirdPartyImport_error_fileReadError": "Не вдалося прочитати вибраний файл.",
-    "appSetting_thirdPartyImport_error_noHabitsFound": "У файлі імпорту не знайдено жодних звичок.",
-    "appSetting_thirdPartyImport_error_parseError": "Не вдалося проаналізувати файл імпорту",
-    "appSetting_thirdPartyImport_error_unknown": "Під час імпорту сталася несподівана помилка.",
-    "appSetting_importDialog_completeTitleGroups": "Імпорт {count} груп завершено",
-    "@appSetting_importDialog_completeTitleGroups": {
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "example": "1"
-            }
-        }
-    },
-    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {{count} звичка зміниться з \"{fromGroup}\" на \"{toGroup}\"} інші {{count} звички зміняться з \"{fromGroup}\" на \"{toGroup}\"}}",
-    "@habitDisplay_groupModifyConfirm_bodyChangeStat": {
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "description": "Number of habits changing group"
-            },
-            "fromGroup": {
-                "type": "String",
-                "description": "Old group name"
-            },
-            "toGroup": {
-                "type": "String",
-                "description": "New group name"
-            }
-        }
-    },
-    "habitDisplay_groupModifyConfirm_bodyAddStat": "{count, plural, =1 {{count} некатегоризована звичка буде додана до \"{toGroup}\"} інші {{count} некатегоризовані звички будуть додані до \"{toGroup}\"}}",
-    "@habitDisplay_groupModifyConfirm_bodyAddStat": {
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "description": "Number of habits being added"
-            },
-            "toGroup": {
-                "type": "String",
-                "description": "Target group name"
-            }
-        }
-    },
-    "common_dontShowAgain": "Більше не показувати",
-    "exportConfirmDialog_option_includeGroups": "включити групи",
-    "habitGroup_uncategorized": "Без групи",
-    "@habitGroup_uncategorized": {
-        "description": "Virtual group name for habits without a group"
-    },
-    "habitDetail_groupTile_title": "Група",
-    "@habitDetail_groupTile_title": {
-        "description": "Title for the group info tile on the habit detail page"
-    },
-    "exportConfirmDialog_tile_includeRecords": "Включити {count} записів",
-    "@exportConfirmDialog_tile_includeRecords": {
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "example": "5"
-            }
-        }
-    },
-    "exportConfirmDialog_tile_includeGroups": "Включити {count} груп",
-    "@exportConfirmDialog_tile_includeGroups": {
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "example": "3"
-            }
-        }
-    },
-    "habitEdit_groupTile_title": "Група",
-    "@habitEdit_groupTile_title": {
-        "description": "Title for the group selector tile on the habit edit page"
-    },
-    "habitEdit_groupPicker_hintText": "Знайти або створити групу",
-    "@habitEdit_groupPicker_hintText": {
-        "description": "Placeholder text for the group picker search field"
-    },
-    "habitEdit_groupPicker_noGroup": "Без групи",
-    "@habitEdit_groupPicker_noGroup": {
-        "description": "Option text for selecting no group"
-    },
-    "habitEdit_groupPicker_createGroup": "Створити «{name}»",
-    "@habitEdit_groupPicker_createGroup": {
-        "description": "Button text to create a new group with the given name",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "example": "Work"
-            }
-        }
-    },
-    "habitEdit_groupPicker_loading": "Завантаження груп…",
-    "@habitEdit_groupPicker_loading": {
-        "description": "Placeholder text shown in the group picker while groups are loading"
     }
 }
