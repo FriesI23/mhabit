@@ -211,7 +211,7 @@ class _PageState extends State<_Page> {
 
   @override
   Widget build(BuildContext context) {
-    // Process initialGroupUUID from Slice 3 navigation.
+    // Process initialGroupUUID passed via navigation.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final vm = context.read<GroupManageViewModel>();

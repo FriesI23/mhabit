@@ -43,7 +43,7 @@ abstract interface class GroupImportAccess {
 /// cache (typically in a page ViewModel) and call [loadAllActiveGroups] when
 /// they need current data.
 ///
-/// Sync writes to mh_sync are deferred to Parse 2.
+/// Sync writes to mh_sync are deferred to the sync module.
 class GroupManager
     with DBHelperLoadedMixin
     implements GroupExportAccess, GroupImportAccess {

@@ -99,7 +99,7 @@ class GroupManageViewModel extends ChangeNotifier
   bool _nextRefreshForceReload = false;
   bool _mounted = true;
 
-  // Slice 3/4: initial group UUID from home page long-press menu
+  // Initial group UUID, set via navigation from the home page long-press menu.
   String? _initialGroupUUID;
 
   String? consumeInitialGroupUUID() {
