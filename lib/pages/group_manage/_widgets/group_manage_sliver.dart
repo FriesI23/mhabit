@@ -58,6 +58,14 @@ class _GroupManageDragHandler {
   }
 
   late List<HabitGroupData> items;
+  late GroupManageViewModel _vm;
+
+  void attach(GroupManageViewModel vm) => _vm = vm;
+
+  GroupManageViewModel get vm => _vm;
+
+  bool get isManualSort =>
+      _vm.effectiveSortType == HabitDisplayGroupType.manual;
 
   void syncGroups(
     List<HabitGroupData> oldGroups,
@@ -66,29 +74,24 @@ class _GroupManageDragHandler {
     if (oldGroups != newGroups) items = List.of(newGroups);
   }
 
-  List<HabitGroupData> resolveNonDraggable(bool isManual) =>
-      isManual ? [] : List.of(items);
+  List<HabitGroupData> resolveNonDraggable({bool? isManual}) =>
+      (isManual ?? isManualSort) ? [] : List.of(items);
 
-  void onReorderStart(
-    int index,
-    GroupManageViewModel vm,
-    bool isManual,
-    bool selectionMode,
-  ) {
+  void onReorderStart(int index, bool selectionMode, {bool? isManual}) {
     // Enter selection mode simultaneously when the drag starts (via either
     // drag-handle click or long-press).  Use [listen: false] to avoid a
     // [notifyListeners] during the drag setup, which would interfere with
     // the drag animation.
-    if (!selectionMode && isManual && index < items.length) {
-      vm.enterSelectionMode(items[index].uuid);
+    if (!selectionMode && (isManual ?? isManualSort) && index < items.length) {
+      _vm.enterSelectionMode(items[index].uuid);
     }
   }
 
-  void onReorder(int oldIndex, int newIndex, GroupManageViewModel vm) {
+  void onReorder(int oldIndex, int newIndex) {
     final item = items.removeAt(oldIndex);
     items.insert(newIndex, item);
     // Keep selection mode active after drag completes.
-    vm.onGroupReorderComplete(items.map((g) => g.uuid).toList());
+    _vm.onGroupReorderComplete(items.map((g) => g.uuid).toList());
   }
 }
 
@@ -120,6 +123,19 @@ class _GroupManageGridState extends State<GroupManageGrid> {
   late final _handler = _GroupManageDragHandler(initialGroups: widget.groups);
 
   @override
+  void initState() {
+    super.initState();
+    _handler.attach(context.read<GroupManageViewModel>());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final newVm = context.read<GroupManageViewModel>();
+    if (_handler.vm != newVm) _handler.attach(newVm);
+  }
+
+  @override
   void didUpdateWidget(covariant GroupManageGrid oldWidget) {
     super.didUpdateWidget(oldWidget);
     _handler.syncGroups(oldWidget.groups, widget.groups);
@@ -127,9 +143,7 @@ class _GroupManageGridState extends State<GroupManageGrid> {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.read<GroupManageViewModel>();
-    final isManual = vm.effectiveSortType == HabitDisplayGroupType.manual;
-    final showHandle = isManual && !_isMobilePlatform;
+    final showHandle = _handler.isManualSort && !_isMobilePlatform;
 
     return SliverReorderableAnimatedList<HabitGroupData>.grid(
       scrollDirection: _GroupManageDragHandler.scrollDirection,
@@ -157,9 +171,9 @@ class _GroupManageGridState extends State<GroupManageGrid> {
       ),
       proxyDecorator: _GroupManageDragHandler.proxyDecorator,
       onReorderStart: (index) =>
-          _handler.onReorderStart(index, vm, isManual, widget.selectionMode),
+          _handler.onReorderStart(index, widget.selectionMode),
       onReorder: (oldIndex, newIndex) => setState(() {
-        _handler.onReorder(oldIndex, newIndex, vm);
+        _handler.onReorder(oldIndex, newIndex);
         context.read<AppEventBus>().push(
           const GroupChangedEvent(
             msg: "group_manage.onGroupReorderComplete",
@@ -171,7 +185,7 @@ class _GroupManageGridState extends State<GroupManageGrid> {
           ),
         );
       }),
-      nonDraggableItems: _handler.resolveNonDraggable(isManual),
+      nonDraggableItems: _handler.resolveNonDraggable(),
     );
   }
 }
@@ -204,6 +218,19 @@ class _GroupManageListState extends State<GroupManageList> {
   late final _handler = _GroupManageDragHandler(initialGroups: widget.groups);
 
   @override
+  void initState() {
+    super.initState();
+    _handler.attach(context.read<GroupManageViewModel>());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final newVm = context.read<GroupManageViewModel>();
+    if (_handler.vm != newVm) _handler.attach(newVm);
+  }
+
+  @override
   void didUpdateWidget(covariant GroupManageList oldWidget) {
     super.didUpdateWidget(oldWidget);
     _handler.syncGroups(oldWidget.groups, widget.groups);
@@ -211,9 +238,7 @@ class _GroupManageListState extends State<GroupManageList> {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.read<GroupManageViewModel>();
-    final isManual = vm.effectiveSortType == HabitDisplayGroupType.manual;
-    final showHandle = isManual && !_isMobilePlatform;
+    final showHandle = _handler.isManualSort && !_isMobilePlatform;
 
     return SliverReorderableAnimatedList<HabitGroupData>(
       scrollDirection: _GroupManageDragHandler.scrollDirection,
@@ -235,9 +260,9 @@ class _GroupManageListState extends State<GroupManageList> {
       ),
       proxyDecorator: _GroupManageDragHandler.proxyDecorator,
       onReorderStart: (index) =>
-          _handler.onReorderStart(index, vm, isManual, widget.selectionMode),
+          _handler.onReorderStart(index, widget.selectionMode),
       onReorder: (oldIndex, newIndex) => setState(() {
-        _handler.onReorder(oldIndex, newIndex, vm);
+        _handler.onReorder(oldIndex, newIndex);
         context.read<AppEventBus>().push(
           const GroupChangedEvent(
             msg: "group_manage.onGroupReorderComplete",
@@ -249,7 +274,7 @@ class _GroupManageListState extends State<GroupManageList> {
           ),
         );
       }),
-      nonDraggableItems: _handler.resolveNonDraggable(isManual),
+      nonDraggableItems: _handler.resolveNonDraggable(),
     );
   }
 }
