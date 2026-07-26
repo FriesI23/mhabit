@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.26.2+175-pre
+
+- Feature: add habit-count sort, manual sort with drag reorder, and group management interaction upgrades (#621)
+- Update translations, thanks to Weblate contributors (#620, #622)
+
 ## 1.26.1+174
 
 - Feature: habit grouping with group management page, group-mode picker, collapsible groups, and cross-group drag-and-drop reorder, behind experimental feature flag (#617)
