@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Setup Microsoft Store Developer CLI
-        uses: microsoft/microsoft-store-apppublisher@v1.3
+        uses: microsoft/microsoft-store-apppublisher@v1.4
       - name: Configure Microsoft Store Developer CLI
         shell: pwsh
         env:
