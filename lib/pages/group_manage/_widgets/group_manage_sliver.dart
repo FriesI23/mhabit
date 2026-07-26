@@ -93,6 +93,21 @@ class _GroupManageDragHandler {
     // Keep selection mode active after drag completes.
     _vm.onGroupReorderComplete(items.map((g) => g.uuid).toList());
   }
+
+  /// Returns a long-press callback for non-draggable items (non-manual sort),
+  /// or `null` when the reorder list handles long-press via drag (manual sort).
+  VoidCallback? resolveLongPressCallback(int index, bool selectionMode) {
+    if (isManualSort) return null;
+    if (selectionMode) return null;
+
+    void onLongPress() {
+      if (index >= 0 && index < items.length) {
+        _vm.enterSelectionMode(items[index].uuid);
+      }
+    }
+
+    return onLongPress;
+  }
 }
 
 class GroupManageGrid extends StatefulWidget {
@@ -157,9 +172,10 @@ class _GroupManageGridState extends State<GroupManageGrid> {
         selectionMode: widget.selectionMode,
         showDragHandle: showHandle,
         onTap: widget.onTap,
-        // Long-press drag is handled by the package's
-        // [ReorderableGridDelayedDragStartListener]; selection mode entry is
-        // handled in [_GroupManageDragHandler.onReorderStart] instead.
+        onLongPress: _handler.resolveLongPressCallback(
+          index,
+          widget.selectionMode,
+        ),
         onEdit: widget.onEdit,
         onDelete: widget.onDelete,
       ),
@@ -252,9 +268,10 @@ class _GroupManageListState extends State<GroupManageList> {
         selectionMode: widget.selectionMode,
         showDragHandle: showHandle,
         onTap: () => widget.onTap(_handler.items[index].uuid),
-        // Long-press drag is handled by the package's
-        // [ReorderableGridDelayedDragStartListener]; selection mode entry is
-        // handled in [_GroupManageDragHandler.onReorderStart] instead.
+        onLongPress: _handler.resolveLongPressCallback(
+          index,
+          widget.selectionMode,
+        ),
         onEdit: () => widget.onEdit(_handler.items[index].uuid),
         onDelete: () => widget.onDelete(_handler.items[index].uuid),
       ),
@@ -286,6 +303,7 @@ class _GroupGridCard extends StatelessWidget {
   final bool selectionMode;
   final bool showDragHandle;
   final void Function(String uuid) onTap;
+  final VoidCallback? onLongPress;
   final void Function(String uuid) onEdit;
   final void Function(String uuid) onDelete;
 
@@ -297,6 +315,7 @@ class _GroupGridCard extends StatelessWidget {
     required this.selectionMode,
     this.showDragHandle = false,
     required this.onTap,
+    this.onLongPress,
     required this.onEdit,
     required this.onDelete,
   });
@@ -399,7 +418,7 @@ class _GroupGridCard extends StatelessWidget {
         child: InkWell(
           borderRadius: _shape.borderRadius.resolve(null),
           onTap: () => onTap(group.uuid),
-
+          onLongPress: onLongPress,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Column(
@@ -554,6 +573,7 @@ class _GroupManageTile extends StatelessWidget {
   final bool selectionMode;
   final bool showDragHandle;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
@@ -565,6 +585,7 @@ class _GroupManageTile extends StatelessWidget {
     this.selectionMode = false,
     this.showDragHandle = false,
     this.onTap,
+    this.onLongPress,
     this.onEdit,
     this.onDelete,
   });
@@ -621,6 +642,7 @@ class _GroupManageTile extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onSecondaryTapDown: (d) => _showContextMenu(context, d),
+      onLongPress: onLongPress,
       child: ListTile(
         selected: selectionMode && isSelected,
         selectedTileColor: colorScheme.primaryContainer.withAlpha(77),
