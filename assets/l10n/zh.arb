@@ -1453,6 +1453,14 @@
     "@groupHeader_menu_manage": {
         "description": "Menu item on Group header long-press to navigate to the group management page"
     },
+    "groupHeader_menu_collapseAll": "折叠全部",
+    "@groupHeader_menu_collapseAll": {
+        "description": "Menu item on Group header long-press to collapse all groups"
+    },
+    "groupHeader_menu_expandAll": "展开全部",
+    "@groupHeader_menu_expandAll": {
+        "description": "Menu item on Group header long-press to expand all groups"
+    },
     "appSetting_manageGroups_subtitleText": "创建、编辑和删除习惯分组",
     "@appSetting_manageGroups_subtitleText": {
         "description": "Subtitle for the Manage Groups tile in Settings"

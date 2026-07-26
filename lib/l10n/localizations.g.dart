@@ -3477,6 +3477,18 @@ abstract class L10n {
   /// **'Manage'**
   String get groupHeader_menu_manage;
 
+  /// Menu item on Group header long-press to collapse all groups
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse all'**
+  String get groupHeader_menu_collapseAll;
+
+  /// Menu item on Group header long-press to expand all groups
+  ///
+  /// In en, this message translates to:
+  /// **'Expand all'**
+  String get groupHeader_menu_expandAll;
+
   /// Subtitle for the Manage Groups tile in Settings
   ///
   /// In en, this message translates to:

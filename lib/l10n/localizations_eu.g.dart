@@ -2177,6 +2177,12 @@ class L10nEu extends L10n {
   String get groupHeader_menu_manage => 'Manage';
 
   @override
+  String get groupHeader_menu_collapseAll => 'Collapse all';
+
+  @override
+  String get groupHeader_menu_expandAll => 'Expand all';
+
+  @override
   String get appSetting_manageGroups_subtitleText =>
       'Create, edit, and delete habit groups';
 

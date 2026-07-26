@@ -1517,6 +1517,9 @@ class _GroupHeaderTileState extends State<_GroupHeaderTile> {
     final isExpanded = context.select<HabitSummaryViewModel, bool>(
       (vm) => !vm.isGroupCollapsed(widget.header.groupUUID),
     );
+    final allCollapsed = context.select<HabitSummaryViewModel, bool>(
+      (vm) => vm.areAllGroupsCollapsed,
+    );
     return GestureDetector(
       onSecondaryTapDown: _handleSecondaryTapDown,
       onLongPressStart: _handleLongPressStart,
@@ -1533,6 +1536,20 @@ class _GroupHeaderTileState extends State<_GroupHeaderTile> {
               );
             },
             child: Text(l10n?.groupHeader_menu_manage ?? 'Manage'),
+          ),
+          MenuItemButton(
+            leadingIcon: Icon(
+              allCollapsed ? Icons.unfold_more : Icons.unfold_less,
+            ),
+            onPressed: () {
+              if (!mounted) return;
+              context.read<HabitSummaryViewModel>().toggleAllGroups();
+            },
+            child: Text(
+              allCollapsed
+                  ? (l10n?.groupHeader_menu_expandAll ?? 'Expand all')
+                  : (l10n?.groupHeader_menu_collapseAll ?? 'Collapse all'),
+            ),
           ),
         ],
         child: GroupHeader(

@@ -2169,6 +2169,12 @@ class L10nHe extends L10n {
   String get groupHeader_menu_manage => 'Manage';
 
   @override
+  String get groupHeader_menu_collapseAll => 'Collapse all';
+
+  @override
+  String get groupHeader_menu_expandAll => 'Expand all';
+
+  @override
   String get appSetting_manageGroups_subtitleText =>
       'יצירה, עריכה ומחיקה של קבוצות הרגלים';
 

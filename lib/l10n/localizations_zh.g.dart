@@ -2050,6 +2050,12 @@ class L10nZh extends L10n {
   String get groupHeader_menu_manage => '管理';
 
   @override
+  String get groupHeader_menu_collapseAll => '折叠全部';
+
+  @override
+  String get groupHeader_menu_expandAll => '展开全部';
+
+  @override
   String get appSetting_manageGroups_subtitleText => '创建、编辑和删除习惯分组';
 
   @override
@@ -3730,6 +3736,12 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get groupHeader_menu_manage => '管理';
+
+  @override
+  String get groupHeader_menu_collapseAll => '折疊全部';
+
+  @override
+  String get groupHeader_menu_expandAll => '展開全部';
 
   @override
   String get appSetting_manageGroups_subtitleText => '建立、編輯和刪除習慣分組';
