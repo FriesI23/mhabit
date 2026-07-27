@@ -46,7 +46,7 @@ import '../../habits_display/_providers/habit_summary.dart' as habit_summary;
 const defaultHabitDetailFreqChardCombine = HabitDetailFreqChartCombine.monthly;
 const defaultHabitDetailScoreChartCombine = HabitDetailScoreChartCombine.daily;
 
-extension on AppEventBus {
+extension on AppEventSubscriptions {
   static const _kHabitChangedTrace = {
     AppEventPageSource.habitDetail: {AppEventFunctionSource.habitChanged},
   };
@@ -98,7 +98,7 @@ extension on AppEventBus {
 }
 
 class HabitDetailViewModel extends ChangeNotifier
-    implements ProviderMounted, AppEventLoaded {
+    implements ProviderMounted, AppEventLoaded, AppEventSubscriber {
   // data
   HabitDetailData? _habitDetailData;
   final _heatmapDateToColorMap = <HabitDate, num>{};
@@ -114,14 +114,27 @@ class HabitDetailViewModel extends ChangeNotifier
   // sync from setting
   int _firstday = defaultFirstDay;
   late HabitDetailAccess _access;
-  AppEventBus? _eventBus;
+  AppEventSubscriptions? _eventSubs;
 
   HabitDetailViewModel();
 
   @override
   void updateAppEvent(AppEventBus newAppEvent) {
-    _eventBus = newAppEvent;
+    _eventSubs?.cancelAll();
+    _eventSubs = AppEventSubscriptions(this, newAppEvent);
   }
+
+  @override
+  bool shouldReceive(AppEvent event) =>
+      !event.isInTrace(AppEventPageSource.habitDetail);
+
+  @override
+  void handleEvent(AppEvent event) => switch (event) {
+    ReloadDataEvent() ||
+    HabitStatusChangedEvent() ||
+    HabitRecordsChangedEvent() ||
+    GroupChangedEvent() => null,
+  };
 
   @override
   bool get mounted => _mounted;
@@ -196,6 +209,7 @@ class HabitDetailViewModel extends ChangeNotifier
   @override
   void dispose() {
     if (!_mounted) return;
+    _eventSubs?.cancelAll();
     _pageLoad.cancel(logName: "$runtimeType._cancelLoading");
     super.dispose();
     _mounted = false;
@@ -524,7 +538,7 @@ class HabitDetailViewModel extends ChangeNotifier
   void onEditCompleted({habit_summary.HabitDetailAdapter? summary}) {
     requestReload();
     if (summary?.mounted != true) {
-      _eventBus?.pushEditCompleted();
+      _eventSubs?.pushEditCompleted();
     } else {
       summary!.onHabitDataChanged();
     }
@@ -537,7 +551,7 @@ class HabitDetailViewModel extends ChangeNotifier
   void onEditRecordCompleted({habit_summary.HabitDetailAdapter? summary}) {
     requestReload();
     if (summary?.mounted != true) {
-      _eventBus?.pushRecordEdited();
+      _eventSubs?.pushRecordEdited();
     } else {
       summary!.onHabitDataChanged();
     }
@@ -550,7 +564,7 @@ class HabitDetailViewModel extends ChangeNotifier
     required HabitRecordDate date,
     required HabitRecordStatus status,
     String? reason,
-  }) => _eventBus?.pushRecordChanged(
+  }) => _eventSubs?.pushRecordChanged(
     uuid: uuid,
     date: date,
     status: status,
@@ -575,7 +589,7 @@ class HabitDetailViewModel extends ChangeNotifier
     if (habitDetailData?.data.status == HabitStatus.deleted) return null;
     final result = await _changeHabitsStatus(HabitStatus.archived);
     if (result != null) {
-      _eventBus?.pushStatusChanged(
+      _eventSubs?.pushStatusChanged(
         uuid: result.habitUUID,
         status: result.newStatus,
       );
@@ -602,7 +616,7 @@ class HabitDetailViewModel extends ChangeNotifier
     if (habitDetailData?.data.status == HabitStatus.deleted) return null;
     final result = await _changeHabitsStatus(HabitStatus.activated);
     if (result != null) {
-      _eventBus?.pushStatusChanged(
+      _eventSubs?.pushStatusChanged(
         uuid: result.habitUUID,
         status: result.newStatus,
       );
@@ -627,7 +641,7 @@ class HabitDetailViewModel extends ChangeNotifier
     if (habitDetailData?.data.status == HabitStatus.deleted) return null;
     final result = await _changeHabitsStatus(HabitStatus.deleted);
     if (result != null) {
-      _eventBus?.pushStatusChanged(
+      _eventSubs?.pushStatusChanged(
         uuid: result.habitUUID,
         status: result.newStatus,
       );

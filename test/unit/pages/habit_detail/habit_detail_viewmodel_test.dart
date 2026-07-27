@@ -16,6 +16,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
+import 'package:mhabit/models/app_event.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_detail.dart';
@@ -24,6 +25,7 @@ import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/models/habit_repo_actions.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/habit_detail/_providers/habit_detail.dart';
+import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/db/handlers/habit.dart';
 
@@ -141,6 +143,7 @@ final class _FakeHabitDetailAccess extends StubHabitDetailAccess {
 
 HabitSummaryData _buildHabitSummaryData({
   String uuid = '11111111-1111-4111-8111-111111111111',
+  HabitStatus status = HabitStatus.activated,
 }) {
   final startDate = HabitDate.now().subtractDays(1);
   return HabitSummaryData(
@@ -154,7 +157,7 @@ HabitSummaryData _buildHabitSummaryData({
     targetDays: 1,
     frequency: HabitFrequency.daily,
     startDate: startDate,
-    status: HabitStatus.activated,
+    status: status,
     sortPostion: 1,
     createTime: DateTime.utc(startDate.year, startDate.month, startDate.day),
   );
@@ -238,6 +241,264 @@ void main() {
       expect(access.loadDetailDataCallCount, 2);
       expect(vm.hasLoad, isTrue);
 
+      vm.dispose();
+    });
+  });
+
+  group('HabitDetailViewModel event push', () {
+    test(
+      'onEditCompleted pushes ReloadDataEvent via AppEventSubscriptions',
+      () async {
+        final detailData = _buildHabitDetailData();
+        final access = _FakeHabitDetailAccess(seedData: detailData);
+        final bus = AppEventBus();
+        final vm = HabitDetailViewModel()
+          ..attachAccess(access)
+          ..updateAppEvent(bus);
+        final events = <ReloadDataEvent>[];
+        bus.on<ReloadDataEvent>().listen(events.add);
+
+        await vm.loadData(detailData.data.uuid, listen: false);
+        vm.onEditCompleted();
+
+        await Future<void>.delayed(Duration.zero);
+        expect(
+          events.length,
+          1,
+          reason: 'onEditCompleted should push one ReloadDataEvent',
+        );
+        final event = events.single;
+        expect(
+          event.isInTrace(
+            AppEventPageSource.habitDetail,
+            AppEventFunctionSource.habitChanged,
+          ),
+          isTrue,
+          reason: 'trace must include habitDetail.habitChanged',
+        );
+        vm.dispose();
+        bus.dispose();
+      },
+    );
+
+    test(
+      'onEditRecordCompleted pushes ReloadDataEvent via AppEventSubscriptions',
+      () async {
+        final detailData = _buildHabitDetailData();
+        final access = _FakeHabitDetailAccess(seedData: detailData);
+        final bus = AppEventBus();
+        final vm = HabitDetailViewModel()
+          ..attachAccess(access)
+          ..updateAppEvent(bus);
+        final events = <ReloadDataEvent>[];
+        bus.on<ReloadDataEvent>().listen(events.add);
+
+        await vm.loadData(detailData.data.uuid, listen: false);
+        vm.onEditRecordCompleted();
+
+        await Future<void>.delayed(Duration.zero);
+        expect(
+          events.length,
+          1,
+          reason: 'onEditRecordCompleted should push one ReloadDataEvent',
+        );
+        final event = events.single;
+        expect(
+          event.isInTrace(
+            AppEventPageSource.habitDetail,
+            AppEventFunctionSource.recordChanged,
+          ),
+          isTrue,
+          reason: 'trace must include habitDetail.recordChanged',
+        );
+        vm.dispose();
+        bus.dispose();
+      },
+    );
+
+    test('onCalendarRecordChanged pushes HabitRecordsChangedEvent', () async {
+      final detailData = _buildHabitDetailData();
+      final access = _FakeHabitDetailAccess(seedData: detailData);
+      final bus = AppEventBus();
+      final vm = HabitDetailViewModel()
+        ..attachAccess(access)
+        ..updateAppEvent(bus);
+      final events = <HabitRecordsChangedEvent>[];
+      bus.on<HabitRecordsChangedEvent>().listen(events.add);
+
+      await vm.loadData(detailData.data.uuid, listen: false);
+      final date = HabitDate.now();
+      vm.onCalendarRecordChanged(
+        uuid: detailData.data.uuid,
+        date: date,
+        status: HabitRecordStatus.done,
+        reason: 'test-reason',
+      );
+
+      await Future<void>.delayed(Duration.zero);
+      expect(events.length, 1);
+      final event = events.single;
+      expect(event.uuidList, [detailData.data.uuid]);
+      expect(event.dateList, [date]);
+      expect(event.status, HabitRecordStatus.done);
+      expect(event.reason, 'test-reason');
+      vm.dispose();
+      bus.dispose();
+    });
+
+    test('onConfirmToArchiveHabit pushes HabitStatusChangedEvent '
+        'via AppEventSubscriptions', () async {
+      final detailData = _buildHabitDetailData();
+      final access = _FakeHabitDetailAccess(seedData: detailData);
+      final bus = AppEventBus();
+      final vm = HabitDetailViewModel()
+        ..attachAccess(access)
+        ..updateAppEvent(bus);
+      final events = <HabitStatusChangedEvent>[];
+      bus.on<HabitStatusChangedEvent>().listen(events.add);
+
+      await vm.loadData(detailData.data.uuid, listen: false);
+
+      // Ensure habit is not deleted (would return null early).
+      final result = await vm.onConfirmToArchiveHabit(listen: false);
+
+      await Future<void>.delayed(Duration.zero);
+      expect(result, isNotNull);
+      expect(
+        result!.newStatus,
+        HabitStatus.archived,
+        reason: 'handler must archive the habit',
+      );
+      expect(events.length, 1);
+      final event = events.single;
+      expect(event.uuidList, [detailData.data.uuid]);
+      expect(event.status, HabitStatus.archived);
+      vm.dispose();
+      bus.dispose();
+    });
+
+    test('onConfirmToUnarchiveHabit pushes HabitStatusChangedEvent '
+        'via AppEventSubscriptions', () async {
+      // Build data in archived state so unarchive has an effect.
+      final summary = _buildHabitSummaryData(status: HabitStatus.archived);
+      final detailData = HabitDetailData(
+        data: summary,
+        modifyT: DateTime.utc(2026, 1, 1),
+        dailyGoalUnit: 'times',
+      );
+      final access = _FakeHabitDetailAccess(seedData: detailData);
+      final bus = AppEventBus();
+      final vm = HabitDetailViewModel()
+        ..attachAccess(access)
+        ..updateAppEvent(bus);
+      final events = <HabitStatusChangedEvent>[];
+      bus.on<HabitStatusChangedEvent>().listen(events.add);
+
+      await vm.loadData(detailData.data.uuid, listen: false);
+
+      // Ensure habit is not deleted (would return null early).
+      final result = await vm.onConfirmToUnarchiveHabit(listen: false);
+
+      await Future<void>.delayed(Duration.zero);
+      expect(result, isNotNull);
+      expect(
+        result!.newStatus,
+        HabitStatus.activated,
+        reason: 'handler must activate the habit',
+      );
+      expect(events.length, 1);
+      final event = events.single;
+      expect(event.uuidList, [detailData.data.uuid]);
+      expect(event.status, HabitStatus.activated);
+      vm.dispose();
+      bus.dispose();
+    });
+
+    test('onConfirmToDeleteHabit pushes HabitStatusChangedEvent '
+        'via AppEventSubscriptions', () async {
+      final detailData = _buildHabitDetailData();
+      final access = _FakeHabitDetailAccess(seedData: detailData);
+      final bus = AppEventBus();
+      final vm = HabitDetailViewModel()
+        ..attachAccess(access)
+        ..updateAppEvent(bus);
+      final events = <HabitStatusChangedEvent>[];
+      bus.on<HabitStatusChangedEvent>().listen(events.add);
+
+      await vm.loadData(detailData.data.uuid, listen: false);
+
+      // Ensure habit is not already deleted (would return null early).
+      final result = await vm.onConfirmToDeleteHabit(listen: false);
+
+      await Future<void>.delayed(Duration.zero);
+      expect(result, isNotNull);
+      expect(
+        result!.newStatus,
+        HabitStatus.deleted,
+        reason: 'handler must mark the habit as deleted',
+      );
+      expect(events.length, 1);
+      final event = events.single;
+      expect(event.uuidList, [detailData.data.uuid]);
+      expect(event.status, HabitStatus.deleted);
+      vm.dispose();
+      bus.dispose();
+    });
+    test('shouldReceive excludes self-originated events', () {
+      final vm = HabitDetailViewModel();
+
+      expect(
+        vm.shouldReceive(
+          const ReloadDataEvent(
+            msg: 'from-habitDetail',
+            trace: {
+              AppEventPageSource.habitDetail: {
+                AppEventFunctionSource.habitChanged,
+              },
+            },
+          ),
+        ),
+        isFalse,
+        reason: 'should exclude events traced to habitDetail',
+      );
+
+      expect(
+        vm.shouldReceive(
+          const GroupChangedEvent(
+            groupUUID: 'g1',
+            trace: {
+              AppEventPageSource.groupManage: {
+                AppEventFunctionSource.groupChanged,
+              },
+            },
+          ),
+        ),
+        isTrue,
+        reason: 'should accept events from other sources',
+      );
+      vm.dispose();
+    });
+
+    test('handleEvent covers all sealed subtypes (no throw)', () {
+      final vm = HabitDetailViewModel();
+
+      // All four sealed subtypes must be accepted without error.
+      vm.handleEvent(const ReloadDataEvent(msg: 'a'));
+      vm.handleEvent(
+        const HabitStatusChangedEvent(
+          uuidList: ['u1'],
+          status: HabitStatus.archived,
+        ),
+      );
+      vm.handleEvent(
+        HabitRecordsChangedEvent(
+          uuidList: ['u1'],
+          dateList: [HabitRecordDate.now()],
+        ),
+      );
+      vm.handleEvent(const GroupChangedEvent(groupUUID: 'g1'));
+
+      // Should not throw.
       vm.dispose();
     });
   });

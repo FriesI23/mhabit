@@ -15,12 +15,15 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/types.dart';
+import 'package:mhabit/models/app_event.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_daily_goal.dart';
+import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/pages/habit_edit/_providers/habit_form.dart';
+import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/db/handlers/habit.dart';
 
@@ -342,5 +345,81 @@ void main() {
         provider.dispose();
       },
     );
+  });
+
+  group('HabitFormViewModel:event', () {
+    test('receives external GroupChangedEvent and refreshes groups', () async {
+      final bus = AppEventBus();
+      final vm = HabitFormViewModel();
+      vm.updateAppEvent(bus);
+      addTearDown(() {
+        vm.dispose();
+        bus.dispose();
+      });
+
+      expect(vm.groupState.version, 0);
+
+      bus.push(
+        const GroupChangedEvent(
+          groupUUID: 'g1',
+          trace: {
+            AppEventPageSource.habitDisplay: {
+              AppEventFunctionSource.habitChanged,
+            },
+          },
+        ),
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      expect(vm.groupState.version, greaterThan(0));
+    });
+
+    test(
+      'ignores self-originated GroupChangedEvent via shouldReceive',
+      () async {
+        final bus = AppEventBus();
+        final vm = HabitFormViewModel();
+        vm.updateAppEvent(bus);
+        addTearDown(() {
+          vm.dispose();
+          bus.dispose();
+        });
+
+        expect(vm.groupState.version, 0);
+
+        bus.push(
+          const GroupChangedEvent(
+            groupUUID: 'g1',
+            trace: {
+              AppEventPageSource.habitEdit: {
+                AppEventFunctionSource.groupChanged,
+              },
+            },
+          ),
+        );
+        await Future<void>.delayed(Duration.zero);
+
+        expect(vm.groupState.version, 0);
+      },
+    );
+  });
+
+  group('HabitFormViewModel:exhaustiveness', () {
+    test('handleEvent covers all sealed subtypes', () {
+      final vm = HabitFormViewModel();
+      addTearDown(vm.dispose);
+
+      vm.handleEvent(const ReloadDataEvent(msg: 'r'));
+      vm.handleEvent(
+        const HabitStatusChangedEvent(
+          uuidList: ['u1'],
+          status: HabitStatus.activated,
+        ),
+      );
+      vm.handleEvent(
+        HabitRecordsChangedEvent(uuidList: ['u1'], dateList: [HabitDate.now()]),
+      );
+      vm.handleEvent(const GroupChangedEvent(groupUUID: 'g1'));
+    });
   });
 }
