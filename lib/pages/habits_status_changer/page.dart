@@ -22,14 +22,12 @@ import '../../common/utils.dart';
 import '../../extensions/context_extensions.dart';
 import '../../extensions/navigator_extensions.dart';
 import '../../logging/helper.dart';
-import '../../models/app_event.dart';
 import '../../models/custom_date_format.dart';
 import '../../models/habit_date.dart';
 import '../../models/habit_summary.dart';
 import '../../providers/app_ui/app_compact_ui_switcher.dart';
 import '../../providers/app_ui/app_custom_date_format.dart';
 import '../../providers/app_ui/app_developer.dart';
-import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_sync.dart';
 import '../../utils/safe_sliver_tools.dart';
 import '../../widgets/helpers.dart';
@@ -169,18 +167,6 @@ class _PageState extends State<_Page> {
       ),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-    context.read<AppEventBus>().push(
-      const ReloadDataEvent(
-        msg: "habit_status_changer._onConfirmButtonpressed",
-        exiEditMode: true,
-        trace: {
-          AppEventPageSource.habitStatusChanger: {
-            AppEventFunctionSource.recordChanged,
-          },
-        },
-      ),
-    );
   }
 
   void _onResetButtonPressed() {

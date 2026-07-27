@@ -29,7 +29,6 @@ import '../../extensions/group_icon_extensions.dart';
 import '../../extensions/num_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
-import '../../models/app_event.dart';
 import '../../models/custom_date_format.dart';
 import '../../models/habit_color.dart';
 import '../../models/habit_date.dart';
@@ -41,7 +40,6 @@ import '../../providers/app_ui/app_custom_date_format.dart';
 import '../../providers/app_ui/app_developer.dart';
 import '../../providers/app_ui/app_first_day.dart';
 import '../../providers/support/utils.dart';
-import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/habits_file_exporter.dart';
 import '../../storage/db/handlers/habit.dart';
@@ -92,22 +90,7 @@ Future<DetailPageReturn?> naviToHabitDetailPage({
   );
 }
 
-extension _AppEventBusExtension on AppEventBus {
-  void pushHabitChangeStatus(HabitStatusChangedRecord result, {String? msg}) {
-    push(
-      HabitStatusChangedEvent(
-        msg: msg,
-        uuidList: [result.habitUUID],
-        status: result.newStatus,
-        trace: {
-          AppEventPageSource.habitDetail: const {
-            AppEventFunctionSource.habitChanged,
-          },
-        },
-      ),
-    );
-  }
-}
+// _AppEventBusExtension removed — VM now handles all event emission.
 
 /// Depend Providers
 /// - Required for builder:
@@ -187,25 +170,13 @@ class _PageState extends State<_Page>
     );
     if (result == null) return false;
     if (!(mounted && _vm.mounted)) return false;
-    _vm.requestReload();
-    if (_summary?.mounted != true) {
-      context.read<AppEventBus>().push(
-        const ReloadDataEvent(
-          msg: "habit_detail._enterHabitEditPage",
-          trace: {
-            AppEventPageSource.habitDetail: {
-              AppEventFunctionSource.habitChanged,
-            },
-          },
-        ),
-      );
-    } else {
-      _summary!.onHabitDataChanged();
-      if (mounted && form.editMode == HabitDisplayEditMode.create) {
-        Navigator.maybePop(context).then((popResult) {
-          if (!popResult) appLog.navi.info("habit_detail", ex: ["didn't pop"]);
-        });
-      }
+    _vm.onEditCompleted(summary: _summary);
+    if (mounted &&
+        _summary?.mounted == true &&
+        form.editMode == HabitDisplayEditMode.create) {
+      Navigator.maybePop(context).then((popResult) {
+        if (!popResult) appLog.navi.info("habit_detail", ex: ["didn't pop"]);
+      });
     }
     return true;
   }
@@ -248,20 +219,7 @@ class _PageState extends State<_Page>
 
     if (!(mounted && _vm.mounted)) return;
     if (_vm.getInsideVersion() == oldVersion) return;
-    if (_summary?.mounted != true) {
-      context.read<AppEventBus>().push(
-        const ReloadDataEvent(
-          msg: "habit_detail._openEditDialog",
-          trace: {
-            AppEventPageSource.habitDetail: {
-              AppEventFunctionSource.recordChanged,
-            },
-          },
-        ),
-      );
-    } else {
-      _summary!.onHabitDataChanged();
-    }
+    _vm.onEditRecordCompleted(summary: _summary);
   }
 
   Future<bool?> _openHabitOpConfirmDialog(
@@ -306,21 +264,8 @@ class _PageState extends State<_Page>
       ),
     );
     if (result == null || result == false || !mounted) return;
-    if (_summary?.mounted != true) {
-      final result = await _vm.onConfirmToArchiveHabit();
-      if (result == null || !mounted) return;
-      context.read<AppEventBus>().pushHabitChangeStatus(
-        result,
-        msg: "habit_detail._openHabitArchiveConfirmDialog",
-      );
-    } else {
-      final habitUUID = _vm.habitUUID;
-      if (habitUUID == null) return;
-      await _summary!.onConfirmToArchiveHabit(habitUUID).whenComplete(() {
-        if (!(mounted && _vm.mounted)) return;
-        _vm.requestReload();
-      });
-    }
+    await _vm.onConfirmToArchiveHabit(summary: _summary);
+    if (!mounted) return;
 
     _onHabitStatusChangeConfirmed();
   }
@@ -335,21 +280,8 @@ class _PageState extends State<_Page>
       ),
     );
     if (result == null || result == false || !mounted) return;
-    if (_summary?.mounted != true) {
-      final result = await _vm.onConfirmToUnarchiveHabit();
-      if (result == null || !mounted) return;
-      context.read<AppEventBus>().pushHabitChangeStatus(
-        result,
-        msg: "habit_detail._openHabitUnarchiveConfirmDialog",
-      );
-    } else {
-      final habitUUID = _vm.habitUUID;
-      if (habitUUID == null) return;
-      await _summary!.onConfirmToUnarchiveHabit(habitUUID).whenComplete(() {
-        if (!(mounted && _vm.mounted)) return;
-        _vm.requestReload();
-      });
-    }
+    await _vm.onConfirmToUnarchiveHabit(summary: _summary);
+    if (!mounted) return;
 
     _onHabitStatusChangeConfirmed();
   }
@@ -365,23 +297,7 @@ class _PageState extends State<_Page>
     );
     if (result == null || result == false || !mounted) return;
 
-    Future<HabitStatusChangedRecord?> exec() async {
-      if (_summary?.mounted != true) {
-        final changedRecord = await _vm.onConfirmToDeleteHabit();
-        if (changedRecord == null || !mounted) return null;
-        context.read<AppEventBus>().pushHabitChangeStatus(
-          changedRecord,
-          msg: "habit_detail._openHabitDeleteConfirmDialog",
-        );
-        return changedRecord;
-      } else {
-        final habitUUID = _vm.habitUUID;
-        if (habitUUID == null) return null;
-        return _summary!.onConfirmToDeleteHabit(habitUUID);
-      }
-    }
-
-    final changedRecord = await exec();
+    final changedRecord = await _vm.onConfirmToDeleteHabit(summary: _summary);
     if (!(mounted && _vm.mounted)) return;
     Navigator.pop(
       context,

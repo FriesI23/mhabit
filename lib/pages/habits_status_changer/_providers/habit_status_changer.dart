@@ -26,6 +26,7 @@ import '../../../common/utils.dart';
 import '../../../extensions/iterable_extensions.dart';
 import '../../../logging/helper.dart';
 import '../../../logging/logger_stack.dart';
+import '../../../models/app_event.dart';
 import '../../../models/habit_daily_record_form.dart';
 import '../../../models/habit_date.dart';
 import '../../../models/habit_form.dart';
@@ -34,6 +35,7 @@ import '../../../models/habit_summary.dart';
 import '../../../pages/common/widgets.dart';
 import '../../../providers/support/commons.dart';
 import '../../../providers/support/page_load_runtime.dart';
+import '../../../providers/workflow/app_event.dart';
 import '../../../providers/workflow/habits_manager.dart';
 
 part 'habit_status_changer.g.dart';
@@ -74,6 +76,7 @@ class HabitStatusChangerViewModel
   // sync from setting
   int _firstday = defaultFirstDay;
   late HabitStatusChangerAccess _access;
+  AppEventBus? _eventBus;
 
   HabitStatusChangerViewModel({required List<HabitUUID> uuidList})
     : _selectedUUIDList = uuidList {
@@ -82,6 +85,10 @@ class HabitStatusChangerViewModel
 
   void attachAccess(HabitStatusChangerAccess newAccess) {
     _access = newAccess;
+  }
+
+  void updateAppEvent(AppEventBus newAppEvent) {
+    _eventBus = newAppEvent;
   }
 
   bool get hasLoad => _pageLoad.hasLoad;
@@ -326,6 +333,17 @@ class HabitStatusChangerViewModel
     if (!mounted) return 0;
 
     requestReloadData();
+    _eventBus?.push(
+      const ReloadDataEvent(
+        msg: "habit_status_changer.confirm.pressed",
+        exiEditMode: true,
+        trace: {
+          AppEventPageSource.habitStatusChanger: {
+            AppEventFunctionSource.recordChanged,
+          },
+        },
+      ),
+    );
     if (listen) notifyListeners();
     return records.length;
   }

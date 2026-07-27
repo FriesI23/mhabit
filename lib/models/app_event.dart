@@ -34,17 +34,12 @@ enum AppEventFunctionSource {
   groupChanged,
 }
 
-abstract interface class AppEvent {
-  Map<AppEventPageSource, Set<AppEventFunctionSource>> get trace;
-}
-
-abstract class AppEventBase implements AppEvent {
-  @override
+sealed class AppEvent {
   final Map<AppEventPageSource, Set<AppEventFunctionSource>> trace;
 
-  const AppEventBase({this.trace = const {}});
+  const AppEvent({this.trace = const {}});
 
-  AppEventBase extendSource(
+  AppEvent extendSource(
     AppEventPageSource page,
     AppEventFunctionSource function,
   );
@@ -70,7 +65,7 @@ abstract class AppEventBase implements AppEvent {
   }
 }
 
-final class ReloadDataEvent extends AppEventBase {
+final class ReloadDataEvent extends AppEvent {
   final String? msg;
   final bool exiEditMode;
   final bool clearSnackBar;
@@ -108,7 +103,7 @@ final class ReloadDataEvent extends AppEventBase {
   }
 }
 
-final class HabitStatusChangedEvent extends AppEventBase {
+final class HabitStatusChangedEvent extends AppEvent {
   final String? msg;
   final List<HabitUUID> uuidList;
   final HabitStatus status;
@@ -146,14 +141,14 @@ final class HabitStatusChangedEvent extends AppEventBase {
   }
 }
 
-final class HabitRecordsChangedEvents extends AppEventBase {
+final class HabitRecordsChangedEvent extends AppEvent {
   final String? msg;
   final List<HabitUUID> uuidList;
   final List<HabitRecordDate> dateList;
   final HabitRecordStatus? status;
   final String? reason;
 
-  const HabitRecordsChangedEvents({
+  const HabitRecordsChangedEvent({
     this.msg,
     required this.uuidList,
     required this.dateList,
@@ -163,10 +158,10 @@ final class HabitRecordsChangedEvents extends AppEventBase {
   }) : assert(status != HabitRecordStatus.unknown);
 
   @override
-  HabitRecordsChangedEvents extendSource(
+  HabitRecordsChangedEvent extendSource(
     AppEventPageSource page,
     AppEventFunctionSource function,
-  ) => HabitRecordsChangedEvents(
+  ) => HabitRecordsChangedEvent(
     msg: msg,
     uuidList: uuidList,
     dateList: dateList,
@@ -177,7 +172,7 @@ final class HabitRecordsChangedEvents extends AppEventBase {
 
   @override
   String toString() {
-    final bf = StringBuffer("HabitRecordsChangedEvents(");
+    final bf = StringBuffer("HabitRecordsChangedEvent(");
     final data = <String>[
       if (msg != null) "msg=$msg",
       "uuidList=$uuidList",
@@ -192,7 +187,7 @@ final class HabitRecordsChangedEvents extends AppEventBase {
   }
 }
 
-final class GroupChangedEvent extends AppEventBase {
+final class GroupChangedEvent extends AppEvent {
   final String? msg;
   final GroupUUID? groupUUID;
   final GroupChangeType changeType;
