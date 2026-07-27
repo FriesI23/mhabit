@@ -282,7 +282,7 @@ void main() {
       eventBus.push(
         const GroupChangedEvent(
           msg: 'test',
-          groupUUID: 'g1',
+          uuidList: ['g1'],
           changeType: GroupChangeType.created,
         ),
       );

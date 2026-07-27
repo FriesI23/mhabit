@@ -361,7 +361,7 @@ void main() {
 
       bus.push(
         const GroupChangedEvent(
-          groupUUID: 'g1',
+          uuidList: ['g1'],
           trace: {
             AppEventPageSource.habitDisplay: {
               AppEventFunctionSource.habitChanged,
@@ -389,7 +389,7 @@ void main() {
 
         bus.push(
           const GroupChangedEvent(
-            groupUUID: 'g1',
+            uuidList: ['g1'],
             trace: {
               AppEventPageSource.habitEdit: {
                 AppEventFunctionSource.groupChanged,
@@ -419,7 +419,7 @@ void main() {
       vm.handleEvent(
         HabitRecordsChangedEvent(uuidList: ['u1'], dateList: [HabitDate.now()]),
       );
-      vm.handleEvent(const GroupChangedEvent(groupUUID: 'g1'));
+      vm.handleEvent(const GroupChangedEvent(uuidList: ['g1']));
     });
   });
 }

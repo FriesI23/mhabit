@@ -92,7 +92,7 @@ void main() {
       final bus = AppEventBus();
       final sub = _TestSubscriber();
       bus.subscribe<ReloadDataEvent>(sub);
-      bus.push(const GroupChangedEvent(groupUUID: 'g1'));
+      bus.push(const GroupChangedEvent(uuidList: ['g1']));
       bus.push(const ReloadDataEvent(msg: 'r'));
 
       await Future<void>.delayed(Duration.zero);
@@ -183,7 +183,7 @@ void main() {
       subs.cancelAll();
 
       bus.push(const ReloadDataEvent(msg: 'a'));
-      bus.push(const GroupChangedEvent(groupUUID: 'b'));
+      bus.push(const GroupChangedEvent(uuidList: ['b']));
 
       await Future<void>.delayed(Duration.zero);
       expect(sub.handleEventCalls, isEmpty);

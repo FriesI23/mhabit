@@ -465,7 +465,7 @@ void main() {
       expect(
         vm.shouldReceive(
           const GroupChangedEvent(
-            groupUUID: 'g1',
+            uuidList: ['g1'],
             trace: {
               AppEventPageSource.groupManage: {
                 AppEventFunctionSource.groupChanged,
@@ -496,7 +496,7 @@ void main() {
           dateList: [HabitRecordDate.now()],
         ),
       );
-      vm.handleEvent(const GroupChangedEvent(groupUUID: 'g1'));
+      vm.handleEvent(const GroupChangedEvent(uuidList: ['g1']));
 
       // Should not throw.
       vm.dispose();

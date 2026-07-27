@@ -94,7 +94,7 @@ void main() {
       vm.handleEvent(
         HabitRecordsChangedEvent(uuidList: ['u1'], dateList: [HabitDate.now()]),
       );
-      vm.handleEvent(const GroupChangedEvent(groupUUID: 'g1'));
+      vm.handleEvent(const GroupChangedEvent(uuidList: ['g1']));
     });
   });
 }

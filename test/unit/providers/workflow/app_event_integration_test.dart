@@ -75,7 +75,7 @@ void main() {
 
         bus.push(
           const GroupChangedEvent(
-            groupUUID: 'g1',
+            uuidList: ['g1'],
             trace: {
               AppEventPageSource.groupManage: {
                 AppEventFunctionSource.groupChanged,
@@ -88,7 +88,7 @@ void main() {
 
         bus.push(
           const GroupChangedEvent(
-            groupUUID: 'g2',
+            uuidList: ['g2'],
             trace: {
               AppEventPageSource.habitDisplay: {
                 AppEventFunctionSource.habitChanged,
@@ -112,7 +112,7 @@ void main() {
 
       bus.push(
         const GroupChangedEvent(
-          groupUUID: 'g1',
+          uuidList: ['g1'],
           trace: {
             AppEventPageSource.habitEdit: {AppEventFunctionSource.groupChanged},
           },
@@ -123,7 +123,7 @@ void main() {
 
       bus.push(
         const GroupChangedEvent(
-          groupUUID: 'g2',
+          uuidList: ['g2'],
           trace: {
             AppEventPageSource.habitDisplay: {
               AppEventFunctionSource.habitChanged,

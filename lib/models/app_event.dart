@@ -189,12 +189,12 @@ final class HabitRecordsChangedEvent extends AppEvent {
 
 final class GroupChangedEvent extends AppEvent {
   final String? msg;
-  final GroupUUID? groupUUID;
+  final List<GroupUUID> uuidList;
   final GroupChangeType changeType;
 
   const GroupChangedEvent({
     this.msg,
-    this.groupUUID,
+    required this.uuidList,
     this.changeType = GroupChangeType.unknown,
     super.trace,
   });
@@ -205,7 +205,7 @@ final class GroupChangedEvent extends AppEvent {
     AppEventFunctionSource function,
   ) => GroupChangedEvent(
     msg: msg,
-    groupUUID: groupUUID,
+    uuidList: uuidList,
     changeType: changeType,
     trace: buildNewTrace(page, function),
   );
@@ -215,7 +215,7 @@ final class GroupChangedEvent extends AppEvent {
     final bf = StringBuffer("GroupChangedEvent(");
     final data = <String>[
       if (msg != null) "msg=$msg",
-      if (groupUUID != null) "groupUUID=$groupUUID",
+      "uuidList=$uuidList",
       "changeType=$changeType",
       "trace=$trace",
     ];

@@ -37,12 +37,12 @@ import '../../../storage/profile_provider.dart';
 extension on AppEventSubscriptions {
   void pushGroupChanged({
     String? msg,
-    GroupUUID? groupUUID,
+    required List<GroupUUID> uuidList,
     GroupChangeType changeType = GroupChangeType.unknown,
   }) => push(
     GroupChangedEvent(
       msg: msg,
-      groupUUID: groupUUID,
+      uuidList: uuidList,
       changeType: changeType,
       trace: const {
         AppEventPageSource.groupManage: {AppEventFunctionSource.groupChanged},
@@ -345,25 +345,25 @@ class GroupManageViewModel extends ChangeNotifier
     requestReload();
     _subs?.pushGroupChanged(
       msg: "group_manage.deleteSingleGroup",
-      groupUUID: uuid,
+      uuidList: [uuid],
       changeType: GroupChangeType.deleted,
     );
   }
 
   Future<void> deleteSelectedGroups() async {
     final uuids = List<String>.of(_selectedGroupUUIDs);
-    for (final uuid in uuids) {
-      await _groupManager?.deleteGroup(uuid);
-      if (!mounted) return;
-      _subs?.pushGroupChanged(
-        msg: "group_manage.deleteSelectedGroups",
-        groupUUID: uuid,
-        changeType: GroupChangeType.deleted,
-      );
-    }
+    final gm = _groupManager;
+    if (gm == null) return;
+    await Future.wait(uuids.map(gm.deleteGroup));
+    if (!mounted) return;
     _lastDeletedUUIDs = uuids;
     exitSelectionMode();
     requestReload();
+    _subs?.pushGroupChanged(
+      msg: "group_manage.deleteSelectedGroups",
+      uuidList: uuids,
+      changeType: GroupChangeType.deleted,
+    );
   }
 
   Future<void> undoLastDelete() async {
@@ -379,13 +379,11 @@ class GroupManageViewModel extends ChangeNotifier
       if (!mounted) return;
     }
     requestReload();
-    for (final uuid in uuids) {
-      _subs?.pushGroupChanged(
-        msg: "group_manage.undoLastDelete",
-        groupUUID: uuid,
-        changeType: GroupChangeType.created,
-      );
-    }
+    _subs?.pushGroupChanged(
+      msg: "group_manage.undoLastDelete",
+      uuidList: uuids,
+      changeType: GroupChangeType.created,
+    );
   }
 
   Future<HabitGroupData> createGroup({
@@ -406,7 +404,7 @@ class GroupManageViewModel extends ChangeNotifier
     requestReload();
     _subs?.pushGroupChanged(
       msg: "group_manage.createGroup",
-      groupUUID: result.uuid,
+      uuidList: [result.uuid],
       changeType: GroupChangeType.created,
     );
     return result;
@@ -432,7 +430,7 @@ class GroupManageViewModel extends ChangeNotifier
     requestReload();
     _subs?.pushGroupChanged(
       msg: "group_manage.updateGroup",
-      groupUUID: uuid,
+      uuidList: [uuid],
       changeType: GroupChangeType.updated,
     );
   }
@@ -461,7 +459,11 @@ class GroupManageViewModel extends ChangeNotifier
     );
 
     notifyListeners();
-    _subs?.pushGroupChanged(msg: "group_manage.onGroupReorderComplete");
+    _subs?.pushGroupChanged(
+      msg: "group_manage.onGroupReorderComplete",
+      uuidList: ordered.map((g) => g.uuid).toList(),
+      changeType: GroupChangeType.updated,
+    );
   }
 }
 

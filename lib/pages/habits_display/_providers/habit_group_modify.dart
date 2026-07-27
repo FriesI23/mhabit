@@ -38,7 +38,7 @@ extension on AppEventSubscriptions {
   void pushGroupCreated(GroupUUID uuid) => push(
     GroupChangedEvent(
       msg: "habit_display.group.created",
-      groupUUID: uuid,
+      uuidList: [uuid],
       changeType: GroupChangeType.created,
       trace: _kGroupChangedTrace,
     ),
