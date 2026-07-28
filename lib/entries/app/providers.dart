@@ -131,6 +131,9 @@ class AppProviders extends SingleChildStatelessWidget {
         ..updateDBHelper(helper)
         ..setNotificationChannelData(channel),
     ),
+    ViewModelProxyProvider<AppEventBus, AppSyncOwner>(
+      update: (context, bus, previous) => previous..attachEventBus(bus),
+    ),
     ListenableProxyProvider<AppSyncOwner, AppSyncSettingsAccess>(
       create: (context) => context.read<AppSyncOwner>(),
       update: (context, value, previous) => value,

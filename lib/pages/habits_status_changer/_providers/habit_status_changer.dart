@@ -40,6 +40,32 @@ import '../../../providers/workflow/habits_manager.dart';
 
 part 'habit_status_changer.g.dart';
 
+extension on AppEventSubscriptions {
+  static const _kStatusChangerSavedTrace = {
+    AppEventPageSource.habitStatusChanger: {
+      AppEventFunctionSource.recordChanged,
+    },
+  };
+
+  /// Pushes a [HabitRecordsChangedEvent] for the status-changer save
+  /// operation, triggering cross-view refresh and sync.
+  void pushRecordsSaved({
+    required List<HabitUUID> uuidList,
+    required List<HabitRecordDate> dateList,
+    required HabitRecordStatus status,
+    String? reason,
+  }) => push(
+    HabitRecordsChangedEvent(
+      msg: "habit_status_changer.confirm.pressed",
+      uuidList: uuidList,
+      dateList: dateList,
+      status: status,
+      reason: reason,
+      trace: _kStatusChangerSavedTrace,
+    ),
+  );
+}
+
 enum RecordStatusChangerStatus {
   skip,
   ok,
@@ -109,6 +135,7 @@ class HabitStatusChangerViewModel
   @override
   void handleEvent(AppEvent event) => switch (event) {
     ReloadDataEvent() ||
+    HabitDataChangedEvent() ||
     HabitStatusChangedEvent() ||
     HabitRecordsChangedEvent() ||
     GroupChangedEvent() => null,
@@ -353,19 +380,16 @@ class HabitStatusChangerViewModel
         habit.reCalculateAutoComplateRecords(firstDay: firstday);
       },
     );
-    if (!mounted) return 0;
+    if (!mounted || records.isEmpty) return 0;
 
     requestReloadData();
-    _eventSubs?.push(
-      const ReloadDataEvent(
-        msg: "habit_status_changer.confirm.pressed",
-        exiEditMode: true,
-        trace: {
-          AppEventPageSource.habitStatusChanger: {
-            AppEventFunctionSource.recordChanged,
-          },
-        },
-      ),
+    _eventSubs?.pushRecordsSaved(
+      uuidList: records.map((r) => r.habit.uuid).toList(),
+      dateList: records.map((r) => r.data.date).toList(),
+      status: records.first.data.status,
+      reason: selectStatus == RecordStatusChangerStatus.skip
+          ? skipReason
+          : null,
     );
     if (listen) notifyListeners();
     return records.length;

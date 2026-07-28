@@ -158,6 +158,7 @@ class GroupManageViewModel extends ChangeNotifier
   void handleEvent(AppEvent event) => switch (event) {
     GroupChangedEvent() => _handleGroupChanged(event),
     ReloadDataEvent() => _handleReloadData(event),
+    HabitDataChangedEvent() => _handleHabitDataChanged(event),
     HabitStatusChangedEvent() || HabitRecordsChangedEvent() => null,
   };
 
@@ -168,6 +169,14 @@ class GroupManageViewModel extends ChangeNotifier
 
   void _handleReloadData(ReloadDataEvent event) {
     appLog.habit.debug("GroupManage.reload", ex: ["ReloadDataEvent", event]);
+    requestReload();
+  }
+
+  void _handleHabitDataChanged(HabitDataChangedEvent event) {
+    appLog.habit.debug(
+      "GroupManage.reload",
+      ex: ["HabitDataChangedEvent", event],
+    );
     requestReload();
   }
 

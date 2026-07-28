@@ -59,14 +59,6 @@ extension on AppEventSubscriptions {
     AppEventPageSource.habitDisplay: {AppEventFunctionSource.recordChanged},
   };
 
-  void pushReloadDisplay({bool? clearSnackBar}) => push(
-    ReloadDataEvent(
-      msg: "habit_display.reload.data",
-      clearSnackBar: clearSnackBar ?? false,
-      trace: _kHabitChangedTrace,
-    ),
-  );
-
   void pushHabitStatusChanged(List<HabitStatusChangedRecord> records) {
     final grouped = records.groupListsBy((r) => r.newStatus);
     for (final entry in grouped.entries) {
@@ -93,6 +85,34 @@ extension on AppEventSubscriptions {
       status: record.status,
       reason: reason,
       trace: _kRecordChangedTrace,
+    ),
+  );
+
+  /// Pushes a [HabitStatusChangedEvent] for batch-group-modify operations.
+  ///
+  /// The affected habits remain [HabitStatus.activated]; only their group
+  /// association changes.  This replaces the previous pattern of pushing
+  /// a [ReloadDataEvent] in [executeBatchGroupModify] so that both UI
+  /// refresh and sync trigger flow through a single semantically-correct
+  /// event.
+  void pushBatchGroupChanged(List<HabitUUID> uuids) => push(
+    HabitStatusChangedEvent(
+      msg: "habit_display.batchGroupModify",
+      uuidList: uuids,
+      status: HabitStatus.activated,
+      trace: _kHabitChangedTrace,
+    ),
+  );
+
+  /// Pushes a [HabitDataChangedEvent] for drag-reorder / cross-group-move
+  /// operations so that both UI refresh and sync trigger flow through a
+  /// single semantically-correct event.
+  void pushHabitReordered(HabitUUID uuid) => push(
+    HabitDataChangedEvent(
+      msg: "habit_display.reorder",
+      uuidList: [uuid],
+      changeType: HabitDataChangeType.updated,
+      trace: _kHabitChangedTrace,
     ),
   );
 }
@@ -776,6 +796,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     HabitStatusChangedEvent() ||
     HabitRecordsChangedEvent() ||
     GroupChangedEvent() => requestReload(clearSnackBar: false),
+    HabitDataChangedEvent() => null,
   };
 
   void _handleReloadData(ReloadDataEvent event) {
@@ -944,11 +965,27 @@ class HabitSummaryViewModel extends ChangeNotifier
     );
   }
 
+  HabitSummaryDataSortCache? _requireSortCache(int index) {
+    final cache = currentHabitList[index];
+    if (cache is! HabitSummaryDataSortCache) {
+      if (kDebugMode) {
+        throw StateError(
+          'Expected HabitSummaryDataSortCache at index=$index, '
+          'got ${cache.runtimeType}',
+        );
+      }
+      return null;
+    }
+    return cache;
+  }
+
   Future<void> onHabitReorderComplate(int index, int dropIndex) async {
+    final movedCache = _requireSortCache(index);
+    if (movedCache == null) return;
     _applyHabitReorder(index, dropIndex);
     await _writeChangedSortPositionToDB(fromIndex: index, toIndex: dropIndex);
     exitEditMode(listen: false);
-    _reloadBridge.eventSubs?.pushReloadDisplay();
+    _reloadBridge.eventSubs?.pushHabitReordered(movedCache.uuid);
   }
 
   Future<void> onCrossGroupHabitMove(
@@ -956,19 +993,11 @@ class HabitSummaryViewModel extends ChangeNotifier
     int targetIndex,
     String? targetGroupUUID,
   ) async {
-    final movedCache = currentHabitList[sourceIndex];
-    if (movedCache is! HabitSummaryDataSortCache) {
-      if (kDebugMode) {
-        throw StateError(
-          'Expected HabitSummaryDataSortCache at sourceIndex=$sourceIndex, '
-          'got ${movedCache.runtimeType}',
-        );
-      }
-      return;
-    }
+    final movedCache = _requireSortCache(sourceIndex);
+    if (movedCache == null) return;
     final movedData = movedCache.data;
     if (movedData == null) return;
-    final movedUUID = movedData.uuid;
+    final movedUUID = movedCache.uuid;
     final oldGroupId = movedData.groupId;
 
     _applyHabitReorder(sourceIndex, targetIndex);
@@ -994,7 +1023,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     }
     resortData();
     exitEditMode(listen: false);
-    _reloadBridge.eventSubs?.pushReloadDisplay();
+    _reloadBridge.eventSubs?.pushHabitReordered(movedUUID);
   }
 
   Future<List<HabitStatusChangedRecord>> _changeHabitsStatus(
@@ -1162,7 +1191,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     _groupCollection = await _groupManager.tryLoadGroupCollection();
     resortData(listen: listen);
     exitEditMode(listen: false);
-    _reloadBridge.eventSubs?.pushReloadDisplay();
+    _reloadBridge.eventSubs?.pushBatchGroupChanged(changedUUIDs);
 
     return changedUUIDs.length;
   }
@@ -1199,7 +1228,9 @@ class HabitSummaryViewModel extends ChangeNotifier
       }
     }
     resortData(listen: listen);
-    if (revertUUIDs.isNotEmpty) _reloadBridge.eventSubs?.pushReloadDisplay();
+    if (revertUUIDs.isNotEmpty) {
+      _reloadBridge.eventSubs?.pushBatchGroupChanged(revertUUIDs);
+    }
     return true;
   }
   //#endregion

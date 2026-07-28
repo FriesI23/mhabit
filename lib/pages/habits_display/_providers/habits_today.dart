@@ -310,6 +310,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   void handleEvent(AppEvent event) => switch (event) {
     ReloadDataEvent() => _handleReloadData(event),
     HabitStatusChangedEvent() => _handleHabitStatusChanged(event),
+    HabitDataChangedEvent() => _handleHabitDataChanged(event),
     HabitRecordsChangedEvent() => _handleRecordsChanged(event),
     GroupChangedEvent() => null,
   };
@@ -326,6 +327,14 @@ class HabitsTodayViewModel extends ChangeNotifier
     appLog.habit.debug(
       "HabitsTody",
       ex: ["habit status changed event triggered", event],
+    );
+    requestReload();
+  }
+
+  void _handleHabitDataChanged(HabitDataChangedEvent event) {
+    appLog.habit.debug(
+      "HabitsTody",
+      ex: ["habit data changed event triggered", event],
     );
     requestReload();
   }

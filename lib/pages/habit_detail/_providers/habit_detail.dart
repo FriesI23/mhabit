@@ -54,16 +54,20 @@ extension on AppEventSubscriptions {
     AppEventPageSource.habitDetail: {AppEventFunctionSource.recordChanged},
   };
 
-  void pushEditCompleted() => push(
-    const ReloadDataEvent(
+  void pushHabitEdited(HabitUUID uuid) => push(
+    HabitDataChangedEvent(
       msg: "habit_detail.edit.completed",
+      uuidList: [uuid],
+      changeType: HabitDataChangeType.updated,
       trace: _kHabitChangedTrace,
     ),
   );
 
-  void pushRecordEdited() => push(
-    const ReloadDataEvent(
+  void pushRecordEdited(HabitUUID uuid) => push(
+    HabitDataChangedEvent(
       msg: "habit_detail.record.edited",
+      uuidList: [uuid],
+      changeType: HabitDataChangeType.updated,
       trace: _kRecordChangedTrace,
     ),
   );
@@ -136,6 +140,7 @@ class HabitDetailViewModel extends ChangeNotifier
   @override
   void handleEvent(AppEvent event) => switch (event) {
     ReloadDataEvent() ||
+    HabitDataChangedEvent() ||
     HabitStatusChangedEvent() ||
     HabitRecordsChangedEvent() ||
     GroupChangedEvent() => null,
@@ -543,7 +548,8 @@ class HabitDetailViewModel extends ChangeNotifier
   void onEditCompleted({habit_summary.HabitDetailAdapter? summary}) {
     requestReload();
     if (summary?.mounted != true) {
-      _eventSubs?.pushEditCompleted();
+      final uuid = habitUUID;
+      if (uuid != null) _eventSubs?.pushHabitEdited(uuid);
     } else {
       summary!.onHabitDataChanged();
     }
@@ -556,7 +562,8 @@ class HabitDetailViewModel extends ChangeNotifier
   void onEditRecordCompleted({habit_summary.HabitDetailAdapter? summary}) {
     requestReload();
     if (summary?.mounted != true) {
-      _eventSubs?.pushRecordEdited();
+      final uuid = habitUUID;
+      if (uuid != null) _eventSubs?.pushRecordEdited(uuid);
     } else {
       summary!.onHabitDataChanged();
     }

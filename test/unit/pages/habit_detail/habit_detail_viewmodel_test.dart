@@ -247,7 +247,7 @@ void main() {
 
   group('HabitDetailViewModel event push', () {
     test(
-      'onEditCompleted pushes ReloadDataEvent via AppEventSubscriptions',
+      'onEditCompleted pushes HabitDataChangedEvent via AppEventSubscriptions',
       () async {
         final detailData = _buildHabitDetailData();
         final access = _FakeHabitDetailAccess(seedData: detailData);
@@ -255,8 +255,8 @@ void main() {
         final vm = HabitDetailViewModel()
           ..attachAccess(access)
           ..updateAppEvent(bus);
-        final events = <ReloadDataEvent>[];
-        bus.on<ReloadDataEvent>().listen(events.add);
+        final events = <HabitDataChangedEvent>[];
+        bus.on<HabitDataChangedEvent>().listen(events.add);
 
         await vm.loadData(detailData.data.uuid, listen: false);
         vm.onEditCompleted();
@@ -265,7 +265,7 @@ void main() {
         expect(
           events.length,
           1,
-          reason: 'onEditCompleted should push one ReloadDataEvent',
+          reason: 'onEditCompleted should push one HabitDataChangedEvent',
         );
         final event = events.single;
         expect(
@@ -276,13 +276,15 @@ void main() {
           isTrue,
           reason: 'trace must include habitDetail.habitChanged',
         );
+        expect(event.uuidList, [detailData.data.uuid]);
+        expect(event.changeType, HabitDataChangeType.updated);
         vm.dispose();
         bus.dispose();
       },
     );
 
     test(
-      'onEditRecordCompleted pushes ReloadDataEvent via AppEventSubscriptions',
+      'onEditRecordCompleted pushes HabitDataChangedEvent via AppEventSubscriptions',
       () async {
         final detailData = _buildHabitDetailData();
         final access = _FakeHabitDetailAccess(seedData: detailData);
@@ -290,8 +292,8 @@ void main() {
         final vm = HabitDetailViewModel()
           ..attachAccess(access)
           ..updateAppEvent(bus);
-        final events = <ReloadDataEvent>[];
-        bus.on<ReloadDataEvent>().listen(events.add);
+        final events = <HabitDataChangedEvent>[];
+        bus.on<HabitDataChangedEvent>().listen(events.add);
 
         await vm.loadData(detailData.data.uuid, listen: false);
         vm.onEditRecordCompleted();
@@ -300,7 +302,7 @@ void main() {
         expect(
           events.length,
           1,
-          reason: 'onEditRecordCompleted should push one ReloadDataEvent',
+          reason: 'onEditRecordCompleted should push one HabitDataChangedEvent',
         );
         final event = events.single;
         expect(
@@ -311,6 +313,8 @@ void main() {
           isTrue,
           reason: 'trace must include habitDetail.recordChanged',
         );
+        expect(event.uuidList, [detailData.data.uuid]);
+        expect(event.changeType, HabitDataChangeType.updated);
         vm.dispose();
         bus.dispose();
       },

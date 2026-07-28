@@ -19,7 +19,6 @@ import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../common/types.dart';
 import '../../common/utils.dart';
-import '../../extensions/context_extensions.dart';
 import '../../extensions/navigator_extensions.dart';
 import '../../logging/helper.dart';
 import '../../models/custom_date_format.dart';
@@ -28,7 +27,6 @@ import '../../models/habit_summary.dart';
 import '../../providers/app_ui/app_compact_ui_switcher.dart';
 import '../../providers/app_ui/app_custom_date_format.dart';
 import '../../providers/app_ui/app_developer.dart';
-import '../../providers/workflow/app_sync.dart';
 import '../../utils/safe_sliver_tools.dart';
 import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
@@ -154,8 +152,6 @@ class _PageState extends State<_Page> {
 
     final changedCount = await _vm.saveSelectStatus();
     if (!mounted || changedCount <= 0) return;
-
-    context.maybeRead<AppSyncTriggerAccess>()?.delayedStartTaskOnce();
 
     final snackBar = buildSnackBarWithDismiss(
       context,
