@@ -165,7 +165,7 @@ class HabitGroupModifyViewModel extends ChangeNotifier
   void handleEvent(AppEvent event) => switch (event) {
     GroupChangedEvent() => _handleGroupChanged(),
     ReloadDataEvent() => _handleReloadData(),
-    final HabitDataChangedEvent e => _handleHabitDataChanged(e),
+    HabitDataChangedEvent() => _handleHabitDataChanged(event),
     HabitStatusChangedEvent() || HabitRecordsChangedEvent() => null,
   };
 

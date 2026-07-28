@@ -965,8 +965,23 @@ class HabitSummaryViewModel extends ChangeNotifier
     );
   }
 
+  HabitSummaryDataSortCache? _requireSortCache(int index) {
+    final cache = currentHabitList[index];
+    if (cache is! HabitSummaryDataSortCache) {
+      if (kDebugMode) {
+        throw StateError(
+          'Expected HabitSummaryDataSortCache at index=$index, '
+          'got ${cache.runtimeType}',
+        );
+      }
+      return null;
+    }
+    return cache;
+  }
+
   Future<void> onHabitReorderComplate(int index, int dropIndex) async {
-    final movedCache = currentHabitList[index] as HabitSummaryDataSortCache;
+    final movedCache = _requireSortCache(index);
+    if (movedCache == null) return;
     _applyHabitReorder(index, dropIndex);
     await _writeChangedSortPositionToDB(fromIndex: index, toIndex: dropIndex);
     exitEditMode(listen: false);
@@ -978,19 +993,11 @@ class HabitSummaryViewModel extends ChangeNotifier
     int targetIndex,
     String? targetGroupUUID,
   ) async {
-    final movedCache = currentHabitList[sourceIndex];
-    if (movedCache is! HabitSummaryDataSortCache) {
-      if (kDebugMode) {
-        throw StateError(
-          'Expected HabitSummaryDataSortCache at sourceIndex=$sourceIndex, '
-          'got ${movedCache.runtimeType}',
-        );
-      }
-      return;
-    }
+    final movedCache = _requireSortCache(sourceIndex);
+    if (movedCache == null) return;
     final movedData = movedCache.data;
     if (movedData == null) return;
-    final movedUUID = movedData.uuid;
+    final movedUUID = movedCache.uuid;
     final oldGroupId = movedData.groupId;
 
     _applyHabitReorder(sourceIndex, targetIndex);

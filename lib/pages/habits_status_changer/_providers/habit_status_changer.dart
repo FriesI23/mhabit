@@ -380,7 +380,7 @@ class HabitStatusChangerViewModel
         habit.reCalculateAutoComplateRecords(firstDay: firstday);
       },
     );
-    if (!mounted) return 0;
+    if (!mounted || records.isEmpty) return 0;
 
     requestReloadData();
     _eventSubs?.pushRecordsSaved(
