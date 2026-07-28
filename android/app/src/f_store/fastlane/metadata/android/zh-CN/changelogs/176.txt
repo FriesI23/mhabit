@@ -1,0 +1,3 @@
+- 重构：抽取 PopScopeGate 组件及 PopScopeHandler 接口（#625）
+- 重构：添加 AppEventSubscriber 并整合事件推送（#626）
+- 重构：使用 AppEventBus 订阅替代手动同步触发（#628）

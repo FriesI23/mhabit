@@ -1,5 +1,11 @@
 # 更新日志
 
+## 1.26.3+176-pre
+
+- 重构：抽取 PopScopeGate 组件及 PopScopeHandler 接口（#625）
+- 重构：添加 AppEventSubscriber 并整合事件推送（#626）
+- 重构：使用 AppEventBus 订阅替代手动同步触发（#628）
+
 ## 1.26.2+175-pre
 
 - 功能：添加习惯计数排序、拖拽手动排序和分组管理交互升级（#621）

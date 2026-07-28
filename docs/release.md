@@ -1,12 +1,9 @@
-# Release: v1.26.2+175-pre
+# Release: v1.26.3+176-pre
 
-## ✨ Features
+## 🔧 Refactors
 
-- Habit-count sort, manual sort with drag reorder, and group management interaction upgrades (#621)
+- Extract PopScopeGate widget with PopScopeHandler interface (#625)
+- Add AppEventSubscriber and consolidate event pushes (#626)
+- Replace manual sync triggers with AppEventBus subscription (#628)
 
-## 🧹 Others
-
-- Update Hebrew translation, thanks to Omer I.S. on Weblate (#620)
-- Update Ukrainian translation, thanks to Павло Погонець on Weblate (#622)
-
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.26.1+174...v1.26.2+175-pre)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.26.2+175-pre...v1.26.3+176-pre)

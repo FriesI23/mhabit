@@ -2,6 +2,12 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.26.3+176-pre
+
+- Refactor: extract PopScopeGate widget with PopScopeHandler interface (#625)
+- Refactor: add AppEventSubscriber and consolidate event pushes (#626)
+- Refactor: replace manual sync triggers with AppEventBus subscription (#628)
+
 ## 1.26.2+175-pre
 
 - Feature: add habit-count sort, manual sort with drag reorder, and group management interaction upgrades (#621)
