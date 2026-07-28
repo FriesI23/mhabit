@@ -1375,8 +1375,66 @@
     "@appSetting_manageGroups_subtitleText": {
         "description": "Subtitle for the Manage Groups tile in Settings"
     },
-    "habitDisplay_groupType_manual": "סדר מותאם אישית",
+    "habitDisplay_groupType_manual": "ידני",
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
+    },
+    "habitDisplay_groupType_habitCount": "לפי כמות הרגלים",
+    "habitDisplay_groupModify_snackbarText": "{count, plural, =1 {ההרגל הועבר לקבוצה „{groupName}”} other {{count} הרגלים הועברו לקבוצה „{groupName}”}}",
+    "@habitDisplay_groupModify_snackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of modified habits"
+            },
+            "groupName": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "groupManage_deleteDialog_content": "{count, plural, =1 {ההרגלים בקבוצה זו לא יהיו משויכים לאף קבוצה.} other {ההרגלים ב־{count} הקבוצות האלה לא יהיו משויכים לאף קבוצה.}}",
+    "@groupManage_deleteDialog_content": {
+        "description": "Content body for the delete confirmation dialog",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of groups being deleted"
+            }
+        }
+    },
+    "groupHeader_menu_manage": "ניהול",
+    "@groupHeader_menu_manage": {
+        "description": "Menu item on Group header long-press to navigate to the group management page"
+    },
+    "groupHeader_menu_collapseAll": "לצמצם הכול",
+    "@groupHeader_menu_collapseAll": {
+        "description": "Menu item on Group header long-press to collapse all groups"
+    },
+    "groupHeader_menu_expandAll": "להרחיב הכול",
+    "@groupHeader_menu_expandAll": {
+        "description": "Menu item on Group header long-press to expand all groups"
+    },
+    "habitDisplay_groupModifyConfirm_bodyAddStat": "{count, plural, =1 {הרגל ללא קבוצה יתווסף לקבוצה „{toGroup}”} other {{count} הרגלים ללא קבוצה יתווספו לקבוצה „{toGroup}”}}",
+    "@habitDisplay_groupModifyConfirm_bodyAddStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits being added"
+            },
+            "toGroup": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyRemoveStat": "{count, plural, =1 {הקבוצה של ההרגל תימחק} other {הקבוצה של {count} הרגלים תימחק}}",
+    "@habitDisplay_groupModifyConfirm_bodyRemoveStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits being removed"
+            }
+        }
     }
 }
