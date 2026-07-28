@@ -22,7 +22,7 @@
   <img src="https://img.shields.io/badge/Flutter-3.35.7-02569B?style=flat-square&logo=Flutter&logoColor=white" alt="Built with Flutter 3.35.7">
   <img src="https://img.shields.io/badge/WebDAV-supported-brightgreen?style=flat-square" alt="WebDAV sync supported">
   <a href="https://hosted.weblate.org/engage/mhabit/"><img src="https://hosted.weblate.org/widget/mhabit/app/svg-badge.svg" alt="Translation status"></a>
-  <a href="https://discord.gg/Hxst5can"><img src="https://img.shields.io/badge/Discord-7289DA?style=flat-square&logo=discord&logoColor=white" alt="Discord community"></a>
+  <a href="https://discord.gg/medWsVYpb4"><img src="https://img.shields.io/badge/Discord-7289DA?style=flat-square&logo=discord&logoColor=white" alt="Discord community"></a>
 </p>
 
 ---
