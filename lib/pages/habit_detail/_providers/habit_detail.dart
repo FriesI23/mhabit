@@ -122,6 +122,11 @@ class HabitDetailViewModel extends ChangeNotifier
   void updateAppEvent(AppEventBus newAppEvent) {
     _eventSubs?.cancelAll();
     _eventSubs = AppEventSubscriptions(this, newAppEvent);
+    // NOTE: This VM is an event producer only — it pushes events
+    // via push*() helpers but does not react to any incoming events.
+    // handleEvent returns null for all types, so no subscribe<>()
+    // calls are needed. shouldReceive / handleEvent exist only
+    // to satisfy the AppEventSubscriber contract.
   }
 
   @override

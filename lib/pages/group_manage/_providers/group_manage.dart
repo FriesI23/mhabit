@@ -353,8 +353,8 @@ class GroupManageViewModel extends ChangeNotifier
   Future<void> deleteSelectedGroups() async {
     final uuids = List<String>.of(_selectedGroupUUIDs);
     final gm = _groupManager;
-    if (gm == null) return;
-    await Future.wait(uuids.map(gm.deleteGroup));
+    if (gm == null || uuids.isEmpty) return;
+    await gm.deleteGroups(uuids);
     if (!mounted) return;
     _lastDeletedUUIDs = uuids;
     exitSelectionMode();
@@ -372,10 +372,9 @@ class GroupManageViewModel extends ChangeNotifier
     final all = await _groupManager?.loadAllActiveGroups() ?? [];
     if (!mounted) return;
     final lookup = all.map((g) => g.uuid).toSet();
-
-    for (final uuid in uuids) {
-      if (lookup.contains(uuid)) continue;
-      await _groupManager?.restoreGroup(uuid);
+    final toRestore = uuids.where((uuid) => !lookup.contains(uuid)).toList();
+    if (toRestore.isNotEmpty) {
+      await _groupManager?.restoreGroups(toRestore);
       if (!mounted) return;
     }
     requestReload();
