@@ -165,7 +165,7 @@ class HabitGroupModifyViewModel extends ChangeNotifier
   void handleEvent(AppEvent event) => switch (event) {
     GroupChangedEvent() => _handleGroupChanged(),
     ReloadDataEvent() => _handleReloadData(),
-    HabitDataChangedEvent() => _handleHabitDataChanged(),
+    final HabitDataChangedEvent e => _handleHabitDataChanged(e),
     HabitStatusChangedEvent() || HabitRecordsChangedEvent() => null,
   };
 
@@ -179,10 +179,10 @@ class HabitGroupModifyViewModel extends ChangeNotifier
     requestReload();
   }
 
-  void _handleHabitDataChanged() {
+  void _handleHabitDataChanged(HabitDataChangedEvent event) {
     appLog.habit.debug(
       "HabitGroupModify.reload",
-      ex: ["HabitDataChangedEvent"],
+      ex: ["HabitDataChangedEvent", event],
     );
     requestReload();
   }
