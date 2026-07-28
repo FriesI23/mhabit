@@ -141,9 +141,7 @@ class $DocsCHANGELOGGen {
   List<String> get values => [zh];
 }
 
-class Assets {
-  const Assets._();
-
+abstract final class Assets {
   static const String changelog = 'CHANGELOG.md';
   static const String license = 'LICENSE';
   static const String licenseThirdparty = 'LICENSE_THIRDPARTY.md';
