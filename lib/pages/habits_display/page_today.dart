@@ -22,7 +22,6 @@ import 'package:provider/provider.dart';
 import '../../common/consts.dart';
 import '../../common/types.dart';
 import '../../common/utils.dart';
-import '../../extensions/context_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/habit_daily_record_form.dart';
@@ -295,10 +294,7 @@ class _HabitsTodayController {
     HabitUUID uuid,
     HabitSummaryRecord record, {
     String? reason,
-  }) {
-    // try sync once
-    context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce();
-  }
+  }) {}
 
   void onMain(HabitUUID uuid) {
     final habit = _vm.getHabit(uuid);

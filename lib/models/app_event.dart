@@ -187,6 +187,46 @@ final class HabitRecordsChangedEvent extends AppEvent {
   }
 }
 
+final class HabitDataChangedEvent extends AppEvent {
+  final String? msg;
+  final List<HabitUUID> uuidList;
+  final HabitDataChangeType changeType;
+
+  const HabitDataChangedEvent({
+    this.msg,
+    required this.uuidList,
+    required this.changeType,
+    super.trace,
+  });
+
+  @override
+  HabitDataChangedEvent extendSource(
+    AppEventPageSource page,
+    AppEventFunctionSource function,
+  ) => HabitDataChangedEvent(
+    msg: msg,
+    uuidList: uuidList,
+    changeType: changeType,
+    trace: buildNewTrace(page, function),
+  );
+
+  @override
+  String toString() {
+    final bf = StringBuffer("HabitDataChangedEvent(");
+    final data = <String>[
+      if (msg != null) "msg=$msg",
+      "uuidList=$uuidList",
+      "changeType=$changeType",
+      "trace=$trace",
+    ];
+    bf.writeAll(data, ",");
+    bf.write(")");
+    return bf.toString();
+  }
+}
+
+enum HabitDataChangeType { created, updated }
+
 final class GroupChangedEvent extends AppEvent {
   final String? msg;
   final List<GroupUUID> uuidList;

@@ -32,7 +32,6 @@ import '../../models/habit_reminder.dart';
 import '../../providers/app_ui/app_caches.dart';
 import '../../providers/app_ui/app_developer.dart';
 import '../../providers/app_ui/app_first_day.dart';
-import '../../providers/workflow/app_sync.dart';
 import '../../reminders/notification_channel.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../widgets/widgets.dart';
@@ -263,10 +262,6 @@ class _PageState extends State<_Page> {
     if (!formvm.canSaveHabit()) return;
     final result = await formvm.saveHabit();
     if (!mounted) return;
-    if (mounted && result != null) {
-      // try sync once
-      context.maybeRead<AppSyncTriggerAccess>()?.delayedStartTaskOnce();
-    }
     // pop result
     Navigator.of(context).maybePop(result);
   }

@@ -48,16 +48,21 @@ extension on AppEventSubscriptions {
     AppEventPageSource.habitEdit: {AppEventFunctionSource.groupChanged},
   };
 
-  void pushReloadData(HabitDisplayEditMode editMode) => push(switch (editMode) {
-    HabitDisplayEditMode.create => const ReloadDataEvent(
-      msg: "habit_edit.saveHabit.create",
-      trace: _kHabitCreatedTrace,
-    ),
-    HabitDisplayEditMode.edit => const ReloadDataEvent(
-      msg: "habit_edit.saveHabit.edit",
-      trace: _kHabitChangedTrace,
-    ),
-  });
+  void pushHabitSaved(HabitUUID uuid, HabitDisplayEditMode editMode) =>
+      push(switch (editMode) {
+        HabitDisplayEditMode.create => HabitDataChangedEvent(
+          msg: "habit_edit.saveHabit.create",
+          uuidList: [uuid],
+          changeType: HabitDataChangeType.created,
+          trace: _kHabitCreatedTrace,
+        ),
+        HabitDisplayEditMode.edit => HabitDataChangedEvent(
+          msg: "habit_edit.saveHabit.edit",
+          uuidList: [uuid],
+          changeType: HabitDataChangeType.updated,
+          trace: _kHabitChangedTrace,
+        ),
+      });
 
   void pushGroupCreated(GroupUUID uuid) => push(
     GroupChangedEvent(
@@ -177,6 +182,7 @@ class HabitFormViewModel extends ChangeNotifier
     GroupChangedEvent() => _handleGroupChanged(),
     ReloadDataEvent() ||
     HabitStatusChangedEvent() ||
+    HabitDataChangedEvent() ||
     HabitRecordsChangedEvent() => null,
   };
 
@@ -381,7 +387,7 @@ class HabitFormViewModel extends ChangeNotifier
       HabitDisplayEditMode.create => _saveNewHabit(),
       HabitDisplayEditMode.edit => _saveExistHabit(),
     };
-    if (result != null) _subs?.pushReloadData(_form.editMode);
+    if (result != null) _subs?.pushHabitSaved(result.uuid!, _form.editMode);
     return result;
   }
 

@@ -40,7 +40,6 @@ import '../../providers/app_ui/app_custom_date_format.dart';
 import '../../providers/app_ui/app_developer.dart';
 import '../../providers/app_ui/app_first_day.dart';
 import '../../providers/support/utils.dart';
-import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/habits_file_exporter.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../theme/color.dart';
@@ -244,14 +243,8 @@ class _PageState extends State<_Page>
     );
   }
 
-  void _onHabitStatusChangeConfirmed({bool shouldSyncOnce = true}) {
+  void _onHabitStatusChangeConfirmed() {
     if (!mounted) return;
-    // try sync once
-    if (shouldSyncOnce) {
-      context.maybeRead<AppSyncTriggerAccess>()?.delayedStartTaskOnce(
-        delay: kAppUndoDialogShowDuration * 2,
-      );
-    }
   }
 
   void _openHabitArchiveConfirmDialog() async {

@@ -109,6 +109,7 @@ class HabitStatusChangerViewModel
   @override
   void handleEvent(AppEvent event) => switch (event) {
     ReloadDataEvent() ||
+    HabitDataChangedEvent() ||
     HabitStatusChangedEvent() ||
     HabitRecordsChangedEvent() ||
     GroupChangedEvent() => null,

@@ -95,6 +95,21 @@ extension on AppEventSubscriptions {
       trace: _kRecordChangedTrace,
     ),
   );
+
+  /// Pushes a [HabitStatusChangedEvent] for batch-group-modify operations.
+  ///
+  /// The affected habits remain [HabitStatus.activated]; only their group
+  /// association changes.  This replaces the previous [pushReloadDisplay]
+  /// in [executeBatchGroupModify] so that both UI refresh and sync trigger
+  /// flow through a single semantically-correct event.
+  void pushBatchGroupChanged(List<HabitUUID> uuids) => push(
+    HabitStatusChangedEvent(
+      msg: "habit_display.batchGroupModify",
+      uuidList: uuids,
+      status: HabitStatus.activated,
+      trace: _kHabitChangedTrace,
+    ),
+  );
 }
 
 extension HabitSummaryDataExntesion on HabitSummaryData {
@@ -776,6 +791,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     HabitStatusChangedEvent() ||
     HabitRecordsChangedEvent() ||
     GroupChangedEvent() => requestReload(clearSnackBar: false),
+    HabitDataChangedEvent() => null,
   };
 
   void _handleReloadData(ReloadDataEvent event) {
@@ -1162,7 +1178,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     _groupCollection = await _groupManager.tryLoadGroupCollection();
     resortData(listen: listen);
     exitEditMode(listen: false);
-    _reloadBridge.eventSubs?.pushReloadDisplay();
+    _reloadBridge.eventSubs?.pushBatchGroupChanged(changedUUIDs);
 
     return changedUUIDs.length;
   }

@@ -31,6 +31,7 @@ import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../logging/logger_message.dart' show AppLoggerMessage;
 import '../../logging/logger_utils.dart';
+import '../../models/app_event.dart';
 import '../../models/app_sync_options.dart';
 import '../../models/app_sync_server.dart';
 import '../../models/app_sync_server_form.dart';
@@ -44,6 +45,7 @@ import '../../utils/app_clock.dart';
 import '../../utils/app_path_provider.dart';
 import '../../utils/async_debouncer.dart';
 import '../support/commons.dart';
+import 'app_event.dart';
 
 part 'app_sync.g.dart';
 
@@ -51,6 +53,7 @@ const kAppSyncDelayDuration1 = Duration(seconds: 1);
 const kAppSyncDelayDuration2 = Duration(milliseconds: 1500);
 const kAppSyncDelayDuration3 = Duration(milliseconds: 2500);
 const kAppSyncOnceDelay = Duration(seconds: 5);
+const _kAppSyncUndoDelay = Duration(seconds: 8);
 
 abstract interface class AppSyncSettingsAccess implements Listenable {
   bool get enabled;
@@ -130,7 +133,8 @@ class AppSyncOwner
         AppSyncSettingsAccess,
         AppSyncStatusSource,
         AppSyncTriggerAccess,
-        AppSyncWorkflowAccess {
+        AppSyncWorkflowAccess,
+        AppEventSubscriber {
   late final AppSyncTaskDispatcher _appSyncTask;
 
   late final CascadingAsyncDebouncer _delayedSyncTrigger;
@@ -145,6 +149,8 @@ class AppSyncOwner
 
   AppSyncPeriodicTimer? _autoSyncTimer;
   bool _clearLogsOnStartup = false;
+
+  AppEventSubscriptions? _eventSubs;
 
   AppSyncOwner() : _passwordStore = const _AppSyncPasswordStore() {
     _appSyncTask = AppSyncTaskDispatcher(this);
@@ -166,6 +172,7 @@ class AppSyncOwner
   void dispose() {
     if (!mounted) return;
     _mounted = false;
+    _eventSubs?.cancelAll();
     _delayedSyncTrigger.cancel();
     _autoSyncTimer?.cancel();
     _appSyncTask.dispose();
@@ -500,6 +507,33 @@ class AppSyncOwner
     );
     _delayedSyncTrigger.exec(delay: delay);
   }
+
+  //#region AppEventSubscriber
+
+  void attachEventBus(AppEventBus bus) {
+    _eventSubs?.cancelAll();
+    _eventSubs = AppEventSubscriptions(this, bus)
+      ..subscribe<HabitDataChangedEvent>()
+      ..subscribe<HabitStatusChangedEvent>()
+      ..subscribe<HabitRecordsChangedEvent>()
+      ..subscribe<GroupChangedEvent>();
+  }
+
+  @override
+  bool shouldReceive(AppEvent event) => true;
+
+  @override
+  void handleEvent(AppEvent event) => switch (event) {
+    HabitDataChangedEvent() ||
+    HabitRecordsChangedEvent() ||
+    GroupChangedEvent() => delayedStartTaskOnce(),
+    HabitStatusChangedEvent() => delayedStartTaskOnce(
+      delay: _kAppSyncUndoDelay,
+    ),
+    ReloadDataEvent() => null,
+  };
+
+  //#endregion
 }
 
 @immutable

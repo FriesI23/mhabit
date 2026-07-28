@@ -29,7 +29,6 @@ import '../../common/consts.dart';
 import '../../common/enums.dart';
 import '../../common/types.dart';
 import '../../extensions/color_extensions.dart';
-import '../../extensions/context_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/app_event.dart';
@@ -197,29 +196,17 @@ class HabitsTabPageState extends State<HabitsTabPage>
   }
 
   void _onHabitStatusChangeConfirmed(
-    List<HabitStatusChangedRecord> recordList, {
-    bool shouldSyncOnce = true,
-  }) {
+    List<HabitStatusChangedRecord> recordList,
+  ) {
     if (!mounted) return;
-    // try sync once
-    if (shouldSyncOnce) {
-      context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce(
-        delay: kAppUndoDialogShowDuration * 2,
-      );
-    }
   }
 
   void _onRecordChangeConfirmed(
     HabitUUID uuid,
     HabitSummaryRecord record, {
     String? reason,
-    bool shouldSyncOnce = true,
   }) {
     if (!mounted) return;
-    // try sync once
-    if (shouldSyncOnce) {
-      context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce();
-    }
   }
 
   void _revertHabitsStatus(List<HabitStatusChangedRecord> recordList) async {
@@ -754,9 +741,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
     );
 
     if (!mounted || count == 0) return;
-    context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce(
-      delay: kAppUndoDialogShowDuration * 2,
-    );
 
     final l10n = L10n.of(context);
     final snackBar = buildSnackBarWithUndo(
@@ -921,7 +905,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
     void finishReorder(Future<void> task) => task
         .then((_) {
           if (!mounted) return;
-          context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce();
         })
         .catchError((Object e, StackTrace s) {
           if (!mounted) return;
