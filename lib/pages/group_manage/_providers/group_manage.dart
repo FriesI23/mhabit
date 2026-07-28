@@ -34,13 +34,38 @@ import '../../../providers/workflow/group_manager.dart';
 import '../../../storage/profile/handlers.dart';
 import '../../../storage/profile_provider.dart';
 
+extension on AppEventSubscriptions {
+  void pushGroupChanged({
+    String? msg,
+    required List<GroupUUID> uuidList,
+    GroupChangeType changeType = GroupChangeType.unknown,
+  }) => push(
+    GroupChangedEvent(
+      msg: msg,
+      uuidList: uuidList,
+      changeType: changeType,
+      trace: const {
+        AppEventPageSource.groupManage: {AppEventFunctionSource.groupChanged},
+      },
+    ),
+  );
+}
+
 /// Page-scoped ViewModel for the Group management page.
 ///
 /// Sort type/direction are nullable session overrides: when null, the effective
 /// value falls back to the global [DisplayGroupModeProfileHandler] config.
+///
+/// Event push is centralized through [AppEventSubscriptions] via the
+/// file-private [_GroupEventPush] extension, keeping trace construction in one
+/// place.
 class GroupManageViewModel extends ChangeNotifier
     with ProfileHandlerLoadedMixin
-    implements ProviderMounted, AppEventLoaded, PopScopeHandler {
+    implements
+        ProviderMounted,
+        AppEventLoaded,
+        PopScopeHandler,
+        AppEventSubscriber {
   GroupManageViewModel({String? initialGroupUUID})
     : _initialGroupUUID = initialGroupUUID;
 
@@ -123,14 +148,33 @@ class GroupManageViewModel extends ChangeNotifier
   List<String> get lastDeletedUUIDs => List.unmodifiable(_lastDeletedUUIDs);
 
   // event subscriptions
-  StreamSubscription<GroupChangedEvent>? _groupEventSub;
-  StreamSubscription<ReloadDataEvent>? _reloadDataSub;
+  AppEventSubscriptions? _subs;
+
+  @override
+  bool shouldReceive(AppEvent event) =>
+      !event.isInTrace(AppEventPageSource.groupManage);
+
+  @override
+  void handleEvent(AppEvent event) => switch (event) {
+    GroupChangedEvent() => _handleGroupChanged(event),
+    ReloadDataEvent() => _handleReloadData(event),
+    HabitStatusChangedEvent() || HabitRecordsChangedEvent() => null,
+  };
+
+  void _handleGroupChanged(GroupChangedEvent event) {
+    appLog.habit.debug("GroupManage.reload", ex: ["GroupChangedEvent", event]);
+    requestReload();
+  }
+
+  void _handleReloadData(ReloadDataEvent event) {
+    appLog.habit.debug("GroupManage.reload", ex: ["ReloadDataEvent", event]);
+    requestReload();
+  }
 
   @override
   void dispose() {
     if (!_mounted) return;
-    _groupEventSub?.cancel();
-    _reloadDataSub?.cancel();
+    _subs?.cancelAll();
     _pageLoad.cancel(logName: "$runtimeType.dispose");
     _mounted = false;
     super.dispose();
@@ -148,18 +192,10 @@ class GroupManageViewModel extends ChangeNotifier
 
   @override
   void updateAppEvent(AppEventBus newAppEvent) {
-    _groupEventSub?.cancel();
-    _reloadDataSub?.cancel();
-    _groupEventSub = newAppEvent.on<GroupChangedEvent>().listen((event) {
-      if (event.isInTrace(AppEventPageSource.groupManage)) return;
-      appLog.habit.debug("GroupManage.reload", ex: ["GroupChangedEvent"]);
-      requestReload();
-    });
-    _reloadDataSub = newAppEvent.on<ReloadDataEvent>().listen((event) {
-      if (event.isInTrace(AppEventPageSource.groupManage)) return;
-      appLog.habit.debug("GroupManage.reload", ex: ["ReloadDataEvent", event]);
-      requestReload();
-    });
+    _subs?.cancelAll();
+    _subs = AppEventSubscriptions(this, newAppEvent)
+      ..subscribe<GroupChangedEvent>()
+      ..subscribe<ReloadDataEvent>();
   }
 
   void requestReload() {
@@ -307,17 +343,27 @@ class GroupManageViewModel extends ChangeNotifier
     _lastDeletedUUIDs = [uuid];
     exitSelectionMode();
     requestReload();
+    _subs?.pushGroupChanged(
+      msg: "group_manage.deleteSingleGroup",
+      uuidList: [uuid],
+      changeType: GroupChangeType.deleted,
+    );
   }
 
   Future<void> deleteSelectedGroups() async {
     final uuids = List<String>.of(_selectedGroupUUIDs);
-    for (final uuid in uuids) {
-      await _groupManager?.deleteGroup(uuid);
-      if (!mounted) return;
-    }
+    final gm = _groupManager;
+    if (gm == null || uuids.isEmpty) return;
+    await gm.deleteGroups(uuids);
+    if (!mounted) return;
     _lastDeletedUUIDs = uuids;
     exitSelectionMode();
     requestReload();
+    _subs?.pushGroupChanged(
+      msg: "group_manage.deleteSelectedGroups",
+      uuidList: uuids,
+      changeType: GroupChangeType.deleted,
+    );
   }
 
   Future<void> undoLastDelete() async {
@@ -326,13 +372,17 @@ class GroupManageViewModel extends ChangeNotifier
     final all = await _groupManager?.loadAllActiveGroups() ?? [];
     if (!mounted) return;
     final lookup = all.map((g) => g.uuid).toSet();
-
-    for (final uuid in uuids) {
-      if (lookup.contains(uuid)) continue;
-      await _groupManager?.restoreGroup(uuid);
+    final toRestore = uuids.where((uuid) => !lookup.contains(uuid)).toList();
+    if (toRestore.isNotEmpty) {
+      await _groupManager?.restoreGroups(toRestore);
       if (!mounted) return;
     }
     requestReload();
+    _subs?.pushGroupChanged(
+      msg: "group_manage.undoLastDelete",
+      uuidList: uuids,
+      changeType: GroupChangeType.created,
+    );
   }
 
   Future<HabitGroupData> createGroup({
@@ -351,6 +401,11 @@ class GroupManageViewModel extends ChangeNotifier
     );
     if (!mounted) return result;
     requestReload();
+    _subs?.pushGroupChanged(
+      msg: "group_manage.createGroup",
+      uuidList: [result.uuid],
+      changeType: GroupChangeType.created,
+    );
     return result;
   }
 
@@ -372,6 +427,11 @@ class GroupManageViewModel extends ChangeNotifier
     );
     if (!mounted) return;
     requestReload();
+    _subs?.pushGroupChanged(
+      msg: "group_manage.updateGroup",
+      uuidList: [uuid],
+      changeType: GroupChangeType.updated,
+    );
   }
 
   /// Persists reorder results after a drag-and-drop completes on the
@@ -398,6 +458,11 @@ class GroupManageViewModel extends ChangeNotifier
     );
 
     notifyListeners();
+    _subs?.pushGroupChanged(
+      msg: "group_manage.onGroupReorderComplete",
+      uuidList: ordered.map((g) => g.uuid).toList(),
+      changeType: GroupChangeType.updated,
+    );
   }
 }
 

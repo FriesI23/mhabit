@@ -17,6 +17,7 @@ import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/app_ui/app_first_day.dart';
+import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/habits_manager.dart';
 import '../../widgets/provider.dart';
 import '_providers/habit_detail.dart';
@@ -38,6 +39,9 @@ class PageProviders extends SingleChildStatelessWidget {
           previous..updateFirstday(value.firstDay),
       post: (t, value, vm) =>
           value.firstDay != vm.firstday ? vm.requestReload() : null,
+    ),
+    ViewModelProxyProvider<AppEventBus, HabitDetailViewModel>(
+      update: (context, value, previous) => previous..updateAppEvent(value),
     ),
   ];
 

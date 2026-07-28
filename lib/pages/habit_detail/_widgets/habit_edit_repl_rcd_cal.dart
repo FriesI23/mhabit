@@ -21,7 +21,6 @@ import '../../../common/consts.dart';
 import '../../../common/types.dart';
 import '../../../extensions/context_extensions.dart';
 import '../../../extensions/custom_color_extensions.dart';
-import '../../../models/app_event.dart';
 import '../../../models/habit_color.dart';
 import '../../../models/habit_daily_record_form.dart';
 import '../../../models/habit_date.dart';
@@ -29,7 +28,6 @@ import '../../../models/habit_detail_chart.dart';
 import '../../../models/habit_form.dart';
 import '../../../models/habit_summary.dart';
 import '../../../providers/app_ui/app_custom_date_format.dart';
-import '../../../providers/workflow/app_event.dart';
 import '../../../providers/workflow/app_sync.dart';
 import '../../../theme/color.dart';
 import '../../../widgets/widgets.dart';
@@ -109,19 +107,11 @@ class _HabitEditReplacementRecordCalendarDialog
     }
     final habitUUID = _vm.habitUUID;
     if (habitUUID != null) {
-      context.read<AppEventBus>().push(
-        HabitRecordsChangedEvents(
-          msg: "habit_detail.calendar._onRecordChangeConfirmed",
-          uuidList: [habitUUID],
-          dateList: [record.date],
-          status: record.status,
-          reason: reason,
-          trace: const {
-            AppEventPageSource.habitDetail: {
-              AppEventFunctionSource.recordChanged,
-            },
-          },
-        ),
+      _vm.onCalendarRecordChanged(
+        uuid: habitUUID,
+        date: record.date,
+        status: record.status,
+        reason: reason,
       );
     }
   }

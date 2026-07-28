@@ -21,7 +21,6 @@ import '../../../extensions/async_extensions.dart';
 import '../../../extensions/custom_color_extensions.dart';
 import '../../../extensions/group_icon_extensions.dart';
 import '../../../l10n/localizations.dart';
-import '../../../models/app_event.dart';
 import '../../../models/habit_color.dart';
 import '../../../models/habit_group.dart';
 import '../../../models/habit_summary.dart';
@@ -120,25 +119,13 @@ Future<void> _handleSaveOnly(
   if (formState == null) return;
   final result = formState.buildResult();
   if (result == null) return;
-  final group = await vm.createGroup(
+  await vm.createGroup(
     name: result.name,
     desc: result.desc,
     icon: result.icon,
     color: result.color,
   );
   if (context.mounted) {
-    context.read<AppEventBus>().push(
-      GroupChangedEvent(
-        msg: "habitDisplay._handleSaveOnly",
-        groupUUID: group.uuid,
-        changeType: GroupChangeType.created,
-        trace: {
-          AppEventPageSource.habitDisplay: {
-            AppEventFunctionSource.groupChanged,
-          },
-        },
-      ),
-    );
     vm.switchToSelectMode();
   }
 }
@@ -181,17 +168,6 @@ Future<void> _handleSaveAndApply(
     color: result.color,
   );
   if (!context.mounted) return;
-
-  context.read<AppEventBus>().push(
-    GroupChangedEvent(
-      msg: "habitDisplay._handleSaveAndApply",
-      groupUUID: group.uuid,
-      changeType: GroupChangeType.created,
-      trace: {
-        AppEventPageSource.habitDisplay: {AppEventFunctionSource.groupChanged},
-      },
-    ),
-  );
 
   Navigator.of(context).pop<GroupModifySelectorResult?>(
     GroupModifySelectorSelected(
@@ -346,7 +322,7 @@ class _GroupModifySelectorScope extends StatelessWidget {
           update: (_, caches, vm) => vm..attachCaches(caches),
         ),
         ViewModelProxyProvider<AppEventBus, HabitGroupModifyViewModel>(
-          update: (_, bus, vm) => vm..attachAppEventBus(bus),
+          update: (_, bus, vm) => vm..updateAppEvent(bus),
         ),
       ],
       child: _GroupInitLoader(child: Builder(builder: bodyBuilder)),

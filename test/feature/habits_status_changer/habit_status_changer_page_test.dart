@@ -23,6 +23,7 @@ import 'package:mhabit/providers/app_ui/app_custom_date_format.dart';
 import 'package:mhabit/providers/app_ui/app_developer.dart';
 import 'package:mhabit/providers/app_ui/app_first_day.dart';
 import 'package:mhabit/providers/support/global.dart';
+import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:provider/provider.dart';
@@ -59,8 +60,10 @@ void main() {
     final firstDay = AppFirstDayViewModel()..updateProfile(profile);
     final compactUi = AppCompactUISwitcherViewModel()..updateProfile(profile);
     final developer = AppDeveloperViewModel(global: Global());
+    final appEvent = AppEventBus();
 
     addTearDown(() {
+      appEvent.dispose();
       developer.dispose();
       compactUi.dispose();
       firstDay.dispose();
@@ -81,6 +84,7 @@ void main() {
             value: compactUi,
           ),
           ChangeNotifierProvider<AppDeveloperViewModel>.value(value: developer),
+          ChangeNotifierProvider<AppEventBus>.value(value: appEvent),
         ],
         child: const MaterialApp(
           home: HabitsStatusChangerPage(

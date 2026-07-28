@@ -26,6 +26,7 @@ import '../../../common/utils.dart';
 import '../../../extensions/iterable_extensions.dart';
 import '../../../logging/helper.dart';
 import '../../../logging/logger_stack.dart';
+import '../../../models/app_event.dart';
 import '../../../models/habit_daily_record_form.dart';
 import '../../../models/habit_date.dart';
 import '../../../models/habit_form.dart';
@@ -34,6 +35,7 @@ import '../../../models/habit_summary.dart';
 import '../../../pages/common/widgets.dart';
 import '../../../providers/support/commons.dart';
 import '../../../providers/support/page_load_runtime.dart';
+import '../../../providers/workflow/app_event.dart';
 import '../../../providers/workflow/habits_manager.dart';
 
 part 'habit_status_changer.g.dart';
@@ -60,7 +62,11 @@ enum RecordStatusChangerStatus {
 
 class HabitStatusChangerViewModel
     with ChangeNotifier
-    implements ProviderMounted, PopScopeHandler {
+    implements
+        ProviderMounted,
+        PopScopeHandler,
+        AppEventLoaded,
+        AppEventSubscriber {
   // data
   final List<HabitUUID> _selectedUUIDList;
   late HabitStatusChangerForm _form;
@@ -74,6 +80,7 @@ class HabitStatusChangerViewModel
   // sync from setting
   int _firstday = defaultFirstDay;
   late HabitStatusChangerAccess _access;
+  AppEventSubscriptions? _eventSubs;
 
   HabitStatusChangerViewModel({required List<HabitUUID> uuidList})
     : _selectedUUIDList = uuidList {
@@ -83,6 +90,29 @@ class HabitStatusChangerViewModel
   void attachAccess(HabitStatusChangerAccess newAccess) {
     _access = newAccess;
   }
+
+  @override
+  void updateAppEvent(AppEventBus newAppEvent) {
+    _eventSubs?.cancelAll();
+    _eventSubs = AppEventSubscriptions(this, newAppEvent);
+    // NOTE: This VM is an event producer only — it pushes events
+    // via _eventSubs but does not react to any incoming events.
+    // handleEvent returns null for all types, so no subscribe<>()
+    // calls are needed. shouldReceive / handleEvent exist only
+    // to satisfy the AppEventSubscriber contract.
+  }
+
+  @override
+  bool shouldReceive(AppEvent event) =>
+      !event.isInTrace(AppEventPageSource.habitStatusChanger);
+
+  @override
+  void handleEvent(AppEvent event) => switch (event) {
+    ReloadDataEvent() ||
+    HabitStatusChangedEvent() ||
+    HabitRecordsChangedEvent() ||
+    GroupChangedEvent() => null,
+  };
 
   bool get hasLoad => _pageLoad.hasLoad;
 
@@ -326,6 +356,17 @@ class HabitStatusChangerViewModel
     if (!mounted) return 0;
 
     requestReloadData();
+    _eventSubs?.push(
+      const ReloadDataEvent(
+        msg: "habit_status_changer.confirm.pressed",
+        exiEditMode: true,
+        trace: {
+          AppEventPageSource.habitStatusChanger: {
+            AppEventFunctionSource.recordChanged,
+          },
+        },
+      ),
+    );
     if (listen) notifyListeners();
     return records.length;
   }
@@ -345,6 +386,7 @@ class HabitStatusChangerViewModel
   @override
   void dispose() {
     if (!_mounted) return;
+    _eventSubs?.cancelAll();
     _pageLoad.cancel(logName: "$runtimeType._cancelLoading");
     super.dispose();
     _mounted = false;

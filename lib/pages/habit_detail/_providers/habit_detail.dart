@@ -23,6 +23,7 @@ import '../../../common/types.dart';
 import '../../../common/utils.dart';
 import '../../../logging/helper.dart';
 import '../../../logging/logger_stack.dart';
+import '../../../models/app_event.dart';
 import '../../../models/habit_color.dart';
 import '../../../models/habit_daily_record_form.dart';
 import '../../../models/habit_date.dart';
@@ -37,13 +38,67 @@ import '../../../models/habit_summary.dart';
 import '../../../providers/support/commons.dart';
 import '../../../providers/support/page_load_runtime.dart';
 import '../../../providers/support/utils.dart';
+import '../../../providers/workflow/app_event.dart';
 import '../../../providers/workflow/habits_manager.dart';
 import '../../../storage/db/handlers/habit.dart';
+import '../../habits_display/_providers/habit_summary.dart' as habit_summary;
 
 const defaultHabitDetailFreqChardCombine = HabitDetailFreqChartCombine.monthly;
 const defaultHabitDetailScoreChartCombine = HabitDetailScoreChartCombine.daily;
 
-class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
+extension on AppEventSubscriptions {
+  static const _kHabitChangedTrace = {
+    AppEventPageSource.habitDetail: {AppEventFunctionSource.habitChanged},
+  };
+  static const _kRecordChangedTrace = {
+    AppEventPageSource.habitDetail: {AppEventFunctionSource.recordChanged},
+  };
+
+  void pushEditCompleted() => push(
+    const ReloadDataEvent(
+      msg: "habit_detail.edit.completed",
+      trace: _kHabitChangedTrace,
+    ),
+  );
+
+  void pushRecordEdited() => push(
+    const ReloadDataEvent(
+      msg: "habit_detail.record.edited",
+      trace: _kRecordChangedTrace,
+    ),
+  );
+
+  void pushStatusChanged({
+    required HabitUUID uuid,
+    required HabitStatus status,
+  }) => push(
+    HabitStatusChangedEvent(
+      msg: "habit_detail.status.changed",
+      uuidList: [uuid],
+      status: status,
+      trace: _kHabitChangedTrace,
+    ),
+  );
+
+  void pushRecordChanged({
+    required HabitUUID uuid,
+    required HabitRecordDate date,
+    required HabitRecordStatus status,
+    String? reason,
+  }) => push(
+    HabitRecordsChangedEvent(
+      msg: "habit_detail.record.changed",
+      uuidList: [uuid],
+      dateList: [date],
+      status: status,
+      reason: reason,
+      trace: _kRecordChangedTrace,
+    ),
+  );
+}
+
+class HabitDetailViewModel extends ChangeNotifier
+    implements ProviderMounted, AppEventLoaded, AppEventSubscriber {
   // data
   HabitDetailData? _habitDetailData;
   final _heatmapDateToColorMap = <HabitDate, num>{};
@@ -59,8 +114,32 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
   // sync from setting
   int _firstday = defaultFirstDay;
   late HabitDetailAccess _access;
+  AppEventSubscriptions? _eventSubs;
 
   HabitDetailViewModel();
+
+  @override
+  void updateAppEvent(AppEventBus newAppEvent) {
+    _eventSubs?.cancelAll();
+    _eventSubs = AppEventSubscriptions(this, newAppEvent);
+    // NOTE: This VM is an event producer only — it pushes events
+    // via push*() helpers but does not react to any incoming events.
+    // handleEvent returns null for all types, so no subscribe<>()
+    // calls are needed. shouldReceive / handleEvent exist only
+    // to satisfy the AppEventSubscriber contract.
+  }
+
+  @override
+  bool shouldReceive(AppEvent event) =>
+      !event.isInTrace(AppEventPageSource.habitDetail);
+
+  @override
+  void handleEvent(AppEvent event) => switch (event) {
+    ReloadDataEvent() ||
+    HabitStatusChangedEvent() ||
+    HabitRecordsChangedEvent() ||
+    GroupChangedEvent() => null,
+  };
 
   @override
   bool get mounted => _mounted;
@@ -135,6 +214,7 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
   @override
   void dispose() {
     if (!_mounted) return;
+    _eventSubs?.cancelAll();
     _pageLoad.cancel(logName: "$runtimeType._cancelLoading");
     super.dispose();
     _mounted = false;
@@ -456,47 +536,121 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
     );
   }
 
+  /// Notifies downstream that habit data has changed after an edit.
+  ///
+  /// When [summary] is mounted, delegates to [habit_summary.HabitDetailAdapter.onHabitDataChanged];
+  /// otherwise fires [ReloadDataEvent] directly.
+  void onEditCompleted({habit_summary.HabitDetailAdapter? summary}) {
+    requestReload();
+    if (summary?.mounted != true) {
+      _eventSubs?.pushEditCompleted();
+    } else {
+      summary!.onHabitDataChanged();
+    }
+  }
+
+  /// Notifies that record data has changed after the calendar dialog.
+  ///
+  /// Same branching as [onEditCompleted] but with
+  /// [AppEventFunctionSource.recordChanged].
+  void onEditRecordCompleted({habit_summary.HabitDetailAdapter? summary}) {
+    requestReload();
+    if (summary?.mounted != true) {
+      _eventSubs?.pushRecordEdited();
+    } else {
+      summary!.onHabitDataChanged();
+    }
+  }
+
+  /// Fires [HabitRecordsChangedEvent] after a single record change from the
+  /// replacement calendar widget.
+  void onCalendarRecordChanged({
+    required HabitUUID uuid,
+    required HabitRecordDate date,
+    required HabitRecordStatus status,
+    String? reason,
+  }) => _eventSubs?.pushRecordChanged(
+    uuid: uuid,
+    date: date,
+    status: status,
+    reason: reason,
+  );
+
   Future<HabitStatusChangedRecord?> onConfirmToArchiveHabit({
     bool listen = true,
+    habit_summary.HabitDetailAdapter? summary,
   }) async {
+    if (summary?.mounted == true) {
+      final habitUUID = this.habitUUID;
+      if (habitUUID == null) return null;
+      final result = await summary!.onConfirmToArchiveHabit(habitUUID);
+      if (listen) requestReload();
+      return result;
+    }
     appLog.habit.info(
       "$runtimeType.onConfirmToArchiveHabit",
       ex: [listen, habitDetailData?.data],
     );
-    if (habitDetailData?.data.status == HabitStatus.deleted) {
-      return null;
-    }
+    if (habitDetailData?.data.status == HabitStatus.deleted) return null;
     final result = await _changeHabitsStatus(HabitStatus.archived);
+    if (result != null) {
+      _eventSubs?.pushStatusChanged(
+        uuid: result.habitUUID,
+        status: result.newStatus,
+      );
+    }
     if (listen) requestReload();
     return result;
   }
 
   Future<HabitStatusChangedRecord?> onConfirmToUnarchiveHabit({
     bool listen = true,
+    habit_summary.HabitDetailAdapter? summary,
   }) async {
+    if (summary?.mounted == true) {
+      final habitUUID = this.habitUUID;
+      if (habitUUID == null) return null;
+      final result = await summary!.onConfirmToUnarchiveHabit(habitUUID);
+      if (listen) requestReload();
+      return result;
+    }
     appLog.habit.info(
       "$runtimeType.onConfirmToUnarchiveHabit",
       ex: [listen, habitDetailData?.data],
     );
-    if (habitDetailData?.data.status == HabitStatus.deleted) {
-      return null;
-    }
+    if (habitDetailData?.data.status == HabitStatus.deleted) return null;
     final result = await _changeHabitsStatus(HabitStatus.activated);
+    if (result != null) {
+      _eventSubs?.pushStatusChanged(
+        uuid: result.habitUUID,
+        status: result.newStatus,
+      );
+    }
     if (listen) requestReload();
     return result;
   }
 
   Future<HabitStatusChangedRecord?> onConfirmToDeleteHabit({
     bool listen = false,
+    habit_summary.HabitDetailAdapter? summary,
   }) async {
+    if (summary?.mounted == true) {
+      final habitUUID = this.habitUUID;
+      if (habitUUID == null) return null;
+      return summary!.onConfirmToDeleteHabit(habitUUID);
+    }
     appLog.habit.info(
       "$runtimeType.onConfirmToDeleteHabit",
       ex: [listen, habitDetailData?.data],
     );
-    if (habitDetailData?.data.status == HabitStatus.deleted) {
-      return null;
-    }
+    if (habitDetailData?.data.status == HabitStatus.deleted) return null;
     final result = await _changeHabitsStatus(HabitStatus.deleted);
+    if (result != null) {
+      _eventSubs?.pushStatusChanged(
+        uuid: result.habitUUID,
+        status: result.newStatus,
+      );
+    }
     if (listen) requestReload();
     return result;
   }

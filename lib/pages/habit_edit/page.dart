@@ -23,7 +23,6 @@ import '../../extensions/context_extensions.dart';
 import '../../extensions/num_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
-import '../../models/app_event.dart';
 import '../../models/habit_color.dart';
 import '../../models/habit_daily_goal.dart';
 import '../../models/habit_display.dart';
@@ -33,9 +32,7 @@ import '../../models/habit_reminder.dart';
 import '../../providers/app_ui/app_caches.dart';
 import '../../providers/app_ui/app_developer.dart';
 import '../../providers/app_ui/app_first_day.dart';
-import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_sync.dart';
-import '../../providers/workflow/group_manager.dart';
 import '../../reminders/notification_channel.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../widgets/widgets.dart';
@@ -267,21 +264,6 @@ class _PageState extends State<_Page> {
     final result = await formvm.saveHabit();
     if (!mounted) return;
     if (mounted && result != null) {
-      // fire event
-      context.read<AppEventBus>().push(switch (formvm.editMode) {
-        HabitDisplayEditMode.create => const ReloadDataEvent(
-          msg: "habit_edit._onSaveButtonPressed.create",
-          trace: {
-            AppEventPageSource.habitEdit: {AppEventFunctionSource.habitCreated},
-          },
-        ),
-        HabitDisplayEditMode.edit => const ReloadDataEvent(
-          msg: "habit_edit._onSaveButtonPressed.edit",
-          trace: {
-            AppEventPageSource.habitEdit: {AppEventFunctionSource.habitChanged},
-          },
-        ),
-      });
       // try sync once
       context.maybeRead<AppSyncTriggerAccess>()?.delayedStartTaskOnce();
     }
@@ -759,21 +741,9 @@ class _GroupFieldState extends State<_GroupField> {
       context.read<HabitFormViewModel>().groupId = id;
     }
 
-    Future<String> onCreateGroup(String name) async {
-      final groupManager = context.read<GroupManager>();
-      final groupUuid = (await groupManager.createGroup(name: name)).uuid;
-      if (!context.mounted) return groupUuid;
-      context.read<AppEventBus>().push(
-        GroupChangedEvent(
-          msg: "habit_edit.onCreateGroup",
-          groupUUID: groupUuid,
-          changeType: GroupChangeType.created,
-          trace: {
-            AppEventPageSource.habitEdit: {AppEventFunctionSource.groupChanged},
-          },
-        ),
-      );
-      return groupUuid;
+    Future<String> createNewGroup(String name) async {
+      final vm = context.read<HabitFormViewModel>();
+      return vm.createGroup(name);
     }
 
     final (hasLoaded, groupId) = context
@@ -786,7 +756,7 @@ class _GroupFieldState extends State<_GroupField> {
       currentGroupId: groupId,
       loading: !hasLoaded,
       onSelected: onGroupSelected,
-      onCreateGroup: onCreateGroup,
+      onCreateGroup: createNewGroup,
     );
   }
 }

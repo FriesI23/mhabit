@@ -40,8 +40,30 @@ import '../../../providers/workflow/habits_manager.dart';
 import '../../../storage/db/handlers/habit.dart';
 import 'habits_display_reload_bridge.dart';
 
+extension on AppEventSubscriptions {
+  static const _kRecordTrace = {
+    AppEventPageSource.habitToday: {AppEventFunctionSource.recordChanged},
+  };
+
+  void pushRecordChanged({
+    required HabitUUID uuid,
+    required HabitRecordDate date,
+    required HabitRecordStatus status,
+    String? reason,
+  }) => push(
+    HabitRecordsChangedEvent(
+      msg: "habit_today.record.changed",
+      uuidList: [uuid],
+      dateList: [date],
+      status: status,
+      reason: reason,
+      trace: _kRecordTrace,
+    ),
+  );
+}
+
 class HabitsTodayViewModel extends ChangeNotifier
-    implements ProviderMounted, AppEventLoaded {
+    implements ProviderMounted, AppEventLoaded, AppEventSubscriber {
   static const _loadHabitDataCollectionColumns = [
     HabitDBCellKey.id,
     HabitDBCellKey.uuid,
@@ -273,30 +295,53 @@ class HabitsTodayViewModel extends ChangeNotifier
   //#region: app event
   @override
   void updateAppEvent(AppEventBus newAppEvent) {
-    _reloadBridge.updateAppEvent(
-      newAppEvent,
-      onReloadData: (event) {
-        if (event.isInTrace(AppEventPageSource.habitToday)) return;
-        appLog.habit.debug("HabitsTody", ex: ["app event triggered", event]);
-        requestReload();
-      },
-      onHabitStatusChanged: (event) {
-        if (event.isInTrace(AppEventPageSource.habitToday)) return;
-        appLog.habit.debug("HabitsTody", ex: ["app event triggered", event]);
-        requestReload();
-      },
-      onHabitRecordsChanged: (event) {
-        if (event.isInTrace(AppEventPageSource.habitToday)) return;
-        final now = HabitDate.now();
-        if (!event.dateList.contains(now)) return;
-        final allHabitCheckedIn = event.uuidList
-            .map((e) => getHabit(e)?.getRecordByDate(now))
-            .every((e) => e != null);
-        if (allHabitCheckedIn) return;
-        appLog.habit.debug("HabitsTody", ex: ["app event triggered", event]);
-        requestReload();
-      },
+    _reloadBridge.updateAppEvent(newAppEvent, this);
+    _reloadBridge.eventSubs
+      ?..subscribe<ReloadDataEvent>()
+      ..subscribe<HabitStatusChangedEvent>()
+      ..subscribe<HabitRecordsChangedEvent>();
+  }
+
+  @override
+  bool shouldReceive(AppEvent event) =>
+      !event.isInTrace(AppEventPageSource.habitToday);
+
+  @override
+  void handleEvent(AppEvent event) => switch (event) {
+    ReloadDataEvent() => _handleReloadData(event),
+    HabitStatusChangedEvent() => _handleHabitStatusChanged(event),
+    HabitRecordsChangedEvent() => _handleRecordsChanged(event),
+    GroupChangedEvent() => null,
+  };
+
+  void _handleReloadData(ReloadDataEvent event) {
+    appLog.habit.debug(
+      "HabitsTody",
+      ex: ["reload data event triggered", event],
     );
+    requestReload();
+  }
+
+  void _handleHabitStatusChanged(HabitStatusChangedEvent event) {
+    appLog.habit.debug(
+      "HabitsTody",
+      ex: ["habit status changed event triggered", event],
+    );
+    requestReload();
+  }
+
+  void _handleRecordsChanged(HabitRecordsChangedEvent event) {
+    final now = HabitDate.now();
+    if (!event.dateList.contains(now)) return;
+    final allHabitCheckedIn = event.uuidList
+        .map((e) => getHabit(e)?.getRecordByDate(now))
+        .every((e) => e != null);
+    if (allHabitCheckedIn) return;
+    appLog.habit.debug(
+      "HabitsTody",
+      ex: ["record changed event triggered", event],
+    );
+    requestReload();
   }
   //#endregion
 
@@ -397,6 +442,12 @@ class HabitsTodayViewModel extends ChangeNotifier
     _resortData();
     _removeHabitExpandStatus(uuid);
     if (listen) notifyListeners();
+    _reloadBridge.eventSubs?.pushRecordChanged(
+      uuid: uuid,
+      date: result.data.date,
+      status: result.data.status,
+      reason: reason,
+    );
     return result.data;
   }
 
@@ -434,6 +485,11 @@ class HabitsTodayViewModel extends ChangeNotifier
     _resortData();
     _removeHabitExpandStatus(uuid);
     if (listen) notifyListeners();
+    _reloadBridge.eventSubs?.pushRecordChanged(
+      uuid: uuid,
+      date: result.data.date,
+      status: result.data.status,
+    );
     return result.data;
   }
   //#endregion

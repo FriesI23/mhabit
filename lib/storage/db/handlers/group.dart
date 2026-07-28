@@ -91,6 +91,31 @@ class GroupDBHelper extends DBHelperHandler {
     });
   }
 
+  /// Batch-update group status for all [uuids] in a single exclusive
+  /// transaction. Use [status] = 2 for soft-delete, 1 for restore.
+  Future<void> updateGroupsStatus(List<String> uuids, int status) async {
+    if (uuids.isEmpty) return;
+    await db.transaction((db) async {
+      final batch = db.batch();
+      for (final uuid in uuids) {
+        batch.update(
+          table,
+          {GroupDBCellKey.status: status},
+          where: "${GroupDBCellKey.uuid} = ?",
+          whereArgs: [uuid],
+        );
+      }
+      batch.rawUpdate(
+        CustomSql.increaseMultiGroupsSyncDirtySql(
+          count: uuids.length,
+          conflictAlgorithm: ConflictAlgorithm.rollback,
+        ),
+        uuids,
+      );
+      await batch.commit();
+    }, exclusive: true);
+  }
+
   Future<List<GroupDBCell>> loadAllActiveGroups() async {
     final result = await db.query(
       table,

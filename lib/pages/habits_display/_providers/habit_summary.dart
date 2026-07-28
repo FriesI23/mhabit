@@ -51,6 +51,52 @@ import 'habits_display_reload_bridge.dart';
 
 part 'habit_summary.g.dart';
 
+extension on AppEventSubscriptions {
+  static const _kHabitChangedTrace = {
+    AppEventPageSource.habitDisplay: {AppEventFunctionSource.habitChanged},
+  };
+  static const _kRecordChangedTrace = {
+    AppEventPageSource.habitDisplay: {AppEventFunctionSource.recordChanged},
+  };
+
+  void pushReloadDisplay({bool? clearSnackBar}) => push(
+    ReloadDataEvent(
+      msg: "habit_display.reload.data",
+      clearSnackBar: clearSnackBar ?? false,
+      trace: _kHabitChangedTrace,
+    ),
+  );
+
+  void pushHabitStatusChanged(List<HabitStatusChangedRecord> records) {
+    final grouped = records.groupListsBy((r) => r.newStatus);
+    for (final entry in grouped.entries) {
+      push(
+        HabitStatusChangedEvent(
+          msg: "habit_display.status.changed",
+          uuidList: entry.value.map((r) => r.habitUUID).toList(),
+          status: entry.key,
+          trace: _kHabitChangedTrace,
+        ),
+      );
+    }
+  }
+
+  void pushHabitRecordChanged(
+    HabitUUID uuid,
+    HabitSummaryRecord record, {
+    String? reason,
+  }) => push(
+    HabitRecordsChangedEvent(
+      msg: "habit_display.record.changed",
+      uuidList: [uuid],
+      dateList: [record.date],
+      status: record.status,
+      reason: reason,
+      trace: _kRecordChangedTrace,
+    ),
+  );
+}
+
 extension HabitSummaryDataExntesion on HabitSummaryData {
   HabitDailyGoal getEffectiveDailyValue(HabitRecordDate date) {
     final record = getRecordByDate(date);
@@ -63,7 +109,11 @@ extension HabitSummaryDataExntesion on HabitSummaryData {
 
 class HabitSummaryViewModel extends ChangeNotifier
     with PinnedAppbarMixin
-    implements ProviderMounted, AppEventLoaded, PopScopeHandler {
+    implements
+        ProviderMounted,
+        AppEventLoaded,
+        PopScopeHandler,
+        AppEventSubscriber {
   // data
   final _data = HabitSummaryDataCollection();
   var _sortableCache = const _HabitsSortableCache(
@@ -89,7 +139,6 @@ class HabitSummaryViewModel extends ChangeNotifier
   final _reloadBridge = HabitsDisplayReloadBridge();
   late GroupManager _groupManager;
   GroupCollection? _groupCollection;
-  StreamSubscription<AppEvent>? _groupEventSubscription;
   final Set<String?> _collapsedGroupUUIDs = {};
   // listenable
   final StreamController<Duration?> _scrollCalendarToStartController =
@@ -210,7 +259,6 @@ class HabitSummaryViewModel extends ChangeNotifier
   @override
   void dispose() {
     if (!_mounted) return;
-    _groupEventSubscription?.cancel();
     _reloadBridge.dispose();
     _scrollCalendarToStartController.close();
     _pageLoad.cancel(logName: "$runtimeType._cancelLoading");
@@ -710,39 +758,38 @@ class HabitSummaryViewModel extends ChangeNotifier
   //#region: app event
   @override
   void updateAppEvent(AppEventBus newAppEvent) {
-    _groupEventSubscription?.cancel();
-    _groupEventSubscription = newAppEvent.on<GroupChangedEvent>().listen((_) {
-      requestReload(clearSnackBar: false);
-    });
-
-    _reloadBridge.updateAppEvent(
-      newAppEvent,
-      onReloadData: (event) {
-        if (event.isInTrace(AppEventPageSource.habitDisplay)) return;
-        if (event.isInTrace(AppEventPageSource.habitEdit)) {
-          appLog.habit.debug(
-            "HabitSummary.skipped",
-            ex: ["app event triggered", event],
-          );
-          return;
-        }
-        appLog.habit.debug("HabitSummary", ex: ["app event triggered", event]);
-        if (event.exiEditMode) exitEditMode();
-        requestReload(clearSnackBar: event.clearSnackBar);
-      },
-      onHabitStatusChanged: (event) {
-        if (event.isInTrace(AppEventPageSource.habitDisplay)) return;
-        appLog.habit.debug("HabitSummary", ex: ["app event triggered", event]);
-        requestReload(clearSnackBar: false);
-      },
-      onHabitRecordsChanged: (event) {
-        if (event.isInTrace(AppEventPageSource.habitDisplay)) return;
-        appLog.habit.debug("HabitSummary", ex: ["app event triggered", event]);
-        requestReload(clearSnackBar: false);
-      },
-    );
+    _reloadBridge.updateAppEvent(newAppEvent, this);
+    _reloadBridge.eventSubs
+      ?..subscribe<GroupChangedEvent>()
+      ..subscribe<ReloadDataEvent>()
+      ..subscribe<HabitStatusChangedEvent>()
+      ..subscribe<HabitRecordsChangedEvent>();
   }
-  //#endregion
+
+  @override
+  bool shouldReceive(AppEvent event) =>
+      !event.isInTrace(AppEventPageSource.habitDisplay);
+
+  @override
+  void handleEvent(AppEvent event) => switch (event) {
+    ReloadDataEvent() => _handleReloadData(event),
+    HabitStatusChangedEvent() ||
+    HabitRecordsChangedEvent() ||
+    GroupChangedEvent() => requestReload(clearSnackBar: false),
+  };
+
+  void _handleReloadData(ReloadDataEvent event) {
+    if (event.isInTrace(AppEventPageSource.habitEdit)) {
+      appLog.habit.debug(
+        "HabitSummary.skipped",
+        ex: ["app event triggered", event],
+      );
+      return;
+    }
+    appLog.habit.debug("HabitSummary", ex: ["app event triggered", event]);
+    if (event.exiEditMode) exitEditMode();
+    requestReload(clearSnackBar: event.clearSnackBar);
+  }
 
   //#region actions
   Future<HabitSummaryRecord?> changeRecordStatus(
@@ -772,6 +819,7 @@ class HabitSummaryViewModel extends ChangeNotifier
 
     _updateHabitAutoCompleteStatistics(data);
     if (listen) notifyListeners();
+    _reloadBridge.eventSubs?.pushHabitRecordChanged(habitUUID, result.data);
     return result.data;
   }
 
@@ -807,6 +855,7 @@ class HabitSummaryViewModel extends ChangeNotifier
 
     _updateHabitAutoCompleteStatistics(data);
     if (listen) notifyListeners();
+    _reloadBridge.eventSubs?.pushHabitRecordChanged(habitUUID, result.data);
     return result.data;
   }
 
@@ -843,6 +892,11 @@ class HabitSummaryViewModel extends ChangeNotifier
 
     _updateHabitAutoCompleteStatistics(data);
     if (listen) notifyListeners();
+    _reloadBridge.eventSubs?.pushHabitRecordChanged(
+      habitUUID,
+      result.data,
+      reason: newReason,
+    );
     return result.data;
   }
 
@@ -893,6 +947,8 @@ class HabitSummaryViewModel extends ChangeNotifier
   Future<void> onHabitReorderComplate(int index, int dropIndex) async {
     _applyHabitReorder(index, dropIndex);
     await _writeChangedSortPositionToDB(fromIndex: index, toIndex: dropIndex);
+    exitEditMode(listen: false);
+    _reloadBridge.eventSubs?.pushReloadDisplay();
   }
 
   Future<void> onCrossGroupHabitMove(
@@ -937,6 +993,8 @@ class HabitSummaryViewModel extends ChangeNotifier
       await _access.updateHabitGroupIds([movedUUID], [targetGroupUUID]);
     }
     resortData();
+    exitEditMode(listen: false);
+    _reloadBridge.eventSubs?.pushReloadDisplay();
   }
 
   Future<List<HabitStatusChangedRecord>> _changeHabitsStatus(
@@ -985,6 +1043,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     }
 
     resortData();
+    _reloadBridge.eventSubs?.pushHabitStatusChanged(recordList);
   }
 
   Future<List<HabitStatusChangedRecord>?> archivedSelectedHabits() async {
@@ -1012,6 +1071,7 @@ class HabitSummaryViewModel extends ChangeNotifier
 
     resortData(listen: false);
     exitEditMode();
+    _reloadBridge.eventSubs?.pushHabitStatusChanged(result);
     return result;
   }
 
@@ -1040,6 +1100,7 @@ class HabitSummaryViewModel extends ChangeNotifier
 
     resortData(listen: false);
     exitEditMode();
+    _reloadBridge.eventSubs?.pushHabitStatusChanged(result);
     return result;
   }
 
@@ -1068,6 +1129,7 @@ class HabitSummaryViewModel extends ChangeNotifier
 
     resortData(listen: false);
     exitEditMode();
+    _reloadBridge.eventSubs?.pushHabitStatusChanged(result);
     return result;
   }
 
@@ -1097,7 +1159,10 @@ class HabitSummaryViewModel extends ChangeNotifier
         }
       }
     }
+    _groupCollection = await _groupManager.tryLoadGroupCollection();
     resortData(listen: listen);
+    exitEditMode(listen: false);
+    _reloadBridge.eventSubs?.pushReloadDisplay();
 
     return changedUUIDs.length;
   }
@@ -1134,6 +1199,7 @@ class HabitSummaryViewModel extends ChangeNotifier
       }
     }
     resortData(listen: listen);
+    if (revertUUIDs.isNotEmpty) _reloadBridge.eventSubs?.pushReloadDisplay();
     return true;
   }
   //#endregion

@@ -30,6 +30,21 @@ import '../../../providers/workflow/app_event.dart';
 import '../../../providers/workflow/group_manager.dart';
 import '../helpers.dart';
 
+extension on AppEventSubscriptions {
+  static const _kGroupChangedTrace = {
+    AppEventPageSource.habitDisplay: {AppEventFunctionSource.groupChanged},
+  };
+
+  void pushGroupCreated(GroupUUID uuid) => push(
+    GroupChangedEvent(
+      msg: "habit_display.group.created",
+      uuidList: [uuid],
+      changeType: GroupChangeType.created,
+      trace: _kGroupChangedTrace,
+    ),
+  );
+}
+
 /// Dialog-scoped ViewModel for the habit-group batch-modify selector.
 ///
 /// Owns group-list loading, selection state, skip-confirm persistence, and
@@ -41,7 +56,11 @@ import '../helpers.dart';
 /// when groups are created / updated / deleted elsewhere while the dialog
 /// is open (same pattern as [GroupManageViewModel]).
 class HabitGroupModifyViewModel extends ChangeNotifier
-    implements ProviderMounted, PopScopeHandler {
+    implements
+        ProviderMounted,
+        AppEventLoaded,
+        PopScopeHandler,
+        AppEventSubscriber {
   final List<HabitSummaryData> _selectedData;
 
   GroupManager? _groupManager;
@@ -50,8 +69,7 @@ class HabitGroupModifyViewModel extends ChangeNotifier
   //#region lifecycle
 
   bool _mounted = true;
-  StreamSubscription<GroupChangedEvent>? _groupEventSub;
-  StreamSubscription<ReloadDataEvent>? _reloadDataSub;
+  AppEventSubscriptions? _subs;
   final _pageLoad = PageLoadRuntime();
   bool _nextRefreshForceReload = false;
 
@@ -71,8 +89,7 @@ class HabitGroupModifyViewModel extends ChangeNotifier
   @override
   void dispose() {
     if (!_mounted) return;
-    _groupEventSub?.cancel();
-    _reloadDataSub?.cancel();
+    _subs?.cancelAll();
     _pageLoad.cancel(logName: "$runtimeType.dispose");
     _mounted = false;
     super.dispose();
@@ -132,22 +149,33 @@ class HabitGroupModifyViewModel extends ChangeNotifier
   /// stays current while the dialog is open.
   ///
   /// Mirrors [GroupManageViewModel.updateAppEvent].
-  void attachAppEventBus(AppEventBus bus) {
-    _groupEventSub?.cancel();
-    _reloadDataSub?.cancel();
-    _groupEventSub = bus.on<GroupChangedEvent>().listen((event) {
-      if (event.isInTrace(AppEventPageSource.habitDisplay)) return;
-      appLog.habit.debug("HabitGroupModify.reload", ex: ["GroupChangedEvent"]);
-      requestReload();
-    });
-    _reloadDataSub = bus.on<ReloadDataEvent>().listen((event) {
-      if (event.isInTrace(AppEventPageSource.habitDisplay)) return;
-      appLog.habit.debug(
-        "HabitGroupModify.reload",
-        ex: ["ReloadDataEvent", event],
-      );
-      requestReload();
-    });
+  @override
+  void updateAppEvent(AppEventBus newAppEvent) {
+    _subs?.cancelAll();
+    _subs = AppEventSubscriptions(this, newAppEvent)
+      ..subscribe<GroupChangedEvent>()
+      ..subscribe<ReloadDataEvent>();
+  }
+
+  @override
+  bool shouldReceive(AppEvent event) =>
+      !event.isInTrace(AppEventPageSource.habitDisplay);
+
+  @override
+  void handleEvent(AppEvent event) => switch (event) {
+    GroupChangedEvent() => _handleGroupChanged(),
+    ReloadDataEvent() => _handleReloadData(),
+    HabitStatusChangedEvent() || HabitRecordsChangedEvent() => null,
+  };
+
+  void _handleGroupChanged() {
+    appLog.habit.debug("HabitGroupModify.reload", ex: ["GroupChangedEvent"]);
+    requestReload();
+  }
+
+  void _handleReloadData() {
+    appLog.habit.debug("HabitGroupModify.reload", ex: ["ReloadDataEvent"]);
+    requestReload();
   }
 
   void requestReload() {
@@ -207,6 +235,7 @@ class HabitGroupModifyViewModel extends ChangeNotifier
     if (!mounted) return result;
     _selectedGroupId = result.uuid;
     requestReload();
+    _subs?.pushGroupCreated(result.uuid);
     return result;
   }
 
