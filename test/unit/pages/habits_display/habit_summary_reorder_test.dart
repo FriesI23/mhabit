@@ -200,7 +200,7 @@ void main() {
 
       await vm.loadData(listen: false);
       vm.updateHabitDisplayFilter(const HabitsDisplayFilter.withDefault());
-      vm.resortData();
+      await vm.resortData();
 
       // before
       expect(_habitUuids(vm), ['a', 'b', 'c']);
@@ -239,7 +239,7 @@ void main() {
 
         await vm.loadData(listen: false);
         vm.updateGroupingEnabled(true);
-        vm.resortData();
+        await vm.resortData();
 
         // before: [H(G1), a(pos=1), b(pos=2), H(G2), c(pos=3)]
         expect(_habitUuids(vm), ['a', 'b', 'c']);
@@ -280,17 +280,17 @@ void main() {
       await vm.loadData(listen: false);
 
       // before(ungroup): [d(pos=0), b(pos=1), a(pos=3), c(pos=5)]
-      vm.resortData();
+      await vm.resortData();
       expect(_habitUuids(vm), ['d', 'b', 'a', 'c']);
 
       // after(group): [H(G1), b, a, H(G2), c, H(null), d]
       vm.updateGroupingEnabled(true);
-      vm.resortData();
+      await vm.resortData();
       expect(_habitUuids(vm), ['b', 'a', 'c', 'd']);
 
       // after(ungroup): [d, b, a, c]
       vm.updateGroupingEnabled(false);
-      vm.resortData();
+      await vm.resortData();
       expect(_habitUuids(vm), ['d', 'b', 'a', 'c']);
 
       vm.dispose();
@@ -317,7 +317,7 @@ void main() {
           ..attachGroupManager(_ReorderTestGroupManager([]));
         await vm1.loadData(listen: false);
         vm1.updateHabitDisplayFilter(const HabitsDisplayFilter.withDefault());
-        vm1.resortData();
+        await vm1.resortData();
         // before: [a, b, c]
         // op:     drag b before a
         await vm1.onHabitReorderComplate(1, 0);
@@ -338,7 +338,7 @@ void main() {
           );
         await vm2.loadData(listen: false);
         vm2.updateGroupingEnabled(true);
-        vm2.resortData();
+        await vm2.resortData();
         // before: [H(G1), a, b, H(null), c]
         // op:     drag b(idx=2) before a(drop=1)
         await vm2.onHabitReorderComplate(2, 1);
@@ -387,7 +387,7 @@ void main() {
 
       await vm.loadData(listen: false);
       vm.updateGroupingEnabled(true);
-      vm.resortData();
+      await vm.resortData();
 
       // before: [H(G1), a(pos=1), b(pos=2), H(G2), c(pos=3), H(null), d(pos=4)]
       // op:     drag b(idx=2) before a(drop=1)
@@ -423,7 +423,7 @@ void main() {
 
       await vm.loadData(listen: false);
       vm.updateHabitDisplayFilter(const HabitsDisplayFilter.withDefault());
-      vm.resortData();
+      await vm.resortData();
 
       // before: [a(g1,pos=1), b(pos=2)]
       // op:     drag b before a
@@ -454,7 +454,7 @@ void main() {
         ..attachGroupManager(_ReorderTestGroupManager([]));
       await vm1.loadData(listen: false);
       vm1.updateHabitDisplayFilter(const HabitsDisplayFilter.withDefault());
-      vm1.resortData();
+      await vm1.resortData();
       // before: [a(10), b(20)]
       // op:     drag b(idx=1) → top(drop=0)
       await vm1.onHabitReorderComplate(1, 0);
@@ -473,7 +473,7 @@ void main() {
         ..attachGroupManager(_ReorderTestGroupManager([]));
       await vm2.loadData(listen: false);
       vm2.updateHabitDisplayFilter(const HabitsDisplayFilter.withDefault());
-      vm2.resortData();
+      await vm2.resortData();
       // before: [a(10), b(20)]
       // op:     drag a(idx=0) → after last(drop=2)
       await vm2.onHabitReorderComplate(0, 2);
@@ -505,7 +505,7 @@ void main() {
 
       await vm.loadData(listen: false);
       vm.updateGroupingEnabled(true);
-      vm.resortData();
+      await vm.resortData();
 
       // before: [H(G1), a(pos=10), b(pos=20), H(G2), c(pos=30)]
       final group1PosBefore = [a.sortPostion, b.sortPostion]..sort();
@@ -548,7 +548,7 @@ void main() {
 
       await vm.loadData(listen: false);
       vm.updateGroupingEnabled(true);
-      vm.resortData();
+      await vm.resortData();
 
       // before: [H(G1), a(pos=10), H(G2), b(pos=20), c(pos=30)]
       expect(_habitUuids(vm), ['a', 'b', 'c']);
@@ -583,7 +583,7 @@ void main() {
 
       await vm.loadData(listen: false);
       vm.updateHabitDisplayFilter(const HabitsDisplayFilter.withDefault());
-      vm.resortData();
+      await vm.resortData();
 
       await vm.onHabitReorderComplate(2, 1);
 
@@ -614,7 +614,7 @@ void main() {
 
         await vm.loadData(listen: false);
         vm.updateGroupingEnabled(true);
-        vm.resortData();
+        await vm.resortData();
 
         // before: [H(G1), a(pos=10), H(G2), b(pos=20), c(pos=30)]
         // drag a(idx=1) between b and c in G2 → drop=3
@@ -654,7 +654,7 @@ void main() {
 
       await vm.loadData(listen: false);
       vm.updateGroupingEnabled(true);
-      vm.resortData();
+      await vm.resortData();
 
       // before: [H(G1), a(pos=10), H(null), b(pos=20)]
       // drag a(idx=1) to end of uncategorized → drop=3
@@ -679,7 +679,7 @@ void main() {
 
       await vm.loadData(listen: false);
       vm.updateGroupingEnabled(true);
-      vm.resortData();
+      await vm.resortData();
 
       // before: [H(G1), b(pos=20), H(null), a(pos=10)]
       // drag a(idx=3) before b → drop=1
@@ -712,7 +712,7 @@ void main() {
 
       await vm.loadData(listen: false);
       vm.updateGroupingEnabled(true);
-      vm.resortData();
+      await vm.resortData();
 
       // before: [H(G1), a(pos=10), b(pos=20), H(G2), c(pos=5)]
       // drag b(idx=2) before c(idx=3) → drop to G2
@@ -755,7 +755,7 @@ void main() {
 
         await vm.loadData(listen: false);
         vm.updateHabitDisplayFilter(const HabitsDisplayFilter.withDefault());
-        vm.resortData();
+        await vm.resortData();
 
         // before: [a, b, c]
         expect(_habitUuids(vm), ['a', 'b', 'c']);
@@ -797,7 +797,7 @@ void main() {
 
         await vm.loadData(listen: false);
         vm.updateGroupingEnabled(true);
-        vm.resortData();
+        await vm.resortData();
 
         // before: [H(G1), a(g1), H(G2), b(g2), c(g2)]
         expect(_habitUuids(vm), ['a', 'b', 'c']);
@@ -840,7 +840,7 @@ void main() {
 
         await vm.loadData(listen: false);
         vm.updateGroupingEnabled(true);
-        vm.resortData();
+        await vm.resortData();
 
         await expectLater(
           vm.onCrossGroupHabitMove(1, 3, 'g2'),
@@ -880,7 +880,7 @@ void main() {
 
       await vm.loadData(listen: false);
       vm.updateGroupingEnabled(true);
-      vm.resortData();
+      await vm.resortData();
 
       // Collapse both named groups and the ungrouped section
       vm.toggleGroup('g1');
@@ -900,7 +900,7 @@ void main() {
 
       await vm.loadData(listen: false);
       vm.updateGroupingEnabled(true);
-      vm.resortData();
+      await vm.resortData();
 
       // Only collapse G1 — G2 and ungrouped remain visible
       vm.toggleGroup('g1');
@@ -920,7 +920,7 @@ void main() {
 
         await vm.loadData(listen: false);
         vm.updateGroupingEnabled(true);
-        vm.resortData();
+        await vm.resortData();
 
         // No named groups, only "ungrouped" (null UUID).  Nothing collapsed
         // yet — so it should be false after the initial expand-all.
@@ -938,7 +938,7 @@ void main() {
 
       await vm.loadData(listen: false);
       vm.updateGroupingEnabled(true);
-      vm.resortData();
+      await vm.resortData();
 
       // Collapse all first
       vm.toggleGroup('g1');
@@ -963,7 +963,7 @@ void main() {
 
       await vm.loadData(listen: false);
       vm.updateGroupingEnabled(true);
-      vm.resortData();
+      await vm.resortData();
 
       // Only G1 collapsed — some expanded
       vm.toggleGroup('g1');
@@ -986,7 +986,7 @@ void main() {
 
         await vm.loadData(listen: false);
         vm.updateGroupingEnabled(true);
-        vm.resortData();
+        await vm.resortData();
 
         // Initially all expanded
         expect(vm.areAllGroupsCollapsed, isFalse);

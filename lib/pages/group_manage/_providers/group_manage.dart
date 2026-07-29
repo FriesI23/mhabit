@@ -17,9 +17,11 @@ import 'dart:async';
 import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../common/collation.dart';
 import '../../../common/consts.dart';
 import '../../../common/sort_generation.dart';
 import '../../../common/types.dart';
+import '../../../extensions/collation_extensions.dart';
 import '../../../extensions/habit_group_extensions.dart';
 import '../../../logging/helper.dart';
 import '../../../models/app_event.dart';
@@ -294,15 +296,41 @@ class GroupManageViewModel extends ChangeNotifier
 
   Future<void> _resortData() async {
     if (_groupCollection == null) return;
+
+    final sortType = effectiveSortType;
+    final sortDirection = effectiveSortDirection;
+
+    Future<_GroupsSortableCache> defaultSort() async =>
+        _sortableCache.copyWithData(
+          _groupCollection!,
+          sortType: sortType,
+          sortDirection: sortDirection,
+        );
+
+    Future<_GroupsSortableCache> naturalSort() async {
+      if (sortType != HabitDisplayGroupType.name) return defaultSort();
+      final groups = _groupCollection!.toList();
+      if (groups.isEmpty) return defaultSort();
+      try {
+        final sorted = await CollationApi.instance.naturalSort(
+          items: groups,
+          idOf: (g) => g.uuid,
+          valueOf: (g) => g.name,
+          descending: sortDirection == HabitDisplaySortDirection.desc,
+        );
+        return _GroupsSortableCache(
+          sortType: sortType,
+          sortDirection: sortDirection,
+          lastSortedDataCache: sorted,
+        );
+      } catch (e) {
+        appLog.load.warn('Natural sort failed', ex: [e]);
+        return defaultSort();
+      }
+    }
+
     _sortableCache =
-        await _sortGuard.run(
-          () => _sortableCache.copyWithData(
-            _groupCollection!,
-            sortType: effectiveSortType,
-            sortDirection: effectiveSortDirection,
-          ),
-          debugLabel: 'GroupManage',
-        ) ??
+        await _sortGuard.run(naturalSort, debugLabel: 'GroupManage') ??
         _sortableCache;
   }
 
@@ -504,10 +532,10 @@ class _GroupsSortableCache {
     required HabitDisplayGroupType sortType,
     required HabitDisplaySortDirection sortDirection,
   }) {
-    final groups = List.of(collection.toList());
-    final orderType =
-        HabitGroupOrderType.fromGroupType(sortType) ?? defaultGroupOrderType;
-    final sorted = groups.sortedBy(orderType, sortDirection);
+    final sorted = List.of(collection.toList()).sortedBy(
+      HabitGroupOrderType.fromGroupType(sortType) ?? defaultGroupOrderType,
+      sortDirection,
+    );
     return _GroupsSortableCache(
       sortType: sortType,
       sortDirection: sortDirection,

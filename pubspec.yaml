@@ -207,6 +207,7 @@ dev_dependencies:
   # Code Generation
   analyzer: ^10.0.1
   build_runner: ^2.3.3
+  pigeon: ^26.0.0
   mhabit_color_builder: any
   mhabit_proxy_builder: any
   copy_with_extension_gen: ^15.0.1

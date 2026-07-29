@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 /// Guards synchronous sort results against being overwritten by a concurrent
@@ -44,14 +46,14 @@ class SortGuard {
   /// Runs [sort] and returns its result, or `null` if [bump] was called
   /// during the operation (i.e. data was reloaded and the sort is stale).
   ///
-  /// The [sort] closure is synchronous (e.g. `List.sort()`).  [run] wraps
+  /// The [sort] closure may be synchronous or asynchronous.  [run] wraps
   /// it in an async frame so that the generation can change across an
   /// `await` yield.
-  Future<T?> run<T>(T Function() sort, {String? debugLabel}) async {
+  Future<T?> run<T>(FutureOr<T> Function() sort, {String? debugLabel}) async {
     final token = _generation;
     // Yield to let any pending microtask (reload bump) run before sort.
     await Future.delayed(Duration.zero);
-    final result = sort();
+    final result = await sort();
     if (_generation != token) {
       assert(() {
         final label = debugLabel != null ? '[$debugLabel] ' : '';
