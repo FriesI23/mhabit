@@ -1436,5 +1436,38 @@
                 "description": "Number of habits being removed"
             }
         }
+    },
+    "habitDisplay_groupModify_snackbarTextRemoved": "{count, plural, =1 {בוטל שיוך ההרגל לקבוצה} other {בוטל השיוך של {count} הרגלים לקבוצה}",
+    "@habitDisplay_groupModify_snackbarTextRemoved": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits"
+            }
+        }
+    },
+    "appSetting_expandTimerDelayTile_subtitleText": "הגדרת משך הזמן של ריחוף מעל כותרות קבוצה לפני שהן ייפתחו אוטומטית במהלך גרירה ושחרור של הרגלים.",
+    "appSetting_thirdPartyImport_provider_versionHint": "יש תמיכה ב־CSV (נבדקה בצמוד ל־<‎/ver‏>)",
+    "groupManage_nameTooLong": "על שמות להיות באורך ≤ {max} תווים",
+    "@groupManage_nameTooLong": {
+        "description": "Validation error when group name exceeds max length",
+        "placeholders": {
+            "max": {
+                "type": "int"
+            }
+        }
+    },
+    "groupManage_descTooLong": "על תיאורים להיות באורך ≤ {max} תווים",
+    "@groupManage_descTooLong": {
+        "description": "Validation warning when group description exceeds recommended length",
+        "placeholders": {
+            "max": {
+                "type": "int"
+            }
+        }
+    },
+    "groupManage_reorder_tooltip": "סידור קבוצות מחדש",
+    "@groupManage_reorder_tooltip": {
+        "description": "Tooltip for the reorder button that enters manual sort + selection mode"
     }
 }
