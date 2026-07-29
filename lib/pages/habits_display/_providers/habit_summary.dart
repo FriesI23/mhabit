@@ -21,6 +21,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../common/consts.dart';
 import '../../../common/exceptions.dart';
+import '../../../common/sort_generation.dart';
 import '../../../common/types.dart';
 import '../../../common/utils.dart';
 import '../../../extensions/iterable_extensions.dart';
@@ -153,6 +154,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   bool _groupingEnabled = false;
   // inside status
   bool _mounted = true;
+  final _sortGuard = SortGuard();
   // sync from setting
   int _firstday = defaultFirstDay;
   late HabitsDisplayAccess _access;
@@ -374,6 +376,7 @@ class HabitSummaryViewModel extends ChangeNotifier
       logName: "$runtimeType.loadData",
       alreadyLoadingEx: ["data already loaded"],
       loadData: (loading) async {
+        _sortGuard.bump();
         if (!mounted) {
           return loadingFailed(loading, const ["viewmodel disposed"]);
         }
@@ -400,7 +403,7 @@ class HabitSummaryViewModel extends ChangeNotifier
         if (loading.isCanceled) return loadingCancelled(loading);
         if (loading.isCompleted) return;
 
-        _resortData();
+        await _resortData();
 
         await _access.repairHabitReminders(
           params: HabitReminderRepairParams.loadedHabits(_data.values),
@@ -452,8 +455,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     final bool addResult = _data.addHabit(cell, forceAdd: false);
     final data = _data.getHabitByUUID(cell.uuid);
     if (data != null) _updateHabitAutoCompleteStatistics(data);
-    resortData();
-    if (listen) notifyListeners();
+    resortData(listen: listen);
     return addResult;
   }
   //#endregion
@@ -495,8 +497,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   void enterSearchMode({bool listen = true}) {
     if (isInSearchMode) return;
     _searchController.enable();
-    _resortData();
-    if (listen) notifyListeners();
+    resortData(listen: listen);
   }
 
   void exitSearchMode({bool listen = true}) {
@@ -504,8 +505,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     _searchController
       ..disable()
       ..clearOptions();
-    _resortData();
-    if (listen) notifyListeners();
+    resortData(listen: listen);
   }
 
   void _onSeachOptionsChanged(
@@ -522,8 +522,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     } else {
       if (!_searchController.enabled) _searchController.enable();
     }
-    _resortData();
-    if (listen) notifyListeners();
+    resortData(listen: listen);
   }
 
   void onSeachKeywordChanged(String text, {bool listen = true}) =>
@@ -633,57 +632,64 @@ class HabitSummaryViewModel extends ChangeNotifier
   HabitSortCache? getHabitBySortId(int index) =>
       _sortableCache.getSortCache(index);
 
-  void resortData({bool listen = true}) {
+  Future<void> resortData({bool listen = true}) async {
     if (!_pageLoad.hasLoaded) return;
-    _resortData();
-    if (listen) notifyListeners();
+    await _resortData();
+    if (mounted && listen) notifyListeners();
   }
 
-  void _resortData() {
+  Future<void> _resortData() async {
     final searchOpt = isInSearchMode ? searchOptions : null;
     final statusFilter = isInSearchMode
         ? HabitsDisplayFilter.allTrue
         : _sortableCache.filter;
 
-    void replaceWithUngroupedData() => _replaceSortbaleCache(
-      _sortableCache.copyWithData(
-        _data,
-        searchOptions: searchOpt,
-        filter: statusFilter,
-      ),
-    );
+    final cache = await _sortGuard.run(() {
+      if (_groupingEnabled) {
+        if (_groupCollection == null) {
+          return _sortableCache.copyWithData(
+            _data,
+            searchOptions: searchOpt,
+            filter: statusFilter,
+          );
+        }
+        final groups = _groupCollection!.toList();
+        final grouped = buildGroupedSortCacheList(
+          data: _data,
+          groups: groups,
+          collapsedUUIDs: _collapsedGroupUUIDs,
+          filter: statusFilter,
+          sortType: _sortableCache.sortType,
+          sortDirection: _sortableCache.sortDirection,
+          groupType: _sortableCache.groupType,
+          groupDirection: _sortableCache.groupDirection,
+        );
 
-    if (_groupingEnabled) {
-      if (_groupCollection == null) {
-        replaceWithUngroupedData();
-        return;
+        // Degrade to ungrouped display when only the uncategorized
+        // (no-group) section has habits after filtering.
+        final headers = grouped.whereType<GroupHeaderSortCache>();
+        if (headers.length == 1 && headers.first.groupUUID == null) {
+          return _sortableCache.copyWithData(
+            _data,
+            searchOptions: searchOpt,
+            filter: statusFilter,
+          );
+        }
+
+        return _sortableCache.copyWithGroupedData(
+          grouped,
+          searchOptions: searchOpt,
+        );
+      } else {
+        return _sortableCache.copyWithData(
+          _data,
+          searchOptions: searchOpt,
+          filter: statusFilter,
+        );
       }
-      final groups = _groupCollection!.toList();
-      final grouped = buildGroupedSortCacheList(
-        data: _data,
-        groups: groups,
-        collapsedUUIDs: _collapsedGroupUUIDs,
-        filter: statusFilter,
-        sortType: _sortableCache.sortType,
-        sortDirection: _sortableCache.sortDirection,
-        groupType: _sortableCache.groupType,
-        groupDirection: _sortableCache.groupDirection,
-      );
+    }, debugLabel: 'HabitSummary');
 
-      // Degrade to ungrouped display when only the uncategorized
-      // (no-group) section has habits after filtering.
-      final headers = grouped.whereType<GroupHeaderSortCache>();
-      if (headers.length == 1 && headers.first.groupUUID == null) {
-        replaceWithUngroupedData();
-        return;
-      }
-
-      _replaceSortbaleCache(
-        _sortableCache.copyWithGroupedData(grouped, searchOptions: searchOpt),
-      );
-    } else {
-      replaceWithUngroupedData();
-    }
+    if (cache != null) _replaceSortbaleCache(cache);
   }
 
   void _replaceSortbaleCache(_HabitsSortableCache newSortbaleCache) {
@@ -1021,7 +1027,8 @@ class HabitSummaryViewModel extends ChangeNotifier
     if (oldGroupId != targetGroupUUID) {
       await _access.updateHabitGroupIds([movedUUID], [targetGroupUUID]);
     }
-    resortData();
+    await resortData();
+    if (!mounted) return;
     exitEditMode(listen: false);
     _reloadBridge.eventSubs?.pushHabitReordered(movedUUID);
   }
@@ -1071,7 +1078,8 @@ class HabitSummaryViewModel extends ChangeNotifier
       await _changeHabitsStatus(r.value, r.key);
     }
 
-    resortData();
+    await resortData();
+    if (!mounted) return;
     _reloadBridge.eventSubs?.pushHabitStatusChanged(recordList);
   }
 
@@ -1098,7 +1106,8 @@ class HabitSummaryViewModel extends ChangeNotifier
       HabitStatus.archived,
     );
 
-    resortData(listen: false);
+    await resortData(listen: false);
+    if (!mounted) return null;
     exitEditMode();
     _reloadBridge.eventSubs?.pushHabitStatusChanged(result);
     return result;
@@ -1127,7 +1136,8 @@ class HabitSummaryViewModel extends ChangeNotifier
       HabitStatus.activated,
     );
 
-    resortData(listen: false);
+    await resortData(listen: false);
+    if (!mounted) return null;
     exitEditMode();
     _reloadBridge.eventSubs?.pushHabitStatusChanged(result);
     return result;
@@ -1156,7 +1166,8 @@ class HabitSummaryViewModel extends ChangeNotifier
       HabitStatus.deleted,
     );
 
-    resortData(listen: false);
+    await resortData(listen: false);
+    if (!mounted) return null;
     exitEditMode();
     _reloadBridge.eventSubs?.pushHabitStatusChanged(result);
     return result;
@@ -1189,7 +1200,8 @@ class HabitSummaryViewModel extends ChangeNotifier
       }
     }
     _groupCollection = await _groupManager.tryLoadGroupCollection();
-    resortData(listen: listen);
+    await resortData(listen: listen);
+    if (!mounted) return changedUUIDs.length;
     exitEditMode(listen: false);
     _reloadBridge.eventSubs?.pushBatchGroupChanged(changedUUIDs);
 
@@ -1227,7 +1239,8 @@ class HabitSummaryViewModel extends ChangeNotifier
         data.groupId = revertGroupIds[i];
       }
     }
-    resortData(listen: listen);
+    await resortData(listen: listen);
+    if (!mounted) return false;
     if (revertUUIDs.isNotEmpty) {
       _reloadBridge.eventSubs?.pushBatchGroupChanged(revertUUIDs);
     }
@@ -1380,7 +1393,7 @@ final class HabitDetailAdapter implements ProviderMounted {
     final habit = root.getHabit(habitUUID);
     if (habit == null || habit.status == HabitStatus.deleted) return null;
     final recordList = await root._changeHabitsStatus([habitUUID], status);
-    _fetchRoot()?.resortData();
+    await _fetchRoot()?.resortData();
     return recordList.firstOrNull;
   }
 

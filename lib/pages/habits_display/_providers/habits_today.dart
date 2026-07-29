@@ -21,6 +21,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../common/consts.dart';
 import '../../../common/exceptions.dart';
+import '../../../common/sort_generation.dart';
 import '../../../common/types.dart';
 import '../../../common/utils.dart';
 import '../../../extensions/iterable_extensions.dart';
@@ -93,6 +94,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   final LinkedHashMap<HabitUUID, bool> _expandStatus;
   // inside status
   bool _mounted = true;
+  final _sortGuard = SortGuard();
   // sync from setting
   int _firstday = defaultFirstDay;
   HabitDisplaySortType _sortType = defaultSortType;
@@ -177,6 +179,7 @@ class HabitsTodayViewModel extends ChangeNotifier
       logName: "$runtimeType.loadData",
       alreadyLoadingEx: ["data already loaded"],
       loadData: (loading) async {
+        _sortGuard.bump();
         if (!mounted) {
           return loadingFailed(loading, const ["viewmodel disposed"]);
         }
@@ -197,7 +200,7 @@ class HabitsTodayViewModel extends ChangeNotifier
         if (loading.isCanceled) return loadingCancelled(loading);
         if (loading.isCompleted) return;
         _data.forEach((_, habit) => _updateHabitAutoCompleteStatistics(habit));
-        _resortData();
+        await _resortData();
 
         await _access.repairHabitReminders(
           params: HabitReminderRepairParams.loadedHabits(_data.values),
@@ -250,22 +253,26 @@ class HabitsTodayViewModel extends ChangeNotifier
 
   HabitSortCache? getHabitBySortId(int index) => _lastSortedDataCache[index];
 
-  void resortData({bool listen = true}) {
+  Future<void> resortData({bool listen = true}) async {
     if (!_pageLoad.hasLoaded) return;
-    _resortData();
-    if (listen) notifyListeners();
+    await _resortData();
+    if (mounted && listen) notifyListeners();
   }
 
-  void _resortData() {
+  Future<void> _resortData() async {
     final now = HabitDate.now();
-    final newData = _data.sort(_sortType, _sortDirection).where((e) {
-      if (!e.isActived) return false;
-      if (e.startDate > now) return false;
-      if (e.getRecordByDate(now) != null) return false;
-      return true;
-    }).toHabitSummarySortCacheList();
-    _replaceSortbaleCache(newData);
-    _pruneExpandStatus(newData);
+    final newData = await _sortGuard.run(() {
+      return _data.sort(_sortType, _sortDirection).where((e) {
+        if (!e.isActived) return false;
+        if (e.startDate > now) return false;
+        if (e.getRecordByDate(now) != null) return false;
+        return true;
+      }).toHabitSummarySortCacheList();
+    }, debugLabel: 'HabitsToday');
+    if (newData != null) {
+      _replaceSortbaleCache(newData);
+      _pruneExpandStatus(newData);
+    }
   }
 
   void _replaceSortbaleCache(List<HabitSortCache> cache) {
@@ -448,9 +455,9 @@ class HabitsTodayViewModel extends ChangeNotifier
     );
 
     _updateHabitAutoCompleteStatistics(data);
-    _resortData();
+    await _resortData();
     _removeHabitExpandStatus(uuid);
-    if (listen) notifyListeners();
+    if (mounted && listen) notifyListeners();
     _reloadBridge.eventSubs?.pushRecordChanged(
       uuid: uuid,
       date: result.data.date,
@@ -491,9 +498,9 @@ class HabitsTodayViewModel extends ChangeNotifier
     );
 
     _updateHabitAutoCompleteStatistics(data);
-    _resortData();
+    await _resortData();
     _removeHabitExpandStatus(uuid);
-    if (listen) notifyListeners();
+    if (mounted && listen) notifyListeners();
     _reloadBridge.eventSubs?.pushRecordChanged(
       uuid: uuid,
       date: result.data.date,

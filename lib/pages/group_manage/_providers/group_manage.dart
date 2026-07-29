@@ -18,6 +18,7 @@ import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../common/consts.dart';
+import '../../../common/sort_generation.dart';
 import '../../../common/types.dart';
 import '../../../extensions/habit_group_extensions.dart';
 import '../../../logging/helper.dart';
@@ -124,6 +125,7 @@ class GroupManageViewModel extends ChangeNotifier
   bool _nextRefreshForceReload = false;
   bool _firstLoadCompleted = false;
   bool _mounted = true;
+  final _sortGuard = SortGuard();
 
   /// Set via navigation from the home page Group header long-press menu.
   /// Consumed on the first successful [loadGroups] call.
@@ -238,6 +240,7 @@ class GroupManageViewModel extends ChangeNotifier
       logName: "$runtimeType.loadGroups",
       alreadyLoadingEx: ["groups already loading"],
       loadData: (loading) async {
+        _sortGuard.bump();
         if (!mounted) {
           return loadingFailed(loading, ["viewmodel disposed"]);
         }
@@ -260,10 +263,9 @@ class GroupManageViewModel extends ChangeNotifier
           _selectionMode = true;
           _selectedGroupUUIDs.add(_initialGroupUUID);
         }
-        _resortData();
-
+        await _resortData();
         loading.complete();
-        if (listen) notifyListeners();
+        if (mounted && listen) notifyListeners();
       },
       onError: (loading, e, s) {
         if (loading.isCanceled) return loadingCancelled(loading);
@@ -280,23 +282,28 @@ class GroupManageViewModel extends ChangeNotifier
   Future<HabitGroupData?> loadGroupDataByUUID(String uuid) =>
       _groupManager?.loadGroupDataByUUID(uuid) ?? Future.value(null);
 
-  void setSortOptions(
+  Future<void> setSortOptions(
     HabitDisplayGroupType type,
     HabitDisplaySortDirection direction,
-  ) {
+  ) async {
     _sortType = type;
     _sortDirection = direction;
-    _resortData();
-    notifyListeners();
+    await _resortData();
+    if (mounted) notifyListeners();
   }
 
-  void _resortData() {
+  Future<void> _resortData() async {
     if (_groupCollection == null) return;
-    _sortableCache = _sortableCache.copyWithData(
-      _groupCollection!,
-      sortType: effectiveSortType,
-      sortDirection: effectiveSortDirection,
-    );
+    _sortableCache =
+        await _sortGuard.run(
+          () => _sortableCache.copyWithData(
+            _groupCollection!,
+            sortType: effectiveSortType,
+            sortDirection: effectiveSortDirection,
+          ),
+          debugLabel: 'GroupManage',
+        ) ??
+        _sortableCache;
   }
 
   void enterSelectionMode(String initialUUID, {bool listen = true}) {
