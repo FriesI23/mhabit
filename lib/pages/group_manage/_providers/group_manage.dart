@@ -75,6 +75,8 @@ class GroupManageViewModel extends ChangeNotifier
   // dependencies
   GroupManager? _groupManager;
   DisplayGroupModeProfileHandler? _groupModeHandler;
+  NaturalSortExperimentalFeature? _naturalSortHandler;
+  AppLanguageProfileHanlder? _languageHandler;
 
   // data
   GroupCollection? _groupCollection;
@@ -197,6 +199,9 @@ class GroupManageViewModel extends ChangeNotifier
   void updateProfile(ProfileViewModel newProfile) {
     super.updateProfile(newProfile);
     _groupModeHandler = newProfile.getHandler<DisplayGroupModeProfileHandler>();
+    _naturalSortHandler = newProfile
+        .getHandler<NaturalSortExperimentalFeature>();
+    _languageHandler = newProfile.getHandler<AppLanguageProfileHanlder>();
   }
 
   void attachGroupManager(GroupManager value) {
@@ -309,14 +314,17 @@ class GroupManageViewModel extends ChangeNotifier
 
     Future<_GroupsSortableCache> naturalSort() async {
       if (sortType != HabitDisplayGroupType.name) return defaultSort();
+      if (!(_naturalSortHandler?.enabled ?? false)) return defaultSort();
       final groups = _groupCollection!.toList();
       if (groups.isEmpty) return defaultSort();
+      final locale = _languageHandler?.get()?.toLanguageTag();
       try {
         final sorted = await CollationApi.instance.naturalSort(
           items: groups,
           idOf: (g) => g.uuid,
           valueOf: (g) => g.name,
           descending: sortDirection == HabitDisplaySortDirection.desc,
+          locale: locale,
         );
         return _GroupsSortableCache(
           sortType: sortType,

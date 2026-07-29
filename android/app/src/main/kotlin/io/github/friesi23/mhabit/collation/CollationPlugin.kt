@@ -1,20 +1,41 @@
 package io.github.friesi23.mhabit.collation
 
-import java.text.Collator
-import java.util.Locale
+import android.icu.text.AlphabeticIndex
+import android.icu.text.CollationKey
+import android.icu.text.Collator
+import android.icu.util.ULocale
 
 class CollationPlugin : CollationHostApi {
     override fun sortStrings(request: CollationRequest): List<String> {
-        val collator = if (request.locale != null) {
+        val uLocale = request.locale?.takeIf { it.isNotBlank() }?.let {
             // Convert locale_SCRIPT_COUNTRY → locale-SCRIPT-COUNTRY (BCP 47)
-            val locale = Locale.forLanguageTag(request.locale.replace("_", "-"))
-            Collator.getInstance(locale)
-        } else {
-            Collator.getInstance()
-        }
-        collator.strength = Collator.TERTIARY
+            ULocale.forLanguageTag(it.replace("_", "-"))
+        } ?: ULocale.getDefault()
 
-        return request.items.sortedWith(Comparator { a, b -> collator.compare(a.value, b.value) })
-            .map { it.id }
+        val collator = Collator.getInstance(uLocale).apply {
+            strength = Collator.TERTIARY
+            decomposition = Collator.CANONICAL_DECOMPOSITION
+        }
+
+        val index = AlphabeticIndex<Any?>(uLocale)
+
+        return request.items.asSequence().map { item ->
+            SortEntry(
+                id = item.id,
+                value = item.value,
+                bucket = index.getBucketIndex(item.value),
+                key = collator.getCollationKey(item.value),
+            )
+        }.sortedWith(
+            compareBy(SortEntry::bucket).thenBy(SortEntry::key).thenBy(SortEntry::value)
+                .thenBy(SortEntry::id),
+        ).map { it.id }.toList()
     }
+
+    private data class SortEntry(
+        val id: String,
+        val value: String,
+        val bucket: Int,
+        val key: CollationKey,
+    )
 }

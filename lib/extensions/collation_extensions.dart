@@ -61,6 +61,7 @@ extension CollationApiNaturalSort on CollationApi {
     required String Function(T) idOf,
     required String Function(T) valueOf,
     bool descending = false,
+    String? locale,
   }) async {
     if (items.isEmpty) return items;
 
@@ -68,6 +69,7 @@ extension CollationApiNaturalSort on CollationApi {
       items: items
           .map((e) => CollationItem(id: idOf(e), value: valueOf(e)))
           .toList(),
+      locale: locale,
     );
     final sortedIds = await sortStrings(request);
     return sortByRank(

@@ -38,4 +38,5 @@ export 'handlers/habit_grouping.dart';
 export 'handlers/habit_search.dart';
 export 'handlers/input_fill_cache.dart';
 export 'handlers/logging_level.dart';
+export 'handlers/natural_sort.dart';
 export 'handlers/show_data_format.dart';
