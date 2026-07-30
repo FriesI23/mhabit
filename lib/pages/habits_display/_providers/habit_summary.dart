@@ -461,7 +461,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     return _access.loadHabitDetail(selectedData.uuid);
   }
 
-  Future<bool> addNewData(HabitSummaryData cell, {bool listen = false}) async {
+  Future<bool> addNewData(HabitSummaryData cell, {bool listen = true}) async {
     final bool addResult = _data.addHabit(cell, forceAdd: false);
     final data = _data.getHabitByUUID(cell.uuid);
     if (data != null) _updateHabitAutoCompleteStatistics(data);
