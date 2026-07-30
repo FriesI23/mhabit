@@ -10,6 +10,11 @@ class MainFlutterWindow: NSWindow {
 
     RegisterGeneratedPlugins(registry: flutterViewController)
 
+    // Register native collation host API (Parse 3: macOS).
+    CollationHostApiSetup.setUp(
+      binaryMessenger: flutterViewController.engine.binaryMessenger,
+      api: CollationPlugin())
+
     super.awakeFromNib()
   }
 }

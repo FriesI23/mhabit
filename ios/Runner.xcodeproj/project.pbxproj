@@ -17,6 +17,8 @@
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		D91BB4AF2DABBEAB00E91D6C /* dev-InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D91BB4AE2DABBEAB00E91D6C /* dev-InfoPlist.strings */; };
 		D91BB4B32DABBEDD00E91D6C /* generic-InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D91BB4B22DABBEDD00E91D6C /* generic-InfoPlist.strings */; };
+		D9A0262B301B5F82005D0B85 /* CollationPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A02627301B5F82005D0B85 /* CollationPlugin.swift */; };
+		D9A0262C301B5F82005D0B85 /* CollationApi.g.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A02626301B5F82005D0B85 /* CollationApi.g.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,8 +46,8 @@
 		659ECB580953A198720CEF80 /* Pods-Runner.profile-f_generic.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-f_generic.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-f_generic.xcconfig"; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		74E73CC2F07E018837C232E0 /* Pods-Runner.release-f_store.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-f_store.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-f_store.xcconfig"; sourceTree = "<group>"; };
+		7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		8F2B85727D99DBF930A5D2D5 /* Pods-Runner.release-f_dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-f_dev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-f_dev.xcconfig"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
@@ -70,6 +72,8 @@
 		D963FEBF2DD0807800FA68EF /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = he; path = "he.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
 		D97345BF2FB5633E002015C2 /* eu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eu; path = "eu.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
 		D97345C02FB5633E002015C2 /* eu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eu; path = "eu.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
+		D9A02626301B5F82005D0B85 /* CollationApi.g.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollationApi.g.swift; sourceTree = "<group>"; };
+		D9A02627301B5F82005D0B85 /* CollationPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollationPlugin.swift; sourceTree = "<group>"; };
 		D9B660282F06A19900E2373D /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = "hu.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9B660292F06A19900E2373D /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = "hu.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9D35CC72EDC70800006DF01 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = "ja.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
@@ -134,6 +138,7 @@
 		97C146E51CF9000F007C117D = {
 			isa = PBXGroup;
 			children = (
+				D9A0262A301B5F82005D0B85 /* CollationPlugin */,
 				D91BB4A92DABB03100E91D6C /* Localizations */,
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
@@ -177,6 +182,32 @@
 			);
 			path = Localizations;
 			sourceTree = "<group>";
+		};
+		D9A02628301B5F82005D0B85 /* CollationPlugin */ = {
+			isa = PBXGroup;
+			children = (
+				D9A02626301B5F82005D0B85 /* CollationApi.g.swift */,
+				D9A02627301B5F82005D0B85 /* CollationPlugin.swift */,
+			);
+			path = CollationPlugin;
+			sourceTree = "<group>";
+		};
+		D9A02629301B5F82005D0B85 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				D9A02628301B5F82005D0B85 /* CollationPlugin */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		D9A0262A301B5F82005D0B85 /* CollationPlugin */ = {
+			isa = PBXGroup;
+			children = (
+				D9A02629301B5F82005D0B85 /* Sources */,
+			);
+			name = CollationPlugin;
+			path = ../darwin/CollationPlugin;
+			sourceTree = SOURCE_ROOT;
 		};
 		E925569DB76AF77B8A759838 /* Frameworks */ = {
 			isa = PBXGroup;
@@ -381,6 +412,8 @@
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				7884E8682EC3CC0700C636F2 /* SceneDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
+				D9A0262B301B5F82005D0B85 /* CollationPlugin.swift in Sources */,
+				D9A0262C301B5F82005D0B85 /* CollationApi.g.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

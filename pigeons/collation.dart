@@ -17,6 +17,8 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/common/collation_api.g.dart',
+    swiftOut:
+        'darwin/CollationPlugin/Sources/CollationPlugin/CollationApi.g.swift',
     kotlinOut:
         'android/app/src/main/kotlin/io/github/friesi23/mhabit/collation/CollationApi.g.kt',
     kotlinOptions: KotlinOptions(
@@ -38,6 +40,12 @@ class CollationItem {
 }
 
 /// Request to sort [items] by the collation order of their [value]s.
+///
+/// [locale] is used by Android (java.text.Collator) to select the ICU
+/// collation locale. iOS/macOS ignore [locale] — they use
+/// CFStringTransform(.toLatin) + localizedStandardCompare for a
+/// contacts-style sort that is locale-independent.
+///
 /// When [locale] is omitted, the platform uses its system-default
 /// collator. Returns the [CollationItem.id]s in collation order.
 class CollationRequest {

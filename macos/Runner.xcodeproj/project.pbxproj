@@ -34,6 +34,8 @@
 		D91BB4D32DAE34CB00E91D6C /* dev-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D91BB4D02DAE34CB00E91D6C /* dev-Info.plist */; };
 		D91BB4DB2DAE3A8200E91D6C /* dev-InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D91BB4D62DAE351C00E91D6C /* dev-InfoPlist.strings */; };
 		D91BB4DC2DAE3A8700E91D6C /* generic-InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D91BB4D92DAE351C00E91D6C /* generic-InfoPlist.strings */; };
+		D9A02632301B5FC8005D0B85 /* CollationApi.g.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A0262D301B5FC8005D0B85 /* CollationApi.g.swift */; };
+		D9A02633301B5FC8005D0B85 /* CollationPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A0262E301B5FC8005D0B85 /* CollationPlugin.swift */; };
 		DA98789C945E561CA9E79084 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EBFFBF83140F5981E821EC1 /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
@@ -121,6 +123,8 @@
 		D97345C12FB56395002015C2 /* eu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eu; path = "eu.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
 		D97345C22FB56395002015C2 /* eu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eu; path = "eu.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
 		D97345C32FB56395002015C2 /* eu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eu; path = "eu.lproj/store-InfoPlist.strings"; sourceTree = "<group>"; };
+		D9A0262D301B5FC8005D0B85 /* CollationApi.g.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollationApi.g.swift; sourceTree = "<group>"; };
+		D9A0262E301B5FC8005D0B85 /* CollationPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollationPlugin.swift; sourceTree = "<group>"; };
 		D9B660252F06A14000E2373D /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = "hu.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9B660262F06A14000E2373D /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = "hu.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9B660272F06A14100E2373D /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = "hu.lproj/store-InfoPlist.strings"; sourceTree = "<group>"; };
@@ -222,6 +226,7 @@
 		33CC10E42044A3C60003C045 = {
 			isa = PBXGroup;
 			children = (
+				D9A02631301B5FC8005D0B85 /* CollationPlugin */,
 				D91BB4CD2DAE321200E91D6C /* Localizations */,
 				33FAB671232836740065AC1E /* Runner */,
 				33CEB47122A05771004F2AC0 /* Flutter */,
@@ -328,6 +333,32 @@
 			);
 			path = Localizations;
 			sourceTree = "<group>";
+		};
+		D9A0262F301B5FC8005D0B85 /* CollationPlugin */ = {
+			isa = PBXGroup;
+			children = (
+				D9A0262D301B5FC8005D0B85 /* CollationApi.g.swift */,
+				D9A0262E301B5FC8005D0B85 /* CollationPlugin.swift */,
+			);
+			path = CollationPlugin;
+			sourceTree = "<group>";
+		};
+		D9A02630301B5FC8005D0B85 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				D9A0262F301B5FC8005D0B85 /* CollationPlugin */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		D9A02631301B5FC8005D0B85 /* CollationPlugin */ = {
+			isa = PBXGroup;
+			children = (
+				D9A02630301B5FC8005D0B85 /* Sources */,
+			);
+			name = CollationPlugin;
+			path = ../darwin/CollationPlugin;
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
@@ -586,6 +617,8 @@
 				33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */,
 				33CC10F12044A3C60003C045 /* AppDelegate.swift in Sources */,
 				335BBD1B22A9A15E00E9071D /* GeneratedPluginRegistrant.swift in Sources */,
+				D9A02632301B5FC8005D0B85 /* CollationApi.g.swift in Sources */,
+				D9A02633301B5FC8005D0B85 /* CollationPlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
