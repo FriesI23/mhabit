@@ -58,8 +58,9 @@ melos:
           --concurrency=1 \
           -- "dart format ."
     build-runner:
-      description: Run build_runner generators and gen-l10n.
+      description: Run build_runner generators, pigeon, and gen-l10n.
       steps:
+        - dart run pigeon --input pigeons/collation.dart
         - flutter pub run build_runner build --delete-conflicting-outputs
         - flutter gen-l10n
     fix:
