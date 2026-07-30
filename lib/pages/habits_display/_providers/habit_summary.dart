@@ -461,11 +461,12 @@ class HabitSummaryViewModel extends ChangeNotifier
     return _access.loadHabitDetail(selectedData.uuid);
   }
 
-  bool addNewData(HabitSummaryData cell, {bool listen = false}) {
+  Future<bool> addNewData(HabitSummaryData cell, {bool listen = false}) async {
     final bool addResult = _data.addHabit(cell, forceAdd: false);
     final data = _data.getHabitByUUID(cell.uuid);
     if (data != null) _updateHabitAutoCompleteStatistics(data);
-    resortData(listen: listen);
+    await resortData(listen: listen);
+    if (!mounted) return addResult;
     return addResult;
   }
   //#endregion
@@ -648,15 +649,17 @@ class HabitSummaryViewModel extends ChangeNotifier
     if (mounted && listen) notifyListeners();
   }
 
-  FutureOr<void> _resortData() async {
-    final resort = _ResortHandler._(
+  FutureOr<void> _resortData() {
+    final handler = _ResortHandler._(
       this,
+      _sortGuard,
       isInSearchMode ? searchOptions : null,
       isInSearchMode ? HabitsDisplayFilter.allTrue : _sortableCache.filter,
     );
-    final cache =
-        await _sortGuard.run(resort.call, debugLabel: 'HabitSummary') ??
-        _sortableCache;
+    final cache = handler();
+    if (cache is Future<_HabitsSortableCache>) {
+      return cache.then(_replaceSortbaleCache);
+    }
     _replaceSortbaleCache(cache);
   }
 
@@ -1291,17 +1294,21 @@ class _HabitsSortableCache {
 /// Internal handler that encapsulates shared resort orchestration:
 /// branching (default vs natural), flat/grouped paths, degrade fallback.
 ///
-/// Callable — pass the instance to [SortGuard.run] directly:
-/// ```dart
-/// final resort = _ResortHandler._(vm, searchOpt, statusFilter);
-/// await _sortGuard.run(resort, debugLabel: 'HabitSummary');
-/// ```
+/// [call] is a true [FutureOr]: sync for default-sort paths,
+/// async when natural sort is active.  [SortGuard] is applied only
+/// inside the async branch.
 class _ResortHandler {
   final HabitSummaryViewModel _vm;
+  final SortGuard _sortGuard;
   final HabitDisplaySearchOptions? _searchOpt;
   final HabitsDisplayFilter _statusFilter;
 
-  _ResortHandler._(this._vm, this._searchOpt, this._statusFilter);
+  _ResortHandler._(
+    this._vm,
+    this._sortGuard,
+    this._searchOpt,
+    this._statusFilter,
+  );
 
   FutureOr<_HabitsSortableCache> call() {
     final cache = _vm._sortableCache;
@@ -1309,7 +1316,17 @@ class _ResortHandler {
     if (!_vm._naturalSortEnabled) return defaultSort();
     final habits = _vm._data.values.toList();
     if (habits.isEmpty) return defaultSort();
-    return naturalSort(habits);
+    return _guardedNaturalSort(habits);
+  }
+
+  Future<_HabitsSortableCache> _guardedNaturalSort(
+    List<HabitSummaryData> habits,
+  ) async {
+    final result = await _sortGuard.run(
+      () => naturalSort(habits),
+      debugLabel: 'HabitSummary',
+    );
+    return result ?? defaultSort();
   }
 
   _HabitsSortableCache defaultSort() {

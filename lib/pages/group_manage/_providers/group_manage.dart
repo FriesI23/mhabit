@@ -301,7 +301,7 @@ class GroupManageViewModel extends ChangeNotifier
     if (mounted) notifyListeners();
   }
 
-  FutureOr<void> _resortData() async {
+  Future<void> _resortData() async {
     if (_groupCollection == null) return;
 
     final sortType = effectiveSortType;
@@ -313,33 +313,38 @@ class GroupManageViewModel extends ChangeNotifier
       sortDirection: sortDirection,
     );
 
-    Future<_GroupsSortableCache> naturalSort() async {
-      if (sortType != HabitDisplayGroupType.name) return defaultSort();
-      if (!_naturalSortEnabled) return defaultSort();
-      final groups = _groupCollection!.toList();
-      if (groups.isEmpty) return defaultSort();
-      final locale = _currentAppLanguage?.toLanguageTag();
-      try {
-        final sorted = await CollationApi.instance.naturalSort(
-          items: groups,
-          idOf: (g) => g.uuid,
-          valueOf: (g) => g.name,
-          descending: sortDirection == HabitDisplaySortDirection.desc,
-          locale: locale,
-        );
-        return _GroupsSortableCache(
-          sortType: sortType,
-          sortDirection: sortDirection,
-          lastSortedDataCache: sorted,
-        );
-      } catch (e) {
-        appLog.load.warn('Natural sort failed', ex: [e]);
-        return defaultSort();
-      }
+    final canNaturalSort =
+        sortType == HabitDisplayGroupType.name &&
+        _naturalSortEnabled &&
+        _groupCollection!.toList().isNotEmpty;
+
+    if (!canNaturalSort) {
+      _sortableCache = defaultSort();
+      return;
     }
 
     _sortableCache =
-        await _sortGuard.run(naturalSort, debugLabel: 'GroupManage') ??
+        await _sortGuard.run(() async {
+          final groups = _groupCollection!.toList();
+          final locale = _currentAppLanguage?.toLanguageTag();
+          try {
+            final sorted = await CollationApi.instance.naturalSort(
+              items: groups,
+              idOf: (g) => g.uuid,
+              valueOf: (g) => g.name,
+              descending: sortDirection == HabitDisplaySortDirection.desc,
+              locale: locale,
+            );
+            return _GroupsSortableCache(
+              sortType: sortType,
+              sortDirection: sortDirection,
+              lastSortedDataCache: sorted,
+            );
+          } catch (e) {
+            appLog.load.warn('Natural sort failed', ex: [e]);
+            return defaultSort();
+          }
+        }, debugLabel: 'GroupManage') ??
         _sortableCache;
   }
 

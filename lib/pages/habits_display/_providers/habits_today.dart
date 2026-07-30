@@ -269,19 +269,27 @@ class HabitsTodayViewModel extends ChangeNotifier
     if (mounted && listen) notifyListeners();
   }
 
-  FutureOr<void> _resortData() async {
+  Future<void> _resortData() async {
     List<HabitSortCache> defaultSort() => _applyFilter(
       _data.sort(_sortType, _sortDirection),
     ).toHabitSummarySortCacheList();
 
-    Future<List<HabitSortCache>> naturalSort() async {
-      if (_sortType != HabitDisplaySortType.name) return defaultSort();
-      if (!_naturalSortEnabled) return defaultSort();
-      final habits = _data.values.toList();
-      if (habits.isEmpty) return defaultSort();
+    final canNaturalSort =
+        _sortType == HabitDisplaySortType.name &&
+        _naturalSortEnabled &&
+        _data.values.isNotEmpty;
+
+    if (!canNaturalSort) {
+      final newData = defaultSort();
+      _replaceSortbaleCache(newData);
+      _pruneExpandStatus(newData);
+      return;
+    }
+
+    final newData = await _sortGuard.run(() async {
       try {
         final sorted = await CollationApi.instance.naturalSort(
-          items: habits,
+          items: _data.values.toList(),
           idOf: (h) => h.uuid,
           valueOf: (h) => h.name,
           descending: _sortDirection == HabitDisplaySortDirection.desc,
@@ -292,12 +300,7 @@ class HabitsTodayViewModel extends ChangeNotifier
         appLog.load.warn('Natural sort failed', ex: [e]);
         return defaultSort();
       }
-    }
-
-    final newData = await _sortGuard.run(
-      naturalSort,
-      debugLabel: 'HabitsToday',
-    );
+    }, debugLabel: 'HabitsToday');
     if (newData != null) {
       _replaceSortbaleCache(newData);
       _pruneExpandStatus(newData);
