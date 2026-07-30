@@ -37,7 +37,6 @@ extension HabitGroupSortExtension on List<HabitGroupData> {
   ) {
     final sorted = toList();
     final comparator = switch (type) {
-      // FIXME: uses Unicode code-unit ordering, not natural-language sorting.
       HabitGroupOrderType.name =>
         (HabitGroupData a, HabitGroupData b) => a.name.compareTo(b.name),
       HabitGroupOrderType.colorType =>

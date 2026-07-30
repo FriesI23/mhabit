@@ -18,6 +18,7 @@ import 'package:provider/provider.dart';
 
 import '../../providers/app_ui/app_experimental_feature.dart';
 import '../../providers/app_ui/app_first_day.dart';
+import '../../providers/app_ui/app_language.dart';
 import '../../providers/app_ui/habits_filter.dart';
 import '../../providers/app_ui/habits_sort.dart';
 import '../../providers/workflow/app_event.dart';
@@ -36,6 +37,17 @@ class PageProviders extends SingleChildStatelessWidget {
   Iterable<SingleChildWidget> _buildPageViewModel() => [
     ChangeNotifierProvider<HabitSummaryViewModel>(
       create: (context) => HabitSummaryViewModel(),
+    ),
+    ViewModelProxyProvider<
+      AppExperimentalFeatureViewModel,
+      HabitSummaryViewModel
+    >(
+      update: (context, value, previous) =>
+          previous..updateNaturalSortEnabled(value.naturalSort),
+    ),
+    ViewModelProxyProvider<AppLanguageViewModel, HabitSummaryViewModel>(
+      update: (context, value, previous) =>
+          previous..updateCurrentAppLanguage(value.languange),
     ),
     ViewModelProxyProvider<GroupManager, HabitSummaryViewModel>(
       update: (context, value, previous) => previous..attachGroupManager(value),
@@ -81,6 +93,17 @@ class PageProviders extends SingleChildStatelessWidget {
   Iterable<SingleChildWidget> _buildTodayViewModel() => [
     ChangeNotifierProvider<HabitsTodayViewModel>(
       create: (context) => HabitsTodayViewModel(),
+    ),
+    ViewModelProxyProvider<
+      AppExperimentalFeatureViewModel,
+      HabitsTodayViewModel
+    >(
+      update: (context, value, previous) =>
+          previous..updateNaturalSortEnabled(value.naturalSort),
+    ),
+    ViewModelProxyProvider<AppLanguageViewModel, HabitsTodayViewModel>(
+      update: (context, value, previous) =>
+          previous..updateCurrentAppLanguage(value.languange),
     ),
     ViewModelProxyProvider<HabitsDisplayAccess, HabitsTodayViewModel>(
       update: (context, value, previous) => previous..attachAccess(value),

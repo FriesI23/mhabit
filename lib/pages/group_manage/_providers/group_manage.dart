@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'dart:async';
+import 'dart:ui' show Locale;
 
 import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
@@ -75,8 +76,8 @@ class GroupManageViewModel extends ChangeNotifier
   // dependencies
   GroupManager? _groupManager;
   DisplayGroupModeProfileHandler? _groupModeHandler;
-  NaturalSortExperimentalFeature? _naturalSortHandler;
-  AppLanguageProfileHanlder? _languageHandler;
+  bool _naturalSortEnabled = NaturalSortExperimentalFeature.defaultEnabled;
+  Locale? _currentAppLanguage;
 
   // data
   GroupCollection? _groupCollection;
@@ -199,10 +200,11 @@ class GroupManageViewModel extends ChangeNotifier
   void updateProfile(ProfileViewModel newProfile) {
     super.updateProfile(newProfile);
     _groupModeHandler = newProfile.getHandler<DisplayGroupModeProfileHandler>();
-    _naturalSortHandler = newProfile
-        .getHandler<NaturalSortExperimentalFeature>();
-    _languageHandler = newProfile.getHandler<AppLanguageProfileHanlder>();
   }
+
+  void updateNaturalSortEnabled(bool enabled) => _naturalSortEnabled = enabled;
+
+  void updateCurrentAppLanguage(Locale? locale) => _currentAppLanguage = locale;
 
   void attachGroupManager(GroupManager value) {
     _groupManager = value;
@@ -299,25 +301,24 @@ class GroupManageViewModel extends ChangeNotifier
     if (mounted) notifyListeners();
   }
 
-  Future<void> _resortData() async {
+  FutureOr<void> _resortData() async {
     if (_groupCollection == null) return;
 
     final sortType = effectiveSortType;
     final sortDirection = effectiveSortDirection;
 
-    Future<_GroupsSortableCache> defaultSort() async =>
-        _sortableCache.copyWithData(
-          _groupCollection!,
-          sortType: sortType,
-          sortDirection: sortDirection,
-        );
+    _GroupsSortableCache defaultSort() => _sortableCache.copyWithData(
+      _groupCollection!,
+      sortType: sortType,
+      sortDirection: sortDirection,
+    );
 
     Future<_GroupsSortableCache> naturalSort() async {
       if (sortType != HabitDisplayGroupType.name) return defaultSort();
-      if (!(_naturalSortHandler?.enabled ?? false)) return defaultSort();
+      if (!_naturalSortEnabled) return defaultSort();
       final groups = _groupCollection!.toList();
       if (groups.isEmpty) return defaultSort();
-      final locale = _languageHandler?.get()?.toLanguageTag();
+      final locale = _currentAppLanguage?.toLanguageTag();
       try {
         final sorted = await CollationApi.instance.naturalSort(
           items: groups,

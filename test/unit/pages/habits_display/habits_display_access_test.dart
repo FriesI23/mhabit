@@ -361,8 +361,8 @@ void main() {
         ]);
 
         vm.onSeachKeywordChanged('Zulu', listen: false);
-        // Let the async resort complete before checking.
-        await Future.delayed(Duration.zero);
+        // Natural sort is async even on fallback; await the resort to settle.
+        await vm.resortData(listen: false);
 
         expect(_currentHabitUuids(vm), [
           '33333333-3333-4333-8333-333333333333',

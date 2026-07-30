@@ -16,6 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
+import '../../providers/app_ui/app_experimental_feature.dart';
+import '../../providers/app_ui/app_language.dart';
 import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/group_manager.dart';
 import '../../storage/profile_provider.dart';
@@ -36,6 +38,17 @@ class PageProviders extends SingleChildStatelessWidget {
       ),
       ViewModelProxyProvider<ProfileViewModel, GroupManageViewModel>(
         update: (context, value, previous) => previous..updateProfile(value),
+      ),
+      ViewModelProxyProvider<
+        AppExperimentalFeatureViewModel,
+        GroupManageViewModel
+      >(
+        update: (context, value, previous) =>
+            previous..updateNaturalSortEnabled(value.naturalSort),
+      ),
+      ViewModelProxyProvider<AppLanguageViewModel, GroupManageViewModel>(
+        update: (context, value, previous) =>
+            previous..updateCurrentAppLanguage(value.languange),
       ),
       ViewModelProxyProvider<GroupManager, GroupManageViewModel>(
         update: (context, value, previous) =>

@@ -14,16 +14,19 @@
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:ui' show Locale;
 
 import 'package:async/async.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../common/collation.dart';
 import '../../../common/consts.dart';
 import '../../../common/exceptions.dart';
 import '../../../common/sort_generation.dart';
 import '../../../common/types.dart';
 import '../../../common/utils.dart';
+import '../../../extensions/collation_extensions.dart';
 import '../../../extensions/iterable_extensions.dart';
 import '../../../logging/helper.dart';
 import '../../../logging/logger_stack.dart';
@@ -39,6 +42,7 @@ import '../../../providers/workflow/app_event.dart';
 import '../../../providers/workflow/app_sync.dart';
 import '../../../providers/workflow/habits_manager.dart';
 import '../../../storage/db/handlers/habit.dart';
+import '../../../storage/profile/handlers/natural_sort.dart';
 import 'habits_display_reload_bridge.dart';
 
 extension on AppEventSubscriptions {
@@ -99,6 +103,8 @@ class HabitsTodayViewModel extends ChangeNotifier
   int _firstday = defaultFirstDay;
   HabitDisplaySortType _sortType = defaultSortType;
   HabitDisplaySortDirection _sortDirection = defaultSortDirection;
+  bool _naturalSortEnabled = NaturalSortExperimentalFeature.defaultEnabled;
+  Locale? _currentAppLanguage;
   late HabitsDisplayAccess _access;
   final _reloadBridge = HabitsDisplayReloadBridge();
 
@@ -251,6 +257,10 @@ class HabitsTodayViewModel extends ChangeNotifier
     _sortDirection = sortDirection;
   }
 
+  void updateNaturalSortEnabled(bool enabled) => _naturalSortEnabled = enabled;
+
+  void updateCurrentAppLanguage(Locale? locale) => _currentAppLanguage = locale;
+
   HabitSortCache? getHabitBySortId(int index) => _lastSortedDataCache[index];
 
   Future<void> resortData({bool listen = true}) async {
@@ -259,21 +269,49 @@ class HabitsTodayViewModel extends ChangeNotifier
     if (mounted && listen) notifyListeners();
   }
 
-  Future<void> _resortData() async {
-    final now = HabitDate.now();
-    final newData = await _sortGuard.run(() {
-      return _data.sort(_sortType, _sortDirection).where((e) {
-        if (!e.isActived) return false;
-        if (e.startDate > now) return false;
-        if (e.getRecordByDate(now) != null) return false;
-        return true;
-      }).toHabitSummarySortCacheList();
-    }, debugLabel: 'HabitsToday');
+  FutureOr<void> _resortData() async {
+    List<HabitSortCache> defaultSort() => _applyFilter(
+      _data.sort(_sortType, _sortDirection),
+    ).toHabitSummarySortCacheList();
+
+    Future<List<HabitSortCache>> naturalSort() async {
+      if (_sortType != HabitDisplaySortType.name) return defaultSort();
+      if (!_naturalSortEnabled) return defaultSort();
+      final habits = _data.values.toList();
+      if (habits.isEmpty) return defaultSort();
+      try {
+        final sorted = await CollationApi.instance.naturalSort(
+          items: habits,
+          idOf: (h) => h.uuid,
+          valueOf: (h) => h.name,
+          descending: _sortDirection == HabitDisplaySortDirection.desc,
+          locale: _currentAppLanguage?.toLanguageTag(),
+        );
+        return _applyFilter(sorted).toHabitSummarySortCacheList();
+      } catch (e) {
+        appLog.load.warn('Natural sort failed', ex: [e]);
+        return defaultSort();
+      }
+    }
+
+    final newData = await _sortGuard.run(
+      naturalSort,
+      debugLabel: 'HabitsToday',
+    );
     if (newData != null) {
       _replaceSortbaleCache(newData);
       _pruneExpandStatus(newData);
     }
   }
+
+  Iterable<HabitSummaryData> _applyFilter(Iterable<HabitSummaryData> source) =>
+      source.where((e) {
+        final now = HabitDate.now();
+        if (!e.isActived) return false;
+        if (e.startDate > now) return false;
+        if (e.getRecordByDate(now) != null) return false;
+        return true;
+      });
 
   void _replaceSortbaleCache(List<HabitSortCache> cache) {
     if (identical(cache, _lastSortedDataCache)) {

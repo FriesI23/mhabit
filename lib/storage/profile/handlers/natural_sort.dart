@@ -17,6 +17,8 @@ import 'app_experimental_feature.dart';
 
 /// Enabled Switch: \<version\> > 1.27.0+130
 class NaturalSortExperimentalFeature extends AppExperimentalFeatureBool<bool> {
+  static const defaultEnabled = true;
+
   NaturalSortExperimentalFeature(super.pref)
     : super(codec: const SameTypeCodec());
 
@@ -24,7 +26,7 @@ class NaturalSortExperimentalFeature extends AppExperimentalFeatureBool<bool> {
   String get expKey => "natural_sort";
 
   @override
-  bool get() => super.get() ?? true;
+  bool get() => super.get() ?? defaultEnabled;
 
   @override
   bool get enabled => get();
