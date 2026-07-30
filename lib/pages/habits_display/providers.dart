@@ -48,6 +48,7 @@ class PageProviders extends SingleChildStatelessWidget {
     ViewModelProxyProvider<AppLanguageViewModel, HabitSummaryViewModel>(
       update: (context, value, previous) =>
           previous..updateCurrentAppLanguage(value.languange),
+      post: (t, _, vm) => vm.resortData(),
     ),
     ViewModelProxyProvider<GroupManager, HabitSummaryViewModel>(
       update: (context, value, previous) => previous..attachGroupManager(value),
@@ -104,6 +105,7 @@ class PageProviders extends SingleChildStatelessWidget {
     ViewModelProxyProvider<AppLanguageViewModel, HabitsTodayViewModel>(
       update: (context, value, previous) =>
           previous..updateCurrentAppLanguage(value.languange),
+      post: (t, _, vm) => vm.resortData(),
     ),
     ViewModelProxyProvider<HabitsDisplayAccess, HabitsTodayViewModel>(
       update: (context, value, previous) => previous..attachAccess(value),

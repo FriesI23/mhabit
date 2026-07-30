@@ -1294,9 +1294,9 @@ class _HabitsSortableCache {
 /// Internal handler that encapsulates shared resort orchestration:
 /// branching (default vs natural), flat/grouped paths, degrade fallback.
 ///
-/// [call] is a true [FutureOr]: sync for default-sort paths,
-/// async when natural sort is active.  [SortGuard] is applied only
-/// inside the async branch.
+/// Habit and group natural-sort decisions are independent — either one
+/// can trigger the async path while the other stays sync.
+/// [SortGuard] is applied only inside the async branch.
 class _ResortHandler {
   final HabitSummaryViewModel _vm;
   final SortGuard _sortGuard;
@@ -1312,18 +1312,27 @@ class _ResortHandler {
 
   FutureOr<_HabitsSortableCache> call() {
     final cache = _vm._sortableCache;
-    if (cache.sortType != HabitDisplaySortType.name) return defaultSort();
-    if (!_vm._naturalSortEnabled) return defaultSort();
-    final habits = _vm._data.values.toList();
-    if (habits.isEmpty) return defaultSort();
-    return _guardedNaturalSort(habits);
+    final needHabitNatural =
+        cache.sortType == HabitDisplaySortType.name &&
+        _vm._naturalSortEnabled &&
+        _vm._data.values.isNotEmpty;
+    final needGroupNatural =
+        _vm._groupingEnabled &&
+        _vm._groupCollection != null &&
+        cache.groupType == HabitDisplayGroupType.name &&
+        _vm._naturalSortEnabled &&
+        _vm._groupCollection!.toList().isNotEmpty;
+
+    if (!needHabitNatural && !needGroupNatural) return defaultSort();
+    return _guardedNaturalSort(needHabitNatural, needGroupNatural);
   }
 
   Future<_HabitsSortableCache> _guardedNaturalSort(
-    List<HabitSummaryData> habits,
+    bool needHabitNatural,
+    bool needGroupNatural,
   ) async {
     final result = await _sortGuard.run(
-      () => naturalSort(habits),
+      () => naturalSort(needHabitNatural, needGroupNatural),
       debugLabel: 'HabitSummary',
     );
     return result ?? defaultSort();
@@ -1352,53 +1361,57 @@ class _ResortHandler {
   }
 
   Future<_HabitsSortableCache> naturalSort(
-    List<HabitSummaryData> habits,
+    bool needHabitNatural,
+    bool needGroupNatural,
   ) async {
     final cache = _vm._sortableCache;
     final locale = _vm._currentAppLanguage?.toLanguageTag();
     try {
-      final sortedHabits = await CollationApi.instance.naturalSort(
-        items: habits,
-        idOf: (h) => h.uuid,
-        valueOf: (h) => h.name,
-        descending: cache.sortDirection == HabitDisplaySortDirection.desc,
-        locale: locale,
-      );
+      final sortedHabits = needHabitNatural
+          ? await CollationApi.instance.naturalSort(
+              items: _vm._data.values.toList(),
+              idOf: (h) => h.uuid,
+              valueOf: (h) => h.name,
+              descending: cache.sortDirection == HabitDisplaySortDirection.desc,
+              locale: locale,
+            )
+          : _vm._data.sort(cache.sortType, cache.sortDirection).toList();
 
       if (!_vm._groupingEnabled || _vm._groupCollection == null) {
         return _flatCache(sortedHabits);
       }
 
-      final sortedGroups = await _tryNaturalSortGroups(cache, locale);
+      final sortedGroups = needGroupNatural
+          ? await _sortGroups(locale)
+          : _vm._groupCollection!.toList();
+      final habitOrder = needHabitNatural
+          ? HabitSortOrder.byNatural(sortedHabits)
+          : HabitSortOrder.byType(cache.sortType, cache.sortDirection);
+      final groupOrder = needGroupNatural
+          ? GroupSortOrder.byNatural(sortedGroups)
+          : GroupSortOrder.byType(cache.groupType, cache.groupDirection);
 
-      final groups = _vm._groupCollection!.toList();
       final grouped = buildGroupedSortCacheList(
         data: _vm._data,
-        groups: sortedGroups ?? groups,
+        groups: sortedGroups,
         collapsedUUIDs: _vm._collapsedGroupUUIDs,
         filter: _statusFilter,
-        habitOrder: HabitSortOrder.byNatural(sortedHabits),
-        groupOrder: sortedGroups != null
-            ? GroupSortOrder.byNatural(sortedGroups)
-            : GroupSortOrder.byType(cache.groupType, cache.groupDirection),
+        habitOrder: habitOrder,
+        groupOrder: groupOrder,
       );
-      return _finishGrouped(grouped, sortedHabits: sortedHabits);
+      return _finishGrouped(
+        grouped,
+        sortedHabits: needHabitNatural ? sortedHabits : null,
+      );
     } catch (e) {
       appLog.load.warn('Natural sort failed', ex: [e]);
       return defaultSort();
     }
   }
 
-  /// Returns naturally-sorted groups when the current group sort type is
-  /// [HabitDisplayGroupType.name] and the group list is non-empty;
-  /// otherwise returns `null`.
-  Future<List<HabitGroupData>?> _tryNaturalSortGroups(
-    _HabitsSortableCache cache,
-    String? locale,
-  ) async {
-    if (cache.groupType != HabitDisplayGroupType.name) return null;
+  Future<List<HabitGroupData>> _sortGroups(String? locale) async {
+    final cache = _vm._sortableCache;
     final groupList = _vm._groupCollection!.toList();
-    if (groupList.isEmpty) return null;
     return CollationApi.instance.naturalSort(
       items: groupList,
       idOf: (g) => g.uuid,
