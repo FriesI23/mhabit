@@ -21,6 +21,9 @@ import 'package:pigeon/pigeon.dart';
         'darwin/CollationPlugin/Sources/CollationPlugin/CollationApi.g.swift',
     kotlinOut:
         'android/app/src/main/kotlin/io/github/friesi23/mhabit/collation/CollationApi.g.kt',
+    cppHeaderOut: 'windows/runner/collation/collation_api.g.h',
+    cppSourceOut: 'windows/runner/collation/collation_api.g.cpp',
+    cppOptions: CppOptions(namespace: 'mhabit_collation'),
     kotlinOptions: KotlinOptions(
       package: 'io.github.friesi23.mhabit.collation',
       errorClassName: 'CollationFlutterError',
