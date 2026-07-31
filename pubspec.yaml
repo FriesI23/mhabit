@@ -189,6 +189,9 @@ dependencies:
   vector_graphics: ^1.2.2
   csv: ^8.0.0
 
+  # FFI (Linux collation)
+  ffi: ^2.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

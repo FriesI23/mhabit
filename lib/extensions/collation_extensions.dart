@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 
 import '../common/collation.dart';
@@ -47,24 +50,47 @@ List<T> sortByRank<T>({
 }
 
 /// Extension that provides native-collation sorting on [CollationApi].
+///
+/// Dispatch: sync FFI (Linux) ↔ async MethodChannel (other platforms).
 extension CollationApiNaturalSort on CollationApi {
   /// Sorts [items] by native collation order.
   ///
-  /// [idOf] extracts the stable identifier used in result ordering and as
-  /// a fallback tie-breaker. [valueOf] extracts the string whose
+  /// [idOf] extracts the stable identifier used in result ordering and
+  /// as a fallback tie-breaker. [valueOf] extracts the string whose
   /// collation order determines position.
   ///
-  /// Errors (MissingPluginException, PlatformException, etc.) propagate
-  /// to the caller.
-  Future<List<T>> naturalSort<T>({
+  /// Returns synchronously on Linux (FFI path); returns a [Future]
+  /// on other platforms (async MethodChannel).  Callers should always
+  /// [await] — [FutureOr] is a zero-cost pass-through for sync values.
+  FutureOr<List<T>> naturalSort<T>({
     required List<T> items,
     required String Function(T) idOf,
     required String Function(T) valueOf,
     bool descending = false,
     String? locale,
-  }) async {
+  }) {
     if (items.isEmpty) return items;
 
+    if (Platform.isLinux) {
+      return collationSortFfiLinux(
+        items: items,
+        idOf: idOf,
+        valueOf: valueOf,
+        descending: descending,
+        locale: locale,
+      );
+    }
+
+    return _naturalSortAsync(items, idOf, valueOf, descending, locale);
+  }
+
+  Future<List<T>> _naturalSortAsync<T>(
+    List<T> items,
+    String Function(T) idOf,
+    String Function(T) valueOf,
+    bool descending,
+    String? locale,
+  ) async {
     final request = CollationRequest(
       items: items
           .map((e) => CollationItem(id: idOf(e), value: valueOf(e)))

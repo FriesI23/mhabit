@@ -13,9 +13,13 @@
 // limitations under the License.
 
 import 'collation_api.g.dart';
+import 'collation_ffi_linux.dart';
 
 // Re-export Pigeon-generated types so callers only need this import.
 export 'collation_api.g.dart' show CollationItem, CollationRequest;
+
+// Re-export FFI collation type for direct use.
+export 'collation_ffi_linux.dart' show IcuCollation;
 
 /// Dart-side API that delegates string collation to the platform's
 /// native Collation API via Pigeon-generated MethodChannel.
@@ -37,4 +41,30 @@ class CollationApi {
   /// returns the ids in that order.
   Future<List<String>> sortStrings(CollationRequest request) =>
       _api.sortStrings(request);
+}
+
+/// Linux synchronous collation sort via ICU FFI (sort-key generation
+/// via [ucol_getSortKey] + pure-Dart sort).
+///
+/// Callers must guard with [Platform.isLinux] — this function does
+/// not self-dispatch.  For the platform-aware wrapper, see
+/// [CollationApiNaturalSort.naturalSort] in `collation_extensions.dart`.
+List<T> collationSortFfiLinux<T>({
+  required List<T> items,
+  required String Function(T) idOf,
+  required String Function(T) valueOf,
+  bool descending = false,
+  String? locale,
+}) {
+  final c = IcuCollation(locale);
+  try {
+    return c.sort(
+      items: items,
+      idOf: idOf,
+      valueOf: valueOf,
+      descending: descending,
+    );
+  } finally {
+    c.dispose();
+  }
 }
