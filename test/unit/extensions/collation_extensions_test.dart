@@ -13,6 +13,9 @@
 // limitations under the License.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/common/collation.dart';
+import 'package:mhabit/common/collation_ffi_linux.dart';
+import 'package:mhabit/common/collation_ffi_windows.dart';
 import 'package:mhabit/extensions/collation_extensions.dart';
 
 /// Simple record for testing.
@@ -150,6 +153,32 @@ void main() {
       );
       // a rank 1, b rank 2 → a, b
       expect(result.map((e) => e.id), ['a', 'b']);
+    });
+  });
+
+  group('FFI sort assumes loaded', () {
+    test('collationSortFfiLinux throws when engine not resolved', () {
+      IcuCollationLinux().resetForTest();
+      expect(
+        () => collationSortFfiLinux(
+          items: [_i('a', 'A')],
+          idOf: (e) => e.id,
+          valueOf: (e) => e.name,
+        ),
+        throwsStateError,
+      );
+    });
+
+    test('collationSortFfiWindows throws when engine not resolved', () {
+      IcuCollationWindows().resetForTest();
+      expect(
+        () => collationSortFfiWindows(
+          items: [_i('a', 'A')],
+          idOf: (e) => e.id,
+          valueOf: (e) => e.name,
+        ),
+        throwsStateError,
+      );
     });
   });
 }

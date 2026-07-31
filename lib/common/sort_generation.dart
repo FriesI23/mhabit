@@ -44,16 +44,19 @@ class SortGuard {
   }
 
   /// Runs [sort] and returns its result, or `null` if [bump] was called
-  /// during the operation (i.e. data was reloaded and the sort is stale).
+  /// during the operation (data was reloaded and the sort is stale).
   ///
-  /// The [sort] closure may be synchronous or asynchronous.  [run] wraps
-  /// it in an async frame so that the generation can change across an
-  /// `await` yield.
-  Future<T?> run<T>(FutureOr<T> Function() sort, {String? debugLabel}) async {
+  /// Synchronous results are returned as-is after a generation check;
+  /// asynchronous results chain a `.then` guard.
+  FutureOr<T?> run<T>(FutureOr<T> Function() sort, {String? debugLabel}) {
     final token = _generation;
-    // Yield to let any pending microtask (reload bump) run before sort.
-    await Future.delayed(Duration.zero);
-    final result = await sort();
+    final result = sort();
+    return result is Future<T>
+        ? result.then((r) => _discardIfBumped(r, token, debugLabel: debugLabel))
+        : _discardIfBumped(result, token, debugLabel: debugLabel);
+  }
+
+  T? _discardIfBumped<T>(T value, int token, {String? debugLabel}) {
     if (_generation != token) {
       assert(() {
         final label = debugLabel != null ? '[$debugLabel] ' : '';
@@ -65,7 +68,7 @@ class SortGuard {
       }());
       return null;
     }
-    return result;
+    return value;
   }
 
   /// Capture the current generation before a manual check.

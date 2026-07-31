@@ -13,12 +13,14 @@
 // limitations under the License.
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui' show Locale;
 
 import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../common/collation.dart';
+import '../../../common/collation_ffi_linux.dart';
 import '../../../common/consts.dart';
 import '../../../common/sort_generation.dart';
 import '../../../common/types.dart';
@@ -301,8 +303,8 @@ class GroupManageViewModel extends ChangeNotifier
     if (mounted) notifyListeners();
   }
 
-  Future<void> _resortData() async {
-    if (_groupCollection == null) return;
+  FutureOr<void> _resortData() {
+    if (_groupCollection == null) return null;
 
     final sortType = effectiveSortType;
     final sortDirection = effectiveSortDirection;
@@ -316,36 +318,45 @@ class GroupManageViewModel extends ChangeNotifier
     final canNaturalSort =
         sortType == HabitDisplayGroupType.name &&
         _naturalSortEnabled &&
-        _groupCollection!.toList().isNotEmpty;
+        _groupCollection!.toList().isNotEmpty &&
+        (IcuCollationLinux.available || !Platform.isLinux);
 
     if (!canNaturalSort) {
       _sortableCache = defaultSort();
-      return;
+      return null;
     }
 
-    _sortableCache =
-        await _sortGuard.run(() async {
-          final groups = _groupCollection!.toList();
-          final locale = _currentAppLanguage?.toLanguageTag();
-          try {
-            final sorted = await CollationApi.instance.naturalSort(
-              items: groups,
-              idOf: (g) => g.uuid,
-              valueOf: (g) => g.name,
-              descending: sortDirection == HabitDisplaySortDirection.desc,
-              locale: locale,
-            );
-            return _GroupsSortableCache(
-              sortType: sortType,
-              sortDirection: sortDirection,
-              lastSortedDataCache: sorted,
-            );
-          } catch (e) {
-            appLog.load.warn('Natural sort failed', ex: [e]);
-            return defaultSort();
-          }
-        }, debugLabel: 'GroupManage') ??
-        _sortableCache;
+    final result = _sortGuard.run<_GroupsSortableCache>(() {
+      final groups = _groupCollection!.toList();
+      final locale = _currentAppLanguage?.toLanguageTag();
+      final sorted = CollationApi.instance.naturalSort(
+        items: groups,
+        idOf: (g) => g.uuid,
+        valueOf: (g) => g.name,
+        descending: sortDirection == HabitDisplaySortDirection.desc,
+        locale: locale,
+      );
+
+      _GroupsSortableCache build(List<HabitGroupData> s) =>
+          _GroupsSortableCache(
+            sortType: sortType,
+            sortDirection: sortDirection,
+            lastSortedDataCache: s,
+          );
+
+      if (sorted is Future<List<HabitGroupData>>) {
+        return sorted.then(build).catchError((e) {
+          appLog.load.warn('Natural sort failed', ex: [e]);
+          return defaultSort();
+        });
+      }
+      return build(sorted);
+    }, debugLabel: 'GroupManage');
+
+    if (result is Future<_GroupsSortableCache?>) {
+      return result.then((r) => _sortableCache = r ?? _sortableCache);
+    }
+    _sortableCache = result ?? _sortableCache;
   }
 
   void enterSelectionMode(String initialUUID, {bool listen = true}) {

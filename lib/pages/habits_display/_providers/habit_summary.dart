@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui' show Locale;
 
 import 'package:async/async.dart';
@@ -21,6 +22,7 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../common/collation.dart';
+import '../../../common/collation_ffi_linux.dart';
 import '../../../common/consts.dart';
 import '../../../common/exceptions.dart';
 import '../../../common/sort_generation.dart';
@@ -1312,29 +1314,35 @@ class _ResortHandler {
 
   FutureOr<_HabitsSortableCache> call() {
     final cache = _vm._sortableCache;
+    final ffiAvailable = IcuCollationLinux.available || !Platform.isLinux;
     final needHabitNatural =
         cache.sortType == HabitDisplaySortType.name &&
         _vm._naturalSortEnabled &&
-        _vm._data.values.isNotEmpty;
+        _vm._data.values.isNotEmpty &&
+        ffiAvailable;
     final needGroupNatural =
         _vm._groupingEnabled &&
         _vm._groupCollection != null &&
         cache.groupType == HabitDisplayGroupType.name &&
         _vm._naturalSortEnabled &&
-        _vm._groupCollection!.toList().isNotEmpty;
+        _vm._groupCollection!.toList().isNotEmpty &&
+        ffiAvailable;
 
     if (!needHabitNatural && !needGroupNatural) return defaultSort();
     return _guardedNaturalSort(needHabitNatural, needGroupNatural);
   }
 
-  Future<_HabitsSortableCache> _guardedNaturalSort(
+  FutureOr<_HabitsSortableCache> _guardedNaturalSort(
     bool needHabitNatural,
     bool needGroupNatural,
-  ) async {
-    final result = await _sortGuard.run(
+  ) {
+    final result = _sortGuard.run<_HabitsSortableCache>(
       () => naturalSort(needHabitNatural, needGroupNatural),
       debugLabel: 'HabitSummary',
     );
+    if (result is Future<_HabitsSortableCache?>) {
+      return result.then((r) => r ?? defaultSort());
+    }
     return result ?? defaultSort();
   }
 

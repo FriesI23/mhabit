@@ -13,29 +13,27 @@
 // limitations under the License.
 
 import 'dart:ffi';
+import 'dart:io';
 
-import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-typedef SortKeyFn = Uint8List Function(String);
+import '../logging/helper.dart';
+import 'collation_ffi.dart';
 
-/// ICU-native sort-key implementation via [ucol_getSortKey].
+/// Pure `libicui18n` resolution rules for Linux.
 ///
-/// Loads `libicui18n.so` with a version fallback chain covering common
-/// Linux distributions and Flatpak Freedesktop SDK runtimes, creates an
-/// ICU collator for the given BCP-47 locale, enables numeric collation,
-/// and generates sort-key byte arrays comparable lexicographically in
-/// pure Dart.
-///
-/// Callers obtain a [SortKeyFn] closure for injection into [IcuCollation].
-class IcuSortKey {
-  // -- Library loading -------------------------------------------------------
+/// Encapsulates which sonames/directories to probe, how to parse and order
+/// candidates by ICU version, and how to validate a library (symbol probe).
+/// Kept separate from the cache/load orchestration in [IcuCollationLinux]
+/// so the rules can be unit-tested in isolation.
+final class IcuCollationLinuxRules {
+  /// App-recommended stable ICU version, tried before the highest one
+  /// discovered (widely deployed: Debian 12, Ubuntu 23.04+).
+  static const recommendedVersion = 72;
 
-  /// ICU soname versions covered by the fallback chain (70–77).
-  static const _soVersions = ['77', '76', '75', '74', '73', '72', '71', '70'];
-
-  /// Maps [Abi.current()] to the Linux multiarch directory component.
-  static String get _multiarchTriplet => switch (Abi.current()) {
+  /// The Linux multiarch directory component for the current ABI.
+  String get multiarchTriplet => switch (Abi.current()) {
     Abi.linuxArm64 => 'aarch64-linux-gnu',
     Abi.linuxX64 => 'x86_64-linux-gnu',
     Abi.linuxArm => 'arm-linux-gnueabihf',
@@ -43,51 +41,80 @@ class IcuSortKey {
     _ => 'x86_64-linux-gnu',
   };
 
-  static DynamicLibrary? _libCache;
-  static String _icuVersionSuffix = '';
+  /// Directories scanned for `libicui18n.so*` (host + Flatpak layouts).
+  List<String> get searchDirs => [
+    '/usr/lib/$multiarchTriplet',
+    '/lib/$multiarchTriplet',
+    '/app/lib', // Flatpak runtime layout
+  ];
 
-  static DynamicLibrary get _lib => _libCache ??= _loadLib();
+  /// Candidate paths in resolution order: unversioned soname, then the
+  /// recommended stable version, then the highest version in [discovered].
+  List<String> candidates(List<String> discovered) => [
+    'libicui18n.so',
+    'libicui18n.so.$recommendedVersion',
+    if (discovered.isNotEmpty) discovered.first,
+  ];
 
-  /// Extracts the ICU major version from a soname path.
-  ///
-  /// "libicui18n.so.72" → "_72",
-  /// "/lib/aarch64-linux-gnu/libicui18n.so.72" → "_72",
-  /// "libicui18n.so" → "".
-  static String _extractVersionSuffix(String path) {
-    final match = RegExp(r'\.so\.(\d+)$').firstMatch(path);
-    return match != null ? '_${match.group(1)}' : '';
+  /// Lists `libicui18n.so*` files under [dirs] ordered by descending ICU
+  /// major version (unversioned entries last).
+  Future<List<String>> discoverCandidates(List<String> dirs) async {
+    final found = <String>[];
+    for (final dir in dirs) {
+      final directory = Directory(dir);
+      if (!directory.existsSync()) continue;
+      try {
+        await for (final entity in directory.list(followLinks: true)) {
+          if (entity is! File) continue;
+          final path = entity.path;
+          if (!path.split('/').last.startsWith('libicui18n.so')) continue;
+          found.add(path);
+        }
+      } catch (_) {
+        // Skip unreadable directories.
+      }
+    }
+    found.sort(_byVersionDesc);
+    return found;
   }
 
-  /// Probes the loaded [lib] for a `ucol_open_XX` symbol.
-  ///
-  /// Checks [preferred] first (extracted from the soname path), then
-  /// falls back to trying all versions in [_soVersions], and finally
-  /// tries the bare `ucol_open` (no suffix).  Returns the suffix
-  /// (e.g. `"_72"`, `""`) or `null` when no variant is available.
-  static String? _probeVersionSuffix(
-    DynamicLibrary lib, {
-    String preferred = '',
-  }) {
-    // 1. Try the version suggested by the soname.
+  int _byVersionDesc(String a, String b) {
+    final va = extractVersionMajor(a);
+    final vb = extractVersionMajor(b);
+    if (va == null && vb == null) return a.compareTo(b);
+    if (va == null) return 1;
+    if (vb == null) return -1;
+    if (va != vb) return vb.compareTo(va);
+    return b.compareTo(a);
+  }
+
+  /// ICU major version from a soname path (`libicui18n.so.72.1` → 72),
+  /// or `null` when unversioned (`libicui18n.so`).
+  int? extractVersionMajor(String path) {
+    final name = path.split('/').last;
+    final match = RegExp(r'^libicui18n\.so\.(\d+)').firstMatch(name);
+    return match != null ? int.tryParse(match.group(1)!) : null;
+  }
+
+  /// ICU symbol-version suffix from a soname path:
+  /// `libicui18n.so.72` → `_72`, `libicui18n.so` → `""`.
+  String extractVersionSuffix(String path) {
+    final major = extractVersionMajor(path);
+    return major != null ? '_$major' : '';
+  }
+
+  /// Probes [lib] for a `ucol_open_XX` symbol — [preferred] version first,
+  /// then the bare `ucol_open` (Flatpak-style unversioned exports) —
+  /// returning the suffix or `null`.
+  String? probeVersionSuffix(DynamicLibrary lib, {String preferred = ''}) {
     if (preferred.isNotEmpty) {
       try {
         lib.lookup<NativeFunction<Void Function()>>('ucol_open$preferred');
         return preferred;
       } on ArgumentError {
-        // not available — fall through
+        // fall through to unversioned
       }
     }
-    // 2. Try every known version.
-    for (final v in _soVersions) {
-      if ('_$v' == preferred) continue; // already tried above
-      try {
-        lib.lookup<NativeFunction<Void Function()>>('ucol_open_$v');
-        return '_$v';
-      } on ArgumentError {
-        continue;
-      }
-    }
-    // 3. Try unversioned symbol (standard ICU / Flatpak).
     try {
       lib.lookup<NativeFunction<Void Function()>>('ucol_open');
       return '';
@@ -96,228 +123,150 @@ class IcuSortKey {
     }
   }
 
-  static DynamicLibrary _loadLib() {
-    final arch = _multiarchTriplet;
-
-    // Build fallback chain:
-    //  1. bare sonames (host systems with working ldconfig)
-    //  2. /usr/lib multiarch paths (Flatpak / usrmerge systems)
-    //  3. /lib multiarch paths (traditional Debian layout)
-    //  4. unversioned soname (last resort)
-    final candidates = <String>[
-      for (final v in _soVersions) 'libicui18n.so.$v',
-      for (final v in _soVersions) '/usr/lib/$arch/libicui18n.so.$v',
-      for (final v in _soVersions) '/lib/$arch/libicui18n.so.$v',
-      'libicui18n.so',
-    ];
-
-    for (final candidate in candidates) {
-      DynamicLibrary lib;
-      try {
-        lib = DynamicLibrary.open(candidate);
-      } catch (_) {
-        continue;
-      }
-
-      // Determine the ICU symbol-version suffix for this library.
-      final extractedSuffix = _extractVersionSuffix(candidate);
-      // The extracted suffix may be wrong (e.g. Flatpak has unversioned
-      // symbols inside a versioned soname).  Probe to confirm.
-      final suffix = _probeVersionSuffix(lib, preferred: extractedSuffix);
-      if (suffix == null) continue; // can't resolve any symbol
-
-      _icuVersionSuffix = suffix;
-      return lib;
-    }
-
-    throw UnsupportedError(
-      'libicui18n not found (tried versions $_soVersions,'
-      ' /usr/lib/$arch + /lib/$arch multiarch paths,'
-      ' and unversioned fallback)',
-    );
-  }
-
-  // UCollator* ucol_open(const char* loc, UErrorCode* status)
-  static final _ucolOpen = _lib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Utf8>, Pointer<Int32>),
-        Pointer<Void> Function(Pointer<Utf8>, Pointer<Int32>)
-      >('ucol_open$_icuVersionSuffix');
-
-  // void ucol_close(UCollator* coll)
-  static final _ucolClose = _lib
-      .lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >('ucol_close$_icuVersionSuffix');
-
-  // int32_t ucol_getSortKey(
-  //   const UCollator* coll, const UChar* source, int32_t sourceLength,
-  //   uint8_t* result, int32_t resultLength)
-  static final _ucolGetSortKey = _lib
-      .lookupFunction<
-        Int32 Function(
-          Pointer<Void>,
-          Pointer<Uint16>,
-          Int32,
-          Pointer<Uint8>,
-          Int32,
-        ),
-        int Function(Pointer<Void>, Pointer<Uint16>, int, Pointer<Uint8>, int)
-      >('ucol_getSortKey$_icuVersionSuffix');
-
-  // void ucol_setAttribute(
-  //   UCollator* coll, UColAttribute attr, UColAttributeValue value,
-  //   UErrorCode* status)
-  static final _ucolSetAttribute = _lib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Int32, Int32, Pointer<Int32>),
-        void Function(Pointer<Void>, int, int, Pointer<Int32>)
-      >('ucol_setAttribute$_icuVersionSuffix');
-
-  static const int _uZeroError = 0;
-  static const int _ucolNumericCollation = 6;
-  static const int _ucolOn = 17;
-
-  final Pointer<Void> _coll;
-
-  /// Creates a sort-key generator for [localeName] (BCP-47).
-  ///
-  /// Throws [UnsupportedError] if `libicui18n` cannot be loaded or if ICU
-  /// cannot open a collator for the requested locale.  Callers should
-  /// catch these and fall back to a non-collated sort.
-  IcuSortKey(String? localeName) : _coll = _openCollator(localeName);
-
-  static Pointer<Void> _openCollator(String? localeName) {
-    final hasLocale = localeName != null && localeName.isNotEmpty;
-    final locPtr = hasLocale
-        ? localeName.toNativeUtf8(allocator: malloc)
-        : nullptr;
-    final status = calloc<Int32>()..value = _uZeroError;
+  /// Resolves [path] as a usable ICU library, returning the library and
+  /// its symbol suffix, or `null` when [path] cannot be opened or probed.
+  (DynamicLibrary, String)? tryLoadPath(String path) {
+    DynamicLibrary lib;
     try {
-      final coll = _ucolOpen(locPtr, status);
-      if (status.value != _uZeroError || coll == nullptr) {
-        if (coll != nullptr) _ucolClose(coll);
-        throw UnsupportedError(
-          'ucol_open failed for "$localeName": UErrorCode=${status.value}',
-        );
-      }
-
-      // Enable numeric collation — best-effort, non-fatal.
-      final attrStatus = calloc<Int32>()..value = _uZeroError;
-      try {
-        _ucolSetAttribute(coll, _ucolNumericCollation, _ucolOn, attrStatus);
-      } finally {
-        calloc.free(attrStatus);
-      }
-
-      return coll;
-    } finally {
-      calloc.free(status);
-      if (hasLocale) malloc.free(locPtr);
+      lib = DynamicLibrary.open(path);
+    } catch (_) {
+      return null;
     }
-  }
-
-  void dispose() => _ucolClose(_coll);
-
-  /// Returns a collation sort-key byte array for [s].
-  ///
-  /// Converts the Dart [String] to UTF-16 ([UChar*]) and delegates to ICU
-  /// [ucol_getSortKey].  The returned key includes only the sort-key bytes
-  /// (trailing null terminator stripped) and can be compared with
-  /// byte-wise lexicographic order.
-  Uint8List call(String s) {
-    final codeUnits = s.codeUnits;
-    final srcPtr = malloc<Uint16>(codeUnits.length + 1);
-    try {
-      for (var i = 0; i < codeUnits.length; i++) {
-        srcPtr[i] = codeUnits[i];
-      }
-      srcPtr[codeUnits.length] = 0;
-
-      // ICU sort-key sizing: needed includes the null terminator.
-      final needed = _ucolGetSortKey(
-        _coll,
-        srcPtr,
-        codeUnits.length,
-        nullptr,
-        0,
-      );
-      if (needed <= 0) return Uint8List(0);
-
-      final buf = malloc<Uint8>(needed);
-      try {
-        _ucolGetSortKey(_coll, srcPtr, codeUnits.length, buf, needed);
-        // ICU docs: the returned length includes the trailing NUL.
-        return Uint8List.fromList(buf.asTypedList(needed - 1));
-      } finally {
-        malloc.free(buf);
-      }
-    } finally {
-      malloc.free(srcPtr);
-    }
+    final preferred = extractVersionSuffix(path);
+    final suffix = probeVersionSuffix(lib, preferred: preferred);
+    if (suffix == null) return null;
+    return (lib, suffix);
   }
 }
 
-/// Synchronous collation sort using an injectable sort-key function.
+/// Linux ICU collation resolver (singleton).
 ///
-/// Pure-Dart [sort] logic fed by the injected [_sortKey] closure.
-/// Production instances use [IcuSortKey] ([ucol_getSortKey] via FFI);
-/// tests inject a mock via [IcuCollation.test].
-class IcuCollation {
-  final SortKeyFn _sortKey;
-  final void Function() _dispose;
+/// Resolves the system `libicui18n` eagerly at app startup ([init]) via
+/// directory search + SharedPreferences cache; sort callers branch on
+/// [isAvailable] rather than catching load exceptions.  Use [engine] to
+/// build a locale-specific collator.
+class IcuCollationLinux {
+  static IcuCollationLinux? _instance;
 
-  /// Production: uses ICU [ucol_getSortKey] via [IcuSortKey].
-  IcuCollation(String? localeName) : this._from(IcuSortKey(localeName));
+  factory IcuCollationLinux() => _instance ??= IcuCollationLinux._();
 
-  /// Test: inject a mock sort-key function.  No native resources.
+  IcuCollationLinux._();
+
+  /// SharedPreferences key for the resolved `libicui18n` path (hint only;
+  /// validated on read).
+  static const cacheKey = 'collationFfiIcuLib';
+
+  final IcuCollationLinuxRules _rules = IcuCollationLinuxRules();
+
+  DynamicLibrary? _lib;
+  String _icuVersionSuffix = '';
+  String? _loadedPath;
+  bool _available = false;
+
+  /// Whether a native collation engine was resolved successfully.
+  /// Safe to call on any platform — returns `false` when [init] was
+  /// never called or failed, without creating the singleton.
+  static bool get available => _instance?._available ?? false;
+
+  /// Whether a native collation engine was resolved successfully.
+  bool get isAvailable => _available;
+
+  /// Resolves the native engine once at app startup: cache hit → directory
+  /// search → static soname fallback.  On success caches the resolved path
+  /// (best-effort); any failure is logged and leaves [isAvailable] `false`.
+  Future<void> init({SharedPreferences? prefs}) async {
+    if (_available) return;
+    try {
+      final resolved = prefs ?? await SharedPreferences.getInstance();
+
+      final cachedPath = resolved.getString(cacheKey);
+      if (cachedPath != null && _tryLoadPath(cachedPath)) {
+        appLog.load.info(
+          'Linux ICU collation loaded from cache',
+          ex: [cachedPath],
+        );
+        return;
+      }
+
+      if (await _searchAndLoad()) {
+        await _cacheWrite(resolved);
+        return;
+      }
+
+      appLog.load.warn(
+        'Linux ICU collation unavailable — natural sort falls back to '
+        'plain sort',
+      );
+    } catch (e, s) {
+      appLog.load.warn(
+        'Linux ICU collation init failed — natural sort falls back to '
+        'plain sort',
+        error: e,
+        stackTrace: s,
+      );
+    }
+  }
+
+  /// Builds a collator engine for [localeName] from the resolved library.
+  IcuCollationEngine engine(String? localeName) =>
+      _IcuCollationLinuxEngine(_requireLib(), _icuVersionSuffix, localeName);
+
+  /// Best-effort cache write; failure must never affect availability.
+  Future<void> _cacheWrite(SharedPreferences prefs) async {
+    final loadedPath = _loadedPath;
+    if (loadedPath == null) return;
+    try {
+      await prefs.setString(cacheKey, loadedPath);
+    } catch (e) {
+      appLog.load.debug('Linux ICU collation cache write failed', error: e);
+    }
+  }
+
+  /// Applies a resolved library to the singleton state.
+  void _applyResolved(DynamicLibrary lib, String suffix, String path) {
+    _lib = lib;
+    _icuVersionSuffix = suffix;
+    _loadedPath = path;
+    _available = true;
+  }
+
+  /// Attempts to resolve [path], applying the state on success.
+  bool _tryLoadPath(String path) {
+    final result = _rules.tryLoadPath(path);
+    if (result == null) return false;
+    _applyResolved(result.$1, result.$2, path);
+    return true;
+  }
+
+  Future<bool> _searchAndLoad() async {
+    final discovered = await _rules.discoverCandidates(_rules.searchDirs);
+    for (final candidate in _rules.candidates(discovered)) {
+      if (_tryLoadPath(candidate)) return true;
+    }
+    return false;
+  }
+
+  DynamicLibrary _requireLib() {
+    final lib = _lib;
+    if (lib == null) {
+      throw StateError(
+        'IcuCollationLinux not resolved; call IcuCollationLinux().init() first',
+      );
+    }
+    return lib;
+  }
+
+  /// Resets the resolved state (tests only).
   @visibleForTesting
-  IcuCollation.test(SortKeyFn sortKey) : _sortKey = sortKey, _dispose = _noop;
-
-  IcuCollation._from(IcuSortKey native)
-    : _sortKey = native.call,
-      _dispose = native.dispose;
-
-  static void _noop() {}
-
-  /// Releases native resources (no-op for test instances).
-  void dispose() => _dispose();
-
-  /// Sorts [items] by collation order of their values.
-  ///
-  /// Returns a new sorted list.  Ties are broken by [idOf].
-  List<T> sort<T>({
-    required List<T> items,
-    required String Function(T) idOf,
-    required String Function(T) valueOf,
-    bool descending = false,
-  }) {
-    if (items.isEmpty) return items;
-
-    // 1. Generate sort keys — O(n).
-    final keys = <Uint8List>[];
-    for (final item in items) {
-      keys.add(_sortKey(valueOf(item)));
-    }
-
-    // 2. Sort in pure Dart using precomputed keys.
-    final indices = List.generate(items.length, (i) => i);
-    indices.sort((a, b) {
-      final cmp = _compareKeys(keys[a], keys[b]);
-      if (cmp != 0) return cmp;
-      return idOf(items[a]).compareTo(idOf(items[b]));
-    });
-
-    final result = indices.map((i) => items[i]).toList();
-    return descending ? result.reversed.toList() : result;
+  void resetForTest() {
+    _lib = null;
+    _icuVersionSuffix = '';
+    _loadedPath = null;
+    _available = false;
   }
+}
 
-  static int _compareKeys(Uint8List a, Uint8List b) {
-    final len = a.length < b.length ? a.length : b.length;
-    for (var i = 0; i < len; i++) {
-      if (a[i] != b[i]) return a[i] - b[i];
-    }
-    return a.length - b.length;
-  }
+/// Linux ICU collator backed by the resolved [IcuCollationLinux] library.
+final class _IcuCollationLinuxEngine extends IcuCollationBase {
+  _IcuCollationLinuxEngine(super.lib, super.suffix, super.localeName);
 }

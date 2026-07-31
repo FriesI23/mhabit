@@ -12,14 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'collation.dart';
 import 'collation_api.g.dart';
 import 'collation_ffi_linux.dart';
+import 'collation_ffi_windows.dart';
 
 // Re-export Pigeon-generated types so callers only need this import.
 export 'collation_api.g.dart' show CollationItem, CollationRequest;
 
-// Re-export FFI collation type for direct use.
-export 'collation_ffi_linux.dart' show IcuCollation;
+// Re-export the shared pure-Dart collation engine for direct use.
+export 'collation_ffi.dart' show IcuCollation;
 
 /// Dart-side API that delegates string collation to the platform's
 /// native Collation API via Pigeon-generated MethodChannel.
@@ -43,12 +45,10 @@ class CollationApi {
       _api.sortStrings(request);
 }
 
-/// Linux synchronous collation sort via ICU FFI (sort-key generation
-/// via [ucol_getSortKey] + pure-Dart sort).
+/// Linux synchronous collation sort via ICU FFI (numeric-aware).
 ///
-/// Callers must guard with [Platform.isLinux] — this function does
-/// not self-dispatch.  For the platform-aware wrapper, see
-/// [CollationApiNaturalSort.naturalSort] in `collation_extensions.dart`.
+/// Assumes the engine was resolved at startup; availability is dispatched
+/// by `CollationApiNaturalSort.naturalSort`.
 List<T> collationSortFfiLinux<T>({
   required List<T> items,
   required String Function(T) idOf,
@@ -56,7 +56,31 @@ List<T> collationSortFfiLinux<T>({
   bool descending = false,
   String? locale,
 }) {
-  final c = IcuCollation(locale);
+  final c = IcuCollation(IcuCollationLinux().engine(locale));
+  try {
+    return c.sort(
+      items: items,
+      idOf: idOf,
+      valueOf: valueOf,
+      descending: descending,
+    );
+  } finally {
+    c.dispose();
+  }
+}
+
+/// Windows synchronous collation sort via system ICU FFI (numeric-aware).
+///
+/// Assumes the engine was resolved at startup; availability is dispatched
+/// by `CollationApiNaturalSort.naturalSort`.
+List<T> collationSortFfiWindows<T>({
+  required List<T> items,
+  required String Function(T) idOf,
+  required String Function(T) valueOf,
+  bool descending = false,
+  String? locale,
+}) {
+  final c = IcuCollation(IcuCollationWindows().engine(locale));
   try {
     return c.sort(
       items: items,

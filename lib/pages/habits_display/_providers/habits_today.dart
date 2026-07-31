@@ -14,6 +14,7 @@
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:io';
 import 'dart:ui' show Locale;
 
 import 'package:async/async.dart';
@@ -21,6 +22,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../common/collation.dart';
+import '../../../common/collation_ffi_linux.dart';
 import '../../../common/consts.dart';
 import '../../../common/exceptions.dart';
 import '../../../common/sort_generation.dart';
@@ -269,7 +271,7 @@ class HabitsTodayViewModel extends ChangeNotifier
     if (mounted && listen) notifyListeners();
   }
 
-  Future<void> _resortData() async {
+  FutureOr<void> _resortData() {
     List<HabitSortCache> defaultSort() => _applyFilter(
       _data.sort(_sortType, _sortDirection),
     ).toHabitSummarySortCacheList();
@@ -277,33 +279,48 @@ class HabitsTodayViewModel extends ChangeNotifier
     final canNaturalSort =
         _sortType == HabitDisplaySortType.name &&
         _naturalSortEnabled &&
-        _data.values.isNotEmpty;
+        _data.values.isNotEmpty &&
+        (IcuCollationLinux.available || !Platform.isLinux);
 
     if (!canNaturalSort) {
       final newData = defaultSort();
       _replaceSortbaleCache(newData);
       _pruneExpandStatus(newData);
-      return;
+      return null;
     }
 
-    final newData = await _sortGuard.run(() async {
-      try {
-        final sorted = await CollationApi.instance.naturalSort(
-          items: _data.values.toList(),
-          idOf: (h) => h.uuid,
-          valueOf: (h) => h.name,
-          descending: _sortDirection == HabitDisplaySortDirection.desc,
-          locale: _currentAppLanguage?.toLanguageTag(),
-        );
-        return _applyFilter(sorted).toHabitSummarySortCacheList();
-      } catch (e) {
-        appLog.load.warn('Natural sort failed', ex: [e]);
-        return defaultSort();
+    List<HabitSortCache> build(List<HabitSummaryData> sorted) =>
+        _applyFilter(sorted).toHabitSummarySortCacheList();
+
+    final newData = _sortGuard.run<List<HabitSortCache>>(() {
+      final sorted = CollationApi.instance.naturalSort(
+        items: _data.values.toList(),
+        idOf: (h) => h.uuid,
+        valueOf: (h) => h.name,
+        descending: _sortDirection == HabitDisplaySortDirection.desc,
+        locale: _currentAppLanguage?.toLanguageTag(),
+      );
+      if (sorted is Future<List<HabitSummaryData>>) {
+        return sorted.then(build).catchError((e) {
+          appLog.load.warn('Natural sort failed', ex: [e]);
+          return defaultSort();
+        });
       }
+      return build(sorted);
     }, debugLabel: 'HabitsToday');
-    if (newData != null) {
-      _replaceSortbaleCache(newData);
-      _pruneExpandStatus(newData);
+
+    if (newData is Future<List<HabitSortCache>?>) {
+      return newData.then((d) {
+        if (d != null) {
+          _replaceSortbaleCache(d);
+          _pruneExpandStatus(d);
+        }
+      });
+    }
+    final d = newData;
+    if (d != null) {
+      _replaceSortbaleCache(d);
+      _pruneExpandStatus(d);
     }
   }
 

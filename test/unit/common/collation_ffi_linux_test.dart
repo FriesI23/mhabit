@@ -12,27 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/common/collation_ffi.dart';
 import 'package:mhabit/common/collation_ffi_linux.dart';
 
-/// A mock sort-key function that returns a single-byte key.
+/// A mock collation comparator backed by an explicit position map.
 ///
-/// The byte value equals the desired sort position (lower = earlier).
-/// Unmapped values get a key of [0xFF], placing them last.
-Uint8List Function(String) mockSortKeyFn(Map<String, int> mapping) {
-  return (String value) {
-    final pos = mapping[value];
-    if (pos != null) return Uint8List.fromList([pos]);
-    return Uint8List.fromList([0xFF]);
+/// [mapping] assigns each known value a sort position (lower = earlier).
+/// Unknown values compare collation-equal to each other (tie → broken by
+/// id) and sort after all known values.
+int Function(String, String) mockCompareFn(Map<String, int> mapping) {
+  return (String a, String b) {
+    final pa = mapping[a];
+    final pb = mapping[b];
+    if (pa == null && pb == null) return 0;
+    if (pa == null) return 1;
+    if (pb == null) return -1;
+    return pa.compareTo(pb);
   };
 }
 
 void main() {
   group('IcuCollation.sort (pure-Dart logic)', () {
-    test('sorts by sort-key order (asc)', () {
-      final c = IcuCollation.test(mockSortKeyFn({'A': 1, 'B': 2, 'C': 3}));
+    test('sorts by collation order (asc)', () {
+      final c = IcuCollation.test(mockCompareFn({'A': 1, 'B': 2, 'C': 3}));
       final items = ['C', 'A', 'B'];
       final result = c.sort<String>(
         items: items,
@@ -42,8 +47,8 @@ void main() {
       expect(result, ['A', 'B', 'C']);
     });
 
-    test('sorts by sort-key order (desc)', () {
-      final c = IcuCollation.test(mockSortKeyFn({'A': 1, 'B': 2, 'C': 3}));
+    test('sorts by collation order (desc)', () {
+      final c = IcuCollation.test(mockCompareFn({'A': 1, 'B': 2, 'C': 3}));
       final items = ['C', 'A', 'B'];
       final result = c.sort<String>(
         items: items,
@@ -54,8 +59,20 @@ void main() {
       expect(result, ['C', 'B', 'A']);
     });
 
-    test('tie-breaks by id when sort keys are equal', () {
-      final c = IcuCollation.test((_) => Uint8List.fromList([0]));
+    test('collation order wins over id order', () {
+      // Position order B < C < A differs from id (lexicographic) order.
+      final c = IcuCollation.test(mockCompareFn({'A': 3, 'B': 1, 'C': 2}));
+      final items = ['C', 'A', 'B'];
+      final result = c.sort<String>(
+        items: items,
+        idOf: (s) => s,
+        valueOf: (s) => s,
+      );
+      expect(result, ['B', 'C', 'A']);
+    });
+
+    test('tie-breaks by id when collation-equal', () {
+      final c = IcuCollation.test((_, _) => 0);
       final items = ['C', 'A', 'B'];
       final result = c.sort<String>(
         items: items,
@@ -66,7 +83,7 @@ void main() {
     });
 
     test('tie-break by id respects non-trivial ids', () {
-      final c = IcuCollation.test((_) => Uint8List.fromList([0]));
+      final c = IcuCollation.test((_, _) => 0);
       final items = ['zebra', 'alpha', 'mango'];
       final result = c.sort<String>(
         items: items,
@@ -77,7 +94,7 @@ void main() {
     });
 
     test('descending + tie-break still reverses', () {
-      final c = IcuCollation.test((_) => Uint8List.fromList([0]));
+      final c = IcuCollation.test((_, _) => 0);
       final items = ['C', 'A', 'B'];
       final result = c.sort<String>(
         items: items,
@@ -89,7 +106,7 @@ void main() {
     });
 
     test('empty items → empty result', () {
-      final c = IcuCollation.test((_) => Uint8List(0));
+      final c = IcuCollation.test((_, _) => 0);
       final result = c.sort<String>(
         items: [],
         idOf: (s) => s,
@@ -99,7 +116,7 @@ void main() {
     });
 
     test('single item → same item', () {
-      final c = IcuCollation.test((_) => Uint8List.fromList([42]));
+      final c = IcuCollation.test((_, _) => 0);
       final result = c.sort<String>(
         items: ['only'],
         idOf: (s) => s,
@@ -109,7 +126,7 @@ void main() {
     });
 
     test('preserves original list (returns new list)', () {
-      final c = IcuCollation.test(mockSortKeyFn({'A': 1, 'B': 2}));
+      final c = IcuCollation.test(mockCompareFn({'A': 1, 'B': 2}));
       final items = ['B', 'A'];
       final result = c.sort<String>(
         items: items,
@@ -120,8 +137,8 @@ void main() {
       expect(items, ['B', 'A']);
     });
 
-    test('values not in sort-key map go last', () {
-      final c = IcuCollation.test(mockSortKeyFn({'known': 5}));
+    test('values not in the map go last', () {
+      final c = IcuCollation.test(mockCompareFn({'known': 5}));
       final items = ['known', 'unknown'];
       final result = c.sort<String>(
         items: items,
@@ -132,7 +149,7 @@ void main() {
     });
 
     test('multiple unmapped values sorted by id', () {
-      final c = IcuCollation.test((_) => Uint8List.fromList([0xFF]));
+      final c = IcuCollation.test((_, _) => 0);
       final items = ['z', 'a'];
       final result = c.sort<String>(
         items: items,
@@ -142,45 +159,9 @@ void main() {
       expect(result, ['a', 'z']);
     });
 
-    test('multi-byte keys: shorter prefix wins', () {
-      final c = IcuCollation.test(
-        (s) => switch (s) {
-          'ab' => Uint8List.fromList([1, 2]),
-          'a' => Uint8List.fromList([1]),
-          'abc' => Uint8List.fromList([1, 2, 3]),
-          _ => Uint8List(0),
-        },
-      );
-      final items = ['abc', 'ab', 'a'];
-      final result = c.sort<String>(
-        items: items,
-        idOf: (s) => s,
-        valueOf: (s) => s,
-      );
-      expect(result, ['a', 'ab', 'abc']);
-    });
-
-    test('multi-byte keys: first differing byte decides', () {
-      final c = IcuCollation.test(
-        (s) => switch (s) {
-          'X' => Uint8List.fromList([2, 1]),
-          'Y' => Uint8List.fromList([2, 5]),
-          'Z' => Uint8List.fromList([2, 5, 0]),
-          _ => Uint8List(0),
-        },
-      );
-      final items = ['Z', 'X', 'Y'];
-      final result = c.sort<String>(
-        items: items,
-        idOf: (s) => s,
-        valueOf: (s) => s,
-      );
-      expect(result, ['X', 'Y', 'Z']);
-    });
-
     test('valueOf uses a different field than idOf', () {
       final c = IcuCollation.test(
-        mockSortKeyFn({'first': 1, 'second': 2, 'third': 3}),
+        mockCompareFn({'first': 1, 'second': 2, 'third': 3}),
       );
       final items = ['c', 'a', 'b'];
       final valueMap = {'c': 'third', 'a': 'first', 'b': 'second'};
@@ -193,7 +174,7 @@ void main() {
     });
 
     test('idOf and valueOf can return different data types', () {
-      final c = IcuCollation.test(mockSortKeyFn({'A': 10, 'B': 20, 'C': 30}));
+      final c = IcuCollation.test(mockCompareFn({'A': 10, 'B': 20, 'C': 30}));
       final items = [
         (id: 2, name: 'B'),
         (id: 1, name: 'A'),
@@ -205,6 +186,73 @@ void main() {
         valueOf: (e) => e.name,
       );
       expect(result.map((e) => e.name), ['A', 'B', 'C']);
+    });
+  });
+
+  group('IcuCollationLinuxRules', () {
+    final rules = IcuCollationLinuxRules();
+
+    test('extractVersionMajor parses soname versions', () {
+      expect(rules.extractVersionMajor('libicui18n.so'), isNull);
+      expect(
+        rules.extractVersionMajor('/usr/lib/x86_64-linux-gnu/libicui18n.so.72'),
+        72,
+      );
+      expect(
+        rules.extractVersionMajor('/lib/aarch64-linux-gnu/libicui18n.so.74.1'),
+        74,
+      );
+    });
+
+    test('extractVersionSuffix derives the symbol suffix', () {
+      expect(rules.extractVersionSuffix('libicui18n.so'), '');
+      expect(rules.extractVersionSuffix('libicui18n.so.72'), '_72');
+      expect(rules.extractVersionSuffix('libicui18n.so.74.1'), '_74');
+    });
+
+    test('searchDirs covers host and Flatpak layouts', () {
+      expect(rules.searchDirs, contains('/app/lib'));
+      expect(rules.searchDirs, contains('/usr/lib/${rules.multiarchTriplet}'));
+      expect(rules.searchDirs, contains('/lib/${rules.multiarchTriplet}'));
+    });
+
+    test('candidates resolve unversioned → recommended → highest', () {
+      expect(rules.candidates([]), [
+        'libicui18n.so',
+        'libicui18n.so.${IcuCollationLinuxRules.recommendedVersion}',
+      ]);
+      expect(rules.candidates(['/a/libicui18n.so.74', '/a/libicui18n.so.70']), [
+        'libicui18n.so',
+        'libicui18n.so.${IcuCollationLinuxRules.recommendedVersion}',
+        '/a/libicui18n.so.74',
+      ]);
+    });
+
+    test('recommendedVersion pins a widely-deployed stable ICU release', () {
+      expect(IcuCollationLinuxRules.recommendedVersion, 72);
+    });
+
+    test('discoverCandidates lists libicui18n files by version desc', () async {
+      final tmp = await Directory.systemTemp.createTemp('icu_candidates');
+      addTearDown(() => tmp.delete(recursive: true));
+      for (final name in [
+        'libicui18n.so.72',
+        'libicui18n.so.74',
+        'libicui18n.so.74.1',
+        'libicui18n.so',
+        'other.so.99',
+      ]) {
+        await File('${tmp.path}/$name').create();
+      }
+
+      final candidates = await rules.discoverCandidates([tmp.path]);
+      final names = candidates.map((p) => p.split('/').last).toList();
+      expect(names, [
+        'libicui18n.so.74.1',
+        'libicui18n.so.74',
+        'libicui18n.so.72',
+        'libicui18n.so',
+      ]);
     });
   });
 }

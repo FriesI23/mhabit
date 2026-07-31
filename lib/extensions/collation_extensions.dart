@@ -18,6 +18,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 import '../common/collation.dart';
+import '../common/collation_ffi_windows.dart';
 
 /// Sorts [items] by their position in [rankedIds].
 ///
@@ -51,17 +52,18 @@ List<T> sortByRank<T>({
 
 /// Extension that provides native-collation sorting on [CollationApi].
 ///
-/// Dispatch: sync FFI (Linux) ↔ async MethodChannel (other platforms).
+/// Dispatch: sync FFI on Linux; sync FFI on Windows (falling back to the
+/// async MethodChannel when the system ICU is missing); async
+/// MethodChannel on other platforms.
 extension CollationApiNaturalSort on CollationApi {
   /// Sorts [items] by native collation order.
   ///
-  /// [idOf] extracts the stable identifier used in result ordering and
-  /// as a fallback tie-breaker. [valueOf] extracts the string whose
-  /// collation order determines position.
+  /// [idOf] is the stable identifier used for ordering and tie-breaking;
+  /// [valueOf] is the string whose collation order determines position.
   ///
-  /// Returns synchronously on Linux (FFI path); returns a [Future]
-  /// on other platforms (async MethodChannel).  Callers should always
-  /// [await] — [FutureOr] is a zero-cost pass-through for sync values.
+  /// Returns synchronously on Linux and Windows (FFI), and a [Future] on
+  /// other platforms (async MethodChannel).  Linux is FFI-only — callers
+  /// own the fallback when the engine is unavailable.
   FutureOr<List<T>> naturalSort<T>({
     required List<T> items,
     required String Function(T) idOf,
@@ -72,6 +74,7 @@ extension CollationApiNaturalSort on CollationApi {
     if (items.isEmpty) return items;
 
     if (Platform.isLinux) {
+      // Linux is FFI-only; callers own the fallback.
       return collationSortFfiLinux(
         items: items,
         idOf: idOf,
@@ -79,6 +82,20 @@ extension CollationApiNaturalSort on CollationApi {
         descending: descending,
         locale: locale,
       );
+    }
+
+    if (Platform.isWindows) {
+      // Fall back to the async platform channel when system ICU is missing.
+      if (IcuCollationWindows.available) {
+        return collationSortFfiWindows(
+          items: items,
+          idOf: idOf,
+          valueOf: valueOf,
+          descending: descending,
+          locale: locale,
+        );
+      }
+      return _naturalSortAsync(items, idOf, valueOf, descending, locale);
     }
 
     return _naturalSortAsync(items, idOf, valueOf, descending, locale);
