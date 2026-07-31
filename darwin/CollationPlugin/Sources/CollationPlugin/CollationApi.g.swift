@@ -216,10 +216,9 @@ struct CollationItem: Hashable {
 
 /// Request to sort [items] by the collation order of their [value]s.
 ///
-/// [locale] is used by Android (java.text.Collator) to select the ICU
-/// collation locale. iOS/macOS ignore [locale] — they use
-/// CFStringTransform(.toLatin) + localizedStandardCompare for a
-/// contacts-style sort that is locale-independent.
+/// [locale] selects the ICU collation locale (Android) or is currently
+/// unused (iOS/macOS use the system locale via
+/// `localizedStandardCompare`).
 ///
 /// When [locale] is omitted, the platform uses its system-default
 /// collator. Returns the [CollationItem.id]s in collation order.
