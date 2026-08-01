@@ -97,7 +97,10 @@ class _PageState extends State<_Page> {
       ),
     );
     if (result != null && result.$1 != null && mounted) {
-      vm.setSortOptions(result.$1!, result.$2 ?? HabitDisplaySortDirection.asc);
+      await vm.setSortOptions(
+        result.$1!,
+        result.$2 ?? HabitDisplaySortDirection.asc,
+      );
     }
   }
 

@@ -14,15 +14,21 @@
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:io';
+import 'dart:ui' show Locale;
 
 import 'package:async/async.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../common/collation.dart';
+import '../../../common/collation_ffi_linux.dart';
 import '../../../common/consts.dart';
 import '../../../common/exceptions.dart';
+import '../../../common/sort_generation.dart';
 import '../../../common/types.dart';
 import '../../../common/utils.dart';
+import '../../../extensions/collation_extensions.dart';
 import '../../../extensions/iterable_extensions.dart';
 import '../../../logging/helper.dart';
 import '../../../logging/logger_stack.dart';
@@ -38,6 +44,7 @@ import '../../../providers/workflow/app_event.dart';
 import '../../../providers/workflow/app_sync.dart';
 import '../../../providers/workflow/habits_manager.dart';
 import '../../../storage/db/handlers/habit.dart';
+import '../../../storage/profile/handlers/natural_sort.dart';
 import 'habits_display_reload_bridge.dart';
 
 extension on AppEventSubscriptions {
@@ -93,10 +100,13 @@ class HabitsTodayViewModel extends ChangeNotifier
   final LinkedHashMap<HabitUUID, bool> _expandStatus;
   // inside status
   bool _mounted = true;
+  final _sortGuard = SortGuard();
   // sync from setting
   int _firstday = defaultFirstDay;
   HabitDisplaySortType _sortType = defaultSortType;
   HabitDisplaySortDirection _sortDirection = defaultSortDirection;
+  bool _naturalSortEnabled = NaturalSortExperimentalFeature.defaultEnabled;
+  Locale? _currentAppLanguage;
   late HabitsDisplayAccess _access;
   final _reloadBridge = HabitsDisplayReloadBridge();
 
@@ -177,6 +187,7 @@ class HabitsTodayViewModel extends ChangeNotifier
       logName: "$runtimeType.loadData",
       alreadyLoadingEx: ["data already loaded"],
       loadData: (loading) async {
+        _sortGuard.bump();
         if (!mounted) {
           return loadingFailed(loading, const ["viewmodel disposed"]);
         }
@@ -197,7 +208,7 @@ class HabitsTodayViewModel extends ChangeNotifier
         if (loading.isCanceled) return loadingCancelled(loading);
         if (loading.isCompleted) return;
         _data.forEach((_, habit) => _updateHabitAutoCompleteStatistics(habit));
-        _resortData();
+        await _resortData();
 
         await _access.repairHabitReminders(
           params: HabitReminderRepairParams.loadedHabits(_data.values),
@@ -248,25 +259,79 @@ class HabitsTodayViewModel extends ChangeNotifier
     _sortDirection = sortDirection;
   }
 
+  void updateNaturalSortEnabled(bool enabled) => _naturalSortEnabled = enabled;
+
+  void updateCurrentAppLanguage(Locale? locale) => _currentAppLanguage = locale;
+
   HabitSortCache? getHabitBySortId(int index) => _lastSortedDataCache[index];
 
-  void resortData({bool listen = true}) {
+  Future<void> resortData({bool listen = true}) async {
     if (!_pageLoad.hasLoaded) return;
-    _resortData();
-    if (listen) notifyListeners();
+    await _resortData();
+    if (mounted && listen) notifyListeners();
   }
 
-  void _resortData() {
-    final now = HabitDate.now();
-    final newData = _data.sort(_sortType, _sortDirection).where((e) {
-      if (!e.isActived) return false;
-      if (e.startDate > now) return false;
-      if (e.getRecordByDate(now) != null) return false;
-      return true;
-    }).toHabitSummarySortCacheList();
-    _replaceSortbaleCache(newData);
-    _pruneExpandStatus(newData);
+  FutureOr<void> _resortData() {
+    List<HabitSortCache> defaultSort() => _applyFilter(
+      _data.sort(_sortType, _sortDirection),
+    ).toHabitSummarySortCacheList();
+
+    final canNaturalSort =
+        _sortType == HabitDisplaySortType.name &&
+        _naturalSortEnabled &&
+        _data.values.isNotEmpty &&
+        (IcuCollationLinux.available || !Platform.isLinux);
+
+    if (!canNaturalSort) {
+      final newData = defaultSort();
+      _replaceSortbaleCache(newData);
+      _pruneExpandStatus(newData);
+      return null;
+    }
+
+    List<HabitSortCache> build(List<HabitSummaryData> sorted) =>
+        _applyFilter(sorted).toHabitSummarySortCacheList();
+
+    final newData = _sortGuard.run<List<HabitSortCache>>(() {
+      final sorted = CollationApi.instance.naturalSort(
+        items: _data.values.toList(),
+        idOf: (h) => h.uuid,
+        valueOf: (h) => h.name,
+        descending: _sortDirection == HabitDisplaySortDirection.desc,
+        locale: _currentAppLanguage?.toLanguageTag(),
+      );
+      if (sorted is Future<List<HabitSummaryData>>) {
+        return sorted.then(build).catchError((e) {
+          appLog.load.warn('Natural sort failed', ex: [e]);
+          return defaultSort();
+        });
+      }
+      return build(sorted);
+    }, debugLabel: 'HabitsToday');
+
+    if (newData is Future<List<HabitSortCache>?>) {
+      return newData.then((d) {
+        if (d != null) {
+          _replaceSortbaleCache(d);
+          _pruneExpandStatus(d);
+        }
+      });
+    }
+    final d = newData;
+    if (d != null) {
+      _replaceSortbaleCache(d);
+      _pruneExpandStatus(d);
+    }
   }
+
+  Iterable<HabitSummaryData> _applyFilter(Iterable<HabitSummaryData> source) =>
+      source.where((e) {
+        final now = HabitDate.now();
+        if (!e.isActived) return false;
+        if (e.startDate > now) return false;
+        if (e.getRecordByDate(now) != null) return false;
+        return true;
+      });
 
   void _replaceSortbaleCache(List<HabitSortCache> cache) {
     if (identical(cache, _lastSortedDataCache)) {
@@ -448,9 +513,9 @@ class HabitsTodayViewModel extends ChangeNotifier
     );
 
     _updateHabitAutoCompleteStatistics(data);
-    _resortData();
+    await _resortData();
     _removeHabitExpandStatus(uuid);
-    if (listen) notifyListeners();
+    if (mounted && listen) notifyListeners();
     _reloadBridge.eventSubs?.pushRecordChanged(
       uuid: uuid,
       date: result.data.date,
@@ -491,9 +556,9 @@ class HabitsTodayViewModel extends ChangeNotifier
     );
 
     _updateHabitAutoCompleteStatistics(data);
-    _resortData();
+    await _resortData();
     _removeHabitExpandStatus(uuid);
-    if (listen) notifyListeners();
+    if (mounted && listen) notifyListeners();
     _reloadBridge.eventSubs?.pushRecordChanged(
       uuid: uuid,
       date: result.data.date,

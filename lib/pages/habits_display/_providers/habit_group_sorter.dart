@@ -14,7 +14,6 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../../../common/consts.dart';
 import '../../../extensions/habit_group_extensions.dart';
 import '../../../extensions/iterable_extensions.dart';
 import '../../../models/habit_display.dart';
@@ -22,18 +21,86 @@ import '../../../models/habit_group.dart';
 import '../../../models/habit_group_display.dart';
 import '../../../models/habit_summary.dart';
 
+sealed class HabitSortOrder {
+  const HabitSortOrder._();
+
+  factory HabitSortOrder.byType(
+    HabitDisplaySortType type,
+    HabitDisplaySortDirection direction,
+  ) = _HabitSortByType;
+
+  factory HabitSortOrder.byNatural(List<HabitSummaryData> order) =
+      _HabitSortByNatural;
+
+  List<HabitSummaryData> apply(List<HabitSummaryData> habits);
+}
+
+final class _HabitSortByType extends HabitSortOrder {
+  final HabitDisplaySortType type;
+  final HabitDisplaySortDirection direction;
+  _HabitSortByType(this.type, this.direction) : super._();
+
+  @override
+  List<HabitSummaryData> apply(List<HabitSummaryData> habits) =>
+      habits.sortedBy(type, direction);
+}
+
+final class _HabitSortByNatural extends HabitSortOrder {
+  final List<HabitSummaryData> _order;
+  _HabitSortByNatural(this._order) : super._();
+
+  @override
+  List<HabitSummaryData> apply(List<HabitSummaryData> habits) {
+    final habitSet = habits.map((h) => h.uuid).toSet();
+    return _order.where((h) => habitSet.contains(h.uuid)).toList();
+  }
+}
+
+sealed class GroupSortOrder {
+  const GroupSortOrder._();
+
+  factory GroupSortOrder.byType(
+    HabitDisplayGroupType type,
+    HabitDisplaySortDirection direction,
+  ) = _GroupSortByType;
+
+  factory GroupSortOrder.byNatural(List<HabitGroupData> order) =
+      _GroupSortByNatural;
+
+  List<HabitGroupData> apply(
+    List<HabitGroupData> groups,
+    Map<String?, List<HabitSummaryData>> habitByGroup,
+  );
+}
+
+final class _GroupSortByType extends GroupSortOrder {
+  final HabitDisplayGroupType type;
+  final HabitDisplaySortDirection direction;
+  _GroupSortByType(this.type, this.direction) : super._();
+
+  @override
+  List<HabitGroupData> apply(
+    List<HabitGroupData> groups,
+    Map<String?, List<HabitSummaryData>> habitByGroup,
+  ) => _orderGroups(groups, type, direction, habitByGroup: habitByGroup);
+}
+
+final class _GroupSortByNatural extends GroupSortOrder {
+  final List<HabitGroupData> _order;
+  _GroupSortByNatural(this._order) : super._();
+
+  @override
+  List<HabitGroupData> apply(
+    List<HabitGroupData> groups,
+    Map<String?, List<HabitSummaryData>> habitByGroup,
+  ) => _order;
+}
+
 /// Builds a flat grouped sort-cache list from the given [data].
 ///
 /// Habits are always grouped by their effective group ID in [groups]
-/// (resolving orphan references to `null`). Groups are ordered according to
-/// [groupType]:
-/// - [HabitDisplayGroupType.name]: by group name, alphabetically.
-/// - [HabitDisplayGroupType.colorType]: by each group's [HabitGroupData.color].
-/// - [HabitDisplayGroupType.createDate]: by the order in [groups].
-/// - [HabitDisplayGroupType.habitCount]: by the number of habits in each group.
-///
-/// [groupDirection] controls the order direction for groups.
-/// Within each group, habits are sorted by [sortType]/[sortDirection].
+/// (resolving orphan references to `null`). [habitOrder] controls
+/// per-group habit ordering; [groupOrder] controls the group order.
 ///
 /// Groups with no habits are skipped. Collapsed groups (by
 /// [collapsedUUIDs]) only emit the header, omitting their habit items.
@@ -41,11 +108,9 @@ List<HabitSortCache<dynamic>> buildGroupedSortCacheList({
   required HabitSummaryDataCollection data,
   required List<HabitGroupData> groups,
   required Set<String?> collapsedUUIDs,
+  required HabitSortOrder habitOrder,
+  required GroupSortOrder groupOrder,
   HabitsDisplayFilter? filter,
-  HabitDisplaySortType sortType = defaultSortType,
-  HabitDisplaySortDirection sortDirection = defaultSortDirection,
-  HabitDisplayGroupType groupType = defaultGroupType,
-  HabitDisplaySortDirection groupDirection = defaultGroupSortDirection,
 }) {
   final result = <HabitSortCache<dynamic>>[];
 
@@ -56,13 +121,7 @@ List<HabitSortCache<dynamic>> buildGroupedSortCacheList({
     habitByGroup.putIfAbsent(gid, () => []).add(habit);
   }
 
-  // Sort groups according to groupType, then apply groupDirection.
-  final orderedGroups = _orderGroups(
-    groups,
-    groupType,
-    groupDirection,
-    habitByGroup: habitByGroup,
-  );
+  final orderedGroups = groupOrder.apply(groups, habitByGroup);
 
   for (final group in orderedGroups) {
     final gid = group.uuid;
@@ -80,9 +139,7 @@ List<HabitSortCache<dynamic>> buildGroupedSortCacheList({
     );
 
     if (!collapsedUUIDs.contains(gid)) {
-      result.addAll(
-        habits.sortedBy(sortType, sortDirection).toHabitSummarySortCacheList(),
-      );
+      result.addAll(habitOrder.apply(habits).toHabitSummarySortCacheList());
     }
   }
 
@@ -101,9 +158,7 @@ List<HabitSortCache<dynamic>> buildGroupedSortCacheList({
 
     if (!collapsedUUIDs.contains(null)) {
       result.addAll(
-        uncategorized
-            .sortedBy(sortType, sortDirection)
-            .toHabitSummarySortCacheList(),
+        habitOrder.apply(uncategorized).toHabitSummarySortCacheList(),
       );
     }
   }
@@ -111,11 +166,6 @@ List<HabitSortCache<dynamic>> buildGroupedSortCacheList({
   return result;
 }
 
-/// Returns [groups] sorted according to [groupType] and [direction].
-///
-/// For extrinsic types (e.g. [HabitDisplayGroupType.habitCount]) that
-/// require data beyond [HabitGroupData] fields, [habitByGroup] is used;
-/// for all intrinsic types, delegates to [HabitGroupSortExtension.sortedBy].
 List<HabitGroupData> _orderGroups(
   List<HabitGroupData> groups,
   HabitDisplayGroupType groupType,
@@ -160,8 +210,6 @@ List<HabitGroupData> orderGroupsByHabitCount(
   final count = {
     for (final g in groups) g.uuid: (effectiveMap[g.uuid]?.length ?? 0),
   };
-  // Comparator is intentionally reversed (b, a) so that the default
-  // asc direction puts the group with most habits first.
   final sorted = groups.toList()
     ..sort((a, b) {
       final ca = count[b.uuid] ?? 0;

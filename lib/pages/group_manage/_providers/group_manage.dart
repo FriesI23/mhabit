@@ -13,12 +13,18 @@
 // limitations under the License.
 
 import 'dart:async';
+import 'dart:io';
+import 'dart:ui' show Locale;
 
 import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../common/collation.dart';
+import '../../../common/collation_ffi_linux.dart';
 import '../../../common/consts.dart';
+import '../../../common/sort_generation.dart';
 import '../../../common/types.dart';
+import '../../../extensions/collation_extensions.dart';
 import '../../../extensions/habit_group_extensions.dart';
 import '../../../logging/helper.dart';
 import '../../../models/app_event.dart';
@@ -72,6 +78,8 @@ class GroupManageViewModel extends ChangeNotifier
   // dependencies
   GroupManager? _groupManager;
   DisplayGroupModeProfileHandler? _groupModeHandler;
+  bool _naturalSortEnabled = NaturalSortExperimentalFeature.defaultEnabled;
+  Locale? _currentAppLanguage;
 
   // data
   GroupCollection? _groupCollection;
@@ -124,6 +132,7 @@ class GroupManageViewModel extends ChangeNotifier
   bool _nextRefreshForceReload = false;
   bool _firstLoadCompleted = false;
   bool _mounted = true;
+  final _sortGuard = SortGuard();
 
   /// Set via navigation from the home page Group header long-press menu.
   /// Consumed on the first successful [loadGroups] call.
@@ -195,6 +204,10 @@ class GroupManageViewModel extends ChangeNotifier
     _groupModeHandler = newProfile.getHandler<DisplayGroupModeProfileHandler>();
   }
 
+  void updateNaturalSortEnabled(bool enabled) => _naturalSortEnabled = enabled;
+
+  void updateCurrentAppLanguage(Locale? locale) => _currentAppLanguage = locale;
+
   void attachGroupManager(GroupManager value) {
     _groupManager = value;
   }
@@ -238,6 +251,7 @@ class GroupManageViewModel extends ChangeNotifier
       logName: "$runtimeType.loadGroups",
       alreadyLoadingEx: ["groups already loading"],
       loadData: (loading) async {
+        _sortGuard.bump();
         if (!mounted) {
           return loadingFailed(loading, ["viewmodel disposed"]);
         }
@@ -260,10 +274,9 @@ class GroupManageViewModel extends ChangeNotifier
           _selectionMode = true;
           _selectedGroupUUIDs.add(_initialGroupUUID);
         }
-        _resortData();
-
+        await _resortData();
         loading.complete();
-        if (listen) notifyListeners();
+        if (mounted && listen) notifyListeners();
       },
       onError: (loading, e, s) {
         if (loading.isCanceled) return loadingCancelled(loading);
@@ -280,23 +293,70 @@ class GroupManageViewModel extends ChangeNotifier
   Future<HabitGroupData?> loadGroupDataByUUID(String uuid) =>
       _groupManager?.loadGroupDataByUUID(uuid) ?? Future.value(null);
 
-  void setSortOptions(
+  Future<void> setSortOptions(
     HabitDisplayGroupType type,
     HabitDisplaySortDirection direction,
-  ) {
+  ) async {
     _sortType = type;
     _sortDirection = direction;
-    _resortData();
-    notifyListeners();
+    await _resortData();
+    if (mounted) notifyListeners();
   }
 
-  void _resortData() {
-    if (_groupCollection == null) return;
-    _sortableCache = _sortableCache.copyWithData(
+  FutureOr<void> _resortData() {
+    if (_groupCollection == null) return null;
+
+    final sortType = effectiveSortType;
+    final sortDirection = effectiveSortDirection;
+
+    _GroupsSortableCache defaultSort() => _sortableCache.copyWithData(
       _groupCollection!,
-      sortType: effectiveSortType,
-      sortDirection: effectiveSortDirection,
+      sortType: sortType,
+      sortDirection: sortDirection,
     );
+
+    final canNaturalSort =
+        sortType == HabitDisplayGroupType.name &&
+        _naturalSortEnabled &&
+        _groupCollection!.toList().isNotEmpty &&
+        (IcuCollationLinux.available || !Platform.isLinux);
+
+    if (!canNaturalSort) {
+      _sortableCache = defaultSort();
+      return null;
+    }
+
+    final result = _sortGuard.run<_GroupsSortableCache>(() {
+      final groups = _groupCollection!.toList();
+      final locale = _currentAppLanguage?.toLanguageTag();
+      final sorted = CollationApi.instance.naturalSort(
+        items: groups,
+        idOf: (g) => g.uuid,
+        valueOf: (g) => g.name,
+        descending: sortDirection == HabitDisplaySortDirection.desc,
+        locale: locale,
+      );
+
+      _GroupsSortableCache build(List<HabitGroupData> s) =>
+          _GroupsSortableCache(
+            sortType: sortType,
+            sortDirection: sortDirection,
+            lastSortedDataCache: s,
+          );
+
+      if (sorted is Future<List<HabitGroupData>>) {
+        return sorted.then(build).catchError((e) {
+          appLog.load.warn('Natural sort failed', ex: [e]);
+          return defaultSort();
+        });
+      }
+      return build(sorted);
+    }, debugLabel: 'GroupManage');
+
+    if (result is Future<_GroupsSortableCache?>) {
+      return result.then((r) => _sortableCache = r ?? _sortableCache);
+    }
+    _sortableCache = result ?? _sortableCache;
   }
 
   void enterSelectionMode(String initialUUID, {bool listen = true}) {
@@ -497,10 +557,10 @@ class _GroupsSortableCache {
     required HabitDisplayGroupType sortType,
     required HabitDisplaySortDirection sortDirection,
   }) {
-    final groups = List.of(collection.toList());
-    final orderType =
-        HabitGroupOrderType.fromGroupType(sortType) ?? defaultGroupOrderType;
-    final sorted = groups.sortedBy(orderType, sortDirection);
+    final sorted = List.of(collection.toList()).sortedBy(
+      HabitGroupOrderType.fromGroupType(sortType) ?? defaultGroupOrderType,
+      sortDirection,
+    );
     return _GroupsSortableCache(
       sortType: sortType,
       sortDirection: sortDirection,

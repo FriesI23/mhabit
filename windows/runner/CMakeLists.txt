@@ -26,6 +26,8 @@ add_executable(${BINARY_NAME} WIN32
   "main.cpp"
   "utils.cpp"
   "win32_window.cpp"
+  "collation/collation_api.g.cpp"
+  "collation/collation_plugin.cpp"
   "${FLUTTER_MANAGED_DIR}/generated_plugin_registrant.cc"
   "${GENERATED_RC}"
   "runner.exe.manifest"

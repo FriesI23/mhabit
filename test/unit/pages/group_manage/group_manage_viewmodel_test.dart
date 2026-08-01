@@ -168,7 +168,7 @@ void main() {
       await manager.createGroup(name: 'Apple');
       await vm.loadGroups(listen: false);
 
-      vm.setSortOptions(
+      await vm.setSortOptions(
         HabitDisplayGroupType.name,
         HabitDisplaySortDirection.asc,
       );
@@ -182,7 +182,7 @@ void main() {
       await manager.createGroup(name: 'Banana');
       await vm.loadGroups(listen: false);
 
-      vm.setSortOptions(
+      await vm.setSortOptions(
         HabitDisplayGroupType.name,
         HabitDisplaySortDirection.desc,
       );

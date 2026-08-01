@@ -87,6 +87,7 @@ class AppEntry extends StatelessWidget {
     AppLaunchEntryProfileHandler.new,
     AppThemeColorProfileHandler.new,
     AppLastChangelogVersionProfileHandler.new,
+    NaturalSortExperimentalFeature.new,
   ];
 
   const AppEntry({super.key});

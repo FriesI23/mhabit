@@ -13,16 +13,22 @@
 // limitations under the License.
 
 import 'dart:async';
+import 'dart:io';
+import 'dart:ui' show Locale;
 
 import 'package:async/async.dart';
 import 'package:collection/collection.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../common/collation.dart';
+import '../../../common/collation_ffi_linux.dart';
 import '../../../common/consts.dart';
 import '../../../common/exceptions.dart';
+import '../../../common/sort_generation.dart';
 import '../../../common/types.dart';
 import '../../../common/utils.dart';
+import '../../../extensions/collation_extensions.dart';
 import '../../../extensions/iterable_extensions.dart';
 import '../../../logging/helper.dart';
 import '../../../logging/logger_stack.dart';
@@ -45,6 +51,7 @@ import '../../../providers/workflow/app_sync.dart';
 import '../../../providers/workflow/group_manager.dart';
 import '../../../providers/workflow/habits_manager.dart';
 import '../../../storage/db/handlers/habit.dart';
+import '../../../storage/profile/handlers/natural_sort.dart';
 import '../helpers.dart';
 import 'habit_group_sorter.dart';
 import 'habits_display_reload_bridge.dart';
@@ -153,8 +160,11 @@ class HabitSummaryViewModel extends ChangeNotifier
   bool _groupingEnabled = false;
   // inside status
   bool _mounted = true;
+  final _sortGuard = SortGuard();
   // sync from setting
   int _firstday = defaultFirstDay;
+  bool _naturalSortEnabled = NaturalSortExperimentalFeature.defaultEnabled;
+  Locale? _currentAppLanguage;
   late HabitsDisplayAccess _access;
   final _reloadBridge = HabitsDisplayReloadBridge();
   late GroupManager _groupManager;
@@ -316,6 +326,10 @@ class HabitSummaryViewModel extends ChangeNotifier
     _access = newAccess;
   }
 
+  void updateNaturalSortEnabled(bool enabled) => _naturalSortEnabled = enabled;
+
+  void updateCurrentAppLanguage(Locale? locale) => _currentAppLanguage = locale;
+
   void _updateHabitAutoCompleteStatistics(HabitSummaryData data) {
     final now = HabitDate.now();
     _last30daysProgressChangeData.clearStatistic(data.uuid);
@@ -374,6 +388,7 @@ class HabitSummaryViewModel extends ChangeNotifier
       logName: "$runtimeType.loadData",
       alreadyLoadingEx: ["data already loaded"],
       loadData: (loading) async {
+        _sortGuard.bump();
         if (!mounted) {
           return loadingFailed(loading, const ["viewmodel disposed"]);
         }
@@ -400,7 +415,7 @@ class HabitSummaryViewModel extends ChangeNotifier
         if (loading.isCanceled) return loadingCancelled(loading);
         if (loading.isCompleted) return;
 
-        _resortData();
+        await _resortData();
 
         await _access.repairHabitReminders(
           params: HabitReminderRepairParams.loadedHabits(_data.values),
@@ -448,12 +463,12 @@ class HabitSummaryViewModel extends ChangeNotifier
     return _access.loadHabitDetail(selectedData.uuid);
   }
 
-  bool addNewData(HabitSummaryData cell, {bool listen = false}) {
+  Future<bool> addNewData(HabitSummaryData cell, {bool listen = true}) async {
     final bool addResult = _data.addHabit(cell, forceAdd: false);
     final data = _data.getHabitByUUID(cell.uuid);
     if (data != null) _updateHabitAutoCompleteStatistics(data);
-    resortData();
-    if (listen) notifyListeners();
+    await resortData(listen: listen);
+    if (!mounted) return addResult;
     return addResult;
   }
   //#endregion
@@ -495,8 +510,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   void enterSearchMode({bool listen = true}) {
     if (isInSearchMode) return;
     _searchController.enable();
-    _resortData();
-    if (listen) notifyListeners();
+    resortData(listen: listen);
   }
 
   void exitSearchMode({bool listen = true}) {
@@ -504,8 +518,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     _searchController
       ..disable()
       ..clearOptions();
-    _resortData();
-    if (listen) notifyListeners();
+    resortData(listen: listen);
   }
 
   void _onSeachOptionsChanged(
@@ -522,8 +535,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     } else {
       if (!_searchController.enabled) _searchController.enable();
     }
-    _resortData();
-    if (listen) notifyListeners();
+    resortData(listen: listen);
   }
 
   void onSeachKeywordChanged(String text, {bool listen = true}) =>
@@ -633,57 +645,24 @@ class HabitSummaryViewModel extends ChangeNotifier
   HabitSortCache? getHabitBySortId(int index) =>
       _sortableCache.getSortCache(index);
 
-  void resortData({bool listen = true}) {
+  Future<void> resortData({bool listen = true}) async {
     if (!_pageLoad.hasLoaded) return;
-    _resortData();
-    if (listen) notifyListeners();
+    await _resortData();
+    if (mounted && listen) notifyListeners();
   }
 
-  void _resortData() {
-    final searchOpt = isInSearchMode ? searchOptions : null;
-    final statusFilter = isInSearchMode
-        ? HabitsDisplayFilter.allTrue
-        : _sortableCache.filter;
-
-    void replaceWithUngroupedData() => _replaceSortbaleCache(
-      _sortableCache.copyWithData(
-        _data,
-        searchOptions: searchOpt,
-        filter: statusFilter,
-      ),
+  FutureOr<void> _resortData() {
+    final handler = _ResortHandler._(
+      this,
+      _sortGuard,
+      isInSearchMode ? searchOptions : null,
+      isInSearchMode ? HabitsDisplayFilter.allTrue : _sortableCache.filter,
     );
-
-    if (_groupingEnabled) {
-      if (_groupCollection == null) {
-        replaceWithUngroupedData();
-        return;
-      }
-      final groups = _groupCollection!.toList();
-      final grouped = buildGroupedSortCacheList(
-        data: _data,
-        groups: groups,
-        collapsedUUIDs: _collapsedGroupUUIDs,
-        filter: statusFilter,
-        sortType: _sortableCache.sortType,
-        sortDirection: _sortableCache.sortDirection,
-        groupType: _sortableCache.groupType,
-        groupDirection: _sortableCache.groupDirection,
-      );
-
-      // Degrade to ungrouped display when only the uncategorized
-      // (no-group) section has habits after filtering.
-      final headers = grouped.whereType<GroupHeaderSortCache>();
-      if (headers.length == 1 && headers.first.groupUUID == null) {
-        replaceWithUngroupedData();
-        return;
-      }
-
-      _replaceSortbaleCache(
-        _sortableCache.copyWithGroupedData(grouped, searchOptions: searchOpt),
-      );
-    } else {
-      replaceWithUngroupedData();
+    final cache = handler();
+    if (cache is Future<_HabitsSortableCache>) {
+      return cache.then(_replaceSortbaleCache);
     }
+    _replaceSortbaleCache(cache);
   }
 
   void _replaceSortbaleCache(_HabitsSortableCache newSortbaleCache) {
@@ -1021,7 +1000,8 @@ class HabitSummaryViewModel extends ChangeNotifier
     if (oldGroupId != targetGroupUUID) {
       await _access.updateHabitGroupIds([movedUUID], [targetGroupUUID]);
     }
-    resortData();
+    await resortData();
+    if (!mounted) return;
     exitEditMode(listen: false);
     _reloadBridge.eventSubs?.pushHabitReordered(movedUUID);
   }
@@ -1071,7 +1051,8 @@ class HabitSummaryViewModel extends ChangeNotifier
       await _changeHabitsStatus(r.value, r.key);
     }
 
-    resortData();
+    await resortData();
+    if (!mounted) return;
     _reloadBridge.eventSubs?.pushHabitStatusChanged(recordList);
   }
 
@@ -1098,7 +1079,8 @@ class HabitSummaryViewModel extends ChangeNotifier
       HabitStatus.archived,
     );
 
-    resortData(listen: false);
+    await resortData(listen: false);
+    if (!mounted) return null;
     exitEditMode();
     _reloadBridge.eventSubs?.pushHabitStatusChanged(result);
     return result;
@@ -1127,7 +1109,8 @@ class HabitSummaryViewModel extends ChangeNotifier
       HabitStatus.activated,
     );
 
-    resortData(listen: false);
+    await resortData(listen: false);
+    if (!mounted) return null;
     exitEditMode();
     _reloadBridge.eventSubs?.pushHabitStatusChanged(result);
     return result;
@@ -1156,7 +1139,8 @@ class HabitSummaryViewModel extends ChangeNotifier
       HabitStatus.deleted,
     );
 
-    resortData(listen: false);
+    await resortData(listen: false);
+    if (!mounted) return null;
     exitEditMode();
     _reloadBridge.eventSubs?.pushHabitStatusChanged(result);
     return result;
@@ -1189,7 +1173,8 @@ class HabitSummaryViewModel extends ChangeNotifier
       }
     }
     _groupCollection = await _groupManager.tryLoadGroupCollection();
-    resortData(listen: listen);
+    await resortData(listen: listen);
+    if (!mounted) return changedUUIDs.length;
     exitEditMode(listen: false);
     _reloadBridge.eventSubs?.pushBatchGroupChanged(changedUUIDs);
 
@@ -1227,7 +1212,8 @@ class HabitSummaryViewModel extends ChangeNotifier
         data.groupId = revertGroupIds[i];
       }
     }
-    resortData(listen: listen);
+    await resortData(listen: listen);
+    if (!mounted) return false;
     if (revertUUIDs.isNotEmpty) {
       _reloadBridge.eventSubs?.pushBatchGroupChanged(revertUUIDs);
     }
@@ -1275,9 +1261,8 @@ class _HabitsSortableCache {
     HabitDisplaySearchOptions? searchOptions,
     HabitsDisplayFilter? filter,
   }) {
-    var sorted = data
-        .sort(sortType, sortDirection)
-        .where((filter ?? this.filter).displayFilterFunction);
+    Iterable<HabitSummaryData> sorted = data.sort(sortType, sortDirection);
+    sorted = sorted.where((filter ?? this.filter).displayFilterFunction);
     if (searchOptions != null) {
       sorted = sorted.where(
         (e) => searchOptions.filter(
@@ -1306,6 +1291,190 @@ class _HabitsSortableCache {
   String toString() =>
       "$runtimeType(st=$sortType,sd=$sortDirection,flt=$filter,"
       "cache=$lastSortedDataCache)";
+}
+
+/// Internal handler that encapsulates shared resort orchestration:
+/// branching (default vs natural), flat/grouped paths, degrade fallback.
+///
+/// Habit and group natural-sort decisions are independent — either one
+/// can trigger the async path while the other stays sync.
+/// [SortGuard] is applied only inside the async branch.
+class _ResortHandler {
+  final HabitSummaryViewModel _vm;
+  final SortGuard _sortGuard;
+  final HabitDisplaySearchOptions? _searchOpt;
+  final HabitsDisplayFilter _statusFilter;
+
+  _ResortHandler._(
+    this._vm,
+    this._sortGuard,
+    this._searchOpt,
+    this._statusFilter,
+  );
+
+  FutureOr<_HabitsSortableCache> call() {
+    final cache = _vm._sortableCache;
+    final ffiAvailable = IcuCollationLinux.available || !Platform.isLinux;
+    final needHabitNatural =
+        cache.sortType == HabitDisplaySortType.name &&
+        _vm._naturalSortEnabled &&
+        _vm._data.values.isNotEmpty &&
+        ffiAvailable;
+    final needGroupNatural =
+        _vm._groupingEnabled &&
+        _vm._groupCollection != null &&
+        cache.groupType == HabitDisplayGroupType.name &&
+        _vm._naturalSortEnabled &&
+        _vm._groupCollection!.toList().isNotEmpty &&
+        ffiAvailable;
+
+    if (!needHabitNatural && !needGroupNatural) return defaultSort();
+    return _guardedNaturalSort(needHabitNatural, needGroupNatural);
+  }
+
+  FutureOr<_HabitsSortableCache> _guardedNaturalSort(
+    bool needHabitNatural,
+    bool needGroupNatural,
+  ) {
+    final result = _sortGuard.run<_HabitsSortableCache>(
+      () => naturalSort(needHabitNatural, needGroupNatural),
+      debugLabel: 'HabitSummary',
+    );
+    if (result is Future<_HabitsSortableCache?>) {
+      return result.then((r) => r ?? defaultSort());
+    }
+    return result ?? defaultSort();
+  }
+
+  _HabitsSortableCache defaultSort() {
+    final cache = _vm._sortableCache;
+    if (!_vm._groupingEnabled || _vm._groupCollection == null) {
+      return cache.copyWithData(
+        _vm._data,
+        searchOptions: _searchOpt,
+        filter: _statusFilter,
+      );
+    }
+
+    final groups = _vm._groupCollection!.toList();
+    final grouped = buildGroupedSortCacheList(
+      data: _vm._data,
+      groups: groups,
+      collapsedUUIDs: _vm._collapsedGroupUUIDs,
+      filter: _statusFilter,
+      habitOrder: HabitSortOrder.byType(cache.sortType, cache.sortDirection),
+      groupOrder: GroupSortOrder.byType(cache.groupType, cache.groupDirection),
+    );
+    return _finishGrouped(grouped);
+  }
+
+  Future<_HabitsSortableCache> naturalSort(
+    bool needHabitNatural,
+    bool needGroupNatural,
+  ) async {
+    final cache = _vm._sortableCache;
+    final locale = _vm._currentAppLanguage?.toLanguageTag();
+    try {
+      final sortedHabits = needHabitNatural
+          ? await CollationApi.instance.naturalSort(
+              items: _vm._data.values.toList(),
+              idOf: (h) => h.uuid,
+              valueOf: (h) => h.name,
+              descending: cache.sortDirection == HabitDisplaySortDirection.desc,
+              locale: locale,
+            )
+          : _vm._data.sort(cache.sortType, cache.sortDirection).toList();
+
+      if (!_vm._groupingEnabled || _vm._groupCollection == null) {
+        return _flatCache(sortedHabits);
+      }
+
+      final sortedGroups = needGroupNatural
+          ? await _sortGroups(locale)
+          : _vm._groupCollection!.toList();
+      final habitOrder = needHabitNatural
+          ? HabitSortOrder.byNatural(sortedHabits)
+          : HabitSortOrder.byType(cache.sortType, cache.sortDirection);
+      final groupOrder = needGroupNatural
+          ? GroupSortOrder.byNatural(sortedGroups)
+          : GroupSortOrder.byType(cache.groupType, cache.groupDirection);
+
+      final grouped = buildGroupedSortCacheList(
+        data: _vm._data,
+        groups: sortedGroups,
+        collapsedUUIDs: _vm._collapsedGroupUUIDs,
+        filter: _statusFilter,
+        habitOrder: habitOrder,
+        groupOrder: groupOrder,
+      );
+      return _finishGrouped(
+        grouped,
+        sortedHabits: needHabitNatural ? sortedHabits : null,
+      );
+    } catch (e) {
+      appLog.load.warn('Natural sort failed', ex: [e]);
+      return defaultSort();
+    }
+  }
+
+  Future<List<HabitGroupData>> _sortGroups(String? locale) async {
+    final cache = _vm._sortableCache;
+    final groupList = _vm._groupCollection!.toList();
+    return CollationApi.instance.naturalSort(
+      items: groupList,
+      idOf: (g) => g.uuid,
+      valueOf: (g) => g.name,
+      descending: cache.groupDirection == HabitDisplaySortDirection.desc,
+      locale: locale,
+    );
+  }
+
+  /// Produces a flat cache from pre-sorted habits, applying status filter
+  /// and search options.
+  _HabitsSortableCache _flatCache(List<HabitSummaryData> sorted) {
+    final filtered = _applySearchFilter(
+      sorted.where(_statusFilter.displayFilterFunction),
+    );
+    return _vm._sortableCache.copyWith(
+      lastSortedDataCache: filtered.toHabitSummarySortCacheList(),
+    );
+  }
+
+  /// Applies search-option filtering on top of an already status-filtered
+  /// iterable, or returns it unchanged when no search is active.
+  Iterable<HabitSummaryData> _applySearchFilter(
+    Iterable<HabitSummaryData> source,
+  ) {
+    final opt = _searchOpt;
+    if (opt == null) return source;
+    return source.where(
+      (e) => opt.filter(e, caps: true, keywords: opt.splitKeywords),
+    );
+  }
+
+  /// Resolves the final cache from grouped results.
+  ///
+  /// When [sortedHabits] is provided (natural-sort path), the degrade
+  /// fallback uses the pre-sorted list; otherwise falls back to
+  /// [copyWithData] for default sort.
+  _HabitsSortableCache _finishGrouped(
+    List<HabitSortCache<dynamic>> grouped, {
+    List<HabitSummaryData>? sortedHabits,
+  }) {
+    final headers = grouped.whereType<GroupHeaderSortCache>();
+    if (headers.length == 1 && headers.first.groupUUID == null) {
+      if (sortedHabits != null) return _flatCache(sortedHabits);
+      return _vm._sortableCache.copyWithData(
+        _vm._data,
+        searchOptions: _searchOpt,
+        filter: _statusFilter,
+      );
+    }
+    return _vm._sortableCache.copyWithGroupedData(
+      grouped,
+      searchOptions: _searchOpt,
+    );
+  }
 }
 
 class _SelectedHabitsData {
@@ -1380,7 +1549,7 @@ final class HabitDetailAdapter implements ProviderMounted {
     final habit = root.getHabit(habitUUID);
     if (habit == null || habit.status == HabitStatus.deleted) return null;
     final recordList = await root._changeHabitsStatus([habitUUID], status);
-    _fetchRoot()?.resortData();
+    await _fetchRoot()?.resortData();
     return recordList.firstOrNull;
   }
 

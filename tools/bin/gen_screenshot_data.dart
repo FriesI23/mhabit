@@ -125,6 +125,7 @@ final class ScreenshotConfig {
 }
 
 final class CliArgs {
+  final ScreenshotConfig config;
   final String configPath;
   final String outDir;
   final List<String> langs;
@@ -132,6 +133,7 @@ final class CliArgs {
   final bool noRepeat;
   final bool explicitSeed;
   const CliArgs({
+    required this.config,
     required this.configPath,
     required this.outDir,
     required this.langs,
@@ -338,7 +340,7 @@ ScreenshotConfig _loadConfig(String configPath) {
   );
 }
 
-CliArgs _parseArgs(List<String> args, ScreenshotConfig config) {
+CliArgs _parseArgs(List<String> args) {
   final parser = ArgParser()
     ..addOption('langs', defaultsTo: 'en')
     ..addFlag('all-langs')
@@ -348,6 +350,8 @@ CliArgs _parseArgs(List<String> args, ScreenshotConfig config) {
     ..addOption('seed')
     ..addOption('count', help: 'Generate for seeds 0..N-1 (overrides --seed).');
   final opts = parser.parse(args);
+  final configPath = opts['config'] as String;
+  final config = _loadConfig(configPath);
 
   (int, bool) resolveSeed(String? arg) {
     if (arg == null || arg.isEmpty) return (Random().nextInt(999999), false);
@@ -396,7 +400,8 @@ CliArgs _parseArgs(List<String> args, ScreenshotConfig config) {
   }
 
   return CliArgs(
-    configPath: opts['config'] as String,
+    config: config,
+    configPath: configPath,
     outDir: opts['out-dir'] as String,
     langs: langs,
     seeds: resolveSeeds(),
@@ -674,13 +679,12 @@ void _writeOutput(GenerationOutput output, CliArgs args, int seed) {
 }
 
 void main(List<String> args) {
-  final config = _loadConfig('tools/config/screenshot_seed.yaml');
-  final cli = _parseArgs(args, config);
+  final cli = _parseArgs(args);
   final todayEpoch = _epochDay(DateTime.now());
 
   var generated = 0;
   for (final seed in cli.seeds) {
-    final requests = _buildRequests(config, cli, todayEpoch, seed).toList();
+    final requests = _buildRequests(cli.config, cli, todayEpoch, seed).toList();
     for (final req in requests) {
       final output = _generate(req);
       _writeOutput(output, cli, seed);
