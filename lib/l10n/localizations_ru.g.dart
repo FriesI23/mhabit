@@ -976,6 +976,14 @@ class L10nRu extends L10n {
       'System Language Settings';
 
   @override
+  String get appSetting_openSystemLanguageTile_dialogTitle =>
+      'Open System Language Settings';
+
+  @override
+  String get appSetting_openSystemLanguageTile_macosDialogContent =>
+      'Due to macOS limitations, the app language cannot be changed directly. To switch languages, follow these steps:\n\n1. Open **System Settings > General > Language & Region**\n2. Add this app in the **Applications** list and choose a language';
+
+  @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
     return 'Формат отображения даты ($formatTemplate)';
   }

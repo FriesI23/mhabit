@@ -18,7 +18,7 @@ import '../../storage/profile_provider.dart';
 
 enum _InputFillCacheKey { habitEditTargetDays }
 
-enum _AppFlagKey { skipGroupChangeConfirm }
+enum _AppFlagKey { skipGroupChangeConfirm, skipOpenSystemLanguageConfirm }
 
 class AppCachesViewModel with ProfileHandlerLoadedMixin {
   AppCacheDelegate? _inputFill;
@@ -74,6 +74,22 @@ class AppCachesViewModel with ProfileHandlerLoadedMixin {
     bool rst = false;
     await _appFlags?.updateCache<bool>(
       _AppFlagKey.skipGroupChangeConfirm.name,
+      value,
+      onUpdated: (result, oldValue) => rst = result,
+    );
+    return rst;
+  }
+
+  bool get appFlagSkipOpenSystemLanguageConfirm =>
+      _appFlags?.getCache<bool>(
+        _AppFlagKey.skipOpenSystemLanguageConfirm.name,
+      ) ??
+      false;
+
+  Future<bool> updateAppFlagSkipOpenSystemLanguageConfirm(bool value) async {
+    bool rst = false;
+    await _appFlags?.updateCache<bool>(
+      _AppFlagKey.skipOpenSystemLanguageConfirm.name,
       value,
       onUpdated: (result, oldValue) => rst = result,
     );

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
@@ -606,7 +607,8 @@ class _PageState extends State<_Page> with XShare {
           ),
         ),
       ),
-      const AppSettingOpenSystemLanguageTile(),
+      if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)
+        const AppSettingOpenSystemLanguageTile(),
     ];
 
     Iterable<Widget> buildOperationSubGroup(BuildContext context) => [

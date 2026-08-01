@@ -12,10 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:io';
+
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
+import '../../../providers/app_ui/app_caches.dart';
+import '../../../widgets/widgets.dart';
 
 class AppSettingOpenSystemLanguageTile extends StatelessWidget {
   const AppSettingOpenSystemLanguageTile({super.key});
@@ -29,9 +34,54 @@ class AppSettingOpenSystemLanguageTile extends StatelessWidget {
             "System Language Settings",
       ),
       trailing: const Icon(Icons.open_in_new),
-      onTap: () {
-        AppSettings.openAppSettings(type: AppSettingsType.appLocale);
-      },
+      onTap: () => _onTap(context),
     );
+  }
+
+  Future<void> _onTap(BuildContext context) async {
+    if (Platform.isMacOS) {
+      final caches = context.read<AppCachesViewModel>();
+      if (!caches.appFlagSkipOpenSystemLanguageConfirm) {
+        final skipLabel = L10n.of(context)?.common_dontShowAgain;
+        final l10n = L10n.of(context);
+        final result = await showConfirmDialog(
+          context: context,
+          title: Text(
+            l10n?.appSetting_openSystemLanguageTile_dialogTitle ??
+                "Open System Language Settings",
+          ),
+          subtitle: SingleChildScrollView(
+            child: ThematicMarkdownBlock(
+              data:
+                  l10n?.appSetting_openSystemLanguageTile_macosDialogContent ??
+                  "Due to macOS limitations, the app language cannot be changed directly. "
+                      "To switch languages, follow these steps:\n\n"
+                      "1. Open **System Settings > General > Language & Region**\n"
+                      "2. Add this app in the **Applications** list and choose a language",
+              selectable: false,
+            ),
+          ),
+          confirmTextBuilder: (context) {
+            final l10n = L10n.of(context);
+            return Text(l10n?.confirmDialog_confirm_text('open') ?? 'Open');
+          },
+          cancelTextBuilder: (context) {
+            final l10n = L10n.of(context);
+            return Text(l10n?.confirmDialog_cancel_text ?? 'Cancel');
+          },
+          skipOnConfirm: true,
+          skipInitiallyEnabled: false,
+          skipLabel: skipLabel,
+        );
+
+        if (result != true) return;
+        if (context.mounted) {
+          await caches.updateAppFlagSkipOpenSystemLanguageConfirm(true);
+        }
+      }
+    }
+
+    if (!context.mounted) return;
+    AppSettings.openAppSettings(type: AppSettingsType.appLocale);
   }
 }

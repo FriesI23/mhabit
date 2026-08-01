@@ -1632,6 +1632,18 @@ abstract class L10n {
   /// **'System Language Settings'**
   String get appSetting_openSystemLanguageTile_titleText;
 
+  /// No description provided for @appSetting_openSystemLanguageTile_dialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open System Language Settings'**
+  String get appSetting_openSystemLanguageTile_dialogTitle;
+
+  /// Dialog subtitle rendered as Markdown via markdown_widget. Supports **bold** syntax and numbered lists (1. ...). See https://commonmark.org/help/ for supported Markdown features.
+  ///
+  /// In en, this message translates to:
+  /// **'Due to macOS limitations, the app language cannot be changed directly. To switch languages, follow these steps:\n\n1. Open **System Settings > General > Language & Region**\n2. Add this app in the **Applications** list and choose a language'**
+  String get appSetting_openSystemLanguageTile_macosDialogContent;
+
   /// No description provided for @appSetting_dateDisplayFormat_titleText.
   ///
   /// In en, this message translates to:
