@@ -106,6 +106,21 @@ class _Page extends StatefulWidget {
 }
 
 class _PageState extends State<_Page> with XShare {
+  /// Whether the current platform supports opening the system language
+  /// settings screen.
+  ///
+  /// Windows / Linux are currently **not** supported.
+  ///
+  /// * Android: [ACTION_LOCALE_SETTINGS][android-locale]
+  /// * iOS: [UIApplication.openSettingsURLString][ios-settings]
+  /// * macOS: [NSWorkspace.open(_:)][macos-workspace-open]
+  ///
+  /// [android-locale]: https://developer.android.com/reference/android/provider/Settings#ACTION_LOCALE_SETTINGS
+  /// [ios-settings]: https://developer.apple.com/documentation/uikit/uiapplication/1623042-opensettingsurlstring
+  /// [macos-workspace-open]: https://developer.apple.com/documentation/appkit/nsworkspace/3172701-open
+  static bool get _supportsOpenSystemLang =>
+      Platform.isAndroid || Platform.isIOS || Platform.isMacOS;
+
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
@@ -607,8 +622,7 @@ class _PageState extends State<_Page> with XShare {
           ),
         ),
       ),
-      if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)
-        const AppSettingOpenSystemLanguageTile(),
+      if (_supportsOpenSystemLang) const AppSettingOpenSystemLanguageTile(),
     ];
 
     Iterable<Widget> buildOperationSubGroup(BuildContext context) => [
