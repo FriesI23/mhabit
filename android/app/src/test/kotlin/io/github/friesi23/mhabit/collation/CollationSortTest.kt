@@ -5,8 +5,6 @@ import org.junit.Test
 
 class CollationSortTest {
 
-    // -- Happy-path tests -------------------------------------------------
-
     @Test
     fun `empty list returns empty list`() {
         val result = sortByCollationKey(
@@ -84,26 +82,26 @@ class CollationSortTest {
     }
 
     @Test
-    fun `tie in collation key is broken by original value`() {
+    fun `tie in collation key is broken by id`() {
         val items = listOf(
             CollationItem("y", "zzz"),
             CollationItem("x", "aaa"),
         )
-        // Both have the same collation key → fall back to value compareTo
+        // Both have the same collation key → fall back to id compareTo
         val keyOf = { _: String -> 0 }
         val result = sortByCollationKey(items, keyOf)
-        // "aaa" < "zzz" lexicographically
+        // "x" < "y" lexicographically
         assertEquals(listOf("x", "y"), result)
     }
 
     @Test
-    fun `multiple ties broken by value order`() {
+    fun `multiple ties broken by id order`() {
         val items = listOf(
             CollationItem("c", "ccc"),
             CollationItem("b", "bbb"),
             CollationItem("a", "aaa"),
         )
-        // All have same key — sorted purely by value
+        // All have same key — sorted purely by id
         val keyOf = { _: String -> 0 }
         val result = sortByCollationKey(items, keyOf)
         assertEquals(listOf("a", "b", "c"), result)
@@ -125,8 +123,8 @@ class CollationSortTest {
             }
         }
         val result = sortByCollationKey(items, keyOf)
-        // ya(0) first, then xa(1, "xa") before xb(1, "xb")
-        assertEquals(listOf("y1", "x2", "x1"), result)
+        // ya(0) first, then x1(id "x1") before x2(id "x2")
+        assertEquals(listOf("y1", "x1", "x2"), result)
     }
 
     @Test
@@ -145,8 +143,6 @@ class CollationSortTest {
         val result = sortByCollationKey(items, keyOf)
         assertEquals(listOf("id-second", "id-first"), result)
     }
-
-    // -- Edge / failure-path tests -----------------------------------------
 
     @Test
     fun `items with identical value and same key keep input order (stable sort)`() {
@@ -184,14 +180,14 @@ class CollationSortTest {
     }
 
     @Test
-    fun `case-sensitive value tie-breaking`() {
+    fun `tie broken by id regardless of value case`() {
         val items = listOf(
             CollationItem("upper", "A"),
             CollationItem("lower", "a"),
         )
         val keyOf = { _: String -> 0 }
         val result = sortByCollationKey(items, keyOf)
-        // 'A' (code 65) < 'a' (code 97)
-        assertEquals(listOf("upper", "lower"), result)
+        // "lower" < "upper" lexicographically
+        assertEquals(listOf("lower", "upper"), result)
     }
 }
