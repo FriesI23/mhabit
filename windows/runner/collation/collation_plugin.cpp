@@ -49,7 +49,18 @@ CollationPlugin::ExtractItems(const CollationRequest &request) {
 
 ErrorOr<::flutter::EncodableList>
 CollationPlugin::SortStrings(const CollationRequest &request) {
-  auto entries = ExtractItems(request);
+  struct SortEntry {
+    std::string id;
+    std::wstring wide_value;
+  };
+
+  auto raw = ExtractItems(request);
+  std::vector<SortEntry> entries;
+  entries.reserve(raw.size());
+  for (auto &item : raw) {
+    entries.push_back(
+        {std::move(item.first), ToWide(item.second)});
+  }
 
   // Resolve locale: use requested locale when available, otherwise
   // fall back to the user's default locale.
@@ -68,23 +79,23 @@ CollationPlugin::SortStrings(const CollationRequest &request) {
   const wchar_t *effective_locale =
       locale_name.empty() ? LOCALE_NAME_USER_DEFAULT : locale_name.c_str();
 
-  // Sort by collation order, then by original value as secondary key.
+  // Sort by collation order (using pre-converted wide strings),
+  // then by id as tie-break for consistency with other platforms.
   std::stable_sort(entries.begin(), entries.end(),
                    [effective_locale](const auto &a, const auto &b) {
-                     int cmp = CompareWide(ToWide(a.second), ToWide(b.second),
+                     int cmp = CompareWide(a.wide_value, b.wide_value,
                                            effective_locale);
                      if (cmp == CSTR_LESS_THAN)
                        return true;
                      if (cmp == CSTR_GREATER_THAN)
                        return false;
-                     // Equal collation: tie-break by original value.
-                     return a.second < b.second;
+                     return a.id < b.id;
                    });
 
   ::flutter::EncodableList result;
   result.reserve(entries.size());
   for (const auto &e : entries) {
-    result.push_back(::flutter::EncodableValue(e.first));
+    result.push_back(::flutter::EncodableValue(e.id));
   }
   return result;
 }

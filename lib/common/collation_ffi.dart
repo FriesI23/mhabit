@@ -126,22 +126,17 @@ class IcuCollationBase implements IcuCollationEngine {
 
   /// Compares [a] and [b] via [ucol_strcoll] (numeric-aware).
   @override
-  int compare(String a, String b) {
-    final pa = a.toNativeUtf16(allocator: malloc);
-    final pb = b.toNativeUtf16(allocator: malloc);
-    try {
-      return _ucolStrColl(
-        _coll,
-        pa.cast<Uint16>(),
-        a.length,
-        pb.cast<Uint16>(),
-        b.length,
-      );
-    } finally {
-      malloc.free(pa);
-      malloc.free(pb);
-    }
-  }
+  int compare(String a, String b) => using((arena) {
+    final pa = a.toNativeUtf16(allocator: arena);
+    final pb = b.toNativeUtf16(allocator: arena);
+    return _ucolStrColl(
+      _coll,
+      pa.cast<Uint16>(),
+      a.length,
+      pb.cast<Uint16>(),
+      b.length,
+    );
+  });
 }
 
 /// Synchronous collation sort using an injectable comparison function.

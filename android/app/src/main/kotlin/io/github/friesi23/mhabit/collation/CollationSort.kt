@@ -10,6 +10,6 @@ fun sortByCollationKey(
     }
     .sortedWith(
         compareBy<Triple<String, String, Comparable<*>>> { it.third }
-            .thenBy { it.second },
+            .thenBy { it.first },
     )
     .map { it.first }
