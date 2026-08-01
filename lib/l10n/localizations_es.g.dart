@@ -968,6 +968,13 @@ class L10nEs extends L10n {
       'Seleccionar el idioma';
 
   @override
+  String get appSetting_languageSubgroupText => 'Language';
+
+  @override
+  String get appSetting_openSystemLanguageTile_titleText =>
+      'System Language Settings';
+
+  @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
     return 'Formato de visualización de la fecha ($formatTemplate)';
   }

@@ -1620,6 +1620,18 @@ abstract class L10n {
   /// **'Select Language'**
   String get appSetting_changeLanguageDialog_titleText;
 
+  /// No description provided for @appSetting_languageSubgroupText.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get appSetting_languageSubgroupText;
+
+  /// No description provided for @appSetting_openSystemLanguageTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'System Language Settings'**
+  String get appSetting_openSystemLanguageTile_titleText;
+
   /// No description provided for @appSetting_dateDisplayFormat_titleText.
   ///
   /// In en, this message translates to:

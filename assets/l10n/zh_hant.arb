@@ -585,6 +585,8 @@
     "appSetting_changeLanguage_followSystem_noLocale_text": "依照系統設定",
     "appSetting_changeLanguageTile_titleText": "語言",
     "appSetting_changeLanguageDialog_titleText": "選擇語言",
+    "appSetting_languageSubgroupText": "語言",
+    "appSetting_openSystemLanguageTile_titleText": "系統語言設定",
     "appSetting_dateDisplayFormat_titleText": "日期顯示格式（{formatTemplate}）",
     "@appSetting_dateDisplayFormat_titleText": {
         "placeholders": {

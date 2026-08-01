@@ -975,6 +975,13 @@ class L10nPl extends L10n {
   String get appSetting_changeLanguageDialog_titleText => 'Wybierz język';
 
   @override
+  String get appSetting_languageSubgroupText => 'Language';
+
+  @override
+  String get appSetting_openSystemLanguageTile_titleText =>
+      'System Language Settings';
+
+  @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
     return 'Format daty ($formatTemplate)';
   }

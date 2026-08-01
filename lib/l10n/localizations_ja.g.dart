@@ -945,6 +945,13 @@ class L10nJa extends L10n {
   String get appSetting_changeLanguageDialog_titleText => '言語を選択';
 
   @override
+  String get appSetting_languageSubgroupText => 'Language';
+
+  @override
+  String get appSetting_openSystemLanguageTile_titleText =>
+      'System Language Settings';
+
+  @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
     return '日付表示形式 ($formatTemplate)';
   }

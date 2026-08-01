@@ -958,6 +958,13 @@ class L10nAr extends L10n {
   String get appSetting_changeLanguageDialog_titleText => 'اختر اللغة';
 
   @override
+  String get appSetting_languageSubgroupText => 'Language';
+
+  @override
+  String get appSetting_openSystemLanguageTile_titleText =>
+      'System Language Settings';
+
+  @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
     return 'طريقة عرض التاريخ ($formatTemplate)';
   }

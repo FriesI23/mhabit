@@ -900,6 +900,12 @@ class L10nZh extends L10n {
   String get appSetting_changeLanguageDialog_titleText => '选择语言';
 
   @override
+  String get appSetting_languageSubgroupText => '语言';
+
+  @override
+  String get appSetting_openSystemLanguageTile_titleText => '系统语言设置';
+
+  @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
     return '日期显示格式 ($formatTemplate)';
   }
@@ -2918,6 +2924,12 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get appSetting_changeLanguageDialog_titleText => '選擇語言';
+
+  @override
+  String get appSetting_languageSubgroupText => '語言';
+
+  @override
+  String get appSetting_openSystemLanguageTile_titleText => '系統語言設定';
 
   @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {

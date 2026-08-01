@@ -963,6 +963,13 @@ class L10nFa extends L10n {
   String get appSetting_changeLanguageDialog_titleText => 'گزیدن زبان';
 
   @override
+  String get appSetting_languageSubgroupText => 'Language';
+
+  @override
+  String get appSetting_openSystemLanguageTile_titleText =>
+      'System Language Settings';
+
+  @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
     return 'فرمت نمایش تاریخ ($formatTemplate)';
   }

@@ -961,6 +961,13 @@ class L10nCs extends L10n {
   String get appSetting_changeLanguageDialog_titleText => 'Vyberte jazyk';
 
   @override
+  String get appSetting_languageSubgroupText => 'Language';
+
+  @override
+  String get appSetting_openSystemLanguageTile_titleText =>
+      'System Language Settings';
+
+  @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
     return 'Date display format ($formatTemplate)';
   }

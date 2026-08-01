@@ -581,6 +581,16 @@ class _PageState extends State<_Page> with XShare {
           ),
         ),
       ),
+    ];
+
+    Iterable<Widget> buildLanguageSubGroup(BuildContext context) => [
+      GroupTitleListTile(
+        title: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.appSetting_languageSubgroupText)
+              : const Text("Language"),
+        ),
+      ),
       Selector<AppLanguageViewModel, Locale?>(
         selector: (context, vm) => vm.languange,
         shouldRebuild: (previous, next) => previous != next,
@@ -596,6 +606,7 @@ class _PageState extends State<_Page> with XShare {
           ),
         ),
       ),
+      const AppSettingOpenSystemLanguageTile(),
     ];
 
     Iterable<Widget> buildOperationSubGroup(BuildContext context) => [
@@ -925,6 +936,7 @@ class _PageState extends State<_Page> with XShare {
                     Column(children: [...buildGroupsSubGroup(context)]),
               ),
               ...buildDisplaySubGroup(context),
+              ...buildLanguageSubGroup(context),
               ...buildOperationSubGroup(context),
               ...buildReminderSubGroup(context),
               ...buildBackupAndRestoreSubGroup(context),
