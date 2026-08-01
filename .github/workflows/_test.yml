@@ -36,7 +36,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup_flutter
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -55,4 +55,4 @@ jobs:
         if: success() || failure()
         with:
           name: android-unittest-xml
-          path: android/app/build/test-results/testF_genericDebugUnitTest/TEST-*.xml
+          path: build/app/test-results/testF_genericDebugUnitTest/TEST-*.xml
