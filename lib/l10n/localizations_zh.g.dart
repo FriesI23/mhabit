@@ -900,6 +900,19 @@ class L10nZh extends L10n {
   String get appSetting_changeLanguageDialog_titleText => '选择语言';
 
   @override
+  String get appSetting_languageSubgroupText => '语言';
+
+  @override
+  String get appSetting_openSystemLanguageTile_titleText => '系统语言设置';
+
+  @override
+  String get appSetting_openSystemLanguageTile_dialogTitle => '打开系统语言设置';
+
+  @override
+  String get appSetting_openSystemLanguageTile_macosDialogContent =>
+      '由于 macOS 限制，无法直接更改应用语言。如需切换语言，请按以下步骤操作：\n\n1. 打开**系统设置 > 通用 > 语言与地区**\n2. 在**应用程序**列表中添加此应用并选择语言';
+
+  @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
     return '日期显示格式 ($formatTemplate)';
   }
@@ -2918,6 +2931,19 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get appSetting_changeLanguageDialog_titleText => '選擇語言';
+
+  @override
+  String get appSetting_languageSubgroupText => '語言';
+
+  @override
+  String get appSetting_openSystemLanguageTile_titleText => '系統語言設定';
+
+  @override
+  String get appSetting_openSystemLanguageTile_dialogTitle => '開啟系統語言設定';
+
+  @override
+  String get appSetting_openSystemLanguageTile_macosDialogContent =>
+      '由於 macOS 限制，無法直接更改應用程式語言。如需切換語言，請依照以下步驟操作：\n\n1. 開啟**系統設定 > 一般 > 語言與地區**\n2. 在**應用程式**列表中新增此應用程式並選擇語言';
 
   @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {

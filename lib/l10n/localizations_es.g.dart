@@ -968,6 +968,21 @@ class L10nEs extends L10n {
       'Seleccionar el idioma';
 
   @override
+  String get appSetting_languageSubgroupText => 'Language';
+
+  @override
+  String get appSetting_openSystemLanguageTile_titleText =>
+      'System Language Settings';
+
+  @override
+  String get appSetting_openSystemLanguageTile_dialogTitle =>
+      'Open System Language Settings';
+
+  @override
+  String get appSetting_openSystemLanguageTile_macosDialogContent =>
+      'Due to macOS limitations, the app language cannot be changed directly. To switch languages, follow these steps:\n\n1. Open **System Settings > General > Language & Region**\n2. Add this app in the **Applications** list and choose a language';
+
+  @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
     return 'Formato de visualización de la fecha ($formatTemplate)';
   }

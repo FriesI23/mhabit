@@ -610,6 +610,13 @@
     "appSetting_changeLanguage_followSystem_noLocale_text": "跟随系统",
     "appSetting_changeLanguageTile_titleText": "多语言",
     "appSetting_changeLanguageDialog_titleText": "选择语言",
+    "appSetting_languageSubgroupText": "语言",
+    "appSetting_openSystemLanguageTile_titleText": "系统语言设置",
+    "appSetting_openSystemLanguageTile_dialogTitle": "打开系统语言设置",
+    "appSetting_openSystemLanguageTile_macosDialogContent": "由于 macOS 限制，无法直接更改应用语言。如需切换语言，请按以下步骤操作：\n\n1. 打开**系统设置 > 通用 > 语言与地区**\n2. 在**应用程序**列表中添加此应用并选择语言",
+    "@appSetting_openSystemLanguageTile_macosDialogContent": {
+        "description": "Dialog subtitle rendered as Markdown via markdown_widget. Supports **bold** syntax and numbered lists (1. ...). See https://commonmark.org/help/ for supported Markdown features."
+    },
     "appSetting_dateDisplayFormat_titleText": "日期显示格式 ({formatTemplate})",
     "@appSetting_dateDisplayFormat_titleText": {
         "placeholders": {

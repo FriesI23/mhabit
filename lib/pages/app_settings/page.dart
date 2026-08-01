@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
@@ -105,6 +106,21 @@ class _Page extends StatefulWidget {
 }
 
 class _PageState extends State<_Page> with XShare {
+  /// Whether the current platform supports opening the system language
+  /// settings screen.
+  ///
+  /// Windows / Linux are currently **not** supported.
+  ///
+  /// * Android: [ACTION_LOCALE_SETTINGS][android-locale]
+  /// * iOS: [UIApplication.openSettingsURLString][ios-settings]
+  /// * macOS: [NSWorkspace.open(_:)][macos-workspace-open]
+  ///
+  /// [android-locale]: https://developer.android.com/reference/android/provider/Settings#ACTION_LOCALE_SETTINGS
+  /// [ios-settings]: https://developer.apple.com/documentation/uikit/uiapplication/1623042-opensettingsurlstring
+  /// [macos-workspace-open]: https://developer.apple.com/documentation/appkit/nsworkspace/3172701-open
+  static bool get _supportsOpenSystemLang =>
+      Platform.isAndroid || Platform.isIOS || Platform.isMacOS;
+
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
@@ -581,6 +597,16 @@ class _PageState extends State<_Page> with XShare {
           ),
         ),
       ),
+    ];
+
+    Iterable<Widget> buildLanguageSubGroup(BuildContext context) => [
+      GroupTitleListTile(
+        title: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.appSetting_languageSubgroupText)
+              : const Text("Language"),
+        ),
+      ),
       Selector<AppLanguageViewModel, Locale?>(
         selector: (context, vm) => vm.languange,
         shouldRebuild: (previous, next) => previous != next,
@@ -596,6 +622,7 @@ class _PageState extends State<_Page> with XShare {
           ),
         ),
       ),
+      if (_supportsOpenSystemLang) const AppSettingOpenSystemLanguageTile(),
     ];
 
     Iterable<Widget> buildOperationSubGroup(BuildContext context) => [
@@ -925,6 +952,7 @@ class _PageState extends State<_Page> with XShare {
                     Column(children: [...buildGroupsSubGroup(context)]),
               ),
               ...buildDisplaySubGroup(context),
+              ...buildLanguageSubGroup(context),
               ...buildOperationSubGroup(context),
               ...buildReminderSubGroup(context),
               ...buildBackupAndRestoreSubGroup(context),

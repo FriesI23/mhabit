@@ -22,6 +22,7 @@ export '_widgets/app_setting_display_op_tile.dart';
 export '_widgets/app_setting_expand_timer_delay_tile.dart';
 export '_widgets/app_setting_first_day.dart';
 export '_widgets/app_setting_notify_tile.dart';
+export '_widgets/app_setting_open_system_language_tile.dart';
 export '_widgets/app_setting_reminder_tile.dart';
 export '_widgets/app_setting_sync_failed_tile.dart';
 export '_widgets/app_setting_theme_color.dart';
