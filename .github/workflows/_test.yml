@@ -35,22 +35,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup_flutter
-      - name: Set up JDK 17
-        uses: actions/setup-java@v5
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+      - uses: ./.github/actions/setup_jdk
       - name: Run Android unit tests
-        run: |
-          set -o pipefail
-          cd android
-          ./gradlew :app:testF_genericDebugUnitTest --console=plain 2>&1 | tee ../android_test_report.log
-          set +o pipefail
-      - uses: actions/upload-artifact@v7
-        if: success() || failure()
-        with:
-          name: android-unittest-result
-          path: android_test_report.log
+        run: cd android && ./gradlew :app:testF_genericDebugUnitTest --console=plain
       - uses: actions/upload-artifact@v7
         if: success() || failure()
         with:
