@@ -51,7 +51,7 @@ help:
 	@echo   format            Format Dart sources under lib and test
 	@echo   fix               Apply Dart fixes and then format sources
 	@echo   gen-icons         Generate icon fonts
-	@echo   test              Run the root app and internal package test suites
+	@echo   test              Run the root app, internal package, and Android native test suites
 	@echo   gen               Run the main generation workflow
 	@echo   verify-generated  Ensure normalized/generated files are up to date
 	@echo   verify-submodules Show recursive submodule status
@@ -96,6 +96,7 @@ gen-icons:
 
 test:
 	@$(MELOS) run test
+	@cd android && ./gradlew :app:testF_genericDebugUnitTest --console=plain
 
 gen:
 	@$(SUBMAKE) normalize-l10n

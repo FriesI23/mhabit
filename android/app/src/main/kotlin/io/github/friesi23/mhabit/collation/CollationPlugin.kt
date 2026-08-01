@@ -16,13 +16,6 @@ class CollationPlugin : CollationHostApi {
             decomposition = Collator.CANONICAL_DECOMPOSITION
         }
 
-        return request.items.asSequence()
-            .map { it.id to it.value }
-            .sortedWith(
-                compareBy<Pair<String, String>> { collator.getCollationKey(it.second) }
-                    .thenBy { it.second }
-            )
-            .map { it.first }
-            .toList()
+        return sortByCollationKey(request.items) { collator.getCollationKey(it) }
     }
 }

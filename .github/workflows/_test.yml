@@ -28,3 +28,31 @@ jobs:
         with:
           name: flutter-unittest-result
           path: test_report.log
+
+  android-test:
+    name: Android Unit Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup_flutter
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Run Android unit tests
+        run: |
+          set -o pipefail
+          cd android
+          ./gradlew :app:testF_genericDebugUnitTest --console=plain 2>&1 | tee ../android_test_report.log
+          set +o pipefail
+      - uses: actions/upload-artifact@v7
+        if: success() || failure()
+        with:
+          name: android-unittest-result
+          path: android_test_report.log
+      - uses: actions/upload-artifact@v7
+        if: success() || failure()
+        with:
+          name: android-unittest-xml
+          path: android/app/build/test-results/testF_genericDebugUnitTest/TEST-*.xml
