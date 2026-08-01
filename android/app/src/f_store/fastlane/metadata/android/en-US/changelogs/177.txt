@@ -1,0 +1,2 @@
+- Feature: implement natural-language collation sort for habit and today lists (#631)
+- Feature: add system language settings and localization support (#632)

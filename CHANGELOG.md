@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.26.4+177-pre
+
+- Feature: implement natural-language collation sort for habit and today lists (#631)
+- Feature: add system language settings and localization support (#632)
+
 ## 1.26.3+176-pre
 
 - Refactor: extract PopScopeGate widget with PopScopeHandler interface (#625)
