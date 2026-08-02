@@ -31,7 +31,9 @@ class AppExperimentalFeatureViewModel extends ChangeNotifier
       ..[HabitSearchExperimentalFeature] = profile
           .getHandler<HabitSearchExperimentalFeature>()
       ..[HabitGroupingExperimentalFeature] = profile
-          .getHandler<HabitGroupingExperimentalFeature>();
+          .getHandler<HabitGroupingExperimentalFeature>()
+      ..[NaturalSortExperimentalFeature] = profile
+          .getHandler<NaturalSortExperimentalFeature>();
   }
 
   Iterable<AppExperimentalFeature> get allFeatures => _handlers.values.nonNulls;
@@ -57,4 +59,9 @@ class AppExperimentalFeatureViewModel extends ChangeNotifier
 
   Future<void> setHabitGrouping(bool value, {bool listen = true}) =>
       _setBool<HabitGroupingExperimentalFeature>(value, listen: listen);
+
+  bool get naturalSort => _getBool<NaturalSortExperimentalFeature>();
+
+  Future<void> setNaturalSort(bool value, {bool listen = true}) =>
+      _setBool<NaturalSortExperimentalFeature>(value, listen: listen);
 }

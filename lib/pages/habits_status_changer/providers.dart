@@ -18,6 +18,7 @@ import 'package:provider/provider.dart';
 
 import '../../common/types.dart';
 import '../../providers/app_ui/app_first_day.dart';
+import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/habits_manager.dart';
 import '../../widgets/provider.dart';
 import '_providers/habit_status_changer.dart';
@@ -42,6 +43,9 @@ class PageProviders extends SingleChildStatelessWidget {
             previous..updateFirstday(value.firstDay),
         post: (t, value, vm) =>
             value.firstDay != vm.firstday ? vm.requestReloadData() : null,
+      ),
+      ViewModelProxyProvider<AppEventBus, HabitStatusChangerViewModel>(
+        update: (context, value, previous) => previous..updateAppEvent(value),
       ),
     ],
     child: child,

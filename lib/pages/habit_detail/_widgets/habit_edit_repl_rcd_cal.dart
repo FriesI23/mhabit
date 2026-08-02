@@ -19,9 +19,7 @@ import 'package:simple_heatmap_calendar/simple_heatmap_calendar.dart';
 
 import '../../../common/consts.dart';
 import '../../../common/types.dart';
-import '../../../extensions/context_extensions.dart';
 import '../../../extensions/custom_color_extensions.dart';
-import '../../../models/app_event.dart';
 import '../../../models/habit_color.dart';
 import '../../../models/habit_daily_record_form.dart';
 import '../../../models/habit_date.dart';
@@ -29,8 +27,6 @@ import '../../../models/habit_detail_chart.dart';
 import '../../../models/habit_form.dart';
 import '../../../models/habit_summary.dart';
 import '../../../providers/app_ui/app_custom_date_format.dart';
-import '../../../providers/workflow/app_event.dart';
-import '../../../providers/workflow/app_sync.dart';
 import '../../../theme/color.dart';
 import '../../../widgets/widgets.dart';
 import '../../common/widgets.dart';
@@ -97,31 +93,15 @@ class _HabitEditReplacementRecordCalendarDialog
     }
   }
 
-  void _onRecordChangeConfirmed(
-    HabitSummaryRecord record, {
-    String? reason,
-    bool shouldSyncOnce = true,
-  }) {
+  void _onRecordChangeConfirmed(HabitSummaryRecord record, {String? reason}) {
     if (!mounted) return;
-    // try sync once
-    if (shouldSyncOnce) {
-      context.maybeRead<AppSyncTriggerAccess>()?.delayedStartTaskOnce();
-    }
     final habitUUID = _vm.habitUUID;
     if (habitUUID != null) {
-      context.read<AppEventBus>().push(
-        HabitRecordsChangedEvents(
-          msg: "habit_detail.calendar._onRecordChangeConfirmed",
-          uuidList: [habitUUID],
-          dateList: [record.date],
-          status: record.status,
-          reason: reason,
-          trace: const {
-            AppEventPageSource.habitDetail: {
-              AppEventFunctionSource.recordChanged,
-            },
-          },
-        ),
+      _vm.onCalendarRecordChanged(
+        uuid: habitUUID,
+        date: record.date,
+        status: record.status,
+        reason: reason,
       );
     }
   }

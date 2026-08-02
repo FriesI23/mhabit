@@ -13,12 +13,18 @@
 // limitations under the License.
 
 import 'dart:async';
+import 'dart:io';
+import 'dart:ui' show Locale;
 
 import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../common/collation.dart';
+import '../../../common/collation_ffi_linux.dart';
 import '../../../common/consts.dart';
+import '../../../common/sort_generation.dart';
 import '../../../common/types.dart';
+import '../../../extensions/collation_extensions.dart';
 import '../../../extensions/habit_group_extensions.dart';
 import '../../../logging/helper.dart';
 import '../../../models/app_event.dart';
@@ -26,6 +32,7 @@ import '../../../models/habit_color.dart';
 import '../../../models/habit_display.dart';
 import '../../../models/habit_group.dart';
 import '../../../models/habit_group_display.dart';
+import '../../../pages/common/widgets.dart';
 import '../../../providers/support/commons.dart';
 import '../../../providers/support/page_load_runtime.dart';
 import '../../../providers/workflow/app_event.dart';
@@ -33,19 +40,46 @@ import '../../../providers/workflow/group_manager.dart';
 import '../../../storage/profile/handlers.dart';
 import '../../../storage/profile_provider.dart';
 
+extension on AppEventSubscriptions {
+  void pushGroupChanged({
+    String? msg,
+    required List<GroupUUID> uuidList,
+    GroupChangeType changeType = GroupChangeType.unknown,
+  }) => push(
+    GroupChangedEvent(
+      msg: msg,
+      uuidList: uuidList,
+      changeType: changeType,
+      trace: const {
+        AppEventPageSource.groupManage: {AppEventFunctionSource.groupChanged},
+      },
+    ),
+  );
+}
+
 /// Page-scoped ViewModel for the Group management page.
 ///
 /// Sort type/direction are nullable session overrides: when null, the effective
 /// value falls back to the global [DisplayGroupModeProfileHandler] config.
+///
+/// Event push is centralized through [AppEventSubscriptions] via the
+/// file-private [_GroupEventPush] extension, keeping trace construction in one
+/// place.
 class GroupManageViewModel extends ChangeNotifier
     with ProfileHandlerLoadedMixin
-    implements ProviderMounted, AppEventLoaded {
+    implements
+        ProviderMounted,
+        AppEventLoaded,
+        PopScopeHandler,
+        AppEventSubscriber {
   GroupManageViewModel({String? initialGroupUUID})
     : _initialGroupUUID = initialGroupUUID;
 
   // dependencies
   GroupManager? _groupManager;
   DisplayGroupModeProfileHandler? _groupModeHandler;
+  bool _naturalSortEnabled = NaturalSortExperimentalFeature.defaultEnabled;
+  Locale? _currentAppLanguage;
 
   // data
   GroupCollection? _groupCollection;
@@ -98,6 +132,7 @@ class GroupManageViewModel extends ChangeNotifier
   bool _nextRefreshForceReload = false;
   bool _firstLoadCompleted = false;
   bool _mounted = true;
+  final _sortGuard = SortGuard();
 
   /// Set via navigation from the home page Group header long-press menu.
   /// Consumed on the first successful [loadGroups] call.
@@ -122,14 +157,42 @@ class GroupManageViewModel extends ChangeNotifier
   List<String> get lastDeletedUUIDs => List.unmodifiable(_lastDeletedUUIDs);
 
   // event subscriptions
-  StreamSubscription<GroupChangedEvent>? _groupEventSub;
-  StreamSubscription<ReloadDataEvent>? _reloadDataSub;
+  AppEventSubscriptions? _subs;
+
+  @override
+  bool shouldReceive(AppEvent event) =>
+      !event.isInTrace(AppEventPageSource.groupManage);
+
+  @override
+  void handleEvent(AppEvent event) => switch (event) {
+    GroupChangedEvent() => _handleGroupChanged(event),
+    ReloadDataEvent() => _handleReloadData(event),
+    HabitDataChangedEvent() => _handleHabitDataChanged(event),
+    HabitStatusChangedEvent() || HabitRecordsChangedEvent() => null,
+  };
+
+  void _handleGroupChanged(GroupChangedEvent event) {
+    appLog.habit.debug("GroupManage.reload", ex: ["GroupChangedEvent", event]);
+    requestReload();
+  }
+
+  void _handleReloadData(ReloadDataEvent event) {
+    appLog.habit.debug("GroupManage.reload", ex: ["ReloadDataEvent", event]);
+    requestReload();
+  }
+
+  void _handleHabitDataChanged(HabitDataChangedEvent event) {
+    appLog.habit.debug(
+      "GroupManage.reload",
+      ex: ["HabitDataChangedEvent", event],
+    );
+    requestReload();
+  }
 
   @override
   void dispose() {
     if (!_mounted) return;
-    _groupEventSub?.cancel();
-    _reloadDataSub?.cancel();
+    _subs?.cancelAll();
     _pageLoad.cancel(logName: "$runtimeType.dispose");
     _mounted = false;
     super.dispose();
@@ -141,24 +204,20 @@ class GroupManageViewModel extends ChangeNotifier
     _groupModeHandler = newProfile.getHandler<DisplayGroupModeProfileHandler>();
   }
 
+  void updateNaturalSortEnabled(bool enabled) => _naturalSortEnabled = enabled;
+
+  void updateCurrentAppLanguage(Locale? locale) => _currentAppLanguage = locale;
+
   void attachGroupManager(GroupManager value) {
     _groupManager = value;
   }
 
   @override
   void updateAppEvent(AppEventBus newAppEvent) {
-    _groupEventSub?.cancel();
-    _reloadDataSub?.cancel();
-    _groupEventSub = newAppEvent.on<GroupChangedEvent>().listen((event) {
-      if (event.isInTrace(AppEventPageSource.groupManage)) return;
-      appLog.habit.debug("GroupManage.reload", ex: ["GroupChangedEvent"]);
-      requestReload();
-    });
-    _reloadDataSub = newAppEvent.on<ReloadDataEvent>().listen((event) {
-      if (event.isInTrace(AppEventPageSource.groupManage)) return;
-      appLog.habit.debug("GroupManage.reload", ex: ["ReloadDataEvent", event]);
-      requestReload();
-    });
+    _subs?.cancelAll();
+    _subs = AppEventSubscriptions(this, newAppEvent)
+      ..subscribe<GroupChangedEvent>()
+      ..subscribe<ReloadDataEvent>();
   }
 
   void requestReload() {
@@ -192,6 +251,7 @@ class GroupManageViewModel extends ChangeNotifier
       logName: "$runtimeType.loadGroups",
       alreadyLoadingEx: ["groups already loading"],
       loadData: (loading) async {
+        _sortGuard.bump();
         if (!mounted) {
           return loadingFailed(loading, ["viewmodel disposed"]);
         }
@@ -214,10 +274,9 @@ class GroupManageViewModel extends ChangeNotifier
           _selectionMode = true;
           _selectedGroupUUIDs.add(_initialGroupUUID);
         }
-        _resortData();
-
+        await _resortData();
         loading.complete();
-        if (listen) notifyListeners();
+        if (mounted && listen) notifyListeners();
       },
       onError: (loading, e, s) {
         if (loading.isCanceled) return loadingCancelled(loading);
@@ -234,23 +293,70 @@ class GroupManageViewModel extends ChangeNotifier
   Future<HabitGroupData?> loadGroupDataByUUID(String uuid) =>
       _groupManager?.loadGroupDataByUUID(uuid) ?? Future.value(null);
 
-  void setSortOptions(
+  Future<void> setSortOptions(
     HabitDisplayGroupType type,
     HabitDisplaySortDirection direction,
-  ) {
+  ) async {
     _sortType = type;
     _sortDirection = direction;
-    _resortData();
-    notifyListeners();
+    await _resortData();
+    if (mounted) notifyListeners();
   }
 
-  void _resortData() {
-    if (_groupCollection == null) return;
-    _sortableCache = _sortableCache.copyWithData(
+  FutureOr<void> _resortData() {
+    if (_groupCollection == null) return null;
+
+    final sortType = effectiveSortType;
+    final sortDirection = effectiveSortDirection;
+
+    _GroupsSortableCache defaultSort() => _sortableCache.copyWithData(
       _groupCollection!,
-      sortType: effectiveSortType,
-      sortDirection: effectiveSortDirection,
+      sortType: sortType,
+      sortDirection: sortDirection,
     );
+
+    final canNaturalSort =
+        sortType == HabitDisplayGroupType.name &&
+        _naturalSortEnabled &&
+        _groupCollection!.toList().isNotEmpty &&
+        (IcuCollationLinux.available || !Platform.isLinux);
+
+    if (!canNaturalSort) {
+      _sortableCache = defaultSort();
+      return null;
+    }
+
+    final result = _sortGuard.run<_GroupsSortableCache>(() {
+      final groups = _groupCollection!.toList();
+      final locale = _currentAppLanguage?.toLanguageTag();
+      final sorted = CollationApi.instance.naturalSort(
+        items: groups,
+        idOf: (g) => g.uuid,
+        valueOf: (g) => g.name,
+        descending: sortDirection == HabitDisplaySortDirection.desc,
+        locale: locale,
+      );
+
+      _GroupsSortableCache build(List<HabitGroupData> s) =>
+          _GroupsSortableCache(
+            sortType: sortType,
+            sortDirection: sortDirection,
+            lastSortedDataCache: s,
+          );
+
+      if (sorted is Future<List<HabitGroupData>>) {
+        return sorted.then(build).catchError((e) {
+          appLog.load.warn('Natural sort failed', ex: [e]);
+          return defaultSort();
+        });
+      }
+      return build(sorted);
+    }, debugLabel: 'GroupManage');
+
+    if (result is Future<_GroupsSortableCache?>) {
+      return result.then((r) => _sortableCache = r ?? _sortableCache);
+    }
+    _sortableCache = result ?? _sortableCache;
   }
 
   void enterSelectionMode(String initialUUID, {bool listen = true}) {
@@ -271,6 +377,9 @@ class GroupManageViewModel extends ChangeNotifier
     _selectedGroupUUIDs.clear();
     notifyListeners();
   }
+
+  @override
+  bool get canPop => !_selectionMode;
 
   void toggleSelection(String uuid) {
     if (!_selectionMode) return;
@@ -303,17 +412,27 @@ class GroupManageViewModel extends ChangeNotifier
     _lastDeletedUUIDs = [uuid];
     exitSelectionMode();
     requestReload();
+    _subs?.pushGroupChanged(
+      msg: "group_manage.deleteSingleGroup",
+      uuidList: [uuid],
+      changeType: GroupChangeType.deleted,
+    );
   }
 
   Future<void> deleteSelectedGroups() async {
     final uuids = List<String>.of(_selectedGroupUUIDs);
-    for (final uuid in uuids) {
-      await _groupManager?.deleteGroup(uuid);
-      if (!mounted) return;
-    }
+    final gm = _groupManager;
+    if (gm == null || uuids.isEmpty) return;
+    await gm.deleteGroups(uuids);
+    if (!mounted) return;
     _lastDeletedUUIDs = uuids;
     exitSelectionMode();
     requestReload();
+    _subs?.pushGroupChanged(
+      msg: "group_manage.deleteSelectedGroups",
+      uuidList: uuids,
+      changeType: GroupChangeType.deleted,
+    );
   }
 
   Future<void> undoLastDelete() async {
@@ -322,13 +441,17 @@ class GroupManageViewModel extends ChangeNotifier
     final all = await _groupManager?.loadAllActiveGroups() ?? [];
     if (!mounted) return;
     final lookup = all.map((g) => g.uuid).toSet();
-
-    for (final uuid in uuids) {
-      if (lookup.contains(uuid)) continue;
-      await _groupManager?.restoreGroup(uuid);
+    final toRestore = uuids.where((uuid) => !lookup.contains(uuid)).toList();
+    if (toRestore.isNotEmpty) {
+      await _groupManager?.restoreGroups(toRestore);
       if (!mounted) return;
     }
     requestReload();
+    _subs?.pushGroupChanged(
+      msg: "group_manage.undoLastDelete",
+      uuidList: uuids,
+      changeType: GroupChangeType.created,
+    );
   }
 
   Future<HabitGroupData> createGroup({
@@ -347,6 +470,11 @@ class GroupManageViewModel extends ChangeNotifier
     );
     if (!mounted) return result;
     requestReload();
+    _subs?.pushGroupChanged(
+      msg: "group_manage.createGroup",
+      uuidList: [result.uuid],
+      changeType: GroupChangeType.created,
+    );
     return result;
   }
 
@@ -368,6 +496,11 @@ class GroupManageViewModel extends ChangeNotifier
     );
     if (!mounted) return;
     requestReload();
+    _subs?.pushGroupChanged(
+      msg: "group_manage.updateGroup",
+      uuidList: [uuid],
+      changeType: GroupChangeType.updated,
+    );
   }
 
   /// Persists reorder results after a drag-and-drop completes on the
@@ -394,6 +527,11 @@ class GroupManageViewModel extends ChangeNotifier
     );
 
     notifyListeners();
+    _subs?.pushGroupChanged(
+      msg: "group_manage.onGroupReorderComplete",
+      uuidList: ordered.map((g) => g.uuid).toList(),
+      changeType: GroupChangeType.updated,
+    );
   }
 }
 
@@ -419,10 +557,10 @@ class _GroupsSortableCache {
     required HabitDisplayGroupType sortType,
     required HabitDisplaySortDirection sortDirection,
   }) {
-    final groups = List.of(collection.toList());
-    final orderType =
-        HabitGroupOrderType.fromGroupType(sortType) ?? defaultGroupOrderType;
-    final sorted = groups.sortedBy(orderType, sortDirection);
+    final sorted = List.of(collection.toList()).sortedBy(
+      HabitGroupOrderType.fromGroupType(sortType) ?? defaultGroupOrderType,
+      sortDirection,
+    );
     return _GroupsSortableCache(
       sortType: sortType,
       sortDirection: sortDirection,

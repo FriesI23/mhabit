@@ -21,6 +21,7 @@ import '../../extensions/navigator_extensions.dart';
 import '../../models/app_entry.dart';
 import '../../providers/app_ui/app_launch_entry.dart';
 import '../../widgets/widgets.dart';
+import '../common/widgets.dart';
 import '_providers/habit_summary.dart';
 import 'page_habits.dart';
 import 'page_today.dart';
@@ -109,14 +110,6 @@ class _PageState extends State<_Page> {
       if (state != null) {
         return await state.onWillPop();
       }
-    }
-    return true;
-  }
-
-  bool _canPop(bool canPop) {
-    if (_currentTabIndex == _PageTabs.display.index) {
-      final state = _habitsTabKey.currentState;
-      if (state != null) return canPop;
     }
     return true;
   }
@@ -249,19 +242,12 @@ class _PageState extends State<_Page> {
     );
 
     return ColorfulNavibar(
-      child: Selector<HabitSummaryViewModel, bool>(
-        selector: (context, vm) => vm.canPop,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, canPop, child) => PopScope(
-          canPop: _canPop(canPop),
-          onPopInvokedWithResult: (didPop, result) async {
-            if (didPop) return;
-            if (await _handleWillPop() && context.mounted) {
-              Navigator.of(context).popOrExit(result);
-            }
-          },
-          child: child!,
-        ),
+      child: PopScopeConsumer<HabitSummaryViewModel>(
+        onCannotPop: (ctx, vm, result) async {
+          if (await _handleWillPop() && ctx.mounted) {
+            Navigator.of(ctx).popOrExit(result);
+          }
+        },
         child: scaffold,
       ),
     );

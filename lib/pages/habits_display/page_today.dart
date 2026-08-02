@@ -22,22 +22,18 @@ import 'package:provider/provider.dart';
 import '../../common/consts.dart';
 import '../../common/types.dart';
 import '../../common/utils.dart';
-import '../../extensions/context_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
-import '../../models/app_event.dart';
 import '../../models/habit_daily_record_form.dart';
 import '../../models/habit_date.dart';
 import '../../models/habit_form.dart';
 import '../../models/habit_summary.dart';
 import '../../providers/app_ui/app_developer.dart';
-import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_sync.dart';
 import '../../widgets/widgets.dart';
 import '../common/widgets.dart';
 import '_providers/habit_summary.dart';
 import '_providers/habits_today.dart';
-import 'extensions.dart';
 import 'widgets.dart';
 
 class TodayTabPage extends StatefulWidget {
@@ -298,18 +294,7 @@ class _HabitsTodayController {
     HabitUUID uuid,
     HabitSummaryRecord record, {
     String? reason,
-  }) {
-    // fire event
-    context.read<AppEventBus>().pushHabitRecordChangeStatus(
-      uuid,
-      record,
-      reason: reason,
-      msg: "habit_today._onRecordChangeConfirmed",
-      source: AppEventPageSource.habitToday,
-    );
-    // try sync once
-    context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce();
-  }
+  }) {}
 
   void onMain(HabitUUID uuid) {
     final habit = _vm.getHabit(uuid);

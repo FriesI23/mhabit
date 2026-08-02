@@ -2,6 +2,22 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.26.4+177-pre
+
+- Feature: implement natural-language collation sort for habit and today lists (#631)
+- Feature: add system language settings and localization support (#632)
+
+## 1.26.3+176-pre
+
+- Refactor: extract PopScopeGate widget with PopScopeHandler interface (#625)
+- Refactor: add AppEventSubscriber and consolidate event pushes (#626)
+- Refactor: replace manual sync triggers with AppEventBus subscription (#628)
+
+## 1.26.2+175-pre
+
+- Feature: add habit-count sort, manual sort with drag reorder, and group management interaction upgrades (#621)
+- Update translations, thanks to Weblate contributors (#620, #622)
+
 ## 1.26.1+174
 
 - Feature: habit grouping with group management page, group-mode picker, collapsible groups, and cross-group drag-and-drop reorder, behind experimental feature flag (#617)

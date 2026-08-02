@@ -112,6 +112,25 @@ final class _PageState extends State<_Page> {
       ),
     ];
 
+    List<Widget> buildNaturalSortWidgets(BuildContext context) => [
+      Selector<AppExperimentalFeatureViewModel, bool>(
+        selector: (context, vm) => vm.naturalSort,
+        builder: (context, value, child) => SwitchListTile(
+          title: const Text("Natural Sort"),
+          subtitle: const Text(
+            "Sort names by native locale collation (e.g. pinyin for Chinese)",
+          ),
+          value: value,
+          onChanged: (value) async {
+            await vm?.setNaturalSort(value);
+            if (vm?.naturalSort == true) {
+              setState(() => showWarningBanner = true);
+            }
+          },
+        ),
+      ),
+    ];
+
     return Scaffold(
       appBar: AppBar(
         leading: const PageBackButton(reason: PageBackReason.back),
@@ -141,6 +160,7 @@ final class _PageState extends State<_Page> {
           ),
           if (vm != null) ...buildHabitSearchWidgets(context),
           if (vm != null) ...buildHabitGroupingWidgets(context),
+          if (vm != null) ...buildNaturalSortWidgets(context),
         ],
       ),
     );

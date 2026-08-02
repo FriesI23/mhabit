@@ -344,7 +344,7 @@ void main() {
           HabitDisplaySortType.name,
           HabitDisplaySortDirection.asc,
         );
-        vm.resortData(listen: false);
+        await vm.resortData(listen: false);
 
         expect(_currentHabitUuids(vm), [
           '11111111-1111-4111-8111-111111111111',
@@ -352,7 +352,7 @@ void main() {
         ]);
 
         vm.updateHabitDisplayFilter(HabitsDisplayFilter.allTrue);
-        vm.resortData(listen: false);
+        await vm.resortData(listen: false);
 
         expect(_currentHabitUuids(vm), [
           '11111111-1111-4111-8111-111111111111',
@@ -361,6 +361,8 @@ void main() {
         ]);
 
         vm.onSeachKeywordChanged('Zulu', listen: false);
+        // Natural sort is async even on fallback; await the resort to settle.
+        await vm.resortData(listen: false);
 
         expect(_currentHabitUuids(vm), [
           '33333333-3333-4333-8333-333333333333',
@@ -476,7 +478,7 @@ void main() {
         HabitDisplaySortType.name,
         HabitDisplaySortDirection.asc,
       );
-      vm.resortData(listen: false);
+      await vm.resortData(listen: false);
 
       expect(
         vm.currentHabitList.whereType<HabitSummaryDataSortCache>().map(

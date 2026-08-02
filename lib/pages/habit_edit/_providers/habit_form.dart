@@ -37,16 +37,53 @@ import '../../../providers/workflow/habits_manager.dart';
 import '../../../storage/db/handlers/habit.dart';
 import '../../../utils/app_clock.dart';
 
+extension on AppEventSubscriptions {
+  static const _kHabitCreatedTrace = {
+    AppEventPageSource.habitEdit: {AppEventFunctionSource.habitCreated},
+  };
+  static const _kHabitChangedTrace = {
+    AppEventPageSource.habitEdit: {AppEventFunctionSource.habitChanged},
+  };
+  static const _kGroupChangedTrace = {
+    AppEventPageSource.habitEdit: {AppEventFunctionSource.groupChanged},
+  };
+
+  void pushHabitSaved(HabitUUID uuid, HabitDisplayEditMode editMode) =>
+      push(switch (editMode) {
+        HabitDisplayEditMode.create => HabitDataChangedEvent(
+          msg: "habit_edit.saveHabit.create",
+          uuidList: [uuid],
+          changeType: HabitDataChangeType.created,
+          trace: _kHabitCreatedTrace,
+        ),
+        HabitDisplayEditMode.edit => HabitDataChangedEvent(
+          msg: "habit_edit.saveHabit.edit",
+          uuidList: [uuid],
+          changeType: HabitDataChangeType.updated,
+          trace: _kHabitChangedTrace,
+        ),
+      });
+
+  void pushGroupCreated(GroupUUID uuid) => push(
+    GroupChangedEvent(
+      msg: "habit_edit.createGroup.created",
+      uuidList: [uuid],
+      changeType: GroupChangeType.created,
+      trace: _kGroupChangedTrace,
+    ),
+  );
+}
+
 class HabitFormViewModel extends ChangeNotifier
     with PinnedAppbarMixin
-    implements ProviderMounted, AppEventLoaded {
+    implements ProviderMounted, AppEventLoaded, AppEventSubscriber {
   // inside status
   bool _mounted = true;
   late HabitFormAccess _access;
   GroupManager? _groupManager;
   GroupCollection? _groupCollection;
 
-  StreamSubscription<AppEvent>? _groupEventSubscription;
+  AppEventSubscriptions? _subs;
   StreamSubscription<String>? _startSyncSub;
   int _groupVersion = 0;
 
@@ -58,7 +95,7 @@ class HabitFormViewModel extends ChangeNotifier
   @override
   void dispose() {
     if (!_mounted) return;
-    _groupEventSubscription?.cancel();
+    _subs?.cancelAll();
     _startSyncSub?.cancel();
     super.dispose();
     _mounted = false;
@@ -75,9 +112,25 @@ class HabitFormViewModel extends ChangeNotifier
     _groupManager = gm;
   }
 
+  Future<String> createGroup(String name) async {
+    final gm = _groupManager;
+    assert(gm != null, 'GroupManager not attached');
+    final uuid = (await gm!.createGroup(name: name)).uuid;
+    await _refreshGroups();
+    _subs?.pushGroupCreated(uuid);
+    return uuid;
+  }
+
   Future<void> _reloadGroups() async {
     final cells = await _groupManager?.loadAllActiveGroups() ?? [];
     _groupCollection = GroupCollection.fromDBQueryResult(cells);
+  }
+
+  Future<void> _refreshGroups() async {
+    await _reloadGroups();
+    if (!_mounted) return;
+    _groupVersion++;
+    notifyListeners();
   }
 
   /// Whether initial group loading has completed.
@@ -89,13 +142,10 @@ class HabitFormViewModel extends ChangeNotifier
   /// Ensures groups are loaded exactly once; no-op if already loaded.
   ///
   /// Called from the provider `post` hook. Subsequent reloads are triggered
-  /// by events via [_reloadGroups] directly.
+  /// by events via [_refreshGroups] directly.
   Future<void> ensureGroupsLoaded() async {
     if (_groupCollection != null) return;
-    await _reloadGroups();
-    if (!_mounted) return;
-    _groupVersion++;
-    notifyListeners();
+    await _refreshGroups();
   }
 
   List<HabitGroupData> get groups => _groupCollection?.toList() ?? [];
@@ -112,24 +162,32 @@ class HabitFormViewModel extends ChangeNotifier
   void attachSyncWorkflow(AppSyncWorkflowAccess workflow) {
     _startSyncSub?.cancel();
     _startSyncSub = workflow.startSyncEvents.listen((_) async {
-      await _reloadGroups();
-      if (!_mounted) return;
-      _groupVersion++;
-      notifyListeners();
+      await _refreshGroups();
     });
   }
 
   @override
   void updateAppEvent(AppEventBus newAppEvent) {
-    _groupEventSubscription?.cancel();
-    _groupEventSubscription = newAppEvent.on<GroupChangedEvent>().listen((
-      _,
-    ) async {
-      if (!_mounted) return;
-      await _reloadGroups();
-      _groupVersion++;
-      notifyListeners();
-    });
+    _subs?.cancelAll();
+    _subs = AppEventSubscriptions(this, newAppEvent)
+      ..subscribe<GroupChangedEvent>();
+  }
+
+  @override
+  bool shouldReceive(AppEvent event) =>
+      !event.isInTrace(AppEventPageSource.habitEdit);
+
+  @override
+  void handleEvent(AppEvent event) => switch (event) {
+    GroupChangedEvent() => _handleGroupChanged(),
+    ReloadDataEvent() ||
+    HabitStatusChangedEvent() ||
+    HabitDataChangedEvent() ||
+    HabitRecordsChangedEvent() => null,
+  };
+
+  Future<void> _handleGroupChanged() async {
+    await _refreshGroups();
   }
 
   Future<bool> requestReminderPermission() async =>
@@ -325,10 +383,12 @@ class HabitFormViewModel extends ChangeNotifier
       );
       return null;
     }
-    return switch (_form.editMode) {
+    final result = await switch (_form.editMode) {
       HabitDisplayEditMode.create => _saveNewHabit(),
       HabitDisplayEditMode.edit => _saveExistHabit(),
     };
+    if (result != null) _subs?.pushHabitSaved(result.uuid!, _form.editMode);
+    return result;
   }
 
   Future<HabitDBCell?> _saveNewHabit() async {

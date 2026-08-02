@@ -145,6 +145,16 @@ class GroupManager
     await groupDBHelper.deleteGroup(uuid);
   }
 
+  /// Batch soft-deletes [uuids] in a single transaction.
+  Future<void> deleteGroups(List<String> uuids) async {
+    await groupDBHelper.updateGroupsStatus(uuids, GroupStatus.deleted.dbCode);
+  }
+
+  /// Batch restores [uuids] in a single transaction.
+  Future<void> restoreGroups(List<String> uuids) async {
+    await groupDBHelper.updateGroupsStatus(uuids, GroupStatus.active.dbCode);
+  }
+
   Future<List<String>> fixAndSaveSortPositions(
     List<HabitGroupData> items, {
     required num increaseStep,

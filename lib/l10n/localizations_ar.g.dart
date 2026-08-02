@@ -958,6 +958,21 @@ class L10nAr extends L10n {
   String get appSetting_changeLanguageDialog_titleText => 'اختر اللغة';
 
   @override
+  String get appSetting_languageSubgroupText => 'Language';
+
+  @override
+  String get appSetting_openSystemLanguageTile_titleText =>
+      'System Language Settings';
+
+  @override
+  String get appSetting_openSystemLanguageTile_dialogTitle =>
+      'Open System Language Settings';
+
+  @override
+  String get appSetting_openSystemLanguageTile_macosDialogContent =>
+      'Due to macOS limitations, the app language cannot be changed directly. To switch languages, follow these steps:\n\n1. Open **System Settings > General > Language & Region**\n2. Add this app in the **Applications** list and choose a language';
+
+  @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
     return 'طريقة عرض التاريخ ($formatTemplate)';
   }

@@ -14,16 +14,19 @@
 
 import 'dart:async';
 
-import '../../../models/app_event.dart';
 import '../../../providers/workflow/app_event.dart';
 import '../../../providers/workflow/app_sync.dart';
 
+/// Manages sync-workflow and app-event subscriptions shared by
+/// habits-display VMs.
 final class HabitsDisplayReloadBridge {
   AppSyncWorkflowAccess? _workflow;
   StreamSubscription<String>? _startSyncSub;
-  StreamSubscription<ReloadDataEvent>? _reloadDataSub;
-  StreamSubscription<HabitStatusChangedEvent>? _habitStatusChangedSub;
-  StreamSubscription<HabitRecordsChangedEvents>? _habitRecordsChangedSub;
+  AppEventSubscriptions? _eventSubs;
+
+  /// The shared [AppEventSubscriptions] created by the last call to
+  /// [updateAppEvent].
+  AppEventSubscriptions? get eventSubs => _eventSubs;
 
   void attachWorkflow(
     AppSyncWorkflowAccess workflow, {
@@ -35,29 +38,15 @@ final class HabitsDisplayReloadBridge {
     _startSyncSub = workflow.startSyncEvents.listen(onStartSync);
   }
 
-  void updateAppEvent(
-    AppEventBus newAppEvent, {
-    required void Function(ReloadDataEvent event) onReloadData,
-    required void Function(HabitStatusChangedEvent event) onHabitStatusChanged,
-    required void Function(HabitRecordsChangedEvents event)
-    onHabitRecordsChanged,
-  }) {
-    _reloadDataSub?.cancel();
-    _habitStatusChangedSub?.cancel();
-    _habitRecordsChangedSub?.cancel();
-    _reloadDataSub = newAppEvent.on<ReloadDataEvent>().listen(onReloadData);
-    _habitStatusChangedSub = newAppEvent.on<HabitStatusChangedEvent>().listen(
-      onHabitStatusChanged,
-    );
-    _habitRecordsChangedSub = newAppEvent
-        .on<HabitRecordsChangedEvents>()
-        .listen(onHabitRecordsChanged);
+  /// Replaces the current event subscriptions with a new set backed by
+  /// [bus] and filtered by [subscriber].
+  void updateAppEvent(AppEventBus bus, AppEventSubscriber subscriber) {
+    _eventSubs?.cancelAll();
+    _eventSubs = AppEventSubscriptions(subscriber, bus);
   }
 
   void dispose() {
     _startSyncSub?.cancel();
-    _reloadDataSub?.cancel();
-    _habitStatusChangedSub?.cancel();
-    _habitRecordsChangedSub?.cancel();
+    _eventSubs?.cancelAll();
   }
 }

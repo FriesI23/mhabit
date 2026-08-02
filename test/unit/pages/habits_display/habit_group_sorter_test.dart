@@ -19,6 +19,7 @@ import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/models/habit_group.dart';
+import 'package:mhabit/models/habit_group_display.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_group_sorter.dart';
 
@@ -77,6 +78,14 @@ void main() {
         data: _collection([]),
         groups: [],
         collapsedUUIDs: {},
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.name,
+          HabitDisplaySortDirection.asc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
       expect(result, hasLength(1));
       expect(result.single, isA<GroupHeaderSortCache>());
@@ -96,6 +105,14 @@ void main() {
           _group(uuid: 'g2', name: 'Work'),
         ],
         collapsedUUIDs: {},
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.name,
+          HabitDisplaySortDirection.asc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
 
       expect(result, hasLength(5)); // 2 headers + 3 habits
@@ -117,6 +134,14 @@ void main() {
         ]),
         groups: [_group(uuid: 'g1')],
         collapsedUUIDs: {},
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.manual,
+          HabitDisplaySortDirection.asc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
 
       final habits = result.whereType<HabitSummaryDataSortCache>().toList();
@@ -133,6 +158,14 @@ void main() {
         ]),
         groups: [_group(uuid: 'g1')],
         collapsedUUIDs: {'g1'},
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.name,
+          HabitDisplaySortDirection.asc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
 
       expect(
@@ -151,6 +184,14 @@ void main() {
         ]),
         groups: [],
         collapsedUUIDs: {},
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.name,
+          HabitDisplaySortDirection.asc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
 
       expect(result.whereType<HabitSummaryDataSortCache>(), hasLength(2));
@@ -166,6 +207,14 @@ void main() {
         ]),
         groups: [_group(uuid: 'g1')],
         collapsedUUIDs: {},
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.name,
+          HabitDisplaySortDirection.asc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
 
       final headers = result.whereType<GroupHeaderSortCache>().toList();
@@ -181,6 +230,14 @@ void main() {
           _group(uuid: 'g2', name: 'HasHabit'),
         ],
         collapsedUUIDs: {},
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.name,
+          HabitDisplaySortDirection.asc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
 
       final headers = result.whereType<GroupHeaderSortCache>().toList();
@@ -197,6 +254,14 @@ void main() {
         ]),
         groups: [],
         collapsedUUIDs: {null},
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.name,
+          HabitDisplaySortDirection.asc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
 
       expect(result.whereType<HabitSummaryDataSortCache>(), isEmpty);
@@ -215,6 +280,14 @@ void main() {
           _group(uuid: 'g2'),
         ],
         collapsedUUIDs: {},
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.name,
+          HabitDisplaySortDirection.asc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
 
       final headers = result.whereType<GroupHeaderSortCache>().toList();
@@ -235,6 +308,14 @@ void main() {
         ],
         collapsedUUIDs: {},
         filter: HabitsDisplayFilter.allFalse,
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.name,
+          HabitDisplaySortDirection.asc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
 
       // No habits pass the allFalse filter, so only uncategorized remains
@@ -250,6 +331,14 @@ void main() {
         groups: [_group(uuid: 'g1')],
         collapsedUUIDs: {},
         filter: const HabitsDisplayFilter.withDefault(),
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.name,
+          HabitDisplaySortDirection.asc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
 
       // Default filter allows in-progress and completed, excludes archived.
@@ -266,6 +355,14 @@ void main() {
         groups: [_group(uuid: 'g1')],
         collapsedUUIDs: {},
         filter: null,
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.name,
+          HabitDisplaySortDirection.asc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
 
       expect(result.whereType<HabitSummaryDataSortCache>(), hasLength(2));
@@ -283,6 +380,14 @@ void main() {
         ],
         collapsedUUIDs: {},
         filter: HabitsDisplayFilter.allFalse,
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.name,
+          HabitDisplaySortDirection.asc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
 
       // Both groups have all habits filtered out; only uncategorized remains.
@@ -301,6 +406,14 @@ void main() {
         ]),
         groups: [],
         collapsedUUIDs: {},
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.name,
+          HabitDisplaySortDirection.asc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
 
       final headers = result.whereType<GroupHeaderSortCache>().toList();
@@ -502,6 +615,14 @@ void main() {
         ]),
         groups: [_group(uuid: 'g1')],
         collapsedUUIDs: {},
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.manual,
+          HabitDisplaySortDirection.asc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
 
       final habits = result.whereType<HabitSummaryDataSortCache>().toList();
@@ -518,8 +639,14 @@ void main() {
         ]),
         groups: [_group(uuid: 'g1')],
         collapsedUUIDs: {},
-        sortType: HabitDisplaySortType.name,
-        sortDirection: HabitDisplaySortDirection.asc,
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.name,
+          HabitDisplaySortDirection.asc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
 
       final habits = result.whereType<HabitSummaryDataSortCache>().toList();
@@ -535,8 +662,14 @@ void main() {
         ]),
         groups: [_group(uuid: 'g1')],
         collapsedUUIDs: {},
-        sortType: HabitDisplaySortType.name,
-        sortDirection: HabitDisplaySortDirection.desc,
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.name,
+          HabitDisplaySortDirection.desc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
 
       final habits = result.whereType<HabitSummaryDataSortCache>().toList();
@@ -552,8 +685,14 @@ void main() {
         ]),
         groups: [_group(uuid: 'g1')],
         collapsedUUIDs: {},
-        sortType: HabitDisplaySortType.startT,
-        sortDirection: HabitDisplaySortDirection.asc,
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.startT,
+          HabitDisplaySortDirection.asc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
 
       // Both have same startDate, fallback to descending startDate → tie.
@@ -569,8 +708,14 @@ void main() {
         ]),
         groups: [],
         collapsedUUIDs: {},
-        sortType: HabitDisplaySortType.name,
-        sortDirection: HabitDisplaySortDirection.asc,
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.name,
+          HabitDisplaySortDirection.asc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
 
       final habits = result.whereType<HabitSummaryDataSortCache>().toList();
@@ -586,8 +731,14 @@ void main() {
         ]),
         groups: [_group(uuid: 'g1')],
         collapsedUUIDs: {'g1'},
-        sortType: HabitDisplaySortType.name,
-        sortDirection: HabitDisplaySortDirection.asc,
+        habitOrder: HabitSortOrder.byType(
+          HabitDisplaySortType.name,
+          HabitDisplaySortDirection.asc,
+        ),
+        groupOrder: GroupSortOrder.byType(
+          HabitDisplayGroupType.name,
+          HabitDisplaySortDirection.asc,
+        ),
       );
 
       // Collapsed → only header, no habits emitted.

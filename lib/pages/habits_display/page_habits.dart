@@ -29,7 +29,6 @@ import '../../common/consts.dart';
 import '../../common/enums.dart';
 import '../../common/types.dart';
 import '../../extensions/color_extensions.dart';
-import '../../extensions/context_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/app_event.dart';
@@ -64,7 +63,6 @@ import '../habit_edit/page.dart' as habit_edit;
 import '../habits_status_changer/page.dart' as habits_status_changer;
 import '_providers/habit_summary.dart';
 import '_providers/habits_grouping.dart';
-import 'extensions.dart';
 import 'helpers.dart';
 import 'widgets.dart';
 
@@ -198,43 +196,17 @@ class HabitsTabPageState extends State<HabitsTabPage>
   }
 
   void _onHabitStatusChangeConfirmed(
-    List<HabitStatusChangedRecord> recordList, {
-    bool shouldSyncOnce = true,
-  }) {
+    List<HabitStatusChangedRecord> recordList,
+  ) {
     if (!mounted) return;
-    // fire event
-    context.read<AppEventBus>().pushHabitsChangeStatus(
-      recordList,
-      msg: "habit_display._onHabitStatusChangeConfirmed",
-      source: AppEventPageSource.habitDisplay,
-    );
-    // try sync once
-    if (shouldSyncOnce) {
-      context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce(
-        delay: kAppUndoDialogShowDuration * 2,
-      );
-    }
   }
 
   void _onRecordChangeConfirmed(
     HabitUUID uuid,
     HabitSummaryRecord record, {
     String? reason,
-    bool shouldSyncOnce = true,
   }) {
     if (!mounted) return;
-    // fire event
-    context.read<AppEventBus>().pushHabitRecordChangeStatus(
-      uuid,
-      record,
-      reason: reason,
-      msg: "habit_display._onRecordChangeConfirmed",
-      source: AppEventPageSource.habitDisplay,
-    );
-    // try sync once
-    if (shouldSyncOnce) {
-      context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce();
-    }
   }
 
   void _revertHabitsStatus(List<HabitStatusChangedRecord> recordList) async {
@@ -769,20 +741,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
     );
 
     if (!mounted || count == 0) return;
-    vm.exitEditMode();
-    context.read<AppEventBus>().push(
-      const ReloadDataEvent(
-        msg: "habit_display._executeBatchGroupModify",
-        trace: {
-          AppEventPageSource.habitDisplay: {
-            AppEventFunctionSource.habitChanged,
-          },
-        },
-      ),
-    );
-    context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce(
-      delay: kAppUndoDialogShowDuration * 2,
-    );
 
     final l10n = L10n.of(context);
     final snackBar = buildSnackBarWithUndo(
@@ -835,17 +793,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
         );
       return;
     }
-
-    context.read<AppEventBus>().push(
-      const ReloadDataEvent(
-        msg: "habit_display._undoBatchGroupModify",
-        trace: {
-          AppEventPageSource.habitDisplay: {
-            AppEventFunctionSource.habitChanged,
-          },
-        },
-      ),
-    );
   }
 
   void _onAppbarCloneActionPressed() => _enterHabitEditPage(
@@ -958,18 +905,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
     void finishReorder(Future<void> task) => task
         .then((_) {
           if (!mounted) return;
-          context.read<HabitSummaryViewModel>().exitEditMode(listen: false);
-          context.read<AppEventBus>().push(
-            const ReloadDataEvent(
-              msg: "habit_display._onHabitListReorderComplete",
-              trace: {
-                AppEventPageSource.habitDisplay: {
-                  AppEventFunctionSource.habitChanged,
-                },
-              },
-            ),
-          );
-          context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce();
         })
         .catchError((Object e, StackTrace s) {
           if (!mounted) return;

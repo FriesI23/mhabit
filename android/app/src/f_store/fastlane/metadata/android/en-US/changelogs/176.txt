@@ -1,0 +1,3 @@
+- Refactor: extract PopScopeGate widget with PopScopeHandler interface (#625)
+- Refactor: add AppEventSubscriber and consolidate event pushes (#626)
+- Refactor: replace manual sync triggers with AppEventBus subscription (#628)

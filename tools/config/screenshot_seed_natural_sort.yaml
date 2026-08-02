@@ -1,0 +1,3580 @@
+seed: 42
+seeds:
+  ns01: 52
+  ns02: 94
+  ns03: 136
+  ns04: 178
+  ns05: 220
+selection:
+  habits: 60
+  groups: 20
+groups:
+- uuid: group-ns-a-art-0000-0000-000000000001
+  color: 1
+  icon: 59078
+  weight: 2.0
+  en:
+    name: A-Art (A-Art - Art Basics)
+    desc: Drawing, painting, and crafts.
+  zh:
+    name: A-Art（A-Art - 艺术入门）
+    desc: 绘画、手工与创作。
+- uuid: group-ns-c-cook-0000-0000-000000000001
+  color: 2
+  icon: 61585
+  weight: 2.0
+  en:
+    name: C-Cooking (C-Cooking - Cooking Fun)
+    desc: Meal preparation and recipes.
+  zh:
+    name: C-Cooking（C-Cooking - 烹饪美食）
+    desc: 备餐与尝试新菜谱。
+- uuid: group-ns-e-edu-0000-0000-000000000001
+  color: 3
+  icon: 58713
+  weight: 2.0
+  en:
+    name: E-Education (E-Education - Learning & Study)
+    desc: Knowledge and skill development.
+  zh:
+    name: E-Education（E-Education - 学习教育）
+    desc: 知识学习与技能发展。
+- uuid: group-ns-h-health-0000-0000-0000000001
+  color: 4
+  icon: 57997
+  weight: 2.5
+  en:
+    name: H-Health (H-Health - Wellness)
+    desc: Physical and mental wellness.
+  zh:
+    name: H-Health（H-Health - 健康管理）
+    desc: 身体与心理健康管理。
+- uuid: group-ns-k-kitchen-0000-0000-0000000001
+  color: 5
+  icon: 61585
+  weight: 2.0
+  en:
+    name: K-Kitchen (K-Kitchen - Kitchen Time)
+    desc: Daily cooking and baking.
+  zh:
+    name: K-Kitchen（K-Kitchen - 厨房时光）
+    desc: 日常烹饪与烘焙时光。
+- uuid: group-ns-m-music-0000-0000-0000000001
+  color: 6
+  icon: 58389
+  weight: 2.0
+  en:
+    name: M-Music (M-Music - Music Joy)
+    desc: Listening and playing music.
+  zh:
+    name: M-Music（M-Music - 音乐欣赏）
+    desc: 聆听与演奏音乐。
+- uuid: group-ns-n-nature-0000-0000-0000000001
+  color: 7
+  icon: 58136
+  weight: 2.5
+  en:
+    name: N-Nature (N-Nature - Nature Quest)
+    desc: Outdoor activities and environment.
+  zh:
+    name: N-Nature（N-Nature - 自然探索）
+    desc: 户外活动与环境保护。
+- uuid: group-ns-p-photo-0000-0000-0000000001
+  color: 8
+  icon: 59124
+  weight: 2.0
+  en:
+    name: P-Photo (P-Photo - Photography)
+    desc: Capturing life's moments.
+  zh:
+    name: P-Photo（P-Photo - 摄影记录）
+    desc: 记录生活的精彩瞬间。
+- uuid: group-ns-r-read-0000-0000-00000000001
+  color: 9
+  icon: 61585
+  weight: 2.5
+  en:
+    name: R-Reading (R-Reading - Reading Time)
+    desc: Books, articles, and knowledge.
+  zh:
+    name: R-Reading（R-Reading - 阅读时光）
+    desc: 读书、阅读文章与知识积累。
+- uuid: group-ns-s-sleep-0000-0000-0000000001
+  color: 10
+  icon: 58735
+  weight: 2.0
+  en:
+    name: S-Sleep (S-Sleep - Good Sleep)
+    desc: Rest, recovery, and sleep hygiene.
+  zh:
+    name: S-Sleep（S-Sleep - 优质睡眠）
+    desc: 休息、恢复与睡眠卫生。
+- uuid: group-ns-t-travel-0000-0000-0000000001
+  color: 1
+  icon: 58136
+  weight: 2.0
+  en:
+    name: T-Travel (T-Travel - Travel Explore)
+    desc: Discovering new places and cultures.
+  zh:
+    name: T-Travel（T-Travel - 旅行探索）
+    desc: 探索新地方与新文化。
+- uuid: group-ns-z-zen-0000-0000-00000000001
+  color: 2
+  icon: 58735
+  weight: 2.0
+  en:
+    name: Z-Zen (Z-Zen - Zen Life)
+    desc: Mindfulness, calm, and simplicity.
+  zh:
+    name: Z-Zen（Z-Zen - 禅意生活）
+    desc: 正念、平静与简约生活。
+- uuid: group-ns-idea-0000-0000-00000000001
+  color: 3
+  icon: 59124
+  weight: 2.0
+  en:
+    name: アイデア工房 (aidea kōbō - Idea Workshop)
+    desc: A space for creative brainstorming.
+  zh:
+    name: アイデア工房（aidea kōbō - 创意工坊）
+    desc: 创意头脑风暴的空间。
+- uuid: group-ns-asa-0000-0000-0000000000001
+  color: 4
+  icon: 57997
+  weight: 2.0
+  en:
+    name: あさの日課 (asa no nikka - Morning Routine)
+    desc: Daily habits to start the day right.
+  zh:
+    name: あさの日課（asa no nikka - 晨间习惯）
+    desc: 开启美好一天的每日习惯。
+- uuid: group-ns-katakana-0000-0000-000000001
+  color: 5
+  icon: 58389
+  weight: 2.0
+  en:
+    name: スポーツ習慣 (supōtsu shūkan - Sports Habits)
+    desc: Daily exercise and fitness routine.
+  zh:
+    name: スポーツ習慣（supōtsu shūkan - 运动习惯）
+    desc: 每日运动与健身习惯。
+- uuid: group-ns-pinzhi-0000-0000-0000000001
+  color: 6
+  icon: 59078
+  weight: 2.0
+  en:
+    name: 品質向上 (hinshitsu kōjō - Quality Improvement)
+    desc: Continuous improvement every day.
+  zh:
+    name: 品質向上（hinshitsu kōjō - 品质提升）
+    desc: 每日持续改进提升。
+- uuid: group-ns-riyu-0000-0000-000000000001
+  color: 7
+  icon: 58713
+  weight: 2.0
+  en:
+    name: 日本語学習 (nihongo gakushū - Japanese Study)
+    desc: Learn Japanese language and culture.
+  zh:
+    name: 日本語学習（nihongo gakushū - 日语学习）
+    desc: 学习日语语言与文化。
+- uuid: group-ns-ongaku-0000-0000-0000000001
+  color: 8
+  icon: 58389
+  weight: 2.0
+  en:
+    name: 音楽鑑賞 (ongaku kanshō - Music Appreciation)
+    desc: Enjoy and appreciate music daily.
+  zh:
+    name: 音楽鑑賞（ongaku kanshō - 音乐鉴赏）
+    desc: 每天欣赏与享受音乐。
+- uuid: group-ns-chuangyi-0000-0000-0000000001
+  color: 9
+  icon: 58389
+  weight: 2.5
+  en:
+    name: 创意生活 (chuàngyì shēnghuó - Creative Living)
+    desc: DIY projects and self-expression.
+  zh:
+    name: 创意生活（chuàngyì shēnghuó - 创意生活）
+    desc: 手工项目与自我表达。
+- uuid: group-ns-ertong-0000-0000-0000000001
+  color: 10
+  icon: 58713
+  weight: 2.0
+  en:
+    name: 儿童教育 (értóng jiàoyù - Kids Education)
+    desc: Learning through play and exploration.
+  zh:
+    name: 儿童教育（értóng jiàoyù - 儿童教育）
+    desc: 在玩耍与探索中学习成长。
+- uuid: group-ns-nuli-0000-0000-00000000001
+  color: 1
+  icon: 59124
+  weight: 2.5
+  en:
+    name: 努力学习 (nǔlì xuéxí - Study Diligently)
+    desc: Focused daily learning and growth.
+  zh:
+    name: 努力学习（nǔlì xuéxí - 努力学习）
+    desc: 每日专注学习与持续成长。
+- uuid: group-ns-shenghuo-0000-0000-0000000001
+  color: 2
+  icon: 58136
+  weight: 2.5
+  en:
+    name: 生活日常 (shēnghuó rìcháng - Everyday Life)
+    desc: Daily routines and household habits.
+  zh:
+    name: 生活日常（shēnghuó rìcháng - 生活日常）
+    desc: 日常规律与居家习惯。
+- uuid: group-ns-zaoan-0000-0000-00000000001
+  color: 3
+  icon: 57997
+  weight: 2.0
+  en:
+    name: 早安世界 (zǎoān shìjiè - Good Morning World)
+    desc: Starting each day with energy and joy.
+  zh:
+    name: 早安世界（zǎoān shìjiè - 早安世界）
+    desc: 元气满满迎接每一天。
+- uuid: group-ns-yundong-0000-0000-0000000001
+  color: 4
+  icon: 57997
+  weight: 2.0
+  en:
+    name: 运动健身 (yùndòng jiànshēn - Fitness Training)
+    desc: Exercise and physical training.
+  zh:
+    name: 运动健身（yùndòng jiànshēn - 运动健身）
+    desc: 运动与体能训练。
+- uuid: group-ns-wenhua-0000-0000-0000000001
+  color: 5
+  icon: 58389
+  weight: 2.0
+  en:
+    name: 文化探索 (wénhuà tànsuǒ - Culture Quest)
+    desc: Museums, traditions, and heritage.
+  zh:
+    name: 文化探索（wénhuà tànsuǒ - 文化探索）
+    desc: 博物馆、传统与文化遗产。
+- uuid: group-ns-xuexi-0000-0000-00000000001
+  color: 6
+  icon: 58713
+  weight: 2.0
+  en:
+    name: 学习进步 (xuéxí jìnbù - Learning Progress)
+    desc: Continuous self-improvement.
+  zh:
+    name: 学习进步（xuéxí jìnbù - 学习进步）
+    desc: 持续自我提升进步。
+- uuid: group-ns-shejiao-0000-0000-0000000001
+  color: 7
+  icon: 58877
+  weight: 2.0
+  en:
+    name: 社交达人 (shèjiāo dárén - Social Butterfly)
+    desc: Connect with people and build relationships.
+  zh:
+    name: 社交达人（shèjiāo dárén - 社交达人）
+    desc: 与人交往建立联系。
+- uuid: group-ns-gongyi-0000-0000-00000000001
+  color: 8
+  icon: 61585
+  weight: 2.0
+  en:
+    name: 工艺制作 (gōngyì zhìzuò - Handicraft)
+    desc: Making beautiful things by hand.
+  zh:
+    name: 工艺制作（gōngyì zhìzuò - 工艺制作）
+    desc: 亲手制作精美物件。
+- uuid: group-ns-zdorovie-0000-0000-000000001
+  color: 9
+  icon: 57997
+  weight: 2.5
+  en:
+    name: Здоровье (Zdorovye - Health)
+    desc: Physical activity and well-being.
+  zh:
+    name: Здоровье（Zdorovye - 健康）
+    desc: 身体活动与全面健康。
+- uuid: group-ns-obuchenie-0000-0000-00000001
+  color: 10
+  icon: 58713
+  weight: 2.0
+  en:
+    name: Обучение (Obucheniye - Learning)
+    desc: Continuous education and skill growth.
+  zh:
+    name: Обучение（Obucheniye - 学习）
+    desc: 持续学习与技能提升。
+- uuid: group-ns-sport-0000-0000-0000000001
+  color: 1
+  icon: 57997
+  weight: 2.0
+  en:
+    name: Спорт (Sport - Sports & Fitness)
+    desc: Exercise, training, and active lifestyle.
+  zh:
+    name: Спорт（Sport - 运动健身）
+    desc: 锻炼、训练与积极生活方式。
+- uuid: group-ns-seha-0000-0000-00000000001
+  color: 2
+  icon: 59078
+  weight: 2.5
+  en:
+    name: صحة وعافية (ṣiḥḥa wa-ʿāfiya - Health & Wellness)
+    desc: A sound mind in a sound body.
+  zh:
+    name: صحة وعافية（ṣiḥḥa wa-ʿāfiya - 健康养生）
+    desc: 健康的心灵寓于健康的身体。
+- uuid: group-ns-taalom-0000-0000-0000000001
+  color: 3
+  icon: 58713
+  weight: 2.0
+  en:
+    name: تعلم (taʿallum - Learning)
+    desc: Seek knowledge from cradle to grave.
+  zh:
+    name: تعلم（taʿallum - 学习）
+    desc: 求知从摇篮到坟墓。
+- uuid: group-ns-briut-0000-0000-0000000001
+  color: 4
+  icon: 58735
+  weight: 2.0
+  en:
+    name: בריאות (bri'ut - Health)
+    desc: A healthy soul in a healthy body.
+  zh:
+    name: בריאות（bri'ut - 健康）
+    desc: 健康的心灵寓于健康的身体。
+- uuid: group-ns-suckhoe-0000-0000-000000001
+  color: 5
+  icon: 57997
+  weight: 2.0
+  en:
+    name: Sức Khỏe (Sức Khỏe - Health)
+    desc: Daily wellness and vitality.
+  zh:
+    name: Sức Khỏe（Sức Khỏe - 健康）
+    desc: 日常健康与生命活力。
+- uuid: group-ns-educacion-0000-0000-0000001
+  color: 6
+  icon: 58713
+  weight: 2.0
+  en:
+    name: Educación (Edukasion - Education)
+    desc: Learning and teaching every day.
+  zh:
+    name: Educación（Edukasion - 教育）
+    desc: 每日学习与教学相长。
+- uuid: group-ns-francais-0000-0000-00000001
+  color: 7
+  icon: 58389
+  weight: 2.0
+  en:
+    name: Français (Franse - French Language)
+    desc: Apprendre la langue de Molière.
+  zh:
+    name: Français（Franse - 法语学习）
+    desc: 学习莫里哀的语言。
+- uuid: group-ns-praezision-0000-0000-000001
+  color: 8
+  icon: 59124
+  weight: 2.0
+  en:
+    name: Präzision (Pretsizion - Precision)
+    desc: Accuracy and attention to detail.
+  zh:
+    name: Präzision（Pretsizion - 精准细致）
+    desc: 精确与注重细节。
+- uuid: group-ns-istanbul-0000-0000-0000001
+  color: 9
+  icon: 58136
+  weight: 2.0
+  en:
+    name: İstanbul (Istanbul - Istanbul Life)
+    desc: Daily life in the city of two continents.
+  zh:
+    name: İstanbul（Istanbul - 伊斯坦布尔）
+    desc: 横跨两洲的城市生活。
+habits:
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-a-art-0000-0000-000000000001
+  en:
+    name: Doodle Daily 落書き (Doodle Daily rakugaki - Daily Sketch)
+    desc: Sketch freely for 10 minutes.
+  zh:
+    name: Doodle Daily 落書き（Doodle Daily rakugaki - 每日涂鸦）
+    desc: 每天自由涂鸦 10 分钟。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-a-art-0000-0000-000000000001
+  en:
+    name: Watercolor 水彩 (Watercolor suisai - Watercolor Paint)
+    desc: Paint with watercolors daily.
+  zh:
+    name: Watercolor 水彩（Watercolor suisai - 水彩练习）
+    desc: 每天用水彩练习绘画。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-a-art-0000-0000-000000000001
+  en:
+    name: Calligraphy 書道 (Calligraphy shodō - Calligraphy)
+    desc: Practice brush calligraphy.
+  zh:
+    name: Calligraphy 書道（Calligraphy shodō - 书法练习）
+    desc: 练习毛笔书法。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-a-art-0000-0000-000000000001
+  en:
+    name: Origami 折り紙 (Origami origami - Paper Folding)
+    desc: Fold one origami creation.
+  zh:
+    name: Origami 折り紙（Origami origami - 折纸手工）
+    desc: 折一个折纸作品。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-a-art-0000-0000-000000000001
+  en:
+    name: Color Palette 配色 (Color Palette haishoku - Color Study)
+    desc: Explore a new color palette.
+  zh:
+    name: Color Palette 配色（Color Palette haishoku - 色彩研究）
+    desc: 探索新的配色方案。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-a-art-0000-0000-000000000001
+  en:
+    name: Art Museum 美術館 (Art Museum bijutsukan - Museum Visit)
+    desc: Visit a gallery or museum.
+  zh:
+    name: Art Museum 美術館（Art Museum bijutsukan - 美术馆参观）
+    desc: 参观美术馆或画廊。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-c-cook-0000-0000-000000000001
+  en:
+    name: Утро Sketch 朝スケッチ (Utro Sketch asa sukecchi - Morning Sketch)
+    desc: Quick morning sketch practice.
+  zh:
+    name: Утро Sketch 朝スケッチ（Utro Sketch asa sukecchi - 晨间速写）
+    desc: 早晨快速速写练习。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-c-cook-0000-0000-000000000001
+  en:
+    name: صباح الفن Morning Art (ṣabāḥ al-fann Morning Art - Morning Art)
+    desc: Start the day with creative art.
+  zh:
+    name: صباح الفن Morning Art（ṣabāḥ al-fann Morning Art - 晨间艺术）
+    desc: 以创意艺术开启一天。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-c-cook-0000-0000-000000000001
+  en:
+    name: Abend Malerei 夜絵 (Abend Malerei yoru-e - Evening Painting)
+    desc: Paint in the quiet evening hours.
+  zh:
+    name: Abend Malerei 夜絵（Abend Malerei yoru-e - 晚间绘画）
+    desc: 在宁静的夜晚绘画。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-c-cook-0000-0000-000000000001
+  en:
+    name: 料理実験 Cooking Lab (ryōri jikken Cooking Lab - Cooking Experiment)
+    desc: Try a new cooking technique.
+  zh:
+    name: 料理実験 Cooking Lab（ryōri jikken Cooking Lab - 烹饪实验）
+    desc: 尝试新的烹饪技巧。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-c-cook-0000-0000-000000000001
+  en:
+    name: Brot Backen パン焼き (Brot Backen pan-yaki - Bread Baking)
+    desc: Bake fresh bread at home.
+  zh:
+    name: Brot Backen パン焼き（Brot Backen pan-yaki - 面包烘焙）
+    desc: 在家烘焙新鲜面包。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-c-cook-0000-0000-000000000001
+  en:
+    name: Rezept Notizen レシピ (Rezept Notizen reshipi - Recipe Notes)
+    desc: Write down today's recipe.
+  zh:
+    name: Rezept Notizen レシピ（Rezept Notizen reshipi - 菜谱笔记）
+    desc: 记录今天的菜谱。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-e-edu-0000-0000-000000000001
+  en:
+    name: 生ごみ Kompost 堆肥 (nama-gomi Kompost taihi - Compost Scraps)
+    desc: Compost kitchen food scraps.
+  zh:
+    name: 生ごみ Kompost 堆肥（nama-gomi Kompost taihi - 厨余堆肥）
+    desc: 将厨余进行堆肥处理。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-e-edu-0000-0000-000000000001
+  en:
+    name: Gewürz Lernen 香料学習 (Gewürz Lernen kōryō gakushū - Spice Study)
+    desc: Learn about one new spice.
+  zh:
+    name: Gewürz Lernen 香料学習（Gewürz Lernen kōryō gakushū - 香料学习）
+    desc: 学习一种新的香料知识。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-e-edu-0000-0000-000000000001
+  en:
+    name: Gemüse Garten 野菜畑 (Gemüse Garten yasai-batake - Veggie Garden)
+    desc: Tend your kitchen herb garden.
+  zh:
+    name: Gemüse Garten 野菜畑（Gemüse Garten yasai-batake - 蔬菜园）
+    desc: 照料厨房香草园。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-e-edu-0000-0000-000000000001
+  en:
+    name: Lese Buch 読書 (Lese Buch dokusho - Read a Book)
+    desc: Read one chapter of a book.
+  zh:
+    name: Lese Buch 読書（Lese Buch dokusho - 读书）
+    desc: 读一章书。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-e-edu-0000-0000-000000000001
+  en:
+    name: News Lesen 新聞読む (News Lesen shinbun yomu - Read News)
+    desc: Catch up on world news.
+  zh:
+    name: News Lesen 新聞読む（News Lesen shinbun yomu - 读新闻）
+    desc: 了解世界新闻动态。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-e-edu-0000-0000-000000000001
+  en:
+    name: Vokabel Lernen 単語勉強 (Vokabel Lernen tango benkyō - Vocabulary Study)
+    desc: Learn 10 new vocabulary words.
+  zh:
+    name: Vokabel Lernen 単語勉強（Vokabel Lernen tango benkyō - 单词学习）
+    desc: 学习 10 个新单词。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-h-health-0000-0000-0000000001
+  en:
+    name: Code Üben プログラミング (Code Üben puroguramingu - Code Practice)
+    desc: Solve one coding problem.
+  zh:
+    name: Code Üben プログラミング（Code Üben puroguramingu - 编程练习）
+    desc: 解决一道编程题。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-h-health-0000-0000-0000000001
+  en:
+    name: Podcast Hören ポッドキャスト (Podcast Hören poddokyasuto - Listen Podcast)
+    desc: Listen to an educational podcast.
+  zh:
+    name: Podcast Hören ポッドキャスト（Podcast Hören poddokyasuto - 听播客）
+    desc: 收听一个教育播客。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-h-health-0000-0000-0000000001
+  en:
+    name: Notizen Schreiben メモ (Notizen Schreiben memo - Take Notes)
+    desc: Write study notes for today.
+  zh:
+    name: Notizen Schreiben メモ（Notizen Schreiben memo - 记笔记）
+    desc: 写下今天的学习笔记。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-h-health-0000-0000-0000000001
+  en:
+    name: Joggen Morgen 朝ラン (Joggen Morgen asa-ran - Morning Run)
+    desc: Run 5 km in the morning.
+  zh:
+    name: Joggen Morgen 朝ラン（Joggen Morgen asa-ran - 晨跑）
+    desc: 早上跑步 5 公里。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-h-health-0000-0000-0000000001
+  en:
+    name: Abend Spaziergang 夜散歩 (Abend Spaziergang yoru-sanpo - Evening Walk)
+    desc: Walk 10,000 steps today.
+  zh:
+    name: Abend Spaziergang 夜散歩（Abend Spaziergang yoru-sanpo - 晚间散步）
+    desc: 今天走一万步。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-h-health-0000-0000-0000000001
+  en:
+    name: Meditation 瞑想 (Meditation meisō - Meditation)
+    desc: 10-minute guided meditation.
+  zh:
+    name: Meditation 瞑想（Meditation meisō - 冥想）
+    desc: 10 分钟正念冥想。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-k-kitchen-0000-0000-0000000001
+  en:
+    name: Liegestütze 腕立て (Liegestütze ude-tate - Push-ups)
+    desc: Do 20 push-ups.
+  zh:
+    name: Liegestütze 腕立て（Liegestütze ude-tate - 俯卧撑）
+    desc: 做 20 个俯卧撑。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-k-kitchen-0000-0000-0000000001
+  en:
+    name: Sonne Tanken 日光浴 (Sonne Tanken nikkōyoku - Sunlight)
+    desc: Get 10 minutes of morning sun.
+  zh:
+    name: Sonne Tanken 日光浴（Sonne Tanken nikkōyoku - 晒太阳）
+    desc: 早上晒 10 分钟太阳。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-k-kitchen-0000-0000-0000000001
+  en:
+    name: Klavier Üben ピアノ練習 (Klavier Üben piano renshū - Piano Practice)
+    desc: Practice piano for 20 minutes.
+  zh:
+    name: Klavier Üben ピアノ練習（Klavier Üben piano renshū - 练钢琴）
+    desc: 练习钢琴 20 分钟。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-k-kitchen-0000-0000-0000000001
+  en:
+    name: Neues Lied 新曲練習 (Neues Lied shinkyoku renshū - New Song)
+    desc: Learn to play a new song.
+  zh:
+    name: Neues Lied 新曲練習（Neues Lied shinkyoku renshū - 学新曲）
+    desc: 学一首新曲子。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-k-kitchen-0000-0000-0000000001
+  en:
+    name: Musik Theorie 楽理 (Musik Theorie gakuri - Music Theory)
+    desc: Study music theory 10 minutes.
+  zh:
+    name: Musik Theorie 楽理（Musik Theorie gakuri - 乐理学习）
+    desc: 学习乐理 10 分钟。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-k-kitchen-0000-0000-0000000001
+  en:
+    name: Wandern ハイキング (Wandern haikingu - Hiking)
+    desc: Walk a nature trail.
+  zh:
+    name: Wandern ハイキング（Wandern haikingu - 徒步）
+    desc: 走一段自然步道。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-m-music-0000-0000-0000000001
+  en:
+    name: Vögel Beobachten 野鳥観察 (Vögel Beobachten yachō kansatsu - Bird Watch)
+    desc: Spot and identify birds.
+  zh:
+    name: Vögel Beobachten 野鳥観察（Vögel Beobachten yachō kansatsu - 观鸟）
+    desc: 观察并识别鸟类。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-m-music-0000-0000-0000000001
+  en:
+    name: Bäume Pflanzen 植樹 (Bäume Pflanzen shokuju - Plant Trees)
+    desc: Plant or care for a tree.
+  zh:
+    name: Bäume Pflanzen 植樹（Bäume Pflanzen shokuju - 种树）
+    desc: 种植或照料一棵树。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-m-music-0000-0000-0000000001
+  en:
+    name: Sterne Schauen 星空観察 (Sterne Schauen hoshizora kansatsu - Stargazing)
+    desc: Look at the night stars.
+  zh:
+    name: Sterne Schauen 星空観察（Sterne Schauen hoshizora kansatsu - 观星）
+    desc: 仰望夜空观星。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-m-music-0000-0000-0000000001
+  en:
+    name: Foto Tag 写真の日 (Foto Tag shashin no hi - Photo Day)
+    desc: Take one photo today.
+  zh:
+    name: Foto Tag 写真の日（Foto Tag shashin no hi - 每日一拍）
+    desc: 今天拍一张照片。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-m-music-0000-0000-0000000001
+  en:
+    name: Foto Bearbeiten 写真編集 (Foto Bearbeiten shashin henshū - Edit Photo)
+    desc: Edit and enhance one photo.
+  zh:
+    name: Foto Bearbeiten 写真編集（Foto Bearbeiten shashin henshū - 修图）
+    desc: 编辑美化一张照片。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-m-music-0000-0000-0000000001
+  en:
+    name: Porträt Foto ポートレート (Porträt Foto pōtorēto - Portrait)
+    desc: Take a portrait photograph.
+  zh:
+    name: Porträt Foto ポートレート（Porträt Foto pōtorēto - 人像摄影）
+    desc: 拍摄一张人像照片。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-n-nature-0000-0000-0000000001
+  en:
+    name: Schwarzweiß モノクロ (Schwarzweiß monokuro - B&W Photo)
+    desc: Shoot in black and white.
+  zh:
+    name: Schwarzweiß モノクロ（Schwarzweiß monokuro - 黑白摄影）
+    desc: 拍摄黑白照片。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-n-nature-0000-0000-0000000001
+  en:
+    name: Früh Schlafen 早寝 (Früh Schlafen haya-ne - Sleep Early)
+    desc: Go to bed before 10:30 PM.
+  zh:
+    name: Früh Schlafen 早寝（Früh Schlafen haya-ne - 早睡）
+    desc: 晚上 10:30 前睡觉。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-n-nature-0000-0000-0000000001
+  en:
+    name: Kein Bildschirm 画面OFF (Kein Bildschirm gamen OFF - No Screens)
+    desc: No screens 1 hour before bed.
+  zh:
+    name: Kein Bildschirm 画面OFF（Kein Bildschirm gamen OFF - 无屏幕时间）
+    desc: 睡前 1 小时不看屏幕。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-n-nature-0000-0000-0000000001
+  en:
+    name: Power Nap 昼寝 (Power Nap hirune - Power Nap)
+    desc: Take a 20-minute power nap.
+  zh:
+    name: Power Nap 昼寝（Power Nap hirune - 午间小睡）
+    desc: 小睡 20 分钟。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-n-nature-0000-0000-0000000001
+  en:
+    name: Reise Planen 旅行計画 (Reise Planen ryokō keikaku - Plan Trip)
+    desc: Research your next destination.
+  zh:
+    name: Reise Planen 旅行計画（Reise Planen ryokō keikaku - 规划旅行）
+    desc: 研究下一个旅行目的地。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-n-nature-0000-0000-0000000001
+  en:
+    name: Lokal Erkunden 地元探検 (Lokal Erkunden jimoto tanken - Local Explore)
+    desc: Visit a local landmark.
+  zh:
+    name: Lokal Erkunden 地元探検（Lokal Erkunden jimoto tanken - 本地探索）
+    desc: 探索本地景点。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-p-photo-0000-0000-0000000001
+  en:
+    name: Tief Durchatmen 深呼吸 (Tief Durchatmen shinkokyū - Deep Breath)
+    desc: Take 5 deep mindful breaths.
+  zh:
+    name: Tief Durchatmen 深呼吸（Tief Durchatmen shinkokyū - 深呼吸）
+    desc: 进行 5 次正念深呼吸。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-p-photo-0000-0000-0000000001
+  en:
+    name: Tee Zeremonie 茶道 (Tee Zeremonie sadō - Tea Ceremony)
+    desc: Enjoy a mindful tea moment.
+  zh:
+    name: Tee Zeremonie 茶道（Tee Zeremonie sadō - 茶道）
+    desc: 享受正念品茶时光。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-p-photo-0000-0000-0000000001
+  en:
+    name: Abend Reflexion 夜の振り返り (Abend Reflexion yoru no furikaeri - Evening Reflect)
+    desc: Reflect on the day for 5 minutes.
+  zh:
+    name: Abend Reflexion 夜の振り返り（Abend Reflexion yoru no furikaeri - 晚间反思）
+    desc: 睡前反思今天 5 分钟。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-p-photo-0000-0000-0000000001
+  en:
+    name: Doodle Daily 落書き (Doodle Daily rakugaki - Daily Sketch)
+    desc: Sketch freely for 10 minutes.
+  zh:
+    name: Doodle Daily 落書き（Doodle Daily rakugaki - 每日涂鸦）
+    desc: 每天自由涂鸦 10 分钟。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-p-photo-0000-0000-0000000001
+  en:
+    name: Watercolor 水彩 (Watercolor suisai - Watercolor Paint)
+    desc: Paint with watercolors daily.
+  zh:
+    name: Watercolor 水彩（Watercolor suisai - 水彩练习）
+    desc: 每天用水彩练习绘画。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-p-photo-0000-0000-0000000001
+  en:
+    name: Calligraphy 書道 (Calligraphy shodō - Calligraphy)
+    desc: Practice brush calligraphy.
+  zh:
+    name: Calligraphy 書道（Calligraphy shodō - 书法练习）
+    desc: 练习毛笔书法。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-r-read-0000-0000-00000000001
+  en:
+    name: Origami 折り紙 (Origami origami - Paper Folding)
+    desc: Fold one origami creation.
+  zh:
+    name: Origami 折り紙（Origami origami - 折纸手工）
+    desc: 折一个折纸作品。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-r-read-0000-0000-00000000001
+  en:
+    name: Color Palette 配色 (Color Palette haishoku - Color Study)
+    desc: Explore a new color palette.
+  zh:
+    name: Color Palette 配色（Color Palette haishoku - 色彩研究）
+    desc: 探索新的配色方案。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-r-read-0000-0000-00000000001
+  en:
+    name: Art Museum 美術館 (Art Museum bijutsukan - Museum Visit)
+    desc: Visit a gallery or museum.
+  zh:
+    name: Art Museum 美術館（Art Museum bijutsukan - 美术馆参观）
+    desc: 参观美术馆或画廊。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-r-read-0000-0000-00000000001
+  en:
+    name: Утро Sketch 朝スケッチ (Utro Sketch asa sukecchi - Morning Sketch)
+    desc: Quick morning sketch practice.
+  zh:
+    name: Утро Sketch 朝スケッチ（Utro Sketch asa sukecchi - 晨间速写）
+    desc: 早晨快速速写练习。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-r-read-0000-0000-00000000001
+  en:
+    name: صباح الفن Morning Art (ṣabāḥ al-fann Morning Art - Morning Art)
+    desc: Start the day with creative art.
+  zh:
+    name: صباح الفن Morning Art（ṣabāḥ al-fann Morning Art - 晨间艺术）
+    desc: 以创意艺术开启一天。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-r-read-0000-0000-00000000001
+  en:
+    name: Abend Malerei 夜絵 (Abend Malerei yoru-e - Evening Painting)
+    desc: Paint in the quiet evening hours.
+  zh:
+    name: Abend Malerei 夜絵（Abend Malerei yoru-e - 晚间绘画）
+    desc: 在宁静的夜晚绘画。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-s-sleep-0000-0000-0000000001
+  en:
+    name: 料理実験 Cooking Lab (ryōri jikken Cooking Lab - Cooking Experiment)
+    desc: Try a new cooking technique.
+  zh:
+    name: 料理実験 Cooking Lab（ryōri jikken Cooking Lab - 烹饪实验）
+    desc: 尝试新的烹饪技巧。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-s-sleep-0000-0000-0000000001
+  en:
+    name: Brot Backen パン焼き (Brot Backen pan-yaki - Bread Baking)
+    desc: Bake fresh bread at home.
+  zh:
+    name: Brot Backen パン焼き（Brot Backen pan-yaki - 面包烘焙）
+    desc: 在家烘焙新鲜面包。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-s-sleep-0000-0000-0000000001
+  en:
+    name: Rezept Notizen レシピ (Rezept Notizen reshipi - Recipe Notes)
+    desc: Write down today's recipe.
+  zh:
+    name: Rezept Notizen レシピ（Rezept Notizen reshipi - 菜谱笔记）
+    desc: 记录今天的菜谱。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-s-sleep-0000-0000-0000000001
+  en:
+    name: 生ごみ Kompost 堆肥 (nama-gomi Kompost taihi - Compost Scraps)
+    desc: Compost kitchen food scraps.
+  zh:
+    name: 生ごみ Kompost 堆肥（nama-gomi Kompost taihi - 厨余堆肥）
+    desc: 将厨余进行堆肥处理。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-s-sleep-0000-0000-0000000001
+  en:
+    name: Gewürz Lernen 香料学習 (Gewürz Lernen kōryō gakushū - Spice Study)
+    desc: Learn about one new spice.
+  zh:
+    name: Gewürz Lernen 香料学習（Gewürz Lernen kōryō gakushū - 香料学习）
+    desc: 学习一种新的香料知识。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-s-sleep-0000-0000-0000000001
+  en:
+    name: Gemüse Garten 野菜畑 (Gemüse Garten yasai-batake - Veggie Garden)
+    desc: Tend your kitchen herb garden.
+  zh:
+    name: Gemüse Garten 野菜畑（Gemüse Garten yasai-batake - 蔬菜园）
+    desc: 照料厨房香草园。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-t-travel-0000-0000-0000000001
+  en:
+    name: Lese Buch 読書 (Lese Buch dokusho - Read a Book)
+    desc: Read one chapter of a book.
+  zh:
+    name: Lese Buch 読書（Lese Buch dokusho - 读书）
+    desc: 读一章书。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-t-travel-0000-0000-0000000001
+  en:
+    name: News Lesen 新聞読む (News Lesen shinbun yomu - Read News)
+    desc: Catch up on world news.
+  zh:
+    name: News Lesen 新聞読む（News Lesen shinbun yomu - 读新闻）
+    desc: 了解世界新闻动态。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-t-travel-0000-0000-0000000001
+  en:
+    name: Vokabel Lernen 単語勉強 (Vokabel Lernen tango benkyō - Vocabulary Study)
+    desc: Learn 10 new vocabulary words.
+  zh:
+    name: Vokabel Lernen 単語勉強（Vokabel Lernen tango benkyō - 单词学习）
+    desc: 学习 10 个新单词。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-t-travel-0000-0000-0000000001
+  en:
+    name: Code Üben プログラミング (Code Üben puroguramingu - Code Practice)
+    desc: Solve one coding problem.
+  zh:
+    name: Code Üben プログラミング（Code Üben puroguramingu - 编程练习）
+    desc: 解决一道编程题。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-t-travel-0000-0000-0000000001
+  en:
+    name: Podcast Hören ポッドキャスト (Podcast Hören poddokyasuto - Listen Podcast)
+    desc: Listen to an educational podcast.
+  zh:
+    name: Podcast Hören ポッドキャスト（Podcast Hören poddokyasuto - 听播客）
+    desc: 收听一个教育播客。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-t-travel-0000-0000-0000000001
+  en:
+    name: Notizen Schreiben メモ (Notizen Schreiben memo - Take Notes)
+    desc: Write study notes for today.
+  zh:
+    name: Notizen Schreiben メモ（Notizen Schreiben memo - 记笔记）
+    desc: 写下今天的学习笔记。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-z-zen-0000-0000-00000000001
+  en:
+    name: Joggen Morgen 朝ラン (Joggen Morgen asa-ran - Morning Run)
+    desc: Run 5 km in the morning.
+  zh:
+    name: Joggen Morgen 朝ラン（Joggen Morgen asa-ran - 晨跑）
+    desc: 早上跑步 5 公里。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-z-zen-0000-0000-00000000001
+  en:
+    name: Abend Spaziergang 夜散歩 (Abend Spaziergang yoru-sanpo - Evening Walk)
+    desc: Walk 10,000 steps today.
+  zh:
+    name: Abend Spaziergang 夜散歩（Abend Spaziergang yoru-sanpo - 晚间散步）
+    desc: 今天走一万步。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-z-zen-0000-0000-00000000001
+  en:
+    name: Meditation 瞑想 (Meditation meisō - Meditation)
+    desc: 10-minute guided meditation.
+  zh:
+    name: Meditation 瞑想（Meditation meisō - 冥想）
+    desc: 10 分钟正念冥想。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-z-zen-0000-0000-00000000001
+  en:
+    name: Liegestütze 腕立て (Liegestütze ude-tate - Push-ups)
+    desc: Do 20 push-ups.
+  zh:
+    name: Liegestütze 腕立て（Liegestütze ude-tate - 俯卧撑）
+    desc: 做 20 个俯卧撑。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-z-zen-0000-0000-00000000001
+  en:
+    name: Sonne Tanken 日光浴 (Sonne Tanken nikkōyoku - Sunlight)
+    desc: Get 10 minutes of morning sun.
+  zh:
+    name: Sonne Tanken 日光浴（Sonne Tanken nikkōyoku - 晒太阳）
+    desc: 早上晒 10 分钟太阳。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-z-zen-0000-0000-00000000001
+  en:
+    name: Klavier Üben ピアノ練習 (Klavier Üben piano renshū - Piano Practice)
+    desc: Practice piano for 20 minutes.
+  zh:
+    name: Klavier Üben ピアノ練習（Klavier Üben piano renshū - 练钢琴）
+    desc: 练习钢琴 20 分钟。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-idea-0000-0000-00000000001
+  en:
+    name: アイデア出し (aidea dashi - Brainstorm Ideas)
+    desc: Generate 10 ideas in 10 minutes.
+  zh:
+    name: アイデア出し（aidea dashi - 头脑风暴）
+    desc: 10 分钟产出 10 个点子。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-idea-0000-0000-00000000001
+  en:
+    name: 発想転換 (hassō tenkan - Ideation Shift)
+    desc: Think from a new perspective.
+  zh:
+    name: 発想転換（hassō tenkan - 创意发散）
+    desc: 从新角度思考问题。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-idea-0000-0000-00000000001
+  en:
+    name: 試作一号 (shisaku ichigō - Prototype v1)
+    desc: Build a quick prototype.
+  zh:
+    name: 試作一号（shisaku ichigō - 原型制作）
+    desc: 快速制作一个原型。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-idea-0000-0000-00000000001
+  en:
+    name: 改善ノート (kaizen nōto - Kaizen Notes)
+    desc: 记录一个改进点。
+  zh:
+    name: 改善ノート（kaizen nōto - 改善笔记）
+    desc: 改善点を一つ記録。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-idea-0000-0000-00000000001
+  en:
+    name: 朝の散歩 (asa no sanpo - Morning Walk)
+    desc: Take a refreshing morning walk.
+  zh:
+    name: 朝の散歩（asa no sanpo - 晨间散步）
+    desc: 进行一次清爽的晨间散步。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-idea-0000-0000-00000000001
+  en:
+    name: 夜の読書 (yoru no dokusho - Night Reading)
+    desc: Read before going to sleep.
+  zh:
+    name: 夜の読書（yoru no dokusho - 夜间阅读）
+    desc: 睡前阅读一本书。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-asa-0000-0000-0000000000001
+  en:
+    name: 週末料理 (shūmatsu ryōri - Weekend Cooking)
+    desc: Cook a special weekend meal.
+  zh:
+    name: 週末料理（shūmatsu ryōri - 周末烹饪）
+    desc: 烹饪一顿周末特别餐。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-asa-0000-0000-0000000000001
+  en:
+    name: 日記を書く (nikki o kaku - Write Journal)
+    desc: Write a short journal entry.
+  zh:
+    name: 日記を書く（nikki o kaku - 写日记）
+    desc: 写一篇简短日记。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-asa-0000-0000-0000000000001
+  en:
+    name: 朝活ストレッチ (asakatsu sutoretchi - Morning Stretch)
+    desc: Stretch for 5 minutes.
+  zh:
+    name: 朝活ストレッチ（asakatsu sutoretchi - 晨间拉伸）
+    desc: 拉伸 5 分钟。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-asa-0000-0000-0000000000001
+  en:
+    name: ランニング習慣 (ranningu shūkan - Running Habit)
+    desc: Go for a daily run.
+  zh:
+    name: ランニング習慣（ranningu shūkan - 跑步习惯）
+    desc: 坚持每日跑步。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-asa-0000-0000-0000000000001
+  en:
+    name: 筋トレ日記 (kin-tore nikki - Strength Training)
+    desc: Log your strength workout.
+  zh:
+    name: 筋トレ日記（kin-tore nikki - 力量训练）
+    desc: 记录力量训练。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-asa-0000-0000-0000000000001
+  en:
+    name: サッカー練習 (sakkā renshū - Soccer Practice)
+    desc: Practice soccer drills.
+  zh:
+    name: サッカー練習（sakkā renshū - 足球练习）
+    desc: 练习足球技巧。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-katakana-0000-0000-000000001
+  en:
+    name: バスケ練習 (basuke renshū - Basketball Drill)
+    desc: Shoot some hoops today.
+  zh:
+    name: バスケ練習（basuke renshū - 篮球练习）
+    desc: 今天投几个篮。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-katakana-0000-0000-000000001
+  en:
+    name: 水泳記録 (suiei kiroku - Swim Log)
+    desc: Track your swimming laps.
+  zh:
+    name: 水泳記録（suiei kiroku - 游泳记录）
+    desc: 记录游泳圈数。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-katakana-0000-0000-000000001
+  en:
+    name: 体操の時間 (taisō no jikan - Gymnastics Time)
+    desc: Do a gymnastics routine.
+  zh:
+    name: 体操の時間（taisō no jikan - 体操时间）
+    desc: 做一套体操练习。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-katakana-0000-0000-000000001
+  en:
+    name: 品質記録 (hinshitsu kiroku - Quality Log)
+    desc: Log one quality improvement.
+  zh:
+    name: 品質記録（hinshitsu kiroku - 品质记录）
+    desc: 记录一项品质改进。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-katakana-0000-0000-000000001
+  en:
+    name: 改善提案 (kaizen teian - Improvement Idea)
+    desc: Propose one improvement idea.
+  zh:
+    name: 改善提案（kaizen teian - 改善提案）
+    desc: 提出一个改善提案。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-katakana-0000-0000-000000001
+  en:
+    name: 標準化作業 (hyōjunka sagyō - Standardize Work)
+    desc: Document a standard process.
+  zh:
+    name: 標準化作業（hyōjunka sagyō - 标准化作业）
+    desc: 记录一个标准流程。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-pinzhi-0000-0000-0000000001
+  en:
+    name: 漢字練習 (kanji renshū - Kanji Practice)
+    desc: Practice writing 5 kanji.
+  zh:
+    name: 漢字練習（kanji renshū - 汉字练习）
+    desc: 练习写 5 个汉字。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-pinzhi-0000-0000-0000000001
+  en:
+    name: 文法ドリル (bunpō doriru - Grammar Drill)
+    desc: Do grammar exercises.
+  zh:
+    name: 文法ドリル（bunpō doriru - 语法练习）
+    desc: 做语法练习题。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-pinzhi-0000-0000-0000000001
+  en:
+    name: 聴解トレーニング (chōkai torēningu - Listening Drill)
+    desc: Practice listening comprehension.
+  zh:
+    name: 聴解トレーニング（chōkai torēningu - 听力训练）
+    desc: 练习听力理解。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-pinzhi-0000-0000-0000000001
+  en:
+    name: 会話練習 (kaiwa renshū - Conversation Practice)
+    desc: Speak aloud for 5 minutes.
+  zh:
+    name: 会話練習（kaiwa renshū - 会话练习）
+    desc: 大声说 5 分钟。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-pinzhi-0000-0000-0000000001
+  en:
+    name: 読解問題 (dokkai mondai - Reading Practice)
+    desc: Read and answer questions.
+  zh:
+    name: 読解問題（dokkai mondai - 阅读练习）
+    desc: 阅读并回答问题。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-pinzhi-0000-0000-0000000001
+  en:
+    name: 作曲の時間 (sakkyoku no jikan - Composition Time)
+    desc: Compose a short melody.
+  zh:
+    name: 作曲の時間（sakkyoku no jikan - 作曲时间）
+    desc: 创作一段短旋律。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-riyu-0000-0000-000000000001
+  en:
+    name: 楽器の練習 (gakki no renshū - Instrument Practice)
+    desc: Practice your instrument.
+  zh:
+    name: 楽器の練習（gakki no renshū - 乐器练习）
+    desc: 练习你的乐器。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-riyu-0000-0000-000000000001
+  en:
+    name: 名曲を聴く (meikyoku o kiku - Listen to Classics)
+    desc: Listen to a classical piece.
+  zh:
+    name: 名曲を聴く（meikyoku o kiku - 聆听名曲）
+    desc: 聆听一首古典名曲。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-riyu-0000-0000-000000000001
+  en:
+    name: 手作り工作 (tezukuri kōsaku - DIY Craft)
+    desc: Work on a DIY craft project.
+  zh:
+    name: 手作り工作（tezukuri kōsaku - 手工制作）
+    desc: 做一个手工项目。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-riyu-0000-0000-000000000001
+  en:
+    name: 色の研究 (iro no kenkyū - Color Study)
+    desc: Try a new color combination.
+  zh:
+    name: 色の研究（iro no kenkyū - 配色研究）
+    desc: 尝试一种新配色组合。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-riyu-0000-0000-000000000001
+  en:
+    name: 物語を書く (monogatari o kaku - Write a Story)
+    desc: Write 200 words of fiction.
+  zh:
+    name: 物語を書く（monogatari o kaku - 写故事）
+    desc: 写 200 字小说。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-riyu-0000-0000-000000000001
+  en:
+    name: 即興演奏 (sokkyō ensō - Improvise Music)
+    desc: Improvise on your instrument.
+  zh:
+    name: 即興演奏（sokkyō ensō - 即兴演奏）
+    desc: 用乐器即兴演奏。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-ongaku-0000-0000-0000000001
+  en:
+    name: 自由作文 (jiyū sakubun - Free Writing)
+    desc: Free-write for 15 minutes.
+  zh:
+    name: 自由作文（jiyū sakubun - 自由写作）
+    desc: 自由书写 15 分钟。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-ongaku-0000-0000-0000000001
+  en:
+    name: 絵本読み聞かせ (ehon yomikikase - Read Aloud)
+    desc: Read a picture book aloud.
+  zh:
+    name: 絵本読み聞かせ（ehon yomikikase - 讲故事）
+    desc: 大声朗读一本绘本。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-ongaku-0000-0000-0000000001
+  en:
+    name: パズル遊び (pazuru asobi - Puzzle Time)
+    desc: Solve puzzles together.
+  zh:
+    name: パズル遊び（pazuru asobi - 拼图时间）
+    desc: 一起玩拼图。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-ongaku-0000-0000-0000000001
+  en:
+    name: お絵かき時間 (o-ekaki jikan - Drawing Time)
+    desc: Draw and color together.
+  zh:
+    name: お絵かき時間（o-ekaki jikan - 画画时间）
+    desc: 一起画画涂色。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-ongaku-0000-0000-0000000001
+  en:
+    name: 外遊び (soto asobi - Outdoor Play)
+    desc: Play outside for 30 minutes.
+  zh:
+    name: 外遊び（soto asobi - 户外玩耍）
+    desc: 在户外玩耍 30 分钟。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-ongaku-0000-0000-0000000001
+  en:
+    name: 一緒に歌う (issho ni utau - Sing Together)
+    desc: Sing songs together.
+  zh:
+    name: 一緒に歌う（issho ni utau - 一起唱歌）
+    desc: 一起唱歌谣。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-chuangyi-0000-0000-0000000001
+  en:
+    name: 自然探検 (shizen tanken - Nature Explore)
+    desc: Explore nature together.
+  zh:
+    name: 自然探検（shizen tanken - 自然探索）
+    desc: 一起探索自然。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-chuangyi-0000-0000-0000000001
+  en:
+    name: 集中学習 (shūchū gakushū - Focused Study)
+    desc: Study with deep focus for 90 minutes.
+  zh:
+    name: 集中学習（shūchū gakushū - 深度专注）
+    desc: 深度专注学习 90 分钟。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-chuangyi-0000-0000-0000000001
+  en:
+    name: 単語暗記 (tango anki - Memorize Words)
+    desc: Review 20 flashcards.
+  zh:
+    name: 単語暗記（tango anki - 单词记忆）
+    desc: 复习 20 张闪卡。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-chuangyi-0000-0000-0000000001
+  en:
+    name: 模擬試験 (mogi shiken - Practice Test)
+    desc: Take a practice exam.
+  zh:
+    name: 模擬試験（mogi shiken - 模拟测试）
+    desc: 做一套模拟测试。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-chuangyi-0000-0000-0000000001
+  en:
+    name: 教えて学ぶ (oshiete manabu - Teach to Learn)
+    desc: Explain a concept to someone.
+  zh:
+    name: 教えて学ぶ（oshiete manabu - 教是最好的学）
+    desc: 向他人讲解一个概念。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-chuangyi-0000-0000-0000000001
+  en:
+    name: 学習会参加 (gakushūkai sanka - Study Group)
+    desc: Join a study group discussion.
+  zh:
+    name: 学習会参加（gakushūkai sanka - 学习小组）
+    desc: 参加学习小组讨论。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-ertong-0000-0000-0000000001
+  en:
+    name: 部屋片付け (heya katadzuke - Tidy Room)
+    desc: Tidy up your living space.
+  zh:
+    name: 部屋片付け（heya katadzuke - 整理房间）
+    desc: 整理生活空间。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-ertong-0000-0000-0000000001
+  en:
+    name: 植物の水やり (shokubutsu no mizuyari - Water Plants)
+    desc: Water all the plants.
+  zh:
+    name: 植物の水やり（shokubutsu no mizuyari - 浇花）
+    desc: 给所有植物浇水。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-ertong-0000-0000-0000000001
+  en:
+    name: 洗濯する (sentaku suru - Do Laundry)
+    desc: Do one load of laundry.
+  zh:
+    name: 洗濯する（sentaku suru - 洗衣服）
+    desc: 洗一桶衣服。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-ertong-0000-0000-0000000001
+  en:
+    name: ゴミ出し (gomi-dashi - Take Out Trash)
+    desc: Take out the trash.
+  zh:
+    name: ゴミ出し（gomi-dashi - 倒垃圾）
+    desc: 把垃圾拿出去。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-ertong-0000-0000-0000000001
+  en:
+    name: 献立計画 (kondate keikaku - Plan Meals)
+    desc: Plan tomorrow's meals.
+  zh:
+    name: 献立計画（kondate keikaku - 规划三餐）
+    desc: 规划明天的三餐。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-ertong-0000-0000-0000000001
+  en:
+    name: 起床打卡 (qǐchuáng dǎkǎ - Wake-up Check)
+    desc: Wake up before 6:30 AM.
+  zh:
+    name: 起床打卡（qǐchuáng dǎkǎ - 起床打卡）
+    desc: 早上 6:30 前起床。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-nuli-0000-0000-00000000001
+  en:
+    name: 開窗通風 (kāichuāng tōngfēng - Open Window)
+    desc: Open windows for fresh air.
+  zh:
+    name: 開窗通風（kāichuāng tōngfēng - 开窗通风）
+    desc: 开窗换新鲜空气。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-nuli-0000-0000-00000000001
+  en:
+    name: 晨間瑜伽 (chénjiān yújiā - Morning Yoga)
+    desc: Do 10 minutes of morning yoga.
+  zh:
+    name: 晨間瑜伽（chénjiān yújiā - 晨间瑜伽）
+    desc: 做 10 分钟晨间瑜伽。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-nuli-0000-0000-00000000001
+  en:
+    name: 準備早餐 (zhǔnbèi zǎocān - Breakfast Prep)
+    desc: Prepare a healthy breakfast.
+  zh:
+    name: 準備早餐（zhǔnbèi zǎocān - 准备早餐）
+    desc: 准备一份健康早餐。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-nuli-0000-0000-00000000001
+  en:
+    name: 晨讀時光 (chéndú shíguāng - Morning Reading)
+    desc: Read for 10 minutes in the morning.
+  zh:
+    name: 晨讀時光（chéndú shíguāng - 晨读时光）
+    desc: 晨读 10 分钟。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-nuli-0000-0000-00000000001
+  en:
+    name: 自我肯定 (zìwǒ kěndìng - Self-Affirmation)
+    desc: Say a positive affirmation.
+  zh:
+    name: 自我肯定（zìwǒ kěndìng - 自我肯定）
+    desc: 说一句积极的自我肯定。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-nuli-0000-0000-00000000001
+  en:
+    name: 查看日程 (chákàn rìchéng - Check Calendar)
+    desc: Review today's schedule.
+  zh:
+    name: 查看日程（chákàn rìchéng - 查看日程）
+    desc: 查看今天的日程安排。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-shenghuo-0000-0000-0000000001
+  en:
+    name: 健身房訓練 (jiànshēnfáng xùnliàn - Gym Training)
+    desc: Complete a gym workout.
+  zh:
+    name: 健身房訓練（jiànshēnfáng xùnliàn - 健身训练）
+    desc: 完成一次健身房训练。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-shenghuo-0000-0000-0000000001
+  en:
+    name: 瑜伽練習 (yújiā liànxí - Yoga Practice)
+    desc: Practice yoga for 20 minutes.
+  zh:
+    name: 瑜伽練習（yújiā liànxí - 瑜伽练习）
+    desc: 练习瑜伽 20 分钟。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-shenghuo-0000-0000-0000000001
+  en:
+    name: 跳繩運動 (tiàoshéng yùndòng - Jump Rope)
+    desc: Jump rope for 10 minutes.
+  zh:
+    name: 跳繩運動（tiàoshéng yùndòng - 跳绳运动）
+    desc: 跳绳 10 分钟。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-shenghuo-0000-0000-0000000001
+  en:
+    name: 平板支撐 (píngbǎn zhīchēng - Plank Hold)
+    desc: Hold a plank for 60 seconds.
+  zh:
+    name: 平板支撐（píngbǎn zhīchēng - 平板支撑）
+    desc: 平板支撑 60 秒。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-shenghuo-0000-0000-0000000001
+  en:
+    name: 騎行鍛煉 (qíxíng duànliàn - Cycling Workout)
+    desc: Go cycling for 30 minutes.
+  zh:
+    name: 騎行鍛煉（qíxíng duànliàn - 骑行锻炼）
+    desc: 骑行 30 分钟。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-shenghuo-0000-0000-0000000001
+  en:
+    name: 游泳訓練 (yóuyǒng xùnliàn - Swim Training)
+    desc: Swim laps for 30 minutes.
+  zh:
+    name: 游泳訓練（yóuyǒng xùnliàn - 游泳训练）
+    desc: 游泳 30 分钟。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-zaoan-0000-0000-00000000001
+  en:
+    name: 太極拳法 (tàijí quánfǎ - Tai Chi Practice)
+    desc: Practice Tai Chi for 15 minutes.
+  zh:
+    name: 太極拳法（tàijí quánfǎ - 太极练习）
+    desc: 练太极拳 15 分钟。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-zaoan-0000-0000-00000000001
+  en:
+    name: 參觀博物館 (cānguān bówùguǎn - Museum Visit)
+    desc: Visit a museum today.
+  zh:
+    name: 參觀博物館（cānguān bówùguǎn - 参观博物馆）
+    desc: 今天参观博物馆。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-zaoan-0000-0000-00000000001
+  en:
+    name: 閱讀歷史 (yuèdú lìshǐ - Read History)
+    desc: Read a page of history.
+  zh:
+    name: 閱讀歷史（yuèdú lìshǐ - 阅读历史）
+    desc: 读一页历史。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-zaoan-0000-0000-00000000001
+  en:
+    name: 嘗試異國美食 (chángshì yìguó měishí - Try World Cuisine)
+    desc: Try a dish from another culture.
+  zh:
+    name: 嘗試異國美食（chángshì yìguó měishí - 尝异国美食）
+    desc: 品尝异国美食。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-zaoan-0000-0000-00000000001
+  en:
+    name: 觀看紀錄片 (guānkàn jìlùpiàn - Watch Documentary)
+    desc: Watch a cultural documentary.
+  zh:
+    name: 觀看紀錄片（guānkàn jìlùpiàn - 观看纪录片）
+    desc: 看一部文化纪录片。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-zaoan-0000-0000-00000000001
+  en:
+    name: 了解傳統節日 (liǎojiě chuántǒng jiérì - Learn Festival)
+    desc: Learn about a traditional festival.
+  zh:
+    name: 了解傳統節日（liǎojiě chuántǒng jiérì - 了解传统节日）
+    desc: 了解一个传统节日。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-yundong-0000-0000-0000000001
+  en:
+    name: 學習外語短語 (xuéxí wàiyǔ duǎnyǔ - Learn Language Phrase)
+    desc: Learn a useful phrase.
+  zh:
+    name: 學習外語短語（xuéxí wàiyǔ duǎnyǔ - 学外语短语）
+    desc: 学一句实用外语短语。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-yundong-0000-0000-0000000001
+  en:
+    name: 藝術鑑賞 (yìshù jiànshǎng - Art Appreciation)
+    desc: Appreciate one artwork.
+  zh:
+    name: 藝術鑑賞（yìshù jiànshǎng - 艺术鉴赏）
+    desc: 欣赏一件艺术作品。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-yundong-0000-0000-0000000001
+  en:
+    name: 在線課程 (zàixiàn kèchéng - Online Course)
+    desc: Study 30 minutes of online course.
+  zh:
+    name: 在線課程（zàixiàn kèchéng - 在线课程）
+    desc: 学习 30 分钟在线课程。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-yundong-0000-0000-0000000001
+  en:
+    name: 閱讀技術博客 (yuèdú jìshù bókè - Read Tech Blog)
+    desc: Read one tech article.
+  zh:
+    name: 閱讀技術博客（yuèdú jìshù bókè - 读技术博客）
+    desc: 阅读一篇技术文章。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-yundong-0000-0000-0000000001
+  en:
+    name: 觀看教學視頻 (guānkàn jiàoxué shìpín - Watch Tutorial)
+    desc: Watch a tutorial video.
+  zh:
+    name: 觀看教學視頻（guānkàn jiàoxué shìpín - 看教学视频）
+    desc: 观看一个教学视频。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-yundong-0000-0000-0000000001
+  en:
+    name: 推進副項目 (tuījìn fùxiàngmù - Side Project)
+    desc: Work on your side project.
+  zh:
+    name: 推進副項目（tuījìn fùxiàngmù - 推进副项目）
+    desc: 推进副项目进展。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-wenhua-0000-0000-0000000001
+  en:
+    name: 學習文檔記錄 (xuéxí wéndàng jìlù - Study Notes)
+    desc: Write down what you learned.
+  zh:
+    name: 學習文檔記錄（xuéxí wéndàng jìlù - 学习文档）
+    desc: 记录今天学到的内容。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-wenhua-0000-0000-0000000001
+  en:
+    name: 參加線上研討會 (cānjiā xiànshàng yántǎohuì - Attend Webinar)
+    desc: Attend an online seminar.
+  zh:
+    name: 參加線上研討會（cānjiā xiànshàng yántǎohuì - 参加研讨会）
+    desc: 参加线上分享会。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-wenhua-0000-0000-0000000001
+  en:
+    name: 技能交換練習 (jìnéng jiāohuàn liànxí - Skill Exchange)
+    desc: Teach and learn a new skill.
+  zh:
+    name: 技能交換練習（jìnéng jiāohuàn liànxí - 技能交换）
+    desc: 教别人也学新技能。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-wenhua-0000-0000-0000000001
+  en:
+    name: 打電話給家人 (dǎ diànhuà gěi jiārén - Call Family)
+    desc: Call a family member today.
+  zh:
+    name: 打電話給家人（dǎ diànhuà gěi jiārén - 给家人打电话）
+    desc: 今天给家人打个电话。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-wenhua-0000-0000-0000000001
+  en:
+    name: 回覆未讀消息 (huífù wèidú xiāoxī - Reply Messages)
+    desc: Reply to pending messages.
+  zh:
+    name: 回覆未讀消息（huífù wèidú xiāoxī - 回复消息）
+    desc: 回复未处理的消息。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-wenhua-0000-0000-0000000001
+  en:
+    name: 一起共進午餐 (yīqǐ gòngjìn wǔcān - Lunch Together)
+    desc: Have lunch with someone.
+  zh:
+    name: 一起共進午餐（yīqǐ gòngjìn wǔcān - 一起午餐）
+    desc: 和别人一起吃午餐。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-xuexi-0000-0000-00000000001
+  en:
+    name: Утренняя Зарядка (Utrennyaya Zaryadka - Morning Exercise)
+    desc: Do morning exercises for 15 minutes.
+  zh:
+    name: Утренняя Зарядка（Utrennyaya Zaryadka - 晨练）
+    desc: 做 15 分钟晨练运动。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-xuexi-0000-0000-00000000001
+  en:
+    name: Вечерняя Прогулка (Vechernyaya Progulka - Evening Walk)
+    desc: Take an evening walk after dinner.
+  zh:
+    name: Вечерняя Прогулка（Vechernyaya Progulka - 晚间散步）
+    desc: 晚饭后散步。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-xuexi-0000-0000-00000000001
+  en:
+    name: Чтение Книги (Chteniye Knigi - Read a Book)
+    desc: Read a chapter before bed.
+  zh:
+    name: Чтение Книги（Chteniye Knigi - 读书）
+    desc: 睡前读一章书。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-xuexi-0000-0000-00000000001
+  en:
+    name: Медитация (Meditatsiya - Meditation)
+    desc: Practice mindfulness meditation.
+  zh:
+    name: Медитация（Meditatsiya - 冥想）
+    desc: 练习正念冥想。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-xuexi-0000-0000-00000000001
+  en:
+    name: Спорт Тренировка (Sport Trenirovka - Sports Training)
+    desc: Complete a workout session.
+  zh:
+    name: Спорт Тренировка（Sport Trenirovka - 运动训练）
+    desc: 完成一次运动训练。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-xuexi-0000-0000-00000000001
+  en:
+    name: Приготовление Ужина (Prigotovleniye Uzhina - Cook Dinner)
+    desc: Cook dinner from scratch.
+  zh:
+    name: Приготовление Ужина（Prigotovleniye Uzhina - 做晚餐）
+    desc: 从头开始做晚餐。
+- type: 1
+  color: 7
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 40
+  strategy: sporadic_30
+  group_uuid: group-ns-xuexi-0000-0000-00000000001
+  en:
+    name: Здоровый Сон (Zdorovyy Son - Healthy Sleep)
+    desc: Maintain a consistent sleep schedule.
+  zh:
+    name: Здоровый Сон（Zdorovyy Son - 健康睡眠）
+    desc: 保持规律作息。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-shejiao-0000-0000-0000000001
+  en:
+    name: Уборка Дома (Uborka Doma - Home Cleaning)
+    desc: Clean and organize your home.
+  zh:
+    name: Уборка Дома（Uborka Doma - 居家清洁）
+    desc: 清洁整理家居。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-shejiao-0000-0000-0000000001
+  en:
+    name: Питьевой Режим (Pityevoy Rezhim - Drink Water)
+    desc: Drink 8 glasses of water today.
+  zh:
+    name: Питьевой Режим（Pityevoy Rezhim - 喝水）
+    desc: 今天喝完 8 杯水。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-shejiao-0000-0000-0000000001
+  en:
+    name: Растяжка (Rastyazhka - Stretching)
+    desc: Do a full-body stretch routine.
+  zh:
+    name: Растяжка（Rastyazhka - 拉伸）
+    desc: 做全身拉伸练习。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-shejiao-0000-0000-0000000001
+  en:
+    name: Утренняя Зарядка (Utrennyaya Zaryadka - Morning Exercise)
+    desc: Do morning exercises for 15 minutes.
+  zh:
+    name: Утренняя Зарядка（Utrennyaya Zaryadka - 晨练）
+    desc: 做 15 分钟晨练运动。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-shejiao-0000-0000-0000000001
+  en:
+    name: Вечерняя Прогулка (Vechernyaya Progulka - Evening Walk)
+    desc: Take an evening walk after dinner.
+  zh:
+    name: Вечерняя Прогулка（Vechernyaya Progulka - 晚间散步）
+    desc: 晚饭后散步。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-shejiao-0000-0000-0000000001
+  en:
+    name: Чтение Книги (Chteniye Knigi - Read a Book)
+    desc: Read a chapter before bed.
+  zh:
+    name: Чтение Книги（Chteniye Knigi - 读书）
+    desc: 睡前读一章书。
+- type: 1
+  color: 7
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 40
+  strategy: sporadic_30
+  group_uuid: group-ns-shejiao-0000-0000-0000000001
+  en:
+    name: Медитация (Meditatsiya - Meditation)
+    desc: Practice mindfulness meditation.
+  zh:
+    name: Медитация（Meditatsiya - 冥想）
+    desc: 练习正念冥想。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-gongyi-0000-0000-00000000001
+  en:
+    name: Спорт Тренировка (Sport Trenirovka - Sports Training)
+    desc: Complete a workout session.
+  zh:
+    name: Спорт Тренировка（Sport Trenirovka - 运动训练）
+    desc: 完成一次运动训练。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-gongyi-0000-0000-00000000001
+  en:
+    name: Приготовление Ужина (Prigotovleniye Uzhina - Cook Dinner)
+    desc: Cook dinner from scratch.
+  zh:
+    name: Приготовление Ужина（Prigotovleniye Uzhina - 做晚餐）
+    desc: 从头开始做晚餐。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-gongyi-0000-0000-00000000001
+  en:
+    name: Здоровый Сон (Zdorovyy Son - Healthy Sleep)
+    desc: Maintain a consistent sleep schedule.
+  zh:
+    name: Здоровый Сон（Zdorovyy Son - 健康睡眠）
+    desc: 保持规律作息。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-gongyi-0000-0000-00000000001
+  en:
+    name: Уборка Дома (Uborka Doma - Home Cleaning)
+    desc: Clean and organize your home.
+  zh:
+    name: Уборка Дома（Uborka Doma - 居家清洁）
+    desc: 清洁整理家居。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-gongyi-0000-0000-00000000001
+  en:
+    name: Питьевой Режим (Pityevoy Rezhim - Drink Water)
+    desc: Drink 8 glasses of water today.
+  zh:
+    name: Питьевой Режим（Pityevoy Rezhim - 喝水）
+    desc: 今天喝完 8 杯水。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-gongyi-0000-0000-00000000001
+  en:
+    name: Растяжка (Rastyazhka - Stretching)
+    desc: Do a full-body stretch routine.
+  zh:
+    name: Растяжка（Rastyazhka - 拉伸）
+    desc: 做全身拉伸练习。
+- type: 1
+  color: 7
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 40
+  strategy: sporadic_30
+  group_uuid: group-ns-gongyi-0000-0000-00000000001
+  en:
+    name: Утренняя Зарядка (Utrennyaya Zaryadka - Morning Exercise)
+    desc: Do morning exercises for 15 minutes.
+  zh:
+    name: Утренняя Зарядка（Utrennyaya Zaryadka - 晨练）
+    desc: 做 15 分钟晨练运动。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-zdorovie-0000-0000-000000001
+  en:
+    name: صباح النشاط (ṣabāḥ al-nashāṭ - Active Morning)
+    desc: Start the day with energy.
+  zh:
+    name: صباح النشاط（ṣabāḥ al-nashāṭ - 活力清晨）
+    desc: 充满活力地开始一天。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-zdorovie-0000-0000-000000001
+  en:
+    name: قراءة الصباح (qirāʾat al-ṣabāḥ - Morning Reading)
+    desc: Read for 15 minutes in the morning.
+  zh:
+    name: قراءة الصباح（qirāʾat al-ṣabāḥ - 晨间阅读）
+    desc: 早晨阅读 15 分钟。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-zdorovie-0000-0000-000000001
+  en:
+    name: رياضة يومية (riyāḍa yawmiyya - Daily Exercise)
+    desc: Exercise for 30 minutes.
+  zh:
+    name: رياضة يومية（riyāḍa yawmiyya - 每日运动）
+    desc: 运动 30 分钟。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-zdorovie-0000-0000-000000001
+  en:
+    name: تأمل المساء (taʾammul al-masāʾ - Evening Meditation)
+    desc: Meditate for 10 minutes at night.
+  zh:
+    name: تأمل المساء（taʾammul al-masāʾ - 晚间冥想）
+    desc: 晚间冥想 10 分钟。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-zdorovie-0000-0000-000000001
+  en:
+    name: طبخ صحي (ṭabkh ṣiḥḥī - Healthy Cooking)
+    desc: Cook a healthy meal.
+  zh:
+    name: طبخ صحي（ṭabkh ṣiḥḥī - 健康烹饪）
+    desc: 烹饪一顿健康餐。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-zdorovie-0000-0000-000000001
+  en:
+    name: نوم مبكر (nawm mubakkir - Early Sleep)
+    desc: Go to bed before 11 PM.
+  zh:
+    name: نوم مبكر（nawm mubakkir - 早睡）
+    desc: 晚上 11 点前睡觉。
+- type: 1
+  color: 7
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 40
+  strategy: sporadic_30
+  group_uuid: group-ns-zdorovie-0000-0000-000000001
+  en:
+    name: مشي المساء (mashy al-masāʾ - Evening Walk)
+    desc: Walk for 20 minutes after dinner.
+  zh:
+    name: مشي المساء（mashy al-masāʾ - 晚间散步）
+    desc: 晚饭后散步 20 分钟。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-obuchenie-0000-0000-00000001
+  en:
+    name: شرب الماء (shurb al-māʾ - Drink Water)
+    desc: Drink enough water throughout the day.
+  zh:
+    name: شرب الماء（shurb al-māʾ - 喝水）
+    desc: 全天喝足水。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-obuchenie-0000-0000-00000001
+  en:
+    name: صباح النشاط (ṣabāḥ al-nashāṭ - Active Morning)
+    desc: Start the day with energy.
+  zh:
+    name: صباح النشاط（ṣabāḥ al-nashāṭ - 活力清晨）
+    desc: 充满活力地开始一天。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-obuchenie-0000-0000-00000001
+  en:
+    name: قراءة الصباح (qirāʾat al-ṣabāḥ - Morning Reading)
+    desc: Read for 15 minutes in the morning.
+  zh:
+    name: قراءة الصباح（qirāʾat al-ṣabāḥ - 晨间阅读）
+    desc: 早晨阅读 15 分钟。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-obuchenie-0000-0000-00000001
+  en:
+    name: رياضة يومية (riyāḍa yawmiyya - Daily Exercise)
+    desc: Exercise for 30 minutes.
+  zh:
+    name: رياضة يومية（riyāḍa yawmiyya - 每日运动）
+    desc: 运动 30 分钟。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-obuchenie-0000-0000-00000001
+  en:
+    name: تأمل المساء (taʾammul al-masāʾ - Evening Meditation)
+    desc: Meditate for 10 minutes at night.
+  zh:
+    name: تأمل المساء（taʾammul al-masāʾ - 晚间冥想）
+    desc: 晚间冥想 10 分钟。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-obuchenie-0000-0000-00000001
+  en:
+    name: طبخ صحي (ṭabkh ṣiḥḥī - Healthy Cooking)
+    desc: Cook a healthy meal.
+  zh:
+    name: طبخ صحي（ṭabkh ṣiḥḥī - 健康烹饪）
+    desc: 烹饪一顿健康餐。
+- type: 1
+  color: 7
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 40
+  strategy: sporadic_30
+  group_uuid: group-ns-obuchenie-0000-0000-00000001
+  en:
+    name: نوم مبكر (nawm mubakkir - Early Sleep)
+    desc: Go to bed before 11 PM.
+  zh:
+    name: نوم مبكر（nawm mubakkir - 早睡）
+    desc: 晚上 11 点前睡觉。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-sport-0000-0000-0000000001
+  en:
+    name: בוקר טוב (boker tov - Good Morning)
+    desc: Wake up and greet the new day.
+  zh:
+    name: בוקר טוב（boker tov - 早安）
+    desc: 起床迎接新的一天。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-sport-0000-0000-0000000001
+  en:
+    name: קריאה יומית (kri'a yomit - Daily Reading)
+    desc: Read something new every day.
+  zh:
+    name: קריאה יומית（kri'a yomit - 每日阅读）
+    desc: 每天读一些新内容。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-sport-0000-0000-0000000001
+  en:
+    name: פעילות גופנית (pe'ilut gufanit - Physical Activity)
+    desc: Stay active for 30 minutes.
+  zh:
+    name: פעילות גופנית（pe'ilut gufanit - 身体活动）
+    desc: 保持活动 30 分钟。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-sport-0000-0000-0000000001
+  en:
+    name: מדיטציית בוקר (meditatsyat boker - Morning Meditation)
+    desc: Start the day with quiet reflection.
+  zh:
+    name: מדיטציית בוקר（meditatsyat boker - 晨间冥想）
+    desc: 以安静反思开始一天。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-sport-0000-0000-0000000001
+  en:
+    name: בישול בריא (bishul bari - Healthy Cooking)
+    desc: Prepare a nutritious meal.
+  zh:
+    name: בישול בריא（bishul bari - 健康烹饪）
+    desc: 准备一顿营养餐。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-sport-0000-0000-0000000001
+  en:
+    name: שינה מוקדמת (sheina mukdemet - Early Bedtime)
+    desc: Go to sleep at a reasonable hour.
+  zh:
+    name: שינה מוקדמת（sheina mukdemet - 早睡觉）
+    desc: 在合理时间入睡。
+- type: 1
+  color: 7
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 40
+  strategy: sporadic_30
+  group_uuid: group-ns-sport-0000-0000-0000000001
+  en:
+    name: הליכת ערב (halikhat erev - Evening Stroll)
+    desc: Take a relaxing evening stroll.
+  zh:
+    name: הליכת ערב（halikhat erev - 傍晚散步）
+    desc: 来一次放松的傍晚散步。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-seha-0000-0000-00000000001
+  en:
+    name: Tập Thể Dục Sáng (Tập Thể Dục Sáng - Morning Exercise)
+    desc: Exercise in the fresh morning air.
+  zh:
+    name: Tập Thể Dục Sáng（Tập Thể Dục Sáng - 晨练运动）
+    desc: 在清晨新鲜空气中运动。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-seha-0000-0000-00000000001
+  en:
+    name: Đọc Sách Mỗi Ngày (Đọc Sách Mỗi Ngày - Read Daily)
+    desc: Read a book every day.
+  zh:
+    name: Đọc Sách Mỗi Ngày（Đọc Sách Mỗi Ngày - 每日读书）
+    desc: 每天读一本书。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-seha-0000-0000-00000000001
+  en:
+    name: Thiền Định Buổi Tối (Thiền Định Buổi Tối - Evening Meditation)
+    desc: Meditate before going to sleep.
+  zh:
+    name: Thiền Định Buổi Tối（Thiền Định Buổi Tối - 晚间冥想）
+    desc: 睡前进行冥想。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-seha-0000-0000-00000000001
+  en:
+    name: Nấu Ăn Gia Đình (Nấu Ăn Gia Đình - Family Cooking)
+    desc: Cook a meal for the family.
+  zh:
+    name: Nấu Ăn Gia Đình（Nấu Ăn Gia Đình - 家庭烹饪）
+    desc: 为家人烹饪一顿饭。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-seha-0000-0000-00000000001
+  en:
+    name: Ngủ Sớm Dậy Sớm (Ngủ Sớm Dậy Sớm - Early to Bed)
+    desc: Maintain a healthy sleep routine.
+  zh:
+    name: Ngủ Sớm Dậy Sớm（Ngủ Sớm Dậy Sớm - 早睡早起）
+    desc: 保持健康的作息习惯。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-seha-0000-0000-00000000001
+  en:
+    name: Đi Bộ Công Viên (Đi Bộ Công Viên - Park Walk)
+    desc: Walk in the park for 20 minutes.
+  zh:
+    name: Đi Bộ Công Viên（Đi Bộ Công Viên - 公园散步）
+    desc: 在公园散步 20 分钟。
+- type: 1
+  color: 7
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 40
+  strategy: sporadic_30
+  group_uuid: group-ns-seha-0000-0000-00000000001
+  en:
+    name: Uống Đủ Nước (Uống Đủ Nước - Stay Hydrated)
+    desc: Drink enough water all day.
+  zh:
+    name: Uống Đủ Nước（Uống Đủ Nước - 充足饮水）
+    desc: 全天保持充足饮水。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-taalom-0000-0000-0000000001
+  en:
+    name: Aprender Cada Día (Aprender Cada Dia - Learn Every Day)
+    desc: Learn something new daily.
+  zh:
+    name: Aprender Cada Día（Aprender Cada Dia - 每日学习）
+    desc: 每天学些新东西。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-taalom-0000-0000-0000000001
+  en:
+    name: Lección de Hoy (Leksion de Oy - Today's Lesson)
+    desc: Complete today's study lesson.
+  zh:
+    name: Lección de Hoy（Leksion de Oy - 今日课程）
+    desc: 完成今天的学习课程。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-taalom-0000-0000-0000000001
+  en:
+    name: Estudiar con Calma (Estudiar con Kalma - Study Calmly)
+    desc: Study without rushing.
+  zh:
+    name: Estudiar con Calma（Estudiar con Kalma - 从容学习）
+    desc: 从容不迫地学习。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-taalom-0000-0000-0000000001
+  en:
+    name: Pratique du Français (Pratik du Franse - French Practice)
+    desc: Practice French for 20 minutes.
+  zh:
+    name: Pratique du Français（Pratik du Franse - 法语练习）
+    desc: 练习法语 20 分钟。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-taalom-0000-0000-0000000001
+  en:
+    name: Écouter la Radio (Ekuter la Radyo - Listen to Radio)
+    desc: Listen to French radio.
+  zh:
+    name: Écouter la Radio（Ekuter la Radyo - 听广播）
+    desc: 听法语广播。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-taalom-0000-0000-0000000001
+  en:
+    name: Lire un Article (Lir un Artikl - Read an Article)
+    desc: Read one French article.
+  zh:
+    name: Lire un Article（Lir un Artikl - 读文章）
+    desc: 读一篇法语文章。
+- type: 1
+  color: 7
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 40
+  strategy: sporadic_30
+  group_uuid: group-ns-taalom-0000-0000-0000000001
+  en:
+    name: Écrire en Français (Ekrir an Franse - Write in French)
+    desc: Write a short text in French.
+  zh:
+    name: Écrire en Français（Ekrir an Franse - 写法语）
+    desc: 写一段法语短文。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-briut-0000-0000-0000000001
+  en:
+    name: Genau Arbeiten (Genau Arbaiten - Work Precisely)
+    desc: Complete one task with precision.
+  zh:
+    name: Genau Arbeiten（Genau Arbaiten - 精确工作）
+    desc: 精确完成一项任务。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-briut-0000-0000-0000000001
+  en:
+    name: Sorgfältig Prüfen (Zorgfeltig Prufen - Check Carefully)
+    desc: Double-check your work.
+  zh:
+    name: Sorgfältig Prüfen（Zorgfeltig Prufen - 仔细检查）
+    desc: 仔细检查你的工作。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-briut-0000-0000-0000000001
+  en:
+    name: Ordnung Halten (Ordnung Halten - Stay Organized)
+    desc: Organize your workspace.
+  zh:
+    name: Ordnung Halten（Ordnung Halten - 保持有序）
+    desc: 整理你的工作空间。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-briut-0000-0000-0000000001
+  en:
+    name: Aprender Cada Día (Aprender Cada Dia - Learn Every Day)
+    desc: Learn something new daily.
+  zh:
+    name: Aprender Cada Día（Aprender Cada Dia - 每日学习）
+    desc: 每天学些新东西。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-briut-0000-0000-0000000001
+  en:
+    name: Lección de Hoy (Leksion de Oy - Today's Lesson)
+    desc: Complete today's study lesson.
+  zh:
+    name: Lección de Hoy（Leksion de Oy - 今日课程）
+    desc: 完成今天的学习课程。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-briut-0000-0000-0000000001
+  en:
+    name: Estudiar con Calma (Estudiar con Kalma - Study Calmly)
+    desc: Study without rushing.
+  zh:
+    name: Estudiar con Calma（Estudiar con Kalma - 从容学习）
+    desc: 从容不迫地学习。
+- type: 1
+  color: 7
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 40
+  strategy: sporadic_30
+  group_uuid: group-ns-briut-0000-0000-0000000001
+  en:
+    name: Pratique du Français (Pratik du Franse - French Practice)
+    desc: Practice French for 20 minutes.
+  zh:
+    name: Pratique du Français（Pratik du Franse - 法语练习）
+    desc: 练习法语 20 分钟。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-suckhoe-0000-0000-000000001
+  en:
+    name: Écouter la Radio (Ekuter la Radyo - Listen to Radio)
+    desc: Listen to French radio.
+  zh:
+    name: Écouter la Radio（Ekuter la Radyo - 听广播）
+    desc: 听法语广播。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-suckhoe-0000-0000-000000001
+  en:
+    name: Lire un Article (Lir un Artikl - Read an Article)
+    desc: Read one French article.
+  zh:
+    name: Lire un Article（Lir un Artikl - 读文章）
+    desc: 读一篇法语文章。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-suckhoe-0000-0000-000000001
+  en:
+    name: Écrire en Français (Ekrir an Franse - Write in French)
+    desc: Write a short text in French.
+  zh:
+    name: Écrire en Français（Ekrir an Franse - 写法语）
+    desc: 写一段法语短文。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-suckhoe-0000-0000-000000001
+  en:
+    name: Genau Arbeiten (Genau Arbaiten - Work Precisely)
+    desc: Complete one task with precision.
+  zh:
+    name: Genau Arbeiten（Genau Arbaiten - 精确工作）
+    desc: 精确完成一项任务。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-suckhoe-0000-0000-000000001
+  en:
+    name: Sorgfältig Prüfen (Zorgfeltig Prufen - Check Carefully)
+    desc: Double-check your work.
+  zh:
+    name: Sorgfältig Prüfen（Zorgfeltig Prufen - 仔细检查）
+    desc: 仔细检查你的工作。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-suckhoe-0000-0000-000000001
+  en:
+    name: Ordnung Halten (Ordnung Halten - Stay Organized)
+    desc: Organize your workspace.
+  zh:
+    name: Ordnung Halten（Ordnung Halten - 保持有序）
+    desc: 整理你的工作空间。
+- type: 1
+  color: 7
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 40
+  strategy: sporadic_30
+  group_uuid: group-ns-suckhoe-0000-0000-000000001
+  en:
+    name: Aprender Cada Día (Aprender Cada Dia - Learn Every Day)
+    desc: Learn something new daily.
+  zh:
+    name: Aprender Cada Día（Aprender Cada Dia - 每日学习）
+    desc: 每天学些新东西。
+- type: 1
+  color: 1
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 70
+  strategy: consistent_85
+  group_uuid: group-ns-educacion-0000-0000-0000001
+  en:
+    name: İstanbul'da Yürüyüş (Istanbulda Yuruyus - Walk in İstanbul)
+    desc: Walk along the Bosphorus.
+  zh:
+    name: İstanbul'da Yürüyüş（Istanbulda Yuruyus - 伊斯坦布尔散步）
+    desc: 沿博斯普鲁斯海峡散步。
+- type: 1
+  color: 2
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 65
+  strategy: consistent_90
+  group_uuid: group-ns-educacion-0000-0000-0000001
+  en:
+    name: Kahvaltı Keyfi (Kahvalti Keyfi - Breakfast Joy)
+    desc: Enjoy a proper Turkish breakfast.
+  zh:
+    name: Kahvaltı Keyfi（Kahvalti Keyfi - 早餐时光）
+    desc: 享受一顿正宗土耳其早餐。
+- type: 1
+  color: 3
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 60
+  strategy: improving_5080
+  group_uuid: group-ns-educacion-0000-0000-0000001
+  en:
+    name: Akşam Çayı (Aksam Cayi - Evening Tea)
+    desc: Relax with a cup of evening tea.
+  zh:
+    name: Akşam Çayı（Aksam Cayi - 晚间茶饮）
+    desc: 喝杯晚茶放松一下。
+- type: 2
+  color: 4
+  daily_goal: 0
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 55
+  strategy: variable_70
+  group_uuid: group-ns-educacion-0000-0000-0000001
+  en:
+    name: Kitap Okumak (Kitap Okumak - Read a Book)
+    desc: Read a chapter of a good book.
+  zh:
+    name: Kitap Okumak（Kitap Okumak - 读书）
+    desc: 读一章好书。
+- type: 1
+  color: 5
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 50
+  strategy: recent_95
+  group_uuid: group-ns-educacion-0000-0000-0000001
+  en:
+    name: Erken Kalkmak (Erken Kalkmak - Wake Up Early)
+    desc: Wake up with the sunrise.
+  zh:
+    name: Erken Kalkmak（Erken Kalkmak - 早起）
+    desc: 日出时分起床。
+- type: 1
+  color: 6
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 45
+  strategy: curve_up
+  group_uuid: group-ns-educacion-0000-0000-0000001
+  en:
+    name: Spor Yapmak (Spor Yapmak - Do Sports)
+    desc: Exercise for 30 minutes.
+  zh:
+    name: Spor Yapmak（Spor Yapmak - 运动锻炼）
+    desc: 锻炼 30 分钟。
+- type: 1
+  color: 7
+  daily_goal: 1
+  daily_goal_unit: 次
+  target_days: 66
+  days_back: 40
+  strategy: sporadic_30
+  group_uuid: group-ns-educacion-0000-0000-0000001
+  en:
+    name: Dua ve Şükür (Dua ve Şukur - Prayer & Gratitude)
+    desc: Practice daily gratitude.
+  zh:
+    name: Dua ve Şükür（Dua ve Şukur - 祈祷感恩）
+    desc: 练习每日感恩。

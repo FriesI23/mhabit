@@ -19,7 +19,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.26.1+174
+version: 1.26.4+177-pre
 
 environment:
   sdk: ">=3.11.0 <4.0.0"
@@ -58,8 +58,9 @@ melos:
           --concurrency=1 \
           -- "dart format ."
     build-runner:
-      description: Run build_runner generators and gen-l10n.
+      description: Run build_runner generators, pigeon, and gen-l10n.
       steps:
+        - dart run pigeon --input pigeons/collation.dart
         - flutter pub run build_runner build --delete-conflicting-outputs
         - flutter gen-l10n
     fix:
@@ -188,6 +189,9 @@ dependencies:
   vector_graphics: ^1.2.2
   csv: ^8.0.0
 
+  # FFI (Linux collation)
+  ffi: ^2.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -207,6 +211,7 @@ dev_dependencies:
   # Code Generation
   analyzer: ^10.0.1
   build_runner: ^2.3.3
+  pigeon: ^26.0.0
   mhabit_color_builder: any
   mhabit_proxy_builder: any
   copy_with_extension_gen: ^15.0.1
@@ -221,6 +226,13 @@ dev_dependencies:
   flutter_native_splash: ^2.4.4
   melos: ^7.8.0
   msix: ^3.16.8
+
+# FIXME: jni >= 1.0.1 added global_jni_env.c which casts va_list ↔ void*, valid
+# on x86_64 (va_list is char*) but a hard error on ARM64 where va_list is a
+# struct.  Tracked at https://github.com/dart-lang/native/issues/3498.
+# Drop this once a fixed jni ships.
+dependency_overrides:
+  jni: 1.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -131,7 +131,10 @@ class ConfirmDialog extends StatelessWidget {
           ? Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [?subtitle, ?leadingAction],
+              children: [
+                if (subtitle != null) Flexible(child: subtitle!),
+                ?leadingAction,
+              ],
             )
           : null,
       actions: [

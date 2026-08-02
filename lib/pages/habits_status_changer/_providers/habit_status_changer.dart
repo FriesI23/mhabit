@@ -26,16 +26,45 @@ import '../../../common/utils.dart';
 import '../../../extensions/iterable_extensions.dart';
 import '../../../logging/helper.dart';
 import '../../../logging/logger_stack.dart';
+import '../../../models/app_event.dart';
 import '../../../models/habit_daily_record_form.dart';
 import '../../../models/habit_date.dart';
 import '../../../models/habit_form.dart';
 import '../../../models/habit_repo_actions.dart';
 import '../../../models/habit_summary.dart';
+import '../../../pages/common/widgets.dart';
 import '../../../providers/support/commons.dart';
 import '../../../providers/support/page_load_runtime.dart';
+import '../../../providers/workflow/app_event.dart';
 import '../../../providers/workflow/habits_manager.dart';
 
 part 'habit_status_changer.g.dart';
+
+extension on AppEventSubscriptions {
+  static const _kStatusChangerSavedTrace = {
+    AppEventPageSource.habitStatusChanger: {
+      AppEventFunctionSource.recordChanged,
+    },
+  };
+
+  /// Pushes a [HabitRecordsChangedEvent] for the status-changer save
+  /// operation, triggering cross-view refresh and sync.
+  void pushRecordsSaved({
+    required List<HabitUUID> uuidList,
+    required List<HabitRecordDate> dateList,
+    required HabitRecordStatus status,
+    String? reason,
+  }) => push(
+    HabitRecordsChangedEvent(
+      msg: "habit_status_changer.confirm.pressed",
+      uuidList: uuidList,
+      dateList: dateList,
+      status: status,
+      reason: reason,
+      trace: _kStatusChangerSavedTrace,
+    ),
+  );
+}
 
 enum RecordStatusChangerStatus {
   skip,
@@ -59,7 +88,11 @@ enum RecordStatusChangerStatus {
 
 class HabitStatusChangerViewModel
     with ChangeNotifier
-    implements ProviderMounted {
+    implements
+        ProviderMounted,
+        PopScopeHandler,
+        AppEventLoaded,
+        AppEventSubscriber {
   // data
   final List<HabitUUID> _selectedUUIDList;
   late HabitStatusChangerForm _form;
@@ -73,6 +106,7 @@ class HabitStatusChangerViewModel
   // sync from setting
   int _firstday = defaultFirstDay;
   late HabitStatusChangerAccess _access;
+  AppEventSubscriptions? _eventSubs;
 
   HabitStatusChangerViewModel({required List<HabitUUID> uuidList})
     : _selectedUUIDList = uuidList {
@@ -82,6 +116,30 @@ class HabitStatusChangerViewModel
   void attachAccess(HabitStatusChangerAccess newAccess) {
     _access = newAccess;
   }
+
+  @override
+  void updateAppEvent(AppEventBus newAppEvent) {
+    _eventSubs?.cancelAll();
+    _eventSubs = AppEventSubscriptions(this, newAppEvent);
+    // NOTE: This VM is an event producer only — it pushes events
+    // via _eventSubs but does not react to any incoming events.
+    // handleEvent returns null for all types, so no subscribe<>()
+    // calls are needed. shouldReceive / handleEvent exist only
+    // to satisfy the AppEventSubscriber contract.
+  }
+
+  @override
+  bool shouldReceive(AppEvent event) =>
+      !event.isInTrace(AppEventPageSource.habitStatusChanger);
+
+  @override
+  void handleEvent(AppEvent event) => switch (event) {
+    ReloadDataEvent() ||
+    HabitDataChangedEvent() ||
+    HabitStatusChangedEvent() ||
+    HabitRecordsChangedEvent() ||
+    GroupChangedEvent() => null,
+  };
 
   bool get hasLoad => _pageLoad.hasLoad;
 
@@ -196,6 +254,9 @@ class HabitStatusChangerViewModel
     return _form.selectStatus != null &&
         _form.selectStatus != getDefaultChangerStatus(_form);
   }
+
+  @override
+  bool get canPop => !canSave;
 
   Iterable<HabitSummaryRecord> get selectDateRecords => _habitDataController
       .habits
@@ -319,9 +380,17 @@ class HabitStatusChangerViewModel
         habit.reCalculateAutoComplateRecords(firstDay: firstday);
       },
     );
-    if (!mounted) return 0;
+    if (!mounted || records.isEmpty) return 0;
 
     requestReloadData();
+    _eventSubs?.pushRecordsSaved(
+      uuidList: records.map((r) => r.habit.uuid).toList(),
+      dateList: records.map((r) => r.data.date).toList(),
+      status: records.first.data.status,
+      reason: selectStatus == RecordStatusChangerStatus.skip
+          ? skipReason
+          : null,
+    );
     if (listen) notifyListeners();
     return records.length;
   }
@@ -341,6 +410,7 @@ class HabitStatusChangerViewModel
   @override
   void dispose() {
     if (!_mounted) return;
+    _eventSubs?.cancelAll();
     _pageLoad.cancel(logName: "$runtimeType._cancelLoading");
     super.dispose();
     _mounted = false;

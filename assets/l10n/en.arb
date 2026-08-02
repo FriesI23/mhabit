@@ -813,6 +813,16 @@
     "@appSetting_changeLanguageTile_titleText": {},
     "appSetting_changeLanguageDialog_titleText": "Select Language",
     "@appSetting_changeLanguageDialog_titleText": {},
+    "appSetting_languageSubgroupText": "Language",
+    "@appSetting_languageSubgroupText": {},
+    "appSetting_openSystemLanguageTile_titleText": "System Language Settings",
+    "@appSetting_openSystemLanguageTile_titleText": {},
+    "appSetting_openSystemLanguageTile_dialogTitle": "Open System Language Settings",
+    "@appSetting_openSystemLanguageTile_dialogTitle": {},
+    "appSetting_openSystemLanguageTile_macosDialogContent": "Due to macOS limitations, the app language cannot be changed directly. To switch languages, follow these steps:\n\n1. Open **System Settings > General > Language & Region**\n2. Add this app in the **Applications** list and choose a language",
+    "@appSetting_openSystemLanguageTile_macosDialogContent": {
+        "description": "Dialog subtitle rendered as Markdown via markdown_widget. Supports **bold** syntax and numbered lists (1. ...). See https://commonmark.org/help/ for supported Markdown features."
+    },
     "appSetting_dateDisplayFormat_titleText": "Date display format ({formatTemplate})",
     "@appSetting_dateDisplayFormat_titleText": {
         "placeholders": {

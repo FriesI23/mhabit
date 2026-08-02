@@ -28,3 +28,18 @@ jobs:
         with:
           name: flutter-unittest-result
           path: test_report.log
+
+  android-test:
+    name: Android Unit Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup_flutter
+      - uses: ./.github/actions/setup_jdk
+      - name: Run Android unit tests
+        run: cd android && ./gradlew :app:testF_genericDebugUnitTest --console=plain
+      - uses: actions/upload-artifact@v7
+        if: success() || failure()
+        with:
+          name: android-unittest-xml
+          path: build/app/test-results/testF_genericDebugUnitTest/TEST-*.xml

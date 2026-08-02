@@ -39,7 +39,7 @@ SYNC_RULES_FILE ?= docs/rules/rules.md
 .PHONY: help init bootstrap \
 	normalize-l10n build-runner format fix gen-icons test gen \
 	verify-generated verify-submodules aio aio-full sync-rules unsync-rules \
-	gen-screenshot-data
+	gen-screenshot-data gen-natural-sort-data
 
 help:
 	@echo Standardized automation entrypoints
@@ -51,14 +51,15 @@ help:
 	@echo   format            Format Dart sources under lib and test
 	@echo   fix               Apply Dart fixes and then format sources
 	@echo   gen-icons         Generate icon fonts
-	@echo   test              Run the root app and internal package test suites
+	@echo   test              Run the root app, internal package, and Android native test suites
 	@echo   gen               Run the main generation workflow
 	@echo   verify-generated  Ensure normalized/generated files are up to date
 	@echo   verify-submodules Show recursive submodule status
 	@echo   aio               Run generation, fixes, and generation verification
 	@echo   aio-full          Run aio plus the root app and internal package test suites
 	@echo "  sync-rules        Distribute rule references to AI tools (SYNC_RULES_FILE=docs/rules/rules.md)"
-	@echo "  gen-screenshot-data  Generate seed JSON for screenshots (all langs)"
+	@echo "  gen-screenshot-data    Generate seed JSON for screenshots (all langs, default config)"
+	@echo "  gen-natural-sort-data  Generate seed JSON for natural-sort testing (zh+en, 39 groups)"
 
 init:
 	@git config --local core.hooksPath .githooks
@@ -95,6 +96,7 @@ gen-icons:
 
 test:
 	@$(MELOS) run test
+	@cd android && ./gradlew :app:testF_genericDebugUnitTest --console=plain
 
 gen:
 	@$(SUBMAKE) normalize-l10n
@@ -112,6 +114,11 @@ unsync-rules:
 
 gen-screenshot-data:
 	@$(LOCAL_DART) run tools/bin/gen_screenshot_data.dart --all-langs
+
+gen-natural-sort-data:
+	@$(LOCAL_DART) run tools/bin/gen_screenshot_data.dart \
+		--config tools/config/screenshot_seed_natural_sort.yaml \
+		--all-langs --no-repeat
 
 aio:
 	@$(SUBMAKE) gen

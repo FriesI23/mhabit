@@ -1,0 +1,2 @@
+- Feature: add habit-count sort, manual sort with drag reorder, and group management interaction upgrades (#621)
+- Update translations, thanks to Weblate contributors (#620, #622)
