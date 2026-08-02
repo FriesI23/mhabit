@@ -43,6 +43,8 @@ If stable-vs-pre/beta or mode (ask/plan/execute) not stated → ask via interact
 | R4 | Stage 1: only `release_bump.{sh,cmd}`. No direct `pubspec.yaml`/`flutter`/`make`. Fail → surface verbatim. Fallback only if script can't run. |
 | R5 | Stage 2: delegate to `mhabit-release-notes` Execute Mode. Stable + beta both get `CHANGELOG.md`/`zh.md`. That prompt owns deleting superseded `-pre` sections. |
 | R5a | **Changelog sort order**: after merging entries (stable supersedes `-pre`), sort by category: **Feature → Fix → Other**. Within each category, sort by PR# ascending; entries without PR# sort after those with. |
+| R5b | **Changelog content** (`CHANGELOG.md`/`zh.md` only, not `docs/release.md`): merge refactoring → business summaries (users don't care about widget/event-bus internals). No platform keywords (`android\|windows\|linux\|ios\|macos`) — use business terms. Keep concise for store char limits. |
+| R5c | **Translation format** in `docs/release.md`: `Update <lang> translation, thanks to <name>'s contribution on Weblate`. Template: `.github/PULL_REQUEST_TEMPLATE/weblate.md`. |
 | R6 | Stage 3: only `release_postgen.{sh,cmd} --release\|--pre`. No direct `gen_*.sh`. Then verify paths. Fallback only if script can't run. |
 | R7 | **Stage 3 recovery**: if validate warnings appear (length>500, platform keywords), **never accept skips**. |
 | R7a | Run generator py scripts **without `--validate`** to get raw files. |
