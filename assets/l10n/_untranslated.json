@@ -1880,24 +1880,10 @@
   ],
 
   "he": [
-    "habitDisplay_groupType_habitCount",
-    "habitDisplay_groupModifyConfirm_bodyAddStat",
-    "habitDisplay_groupModifyConfirm_bodyRemoveStat",
-    "habitDisplay_groupModify_snackbarText",
-    "habitDisplay_groupModify_snackbarTextRemoved",
-    "appSetting_expandTimerDelayTile_subtitleText",
     "appSetting_languageSubgroupText",
     "appSetting_openSystemLanguageTile_titleText",
     "appSetting_openSystemLanguageTile_dialogTitle",
-    "appSetting_openSystemLanguageTile_macosDialogContent",
-    "appSetting_thirdPartyImport_provider_versionHint",
-    "groupManage_deleteDialog_content",
-    "groupManage_nameTooLong",
-    "groupManage_descTooLong",
-    "groupManage_reorder_tooltip",
-    "groupHeader_menu_manage",
-    "groupHeader_menu_collapseAll",
-    "groupHeader_menu_expandAll"
+    "appSetting_openSystemLanguageTile_macosDialogContent"
   ],
 
   "hu": [

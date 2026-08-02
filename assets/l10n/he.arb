@@ -287,6 +287,7 @@
     "habitDisplay_groupType_name": "לפי שם",
     "habitDisplay_groupType_colorType": "לפי צבע",
     "habitDisplay_groupType_createDate": "לפי תאריך יצירה",
+    "habitDisplay_groupType_habitCount": "לפי כמות הרגלים",
     "habitDisplay_groupTypeDialog_title": "מיון בתוך הקבוצה",
     "habitDisplay_groupTypeDialog_confirm": "אישור",
     "habitDisplay_groupTypeDialog_cancel": "ביטול",
@@ -327,7 +328,51 @@
             }
         }
     },
+    "habitDisplay_groupModifyConfirm_bodyAddStat": "{count, plural, =1 {הרגל ללא קבוצה יתווסף לקבוצה „{toGroup}”} other {{count} הרגלים ללא קבוצה יתווספו לקבוצה „{toGroup}”}}",
+    "@habitDisplay_groupModifyConfirm_bodyAddStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits being added"
+            },
+            "toGroup": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyRemoveStat": "{count, plural, =1 {הקבוצה של ההרגל תימחק} other {הקבוצה של {count} הרגלים תימחק}}",
+    "@habitDisplay_groupModifyConfirm_bodyRemoveStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits being removed"
+            }
+        }
+    },
     "habitDisplay_groupModifyConfirm_nameSeparator": ",‏ ",
+    "habitDisplay_groupModify_snackbarText": "{count, plural, =1 {ההרגל הועבר לקבוצה „{groupName}”} other {{count} הרגלים הועברו לקבוצה „{groupName}”}}",
+    "@habitDisplay_groupModify_snackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of modified habits"
+            },
+            "groupName": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModify_snackbarTextRemoved": "{count, plural, =1 {בוטל שיוך ההרגל לקבוצה} other {בוטל השיוך של {count} הרגלים לקבוצה}}",
+    "@habitDisplay_groupModify_snackbarTextRemoved": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits"
+            }
+        }
+    },
     "habitDisplay_groupModify_undoFailed": "הקבוצה השתנתה במקום אחר, לא ניתן להחזיר לאחור",
     "habitDisplay_sort_reverseText": "היפוך",
     "habitDisplay_sortDirection_asc": "(עולה)",
@@ -541,6 +586,7 @@
     "@appSetting_expandTimerDelayTile_titleText": {
         "description": "Title for the group expand timer delay setting tile"
     },
+    "appSetting_expandTimerDelayTile_subtitleText": "הגדרת משך הזמן של ריחוף מעל כותרות קבוצה לפני שהן ייפתחו אוטומטית במהלך גרירה ושחרור של הרגלים.",
     "appSetting_expandTimerDelay_default": "ברירת מחדל",
     "appSetting_expandTimerDelay_fast": "מהיר",
     "appSetting_expandTimerDelay_slow": "איטי",
@@ -594,6 +640,7 @@
     "appSetting_thirdPartyImport_titleText": "ייבוא מצד שלישי",
     "appSetting_thirdPartyImport_subtitleText": "ייבוא הרגלים מיישומים אחרים למעקב הרגלים",
     "appSetting_thirdPartyImport_provider_loopName": "‏„Loop” לניהול הרגלים",
+    "appSetting_thirdPartyImport_provider_versionHint": "יש תמיכה ב־CSV (נבדקה בצמוד ל־<‎/ver‏>)",
     "appSetting_importDialog_confirmTitle": "לאשר את הייבוא של {count} הרגלים?",
     "@appSetting_importDialog_confirmTitle": {
         "placeholders": {
@@ -1291,6 +1338,16 @@
     "@groupManage_deleteDialog_title": {
         "description": "Title for the delete confirmation dialog"
     },
+    "groupManage_deleteDialog_content": "{count, plural, =1 {ההרגלים בקבוצה זו לא יהיו משויכים לאף קבוצה.} other {ההרגלים ב־{count} הקבוצות האלה לא יהיו משויכים לאף קבוצה.}}",
+    "@groupManage_deleteDialog_content": {
+        "description": "Content body for the delete confirmation dialog",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of groups being deleted"
+            }
+        }
+    },
     "groupManage_deleteDialog_confirm": "מחיקה",
     "@groupManage_deleteDialog_confirm": {
         "description": "Confirm button text for delete dialog"
@@ -1319,6 +1376,15 @@
     "@groupManage_nameRequired": {
         "description": "Validation error when group name is empty"
     },
+    "groupManage_nameTooLong": "על שמות להיות באורך ≤ {max} תווים",
+    "@groupManage_nameTooLong": {
+        "description": "Validation error when group name exceeds max length",
+        "placeholders": {
+            "max": {
+                "type": "int"
+            }
+        }
+    },
     "groupManage_name_label": "שם",
     "@groupManage_name_label": {
         "description": "Label for the group name input field"
@@ -1326,6 +1392,15 @@
     "groupManage_desc_label": "תיאור",
     "@groupManage_desc_label": {
         "description": "Label for the group description input field"
+    },
+    "groupManage_descTooLong": "על תיאורים להיות באורך ≤ {max} תווים",
+    "@groupManage_descTooLong": {
+        "description": "Validation warning when group description exceeds recommended length",
+        "placeholders": {
+            "max": {
+                "type": "int"
+            }
+        }
     },
     "groupManage_sortTile_text": "מיון קבוצות",
     "@groupManage_sortTile_text": {
@@ -1359,6 +1434,10 @@
     "@groupManage_color_none": {
         "description": "Tooltip for the 'no color' option in the group color picker"
     },
+    "groupManage_reorder_tooltip": "סידור קבוצות מחדש",
+    "@groupManage_reorder_tooltip": {
+        "description": "Tooltip for the reorder button that enters manual sort + selection mode"
+    },
     "groupManage_menu_edit": "עריכה",
     "@groupManage_menu_edit": {
         "description": "Menu item label for editing a group"
@@ -1371,11 +1450,23 @@
     "@groupManage_selectAll": {
         "description": "Button in selection mode AppBar to select or deselect all groups"
     },
+    "groupHeader_menu_manage": "ניהול",
+    "@groupHeader_menu_manage": {
+        "description": "Menu item on Group header long-press to navigate to the group management page"
+    },
+    "groupHeader_menu_collapseAll": "לצמצם הכול",
+    "@groupHeader_menu_collapseAll": {
+        "description": "Menu item on Group header long-press to collapse all groups"
+    },
+    "groupHeader_menu_expandAll": "להרחיב הכול",
+    "@groupHeader_menu_expandAll": {
+        "description": "Menu item on Group header long-press to expand all groups"
+    },
     "appSetting_manageGroups_subtitleText": "יצירה, עריכה ומחיקה של קבוצות הרגלים",
     "@appSetting_manageGroups_subtitleText": {
         "description": "Subtitle for the Manage Groups tile in Settings"
     },
-    "habitDisplay_groupType_manual": "סדר מותאם אישית",
+    "habitDisplay_groupType_manual": "ידני",
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
     }

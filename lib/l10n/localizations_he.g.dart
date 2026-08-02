@@ -412,7 +412,7 @@ class L10nHe extends L10n {
   String get habitDisplay_groupType_createDate => 'לפי תאריך יצירה';
 
   @override
-  String get habitDisplay_groupType_habitCount => 'By Habit Count';
+  String get habitDisplay_groupType_habitCount => 'לפי כמות הרגלים';
 
   @override
   String get habitDisplay_groupTypeDialog_title => 'מיון בתוך הקבוצה';
@@ -486,8 +486,8 @@ class L10nHe extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count uncategorized habits will be added to \"$toGroup\"',
-      one: '$count uncategorized habit will be added to \"$toGroup\"',
+      other: '$count הרגלים ללא קבוצה יתווספו לקבוצה „$toGroup”',
+      one: 'הרגל ללא קבוצה יתווסף לקבוצה „$toGroup”',
     );
     return '$_temp0';
   }
@@ -497,8 +497,8 @@ class L10nHe extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count habits will have their groups removed',
-      one: '$count habit will have its group removed',
+      other: 'הקבוצה של $count הרגלים תימחק',
+      one: 'הקבוצה של ההרגל תימחק',
     );
     return '$_temp0';
   }
@@ -511,8 +511,8 @@ class L10nHe extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Moved $count habits to \"$groupName\"',
-      one: 'Moved habit to \"$groupName\"',
+      other: '$count הרגלים הועברו לקבוצה „$groupName”',
+      one: 'ההרגל הועבר לקבוצה „$groupName”',
     );
     return '$_temp0';
   }
@@ -522,8 +522,8 @@ class L10nHe extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Removed groups from $count habits',
-      one: 'Removed group from habit',
+      other: 'בוטל השיוך של $count הרגלים לקבוצה',
+      one: 'בוטל שיוך ההרגל לקבוצה',
     );
     return '$_temp0';
   }
@@ -900,7 +900,7 @@ class L10nHe extends L10n {
 
   @override
   String get appSetting_expandTimerDelayTile_subtitleText =>
-      'Set how long to hover over a collapsed group header before it auto-expands during drag-and-drop.';
+      'הגדרת משך הזמן של ריחוף מעל כותרות קבוצה לפני שהן ייפתחו אוטומטית במהלך גרירה ושחרור של הרגלים.';
 
   @override
   String get appSetting_expandTimerDelay_default => 'ברירת מחדל';
@@ -1040,7 +1040,7 @@ class L10nHe extends L10n {
 
   @override
   String get appSetting_thirdPartyImport_provider_versionHint =>
-      'Supports CSV (tested up to <ver/>)';
+      'יש תמיכה ב־CSV (נבדקה בצמוד ל־<‎/ver‏>)';
 
   @override
   String appSetting_importDialog_confirmTitle(int count) {
@@ -2101,8 +2101,8 @@ class L10nHe extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Habits in these $count groups will become uncategorized.',
-      one: 'Habits in this group will become uncategorized.',
+      other: 'ההרגלים ב־$count הקבוצות האלה לא יהיו משויכים לאף קבוצה.',
+      one: 'ההרגלים בקבוצה זו לא יהיו משויכים לאף קבוצה.',
     );
     return '$_temp0';
   }
@@ -2130,7 +2130,7 @@ class L10nHe extends L10n {
 
   @override
   String groupManage_nameTooLong(int max) {
-    return 'Name must be ≤ $max characters';
+    return 'על שמות להיות באורך ≤ $max תווים';
   }
 
   @override
@@ -2141,7 +2141,7 @@ class L10nHe extends L10n {
 
   @override
   String groupManage_descTooLong(int max) {
-    return 'Description should be ≤ $max characters';
+    return 'על תיאורים להיות באורך ≤ $max תווים';
   }
 
   @override
@@ -2169,7 +2169,7 @@ class L10nHe extends L10n {
   String get groupManage_color_none => 'ללא';
 
   @override
-  String get groupManage_reorder_tooltip => 'Reorder groups';
+  String get groupManage_reorder_tooltip => 'סידור קבוצות מחדש';
 
   @override
   String get groupManage_menu_edit => 'עריכה';
@@ -2181,18 +2181,18 @@ class L10nHe extends L10n {
   String get groupManage_selectAll => 'לבחור הכול';
 
   @override
-  String get groupHeader_menu_manage => 'Manage';
+  String get groupHeader_menu_manage => 'ניהול';
 
   @override
-  String get groupHeader_menu_collapseAll => 'Collapse all';
+  String get groupHeader_menu_collapseAll => 'לצמצם הכול';
 
   @override
-  String get groupHeader_menu_expandAll => 'Expand all';
+  String get groupHeader_menu_expandAll => 'להרחיב הכול';
 
   @override
   String get appSetting_manageGroups_subtitleText =>
       'יצירה, עריכה ומחיקה של קבוצות הרגלים';
 
   @override
-  String get habitDisplay_groupType_manual => 'סדר מותאם אישית';
+  String get habitDisplay_groupType_manual => 'ידני';
 }
