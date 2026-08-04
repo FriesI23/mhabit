@@ -1469,5 +1469,6 @@
     "habitDisplay_groupType_manual": "ידני",
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
-    }
+    },
+    "appSetting_languageSubgroupText": "שפה"
 }
