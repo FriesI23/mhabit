@@ -1470,5 +1470,11 @@
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
     },
-    "appSetting_languageSubgroupText": "שפה"
+    "appSetting_languageSubgroupText": "שפה",
+    "appSetting_openSystemLanguageTile_titleText": "הגדרות שפת המערכת",
+    "appSetting_openSystemLanguageTile_dialogTitle": "פתיחת הגדרות שפת המערכת",
+    "appSetting_openSystemLanguageTile_macosDialogContent": "בשל המגבלות של macOS, לא ניתן לשנות את שפת היישום ישירות. בשביל לעבור בין שפות, יש למלא אחר השלבים הבאים:\n\n1. יש לפתוח את **הגדרות מערכת > כללי > שפה ואזור**\n2. יש להוסיף את היישום הזה תחת הרשימה **יישומים** ולבחור שפה",
+    "@appSetting_openSystemLanguageTile_macosDialogContent": {
+        "description": "Dialog subtitle rendered as Markdown via markdown_widget. Supports **bold** syntax and numbered lists (1. ...). See https://commonmark.org/help/ for supported Markdown features."
+    }
 }
