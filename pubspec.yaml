@@ -90,16 +90,16 @@ mhabit_color_builder:
     light_primary_tone: 56
     dark_primary_tone: 80
     colors:
-      cc1: '0xFF6750A4'
-      cc2: '0xFFF44336'
-      cc3: '0xFF9C27B0'
-      cc4: '0xFF3F51B5'
-      cc5: '0xFF009688'
-      cc6: '0xFF4CAF50'
-      cc7: '0xFFFFC107'
-      cc8: '0xFFFF9800'
-      cc9: '0xFF8BC34A'
-      cc10: '0xFF673AB7'
+      cc1: "0xFF6750A4"
+      cc2: "0xFFF44336"
+      cc3: "0xFF9C27B0"
+      cc4: "0xFF3F51B5"
+      cc5: "0xFF009688"
+      cc6: "0xFF4CAF50"
+      cc7: "0xFFFFC107"
+      cc8: "0xFFFF9800"
+      cc9: "0xFF8BC34A"
+      cc10: "0xFF673AB7"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -211,14 +211,13 @@ dev_dependencies:
   # Code Generation
   analyzer: ^10.0.1
   build_runner: ^2.3.3
-  pigeon: ^26.0.0
+  pigeon: ^27.3.0
   mhabit_color_builder: any
   mhabit_proxy_builder: any
   copy_with_extension_gen: ^15.0.1
   flutter_gen: ^5.2.0
   flutter_gen_runner: ^5.2.0
   json_serializable: ^6.6.1
-
 
   # Utilities
   package_rename: ^1.2.0
