@@ -17,12 +17,5 @@ import UserNotifications
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
-
-    // Register native collation host API (Parse 3: iOS).
-    if let engine = engineBridge.pluginRegistry as? FlutterEngine {
-      CollationHostApiSetup.setUp(
-        binaryMessenger: engine.binaryMessenger,
-        api: CollationPlugin())
-    }
   }
 }

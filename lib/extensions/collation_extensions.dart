@@ -12,115 +12,70 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:async';
-import 'dart:io';
+import 'dart:ui' show Locale;
 
-import 'package:flutter/foundation.dart';
+import 'package:native_natural_sort/native_natural_sort.dart';
 
-import '../common/collation.dart';
-import '../common/collation_ffi_windows.dart';
-
-/// Sorts [items] by their position in [rankedIds].
-///
-/// Items whose ids are not in [rankedIds] (e.g. added during the async
-/// gap) fall back to [valueOf] → [Comparable.compareTo].
-@visibleForTesting
-List<T> sortByRank<T>({
-  required List<T> items,
-  required List<String> rankedIds,
-  required String Function(T) idOf,
-  required String Function(T) valueOf,
-  bool descending = false,
-}) {
-  final rank = <String, int>{};
-  for (var i = 0; i < rankedIds.length; i++) {
-    rank[rankedIds[i]] = i;
-  }
-
-  final sorted = items.toList()
-    ..sort((a, b) {
-      final ra = rank[idOf(a)];
-      final rb = rank[idOf(b)];
-      if (ra != null && rb != null) return ra.compareTo(rb);
-      if (ra != null) return -1;
-      if (rb != null) return 1;
-      return valueOf(a).compareTo(valueOf(b));
-    });
-
-  return descending ? sorted.reversed.toList() : sorted;
+/// Parses a BCP-47 language tag (e.g. "zh", "zh-CN") into a [Locale].
+Locale? _parseLocale(String? tag) {
+  if (tag == null || tag.isEmpty) return null;
+  final parts = tag.split('-');
+  return switch (parts.length) {
+    1 => Locale(parts[0]),
+    >= 2 => Locale(parts[0], parts[1]),
+    _ => null,
+  };
 }
 
-/// Extension that provides native-collation sorting on [CollationApi].
+/// Thin wrapper around [NativeSort] from the native_natural_sort package.
 ///
-/// Dispatch: sync FFI on Linux; sync FFI on Windows (falling back to the
-/// async MethodChannel when the system ICU is missing); async
-/// MethodChannel on other platforms.
-extension CollationApiNaturalSort on CollationApi {
+/// All platform-specific dispatch (Android Collator, iOS/macOS
+/// localizedStandardCompare, Linux FFI→ICU, Windows CompareStringEx/FFI)
+/// is handled by the package.  This extension provides the generic
+/// [naturalSort] method used by the habit-display sorter.
+extension NaturalSortExtension on NativeSort {
   /// Sorts [items] by native collation order.
   ///
   /// [idOf] is the stable identifier used for ordering and tie-breaking;
   /// [valueOf] is the string whose collation order determines position.
   ///
-  /// Returns synchronously on Linux and Windows (FFI), and a [Future] on
-  /// other platforms (async MethodChannel).  Linux is FFI-only — callers
-  /// own the fallback when the engine is unavailable.
-  FutureOr<List<T>> naturalSort<T>({
+  /// Returns a [Future] that completes with the sorted list.  Empty
+  /// input is returned immediately without calling into the platform.
+  Future<List<T>> naturalSort<T>({
     required List<T> items,
     required String Function(T) idOf,
     required String Function(T) valueOf,
     bool descending = false,
     String? locale,
-  }) {
+  }) async {
     if (items.isEmpty) return items;
 
-    if (Platform.isLinux) {
-      // Linux is FFI-only; callers own the fallback.
-      return collationSortFfiLinux(
-        items: items,
-        idOf: idOf,
-        valueOf: valueOf,
-        descending: descending,
-        locale: locale,
-      );
-    }
+    final sortItems = items
+        .map((e) => SortItem(id: idOf(e), value: valueOf(e)))
+        .toList();
 
-    if (Platform.isWindows) {
-      // Fall back to the async platform channel when system ICU is missing.
-      if (IcuCollationWindows.available) {
-        return collationSortFfiWindows(
-          items: items,
-          idOf: idOf,
-          valueOf: valueOf,
-          descending: descending,
-          locale: locale,
-        );
-      }
-      return _naturalSortAsync(items, idOf, valueOf, descending, locale);
-    }
-
-    return _naturalSortAsync(items, idOf, valueOf, descending, locale);
-  }
-
-  Future<List<T>> _naturalSortAsync<T>(
-    List<T> items,
-    String Function(T) idOf,
-    String Function(T) valueOf,
-    bool descending,
-    String? locale,
-  ) async {
-    final request = CollationRequest(
-      items: items
-          .map((e) => CollationItem(id: idOf(e), value: valueOf(e)))
-          .toList(),
-      locale: locale,
+    final sorted = await sort(
+      sortItems,
+      direction: descending
+          ? SortDirection.descending
+          : SortDirection.ascending,
+      locale: _parseLocale(locale),
     );
-    final sortedIds = await sortStrings(request);
-    return sortByRank(
-      items: items,
-      rankedIds: sortedIds,
-      idOf: idOf,
-      valueOf: valueOf,
-      descending: descending,
-    );
+
+    // Map sorted IDs back to original items.
+    final idToItem = <String, T>{for (final e in items) idOf(e): e};
+    final result = <T>[];
+    for (final si in sorted) {
+      final item = idToItem.remove(si.id);
+      if (item != null) result.add(item);
+    }
+    // Append any items that appeared during the async gap
+    // (e.g. added while the platform sort was in-flight).
+    if (idToItem.isNotEmpty) {
+      final remaining = idToItem.values.toList()
+        ..sort((a, b) => valueOf(a).compareTo(valueOf(b)));
+      result.addAll(remaining);
+    }
+    return result;
   }
 }

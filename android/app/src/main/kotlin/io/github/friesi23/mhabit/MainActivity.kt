@@ -3,8 +3,6 @@ package io.github.friesi23.mhabit
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
-import io.github.friesi23.mhabit.collation.CollationHostApi
-import io.github.friesi23.mhabit.collation.CollationPlugin
 
 class MainActivity : FlutterActivity() {
     companion object {
@@ -23,12 +21,6 @@ class MainActivity : FlutterActivity() {
         EventChannel(
             flutterEngine.dartExecutor.binaryMessenger, ANIMATION_SCALE_CHANNEL
         ).setStreamHandler(handler)
-
-        // Natural language collation
-        CollationHostApi.setUp(
-            flutterEngine.dartExecutor.binaryMessenger,
-            CollationPlugin(),
-        )
     }
 
     override fun onDestroy() {
