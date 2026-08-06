@@ -42,4 +42,4 @@ jobs:
         if: success() || failure()
         with:
           name: android-unittest-xml
-          path: android/build/app/test-results/testF_genericDebugUnitTest/TEST-*.xml
+          path: build/app/test-results/testF_genericDebugUnitTest/TEST-*.xml
