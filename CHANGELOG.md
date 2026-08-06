@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.26.6+179-pre
+
+- Improve sorting backend reliability (#635)
+- Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate
+
 ## 1.26.5+178
 
 - Feature: habit-count sort, drag reorder, group management upgrades (#621)
