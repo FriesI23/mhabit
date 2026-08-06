@@ -33,8 +33,35 @@ on:
         required: true
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - id: set-matrix
+        env:
+          PLATFORM: ${{ inputs.platform }}
+        run: |
+          case "$PLATFORM" in
+            linux)
+              MATRIX='[
+                {"platform":"linux","arch":"x64","runner":"ubuntu-22.04"},
+                {"platform":"linux","arch":"arm64","runner":"ubuntu-22.04-arm"}
+              ]' ;;
+            ios|macos)
+              MATRIX="[{\"platform\":\"$PLATFORM\",\"arch\":\"\",\"runner\":\"macos-latest\"}]" ;;
+            *)
+              MATRIX="[{\"platform\":\"$PLATFORM\",\"arch\":\"\",\"runner\":\"ubuntu-latest\"}]" ;;
+          esac
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+
   build:
-    runs-on: ${{ (inputs.platform == 'ios' || inputs.platform == 'macos') && 'macos-latest' || 'ubuntu-latest' }}
+    needs: prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    runs-on: ${{ matrix.runner }}
     environment: ${{ inputs.environment }}
     steps:
       - id: meta
@@ -42,7 +69,7 @@ jobs:
           case "${{ inputs.platform }}" in
             android) echo "label=Android" >> "$GITHUB_OUTPUT" ;;
             ios) echo "label=iOS" >> "$GITHUB_OUTPUT" ;;
-            linux) echo "label=Linux" >> "$GITHUB_OUTPUT" ;;
+            linux) echo "label=Linux (${{ matrix.arch }})" >> "$GITHUB_OUTPUT" ;;
             macos) echo "label=macOS" >> "$GITHUB_OUTPUT" ;;
           esac
 
@@ -77,6 +104,8 @@ jobs:
       - if: inputs.platform == 'linux'
         id: build-linux
         uses: ./.github/actions/build_linux
+        with:
+          arch: ${{ matrix.arch }}
 
       - if: inputs.platform == 'macos'
         id: build-macos
@@ -99,7 +128,7 @@ jobs:
                      echo "path=${{ steps.build-android.outputs.path }}" >> "$GITHUB_OUTPUT" ;;
             ios)     echo "name=app-release.ipa" >> "$GITHUB_OUTPUT"
                      echo "path=${{ steps.build-ios.outputs.ipa-path }}" >> "$GITHUB_OUTPUT" ;;
-            linux)   echo "name=linux-bundle-x64" >> "$GITHUB_OUTPUT"
+            linux)   echo "name=linux-bundle-${{ matrix.arch }}" >> "$GITHUB_OUTPUT"
                      echo "path=${{ steps.build-linux.outputs.path }}" >> "$GITHUB_OUTPUT" ;;
             macos)   echo "name=app-release.app" >> "$GITHUB_OUTPUT"
                      echo "path=${{ steps.build-macos.outputs.path }}" >> "$GITHUB_OUTPUT" ;;
