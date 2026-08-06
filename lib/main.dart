@@ -15,10 +15,9 @@
 import 'dart:io';
 
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding, runApp;
+import 'package:native_natural_sort/native_natural_sort.dart';
 
 import 'common/app_info.dart';
-import 'common/collation_ffi_linux.dart';
-import 'common/collation_ffi_windows.dart';
 import 'entries/app/entry.dart';
 import 'logging/logger_manager.dart';
 import 'reminders/notification_service.dart';
@@ -37,11 +36,11 @@ Future<void> main() async {
   await NotificationService().init();
   await LocalTimeZoneManager().init();
 
-  if (Platform.isLinux) {
-    await IcuCollationLinux().init();
-  } else if (Platform.isWindows) {
-    await IcuCollationWindows().init();
-  }
+  await NativeSort().config(
+    SortOptions(
+      windows: SortOptionsWindows.ffi(onLoadFailed: WindowsSort.pigeon),
+    ),
+  );
 
   runApp(const AppEntry());
 }

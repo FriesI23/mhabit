@@ -14,15 +14,13 @@
 
 import 'dart:async';
 import 'dart:collection';
-import 'dart:io';
 import 'dart:ui' show Locale;
 
 import 'package:async/async.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:native_natural_sort/native_natural_sort.dart';
 
-import '../../../common/collation.dart';
-import '../../../common/collation_ffi_linux.dart';
 import '../../../common/consts.dart';
 import '../../../common/exceptions.dart';
 import '../../../common/sort_generation.dart';
@@ -279,8 +277,7 @@ class HabitsTodayViewModel extends ChangeNotifier
     final canNaturalSort =
         _sortType == HabitDisplaySortType.name &&
         _naturalSortEnabled &&
-        _data.values.isNotEmpty &&
-        (IcuCollationLinux.available || !Platform.isLinux);
+        _data.values.isNotEmpty;
 
     if (!canNaturalSort) {
       final newData = defaultSort();
@@ -293,20 +290,19 @@ class HabitsTodayViewModel extends ChangeNotifier
         _applyFilter(sorted).toHabitSummarySortCacheList();
 
     final newData = _sortGuard.run<List<HabitSortCache>>(() {
-      final sorted = CollationApi.instance.naturalSort(
-        items: _data.values.toList(),
-        idOf: (h) => h.uuid,
-        valueOf: (h) => h.name,
-        descending: _sortDirection == HabitDisplaySortDirection.desc,
-        locale: _currentAppLanguage?.toLanguageTag(),
-      );
-      if (sorted is Future<List<HabitSummaryData>>) {
-        return sorted.then(build).catchError((e) {
-          appLog.load.warn('Natural sort failed', ex: [e]);
-          return defaultSort();
-        });
-      }
-      return build(sorted);
+      return NativeSort()
+          .naturalSort(
+            items: _data.values.toList(),
+            idOf: (h) => h.uuid,
+            valueOf: (h) => h.name,
+            descending: _sortDirection == HabitDisplaySortDirection.desc,
+            locale: _currentAppLanguage?.toLanguageTag(),
+          )
+          .then(build)
+          .catchError((e) {
+            appLog.load.warn('Natural sort failed', ex: [e]);
+            return defaultSort();
+          });
     }, debugLabel: 'HabitsToday');
 
     if (newData is Future<List<HabitSortCache>?>) {

@@ -6,7 +6,6 @@
 
 #include <memory>
 
-#include "collation/collation_plugin.h"
 #include "win32_window.h"
 
 // A window that does nothing but host a Flutter view.
@@ -29,9 +28,6 @@ private:
 
   // The Flutter instance hosted by this window.
   std::unique_ptr<flutter::FlutterViewController> flutter_controller_;
-
-  // Native collation plugin (Parse 4: Windows).
-  mhabit_collation::CollationPlugin collation_plugin_;
 };
 
 #endif // RUNNER_FLUTTER_WINDOW_H_

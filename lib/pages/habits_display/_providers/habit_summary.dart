@@ -13,16 +13,14 @@
 // limitations under the License.
 
 import 'dart:async';
-import 'dart:io';
 import 'dart:ui' show Locale;
 
 import 'package:async/async.dart';
 import 'package:collection/collection.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
+import 'package:native_natural_sort/native_natural_sort.dart';
 
-import '../../../common/collation.dart';
-import '../../../common/collation_ffi_linux.dart';
 import '../../../common/consts.dart';
 import '../../../common/exceptions.dart';
 import '../../../common/sort_generation.dart';
@@ -1314,19 +1312,16 @@ class _ResortHandler {
 
   FutureOr<_HabitsSortableCache> call() {
     final cache = _vm._sortableCache;
-    final ffiAvailable = IcuCollationLinux.available || !Platform.isLinux;
     final needHabitNatural =
         cache.sortType == HabitDisplaySortType.name &&
         _vm._naturalSortEnabled &&
-        _vm._data.values.isNotEmpty &&
-        ffiAvailable;
+        _vm._data.values.isNotEmpty;
     final needGroupNatural =
         _vm._groupingEnabled &&
         _vm._groupCollection != null &&
         cache.groupType == HabitDisplayGroupType.name &&
         _vm._naturalSortEnabled &&
-        _vm._groupCollection!.toList().isNotEmpty &&
-        ffiAvailable;
+        _vm._groupCollection!.toList().isNotEmpty;
 
     if (!needHabitNatural && !needGroupNatural) return defaultSort();
     return _guardedNaturalSort(needHabitNatural, needGroupNatural);
@@ -1376,7 +1371,7 @@ class _ResortHandler {
     final locale = _vm._currentAppLanguage?.toLanguageTag();
     try {
       final sortedHabits = needHabitNatural
-          ? await CollationApi.instance.naturalSort(
+          ? await NativeSort().naturalSort(
               items: _vm._data.values.toList(),
               idOf: (h) => h.uuid,
               valueOf: (h) => h.name,
@@ -1420,7 +1415,7 @@ class _ResortHandler {
   Future<List<HabitGroupData>> _sortGroups(String? locale) async {
     final cache = _vm._sortableCache;
     final groupList = _vm._groupCollection!.toList();
-    return CollationApi.instance.naturalSort(
+    return NativeSort().naturalSort(
       items: groupList,
       idOf: (g) => g.uuid,
       valueOf: (g) => g.name,

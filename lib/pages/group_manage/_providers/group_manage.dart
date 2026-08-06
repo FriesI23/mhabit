@@ -13,14 +13,12 @@
 // limitations under the License.
 
 import 'dart:async';
-import 'dart:io';
 import 'dart:ui' show Locale;
 
 import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
+import 'package:native_natural_sort/native_natural_sort.dart';
 
-import '../../../common/collation.dart';
-import '../../../common/collation_ffi_linux.dart';
 import '../../../common/consts.dart';
 import '../../../common/sort_generation.dart';
 import '../../../common/types.dart';
@@ -318,8 +316,7 @@ class GroupManageViewModel extends ChangeNotifier
     final canNaturalSort =
         sortType == HabitDisplayGroupType.name &&
         _naturalSortEnabled &&
-        _groupCollection!.toList().isNotEmpty &&
-        (IcuCollationLinux.available || !Platform.isLinux);
+        _groupCollection!.toList().isNotEmpty;
 
     if (!canNaturalSort) {
       _sortableCache = defaultSort();
@@ -329,13 +326,6 @@ class GroupManageViewModel extends ChangeNotifier
     final result = _sortGuard.run<_GroupsSortableCache>(() {
       final groups = _groupCollection!.toList();
       final locale = _currentAppLanguage?.toLanguageTag();
-      final sorted = CollationApi.instance.naturalSort(
-        items: groups,
-        idOf: (g) => g.uuid,
-        valueOf: (g) => g.name,
-        descending: sortDirection == HabitDisplaySortDirection.desc,
-        locale: locale,
-      );
 
       _GroupsSortableCache build(List<HabitGroupData> s) =>
           _GroupsSortableCache(
@@ -344,13 +334,19 @@ class GroupManageViewModel extends ChangeNotifier
             lastSortedDataCache: s,
           );
 
-      if (sorted is Future<List<HabitGroupData>>) {
-        return sorted.then(build).catchError((e) {
-          appLog.load.warn('Natural sort failed', ex: [e]);
-          return defaultSort();
-        });
-      }
-      return build(sorted);
+      return NativeSort()
+          .naturalSort(
+            items: groups,
+            idOf: (g) => g.uuid,
+            valueOf: (g) => g.name,
+            descending: sortDirection == HabitDisplaySortDirection.desc,
+            locale: locale,
+          )
+          .then(build)
+          .catchError((e) {
+            appLog.load.warn('Natural sort failed', ex: [e]);
+            return defaultSort();
+          });
     }, debugLabel: 'GroupManage');
 
     if (result is Future<_GroupsSortableCache?>) {

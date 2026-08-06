@@ -58,9 +58,8 @@ melos:
           --concurrency=1 \
           -- "dart format ."
     build-runner:
-      description: Run build_runner generators, pigeon, and gen-l10n.
+      description: Run build_runner generators and gen-l10n.
       steps:
-        - dart run pigeon --input pigeons/collation.dart
         - flutter pub run build_runner build --delete-conflicting-outputs
         - flutter gen-l10n
     fix:
@@ -147,8 +146,7 @@ dependencies:
   connectivity_plus: ^7.0.0
   data_saver: ^0.4.0
   app_settings: ^7.0.0
-  mhabit_color_annotation: any
-  mhabit_proxy_annotation: any
+  native_natural_sort: ^0.1.3
 
   # Fonts and Icons
   named_html_color: ^0.0.3+1
@@ -189,8 +187,9 @@ dependencies:
   vector_graphics: ^1.2.2
   csv: ^8.0.0
 
-  # FFI (Linux collation)
-  ffi: ^2.1.0
+  # Internal Packages
+  mhabit_color_annotation: any
+  mhabit_proxy_annotation: any
 
 dev_dependencies:
   flutter_test:
@@ -211,7 +210,6 @@ dev_dependencies:
   # Code Generation
   analyzer: ^10.0.1
   build_runner: ^2.3.3
-  pigeon: ^27.3.0
   mhabit_color_builder: any
   mhabit_proxy_builder: any
   copy_with_extension_gen: ^15.0.1

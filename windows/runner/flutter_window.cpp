@@ -26,9 +26,6 @@ bool FlutterWindow::OnCreate() {
   }
   RegisterPlugins(flutter_controller_->engine());
 
-  mhabit_collation::CollationHostApi::SetUp(
-      flutter_controller_->engine()->messenger(), &collation_plugin_);
-
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
 
   flutter_controller_->engine()->SetNextFrameCallback([&]() { this->Show(); });
