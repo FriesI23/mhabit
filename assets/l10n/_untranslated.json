@@ -1879,13 +1879,6 @@
     "appSetting_manageGroups_subtitleText"
   ],
 
-  "he": [
-    "appSetting_languageSubgroupText",
-    "appSetting_openSystemLanguageTile_titleText",
-    "appSetting_openSystemLanguageTile_dialogTitle",
-    "appSetting_openSystemLanguageTile_macosDialogContent"
-  ],
-
   "hu": [
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
