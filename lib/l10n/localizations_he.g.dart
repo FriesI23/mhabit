@@ -959,19 +959,18 @@ class L10nHe extends L10n {
   String get appSetting_changeLanguageDialog_titleText => 'נא לבחור שפה';
 
   @override
-  String get appSetting_languageSubgroupText => 'Language';
+  String get appSetting_languageSubgroupText => 'שפה';
 
   @override
-  String get appSetting_openSystemLanguageTile_titleText =>
-      'System Language Settings';
+  String get appSetting_openSystemLanguageTile_titleText => 'הגדרות שפת המערכת';
 
   @override
   String get appSetting_openSystemLanguageTile_dialogTitle =>
-      'Open System Language Settings';
+      'פתיחת הגדרות שפת המערכת';
 
   @override
   String get appSetting_openSystemLanguageTile_macosDialogContent =>
-      'Due to macOS limitations, the app language cannot be changed directly. To switch languages, follow these steps:\n\n1. Open **System Settings > General > Language & Region**\n2. Add this app in the **Applications** list and choose a language';
+      'בשל המגבלות של macOS, לא ניתן לשנות את שפת היישום ישירות. בשביל לעבור בין שפות, יש למלא אחר השלבים הבאים:\n\n1. יש לפתוח את **הגדרות מערכת > כללי > שפה ואזור**\n2. יש להוסיף את היישום הזה תחת הרשימה **יישומים** ולבחור שפה';
 
   @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
