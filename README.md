@@ -256,11 +256,11 @@ supporting its development:
 ---
 
 <p align="center">
-  <a href="https://www.star-history.com/?repos=FriesI23%2Fmhabit&type=date&legend=top-left">
+  <a href="https://www.star-history.com/?repos=FriesI23%2Fmhabit&type=timeline&legend=top-left">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=FriesI23/mhabit&type=date&theme=dark&legend=top-left" />
-      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=FriesI23/mhabit&type=date&legend=top-left" />
-      <img alt="Star history chart for FriesI23/mhabit" src="https://api.star-history.com/chart?repos=FriesI23/mhabit&type=date&legend=top-left" width="640" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=FriesI23/mhabit&type=timeline&theme=dark&legend=bottom-right&sealed_token=fJ4rf36qijj-ANK0NYzI3auzBG9tMZvs_KIPWB2neWlD8QpuUftraBuUxrSIrGDNrmvmqPyzMhjZYmxpHI4UDHPXbBa8t9MSidLYzELT3K7FSWW0_H4qfUj8TItgfAy20IclznC8yspp2raSY0J_CqNFgt-yJhQ66r2TuU_hMFLR0EcNV7lf6mzkcUqG" />
+      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=FriesI23/mhabit&type=timeline&legend=bottom-right&sealed_token=fJ4rf36qijj-ANK0NYzI3auzBG9tMZvs_KIPWB2neWlD8QpuUftraBuUxrSIrGDNrmvmqPyzMhjZYmxpHI4UDHPXbBa8t9MSidLYzELT3K7FSWW0_H4qfUj8TItgfAy20IclznC8yspp2raSY0J_CqNFgt-yJhQ66r2TuU_hMFLR0EcNV7lf6mzkcUqG" />
+      <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=FriesI23/mhabit&type=timeline&legend=bottom-right&sealed_token=fJ4rf36qijj-ANK0NYzI3auzBG9tMZvs_KIPWB2neWlD8QpuUftraBuUxrSIrGDNrmvmqPyzMhjZYmxpHI4UDHPXbBa8t9MSidLYzELT3K7FSWW0_H4qfUj8TItgfAy20IclznC8yspp2raSY0J_CqNFgt-yJhQ66r2TuU_hMFLR0EcNV7lf6mzkcUqG" width="640" />
     </picture>
   </a>
 </p>
