@@ -774,5 +774,25 @@
     "habitDisplay_groupType_manual": "Personale",
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
-    }
+    },
+    "habitEdit_colorPicker_historySectionLabel": "Usato di recente",
+    "habitEdit_colorPicker_cancel": "Cancella",
+    "habitDisplay_tab_habits_label": "Abitudini",
+    "habitDisplay_groupType_createDate": "Per Data di Creazione",
+    "habitEdit_groupPicker_createGroup": "Crea \"{name}\"",
+    "@habitEdit_groupPicker_createGroup": {
+        "description": "Button text to create a new group with the given name",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "Work"
+            }
+        }
+    },
+    "habitEdit_groupPicker_loading": "Caricamento gruppi…",
+    "@habitEdit_groupPicker_loading": {
+        "description": "Placeholder text shown in the group picker while groups are loading"
+    },
+    "exportConfirmDialog_option_includeGroups": "Includi gruppi",
+    "experimentalFeatures_habitSearchTile_titleText": "Cerca abitudine"
 }
