@@ -8,6 +8,7 @@
     "habitEdit_saveButton_text": "Сохранить",
     "habitEdit_habitName_hintText": "Название привычки ...",
     "habitEdit_colorPicker_title": "Выберите цвет",
+    "habitEdit_colorPicker_historySectionLabel": "Недавно используемые",
     "habitEdit_habitTypeDialog_title": "Тип привычки",
     "habitEdit_habitType_positiveText": "Полезная",
     "habitEdit_habitType_negativeText": "Вредная",
@@ -1094,6 +1095,5 @@
     "habitDisplay_groupType_manual": "Свой порядок",
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
-    },
-    "habitEdit_colorPicker_historySectionLabel": "Недавно используемые"
+    }
 }

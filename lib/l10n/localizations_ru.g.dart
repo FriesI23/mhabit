@@ -24,7 +24,8 @@ class L10nRu extends L10n {
   String get habitEdit_colorPicker_title => 'Выберите цвет';
 
   @override
-  String get habitEdit_colorPicker_historySectionLabel => 'Recently used';
+  String get habitEdit_colorPicker_historySectionLabel =>
+      'Недавно используемые';
 
   @override
   String habitEdit_colorPicker_customSectionLabel(String tinted) {
