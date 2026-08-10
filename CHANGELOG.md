@@ -2,10 +2,12 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.26.6+179-pre
+## 1.26.7+180
 
 - Improve sorting backend reliability (#635)
 - Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate
+- Update Italian translation, thanks to nickfrn's contribution on Weblate
+- Update Russian translation, thanks to sanda1iki's contribution on Weblate
 
 ## 1.26.5+178
 

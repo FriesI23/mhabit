@@ -1,5 +1,4 @@
-- Feature: habit-count sort, drag reorder, group management upgrades (#621)
-- Feature: natural-language collation sort for habit and today lists (#631)
-- Feature: system language settings and localization support (#632)
-- Improve event handling and sync reliability (#625, #626, #628)
-- Update Hebrew and Ukrainian translations, thanks to Weblate (#620, #622, #633)
+- Improve sorting backend reliability (#635)
+- Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate
+- Update Italian translation, thanks to nickfrn's contribution on Weblate
+- Update Russian translation, thanks to sanda1iki's contribution on Weblate
