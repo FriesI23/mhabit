@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 
 import '../common/types.dart';
 import '../models/habit_color.dart';
+import '../models/habit_display.dart';
 import '../models/habit_form.dart';
 import '../pages/app_about/page.dart' as app_about;
 import '../pages/app_debugger/page.dart' as app_debugger;
@@ -25,25 +26,31 @@ import '../pages/app_sync/page.dart' as app_sync;
 import '../pages/expermental_features/page.dart' as exp_feature;
 import '../pages/group_manage/page.dart' as group_manage;
 import '../pages/habit_detail/page.dart' as habit_detail;
-import '../pages/habit_edit/page.dart' as habit_edit;
 import '../pages/habits_display/providers.dart' show HabitDetailAdapter;
 import '../pages/habits_status_changer/page.dart' as habits_status_changer;
 import '../storage/db/handlers/habit.dart';
+import 'helpers/habit_create_helper.dart';
 import 'helpers/habit_detail_helper.dart';
+import 'helpers/habit_edit_helper.dart';
 
-Future<HabitDBCell?> naviToHabitEidtPage({
+Future<HabitDBCell?> naviToHabitCreatePage({
+  required BuildContext context,
+  HabitForm? initForm,
+}) => context.pushHabitCreate(initForm: initForm);
+
+Future<HabitDBCell?> naviToHabitEditPage({
   required BuildContext context,
   required HabitForm initForm,
-  bool? naviWithFullscreenDialog,
-}) => Navigator.of(context).push(
-  MaterialPageRoute(
-    fullscreenDialog: naviWithFullscreenDialog ?? true,
-    builder: (context) => habit_edit.HabitEditPage(
-      initForm: initForm,
-      showInFullscreenDialog: false,
-    ),
-  ),
-);
+}) {
+  assert(
+    initForm.editMode == HabitDisplayEditMode.edit,
+    'naviToHabitEditPage called with editMode=${initForm.editMode}',
+  );
+  return context.pushHabitEdit(
+    habitId: initForm.editParams!.uuid,
+    initForm: initForm,
+  );
+}
 
 Future<habit_detail.DetailPageReturn?> naviToHabitDetailPage({
   required BuildContext context,

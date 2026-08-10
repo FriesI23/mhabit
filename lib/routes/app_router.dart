@@ -18,7 +18,9 @@ import '../../common/global.dart';
 
 enum AppRoute {
   habits('habits'),
-  habitDetail('habits/:habitId');
+  habitDetail('habits/:habitId'),
+  habitCreate('habit/create'),
+  habitEdit('habit/edit');
 
   const AppRoute(this.name);
   final String name;
@@ -30,6 +32,8 @@ class AppRouterBuilder {
   static String _pathFor(AppRoute route) => switch (route) {
     AppRoute.habits => '/habits',
     AppRoute.habitDetail => '/habits/:habitId',
+    AppRoute.habitCreate => '/habit/create',
+    AppRoute.habitEdit => '/habit/edit',
   };
 
   AppRouterBuilder addHabits({required GoRouterWidgetBuilder builder}) {
@@ -44,6 +48,30 @@ class AppRouterBuilder {
     const route = AppRoute.habitDetail;
     _routes.add(
       GoRoute(path: _pathFor(route), name: route.name, builder: builder),
+    );
+    return this;
+  }
+
+  AppRouterBuilder addHabitCreate({required GoRouterPageBuilder pageBuilder}) {
+    const route = AppRoute.habitCreate;
+    _routes.add(
+      GoRoute(
+        path: _pathFor(route),
+        name: route.name,
+        pageBuilder: pageBuilder,
+      ),
+    );
+    return this;
+  }
+
+  AppRouterBuilder addHabitEdit({required GoRouterPageBuilder pageBuilder}) {
+    const route = AppRoute.habitEdit;
+    _routes.add(
+      GoRoute(
+        path: _pathFor(route),
+        name: route.name,
+        pageBuilder: pageBuilder,
+      ),
     );
     return this;
   }

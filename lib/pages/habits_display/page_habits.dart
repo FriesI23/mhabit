@@ -651,7 +651,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
       if (!mounted) return false;
     }
 
-    final result = await naviToHabitEidtPage(context: context, initForm: form);
+    final result = await (form.editMode == HabitDisplayEditMode.create
+        ? naviToHabitCreatePage(context: context, initForm: form)
+        : naviToHabitEditPage(context: context, initForm: form));
 
     if (result == null) return false;
     if (!(mounted && _vm.mounted)) return false;

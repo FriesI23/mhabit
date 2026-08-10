@@ -33,6 +33,7 @@ import '../../models/app_theme_color.dart';
 import '../../models/habit_date.dart';
 import '../../pages/common/widgets.dart';
 import '../../pages/habit_detail/page.dart' show HabitDetailPage;
+import '../../pages/habit_edit/page.dart' show HabitEditPage;
 import '../../pages/habits_display/page.dart' show HabitsDisplayPage;
 import '../../pages/habits_display/providers.dart' show PageProviders;
 import '../../providers/app_ui/app_debugger.dart';
@@ -44,7 +45,9 @@ import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/habits_manager.dart';
 import '../../reminders/notification_channel.dart';
 import '../../routes/app_router.dart';
+import '../../routes/helpers/habit_create_helper.dart';
 import '../../routes/helpers/habit_detail_helper.dart';
+import '../../routes/helpers/habit_edit_helper.dart';
 import '../../storage/db_helper_builder.dart';
 import '../../storage/profile/handlers.dart';
 import '../../storage/profile_builder.dart';
@@ -123,6 +126,30 @@ class _AppEntry extends StatelessWidget {
           return Provider.value(
             value: adapter,
             child: HabitDetailPage(habitUUID: habitUUID, color: color),
+          );
+        },
+      )
+      .addHabitCreate(
+        pageBuilder: (_, state) {
+          final (:initForm) = state.unpackHabitCreate();
+          return MaterialPage<void>(
+            fullscreenDialog: true,
+            child: HabitEditPage(
+              initForm: initForm,
+              showInFullscreenDialog: false,
+            ),
+          );
+        },
+      )
+      .addHabitEdit(
+        pageBuilder: (_, state) {
+          final (:habitId, :initForm) = state.unpackHabitEdit();
+          return MaterialPage<void>(
+            fullscreenDialog: true,
+            child: HabitEditPage(
+              initForm: initForm,
+              showInFullscreenDialog: false,
+            ),
           );
         },
       )

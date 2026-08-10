@@ -147,7 +147,9 @@ class _PageState extends State<_Page>
     final dbcell = await _vm.loadCurrentHabitDetail();
     if (dbcell == null || !mounted) return false;
     final form = formBuilder(dbcell);
-    final result = await naviToHabitEidtPage(context: context, initForm: form);
+    final result = await (form.editMode == HabitDisplayEditMode.create
+        ? naviToHabitCreatePage(context: context, initForm: form)
+        : naviToHabitEditPage(context: context, initForm: form));
     if (result == null) return false;
     if (!(mounted && _vm.mounted)) return false;
     _vm.onEditCompleted(summary: _summary);
