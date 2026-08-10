@@ -18,6 +18,7 @@ export '_widgets/animated_reorderable_list.dart';
 export '_widgets/app_ui_layout_builder.dart';
 export '_widgets/appbar_actions.dart';
 export '_widgets/beta_badge.dart';
+export '_widgets/changelog_banner.dart';
 export '_widgets/chip_list.dart';
 export '_widgets/color_display_chip.dart';
 export '_widgets/color_swatch_button.dart';

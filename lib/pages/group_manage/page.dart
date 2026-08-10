@@ -30,17 +30,6 @@ import '_providers/group_manage.dart';
 import 'providers.dart';
 import 'widgets.dart';
 
-Future<void> naviToGroupManagePage({
-  required BuildContext context,
-  String? initialGroupUUID,
-}) async {
-  return Navigator.of(context).push<void>(
-    MaterialPageRoute(
-      builder: (context) => GroupManagePage(initialGroupUUID: initialGroupUUID),
-    ),
-  );
-}
-
 class GroupManagePage extends StatelessWidget {
   final String? initialGroupUUID;
 

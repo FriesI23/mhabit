@@ -33,26 +33,11 @@ import '../../providers/app_ui/app_caches.dart';
 import '../../providers/app_ui/app_developer.dart';
 import '../../providers/app_ui/app_first_day.dart';
 import '../../reminders/notification_channel.dart';
-import '../../storage/db/handlers/habit.dart';
 import '../../widgets/widgets.dart';
 import '../common/debug.dart';
 import '../common/widgets.dart';
 import '_providers/habit_form.dart';
 import 'widgets.dart';
-
-Future<HabitDBCell?> naviToHabitEidtPage({
-  required BuildContext context,
-  required HabitForm initForm,
-  bool? naviWithFullscreenDialog,
-}) async {
-  return Navigator.of(context).push<HabitDBCell>(
-    MaterialPageRoute(
-      fullscreenDialog: naviWithFullscreenDialog ?? true,
-      builder: (context) =>
-          HabitEditPage(initForm: initForm, showInFullscreenDialog: false),
-    ),
-  );
-}
 
 /// Depend Providers
 /// - Required for builder:

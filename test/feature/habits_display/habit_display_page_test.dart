@@ -20,7 +20,6 @@ import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/common/_widgets/not_found_image.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/_providers/habits_today.dart';
-import 'package:mhabit/pages/habits_display/_widgets/changelog_banner_sliver.dart';
 import 'package:mhabit/pages/habits_display/page_habits.dart';
 import 'package:mhabit/pages/habits_display/page_today.dart';
 import 'package:mhabit/providers/app_ui/app_compact_ui_switcher.dart';
@@ -38,6 +37,7 @@ import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/app_sync.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/profile_provider.dart';
+import 'package:mhabit/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

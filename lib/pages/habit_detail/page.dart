@@ -41,6 +41,7 @@ import '../../providers/app_ui/app_developer.dart';
 import '../../providers/app_ui/app_first_day.dart';
 import '../../providers/support/utils.dart';
 import '../../providers/workflow/habits_file_exporter.dart';
+import '../../routes/navigator_helpers.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../theme/color.dart';
 import '../../theme/icon.dart';
@@ -50,7 +51,6 @@ import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
 import '../common/debug.dart';
 import '../common/widgets.dart';
-import '../habit_edit/page.dart' as habit_edit;
 import '../habits_display/_providers/habit_summary.dart' as habit_summary;
 import '_providers/habit_detail.dart';
 import '_providers/habit_detail_freqchart.dart';
@@ -71,22 +71,6 @@ class DetailPageReturn {
     this.habitName,
     this.recordList,
   });
-}
-
-Future<DetailPageReturn?> naviToHabitDetailPage({
-  required BuildContext context,
-  required HabitUUID habitUUID,
-  HabitColor? color,
-  habit_summary.HabitSummaryViewModel? summary,
-}) async {
-  return Navigator.of(context).push<DetailPageReturn>(
-    MaterialPageRoute(
-      builder: (context) => Provider.value(
-        value: summary?.buildHabitDetailAdapter(),
-        child: HabitDetailPage(habitUUID: habitUUID, color: color),
-      ),
-    ),
-  );
 }
 
 // _AppEventBusExtension removed — VM now handles all event emission.
@@ -163,10 +147,7 @@ class _PageState extends State<_Page>
     final dbcell = await _vm.loadCurrentHabitDetail();
     if (dbcell == null || !mounted) return false;
     final form = formBuilder(dbcell);
-    final result = await habit_edit.naviToHabitEidtPage(
-      context: context,
-      initForm: form,
-    );
+    final result = await naviToHabitEidtPage(context: context, initForm: form);
     if (result == null) return false;
     if (!(mounted && _vm.mounted)) return false;
     _vm.onEditCompleted(summary: _summary);

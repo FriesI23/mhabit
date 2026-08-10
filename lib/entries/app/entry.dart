@@ -32,7 +32,6 @@ import '../../models/app_sync_tasks.dart';
 import '../../models/app_theme_color.dart';
 import '../../models/habit_date.dart';
 import '../../pages/common/widgets.dart';
-import '../../pages/habits_display/_widgets/changelog_banner_sliver.dart';
 import '../../pages/habits_display/page.dart' show HabitsDisplayPage;
 import '../../providers/app_ui/app_debugger.dart';
 import '../../providers/app_ui/app_language.dart';

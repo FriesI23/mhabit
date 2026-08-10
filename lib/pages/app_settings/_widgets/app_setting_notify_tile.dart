@@ -18,7 +18,7 @@ import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 
 import '../../../l10n/localizations.dart';
-import '../../app_notify_config/page.dart' as app_notify_config;
+import '../../../routes/navigator_helpers.dart';
 
 class AppSettingNotifyTile extends StatelessWidget {
   const AppSettingNotifyTile({super.key});
@@ -57,7 +57,7 @@ class _AppSettingNotifyTile extends StatelessWidget {
     return ListTile(
       title: Text(l10n?.appSetting_notify_titleTile ?? "Notifications"),
       subtitle: l10n != null ? Text(l10n.appSetting_notify_subtitleTile) : null,
-      onTap: () => app_notify_config.naviToNotifyConfigPage(context: context),
+      onTap: () => naviToNotifyConfigPage(context: context),
     );
   }
 }
