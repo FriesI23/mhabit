@@ -24,7 +24,7 @@ class L10nIt extends L10n {
   String get habitEdit_colorPicker_title => 'Scegli colore';
 
   @override
-  String get habitEdit_colorPicker_historySectionLabel => 'Recently used';
+  String get habitEdit_colorPicker_historySectionLabel => 'Usato di recente';
 
   @override
   String habitEdit_colorPicker_customSectionLabel(String tinted) {
@@ -37,7 +37,7 @@ class L10nIt extends L10n {
   }
 
   @override
-  String get habitEdit_colorPicker_cancel => 'Cancel';
+  String get habitEdit_colorPicker_cancel => 'Cancella';
 
   @override
   String get habitEdit_colorPicker_tintToggleLabel => 'Tint to theme';
@@ -415,7 +415,7 @@ class L10nIt extends L10n {
   String get habitDisplay_groupType_colorType => 'Per Colore';
 
   @override
-  String get habitDisplay_groupType_createDate => 'By Creation Date';
+  String get habitDisplay_groupType_createDate => 'Per Data di Creazione';
 
   @override
   String get habitDisplay_groupType_habitCount => 'By Habit Count';
@@ -603,7 +603,7 @@ class L10nIt extends L10n {
   String get habitDisplay_searchFilter_clearFilter => 'Clear Filters';
 
   @override
-  String get habitDisplay_tab_habits_label => 'Habits';
+  String get habitDisplay_tab_habits_label => 'Abitudini';
 
   @override
   String get habitDisplay_tab_today_label => 'Oggi';
@@ -1572,7 +1572,8 @@ class L10nIt extends L10n {
   }
 
   @override
-  String get experimentalFeatures_habitSearchTile_titleText => 'Habit Search';
+  String get experimentalFeatures_habitSearchTile_titleText =>
+      'Cerca abitudine';
 
   @override
   String get experimentalFeatures_habitSearchTile_subtitleText =>
@@ -1915,7 +1916,7 @@ class L10nIt extends L10n {
   String get exportConfirmDialog_option_includeRecords => 'includi voci';
 
   @override
-  String get exportConfirmDialog_option_includeGroups => 'include groups';
+  String get exportConfirmDialog_option_includeGroups => 'Includi gruppi';
 
   @override
   String exportConfirmDialog_tile_includeRecords(int count) {
@@ -2102,11 +2103,11 @@ class L10nIt extends L10n {
 
   @override
   String habitEdit_groupPicker_createGroup(String name) {
-    return 'Create \"$name\"';
+    return 'Crea \"$name\"';
   }
 
   @override
-  String get habitEdit_groupPicker_loading => 'Loading groups…';
+  String get habitEdit_groupPicker_loading => 'Caricamento gruppi…';
 
   @override
   String get groupManage_appbar_title => 'Manage Groups';

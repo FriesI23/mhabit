@@ -1970,9 +1970,7 @@
   ],
 
   "it": [
-    "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
-    "habitEdit_colorPicker_cancel",
     "habitEdit_colorPicker_tintToggleLabel",
     "habitEdit_colorPicker_tintedLabel",
     "habitEdit_colorPicker_untintedLabel",
@@ -1983,7 +1981,6 @@
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
-    "habitDisplay_groupType_createDate",
     "habitDisplay_groupType_habitCount",
     "habitDisplay_groupTypeDialog_title",
     "habitDisplay_groupTypeDialog_none",
@@ -2010,7 +2007,6 @@
     "habitDisplay_searchFilter_ongoing_desc",
     "habitDisplay_searchFilter_tooltips",
     "habitDisplay_searchFilter_clearFilter",
-    "habitDisplay_tab_habits_label",
     "habitToday_image_desc",
     "habitToday_card_subtitle_text",
     "habitToday_card_donePlusButton_label",
@@ -2119,7 +2115,6 @@
     "experimentalFeatures_habitSyncTile_subtitleText",
     "experimentalFeatures_warnTile_titleText",
     "experimentalFeatures_warnTile_forHabitSyncText",
-    "experimentalFeatures_habitSearchTile_titleText",
     "experimentalFeatures_habitSearchTile_subtitleText",
     "appAbout_privacyTile_titleText",
     "appAbout_privacyTile_subTitleText",
@@ -2131,7 +2126,6 @@
     "common_errorPage_copied",
     "common_enable_text",
     "common_dontShowAgain",
-    "exportConfirmDialog_option_includeGroups",
     "exportConfirmDialog_tile_includeRecords",
     "exportConfirmDialog_tile_includeGroups",
     "confirmDialog_confirm_text",
@@ -2148,8 +2142,6 @@
     "habitEdit_groupTile_title",
     "habitEdit_groupPicker_hintText",
     "habitEdit_groupPicker_noGroup",
-    "habitEdit_groupPicker_createGroup",
-    "habitEdit_groupPicker_loading",
     "groupManage_appbar_title",
     "groupManage_selectionAppbar_title",
     "groupManage_emptyState_text",
@@ -3193,7 +3185,6 @@
   ],
 
   "ru": [
-    "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
     "habitEdit_colorPicker_tintToggleLabel",

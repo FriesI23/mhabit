@@ -8,6 +8,8 @@
     "habitEdit_saveButton_text": "Salva",
     "habitEdit_habitName_hintText": "Nome Abitudine ...",
     "habitEdit_colorPicker_title": "Scegli colore",
+    "habitEdit_colorPicker_historySectionLabel": "Usato di recente",
+    "habitEdit_colorPicker_cancel": "Cancella",
     "habitEdit_habitTypeDialog_title": "Tipologia abitudine",
     "habitEdit_habitType_positiveText": "Positiva",
     "habitEdit_habitType_negativeText": "Negativa",
@@ -236,6 +238,7 @@
     "habitDisplay_mainMenu_settingTileText": "Impostazioni",
     "habitDisplay_groupType_name": "Per Nome",
     "habitDisplay_groupType_colorType": "Per Colore",
+    "habitDisplay_groupType_createDate": "Per Data di Creazione",
     "habitDisplay_groupTypeDialog_confirm": "Conferma",
     "habitDisplay_groupTypeDialog_cancel": "Annulla",
     "habitDisplay_sort_reverseText": "Inverti",
@@ -253,6 +256,7 @@
     "habitDisplay_debug_debugSubgroup_title": "🛠️Debug",
     "habitDisplay_searchFilter_completed": "Completate",
     "habitDisplay_searchFilter_habitType_groupTitle": "Tipologia abitudine",
+    "habitDisplay_tab_habits_label": "Abitudini",
     "habitDisplay_tab_today_label": "Oggi",
     "habitToday_appBar_title": "Oggi",
     "habitDetail_editButton_tooltip": "Modifica",
@@ -513,6 +517,7 @@
     "appSetting_clearCache_snackBar_failText": "Eliminazione Cache fallita",
     "appSetting_debugger_titleText": "Info di debug",
     "appSetting_about_titleText": "Riguardo a",
+    "experimentalFeatures_habitSearchTile_titleText": "Cerca abitudine",
     "appAbout_appbarTile_titleText": "Riguardo a",
     "appAbout_versionTile_titleText": "Versione: {appVersion}",
     "@appAbout_versionTile_titleText": {
@@ -668,6 +673,7 @@
         }
     },
     "exportConfirmDialog_option_includeRecords": "includi voci",
+    "exportConfirmDialog_option_includeGroups": "Includi gruppi",
     "exportConfirmDialog_cancel_buttonText": "Annulla",
     "exportConfirmDialog_confirm_buttonText": "esporta",
     "debug_logLevelTile_title": "Livello di log",
@@ -730,6 +736,20 @@
     "changelog_view_full": "View Full Changelog",
     "@changelog_view_full": {
         "description": "Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content."
+    },
+    "habitEdit_groupPicker_createGroup": "Crea \"{name}\"",
+    "@habitEdit_groupPicker_createGroup": {
+        "description": "Button text to create a new group with the given name",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "Work"
+            }
+        }
+    },
+    "habitEdit_groupPicker_loading": "Caricamento gruppi…",
+    "@habitEdit_groupPicker_loading": {
+        "description": "Placeholder text shown in the group picker while groups are loading"
     },
     "groupManage_deleteDialog_confirm": "Elimina",
     "@groupManage_deleteDialog_confirm": {
