@@ -33,6 +33,7 @@ import '../../models/app_theme_color.dart';
 import '../../models/habit_date.dart';
 import '../../pages/common/widgets.dart';
 import '../../pages/habits_display/page.dart' show HabitsDisplayPage;
+import '../../pages/habits_display/providers.dart' show PageProviders;
 import '../../providers/app_ui/app_debugger.dart';
 import '../../providers/app_ui/app_language.dart';
 import '../../providers/app_ui/app_theme.dart';
@@ -41,6 +42,7 @@ import '../../providers/workflow/app_reminder.dart';
 import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/habits_manager.dart';
 import '../../reminders/notification_channel.dart';
+import '../../routes/app_router.dart';
 import '../../storage/db_helper_builder.dart';
 import '../../storage/profile/handlers.dart';
 import '../../storage/profile_builder.dart';
@@ -101,9 +103,7 @@ class AppEntry extends StatelessWidget {
         errorBuilder: (details) => AppErrorEntry(errorDetails: details),
         builder: (context, child) => DateChanger(
           interval: const Duration(seconds: 10),
-          builder: (context) => const AppProviders(
-            child: _AppEntry(homePage: AppPostInit(child: HabitsDisplayPage())),
-          ),
+          builder: (context) => const AppProviders(child: _AppEntry()),
         ),
       ),
     );
@@ -111,9 +111,11 @@ class AppEntry extends StatelessWidget {
 }
 
 class _AppEntry extends StatelessWidget {
-  final Widget homePage;
+  const _AppEntry();
 
-  const _AppEntry({required this.homePage});
+  static final _router = AppRouterBuilder()
+      .addHabits(builder: (_, _) => const _DisplayEntry())
+      .build(home: AppRoute.habits);
 
   String? getFontFamily() {
     switch (defaultTargetPlatform) {
@@ -242,7 +244,7 @@ class _AppEntry extends StatelessWidget {
           final disableAnimations = context.select<AnimationScaleSync, bool>(
             (vm) => vm.disableAnimations,
           );
-          return AppRootView(
+          return AppRootView.router(
             themeMode: transToMaterialThemeType(themeMode),
             language: language,
             disableAnimations: disableAnimations,
@@ -296,11 +298,105 @@ class _AppEntry extends StatelessWidget {
                 extensions: [customColor],
               );
             },
-            child: ChangelogBanner(child: homePage),
+            config: _router,
           );
         },
       ),
     );
+  }
+}
+
+class _DisplayEntry extends StatelessWidget {
+  const _DisplayEntry();
+
+  @override
+  Widget build(BuildContext context) => const ChangelogBanner(
+    child: AppPostInit(child: PageProviders(child: HabitsDisplayPage())),
+  );
+}
+
+class AppPostInit extends SingleChildStatefulWidget {
+  const AppPostInit({required Widget child, super.key}) : super(child: child);
+
+  @override
+  State<StatefulWidget> createState() => _AppPostInitState();
+}
+
+class _AppPostInitState extends SingleChildState<AppPostInit> {
+  final _appSyncBridge = _AppSyncPostInitBridge();
+  final _habitReminderBridge = _HabitReminderPostInitBridge();
+  bool _didHandlePostInit = false;
+
+  void _syncL10n([L10n? l10n]) {
+    context.maybeRead<NotificationChannelData>()?.onL10nUpdate(l10n);
+    _habitReminderBridge.sync(context);
+    _appSyncBridge.sync(
+      context,
+      l10n: l10n,
+      onNeedCheck: _onWebDavAppSyncUserConfirmNeedCheck,
+    );
+  }
+
+  Future<bool> _onWebDavAppSyncUserConfirmNeedCheck(
+    WebDavConfigTaskChecklist checklist,
+  ) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => checklist.isEmptyDir
+          ? const AppSyncWebDavNewServerConfirmDialog()
+          : const AppSyncWebDavOldServerConfirmDialog(),
+    ).then((value) => value ?? false);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncL10n(L10n.of(context));
+  }
+
+  @override
+  void dispose() {
+    _habitReminderBridge.dispose();
+    _appSyncBridge.dispose();
+    super.dispose();
+  }
+
+  void _handlePostInit(BuildContext context) {
+    final l10n = L10n.of(context);
+    final reminderContent = AppReminderContent.maybeFromL10n(l10n);
+    appLog.build.info(context, ex: ["onPostInitHandled", l10n]);
+    context.maybeRead<AppDebuggerViewModel>()?.processDebuggingNotification(
+      l10n,
+    );
+    context.maybeRead<AppReminderAccess>()?.processTrigger(
+      const AppReminderTrigger.startup(),
+      content: reminderContent,
+    );
+    context.maybeRead<HabitsDisplayAccess>()?.refreshHabitReminders(
+      params: const HabitReminderRefreshParams.startup(),
+    );
+    _syncL10n(l10n);
+    _didHandlePostInit = true;
+
+    final handler = context
+        .read<ProfileViewModel>()
+        .getHandler<AppLastChangelogVersionProfileHandler>();
+    final currentVersion = AppInfo().changelogVersion;
+    final lastVersion = handler?.get();
+
+    if (lastVersion != currentVersion) {
+      handler?.set(currentVersion);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        showChangelogBanner(context, version: currentVersion);
+      });
+    }
+  }
+
+  @override
+  Widget buildWithChild(BuildContext context, Widget? child) {
+    if (!_didHandlePostInit) _handlePostInit(context);
+    return child!;
   }
 }
 
@@ -465,90 +561,5 @@ final class _HabitReminderPostInitBridge {
     access.refreshHabitReminders(
       params: const HabitReminderRefreshParams.dateChange(),
     );
-  }
-}
-
-class AppPostInit extends SingleChildStatefulWidget {
-  const AppPostInit({required Widget child, super.key}) : super(child: child);
-
-  @override
-  State<StatefulWidget> createState() => _AppPostInitState();
-}
-
-class _AppPostInitState extends SingleChildState<AppPostInit> {
-  final _appSyncBridge = _AppSyncPostInitBridge();
-  final _habitReminderBridge = _HabitReminderPostInitBridge();
-  bool _didHandlePostInit = false;
-
-  void _syncL10n([L10n? l10n]) {
-    context.maybeRead<NotificationChannelData>()?.onL10nUpdate(l10n);
-    _habitReminderBridge.sync(context);
-    _appSyncBridge.sync(
-      context,
-      l10n: l10n,
-      onNeedCheck: _onWebDavAppSyncUserConfirmNeedCheck,
-    );
-  }
-
-  Future<bool> _onWebDavAppSyncUserConfirmNeedCheck(
-    WebDavConfigTaskChecklist checklist,
-  ) {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) => checklist.isEmptyDir
-          ? const AppSyncWebDavNewServerConfirmDialog()
-          : const AppSyncWebDavOldServerConfirmDialog(),
-    ).then((value) => value ?? false);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _syncL10n(L10n.of(context));
-  }
-
-  @override
-  void dispose() {
-    _habitReminderBridge.dispose();
-    _appSyncBridge.dispose();
-    super.dispose();
-  }
-
-  void _handlePostInit(BuildContext context) {
-    final l10n = L10n.of(context);
-    final reminderContent = AppReminderContent.maybeFromL10n(l10n);
-    appLog.build.info(context, ex: ["onPostInitHandled", l10n]);
-    context.maybeRead<AppDebuggerViewModel>()?.processDebuggingNotification(
-      l10n,
-    );
-    context.maybeRead<AppReminderAccess>()?.processTrigger(
-      const AppReminderTrigger.startup(),
-      content: reminderContent,
-    );
-    context.maybeRead<HabitsDisplayAccess>()?.refreshHabitReminders(
-      params: const HabitReminderRefreshParams.startup(),
-    );
-    _syncL10n(l10n);
-    _didHandlePostInit = true;
-
-    final handler = context
-        .read<ProfileViewModel>()
-        .getHandler<AppLastChangelogVersionProfileHandler>();
-    final currentVersion = AppInfo().changelogVersion;
-    final lastVersion = handler?.get();
-
-    if (lastVersion != currentVersion) {
-      handler?.set(currentVersion);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        showChangelogBanner(context, version: currentVersion);
-      });
-    }
-  }
-
-  @override
-  Widget buildWithChild(BuildContext context, Widget? child) {
-    if (!_didHandlePostInit) _handlePostInit(context);
-    return child!;
   }
 }
