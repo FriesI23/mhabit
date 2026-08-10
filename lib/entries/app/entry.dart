@@ -31,11 +31,21 @@ import '../../logging/helper.dart';
 import '../../models/app_sync_tasks.dart';
 import '../../models/app_theme_color.dart';
 import '../../models/habit_date.dart';
+import '../../pages/app_about/page.dart' show AppAboutPage;
+import '../../pages/app_debugger/page.dart' show AppDebuggerPage;
+import '../../pages/app_notify_config/page.dart' show AppNotifyConfigPage;
+import '../../pages/app_settings/page.dart' show AppSettingPage;
+import '../../pages/app_sync/page.dart' show AppSyncPage;
 import '../../pages/common/widgets.dart';
+import '../../pages/expermental_features/page.dart'
+    show ExpermentalFeaturesPage;
+import '../../pages/group_manage/page.dart' show GroupManagePage;
 import '../../pages/habit_detail/page.dart' show HabitDetailPage;
 import '../../pages/habit_edit/page.dart' show HabitEditPage;
 import '../../pages/habits_display/page.dart' show HabitsDisplayPage;
 import '../../pages/habits_display/providers.dart' show PageProviders;
+import '../../pages/habits_status_changer/page.dart'
+    show HabitsStatusChangerPage;
 import '../../providers/app_ui/app_debugger.dart';
 import '../../providers/app_ui/app_language.dart';
 import '../../providers/app_ui/app_theme.dart';
@@ -45,9 +55,11 @@ import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/habits_manager.dart';
 import '../../reminders/notification_channel.dart';
 import '../../routes/app_router.dart';
+import '../../routes/helpers/group_manage_helper.dart';
 import '../../routes/helpers/habit_create_helper.dart';
 import '../../routes/helpers/habit_detail_helper.dart';
 import '../../routes/helpers/habit_edit_helper.dart';
+import '../../routes/helpers/habits_status_changer_helper.dart';
 import '../../storage/db_helper_builder.dart';
 import '../../storage/profile/handlers.dart';
 import '../../storage/profile_builder.dart';
@@ -118,42 +130,64 @@ class AppEntry extends StatelessWidget {
 class _AppEntry extends StatelessWidget {
   const _AppEntry();
 
-  static final _router = AppRouterBuilder()
-      .addHabits(builder: (_, _) => const _DisplayEntry())
-      .addHabitDetail(
-        builder: (_, state) {
-          final (:habitUUID, :color, :adapter) = state.unpackHabitDetail();
-          return Provider.value(
-            value: adapter,
-            child: HabitDetailPage(habitUUID: habitUUID, color: color),
-          );
-        },
-      )
-      .addHabitCreate(
-        pageBuilder: (_, state) {
-          final (:initForm) = state.unpackHabitCreate();
-          return MaterialPage<void>(
-            fullscreenDialog: true,
-            child: HabitEditPage(
-              initForm: initForm,
-              showInFullscreenDialog: false,
-            ),
-          );
-        },
-      )
-      .addHabitEdit(
-        pageBuilder: (_, state) {
-          final (:habitId, :initForm) = state.unpackHabitEdit();
-          return MaterialPage<void>(
-            fullscreenDialog: true,
-            child: HabitEditPage(
-              initForm: initForm,
-              showInFullscreenDialog: false,
-            ),
-          );
-        },
-      )
-      .build(home: AppRoute.habits);
+  static final _router =
+      (AppRouterBuilder()
+            ..addHabits(builder: (_, _) => const _DisplayEntry())
+            ..addHabitDetail(
+              builder: (_, state) {
+                final (:habitUUID, :color, :adapter) = state
+                    .unpackHabitDetail();
+                return Provider.value(
+                  value: adapter,
+                  child: HabitDetailPage(habitUUID: habitUUID, color: color),
+                );
+              },
+            )
+            ..addHabitCreate(
+              pageBuilder: (_, state) {
+                final (:initForm) = state.unpackHabitCreate();
+                return MaterialPage<void>(
+                  fullscreenDialog: true,
+                  child: HabitEditPage(
+                    initForm: initForm,
+                    showInFullscreenDialog: false,
+                  ),
+                );
+              },
+            )
+            ..addHabitEdit(
+              pageBuilder: (_, state) {
+                final (:habitId, :initForm) = state.unpackHabitEdit();
+                return MaterialPage<void>(
+                  fullscreenDialog: true,
+                  child: HabitEditPage(
+                    initForm: initForm,
+                    showInFullscreenDialog: false,
+                  ),
+                );
+              },
+            )
+            ..addSettings(builder: (_, _) => const AppSettingPage())
+            ..addSettingsAbout(builder: (_, _) => const AppAboutPage())
+            ..addSettingsSync(builder: (_, _) => const AppSyncPage())
+            ..addSettingsNotify(builder: (_, _) => const AppNotifyConfigPage())
+            ..addExperimental(
+              builder: (_, _) => const ExpermentalFeaturesPage(),
+            )
+            ..addDebugger(builder: (_, _) => const AppDebuggerPage())
+            ..addGroupManage(
+              builder: (_, state) {
+                final (:selectedGroupId) = state.unpackGroupManage();
+                return GroupManagePage(initialGroupUUID: selectedGroupId);
+              },
+            )
+            ..addHabitsStatus(
+              builder: (_, state) {
+                final (:uuidList) = state.unpackHabitsStatusChanger();
+                return HabitsStatusChangerPage(uuidList: uuidList);
+              },
+            ))
+          .build(home: AppRoute.habits);
 
   String? getFontFamily() {
     switch (defaultTargetPlatform) {

@@ -20,6 +20,8 @@ import '../../models/habit_form.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../app_router.dart';
 
+const _kRouteQueryHabitId = 'habitId';
+
 /// Strongly-typed container for [AppRoute.habitEdit] extra data.
 ///
 /// Wraps the underlying go_router record with an [extension type] so the
@@ -54,8 +56,8 @@ extension HabitEditRoute on GoRouterState {
   HabitEditParams unpackHabitEdit() {
     final extra = this.extra! as HabitEditExtra;
     assert(
-      uri.queryParameters['habitId'] == extra.habitId,
-      'Query habitId (${uri.queryParameters['habitId']}) '
+      uri.queryParameters[_kRouteQueryHabitId] == extra.habitId,
+      'Query habitId (${uri.queryParameters[_kRouteQueryHabitId]}) '
       '!= extra habitId (${extra.habitId})',
     );
     return (habitId: extra.habitId, initForm: extra.initForm);
@@ -78,7 +80,7 @@ extension HabitEditPush on BuildContext {
     );
     return pushNamed<HabitDBCell>(
       AppRoute.habitEdit.name,
-      queryParameters: {'habitId': habitId},
+      queryParameters: {_kRouteQueryHabitId: habitId},
       extra: HabitEditExtra(habitId: habitId, initForm: initForm),
     );
   }

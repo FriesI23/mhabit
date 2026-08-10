@@ -26,9 +26,10 @@ void main() {
     });
 
     test('addHabits sets correct path and name', () {
-      final router = AppRouterBuilder()
-          .addHabits(builder: (_, _) => const SizedBox.shrink())
-          .build();
+      final router =
+          (AppRouterBuilder()
+                ..addHabits(builder: (_, _) => const SizedBox.shrink()))
+              .build();
       final routes = router.configuration.routes;
       expect(routes, hasLength(1));
       final route = routes.first as GoRoute;
@@ -38,9 +39,10 @@ void main() {
     });
 
     test('addHabitDetail sets correct path and name', () {
-      final router = AppRouterBuilder()
-          .addHabitDetail(builder: (_, _) => const SizedBox.shrink())
-          .build();
+      final router =
+          (AppRouterBuilder()
+                ..addHabitDetail(builder: (_, _) => const SizedBox.shrink()))
+              .build();
       final routes = router.configuration.routes;
       expect(routes, hasLength(1));
       final route = routes.first as GoRoute;
@@ -50,12 +52,12 @@ void main() {
     });
 
     test('addHabitCreate sets correct path, name and pageBuilder', () {
-      final router = AppRouterBuilder()
-          .addHabitCreate(
-            pageBuilder: (_, _) =>
-                const MaterialPage<void>(child: SizedBox.shrink()),
-          )
-          .build();
+      final router =
+          (AppRouterBuilder()..addHabitCreate(
+                pageBuilder: (_, _) =>
+                    const MaterialPage<void>(child: SizedBox.shrink()),
+              ))
+              .build();
       final routes = router.configuration.routes;
       expect(routes, hasLength(1));
       final route = routes.first as GoRoute;
@@ -65,12 +67,12 @@ void main() {
     });
 
     test('addHabitEdit sets correct path, name and pageBuilder', () {
-      final router = AppRouterBuilder()
-          .addHabitEdit(
-            pageBuilder: (_, _) =>
-                const MaterialPage<void>(child: SizedBox.shrink()),
-          )
-          .build();
+      final router =
+          (AppRouterBuilder()..addHabitEdit(
+                pageBuilder: (_, _) =>
+                    const MaterialPage<void>(child: SizedBox.shrink()),
+              ))
+              .build();
       final routes = router.configuration.routes;
       expect(routes, hasLength(1));
       final route = routes.first as GoRoute;
@@ -79,31 +81,137 @@ void main() {
       expect(route.pageBuilder, isNotNull);
     });
 
-    test('chains all routes in registration order', () {
-      final router = AppRouterBuilder()
-          .addHabits(builder: (_, _) => const SizedBox.shrink())
-          .addHabitDetail(builder: (_, _) => const SizedBox.shrink())
-          .addHabitCreate(
-            pageBuilder: (_, _) =>
-                const MaterialPage<void>(child: SizedBox.shrink()),
-          )
-          .addHabitEdit(
-            pageBuilder: (_, _) =>
-                const MaterialPage<void>(child: SizedBox.shrink()),
-          )
-          .build();
+    test('addSettings sets correct path and name', () {
+      final router =
+          (AppRouterBuilder()
+                ..addSettings(builder: (_, _) => const SizedBox.shrink()))
+              .build();
+      final route = router.configuration.routes.first as GoRoute;
+      expect(route.path, '/settings');
+      expect(route.name, AppRoute.settings.name);
+      expect(route.builder, isNotNull);
+    });
+
+    test('addSettingsAbout sets correct path and name', () {
+      final router =
+          (AppRouterBuilder()
+                ..addSettingsAbout(builder: (_, _) => const SizedBox.shrink()))
+              .build();
+      final route = router.configuration.routes.first as GoRoute;
+      expect(route.path, '/settings/about');
+      expect(route.name, AppRoute.settingsAbout.name);
+      expect(route.builder, isNotNull);
+    });
+
+    test('addSettingsSync sets correct path and name', () {
+      final router =
+          (AppRouterBuilder()
+                ..addSettingsSync(builder: (_, _) => const SizedBox.shrink()))
+              .build();
+      final route = router.configuration.routes.first as GoRoute;
+      expect(route.path, '/settings/sync');
+      expect(route.name, AppRoute.settingsSync.name);
+      expect(route.builder, isNotNull);
+    });
+
+    test('addSettingsNotify sets correct path and name', () {
+      final router =
+          (AppRouterBuilder()
+                ..addSettingsNotify(builder: (_, _) => const SizedBox.shrink()))
+              .build();
+      final route = router.configuration.routes.first as GoRoute;
+      expect(route.path, '/settings/notify');
+      expect(route.name, AppRoute.settingsNotify.name);
+      expect(route.builder, isNotNull);
+    });
+
+    test('addExperimental sets correct path and name', () {
+      final router =
+          (AppRouterBuilder()
+                ..addExperimental(builder: (_, _) => const SizedBox.shrink()))
+              .build();
+      final route = router.configuration.routes.first as GoRoute;
+      expect(route.path, '/experimental');
+      expect(route.name, AppRoute.experimental.name);
+      expect(route.builder, isNotNull);
+    });
+
+    test('addDebugger sets correct path and name', () {
+      final router =
+          (AppRouterBuilder()
+                ..addDebugger(builder: (_, _) => const SizedBox.shrink()))
+              .build();
+      final route = router.configuration.routes.first as GoRoute;
+      expect(route.path, '/debugger');
+      expect(route.name, AppRoute.debugger.name);
+      expect(route.builder, isNotNull);
+    });
+
+    test('addGroupManage sets correct path and name', () {
+      final router =
+          (AppRouterBuilder()
+                ..addGroupManage(builder: (_, _) => const SizedBox.shrink()))
+              .build();
+      final route = router.configuration.routes.first as GoRoute;
+      expect(route.path, '/group/manage');
+      expect(route.name, AppRoute.groupManage.name);
+      expect(route.builder, isNotNull);
+    });
+
+    test('addHabitsStatus sets correct path and name', () {
+      final router =
+          (AppRouterBuilder()
+                ..addHabitsStatus(builder: (_, _) => const SizedBox.shrink()))
+              .build();
+      final route = router.configuration.routes.first as GoRoute;
+      expect(route.path, '/habits/status');
+      expect(route.name, AppRoute.habitsStatus.name);
+      expect(route.builder, isNotNull);
+    });
+
+    test('chains all 12 routes in registration order', () {
+      final router =
+          (AppRouterBuilder()
+                ..addHabits(builder: (_, _) => const SizedBox.shrink())
+                ..addHabitDetail(builder: (_, _) => const SizedBox.shrink())
+                ..addHabitCreate(
+                  pageBuilder: (_, _) =>
+                      const MaterialPage<void>(child: SizedBox.shrink()),
+                )
+                ..addHabitEdit(
+                  pageBuilder: (_, _) =>
+                      const MaterialPage<void>(child: SizedBox.shrink()),
+                )
+                ..addSettings(builder: (_, _) => const SizedBox.shrink())
+                ..addSettingsAbout(builder: (_, _) => const SizedBox.shrink())
+                ..addSettingsSync(builder: (_, _) => const SizedBox.shrink())
+                ..addSettingsNotify(builder: (_, _) => const SizedBox.shrink())
+                ..addExperimental(builder: (_, _) => const SizedBox.shrink())
+                ..addDebugger(builder: (_, _) => const SizedBox.shrink())
+                ..addGroupManage(builder: (_, _) => const SizedBox.shrink())
+                ..addHabitsStatus(builder: (_, _) => const SizedBox.shrink()))
+              .build();
       final routes = router.configuration.routes;
-      expect(routes, hasLength(4));
+      expect(routes, hasLength(12));
       expect((routes[0] as GoRoute).path, '/habits');
       expect((routes[1] as GoRoute).path, '/habits/:habitId');
       expect((routes[2] as GoRoute).path, '/habit/create');
       expect((routes[3] as GoRoute).path, '/habit/edit');
+      expect((routes[4] as GoRoute).path, '/settings');
+      expect((routes[5] as GoRoute).path, '/settings/about');
+      expect((routes[6] as GoRoute).path, '/settings/sync');
+      expect((routes[7] as GoRoute).path, '/settings/notify');
+      expect((routes[8] as GoRoute).path, '/experimental');
+      expect((routes[9] as GoRoute).path, '/debugger');
+      expect((routes[10] as GoRoute).path, '/group/manage');
+      expect((routes[11] as GoRoute).path, '/habits/status');
     });
 
     test('build without home leaves initialLocation unset', () {
-      final router = AppRouterBuilder()
-          .addHabits(builder: (_, _) => const SizedBox.shrink())
-          .build();
+      final router =
+          (AppRouterBuilder()
+                ..addHabits(builder: (_, _) => const SizedBox.shrink()))
+              .build();
       // When no home is set, routeInformationProvider wraps initialLocation
       // in a RouteInformation. Verify configuration has the routes.
       expect(router.configuration.routes, hasLength(1));
@@ -114,6 +222,14 @@ void main() {
       expect(AppRoute.habitDetail.name, 'habits/:habitId');
       expect(AppRoute.habitCreate.name, 'habit/create');
       expect(AppRoute.habitEdit.name, 'habit/edit');
+      expect(AppRoute.settings.name, 'settings');
+      expect(AppRoute.settingsAbout.name, 'settings/about');
+      expect(AppRoute.settingsSync.name, 'settings/sync');
+      expect(AppRoute.settingsNotify.name, 'settings/notify');
+      expect(AppRoute.experimental.name, 'experimental');
+      expect(AppRoute.debugger.name, 'debugger');
+      expect(AppRoute.groupManage.name, 'group/manage');
+      expect(AppRoute.habitsStatus.name, 'habits/status');
     });
   });
 }

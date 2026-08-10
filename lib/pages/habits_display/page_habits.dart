@@ -1465,7 +1465,7 @@ class _GroupHeaderTileState extends State<_GroupHeaderTile> {
               if (!mounted) return;
               naviToGroupManagePage(
                 context: context,
-                initialGroupUUID: widget.header.groupUUID,
+                selectedGroupId: widget.header.groupUUID,
               );
             },
             child: Text(l10n?.groupHeader_menu_manage ?? 'Manage'),

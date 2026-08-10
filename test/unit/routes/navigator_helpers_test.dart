@@ -140,5 +140,163 @@ void main() {
         returnsNormally,
       );
     });
+
+    // ---- Step 4: 全量推广 naviTo* delegates ----
+
+    testWidgets('naviToAppSettingPage delegates to pushNamed', (tester) async {
+      final router = GoRouter(
+        initialLocation: '/',
+        routes: [
+          GoRoute(path: '/', builder: (_, _) => const SizedBox.shrink()),
+          GoRoute(
+            path: '/settings',
+            name: AppRoute.settings.name,
+            builder: (_, _) => const SizedBox.shrink(),
+          ),
+        ],
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      final context = tester.element(find.byType(SizedBox).first);
+      expect(() => naviToAppSettingPage(context: context), returnsNormally);
+    });
+
+    testWidgets('naviToAppAboutPage delegates to pushNamed', (tester) async {
+      final router = GoRouter(
+        initialLocation: '/',
+        routes: [
+          GoRoute(path: '/', builder: (_, _) => const SizedBox.shrink()),
+          GoRoute(
+            path: '/settings/about',
+            name: AppRoute.settingsAbout.name,
+            builder: (_, _) => const SizedBox.shrink(),
+          ),
+        ],
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      final context = tester.element(find.byType(SizedBox).first);
+      expect(() => naviToAppAboutPage(context: context), returnsNormally);
+    });
+
+    testWidgets('naviToAppSyncPage delegates to pushNamed', (tester) async {
+      final router = GoRouter(
+        initialLocation: '/',
+        routes: [
+          GoRoute(path: '/', builder: (_, _) => const SizedBox.shrink()),
+          GoRoute(
+            path: '/settings/sync',
+            name: AppRoute.settingsSync.name,
+            builder: (_, _) => const SizedBox.shrink(),
+          ),
+        ],
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      final context = tester.element(find.byType(SizedBox).first);
+      expect(() => naviToAppSyncPage(context: context), returnsNormally);
+    });
+
+    testWidgets('naviToNotifyConfigPage delegates to pushNamed', (
+      tester,
+    ) async {
+      final router = GoRouter(
+        initialLocation: '/',
+        routes: [
+          GoRoute(path: '/', builder: (_, _) => const SizedBox.shrink()),
+          GoRoute(
+            path: '/settings/notify',
+            name: AppRoute.settingsNotify.name,
+            builder: (_, _) => const SizedBox.shrink(),
+          ),
+        ],
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      final context = tester.element(find.byType(SizedBox).first);
+      expect(() => naviToNotifyConfigPage(context: context), returnsNormally);
+    });
+
+    testWidgets('naviToExperimentalFeaturesPage delegates to pushNamed', (
+      tester,
+    ) async {
+      final router = GoRouter(
+        initialLocation: '/',
+        routes: [
+          GoRoute(path: '/', builder: (_, _) => const SizedBox.shrink()),
+          GoRoute(
+            path: '/experimental',
+            name: AppRoute.experimental.name,
+            builder: (_, _) => const SizedBox.shrink(),
+          ),
+        ],
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      final context = tester.element(find.byType(SizedBox).first);
+      expect(
+        () => naviToExperimentalFeaturesPage(context: context),
+        returnsNormally,
+      );
+    });
+
+    testWidgets('naviToAppDebuggerPage delegates to pushNamed', (tester) async {
+      final router = GoRouter(
+        initialLocation: '/',
+        routes: [
+          GoRoute(path: '/', builder: (_, _) => const SizedBox.shrink()),
+          GoRoute(
+            path: '/debugger',
+            name: AppRoute.debugger.name,
+            builder: (_, _) => const SizedBox.shrink(),
+          ),
+        ],
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      final context = tester.element(find.byType(SizedBox).first);
+      expect(() => naviToAppDebuggerPage(context: context), returnsNormally);
+    });
+
+    testWidgets('naviToGroupManagePage delegates with selectedGroupId', (
+      tester,
+    ) async {
+      final router = GoRouter(
+        initialLocation: '/',
+        routes: [
+          GoRoute(path: '/', builder: (_, _) => const SizedBox.shrink()),
+          GoRoute(
+            path: '/group/manage',
+            name: AppRoute.groupManage.name,
+            builder: (_, _) => const SizedBox.shrink(),
+          ),
+        ],
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      final context = tester.element(find.byType(SizedBox).first);
+      expect(
+        () => naviToGroupManagePage(context: context, selectedGroupId: 'grp-1'),
+        returnsNormally,
+      );
+    });
+
+    testWidgets('naviToHabitsStatusChangerPage delegates with uuidList', (
+      tester,
+    ) async {
+      final router = GoRouter(
+        initialLocation: '/',
+        routes: [
+          GoRoute(path: '/', builder: (_, _) => const SizedBox.shrink()),
+          GoRoute(
+            path: '/habits/status',
+            name: AppRoute.habitsStatus.name,
+            builder: (_, _) => const SizedBox.shrink(),
+          ),
+        ],
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      final context = tester.element(find.byType(SizedBox).first);
+      expect(
+        () => naviToHabitsStatusChangerPage(
+          context: context,
+          uuidList: const ['a', 'b'],
+        ),
+        returnsNormally,
+      );
+    });
   });
 }

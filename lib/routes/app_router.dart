@@ -20,7 +20,15 @@ enum AppRoute {
   habits('habits'),
   habitDetail('habits/:habitId'),
   habitCreate('habit/create'),
-  habitEdit('habit/edit');
+  habitEdit('habit/edit'),
+  settings('settings'),
+  settingsAbout('settings/about'),
+  settingsSync('settings/sync'),
+  settingsNotify('settings/notify'),
+  experimental('experimental'),
+  debugger('debugger'),
+  groupManage('group/manage'),
+  habitsStatus('habits/status');
 
   const AppRoute(this.name);
   final String name;
@@ -34,46 +42,134 @@ class AppRouterBuilder {
     AppRoute.habitDetail => '/habits/:habitId',
     AppRoute.habitCreate => '/habit/create',
     AppRoute.habitEdit => '/habit/edit',
+    AppRoute.settings => '/settings',
+    AppRoute.settingsAbout => '/settings/about',
+    AppRoute.settingsSync => '/settings/sync',
+    AppRoute.settingsNotify => '/settings/notify',
+    AppRoute.experimental => '/experimental',
+    AppRoute.debugger => '/debugger',
+    AppRoute.groupManage => '/group/manage',
+    AppRoute.habitsStatus => '/habits/status',
   };
 
-  AppRouterBuilder addHabits({required GoRouterWidgetBuilder builder}) {
-    const route = AppRoute.habits;
-    _routes.add(
-      GoRoute(path: _pathFor(route), name: route.name, builder: builder),
-    );
-    return this;
-  }
-
-  AppRouterBuilder addHabitDetail({required GoRouterWidgetBuilder builder}) {
-    const route = AppRoute.habitDetail;
-    _routes.add(
-      GoRoute(path: _pathFor(route), name: route.name, builder: builder),
-    );
-    return this;
-  }
-
-  AppRouterBuilder addHabitCreate({required GoRouterPageBuilder pageBuilder}) {
-    const route = AppRoute.habitCreate;
+  void addHabits({required GoRouterWidgetBuilder builder}) {
     _routes.add(
       GoRoute(
-        path: _pathFor(route),
-        name: route.name,
+        path: _pathFor(AppRoute.habits),
+        name: AppRoute.habits.name,
+        builder: builder,
+      ),
+    );
+  }
+
+  void addHabitDetail({required GoRouterWidgetBuilder builder}) {
+    _routes.add(
+      GoRoute(
+        path: _pathFor(AppRoute.habitDetail),
+        name: AppRoute.habitDetail.name,
+        builder: builder,
+      ),
+    );
+  }
+
+  void addHabitCreate({required GoRouterPageBuilder pageBuilder}) {
+    _routes.add(
+      GoRoute(
+        path: _pathFor(AppRoute.habitCreate),
+        name: AppRoute.habitCreate.name,
         pageBuilder: pageBuilder,
       ),
     );
-    return this;
   }
 
-  AppRouterBuilder addHabitEdit({required GoRouterPageBuilder pageBuilder}) {
-    const route = AppRoute.habitEdit;
+  void addHabitEdit({required GoRouterPageBuilder pageBuilder}) {
     _routes.add(
       GoRoute(
-        path: _pathFor(route),
-        name: route.name,
+        path: _pathFor(AppRoute.habitEdit),
+        name: AppRoute.habitEdit.name,
         pageBuilder: pageBuilder,
       ),
     );
-    return this;
+  }
+
+  void addSettings({required GoRouterWidgetBuilder builder}) {
+    _routes.add(
+      GoRoute(
+        path: _pathFor(AppRoute.settings),
+        name: AppRoute.settings.name,
+        builder: builder,
+      ),
+    );
+  }
+
+  void addSettingsAbout({required GoRouterWidgetBuilder builder}) {
+    _routes.add(
+      GoRoute(
+        path: _pathFor(AppRoute.settingsAbout),
+        name: AppRoute.settingsAbout.name,
+        builder: builder,
+      ),
+    );
+  }
+
+  void addSettingsSync({required GoRouterWidgetBuilder builder}) {
+    _routes.add(
+      GoRoute(
+        path: _pathFor(AppRoute.settingsSync),
+        name: AppRoute.settingsSync.name,
+        builder: builder,
+      ),
+    );
+  }
+
+  void addSettingsNotify({required GoRouterWidgetBuilder builder}) {
+    _routes.add(
+      GoRoute(
+        path: _pathFor(AppRoute.settingsNotify),
+        name: AppRoute.settingsNotify.name,
+        builder: builder,
+      ),
+    );
+  }
+
+  void addExperimental({required GoRouterWidgetBuilder builder}) {
+    _routes.add(
+      GoRoute(
+        path: _pathFor(AppRoute.experimental),
+        name: AppRoute.experimental.name,
+        builder: builder,
+      ),
+    );
+  }
+
+  void addDebugger({required GoRouterWidgetBuilder builder}) {
+    _routes.add(
+      GoRoute(
+        path: _pathFor(AppRoute.debugger),
+        name: AppRoute.debugger.name,
+        builder: builder,
+      ),
+    );
+  }
+
+  void addGroupManage({required GoRouterWidgetBuilder builder}) {
+    _routes.add(
+      GoRoute(
+        path: _pathFor(AppRoute.groupManage),
+        name: AppRoute.groupManage.name,
+        builder: builder,
+      ),
+    );
+  }
+
+  void addHabitsStatus({required GoRouterWidgetBuilder builder}) {
+    _routes.add(
+      GoRoute(
+        path: _pathFor(AppRoute.habitsStatus),
+        name: AppRoute.habitsStatus.name,
+        builder: builder,
+      ),
+    );
   }
 
   GoRouter build({AppRoute? home}) {

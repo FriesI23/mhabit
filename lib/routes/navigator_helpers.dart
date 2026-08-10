@@ -13,25 +13,21 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../common/types.dart';
 import '../models/habit_color.dart';
 import '../models/habit_display.dart';
 import '../models/habit_form.dart';
-import '../pages/app_about/page.dart' as app_about;
-import '../pages/app_debugger/page.dart' as app_debugger;
-import '../pages/app_notify_config/page.dart' as app_notify_config;
-import '../pages/app_settings/page.dart' as app_settings;
-import '../pages/app_sync/page.dart' as app_sync;
-import '../pages/expermental_features/page.dart' as exp_feature;
-import '../pages/group_manage/page.dart' as group_manage;
 import '../pages/habit_detail/page.dart' as habit_detail;
 import '../pages/habits_display/providers.dart' show HabitDetailAdapter;
-import '../pages/habits_status_changer/page.dart' as habits_status_changer;
 import '../storage/db/handlers/habit.dart';
+import 'app_router.dart';
+import 'helpers/group_manage_helper.dart';
 import 'helpers/habit_create_helper.dart';
 import 'helpers/habit_detail_helper.dart';
 import 'helpers/habit_edit_helper.dart';
+import 'helpers/habits_status_changer_helper.dart';
 
 Future<HabitDBCell?> naviToHabitCreatePage({
   required BuildContext context,
@@ -64,61 +60,29 @@ Future<habit_detail.DetailPageReturn?> naviToHabitDetailPage({
 );
 
 Future<void> naviToAppSettingPage({required BuildContext context}) =>
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const app_settings.AppSettingPage(),
-      ),
-    );
+    context.pushNamed(AppRoute.settings.name);
 
 Future<void> naviToAppAboutPage({required BuildContext context}) =>
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const app_about.AppAboutPage()),
-    );
+    context.pushNamed(AppRoute.settingsAbout.name);
 
 Future<void> naviToGroupManagePage({
   required BuildContext context,
-  String? initialGroupUUID,
-}) => Navigator.of(context).push(
-  MaterialPageRoute(
-    builder: (context) =>
-        group_manage.GroupManagePage(initialGroupUUID: initialGroupUUID),
-  ),
-);
+  String? selectedGroupId,
+}) => context.pushGroupManage(selectedGroupId: selectedGroupId);
 
-Future<void> naviToAppSyncPage({required BuildContext context}) => Navigator.of(
-  context,
-).push(MaterialPageRoute(builder: (context) => const app_sync.AppSyncPage()));
+Future<void> naviToAppSyncPage({required BuildContext context}) =>
+    context.pushNamed(AppRoute.settingsSync.name);
 
 Future<void> naviToNotifyConfigPage({required BuildContext context}) =>
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const app_notify_config.AppNotifyConfigPage(),
-      ),
-    );
+    context.pushNamed(AppRoute.settingsNotify.name);
 
 Future<void> naviToAppDebuggerPage({required BuildContext context}) =>
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const app_debugger.AppDebuggerPage(),
-        settings: const RouteSettings(
-          name: app_debugger.AppDebuggerPage.routerName,
-        ),
-      ),
-    );
+    context.pushNamed(AppRoute.debugger.name);
 
 Future<void> naviToExperimentalFeaturesPage({required BuildContext context}) =>
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const exp_feature.ExpermentalFeaturesPage(),
-      ),
-    );
+    context.pushNamed(AppRoute.experimental.name);
 
 Future<void> naviToHabitsStatusChangerPage({
   required BuildContext context,
   required List<HabitUUID> uuidList,
-}) => Navigator.of(context).push(
-  MaterialPageRoute(
-    builder: (context) =>
-        habits_status_changer.HabitsStatusChangerPage(uuidList: uuidList),
-  ),
-);
+}) => context.pushHabitsStatusChanger(uuidList: uuidList);
