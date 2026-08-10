@@ -46,13 +46,18 @@ typedef HabitDetailParams = ({
 
 /// Unpacks [GoRouterState] into [HabitDetailParams] for the
 /// [AppRoute.habitDetail] route builder.
+///
+/// When [extra] is null or not a [HabitDetailExtra] (e.g. deep-link
+/// navigation where [HabitDetailAdapter] cannot be passed via extra),
+/// [color] and [adapter] default to null.
 extension HabitDetailRoute on GoRouterState {
   HabitDetailParams unpackHabitDetail() {
-    final extra = this.extra! as HabitDetailExtra;
+    final extra = this.extra;
+    final detailExtra = extra is HabitDetailExtra ? extra : null;
     return (
       habitUUID: pathParameters['habitId']!,
-      color: extra.color,
-      adapter: extra.adapter,
+      color: detailExtra?.color,
+      adapter: detailExtra?.adapter,
     );
   }
 }

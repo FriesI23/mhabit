@@ -86,5 +86,54 @@ void main() {
       final params = capturedState!.unpackHabitCreate();
       expect(params.initForm, isNull);
     });
+
+    testWidgets(
+      'returns default initForm when extra is null (deep-link compat)',
+      (tester) async {
+        GoRouterState? capturedState;
+
+        final router = GoRouter(
+          initialLocation: '/habit/create',
+          routes: [
+            GoRoute(
+              path: '/habit/create',
+              builder: (_, state) {
+                capturedState = state;
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
+        );
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+        final params = capturedState!.unpackHabitCreate();
+        expect(params.initForm, isNull);
+      },
+    );
+
+    testWidgets(
+      'returns default initForm when extra is wrong type (deep-link compat)',
+      (tester) async {
+        GoRouterState? capturedState;
+
+        final router = GoRouter(
+          initialLocation: '/habit/create',
+          initialExtra: 'wrong-type',
+          routes: [
+            GoRoute(
+              path: '/habit/create',
+              builder: (_, state) {
+                capturedState = state;
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
+        );
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+        final params = capturedState!.unpackHabitCreate();
+        expect(params.initForm, isNull);
+      },
+    );
   });
 }

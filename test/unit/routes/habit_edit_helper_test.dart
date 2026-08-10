@@ -126,6 +126,53 @@ void main() {
         throwsA(isA<AssertionError>()),
       );
     });
+
+    testWidgets('throws StateError when extra is null', (tester) async {
+      GoRouterState? capturedState;
+
+      final router = GoRouter(
+        initialLocation: '/habit/edit?habitId=test-id',
+        routes: [
+          GoRoute(
+            path: '/habit/edit',
+            builder: (_, state) {
+              capturedState = state;
+              return const SizedBox.shrink();
+            },
+          ),
+        ],
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(
+        () => capturedState!.unpackHabitEdit(),
+        throwsA(isA<StateError>()),
+      );
+    });
+
+    testWidgets('throws StateError when extra is wrong type', (tester) async {
+      GoRouterState? capturedState;
+
+      final router = GoRouter(
+        initialLocation: '/habit/edit?habitId=test-id',
+        initialExtra: 'wrong-type',
+        routes: [
+          GoRoute(
+            path: '/habit/edit',
+            builder: (_, state) {
+              capturedState = state;
+              return const SizedBox.shrink();
+            },
+          ),
+        ],
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(
+        () => capturedState!.unpackHabitEdit(),
+        throwsA(isA<StateError>()),
+      );
+    });
   });
 
   group('pushHabitEdit', () {

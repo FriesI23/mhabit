@@ -50,11 +50,19 @@ typedef HabitEditParams = ({HabitUUID habitId, HabitForm initForm});
 /// Unpacks [GoRouterState] into [HabitEditParams] for the
 /// [AppRoute.habitEdit] route builder.
 ///
-/// Asserts that the query parameter [habitId] matches the [extra.habitId]
-/// for bidirectional integrity.
+/// Throws [StateError] when [extra] is null or not a [HabitEditExtra],
+/// since both [habitId] and [initForm] are required for this route.
+/// Also asserts that the query parameter [habitId] matches the
+/// [HabitEditExtra.habitId] for bidirectional integrity.
 extension HabitEditRoute on GoRouterState {
   HabitEditParams unpackHabitEdit() {
-    final extra = this.extra! as HabitEditExtra;
+    final extra = this.extra;
+    if (extra is! HabitEditExtra) {
+      throw StateError(
+        'GoRouterState.extra must be a HabitEditExtra, '
+        'got ${extra.runtimeType}',
+      );
+    }
     assert(
       uri.queryParameters[_kRouteQueryHabitId] == extra.habitId,
       'Query habitId (${uri.queryParameters[_kRouteQueryHabitId]}) '

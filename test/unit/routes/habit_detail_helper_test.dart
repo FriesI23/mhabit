@@ -81,7 +81,9 @@ void main() {
       expect(params.adapter, isNull);
     });
 
-    testWidgets('throws when extra is null', (tester) async {
+    testWidgets('returns defaults when extra is null (deep-link compat)', (
+      tester,
+    ) async {
       GoRouterState? capturedState;
 
       final router = GoRouter(
@@ -98,34 +100,37 @@ void main() {
       );
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      expect(
-        () => capturedState!.unpackHabitDetail(),
-        throwsA(isA<TypeError>()),
-      );
+      final params = capturedState!.unpackHabitDetail();
+      expect(params.habitUUID, 'test-id');
+      expect(params.color, isNull);
+      expect(params.adapter, isNull);
     });
 
-    testWidgets('throws when extra is wrong type', (tester) async {
-      GoRouterState? capturedState;
+    testWidgets(
+      'returns defaults when extra is wrong type (deep-link compat)',
+      (tester) async {
+        GoRouterState? capturedState;
 
-      final router = GoRouter(
-        initialLocation: '/habits/test-id',
-        initialExtra: 'wrong-type',
-        routes: [
-          GoRoute(
-            path: '/habits/:habitId',
-            builder: (_, state) {
-              capturedState = state;
-              return const SizedBox.shrink();
-            },
-          ),
-        ],
-      );
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        final router = GoRouter(
+          initialLocation: '/habits/test-id',
+          initialExtra: 'wrong-type',
+          routes: [
+            GoRoute(
+              path: '/habits/:habitId',
+              builder: (_, state) {
+                capturedState = state;
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
+        );
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      expect(
-        () => capturedState!.unpackHabitDetail(),
-        throwsA(isA<TypeError>()),
-      );
-    });
+        final params = capturedState!.unpackHabitDetail();
+        expect(params.habitUUID, 'test-id');
+        expect(params.color, isNull);
+        expect(params.adapter, isNull);
+      },
+    );
   });
 }

@@ -39,10 +39,15 @@ typedef HabitCreateParams = ({HabitForm? initForm});
 
 /// Unpacks [GoRouterState] into [HabitCreateParams] for the
 /// [AppRoute.habitCreate] route builder.
+///
+/// When [extra] is null or not a [HabitCreateExtra] (e.g. deep-link
+/// navigation where [HabitForm] cannot be passed via extra),
+/// [initForm] defaults to null.
 extension HabitCreateRoute on GoRouterState {
   HabitCreateParams unpackHabitCreate() {
-    final extra = this.extra! as HabitCreateExtra;
-    return (initForm: extra.initForm);
+    final extra = this.extra;
+    final createExtra = extra is HabitCreateExtra ? extra : null;
+    return (initForm: createExtra?.initForm);
   }
 }
 
