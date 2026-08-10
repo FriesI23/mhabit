@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../common/types.dart';
 import '../models/habit_color.dart';
@@ -30,6 +29,7 @@ import '../pages/habit_edit/page.dart' as habit_edit;
 import '../pages/habits_display/providers.dart' show HabitDetailAdapter;
 import '../pages/habits_status_changer/page.dart' as habits_status_changer;
 import '../storage/db/handlers/habit.dart';
+import 'helpers/habit_detail_helper.dart';
 
 Future<HabitDBCell?> naviToHabitEidtPage({
   required BuildContext context,
@@ -50,13 +50,10 @@ Future<habit_detail.DetailPageReturn?> naviToHabitDetailPage({
   required HabitUUID habitUUID,
   HabitColor? color,
   HabitDetailAdapter? adapter,
-}) => Navigator.of(context).push(
-  MaterialPageRoute(
-    builder: (context) => Provider.value(
-      value: adapter,
-      child: habit_detail.HabitDetailPage(habitUUID: habitUUID, color: color),
-    ),
-  ),
+}) => context.pushHabitDetail(
+  habitUUID: habitUUID,
+  color: color,
+  adapter: adapter,
 );
 
 Future<void> naviToAppSettingPage({required BuildContext context}) =>
