@@ -18,38 +18,40 @@ import 'package:go_router/go_router.dart';
 import '../../common/types.dart';
 import '../../models/habit_color.dart';
 import '../../pages/habit_detail/page.dart' as habit_detail;
-import '../../pages/habits_display/providers.dart' show HabitDetailAdapter;
+import '../../pages/habits_display/_providers/habit_summary.dart' as summary;
 import '../app_router.dart';
 
 /// Strongly-typed container for [AppRoute.habitDetail] extra data.
 ///
 /// Wraps the underlying go_router record with an [extension type] so the
 /// extra payload carries a nominal (non-structural) type.  Callers construct
-/// via [HabitDetailExtra.new] and consumers unwrap via the [color]/[adapter]
+/// via [HabitDetailExtra.new] and consumers unwrap via the [color]/[summaryAdapter]
 /// accessors — the raw record is never exposed.
 extension type const HabitDetailExtra._(
-  ({HabitColor? color, HabitDetailAdapter? adapter}) _value
+  ({HabitColor? color, summary.HabitDetailAdapter? summaryAdapter}) _value
 ) {
-  const HabitDetailExtra({HabitColor? color, HabitDetailAdapter? adapter})
-    : this._((color: color, adapter: adapter));
+  const HabitDetailExtra({
+    HabitColor? color,
+    summary.HabitDetailAdapter? summaryAdapter,
+  }) : this._((color: color, summaryAdapter: summaryAdapter));
 
   HabitColor? get color => _value.color;
-  HabitDetailAdapter? get adapter => _value.adapter;
+  summary.HabitDetailAdapter? get summaryAdapter => _value.summaryAdapter;
 }
 
 /// Unpacked parameters for the habit detail route builder.
 typedef HabitDetailParams = ({
   HabitUUID habitUUID,
   HabitColor? color,
-  HabitDetailAdapter? adapter,
+  summary.HabitDetailAdapter? summaryAdapter,
 });
 
 /// Unpacks [GoRouterState] into [HabitDetailParams] for the
 /// [AppRoute.habitDetail] route builder.
 ///
 /// When [extra] is null or not a [HabitDetailExtra] (e.g. deep-link
-/// navigation where [HabitDetailAdapter] cannot be passed via extra),
-/// [color] and [adapter] default to null.
+/// navigation where [summary.HabitDetailAdapter] cannot be passed via extra),
+/// [color] and [summaryAdapter] default to null.
 extension HabitDetailRoute on GoRouterState {
   HabitDetailParams unpackHabitDetail() {
     final extra = this.extra;
@@ -57,7 +59,7 @@ extension HabitDetailRoute on GoRouterState {
     return (
       habitUUID: pathParameters['habitId']!,
       color: detailExtra?.color,
-      adapter: detailExtra?.adapter,
+      summaryAdapter: detailExtra?.summaryAdapter,
     );
   }
 }
@@ -67,10 +69,10 @@ extension HabitDetailPush on BuildContext {
   Future<habit_detail.DetailPageReturn?> pushHabitDetail({
     required HabitUUID habitUUID,
     HabitColor? color,
-    HabitDetailAdapter? adapter,
+    summary.HabitDetailAdapter? summaryAdapter,
   }) => pushNamed<habit_detail.DetailPageReturn>(
     AppRoute.habitDetail.name,
     pathParameters: {'habitId': habitUUID},
-    extra: HabitDetailExtra(color: color, adapter: adapter),
+    extra: HabitDetailExtra(color: color, summaryAdapter: summaryAdapter),
   );
 }

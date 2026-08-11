@@ -135,10 +135,10 @@ class _AppEntry extends StatelessWidget {
             ..addHabits(builder: (_, _) => const _DisplayEntry())
             ..addHabitDetail(
               builder: (_, state) {
-                final (:habitUUID, :color, :adapter) = state
+                final (:habitUUID, :color, :summaryAdapter) = state
                     .unpackHabitDetail();
                 return Provider.value(
-                  value: adapter,
+                  value: summaryAdapter,
                   child: HabitDetailPage(habitUUID: habitUUID, color: color),
                 );
               },

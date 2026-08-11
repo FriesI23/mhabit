@@ -22,13 +22,13 @@ import 'package:mhabit/routes/helpers/habit_detail_helper.dart';
 void main() {
   group('HabitDetailExtra', () {
     test(
-      'construct with color only — accessors return color, adapter null',
+      'construct with color only — accessors return color, summaryAdapter null',
       () {
         const color = HabitColor.builtIn(HabitColorType.cc1);
         const extra = HabitDetailExtra(color: color);
 
         expect(extra.color, color);
-        expect(extra.adapter, isNull);
+        expect(extra.summaryAdapter, isNull);
       },
     );
 
@@ -36,7 +36,7 @@ void main() {
       const extra = HabitDetailExtra();
 
       expect(extra.color, isNull);
-      expect(extra.adapter, isNull);
+      expect(extra.summaryAdapter, isNull);
     });
 
     test('construct with same color — accessor returns same value', () {
@@ -78,7 +78,7 @@ void main() {
       final params = capturedState!.unpackHabitDetail();
       expect(params.habitUUID, 'test-habit-id');
       expect(params.color, const HabitColor.builtIn(HabitColorType.cc3));
-      expect(params.adapter, isNull);
+      expect(params.summaryAdapter, isNull);
     });
 
     testWidgets('returns defaults when extra is null (deep-link compat)', (
@@ -103,7 +103,7 @@ void main() {
       final params = capturedState!.unpackHabitDetail();
       expect(params.habitUUID, 'test-id');
       expect(params.color, isNull);
-      expect(params.adapter, isNull);
+      expect(params.summaryAdapter, isNull);
     });
 
     testWidgets(
@@ -129,7 +129,7 @@ void main() {
         final params = capturedState!.unpackHabitDetail();
         expect(params.habitUUID, 'test-id');
         expect(params.color, isNull);
-        expect(params.adapter, isNull);
+        expect(params.summaryAdapter, isNull);
       },
     );
   });

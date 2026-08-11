@@ -974,7 +974,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
         context: context,
         habitUUID: uuid,
         color: _vm.getHabit(uuid)?.color,
-        adapter: _vm.buildHabitDetailAdapter(),
+        summaryAdapter: _vm.summaryAdapter,
       );
 
       if (result == null || !mounted) return;

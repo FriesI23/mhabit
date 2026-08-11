@@ -52,11 +52,11 @@ Future<habit_detail.DetailPageReturn?> naviToHabitDetailPage({
   required BuildContext context,
   required HabitUUID habitUUID,
   HabitColor? color,
-  HabitDetailAdapter? adapter,
+  HabitDetailAdapter? summaryAdapter,
 }) => context.pushHabitDetail(
   habitUUID: habitUUID,
   color: color,
-  adapter: adapter,
+  summaryAdapter: summaryAdapter,
 );
 
 Future<void> naviToAppSettingPage({required BuildContext context}) =>

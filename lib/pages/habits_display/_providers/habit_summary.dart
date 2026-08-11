@@ -176,8 +176,7 @@ class HabitSummaryViewModel extends ChangeNotifier
 
   HabitSummaryViewModel();
 
-  HabitDetailAdapter buildHabitDetailAdapter() =>
-      HabitDetailAdapter(root: this);
+  HabitDetailAdapter get summaryAdapter => HabitDetailAdapter(root: this);
 
   @override
   bool get mounted => _mounted;

@@ -62,47 +62,49 @@ class AppRootView extends StatelessWidget {
 
   bool get _useRouter => routerConfig != null;
 
+  Widget _builder(BuildContext context, Widget? child) => MediaQuery(
+    data: MediaQuery.of(context).copyWith(
+      disableAnimations:
+          disableAnimations || MediaQuery.disableAnimationsOf(context),
+    ),
+    child: UnfocusOnTap(child: child),
+  );
+
+  String _onGenerateTitle(BuildContext context) =>
+      L10n.of(context)?.appName ?? appName;
+
   @override
   Widget build(BuildContext context) {
+    final lightTheme = lightThemeBuilder?.call();
+    final darkTheme = darkThemeBuilder?.call();
+
     Widget routerApp() => MaterialApp.router(
       routerConfig: routerConfig!,
-      onGenerateTitle: (context) => L10n.of(context)?.appName ?? appName,
+      onGenerateTitle: _onGenerateTitle,
       scaffoldMessengerKey: snackbarKey,
-      theme: lightThemeBuilder?.call(),
-      darkTheme: darkThemeBuilder?.call(),
+      theme: lightTheme,
+      darkTheme: darkTheme,
       themeMode: themeMode,
       locale: language,
       shortcuts: WidgetsApp.defaultShortcuts,
       actions: WidgetsApp.defaultActions,
-      builder: (context, child) => MediaQuery(
-        data: MediaQuery.of(context).copyWith(
-          disableAnimations:
-              disableAnimations || MediaQuery.disableAnimationsOf(context),
-        ),
-        child: UnfocusOnTap(child: child),
-      ),
+      builder: _builder,
       localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: appSupportedLocales,
       debugShowCheckedModeBanner: false,
     );
     Widget homeApp() => MaterialApp(
-      onGenerateTitle: (context) => L10n.of(context)?.appName ?? appName,
+      onGenerateTitle: _onGenerateTitle,
       navigatorKey: navigatorKey,
       navigatorObservers: [currentRouteObserver],
       scaffoldMessengerKey: snackbarKey,
-      theme: lightThemeBuilder?.call(),
-      darkTheme: darkThemeBuilder?.call(),
+      theme: lightTheme,
+      darkTheme: darkTheme,
       themeMode: themeMode,
       locale: language,
       shortcuts: WidgetsApp.defaultShortcuts,
       actions: WidgetsApp.defaultActions,
-      builder: (context, child) => MediaQuery(
-        data: MediaQuery.of(context).copyWith(
-          disableAnimations:
-              disableAnimations || MediaQuery.disableAnimationsOf(context),
-        ),
-        child: UnfocusOnTap(child: child),
-      ),
+      builder: _builder,
       home: child,
       localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: appSupportedLocales,
