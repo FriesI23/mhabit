@@ -44,10 +44,7 @@ jobs:
         run: |
           case "$PLATFORM" in
             linux)
-              MATRIX='[
-                {"platform":"linux","arch":"x64","runner":"ubuntu-22.04"},
-                {"platform":"linux","arch":"arm64","runner":"ubuntu-22.04-arm"}
-              ]' ;;
+              MATRIX='[{"platform":"linux","arch":"x64","runner":"ubuntu-22.04"},{"platform":"linux","arch":"arm64","runner":"ubuntu-22.04-arm"}]' ;;
             ios|macos)
               MATRIX="[{\"platform\":\"$PLATFORM\",\"arch\":\"\",\"runner\":\"macos-latest\"}]" ;;
             *)

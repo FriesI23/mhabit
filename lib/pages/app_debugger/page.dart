@@ -28,6 +28,8 @@ import '../../logging/helper.dart';
 import '../../logging/level.dart';
 import '../../logging/logger_manager.dart';
 import '../../providers/app_ui/app_debugger.dart';
+import '../../routes/app_router.dart';
+import '../../routes/navigator_helpers.dart';
 import '../../utils/app_path_provider.dart';
 import '../../utils/debug_info.dart';
 import '../../utils/xshare.dart';
@@ -42,20 +44,11 @@ Future<void> onDebuggerNotificationTapped() async {
   final currentRouteName = currentRouteObserver.routeName;
   appLog.debugger.info(
     "onDebuggerNotificationTapped: navi",
-    ex: [AppDebuggerPage.routerName, currentRouteName],
+    ex: [AppRoute.debugger.name, currentRouteName],
   );
-  if (currentRouteName != AppDebuggerPage.routerName) {
+  if (currentRouteName != AppRoute.debugger.name) {
     naviToAppDebuggerPage(context: context);
   }
-}
-
-Future<void> naviToAppDebuggerPage({required BuildContext context}) async {
-  return Navigator.of(context).push<void>(
-    MaterialPageRoute(
-      builder: (context) => const AppDebuggerPage(),
-      settings: const RouteSettings(name: AppDebuggerPage.routerName),
-    ),
-  );
 }
 
 /// Depend Providers

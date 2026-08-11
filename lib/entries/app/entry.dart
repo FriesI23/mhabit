@@ -31,9 +31,21 @@ import '../../logging/helper.dart';
 import '../../models/app_sync_tasks.dart';
 import '../../models/app_theme_color.dart';
 import '../../models/habit_date.dart';
+import '../../pages/app_about/page.dart' show AppAboutPage;
+import '../../pages/app_debugger/page.dart' show AppDebuggerPage;
+import '../../pages/app_notify_config/page.dart' show AppNotifyConfigPage;
+import '../../pages/app_settings/page.dart' show AppSettingPage;
+import '../../pages/app_sync/page.dart' show AppSyncPage;
 import '../../pages/common/widgets.dart';
-import '../../pages/habits_display/_widgets/changelog_banner_sliver.dart';
+import '../../pages/expermental_features/page.dart'
+    show ExpermentalFeaturesPage;
+import '../../pages/group_manage/page.dart' show GroupManagePage;
+import '../../pages/habit_detail/page.dart' show HabitDetailPage;
+import '../../pages/habit_edit/page.dart' show HabitEditPage;
 import '../../pages/habits_display/page.dart' show HabitsDisplayPage;
+import '../../pages/habits_display/providers.dart' show PageProviders;
+import '../../pages/habits_status_changer/page.dart'
+    show HabitsStatusChangerPage;
 import '../../providers/app_ui/app_debugger.dart';
 import '../../providers/app_ui/app_language.dart';
 import '../../providers/app_ui/app_theme.dart';
@@ -42,6 +54,12 @@ import '../../providers/workflow/app_reminder.dart';
 import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/habits_manager.dart';
 import '../../reminders/notification_channel.dart';
+import '../../routes/app_router.dart';
+import '../../routes/helpers/group_manage_helper.dart';
+import '../../routes/helpers/habit_create_helper.dart';
+import '../../routes/helpers/habit_detail_helper.dart';
+import '../../routes/helpers/habit_edit_helper.dart';
+import '../../routes/helpers/habits_status_changer_helper.dart';
 import '../../storage/db_helper_builder.dart';
 import '../../storage/profile/handlers.dart';
 import '../../storage/profile_builder.dart';
@@ -102,9 +120,7 @@ class AppEntry extends StatelessWidget {
         errorBuilder: (details) => AppErrorEntry(errorDetails: details),
         builder: (context, child) => DateChanger(
           interval: const Duration(seconds: 10),
-          builder: (context) => const AppProviders(
-            child: _AppEntry(homePage: AppPostInit(child: HabitsDisplayPage())),
-          ),
+          builder: (context) => const AppProviders(child: _AppEntry()),
         ),
       ),
     );
@@ -112,9 +128,66 @@ class AppEntry extends StatelessWidget {
 }
 
 class _AppEntry extends StatelessWidget {
-  final Widget homePage;
+  const _AppEntry();
 
-  const _AppEntry({required this.homePage});
+  static final _router =
+      (AppRouterBuilder()
+            ..addHabits(builder: (_, _) => const _DisplayEntry())
+            ..addHabitDetail(
+              builder: (_, state) {
+                final (:habitUUID, :color, :summaryAdapter) = state
+                    .unpackHabitDetail();
+                return Provider.value(
+                  value: summaryAdapter,
+                  child: HabitDetailPage(habitUUID: habitUUID, color: color),
+                );
+              },
+            )
+            ..addHabitCreate(
+              pageBuilder: (_, state) {
+                final (:initForm) = state.unpackHabitCreate();
+                return MaterialPage<void>(
+                  fullscreenDialog: true,
+                  child: HabitEditPage(
+                    initForm: initForm,
+                    showInFullscreenDialog: false,
+                  ),
+                );
+              },
+            )
+            ..addHabitEdit(
+              pageBuilder: (_, state) {
+                final (:habitId, :initForm) = state.unpackHabitEdit();
+                return MaterialPage<void>(
+                  fullscreenDialog: true,
+                  child: HabitEditPage(
+                    initForm: initForm,
+                    showInFullscreenDialog: false,
+                  ),
+                );
+              },
+            )
+            ..addSettings(builder: (_, _) => const AppSettingPage())
+            ..addSettingsAbout(builder: (_, _) => const AppAboutPage())
+            ..addSettingsSync(builder: (_, _) => const AppSyncPage())
+            ..addSettingsNotify(builder: (_, _) => const AppNotifyConfigPage())
+            ..addExperimental(
+              builder: (_, _) => const ExpermentalFeaturesPage(),
+            )
+            ..addDebugger(builder: (_, _) => const AppDebuggerPage())
+            ..addGroupManage(
+              builder: (_, state) {
+                final (:selectedGroupId) = state.unpackGroupManage();
+                return GroupManagePage(initialGroupUUID: selectedGroupId);
+              },
+            )
+            ..addHabitsStatus(
+              builder: (_, state) {
+                final (:uuidList) = state.unpackHabitsStatusChanger();
+                return HabitsStatusChangerPage(uuidList: uuidList);
+              },
+            ))
+          .build(home: AppRoute.habits);
 
   String? getFontFamily() {
     switch (defaultTargetPlatform) {
@@ -243,7 +316,7 @@ class _AppEntry extends StatelessWidget {
           final disableAnimations = context.select<AnimationScaleSync, bool>(
             (vm) => vm.disableAnimations,
           );
-          return AppRootView(
+          return AppRootView.router(
             themeMode: transToMaterialThemeType(themeMode),
             language: language,
             disableAnimations: disableAnimations,
@@ -297,11 +370,105 @@ class _AppEntry extends StatelessWidget {
                 extensions: [customColor],
               );
             },
-            child: ChangelogBanner(child: homePage),
+            config: _router,
           );
         },
       ),
     );
+  }
+}
+
+class _DisplayEntry extends StatelessWidget {
+  const _DisplayEntry();
+
+  @override
+  Widget build(BuildContext context) => const ChangelogBanner(
+    child: AppPostInit(child: PageProviders(child: HabitsDisplayPage())),
+  );
+}
+
+class AppPostInit extends SingleChildStatefulWidget {
+  const AppPostInit({required Widget child, super.key}) : super(child: child);
+
+  @override
+  State<StatefulWidget> createState() => _AppPostInitState();
+}
+
+class _AppPostInitState extends SingleChildState<AppPostInit> {
+  final _appSyncBridge = _AppSyncPostInitBridge();
+  final _habitReminderBridge = _HabitReminderPostInitBridge();
+  bool _didHandlePostInit = false;
+
+  void _syncL10n([L10n? l10n]) {
+    context.maybeRead<NotificationChannelData>()?.onL10nUpdate(l10n);
+    _habitReminderBridge.sync(context);
+    _appSyncBridge.sync(
+      context,
+      l10n: l10n,
+      onNeedCheck: _onWebDavAppSyncUserConfirmNeedCheck,
+    );
+  }
+
+  Future<bool> _onWebDavAppSyncUserConfirmNeedCheck(
+    WebDavConfigTaskChecklist checklist,
+  ) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => checklist.isEmptyDir
+          ? const AppSyncWebDavNewServerConfirmDialog()
+          : const AppSyncWebDavOldServerConfirmDialog(),
+    ).then((value) => value ?? false);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncL10n(L10n.of(context));
+  }
+
+  @override
+  void dispose() {
+    _habitReminderBridge.dispose();
+    _appSyncBridge.dispose();
+    super.dispose();
+  }
+
+  void _handlePostInit(BuildContext context) {
+    final l10n = L10n.of(context);
+    final reminderContent = AppReminderContent.maybeFromL10n(l10n);
+    appLog.build.info(context, ex: ["onPostInitHandled", l10n]);
+    context.maybeRead<AppDebuggerViewModel>()?.processDebuggingNotification(
+      l10n,
+    );
+    context.maybeRead<AppReminderAccess>()?.processTrigger(
+      const AppReminderTrigger.startup(),
+      content: reminderContent,
+    );
+    context.maybeRead<HabitsDisplayAccess>()?.refreshHabitReminders(
+      params: const HabitReminderRefreshParams.startup(),
+    );
+    _syncL10n(l10n);
+    _didHandlePostInit = true;
+
+    final handler = context
+        .read<ProfileViewModel>()
+        .getHandler<AppLastChangelogVersionProfileHandler>();
+    final currentVersion = AppInfo().changelogVersion;
+    final lastVersion = handler?.get();
+
+    if (lastVersion != currentVersion) {
+      handler?.set(currentVersion);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        showChangelogBanner(context, version: currentVersion);
+      });
+    }
+  }
+
+  @override
+  Widget buildWithChild(BuildContext context, Widget? child) {
+    if (!_didHandlePostInit) _handlePostInit(context);
+    return child!;
   }
 }
 
@@ -466,90 +633,5 @@ final class _HabitReminderPostInitBridge {
     access.refreshHabitReminders(
       params: const HabitReminderRefreshParams.dateChange(),
     );
-  }
-}
-
-class AppPostInit extends SingleChildStatefulWidget {
-  const AppPostInit({required Widget child, super.key}) : super(child: child);
-
-  @override
-  State<StatefulWidget> createState() => _AppPostInitState();
-}
-
-class _AppPostInitState extends SingleChildState<AppPostInit> {
-  final _appSyncBridge = _AppSyncPostInitBridge();
-  final _habitReminderBridge = _HabitReminderPostInitBridge();
-  bool _didHandlePostInit = false;
-
-  void _syncL10n([L10n? l10n]) {
-    context.maybeRead<NotificationChannelData>()?.onL10nUpdate(l10n);
-    _habitReminderBridge.sync(context);
-    _appSyncBridge.sync(
-      context,
-      l10n: l10n,
-      onNeedCheck: _onWebDavAppSyncUserConfirmNeedCheck,
-    );
-  }
-
-  Future<bool> _onWebDavAppSyncUserConfirmNeedCheck(
-    WebDavConfigTaskChecklist checklist,
-  ) {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) => checklist.isEmptyDir
-          ? const AppSyncWebDavNewServerConfirmDialog()
-          : const AppSyncWebDavOldServerConfirmDialog(),
-    ).then((value) => value ?? false);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _syncL10n(L10n.of(context));
-  }
-
-  @override
-  void dispose() {
-    _habitReminderBridge.dispose();
-    _appSyncBridge.dispose();
-    super.dispose();
-  }
-
-  void _handlePostInit(BuildContext context) {
-    final l10n = L10n.of(context);
-    final reminderContent = AppReminderContent.maybeFromL10n(l10n);
-    appLog.build.info(context, ex: ["onPostInitHandled", l10n]);
-    context.maybeRead<AppDebuggerViewModel>()?.processDebuggingNotification(
-      l10n,
-    );
-    context.maybeRead<AppReminderAccess>()?.processTrigger(
-      const AppReminderTrigger.startup(),
-      content: reminderContent,
-    );
-    context.maybeRead<HabitsDisplayAccess>()?.refreshHabitReminders(
-      params: const HabitReminderRefreshParams.startup(),
-    );
-    _syncL10n(l10n);
-    _didHandlePostInit = true;
-
-    final handler = context
-        .read<ProfileViewModel>()
-        .getHandler<AppLastChangelogVersionProfileHandler>();
-    final currentVersion = AppInfo().changelogVersion;
-    final lastVersion = handler?.get();
-
-    if (lastVersion != currentVersion) {
-      handler?.set(currentVersion);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        showChangelogBanner(context, version: currentVersion);
-      });
-    }
-  }
-
-  @override
-  Widget buildWithChild(BuildContext context, Widget? child) {
-    if (!_didHandlePostInit) _handlePostInit(context);
-    return child!;
   }
 }

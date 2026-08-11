@@ -27,12 +27,6 @@ import '../../widgets/widgets.dart';
 import '../common/widgets.dart';
 import 'widgets.dart';
 
-Future<void> naviToAppAboutPage({required BuildContext context}) async {
-  return Navigator.of(
-    context,
-  ).push<void>(MaterialPageRoute(builder: (context) => const AppAboutPage()));
-}
-
 class AppAboutPage extends StatelessWidget {
   const AppAboutPage({super.key});
 

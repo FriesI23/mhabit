@@ -26,12 +26,6 @@ import '../app_sync_server_editor/page.dart' as app_sync_server_editor;
 import 'providers.dart';
 import 'widgets.dart';
 
-Future<void> naviToAppSyncPage({required BuildContext context}) async {
-  return Navigator.of(
-    context,
-  ).push<void>(MaterialPageRoute(builder: (context) => const AppSyncPage()));
-}
-
 final class AppSyncPage extends StatelessWidget {
   const AppSyncPage({super.key});
 

@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/l10n/localizations.dart';
-import 'package:mhabit/pages/habits_display/_widgets/changelog_banner_sliver.dart';
+import 'package:mhabit/widgets/widgets.dart';
 
 const _testVersion = '1.0.0+1';
 const _testContent = '- item a\n- item b';

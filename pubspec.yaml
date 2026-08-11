@@ -165,6 +165,7 @@ dependencies:
   crypto: ^3.0.2
   timezone: ^0.11.0
   nested: ^1.0.0
+  go_router: ^17.0.0
   async: ^2.11.0
   pool: ^1.5.1
   rxdart: ^0.28.0

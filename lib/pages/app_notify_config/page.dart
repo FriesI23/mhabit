@@ -20,12 +20,6 @@ import '../../providers/workflow/app_notify_config.dart';
 import '../../reminders/notification_channel.dart';
 import '../../widgets/widgets.dart';
 
-Future<void> naviToNotifyConfigPage({required BuildContext context}) {
-  return Navigator.of(context).push<void>(
-    MaterialPageRoute(builder: (context) => const AppNotifyConfigPage()),
-  );
-}
-
 class AppNotifyConfigPage extends StatelessWidget {
   const AppNotifyConfigPage({super.key});
 

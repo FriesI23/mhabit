@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export '_widgets/changelog_banner_sliver.dart';
 export '_widgets/habit_display_develop_list.dart';
 export '_widgets/habit_display_edit_mode_action.dart';
 export '_widgets/habit_display_empty_image.dart';
