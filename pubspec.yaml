@@ -30,6 +30,7 @@ workspace:
   - packages/mhabit_proxy_annotation
   - packages/mhabit_proxy_builder
   - packages/mhabit_color_builder
+  - packages/mhabit_adaptive_ui
 
 melos:
   sdkPath: .flutter
@@ -78,10 +79,18 @@ melos:
         flutter test --reporter github
         dart run melos exec \
           --category=internal_packages \
+          --no-flutter \
           --dir-exists=test \
           --fail-fast \
           --concurrency=1 \
           -- "dart test --reporter github"
+        dart run melos exec \
+          --category=internal_packages \
+          --flutter \
+          --dir-exists=test \
+          --fail-fast \
+          --concurrency=1 \
+          -- "flutter test --reporter github"
 
 mhabit_color_builder:
   app:
@@ -191,6 +200,7 @@ dependencies:
   # Internal Packages
   mhabit_color_annotation: any
   mhabit_proxy_annotation: any
+  mhabit_adaptive_ui: any
 
 dev_dependencies:
   flutter_test:

@@ -1,0 +1,3 @@
+# This file configures the analyzer for the mhabit_adaptive_ui package.
+# It inherits the repository-wide lint rules from the workspace root.
+include: ../../analysis_options.yaml
