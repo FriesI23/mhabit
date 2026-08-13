@@ -2,6 +2,10 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.26.8+181-pre
+
+- Improve navigation reliability (#638)
+
 ## 1.26.7+180
 
 - Improve sorting backend reliability (#635)

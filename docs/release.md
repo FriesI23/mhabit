@@ -1,13 +1,7 @@
-# Release: v1.26.7+180
+# Release: v1.26.8+181-pre
 
 ## 🔧 Refactoring
 
-- Replace custom ICU collation with native_natural_sort package for more reliable sorting (#635)
+- Migrate page routing to go_router for more reliable navigation (#638)
 
-## 🌍 Translations
-
-- Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate.
-- Update Italian translation, thanks to nickfrn's contribution on Weblate.
-- Update Russian translation, thanks to sanda1iki's contribution on Weblate.
-
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.26.5+178...v1.26.7+180)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.26.7+180...v1.26.8+181-pre)
