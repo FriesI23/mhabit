@@ -97,9 +97,8 @@ melos:
         App output goes to test_report.log; package results are written to
         build/test-results/dart/ and build/test-results/flutter/.
       run: |
-        set -o pipefail
         FAILED=0
-        flutter test --no-pub --machine | tee test_report.log || FAILED=1
+        flutter test --no-pub --machine > test_report.log || FAILED=1
         mkdir -p \
           "$MELOS_ROOT_PATH/build/test-results/dart" \
           "$MELOS_ROOT_PATH/build/test-results/flutter"
