@@ -38,7 +38,7 @@ class AdaptiveNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final effective = style ?? context.adaptiveStyle;
     return switch (effective) {
-      // TODO(Phase 3): apple style (CupertinoTabBar-style).
+      // TODO(adaptive-ui::apple): apple style (CupertinoTabBar-style).
       AdaptiveStyle.apple || AdaptiveStyle.material => _buildMaterial(context),
     };
   }

@@ -39,7 +39,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final effective = style ?? context.adaptiveStyle;
     return switch (effective) {
-      // TODO(Phase 3): apple style (CupertinoSliverNavigationBar-style).
+      // TODO(adaptive-ui::apple): apple style (CupertinoSliverNavigationBar-style).
       AdaptiveStyle.apple || AdaptiveStyle.material => _buildMaterial(),
     };
   }

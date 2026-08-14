@@ -33,7 +33,7 @@ final class AdaptiveBottomSheet<T> implements AdaptiveModal<T> {
   Future<T?> call() {
     final effective = style ?? adaptiveStyle;
     return switch (effective) {
-      // TODO(Phase 3): card-style sheet with gesture dismissal.
+      // TODO(adaptive-ui::apple): card-style sheet with gesture dismissal.
       AdaptiveStyle.apple || AdaptiveStyle.material => showModalBottomSheet<T>(
         context: context,
         builder: builder,

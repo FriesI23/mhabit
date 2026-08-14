@@ -31,7 +31,7 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final effective = style ?? context.adaptiveStyle;
     return switch (effective) {
-      // TODO(Phase 3): apple style (iOS-style expanding search).
+      // TODO(adaptive-ui::apple): apple style (iOS-style expanding search).
       AdaptiveStyle.apple || AdaptiveStyle.material => _buildMaterial(),
     };
   }

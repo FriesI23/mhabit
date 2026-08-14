@@ -16,6 +16,7 @@ class AdaptiveNavigationShell extends StatefulWidget {
   const AdaptiveNavigationShell({
     super.key,
     required this.navigationShell,
+    required this.wideWidthThreshold,
     required this.destinations,
     this.onBranchChanged,
     this.branchObservers = const [],
@@ -24,6 +25,12 @@ class AdaptiveNavigationShell extends StatefulWidget {
 
   /// The go_router shell whose branches are switched by the navigation bar.
   final StatefulNavigationShell navigationShell;
+
+  /// Width in logical pixels at which the shell switches to the wide layout
+  /// (shorter bar, hidden labels).
+  // TODO(adaptive-ui::window-class): resolve the layout from the window class and drop
+  // this parameter.
+  final double wideWidthThreshold;
 
   /// Bottom navigation destinations; destination i switches to branch i.
   final List<NavigationDestination> destinations;
@@ -58,8 +65,6 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
     milliseconds: 250,
   );
   static const double _narrowNavHeight = 80.0;
-  // TODO(Phase 2): replace with resolveWindowClass(DeviceContext.of(context)).
-  static const double _wideWidthThreshold = 600.0;
 
   /// Whether the bottom bar is actually shown, derived from the route stack
   /// and [_scrollWish].
@@ -166,7 +171,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
   @override
   Widget build(BuildContext context) {
     final isWideLayout =
-        MediaQuery.sizeOf(context).width >= _wideWidthThreshold;
+        MediaQuery.sizeOf(context).width >= widget.wideWidthThreshold;
     final barHeight = isWideLayout
         ? kBottomNavigationBarHeight
         : _narrowNavHeight;

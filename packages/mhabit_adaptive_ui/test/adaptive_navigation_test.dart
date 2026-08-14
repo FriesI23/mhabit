@@ -9,6 +9,7 @@ GoRouter _buildRouter({
   ValueChanged<int>? onBranchChanged,
   List<AdaptiveBranchRouteObserver>? observers,
   bool Function(List<String?> routeNames)? barVisibilityPolicy,
+  double wideWidthThreshold = 600.0,
 }) {
   return GoRouter(
     initialLocation: '/habits',
@@ -16,6 +17,7 @@ GoRouter _buildRouter({
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) => AdaptiveNavigationShell(
           navigationShell: navigationShell,
+          wideWidthThreshold: wideWidthThreshold,
           branchObservers: observers ?? const [],
           barVisibilityPolicy: barVisibilityPolicy,
           destinations:

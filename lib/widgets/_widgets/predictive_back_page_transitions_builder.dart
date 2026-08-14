@@ -65,7 +65,8 @@ class CustomPredictiveBackPageTransitionsBuilder
 /// (e.g. a go_router shell branch inside the shell route) must not take part
 /// in the Android predictive back gesture while that ancestor route is not
 /// the current root route: the gesture would otherwise pop this route
-/// instead of the covering modal. See flutter/flutter#152323.
+/// instead of the covering modal. See
+/// [flutter/flutter#152323](https://github.com/flutter/flutter/issues/152323).
 ///
 /// Routes on the root navigator itself have no such ancestor and always
 /// return false.

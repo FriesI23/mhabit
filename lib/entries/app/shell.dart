@@ -18,6 +18,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
+import '../../common/consts.dart';
 import '../../models/app_entry.dart';
 import '../../providers/app_ui/app_launch_entry.dart';
 import '../../routes/app_router.dart';
@@ -48,6 +49,7 @@ class AppNavigationShell extends StatelessWidget {
       child: L10nBuilder(
         builder: (context, l10n) => AdaptiveNavigationShell(
           navigationShell: navigationShell,
+          wideWidthThreshold: kHabitLargeScreenAdaptWidth.toDouble(),
           branchObservers: branchObservers,
           barVisibilityPolicy: appShellBarVisibilityPolicy,
           destinations: [
