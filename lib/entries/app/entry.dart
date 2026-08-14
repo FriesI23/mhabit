@@ -17,6 +17,8 @@ import 'dart:async';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
@@ -28,6 +30,7 @@ import '../../extensions/context_extensions.dart';
 import '../../extensions/custom_color_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
+import '../../models/app_entry.dart';
 import '../../models/app_sync_tasks.dart';
 import '../../models/app_theme_color.dart';
 import '../../models/habit_date.dart';
@@ -42,12 +45,13 @@ import '../../pages/expermental_features/page.dart'
 import '../../pages/group_manage/page.dart' show GroupManagePage;
 import '../../pages/habit_detail/page.dart' show HabitDetailPage;
 import '../../pages/habit_edit/page.dart' show HabitEditPage;
-import '../../pages/habits_display/page.dart' show HabitsDisplayPage;
+import '../../pages/habits_display/page.dart' show HabitsPage, TodayPage;
 import '../../pages/habits_display/providers.dart' show PageProviders;
 import '../../pages/habits_status_changer/page.dart'
     show HabitsStatusChangerPage;
 import '../../providers/app_ui/app_debugger.dart';
 import '../../providers/app_ui/app_language.dart';
+import '../../providers/app_ui/app_launch_entry.dart';
 import '../../providers/app_ui/app_theme.dart';
 import '../../providers/support/animation_scale_sync.dart';
 import '../../providers/workflow/app_reminder.dart';
@@ -70,6 +74,7 @@ import '../../widgets/widgets.dart';
 import '../app_error/entry.dart';
 import '../common/app_root_view.dart';
 import 'providers.dart';
+import 'shell.dart';
 
 /// Note: [AppProviders] are use to build providers that need to be initialized
 /// in [MaterialApp]. An important to note that, e.g., [Localizations] are
@@ -127,67 +132,93 @@ class AppEntry extends StatelessWidget {
   }
 }
 
-class _AppEntry extends StatelessWidget {
+class _AppEntry extends StatefulWidget {
   const _AppEntry();
 
-  static final _router =
-      (AppRouterBuilder()
-            ..addHabits(builder: (_, _) => const _DisplayEntry())
-            ..addHabitDetail(
-              builder: (_, state) {
-                final (:habitUUID, :color, :summaryAdapter) = state
-                    .unpackHabitDetail();
-                return Provider.value(
-                  value: summaryAdapter,
-                  child: HabitDetailPage(habitUUID: habitUUID, color: color),
-                );
-              },
-            )
-            ..addHabitCreate(
-              pageBuilder: (_, state) {
-                final (:initForm) = state.unpackHabitCreate();
-                return MaterialPage<void>(
-                  fullscreenDialog: true,
-                  child: HabitEditPage(
-                    initForm: initForm,
-                    showInFullscreenDialog: false,
+  @override
+  State<_AppEntry> createState() => _AppEntryState();
+}
+
+class _AppEntryState extends State<_AppEntry> {
+  late final GoRouter _router;
+
+  @override
+  void initState() {
+    super.initState();
+    final launchEntry = context.read<AppLaunchEntryViewModel>().launchEntry;
+    _router = _buildRouter(
+      home: launchEntry == AppEntrys.habitToday
+          ? AppRoute.today
+          : AppRoute.habits,
+    );
+  }
+
+  GoRouter _buildRouter({required AppRoute home}) {
+    final branches = [
+      BranchRouterBuilder()
+        ..addHabits(builder: (_, _) => const HabitsPage())
+        ..addHabitDetail(
+          builder: (_, state) {
+            final (:habitUUID, :color, :summaryAdapter) = state
+                .unpackHabitDetail();
+            return Provider.value(
+              value: summaryAdapter,
+              child: HabitDetailPage(habitUUID: habitUUID, color: color),
+            );
+          },
+        ),
+      BranchRouterBuilder()..addToday(builder: (_, _) => const TodayPage()),
+    ];
+    final branchObservers = [
+      for (final _ in branches) AdaptiveBranchRouteObserver(),
+    ];
+    return (AppRouterBuilder()
+          ..addSettings(builder: (_, _) => const AppSettingPage())
+          ..addSettingsAbout(builder: (_, _) => const AppAboutPage())
+          ..addSettingsSync(builder: (_, _) => const AppSyncPage())
+          ..addSettingsNotify(builder: (_, _) => const AppNotifyConfigPage())
+          ..addExperimental(builder: (_, _) => const ExpermentalFeaturesPage())
+          ..addDebugger(builder: (_, _) => const AppDebuggerPage())
+          ..addHabitCreate(
+            builder: (_, state) {
+              final (:initForm) = state.unpackHabitCreate();
+              return HabitEditPage(initForm: initForm);
+            },
+          )
+          ..addHabitEdit(
+            builder: (_, state) {
+              final (habitId: _, initForm: initForm) = state.unpackHabitEdit();
+              return HabitEditPage(initForm: initForm);
+            },
+          )
+          ..addGroupManage(
+            builder: (_, state) {
+              final (:selectedGroupId) = state.unpackGroupManage();
+              return GroupManagePage(initialGroupUUID: selectedGroupId);
+            },
+          )
+          ..addHabitsStatus(
+            builder: (_, state) {
+              final (:uuidList) = state.unpackHabitsStatusChanger();
+              return HabitsStatusChangerPage(uuidList: uuidList);
+            },
+          )
+          ..addShellRoute(
+            branchObservers: branchObservers,
+            branches: branches,
+            builder: (context, state, navigationShell) => ChangelogBanner(
+              child: AppPostInit(
+                child: PageProviders(
+                  child: AppNavigationShell(
+                    navigationShell: navigationShell,
+                    branchObservers: branchObservers,
                   ),
-                );
-              },
-            )
-            ..addHabitEdit(
-              pageBuilder: (_, state) {
-                final (:habitId, :initForm) = state.unpackHabitEdit();
-                return MaterialPage<void>(
-                  fullscreenDialog: true,
-                  child: HabitEditPage(
-                    initForm: initForm,
-                    showInFullscreenDialog: false,
-                  ),
-                );
-              },
-            )
-            ..addSettings(builder: (_, _) => const AppSettingPage())
-            ..addSettingsAbout(builder: (_, _) => const AppAboutPage())
-            ..addSettingsSync(builder: (_, _) => const AppSyncPage())
-            ..addSettingsNotify(builder: (_, _) => const AppNotifyConfigPage())
-            ..addExperimental(
-              builder: (_, _) => const ExpermentalFeaturesPage(),
-            )
-            ..addDebugger(builder: (_, _) => const AppDebuggerPage())
-            ..addGroupManage(
-              builder: (_, state) {
-                final (:selectedGroupId) = state.unpackGroupManage();
-                return GroupManagePage(initialGroupUUID: selectedGroupId);
-              },
-            )
-            ..addHabitsStatus(
-              builder: (_, state) {
-                final (:uuidList) = state.unpackHabitsStatusChanger();
-                return HabitsStatusChangerPage(uuidList: uuidList);
-              },
-            ))
-          .build(home: AppRoute.habits);
+                ),
+              ),
+            ),
+          ))
+        .build(home: home);
+  }
 
   String? getFontFamily() {
     switch (defaultTargetPlatform) {
@@ -376,15 +407,6 @@ class _AppEntry extends StatelessWidget {
       ),
     );
   }
-}
-
-class _DisplayEntry extends StatelessWidget {
-  const _DisplayEntry();
-
-  @override
-  Widget build(BuildContext context) => const ChangelogBanner(
-    child: AppPostInit(child: PageProviders(child: HabitsDisplayPage())),
-  );
 }
 
 class AppPostInit extends SingleChildStatefulWidget {

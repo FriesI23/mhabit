@@ -39,18 +39,25 @@ class AdaptiveNavigationBar extends StatelessWidget {
     final effective = style ?? context.adaptiveStyle;
     return switch (effective) {
       // TODO(Phase 3): apple style (CupertinoTabBar-style).
-      AdaptiveStyle.apple || AdaptiveStyle.material => _buildMaterial(),
+      AdaptiveStyle.apple || AdaptiveStyle.material => _buildMaterial(context),
     };
   }
 
-  Widget _buildMaterial() {
-    // Matches the app's current `naviBarBody` parameter surface.
-    return NavigationBar(
-      selectedIndex: selectedIndex,
-      destinations: destinations,
-      onDestinationSelected: onDestinationSelected,
-      height: height,
-      labelBehavior: labelBehavior,
+  Widget _buildMaterial(BuildContext context) {
+    // NavigationBar has no built-in blur or opacity, so translucency comes
+    // from the background color's alpha. Keep the default theme otherwise.
+    final backgroundColor = Theme.of(
+      context,
+    ).colorScheme.surfaceContainer.withValues(alpha: 0.8);
+    return NavigationBarTheme(
+      data: NavigationBarThemeData(backgroundColor: backgroundColor),
+      child: NavigationBar(
+        selectedIndex: selectedIndex,
+        destinations: destinations,
+        onDestinationSelected: onDestinationSelected,
+        height: height,
+        labelBehavior: labelBehavior,
+      ),
     );
   }
 }
