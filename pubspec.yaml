@@ -91,6 +91,33 @@ melos:
           --fail-fast \
           --concurrency=1 \
           -- "flutter test --reporter github"
+    test-ci:
+      description: |
+        Run app and package test suites for CI with machine-readable results.
+        App output goes to test_report.log; package results are written to
+        build/test-results/dart/ and build/test-results/flutter/.
+      run: |
+        set -o pipefail
+        FAILED=0
+        flutter test --no-pub --machine | tee test_report.log || FAILED=1
+        mkdir -p \
+          "$MELOS_ROOT_PATH/build/test-results/dart" \
+          "$MELOS_ROOT_PATH/build/test-results/flutter"
+        dart run melos exec \
+          --category=internal_packages \
+          --no-flutter \
+          --dir-exists=test \
+          --fail-fast \
+          --concurrency=1 \
+          -- "dart test --reporter json > \"$MELOS_ROOT_PATH/build/test-results/dart/\$MELOS_PACKAGE_NAME.json\"" || FAILED=1
+        dart run melos exec \
+          --category=internal_packages \
+          --flutter \
+          --dir-exists=test \
+          --fail-fast \
+          --concurrency=1 \
+          -- "flutter test --no-pub --machine > \"$MELOS_ROOT_PATH/build/test-results/flutter/\$MELOS_PACKAGE_NAME.json\"" || FAILED=1
+        exit $FAILED
 
 mhabit_color_builder:
   app:

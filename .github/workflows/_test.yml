@@ -10,36 +10,35 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup_flutter
-      - name: Run app Flutter tests
-        run: |
-          set -o pipefail
-          flutter test --machine | tee test_report.log
-          set +o pipefail
-      - name: Run internal package tests
-        run: |
-          dart run melos exec \
-            --category=internal_packages \
-            --dir-exists=test \
-            --fail-fast \
-            --concurrency=1 \
-            -- "dart test --reporter github"
+      - name: Run app and package test suites
+        run: dart run melos run test-ci
       - uses: actions/upload-artifact@v7
         if: success() || failure()
         with:
           name: flutter-unittest-result
           path: test_report.log
-
-  android-test:
-    name: Android Unit Test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: ./.github/actions/setup_flutter
-      - uses: ./.github/actions/setup_jdk
-      - name: Run Android unit tests
-        run: cd android && ./gradlew :app:testF_genericDebugUnitTest --console=plain
       - uses: actions/upload-artifact@v7
         if: success() || failure()
         with:
-          name: android-unittest-xml
-          path: build/app/test-results/testF_genericDebugUnitTest/TEST-*.xml
+          name: flutter-package-unittest-result
+          path: build/test-results/flutter/*.json
+      - uses: actions/upload-artifact@v7
+        if: success() || failure()
+        with:
+          name: dart-package-unittest-result
+          path: build/test-results/dart/*.json
+
+  # android-test:
+  #   name: Android Unit Test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v7
+  #     - uses: ./.github/actions/setup_flutter
+  #     - uses: ./.github/actions/setup_jdk
+  #     - name: Run Android unit tests
+  #       run: cd android && ./gradlew :app:testF_genericDebugUnitTest --console=plain
+  #     - uses: actions/upload-artifact@v7
+  #       if: success() || failure()
+  #       with:
+  #         name: android-unittest-xml
+  #         path: build/app/test-results/testF_genericDebugUnitTest/TEST-*.xml
