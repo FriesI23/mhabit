@@ -2,9 +2,9 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.26.8+181-pre
+## 1.26.9+182-pre
 
-- Improve navigation reliability (#638)
+- Improve navigation reliability and tab navigation experience (#638, #640)
 
 ## 1.26.7+180
 
