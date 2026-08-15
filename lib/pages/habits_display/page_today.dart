@@ -17,6 +17,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/consts.dart';
@@ -70,6 +71,7 @@ class TodayTabPageState extends State<TodayTabPage>
     _scrollVisibilityDispatcher = VerticalScrollVisibilityDispatcher(
       toolbarHeight: _toolbarHeight,
       onVisibilityChanged: widget.onBottomNavVisibilityChanged,
+      externalVisibility: AdaptiveNavScope.maybeOf(context)?.scrollWish,
     );
   }
 

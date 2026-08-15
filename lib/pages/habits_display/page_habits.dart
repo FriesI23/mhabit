@@ -20,6 +20,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -114,6 +115,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     _scrollVisibilityDispatcher = VerticalScrollVisibilityDispatcher(
       toolbarHeight: _toolbarHeight,
       onVisibilityChanged: widget.onBottomNavVisibilityChanged,
+      externalVisibility: AdaptiveNavScope.maybeOf(context)?.scrollWish,
     );
   }
 
@@ -1157,10 +1159,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
     //#region bottom placeholder
     Widget buildBottomPlaceHolder(BuildContext context) {
-      return const SliverToBoxAdapter(
-        child: FixedPagePlaceHolder(
-          minHeight: kDefaultHabitSummaryListTileHeight,
-        ),
+      final navHeight = AdaptiveNavScope.maybeOf(context)?.navHeight;
+      return SliverToBoxAdapter(
+        child: FixedPagePlaceHolder(minHeight: navHeight),
       );
     }
     //#endregion
@@ -1211,8 +1212,10 @@ class HabitsTabPageState extends State<HabitsTabPage>
     );
   }
 
-  Widget? buildFloatingActionButton({
+  Widget buildFloatingActionButton({
     required bool bottomNavVisible,
+    // Bar content height without the bottom safe-area inset; Scaffold
+    // already clears the inset for the FAB.
     required double bottomNavHeight,
   }) {
     final fab = _FAB(

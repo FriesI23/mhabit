@@ -1,0 +1,17 @@
+name: mhabit_adaptive_ui
+description: Adaptive UI components and layout infrastructure for mhabit.
+publish_to: none
+
+resolution: workspace
+
+environment:
+  sdk: ">=3.11.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  go_router: ^17.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

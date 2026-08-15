@@ -15,6 +15,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -58,6 +59,10 @@ import '_providers/habit_detail_scorechart.dart';
 import 'widgets.dart';
 
 const _largeScreenTwoChartBetween = 16.0;
+
+/// Keeps the page's bar reservation and FAB lift in sync with the shell's
+/// bottom-bar hide/show animation.
+const _navBarAnimationDuration = Duration(milliseconds: 250);
 
 enum DetailPageReturnOpr { unknown, deleted }
 
@@ -1034,6 +1039,12 @@ class _PageState extends State<_Page>
       );
     }
 
+    // The shell's translucent bar overlays the page bottom, so reserve its
+    // height and lift the FAB while it is visible (hidden while this page
+    // sits above the branch root).
+    final scope = AdaptiveNavScope.maybeOf(context);
+    final navHeight = scope?.navHeight ?? 0.0;
+    final barHeight = scope?.barHeight ?? 0.0;
     return ColorfulNavibar(
       child: Scaffold(
         body: CustomScrollView(
@@ -1043,10 +1054,32 @@ class _PageState extends State<_Page>
               withSliver: true,
               child: buildBody(context),
             ),
+            if (scope != null)
+              SliverToBoxAdapter(
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: scope.visible,
+                  builder: (context, visible, child) => AnimatedContainer(
+                    duration: _navBarAnimationDuration,
+                    curve: Curves.easeOut,
+                    height: visible ? navHeight : 0,
+                  ),
+                ),
+              ),
             if (kDebugMode) _buildScrollablePlaceHolder(context),
           ],
         ),
-        floatingActionButton: buildFAB(context),
+        floatingActionButton: scope == null
+            ? buildFAB(context)
+            : ValueListenableBuilder<bool>(
+                valueListenable: scope.visible,
+                builder: (context, visible, child) => AnimatedPadding(
+                  duration: _navBarAnimationDuration,
+                  curve: Curves.easeOut,
+                  padding: EdgeInsets.only(bottom: visible ? barHeight : 0),
+                  child: child,
+                ),
+                child: buildFAB(context),
+              ),
       ),
     );
   }
