@@ -40,7 +40,7 @@ class _HabitsPageState extends State<HabitsPage> {
   final GlobalKey<HabitsTabPageState> _habitsTabKey = GlobalKey();
 
   void _handleBottomNavVisibilityChanged(bool visible) {
-    AdaptiveNavScope.maybeOf(context)?.scrollWish.value = visible;
+    AdaptiveNavScope.maybeOf(context)?.reportScrollWish(visible);
   }
 
   Widget? _buildFloatingActionButton(AdaptiveNavScope scope) {
@@ -125,7 +125,7 @@ class TodayPage extends StatelessWidget {
       body: TodayTabPage(
         bottomNavigationHeight: scope.navHeight,
         onBottomNavVisibilityChanged: (visible) {
-          AdaptiveNavScope.maybeOf(context)?.scrollWish.value = visible;
+          AdaptiveNavScope.maybeOf(context)?.reportScrollWish(visible);
         },
       ),
     );

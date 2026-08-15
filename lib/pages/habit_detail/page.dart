@@ -1054,10 +1054,10 @@ class _PageState extends State<_Page>
               withSliver: true,
               child: buildBody(context),
             ),
-            if (navHeight > 0)
+            if (scope != null)
               SliverToBoxAdapter(
                 child: ValueListenableBuilder<bool>(
-                  valueListenable: scope!.visible,
+                  valueListenable: scope.visible,
                   builder: (context, visible, child) => AnimatedContainer(
                     duration: _navBarAnimationDuration,
                     curve: Curves.easeOut,

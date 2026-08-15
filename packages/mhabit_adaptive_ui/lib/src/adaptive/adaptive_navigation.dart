@@ -4,14 +4,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'adaptive_nav_visibility.dart';
 import 'adaptive_navigation_bar.dart';
 
 /// Shell for a [StatefulNavigationShell] with a bottom navigation bar.
 ///
 /// Bar visibility is derived, not stored: the bar shows when the active
 /// branch's top route satisfies [barVisibilityPolicy] and the page has not
-/// asked to hide it while scrolling ([AdaptiveNavScope.scrollWish]). By
-/// default it is visible only on a branch's root route.
+/// asked to hide it while scrolling ([AdaptiveNavScope.reportScrollWish]).
+/// By default it is visible only on a branch's root route.
 class AdaptiveNavigationShell extends StatefulWidget {
   const AdaptiveNavigationShell({
     super.key,
@@ -68,10 +69,12 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
 
   /// Whether the bottom bar is actually shown, derived from the route stack
   /// and [_scrollWish].
-  final ValueNotifier<bool> _isBottomNavVisible = ValueNotifier(true);
+  final AdaptiveNavVisibilityController _navVisibility =
+      AdaptiveNavVisibilityController();
 
   /// Whether the active page wants the bar shown, e.g. while scrolling.
-  final ValueNotifier<bool> _scrollWish = ValueNotifier(true);
+  final AdaptiveScrollWishController _scrollWish =
+      AdaptiveScrollWishController();
 
   late int _currentBranchIndex;
 
@@ -100,7 +103,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
     // A branch switch starts with the bar visible; the route stack policy
     // can still hide it (e.g. switching back to a branch showing a detail
     // page).
-    _scrollWish.value = true;
+    _scrollWish.reset();
     widget.onBranchChanged?.call(index);
     _recomputeVisibility();
   }
@@ -110,7 +113,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
     _unbindBranchObservers(widget.branchObservers);
     _scrollWish.removeListener(_recomputeVisibility);
     _scrollWish.dispose();
-    _isBottomNavVisible.dispose();
+    _navVisibility.dispose();
     super.dispose();
   }
 
@@ -133,8 +136,8 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
         ? depth == 1
         : policy(observer?.routeNameStack ?? const <String?>[]);
     final visible = structuralVisible && _scrollWish.value;
-    if (_isBottomNavVisible.value == visible) return;
-    _isBottomNavVisible.value = visible;
+    if (_navVisibility.value == visible) return;
+    visible ? _navVisibility.show() : _navVisibility.hide();
   }
 
   void _bindBranchObservers() {
@@ -158,13 +161,13 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
     scheduleMicrotask(() {
       // Re-entering a root page starts with the bar visible; scrolling can
       // hide it again afterwards.
-      _scrollWish.value = true;
+      _scrollWish.reset();
       _recomputeVisibility();
     });
   }
 
   void _onDestinationSelected(int index) {
-    _scrollWish.value = true;
+    _scrollWish.reset();
     widget.navigationShell.goBranch(index);
   }
 
@@ -192,7 +195,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
     );
 
     return AdaptiveNavScope(
-      visible: _isBottomNavVisible,
+      visible: _navVisibility,
       scrollWish: _scrollWish,
       barHeight: barHeight,
       navHeight: navHeight,
@@ -212,7 +215,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
                 context: context,
                 removeTop: true,
                 child: ValueListenableBuilder<bool>(
-                  valueListenable: _isBottomNavVisible,
+                  valueListenable: _navVisibility,
                   builder: (context, visible, child) => AnimatedSlide(
                     duration: _bottomNavAnimationDuration,
                     curve: Curves.easeOut,
@@ -237,30 +240,42 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
 /// Inherited scope exposed by [AdaptiveNavigationShell] to its branches.
 ///
 /// Branch pages read [visible] to coordinate FAB / placeholder animations
-/// with the bottom bar, write [scrollWish] to report scroll-driven
+/// with the bottom bar, call [reportScrollWish] to report scroll-driven
 /// visibility changes, and reserve [navHeight].
 class AdaptiveNavScope extends InheritedWidget {
   const AdaptiveNavScope({
     super.key,
-    required this.visible,
-    required this.scrollWish,
+    required AdaptiveNavVisibilityController visible,
+    required AdaptiveScrollWishController scrollWish,
     required this.barHeight,
     required this.navHeight,
     required super.child,
-  });
+  }) : _visible = visible,
+       _scrollWish = scrollWish;
+
+  final AdaptiveNavVisibilityController _visible;
+  final AdaptiveScrollWishController _scrollWish;
 
   /// Whether the bottom navigation bar is currently visible.
   ///
   /// Derived by the shell from [scrollWish], the branch stack depth, and
   /// the bar visibility policy. Pages read it to coordinate FAB /
-  /// placeholder animations; they must not write it.
-  final ValueListenable<bool> visible;
+  /// placeholder animations, e.g. through [ValueListenableBuilder]; the
+  /// [ValueListenable] view is read-only by construction.
+  ValueListenable<bool> get visible => _visible;
 
   /// Whether the active page wants the bottom bar visible.
   ///
-  /// Pages write this to report scroll-driven visibility changes; the shell
-  /// combines it with the route stack policy to derive [visible].
-  final ValueNotifier<bool> scrollWish;
+  /// Exposed as a read-only [ValueListenable]; pages report changes
+  /// through [reportScrollWish]. The shell combines the wish with the
+  /// route stack policy to derive [visible].
+  ValueListenable<bool> get scrollWish => _scrollWish;
+
+  /// Reports the page's scroll-driven visibility wish to the shell.
+  ///
+  /// Call this from scroll handlers; the shell may override the wish with
+  /// the route stack policy.
+  void reportScrollWish(bool visible) => _scrollWish.report(visible);
 
   /// Content height of the bar, excluding the bottom safe-area inset.
   ///
@@ -277,15 +292,15 @@ class AdaptiveNavScope extends InheritedWidget {
   static AdaptiveNavScope of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<AdaptiveNavScope>()!;
 
-  /// Reads the scope without depending on it, for handlers that only write
-  /// [scrollWish].
+  /// Reads the scope without depending on it, for handlers that only
+  /// report scroll wishes.
   static AdaptiveNavScope? maybeOf(BuildContext context) =>
       context.getInheritedWidgetOfExactType<AdaptiveNavScope>();
 
   @override
   bool updateShouldNotify(AdaptiveNavScope oldWidget) =>
-      visible != oldWidget.visible ||
-      scrollWish != oldWidget.scrollWish ||
+      _visible != oldWidget._visible ||
+      _scrollWish != oldWidget._scrollWish ||
       barHeight != oldWidget.barHeight ||
       navHeight != oldWidget.navHeight;
 }

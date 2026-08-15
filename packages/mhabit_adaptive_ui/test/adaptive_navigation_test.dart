@@ -164,7 +164,7 @@ void main() {
       final scope = AdaptiveNavScope.of(
         tester.element(find.text('habits page')),
       );
-      scope.scrollWish.value = false;
+      scope.reportScrollWish(false);
       await tester.pumpAndSettle();
       expect(scope.visible.value, isFalse);
 
@@ -184,7 +184,7 @@ void main() {
       final scope = AdaptiveNavScope.of(
         tester.element(find.text('habits page')),
       );
-      scope.scrollWish.value = false;
+      scope.reportScrollWish(false);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 250));
 
