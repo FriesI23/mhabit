@@ -34,7 +34,9 @@ final class AdaptiveBottomSheet<T> implements AdaptiveModal<T> {
     final effective = style ?? adaptiveStyle;
     return switch (effective) {
       // TODO(adaptive-ui::apple): card-style sheet with gesture dismissal.
-      AdaptiveStyle.apple || AdaptiveStyle.material => showModalBottomSheet<T>(
+      AdaptiveStyle.apple ||
+      AdaptiveStyle.material ||
+      AdaptiveStyle.desktop => showModalBottomSheet<T>(
         context: context,
         builder: builder,
         isScrollControlled: isScrollControlled,

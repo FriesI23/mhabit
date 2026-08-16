@@ -15,9 +15,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
-import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
 import '../../models/habit_display.dart';
 import '../../models/habit_group.dart';
@@ -309,10 +309,8 @@ class _GroupManageBody extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return AppUiLayoutBuilder(
-      ignoreWidth: false,
-      ignoreHeight: true,
-      builder: (context, layoutType, child) {
+    return WindowSizeClassLayoutBuilder(
+      builder: (context, windowSize, child) {
         return CustomScrollView(
           slivers: [
             _GroupManageSliverAppBar(
@@ -327,7 +325,7 @@ class _GroupManageBody extends StatelessWidget {
               )
             else ...[
               _GroupManageContent(
-                layoutType: layoutType,
+                widthClass: windowSize.width,
                 onGroupTap: onGroupTap,
                 onEdit: onEdit,
                 onDelete: onDelete,
@@ -481,13 +479,13 @@ class _GroupManageSliverAppBar extends StatelessWidget {
 
 class _GroupManageContent extends StatelessWidget {
   const _GroupManageContent({
-    required this.layoutType,
+    required this.widthClass,
     required this.onGroupTap,
     required this.onEdit,
     required this.onDelete,
   });
 
-  final UiLayoutType layoutType;
+  final WindowSizeClass widthClass;
   final void Function(String uuid) onGroupTap;
   final void Function(String uuid) onEdit;
   final void Function(String uuid) onDelete;
@@ -503,29 +501,28 @@ class _GroupManageContent extends StatelessWidget {
     final selectedUUIDs = context.read<GroupManageViewModel>().selectedUUIDs;
     final selectedCount = selectedUUIDs.length;
 
-    return switch (layoutType) {
-      UiLayoutType.l => SliverPadding(
-        padding: const EdgeInsets.all(16),
-        sliver: GroupManageGrid(
-          groups: groups,
-          selectedUUIDs: selectedUUIDs,
-          selectionMode: selectionMode,
-          selectedCount: selectedCount,
-          onTap: onGroupTap,
-          onEdit: onEdit,
-          onDelete: onDelete,
-        ),
-      ),
-      UiLayoutType.s => GroupManageList(
-        groups: groups,
-        selectedUUIDs: selectedUUIDs,
-        selectionMode: selectionMode,
-        selectedCount: selectedCount,
-        onTap: onGroupTap,
-        onEdit: onEdit,
-        onDelete: onDelete,
-      ),
-    };
+    return widthClass >= WindowSizeClass.medium
+        ? SliverPadding(
+            padding: const EdgeInsets.all(16),
+            sliver: GroupManageGrid(
+              groups: groups,
+              selectedUUIDs: selectedUUIDs,
+              selectionMode: selectionMode,
+              selectedCount: selectedCount,
+              onTap: onGroupTap,
+              onEdit: onEdit,
+              onDelete: onDelete,
+            ),
+          )
+        : GroupManageList(
+            groups: groups,
+            selectedUUIDs: selectedUUIDs,
+            selectionMode: selectionMode,
+            selectedCount: selectedCount,
+            onTap: onGroupTap,
+            onEdit: onEdit,
+            onDelete: onDelete,
+          );
   }
 }
 

@@ -365,7 +365,7 @@ class HabitDetailFreqChart extends StatelessWidget {
   final HabitDate Function(int limit) getLastDate;
   final HabitDate habitStartDate;
   final HabitDetailFreqChartCombine chartCombine;
-  final bool isLargeScreen;
+  final bool useSideBySideLayout;
   final bool isChartExpanded;
   final List<MapEntry<HabitDate, HabitDetailFreqChartData>> Function(
     HabitDate firstDate,
@@ -411,7 +411,7 @@ class HabitDetailFreqChart extends StatelessWidget {
     required this.getLastDate,
     required this.habitStartDate,
     required this.chartCombine,
-    required this.isLargeScreen,
+    required this.useSideBySideLayout,
     required this.isChartExpanded,
     required this.getData,
     this.onPopMenuSelected,
@@ -462,7 +462,7 @@ class HabitDetailFreqChart extends StatelessWidget {
     final isToday = offset == 0;
     final isLast = lastDate.isBefore(habitStartDate);
     final data = getData(firstDate, lastDate, limit);
-    if (isLargeScreen) {
+    if (useSideBySideLayout) {
       return Padding(
         padding: padding,
         child: _HabitDetailFreqChartInLargeScreen(

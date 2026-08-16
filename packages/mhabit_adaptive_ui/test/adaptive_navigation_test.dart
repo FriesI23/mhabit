@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -9,7 +10,6 @@ GoRouter _buildRouter({
   ValueChanged<int>? onBranchChanged,
   List<AdaptiveBranchRouteObserver>? observers,
   bool Function(List<String?> routeNames)? barVisibilityPolicy,
-  double wideWidthThreshold = 600.0,
 }) {
   return GoRouter(
     initialLocation: '/habits',
@@ -17,7 +17,6 @@ GoRouter _buildRouter({
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) => AdaptiveNavigationShell(
           navigationShell: navigationShell,
-          wideWidthThreshold: wideWidthThreshold,
           branchObservers: observers ?? const [],
           barVisibilityPolicy: barVisibilityPolicy,
           destinations:
@@ -83,11 +82,22 @@ class _StubPage extends StatelessWidget {
   }
 }
 
+/// Pins the test surface to [size] logical pixels for this test.
+///
+/// The default test surface is 800x600, which already classifies as medium;
+/// compact shell cases must pin a narrow viewport explicitly.
+void _setSurfaceSize(WidgetTester tester, Size size) {
+  tester.view.devicePixelRatio = 1.0;
+  tester.view.physicalSize = size;
+  addTearDown(tester.view.reset);
+}
+
 void main() {
   group('AdaptiveNavigationShell', () {
     testWidgets('renders destinations and switches branch on tap', (
       tester,
     ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
@@ -111,6 +121,7 @@ void main() {
         AdaptiveBranchRouteObserver(),
         AdaptiveBranchRouteObserver(),
       ];
+      _setSurfaceSize(tester, const Size(400, 800));
       final router = _buildRouter(observers: observers);
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
@@ -130,6 +141,7 @@ void main() {
         AdaptiveBranchRouteObserver(),
         AdaptiveBranchRouteObserver(),
       ];
+      _setSurfaceSize(tester, const Size(400, 800));
       final router = _buildRouter(observers: observers);
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
       await tester.pumpAndSettle();
@@ -158,6 +170,7 @@ void main() {
       tester,
     ) async {
       final changes = <int>[];
+      _setSurfaceSize(tester, const Size(400, 800));
       final router = _buildRouter(onBranchChanged: changes.add);
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
@@ -178,6 +191,7 @@ void main() {
     testWidgets('animates the bar out when visibility is set to false', (
       tester,
     ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
@@ -204,6 +218,7 @@ void main() {
           AdaptiveBranchRouteObserver(),
           AdaptiveBranchRouteObserver(),
         ];
+        _setSurfaceSize(tester, const Size(400, 800));
         final router = _buildRouter(observers: observers);
         await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
@@ -233,6 +248,7 @@ void main() {
           AdaptiveBranchRouteObserver(),
           AdaptiveBranchRouteObserver(),
         ];
+        _setSurfaceSize(tester, const Size(400, 800));
         final router = _buildRouter(
           observers: observers,
           barVisibilityPolicy: (routeNames) =>
@@ -273,6 +289,7 @@ void main() {
         AdaptiveBranchRouteObserver(),
         AdaptiveBranchRouteObserver(),
       ];
+      _setSurfaceSize(tester, const Size(400, 800));
       final router = _buildRouter(
         observers: observers,
         barVisibilityPolicy: (routeNames) =>
@@ -301,6 +318,7 @@ void main() {
         AdaptiveBranchRouteObserver(),
         AdaptiveBranchRouteObserver(),
       ];
+      _setSurfaceSize(tester, const Size(400, 800));
       final router = _buildRouter(observers: observers);
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
@@ -325,35 +343,459 @@ void main() {
       );
     });
 
-    testWidgets('resolves bar height and label behavior by width', (
+    testWidgets('compact form shows the bar with labels at 80dp', (
       tester,
     ) async {
-      tester.view.devicePixelRatio = 1.0;
-      tester.view.physicalSize = const Size(800, 600);
-      addTearDown(tester.view.reset);
+      _setSurfaceSize(tester, const Size(400, 800));
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      final wideScope = AdaptiveNavScope.of(
+      expect(find.byType(NavigationBar), findsOneWidget);
+      expect(find.byType(NavigationRail), findsNothing);
+      final scope = AdaptiveNavScope.of(
         tester.element(find.text('habits page')),
       );
-      expect(wideScope.barHeight, kBottomNavigationBarHeight);
-      expect(wideScope.navHeight, kBottomNavigationBarHeight);
-      var bar = tester.widget<NavigationBar>(find.byType(NavigationBar));
-      expect(bar.height, kBottomNavigationBarHeight);
-      expect(bar.labelBehavior, NavigationDestinationLabelBehavior.alwaysHide);
+      expect(scope.barHeight, 80.0);
+      expect(scope.navHeight, 80.0);
+      final bar = tester.widget<NavigationBar>(find.byType(NavigationBar));
+      expect(bar.height, 80.0);
+      expect(bar.labelBehavior, NavigationDestinationLabelBehavior.alwaysShow);
+    });
+
+    testWidgets('medium form shows an always-visible collapsible rail', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(700, 600));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(find.byType(NavigationBar), findsNothing);
+      expect(find.text('habits page'), findsOneWidget);
+
+      final scope = AdaptiveNavScope.of(
+        tester.element(find.text('habits page')),
+      );
+      expect(scope.barHeight, 0);
+      expect(scope.navHeight, 0);
+      expect(scope.visible.value, isTrue);
+      expect(scope.scrollWish.value, isTrue);
+
+      // Scroll wishes are ignored; the navigation stays visible.
+      scope.reportScrollWish(false);
+      await tester.pump();
+      expect(scope.visible.value, isTrue);
+    });
+
+    testWidgets('medium form switches branch from the rail', (tester) async {
+      _setSurfaceSize(tester, const Size(700, 600));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      await tester.tap(find.byIcon(Icons.calendar_today_outlined));
+      await tester.pumpAndSettle();
+
+      expect(find.text('today page'), findsOneWidget);
+      expect(find.text('habits page'), findsNothing);
+    });
+
+    testWidgets('medium form toggles the rail between collapsed and extended', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(700, 600));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      NavigationRail rail() =>
+          tester.widget<NavigationRail>(find.byType(NavigationRail));
+      expect(rail().extended, isFalse);
+
+      await tester.tap(find.byIcon(Icons.menu));
+      await tester.pumpAndSettle();
+      expect(rail().extended, isTrue);
+
+      await tester.tap(find.byIcon(Icons.menu_open));
+      await tester.pumpAndSettle();
+      expect(rail().extended, isFalse);
+    });
+
+    testWidgets('expanded form defaults to an extended collapsible rail', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1000, 600));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(find.byType(NavigationBar), findsNothing);
+      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isTrue,
+      );
+
+      await tester.tap(find.byIcon(Icons.menu_open));
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isFalse,
+      );
+
+      await tester.tap(find.byIcon(Icons.menu));
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isTrue,
+      );
+
+      final scope = AdaptiveNavScope.of(
+        tester.element(find.text('habits page')),
+      );
+      expect(scope.barHeight, 0);
+      expect(scope.visible.value, isTrue);
+    });
+
+    testWidgets('macOS classifies with material tiers', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      _setSurfaceSize(tester, const Size(700, 600));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      // macOS resolves the five-tier material system (only iOS is apple), so
+      // 700dp classifies as medium: a rail collapsed by default.
+      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isFalse,
+      );
+      expect(find.byIcon(Icons.menu), findsOneWidget);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('large form keeps a collapsible rail extended by default', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(find.byType(NavigationDrawer), findsNothing);
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isTrue,
+      );
+      expect(find.byIcon(Icons.menu_open), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.menu_open));
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isFalse,
+      );
+    });
+
+    testWidgets('extra-large form keeps the rail at its maximum auto width', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1800, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(find.byType(NavigationDrawer), findsNothing);
+      expect(find.byType(NavigationRail), findsOneWidget);
+      // Auto width tops out at 180 + 0.7 * (360 - 180) = 306.
+      final panel = tester.widget<NavigationRail>(find.byType(NavigationRail));
+      expect(panel.minExtendedWidth, closeTo(306, 0.01));
+      expect(find.byIcon(Icons.menu_open), findsOneWidget);
+    });
+
+    testWidgets('rail auto width follows the window within the interval', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1200, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      NavigationRail panel() =>
+          tester.widget<NavigationRail>(find.byType(NavigationRail));
+      // Upper bound: 180 + 180 * (1200-600)/1000 = 288;
+      // auto: 180 + 0.7 * 108 = 255.6.
+      expect(panel().minExtendedWidth, closeTo(255.6, 0.01));
+
+      tester.view.physicalSize = const Size(900, 800);
+      await tester.pumpAndSettle();
+
+      // Upper bound: 180 + 180 * (900-600)/1000 = 234;
+      // auto: 180 + 0.7 * 54 = 217.8.
+      expect(panel().minExtendedWidth, closeTo(217.8, 0.01));
+    });
+
+    testWidgets('drag resizes the rail and clamps to the interval', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1800, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      NavigationRail panel() =>
+          tester.widget<NavigationRail>(find.byType(NavigationRail));
+      expect(panel().minExtendedWidth, closeTo(306, 0.01));
+
+      // Drag far left: many small moves accumulate and clamp to the minimum.
+      var gesture = await tester.startGesture(
+        tester.getCenter(find.byKey(const ValueKey('rail-resize-handle'))),
+      );
+      for (var i = 0; i < 60; i++) {
+        await gesture.moveBy(const Offset(-10, 0));
+        await tester.pump();
+      }
+      await gesture.up();
+      await tester.pumpAndSettle();
+      expect(panel().minExtendedWidth, 180.0);
+
+      // Drag far right: clamps to the maximum width.
+      gesture = await tester.startGesture(
+        tester.getCenter(find.byKey(const ValueKey('rail-resize-handle'))),
+      );
+      for (var i = 0; i < 60; i++) {
+        await gesture.moveBy(const Offset(10, 0));
+        await tester.pump();
+      }
+      await gesture.up();
+      await tester.pumpAndSettle();
+      expect(panel().minExtendedWidth, 360.0);
+    });
+
+    testWidgets('manual width above auto hands off along the interval', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1800, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      await tester.drag(
+        find.byKey(const ValueKey('rail-resize-handle')),
+        const Offset(500, 0),
+      );
+      await tester.pumpAndSettle();
+      NavigationRail panel() =>
+          tester.widget<NavigationRail>(find.byType(NavigationRail));
+      expect(panel().minExtendedWidth, 360.0);
+
+      // Shrink into expanded: 900 -> upper bound 234, so the manual 360
+      // follows the interval's upper bound down (no jump, never rewritten).
+      tester.view.physicalSize = const Size(900, 800);
+      await tester.pumpAndSettle();
+      expect(panel().minExtendedWidth, closeTo(234, 0.01));
+
+      // Grow back: the remembered manual value applies again.
+      tester.view.physicalSize = const Size(1800, 800);
+      await tester.pumpAndSettle();
+      expect(panel().minExtendedWidth, 360.0);
+    });
+
+    testWidgets('manual width below auto follows auto after the handoff', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1800, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      // Drag slightly narrower than the auto width (306) -> 276.
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.byKey(const ValueKey('rail-resize-handle'))),
+      );
+      for (var i = 0; i < 3; i++) {
+        await gesture.moveBy(const Offset(-10, 0));
+        await tester.pump();
+      }
+      await gesture.up();
+      await tester.pumpAndSettle();
+      NavigationRail panel() =>
+          tester.widget<NavigationRail>(find.byType(NavigationRail));
+      expect(panel().minExtendedWidth, closeTo(276, 0.01));
+
+      // 1400: auto 280.8 > manual -> manual holds.
+      tester.view.physicalSize = const Size(1400, 800);
+      await tester.pumpAndSettle();
+      expect(panel().minExtendedWidth, closeTo(276, 0.01));
+
+      // 1300: auto 268.2 < manual -> follows the auto value down.
+      tester.view.physicalSize = const Size(1300, 800);
+      await tester.pumpAndSettle();
+      expect(panel().minExtendedWidth, closeTo(268.2, 0.01));
+
+      // 1150: auto 249.3 -> keeps following the auto value.
+      tester.view.physicalSize = const Size(1150, 800);
+      await tester.pumpAndSettle();
+      expect(panel().minExtendedWidth, closeTo(249.3, 0.01));
+
+      // Grow back: the remembered manual value resumes.
+      tester.view.physicalSize = const Size(1800, 800);
+      await tester.pumpAndSettle();
+      expect(panel().minExtendedWidth, closeTo(276, 0.01));
+    });
+
+    testWidgets('drag while the panel animation is running does not crash', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1200, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      // Resize to extra-large: the panel starts animating.
+      tester.view.physicalSize = const Size(1800, 800);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      // Drag while the animation is still running. A zero-duration restart
+      // would synchronously re-dirty RenderAnimatedSize inside its own
+      // performLayout and crash.
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.byKey(const ValueKey('rail-resize-handle'))),
+      );
+      await gesture.moveBy(const Offset(-100, 0));
+      await tester.pump();
+      await gesture.moveBy(const Offset(-100, 0));
+      await tester.pump();
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('collapsed rail hides the resize handle', (tester) async {
+      _setSurfaceSize(tester, const Size(700, 600));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(find.byKey(const ValueKey('rail-resize-handle')), findsNothing);
+
+      await tester.tap(find.byIcon(Icons.menu));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('rail-resize-handle')), findsOneWidget);
+    });
+
+    testWidgets('apple platforms keep three tiers without a drawer', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      _setSurfaceSize(tester, const Size(700, 600));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      // Apple medium maps to the collapsible rail, collapsed by default.
+      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isFalse,
+      );
+
+      tester.view.physicalSize = const Size(1300, 800);
+      await tester.pumpAndSettle();
+
+      // Apple large maps to the collapsible rail, extended by default; no
+      // drawer tier exists on Apple platforms.
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isTrue,
+      );
+      expect(find.byType(NavigationDrawer), findsNothing);
+      expect(find.byIcon(Icons.menu_open), findsOneWidget);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('switches forms when crossing the compact/medium boundary', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(find.byType(NavigationBar), findsOneWidget);
+      expect(find.byType(NavigationRail), findsNothing);
+
+      tester.view.physicalSize = const Size(700, 600);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(NavigationBar), findsNothing);
+      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(find.text('habits page'), findsOneWidget);
+      final mediumScope = AdaptiveNavScope.of(
+        tester.element(find.text('habits page')),
+      );
+      expect(mediumScope.barHeight, 0);
+      expect(mediumScope.visible.value, isTrue);
 
       tester.view.physicalSize = const Size(400, 800);
       await tester.pumpAndSettle();
 
-      final narrowScope = AdaptiveNavScope.of(
+      expect(find.byType(NavigationBar), findsOneWidget);
+      expect(find.byType(NavigationRail), findsNothing);
+      final compactScope = AdaptiveNavScope.of(
         tester.element(find.text('habits page')),
       );
-      expect(narrowScope.barHeight, 80.0);
-      expect(narrowScope.navHeight, 80.0);
-      bar = tester.widget<NavigationBar>(find.byType(NavigationBar));
-      expect(bar.height, 80.0);
-      expect(bar.labelBehavior, NavigationDestinationLabelBehavior.alwaysShow);
+      expect(compactScope.barHeight, 80.0);
+    });
+
+    testWidgets('resets rail extension to the form default on form changes', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1000, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      NavigationRail rail() =>
+          tester.widget<NavigationRail>(find.byType(NavigationRail));
+      // The expanded form defaults to an extended rail.
+      expect(rail().extended, isTrue);
+
+      // Collapse manually, then shrink into medium: the medium default
+      // (collapsed) applies.
+      await tester.tap(find.byIcon(Icons.menu_open));
+      await tester.pumpAndSettle();
+      expect(rail().extended, isFalse);
+      tester.view.physicalSize = const Size(700, 600);
+      await tester.pumpAndSettle();
+      expect(rail().extended, isFalse);
+
+      // Grow back into expanded: the expanded default (extended) applies
+      // again, overriding the manual collapse.
+      tester.view.physicalSize = const Size(1000, 800);
+      await tester.pumpAndSettle();
+      expect(rail().extended, isTrue);
+    });
+
+    testWidgets('keeps the manual rail width across a compact round-trip', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1800, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      // Drag slightly narrower than the auto width (306) -> 276.
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.byKey(const ValueKey('rail-resize-handle'))),
+      );
+      for (var i = 0; i < 3; i++) {
+        await gesture.moveBy(const Offset(-10, 0));
+        await tester.pump();
+      }
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      // Cross into compact: the bottom bar replaces the rail.
+      tester.view.physicalSize = const Size(400, 800);
+      await tester.pumpAndSettle();
+      expect(find.byType(NavigationBar), findsOneWidget);
+      expect(find.byType(NavigationRail), findsNothing);
+
+      // Grow back: the remembered manual width resumes.
+      tester.view.physicalSize = const Size(1800, 800);
+      await tester.pumpAndSettle();
+      final rail = tester.widget<NavigationRail>(find.byType(NavigationRail));
+      expect(rail.minExtendedWidth, closeTo(276, 0.01));
     });
   });
 

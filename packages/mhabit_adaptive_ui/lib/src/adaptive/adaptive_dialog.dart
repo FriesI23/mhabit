@@ -26,10 +26,8 @@ final class AdaptiveDialog<T> implements AdaptiveModal<T> {
     final effective = style ?? adaptiveStyle;
     return switch (effective) {
       // TODO(adaptive-ui::apple): CupertinoAlertDialog / CupertinoActionSheet.
-      AdaptiveStyle.apple || AdaptiveStyle.material => showDialog<T>(
-        context: context,
-        builder: builder,
-      ),
+      AdaptiveStyle.apple || AdaptiveStyle.material || AdaptiveStyle.desktop =>
+        showDialog<T>(context: context, builder: builder),
     };
   }
 }

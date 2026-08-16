@@ -38,7 +38,9 @@ class AdaptiveScaffold extends StatelessWidget {
     final effective = style ?? context.adaptiveStyle;
     return switch (effective) {
       // TODO(adaptive-ui::apple): apple style (FAB behavior / safe-area).
-      AdaptiveStyle.apple || AdaptiveStyle.material => _buildMaterial(),
+      AdaptiveStyle.apple ||
+      AdaptiveStyle.material ||
+      AdaptiveStyle.desktop => _buildMaterial(),
     };
   }
 

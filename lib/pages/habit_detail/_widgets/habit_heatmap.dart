@@ -30,7 +30,7 @@ class HabitHeatmap extends StatelessWidget {
   final Widget? descTargetDaysWidget;
   final Widget? descRecordsNumWidget;
   final EdgeInsetsGeometry padding;
-  final bool isLargeScreen;
+  final bool useSideBySideLayout;
   final HabitDate startDate;
   final HabitDate endedDate;
   final Map<num, Color>? colorMap;
@@ -70,7 +70,7 @@ class HabitHeatmap extends StatelessWidget {
     this.descTargetDaysWidget,
     this.descRecordsNumWidget,
     this.padding = EdgeInsets.zero,
-    this.isLargeScreen = false,
+    this.useSideBySideLayout = false,
     required this.startDate,
     required this.endedDate,
     this.colorMap,
@@ -167,7 +167,7 @@ class HabitHeatmap extends StatelessWidget {
 
     return Padding(
       padding: padding,
-      child: isLargeScreen
+      child: useSideBySideLayout
           ? buildWithHorizontal(context)
           : buildWithVertical(context),
     );

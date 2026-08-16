@@ -21,7 +21,7 @@ class AppSettingExpandTimerDelayTile extends StatelessWidget {
   final Widget? title;
   final Widget? subtitle;
   final GroupExpandTimerSpeed speed;
-  final bool isLargeScreen;
+  final bool useSideBySideLayout;
   final void Function(GroupExpandTimerSpeed speed)? onSelected;
 
   const AppSettingExpandTimerDelayTile({
@@ -29,7 +29,7 @@ class AppSettingExpandTimerDelayTile extends StatelessWidget {
     this.title,
     this.subtitle,
     required this.speed,
-    this.isLargeScreen = false,
+    this.useSideBySideLayout = false,
     this.onSelected,
   });
 
@@ -66,7 +66,7 @@ class AppSettingExpandTimerDelayTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isLargeScreen) {
+    if (useSideBySideLayout) {
       return ListTile(
         title: title,
         subtitle: Row(

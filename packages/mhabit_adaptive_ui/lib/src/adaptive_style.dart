@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 /// Platform design styles supported by the adaptive components.
 ///
-/// [AdaptiveStyle.apple] is resolved for iOS / macOS but not implemented in
-/// Phase 0: adaptive components fall back to [AdaptiveStyle.material] until
-/// Phase 3.
-enum AdaptiveStyle { material, apple }
+/// [AdaptiveStyle.apple] is resolved for iOS only; [AdaptiveStyle.desktop]
+/// covers macOS, Windows, and Linux. Adaptive components fall back to
+/// material for [AdaptiveStyle.apple] / [AdaptiveStyle.desktop] until the
+/// platform variants land (Phase 3+).
+enum AdaptiveStyle { material, apple, desktop }
 
 /// Maps the current platform of [context] to an [AdaptiveStyle].
 ///
@@ -13,7 +14,10 @@ enum AdaptiveStyle { material, apple }
 /// never branch on `defaultTargetPlatform` / `Platform.isXxx` themselves.
 AdaptiveStyle resolveAdaptiveStyle(BuildContext context) =>
     switch (Theme.of(context).platform) {
-      TargetPlatform.iOS || TargetPlatform.macOS => AdaptiveStyle.apple,
+      TargetPlatform.iOS => AdaptiveStyle.apple,
+      TargetPlatform.macOS ||
+      TargetPlatform.windows ||
+      TargetPlatform.linux => AdaptiveStyle.desktop,
       _ => AdaptiveStyle.material,
     };
 

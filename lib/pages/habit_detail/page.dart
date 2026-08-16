@@ -560,10 +560,10 @@ class _PageState extends State<_Page>
         );
       }
 
-      return LayoutBuilder(
-        builder: (context, constraints) {
-          final isLargeScreen =
-              constraints.maxWidth > kHabitLargeScreenAdaptWidth;
+      return WindowSizeClassLayoutBuilder(
+        builder: (context, windowSize, child) {
+          final useSideBySideLayout =
+              windowSize.width >= WindowSizeClass.medium;
           final l10n = L10n.of(context);
           return HabitHeatmap(
             firstday: viewmodel.firstday,
@@ -571,7 +571,7 @@ class _PageState extends State<_Page>
             descTargetDaysWidget: buildDescTargetDaysTile(context, l10n),
             descRecordsNumWidget: buildDescRecordsNumTile(context, l10n),
             padding: kHabitDetailWidgetPadding.copyWith(top: 16.0),
-            isLargeScreen: isLargeScreen,
+            useSideBySideLayout: useSideBySideLayout,
             startDate: startDate,
             endedDate: endedDate,
             colorMap: buildHeatmapColorMap(context),
@@ -757,8 +757,12 @@ class _PageState extends State<_Page>
             final viewmodel = context.read<HabitDetailViewModel>();
             final now = HabitDate.now();
 
-            final isLargeScreen =
-                constraints.maxWidth > kHabitLargeScreenAdaptWidth;
+            final useSideBySideLayout =
+                WindowSize.fromBreakpoints(
+                  Breakpoints.of(context),
+                  Size(constraints.maxWidth, constraints.maxHeight),
+                ).width >=
+                WindowSizeClass.medium;
             final animatedDirection = chartvm.consumeCachedAnimateDirection();
 
             return HabitDetailFreqChart(
@@ -766,7 +770,7 @@ class _PageState extends State<_Page>
               eachSize: 48.0,
               barWidth: 14.0,
               barSpaceBetween: 2.0,
-              allowWidth: isLargeScreen
+              allowWidth: useSideBySideLayout
                   ? (constraints.maxWidth - _largeScreenTwoChartBetween) / 2
                   : constraints.maxWidth,
               titleHeight: MediaQuery.textScalerOf(context)
@@ -779,7 +783,7 @@ class _PageState extends State<_Page>
                   chartvm.getCurrentChartLastDate(now, limit),
               habitStartDate: viewmodel.habitStartDate,
               chartCombine: chartvm.chartCombine,
-              isLargeScreen: isLargeScreen,
+              useSideBySideLayout: useSideBySideLayout,
               isChartExpanded: chartvm.isChartExpanded,
               getData: (firstDate, lastDate, limit) =>
                   chartvm.getCurrentOffsetChartData(

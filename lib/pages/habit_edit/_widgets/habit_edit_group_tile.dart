@@ -14,9 +14,9 @@
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../common/consts.dart';
-import '../../../common/utils.dart';
 import '../../../extensions/colorscheme_extensions.dart';
 import '../../../extensions/group_icon_extensions.dart';
 import '../../../l10n/localizations.dart';
@@ -41,14 +41,14 @@ class HabitEditGroupTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppUiLayoutBuilder.useScreenSize(
-      builder: (context, layoutType, _) {
-        final isDesktop = layoutType == UiLayoutType.l;
+    return WindowSizeClassLayoutBuilder.useScreenSize(
+      builder: (context, windowSize, _) {
+        final useInlinePicker = windowSize.width >= WindowSizeClass.medium;
         return Stack(
           children: [
             Offstage(
-              offstage: !isDesktop,
-              child: _HabitEditGroupDesktopTile(
+              offstage: !useInlinePicker,
+              child: _HabitEditGroupInlineTile(
                 groups: groups,
                 currentGroupId: currentGroupId,
                 onSelected: onSelected,
@@ -57,8 +57,8 @@ class HabitEditGroupTile extends StatelessWidget {
               ),
             ),
             Offstage(
-              offstage: isDesktop,
-              child: _HabitEditGroupMobileTile(
+              offstage: useInlinePicker,
+              child: _HabitEditGroupOverlayTile(
                 groups: groups,
                 currentGroupId: currentGroupId,
                 onSelected: onSelected,
@@ -73,14 +73,14 @@ class HabitEditGroupTile extends StatelessWidget {
   }
 }
 
-class _HabitEditGroupDesktopTile extends StatelessWidget {
+class _HabitEditGroupInlineTile extends StatelessWidget {
   final List<HabitGroupData> groups;
   final String? currentGroupId;
   final void Function(String?) onSelected;
   final Future<String> Function(String name) onCreateGroup;
   final bool loading;
 
-  const _HabitEditGroupDesktopTile({
+  const _HabitEditGroupInlineTile({
     required this.groups,
     required this.currentGroupId,
     required this.onSelected,
@@ -250,14 +250,14 @@ class _HabitEditGroupDesktopTile extends StatelessWidget {
   }
 }
 
-class _HabitEditGroupMobileTile extends StatelessWidget {
+class _HabitEditGroupOverlayTile extends StatelessWidget {
   final List<HabitGroupData> groups;
   final String? currentGroupId;
   final void Function(String?) onSelected;
   final Future<String> Function(String name) onCreateGroup;
   final bool loading;
 
-  const _HabitEditGroupMobileTile({
+  const _HabitEditGroupOverlayTile({
     required this.groups,
     required this.currentGroupId,
     required this.onSelected,
