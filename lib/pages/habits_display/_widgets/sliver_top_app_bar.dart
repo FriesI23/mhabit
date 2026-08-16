@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart' hide PreferredSize;
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
@@ -193,16 +194,16 @@ class _ViewAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return SliverAppBar(
-      floating: true,
-      snap: true,
-      pinned: true,
-      centerTitle: true,
-      toolbarHeight: height ?? kToolbarHeight,
-      scrolledUnderElevation: scrolledUnderElevation,
-      shadowColor: shawdowColor,
-      bottom: bottom,
-      title: title,
+    return AdaptiveSliverAppBar(
+      height: height,
+      styles: AppBarStyles(
+        material: AppBarMaterialStyle(
+          scrolledUnderElevation: scrolledUnderElevation,
+          shadowColor: shawdowColor,
+          bottom: bottom,
+        ),
+      ),
+      title: title ?? const SizedBox.shrink(),
       leading: IconButton(
         onPressed: onInfoButtonPressed,
         icon: const Icon(Icons.article_outlined),
@@ -235,19 +236,25 @@ class _EditAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverAppBar(
-      pinned: true,
-      forceElevated: true,
-      scrolledUnderElevation: scrolledUnderElevation,
-      shadowColor: Theme.of(context).colorScheme.shadow,
-      toolbarHeight: height ?? kToolbarHeight,
-      title: title,
-      centerTitle: false,
+    return AdaptiveSliverAppBar(
+      height: height,
+      styles: AppBarStyles(
+        material: AppBarMaterialStyle(
+          floating: false,
+          snap: false,
+          pinned: true,
+          forceElevated: true,
+          centerTitle: false,
+          scrolledUnderElevation: scrolledUnderElevation,
+          shadowColor: Theme.of(context).colorScheme.shadow,
+        ),
+      ),
+      title: title ?? const SizedBox.shrink(),
       leading: PageBackButton(
         reason: PageBackReason.close,
         onPressed: onLeadingButtonPressed,
       ),
-      actions: actions,
+      actions: actions ?? const [],
     );
   }
 }

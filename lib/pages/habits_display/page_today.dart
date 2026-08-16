@@ -185,9 +185,15 @@ class _Appbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return SliverAppBar(
-      centerTitle: true,
-      toolbarHeight: toolbarHeight,
+    return AdaptiveSliverAppBar(
+      height: toolbarHeight,
+      styles: const AppBarStyles(
+        material: AppBarMaterialStyle(
+          floating: false,
+          snap: false,
+          pinned: false,
+        ),
+      ),
       title: Text(l10n?.habitToday_appBar_title ?? "Today"),
       actions: const [AppThemeSwitchButton()],
     );
