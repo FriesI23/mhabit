@@ -454,14 +454,14 @@ void main() {
       expect(scope.visible.value, isTrue);
     });
 
-    testWidgets('macOS classifies with material tiers', (tester) async {
+    testWidgets('macOS classifies with apple tiers', (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
       _setSurfaceSize(tester, const Size(700, 600));
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      // macOS resolves the five-tier material system (only iOS is apple), so
-      // 700dp classifies as medium: a rail collapsed by default.
+      // macOS resolves the three-tier apple system, so 700dp classifies as
+      // medium: a rail collapsed by default.
       expect(find.byType(NavigationRail), findsOneWidget);
       expect(
         tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,

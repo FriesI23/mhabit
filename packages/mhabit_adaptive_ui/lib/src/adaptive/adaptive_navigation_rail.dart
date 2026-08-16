@@ -44,9 +44,7 @@ class AdaptiveNavigationRail extends StatelessWidget {
     final effective = style ?? context.adaptiveStyle;
     return switch (effective) {
       // TODO(adaptive-ui::apple): apple style (HIG sidebar rail).
-      AdaptiveStyle.apple ||
-      AdaptiveStyle.material ||
-      AdaptiveStyle.desktop => _buildMaterial(),
+      AdaptiveStyle.apple || AdaptiveStyle.material => _buildMaterial(),
     };
   }
 

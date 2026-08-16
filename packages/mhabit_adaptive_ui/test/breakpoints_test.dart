@@ -5,7 +5,6 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 const material = MaterialBreakpoints();
 const apple = AppleBreakpoints();
-const desktop = DesktopBreakpoints();
 
 void main() {
   group('MaterialBreakpoints', () {
@@ -42,26 +41,6 @@ void main() {
       expect(apple.heightClass(480), WindowSizeClass.medium);
       expect(apple.heightClass(899), WindowSizeClass.medium);
       expect(apple.heightClass(900), WindowSizeClass.expanded);
-    });
-  });
-
-  group('DesktopBreakpoints', () {
-    test('classifies like material for now', () {
-      for (final width in [
-        599.0,
-        600.0,
-        839.0,
-        840.0,
-        1199.0,
-        1200.0,
-        1599.0,
-        1600.0,
-      ]) {
-        expect(desktop.widthClass(width), material.widthClass(width));
-      }
-      for (final height in [479.0, 480.0, 899.0, 900.0]) {
-        expect(desktop.heightClass(height), material.heightClass(height));
-      }
     });
   });
 
@@ -106,7 +85,7 @@ void main() {
       expect(Breakpoints.of(context), same(apple));
     });
 
-    testWidgets('selects desktop on macOS platforms', (tester) async {
+    testWidgets('selects apple on macOS platforms', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(platform: TargetPlatform.macOS),
@@ -114,7 +93,7 @@ void main() {
         ),
       );
       final context = tester.element(find.byKey(const ValueKey('box')));
-      expect(Breakpoints.of(context), same(desktop));
+      expect(Breakpoints.of(context), same(apple));
     });
 
     testWidgets('prefers the scope over the platform default', (tester) async {

@@ -42,7 +42,6 @@ abstract interface class Breakpoints {
       BreakpointsScope.maybeOf(context)?.breakpoints ??
       switch (context.adaptiveStyle) {
         AdaptiveStyle.apple => const AppleBreakpoints(),
-        AdaptiveStyle.desktop => const DesktopBreakpoints(),
         AdaptiveStyle.material => const MaterialBreakpoints(),
       };
 }
@@ -121,24 +120,6 @@ final class AppleBreakpoints extends CustomBreakpoints {
         ],
         // Same height classes as material: compact < 480, medium 480-899,
         // expanded >= 900.
-        height: const [_compactHeightBound, _expandedHeightBound],
-      );
-}
-
-/// Desktop breakpoints (macOS / Windows / Linux).
-///
-/// Currently identical to [MaterialBreakpoints]; the dedicated type gives
-/// desktop platforms a seam for future tuning (e.g. Windows Fluent tiers)
-/// without touching the mobile material chain.
-final class DesktopBreakpoints extends CustomBreakpoints {
-  const DesktopBreakpoints()
-    : super(
-        width: const [
-          _compactWidthBound,
-          _mediumWidthBound,
-          _largeWidthBound,
-          _extraLargeWidthBound,
-        ],
         height: const [_compactHeightBound, _expandedHeightBound],
       );
 }
