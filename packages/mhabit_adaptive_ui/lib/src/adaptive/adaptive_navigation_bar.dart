@@ -6,8 +6,8 @@ import '../adaptive_style.dart';
 /// slot).
 ///
 /// The default constructor resolves the style from the current platform;
-/// `.material` forces the Material style. Phase 3 adds the apple style
-/// (`CupertinoTabBar`-style).
+/// `.material` forces the Material style. The Apple style currently falls back
+/// to the Material implementation.
 class AdaptiveNavigationBar extends StatelessWidget {
   const AdaptiveNavigationBar({
     super.key,

@@ -18,6 +18,7 @@ import 'dart:io';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
@@ -643,11 +644,11 @@ class _PageState extends State<_Page> with XShare {
         selector: (context, vm) => vm.changeRecordStatus,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, value, child) => L10nBuilder(
-          builder: (context, l10n) => LayoutBuilder(
-            builder: (context, constraints) =>
+          builder: (context, l10n) => WindowSizeClassLayoutBuilder(
+            builder: (context, windowSize, child) =>
                 AppSettingDisplayRecordOperationTile(
-                  isLargeScreen:
-                      constraints.maxWidth >= kHabitLargeScreenAdaptWidth,
+                  useSideBySideLayout:
+                      windowSize.width >= WindowSizeClass.medium,
                   inputAction: value,
                   title: l10n != null
                       ? Text(l10n.appSetting_changeRecordStatusOpTile_titleText)
@@ -666,21 +667,24 @@ class _PageState extends State<_Page> with XShare {
         selector: (context, vm) => vm.openRecordStatusDialog,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, value, child) => L10nBuilder(
-          builder: (context, l10n) => LayoutBuilder(
-            builder: (context, constraints) => AppSettingDisplayRecordOperationTile(
-              isLargeScreen:
-                  constraints.maxWidth >= kHabitLargeScreenAdaptWidth,
-              inputAction: value,
-              title: l10n != null
-                  ? Text(l10n.appSetting_openRecordStatusDialogOpTile_titleText)
-                  : null,
-              subtitle: l10n != null
-                  ? Text(
-                      l10n.appSetting_openRecordStatusDialogOpTile_subtitleText,
-                    )
-                  : null,
-              onSelected: _onOpenRecordStatusDialogSelected,
-            ),
+          builder: (context, l10n) => WindowSizeClassLayoutBuilder(
+            builder: (context, windowSize, child) =>
+                AppSettingDisplayRecordOperationTile(
+                  useSideBySideLayout:
+                      windowSize.width >= WindowSizeClass.medium,
+                  inputAction: value,
+                  title: l10n != null
+                      ? Text(
+                          l10n.appSetting_openRecordStatusDialogOpTile_titleText,
+                        )
+                      : null,
+                  subtitle: l10n != null
+                      ? Text(
+                          l10n.appSetting_openRecordStatusDialogOpTile_subtitleText,
+                        )
+                      : null,
+                  onSelected: _onOpenRecordStatusDialogSelected,
+                ),
           ),
         ),
       ),
@@ -691,11 +695,11 @@ class _PageState extends State<_Page> with XShare {
               selector: (context, vm) => vm.speed,
               shouldRebuild: (previous, next) => previous != next,
               builder: (context, value, child) => L10nBuilder(
-                builder: (context, l10n) => LayoutBuilder(
-                  builder: (context, constraints) =>
+                builder: (context, l10n) => WindowSizeClassLayoutBuilder(
+                  builder: (context, windowSize, child) =>
                       AppSettingExpandTimerDelayTile(
-                        isLargeScreen:
-                            constraints.maxWidth >= kHabitLargeScreenAdaptWidth,
+                        useSideBySideLayout:
+                            windowSize.width >= WindowSizeClass.medium,
                         speed: value,
                         title: l10n != null
                             ? Text(

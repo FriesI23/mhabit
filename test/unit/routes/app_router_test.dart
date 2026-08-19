@@ -52,26 +52,42 @@ void main() {
     });
 
     test('addHabitCreate sets correct path and name', () {
+      final appFlow = AppFlowRouterBuilder()
+        ..addHabitCreate(builder: (_, _) => const SizedBox.shrink());
       final router =
-          (AppRouterBuilder()
-                ..addHabitCreate(builder: (_, _) => const SizedBox.shrink()))
+          (AppRouterBuilder()..addShellRoute(
+                appFlow: appFlow,
+                branches: [
+                  BranchRouterBuilder()
+                    ..addHabits(builder: (_, _) => const SizedBox.shrink()),
+                ],
+                builder: (_, _, child) => child,
+                branchBuilder: (_, _, _) => const SizedBox.shrink(),
+              ))
               .build();
-      final routes = router.configuration.routes;
-      expect(routes, hasLength(1));
-      final route = routes.first as GoRoute;
+      final shell = router.configuration.routes.first as ShellRoute;
+      final route = shell.routes[1] as GoRoute;
       expect(route.path, '/habit/create');
       expect(route.name, AppRoute.habitCreate.name);
       expect(route.builder, isNotNull);
     });
 
     test('addHabitEdit sets correct path and name', () {
+      final appFlow = AppFlowRouterBuilder()
+        ..addHabitEdit(builder: (_, _) => const SizedBox.shrink());
       final router =
-          (AppRouterBuilder()
-                ..addHabitEdit(builder: (_, _) => const SizedBox.shrink()))
+          (AppRouterBuilder()..addShellRoute(
+                appFlow: appFlow,
+                branches: [
+                  BranchRouterBuilder()
+                    ..addHabits(builder: (_, _) => const SizedBox.shrink()),
+                ],
+                builder: (_, _, child) => child,
+                branchBuilder: (_, _, _) => const SizedBox.shrink(),
+              ))
               .build();
-      final routes = router.configuration.routes;
-      expect(routes, hasLength(1));
-      final route = routes.first as GoRoute;
+      final shell = router.configuration.routes.first as ShellRoute;
+      final route = shell.routes[1] as GoRoute;
       expect(route.path, '/habit/edit');
       expect(route.name, AppRoute.habitEdit.name);
       expect(route.builder, isNotNull);
@@ -263,6 +279,26 @@ void main() {
     });
   });
 
+  group('appShellFlowVisibilityPolicy', () {
+    test('shows chrome for an empty or single tab-shell stack', () {
+      expect(appShellFlowVisibilityPolicy(const []), isTrue);
+      expect(appShellFlowVisibilityPolicy(const [null]), isTrue);
+      expect(appShellFlowVisibilityPolicy([AppRoute.habits.name]), isTrue);
+    });
+
+    test('hides compact chrome for pushed or direct common flows', () {
+      expect(
+        appShellFlowVisibilityPolicy([null, AppRoute.habitCreate.name]),
+        isFalse,
+      );
+      expect(
+        appShellFlowVisibilityPolicy([AppRoute.habitCreate.name]),
+        isFalse,
+      );
+      expect(appShellFlowVisibilityPolicy([AppRoute.habitEdit.name]), isFalse);
+    });
+  });
+
   group('AppRouterBuilder shell routes', () {
     List<BranchRouterBuilder> buildBranchRoutes() => [
       BranchRouterBuilder()
@@ -272,52 +308,65 @@ void main() {
         ..addToday(builder: (_, _) => const SizedBox.shrink()),
     ];
 
-    test('addShellRoute wraps branch routes into a StatefulShellRoute', () {
+    AppFlowRouterBuilder buildAppFlowRoutes() => AppFlowRouterBuilder()
+      ..addHabitCreate(builder: (_, _) => const SizedBox.shrink())
+      ..addHabitEdit(builder: (_, _) => const SizedBox.shrink());
+
+    test('addShellRoute nests tab branches under an app chrome shell', () {
       final router =
           (AppRouterBuilder()..addShellRoute(
+                appFlow: buildAppFlowRoutes(),
                 branches: buildBranchRoutes(),
-                builder: (_, _, _) => const SizedBox.shrink(),
+                builder: (_, _, child) => child,
+                branchBuilder: (_, _, _) => const SizedBox.shrink(),
               ))
               .build();
       final routes = router.configuration.routes;
       expect(routes, hasLength(1));
-      final shell = routes.first as StatefulShellRoute;
-      expect(shell.builder, isNotNull);
-      expect(shell.branches, hasLength(2));
+      final appChromeShell = routes.first as ShellRoute;
+      expect(appChromeShell.builder, isNotNull);
+      expect(appChromeShell.routes, hasLength(3));
+
+      final tabShell = appChromeShell.routes.first as StatefulShellRoute;
+      expect(tabShell.builder, isNotNull);
+      expect(tabShell.branches, hasLength(2));
 
       final cases = [
-        (shell.branches[0].routes[0], '/habits', AppRoute.habits.name),
+        (tabShell.branches[0].routes[0], '/habits', AppRoute.habits.name),
         (
-          shell.branches[0].routes[1],
+          tabShell.branches[0].routes[1],
           '/habits/:habitId',
           AppRoute.habitDetail.name,
         ),
-        (shell.branches[1].routes[0], '/today', AppRoute.today.name),
+        (tabShell.branches[1].routes[0], '/today', AppRoute.today.name),
       ];
       for (final (route, path, name) in cases) {
         final goRoute = route as GoRoute;
         expect(goRoute.path, path);
         expect(goRoute.name, name);
       }
+      expect((appChromeShell.routes[1] as GoRoute).path, '/habit/create');
+      expect((appChromeShell.routes[2] as GoRoute).path, '/habit/edit');
     });
 
     test('shell route coexists with root-level routes', () {
       final router =
           (AppRouterBuilder()
                 ..addShellRoute(
+                  appFlow: buildAppFlowRoutes(),
                   branches: buildBranchRoutes(),
-                  builder: (_, _, _) => const SizedBox.shrink(),
+                  builder: (_, _, child) => child,
+                  branchBuilder: (_, _, _) => const SizedBox.shrink(),
                 )
-                ..addHabitCreate(builder: (_, _) => const SizedBox.shrink())
-                ..addHabitEdit(builder: (_, _) => const SizedBox.shrink())
                 ..addGroupManage(builder: (_, _) => const SizedBox.shrink()))
               .build();
       final routes = router.configuration.routes;
-      expect(routes, hasLength(4));
-      expect(routes[0], isA<StatefulShellRoute>());
-      expect((routes[1] as GoRoute).path, '/habit/create');
-      expect((routes[2] as GoRoute).path, '/habit/edit');
-      expect((routes[3] as GoRoute).path, '/group/manage');
+      expect(routes, hasLength(2));
+      expect(routes[0], isA<ShellRoute>());
+      final appChromeShell = routes[0] as ShellRoute;
+      expect((appChromeShell.routes[1] as GoRoute).path, '/habit/create');
+      expect((appChromeShell.routes[2] as GoRoute).path, '/habit/edit');
+      expect((routes[1] as GoRoute).path, '/group/manage');
     });
   });
 }

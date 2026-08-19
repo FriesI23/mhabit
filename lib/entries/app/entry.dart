@@ -23,11 +23,9 @@ import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/app_info.dart';
-import '../../common/consts.dart';
 import '../../common/flavor.dart';
 import '../../common/utils.dart';
 import '../../extensions/context_extensions.dart';
-import '../../extensions/custom_color_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/app_entry.dart';
@@ -68,6 +66,7 @@ import '../../storage/db_helper_builder.dart';
 import '../../storage/profile/handlers.dart';
 import '../../storage/profile_builder.dart';
 import '../../storage/profile_provider.dart';
+import '../../theme/app_theme_builder.dart';
 import '../../theme/color.dart';
 import '../../utils/app_clock.dart';
 import '../../widgets/widgets.dart';
@@ -75,6 +74,8 @@ import '../app_error/entry.dart';
 import '../common/app_root_view.dart';
 import 'providers.dart';
 import 'shell.dart';
+
+typedef _AppInitialNavigationConfig = ({AppRoute home, int initialBranchIndex});
 
 /// Note: [AppProviders] are use to build providers that need to be initialized
 /// in [MaterialApp]. An important to note that, e.g., [Localizations] are
@@ -140,20 +141,22 @@ class _AppEntry extends StatefulWidget {
 }
 
 class _AppEntryState extends State<_AppEntry> {
+  late final AppNavigationCoordinator _navigationCoordinator;
   late final GoRouter _router;
 
   @override
   void initState() {
     super.initState();
     final launchEntry = context.read<AppLaunchEntryViewModel>().launchEntry;
-    _router = _buildRouter(
-      home: launchEntry == AppEntrys.habitToday
-          ? AppRoute.today
-          : AppRoute.habits,
-    );
+    final config = switch (launchEntry) {
+      AppEntrys.habitToday => (home: AppRoute.today, initialBranchIndex: 1),
+      AppEntrys.undefined ||
+      AppEntrys.habitDisplay => (home: AppRoute.habits, initialBranchIndex: 0),
+    };
+    _router = _buildRouter(config);
   }
 
-  GoRouter _buildRouter({required AppRoute home}) {
+  GoRouter _buildRouter(_AppInitialNavigationConfig config) {
     final branches = [
       BranchRouterBuilder()
         ..addHabits(builder: (_, _) => const HabitsPage())
@@ -172,6 +175,27 @@ class _AppEntryState extends State<_AppEntry> {
     final branchObservers = [
       for (final _ in branches) AdaptiveBranchRouteObserver(),
     ];
+    final appFlow = AppFlowRouterBuilder()
+      ..addHabitCreate(
+        builder: (_, state) {
+          final (:initForm) = state.unpackHabitCreate();
+          return HabitEditPage(initForm: initForm);
+        },
+      )
+      ..addHabitEdit(
+        builder: (_, state) {
+          final (habitId: _, initForm: initForm) = state.unpackHabitEdit();
+          return HabitEditPage(initForm: initForm);
+        },
+      );
+    final appFlowObserver = AdaptiveBranchRouteObserver();
+    final appChromeNavigatorKey = GlobalKey<NavigatorState>();
+    _navigationCoordinator = AppNavigationCoordinator(
+      branchObservers: branchObservers,
+      appFlowObserver: appFlowObserver,
+      appChromeNavigatorKey: appChromeNavigatorKey,
+      initialIndex: config.initialBranchIndex,
+    );
     return (AppRouterBuilder()
           ..addSettings(builder: (_, _) => const AppSettingPage())
           ..addSettingsAbout(builder: (_, _) => const AppAboutPage())
@@ -179,18 +203,6 @@ class _AppEntryState extends State<_AppEntry> {
           ..addSettingsNotify(builder: (_, _) => const AppNotifyConfigPage())
           ..addExperimental(builder: (_, _) => const ExpermentalFeaturesPage())
           ..addDebugger(builder: (_, _) => const AppDebuggerPage())
-          ..addHabitCreate(
-            builder: (_, state) {
-              final (:initForm) = state.unpackHabitCreate();
-              return HabitEditPage(initForm: initForm);
-            },
-          )
-          ..addHabitEdit(
-            builder: (_, state) {
-              final (habitId: _, initForm: initForm) = state.unpackHabitEdit();
-              return HabitEditPage(initForm: initForm);
-            },
-          )
           ..addGroupManage(
             builder: (_, state) {
               final (:selectedGroupId) = state.unpackGroupManage();
@@ -204,136 +216,36 @@ class _AppEntryState extends State<_AppEntry> {
             },
           )
           ..addShellRoute(
+            appFlow: appFlow,
             branchObservers: branchObservers,
             branches: branches,
-            builder: (context, state, navigationShell) => ChangelogBanner(
+            navigatorKey: appChromeNavigatorKey,
+            observers: [appFlowObserver],
+            builder: (context, state, child) => ChangelogBanner(
               child: AppPostInit(
-                child: PageProviders(
-                  child: AppNavigationShell(
-                    navigationShell: navigationShell,
-                    branchObservers: branchObservers,
-                  ),
+                child: AppNavigationShell(
+                  coordinator: _navigationCoordinator,
+                  child: child,
                 ),
               ),
             ),
+            branchBuilder: (context, state, navigationShell) {
+              _navigationCoordinator.attachTabShell(navigationShell);
+              return PageProviders(child: navigationShell);
+            },
           ))
-        .build(home: home);
+        .build(home: config.home);
   }
 
-  String? getFontFamily() {
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.linux:
-        final arch = AppInfo().linuxArchitecture;
-        return switch (arch) {
-          LinuxPlatformArchitecture.aarch64 => 'Roboto',
-          _ => null,
-        };
-      default:
-        return null;
-    }
+  @override
+  void dispose() {
+    _router.dispose();
+    _navigationCoordinator.dispose();
+    super.dispose();
   }
-
-  List<String>? getFontFamilyFallbacks() {
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.linux:
-        final arch = AppInfo().linuxArchitecture;
-        return switch (arch) {
-          LinuxPlatformArchitecture.aarch64 => const [
-            'Ubuntu',
-            'Cantarell',
-            'DejaVu Sans',
-            'Liberation Sans',
-            'Arial',
-            'Noto Color Emoji',
-            'Noto Sans CJK SC',
-            'Noto Sans CJK TC',
-            'Noto Sans CJK JP',
-            'Noto Sans CJK KR',
-          ],
-          _ => null,
-        };
-      default:
-        return null;
-    }
-  }
-
-  static MenuThemeData? get _mobileMenuTheme => switch (defaultTargetPlatform) {
-    TargetPlatform.iOS || TargetPlatform.android => const MenuThemeData(
-      style: MenuStyle(
-        shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12)),
-          ),
-        ),
-      ),
-    ),
-    _ => null,
-  };
-
-  Color? getThemeColor(
-    AppThemeColor themeColor, {
-    Color? themeMainColor,
-    ColorScheme? dynamicScheme,
-    CustomColors? customColor,
-  }) {
-    switch (themeColor) {
-      case SystemAppThemeColor():
-        return null;
-      case PrimaryAppThemeColor():
-        return appDefaultThemeMainColor;
-      case DynamicAppThemeColor():
-        final colorData = dynamicScheme?.primary.toARGB32();
-        return colorData != null ? Color(colorData) : themeMainColor;
-      case InternalAppThemeColor():
-        final colorType = themeColor.colorType;
-        return customColor?.getBuiltInColor(colorType) ?? themeMainColor;
-      default:
-        return themeMainColor;
-    }
-  }
-
-  ColorScheme? getSystemLightColor() => switch (defaultTargetPlatform) {
-    TargetPlatform.android ||
-    TargetPlatform.iOS ||
-    TargetPlatform.macOS => ColorScheme.fromSeed(
-      seedColor: appDefaultThemeMainColor,
-      brightness: Brightness.light,
-      surface: Colors.white,
-    ),
-    _ => null,
-  };
-
-  ColorScheme? getSystemDarkColor() => switch (defaultTargetPlatform) {
-    TargetPlatform.android => ColorScheme.fromSeed(
-      seedColor: appDefaultThemeMainColor,
-      brightness: Brightness.dark,
-      surface: const Color(0xFF0F0F0F),
-    ),
-    TargetPlatform.iOS => ColorScheme.fromSeed(
-      seedColor: appDefaultThemeMainColor,
-      brightness: Brightness.dark,
-      surface: Colors.black,
-    ),
-    TargetPlatform.macOS => ColorScheme.fromSeed(
-      seedColor: appDefaultThemeMainColor,
-      brightness: Brightness.dark,
-      surface: const Color(0xFF1E1E1E),
-    ),
-    _ => null,
-  };
 
   @override
   Widget build(BuildContext context) {
-    final fontFamily = getFontFamily();
-    final fontFamilyFallbacks = getFontFamilyFallbacks();
-    final pageTransitionsTheme = PageTransitionsTheme(
-      builders: {
-        ...const PageTransitionsTheme().builders,
-        if (AppInfo().shouldEnablePredictBackPage())
-          TargetPlatform.android:
-              const CustomPredictiveBackPageTransitionsBuilder(),
-      },
-    );
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) => Builder(
         builder: (context) {
@@ -351,56 +263,16 @@ class _AppEntryState extends State<_AppEntry> {
             themeMode: transToMaterialThemeType(themeMode),
             language: language,
             disableAnimations: disableAnimations,
-            lightThemeBuilder: () {
-              final customColor = lightCustomColors;
-              final mainColor = getThemeColor(
-                themeColor,
-                themeMainColor: themeMainColor,
-                dynamicScheme: lightDynamic,
-                customColor: customColor,
-              );
-              return ThemeData(
-                fontFamily: fontFamily,
-                fontFamilyFallback: fontFamilyFallbacks,
-                pageTransitionsTheme: pageTransitionsTheme,
-                brightness: mainColor == null ? Brightness.light : null,
-                colorScheme: mainColor != null
-                    ? ColorScheme.fromSeed(
-                        seedColor: mainColor,
-                        brightness: Brightness.light,
-                      )
-                    : getSystemLightColor(),
-                useMaterial3: true,
-                appBarTheme: kAppBarTheme,
-                menuTheme: _mobileMenuTheme,
-                extensions: [customColor],
-              );
-            },
-            darkThemeBuilder: () {
-              final customColor = darkCustomColors;
-              final mainColor = getThemeColor(
-                themeColor,
-                themeMainColor: themeMainColor,
-                dynamicScheme: darkDynamic,
-                customColor: customColor,
-              );
-              return ThemeData(
-                fontFamily: fontFamily,
-                fontFamilyFallback: fontFamilyFallbacks,
-                pageTransitionsTheme: pageTransitionsTheme,
-                brightness: mainColor == null ? Brightness.dark : null,
-                colorScheme: mainColor != null
-                    ? ColorScheme.fromSeed(
-                        seedColor: mainColor,
-                        brightness: Brightness.dark,
-                      )
-                    : getSystemDarkColor(),
-                useMaterial3: true,
-                appBarTheme: kAppBarTheme,
-                menuTheme: _mobileMenuTheme,
-                extensions: [customColor],
-              );
-            },
+            lightThemeBuilder: () => const AppThemeBuilder().buildLight(
+              themeColor: themeColor,
+              themeMainColor: themeMainColor,
+              dynamicScheme: lightDynamic,
+            ),
+            darkThemeBuilder: () => const AppThemeBuilder().buildDark(
+              themeColor: themeColor,
+              themeMainColor: themeMainColor,
+              dynamicScheme: darkDynamic,
+            ),
             config: _router,
           );
         },

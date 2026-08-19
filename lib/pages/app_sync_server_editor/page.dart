@@ -14,10 +14,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
-import '../../common/consts.dart';
-import '../../common/utils.dart';
+import '../../extensions/window_size_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../models/app_sync_server.dart';
 import '../../models/app_sync_server_form.dart';
@@ -80,14 +80,11 @@ class AppSyncServerEditorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return PageProviders(
       initServerConfig: serverConfig,
-      child: AppUiLayoutBuilder(
-        ignoreHeight: false,
-        ignoreWidth: false,
-        builder: (context, layoutType, child) => _Page(
+      child: WindowSizeClassLayoutBuilder(
+        builder: (context, windowSize, child) => _Page(
           serverConfig: serverConfig,
           showInFullscreenDialog:
-              showInFullscreenDialog ??
-              (layoutType == UiLayoutType.s ? true : false),
+              showInFullscreenDialog ?? !windowSize.isTabletFormFactor,
         ),
       ),
     );
@@ -281,7 +278,7 @@ class _PageFullScreenDialog extends StatelessWidget {
             const _UsernameTile(),
             const _PasswordTile(),
             _PageAdvancedSection(
-              type: UiLayoutType.s,
+              isLarge: false,
               expanded: showAdvanceConfig,
               onExpansionChanged: onAdvConfigExpansionChanged,
             ),
@@ -319,7 +316,7 @@ class _PageDialog extends StatelessWidget {
 
   Widget _buildUserTiles(BuildContext context) => Builder(
     builder: (context) =>
-        MediaQuery.sizeOf(context).width >= kHabitLargeScreenAdaptWidth * 1.5
+        WindowSize.of(context).width >= WindowSizeClass.expanded
         ? const Row(
             key: ValueKey("large"),
             mainAxisSize: MainAxisSize.min,
@@ -360,7 +357,7 @@ class _PageDialog extends StatelessWidget {
           const _PathTile(),
           _buildUserTiles(context),
           _PageAdvancedSection(
-            type: UiLayoutType.l,
+            isLarge: true,
             expanded: showAdvanceConfig,
             onExpansionChanged: onAdvConfigExpansionChanged,
           ),
@@ -384,12 +381,12 @@ class _PageDialog extends StatelessWidget {
 }
 
 class _PageAdvancedSection extends StatelessWidget {
-  final UiLayoutType type;
+  final bool isLarge;
   final bool? expanded;
   final ValueChanged<bool>? onExpansionChanged;
 
   const _PageAdvancedSection({
-    required this.type,
+    required this.isLarge,
     this.expanded,
     this.onExpansionChanged,
   });
@@ -428,10 +425,7 @@ class _PageAdvancedSection extends StatelessWidget {
     shape: const Border(),
     initiallyExpanded: expanded ?? false,
     onExpansionChanged: onExpansionChanged,
-    children: switch (type) {
-      UiLayoutType.l => _buildForLargeScreen(),
-      _ => _buildForSmallScreen(),
-    },
+    children: isLarge ? _buildForLargeScreen() : _buildForSmallScreen(),
   );
 }
 

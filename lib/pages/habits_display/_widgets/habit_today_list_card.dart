@@ -119,7 +119,7 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: color ?? Colors.transparent, width: 1), // 边框
+          side: BorderSide(color: color ?? Colors.transparent, width: 1),
         ),
       ),
       icon: HabitDailyStatusIcon(

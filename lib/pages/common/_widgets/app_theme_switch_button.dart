@@ -33,6 +33,9 @@ class AppThemeSwitchButton extends StatelessWidget {
       AppThemeType.dark => const Icon(Icons.dark_mode_rounded),
       _ => const Icon(MdiIcons.themeLightDark),
     };
+    // TODO(adaptive-ui::apple): the inner IconButton is Material-styled
+    // (ripple, padding); replace with an Adaptive action button when this
+    // surface gets its apple variant.
     return IconButton(
       onPressed: () =>
           context.read<AppThemeViewModel>().onTapChangeThemeType(brightness),

@@ -13,71 +13,56 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
-import '../../common/consts.dart';
-import '../../common/utils.dart';
-
-class AppUiLayoutBuilder extends StatelessWidget {
+/// Builds adaptive layouts from the window's width and height classes,
+/// resolved through the [Breakpoints] chain.
+///
+/// The default constructor measures the incoming [LayoutBuilder] constraints;
+/// [WindowSizeClassLayoutBuilder.useScreenSize] measures the ambient
+/// [MediaQuery] size instead. Both dimensions reach [builder] as a
+/// [WindowSize].
+class WindowSizeClassLayoutBuilder extends StatelessWidget {
   final Widget? child;
-  final bool ignoreWidth;
-  final bool ignoreHeight;
-  final UiLayoutType defaultUiType;
   final Widget Function(
     BuildContext context,
-    UiLayoutType layoutType,
+    WindowSize windowSize,
     Widget? child,
   )
   builder;
 
   final bool _useSize;
 
-  const AppUiLayoutBuilder({
+  const WindowSizeClassLayoutBuilder({
     super.key,
-    this.ignoreHeight = true,
-    this.ignoreWidth = false,
-    this.defaultUiType = UiLayoutType.s,
     this.child,
     required this.builder,
   }) : _useSize = false;
 
-  const AppUiLayoutBuilder.useScreenSize({
+  const WindowSizeClassLayoutBuilder.useScreenSize({
     super.key,
-    this.ignoreHeight = true,
-    this.ignoreWidth = false,
-    this.defaultUiType = UiLayoutType.s,
     this.child,
     required this.builder,
   }) : _useSize = true;
 
-  Widget _buildSizeOf(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    final layoutType = computeLayoutType(
-      width: size.width,
-      height: size.height,
-      largeScreenWidth: kHabitLargeScreenAdaptWidth,
-      largeScreenHeight: kHabitLargeScreenAdaptHeight,
-      ignoreWidth: ignoreWidth,
-      ignoreHeight: ignoreHeight,
-      defaultType: defaultUiType,
-    );
-    return builder(context, layoutType, child);
-  }
-
   @override
-  Widget build(BuildContext context) => _useSize
-      ? _buildSizeOf(context)
-      : LayoutBuilder(
-          builder: (context, constraints) {
-            final layoutType = computeLayoutType(
-              width: constraints.maxWidth,
-              height: constraints.maxHeight,
-              largeScreenWidth: kHabitLargeScreenAdaptWidth,
-              largeScreenHeight: kHabitLargeScreenAdaptHeight,
-              ignoreWidth: ignoreWidth,
-              ignoreHeight: ignoreHeight,
-              defaultType: defaultUiType,
-            );
-            return builder(context, layoutType, child);
-          },
-        );
+  Widget build(BuildContext context) {
+    final breakpoints = Breakpoints.of(context);
+    return _useSize
+        ? builder(
+            context,
+            WindowSize.fromBreakpoints(breakpoints, MediaQuery.sizeOf(context)),
+            child,
+          )
+        : LayoutBuilder(
+            builder: (context, constraints) => builder(
+              context,
+              WindowSize.fromBreakpoints(
+                breakpoints,
+                Size(constraints.maxWidth, constraints.maxHeight),
+              ),
+              child,
+            ),
+          );
+  }
 }

@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_donation_buttons/flutter_donation_buttons.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../common/enums.dart';
 import '../../../common/utils.dart';
@@ -228,9 +229,9 @@ class _DonateContentState extends State<DonateContent> {
       final hasWechat = donateWays.contains(DonateWay.wechatPay);
       if (!hasAlipay && !hasWechat) return const SizedBox.shrink();
 
-      return AppUiLayoutBuilder(
-        builder: (context, layoutType, _) {
-          final wide = layoutType == UiLayoutType.l;
+      return WindowSizeClassLayoutBuilder(
+        builder: (context, windowSize, _) {
+          final wide = windowSize.width >= WindowSizeClass.medium;
           final screenWidth = MediaQuery.sizeOf(context).width;
           final qrSize = wide
               ? 300.0

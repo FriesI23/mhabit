@@ -13,10 +13,11 @@
 // limitations under the License.
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide PreferredSize;
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
-import '../../../common/utils.dart';
+import '../../../extensions/window_size_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_form.dart';
 import '../../../widgets/widgets.dart';
@@ -273,27 +274,22 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
 
     Widget buildSearchFilter() => Builder(
       builder: (context) {
-        final size = MediaQuery.sizeOf(context);
-        final uiLayout = switch (defaultTargetPlatform) {
-          TargetPlatform.android || TargetPlatform.iOS => computeLayoutType(
-            width: size.width,
-            height: size.height,
-            ignoreHeight: false,
-            largeScreenHeight: 600,
-          ),
-          _ => UiLayoutType.l,
+        // TODO(adaptive-ui::platform): move filter presentation behind an
+        // adaptive widget.
+        final windowSize = WindowSize.of(context);
+        final isLargeLayout = switch (defaultTargetPlatform) {
+          TargetPlatform.android ||
+          TargetPlatform.iOS => windowSize.isTabletFormFactor,
+          _ => true,
         };
-        return switch (uiLayout) {
-          UiLayoutType.l => SearchFilterPopupMenuButton(
-            ongoingChanged: _onOngingFilterChanged,
-            completedChanged: _onCompletedFilterChanged,
-            typeChanged: _onTypeFilterChanged,
-            onClearFilterPressed: _onClearFilterPressed,
-          ),
-          UiLayoutType.s => SearchFilterIconButton(
-            onPreesed: _openSearchFilterBottonSheet,
-          ),
-        };
+        return isLargeLayout
+            ? SearchFilterPopupMenuButton(
+                ongoingChanged: _onOngingFilterChanged,
+                completedChanged: _onCompletedFilterChanged,
+                typeChanged: _onTypeFilterChanged,
+                onClearFilterPressed: _onClearFilterPressed,
+              )
+            : SearchFilterIconButton(onPreesed: _openSearchFilterBottonSheet);
       },
     );
 
@@ -366,50 +362,49 @@ class _AppBar extends StatelessWidget {
     );
     final searchBar = this.searchBar;
     const sliverAppBarKey = ValueKey("bar");
-    return SliverLayoutBuilder(
-      builder: (context, constraints) {
-        final uiLayout = computeLayoutType(
-          width: constraints.crossAxisExtent,
-          height: constraints.viewportMainAxisExtent,
-        );
-        return switch (uiLayout) {
-          UiLayoutType.s => SliverAppBar(
-            key: sliverAppBarKey,
-            floating: true,
-            snap: true,
-            pinned: true,
-            centerTitle: false,
-            toolbarHeight: height ?? kToolbarHeight,
-            scrolledUnderElevation: scrolledUnderElevation,
-            shadowColor: shawdowColor,
-            title: searchBar,
-            bottom: bottom,
-            actions: [infoButton, menuButton],
-          ),
-          UiLayoutType.l => SliverAppBar(
-            key: sliverAppBarKey,
-            floating: true,
-            snap: true,
-            pinned: true,
-            centerTitle: false,
-            toolbarHeight: height ?? kToolbarHeight,
-            scrolledUnderElevation: scrolledUnderElevation,
-            shadowColor: shawdowColor,
-            leading: infoButton,
-            title: Text(l10n?.appName ?? appName),
-            bottom: bottom,
-            actions: [
-              if (searchBar != null)
-                ConstrainedBox(
-                  constraints: const BoxConstraints.tightFor(
-                    width: _SearchBar.kSearchFullWidthLimit,
-                  ),
-                  child: searchBar,
-                ),
-              menuButton,
-            ],
-          ),
-        };
+    return Builder(
+      builder: (context) {
+        // The app-bar form follows the window width, not the content-region
+        // width: in non-compact forms the rail sits beside the content area,
+        // so the two have diverged. The app bar is window chrome.
+        final isLarge = WindowSize.of(context).width >= WindowSizeClass.medium;
+        return isLarge
+            ? SliverAppBar(
+                key: sliverAppBarKey,
+                floating: true,
+                snap: true,
+                pinned: true,
+                centerTitle: false,
+                toolbarHeight: height ?? kToolbarHeight,
+                scrolledUnderElevation: scrolledUnderElevation,
+                shadowColor: shawdowColor,
+                leading: infoButton,
+                title: Text(l10n?.appName ?? appName),
+                bottom: bottom,
+                actions: [
+                  if (searchBar != null)
+                    ConstrainedBox(
+                      constraints: const BoxConstraints.tightFor(
+                        width: _SearchBar.kSearchFullWidthLimit,
+                      ),
+                      child: searchBar,
+                    ),
+                  menuButton,
+                ],
+              )
+            : SliverAppBar(
+                key: sliverAppBarKey,
+                floating: true,
+                snap: true,
+                pinned: true,
+                centerTitle: false,
+                toolbarHeight: height ?? kToolbarHeight,
+                scrolledUnderElevation: scrolledUnderElevation,
+                shadowColor: shawdowColor,
+                title: searchBar,
+                bottom: bottom,
+                actions: [infoButton, menuButton],
+              );
       },
     );
   }

@@ -14,9 +14,9 @@
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
-import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_display.dart';
 import '../../../models/habit_form.dart';
@@ -298,8 +298,8 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                 ),
               ),
             ),
-            AppUiLayoutBuilder(
-              builder: (context, uiLayout, child) {
+            WindowSizeClassLayoutBuilder(
+              builder: (context, windowSize, child) {
                 final filtered =
                     this.filtered || !widget.initOptions.isFilterEmpty;
 
@@ -329,34 +329,36 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                   ),
                 );
 
-                return switch (uiLayout) {
-                  UiLayoutType.s => ExpandedSection(
-                    expand: filtered || canSave,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const HabitDivider(),
-                        ExpandedSection(expand: canSave, child: saveButton),
-                        ExpandedSection(expand: filtered, child: clearButton),
-                      ],
-                    ),
-                  ),
-                  UiLayoutType.l => ExpandedSection(
-                    expand: filtered || canSave,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const HabitDivider(),
-                        Row(
+                return windowSize.width >= WindowSizeClass.medium
+                    ? ExpandedSection(
+                        expand: filtered || canSave,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            saveButton,
-                            clearButton,
-                          ].map((e) => Expanded(child: e)).toList(),
+                            const HabitDivider(),
+                            Row(
+                              children: [
+                                saveButton,
+                                clearButton,
+                              ].map((e) => Expanded(child: e)).toList(),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                };
+                      )
+                    : ExpandedSection(
+                        expand: filtered || canSave,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const HabitDivider(),
+                            ExpandedSection(expand: canSave, child: saveButton),
+                            ExpandedSection(
+                              expand: filtered,
+                              child: clearButton,
+                            ),
+                          ],
+                        ),
+                      );
               },
             ),
           ],

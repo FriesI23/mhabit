@@ -14,9 +14,9 @@
 
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
-import '../../common/consts.dart';
-import '../../common/utils.dart';
+import '../../extensions/window_size_extensions.dart';
 import 'enhanced_safe_area.dart';
 
 /// Shows an adaptive content sheet or dialog based on screen size.
@@ -31,11 +31,10 @@ import 'enhanced_safe_area.dart';
 /// filter chips, or other controls that should stay visible while the
 /// content scrolls.
 ///
-/// On Android, iOS, and Fuchsia, dialog mode is used only when
-/// [computeLayoutType] resolves a large layout with both the width and height
-/// thresholds enabled. Otherwise this uses [showModalBottomSheet] with a
-/// [DraggableScrollableSheet]. On other platforms, this always uses
-/// [showDialog] with an [AlertDialog].
+/// On Android, iOS, and Fuchsia, dialog mode is used only when the window
+/// is large on both axes (600dp wide and 400dp tall). Otherwise this uses
+/// [showModalBottomSheet] with a [DraggableScrollableSheet]. On other
+/// platforms, this always uses [showDialog] with an [AlertDialog].
 ///
 /// [actions] are placed in a bottom area (sheet) or appended before the
 /// default close button in [AlertDialog.actions] (dialog).
@@ -89,15 +88,8 @@ Future<T?> showAdaptiveContentSheet<T>({
     'forceSheet and forceDialog cannot both be true',
   );
 
-  final viewSize = MediaQuery.sizeOf(context);
-  final appLayoutType = computeLayoutType(
-    width: viewSize.width,
-    height: viewSize.height,
-    largeScreenWidth: kHabitLargeScreenAdaptWidth,
-    largeScreenHeight: kHabitLargeScreenAdaptHeight,
-    ignoreHeight: false,
-    defaultType: UiLayoutType.s,
-  );
+  final windowSize = WindowSize.of(context);
+  final isLargeLayout = windowSize.isTabletFormFactor;
 
   final useDialog = forceDialog
       ? true
@@ -106,7 +98,7 @@ Future<T?> showAdaptiveContentSheet<T>({
       : switch (defaultTargetPlatform) {
           TargetPlatform.android ||
           TargetPlatform.iOS ||
-          TargetPlatform.fuchsia => appLayoutType == UiLayoutType.l,
+          TargetPlatform.fuchsia => isLargeLayout,
           _ => true,
         };
 
@@ -114,51 +106,49 @@ Future<T?> showAdaptiveContentSheet<T>({
 
   Widget buildBody(BuildContext ctx) {
     final bodyActions = actionsBuilder?.call(ctx, useDialog) ?? actions;
-    return switch (useDialog) {
-      true => _AdaptiveAlertDialog(
-        title: title,
-        width: dialogWidth,
-        maxContentHeight: dialogMaxContentHeight,
-        showScrollbar: dialogShowScrollbar,
-        showCloseButton: showCloseButton,
-        actions: bodyActions,
-        pinnedContentBuilder: pinnedContentBuilder,
-        child: contentBuilder(ctx),
-      ),
-      false => _AdaptiveSheet(
-        title: title,
-        initialChildSize: sheetInitialChildSize,
-        minChildSize: sheetMinChildSize,
-        maxChildSize: sheetMaxChildSize,
-        scrollPhysics: sheetScrollPhysics,
-        padding: sheetPadding,
-        sheetShowCloseButton: sheetShowCloseButton ?? showCloseButton,
-        actions: bodyActions,
-        actionsAlign: sheetActionsAlign,
-        titleAlignment: sheetTitleAlignment,
-        pinnedContentBuilder: pinnedContentBuilder,
-        child: contentBuilder(ctx),
-      ),
-    };
+    return useDialog
+        ? _AdaptiveAlertDialog(
+            title: title,
+            width: dialogWidth,
+            maxContentHeight: dialogMaxContentHeight,
+            showScrollbar: dialogShowScrollbar,
+            showCloseButton: showCloseButton,
+            actions: bodyActions,
+            pinnedContentBuilder: pinnedContentBuilder,
+            child: contentBuilder(ctx),
+          )
+        : _AdaptiveSheet(
+            title: title,
+            initialChildSize: sheetInitialChildSize,
+            minChildSize: sheetMinChildSize,
+            maxChildSize: sheetMaxChildSize,
+            scrollPhysics: sheetScrollPhysics,
+            padding: sheetPadding,
+            sheetShowCloseButton: sheetShowCloseButton ?? showCloseButton,
+            actions: bodyActions,
+            actionsAlign: sheetActionsAlign,
+            titleAlignment: sheetTitleAlignment,
+            pinnedContentBuilder: pinnedContentBuilder,
+            child: contentBuilder(ctx),
+          );
   }
 
-  return switch (useDialog) {
-    true => showDialog<T>(
-      context: context,
-      builder: (ctx) => resolvedBuilder != null
-          ? resolvedBuilder(ctx, buildBody)
-          : buildBody(ctx),
-    ),
-    false => showModalBottomSheet<T>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      showDragHandle: sheetShowDragHandle,
-      builder: (ctx) => resolvedBuilder != null
-          ? resolvedBuilder(ctx, buildBody)
-          : buildBody(ctx),
-    ),
-  };
+  return useDialog
+      ? showDialog<T>(
+          context: context,
+          builder: (ctx) => resolvedBuilder != null
+              ? resolvedBuilder(ctx, buildBody)
+              : buildBody(ctx),
+        )
+      : showModalBottomSheet<T>(
+          context: context,
+          isScrollControlled: true,
+          useSafeArea: true,
+          showDragHandle: sheetShowDragHandle,
+          builder: (ctx) => resolvedBuilder != null
+              ? resolvedBuilder(ctx, buildBody)
+              : buildBody(ctx),
+        );
 }
 
 class _AdaptiveSheet extends StatelessWidget {
