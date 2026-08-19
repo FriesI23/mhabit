@@ -637,5 +637,6 @@
                 "description": "Third-party provider display name"
             }
         }
-    }
+    },
+    "appSetting_languageSubgroupText": "Jazyk"
 }
