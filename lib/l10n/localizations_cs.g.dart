@@ -24,7 +24,7 @@ class L10nCs extends L10n {
   String get habitEdit_colorPicker_title => 'Zvolte barvu';
 
   @override
-  String get habitEdit_colorPicker_historySectionLabel => 'Recently used';
+  String get habitEdit_colorPicker_historySectionLabel => 'Nedávno použité';
 
   @override
   String habitEdit_colorPicker_customSectionLabel(String tinted) {
@@ -37,16 +37,16 @@ class L10nCs extends L10n {
   }
 
   @override
-  String get habitEdit_colorPicker_cancel => 'Cancel';
+  String get habitEdit_colorPicker_cancel => 'Zrušit';
 
   @override
   String get habitEdit_colorPicker_tintToggleLabel => 'Tint to theme';
 
   @override
-  String get habitEdit_colorPicker_tintedLabel => 'Tinted';
+  String get habitEdit_colorPicker_tintedLabel => 'Tónované';
 
   @override
-  String get habitEdit_colorPicker_untintedLabel => 'Not tinted';
+  String get habitEdit_colorPicker_untintedLabel => 'Nezabarvené';
 
   @override
   String get habitEdit_colorPicker_tintToggleOnHint =>
@@ -165,7 +165,7 @@ class L10nCs extends L10n {
 
   @override
   String habitEdit_targetDays_title(int targetDays) {
-    return '$targetDays days';
+    return '$targetDays dnů';
   }
 
   @override
@@ -312,10 +312,10 @@ class L10nCs extends L10n {
       'Delete Selected Habits?';
 
   @override
-  String get habitDisplay_deleteHabitsConfirmDialog_confirm => 'confirm';
+  String get habitDisplay_deleteHabitsConfirmDialog_confirm => 'potvrdit';
 
   @override
-  String get habitDisplay_deleteHabitsConfirmDialog_cancel => 'cancel';
+  String get habitDisplay_deleteHabitsConfirmDialog_cancel => 'zrušit';
 
   @override
   String habitDisplay_deleteHabitsSuccSnackbarText(int count) {
@@ -343,7 +343,7 @@ class L10nCs extends L10n {
       'Exported All Habits';
 
   @override
-  String get habitDisplay_editPopMenu_selectAll => 'Select All';
+  String get habitDisplay_editPopMenu_selectAll => 'Vybrat vše';
 
   @override
   String get habitDisplay_editPopMenu_export => 'Export';
@@ -396,19 +396,20 @@ class L10nCs extends L10n {
       'Zobrazit archivované';
 
   @override
-  String get habitDisplay_mainMenu_showCompletedTileText => 'Show Completed';
+  String get habitDisplay_mainMenu_showCompletedTileText =>
+      'Zobrazit dokončené';
 
   @override
-  String get habitDisplay_mainMenu_showActivedTileText => 'Show Actived';
+  String get habitDisplay_mainMenu_showActivedTileText => 'Zobrazit aktivované';
 
   @override
   String get habitDisplay_mainMenu_settingTileText => 'Nastavení';
 
   @override
-  String get habitDisplay_groupType_name => 'By Name';
+  String get habitDisplay_groupType_name => 'Podle názvu';
 
   @override
-  String get habitDisplay_groupType_colorType => 'By Color';
+  String get habitDisplay_groupType_colorType => 'Podle barvy';
 
   @override
   String get habitDisplay_groupType_createDate => 'By Creation Date';
@@ -420,13 +421,13 @@ class L10nCs extends L10n {
   String get habitDisplay_groupTypeDialog_title => 'Group Sort';
 
   @override
-  String get habitDisplay_groupTypeDialog_confirm => 'Potvrdit';
+  String get habitDisplay_groupTypeDialog_confirm => 'potvrdit';
 
   @override
-  String get habitDisplay_groupTypeDialog_cancel => 'cancel';
+  String get habitDisplay_groupTypeDialog_cancel => 'zrušit';
 
   @override
-  String get habitDisplay_groupTypeDialog_none => 'Flat';
+  String get habitDisplay_groupTypeDialog_none => 'Ploché';
 
   @override
   String get habitDisplay_editPopMenu_groupModify => 'Modify Group';
@@ -549,19 +550,19 @@ class L10nCs extends L10n {
   String get habitDisplay_sortType_manual => 'Moje pořadí';
 
   @override
-  String get habitDisplay_sortType_name => 'By Name';
+  String get habitDisplay_sortType_name => 'Podle názvu';
 
   @override
-  String get habitDisplay_sortType_colorType => 'By Color';
+  String get habitDisplay_sortType_colorType => 'Podle barvy';
 
   @override
-  String get habitDisplay_sortType_progress => 'By Rate';
+  String get habitDisplay_sortType_progress => 'Podle četnosti';
 
   @override
   String get habitDisplay_sortType_startT => 'By Start Date';
 
   @override
-  String get habitDisplay_sortType_status => 'By Status';
+  String get habitDisplay_sortType_status => 'Podle stavu';
 
   @override
   String get habitDisplay_sortTypeDialog_title => 'Sort';
@@ -579,7 +580,7 @@ class L10nCs extends L10n {
   String get habitDisplay_searchBar_hintText => 'Vyhledat zvyky';
 
   @override
-  String get habitDisplay_searchFilter_ongoing => 'Ongoing';
+  String get habitDisplay_searchFilter_ongoing => 'Probíhající';
 
   @override
   String get habitDisplay_searchFilter_ongoing_desc =>
@@ -592,19 +593,19 @@ class L10nCs extends L10n {
   String get habitDisplay_searchFilter_habitType_groupTitle => 'Typ zvyku';
 
   @override
-  String get habitDisplay_searchFilter_tooltips => 'Show Filters';
+  String get habitDisplay_searchFilter_tooltips => 'Zobrazit filtry';
 
   @override
-  String get habitDisplay_searchFilter_clearFilter => 'Clear Filters';
+  String get habitDisplay_searchFilter_clearFilter => 'Vymazat filtry';
 
   @override
-  String get habitDisplay_tab_habits_label => 'Habits';
+  String get habitDisplay_tab_habits_label => 'Zvyky';
 
   @override
-  String get habitDisplay_tab_today_label => 'Today';
+  String get habitDisplay_tab_today_label => 'Dnes';
 
   @override
-  String get habitToday_appBar_title => 'Today';
+  String get habitToday_appBar_title => 'Dnes';
 
   @override
   String get habitToday_image_desc => 'YOU MADE IT';
@@ -615,10 +616,10 @@ class L10nCs extends L10n {
   }
 
   @override
-  String get habitToday_card_donePlusButton_label => 'Done+';
+  String get habitToday_card_donePlusButton_label => 'Hotovo+';
 
   @override
-  String get habitToday_card_skipPlusButton_label => 'Skip+';
+  String get habitToday_card_skipPlusButton_label => 'Přeskočit+';
 
   @override
   String get habitDetail_editButton_tooltip => 'Edit';
@@ -633,28 +634,29 @@ class L10nCs extends L10n {
   String get habitDetail_editPopMenu_export => 'Export';
 
   @override
-  String get habitDetail_editPopMenu_delete => 'Delete';
+  String get habitDetail_editPopMenu_delete => 'Smazat';
 
   @override
-  String get habitDetail_editPopMenu_clone => 'Template';
+  String get habitDetail_editPopMenu_clone => 'Šablona';
 
   @override
   String get habitDetail_confirmDialog_confirm => 'Potvrdit';
 
   @override
-  String get habitDetail_confirmDialog_cancel => 'cancel';
+  String get habitDetail_confirmDialog_cancel => 'zrušit';
 
   @override
-  String get habitDetail_archiveConfirmDialog_titleText => 'Archive Habit?';
+  String get habitDetail_archiveConfirmDialog_titleText => 'Zaarchivovat zvyk?';
 
   @override
-  String get habitDetail_unarchiveConfirmDialog_titleText => 'Unarchive Habit?';
+  String get habitDetail_unarchiveConfirmDialog_titleText =>
+      'Vyndat zvyk zpět z archivu?';
 
   @override
-  String get habitDetail_deleteConfirmDialog_titleText => 'Delete Habit?';
+  String get habitDetail_deleteConfirmDialog_titleText => 'Smazat návyk?';
 
   @override
-  String get habitDetail_summary_title => 'Summary';
+  String get habitDetail_summary_title => 'Souhrn';
 
   @override
   String habitDetail_summary_body(String score, int days) {
@@ -709,7 +711,7 @@ class L10nCs extends L10n {
 
   @override
   String habitDetail_descDailyGoal_unitText(String unit) {
-    return 'Unit: $unit';
+    return 'Jednotka: $unit';
   }
 
   @override
@@ -729,43 +731,43 @@ class L10nCs extends L10n {
   String get habitDetail_descTargetDays_unitText => 'd';
 
   @override
-  String get habitDetail_descRecordsNum_titleText => 'Records';
+  String get habitDetail_descRecordsNum_titleText => 'Záznamy';
 
   @override
-  String get habitDetail_scoreChart_title => 'Score';
+  String get habitDetail_scoreChart_title => 'Hodnocení';
 
   @override
-  String get habitDetail_scoreChartCombine_dailyText => 'Day';
+  String get habitDetail_scoreChartCombine_dailyText => 'Den';
 
   @override
-  String get habitDetail_scoreChartCombine_weeklyText => 'Week';
+  String get habitDetail_scoreChartCombine_weeklyText => 'Týden';
 
   @override
-  String get habitDetail_scoreChartCombine_monthlyText => 'Month';
+  String get habitDetail_scoreChartCombine_monthlyText => 'Měsíc';
 
   @override
-  String get habitDetail_scoreChartCombine_yearlyText => 'Year';
+  String get habitDetail_scoreChartCombine_yearlyText => 'Rok';
 
   @override
-  String get habitDetail_freqChart_freqTitle => 'Frequency';
+  String get habitDetail_freqChart_freqTitle => 'Četnost';
 
   @override
-  String get habitDetail_freqChart_historyTitle => 'History';
+  String get habitDetail_freqChart_historyTitle => 'Historie';
 
   @override
   String get habitDetail_freqChart_combinedTitle => 'Frequency & History';
 
   @override
-  String get habitDetail_freqChartCombine_weeklyText => 'Week';
+  String get habitDetail_freqChartCombine_weeklyText => 'Týden';
 
   @override
-  String get habitDetail_freqChartCombine_monthlyText => 'Month';
+  String get habitDetail_freqChartCombine_monthlyText => 'Měsíc';
 
   @override
-  String get habitDetail_freqChartCombine_yearlyText => 'Year';
+  String get habitDetail_freqChartCombine_yearlyText => 'Rok';
 
   @override
-  String get habitDetail_freqChartNaviBar_nowText => 'Now';
+  String get habitDetail_freqChartNaviBar_nowText => 'Nyní';
 
   @override
   String get habitDetail_freqChart_expanded_hideTooltip => 'Hide History Chart';
@@ -774,34 +776,34 @@ class L10nCs extends L10n {
   String get habitDetail_freqChart_expanded_showTooltip => 'Show History Chart';
 
   @override
-  String get habitDetail_descSubgroup_title => 'Memo';
+  String get habitDetail_descSubgroup_title => 'Pozn.';
 
   @override
-  String get habitDetail_otherSubgroup_title => 'Other';
+  String get habitDetail_otherSubgroup_title => 'Ostatní';
 
   @override
-  String get habitDetail_habitType_title => 'Type';
+  String get habitDetail_habitType_title => 'Typ';
 
   @override
-  String get habitDetail_reminderTile_title => 'Reminder';
+  String get habitDetail_reminderTile_title => 'Připomínka';
 
   @override
-  String get habitDetail_freqTile_title => 'Repeat';
+  String get habitDetail_freqTile_title => 'Opakovat';
 
   @override
-  String get habitDetail_startDateTile_title => 'Start Date';
+  String get habitDetail_startDateTile_title => 'Datum zahájení';
 
   @override
-  String get habitDetail_createDateTile_title => 'Created';
+  String get habitDetail_createDateTile_title => 'Vytvořeno';
 
   @override
-  String get habitDetail_modifyDateTile_title => 'Modified';
+  String get habitDetail_modifyDateTile_title => 'Změněno';
 
   @override
-  String get habitDetail_editHeatmapCal_dateButtonText => 'date';
+  String get habitDetail_editHeatmapCal_dateButtonText => 'datum';
 
   @override
-  String get habitDetail_editHeatmapCal_valueButtonText => 'value';
+  String get habitDetail_editHeatmapCal_valueButtonText => 'hodnota';
 
   @override
   String get habitDetail_editHeatmapCal_backToToday_tooltipText =>
@@ -811,29 +813,29 @@ class L10nCs extends L10n {
   String get common_loadError_text => 'Failed to load';
 
   @override
-  String get common_loadError_retryText => 'Try again';
+  String get common_loadError_retryText => 'Zkusit znovu';
 
   @override
   String get habitDetail_notFoundText => 'Load habit failed';
 
   @override
-  String get habitDetail_notFoundRetryText => 'Try again';
+  String get habitDetail_notFoundRetryText => 'Zkusit znovu';
 
   @override
-  String get habitDetail_changeGoal_title => 'Change goal';
+  String get habitDetail_changeGoal_title => 'Změnit cíl';
 
   @override
   String habitDetail_changeGoal_currentChipText(String goal) {
-    return 'current: $goal';
+    return 'stávající: $goal';
   }
 
   @override
   String habitDetail_changeGoal_doneChipText(String goal) {
-    return 'done: $goal';
+    return 'hotovo: $goal';
   }
 
   @override
-  String get habitDetail_changeGoal_undoneChipText => 'undone';
+  String get habitDetail_changeGoal_undoneChipText => 'zrušit dokončení';
 
   @override
   String habitDetail_changeGoal_extraChipText(String goal) {
@@ -846,31 +848,31 @@ class L10nCs extends L10n {
   }
 
   @override
-  String get habitDetail_changeGoal_cancelText => 'cancel';
+  String get habitDetail_changeGoal_cancelText => 'zrušit';
 
   @override
-  String get habitDetail_changeGoal_saveText => 'save';
+  String get habitDetail_changeGoal_saveText => 'uložit';
 
   @override
-  String get habitDetail_skipReason_title => 'Skip reason';
+  String get habitDetail_skipReason_title => 'Důvod přeskočení';
 
   @override
   String get habitDetail_skipReason_bodyHelpText => 'Write something here...';
 
   @override
-  String get habitDetail_skipReason_cancelText => 'cancel';
+  String get habitDetail_skipReason_cancelText => 'zrušit';
 
   @override
-  String get habitDetail_skipReason_saveText => 'save';
+  String get habitDetail_skipReason_saveText => 'uložit';
 
   @override
   String get appSetting_appbar_titleText => 'Nastavení';
 
   @override
-  String get appSetting_displaySubgroupText => 'Display';
+  String get appSetting_displaySubgroupText => 'Zobrazení';
 
   @override
-  String get appSetting_operationSubgroupText => 'Operation';
+  String get appSetting_operationSubgroupText => 'Operace';
 
   @override
   String get appSetting_dragCalendarByPageTile_titleText =>
@@ -904,16 +906,16 @@ class L10nCs extends L10n {
       'Set how long to hover over a collapsed group header before it auto-expands during drag-and-drop.';
 
   @override
-  String get appSetting_expandTimerDelay_default => 'Default';
+  String get appSetting_expandTimerDelay_default => 'Výchozí';
 
   @override
-  String get appSetting_expandTimerDelay_fast => 'Fast';
+  String get appSetting_expandTimerDelay_fast => 'Rychlé';
 
   @override
-  String get appSetting_expandTimerDelay_slow => 'Slow';
+  String get appSetting_expandTimerDelay_slow => 'Pomalé';
 
   @override
-  String get appSetting_appThemeColorTile_titleText => 'Theme Color';
+  String get appSetting_appThemeColorTile_titleText => 'Barva vzhledu';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText =>
@@ -943,7 +945,7 @@ class L10nCs extends L10n {
       'Show first day of week';
 
   @override
-  String get appSetting_firstDayOfWeekDialog_defaultText => ' (Default)';
+  String get appSetting_firstDayOfWeekDialog_defaultText => ' (Výchozí)';
 
   @override
   String appSetting_changeLanguage_followSystem_text(String localeName) {
@@ -952,7 +954,7 @@ class L10nCs extends L10n {
 
   @override
   String get appSetting_changeLanguage_followSystem_noLocale_text =>
-      'Follow System';
+      'Podle systému';
 
   @override
   String get appSetting_changeLanguageTile_titleText => 'Jazyk';
@@ -961,7 +963,7 @@ class L10nCs extends L10n {
   String get appSetting_changeLanguageDialog_titleText => 'Vyberte jazyk';
 
   @override
-  String get appSetting_languageSubgroupText => 'Language';
+  String get appSetting_languageSubgroupText => 'Jazyk';
 
   @override
   String get appSetting_openSystemLanguageTile_titleText =>
@@ -1005,13 +1007,13 @@ class L10nCs extends L10n {
       'Adjust percentage for more/less space in habits check table area.';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_defaultText => 'Default';
+  String get appSetting_collapsed_calendar_bararea_defaultText => 'Výchozí';
 
   @override
   String get appSetting_reminderSubgroupText => 'Reminder & Notification';
 
   @override
-  String get appSetting_dailyReminder_titleText => 'Daily reminder';
+  String get appSetting_dailyReminder_titleText => 'Denní připomenutí';
 
   @override
   String get appSetting_backupAndRestoreSubgroupText => 'Záloha a obnovení';
@@ -1071,7 +1073,7 @@ class L10nCs extends L10n {
 
   @override
   String appSetting_importConfirmDialog_sourceLabel(String provider) {
-    return 'Source: $provider';
+    return 'Zdroj: $provider';
   }
 
   @override
@@ -1091,17 +1093,17 @@ class L10nCs extends L10n {
       'An unexpected error occurred during import.';
 
   @override
-  String get appSetting_importDialog_confirm_confirmText => 'confirm';
+  String get appSetting_importDialog_confirm_confirmText => 'Potvrdit';
 
   @override
-  String get appSetting_importDialog_confirm_cancelText => 'cancel';
+  String get appSetting_importDialog_confirm_cancelText => 'zrušit';
 
   @override
   String appSetting_importDialog_importingTitle(
     int completeCount,
     int totalCount,
   ) {
-    return 'Imported $completeCount/$totalCount';
+    return 'Naimportováno $completeCount/$totalCount';
   }
 
   @override
@@ -1115,53 +1117,53 @@ class L10nCs extends L10n {
   }
 
   @override
-  String get appSetting_importDialog_complete_closeLabel => 'close';
+  String get appSetting_importDialog_complete_closeLabel => 'zavřít';
 
   @override
-  String get appSetting_resetConfig_titleText => 'Reset configs';
+  String get appSetting_resetConfig_titleText => 'Resetovat nastavení';
 
   @override
   String get appSetting_resetConfig_subtitleText =>
       'Reset all configs to default.';
 
   @override
-  String get appSetting_resetConfigDialog_titleText => 'Reset configs?';
+  String get appSetting_resetConfigDialog_titleText => 'Resetovat nastavení?';
 
   @override
   String get appSetting_resetConfigDialog_subtitleText =>
       'Reset all configs to default, must restart application to apply.';
 
   @override
-  String get appSetting_resetConfigDialog_cancelText => 'cancel';
+  String get appSetting_resetConfigDialog_cancelText => 'zrušit';
 
   @override
-  String get appSetting_resetConfigDialog_confirmText => 'confirm';
+  String get appSetting_resetConfigDialog_confirmText => 'potvrdit';
 
   @override
   String get appSetting_resetConfigSuccess_snackbarText =>
       'reset app configs succeed';
 
   @override
-  String get appSetting_otherSubgroupText => 'Others';
+  String get appSetting_otherSubgroupText => 'Ostatní';
 
   @override
-  String get appSetting_developMode_titleText => 'Develop Mode';
+  String get appSetting_developMode_titleText => 'Režim pro vývojáře';
 
   @override
-  String get appSetting_clearCache_titleText => 'Clear Cache';
+  String get appSetting_clearCache_titleText => 'Vymazat mezipaměť';
 
   @override
-  String get appSetting_clearCacheDialog_titleText => 'Clear Cache';
+  String get appSetting_clearCacheDialog_titleText => 'Vymazat mezipaměť';
 
   @override
   String get appSetting_clearCacheDialog_subtitleText =>
       'After clearing cache, some custom values will be restored to defaults.';
 
   @override
-  String get appSetting_clearCacheDialog_cancelText => 'cancel';
+  String get appSetting_clearCacheDialog_cancelText => 'zrušit';
 
   @override
-  String get appSetting_clearCacheDialog_confirmText => 'confirm';
+  String get appSetting_clearCacheDialog_confirmText => 'potvrdit';
 
   @override
   String get appSetting_clearCache_snackBar_partSuccText =>
@@ -1175,23 +1177,23 @@ class L10nCs extends L10n {
   String get appSetting_clearCache_snackBar_failText => 'Cache cleared failed';
 
   @override
-  String get appSetting_debugger_titleText => 'Debug Info';
+  String get appSetting_debugger_titleText => 'Ladící informace';
 
   @override
-  String get appSetting_about_titleText => 'About';
+  String get appSetting_about_titleText => 'O aplikaci';
 
   @override
   String get appSetting_experimentalFeatureTile_titleText =>
-      'Experimental Features';
+      'Experimentální funkce';
 
   @override
-  String get appSetting_synSubgroupText => 'Sync';
+  String get appSetting_synSubgroupText => 'Synchr.';
 
   @override
-  String get appSetting_syncOption_titleText => 'Sync Options';
+  String get appSetting_syncOption_titleText => 'Možnosti synchronizace';
 
   @override
-  String get appSetting_notify_titleTile => 'Notifications';
+  String get appSetting_notify_titleTile => 'Notifikace';
 
   @override
   String get appSetting_notify_subtitleTile =>
@@ -1202,10 +1204,10 @@ class L10nCs extends L10n {
       'Tap to open system notification settings';
 
   @override
-  String get appSync_nowTile_titleText => 'Sync Now';
+  String get appSync_nowTile_titleText => 'Synchronizovat nyní';
 
   @override
-  String get appSync_nowTile_titleText_syncing => 'Syncing';
+  String get appSync_nowTile_titleText_syncing => 'Synchronizuje se';
 
   @override
   String appSync_nowTile_dateFormat(DateTime ymd, DateTime jms) {
@@ -1234,7 +1236,7 @@ class L10nCs extends L10n {
   }
 
   @override
-  String get appSync_nowTile_syncingText => 'Syncing...';
+  String get appSync_nowTile_syncingText => 'Synchronizování…';
 
   @override
   String appSync_nowTile_syncingText_withPrt(num prt) {
@@ -1245,11 +1247,11 @@ class L10nCs extends L10n {
         );
     final String prtString = prtNumberFormat.format(prt);
 
-    return 'Syncing: $prtString';
+    return 'Synchronizování: $prtString';
   }
 
   @override
-  String get appSync_nowTile_cancellingText => 'Canceling...';
+  String get appSync_nowTile_cancellingText => 'Rušení…';
 
   @override
   String get appSync_nowTile_cancelText_noDate => 'Last Sync (Cancelled): N/A';
@@ -1309,17 +1311,19 @@ class L10nCs extends L10n {
   }
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_titleText => 'New Location';
+  String get appSync_webdav_newServerConfirmDialog_titleText => 'Nové umístění';
 
   @override
   String get appSync_webdav_newServerConfirmDialog_subtitleText =>
       'Syncing will create necessary directories and upload local habits to the server. Continue?';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_confirmText => 'Sync Now!';
+  String get appSync_webdav_newServerConfirmDialog_confirmText =>
+      'Synchronizovat nyní!';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_titleText => 'Confirm Sync';
+  String get appSync_webdav_oldServerConfirmDialog_titleText =>
+      'Potvrdit synchronizaci';
 
   @override
   String get appSync_webdav_oldServerConfirmDialog_subtitleText =>
@@ -1327,7 +1331,7 @@ class L10nCs extends L10n {
 
   @override
   String get appSync_webdav_oldServerConfirmDialog_confirmText =>
-      'Confirm Merge';
+      'Potvrdit sloučení';
 
   @override
   String get appSync_exportAllLogsTile_titleText => 'Export Failed Sync Logs';
@@ -1380,14 +1384,13 @@ class L10nCs extends L10n {
   }
 
   @override
-  String get appSync_syncIntervalTile_title => 'Fetch Interval';
+  String get appSync_syncIntervalTile_title => 'Interval načítání';
 
   @override
-  String get appSync_summaryTile_title => 'Sync Server';
+  String get appSync_summaryTile_title => 'Synchronizační server';
 
   @override
-  String get appSync_summaryTile_subtitle_text_notConfigured =>
-      'Not Configured';
+  String get appSync_summaryTile_subtitle_text_notConfigured => 'Nenastaveno';
 
   @override
   String get appSync_exportAllLogsTile_exportSubjectText =>
@@ -1402,14 +1405,14 @@ class L10nCs extends L10n {
       'Saving will overwrite previous server configuration.';
 
   @override
-  String get appSync_serverEditor_exitDialog_titleText => 'Unsaved Changes';
+  String get appSync_serverEditor_exitDialog_titleText => 'Neuložené změny';
 
   @override
   String get appSync_serverEditor_exitDialog_subtitleText =>
       'Exiting will discard all unsaved changes.';
 
   @override
-  String get appSync_serverEditor_deleteDialog_titleText => 'Confirm Delete';
+  String get appSync_serverEditor_deleteDialog_titleText => 'Potvrdit smazání';
 
   @override
   String get appSync_serverEditor_deleteDialog_subtitleText =>
@@ -1422,10 +1425,10 @@ class L10nCs extends L10n {
   String get appSync_serverEditor_titleText_modify => 'Modify Sync Server';
 
   @override
-  String get appSync_serverEditor_advance_titleText => 'Advanced Configs';
+  String get appSync_serverEditor_advance_titleText => 'Pokročilá nastavení';
 
   @override
-  String get appSync_serverEditor_pathTile_titleText => 'Path';
+  String get appSync_serverEditor_pathTile_titleText => 'Popis umístění';
 
   @override
   String get appSync_serverEditor_pathTile_hintText =>
@@ -1436,14 +1439,14 @@ class L10nCs extends L10n {
       'Path shouldn\'t be empty!';
 
   @override
-  String get appSync_serverEditor_usernameTile_titleText => 'Username';
+  String get appSync_serverEditor_usernameTile_titleText => 'Uživatelské jméno';
 
   @override
   String get appSync_serverEditor_usernameTile_hintText =>
       'Enter username here, leave empty if not required.';
 
   @override
-  String get appSync_serverEditor_passwordTile_titleText => 'Password';
+  String get appSync_serverEditor_passwordTile_titleText => 'Heslo';
 
   @override
   String get appSync_serverEditor_ignoreSSLTile_titleText =>
@@ -1558,38 +1561,39 @@ class L10nCs extends L10n {
   }
 
   @override
-  String get experimentalFeatures_habitSearchTile_titleText => 'Habit Search';
+  String get experimentalFeatures_habitSearchTile_titleText => 'Hledání návyku';
 
   @override
   String get experimentalFeatures_habitSearchTile_subtitleText =>
       'Once enabled, a search bar will appear at the top of the Habits screen and allowing to search habits.';
 
   @override
-  String get appAbout_appbarTile_titleText => 'About';
+  String get appAbout_appbarTile_titleText => 'O aplikaci';
 
   @override
   String appAbout_versionTile_titleText(String appVersion) {
-    return 'Version: $appVersion';
+    return 'Verze: $appVersion';
   }
 
   @override
   String get appAbout_versionTile_changeLogPath => 'CHANGELOG.md';
 
   @override
-  String get appAbout_sourceCodeTile_titleText => 'Source code';
+  String get appAbout_sourceCodeTile_titleText => 'Zdrojové kódy';
 
   @override
-  String get appAbout_issueTrackerTile_titleText => 'Issue tracker';
+  String get appAbout_issueTrackerTile_titleText =>
+      'Systém pro správu hlášení chyb';
 
   @override
-  String get appAbout_contactEmailTile_titleText => 'Contact me';
+  String get appAbout_contactEmailTile_titleText => 'Kontaktujte mě';
 
   @override
   String get appAbout_contactEmailTile_emailBody =>
       'Hi, I\'m glad you reached out to me.\nIf you\'re reporting a bug, please indicate the app version and describe the steps to reproduce it.\n--------------------------------------';
 
   @override
-  String get appAbout_licenseTile_titleText => 'License';
+  String get appAbout_licenseTile_titleText => 'Licence';
 
   @override
   String get appAbout_licenseTile_subtitleText => 'Apache License, Version 2.0';
@@ -1602,14 +1606,14 @@ class L10nCs extends L10n {
   String get appAbout_licenseThirdPartyTile_subtitleText => 'flutter';
 
   @override
-  String get appAbout_privacyTile_titleText => 'Privacy';
+  String get appAbout_privacyTile_titleText => 'Soukromí';
 
   @override
   String get appAbout_privacyTile_subTitleText =>
       'Access the privacy policy in this app';
 
   @override
-  String get appAbout_donateTile_titleText => 'Donate';
+  String get appAbout_donateTile_titleText => 'Podpořit darováním';
 
   @override
   String get appAbout_donateTile_subTitleText =>
@@ -1632,7 +1636,7 @@ class L10nCs extends L10n {
   String get donateWay_wechatPay => 'Wechat Pay';
 
   @override
-  String get donateWay_cryptoCurrency => 'Crypto Currencies';
+  String get donateWay_cryptoCurrency => 'Kryptoměny';
 
   @override
   String get donateWay_cryptoCurrency_BTC => 'BTC';
@@ -1658,25 +1662,25 @@ class L10nCs extends L10n {
   }
 
   @override
-  String get batchCheckin_appbar_title => 'Batch Check-in';
+  String get batchCheckin_appbar_title => 'Dávkové check-in';
 
   @override
-  String get batchCheckin_datePicker_prevButton_tooltip => 'Previous day';
+  String get batchCheckin_datePicker_prevButton_tooltip => 'Předchozí den';
 
   @override
-  String get batchCheckin_datePicker_nextButton_tooltip => 'Next day';
+  String get batchCheckin_datePicker_nextButton_tooltip => 'Následující den';
 
   @override
-  String get batchCheckin_status_skip_text => 'Skip';
+  String get batchCheckin_status_skip_text => 'Přeskočit';
 
   @override
-  String get batchCheckin_status_ok_text => 'Complete';
+  String get batchCheckin_status_ok_text => 'Dokončeno';
 
   @override
-  String get batchCheckin_status_double_text => 'x2 Hit!';
+  String get batchCheckin_status_double_text => 'Dvojnásobný zásah!';
 
   @override
-  String get batchCheckin_status_zero_text => 'Incomplete';
+  String get batchCheckin_status_zero_text => 'Nedokončeno';
 
   @override
   String batchCheckin_habits_groupTitle(int count) {
@@ -1693,7 +1697,7 @@ class L10nCs extends L10n {
   String get batchCheckin_save_button_text => 'Uložit';
 
   @override
-  String get batchCheckin_reset_button_text => 'Reset';
+  String get batchCheckin_reset_button_text => 'Resetovat';
 
   @override
   String batchCheckin_completed_snackbar_text(int count) {
@@ -1715,23 +1719,23 @@ class L10nCs extends L10n {
       'Existing records will be overwritten After saving, previous records will be lost.';
 
   @override
-  String get batchCheckin_save_confirmDialog_confirmButton_text => 'save';
+  String get batchCheckin_save_confirmDialog_confirmButton_text => 'uložit';
 
   @override
-  String get batchCheckin_save_confirmDialog_cancelButton_text => 'cancel';
+  String get batchCheckin_save_confirmDialog_cancelButton_text => 'zrušit';
 
   @override
-  String get batchCheckin_close_confirmDialog_title => 'Confirm Return';
+  String get batchCheckin_close_confirmDialog_title => 'Potvrdit návrat';
 
   @override
   String get batchCheckin_close_confirmDialog_body =>
       'Check-in Status Changes won\'t be applied before saved';
 
   @override
-  String get batchCheckin_close_confirmDialog_confirmButton_text => 'exit';
+  String get batchCheckin_close_confirmDialog_confirmButton_text => 'ukončit';
 
   @override
-  String get batchCheckin_close_confirmDialog_cancelButton_text => 'cancel';
+  String get batchCheckin_close_confirmDialog_cancelButton_text => 'zrušit';
 
   @override
   String get appReminder_dailyReminder_title =>
@@ -1742,58 +1746,58 @@ class L10nCs extends L10n {
       'click to enter app and punch in on time.';
 
   @override
-  String get common_habitColorType_cc1 => 'Deep lilac';
+  String get common_habitColorType_cc1 => 'Tmavě šeříková';
 
   @override
-  String get common_habitColorType_cc2 => 'Red';
+  String get common_habitColorType_cc2 => 'Červená';
 
   @override
-  String get common_habitColorType_cc3 => 'Purple';
+  String get common_habitColorType_cc3 => 'Purpurová';
 
   @override
-  String get common_habitColorType_cc4 => 'Royal blue';
+  String get common_habitColorType_cc4 => 'Královská modrá';
 
   @override
-  String get common_habitColorType_cc5 => 'Dark cyan';
+  String get common_habitColorType_cc5 => 'Tmavě azurová';
 
   @override
-  String get common_habitColorType_cc6 => 'Green';
+  String get common_habitColorType_cc6 => 'Zelená';
 
   @override
-  String get common_habitColorType_cc7 => 'Amber';
+  String get common_habitColorType_cc7 => 'Jantarová';
 
   @override
-  String get common_habitColorType_cc8 => 'Orange';
+  String get common_habitColorType_cc8 => 'Oranžová';
 
   @override
-  String get common_habitColorType_cc9 => 'Lime green';
+  String get common_habitColorType_cc9 => 'Limetová zelená';
 
   @override
-  String get common_habitColorType_cc10 => 'Dark orchid';
+  String get common_habitColorType_cc10 => 'Tmavá orchidej';
 
   @override
-  String get common_habitColorType_custom => 'Custom';
+  String get common_habitColorType_custom => 'Uživatelsky určené';
 
   @override
   String common_habitColorType_default(int index) {
-    return 'Color $index';
+    return 'Barva $index';
   }
 
   @override
-  String get common_appThemeColor_system => 'System';
+  String get common_appThemeColor_system => 'Systémové';
 
   @override
-  String get common_appThemeColor_primary => 'Primary';
+  String get common_appThemeColor_primary => 'Hlavní';
 
   @override
-  String get common_appThemeColor_dynamic => 'Dynamic';
+  String get common_appThemeColor_dynamic => 'Dynamické';
 
   @override
   String get common_customDateTimeFormatPicker_useSystemFormat_text =>
       'Use system format';
 
   @override
-  String get common_customDateTimeFormatPicker_fmtTileText => 'Date format';
+  String get common_customDateTimeFormatPicker_fmtTileText => 'Formát data';
 
   @override
   String get common_customDateTimeFormatPicker_ymd_text => 'Year Month Day';
@@ -1805,29 +1809,30 @@ class L10nCs extends L10n {
   String get common_customDateTimeFormatPicker_dmy_text => 'Day Month Year';
 
   @override
-  String get common_customDateTimeFormatPicker_SepTileText => 'Separator';
+  String get common_customDateTimeFormatPicker_SepTileText => 'Oddělovač';
 
   @override
-  String get common_customDateTimeFormatPicker_sepDash_text => 'Dash';
+  String get common_customDateTimeFormatPicker_sepDash_text => 'Pomlčka';
 
   @override
-  String get common_customDateTimeFormatPicker_sepSlash_text => 'Slash';
+  String get common_customDateTimeFormatPicker_sepSlash_text =>
+      'Dopředné lomítko';
 
   @override
-  String get common_customDateTimeFormatPicker_sepSpace_text => 'Space';
+  String get common_customDateTimeFormatPicker_sepSpace_text => 'Mezera';
 
   @override
-  String get common_customDateTimeFormatPicker_sepDot_text => 'Dot';
+  String get common_customDateTimeFormatPicker_sepDot_text => 'Tečka';
 
   @override
-  String get common_customDateTimeFormatPicker_empty_text => 'No Separator';
+  String get common_customDateTimeFormatPicker_empty_text => 'Bez oddělovače';
 
   @override
   String common_customDateTimeFormatPicker_sep_formatter(
     String splitName,
     String splitChar,
   ) {
-    return '$splitName: \"$splitChar\"';
+    return '$splitName: „$splitChar“';
   }
 
   @override
@@ -1847,35 +1852,35 @@ class L10nCs extends L10n {
       'Apply for Calendar';
 
   @override
-  String get common_customDateTimeFormatPicker_cancelButton_text => 'cancel';
+  String get common_customDateTimeFormatPicker_cancelButton_text => 'zrušit';
 
   @override
-  String get common_customDateTimeFormatPicker_confirmButton_text => 'confirm';
+  String get common_customDateTimeFormatPicker_confirmButton_text => 'potvrdit';
 
   @override
-  String get common_errorPage_title => 'Oops, Crashed!';
+  String get common_errorPage_title => 'Jejda, zhavarovalo!';
 
   @override
   String get common_errorPage_copied => 'Copied crash information';
 
   @override
-  String get common_enable_text => 'Enabled';
+  String get common_enable_text => 'Povoleno';
 
   @override
   String get common_dontShowAgain => 'Don\'t show again';
 
   @override
-  String get calendarPicker_clip_today => 'Today';
+  String get calendarPicker_clip_today => 'Dnes';
 
   @override
-  String get calendarPicker_clip_tomorrow => 'Tomorrow';
+  String get calendarPicker_clip_tomorrow => 'Zítra';
 
   @override
   String calendarPicker_clip_after7Days(DateTime date) {
     final intl.DateFormat dateDateFormat = intl.DateFormat.E(localeName);
     final String dateString = dateDateFormat.format(date);
 
-    return 'Next $dateString';
+    return 'Příští $dateString';
   }
 
   @override
@@ -1894,7 +1899,7 @@ class L10nCs extends L10n {
   }
 
   @override
-  String get exportConfirmDialog_option_includeRecords => 'include records';
+  String get exportConfirmDialog_option_includeRecords => 'zahrnout záznamy';
 
   @override
   String get exportConfirmDialog_option_includeGroups => 'include groups';
@@ -1910,34 +1915,35 @@ class L10nCs extends L10n {
   }
 
   @override
-  String get exportConfirmDialog_cancel_buttonText => 'cancel';
+  String get exportConfirmDialog_cancel_buttonText => 'zrušit';
 
   @override
   String get exportConfirmDialog_confirm_buttonText => 'export';
 
   @override
-  String get debug_logLevelTile_title => 'Logging Level';
+  String get debug_logLevelTile_title =>
+      'Stupeň podrobnosti zaznamenávání událostí';
 
   @override
   String get debug_logLevelDialog_title => 'Change Logging Level';
 
   @override
-  String get debug_logLevel_debug => 'Debug';
+  String get debug_logLevel_debug => 'Ladění';
 
   @override
-  String get debug_logLevel_info => 'Info';
+  String get debug_logLevel_info => 'Pro informaci';
 
   @override
-  String get debug_logLevel_warn => 'Warning';
+  String get debug_logLevel_warn => 'Varování';
 
   @override
-  String get debug_logLevel_error => 'Error';
+  String get debug_logLevel_error => 'Chyba';
 
   @override
-  String get debug_logLevel_fatal => 'Fatal';
+  String get debug_logLevel_fatal => 'Fatální';
 
   @override
-  String get debug_collectLogTile_title => 'Collecting Logs';
+  String get debug_collectLogTile_title => 'Shromažďování záznamů událostí';
 
   @override
   String get debug_collectLogTile_enable_subtitle =>
@@ -1960,34 +1966,34 @@ class L10nCs extends L10n {
 
   @override
   String debug_downladDebugZip_subject(String fileName) {
-    return 'Downloading $fileName';
+    return 'Stahování $fileName';
   }
 
   @override
   String get debug_missingDebugLogFile_snackbar => 'Debug log doesn\'t exist.';
 
   @override
-  String get debug_debuggerLogCard_title => 'Logging Information';
+  String get debug_debuggerLogCard_title => 'Informace záznamu událostí';
 
   @override
   String get debug_debuggerLogCard_subtitle =>
       'Includes local debugging log information, need to turn on the log collection switcher.';
 
   @override
-  String get debug_debuggerLogCard_saveButton_text => 'Download';
+  String get debug_debuggerLogCard_saveButton_text => 'Stáhnout';
 
   @override
-  String get debug_debuggerLogCard_clearButton_text => 'Clear';
+  String get debug_debuggerLogCard_clearButton_text => 'Vyčištit';
 
   @override
-  String get debug_debuggerInfoCard_title => 'Debugging Information';
+  String get debug_debuggerInfoCard_title => 'Ladící informace';
 
   @override
   String get debug_debuggerInfoCard_subtitle =>
       'Includes app\'s debugging information.';
 
   @override
-  String get debug_debuggerInfoCard_openButton_text => 'Open';
+  String get debug_debuggerInfoCard_openButton_text => 'Otevřít';
 
   @override
   String get debug_debuggerInfoCard_saveButton_text => 'Uložit';
@@ -2008,44 +2014,44 @@ class L10nCs extends L10n {
   }
 
   @override
-  String get confirmDialog_cancel_text => 'Cancel';
+  String get confirmDialog_cancel_text => 'Zrušit';
 
   @override
-  String get snackbar_undoText => 'UNDO';
+  String get snackbar_undoText => 'ZPĚT';
 
   @override
-  String get snackbar_dismissText => 'DISMISS';
+  String get snackbar_dismissText => 'ZAHODIT';
 
   @override
-  String get contributors_tile_title => 'Contributors';
+  String get contributors_tile_title => 'Přispěvatelé';
 
   @override
-  String get userAction_tap => 'Tap';
+  String get userAction_tap => 'Klepnutí';
 
   @override
-  String get userAction_doubleTap => 'Double';
+  String get userAction_doubleTap => 'Dvojité';
 
   @override
-  String get userAction_longTap => 'Long';
+  String get userAction_longTap => 'Dlouhé';
 
   @override
-  String get channelName_habitReminder => 'Habit Reminder';
+  String get channelName_habitReminder => 'Připomínka návyku';
 
   @override
-  String get channelName_appReminder => 'Prompt';
+  String get channelName_appReminder => 'Dotázat';
 
   @override
-  String get channelName_appDebugger => 'Debugger';
+  String get channelName_appDebugger => 'Nástroj pro ladění';
 
   @override
-  String get channelName_appSyncing => 'Sync Process';
+  String get channelName_appSyncing => 'Proces synchronizace';
 
   @override
   String get channelDesc_appSyncing =>
       'Used to show sync progress and non-failure results';
 
   @override
-  String get channelName_appSyncFailed => 'Sync Failed';
+  String get channelName_appSyncFailed => 'Synchronizace se nezdařila';
 
   @override
   String get channelDesc_appSyncFailed => 'Used to alert when sync fails';
@@ -2056,13 +2062,13 @@ class L10nCs extends L10n {
   }
 
   @override
-  String get changelog_banner_action => 'CLOSE';
+  String get changelog_banner_action => 'ZAVŘÍT';
 
   @override
-  String get changelog_banner_view => 'VIEW';
+  String get changelog_banner_view => 'ZOBRAZIT';
 
   @override
-  String get changelog_dialog_title => 'Changelog';
+  String get changelog_dialog_title => 'Seznam změn';
 
   @override
   String get changelog_view_full => 'View Full Changelog';
@@ -2071,10 +2077,10 @@ class L10nCs extends L10n {
   String get habitGroup_uncategorized => 'No Group';
 
   @override
-  String get habitDetail_groupTile_title => 'Group';
+  String get habitDetail_groupTile_title => 'Skupina';
 
   @override
-  String get habitEdit_groupTile_title => 'Group';
+  String get habitEdit_groupTile_title => 'Skupina';
 
   @override
   String get habitEdit_groupPicker_hintText => 'Search or create group';
@@ -2117,16 +2123,16 @@ class L10nCs extends L10n {
   }
 
   @override
-  String get groupManage_deleteDialog_confirm => 'Delete';
+  String get groupManage_deleteDialog_confirm => 'Smazat';
 
   @override
-  String get groupManage_deleteDialog_cancel => 'Cancel';
+  String get groupManage_deleteDialog_cancel => 'Zrušit';
 
   @override
   String get groupManage_deleted_snackbarText => 'Group deleted';
 
   @override
-  String get groupManage_undo_snackbarAction => 'Undo';
+  String get groupManage_undo_snackbarAction => 'Zpět';
 
   @override
   String get groupManage_editDialog_title => 'Edit Group';
@@ -2143,10 +2149,10 @@ class L10nCs extends L10n {
   }
 
   @override
-  String get groupManage_name_label => 'Name';
+  String get groupManage_name_label => 'Název';
 
   @override
-  String get groupManage_desc_label => 'Description';
+  String get groupManage_desc_label => 'Popis';
 
   @override
   String groupManage_descTooLong(int max) {
@@ -2157,40 +2163,40 @@ class L10nCs extends L10n {
   String get groupManage_sortTile_text => 'Sort Groups';
 
   @override
-  String get groupManage_sectionTitle_text => 'Groups';
+  String get groupManage_sectionTitle_text => 'Skupiny';
 
   @override
-  String get groupManage_createDateTile_title => 'Created';
+  String get groupManage_createDateTile_title => 'Vytvořeno';
 
   @override
-  String get groupManage_modifyDateTile_title => 'Modified';
+  String get groupManage_modifyDateTile_title => 'Změněno';
 
   @override
-  String get groupManage_icon_label => 'Icon';
+  String get groupManage_icon_label => 'Ikona';
 
   @override
-  String get groupManage_icon_none => 'None';
+  String get groupManage_icon_none => 'Žádná';
 
   @override
-  String get groupManage_color_label => 'Color';
+  String get groupManage_color_label => 'Barva';
 
   @override
-  String get groupManage_color_none => 'None';
+  String get groupManage_color_none => 'Žádná';
 
   @override
   String get groupManage_reorder_tooltip => 'Reorder groups';
 
   @override
-  String get groupManage_menu_edit => 'Edit';
+  String get groupManage_menu_edit => 'Upravit';
 
   @override
-  String get groupManage_menu_delete => 'Delete';
+  String get groupManage_menu_delete => 'Smazat';
 
   @override
-  String get groupManage_selectAll => 'Select all';
+  String get groupManage_selectAll => 'Vybrat vše';
 
   @override
-  String get groupHeader_menu_manage => 'Manage';
+  String get groupHeader_menu_manage => 'Spravovat';
 
   @override
   String get groupHeader_menu_collapseAll => 'Collapse all';
@@ -2203,5 +2209,5 @@ class L10nCs extends L10n {
       'Create, edit, and delete habit groups';
 
   @override
-  String get habitDisplay_groupType_manual => 'Moje pořadí';
+  String get habitDisplay_groupType_manual => 'Ručně';
 }
