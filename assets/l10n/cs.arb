@@ -196,5 +196,6 @@
     "habitDisplay_groupType_manual": "Moje pořadí",
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
-    }
+    },
+    "habitDisplay_deleteHabitsConfirmDialog_confirm": "Potvrdit"
 }
