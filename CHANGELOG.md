@@ -2,6 +2,10 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.26.10+183-pre
+
+- Improve adaptive layouts and navigation across screen sizes (#642)
+
 ## 1.26.9+182-pre
 
 - Improve navigation reliability and tab navigation experience (#638, #640)
