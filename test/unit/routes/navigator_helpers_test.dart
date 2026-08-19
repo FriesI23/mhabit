@@ -141,8 +141,6 @@ void main() {
       );
     });
 
-    // ---- Step 4: 全量推广 naviTo* delegates ----
-
     testWidgets('naviToAppSettingPage delegates to pushNamed', (tester) async {
       final router = GoRouter(
         initialLocation: '/',

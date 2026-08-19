@@ -5,8 +5,8 @@ import '../adaptive_style.dart';
 /// Adaptive navigation rail (the medium+ chrome of the navigation shell).
 ///
 /// The default constructor resolves the style from the current platform;
-/// `.material` forces the Material style. Phase 3 adds the apple style
-/// (HIG sidebar-style rail).
+/// `.material` forces the Material style. The Apple style currently falls back
+/// to the Material implementation.
 class AdaptiveNavigationRail extends StatelessWidget {
   const AdaptiveNavigationRail({
     super.key,

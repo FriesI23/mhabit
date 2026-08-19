@@ -274,7 +274,8 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
 
     Widget buildSearchFilter() => Builder(
       builder: (context) {
-        // The platform switch stays until Phase 3-6.
+        // TODO(adaptive-ui::platform): move filter presentation behind an
+        // adaptive widget.
         final windowSize = WindowSize.of(context);
         final isLargeLayout = switch (defaultTargetPlatform) {
           TargetPlatform.android ||

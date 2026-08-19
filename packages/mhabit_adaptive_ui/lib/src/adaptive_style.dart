@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 ///
 /// [AdaptiveStyle.apple] is resolved for iOS and macOS; everything else
 /// resolves to [AdaptiveStyle.material]. Adaptive components fall back to
-/// material for [AdaptiveStyle.apple] until the platform variants land
-/// (Phase 3).
+/// material when they do not provide an Apple-specific implementation.
 enum AdaptiveStyle { material, apple }
 
 /// Maps the current platform of [context] to an [AdaptiveStyle].

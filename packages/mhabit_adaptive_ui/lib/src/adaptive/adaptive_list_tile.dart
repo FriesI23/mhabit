@@ -5,8 +5,8 @@ import '../adaptive_style.dart';
 /// Adaptive list item.
 ///
 /// The default constructor resolves the style from the current platform;
-/// `.material` forces the Material style. Phase 3 adds the apple style
-/// (Cupertino separator style, 44pt height).
+/// `.material` forces the Material style. The Apple style currently falls back
+/// to the Material implementation.
 class AdaptiveListTile extends StatelessWidget {
   const AdaptiveListTile({
     super.key,

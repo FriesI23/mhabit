@@ -5,8 +5,8 @@ import '../adaptive_style.dart';
 /// Adaptive page scaffold.
 ///
 /// The default constructor resolves the style from the current platform;
-/// `.material` forces the Material style. Phase 3 adds the apple style
-/// (FAB behavior / safe-area differences).
+/// `.material` forces the Material style. The Apple style currently falls back
+/// to the Material implementation.
 class AdaptiveScaffold extends StatelessWidget {
   const AdaptiveScaffold({
     super.key,

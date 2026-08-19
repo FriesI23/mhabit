@@ -6,7 +6,8 @@ import '../adaptive_style.dart';
 ///
 /// Must be placed in a viewport `slivers:` list. The default constructor
 /// resolves the style from the current platform; `.material` forces the
-/// Material style. Phase 3 adds the apple style (iOS-style expanding search).
+/// Material style. The Apple style currently falls back to the Material
+/// implementation.
 class AdaptiveSliverSearchBar extends StatelessWidget {
   const AdaptiveSliverSearchBar({
     super.key,
