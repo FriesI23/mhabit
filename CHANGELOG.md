@@ -2,6 +2,21 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.26.10+183-pre
+
+- Improve adaptive layouts and navigation across screen sizes (#642)
+
+## 1.26.9+182-pre
+
+- Improve navigation reliability and tab navigation experience (#638, #640)
+
+## 1.26.7+180
+
+- Improve sorting backend reliability (#635)
+- Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate
+- Update Italian translation, thanks to nickfrn's contribution on Weblate
+- Update Russian translation, thanks to sanda1iki's contribution on Weblate
+
 ## 1.26.5+178
 
 - Feature: habit-count sort, drag reorder, group management upgrades (#621)

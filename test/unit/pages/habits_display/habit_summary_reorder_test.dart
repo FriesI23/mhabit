@@ -219,7 +219,7 @@ void main() {
     //  before(flat):  [a(pos=1), b(pos=2), c(pos=3)]
     //  before(group): [H(G1), a, b, H(G2), c]
     //  op:            drag b(idx=2) before a(drop=1)
-    //  after(flat):   [b, a, c]   a.pos=2  b.pos=1  c.pos=3(不变)
+    //  after(flat):   [b, a, c]   a.pos=2  b.pos=1  c.pos=3(unchanged)
     //  after(group):  [H(G1), b, a, H(G2), c]
     test(
       'grouped reorder within a group is stable and only affects that group',

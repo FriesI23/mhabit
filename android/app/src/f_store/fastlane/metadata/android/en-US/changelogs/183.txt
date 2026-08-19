@@ -1,0 +1,1 @@
+- Improve adaptive layouts and navigation across screen sizes (#642)

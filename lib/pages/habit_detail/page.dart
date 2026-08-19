@@ -15,6 +15,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -41,6 +42,7 @@ import '../../providers/app_ui/app_developer.dart';
 import '../../providers/app_ui/app_first_day.dart';
 import '../../providers/support/utils.dart';
 import '../../providers/workflow/habits_file_exporter.dart';
+import '../../routes/navigator_helpers.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../theme/color.dart';
 import '../../theme/icon.dart';
@@ -50,7 +52,6 @@ import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
 import '../common/debug.dart';
 import '../common/widgets.dart';
-import '../habit_edit/page.dart' as habit_edit;
 import '../habits_display/_providers/habit_summary.dart' as habit_summary;
 import '_providers/habit_detail.dart';
 import '_providers/habit_detail_freqchart.dart';
@@ -58,6 +59,10 @@ import '_providers/habit_detail_scorechart.dart';
 import 'widgets.dart';
 
 const _largeScreenTwoChartBetween = 16.0;
+
+/// Keeps the page's bar reservation and FAB lift in sync with the shell's
+/// bottom-bar hide/show animation.
+const _navBarAnimationDuration = Duration(milliseconds: 250);
 
 enum DetailPageReturnOpr { unknown, deleted }
 
@@ -71,22 +76,6 @@ class DetailPageReturn {
     this.habitName,
     this.recordList,
   });
-}
-
-Future<DetailPageReturn?> naviToHabitDetailPage({
-  required BuildContext context,
-  required HabitUUID habitUUID,
-  HabitColor? color,
-  habit_summary.HabitSummaryViewModel? summary,
-}) async {
-  return Navigator.of(context).push<DetailPageReturn>(
-    MaterialPageRoute(
-      builder: (context) => Provider.value(
-        value: summary?.buildHabitDetailAdapter(),
-        child: HabitDetailPage(habitUUID: habitUUID, color: color),
-      ),
-    ),
-  );
 }
 
 // _AppEventBusExtension removed — VM now handles all event emission.
@@ -163,10 +152,9 @@ class _PageState extends State<_Page>
     final dbcell = await _vm.loadCurrentHabitDetail();
     if (dbcell == null || !mounted) return false;
     final form = formBuilder(dbcell);
-    final result = await habit_edit.naviToHabitEidtPage(
-      context: context,
-      initForm: form,
-    );
+    final result = await (form.editMode == HabitDisplayEditMode.create
+        ? naviToHabitCreatePage(context: context, initForm: form)
+        : naviToHabitEditPage(context: context, initForm: form));
     if (result == null) return false;
     if (!(mounted && _vm.mounted)) return false;
     _vm.onEditCompleted(summary: _summary);
@@ -572,10 +560,10 @@ class _PageState extends State<_Page>
         );
       }
 
-      return LayoutBuilder(
-        builder: (context, constraints) {
-          final isLargeScreen =
-              constraints.maxWidth > kHabitLargeScreenAdaptWidth;
+      return WindowSizeClassLayoutBuilder(
+        builder: (context, windowSize, child) {
+          final useSideBySideLayout =
+              windowSize.width >= WindowSizeClass.medium;
           final l10n = L10n.of(context);
           return HabitHeatmap(
             firstday: viewmodel.firstday,
@@ -583,7 +571,7 @@ class _PageState extends State<_Page>
             descTargetDaysWidget: buildDescTargetDaysTile(context, l10n),
             descRecordsNumWidget: buildDescRecordsNumTile(context, l10n),
             padding: kHabitDetailWidgetPadding.copyWith(top: 16.0),
-            isLargeScreen: isLargeScreen,
+            useSideBySideLayout: useSideBySideLayout,
             startDate: startDate,
             endedDate: endedDate,
             colorMap: buildHeatmapColorMap(context),
@@ -769,8 +757,12 @@ class _PageState extends State<_Page>
             final viewmodel = context.read<HabitDetailViewModel>();
             final now = HabitDate.now();
 
-            final isLargeScreen =
-                constraints.maxWidth > kHabitLargeScreenAdaptWidth;
+            final useSideBySideLayout =
+                WindowSize.fromBreakpoints(
+                  Breakpoints.of(context),
+                  Size(constraints.maxWidth, constraints.maxHeight),
+                ).width >=
+                WindowSizeClass.medium;
             final animatedDirection = chartvm.consumeCachedAnimateDirection();
 
             return HabitDetailFreqChart(
@@ -778,7 +770,7 @@ class _PageState extends State<_Page>
               eachSize: 48.0,
               barWidth: 14.0,
               barSpaceBetween: 2.0,
-              allowWidth: isLargeScreen
+              allowWidth: useSideBySideLayout
                   ? (constraints.maxWidth - _largeScreenTwoChartBetween) / 2
                   : constraints.maxWidth,
               titleHeight: MediaQuery.textScalerOf(context)
@@ -791,7 +783,7 @@ class _PageState extends State<_Page>
                   chartvm.getCurrentChartLastDate(now, limit),
               habitStartDate: viewmodel.habitStartDate,
               chartCombine: chartvm.chartCombine,
-              isLargeScreen: isLargeScreen,
+              useSideBySideLayout: useSideBySideLayout,
               isChartExpanded: chartvm.isChartExpanded,
               getData: (firstDate, lastDate, limit) =>
                   chartvm.getCurrentOffsetChartData(
@@ -1051,6 +1043,12 @@ class _PageState extends State<_Page>
       );
     }
 
+    // The shell's translucent bar overlays the page bottom, so reserve its
+    // height and lift the FAB while it is visible (hidden while this page
+    // sits above the branch root).
+    final scope = AdaptiveNavScope.maybeOf(context);
+    final navHeight = scope?.navHeight ?? 0.0;
+    final barHeight = scope?.barHeight ?? 0.0;
     return ColorfulNavibar(
       child: Scaffold(
         body: CustomScrollView(
@@ -1060,10 +1058,32 @@ class _PageState extends State<_Page>
               withSliver: true,
               child: buildBody(context),
             ),
+            if (scope != null)
+              SliverToBoxAdapter(
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: scope.visible,
+                  builder: (context, visible, child) => AnimatedContainer(
+                    duration: _navBarAnimationDuration,
+                    curve: Curves.easeOut,
+                    height: visible ? navHeight : 0,
+                  ),
+                ),
+              ),
             if (kDebugMode) _buildScrollablePlaceHolder(context),
           ],
         ),
-        floatingActionButton: buildFAB(context),
+        floatingActionButton: scope == null
+            ? buildFAB(context)
+            : ValueListenableBuilder<bool>(
+                valueListenable: scope.visible,
+                builder: (context, visible, child) => AnimatedPadding(
+                  duration: _navBarAnimationDuration,
+                  curve: Curves.easeOut,
+                  padding: EdgeInsets.only(bottom: visible ? barHeight : 0),
+                  child: child,
+                ),
+                child: buildFAB(context),
+              ),
       ),
     );
   }

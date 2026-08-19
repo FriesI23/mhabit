@@ -31,6 +31,8 @@ import '_providers/habit_summary.dart';
 import '_providers/habits_grouping.dart';
 import '_providers/habits_today.dart';
 
+export '_providers/habit_summary.dart' show HabitDetailAdapter;
+
 class PageProviders extends SingleChildStatelessWidget {
   const PageProviders({super.key, super.child});
 

@@ -21,12 +21,6 @@ import '../../logging/helper.dart';
 import '../../providers/app_ui/app_experimental_feature.dart';
 import '../../widgets/widgets.dart';
 
-Future<void> naviToExperimentalFeaturesPage({required BuildContext context}) {
-  return Navigator.of(context).push<void>(
-    MaterialPageRoute(builder: (context) => const ExpermentalFeaturesPage()),
-  );
-}
-
 class ExpermentalFeaturesPage extends StatelessWidget {
   const ExpermentalFeaturesPage({super.key});
 

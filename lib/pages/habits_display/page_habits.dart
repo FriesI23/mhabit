@@ -20,6 +20,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -50,14 +51,13 @@ import '../../providers/app_ui/habits_sort.dart';
 import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/habits_file_exporter.dart';
+import '../../routes/navigator_helpers.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../utils/xshare.dart';
 import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
-import '../app_settings/page.dart' as app_settings;
 import '../common/debug.dart';
 import '../common/widgets.dart';
-import '../group_manage/page.dart' as group_manage;
 import '../habit_detail/page.dart' as habit_detail;
 import '../habit_edit/page.dart' as habit_edit;
 import '../habits_status_changer/page.dart' as habits_status_changer;
@@ -115,6 +115,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     _scrollVisibilityDispatcher = VerticalScrollVisibilityDispatcher(
       toolbarHeight: _toolbarHeight,
       onVisibilityChanged: widget.onBottomNavVisibilityChanged,
+      externalVisibility: AdaptiveNavScope.maybeOf(context)?.scrollWish,
     );
   }
 
@@ -601,7 +602,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
       _vm.exitSearchMode();
       _vm.exitEditMode();
     }
-    app_settings.naviToAppSettingPage(context: context);
+    naviToAppSettingPage(context: context);
   }
 
   Future<void> _onRefreshIndicatorTriggered() async {
@@ -652,10 +653,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
       if (!mounted) return false;
     }
 
-    final result = await habit_edit.naviToHabitEidtPage(
-      context: context,
-      initForm: form,
-    );
+    final result = await (form.editMode == HabitDisplayEditMode.create
+        ? naviToHabitCreatePage(context: context, initForm: form)
+        : naviToHabitEditPage(context: context, initForm: form));
 
     if (result == null) return false;
     if (!(mounted && _vm.mounted)) return false;
@@ -972,11 +972,11 @@ class HabitsTabPageState extends State<HabitsTabPage>
       if (!mounted) return;
 
       Navigator.of(context).popUntil((route) => route.isFirst);
-      final result = await habit_detail.naviToHabitDetailPage(
+      final result = await naviToHabitDetailPage(
         context: context,
         habitUUID: uuid,
         color: _vm.getHabit(uuid)?.color,
-        summary: _vm,
+        summaryAdapter: _vm.summaryAdapter,
       );
 
       if (result == null || !mounted) return;
@@ -1159,10 +1159,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
     //#region bottom placeholder
     Widget buildBottomPlaceHolder(BuildContext context) {
-      return const SliverToBoxAdapter(
-        child: FixedPagePlaceHolder(
-          minHeight: kDefaultHabitSummaryListTileHeight,
-        ),
+      final navHeight = AdaptiveNavScope.maybeOf(context)?.navHeight;
+      return SliverToBoxAdapter(
+        child: FixedPagePlaceHolder(minHeight: navHeight),
       );
     }
     //#endregion
@@ -1213,8 +1212,10 @@ class HabitsTabPageState extends State<HabitsTabPage>
     );
   }
 
-  Widget? buildFloatingActionButton({
+  Widget buildFloatingActionButton({
     required bool bottomNavVisible,
+    // Bar content height without the bottom safe-area inset; Scaffold
+    // already clears the inset for the FAB.
     required double bottomNavHeight,
   }) {
     final fab = _FAB(
@@ -1465,9 +1466,9 @@ class _GroupHeaderTileState extends State<_GroupHeaderTile> {
             leadingIcon: const Icon(Icons.drag_handle),
             onPressed: () {
               if (!mounted) return;
-              group_manage.naviToGroupManagePage(
+              naviToGroupManagePage(
                 context: context,
-                initialGroupUUID: widget.header.groupUUID,
+                selectedGroupId: widget.header.groupUUID,
               );
             },
             child: Text(l10n?.groupHeader_menu_manage ?? 'Manage'),

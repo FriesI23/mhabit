@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class PinnedAppbarScrollController extends ScrollController {
@@ -48,6 +49,7 @@ class PinnedAppbarScrollController extends ScrollController {
 class VerticalScrollVisibilityDispatcher {
   final Duration animationDuration;
   final void Function(bool visible) onVisibilityChanged;
+  final ValueListenable<bool>? _externalVisibility;
   late final ScrollController controller;
   double _lastOffset = 0.0;
   bool _lastVisible = true;
@@ -55,13 +57,20 @@ class VerticalScrollVisibilityDispatcher {
   VerticalScrollVisibilityDispatcher({
     required double toolbarHeight,
     required this.onVisibilityChanged,
+    ValueListenable<bool>? externalVisibility,
     this.animationDuration = const Duration(milliseconds: 250),
-  }) {
+  }) : _externalVisibility = externalVisibility {
     controller = PinnedAppbarScrollController(
       toolbarHeight: toolbarHeight,
       onAppbarStatusChanged: (_) {},
     )..addListener(_onScroll);
     _lastOffset = controller.initialScrollOffset;
+    _lastVisible = externalVisibility?.value ?? true;
+    externalVisibility?.addListener(_onExternalVisibilityChanged);
+  }
+
+  void _onExternalVisibilityChanged() {
+    _lastVisible = _externalVisibility?.value ?? true;
   }
 
   void _onScroll() {
@@ -86,6 +95,7 @@ class VerticalScrollVisibilityDispatcher {
   }
 
   void dispose() {
+    _externalVisibility?.removeListener(_onExternalVisibilityChanged);
     controller.removeListener(_onScroll);
     controller.dispose();
   }

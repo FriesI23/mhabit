@@ -17,41 +17,65 @@ import 'dart:async';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/app_info.dart';
-import '../../common/consts.dart';
 import '../../common/flavor.dart';
 import '../../common/utils.dart';
 import '../../extensions/context_extensions.dart';
-import '../../extensions/custom_color_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
+import '../../models/app_entry.dart';
 import '../../models/app_sync_tasks.dart';
 import '../../models/app_theme_color.dart';
 import '../../models/habit_date.dart';
+import '../../pages/app_about/page.dart' show AppAboutPage;
+import '../../pages/app_debugger/page.dart' show AppDebuggerPage;
+import '../../pages/app_notify_config/page.dart' show AppNotifyConfigPage;
+import '../../pages/app_settings/page.dart' show AppSettingPage;
+import '../../pages/app_sync/page.dart' show AppSyncPage;
 import '../../pages/common/widgets.dart';
-import '../../pages/habits_display/_widgets/changelog_banner_sliver.dart';
-import '../../pages/habits_display/page.dart' show HabitsDisplayPage;
+import '../../pages/expermental_features/page.dart'
+    show ExpermentalFeaturesPage;
+import '../../pages/group_manage/page.dart' show GroupManagePage;
+import '../../pages/habit_detail/page.dart' show HabitDetailPage;
+import '../../pages/habit_edit/page.dart' show HabitEditPage;
+import '../../pages/habits_display/page.dart' show HabitsPage, TodayPage;
+import '../../pages/habits_display/providers.dart' show PageProviders;
+import '../../pages/habits_status_changer/page.dart'
+    show HabitsStatusChangerPage;
 import '../../providers/app_ui/app_debugger.dart';
 import '../../providers/app_ui/app_language.dart';
+import '../../providers/app_ui/app_launch_entry.dart';
 import '../../providers/app_ui/app_theme.dart';
 import '../../providers/support/animation_scale_sync.dart';
 import '../../providers/workflow/app_reminder.dart';
 import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/habits_manager.dart';
 import '../../reminders/notification_channel.dart';
+import '../../routes/app_router.dart';
+import '../../routes/helpers/group_manage_helper.dart';
+import '../../routes/helpers/habit_create_helper.dart';
+import '../../routes/helpers/habit_detail_helper.dart';
+import '../../routes/helpers/habit_edit_helper.dart';
+import '../../routes/helpers/habits_status_changer_helper.dart';
 import '../../storage/db_helper_builder.dart';
 import '../../storage/profile/handlers.dart';
 import '../../storage/profile_builder.dart';
 import '../../storage/profile_provider.dart';
+import '../../theme/app_theme_builder.dart';
 import '../../theme/color.dart';
 import '../../utils/app_clock.dart';
 import '../../widgets/widgets.dart';
 import '../app_error/entry.dart';
 import '../common/app_root_view.dart';
 import 'providers.dart';
+import 'shell.dart';
+
+typedef _AppInitialNavigationConfig = ({AppRoute home, int initialBranchIndex});
 
 /// Note: [AppProviders] are use to build providers that need to be initialized
 /// in [MaterialApp]. An important to note that, e.g., [Localizations] are
@@ -102,134 +126,126 @@ class AppEntry extends StatelessWidget {
         errorBuilder: (details) => AppErrorEntry(errorDetails: details),
         builder: (context, child) => DateChanger(
           interval: const Duration(seconds: 10),
-          builder: (context) => const AppProviders(
-            child: _AppEntry(homePage: AppPostInit(child: HabitsDisplayPage())),
-          ),
+          builder: (context) => const AppProviders(child: _AppEntry()),
         ),
       ),
     );
   }
 }
 
-class _AppEntry extends StatelessWidget {
-  final Widget homePage;
+class _AppEntry extends StatefulWidget {
+  const _AppEntry();
 
-  const _AppEntry({required this.homePage});
+  @override
+  State<_AppEntry> createState() => _AppEntryState();
+}
 
-  String? getFontFamily() {
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.linux:
-        final arch = AppInfo().linuxArchitecture;
-        return switch (arch) {
-          LinuxPlatformArchitecture.aarch64 => 'Roboto',
-          _ => null,
-        };
-      default:
-        return null;
-    }
+class _AppEntryState extends State<_AppEntry> {
+  late final AppNavigationCoordinator _navigationCoordinator;
+  late final GoRouter _router;
+
+  @override
+  void initState() {
+    super.initState();
+    final launchEntry = context.read<AppLaunchEntryViewModel>().launchEntry;
+    final config = switch (launchEntry) {
+      AppEntrys.habitToday => (home: AppRoute.today, initialBranchIndex: 1),
+      AppEntrys.undefined ||
+      AppEntrys.habitDisplay => (home: AppRoute.habits, initialBranchIndex: 0),
+    };
+    _router = _buildRouter(config);
   }
 
-  List<String>? getFontFamilyFallbacks() {
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.linux:
-        final arch = AppInfo().linuxArchitecture;
-        return switch (arch) {
-          LinuxPlatformArchitecture.aarch64 => const [
-            'Ubuntu',
-            'Cantarell',
-            'DejaVu Sans',
-            'Liberation Sans',
-            'Arial',
-            'Noto Color Emoji',
-            'Noto Sans CJK SC',
-            'Noto Sans CJK TC',
-            'Noto Sans CJK JP',
-            'Noto Sans CJK KR',
-          ],
-          _ => null,
-        };
-      default:
-        return null;
-    }
-  }
-
-  static MenuThemeData? get _mobileMenuTheme => switch (defaultTargetPlatform) {
-    TargetPlatform.iOS || TargetPlatform.android => const MenuThemeData(
-      style: MenuStyle(
-        shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12)),
-          ),
+  GoRouter _buildRouter(_AppInitialNavigationConfig config) {
+    final branches = [
+      BranchRouterBuilder()
+        ..addHabits(builder: (_, _) => const HabitsPage())
+        ..addHabitDetail(
+          builder: (_, state) {
+            final (:habitUUID, :color, :summaryAdapter) = state
+                .unpackHabitDetail();
+            return Provider.value(
+              value: summaryAdapter,
+              child: HabitDetailPage(habitUUID: habitUUID, color: color),
+            );
+          },
         ),
-      ),
-    ),
-    _ => null,
-  };
-
-  Color? getThemeColor(
-    AppThemeColor themeColor, {
-    Color? themeMainColor,
-    ColorScheme? dynamicScheme,
-    CustomColors? customColor,
-  }) {
-    switch (themeColor) {
-      case SystemAppThemeColor():
-        return null;
-      case PrimaryAppThemeColor():
-        return appDefaultThemeMainColor;
-      case DynamicAppThemeColor():
-        final colorData = dynamicScheme?.primary.toARGB32();
-        return colorData != null ? Color(colorData) : themeMainColor;
-      case InternalAppThemeColor():
-        final colorType = themeColor.colorType;
-        return customColor?.getBuiltInColor(colorType) ?? themeMainColor;
-      default:
-        return themeMainColor;
-    }
+      BranchRouterBuilder()..addToday(builder: (_, _) => const TodayPage()),
+    ];
+    final branchObservers = [
+      for (final _ in branches) AdaptiveBranchRouteObserver(),
+    ];
+    final appFlow = AppFlowRouterBuilder()
+      ..addHabitCreate(
+        builder: (_, state) {
+          final (:initForm) = state.unpackHabitCreate();
+          return HabitEditPage(initForm: initForm);
+        },
+      )
+      ..addHabitEdit(
+        builder: (_, state) {
+          final (habitId: _, initForm: initForm) = state.unpackHabitEdit();
+          return HabitEditPage(initForm: initForm);
+        },
+      );
+    final appFlowObserver = AdaptiveBranchRouteObserver();
+    final appChromeNavigatorKey = GlobalKey<NavigatorState>();
+    _navigationCoordinator = AppNavigationCoordinator(
+      branchObservers: branchObservers,
+      appFlowObserver: appFlowObserver,
+      appChromeNavigatorKey: appChromeNavigatorKey,
+      initialIndex: config.initialBranchIndex,
+    );
+    return (AppRouterBuilder()
+          ..addSettings(builder: (_, _) => const AppSettingPage())
+          ..addSettingsAbout(builder: (_, _) => const AppAboutPage())
+          ..addSettingsSync(builder: (_, _) => const AppSyncPage())
+          ..addSettingsNotify(builder: (_, _) => const AppNotifyConfigPage())
+          ..addExperimental(builder: (_, _) => const ExpermentalFeaturesPage())
+          ..addDebugger(builder: (_, _) => const AppDebuggerPage())
+          ..addGroupManage(
+            builder: (_, state) {
+              final (:selectedGroupId) = state.unpackGroupManage();
+              return GroupManagePage(initialGroupUUID: selectedGroupId);
+            },
+          )
+          ..addHabitsStatus(
+            builder: (_, state) {
+              final (:uuidList) = state.unpackHabitsStatusChanger();
+              return HabitsStatusChangerPage(uuidList: uuidList);
+            },
+          )
+          ..addShellRoute(
+            appFlow: appFlow,
+            branchObservers: branchObservers,
+            branches: branches,
+            navigatorKey: appChromeNavigatorKey,
+            observers: [appFlowObserver],
+            builder: (context, state, child) => ChangelogBanner(
+              child: AppPostInit(
+                child: AppNavigationShell(
+                  coordinator: _navigationCoordinator,
+                  child: child,
+                ),
+              ),
+            ),
+            branchBuilder: (context, state, navigationShell) {
+              _navigationCoordinator.attachTabShell(navigationShell);
+              return PageProviders(child: navigationShell);
+            },
+          ))
+        .build(home: config.home);
   }
 
-  ColorScheme? getSystemLightColor() => switch (defaultTargetPlatform) {
-    TargetPlatform.android ||
-    TargetPlatform.iOS ||
-    TargetPlatform.macOS => ColorScheme.fromSeed(
-      seedColor: appDefaultThemeMainColor,
-      brightness: Brightness.light,
-      surface: Colors.white,
-    ),
-    _ => null,
-  };
-
-  ColorScheme? getSystemDarkColor() => switch (defaultTargetPlatform) {
-    TargetPlatform.android => ColorScheme.fromSeed(
-      seedColor: appDefaultThemeMainColor,
-      brightness: Brightness.dark,
-      surface: const Color(0xFF0F0F0F),
-    ),
-    TargetPlatform.iOS => ColorScheme.fromSeed(
-      seedColor: appDefaultThemeMainColor,
-      brightness: Brightness.dark,
-      surface: Colors.black,
-    ),
-    TargetPlatform.macOS => ColorScheme.fromSeed(
-      seedColor: appDefaultThemeMainColor,
-      brightness: Brightness.dark,
-      surface: const Color(0xFF1E1E1E),
-    ),
-    _ => null,
-  };
+  @override
+  void dispose() {
+    _router.dispose();
+    _navigationCoordinator.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final fontFamily = getFontFamily();
-    final fontFamilyFallbacks = getFontFamilyFallbacks();
-    final pageTransitionsTheme = PageTransitionsTheme(
-      builders: {
-        ...const PageTransitionsTheme().builders,
-        if (AppInfo().shouldEnablePredictBackPage())
-          TargetPlatform.android:
-              const CustomPredictiveBackPageTransitionsBuilder(),
-      },
-    );
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) => Builder(
         builder: (context) {
@@ -243,65 +259,110 @@ class _AppEntry extends StatelessWidget {
           final disableAnimations = context.select<AnimationScaleSync, bool>(
             (vm) => vm.disableAnimations,
           );
-          return AppRootView(
+          return AppRootView.router(
             themeMode: transToMaterialThemeType(themeMode),
             language: language,
             disableAnimations: disableAnimations,
-            lightThemeBuilder: () {
-              final customColor = lightCustomColors;
-              final mainColor = getThemeColor(
-                themeColor,
-                themeMainColor: themeMainColor,
-                dynamicScheme: lightDynamic,
-                customColor: customColor,
-              );
-              return ThemeData(
-                fontFamily: fontFamily,
-                fontFamilyFallback: fontFamilyFallbacks,
-                pageTransitionsTheme: pageTransitionsTheme,
-                brightness: mainColor == null ? Brightness.light : null,
-                colorScheme: mainColor != null
-                    ? ColorScheme.fromSeed(
-                        seedColor: mainColor,
-                        brightness: Brightness.light,
-                      )
-                    : getSystemLightColor(),
-                useMaterial3: true,
-                appBarTheme: kAppBarTheme,
-                menuTheme: _mobileMenuTheme,
-                extensions: [customColor],
-              );
-            },
-            darkThemeBuilder: () {
-              final customColor = darkCustomColors;
-              final mainColor = getThemeColor(
-                themeColor,
-                themeMainColor: themeMainColor,
-                dynamicScheme: darkDynamic,
-                customColor: customColor,
-              );
-              return ThemeData(
-                fontFamily: fontFamily,
-                fontFamilyFallback: fontFamilyFallbacks,
-                pageTransitionsTheme: pageTransitionsTheme,
-                brightness: mainColor == null ? Brightness.dark : null,
-                colorScheme: mainColor != null
-                    ? ColorScheme.fromSeed(
-                        seedColor: mainColor,
-                        brightness: Brightness.dark,
-                      )
-                    : getSystemDarkColor(),
-                useMaterial3: true,
-                appBarTheme: kAppBarTheme,
-                menuTheme: _mobileMenuTheme,
-                extensions: [customColor],
-              );
-            },
-            child: ChangelogBanner(child: homePage),
+            lightThemeBuilder: () => const AppThemeBuilder().buildLight(
+              themeColor: themeColor,
+              themeMainColor: themeMainColor,
+              dynamicScheme: lightDynamic,
+            ),
+            darkThemeBuilder: () => const AppThemeBuilder().buildDark(
+              themeColor: themeColor,
+              themeMainColor: themeMainColor,
+              dynamicScheme: darkDynamic,
+            ),
+            config: _router,
           );
         },
       ),
     );
+  }
+}
+
+class AppPostInit extends SingleChildStatefulWidget {
+  const AppPostInit({required Widget child, super.key}) : super(child: child);
+
+  @override
+  State<StatefulWidget> createState() => _AppPostInitState();
+}
+
+class _AppPostInitState extends SingleChildState<AppPostInit> {
+  final _appSyncBridge = _AppSyncPostInitBridge();
+  final _habitReminderBridge = _HabitReminderPostInitBridge();
+  bool _didHandlePostInit = false;
+
+  void _syncL10n([L10n? l10n]) {
+    context.maybeRead<NotificationChannelData>()?.onL10nUpdate(l10n);
+    _habitReminderBridge.sync(context);
+    _appSyncBridge.sync(
+      context,
+      l10n: l10n,
+      onNeedCheck: _onWebDavAppSyncUserConfirmNeedCheck,
+    );
+  }
+
+  Future<bool> _onWebDavAppSyncUserConfirmNeedCheck(
+    WebDavConfigTaskChecklist checklist,
+  ) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => checklist.isEmptyDir
+          ? const AppSyncWebDavNewServerConfirmDialog()
+          : const AppSyncWebDavOldServerConfirmDialog(),
+    ).then((value) => value ?? false);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncL10n(L10n.of(context));
+  }
+
+  @override
+  void dispose() {
+    _habitReminderBridge.dispose();
+    _appSyncBridge.dispose();
+    super.dispose();
+  }
+
+  void _handlePostInit(BuildContext context) {
+    final l10n = L10n.of(context);
+    final reminderContent = AppReminderContent.maybeFromL10n(l10n);
+    appLog.build.info(context, ex: ["onPostInitHandled", l10n]);
+    context.maybeRead<AppDebuggerViewModel>()?.processDebuggingNotification(
+      l10n,
+    );
+    context.maybeRead<AppReminderAccess>()?.processTrigger(
+      const AppReminderTrigger.startup(),
+      content: reminderContent,
+    );
+    context.maybeRead<HabitsDisplayAccess>()?.refreshHabitReminders(
+      params: const HabitReminderRefreshParams.startup(),
+    );
+    _syncL10n(l10n);
+    _didHandlePostInit = true;
+
+    final handler = context
+        .read<ProfileViewModel>()
+        .getHandler<AppLastChangelogVersionProfileHandler>();
+    final currentVersion = AppInfo().changelogVersion;
+    final lastVersion = handler?.get();
+
+    if (lastVersion != currentVersion) {
+      handler?.set(currentVersion);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        showChangelogBanner(context, version: currentVersion);
+      });
+    }
+  }
+
+  @override
+  Widget buildWithChild(BuildContext context, Widget? child) {
+    if (!_didHandlePostInit) _handlePostInit(context);
+    return child!;
   }
 }
 
@@ -466,90 +527,5 @@ final class _HabitReminderPostInitBridge {
     access.refreshHabitReminders(
       params: const HabitReminderRefreshParams.dateChange(),
     );
-  }
-}
-
-class AppPostInit extends SingleChildStatefulWidget {
-  const AppPostInit({required Widget child, super.key}) : super(child: child);
-
-  @override
-  State<StatefulWidget> createState() => _AppPostInitState();
-}
-
-class _AppPostInitState extends SingleChildState<AppPostInit> {
-  final _appSyncBridge = _AppSyncPostInitBridge();
-  final _habitReminderBridge = _HabitReminderPostInitBridge();
-  bool _didHandlePostInit = false;
-
-  void _syncL10n([L10n? l10n]) {
-    context.maybeRead<NotificationChannelData>()?.onL10nUpdate(l10n);
-    _habitReminderBridge.sync(context);
-    _appSyncBridge.sync(
-      context,
-      l10n: l10n,
-      onNeedCheck: _onWebDavAppSyncUserConfirmNeedCheck,
-    );
-  }
-
-  Future<bool> _onWebDavAppSyncUserConfirmNeedCheck(
-    WebDavConfigTaskChecklist checklist,
-  ) {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) => checklist.isEmptyDir
-          ? const AppSyncWebDavNewServerConfirmDialog()
-          : const AppSyncWebDavOldServerConfirmDialog(),
-    ).then((value) => value ?? false);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _syncL10n(L10n.of(context));
-  }
-
-  @override
-  void dispose() {
-    _habitReminderBridge.dispose();
-    _appSyncBridge.dispose();
-    super.dispose();
-  }
-
-  void _handlePostInit(BuildContext context) {
-    final l10n = L10n.of(context);
-    final reminderContent = AppReminderContent.maybeFromL10n(l10n);
-    appLog.build.info(context, ex: ["onPostInitHandled", l10n]);
-    context.maybeRead<AppDebuggerViewModel>()?.processDebuggingNotification(
-      l10n,
-    );
-    context.maybeRead<AppReminderAccess>()?.processTrigger(
-      const AppReminderTrigger.startup(),
-      content: reminderContent,
-    );
-    context.maybeRead<HabitsDisplayAccess>()?.refreshHabitReminders(
-      params: const HabitReminderRefreshParams.startup(),
-    );
-    _syncL10n(l10n);
-    _didHandlePostInit = true;
-
-    final handler = context
-        .read<ProfileViewModel>()
-        .getHandler<AppLastChangelogVersionProfileHandler>();
-    final currentVersion = AppInfo().changelogVersion;
-    final lastVersion = handler?.get();
-
-    if (lastVersion != currentVersion) {
-      handler?.set(currentVersion);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        showChangelogBanner(context, version: currentVersion);
-      });
-    }
-  }
-
-  @override
-  Widget buildWithChild(BuildContext context, Widget? child) {
-    if (!_didHandlePostInit) _handlePostInit(context);
-    return child!;
   }
 }

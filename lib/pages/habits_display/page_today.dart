@@ -17,11 +17,12 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/consts.dart';
 import '../../common/types.dart';
-import '../../common/utils.dart';
+import '../../extensions/window_size_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/habit_daily_record_form.dart';
@@ -70,6 +71,7 @@ class TodayTabPageState extends State<TodayTabPage>
     _scrollVisibilityDispatcher = VerticalScrollVisibilityDispatcher(
       toolbarHeight: _toolbarHeight,
       onVisibilityChanged: widget.onBottomNavVisibilityChanged,
+      externalVisibility: AdaptiveNavScope.maybeOf(context)?.scrollWish,
     );
   }
 
@@ -183,9 +185,15 @@ class _Appbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return SliverAppBar(
-      centerTitle: true,
-      toolbarHeight: toolbarHeight,
+    return AdaptiveSliverAppBar(
+      height: toolbarHeight,
+      styles: const AppBarStyles(
+        material: AppBarMaterialStyle(
+          floating: false,
+          snap: false,
+          pinned: false,
+        ),
+      ),
       title: Text(l10n?.habitToday_appBar_title ?? "Today"),
       actions: const [AppThemeSwitchButton()],
     );
@@ -237,12 +245,11 @@ class _HabitsGroupView extends StatelessWidget {
 
           return SliverPadding(
             padding: kListTileContentPadding,
-            sliver: AppUiLayoutBuilder.useScreenSize(
-              ignoreHeight: false,
-              builder: (context, layoutType, child) => switch (layoutType) {
-                UiLayoutType.l => const _HabitGrid(),
-                UiLayoutType.s => const _HabitList(),
-              },
+            sliver: WindowSizeClassLayoutBuilder.useScreenSize(
+              builder: (context, windowSize, child) =>
+                  windowSize.isTabletFormFactor
+                  ? const _HabitGrid()
+                  : const _HabitList(),
             ),
           );
         },
@@ -387,6 +394,12 @@ class _HabitGrid extends StatefulWidget {
 }
 
 class _HabitGridState extends State<_HabitGrid> {
+  // Grid item geometry, independent of window size classes:
+  // 396 ≈ 0.66 × 600dp (legacy wide-screen threshold).
+  static const _gridItemWidth = 396.0;
+  static const _gridItemHeight = _gridItemWidth * 0.618;
+  static const Size gridItemSize = Size(_gridItemWidth, _gridItemHeight);
+
   late final _HabitsTodayController _controller = _HabitsTodayController(
     context,
   );
@@ -418,8 +431,6 @@ class _HabitGridState extends State<_HabitGrid> {
     final vm = _controller.vm;
 
     final today = DateChangeProvider.of(context).dateTime;
-    final width = kHabitLargeScreenAdaptWidth.toDouble() * 0.66;
-    final height = width * 0.618;
     return SliverReorderableAnimatedList<HabitSortCache>.grid(
       scrollDirection: Axis.vertical,
       items: habits,
@@ -439,7 +450,7 @@ class _HabitGridState extends State<_HabitGrid> {
               return _HabitGridItem(
                 uuid: uuid,
                 date: today,
-                height: height,
+                height: gridItemSize.height,
                 selected: value,
                 onExpandChanged: (value) => vm.toggleHabitExpandStatus(uuid),
                 onMainPressed: () => _controller.onMain(uuid),
@@ -456,10 +467,10 @@ class _HabitGridState extends State<_HabitGrid> {
           return SizedBox.shrink(key: ValueKey("notfound-$index"));
         }
       },
-      sliverGridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: width,
-        mainAxisExtent: height,
-        childAspectRatio: height / width,
+      sliverGridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: _gridItemWidth,
+        mainAxisExtent: _gridItemHeight,
+        childAspectRatio: _gridItemHeight / _gridItemWidth,
       ),
     );
   }

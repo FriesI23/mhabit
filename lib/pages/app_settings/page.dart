@@ -18,6 +18,7 @@ import 'dart:io';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
@@ -51,26 +52,16 @@ import '../../providers/workflow/habits_file_exporter.dart';
 import '../../providers/workflow/habits_file_importer.dart';
 import '../../providers/workflow/habits_manager.dart';
 import '../../providers/workflow/thirdparty_file_importer.dart';
+import '../../routes/navigator_helpers.dart';
 import '../../storage/db_helper_provider.dart';
 import '../../storage/profile_provider.dart';
 import '../../utils/app_path_provider.dart';
 import '../../utils/xshare.dart';
 import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
-import '../app_about/page.dart' as app_about;
-import '../app_debugger/page.dart' as app_debugger;
-import '../app_sync/page.dart' as app_sync;
 import '../common/widgets.dart';
-import '../expermental_features/page.dart' as exp_feature;
-import '../group_manage/page.dart' as group_manage;
 import 'providers.dart';
 import 'widgets.dart';
-
-Future<void> naviToAppSettingPage({required BuildContext context}) async {
-  return Navigator.of(
-    context,
-  ).push<void>(MaterialPageRoute(builder: (context) => const AppSettingPage()));
-}
 
 /// Depend Providers
 /// - Required for page providers:
@@ -653,11 +644,11 @@ class _PageState extends State<_Page> with XShare {
         selector: (context, vm) => vm.changeRecordStatus,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, value, child) => L10nBuilder(
-          builder: (context, l10n) => LayoutBuilder(
-            builder: (context, constraints) =>
+          builder: (context, l10n) => WindowSizeClassLayoutBuilder(
+            builder: (context, windowSize, child) =>
                 AppSettingDisplayRecordOperationTile(
-                  isLargeScreen:
-                      constraints.maxWidth >= kHabitLargeScreenAdaptWidth,
+                  useSideBySideLayout:
+                      windowSize.width >= WindowSizeClass.medium,
                   inputAction: value,
                   title: l10n != null
                       ? Text(l10n.appSetting_changeRecordStatusOpTile_titleText)
@@ -676,21 +667,24 @@ class _PageState extends State<_Page> with XShare {
         selector: (context, vm) => vm.openRecordStatusDialog,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, value, child) => L10nBuilder(
-          builder: (context, l10n) => LayoutBuilder(
-            builder: (context, constraints) => AppSettingDisplayRecordOperationTile(
-              isLargeScreen:
-                  constraints.maxWidth >= kHabitLargeScreenAdaptWidth,
-              inputAction: value,
-              title: l10n != null
-                  ? Text(l10n.appSetting_openRecordStatusDialogOpTile_titleText)
-                  : null,
-              subtitle: l10n != null
-                  ? Text(
-                      l10n.appSetting_openRecordStatusDialogOpTile_subtitleText,
-                    )
-                  : null,
-              onSelected: _onOpenRecordStatusDialogSelected,
-            ),
+          builder: (context, l10n) => WindowSizeClassLayoutBuilder(
+            builder: (context, windowSize, child) =>
+                AppSettingDisplayRecordOperationTile(
+                  useSideBySideLayout:
+                      windowSize.width >= WindowSizeClass.medium,
+                  inputAction: value,
+                  title: l10n != null
+                      ? Text(
+                          l10n.appSetting_openRecordStatusDialogOpTile_titleText,
+                        )
+                      : null,
+                  subtitle: l10n != null
+                      ? Text(
+                          l10n.appSetting_openRecordStatusDialogOpTile_subtitleText,
+                        )
+                      : null,
+                  onSelected: _onOpenRecordStatusDialogSelected,
+                ),
           ),
         ),
       ),
@@ -701,11 +695,11 @@ class _PageState extends State<_Page> with XShare {
               selector: (context, vm) => vm.speed,
               shouldRebuild: (previous, next) => previous != next,
               builder: (context, value, child) => L10nBuilder(
-                builder: (context, l10n) => LayoutBuilder(
-                  builder: (context, constraints) =>
+                builder: (context, l10n) => WindowSizeClassLayoutBuilder(
+                  builder: (context, windowSize, child) =>
                       AppSettingExpandTimerDelayTile(
-                        isLargeScreen:
-                            constraints.maxWidth >= kHabitLargeScreenAdaptWidth,
+                        useSideBySideLayout:
+                            windowSize.width >= WindowSizeClass.medium,
                         speed: value,
                         title: l10n != null
                             ? Text(
@@ -825,8 +819,7 @@ class _PageState extends State<_Page> with XShare {
                 "Experimental Features",
           ),
         ),
-        onTap: () =>
-            exp_feature.naviToExperimentalFeaturesPage(context: context),
+        onTap: () => naviToExperimentalFeaturesPage(context: context),
       ),
       Selector<AppDeveloperViewModel, bool>(
         selector: (context, vm) => vm.isInDevelopMode,
@@ -855,7 +848,7 @@ class _PageState extends State<_Page> with XShare {
               ? Text(l10n.appSetting_debugger_titleText)
               : const Text("Debugger"),
         ),
-        onTap: () => app_debugger.naviToAppDebuggerPage(context: context),
+        onTap: () => naviToAppDebuggerPage(context: context),
       ),
       ListTile(
         title: L10nBuilder(
@@ -863,7 +856,7 @@ class _PageState extends State<_Page> with XShare {
               ? Text(l10n.appSetting_about_titleText)
               : const Text("About"),
         ),
-        onTap: () => app_about.naviToAppAboutPage(context: context),
+        onTap: () => naviToAppAboutPage(context: context),
       ),
     ];
 
@@ -884,7 +877,7 @@ class _PageState extends State<_Page> with XShare {
               ? Text(l10n.appSetting_manageGroups_subtitleText)
               : const Text("Create, edit, and delete habit groups"),
           trailing: const Icon(Icons.chevron_right),
-          onTap: () => group_manage.naviToGroupManagePage(context: context),
+          onTap: () => naviToGroupManagePage(context: context),
         ),
       ),
     ];
@@ -903,7 +896,7 @@ class _PageState extends State<_Page> with XShare {
           builder: (context, l10n) =>
               Text(l10n?.appSetting_syncOption_titleText ?? "Sync Option"),
         ),
-        onTap: () => app_sync.naviToAppSyncPage(context: context),
+        onTap: () => naviToAppSyncPage(context: context),
       ),
     ];
 

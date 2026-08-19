@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common/consts.dart';
 import '../../common/global.dart';
@@ -23,6 +24,7 @@ class AppRootView extends StatelessWidget {
   final ThemeMode themeMode;
   final Locale? language;
   final Widget? child;
+  final GoRouter? routerConfig;
   final ThemeData Function()? lightThemeBuilder;
   final ThemeData Function()? darkThemeBuilder;
   final bool disableAnimations;
@@ -35,7 +37,18 @@ class AppRootView extends StatelessWidget {
     this.darkThemeBuilder,
     this.child,
     this.disableAnimations = false,
-  });
+  }) : routerConfig = null;
+
+  const AppRootView.router({
+    super.key,
+    required this.themeMode,
+    this.language,
+    this.lightThemeBuilder,
+    this.darkThemeBuilder,
+    required GoRouter config,
+    this.disableAnimations = false,
+  }) : child = null,
+       routerConfig = config;
 
   const AppRootView.withDefault({
     super.key,
@@ -45,32 +58,58 @@ class AppRootView extends StatelessWidget {
     this.darkThemeBuilder,
     this.child,
     this.disableAnimations = false,
-  });
+  }) : routerConfig = null;
+
+  bool get _useRouter => routerConfig != null;
+
+  Widget _builder(BuildContext context, Widget? child) => MediaQuery(
+    data: MediaQuery.of(context).copyWith(
+      disableAnimations:
+          disableAnimations || MediaQuery.disableAnimationsOf(context),
+    ),
+    child: UnfocusOnTap(child: child),
+  );
+
+  String _onGenerateTitle(BuildContext context) =>
+      L10n.of(context)?.appName ?? appName;
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      onGenerateTitle: (context) => L10n.of(context)?.appName ?? appName,
-      navigatorKey: navigatorKey,
-      navigatorObservers: [currentRouteObserver],
+    final lightTheme = lightThemeBuilder?.call();
+    final darkTheme = darkThemeBuilder?.call();
+
+    Widget routerApp() => MaterialApp.router(
+      routerConfig: routerConfig!,
+      onGenerateTitle: _onGenerateTitle,
       scaffoldMessengerKey: snackbarKey,
-      theme: lightThemeBuilder?.call(),
-      darkTheme: darkThemeBuilder?.call(),
+      theme: lightTheme,
+      darkTheme: darkTheme,
       themeMode: themeMode,
       locale: language,
       shortcuts: WidgetsApp.defaultShortcuts,
       actions: WidgetsApp.defaultActions,
-      builder: (context, child) => MediaQuery(
-        data: MediaQuery.of(context).copyWith(
-          disableAnimations:
-              disableAnimations || MediaQuery.disableAnimationsOf(context),
-        ),
-        child: UnfocusOnTap(child: child),
-      ),
+      builder: _builder,
+      localizationsDelegates: appLocalizationsDelegates,
+      supportedLocales: appSupportedLocales,
+      debugShowCheckedModeBanner: false,
+    );
+    Widget homeApp() => MaterialApp(
+      onGenerateTitle: _onGenerateTitle,
+      navigatorKey: navigatorKey,
+      navigatorObservers: [currentRouteObserver],
+      scaffoldMessengerKey: snackbarKey,
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: themeMode,
+      locale: language,
+      shortcuts: WidgetsApp.defaultShortcuts,
+      actions: WidgetsApp.defaultActions,
+      builder: _builder,
       home: child,
       localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: appSupportedLocales,
       debugShowCheckedModeBanner: false,
     );
+    return _useRouter ? routerApp() : homeApp();
   }
 }

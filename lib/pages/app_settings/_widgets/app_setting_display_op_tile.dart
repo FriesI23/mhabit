@@ -23,7 +23,7 @@ class AppSettingDisplayRecordOperationTile extends StatelessWidget {
   final Widget? title;
   final Widget? subtitle;
   final UserAction inputAction;
-  final bool isLargeScreen;
+  final bool useSideBySideLayout;
   final void Function(UserAction selectedAction)? onSelected;
 
   const AppSettingDisplayRecordOperationTile({
@@ -31,7 +31,7 @@ class AppSettingDisplayRecordOperationTile extends StatelessWidget {
     this.title,
     this.subtitle,
     required this.inputAction,
-    this.isLargeScreen = false,
+    this.useSideBySideLayout = false,
     this.onSelected,
   });
 
@@ -125,7 +125,7 @@ class AppSettingDisplayRecordOperationTile extends StatelessWidget {
     return L10nBuilder(
       builder: (context, l10n) => ListTile(
         title: title,
-        subtitle: isLargeScreen
+        subtitle: useSideBySideLayout
             ? buildBigViewSubtitle(context, l10n)
             : buildNormalSubtitle(context, l10n),
       ),

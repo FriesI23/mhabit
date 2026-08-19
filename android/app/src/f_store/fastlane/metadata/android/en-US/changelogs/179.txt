@@ -1,0 +1,2 @@
+- Improve sorting backend reliability (#635)
+- Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate

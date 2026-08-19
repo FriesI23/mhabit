@@ -20,8 +20,8 @@ import '../../../l10n/localizations.dart';
 import '../../../providers/app_ui/app_debugger.dart';
 import '../../../storage/profile/handlers.dart';
 import '../../../storage/profile_provider.dart';
+import '../../../widgets/widgets.dart';
 import '../../common/widgets.dart';
-import 'changelog_banner_sliver.dart';
 
 class HabitDisplayDevelopSliverList extends StatefulWidget {
   final void Function(int count, bool withGroups)? onAddCountHabitsPressed;

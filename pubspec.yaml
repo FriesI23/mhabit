@@ -19,7 +19,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.26.5+178
+version: 1.26.10+183-pre
 
 environment:
   sdk: ">=3.11.0 <4.0.0"
@@ -30,6 +30,7 @@ workspace:
   - packages/mhabit_proxy_annotation
   - packages/mhabit_proxy_builder
   - packages/mhabit_color_builder
+  - packages/mhabit_adaptive_ui
 
 melos:
   sdkPath: .flutter
@@ -78,10 +79,44 @@ melos:
         flutter test --reporter github
         dart run melos exec \
           --category=internal_packages \
+          --no-flutter \
           --dir-exists=test \
           --fail-fast \
           --concurrency=1 \
           -- "dart test --reporter github"
+        dart run melos exec \
+          --category=internal_packages \
+          --flutter \
+          --dir-exists=test \
+          --fail-fast \
+          --concurrency=1 \
+          -- "flutter test --reporter github"
+    test-ci:
+      description: |
+        Run app and package test suites for CI with machine-readable results.
+        App output goes to test_report.log; package results are written to
+        build/test-results/dart/ and build/test-results/flutter/.
+      run: |
+        FAILED=0
+        flutter test --no-pub --machine > test_report.log || FAILED=1
+        mkdir -p \
+          "$MELOS_ROOT_PATH/build/test-results/dart" \
+          "$MELOS_ROOT_PATH/build/test-results/flutter"
+        dart run melos exec \
+          --category=internal_packages \
+          --no-flutter \
+          --dir-exists=test \
+          --fail-fast \
+          --concurrency=1 \
+          -- "dart test --reporter json > \"$MELOS_ROOT_PATH/build/test-results/dart/\$MELOS_PACKAGE_NAME.json\"" || FAILED=1
+        dart run melos exec \
+          --category=internal_packages \
+          --flutter \
+          --dir-exists=test \
+          --fail-fast \
+          --concurrency=1 \
+          -- "flutter test --no-pub --machine > \"$MELOS_ROOT_PATH/build/test-results/flutter/\$MELOS_PACKAGE_NAME.json\"" || FAILED=1
+        exit $FAILED
 
 mhabit_color_builder:
   app:
@@ -165,6 +200,7 @@ dependencies:
   crypto: ^3.0.2
   timezone: ^0.11.0
   nested: ^1.0.0
+  go_router: ^17.0.0
   async: ^2.11.0
   pool: ^1.5.1
   rxdart: ^0.28.0
@@ -190,6 +226,7 @@ dependencies:
   # Internal Packages
   mhabit_color_annotation: any
   mhabit_proxy_annotation: any
+  mhabit_adaptive_ui: any
 
 dev_dependencies:
   flutter_test:

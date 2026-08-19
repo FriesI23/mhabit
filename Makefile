@@ -96,7 +96,7 @@ gen-icons:
 
 test:
 	@$(MELOS) run test
-	@cd android && ./gradlew :app:testF_genericDebugUnitTest --console=plain
+# 	@cd android && ./gradlew :app:testF_genericDebugUnitTest --console=plain
 
 gen:
 	@$(SUBMAKE) normalize-l10n

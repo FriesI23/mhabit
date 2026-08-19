@@ -25,7 +25,19 @@ jobs:
           reporter: flutter-json
       - uses: dorny/test-reporter@v3
         with:
-          artifact: android-unittest-xml
-          name: Android Unit Test
-          path: TEST-*.xml
-          reporter: java-junit
+          artifact: flutter-package-unittest-result
+          name: Flutter Package Test
+          path: build/test-results/flutter/*.json
+          reporter: flutter-json
+      - uses: dorny/test-reporter@v3
+        with:
+          artifact: dart-package-unittest-result
+          name: Dart Package Test
+          path: build/test-results/dart/*.json
+          reporter: dart-json
+      # - uses: dorny/test-reporter@v3
+      #   with:
+      #     artifact: android-unittest-xml
+      #     name: Android Unit Test
+      #     path: TEST-*.xml
+      #     reporter: java-junit
