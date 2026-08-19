@@ -53,14 +53,28 @@ String _pathFor(AppRoute route) => switch (route) {
 };
 
 /// Bar visibility policy for the app's branches: the bar is shown only on a
-/// branch's root route and hidden on anything pushed above it. Routes that
-/// cover the shell (edit, create, group manage, status) never consult this
-/// policy, and neither does the shell until the active branch has loaded a
-/// route.
+/// branch's root route and hidden on anything pushed above it.
 bool appShellBarVisibilityPolicy(List<String?> routeNames) =>
     routeNames.length == 1;
 
-/// Shared `add*` helpers for [AppRouterBuilder] and [BranchRouterBuilder].
+/// Compact-bar visibility policy for the app-chrome navigator.
+///
+/// A pushed common flow adds a second route above the tab shell. A direct
+/// entry into create/edit has only one route, so its name is also checked to
+/// keep the compact bar hidden without inventing a source tab stack.
+bool appShellFlowVisibilityPolicy(List<String?> routeNames) {
+  if (routeNames.isEmpty) return true;
+  if (routeNames.length > 1) return false;
+  return switch (routeNames.single) {
+    final name
+        when name == AppRoute.habitCreate.name ||
+            name == AppRoute.habitEdit.name =>
+      false,
+    _ => true,
+  };
+}
+
+/// Shared `add*` helpers for the app's route collectors.
 ///
 /// Keeps route path/name knowledge in this library; callers supply only
 /// widget builders.
@@ -204,35 +218,56 @@ class BranchRouterBuilder with _AppRouteAdder {
   final List<RouteBase> _routes = [];
 }
 
+/// Route collector for app-internal flows shown inside the app chrome but
+/// outside any individual tab branch.
+class AppFlowRouterBuilder with _AppRouteAdder {
+  @override
+  final List<RouteBase> _routes = [];
+}
+
 class AppRouterBuilder with _AppRouteAdder {
   @override
   final List<RouteBase> _routes = [];
 
-  /// Registers a [StatefulShellRoute.indexedStack] as a top-level route.
+  /// Registers an app-chrome [ShellRoute] containing a tab
+  /// [StatefulShellRoute.indexedStack].
   ///
   /// Each [BranchRouterBuilder] in [branches] becomes a [StatefulShellBranch]
-  /// of the shell. [branchObservers], when provided, must have exactly one
-  /// observer per branch: a [NavigatorObserver] attaches to a single
-  /// navigator only, so each branch navigator needs its own instance.
+  /// of the inner shell. [appFlow] routes become siblings of that tab shell on
+  /// the outer app-chrome navigator. [branchObservers], when provided, must
+  /// have exactly one observer per branch: a [NavigatorObserver] attaches to
+  /// a single navigator only, so each branch navigator needs its own instance.
   void addShellRoute({
     required List<BranchRouterBuilder> branches,
+    required AppFlowRouterBuilder appFlow,
     List<NavigatorObserver>? branchObservers,
-    required StatefulShellRouteBuilder builder,
+    List<NavigatorObserver>? observers,
+    GlobalKey<NavigatorState>? navigatorKey,
+    required ShellRouteBuilder builder,
+    required StatefulShellRouteBuilder branchBuilder,
   }) {
     assert(
       branchObservers == null || branchObservers.length == branches.length,
     );
     _routes.add(
-      StatefulShellRoute.indexedStack(
+      ShellRoute(
         builder: builder,
-        branches: [
-          for (final (index, branch) in branches.indexed)
-            StatefulShellBranch(
-              routes: branch._routes,
-              observers: branchObservers == null
-                  ? const <NavigatorObserver>[]
-                  : [branchObservers[index]],
-            ),
+        observers: observers,
+        navigatorKey: navigatorKey,
+        routes: [
+          StatefulShellRoute.indexedStack(
+            builder: branchBuilder,
+            branches: [
+              for (final (index, branch) in branches.indexed)
+                StatefulShellBranch(
+                  routes: branch._routes,
+                  observers: branchObservers == null
+                      ? const <NavigatorObserver>[]
+                      : [branchObservers[index]],
+                ),
+            ],
+          ),
+          ...appFlow._routes,
         ],
       ),
     );

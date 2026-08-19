@@ -75,6 +75,8 @@ import '../common/app_root_view.dart';
 import 'providers.dart';
 import 'shell.dart';
 
+typedef _AppInitialNavigationConfig = ({AppRoute home, int initialBranchIndex});
+
 /// Note: [AppProviders] are use to build providers that need to be initialized
 /// in [MaterialApp]. An important to note that, e.g., [Localizations] are
 /// initialized within MaterialApp. Some feature that depend on these inherited
@@ -139,20 +141,22 @@ class _AppEntry extends StatefulWidget {
 }
 
 class _AppEntryState extends State<_AppEntry> {
+  late final AppNavigationCoordinator _navigationCoordinator;
   late final GoRouter _router;
 
   @override
   void initState() {
     super.initState();
     final launchEntry = context.read<AppLaunchEntryViewModel>().launchEntry;
-    _router = _buildRouter(
-      home: launchEntry == AppEntrys.habitToday
-          ? AppRoute.today
-          : AppRoute.habits,
-    );
+    final config = switch (launchEntry) {
+      AppEntrys.habitToday => (home: AppRoute.today, initialBranchIndex: 1),
+      AppEntrys.undefined ||
+      AppEntrys.habitDisplay => (home: AppRoute.habits, initialBranchIndex: 0),
+    };
+    _router = _buildRouter(config);
   }
 
-  GoRouter _buildRouter({required AppRoute home}) {
+  GoRouter _buildRouter(_AppInitialNavigationConfig config) {
     final branches = [
       BranchRouterBuilder()
         ..addHabits(builder: (_, _) => const HabitsPage())
@@ -171,6 +175,27 @@ class _AppEntryState extends State<_AppEntry> {
     final branchObservers = [
       for (final _ in branches) AdaptiveBranchRouteObserver(),
     ];
+    final appFlow = AppFlowRouterBuilder()
+      ..addHabitCreate(
+        builder: (_, state) {
+          final (:initForm) = state.unpackHabitCreate();
+          return HabitEditPage(initForm: initForm);
+        },
+      )
+      ..addHabitEdit(
+        builder: (_, state) {
+          final (habitId: _, initForm: initForm) = state.unpackHabitEdit();
+          return HabitEditPage(initForm: initForm);
+        },
+      );
+    final appFlowObserver = AdaptiveBranchRouteObserver();
+    final appChromeNavigatorKey = GlobalKey<NavigatorState>();
+    _navigationCoordinator = AppNavigationCoordinator(
+      branchObservers: branchObservers,
+      appFlowObserver: appFlowObserver,
+      appChromeNavigatorKey: appChromeNavigatorKey,
+      initialIndex: config.initialBranchIndex,
+    );
     return (AppRouterBuilder()
           ..addSettings(builder: (_, _) => const AppSettingPage())
           ..addSettingsAbout(builder: (_, _) => const AppAboutPage())
@@ -178,18 +203,6 @@ class _AppEntryState extends State<_AppEntry> {
           ..addSettingsNotify(builder: (_, _) => const AppNotifyConfigPage())
           ..addExperimental(builder: (_, _) => const ExpermentalFeaturesPage())
           ..addDebugger(builder: (_, _) => const AppDebuggerPage())
-          ..addHabitCreate(
-            builder: (_, state) {
-              final (:initForm) = state.unpackHabitCreate();
-              return HabitEditPage(initForm: initForm);
-            },
-          )
-          ..addHabitEdit(
-            builder: (_, state) {
-              final (habitId: _, initForm: initForm) = state.unpackHabitEdit();
-              return HabitEditPage(initForm: initForm);
-            },
-          )
           ..addGroupManage(
             builder: (_, state) {
               final (:selectedGroupId) = state.unpackGroupManage();
@@ -203,20 +216,32 @@ class _AppEntryState extends State<_AppEntry> {
             },
           )
           ..addShellRoute(
+            appFlow: appFlow,
             branchObservers: branchObservers,
             branches: branches,
-            builder: (context, state, navigationShell) => ChangelogBanner(
+            navigatorKey: appChromeNavigatorKey,
+            observers: [appFlowObserver],
+            builder: (context, state, child) => ChangelogBanner(
               child: AppPostInit(
-                child: PageProviders(
-                  child: AppNavigationShell(
-                    navigationShell: navigationShell,
-                    branchObservers: branchObservers,
-                  ),
+                child: AppNavigationShell(
+                  coordinator: _navigationCoordinator,
+                  child: child,
                 ),
               ),
             ),
+            branchBuilder: (context, state, navigationShell) {
+              _navigationCoordinator.attachTabShell(navigationShell);
+              return PageProviders(child: navigationShell);
+            },
           ))
-        .build(home: home);
+        .build(home: config.home);
+  }
+
+  @override
+  void dispose() {
+    _router.dispose();
+    _navigationCoordinator.dispose();
+    super.dispose();
   }
 
   @override

@@ -1,74 +1,192 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
-GoRouter _buildRouter({
+_TestRouter _buildRouter({
   List<NavigationDestination>? destinations,
   ValueChanged<int>? onBranchChanged,
   List<AdaptiveBranchRouteObserver>? observers,
   bool Function(List<String?> routeNames)? barVisibilityPolicy,
 }) {
-  return GoRouter(
-    initialLocation: '/habits',
-    routes: [
-      StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) => AdaptiveNavigationShell(
-          navigationShell: navigationShell,
-          branchObservers: observers ?? const [],
-          barVisibilityPolicy: barVisibilityPolicy,
-          destinations:
-              destinations ??
-              const [
-                NavigationDestination(
-                  icon: Icon(Icons.home_outlined),
-                  selectedIcon: Icon(Icons.home),
-                  label: 'Habits',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.calendar_today_outlined),
-                  selectedIcon: Icon(Icons.calendar_today),
-                  label: 'Today',
-                ),
-              ],
-          onBranchChanged: onBranchChanged,
-        ),
-        branches: [
-          StatefulShellBranch(
-            observers: observers == null
-                ? const <NavigatorObserver>[]
-                : [observers[0]],
-            routes: [
-              GoRoute(
-                path: '/habits',
-                name: 'habits-root',
-                builder: (_, _) => const _StubPage(text: 'habits page'),
-              ),
-              GoRoute(
-                path: '/habits/detail',
-                name: 'habits-detail',
-                builder: (_, _) => const _StubPage(text: 'detail page'),
-              ),
-            ],
+  return _TestRouter(
+    destinations:
+        destinations ??
+        const [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
+            label: 'Habits',
           ),
-          StatefulShellBranch(
-            observers: observers == null
-                ? const <NavigatorObserver>[]
-                : [observers[1]],
-            routes: [
-              GoRoute(
-                path: '/today',
-                name: 'today-root',
-                builder: (_, _) => const _StubPage(text: 'today page'),
-              ),
-            ],
+          NavigationDestination(
+            icon: Icon(Icons.calendar_today_outlined),
+            selectedIcon: Icon(Icons.calendar_today),
+            label: 'Today',
           ),
         ],
-      ),
-    ],
+    onBranchChanged: onBranchChanged,
+    observers: observers ?? const [],
+    barVisibilityPolicy: barVisibilityPolicy,
   );
+}
+
+class _TestRouter extends RouterConfig<Object> {
+  factory _TestRouter({
+    required List<NavigationDestination> destinations,
+    required List<AdaptiveBranchRouteObserver> observers,
+    ValueChanged<int>? onBranchChanged,
+    bool Function(List<String?> routeNames)? barVisibilityPolicy,
+  }) {
+    final delegate = _TestRouterDelegate(
+      destinations: destinations,
+      onBranchChanged: onBranchChanged,
+      observers: observers,
+      barVisibilityPolicy: barVisibilityPolicy,
+    );
+    return _TestRouter._(delegate);
+  }
+
+  const _TestRouter._(this.delegate) : super(routerDelegate: delegate);
+
+  final _TestRouterDelegate delegate;
+
+  void go(String location) => delegate.go(location);
+
+  void push(String location) => delegate.push(location);
+
+  void pop() => delegate.pop();
+}
+
+class _TestRouteEntry {
+  _TestRouteEntry({required this.name, required this.label})
+    : route = MaterialPageRoute<void>(
+        settings: RouteSettings(name: name),
+        builder: (_) => const SizedBox.shrink(),
+      );
+
+  final String name;
+  final String label;
+  final Route<void> route;
+}
+
+class _TestRouterDelegate extends RouterDelegate<Object>
+    with ChangeNotifier, PopNavigatorRouterDelegateMixin<Object> {
+  _TestRouterDelegate({
+    required this.destinations,
+    required this.observers,
+    this.onBranchChanged,
+    this.barVisibilityPolicy,
+  }) {
+    _pushEntry(
+      0,
+      _TestRouteEntry(name: 'habits-root', label: 'habits page'),
+      notify: false,
+    );
+  }
+
+  final List<NavigationDestination> destinations;
+  final List<AdaptiveBranchRouteObserver> observers;
+  final ValueChanged<int>? onBranchChanged;
+  final bool Function(List<String?> routeNames)? barVisibilityPolicy;
+
+  final List<List<_TestRouteEntry>> _branchStacks = [[], []];
+  int _selectedIndex = 0;
+
+  @override
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  bool get _compactRouteVisible {
+    final routeNames = _branchStacks[_selectedIndex]
+        .map<String?>((entry) => entry.name)
+        .toList(growable: false);
+    final policy = barVisibilityPolicy;
+    return policy == null ? routeNames.length == 1 : policy(routeNames);
+  }
+
+  void go(String location) {
+    final nextIndex = switch (location) {
+      '/habits' => 0,
+      '/today' => 1,
+      _ => throw ArgumentError.value(location, 'location'),
+    };
+    if (_branchStacks[nextIndex].isEmpty) {
+      _pushEntry(
+        nextIndex,
+        _TestRouteEntry(
+          name: nextIndex == 0 ? 'habits-root' : 'today-root',
+          label: nextIndex == 0 ? 'habits page' : 'today page',
+        ),
+        notify: false,
+      );
+    }
+    if (nextIndex == _selectedIndex) return;
+    _selectedIndex = nextIndex;
+    onBranchChanged?.call(nextIndex);
+    notifyListeners();
+  }
+
+  void push(String location) {
+    if (location != '/habits/detail' || _selectedIndex != 0) {
+      throw ArgumentError.value(location, 'location');
+    }
+    _pushEntry(0, _TestRouteEntry(name: 'habits-detail', label: 'detail page'));
+  }
+
+  void pop() {
+    final stack = _branchStacks[_selectedIndex];
+    if (stack.length <= 1) return;
+    final removed = stack.removeLast();
+    _observerFor(_selectedIndex)?.didPop(removed.route, stack.last.route);
+    notifyListeners();
+  }
+
+  AdaptiveBranchRouteObserver? _observerFor(int index) {
+    return index < observers.length ? observers[index] : null;
+  }
+
+  void _pushEntry(int index, _TestRouteEntry entry, {bool notify = true}) {
+    final stack = _branchStacks[index];
+    final previousRoute = stack.isEmpty ? null : stack.last.route;
+    stack.add(entry);
+    _observerFor(index)?.didPush(entry.route, previousRoute);
+    if (notify) notifyListeners();
+  }
+
+  void _selectDestination(int index) {
+    go(index == 0 ? '/habits' : '/today');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final currentEntry = _branchStacks[_selectedIndex].last;
+    return Navigator(
+      key: navigatorKey,
+      pages: [
+        MaterialPage<void>(
+          key: const ValueKey('test-shell'),
+          child: AdaptiveNavigationShell(
+            selectedIndex: _selectedIndex,
+            destinations: destinations,
+            compactRouteVisible: _compactRouteVisible,
+            onDestinationSelected: _selectDestination,
+            child: _StubPage(text: currentEntry.label),
+          ),
+        ),
+      ],
+      onDidRemovePage: (_) {},
+    );
+  }
+
+  @override
+  Future<bool> popRoute() async {
+    if (_branchStacks[_selectedIndex].length <= 1) return false;
+    pop();
+    return true;
+  }
+
+  @override
+  Future<void> setNewRoutePath(Object configuration) async {}
 }
 
 class _StubPage extends StatelessWidget {
