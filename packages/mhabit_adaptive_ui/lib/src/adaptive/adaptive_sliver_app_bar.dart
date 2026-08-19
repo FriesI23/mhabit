@@ -188,35 +188,23 @@ class AdaptiveSliverAppBar extends StatelessWidget {
 
   const AdaptiveSliverAppBar.material({
     super.key,
-    required Widget title,
-    List<Widget> actions = _kDefaultActions,
-    Widget? leading,
-    VoidCallback? onLeadingPressed,
-    double? height,
-    AppBarStyles? styles,
-  }) : title = title,
-       actions = actions,
-       leading = leading,
-       onLeadingPressed = onLeadingPressed,
-       height = height,
-       styles = styles,
-       style = AdaptiveStyle.material;
+    required this.title,
+    this.actions = _kDefaultActions,
+    this.leading,
+    this.onLeadingPressed,
+    this.height,
+    this.styles,
+  }) : style = AdaptiveStyle.material;
 
   const AdaptiveSliverAppBar.apple({
     super.key,
-    required Widget title,
-    List<Widget> actions = _kDefaultActions,
-    Widget? leading,
-    VoidCallback? onLeadingPressed,
-    double? height,
-    AppBarStyles? styles,
-  }) : title = title,
-       actions = actions,
-       leading = leading,
-       onLeadingPressed = onLeadingPressed,
-       height = height,
-       styles = styles,
-       style = AdaptiveStyle.apple;
+    required this.title,
+    this.actions = _kDefaultActions,
+    this.leading,
+    this.onLeadingPressed,
+    this.height,
+    this.styles,
+  }) : style = AdaptiveStyle.apple;
 
   final AdaptiveStyle? style;
   final Widget title;

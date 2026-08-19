@@ -236,7 +236,7 @@ class _EditAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AdaptiveSliverAppBar(
+    return AdaptiveSliverAppBar.material(
       height: height,
       styles: AppBarStyles(
         material: AppBarMaterialStyle(
