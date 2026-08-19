@@ -8,6 +8,10 @@
     "habitEdit_saveButton_text": "Uložit",
     "habitEdit_habitName_hintText": "Název zvyku ...",
     "habitEdit_colorPicker_title": "Zvolte barvu",
+    "habitEdit_colorPicker_historySectionLabel": "Nedávno použité",
+    "habitEdit_colorPicker_cancel": "Zrušit",
+    "habitEdit_colorPicker_tintedLabel": "Tónované",
+    "habitEdit_colorPicker_untintedLabel": "Nezabarvené",
     "habitEdit_habitTypeDialog_title": "Typ zvyku",
     "habitEdit_habitType_positiveText": "Pozitivní",
     "habitEdit_habitType_negativeText": "Negativní",
@@ -78,6 +82,15 @@
     "habitEdit_habitFreq_permonth_text": "%%time%% krát za měsíc",
     "habitEdit_habitFreq_predayfreq_text": "%%time%% krát za %%day%% dnů",
     "habitEdit_habitFreq_show_daily": "Denní",
+    "habitEdit_targetDays_title": "{targetDays} dnů",
+    "@habitEdit_targetDays_title": {
+        "placeholders": {
+            "targetDays": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
     "habitEdit_reminder_hintText": "Připomenutí",
     "habitEdit_reminder_freq_weekHelpText": "Kterýkoli den v týdnu",
     "habitEdit_reminder_freq_week_text": "{days} každý týden",
@@ -148,6 +161,9 @@
         }
     },
     "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "Potvrdit",
+    "habitDisplay_deleteHabitsConfirmDialog_confirm": "potvrdit",
+    "habitDisplay_deleteHabitsConfirmDialog_cancel": "zrušit",
+    "habitDisplay_editPopMenu_selectAll": "Vybrat vše",
     "habitDisplay_statsMenu_completedTileText": "Dokončené",
     "habitDisplay_statsMenu_inProgresTileText": "Probíhající",
     "habitDisplay_statsMenu_archivedTileText": "Archivováno",
@@ -155,21 +171,381 @@
     "habitDisplay_mainMenu_darkTheme": "Tmavý vzhled",
     "habitDisplay_mainMenu_followSystemTheme": "Podle systému",
     "habitDisplay_mainMenu_showArchivedTileText": "Zobrazit archivované",
+    "habitDisplay_mainMenu_showCompletedTileText": "Zobrazit dokončené",
+    "habitDisplay_mainMenu_showActivedTileText": "Zobrazit aktivované",
     "habitDisplay_mainMenu_settingTileText": "Nastavení",
-    "habitDisplay_groupTypeDialog_confirm": "Potvrdit",
+    "habitDisplay_groupType_name": "Podle názvu",
+    "habitDisplay_groupType_colorType": "Podle barvy",
+    "habitDisplay_groupTypeDialog_confirm": "potvrdit",
+    "habitDisplay_groupTypeDialog_cancel": "zrušit",
+    "habitDisplay_groupTypeDialog_none": "Ploché",
+    "habitDisplay_groupModifyConfirm_nameSeparator": ", ",
     "habitDisplay_sortType_manual": "Moje pořadí",
+    "habitDisplay_sortType_name": "Podle názvu",
+    "habitDisplay_sortType_colorType": "Podle barvy",
+    "habitDisplay_sortType_progress": "Podle četnosti",
+    "habitDisplay_sortType_status": "Podle stavu",
     "habitDisplay_sortTypeDialog_confirm": "Potvrdit",
     "habitDisplay_searchBar_hintText": "Vyhledat zvyky",
+    "habitDisplay_searchFilter_ongoing": "Probíhající",
     "habitDisplay_searchFilter_completed": "Dokončené",
     "habitDisplay_searchFilter_habitType_groupTitle": "Typ zvyku",
+    "habitDisplay_searchFilter_tooltips": "Zobrazit filtry",
+    "habitDisplay_searchFilter_clearFilter": "Vymazat filtry",
+    "habitDisplay_tab_habits_label": "Zvyky",
+    "habitDisplay_tab_today_label": "Dnes",
+    "habitToday_appBar_title": "Dnes",
+    "habitToday_card_donePlusButton_label": "Hotovo+",
+    "@habitToday_card_donePlusButton_label": {
+        "description": "Button label for completing today's habit with dialog"
+    },
+    "habitToday_card_skipPlusButton_label": "Přeskočit+",
+    "@habitToday_card_skipPlusButton_label": {
+        "description": "Button label for skipping today's habit with dialog"
+    },
+    "habitDetail_editPopMenu_export": "Export",
+    "habitDetail_editPopMenu_delete": "Smazat",
+    "habitDetail_editPopMenu_clone": "Šablona",
     "habitDetail_confirmDialog_confirm": "Potvrdit",
+    "habitDetail_confirmDialog_cancel": "zrušit",
+    "habitDetail_archiveConfirmDialog_titleText": "Zaarchivovat zvyk?",
+    "habitDetail_unarchiveConfirmDialog_titleText": "Vyndat zvyk zpět z archivu?",
+    "habitDetail_deleteConfirmDialog_titleText": "Smazat návyk?",
+    "habitDetail_summary_title": "Souhrn",
+    "habitDetail_descDailyGoal_unitText": "Jednotka: {unit}",
+    "@habitDetail_descDailyGoal_unitText": {
+        "placeholders": {
+            "unit": {
+                "type": "String",
+                "example": "M/S"
+            }
+        }
+    },
+    "habitDetail_descTargetDays_unitText": "d",
+    "habitDetail_descRecordsNum_titleText": "Záznamy",
+    "habitDetail_scoreChart_title": "Hodnocení",
+    "habitDetail_scoreChartCombine_dailyText": "Den",
+    "habitDetail_scoreChartCombine_weeklyText": "Týden",
+    "habitDetail_scoreChartCombine_monthlyText": "Měsíc",
+    "habitDetail_scoreChartCombine_yearlyText": "Rok",
+    "habitDetail_freqChart_freqTitle": "Četnost",
+    "habitDetail_freqChart_historyTitle": "Historie",
+    "habitDetail_freqChartCombine_weeklyText": "Týden",
+    "habitDetail_freqChartCombine_monthlyText": "Měsíc",
+    "habitDetail_freqChartCombine_yearlyText": "Rok",
+    "habitDetail_freqChartNaviBar_nowText": "Nyní",
+    "habitDetail_descSubgroup_title": "Pozn.",
+    "habitDetail_otherSubgroup_title": "Ostatní",
+    "habitDetail_habitType_title": "Typ",
+    "habitDetail_reminderTile_title": "Připomínka",
+    "habitDetail_freqTile_title": "Opakovat",
+    "habitDetail_startDateTile_title": "Datum zahájení",
+    "habitDetail_createDateTile_title": "Vytvořeno",
+    "habitDetail_modifyDateTile_title": "Změněno",
+    "habitDetail_editHeatmapCal_dateButtonText": "datum",
+    "habitDetail_editHeatmapCal_valueButtonText": "hodnota",
+    "common_loadError_retryText": "Zkusit znovu",
+    "habitDetail_notFoundRetryText": "Zkusit znovu",
+    "habitDetail_changeGoal_title": "Změnit cíl",
+    "habitDetail_changeGoal_currentChipText": "stávající: {goal}",
+    "@habitDetail_changeGoal_currentChipText": {
+        "placeholders": {
+            "goal": {
+                "type": "String",
+                "example": "1.5"
+            }
+        }
+    },
+    "habitDetail_changeGoal_doneChipText": "hotovo: {goal}",
+    "@habitDetail_changeGoal_doneChipText": {
+        "placeholders": {
+            "goal": {
+                "type": "String",
+                "example": "1.5"
+            }
+        }
+    },
+    "habitDetail_changeGoal_undoneChipText": "zrušit dokončení",
+    "habitDetail_changeGoal_extraChipText": "{goal}",
+    "@habitDetail_changeGoal_extraChipText": {
+        "placeholders": {
+            "goal": {
+                "type": "String",
+                "example": "1.5"
+            }
+        }
+    },
+    "habitDetail_changeGoal_cancelText": "zrušit",
+    "habitDetail_changeGoal_saveText": "uložit",
+    "habitDetail_skipReason_title": "Důvod přeskočení",
+    "habitDetail_skipReason_cancelText": "zrušit",
+    "habitDetail_skipReason_saveText": "uložit",
     "appSetting_appbar_titleText": "Nastavení",
+    "appSetting_displaySubgroupText": "Zobrazení",
+    "appSetting_operationSubgroupText": "Operace",
+    "appSetting_expandTimerDelay_default": "Výchozí",
+    "appSetting_expandTimerDelay_fast": "Rychlé",
+    "appSetting_expandTimerDelay_slow": "Pomalé",
+    "appSetting_appThemeColorTile_titleText": "Barva vzhledu",
     "appSetting_firstDayOfWeek_titleText": "První den v týdnu",
+    "appSetting_firstDayOfWeekDialog_defaultText": " (Výchozí)",
+    "appSetting_changeLanguage_followSystem_noLocale_text": "Podle systému",
     "appSetting_changeLanguageTile_titleText": "Jazyk",
     "appSetting_changeLanguageDialog_titleText": "Vyberte jazyk",
+    "appSetting_languageSubgroupText": "Jazyk",
+    "appSetting_collapsed_calendar_bararea_defaultText": "Výchozí",
+    "appSetting_dailyReminder_titleText": "Denní připomenutí",
     "appSetting_backupAndRestoreSubgroupText": "Záloha a obnovení",
+    "appSetting_export_titleText": "Export",
+    "appSetting_import_titleText": "Import",
+    "appSetting_importConfirmDialog_sourceLabel": "Zdroj: {provider}",
+    "@appSetting_importConfirmDialog_sourceLabel": {
+        "placeholders": {
+            "provider": {
+                "type": "String",
+                "description": "Third-party provider display name"
+            }
+        }
+    },
+    "appSetting_importDialog_confirm_confirmText": "Potvrdit",
+    "appSetting_importDialog_confirm_cancelText": "zrušit",
+    "appSetting_importDialog_importingTitle": "Naimportováno {completeCount}/{totalCount}",
+    "@appSetting_importDialog_importingTitle": {
+        "placeholders": {
+            "completeCount": {
+                "type": "int",
+                "example": "1"
+            },
+            "totalCount": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_importDialog_complete_closeLabel": "zavřít",
+    "appSetting_resetConfig_titleText": "Resetovat nastavení",
+    "appSetting_resetConfigDialog_titleText": "Resetovat nastavení?",
+    "appSetting_resetConfigDialog_cancelText": "zrušit",
+    "appSetting_resetConfigDialog_confirmText": "potvrdit",
+    "appSetting_otherSubgroupText": "Ostatní",
+    "appSetting_developMode_titleText": "Režim pro vývojáře",
+    "appSetting_clearCache_titleText": "Vymazat mezipaměť",
+    "appSetting_clearCacheDialog_titleText": "Vymazat mezipaměť",
+    "appSetting_clearCacheDialog_cancelText": "zrušit",
+    "appSetting_clearCacheDialog_confirmText": "potvrdit",
+    "appSetting_debugger_titleText": "Ladící informace",
+    "appSetting_about_titleText": "O aplikaci",
+    "appSetting_experimentalFeatureTile_titleText": "Experimentální funkce",
+    "appSetting_synSubgroupText": "Synchr.",
+    "appSetting_syncOption_titleText": "Možnosti synchronizace",
+    "appSetting_notify_titleTile": "Notifikace",
+    "appSync_nowTile_titleText": "Synchronizovat nyní",
+    "appSync_nowTile_titleText_syncing": "Synchronizuje se",
+    "appSync_nowTile_dateFormat": "{ymd} {jms}",
+    "@appSync_nowTile_dateFormat": {
+        "placeholders": {
+            "ymd": {
+                "type": "DateTime",
+                "format": "yMd"
+            },
+            "jms": {
+                "type": "DateTime",
+                "format": "jms"
+            }
+        }
+    },
+    "appSync_nowTile_syncingText": "Synchronizování…",
+    "appSync_nowTile_syncingText_withPrt": "Synchronizování: {prt}",
+    "@appSync_nowTile_syncingText_withPrt": {
+        "placeholders": {
+            "prt": {
+                "type": "num",
+                "description": "Current sync progress percentage (0-100).",
+                "format": "decimalPercentPattern",
+                "optionalParameters": {
+                    "decimalDigits": 2
+                }
+            }
+        }
+    },
+    "appSync_nowTile_cancellingText": "Rušení…",
+    "appSync_failedTile_errorText": "[Error]: {info}",
+    "@appSync_failedTile_errorText": {
+        "placeholders": {
+            "info": {
+                "type": "String",
+                "description": "Error information."
+            }
+        }
+    },
+    "appSync_failedTile_webdavMulti_counterText": "{reason}: {count}",
+    "@appSync_failedTile_webdavMulti_counterText": {
+        "placeholders": {
+            "reason": {
+                "type": "String"
+            },
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "appSync_webdav_newServerConfirmDialog_titleText": "Nové umístění",
+    "appSync_webdav_newServerConfirmDialog_confirmText": "Synchronizovat nyní!",
+    "appSync_webdav_oldServerConfirmDialog_titleText": "Potvrdit synchronizaci",
+    "appSync_webdav_oldServerConfirmDialog_confirmText": "Potvrdit sloučení",
+    "appSync_syncIntervalTile_title": "Interval načítání",
+    "appSync_summaryTile_title": "Synchronizační server",
+    "appSync_summaryTile_subtitle_text_notConfigured": "Nenastaveno",
+    "appSync_serverEditor_exitDialog_titleText": "Neuložené změny",
+    "appSync_serverEditor_deleteDialog_titleText": "Potvrdit smazání",
+    "appSync_serverEditor_advance_titleText": "Pokročilá nastavení",
+    "appSync_serverEditor_pathTile_titleText": "Popis umístění",
+    "appSync_serverEditor_usernameTile_titleText": "Uživatelské jméno",
+    "appSync_serverEditor_passwordTile_titleText": "Heslo",
+    "appSync_serverEditor_connTimeoutTile_unitText": "s",
+    "experimentalFeatures_habitSearchTile_titleText": "Hledání návyku",
+    "appAbout_appbarTile_titleText": "O aplikaci",
+    "appAbout_versionTile_titleText": "Verze: {appVersion}",
+    "@appAbout_versionTile_titleText": {
+        "placeholders": {
+            "appVersion": {
+                "type": "String",
+                "example": "1.0.0"
+            }
+        }
+    },
+    "appAbout_versionTile_changeLogPath": "CHANGELOG.md",
+    "appAbout_sourceCodeTile_titleText": "Zdrojové kódy",
+    "appAbout_issueTrackerTile_titleText": "Systém pro správu hlášení chyb",
+    "appAbout_contactEmailTile_titleText": "Kontaktujte mě",
+    "appAbout_licenseTile_titleText": "Licence",
+    "appAbout_licenseThirdPartyTile_subtitleText": "flutter",
+    "appAbout_privacyTile_titleText": "Soukromí",
+    "appAbout_donateTile_titleText": "Podpořit darováním",
+    "appAbout_donateTile_ways": "@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll",
+    "@appAbout_donateTile_ways": {
+        "description": "Donate begin with `@` and split with `,`, available ways: paypal, buyMeACoffee, alipay, wechatPay"
+    },
+    "donateWay_paypal": "Paypal",
+    "donateWay_alipay": "Alipay",
+    "donateWay_wechatPay": "Wechat Pay",
+    "donateWay_cryptoCurrency": "Kryptoměny",
+    "donateWay_cryptoCurrency_BTC": "BTC",
+    "donateWay_cryptoCurrency_ETH": "ETH",
+    "donateWay_cryptoCurrency_BNB": "BNB",
+    "donateWay_cryptoCurrency_AVAX": "AVAX",
+    "donateWay_cryptoCurrency_FTM": "FTM",
+    "batchCheckin_appbar_title": "Dávkové check-in",
+    "batchCheckin_datePicker_prevButton_tooltip": "Předchozí den",
+    "batchCheckin_datePicker_nextButton_tooltip": "Následující den",
+    "batchCheckin_status_skip_text": "Přeskočit",
+    "batchCheckin_status_ok_text": "Dokončeno",
+    "batchCheckin_status_double_text": "Dvojnásobný zásah!",
+    "batchCheckin_status_zero_text": "Nedokončeno",
     "batchCheckin_save_button_text": "Uložit",
+    "batchCheckin_reset_button_text": "Resetovat",
+    "batchCheckin_save_confirmDialog_confirmButton_text": "uložit",
+    "batchCheckin_save_confirmDialog_cancelButton_text": "zrušit",
+    "batchCheckin_close_confirmDialog_title": "Potvrdit návrat",
+    "batchCheckin_close_confirmDialog_confirmButton_text": "ukončit",
+    "batchCheckin_close_confirmDialog_cancelButton_text": "zrušit",
+    "common_habitColorType_cc1": "Tmavě šeříková",
+    "common_habitColorType_cc2": "Červená",
+    "common_habitColorType_cc3": "Purpurová",
+    "common_habitColorType_cc4": "Královská modrá",
+    "common_habitColorType_cc5": "Tmavě azurová",
+    "common_habitColorType_cc6": "Zelená",
+    "common_habitColorType_cc7": "Jantarová",
+    "common_habitColorType_cc8": "Oranžová",
+    "common_habitColorType_cc9": "Limetová zelená",
+    "common_habitColorType_cc10": "Tmavá orchidej",
+    "common_habitColorType_custom": "Uživatelsky určené",
+    "common_habitColorType_default": "Barva {index}",
+    "@common_habitColorType_default": {
+        "description": "unknown habit color type name",
+        "placeholders": {
+            "index": {
+                "type": "int",
+                "example": "0"
+            }
+        }
+    },
+    "common_appThemeColor_system": "Systémové",
+    "common_appThemeColor_primary": "Hlavní",
+    "common_appThemeColor_dynamic": "Dynamické",
+    "common_customDateTimeFormatPicker_fmtTileText": "Formát data",
+    "common_customDateTimeFormatPicker_SepTileText": "Oddělovač",
+    "common_customDateTimeFormatPicker_sepDash_text": "Pomlčka",
+    "common_customDateTimeFormatPicker_sepSlash_text": "Dopředné lomítko",
+    "common_customDateTimeFormatPicker_sepSpace_text": "Mezera",
+    "common_customDateTimeFormatPicker_sepDot_text": "Tečka",
+    "common_customDateTimeFormatPicker_empty_text": "Bez oddělovače",
+    "common_customDateTimeFormatPicker_sep_formatter": "{splitName}: „{splitChar}“",
+    "@common_customDateTimeFormatPicker_sep_formatter": {
+        "description": "split char",
+        "placeholders": {
+            "splitName": {
+                "type": "String",
+                "example": "Dash"
+            },
+            "splitChar": {
+                "type": "String",
+                "example": "/"
+            }
+        }
+    },
+    "common_customDateTimeFormatPicker_cancelButton_text": "zrušit",
+    "common_customDateTimeFormatPicker_confirmButton_text": "potvrdit",
+    "common_errorPage_title": "Jejda, zhavarovalo!",
+    "common_enable_text": "Povoleno",
+    "calendarPicker_clip_today": "Dnes",
+    "calendarPicker_clip_tomorrow": "Zítra",
+    "calendarPicker_clip_after7Days": "Příští {date}",
+    "@calendarPicker_clip_after7Days": {
+        "placeholders": {
+            "date": {
+                "type": "DateTime",
+                "format": "E"
+            }
+        }
+    },
+    "exportConfirmDialog_option_includeRecords": "zahrnout záznamy",
+    "exportConfirmDialog_cancel_buttonText": "zrušit",
+    "exportConfirmDialog_confirm_buttonText": "export",
+    "debug_logLevelTile_title": "Stupeň podrobnosti zaznamenávání událostí",
+    "debug_logLevel_debug": "Ladění",
+    "debug_logLevel_info": "Pro informaci",
+    "debug_logLevel_warn": "Varování",
+    "debug_logLevel_error": "Chyba",
+    "debug_logLevel_fatal": "Fatální",
+    "debug_collectLogTile_title": "Shromažďování záznamů událostí",
+    "debug_downladDebugZip_subject": "Stahování {fileName}",
+    "@debug_downladDebugZip_subject": {
+        "placeholders": {
+            "fileName": {
+                "type": "String",
+                "example": "debug.zip"
+            }
+        }
+    },
+    "debug_debuggerLogCard_title": "Informace záznamu událostí",
+    "debug_debuggerLogCard_saveButton_text": "Stáhnout",
+    "debug_debuggerLogCard_clearButton_text": "Vyčištit",
+    "debug_debuggerInfoCard_title": "Ladící informace",
+    "debug_debuggerInfoCard_openButton_text": "Otevřít",
     "debug_debuggerInfoCard_saveButton_text": "Uložit",
+    "confirmDialog_cancel_text": "Zrušit",
+    "snackbar_undoText": "ZPĚT",
+    "snackbar_dismissText": "ZAHODIT",
+    "contributors_tile_title": "Přispěvatelé",
+    "userAction_tap": "Klepnutí",
+    "userAction_doubleTap": "Dvojité",
+    "userAction_longTap": "Dlouhé",
+    "channelName_habitReminder": "Připomínka návyku",
+    "channelName_appReminder": "Dotázat",
+    "channelName_appDebugger": "Nástroj pro ladění",
+    "channelName_appSyncing": "Proces synchronizace",
+    "channelName_appSyncFailed": "Synchronizace se nezdařila",
     "changelog_banner_title": "What's New in v{version}",
     "@changelog_banner_title": {
         "description": "Title in the MaterialBanner showing the current version changelog on first open after upgrade.",
@@ -180,20 +556,92 @@
             }
         }
     },
-    "changelog_banner_action": "CLOSE",
+    "changelog_banner_action": "ZAVŘÍT",
     "@changelog_banner_action": {
         "description": "Dismiss button label on the changelog MaterialBanner."
     },
-    "changelog_banner_view": "VIEW",
+    "changelog_banner_view": "ZOBRAZIT",
     "@changelog_banner_view": {
         "description": "View button label on the changelog MaterialBanner that opens the full changelog dialog."
     },
-    "changelog_dialog_title": "Changelog",
+    "changelog_dialog_title": "Seznam změn",
     "changelog_view_full": "View Full Changelog",
     "@changelog_view_full": {
         "description": "Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content."
     },
-    "habitDisplay_groupType_manual": "Moje pořadí",
+    "habitDetail_groupTile_title": "Skupina",
+    "@habitDetail_groupTile_title": {
+        "description": "Title for the group info tile on the habit detail page"
+    },
+    "habitEdit_groupTile_title": "Skupina",
+    "@habitEdit_groupTile_title": {
+        "description": "Title for the group selector tile on the habit edit page"
+    },
+    "groupManage_deleteDialog_confirm": "Smazat",
+    "@groupManage_deleteDialog_confirm": {
+        "description": "Confirm button text for delete dialog"
+    },
+    "groupManage_deleteDialog_cancel": "Zrušit",
+    "@groupManage_deleteDialog_cancel": {
+        "description": "Cancel button text for delete dialog"
+    },
+    "groupManage_undo_snackbarAction": "Zpět",
+    "@groupManage_undo_snackbarAction": {
+        "description": "SnackBar undo button text"
+    },
+    "groupManage_name_label": "Název",
+    "@groupManage_name_label": {
+        "description": "Label for the group name input field"
+    },
+    "groupManage_desc_label": "Popis",
+    "@groupManage_desc_label": {
+        "description": "Label for the group description input field"
+    },
+    "groupManage_sectionTitle_text": "Skupiny",
+    "@groupManage_sectionTitle_text": {
+        "description": "Section header text for Groups in Settings page"
+    },
+    "groupManage_createDateTile_title": "Vytvořeno",
+    "@groupManage_createDateTile_title": {
+        "description": "Label shown for the group creation date in the edit dialog"
+    },
+    "groupManage_modifyDateTile_title": "Změněno",
+    "@groupManage_modifyDateTile_title": {
+        "description": "Label shown for the group modification date in the edit dialog"
+    },
+    "groupManage_icon_label": "Ikona",
+    "@groupManage_icon_label": {
+        "description": "Section label for the icon picker in group create/edit forms"
+    },
+    "groupManage_icon_none": "Žádná",
+    "@groupManage_icon_none": {
+        "description": "Tooltip for the 'no icon' option in the group icon picker"
+    },
+    "groupManage_color_label": "Barva",
+    "@groupManage_color_label": {
+        "description": "Section label for the color picker in group create/edit forms"
+    },
+    "groupManage_color_none": "Žádná",
+    "@groupManage_color_none": {
+        "description": "Tooltip for the 'no color' option in the group color picker"
+    },
+    "groupManage_menu_edit": "Upravit",
+    "@groupManage_menu_edit": {
+        "description": "Menu item label for editing a group"
+    },
+    "groupManage_menu_delete": "Smazat",
+    "@groupManage_menu_delete": {
+        "description": "Menu item label for deleting a group"
+    },
+    "groupManage_selectAll": "Vybrat vše",
+    "@groupManage_selectAll": {
+        "description": "Button in selection mode AppBar to select or deselect all groups"
+    },
+    "groupHeader_menu_manage": "Spravovat",
+    "@groupHeader_menu_manage": {
+        "description": "Menu item on Group header long-press to navigate to the group management page"
+    },
+    "habitDisplay_groupType_manual": "Ručně",
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
     }
