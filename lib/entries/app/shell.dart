@@ -84,25 +84,28 @@ class _AppNavigationShellState extends State<AppNavigationShell> {
 
   @override
   Widget build(BuildContext context) {
-    return ColorfulNavibar(
-      child: L10nBuilder(
-        builder: (context, l10n) => AdaptiveNavigationShell(
-          selectedIndex: widget.coordinator.selectedIndex,
-          compactRouteVisible: widget.coordinator.compactRouteVisible,
-          destinations: [
-            NavigationDestination(
-              icon: const Icon(Icons.home_outlined),
-              selectedIcon: const Icon(Icons.home),
-              label: l10n?.habitDisplay_tab_habits_label ?? 'Habits',
-            ),
-            NavigationDestination(
-              icon: const Icon(MdiIcons.calendarTodayOutline),
-              selectedIcon: const Icon(MdiIcons.calendarToday),
-              label: l10n?.habitDisplay_tab_today_label ?? 'Today',
-            ),
-          ],
-          onDestinationSelected: widget.coordinator.selectBranch,
-          child: widget.child,
+    return PopScope<void>(
+      canPop: !widget.coordinator.activeBranchCanPop,
+      child: ColorfulNavibar(
+        child: L10nBuilder(
+          builder: (context, l10n) => AdaptiveNavigationShell(
+            selectedIndex: widget.coordinator.selectedIndex,
+            compactRouteVisible: widget.coordinator.compactRouteVisible,
+            destinations: [
+              NavigationDestination(
+                icon: const Icon(Icons.home_outlined),
+                selectedIcon: const Icon(Icons.home),
+                label: l10n?.habitDisplay_tab_habits_label ?? 'Habits',
+              ),
+              NavigationDestination(
+                icon: const Icon(MdiIcons.calendarTodayOutline),
+                selectedIcon: const Icon(MdiIcons.calendarToday),
+                label: l10n?.habitDisplay_tab_today_label ?? 'Today',
+              ),
+            ],
+            onDestinationSelected: widget.coordinator.selectBranch,
+            child: widget.child,
+          ),
         ),
       ),
     );
@@ -140,6 +143,7 @@ class AppNavigationCoordinator extends ChangeNotifier {
 
   int get selectedIndex => _selectedIndex;
   bool get compactRouteVisible => _compactRouteVisible;
+  bool get activeBranchCanPop => (_activeBranchObserver?.depth ?? 0) > 1;
 
   void attachTabShell(StatefulNavigationShell navigationShell) {
     _navigationShell = navigationShell;

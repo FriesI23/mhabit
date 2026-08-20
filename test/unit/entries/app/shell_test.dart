@@ -1,10 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mhabit/entries/app/shell.dart';
 import 'package:mhabit/models/app_entry.dart';
 import 'package:mhabit/providers/app_ui/app_launch_entry.dart';
+import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
@@ -119,9 +122,39 @@ Future<void> _pumpApp(
   return tester.pumpWidget(
     ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
       value: launchEntry,
-      child: MaterialApp.router(routerConfig: router),
+      child: MaterialApp.router(
+        routerConfig: router,
+        theme: ThemeData(
+          pageTransitionsTheme: const PageTransitionsTheme(
+            builders: {
+              TargetPlatform.android:
+                  CustomPredictiveBackPageTransitionsBuilder(),
+            },
+          ),
+        ),
+      ),
     ),
   );
+}
+
+Future<void> _commitPredictiveBack(WidgetTester tester) async {
+  for (final call in [
+    const MethodCall('startBackGesture', <String, dynamic>{
+      'touchOffset': <double>[5.0, 300.0],
+      'progress': 0.0,
+      'swipeEdge': 0,
+    }),
+    const MethodCall('commitBackGesture'),
+  ]) {
+    final message = const StandardMethodCodec().encodeMethodCall(call);
+    await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+      'flutter/backgesture',
+      message,
+      (data) {},
+    );
+    await tester.pump();
+  }
+  await tester.pumpAndSettle();
 }
 
 void main() {
@@ -217,6 +250,28 @@ void main() {
   testWidgets('keeps detail chrome hidden across an unnamed branch dialog', (
     tester,
   ) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.android;
+    final frameworkHandlesBack = <bool>[];
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        if (call.method == 'SystemNavigator.setFrameworkHandlesBack') {
+          frameworkHandlesBack.add(call.arguments as bool);
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+    await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+      'flutter/lifecycle',
+      const StringCodec().encodeMessage(AppLifecycleState.resumed.toString()),
+      (data) {},
+    );
     _setCompactSurface(tester);
     final observers = [
       AdaptiveBranchRouteObserver(),
@@ -236,18 +291,19 @@ void main() {
 
     showDialog<void>(
       context: detailContext,
-      useRootNavigator: false,
       builder: (context) => const AlertDialog(title: Text('dialog')),
     );
     await tester.pumpAndSettle();
 
     expect(find.text('dialog'), findsOneWidget);
-    expect(observers[0].routeNameStack, ['habits', 'habits-detail', null]);
+    expect(observers[0].routeNameStack, ['habits', 'habits-detail']);
     expect(AdaptiveNavScope.of(detailContext).visible.value, isFalse);
 
-    Navigator.of(detailContext).pop();
-    await tester.pumpAndSettle();
+    await _commitPredictiveBack(tester);
 
+    expect(find.text('dialog'), findsNothing);
+    expect(find.text('detail page'), findsOneWidget);
+    expect(frameworkHandlesBack.last, isTrue);
     expect(observers[0].routeNameStack, ['habits', 'habits-detail']);
     expect(
       AdaptiveNavScope.of(
@@ -255,6 +311,14 @@ void main() {
       ).visible.value,
       isFalse,
     );
+
+    await Navigator.maybePop(tester.element(find.text('detail page')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('detail page'), findsNothing);
+    expect(find.text('habits page'), findsOneWidget);
+    expect(observers[0].routeNameStack, ['habits']);
+    debugDefaultTargetPlatformOverride = null;
   });
 
   testWidgets('shows compact chrome after leaving a hidden detail branch', (
