@@ -19,10 +19,9 @@ class AdaptiveNavScope extends InheritedWidget {
     required this.barHeight,
     required this.navHeight,
     required super.child,
-    AdaptiveNavVisibilityController? visible,
-    AdaptiveScrollWishController? scrollWish,
-  }) : _visible = visible,
-       _scrollWish = scrollWish;
+    this._visible,
+    this._scrollWish,
+  });
 
   final AdaptiveNavVisibilityController? _visible;
   final AdaptiveScrollWishController? _scrollWish;

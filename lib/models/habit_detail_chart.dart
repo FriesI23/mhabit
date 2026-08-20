@@ -70,18 +70,14 @@ class HabitDetailFreqChartData {
     int autoComplate = 0,
     int complate = 0,
     int overfulfil = 0,
-    num partiallyCompletedTotalValue = 0,
-    num autoComplateTotalValue = 0,
-    num complateTotalValue = 0,
-    num overfulfilTotalValue = 0,
+    this._partiallyCompletedTotalValue = 0,
+    this._autoComplateTotalValue = 0,
+    this._complateTotalValue = 0,
+    this._overfulfilTotalValue = 0,
   }) : _partiallyCompleted = partiallyCompleted,
        _autoComplate = autoComplate,
        _complate = complate,
        _overfulfil = overfulfil,
-       _partiallyCompletedTotalValue = partiallyCompletedTotalValue,
-       _autoComplateTotalValue = autoComplateTotalValue,
-       _complateTotalValue = complateTotalValue,
-       _overfulfilTotalValue = overfulfilTotalValue,
        assert(
          partiallyCompleted >= 0 &&
              autoComplate >= 0 &&

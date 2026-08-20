@@ -22,7 +22,8 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.26.10+183-pre
 
 environment:
-  sdk: ">=3.11.0 <4.0.0"
+  sdk: ">=3.12.0 <4.0.0"
+  flutter: ">=3.44.0"
 
 workspace:
   - tools
@@ -170,10 +171,10 @@ dependencies:
   markdown_widget: ^2.3.2+8
   url_launcher: ^6.1.10
   package_info_plus: ^10.1.0
-  copy_with_extension: ^15.0.1
+  copy_with_extension: ^17.0.0
   json_annotation: ^4.12.0
   win2iana_tz_converter: ^0.1.3
-  open_file: ^3.5.10
+  open_file: ^4.0.0
   archive: ^4.0.2
   simple_webdav_client: ^0.2.0
   retry: ^3.1.2
@@ -216,7 +217,7 @@ dependencies:
 
   # Animation
   animated_check: ^1.0.5
-  animations: ^2.0.7
+  animations: ^3.0.0
 
   # logging
   logger: ^2.1.0
@@ -247,11 +248,11 @@ dev_dependencies:
   mockito: ^5.4.4
 
   # Code Generation
-  analyzer: ^10.0.1
+  analyzer: ^12.1.0
   build_runner: ^2.3.3
   mhabit_color_builder: any
   mhabit_proxy_builder: any
-  copy_with_extension_gen: ^15.0.1
+  copy_with_extension_gen: ^17.0.0
   flutter_gen: ^5.2.0
   flutter_gen_runner: ^5.2.0
   json_serializable: ^6.6.1

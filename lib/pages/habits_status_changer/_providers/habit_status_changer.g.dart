@@ -31,7 +31,6 @@ class _$HabitStatusChangerFormCWProxyImpl
 
   final HabitStatusChangerForm _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -39,6 +38,7 @@ class _$HabitStatusChangerFormCWProxyImpl
   /// ```dart
   /// HabitStatusChangerForm(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   HabitStatusChangerForm call({
     Object? selectDate = const $CopyWithPlaceholder(),
     Object? selectStatus = const $CopyWithPlaceholder(),

@@ -25,7 +25,7 @@ enum HabitDisplayGroupType implements EnumWithDBCode {
 
   final int _code;
 
-  const HabitDisplayGroupType({required int code}) : _code = code;
+  const HabitDisplayGroupType({required this._code});
 
   @override
   int get dbCode => _code;

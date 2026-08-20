@@ -129,8 +129,7 @@ class HabitGroupModifyViewModel extends ChangeNotifier
   /// in create mode).
   List<HabitSummaryData> get selectedData => _selectedData;
 
-  HabitGroupModifyViewModel({required List<HabitSummaryData> selectedData})
-    : _selectedData = selectedData;
+  HabitGroupModifyViewModel({required this._selectedData});
 
   //#endregion
 

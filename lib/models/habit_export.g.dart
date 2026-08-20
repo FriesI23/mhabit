@@ -33,7 +33,6 @@ class _$RecordExportDataCWProxyImpl implements _$RecordExportDataCWProxy {
 
   final RecordExportData _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -41,6 +40,7 @@ class _$RecordExportDataCWProxyImpl implements _$RecordExportDataCWProxy {
   /// ```dart
   /// RecordExportData(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   RecordExportData call({
     Object? recordDate = const $CopyWithPlaceholder(),
     Object? recordType = const $CopyWithPlaceholder(),
@@ -124,7 +124,6 @@ class _$HabitExportDataCWProxyImpl implements _$HabitExportDataCWProxy {
 
   final HabitExportData _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -132,6 +131,7 @@ class _$HabitExportDataCWProxyImpl implements _$HabitExportDataCWProxy {
   /// ```dart
   /// HabitExportData(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   HabitExportData call({
     Object? createT = const $CopyWithPlaceholder(),
     Object? modifyT = const $CopyWithPlaceholder(),

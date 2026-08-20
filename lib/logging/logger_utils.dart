@@ -38,14 +38,13 @@ class ReplayAppLoggerStreamer<T extends AppLoggerMessage> {
   int _count = 0;
 
   ReplayAppLoggerStreamer({
-    required ReplaySubject<l.LogEvent> replaySubject,
+    required this._replaySubject,
     required this.printer,
     required this.outputer,
     this.startMessage,
     this.errorMessage,
     this.completeMessage,
-  }) : _replaySubject = replaySubject,
-       _completer = Completer();
+  }) : _completer = Completer();
 
   static ReplayAppLoggerStreamer<AppLoggerMessage> buildAppSyncFailed({
     required ReplaySubject<l.LogEvent> replaySubject,

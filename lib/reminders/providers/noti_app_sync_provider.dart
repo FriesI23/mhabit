@@ -306,8 +306,8 @@ final class AndroidNotiAppSyncProvider extends BaseNotiAppSyncProvider {
     required super.type,
     required super.data,
     required super.service,
-    L10n? l10n,
-  }) : _l10n = l10n;
+    this._l10n,
+  });
 
   factory AndroidNotiAppSyncProvider.generate({
     int? syncId,
@@ -419,8 +419,8 @@ final class DrawinNotiAppSyncProvider extends BaseNotiAppSyncProvider {
     required super.data,
     required super.service,
     this.delayed,
-    L10n? l10n,
-  }) : _l10n = l10n {
+    this._l10n,
+  }) {
     _syncTrKey = "id.$syncId.${type.code}";
     _throttle = delayed != null ? _NotiThrottle() : null;
   }
@@ -525,8 +525,8 @@ final class WindowsNotiAppSyncProvider extends BaseNotiAppSyncProvider {
     required super.type,
     required super.data,
     required super.service,
-    L10n? l10n,
-  }) : _l10n = l10n;
+    this._l10n,
+  });
 
   factory WindowsNotiAppSyncProvider.generate({
     int? syncId,
@@ -643,8 +643,8 @@ final class LinuxNotiAppSyncProvider extends BaseNotiAppSyncProvider {
     required super.data,
     required super.service,
     this.delayed,
-    L10n? l10n,
-  }) : _l10n = l10n {
+    this._l10n,
+  }) {
     _syncTrKey = "id.$syncId.${type.code}";
     _throttle = delayed != null ? _NotiThrottle() : null;
   }

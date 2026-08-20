@@ -70,8 +70,7 @@ class GroupManageViewModel extends ChangeNotifier
         AppEventLoaded,
         PopScopeHandler,
         AppEventSubscriber {
-  GroupManageViewModel({String? initialGroupUUID})
-    : _initialGroupUUID = initialGroupUUID;
+  GroupManageViewModel({this._initialGroupUUID});
 
   // dependencies
   GroupManager? _groupManager;

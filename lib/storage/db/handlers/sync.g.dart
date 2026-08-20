@@ -39,7 +39,6 @@ class _$SyncDBCellCWProxyImpl implements _$SyncDBCellCWProxy {
 
   final SyncDBCell _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -47,6 +46,7 @@ class _$SyncDBCellCWProxyImpl implements _$SyncDBCellCWProxy {
   /// ```dart
   /// SyncDBCell(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   SyncDBCell call({
     Object? id = const $CopyWithPlaceholder(),
     Object? createT = const $CopyWithPlaceholder(),

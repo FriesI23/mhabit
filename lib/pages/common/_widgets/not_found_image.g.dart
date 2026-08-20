@@ -33,7 +33,6 @@ class _$NotFoundImageStyleCWProxyImpl implements _$NotFoundImageStyleCWProxy {
 
   final NotFoundImageStyle _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -41,6 +40,7 @@ class _$NotFoundImageStyleCWProxyImpl implements _$NotFoundImageStyleCWProxy {
   /// ```dart
   /// NotFoundImageStyle(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   NotFoundImageStyle call({
     Object? backBoardBackgroundColor = const $CopyWithPlaceholder(),
     Object? backBoardPaperColor = const $CopyWithPlaceholder(),

@@ -29,8 +29,7 @@ abstract class ProfileHelperConvertHandler<S, T>
     implements ProfileHelperHandler<S> {
   final Codec<S, T> _codec;
 
-  const ProfileHelperConvertHandler({required Codec<S, T> codec})
-    : _codec = codec;
+  const ProfileHelperConvertHandler({required this._codec});
 
   @override
   Future<bool> set(S value) => setMethod.call(key, _codec.encode(value));

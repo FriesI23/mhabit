@@ -37,7 +37,6 @@ class _$RecordDBCellCWProxyImpl implements _$RecordDBCellCWProxy {
 
   final RecordDBCell _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -45,6 +44,7 @@ class _$RecordDBCellCWProxyImpl implements _$RecordDBCellCWProxy {
   /// ```dart
   /// RecordDBCell(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   RecordDBCell call({
     Object? id = const $CopyWithPlaceholder(),
     Object? parentId = const $CopyWithPlaceholder(),

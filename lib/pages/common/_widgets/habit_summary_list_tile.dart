@@ -67,8 +67,8 @@ class HabitSummaryListTile extends StatefulWidget {
     this.isSelected = false,
     this.selectColor,
     required this.data,
-    double? height,
-    EdgeInsets? titlePadding,
+    this._height,
+    this._titlePadding,
     this.itemPadding,
     this.collapsePrt,
     this.cellBuilder,
@@ -78,8 +78,7 @@ class HabitSummaryListTile extends StatefulWidget {
     this.onCellPressed,
     this.onCellLongPressed,
     this.onCellDoublePressed,
-  }) : _titlePadding = titlePadding,
-       _height = height;
+  });
 
   @override
   State<StatefulWidget> createState() => _HabitSummaryListTile();

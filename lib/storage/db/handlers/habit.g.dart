@@ -50,7 +50,6 @@ class _$HabitDBCellCWProxyImpl implements _$HabitDBCellCWProxy {
 
   final HabitDBCell _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -58,6 +57,7 @@ class _$HabitDBCellCWProxyImpl implements _$HabitDBCellCWProxy {
   /// ```dart
   /// HabitDBCell(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   HabitDBCell call({
     Object? id = const $CopyWithPlaceholder(),
     Object? type = const $CopyWithPlaceholder(),

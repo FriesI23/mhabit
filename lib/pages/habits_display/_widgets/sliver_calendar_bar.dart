@@ -46,10 +46,10 @@ class SliverCalendarBar extends StatefulWidget implements PreferredSizeWidget {
     this.endDate,
     required this.isExtended,
     this.collapsePrt,
-    double? height,
+    this._height,
     this.itemPadding,
     this.scrollPhysicsBuilder,
-  }) : _height = height;
+  });
 
   double get height => _height ?? kDefaultHabitCalendarBarHeight;
 

@@ -65,10 +65,9 @@ class ScrollingFAB extends StatelessWidget {
     this.labelSpaceBetween,
     this.elevation,
     required this.onPressed,
-    required ScrollingFABType type,
+    required this._type,
   }) : child = icon,
-       _extendedLabel = label,
-       _type = type;
+       _extendedLabel = label;
 
   const ScrollingFAB.small({
     super.key,

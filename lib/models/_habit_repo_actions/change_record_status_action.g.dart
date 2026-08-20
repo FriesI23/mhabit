@@ -33,7 +33,6 @@ class _$ChangeRecordStatusResultCWProxyImpl
 
   final ChangeRecordStatusResult _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -41,6 +40,7 @@ class _$ChangeRecordStatusResultCWProxyImpl
   /// ```dart
   /// ChangeRecordStatusResult(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   ChangeRecordStatusResult call({
     Object? habit = const $CopyWithPlaceholder(),
     Object? origin = const $CopyWithPlaceholder(),

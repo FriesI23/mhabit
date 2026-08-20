@@ -29,22 +29,18 @@ class HabitDetailData implements DirtyMarkMixin {
   final HabitGroupData? _groupData;
 
   HabitDetailData({
-    required HabitSummaryData data,
-    required DateTime modifyT,
-    required String dailyGoalUnit,
-    HabitGroupData? groupData,
-  }) : _data = data,
-       _modifyT = modifyT,
-       _dailyGoalUnit = dailyGoalUnit,
-       _groupData = groupData;
+    required this._data,
+    required this._modifyT,
+    required this._dailyGoalUnit,
+    this._groupData,
+  });
 
-  HabitDetailData.fromDBQueryCell(HabitDBCell cell, {HabitGroupData? groupData})
+  HabitDetailData.fromDBQueryCell(HabitDBCell cell, {this._groupData})
     : _data = HabitSummaryData.fromDBQueryCell(cell),
       _dailyGoalUnit = cell.dailyGoalUnit!,
       _modifyT = DateTime.fromMillisecondsSinceEpoch(
         cell.modifyT! * onSecondMS,
-      ),
-      _groupData = groupData;
+      );
 
   HabitSummaryData get data => _data;
 
