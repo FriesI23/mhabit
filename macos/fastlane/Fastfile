@@ -38,13 +38,6 @@ platform :mac do
   desc "Build Flutter app for a specified flavor (default: f_generic)"
   lane :build do |options|
     flavor = options[:flavor] || "f_generic"
-    sh <<~EOS
-      HOMEBREW_NO_AUTO_UPDATE=1 # disable homebrew's automatic updates.
-      brew install cocoapods
-      cd ../../macos
-      bundle check || bundle install
-      bundle exec pod install --no-repo-update
-    EOS
     sh "../../.flutter/bin/flutter build macos --flavor #{flavor} --config-only"
   end
 
