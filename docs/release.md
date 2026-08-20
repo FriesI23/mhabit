@@ -1,4 +1,4 @@
-# Release: v1.26.11+184-pre
+# Release: v1.26.12+185-pre
 
 ## 🌐 Localization
 
@@ -19,6 +19,8 @@
 
 ## 🐛 Fixes
 
+- Preserve consecutive back navigation for root dialogs and nested detail
+  pages, including gesture-driven navigation
 - Enable animated menus for search filters and group actions, while disabling
   the affected filterable-menu animation in debug builds to avoid a Flutter
   framework assertion (#644)
@@ -31,4 +33,4 @@
 - Add regression coverage for menu configuration, stack-trace parsing, and
   habit record queries (#644)
 
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.26.7+180...pre-v1.26.11+184)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.26.7+180...pre-v1.26.12+185)

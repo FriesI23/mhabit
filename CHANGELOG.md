@@ -2,13 +2,14 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.26.11+184-pre
+## 1.26.12+185-pre
 
 - Update Czech translation, thanks to Pavel Borecki's contribution on Weblate (#643)
 - Upgrade to Flutter 3.44.9 and refresh dependencies and build tooling (#644)
 - Enable menu animations for search filters and group actions, with safeguards
   for debug builds (#644)
 - Improve donation flow, error logging, and habit record query reliability (#644)
+- Preserve consecutive back navigation for dialogs and nested detail pages
 
 ## 1.26.10+183-pre
 
