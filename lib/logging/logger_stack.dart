@@ -24,17 +24,21 @@ class LoggerStackTrace implements StackTrace {
   });
 
   factory LoggerStackTrace.from(StackTrace trace) {
-    final frames = trace.toString().split('\n');
-    final functionName = _getFunctionNameFromFrame(frames[0]);
-    final callerFunctionName = _getFunctionNameFromFrame(frames[1]);
-    final fileInfo = _getFileInfoFromFrame(frames[0]);
+    final frames = trace
+        .toString()
+        .split('\n')
+        .where((frame) => frame.isNotEmpty)
+        .toList();
+    final firstFrame = frames.firstOrNull ?? '';
+    final callerFrame = frames.elementAtOrNull(1) ?? '';
+    final fileInfo = _getFileInfoFromFrame(firstFrame);
 
     return LoggerStackTrace._(
-      functionName: functionName,
-      callerFunctionName: callerFunctionName,
-      fileName: fileInfo[0],
-      lineNumber: int.parse(fileInfo[1]),
-      columnNumber: int.parse(fileInfo[2].replaceFirst(')', '')),
+      functionName: _getFunctionNameFromFrame(firstFrame),
+      callerFunctionName: _getFunctionNameFromFrame(callerFrame),
+      fileName: fileInfo.$1,
+      lineNumber: fileInfo.$2,
+      columnNumber: fileInfo.$3,
     );
   }
 
@@ -44,22 +48,20 @@ class LoggerStackTrace implements StackTrace {
   final int lineNumber;
   final int columnNumber;
 
-  static List<String> _getFileInfoFromFrame(String trace) {
-    final indexOfFileName = trace.indexOf(RegExp('[A-Za-z]+.dart'));
-    final fileInfo = trace.substring(indexOfFileName);
-
-    return fileInfo.split(':');
+  static (String, int, int) _getFileInfoFromFrame(String trace) {
+    final match = RegExp(
+      r'([A-Za-z0-9_]+\.dart):(\d+)(?::(\d+))?\)?',
+    ).firstMatch(trace);
+    return (
+      match?.group(1) ?? 'unknown.dart',
+      int.tryParse(match?.group(2) ?? '') ?? 0,
+      int.tryParse(match?.group(3) ?? '') ?? 0,
+    );
   }
 
   static String _getFunctionNameFromFrame(String trace) {
-    final indexOfWhiteSpace = trace.indexOf(' ');
-    final subStr = trace.substring(indexOfWhiteSpace);
-    final indexOfFunction = subStr.indexOf(RegExp('[A-Za-z0-9]'));
-
-    final endIndex = subStr.substring(indexOfFunction).indexOf(' ');
-    return subStr
-        .substring(indexOfFunction)
-        .substring(0, endIndex < 0 ? null : endIndex);
+    final match = RegExp(r'^#\d+\s+([^\s(]+)').firstMatch(trace.trim());
+    return match?.group(1) ?? 'unknown';
   }
 
   @override
