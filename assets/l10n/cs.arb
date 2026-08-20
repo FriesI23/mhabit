@@ -6,16 +6,25 @@
     },
     "appName": "Table Habit",
     "habitEdit_saveButton_text": "Uložit",
-    "habitEdit_habitName_hintText": "Název zvyku ...",
+    "habitEdit_habitName_hintText": "Název návyku …",
     "habitEdit_colorPicker_title": "Zvolte barvu",
     "habitEdit_colorPicker_historySectionLabel": "Nedávno použité",
+    "habitEdit_colorPicker_customSectionLabel": "{tinted, select, true {Custom (Uživatelsky určené)} false {Custom} other {Custom}}",
+    "@habitEdit_colorPicker_customSectionLabel": {
+        "placeholders": {
+            "tinted": {
+                "type": "String",
+                "description": "<bool>.toString()"
+            }
+        }
+    },
     "habitEdit_colorPicker_cancel": "Zrušit",
-    "habitEdit_colorPicker_tintToggleLabel": "Odstín motivu",
+    "habitEdit_colorPicker_tintToggleLabel": "Tónovat do motivu barev",
     "habitEdit_colorPicker_tintedLabel": "Tónované",
-    "habitEdit_colorPicker_untintedLabel": "Nezabarvené",
-    "habitEdit_colorPicker_tintToggleOnHint": "Odstíny mohou posunout výslednou barvu vůči té, kterou jste zvolili.",
+    "habitEdit_colorPicker_untintedLabel": "Netónované",
+    "habitEdit_colorPicker_tintToggleOnHint": "Tónování může posunout výslednou barvu vůči té, kterou jste vybrali.",
     "habitEdit_colorPicker_tintToggleOffHint": "Některé barvy mohou zhoršit čitelnost textu v případě světlého nebo tmavého motivu vzhledu.",
-    "habitEdit_habitTypeDialog_title": "Typ zvyku",
+    "habitEdit_habitTypeDialog_title": "Typ návyku",
     "habitEdit_habitType_positiveText": "Pozitivní",
     "habitEdit_habitType_negativeText": "Negativní",
     "habitEdit_habitDailyGoal_hintText": "Denní cíl, {number} je výchozí",
@@ -38,7 +47,7 @@
             }
         }
     },
-    "habitEdit_habitDailyGoal_errorText01": "denní cíl musí být > {number}",
+    "habitEdit_habitDailyGoal_errorText01": "je třeba, aby denní cíl byl > {number}",
     "@habitEdit_habitDailyGoal_errorText01": {
         "description": "minimum number for habit daily goal",
         "placeholders": {
@@ -48,7 +57,7 @@
             }
         }
     },
-    "habitEdit_habitDailyGoal_errorText02": "denní cíl musí být ≤ {number}",
+    "habitEdit_habitDailyGoal_errorText02": "je třeba, aby denní cíl byl ≤ {number}",
     "@habitEdit_habitDailyGoal_errorText02": {
         "description": "maximum number for habit daily goal",
         "placeholders": {
@@ -58,7 +67,7 @@
             }
         }
     },
-    "habitEdit_habitDailyGoal_negativeErrorText01": "denní cíl musí být ≥ {number}",
+    "habitEdit_habitDailyGoal_negativeErrorText01": "je třeba, aby denní cíl byl ≥ {number}",
     "@habitEdit_habitDailyGoal_negativeErrorText01": {
         "description": "minimum number for negative habit daily goal",
         "placeholders": {
@@ -80,7 +89,7 @@
     },
     "habitEdit_habitDailyGoalUnit_hintText": "Jednotka denního cíle",
     "habitEdit_habitDailyGoalExtra_hintText": "Očekávaný maximální denní cíl",
-    "habitEdit_habitDailyGoalExtra_errorText": "neplatná hodna, musí být prázdné, nebo ≥ {dailyGoal}",
+    "habitEdit_habitDailyGoalExtra_errorText": "neplatná hodnota – je třeba aby buď nebylo vyplněné nebo bylo ≥ {dailyGoal}",
     "@habitEdit_habitDailyGoalExtra_errorText": {
         "placeholders": {
             "dailyGoal": {
@@ -92,10 +101,41 @@
     "habitEdit_habitDailyGoalExtra_negativeHintText": "Maximální denní limit",
     "habitEdit_frequencySelector_title": "Zvolte četnost",
     "habitEdit_habitFreq_daily": "Denní",
-    "habitEdit_habitFreq_perweek_text": "%%time%% za týden",
+    "habitEdit_habitFreq_perweek_text": "%%time%% krát za týden",
     "habitEdit_habitFreq_permonth_text": "%%time%% krát za měsíc",
     "habitEdit_habitFreq_predayfreq_text": "%%time%% krát za %%day%% dnů",
     "habitEdit_habitFreq_show_daily": "Denní",
+    "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{Týdně} other{Alespoň {freq} krát týdně}}",
+    "@habitEdit_habitFreq_show_perweek": {
+        "placeholders": {
+            "freq": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{Měsíčně} other{Alespoň {freq} krát za měsíc}}",
+    "@habitEdit_habitFreq_show_permonth": {
+        "placeholders": {
+            "freq": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitEdit_habitFreq_show_perdayfreq": "{freq, plural, =1{Každé {days} dny} other{Alespoň {freq} krát za každé {days} dny}}",
+    "@habitEdit_habitFreq_show_perdayfreq": {
+        "placeholders": {
+            "freq": {
+                "type": "int",
+                "example": "1"
+            },
+            "days": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
     "habitEdit_targetDays_title": "{targetDays} dnů",
     "@habitEdit_targetDays_title": {
         "placeholders": {
@@ -130,35 +170,35 @@
             }
         }
     },
-    "habitEdit_reminderQuest_hintText": "Otázka, např. Cvičil jsi dnes?",
+    "habitEdit_reminderQuest_hintText": "Otázka, např. Cvičili jste dnes?",
     "habitEdit_reminder_dialogTitle": "Zvolte typ připomenutí",
     "habitEdit_reminder_dialogType_whenNeeded": "Kdy je třeba zkontrolovat",
     "habitEdit_reminder_dialogType_daily": "Denní",
     "habitEdit_reminder_dialogType_week": "Týdně",
     "habitEdit_reminder_dialogType_month": "Měsíčně",
-    "habitEdit_reminder_dialogConfirm": "Potvrdit",
-    "habitEdit_reminder_dialogCancel": "Zrušit",
+    "habitEdit_reminder_dialogConfirm": "potvrdit",
+    "habitEdit_reminder_dialogCancel": "zrušit",
     "habitEdit_reminder_cancelDialogTitle": "Potvrdit",
     "habitEdit_reminder_cancelDialogSubtitle": "Potvrzujete odstranění této připomínky",
-    "habitEdit_reminder_cancelDialogConfirm": "Potvrdit",
-    "habitEdit_reminder_cancelDialogCancel": "Zrušit",
-    "habitEdit_reminder_weekdayText_monday": "Po",
-    "habitEdit_reminder_weekdayText_tuesday": "Út",
-    "habitEdit_reminder_weekdayText_wednesday": "St",
-    "habitEdit_reminder_weekdayText_thursday": "Čt",
-    "habitEdit_reminder_weekdayText_friday": "Pá",
-    "habitEdit_reminder_weekdayText_saturday": "So",
-    "habitEdit_reminder_weekdayText_sunday": "Ne",
-    "habitEdit_desc_hintText": "Memo, podporuje Markdown",
+    "habitEdit_reminder_cancelDialogConfirm": "potvrdit",
+    "habitEdit_reminder_cancelDialogCancel": "zrušit",
+    "habitEdit_reminder_weekdayText_monday": "po",
+    "habitEdit_reminder_weekdayText_tuesday": "út",
+    "habitEdit_reminder_weekdayText_wednesday": "st",
+    "habitEdit_reminder_weekdayText_thursday": "čt",
+    "habitEdit_reminder_weekdayText_friday": "pá",
+    "habitEdit_reminder_weekdayText_saturday": "so",
+    "habitEdit_reminder_weekdayText_sunday": "ne",
+    "habitEdit_desc_hintText": "Poznámka (je možné použít Markdown formátování)",
     "habitEdit_create_datetime_prefix": "Vytvořeno: ",
     "habitEdit_modify_datetime_prefix": "Upraveno: ",
-    "habitDisplay_fab_text": "Nový zvyk",
+    "habitDisplay_fab_text": "Nový návyk",
     "habitDisplay_emptyImage_text_01": "I ta nejdelší cesta začíná jediným krokem",
     "habitDisplay_notFoundImage_text_01": "Žádné odpovídající návyky",
     "@habitDisplay_notFoundImage_text_01": {
         "description": "Displayed when no habits match the current search"
     },
-    "habitDisplay_notFoundImage_text_02": "Žádné odpovídající zvyky pro \"{keyword}\"",
+    "habitDisplay_notFoundImage_text_02": "Žádné odpovídající návyky pro „{keyword}“",
     "@habitDisplay_notFoundImage_text_02": {
         "description": "Displayed when no habits match the specified keyword",
         "placeholders": {
@@ -181,7 +221,7 @@
         }
     },
     "habitDisplay_unarchiveHabitsConfirmDialog_title": "Vrátit označené skupiny nazpět z archivu?",
-    "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "Potvrdit",
+    "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "potvrdit",
     "habitDisplay_unarchiveHabitsConfirmDialog_cancel": "zrušit",
     "habitDisplay_unarchiveHabitsSuccSnackbarText": "{count} návyků navráceno zpět z archivu",
     "@habitDisplay_unarchiveHabitsSuccSnackbarText": {
@@ -210,6 +250,16 @@
             "name": {
                 "type": "String",
                 "description": "Habit name."
+            }
+        }
+    },
+    "habitDisplay_exportHabitsSuccSnackbarText": "{count, plural, =1 {Návyk exportován.} other {Exportováno {count} návyků.}}",
+    "@habitDisplay_exportHabitsSuccSnackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of exported habits",
+                "example": "3"
             }
         }
     },
@@ -261,11 +311,72 @@
         }
     },
     "habitDisplay_groupModifyConfirm_bodyRemoveGroup": "Návykům bude odebrána jejich skupina",
+    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {{count} návyk se změní z „{fromGroup}“ na „{toGroup}“} other {{count} návyků se změní z „{fromGroup}“ na „{toGroup}“}}",
+    "@habitDisplay_groupModifyConfirm_bodyChangeStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits changing group"
+            },
+            "fromGroup": {
+                "type": "String",
+                "description": "Old group name"
+            },
+            "toGroup": {
+                "type": "String",
+                "description": "New group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyAddStat": "{count, plural, =1 {{count} nezařazený návyk bude přidán do „{toGroup}“} other {{count} nezařazených návyků bude přidáno do „{toGroup}“}}",
+    "@habitDisplay_groupModifyConfirm_bodyAddStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits being added"
+            },
+            "toGroup": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyRemoveStat": "{count, plural, =1 {{count} návyku bude odebrána jeho skupina} other {{count} návykům bude odebrána jejich skupina}}",
+    "@habitDisplay_groupModifyConfirm_bodyRemoveStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits being removed"
+            }
+        }
+    },
     "habitDisplay_groupModifyConfirm_nameSeparator": ", ",
+    "habitDisplay_groupModify_snackbarText": "{count, plural, =1 {Návyk přesunut do „{groupName}“} other {{count} návyků přesunuto do „{groupName}“}}",
+    "@habitDisplay_groupModify_snackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of modified habits"
+            },
+            "groupName": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModify_snackbarTextRemoved": "{count, plural, =1 {Návyku odebrána skupina} other {{count} návykům odebrány skupiny}}",
+    "@habitDisplay_groupModify_snackbarTextRemoved": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits"
+            }
+        }
+    },
     "habitDisplay_groupModify_undoFailed": "Skupina byla změněna odjinud – není možné provést navrácení zpět",
     "habitDisplay_sort_reverseText": "Obrácené",
     "habitDisplay_sortDirection_asc": "(Vzest)",
-    "habitDisplay_sortDirection_Desc": "(Popis)",
+    "habitDisplay_sortDirection_Desc": "(Sest)",
     "habitDisplay_sortType_manual": "Moje pořadí",
     "habitDisplay_sortType_name": "Podle názvu",
     "habitDisplay_sortType_colorType": "Podle barvy",
@@ -273,17 +384,17 @@
     "habitDisplay_sortType_startT": "Podle data zahájení",
     "habitDisplay_sortType_status": "Podle stavu",
     "habitDisplay_sortTypeDialog_title": "Seřadit",
-    "habitDisplay_sortTypeDialog_confirm": "Potvrdit",
+    "habitDisplay_sortTypeDialog_confirm": "potvrdit",
     "habitDisplay_sortTypeDialog_cancel": "zrušit",
     "habitDisplay_debug_debugSubgroup_title": "🛠️ Ladění",
-    "habitDisplay_searchBar_hintText": "Vyhledat zvyky",
+    "habitDisplay_searchBar_hintText": "Prohledat návyky",
     "habitDisplay_searchFilter_ongoing": "Probíhající",
     "habitDisplay_searchFilter_ongoing_desc": "Zobrazit návyky které jsou v tuto chvíli aktivní a probíhající (ne archivované nebo smazané).",
     "habitDisplay_searchFilter_completed": "Dokončené",
-    "habitDisplay_searchFilter_habitType_groupTitle": "Typ zvyku",
+    "habitDisplay_searchFilter_habitType_groupTitle": "Typ návyku",
     "habitDisplay_searchFilter_tooltips": "Zobrazit filtry",
     "habitDisplay_searchFilter_clearFilter": "Vymazat filtry",
-    "habitDisplay_tab_habits_label": "Zvyky",
+    "habitDisplay_tab_habits_label": "Návyky",
     "habitDisplay_tab_today_label": "Dnes",
     "habitToday_appBar_title": "Dnes",
     "habitToday_image_desc": "DOKÁZALI JSTE TO",
@@ -313,10 +424,10 @@
     "habitDetail_editPopMenu_export": "Export",
     "habitDetail_editPopMenu_delete": "Smazat",
     "habitDetail_editPopMenu_clone": "Šablona",
-    "habitDetail_confirmDialog_confirm": "Potvrdit",
+    "habitDetail_confirmDialog_confirm": "potvrdit",
     "habitDetail_confirmDialog_cancel": "zrušit",
     "habitDetail_archiveConfirmDialog_titleText": "Zaarchivovat zvyk?",
-    "habitDetail_unarchiveConfirmDialog_titleText": "Vyndat zvyk zpět z archivu?",
+    "habitDetail_unarchiveConfirmDialog_titleText": "Vrátit návyk nazpět z archivu?",
     "habitDetail_deleteConfirmDialog_titleText": "Smazat návyk?",
     "habitDetail_summary_title": "Souhrn",
     "habitDetail_summary_body": "Stávající známka je {score}, a je to {days} dnů od zahájení.",
@@ -341,12 +452,49 @@
             }
         }
     },
+    "habitDetail_heatmap_leftHelpText": "{habitType, plural, =1{NEÚPLNÝ} =2{NEDOSTATEČNÉ} other{}}",
+    "@habitDetail_heatmap_leftHelpText": {
+        "placeholders": {
+            "habitType": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{PŘESPLNĚN} =2{DOKONALÉ} other{}}",
+    "@habitDetail_heatmap_rightHelpText": {
+        "placeholders": {
+            "habitType": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_descDailyGoal_titleText": "{habitType, plural, =2{Práh} other{Cíl}}",
+    "@habitDetail_descDailyGoal_titleText": {
+        "placeholders": {
+            "habitType": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
     "habitDetail_descDailyGoal_unitText": "Jednotka: {unit}",
     "@habitDetail_descDailyGoal_unitText": {
         "placeholders": {
             "unit": {
                 "type": "String",
                 "example": "M/S"
+            }
+        }
+    },
+    "habitDetail_descDailyGoal_unitEmptyText": "nic",
+    "habitDetail_descTargetDays_titleText": "{habitType, plural, other{Dnů}}",
+    "@habitDetail_descTargetDays_titleText": {
+        "placeholders": {
+            "habitType": {
+                "type": "int",
+                "example": "1"
             }
         }
     },
@@ -543,7 +691,7 @@
     "appSetting_thirdPartyImport_error_noHabitsFound": "V importním souboru nenalezeny žádné návyky.",
     "appSetting_thirdPartyImport_error_parseError": "Importovaný soubor se nepodařilo zpracovat",
     "appSetting_thirdPartyImport_error_unknown": "Při importu došlo k neočekávané chybě.",
-    "appSetting_importDialog_confirm_confirmText": "Potvrdit",
+    "appSetting_importDialog_confirm_confirmText": "potvrdit",
     "appSetting_importDialog_confirm_cancelText": "zrušit",
     "appSetting_importDialog_importingTitle": "Naimportováno {completeCount}/{totalCount}",
     "@appSetting_importDialog_importingTitle": {
@@ -591,7 +739,7 @@
     "appSetting_clearCacheDialog_subtitleText": "Po vyčištění mezipaměti budou některé uživatelsky určené hodnoty obnoveny do výchozího stavu.",
     "appSetting_clearCacheDialog_cancelText": "zrušit",
     "appSetting_clearCacheDialog_confirmText": "potvrdit",
-    "appSetting_clearCache_snackBar_partSuccText": "Vymazání mezipaměti neúplného se nezdařilo",
+    "appSetting_clearCache_snackBar_partSuccText": "Vymazání mezipaměti neúplných se nezdařilo",
     "appSetting_clearCache_snackBar_succText": "Mezipaměť úspěšně vymazána",
     "appSetting_clearCache_snackBar_failText": "Vymazání mezipaměti se nezdařilo",
     "appSetting_debugger_titleText": "Ladící informace",
@@ -683,6 +831,37 @@
             }
         }
     },
+    "appSync_webdav_resultStatus": "{status, select, success {Dokončeno} cancelled {Zrušeno} failed {Nezdařilo se} multi {Vícero stavů} other {Neznámý stav}}",
+    "@appSync_webdav_resultStatus": {
+        "placeholders": {
+            "status": {
+                "type": "String",
+                "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+            }
+        }
+    },
+    "appSync_webdav_resultStatus_withReason": "{status, select, success {Dokončeno z důvodu {reason}} cancelled {Zrušeno z důvodu {reason}} failed {Nezdařilo se z důvodu {reason}} multi {Vícero stavů z důvodu {reason}} other {Neznámý stav}}",
+    "@appSync_webdav_resultStatus_withReason": {
+        "placeholders": {
+            "status": {
+                "type": "String",
+                "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+            },
+            "reason": {
+                "type": "String",
+                "description": "The reason for the status"
+            }
+        }
+    },
+    "appSync_webdav_resultReason": "{reason, select, error {Chyba} userAction {Je zapotřebí akce uživatele} missingHabitUuid {Chybí UUID návyku} empty {Prázdná data} other {Neznámý důvod}}",
+    "@appSync_webdav_resultReason": {
+        "placeholders": {
+            "reason": {
+                "type": "String",
+                "description": "The reason for the WebDAV AppSync task result, see: [WebDavAppSyncTaskResultSubStatus]"
+            }
+        }
+    },
     "appSync_webdav_newServerConfirmDialog_titleText": "Nové umístění",
     "appSync_webdav_newServerConfirmDialog_subtitleText": "Synchronizování vytvoří nezbytné složky a nahraje lokální návyky na server. Pokračovat?",
     "appSync_webdav_newServerConfirmDialog_confirmText": "Synchronizovat nyní!",
@@ -690,6 +869,50 @@
     "appSync_webdav_oldServerConfirmDialog_subtitleText": "Složka není prázdná. Synchronizování sloučí návyky ze serveru s těmi lokálními. Pokračovat?",
     "appSync_webdav_oldServerConfirmDialog_confirmText": "Potvrdit sloučení",
     "appSync_exportAllLogsTile_titleText": "Exportovat záznamy událostí nezdařené synchronizace",
+    "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {Nenalezeny žádné záznamy události} false {Exportujete klepnutím} other {načítání…}}",
+    "@appSync_exportAllLogsTile_subtitleText": {
+        "placeholders": {
+            "isEmpty": {
+                "type": "String",
+                "description": "<bool>.toString()"
+            }
+        }
+    },
+    "appSync_syncServerType_text": "{isCurrent, select, true {Stávající: } other {}}{name, select, webdav {WebDAV} fake {Nastrčené (pouze pro nástroj pro ladění)} other {Neznámé ({name})}}",
+    "@appSync_syncServerType_text": {
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "description": "Server name, depend on specific server type.",
+                "example": "WebDAV"
+            },
+            "isCurrent": {
+                "type": "String",
+                "description": "Is currently selected server",
+                "example": "true|false"
+            }
+        }
+    },
+    "appSync_networkType_text": "{type, select, mobile {Mobilní} wifi {Wifi} other {Neznámé}}",
+    "@appSync_networkType_text": {
+        "placeholders": {
+            "type": {
+                "type": "String",
+                "description": "<AppSyncServerMobileNetwork>.name"
+            }
+        }
+    },
+    "appSync_syncInterval_text": "{name, select, manual {Ruční} minute5 {5 minut} minute15 {15 minut} minute30 {30 minut} hour1 {1 hodina} other {Neznámé}}",
+    "@appSync_syncInterval_text": {
+        "description": "Localized display text for app sync interval",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "minute15",
+                "description": "<AppSyncFetchInterval>.name"
+            }
+        }
+    },
     "appSync_syncIntervalTile_title": "Interval načítání",
     "appSync_summaryTile_title": "Synchronizační server",
     "appSync_summaryTile_subtitle_text_notConfigured": "Nenastaveno",
@@ -711,16 +934,86 @@
     "appSync_serverEditor_passwordTile_titleText": "Heslo",
     "appSync_serverEditor_ignoreSSLTile_titleText": "Ignorovat SSL certifikát",
     "appSync_serverEditor_timeoutTile_titleText": "Sekundy časového limitu synchronizace",
+    "appSync_serverEditor_timeoutTile_hintText": "Výchozí: {seconds, plural, =0 {Nekonečně} other {{seconds}{unit}}}",
+    "@appSync_serverEditor_timeoutTile_hintText": {
+        "placeholders": {
+            "seconds": {
+                "type": "int",
+                "example": "10"
+            },
+            "unit": {
+                "type": "String",
+                "example": "s"
+            }
+        }
+    },
     "appSync_serverEditor_timeoutTile_unitText": "s",
     "appSync_serverEditor_connTimeoutTile_titleText": "Sekundy časového limit síťového připojení",
+    "appSync_serverEditor_connTimeoutTile_hintText": "Výchozí: {seconds, plural, =0 {Nekonečno} other {{seconds}{unit}}}",
+    "@appSync_serverEditor_connTimeoutTile_hintText": {
+        "placeholders": {
+            "seconds": {
+                "type": "int",
+                "example": "10"
+            },
+            "unit": {
+                "type": "String",
+                "example": "s"
+            }
+        }
+    },
     "appSync_serverEditor_connTimeoutTile_unitText": "s",
     "appSync_serverEditor_connRetryCountTile_titleText": "Počet pokusů o síťové připojení",
+    "appSync_serverEditor_connRetryCountTile_hintText": "Výchozí: {count, plural, =0 {Znovu zkusit zakázané} other {{count}}}",
+    "@appSync_serverEditor_connRetryCountTile_hintText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "10"
+            }
+        }
+    },
     "appSync_serverEditor_netTypeTile_titleText": "Režim synchronizace po síti",
+    "appSync_serverEditor_netTypeTile_typeTooltip": "{type, select, mobile {Synchronizovat na mobilní síti} wifi {Synchronizovat na Wifi} other {Neznámé}}",
+    "@appSync_serverEditor_netTypeTile_typeTooltip": {
+        "placeholders": {
+            "type": {
+                "type": "String",
+                "description": "<AppSyncServerMobileNetwork>.name"
+            }
+        }
+    },
+    "appSync_serverEditor_netTypeTile_lowDataText": "Málo dat",
     "appSync_noti_readyToSync_body": "Příprava synchronizace…",
+    "appSync_noti_syncing_title": "{synced, select, synced {Synchronizováno ({type})} failed {Synchronizace se nezdařila ({type})} other {Synchronizování ({type})}}",
+    "@appSync_noti_syncing_title": {
+        "placeholders": {
+            "synced": {
+                "type": "String",
+                "description": "<AppSyncNotiTitleEnum>.name",
+                "example": "synced"
+            },
+            "type": {
+                "type": "String",
+                "description": "Server type, see 'appSync_syncServerType_text' field",
+                "example": "WebDAV"
+            }
+        }
+    },
     "appSync_serverEditor_netTypeTile_lowDataTooltip": "Synchronizovat v režimu s málo daty",
     "experimentalFeatures_warnginBanner_title": "Je zapnutá jedna nebo více experimentálních funkcí – používejte je obezřetně.",
     "experimentalFeatures_habitSyncTile_titleText": "Synchronizace s Habit Cloud",
     "experimentalFeatures_habitSyncTile_subtitleText": "Jakmile zapnuto, v nastavení se objeví předvolby synchronizace aplikace",
+    "experimentalFeatures_warnTile_titleText": "Experimentální funkce ({syncName}) je zakázána, ale funkce je pořád ještě spuštěná.",
+    "@experimentalFeatures_warnTile_titleText": {
+        "placeholders": {
+            "syncName": {
+                "type": "String",
+                "example": "Habit Cloud Sync",
+                "description": "Experimental Feature's name."
+            }
+        }
+    },
     "experimentalFeatures_warnTile_forHabitSyncText": "Pro úplné zakázání, dlouze podržte pro přístup k „{menuName}“ a vypněte to.",
     "@experimentalFeatures_warnTile_forHabitSyncText": {
         "placeholders": {
@@ -797,6 +1090,15 @@
     },
     "batchCheckin_save_button_text": "Uložit",
     "batchCheckin_reset_button_text": "Resetovat",
+    "batchCheckin_completed_snackbar_text": "Změněno {count, plural, =1{stav návyku} other{stav {count} návyků}}",
+    "@batchCheckin_completed_snackbar_text": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
     "batchCheckin_save_confirmDialog_title": "Přepsát stávající záznamy",
     "batchCheckin_save_confirmDialog_body": "Existující záznamy budou přepsány. Po uložení budou předchozí záznamy ztraceny.",
     "batchCheckin_save_confirmDialog_confirmButton_text": "uložit",
@@ -859,7 +1161,7 @@
     "common_customDateTimeFormatPicker_12Hour_text": "Používat 12hodinový formát",
     "common_customDateTimeFormatPicker_monthName_text": "Používat celý název",
     "common_customDateTimeFormatPicker_applyFreqChart_text": "Použít na graf četnosti",
-    "common_customDateTimeFormatPicker_applyHeapmap_text": "Uplatnit na kalendář",
+    "common_customDateTimeFormatPicker_applyHeapmap_text": "Použít na kalendář",
     "common_customDateTimeFormatPicker_cancelButton_text": "zrušit",
     "common_customDateTimeFormatPicker_confirmButton_text": "potvrdit",
     "common_errorPage_title": "Jejda, zhavarovalo!",
@@ -878,8 +1180,17 @@
         }
     },
     "exportConfirmDialog_title_exportAll": "Exportovat všechny návyky?",
+    "exportConfirmDialog_title_exportMulti": "Exportovat {number, plural, =0{stávající návyk} =1{1 návyk} other{{number} návyků}}?",
+    "@exportConfirmDialog_title_exportMulti": {
+        "placeholders": {
+            "number": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
     "exportConfirmDialog_option_includeRecords": "zahrnout záznamy",
-    "exportConfirmDialog_option_includeGroups": "zahrnují skupiny",
+    "exportConfirmDialog_option_includeGroups": "zahrnout skupiny",
     "exportConfirmDialog_tile_includeRecords": "Zahrnout {count} záznamů",
     "@exportConfirmDialog_tile_includeRecords": {
         "placeholders": {
@@ -932,6 +1243,16 @@
     "debug_debuggerInfoCard_openButton_text": "Otevřít",
     "debug_debuggerInfoCard_saveButton_text": "Uložit",
     "debug_debuggerInfo_notificationTitle": "Shromažďování informací o aplikaci…",
+    "confirmDialog_confirm_text": "{type, select, save {Uložit} exit {Ukončit} delete {Smazat} other {Potvrdit}}",
+    "@confirmDialog_confirm_text": {
+        "placeholders": {
+            "type": {
+                "type": "String",
+                "description": "<NormalizeConfirmDialogType>.name",
+                "example": "confirm"
+            }
+        }
+    },
     "confirmDialog_cancel_text": "Zrušit",
     "snackbar_undoText": "ZPĚT",
     "snackbar_dismissText": "ZAHODIT",
@@ -1023,6 +1344,16 @@
     "groupManage_deleteDialog_title": "Odstranit skupinu",
     "@groupManage_deleteDialog_title": {
         "description": "Title for the delete confirmation dialog"
+    },
+    "groupManage_deleteDialog_content": "{count, plural, =1 {Návyky v této skupině se stanou nezařazenými.} other {Návyky v těchto {count} skupinách se stanou nezařazenými.}}",
+    "@groupManage_deleteDialog_content": {
+        "description": "Content body for the delete confirmation dialog",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of groups being deleted"
+            }
+        }
     },
     "groupManage_deleteDialog_confirm": "Smazat",
     "@groupManage_deleteDialog_confirm": {
