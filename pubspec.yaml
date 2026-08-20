@@ -178,7 +178,10 @@ dependencies:
   simple_webdav_client: ^0.2.0
   retry: ^3.1.2
   connectivity_plus: ^7.0.0
-  data_saver: ^0.4.0
+  data_saver:
+    git:
+      url: https://github.com/FriesI23/data_saver.git
+      ref: flutter-344-spm
   app_settings: ^7.0.0
   native_natural_sort: ^0.1.3
 

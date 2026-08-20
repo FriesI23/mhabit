@@ -1,20 +1,14 @@
 PODS:
-  - data_saver (0.0.1):
-    - Flutter
   - Flutter (1.0.0)
 
 DEPENDENCIES:
-  - data_saver (from `.symlinks/plugins/data_saver/ios`)
   - Flutter (from `Flutter`)
 
 EXTERNAL SOURCES:
-  data_saver:
-    :path: ".symlinks/plugins/data_saver/ios"
   Flutter:
     :path: Flutter
 
 SPEC CHECKSUMS:
-  data_saver: 5a32742d726f8574a457b61dded3585f869887a9
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
 
 PODFILE CHECKSUM: 20c79434a95ad0f1f08d7759c5868e29cf33c279

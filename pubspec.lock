@@ -356,10 +356,11 @@ packages:
   data_saver:
     dependency: "direct main"
     description:
-      name: data_saver
-      sha256: "5e1634495e52c163ba02e3840a7ace20f292de418c3cb059b9aef35505edafcb"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: flutter-344-spm
+      resolved-ref: "3d6097597a41f3c58cf1f37c9141fb00939781fa"
+      url: "https://github.com/FriesI23/data_saver.git"
+    source: git
     version: "0.4.0"
   dbus:
     dependency: transitive
