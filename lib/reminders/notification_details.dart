@@ -33,6 +33,8 @@ final class NotificationDetails implements fln.NotificationDetails {
   final LinuxNotificationDetails? linux;
   @override
   final WindowsNotificationDetails? windows;
+  @override
+  final WebNotificationDetails? web;
 
   const NotificationDetails({
     this.android,
@@ -40,6 +42,7 @@ final class NotificationDetails implements fln.NotificationDetails {
     this.macOS,
     this.linux,
     this.windows,
+    this.web,
   });
 }
 

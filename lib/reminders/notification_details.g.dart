@@ -22,6 +22,7 @@ abstract class _$NotificationDetailsCWProxy {
     DarwinNotificationDetails? macOS,
     LinuxNotificationDetails? linux,
     WindowsNotificationDetails? windows,
+    WebNotificationDetails? web,
   });
 }
 
@@ -46,6 +47,7 @@ class _$NotificationDetailsCWProxyImpl implements _$NotificationDetailsCWProxy {
     Object? macOS = const $CopyWithPlaceholder(),
     Object? linux = const $CopyWithPlaceholder(),
     Object? windows = const $CopyWithPlaceholder(),
+    Object? web = const $CopyWithPlaceholder(),
   }) {
     return NotificationDetails(
       android: android == const $CopyWithPlaceholder()
@@ -68,6 +70,10 @@ class _$NotificationDetailsCWProxyImpl implements _$NotificationDetailsCWProxy {
           ? _value.windows
           // ignore: cast_nullable_to_non_nullable
           : windows as WindowsNotificationDetails?,
+      web: web == const $CopyWithPlaceholder()
+          ? _value.web
+          // ignore: cast_nullable_to_non_nullable
+          : web as WebNotificationDetails?,
     );
   }
 }
