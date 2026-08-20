@@ -124,7 +124,7 @@ class AppErrorPage extends StatelessWidget {
             pinned: true,
           ),
           SliverPinnedHeader(
-            child: ColoredBox(
+            child: Material(
               color: Theme.of(context).colorScheme.surface,
               child: ListTile(title: Text(details.exception.toString())),
             ),

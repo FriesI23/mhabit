@@ -48,7 +48,6 @@ class _$HabitsDisplayFilterCWProxyImpl implements _$HabitsDisplayFilterCWProxy {
   HabitsDisplayFilter allowCompleteHabits(bool allowCompleteHabits) =>
       call(allowCompleteHabits: allowCompleteHabits);
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `HabitsDisplayFilter(...).copyWith.fieldName(value)`.
   ///
@@ -56,6 +55,7 @@ class _$HabitsDisplayFilterCWProxyImpl implements _$HabitsDisplayFilterCWProxy {
   /// ```dart
   /// HabitsDisplayFilter(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   HabitsDisplayFilter call({
     Object? allowInProgressHabits = const $CopyWithPlaceholder(),
     Object? allowArchivedHabits = const $CopyWithPlaceholder(),
@@ -114,7 +114,6 @@ class _$HabitDisplayOpConfigCWProxyImpl
 
   final HabitDisplayOpConfig _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -122,6 +121,7 @@ class _$HabitDisplayOpConfigCWProxyImpl
   /// ```dart
   /// HabitDisplayOpConfig(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   HabitDisplayOpConfig call({
     Object? changeRecordStatus = const $CopyWithPlaceholder(),
     Object? openRecordStatusDialog = const $CopyWithPlaceholder(),
@@ -175,7 +175,6 @@ class _$HabitDisplaySearchOptionsCWProxyImpl
 
   final HabitDisplaySearchOptions _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -183,6 +182,7 @@ class _$HabitDisplaySearchOptionsCWProxyImpl
   /// ```dart
   /// HabitDisplaySearchOptions(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   HabitDisplaySearchOptions call({
     Object? keyword = const $CopyWithPlaceholder(),
     Object? activated = const $CopyWithPlaceholder(),

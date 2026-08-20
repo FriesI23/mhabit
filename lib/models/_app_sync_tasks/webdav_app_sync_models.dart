@@ -115,9 +115,8 @@ abstract class _WebDavAppSyncCellInfo implements WebDavAppSyncCellInfo {
   _WebDavAppSyncCellInfo({
     required this.configUUID,
     required bool isDirty,
-    required WebDavAppSyncInfoStatus status,
-  }) : _includeDirtyMark = isDirty,
-       _status = status;
+    required this._status,
+  }) : _includeDirtyMark = isDirty;
 
   @override
   WebDavAppSyncInfoStatus get status => _status;

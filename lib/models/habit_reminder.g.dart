@@ -26,7 +26,6 @@ class _$HabitReminderCWProxyImpl implements _$HabitReminderCWProxy {
 
   final HabitReminder _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -34,6 +33,7 @@ class _$HabitReminderCWProxyImpl implements _$HabitReminderCWProxy {
   /// ```dart
   /// HabitReminder(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   HabitReminder call({
     Object? type = const $CopyWithPlaceholder(),
     Object? extra = const $CopyWithPlaceholder(),

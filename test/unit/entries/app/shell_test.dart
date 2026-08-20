@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:mhabit/entries/app/shell.dart';
 import 'package:mhabit/models/app_entry.dart';
 import 'package:mhabit/providers/app_ui/app_launch_entry.dart';

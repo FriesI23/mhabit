@@ -53,10 +53,9 @@ class _HiddenTypeGroupTypePickerFilter extends GroupTypePickerFilter {
   final Set<HabitDisplayGroupType> _hiddenTypes;
 
   const _HiddenTypeGroupTypePickerFilter({
-    bool showNone = true,
-    Set<HabitDisplayGroupType> hiddenTypes = const {},
-  }) : _showNone = showNone,
-       _hiddenTypes = hiddenTypes;
+    this._showNone = true,
+    this._hiddenTypes = const {},
+  });
 
   final bool _showNone;
 

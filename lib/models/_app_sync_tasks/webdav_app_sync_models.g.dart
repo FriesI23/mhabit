@@ -38,7 +38,6 @@ class _$WebDavSyncRecordDataCWProxyImpl
 
   final WebDavSyncRecordData _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -46,6 +45,7 @@ class _$WebDavSyncRecordDataCWProxyImpl
   /// ```dart
   /// WebDavSyncRecordData(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   WebDavSyncRecordData call({
     Object? recordDate = const $CopyWithPlaceholder(),
     Object? recordType = const $CopyWithPlaceholder(),
@@ -157,7 +157,6 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
 
   final WebDavSyncHabitData _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -165,6 +164,7 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
   /// ```dart
   /// WebDavSyncHabitData(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   WebDavSyncHabitData call({
     Object? schemaVersion = const $CopyWithPlaceholder(),
     Object? uuid = const $CopyWithPlaceholder(),
@@ -352,7 +352,6 @@ class _$WebDavSyncGroupDataCWProxyImpl implements _$WebDavSyncGroupDataCWProxy {
 
   final WebDavSyncGroupData _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -360,6 +359,7 @@ class _$WebDavSyncGroupDataCWProxyImpl implements _$WebDavSyncGroupDataCWProxy {
   /// ```dart
   /// WebDavSyncGroupData(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   WebDavSyncGroupData call({
     Object? schemaVersion = const $CopyWithPlaceholder(),
     Object? uuid = const $CopyWithPlaceholder(),

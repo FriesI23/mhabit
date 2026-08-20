@@ -33,18 +33,13 @@ class HabitScoreCalculator {
   final HabitSummaryRecord? Function(HabitDate date) _getHabitRecord;
 
   HabitScoreCalculator({
-    required HabitScore habitScore,
-    required HabitDate startDate,
-    HabitDate? endDate,
-    required Iterable<HabitDate> iterable,
-    required bool Function(HabitDate) isAutoComplated,
-    required HabitSummaryRecord? Function(HabitDate) getHabitRecord,
-  }) : _getHabitRecord = getHabitRecord,
-       _isAutoComplated = isAutoComplated,
-       _iterable = iterable,
-       _endDate = endDate,
-       _startDate = startDate,
-       _habitScore = habitScore;
+    required this._habitScore,
+    required this._startDate,
+    this._endDate,
+    required this._iterable,
+    required this._isAutoComplated,
+    required this._getHabitRecord,
+  });
 
   Iterable<HabitDate> get _dateIter => _iterable;
 

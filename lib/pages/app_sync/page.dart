@@ -120,7 +120,7 @@ final class _PageState extends State<_Page> {
             child: Selector<AppSyncSettingsAccess, bool>(
               selector: (ctx, v) => v.enabled,
               shouldRebuild: (previous, next) => previous != next,
-              builder: (context, value, child) => ColoredBox(
+              builder: (context, value, child) => Material(
                 color: Theme.of(context).colorScheme.surface,
                 child: SwitchListTile.adaptive(
                   title: L10nBuilder(

@@ -34,7 +34,6 @@ class _$_HabitsSortableCacheCWProxyImpl
 
   final _HabitsSortableCache _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -42,6 +41,7 @@ class _$_HabitsSortableCacheCWProxyImpl
   /// ```dart
   /// _HabitsSortableCache(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   _HabitsSortableCache call({
     Object? sortType = const $CopyWithPlaceholder(),
     Object? sortDirection = const $CopyWithPlaceholder(),

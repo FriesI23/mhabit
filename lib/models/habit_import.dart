@@ -31,9 +31,8 @@ class HabitImport {
     this.helper,
     this.recordDBHelper, {
     Iterable<Object?> data = const [],
-    Map<String, GroupUUID>? groupUuidMapping,
-  }) : _jsonData = data,
-       _groupUuidMapping = groupUuidMapping;
+    this._groupUuidMapping,
+  }) : _jsonData = data;
 
   int get habitsCount => _jsonData.length;
 

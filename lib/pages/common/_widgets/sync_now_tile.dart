@@ -13,8 +13,8 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:intl/intl.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
@@ -139,7 +139,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
               _ => IconButton(
                 key: const ValueKey(2),
                 onPressed: enabled ? _onStartButtonPressed : null,
-                icon: const Icon(MdiIcons.syncIcon),
+                icon: const Icon(MdiIcons.sync),
               ),
             },
           ),

@@ -13,7 +13,22 @@
 // limitations under the License.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/storage/db/db_helper.dart';
 import 'package:mhabit/storage/db/handlers/record.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+class _TestDBHelper implements DBHelper {
+  _TestDBHelper(this.db);
+
+  @override
+  final Database db;
+
+  @override
+  Future<void> init({bool reinit = false}) async {}
+
+  @override
+  void dispose() {}
+}
 
 void main() {
   group("RecordDBCell", () {
@@ -47,5 +62,41 @@ void main() {
     test('toString', () {
       expect(record1.toString().startsWith("RecordDB"), true);
     });
+  });
+
+  test('loadRecords binds the habit UUID as a query argument', () async {
+    sqfliteFfiInit();
+    final db = await databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
+    addTearDown(db.close);
+    await db.execute('''
+      CREATE TABLE mh_habits (
+        uuid TEXT PRIMARY KEY,
+        start_date INTEGER NOT NULL
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE mh_records (
+        parent_uuid TEXT NOT NULL,
+        uuid TEXT PRIMARY KEY,
+        record_date INTEGER NOT NULL,
+        record_type INTEGER NOT NULL,
+        record_value REAL NOT NULL
+      )
+    ''');
+    const habitUUID = "habit-'quoted-value";
+    await db.insert('mh_habits', {'uuid': habitUUID, 'start_date': 10});
+    await db.insert('mh_records', {
+      'parent_uuid': habitUUID,
+      'uuid': 'record-uuid',
+      'record_date': 11,
+      'record_type': 1,
+      'record_value': 1,
+    });
+
+    final records = await RecordDBHelper(
+      _TestDBHelper(db),
+    ).loadRecords(habitUUID);
+
+    expect(records.single.uuid, 'record-uuid');
   });
 }

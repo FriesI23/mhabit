@@ -39,6 +39,25 @@ void main() {
   // Rendering
   // ---------------------------------------------------------------------------
   group('FilterableMenuField rendering', () {
+    testWidgets('disables item animation in debug mode', (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          FilterableMenuField<String>(
+            label: '',
+            builder: _defaultBuilder,
+            menuChildrenBuilder: (query, hi) => const [
+              MenuItemButton(child: Text('Item')),
+            ],
+          ),
+        ),
+      );
+
+      expect(
+        tester.widget<MenuAnchor>(find.byType(MenuAnchor)).animated,
+        false,
+      );
+    });
+
     testWidgets('builder receives non-null parameters and correct label', (
       tester,
     ) async {

@@ -22,6 +22,7 @@ abstract class _$NotificationDetailsCWProxy {
     DarwinNotificationDetails? macOS,
     LinuxNotificationDetails? linux,
     WindowsNotificationDetails? windows,
+    WebNotificationDetails? web,
   });
 }
 
@@ -32,7 +33,6 @@ class _$NotificationDetailsCWProxyImpl implements _$NotificationDetailsCWProxy {
 
   final NotificationDetails _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -40,12 +40,14 @@ class _$NotificationDetailsCWProxyImpl implements _$NotificationDetailsCWProxy {
   /// ```dart
   /// NotificationDetails(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   NotificationDetails call({
     Object? android = const $CopyWithPlaceholder(),
     Object? iOS = const $CopyWithPlaceholder(),
     Object? macOS = const $CopyWithPlaceholder(),
     Object? linux = const $CopyWithPlaceholder(),
     Object? windows = const $CopyWithPlaceholder(),
+    Object? web = const $CopyWithPlaceholder(),
   }) {
     return NotificationDetails(
       android: android == const $CopyWithPlaceholder()
@@ -68,6 +70,10 @@ class _$NotificationDetailsCWProxyImpl implements _$NotificationDetailsCWProxy {
           ? _value.windows
           // ignore: cast_nullable_to_non_nullable
           : windows as WindowsNotificationDetails?,
+      web: web == const $CopyWithPlaceholder()
+          ? _value.web
+          // ignore: cast_nullable_to_non_nullable
+          : web as WebNotificationDetails?,
     );
   }
 }
@@ -148,7 +154,6 @@ class _$AndroidNotificationDetailsCWProxyImpl
 
   final AndroidNotificationDetails _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -156,6 +161,7 @@ class _$AndroidNotificationDetailsCWProxyImpl
   /// ```dart
   /// AndroidNotificationDetails(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   AndroidNotificationDetails call({
     Object? channelId = const $CopyWithPlaceholder(),
     Object? channelName = const $CopyWithPlaceholder(),
@@ -470,7 +476,6 @@ class _$DarwinNotificationDetailsCWProxyImpl
 
   final DarwinNotificationDetails _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -478,6 +483,7 @@ class _$DarwinNotificationDetailsCWProxyImpl
   /// ```dart
   /// DarwinNotificationDetails(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   DarwinNotificationDetails call({
     Object? presentAlert = const $CopyWithPlaceholder(),
     Object? presentBadge = const $CopyWithPlaceholder(),
@@ -590,7 +596,6 @@ class _$LinuxNotificationDetailsCWProxyImpl
 
   final LinuxNotificationDetails _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -598,6 +603,7 @@ class _$LinuxNotificationDetailsCWProxyImpl
   /// ```dart
   /// LinuxNotificationDetails(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   LinuxNotificationDetails call({
     Object? icon = const $CopyWithPlaceholder(),
     Object? sound = const $CopyWithPlaceholder(),
@@ -708,7 +714,6 @@ class _$WindowsNotificationDetailsCWProxyImpl
 
   final WindowsNotificationDetails _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -716,6 +721,7 @@ class _$WindowsNotificationDetailsCWProxyImpl
   /// ```dart
   /// WindowsNotificationDetails(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   WindowsNotificationDetails call({
     Object? actions = const $CopyWithPlaceholder(),
     Object? inputs = const $CopyWithPlaceholder(),

@@ -84,6 +84,7 @@ class SearchFilterPopupMenuButton extends StatelessWidget {
           (vm) => vm.searchOptions,
         );
     return MenuAnchor(
+      animated: true,
       builder: (context, controller, child) => IconButton(
         icon: SearchFilterIcon(
           filtered: !options.isFilterEmpty,

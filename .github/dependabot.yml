@@ -23,7 +23,7 @@ updates:
     ignore:
       - dependency-name: "*"
 
-  # fastlane's own Ruby toolchain (cocoapods/dotenv/etc.), not a project dependency
+  # fastlane's own Ruby toolchain (dotenv/etc.), not a project dependency
   - package-ecosystem: "bundler"
     directory: "/ios"
     schedule:

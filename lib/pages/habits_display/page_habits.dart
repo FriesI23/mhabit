@@ -1460,6 +1460,7 @@ class _GroupHeaderTileState extends State<_GroupHeaderTile> {
       onSecondaryTapDown: _handleSecondaryTapDown,
       onLongPressStart: _handleLongPressStart,
       child: MenuAnchor(
+        animated: true,
         controller: _menuController,
         menuChildren: [
           MenuItemButton(

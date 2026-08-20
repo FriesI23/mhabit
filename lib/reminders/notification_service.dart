@@ -463,8 +463,9 @@ final class LinuxNotificationService extends NotificationServiceImpl {
   static const _defaultMaxProcessPerTick = 16;
   static const _tickInterval = Duration(seconds: 1);
 
-  LinuxNotificationService({int maxProcessPerTick = _defaultMaxProcessPerTick})
-    : _maxProcessPerTick = maxProcessPerTick;
+  LinuxNotificationService({
+    this._maxProcessPerTick = _defaultMaxProcessPerTick,
+  });
 
   final SplayTreeSet<_LinuxPendingNotification> _pendingQueue = SplayTreeSet(
     _LinuxPendingNotification.compare,

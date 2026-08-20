@@ -216,9 +216,9 @@ JOIN $habitTable
 WHERE $table.${RecordDBCellKey.recordDate}
         >= $habitTable.${HabitDBCellKey.startDate}
   AND
-      $table.${RecordDBCellKey.parentUUID} = "$uuid";
+      $table.${RecordDBCellKey.parentUUID} = ?;
 """;
-    final results = await db.rawQuery(sql);
+    final results = await db.rawQuery(sql, [uuid]);
     return results.map(RecordDBCell.fromJson);
   }
 

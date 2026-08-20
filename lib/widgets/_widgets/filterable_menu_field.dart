@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -182,6 +183,11 @@ class _FilterableMenuFieldState<T> extends State<FilterableMenuField<T>> {
   @override
   Widget build(BuildContext context) {
     return MenuAnchor(
+      // FIXME: Flutter 3.44 may calculate the final menu item Interval.end as
+      // slightly greater than 1.0 and trigger a curves.dart assertion in
+      // debug mode. Restore the animation in debug mode once the framework
+      // clamps the staggered animation interval.
+      animated: !kDebugMode,
       controller: _effectiveMenuController,
       alignmentOffset: widget.alignmentOffset,
       clipBehavior: widget.clipBehavior,
