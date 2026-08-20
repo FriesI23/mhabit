@@ -154,7 +154,6 @@ dependencies:
   animated_reorderable_list: ^1.3.0
   fl_chart: "^1.1.1"
   simple_heatmap_calendar: ^0.4.0
-  flutter_donation_buttons: ^0.4.8
 
   # Extra Features
   dynamic_color: ^1.5.4
@@ -188,8 +187,8 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  material_design_icons_flutter: ^6.0.7296
-  cryptofont: ^1.0.2+1
+  flutter_material_design_icons: ^3.1.0+7447
+  simple_icons: ^16.23.0
 
   # Data Structure
   provider: ^6.0.5

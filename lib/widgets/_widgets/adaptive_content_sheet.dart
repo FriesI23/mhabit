@@ -272,7 +272,7 @@ class _AdaptiveSheet extends StatelessWidget {
                         spacing: 8,
                         overflowAlignment: OverflowBarAlignment.end,
                         children: [
-                          if (actions != null) ...actions!,
+                          ...?actions,
                           if (sheetShowCloseButton) buildCloseButton(),
                         ],
                       ),

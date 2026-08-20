@@ -14,8 +14,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_donation_buttons/flutter_donation_buttons.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+import 'package:simple_icons/simple_icons.dart';
 
 import '../../../common/enums.dart';
 import '../../../common/utils.dart';
@@ -90,9 +90,18 @@ class _DonateContentState extends State<DonateContent> {
     return launchExternalUrl(Uri.parse(urlString));
   }
 
-  void _onDonation(DonateWay dw) async {
+  void _onDonation(DonateWay dw) {
     if (!mounted) return;
     Navigator.of(context).pop(DonateDialogResult.donated);
+  }
+
+  Future<void> _openDonation(DonateWay donateWay, String url) async {
+    try {
+      await _onLaunchExternalUrl(url);
+    } catch (error) {
+      debugPrint('Failed to open donation URL: $error');
+    }
+    _onDonation(donateWay);
   }
 
   void _onCopyCryptoAddressToClipboard(CryptoDonateButtonType t) async {
@@ -165,10 +174,24 @@ class _DonateContentState extends State<DonateContent> {
           ),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 320),
-          child: BuyMeACoffeeButton(
-            buyMeACoffeeName: widget.donateBuyMeACoffeeToken,
-            onLaunchURL: _onLaunchExternalUrl,
-            onDonation: () => _onDonation(DonateWay.buyMeACoffee),
+          child: ElevatedButton.icon(
+            onPressed: widget.donateBuyMeACoffeeToken.isEmpty
+                ? null
+                : () => _openDonation(
+                    DonateWay.buyMeACoffee,
+                    'https://www.buymeacoffee.com/'
+                    '${widget.donateBuyMeACoffeeToken}',
+                  ),
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(200, 42),
+              backgroundColor: const Color(0xffffdd00),
+              foregroundColor: Colors.black,
+            ),
+            icon: const Icon(SimpleIcons.buymeacoffee),
+            label: const Text(
+              'Buy me a Coffee',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ),
       ],
@@ -183,10 +206,17 @@ class _DonateContentState extends State<DonateContent> {
             contentPadding: EdgeInsets.zero,
             visualDensity: VisualDensity.compact,
           ),
-        PayPalButton(
-          paypalButtonId: widget.donatePaypalToken,
-          onLaunchURL: _onLaunchExternalUrl,
-          onDonation: () => _onDonation(DonateWay.paypal),
+        ElevatedButton.icon(
+          onPressed: widget.donatePaypalToken.isEmpty
+              ? null
+              : () => _openDonation(
+                  DonateWay.paypal,
+                  'https://www.paypal.com/donate?hosted_button_id='
+                  '${widget.donatePaypalToken}',
+                ),
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.blue[600]),
+          icon: const Icon(SimpleIcons.paypal),
+          label: const Text('Donate with Paypal'),
         ),
       ],
     );

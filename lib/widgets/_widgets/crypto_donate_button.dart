@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:cryptofont/cryptofont.dart';
 import 'package:flutter/material.dart';
+import 'package:simple_icons/simple_icons.dart';
 
 import '../../extensions/color_extensions.dart';
 import '../../theme/color.dart';
@@ -37,15 +37,15 @@ class CryptoDonateButton extends StatelessWidget {
   IconData get buttonIcon {
     switch (cryptoType) {
       case CryptoDonateButtonType.btc:
-        return CryptoFontIcons.btc;
+        return SimpleIcons.bitcoin;
       case CryptoDonateButtonType.eth:
-        return CryptoFontIcons.eth;
+        return SimpleIcons.ethereum;
       case CryptoDonateButtonType.bnb:
-        return CryptoFontIcons.bnb;
+        return SimpleIcons.binance;
       case CryptoDonateButtonType.avax:
-        return CryptoFontIcons.avax;
+        return Icons.change_history;
       case CryptoDonateButtonType.ftm:
-        return CryptoFontIcons.ftm;
+        return SimpleIcons.fantom;
     }
   }
 
