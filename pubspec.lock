@@ -366,7 +366,7 @@ packages:
     description:
       path: "."
       ref: flutter-344-spm
-      resolved-ref: "3d6097597a41f3c58cf1f37c9141fb00939781fa"
+      resolved-ref: "6498902702b48139282a79c064b1ac385f00be80"
       url: "https://github.com/FriesI23/data_saver.git"
     source: git
     version: "0.4.0"
