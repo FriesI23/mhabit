@@ -1051,9 +1051,17 @@ class HabitsTabPageState extends State<HabitsTabPage>
     final displayPageOccupyPrt = context.select<AppThemeViewModel, int>(
       (vm) => vm.displayPageOccupyPrt,
     );
-    final (calendarBarHeight, columnExtent) = context
-        .select<AppCompactUISwitcherViewModel, (double, double)>(
-          (vm) => (vm.appCalendarBarHeight, vm.appHabitDisplayColumnExtent),
+    final (
+      calendarHeaderHeight,
+      calendarHeaderItemPadding,
+      columnExtent,
+    ) = context
+        .select<AppCompactUISwitcherViewModel, (double, EdgeInsets, double)>(
+          (vm) => (
+            vm.appCalendarHeaderHeight,
+            vm.appCalendarHeaderItemPadding,
+            vm.appHabitDisplayColumnExtent,
+          ),
         );
     final geometry = HabitListTileGeometry.fromExpansionState(
       columnExtent: columnExtent,
@@ -1117,6 +1125,8 @@ class HabitsTabPageState extends State<HabitsTabPage>
       return _CalendarBar(
         key: const ValueKey("calendar-bar"),
         geometry: geometry,
+        height: calendarHeaderHeight,
+        itemPadding: calendarHeaderItemPadding,
         verticalScrollController: _scrollVisibilityDispatcher.controller,
         horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
         onCalendarToggleExpandPressed: _onAppbarLeftButtonPressed,
@@ -1185,7 +1195,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
     //#region: empty image
     Widget buildEmptyImage(BuildContext context) {
-      return const _EmptyImage();
+      return _EmptyImage(
+        pinnedHeaderExtent: _toolbarHeight + calendarHeaderHeight,
+      );
     }
     //#endregion
 
@@ -1202,8 +1214,8 @@ class HabitsTabPageState extends State<HabitsTabPage>
       },
       onRefresh: _onRefreshIndicatorTriggered,
       edgeOffset:
-          kToolbarHeight +
-          calendarBarHeight +
+          _toolbarHeight +
+          calendarHeaderHeight +
           MediaQuery.paddingOf(context).top,
       triggerMode: RefreshIndicatorTriggerMode.onEdge,
       child: Stack(
@@ -1638,7 +1650,9 @@ class _HabitListItem extends StatelessWidget {
 enum EmptyImageMode { normal, search }
 
 class _EmptyImage extends StatefulWidget {
-  const _EmptyImage();
+  final double pinnedHeaderExtent;
+
+  const _EmptyImage({required this.pinnedHeaderExtent});
 
   @override
   State<_EmptyImage> createState() => _EmptyImageState();
@@ -1680,11 +1694,7 @@ class _EmptyImageState extends State<_EmptyImage> {
         .select<HabitSummaryViewModel, (int, bool, bool)>(
           (vm) => (vm.currentHabitList.length, vm.isInSearchMode, vm.hasLoaded),
         );
-    final (_, calBarHeight) = context
-        .select<AppCompactUISwitcherViewModel, (bool, double)>(
-          (vm) => (vm.flag, vm.appCalendarBarHeight),
-        );
-    final offsetHeight = -(calBarHeight + kToolbarHeight);
+    final offsetHeight = -widget.pinnedHeaderExtent;
     final changeDuration = _lastMode != _mode && habitCount > 0
         ? Duration.zero
         : kHabitListFutureLoadDuration;
@@ -1863,6 +1873,8 @@ class _FAB extends StatelessWidget {
 
 class _CalendarBar extends StatelessWidget {
   final HabitListTileGeometry geometry;
+  final double height;
+  final EdgeInsets itemPadding;
   final ScrollController? verticalScrollController;
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
   final ValueChanged<bool>? onCalendarToggleExpandPressed;
@@ -1870,6 +1882,8 @@ class _CalendarBar extends StatelessWidget {
   const _CalendarBar({
     super.key,
     required this.geometry,
+    required this.height,
+    required this.itemPadding,
     this.verticalScrollController,
     this.horizonalScrollControllerGroup,
     this.onCalendarToggleExpandPressed,
@@ -1884,10 +1898,6 @@ class _CalendarBar extends StatelessWidget {
     final earliestStartDate = context.select<HabitSummaryViewModel, DateTime?>(
       (vm) => vm.earliestSummaryDataStartDate?.startDate,
     );
-    final (appCalendarBarHeight, appCalendarBarItemPadding) = context
-        .select<AppCompactUISwitcherViewModel, (double, EdgeInsets)>(
-          (vm) => (vm.appCalendarBarHeight, vm.appCalendarBarItemPadding),
-        );
     final scrollBehavior = context
         .select<
           HabitsRecordScrollBehaviorViewModel,
@@ -1895,19 +1905,9 @@ class _CalendarBar extends StatelessWidget {
         >((vm) => vm.scrollBehavior);
     appLog.build.debug(
       context,
-      ex: [
-        state,
-        earliestStartDate,
-        appCalendarBarHeight,
-        appCalendarBarItemPadding,
-      ],
+      ex: [state, earliestStartDate, height, itemPadding],
       name: "HabitDisplay.calendarBar",
     );
-    final scrolledUnderElevation = state.isInEditMode ? 0.0 : kCommonEvalation;
-    final backgroundColor = state.isInEditMode
-        ? Theme.of(context).colorScheme.surface
-        : null;
-
     ScrollPhysics? buildScrollPhysics(double itemSize, double length) {
       return switch (scrollBehavior) {
         HabitsRecordScrollBehavior.page => const PageScrollPhysics(),
@@ -1918,11 +1918,13 @@ class _CalendarBar extends StatelessWidget {
     return SliverAppBar(
       pinned: true,
       shadowColor: Theme.of(context).colorScheme.shadow,
-      backgroundColor: backgroundColor,
-      scrolledUnderElevation: scrolledUnderElevation,
+      backgroundColor: state.isInEditMode
+          ? Theme.of(context).colorScheme.surface
+          : null,
+      scrolledUnderElevation: state.isInEditMode ? 0.0 : kCommonEvalation,
       titleSpacing: 0.0,
       primary: false,
-      toolbarHeight: appCalendarBarHeight,
+      toolbarHeight: height,
       title: EnhancedSafeArea.edgeToEdgeSafe(
         child: Stack(
           alignment: Alignment.bottomCenter,
@@ -1934,8 +1936,8 @@ class _CalendarBar extends StatelessWidget {
               endDate: earliestStartDate,
               isExtended: state.isClandarExpanded,
               geometry: geometry,
-              height: appCalendarBarHeight,
-              itemPadding: appCalendarBarItemPadding,
+              height: height,
+              itemPadding: itemPadding,
               onLeftBtnPressed: onCalendarToggleExpandPressed,
               scrollPhysicsBuilder: buildScrollPhysics,
             ),

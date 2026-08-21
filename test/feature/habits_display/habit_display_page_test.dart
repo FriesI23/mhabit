@@ -27,6 +27,7 @@ import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/_providers/habits_today.dart';
 import 'package:mhabit/pages/habits_display/page_habits.dart';
 import 'package:mhabit/pages/habits_display/page_today.dart';
+import 'package:mhabit/pages/habits_display/widgets.dart';
 import 'package:mhabit/providers/app_ui/app_compact_ui_switcher.dart';
 import 'package:mhabit/providers/app_ui/app_custom_date_format.dart';
 import 'package:mhabit/providers/app_ui/app_developer.dart';
@@ -68,6 +69,10 @@ final class _FakeGroupManager extends GroupManager {
 }
 
 final class _LoadedHabitsDisplayAccess extends StubHabitsDisplayAccess {
+  final int habitCount;
+
+  _LoadedHabitsDisplayAccess({this.habitCount = 1});
+
   @override
   Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
     HabitSummaryDataCollection? initedCollection,
@@ -75,18 +80,30 @@ final class _LoadedHabitsDisplayAccess extends StubHabitsDisplayAccess {
     List<HabitUUID>? habitUUIDs,
   }) async {
     final collection = initedCollection ?? HabitSummaryDataCollection();
-    collection.addHabit(_buildHabitSummaryData(), forceAdd: true);
+    for (var i = 0; i < habitCount; i++) {
+      collection.addHabit(_buildHabitSummaryData(i), forceAdd: true);
+    }
     return collection;
   }
 }
 
-HabitSummaryData _buildHabitSummaryData() {
+final class _TestAppCompactUISwitcherViewModel
+    extends AppCompactUISwitcherViewModel {
+  final bool useCompactUi;
+
+  _TestAppCompactUISwitcherViewModel({required this.useCompactUi});
+
+  @override
+  bool get flag => useCompactUi;
+}
+
+HabitSummaryData _buildHabitSummaryData(int index) {
   final startDate = HabitDate.now().subtractDays(1);
   return HabitSummaryData(
-    id: 1,
-    uuid: '11111111-1111-4111-8111-111111111111',
+    id: index + 1,
+    uuid: '11111111-1111-4111-8111-${(index + 1).toString().padLeft(12, '0')}',
     type: HabitType.normal,
-    name: 'Geometry regression habit',
+    name: 'Geometry regression habit $index',
     desc: '',
     color: const HabitColor.builtIn(HabitColorType.cc1),
     dailyGoal: 1,
@@ -94,7 +111,7 @@ HabitSummaryData _buildHabitSummaryData() {
     frequency: HabitFrequency.daily,
     startDate: startDate,
     status: HabitStatus.activated,
-    sortPostion: 1,
+    sortPostion: index + 1,
     createTime: DateTime.utc(startDate.year, startDate.month, startDate.day),
   );
 }
@@ -160,11 +177,14 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
   required ProfileViewModel profile,
   required HabitsDisplayAccess access,
   required AppSyncWorkflowAccess sync,
+  bool useCompactUi = false,
 }) async {
   final customDate = AppCustomDateYmdHmsConfigViewModel()
     ..updateProfile(profile);
   final firstDay = AppFirstDayViewModel()..updateProfile(profile);
-  final compactUi = AppCompactUISwitcherViewModel()..updateProfile(profile);
+  final compactUi = _TestAppCompactUISwitcherViewModel(
+    useCompactUi: useCompactUi,
+  )..updateProfile(profile);
   final developer = AppDeveloperViewModel(global: Global());
   final experimental = AppExperimentalFeatureViewModel()
     ..updateProfile(profile);
@@ -342,5 +362,91 @@ void main() {
 
     expect(expandedWidth, greaterThan(collapsedWidth));
     expect(tester.getSize(rowTrack).width, collapsedWidth);
+  });
+
+  testWidgets('calendar uses pinned regular header geometry', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(800, 400));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess(habitCount: 20);
+    final sync = _FakeAppSyncWorkflowAccess();
+
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+
+    await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pump(const Duration(milliseconds: 600));
+
+    final calendar = find.byType(SliverCalendarBar);
+    expect(calendar, findsOneWidget);
+    expect(
+      find.ancestor(of: calendar, matching: find.byType(SliverAppBar)),
+      findsOneWidget,
+    );
+    expect(tester.getSize(calendar).height, 48);
+    expect(
+      tester.widget<SliverCalendarBar>(calendar).geometry.columnExtent,
+      60,
+    );
+    expect(
+      tester.widget<RefreshIndicator>(find.byType(RefreshIndicator)).edgeOffset,
+      112,
+    );
+
+    final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar).last);
+    expect(appBar.toolbarHeight, 48);
+    expect(appBar.pinned, isTrue);
+    expect(appBar.primary, isFalse);
+    expect(appBar.backgroundColor, isNull);
+    expect(appBar.scrolledUnderElevation, kCommonEvalation);
+    final pinnedTop = tester.getTopLeft(calendar).dy;
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    expect(pinnedTop, 64);
+    expect(tester.getTopLeft(calendar).dy, 0);
+  });
+
+  testWidgets('calendar uses compact header geometry', (tester) async {
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+
+    await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      useCompactUi: true,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    final calendar = find.byType(SliverCalendarBar);
+    expect(tester.getSize(calendar).height, 44);
+    expect(
+      tester.widget<SliverCalendarBar>(calendar).geometry.columnExtent,
+      44,
+    );
+    expect(
+      tester.widget<RefreshIndicator>(find.byType(RefreshIndicator)).edgeOffset,
+      108,
+    );
   });
 }

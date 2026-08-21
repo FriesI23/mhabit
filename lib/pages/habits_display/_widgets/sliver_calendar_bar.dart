@@ -20,7 +20,6 @@ import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import '../../../common/types.dart';
 import '../../../widgets/widgets.dart';
 
-const double kDefaultHabitCalendarBarHeight = 64.0;
 const double kDefaultHabitCalendarBarExtendedPrt = 0.85;
 const int kHabitCalendarBarMinShowDate = 1;
 
@@ -32,7 +31,7 @@ class SliverCalendarBar extends StatefulWidget implements PreferredSizeWidget {
   final DateTime? endDate;
   final bool isExtended;
   final HabitListTileGeometry geometry;
-  final double? _height;
+  final double height;
   final EdgeInsetsGeometry? itemPadding;
   final HabitListTilePhysicsBuilder? scrollPhysicsBuilder;
 
@@ -45,12 +44,10 @@ class SliverCalendarBar extends StatefulWidget implements PreferredSizeWidget {
     this.endDate,
     required this.isExtended,
     required this.geometry,
-    this._height,
+    required this.height,
     this.itemPadding,
     this.scrollPhysicsBuilder,
   });
-
-  double get height => _height ?? kDefaultHabitCalendarBarHeight;
 
   @override
   Size get preferredSize => Size.fromHeight(height);
