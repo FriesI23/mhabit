@@ -86,6 +86,10 @@
             {
                 "name": "tenJirka",
                 "email": "jirka.steh@gmail.com"
+            },
+            {
+                "name": "Pavel Borecki",
+                "email": "pavel.borecki@gmail.com"
             }
         ],
         "de": [
@@ -108,6 +112,10 @@
             },
             {
                 "name": "biram"
+            },
+            {
+                "name": "Galdarion",
+                "email": "galdarion@hotmail.com"
             }
         ],
         "es": [
@@ -161,6 +169,14 @@
             {
                 "name": "glemco",
                 "email": "glemco@posteo.net"
+            },
+            {
+                "name": "Stefano",
+                "email": "weblate@guandalf.com"
+            },
+            {
+                "name": "nickfrn",
+                "email": "nicolafr3@proton.me"
             }
         ],
         "ja": [ 11 ],
@@ -189,7 +205,12 @@
                 "email": "cb6gvwvm@duck.com"
             }
         ],
-        "ru": [ 7 ],
+        "ru": [ 7,
+            {
+                "name": "sanda1iki",
+                "email": "rentake@yandex.ru"
+            }
+        ],
         "tr": [
             {
                 "name": "Soykan Aydın",
