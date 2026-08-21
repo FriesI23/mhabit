@@ -1,4 +1,4 @@
-# Release: v1.26.13+186-pre
+# Release: v1.26.14+187
 
 ## 🌐 Localization
 
@@ -40,4 +40,4 @@
 - Add regression coverage for menu configuration, stack-trace parsing, and
   habit record queries (#644)
 
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.26.7+180...pre-v1.26.13+186)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.26.7+180...v1.26.14+187)
