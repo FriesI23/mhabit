@@ -19,7 +19,12 @@ import 'package:flutter/material.dart';
 import '../../common/types.dart';
 import 'scroll_physics.dart' show MagnetScrollPhysics;
 
-const kDefaultHabitListTilePadding = EdgeInsets.fromLTRB(2.0, 2.0, 6.0, 2.0);
+const kDefaultHabitListTileTrackPadding = EdgeInsets.fromLTRB(
+  2.0,
+  0.0,
+  6.0,
+  0.0,
+);
 
 @immutable
 class HabitListTileGeometry {
@@ -59,39 +64,27 @@ class HabitListTileGeometry {
 class HabitListTile extends StatelessWidget {
   final HabitListTileGeometry geometry;
   final bool canScroll;
-  final ScrollController? mainScrollController;
   final ScrollController? listScrollController;
   final Widget? leftChild;
   final Widget? stackedChild;
   final bool stackAutoWrap;
-  final int rightFlex;
   final int? itemCount;
   final int minItemCoun;
-  final bool useDefaultItemCount;
   final Widget? Function(BuildContext context, int index, double columnExtent)
   itemBuilder;
-  final double? height;
-  final Color? backgroundColor;
-  final EdgeInsets? padding;
   final HabitListTilePhysicsBuilder? scrollPhysicsBuilder;
 
   const HabitListTile({
     super.key,
     required this.geometry,
     required this.canScroll,
-    this.mainScrollController,
     this.listScrollController,
     this.stackAutoWrap = true,
     this.stackedChild,
     this.leftChild,
-    this.rightFlex = 1,
     this.itemCount,
     this.minItemCoun = 3,
-    this.useDefaultItemCount = false,
     required this.itemBuilder,
-    this.height,
-    this.backgroundColor,
-    this.padding,
     this.scrollPhysicsBuilder,
   });
 
@@ -112,8 +105,6 @@ class HabitListTile extends StatelessWidget {
       ),
     );
   }
-
-  EdgeInsets get _padding => padding ?? kDefaultHabitListTilePadding;
 
   @override
   Widget build(BuildContext context) {
@@ -163,14 +154,9 @@ class HabitListTile extends StatelessWidget {
         minCount: minItemCoun,
       );
 
-      int? itemCount;
-      if (!useDefaultItemCount) {
-        if (this.itemCount != null) {
-          itemCount = math.max(this.itemCount!, limitItemCount);
-        } else {
-          itemCount = this.itemCount;
-        }
-      }
+      final int? itemCount = this.itemCount != null
+          ? math.max(this.itemCount!, limitItemCount)
+          : null;
 
       final Widget rowWidget = Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -179,10 +165,7 @@ class HabitListTile extends StatelessWidget {
           final result = <Widget>[];
           if (leftChild != null) result.add(leftChild!);
           result.add(
-            Flexible(
-              flex: rightFlex,
-              child: rightBuilder(context, itemCount, viewportExtent),
-            ),
+            Flexible(child: rightBuilder(context, itemCount, viewportExtent)),
           );
 
           return result;
@@ -208,18 +191,11 @@ class HabitListTile extends StatelessWidget {
       }
     }
 
-    return Container(
-      color: backgroundColor,
-      height: height,
-      child: Padding(
-        padding: _padding,
-        child: Material(
-          type: MaterialType.transparency,
-          color: themeData.colorScheme.surface,
-          surfaceTintColor: themeData.colorScheme.surfaceTint,
-          child: LayoutBuilder(builder: tileBuilder),
-        ),
-      ),
+    return Material(
+      type: MaterialType.transparency,
+      color: themeData.colorScheme.surface,
+      surfaceTintColor: themeData.colorScheme.surfaceTint,
+      child: LayoutBuilder(builder: tileBuilder),
     );
   }
 }

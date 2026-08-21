@@ -1069,6 +1069,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
       collapsedViewportFraction: displayPageOccupyPrt / 100,
       expandedViewportFraction: kDefaultHabitCalendarBarExtendedPrt,
     );
+    const trackPadding = kDefaultHabitListTileTrackPadding;
 
     //#region: appbar
     Widget buildAppbar(BuildContext context) {
@@ -1125,9 +1126,10 @@ class HabitsTabPageState extends State<HabitsTabPage>
       return _CalendarBar(
         key: const ValueKey("calendar-bar"),
         geometry: geometry,
+        isCalendarExpanded: isCalendarExpanded,
         height: calendarHeaderHeight,
         itemPadding: calendarHeaderItemPadding,
-        verticalScrollController: _scrollVisibilityDispatcher.controller,
+        trackPadding: trackPadding,
         horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
         onCalendarToggleExpandPressed: _onAppbarLeftButtonPressed,
       );
@@ -1140,7 +1142,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
         withSliver: true,
         child: _HabitList(
           horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
-          verticalScrollController: _scrollVisibilityDispatcher.controller,
           reorderModel: AnimatedListReorderModel(
             onReorderStart: _onHabitListReorderStart,
             onReorderMove: _onHabitListReorderMove,
@@ -1278,7 +1279,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
 class _HabitList extends StatefulWidget {
   final LinkedScrollControllerGroup horizonalScrollControllerGroup;
-  final ScrollController verticalScrollController;
   final AnimatedListBaseReorderModel? reorderModel;
   final void Function(HabitUUID uuid)? onHabitSummaryDataPressed;
   final OnHabitSummaryPressCallback? onOpenRecordStatusDialog;
@@ -1286,7 +1286,6 @@ class _HabitList extends StatefulWidget {
 
   const _HabitList({
     required this.horizonalScrollControllerGroup,
-    required this.verticalScrollController,
     this.reorderModel,
     this.onHabitSummaryDataPressed,
     this.onOpenRecordStatusDialog,
@@ -1304,9 +1303,6 @@ class _HabitListState extends State<_HabitList> {
 
   LinkedScrollControllerGroup get _effectiveHorizonalScrollControllerGroup =>
       widget.horizonalScrollControllerGroup;
-
-  ScrollController get _effectiveVerticalScrollController =>
-      widget.verticalScrollController;
 
   @override
   void initState() {
@@ -1352,7 +1348,6 @@ class _HabitListState extends State<_HabitList> {
               uuid: element.uuid,
               horizonalScrollControllerGroup:
                   _effectiveHorizonalScrollControllerGroup,
-              verticalScrollController: _effectiveVerticalScrollController,
               onHabitSummaryDataPressed: widget.onHabitSummaryDataPressed,
               onChangeRecordStatus: widget.onChangeRecordStatus,
               onOpenRecordStatusDialog: widget.onOpenRecordStatusDialog,
@@ -1558,7 +1553,6 @@ class _HabitListItemRecordCallbackResolver {
 class _HabitListItem extends StatelessWidget {
   final HabitUUID uuid;
   final LinkedScrollControllerGroup horizonalScrollControllerGroup;
-  final ScrollController verticalScrollController;
   final void Function(HabitUUID uuid)? onHabitSummaryDataPressed;
   final OnHabitSummaryPressCallback? onOpenRecordStatusDialog;
   final OnHabitSummaryPressCallback? onChangeRecordStatus;
@@ -1566,7 +1560,6 @@ class _HabitListItem extends StatelessWidget {
   const _HabitListItem({
     required this.uuid,
     required this.horizonalScrollControllerGroup,
-    required this.verticalScrollController,
     this.onHabitSummaryDataPressed,
     this.onOpenRecordStatusDialog,
     this.onChangeRecordStatus,
@@ -1575,24 +1568,24 @@ class _HabitListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final crtDate = DateChangeProvider.of(context).dateTime;
-    final (isExtended, data, endedDate, isSelected, isInEditMode, _) = context
-        .select<
+    final (data, endedDate, isSelected, isInEditMode, isCalendarExpanded, _) =
+        context.select<
           HabitSummaryViewModel,
-          (bool, HabitSummaryData?, HabitDate?, bool, bool, Key)
+          (HabitSummaryData?, HabitDate?, bool, bool, bool, Key)
         >(
           (vm) => (
-            vm.isCalendarExpanded,
             vm.getHabit(uuid),
             vm.earliestSummaryDataStartDate?.startDate,
             vm.isHabitSelected(uuid),
             vm.isInEditMode,
+            vm.isCalendarExpanded,
             vm.getHabitInsideVersion(uuid),
           ),
         );
-    final occupyPrt = context.select<AppThemeViewModel, int>(
+    final displayPageOccupyPrt = context.select<AppThemeViewModel, int>(
       (vm) => vm.displayPageOccupyPrt,
     );
-    final (useCompactUI, height, columnExtent) = context
+    final (compactVisual, height, columnExtent) = context
         .select<AppCompactUISwitcherViewModel, (bool, double, double)>(
           (vm) => (
             vm.flag,
@@ -1602,8 +1595,8 @@ class _HabitListItem extends StatelessWidget {
         );
     final geometry = HabitListTileGeometry.fromExpansionState(
       columnExtent: columnExtent,
-      isExpanded: isExtended,
-      collapsedViewportFraction: occupyPrt / 100,
+      isExpanded: isCalendarExpanded,
+      collapsedViewportFraction: displayPageOccupyPrt / 100,
       expandedViewportFraction: kDefaultHabitCalendarBarExtendedPrt,
     );
     final (changeRecordStatusAction, openRecordStatusDialogAction) = context
@@ -1627,14 +1620,14 @@ class _HabitListItem extends StatelessWidget {
     final tile = HabitDisplayListTile(
       startDate: crtDate,
       endedData: endedDate,
-      isExtended: isExtended,
       isSelected: isSelected,
       isInEditMode: isInEditMode,
-      geometry: geometry,
-      compactVisual: useCompactUI,
+      isCalendarExpanded: isCalendarExpanded,
+      compactVisual: compactVisual,
       height: height,
+      trackPadding: kDefaultHabitListTileTrackPadding,
+      geometry: geometry,
       data: data,
-      verticalScrollController: verticalScrollController,
       horizonalScrollControllerGroup: horizonalScrollControllerGroup,
       onHabitSummaryDataPressed: onHabitSummaryDataPressed,
       onHabitRecordPressed: actionResolver.resolve(UserAction.tap),
@@ -1873,18 +1866,20 @@ class _FAB extends StatelessWidget {
 
 class _CalendarBar extends StatelessWidget {
   final HabitListTileGeometry geometry;
+  final bool isCalendarExpanded;
   final double height;
-  final EdgeInsets itemPadding;
-  final ScrollController? verticalScrollController;
+  final EdgeInsetsGeometry itemPadding;
+  final EdgeInsets trackPadding;
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
   final ValueChanged<bool>? onCalendarToggleExpandPressed;
 
   const _CalendarBar({
     super.key,
     required this.geometry,
+    required this.isCalendarExpanded,
     required this.height,
     required this.itemPadding,
-    this.verticalScrollController,
+    required this.trackPadding,
     this.horizonalScrollControllerGroup,
     this.onCalendarToggleExpandPressed,
   });
@@ -1905,7 +1900,7 @@ class _CalendarBar extends StatelessWidget {
         >((vm) => vm.scrollBehavior);
     appLog.build.debug(
       context,
-      ex: [state, earliestStartDate, height, itemPadding],
+      ex: [state, earliestStartDate, geometry],
       name: "HabitDisplay.calendarBar",
     );
     ScrollPhysics? buildScrollPhysics(double itemSize, double length) {
@@ -1930,14 +1925,14 @@ class _CalendarBar extends StatelessWidget {
           alignment: Alignment.bottomCenter,
           children: [
             SliverCalendarBar(
-              verticalScrollController: verticalScrollController,
               horizonalScrollControllerGroup: horizonalScrollControllerGroup,
               startDate: DateChangeProvider.of(context).dateTime,
               endDate: earliestStartDate,
-              isExtended: state.isClandarExpanded,
+              isExtended: isCalendarExpanded,
               geometry: geometry,
               height: height,
               itemPadding: itemPadding,
+              trackPadding: trackPadding,
               onLeftBtnPressed: onCalendarToggleExpandPressed,
               scrollPhysicsBuilder: buildScrollPhysics,
             ),

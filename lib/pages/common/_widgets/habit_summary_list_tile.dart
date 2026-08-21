@@ -42,6 +42,7 @@ class HabitSummaryListTile extends StatefulWidget {
   final double? _height;
   final EdgeInsets? _titlePadding;
   final EdgeInsets? itemPadding;
+  final EdgeInsets trackPadding;
   final HabitListTileGeometry geometry;
   final Widget Function(
     BuildContext context,
@@ -50,7 +51,6 @@ class HabitSummaryListTile extends StatefulWidget {
   )?
   cellBuilder;
   final HabitListTilePhysicsBuilder? scrollPhysicsBuilder;
-  final ScrollController? verticalScrollController;
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
   final OnHabitSummaryPressCallback? onCellPressed;
   final OnHabitSummaryPressCallback? onCellLongPressed;
@@ -68,10 +68,10 @@ class HabitSummaryListTile extends StatefulWidget {
     this._height,
     this._titlePadding,
     this.itemPadding,
+    this.trackPadding = kDefaultHabitListTileTrackPadding,
     required this.geometry,
     this.cellBuilder,
     this.scrollPhysicsBuilder,
-    this.verticalScrollController,
     this.horizonalScrollControllerGroup,
     this.onCellPressed,
     this.onCellLongPressed,
@@ -258,25 +258,32 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
       );
     }
 
-    return HabitListTile(
-      leftChild: leftPartBuilder(),
-      stackedChild: titlePartBuilder(widget.isExtended),
-      geometry: widget.geometry,
-      stackAutoWrap: !widget.isExtended,
-      canScroll: widget.canScroll ?? widget.isExtended,
-      mainScrollController: widget.verticalScrollController,
-      listScrollController: _horizonalScrollController,
-      itemCount: limitItemCount,
-      itemBuilder: (context, index, columnExtent) =>
-          _buildCellItem(context, index, columnExtent, crtDate),
-      backgroundColor: widget.isSelected
-          ? widget.selectColor ??
-                themeColor?.selectedColor ??
-                defaultThemeColor.selectedColor
-          : null,
+    final backgroundColor = widget.isSelected
+        ? widget.selectColor ??
+              themeColor?.selectedColor ??
+              defaultThemeColor.selectedColor
+        : null;
+    final track = Padding(
+      padding: widget.trackPadding,
+      child: HabitListTile(
+        leftChild: leftPartBuilder(),
+        stackedChild: titlePartBuilder(widget.isExtended),
+        geometry: widget.geometry,
+        stackAutoWrap: !widget.isExtended,
+        canScroll: widget.canScroll ?? widget.isExtended,
+        listScrollController: _horizonalScrollController,
+        itemCount: limitItemCount,
+        itemBuilder: (context, index, columnExtent) =>
+            _buildCellItem(context, index, columnExtent, crtDate),
+        minItemCoun: kHabitSummaryListTilMinShowDate,
+        scrollPhysicsBuilder: widget.scrollPhysicsBuilder,
+      ),
+    );
+    return SizedBox(
       height: getTextScaler(context).scale(height),
-      minItemCoun: kHabitSummaryListTilMinShowDate,
-      scrollPhysicsBuilder: widget.scrollPhysicsBuilder,
+      child: backgroundColor == null
+          ? track
+          : ColoredBox(color: backgroundColor, child: track),
     );
   }
 

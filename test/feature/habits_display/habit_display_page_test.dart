@@ -333,6 +333,12 @@ void main() {
 
     expect(vm.hasLoaded, isTrue);
     expect(vm.currentHabitList, isNotEmpty);
+    final calendar = find.byType(SliverCalendarBar);
+    final calendarList = find.descendant(
+      of: calendar,
+      matching: find.byType(ListView),
+    );
+    final displayRow = find.byType(HabitDisplayListTile);
     final row = find.byType(HabitSummaryListTile);
     final rowList = find.descendant(of: row, matching: find.byType(ListView));
     final rowTrack = find.ancestor(
@@ -340,7 +346,18 @@ void main() {
       matching: find.byType(AnimatedContainer),
     );
     expect(row, findsOneWidget);
+    expect(displayRow, findsOneWidget);
     expect(rowTrack, findsOneWidget);
+    expect(tester.getSize(calendarList).height, 48);
+    expect(tester.getSize(rowList).height, 64);
+    final calendarGeometry = tester
+        .widget<SliverCalendarBar>(calendar)
+        .geometry;
+    final rowGeometry = tester
+        .widget<HabitDisplayListTile>(displayRow)
+        .geometry;
+    expect(rowGeometry.columnExtent, calendarGeometry.columnExtent);
+    expect(rowGeometry.viewportFraction, calendarGeometry.viewportFraction);
     final collapsedWidth = tester.getSize(rowTrack).width;
     expect(
       tester.widget<HabitSummaryListTile>(row).geometry.viewportFraction,
@@ -352,6 +369,14 @@ void main() {
     expect(
       tester.widget<HabitSummaryListTile>(row).geometry.viewportFraction,
       0.85,
+    );
+    expect(
+      tester.widget<HabitDisplayListTile>(displayRow).geometry.columnExtent,
+      tester.widget<SliverCalendarBar>(calendar).geometry.columnExtent,
+    );
+    expect(
+      tester.widget<HabitDisplayListTile>(displayRow).geometry.viewportFraction,
+      tester.widget<SliverCalendarBar>(calendar).geometry.viewportFraction,
     );
     await tester.pump(const Duration(milliseconds: 300));
     final expandedWidth = tester.getSize(rowTrack).width;
@@ -398,6 +423,10 @@ void main() {
       60,
     );
     expect(
+      tester.widget<SliverCalendarBar>(calendar).itemPadding,
+      const EdgeInsets.symmetric(horizontal: 8),
+    );
+    expect(
       tester.widget<RefreshIndicator>(find.byType(RefreshIndicator)).edgeOffset,
       112,
     );
@@ -439,10 +468,19 @@ void main() {
     await tester.pump(const Duration(milliseconds: 350));
 
     final calendar = find.byType(SliverCalendarBar);
+    final calendarList = find.descendant(
+      of: calendar,
+      matching: find.byType(ListView),
+    );
     expect(tester.getSize(calendar).height, 44);
+    expect(tester.getSize(calendarList).height, 44);
     expect(
       tester.widget<SliverCalendarBar>(calendar).geometry.columnExtent,
       44,
+    );
+    expect(
+      tester.widget<SliverCalendarBar>(calendar).itemPadding,
+      const EdgeInsets.symmetric(horizontal: 4),
     );
     expect(
       tester.widget<RefreshIndicator>(find.byType(RefreshIndicator)).edgeOffset,

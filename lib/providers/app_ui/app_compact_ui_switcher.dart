@@ -48,7 +48,7 @@ class AppCompactUISwitcherViewModel extends ChangeNotifier
   double get appCalendarHeaderHeight => flag ? 44.0 : 48.0;
   EdgeInsets get appCalendarHeaderItemPadding => flag
       ? const EdgeInsets.symmetric(horizontal: 4.0)
-      : const EdgeInsets.all(8.0);
+      : const EdgeInsets.symmetric(horizontal: 8.0);
   double get appHabitDisplayListTileHeight => flag ? 48.0 : 64.0;
   double get appHabitDisplayColumnExtent => flag ? 44.0 : 60.0;
 }

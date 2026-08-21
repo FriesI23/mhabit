@@ -26,14 +26,14 @@ import '../../common/widgets.dart';
 class HabitDisplayListTile extends StatelessWidget {
   final HabitDate? startDate;
   final HabitDate? endedData;
-  final bool isExtended;
   final bool isSelected;
   final bool isInEditMode;
-  final HabitListTileGeometry geometry;
-  final double? height;
+  final bool isCalendarExpanded;
   final bool compactVisual;
+  final double height;
+  final EdgeInsets trackPadding;
+  final HabitListTileGeometry geometry;
   final HabitSummaryData data;
-  final ScrollController? verticalScrollController;
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
   final void Function(HabitUUID uuid)? onHabitSummaryDataPressed;
   final OnHabitSummaryPressCallback? onHabitRecordPressed;
@@ -44,14 +44,14 @@ class HabitDisplayListTile extends StatelessWidget {
     super.key,
     this.startDate,
     this.endedData,
-    required this.isExtended,
     required this.isSelected,
     required this.isInEditMode,
+    required this.isCalendarExpanded,
+    required this.compactVisual,
+    required this.height,
+    required this.trackPadding,
     required this.geometry,
-    this.height,
-    this.compactVisual = false,
     required this.data,
-    this.verticalScrollController,
     this.horizonalScrollControllerGroup,
     this.onHabitSummaryDataPressed,
     this.onHabitRecordPressed,
@@ -101,11 +101,11 @@ class HabitDisplayListTile extends StatelessWidget {
     return themeData.copyWith(extensions: extensions, textTheme: textTheme);
   }
 
-  EdgeInsets getTitlePadding() => compactVisual
+  EdgeInsets get titlePadding => compactVisual
       ? const EdgeInsets.fromLTRB(4, 2, 2, 4)
       : const EdgeInsets.fromLTRB(8, 4, 4, 8);
 
-  EdgeInsets? getItemPadding() =>
+  EdgeInsets get itemPadding =>
       compactVisual ? const EdgeInsets.all(2.0) : const EdgeInsets.all(8.0);
 
   @override
@@ -126,17 +126,17 @@ class HabitDisplayListTile extends StatelessWidget {
             child: HabitSummaryListTile(
               key: ValueKey("${data.uuid}|$isSelected"),
               height: height,
-              titlePadding: getTitlePadding(),
-              itemPadding: getItemPadding(),
+              titlePadding: titlePadding,
+              itemPadding: itemPadding,
+              trackPadding: trackPadding,
               data: data,
               startDate: startDate,
               endDate: endedData,
               canScroll: true,
-              isExtended: isExtended,
+              isExtended: isCalendarExpanded,
               isSelected: isSelected,
               selectColor: bgcolor,
               geometry: geometry,
-              verticalScrollController: verticalScrollController,
               horizonalScrollControllerGroup: horizonalScrollControllerGroup,
               onCellPressed: onHabitRecordPressed,
               onCellLongPressed: onHabitRecordLongPressed,

@@ -90,8 +90,6 @@ void main() {
                 canScroll: true,
                 itemCount: 10,
                 minItemCoun: 1,
-                height: height,
-                padding: EdgeInsets.zero,
                 scrollPhysicsBuilder: physicsBuilder,
                 itemBuilder: (context, index, columnExtent) =>
                     SizedBox(key: ValueKey('cell-$index'), width: columnExtent),

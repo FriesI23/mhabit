@@ -18,13 +18,13 @@ import 'package:flutter/material.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 
 import '../../../common/types.dart';
+import '../../../utils/app_clock.dart';
 import '../../../widgets/widgets.dart';
 
 const double kDefaultHabitCalendarBarExtendedPrt = 0.85;
 const int kHabitCalendarBarMinShowDate = 1;
 
-class SliverCalendarBar extends StatefulWidget implements PreferredSizeWidget {
-  final ScrollController? verticalScrollController;
+class SliverCalendarBar extends StatefulWidget {
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
   final ValueChanged<bool>? onLeftBtnPressed;
   final DateTime? startDate;
@@ -33,11 +33,11 @@ class SliverCalendarBar extends StatefulWidget implements PreferredSizeWidget {
   final HabitListTileGeometry geometry;
   final double height;
   final EdgeInsetsGeometry? itemPadding;
+  final EdgeInsets trackPadding;
   final HabitListTilePhysicsBuilder? scrollPhysicsBuilder;
 
   const SliverCalendarBar({
     super.key,
-    this.verticalScrollController,
     this.horizonalScrollControllerGroup,
     this.onLeftBtnPressed,
     this.startDate,
@@ -46,11 +46,9 @@ class SliverCalendarBar extends StatefulWidget implements PreferredSizeWidget {
     required this.geometry,
     required this.height,
     this.itemPadding,
+    this.trackPadding = kDefaultHabitListTileTrackPadding,
     this.scrollPhysicsBuilder,
   });
-
-  @override
-  Size get preferredSize => Size.fromHeight(height);
 
   @override
   State<StatefulWidget> createState() => _SliverCalendarBar();
@@ -74,6 +72,10 @@ class _SliverCalendarBar extends State<SliverCalendarBar> {
 
   @override
   Widget build(BuildContext context) {
+    final currentDate = widget.startDate ?? AppClock().now();
+    final int? itemCount = widget.endDate == null
+        ? null
+        : math.max(currentDate.difference(widget.endDate!).inDays, 0) + 1;
     final Widget? expandIcon = widget.onLeftBtnPressed != null
         ? _SliverClanedarBarExpandButton(
             onPressed: widget.onLeftBtnPressed,
@@ -81,20 +83,41 @@ class _SliverCalendarBar extends State<SliverCalendarBar> {
           )
         : null;
 
+    Widget? itemBuilder(BuildContext context, int index, double columnExtent) {
+      return ConstrainedBox(
+        constraints: BoxConstraints.tightFor(width: columnExtent),
+        child: FittedBox(
+          child: DateContainer(
+            padding: widget.itemPadding,
+            date: currentDate.subtract(Duration(days: index)),
+          ),
+        ),
+      );
+    }
+
+    Widget buildLeftChild(Widget button) {
+      return LayoutBuilder(
+        builder: (context, constraints) => ConstrainedBox(
+          constraints: BoxConstraints.tightFor(width: constraints.maxHeight),
+          child: FittedBox(child: DateArrowContainer(button: button)),
+        ),
+      );
+    }
+
     return SizedBox(
       height: widget.height,
-      child: HabitCalendarSpaceBar(
-        startDate: widget.startDate,
-        endDate: widget.endDate,
-        geometry: widget.geometry,
-        canScroll: widget.isExtended,
-        isExtended: widget.isExtended,
-        mainScrollController: widget.verticalScrollController,
-        listScrollController: _horizonalScrollController,
-        leftButton: expandIcon,
-        minItemCoun: kHabitCalendarBarMinShowDate,
-        itemPadding: widget.itemPadding,
-        scrollPhysicsBuilder: widget.scrollPhysicsBuilder,
+      child: Padding(
+        padding: widget.trackPadding,
+        child: HabitListTile(
+          geometry: widget.geometry,
+          canScroll: widget.isExtended,
+          listScrollController: _horizonalScrollController,
+          leftChild: expandIcon != null ? buildLeftChild(expandIcon) : null,
+          itemCount: itemCount,
+          itemBuilder: itemBuilder,
+          minItemCoun: kHabitCalendarBarMinShowDate,
+          scrollPhysicsBuilder: widget.scrollPhysicsBuilder,
+        ),
       ),
     );
   }
