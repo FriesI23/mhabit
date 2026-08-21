@@ -1,8 +1,15 @@
-# Release: v1.26.12+185-pre
+# Release: v1.26.13+186-pre
 
 ## 🌐 Localization
 
-- Update Czech translation, thanks to Pavel Borecki's contribution on Weblate (#643)
+- Update Czech translation, thanks to Pavel Borecki's contribution on Weblate
+  (#645)
+- Update German translation, thanks to Galdarion's contribution on Weblate
+  (#645)
+- Update Italian translation, thanks to Stefano and nickfrn's contributions on
+  Weblate (#645)
+- Update Russian translation, thanks to sanda1iki's contribution on Weblate
+  (#645)
 
 ## 🔄 Migration
 
@@ -33,4 +40,4 @@
 - Add regression coverage for menu configuration, stack-trace parsing, and
   habit record queries (#644)
 
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.26.7+180...pre-v1.26.12+185)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.26.7+180...pre-v1.26.13+186)
