@@ -46,8 +46,7 @@ class AppNotifyConfig implements JsonAdaptor {
   const AppNotifyConfig({Map<NotificationChannelId, bool>? channels})
     : _channels = channels ?? const {};
 
-  AppNotifyConfig._({required Map<NotificationChannelId, bool> channels})
-    : _channels = channels;
+  AppNotifyConfig._({required this._channels});
 
   factory AppNotifyConfig.fromJson(JsonMap json) =>
       _$AppNotifyConfigFromJson(json);

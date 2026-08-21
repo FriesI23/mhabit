@@ -34,7 +34,6 @@ class _$GroupExportDataCWProxyImpl implements _$GroupExportDataCWProxy {
 
   final GroupExportData _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -42,6 +41,7 @@ class _$GroupExportDataCWProxyImpl implements _$GroupExportDataCWProxy {
   /// ```dart
   /// GroupExportData(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   GroupExportData call({
     Object? uuid = const $CopyWithPlaceholder(),
     Object? name = const $CopyWithPlaceholder(),

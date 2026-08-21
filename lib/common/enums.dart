@@ -32,7 +32,7 @@ enum HabitsRecordScrollBehavior implements EnumWithDBCode {
 
   final int _code;
 
-  const HabitsRecordScrollBehavior({required int code}) : _code = code;
+  const HabitsRecordScrollBehavior({required this._code});
 
   @override
   int get dbCode => _code;
@@ -72,7 +72,7 @@ enum UserAction implements EnumWithDBCode {
 
   final int _code;
 
-  const UserAction({required int code}) : _code = code;
+  const UserAction({required this._code});
 
   @override
   int get dbCode => _code;

@@ -33,7 +33,6 @@ class _$HabitRangeDayStatisticCWProxyImpl
 
   final HabitRangeDayStatistic _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -41,6 +40,7 @@ class _$HabitRangeDayStatisticCWProxyImpl
   /// ```dart
   /// HabitRangeDayStatistic(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   HabitRangeDayStatistic call({
     Object? uuid = const $CopyWithPlaceholder(),
     Object? startProgress = const $CopyWithPlaceholder(),
@@ -140,7 +140,6 @@ class _$HabitSummaryStatisticsDataCWProxyImpl
     List<HabitRangeDayStatistic> currentPopularityData,
   ) => call(currentPopularityData: currentPopularityData);
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `HabitSummaryStatisticsData(...).copyWith.fieldName(value)`.
   ///
@@ -148,6 +147,7 @@ class _$HabitSummaryStatisticsDataCWProxyImpl
   /// ```dart
   /// HabitSummaryStatisticsData(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   HabitSummaryStatisticsData call({
     Object? currentComplatedCount = const $CopyWithPlaceholder(),
     Object? currentInProgressCount = const $CopyWithPlaceholder(),

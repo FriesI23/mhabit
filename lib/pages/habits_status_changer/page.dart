@@ -260,7 +260,7 @@ class _PageState extends State<_Page> {
           selector: (context, vm) => vm.selectStatus,
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, _, child) {
-            return ColoredBox(
+            return Material(
               color: Theme.of(context).colorScheme.surface,
               child: RecordStatusChangeTile(
                 initStatus: _vm.selectStatus,
@@ -274,7 +274,7 @@ class _PageState extends State<_Page> {
     Widget buildConfirmButton(BuildContext context) {
       return Selector<HabitStatusChangerViewModel, bool>(
         selector: (context, vm) => vm.canSave,
-        builder: (context, canSave, child) => ColoredBox(
+        builder: (context, canSave, child) => Material(
           color: Theme.of(context).colorScheme.surface,
           child: ConfirmButton(
             enbaleConfirm: canSave,
@@ -289,7 +289,7 @@ class _PageState extends State<_Page> {
       return Selector<HabitStatusChangerViewModel, int>(
         selector: (context, vm) => vm.currentHabitCount,
         builder: (context, habitCount, child) {
-          return ColoredBox(
+          return Material(
             color: Theme.of(context).colorScheme.surface,
             child: L10nBuilder(
               builder: (context, l10n) => GroupTitleListTile(

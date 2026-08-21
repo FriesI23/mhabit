@@ -26,7 +26,6 @@ class _$FakeSyncServerFormCWProxyImpl implements _$FakeSyncServerFormCWProxy {
 
   final FakeSyncServerForm _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -34,6 +33,7 @@ class _$FakeSyncServerFormCWProxyImpl implements _$FakeSyncServerFormCWProxy {
   /// ```dart
   /// FakeSyncServerForm(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   FakeSyncServerForm call({Object? uuid = const $CopyWithPlaceholder()}) {
     return FakeSyncServerForm(
       uuid: uuid == const $CopyWithPlaceholder() || uuid == null
@@ -82,7 +82,6 @@ class _$WebDavSyncServerFormCWProxyImpl
 
   final WebDavSyncServerForm _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -90,6 +89,7 @@ class _$WebDavSyncServerFormCWProxyImpl
   /// ```dart
   /// WebDavSyncServerForm(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   WebDavSyncServerForm call({
     Object? uuid = const $CopyWithPlaceholder(),
     Object? path = const $CopyWithPlaceholder(),

@@ -16,7 +16,7 @@ import 'dart:math' as math;
 
 import 'package:animated_check/animated_check.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 
 class HabitProgressIndicator extends StatefulWidget {
   final double value;

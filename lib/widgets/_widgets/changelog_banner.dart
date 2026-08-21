@@ -274,7 +274,7 @@ class _ChangelogBannerState extends State<_ChangelogBanner>
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, _) => SizeTransition(
-        axisAlignment: 1.0,
+        alignment: AlignmentDirectional.bottomStart,
         sizeFactor: _animation,
         child: Dismissible(
           key: ValueKey(widget.controller.dismissibleKey),

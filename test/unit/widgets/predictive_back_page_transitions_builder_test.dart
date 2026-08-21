@@ -12,9 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/widgets/widgets.dart';
+
+Future<void> _commitPredictiveBack(WidgetTester tester) async {
+  final startMessage = const StandardMethodCodec().encodeMethodCall(
+    const MethodCall('startBackGesture', <String, dynamic>{
+      'touchOffset': <double>[5.0, 300.0],
+      'progress': 0.0,
+      'swipeEdge': 0,
+    }),
+  );
+  await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+    'flutter/backgesture',
+    startMessage,
+    (data) {},
+  );
+  await tester.pump();
+
+  final commitMessage = const StandardMethodCodec().encodeMethodCall(
+    const MethodCall('commitBackGesture'),
+  );
+  await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+    'flutter/backgesture',
+    commitMessage,
+    (data) {},
+  );
+  await tester.pumpAndSettle();
+}
 
 void main() {
   testWidgets('routes on the root navigator are never considered covered', (
@@ -79,6 +107,112 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(isRouteCoveredByRootRoute(nestedRoute), isTrue);
+    },
+  );
+
+  testWidgets(
+    'stateful-shell-depth route detects a dialog above all shell navigators',
+    (tester) async {
+      late BuildContext rootPageContext;
+      late BuildContext branchPageContext;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) {
+              rootPageContext = context;
+              return Navigator(
+                onGenerateRoute: (_) => MaterialPageRoute<void>(
+                  builder: (context) => Navigator(
+                    onGenerateRoute: (_) => MaterialPageRoute<void>(
+                      builder: (context) => Builder(
+                        builder: (context) {
+                          branchPageContext = context;
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      );
+
+      final branchRoute =
+          ModalRoute.of(branchPageContext)! as PageRoute<dynamic>;
+      expect(isRouteCoveredByRootRoute(branchRoute), isFalse);
+
+      Navigator.of(rootPageContext).push<void>(
+        DialogRoute<void>(
+          context: rootPageContext,
+          builder: (context) => const SizedBox.shrink(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(isRouteCoveredByRootRoute(branchRoute), isTrue);
+    },
+  );
+
+  testWidgets(
+    'root dialog then branch detail handle consecutive predictive backs',
+    (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      final branchNavigatorKey = GlobalKey<NavigatorState>();
+      late BuildContext rootPageContext;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            pageTransitionsTheme: const PageTransitionsTheme(
+              builders: {
+                TargetPlatform.android:
+                    CustomPredictiveBackPageTransitionsBuilder(),
+              },
+            ),
+          ),
+          home: Builder(
+            builder: (context) {
+              rootPageContext = context;
+              return Navigator(
+                onGenerateRoute: (_) => MaterialPageRoute<void>(
+                  builder: (context) => Navigator(
+                    key: branchNavigatorKey,
+                    onGenerateRoute: (_) => MaterialPageRoute<void>(
+                      builder: (context) => const Text('habits page'),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      );
+
+      branchNavigatorKey.currentState!.push<void>(
+        MaterialPageRoute<void>(
+          builder: (context) => const Text('detail page'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      showDialog<void>(
+        context: rootPageContext,
+        builder: (context) => const AlertDialog(title: Text('calendar')),
+      );
+      await tester.pumpAndSettle();
+
+      await _commitPredictiveBack(tester);
+
+      expect(find.text('calendar'), findsNothing);
+      expect(find.text('detail page'), findsOneWidget);
+
+      await _commitPredictiveBack(tester);
+
+      expect(find.text('detail page'), findsNothing);
+      expect(find.text('habits page'), findsOneWidget);
+      debugDefaultTargetPlatformOverride = null;
     },
   );
 }

@@ -39,7 +39,6 @@ class _$GroupDBCellCWProxyImpl implements _$GroupDBCellCWProxy {
 
   final GroupDBCell _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -47,6 +46,7 @@ class _$GroupDBCellCWProxyImpl implements _$GroupDBCellCWProxy {
   /// ```dart
   /// GroupDBCell(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   GroupDBCell call({
     Object? id = const $CopyWithPlaceholder(),
     Object? createT = const $CopyWithPlaceholder(),

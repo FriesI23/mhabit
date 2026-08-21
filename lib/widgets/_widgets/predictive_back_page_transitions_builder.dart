@@ -59,7 +59,7 @@ class CustomPredictiveBackPageTransitionsBuilder
   }
 }
 
-/// Whether [route]'s navigator is covered by a root-level route.
+/// Whether [route]'s navigator is covered by a route on an ancestor navigator.
 ///
 /// A route whose navigator sits inside a [ModalRoute] on the root navigator
 /// (e.g. a go_router shell branch inside the shell route) must not take part
@@ -68,11 +68,18 @@ class CustomPredictiveBackPageTransitionsBuilder
 /// instead of the covering modal. See
 /// [flutter/flutter#152323](https://github.com/flutter/flutter/issues/152323).
 ///
-/// Routes on the root navigator itself have no such ancestor and always
-/// return false.
+/// Every shell adds another navigator/route pair, so checking only the nearest
+/// ancestor is insufficient for routes inside a stateful shell branch. Walk
+/// the complete navigator ancestry until a non-current covering route is found.
+/// Routes on the root navigator itself have no such ancestor and return false.
 bool isRouteCoveredByRootRoute(PageRoute<dynamic> route) {
-  final navigator = route.navigator;
-  if (navigator == null) return false;
-  final ModalRoute<dynamic>? ancestorRoute = ModalRoute.of(navigator.context);
-  return ancestorRoute != null && !ancestorRoute.isCurrent;
+  NavigatorState? navigator = route.navigator;
+  final visitedNavigators = <NavigatorState>{};
+  while (navigator != null && visitedNavigators.add(navigator)) {
+    final ancestorRoute = ModalRoute.of(navigator.context);
+    if (ancestorRoute == null) return false;
+    if (!ancestorRoute.isCurrent) return true;
+    navigator = ancestorRoute.navigator;
+  }
+  return false;
 }

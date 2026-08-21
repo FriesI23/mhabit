@@ -38,7 +38,7 @@ enum HabitDisplaySortType implements EnumWithDBCode {
 
   final int _code;
 
-  const HabitDisplaySortType({required int code}) : _code = code;
+  const HabitDisplaySortType({required this._code});
 
   @override
   int get dbCode => _code;
@@ -64,7 +64,7 @@ enum HabitDisplaySortDirection implements EnumWithDBCode {
 
   final int _code;
 
-  const HabitDisplaySortDirection({required int code}) : _code = code;
+  const HabitDisplaySortDirection({required this._code});
 
   @override
   int get dbCode => _code;

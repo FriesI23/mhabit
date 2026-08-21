@@ -40,7 +40,6 @@ class _$AppWebDavSyncServerCWProxyImpl implements _$AppWebDavSyncServerCWProxy {
 
   final AppWebDavSyncServer _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -48,6 +47,7 @@ class _$AppWebDavSyncServerCWProxyImpl implements _$AppWebDavSyncServerCWProxy {
   /// ```dart
   /// AppWebDavSyncServer(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   AppWebDavSyncServer call({
     Object? identity = const $CopyWithPlaceholder(),
     Object? createTime = const $CopyWithPlaceholder(),
@@ -159,7 +159,6 @@ class _$AppFakeSyncServerCWProxyImpl implements _$AppFakeSyncServerCWProxy {
 
   final AppFakeSyncServer _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -167,6 +166,7 @@ class _$AppFakeSyncServerCWProxyImpl implements _$AppFakeSyncServerCWProxy {
   /// ```dart
   /// AppFakeSyncServer(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   AppFakeSyncServer call({
     Object? identity = const $CopyWithPlaceholder(),
     Object? name = const $CopyWithPlaceholder(),

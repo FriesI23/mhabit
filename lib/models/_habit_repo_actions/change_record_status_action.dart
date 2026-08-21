@@ -100,8 +100,8 @@ final class AutoChangeRecordStatusAction
 
   const AutoChangeRecordStatusAction({
     required this.data,
-    required List<HabitRecordDate> dateList,
-  }) : _dateList = dateList;
+    required this._dateList,
+  });
 
   @override
   List<HabitRecordDate> get valueList => _dateList;
@@ -178,8 +178,8 @@ final class ChangeMultiRecordStatusAction
     this.goal,
     this.reason,
     this.status = HabitRecordStatus.done,
-    required List<HabitRecordDate> dateList,
-  }) : _dateList = dateList;
+    required this._dateList,
+  });
 
   @override
   List<HabitRecordDate> get valueList => _dateList;

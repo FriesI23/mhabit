@@ -30,7 +30,6 @@ class _$AppReminderConfigCWProxyImpl implements _$AppReminderConfigCWProxy {
 
   final AppReminderConfig _value;
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
@@ -38,6 +37,7 @@ class _$AppReminderConfigCWProxyImpl implements _$AppReminderConfigCWProxy {
   /// ```dart
   /// AppReminderConfig(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   AppReminderConfig call({
     Object? enabled = const $CopyWithPlaceholder(),
     Object? type = const $CopyWithPlaceholder(),

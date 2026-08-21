@@ -81,7 +81,7 @@ class _ExpandedSectionState extends State<ExpandedSection>
   @override
   Widget build(BuildContext context) {
     return SizeTransition(
-      axisAlignment: 1.0,
+      alignment: AlignmentDirectional.bottomStart,
       sizeFactor: animation,
       child: FocusTraversalGroup(
         descendantsAreFocusable: widget.expand,

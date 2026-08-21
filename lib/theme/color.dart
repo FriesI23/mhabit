@@ -26,7 +26,7 @@ enum AppThemeType implements EnumWithDBCode {
 
   final int _code;
 
-  const AppThemeType({required int code}) : _code = code;
+  const AppThemeType({required this._code});
 
   @override
   int get dbCode => _code;
