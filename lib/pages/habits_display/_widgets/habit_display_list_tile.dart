@@ -20,6 +20,7 @@ import '../../../extensions/colorscheme_extensions.dart';
 import '../../../models/habit_date.dart';
 import '../../../models/habit_summary.dart';
 import '../../../theme/color.dart';
+import '../../../widgets/widgets.dart' show HabitListTileGeometry;
 import '../../common/widgets.dart';
 
 class HabitDisplayListTile extends StatelessWidget {
@@ -28,7 +29,7 @@ class HabitDisplayListTile extends StatelessWidget {
   final bool isExtended;
   final bool isSelected;
   final bool isInEditMode;
-  final int? collapsePrt;
+  final HabitListTileGeometry geometry;
   final double? height;
   final bool compactVisual;
   final HabitSummaryData data;
@@ -46,7 +47,7 @@ class HabitDisplayListTile extends StatelessWidget {
     required this.isExtended,
     required this.isSelected,
     required this.isInEditMode,
-    this.collapsePrt,
+    required this.geometry,
     this.height,
     this.compactVisual = false,
     required this.data,
@@ -134,7 +135,7 @@ class HabitDisplayListTile extends StatelessWidget {
               isExtended: isExtended,
               isSelected: isSelected,
               selectColor: bgcolor,
-              collapsePrt: collapsePrt,
+              geometry: geometry,
               verticalScrollController: verticalScrollController,
               horizonalScrollControllerGroup: horizonalScrollControllerGroup,
               onCellPressed: onHabitRecordPressed,

@@ -25,7 +25,7 @@ import 'habit_list_tile.dart';
 class HabitCalendarSpaceBar extends StatelessWidget {
   final DateTime? startDate;
   final DateTime? endDate;
-  final double sizePrt;
+  final HabitListTileGeometry geometry;
   final bool canScroll;
   final bool isExtended;
   final ScrollController? mainScrollController;
@@ -39,7 +39,7 @@ class HabitCalendarSpaceBar extends StatelessWidget {
     super.key,
     this.startDate,
     this.endDate,
-    required this.sizePrt,
+    required this.geometry,
     required this.canScroll,
     required this.isExtended,
     this.mainScrollController,
@@ -61,9 +61,9 @@ class HabitCalendarSpaceBar extends StatelessWidget {
       limitItemCount = math.max(crtDate.difference(endDate!).inDays, 0) + 1;
     }
 
-    Widget? itemBuilder(BuildContext context, int index, double realHeight) {
+    Widget? itemBuilder(BuildContext context, int index, double columnExtent) {
       return ConstrainedBox(
-        constraints: BoxConstraints.tightFor(width: realHeight),
+        constraints: BoxConstraints.tightFor(width: columnExtent),
         child: FittedBox(
           child: DateContainer(
             padding: itemPadding,
@@ -83,7 +83,7 @@ class HabitCalendarSpaceBar extends StatelessWidget {
     }
 
     return HabitListTile(
-      sizePrt: sizePrt,
+      geometry: geometry,
       canScroll: canScroll,
       mainScrollController: mainScrollController,
       listScrollController: listScrollController,

@@ -155,7 +155,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     final offset = controller.offset;
     final lastOffset = _lastHorizonalScrollOffset;
     final expanded = _vm.isCalendarExpanded;
-    final window = _uiSwitcher.appHabitDisplayListTileHeight ~/ 2;
+    final window = _uiSwitcher.appHabitDisplayColumnExtent / 2;
     if (!expanded && lastOffset < window && offset >= window) {
       _vm.expandCalendar();
     } else if (expanded && offset < lastOffset && offset <= 0) {
@@ -1045,6 +1045,22 @@ class HabitsTabPageState extends State<HabitsTabPage>
   Widget build(BuildContext context) {
     super.build(context);
     appLog.build.debug(context);
+    final isCalendarExpanded = context.select<HabitSummaryViewModel, bool>(
+      (vm) => vm.isCalendarExpanded,
+    );
+    final displayPageOccupyPrt = context.select<AppThemeViewModel, int>(
+      (vm) => vm.displayPageOccupyPrt,
+    );
+    final (calendarBarHeight, columnExtent) = context
+        .select<AppCompactUISwitcherViewModel, (double, double)>(
+          (vm) => (vm.appCalendarBarHeight, vm.appHabitDisplayColumnExtent),
+        );
+    final geometry = HabitListTileGeometry.fromExpansionState(
+      columnExtent: columnExtent,
+      isExpanded: isCalendarExpanded,
+      collapsedViewportFraction: displayPageOccupyPrt / 100,
+      expandedViewportFraction: kDefaultHabitCalendarBarExtendedPrt,
+    );
 
     //#region: appbar
     Widget buildAppbar(BuildContext context) {
@@ -1100,6 +1116,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     Widget buildCalendarBar(BuildContext context) {
       return _CalendarBar(
         key: const ValueKey("calendar-bar"),
+        geometry: geometry,
         verticalScrollController: _scrollVisibilityDispatcher.controller,
         horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
         onCalendarToggleExpandPressed: _onAppbarLeftButtonPressed,
@@ -1172,42 +1189,41 @@ class HabitsTabPageState extends State<HabitsTabPage>
     }
     //#endregion
 
-    return Selector<AppCompactUISwitcherViewModel, Tuple2<bool, double>>(
-      selector: (context, vm) => Tuple2(vm.flag, vm.appCalendarBarHeight),
-      builder: (context, value, child) => RefreshIndicator(
-        notificationPredicate: (notification) {
-          final context = notification.context;
-          if (context == null) {
-            return defaultScrollNotificationPredicate(notification);
-          }
-          final summary = context.read<HabitSummaryViewModel>();
-          final sync = context.read<AppSyncWorkflowAccess>();
-          if (summary.isInEditMode || !sync.canStartSync) return false;
+    return RefreshIndicator(
+      notificationPredicate: (notification) {
+        final context = notification.context;
+        if (context == null) {
           return defaultScrollNotificationPredicate(notification);
-        },
-        onRefresh: _onRefreshIndicatorTriggered,
-        edgeOffset:
-            kToolbarHeight + value.item2 + MediaQuery.paddingOf(context).top,
-        triggerMode: RefreshIndicatorTriggerMode.onEdge,
-        child: Stack(
-          children: [
-            buildEmptyImage(context),
-            CustomScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              controller: _scrollVisibilityDispatcher.controller,
-              slivers: [
-                buildAppbar(context),
-                buildCalendarBar(context),
-                const ChangelogBannerSliver(),
-                const PinnedHeaderSliver(child: HabitDivider(height: 1)),
-                buildHabits(context),
-                buildDevelopSliverList(context),
-                buildBottomPlaceHolder(context),
-                if (kDebugMode) _buildScrollablePlaceHolder(context),
-              ],
-            ),
-          ],
-        ),
+        }
+        final summary = context.read<HabitSummaryViewModel>();
+        final sync = context.read<AppSyncWorkflowAccess>();
+        if (summary.isInEditMode || !sync.canStartSync) return false;
+        return defaultScrollNotificationPredicate(notification);
+      },
+      onRefresh: _onRefreshIndicatorTriggered,
+      edgeOffset:
+          kToolbarHeight +
+          calendarBarHeight +
+          MediaQuery.paddingOf(context).top,
+      triggerMode: RefreshIndicatorTriggerMode.onEdge,
+      child: Stack(
+        children: [
+          buildEmptyImage(context),
+          CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            controller: _scrollVisibilityDispatcher.controller,
+            slivers: [
+              buildAppbar(context),
+              buildCalendarBar(context),
+              const ChangelogBannerSliver(),
+              const PinnedHeaderSliver(child: HabitDivider(height: 1)),
+              buildHabits(context),
+              buildDevelopSliverList(context),
+              buildBottomPlaceHolder(context),
+              if (kDebugMode) _buildScrollablePlaceHolder(context),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -1564,10 +1580,20 @@ class _HabitListItem extends StatelessWidget {
     final occupyPrt = context.select<AppThemeViewModel, int>(
       (vm) => vm.displayPageOccupyPrt,
     );
-    final (useCompactUI, height) = context
-        .select<AppCompactUISwitcherViewModel, (bool, double)>(
-          (vm) => (vm.flag, vm.appHabitDisplayListTileHeight),
+    final (useCompactUI, height, columnExtent) = context
+        .select<AppCompactUISwitcherViewModel, (bool, double, double)>(
+          (vm) => (
+            vm.flag,
+            vm.appHabitDisplayListTileHeight,
+            vm.appHabitDisplayColumnExtent,
+          ),
         );
+    final geometry = HabitListTileGeometry.fromExpansionState(
+      columnExtent: columnExtent,
+      isExpanded: isExtended,
+      collapsedViewportFraction: occupyPrt / 100,
+      expandedViewportFraction: kDefaultHabitCalendarBarExtendedPrt,
+    );
     final (changeRecordStatusAction, openRecordStatusDialogAction) = context
         .select<HabitRecordOpConfigViewModel, (UserAction, UserAction)>(
           (vm) => (vm.changeRecordStatus, vm.openRecordStatusDialog),
@@ -1592,7 +1618,7 @@ class _HabitListItem extends StatelessWidget {
       isExtended: isExtended,
       isSelected: isSelected,
       isInEditMode: isInEditMode,
-      collapsePrt: occupyPrt,
+      geometry: geometry,
       compactVisual: useCompactUI,
       height: height,
       data: data,
@@ -1836,12 +1862,14 @@ class _FAB extends StatelessWidget {
 }
 
 class _CalendarBar extends StatelessWidget {
+  final HabitListTileGeometry geometry;
   final ScrollController? verticalScrollController;
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
   final ValueChanged<bool>? onCalendarToggleExpandPressed;
 
   const _CalendarBar({
     super.key,
+    required this.geometry,
     this.verticalScrollController,
     this.horizonalScrollControllerGroup,
     this.onCalendarToggleExpandPressed,
@@ -1853,9 +1881,6 @@ class _CalendarBar extends StatelessWidget {
         .select<HabitSummaryViewModel, HabitSummaryStatusCache>(
           (vm) => vm.currentState,
         );
-    final displayPageOccupyPrt = context.select<AppThemeViewModel, int>(
-      (vm) => vm.displayPageOccupyPrt,
-    );
     final earliestStartDate = context.select<HabitSummaryViewModel, DateTime?>(
       (vm) => vm.earliestSummaryDataStartDate?.startDate,
     );
@@ -1872,7 +1897,6 @@ class _CalendarBar extends StatelessWidget {
       context,
       ex: [
         state,
-        displayPageOccupyPrt,
         earliestStartDate,
         appCalendarBarHeight,
         appCalendarBarItemPadding,
@@ -1909,7 +1933,7 @@ class _CalendarBar extends StatelessWidget {
               startDate: DateChangeProvider.of(context).dateTime,
               endDate: earliestStartDate,
               isExtended: state.isClandarExpanded,
-              collapsePrt: displayPageOccupyPrt,
+              geometry: geometry,
               height: appCalendarBarHeight,
               itemPadding: appCalendarBarItemPadding,
               onLeftBtnPressed: onCalendarToggleExpandPressed,

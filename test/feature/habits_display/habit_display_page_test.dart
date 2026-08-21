@@ -16,8 +16,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/l10n/localizations.dart';
+import 'package:mhabit/models/habit_color.dart';
+import 'package:mhabit/models/habit_date.dart';
+import 'package:mhabit/models/habit_form.dart';
+import 'package:mhabit/models/habit_freq.dart';
+import 'package:mhabit/models/habit_group.dart';
 import 'package:mhabit/models/habit_summary.dart';
-import 'package:mhabit/pages/common/_widgets/not_found_image.dart';
+import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/_providers/habits_today.dart';
 import 'package:mhabit/pages/habits_display/page_habits.dart';
@@ -35,6 +40,7 @@ import 'package:mhabit/providers/app_ui/habits_sort.dart';
 import 'package:mhabit/providers/support/global.dart';
 import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/app_sync.dart';
+import 'package:mhabit/providers/workflow/group_manager.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:mhabit/widgets/widgets.dart';
@@ -54,6 +60,44 @@ final class _FailingHabitsDisplayAccess extends StubHabitsDisplayAccess {
 }
 
 final class _FakeAppSyncWorkflowAccess extends StubAppSyncWorkflowAccess {}
+
+final class _FakeGroupManager extends GroupManager {
+  @override
+  Future<GroupCollection?> tryLoadGroupCollection() async =>
+      GroupCollection.fromDBQueryResult([]);
+}
+
+final class _LoadedHabitsDisplayAccess extends StubHabitsDisplayAccess {
+  @override
+  Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
+    HabitSummaryDataCollection? initedCollection,
+    List<String>? habitsColmns,
+    List<HabitUUID>? habitUUIDs,
+  }) async {
+    final collection = initedCollection ?? HabitSummaryDataCollection();
+    collection.addHabit(_buildHabitSummaryData(), forceAdd: true);
+    return collection;
+  }
+}
+
+HabitSummaryData _buildHabitSummaryData() {
+  final startDate = HabitDate.now().subtractDays(1);
+  return HabitSummaryData(
+    id: 1,
+    uuid: '11111111-1111-4111-8111-111111111111',
+    type: HabitType.normal,
+    name: 'Geometry regression habit',
+    desc: '',
+    color: const HabitColor.builtIn(HabitColorType.cc1),
+    dailyGoal: 1,
+    targetDays: 1,
+    frequency: HabitFrequency.daily,
+    startDate: startDate,
+    status: HabitStatus.activated,
+    sortPostion: 1,
+    createTime: DateTime.utc(startDate.year, startDate.month, startDate.day),
+  );
+}
 
 void _ignoreBool(bool _) {}
 
@@ -111,7 +155,7 @@ Future<void> _pumpTodayTabPage(
   );
 }
 
-Future<void> _pumpHabitsTabPage(
+Future<HabitSummaryViewModel> _pumpHabitsTabPage(
   WidgetTester tester, {
   required ProfileViewModel profile,
   required HabitsDisplayAccess access,
@@ -131,7 +175,9 @@ Future<void> _pumpHabitsTabPage(
   final sort = HabitsSortViewModel()..updateProfile(profile);
   final filter = HabitsFilterViewModel()..updateProfile(profile);
   final appEvent = AppEventBus();
-  final vm = HabitSummaryViewModel()..attachAccess(access);
+  final vm = HabitSummaryViewModel()
+    ..attachAccess(access)
+    ..attachGroupManager(_FakeGroupManager());
 
   addTearDown(() {
     vm.dispose();
@@ -189,6 +235,7 @@ Future<void> _pumpHabitsTabPage(
       ),
     ),
   );
+  return vm;
 }
 
 void main() {
@@ -240,5 +287,60 @@ void main() {
 
       expect(find.byType(NotFoundImage), findsOneWidget);
     });
+  });
+
+  testWidgets('habit rows follow calendar expand and collapse geometry', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+
+    final vm = await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pump(const Duration(milliseconds: 600));
+
+    expect(vm.hasLoaded, isTrue);
+    expect(vm.currentHabitList, isNotEmpty);
+    final row = find.byType(HabitSummaryListTile);
+    final rowList = find.descendant(of: row, matching: find.byType(ListView));
+    final rowTrack = find.ancestor(
+      of: rowList,
+      matching: find.byType(AnimatedContainer),
+    );
+    expect(row, findsOneWidget);
+    expect(rowTrack, findsOneWidget);
+    final collapsedWidth = tester.getSize(rowTrack).width;
+    expect(
+      tester.widget<HabitSummaryListTile>(row).geometry.viewportFraction,
+      0.5,
+    );
+
+    vm.expandCalendar();
+    await tester.pump();
+    expect(
+      tester.widget<HabitSummaryListTile>(row).geometry.viewportFraction,
+      0.85,
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+    final expandedWidth = tester.getSize(rowTrack).width;
+
+    vm.collapseCalendar();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(expandedWidth, greaterThan(collapsedWidth));
+    expect(tester.getSize(rowTrack).width, collapsedWidth);
   });
 }

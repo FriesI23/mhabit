@@ -50,4 +50,5 @@ class AppCompactUISwitcherViewModel extends ChangeNotifier
       ? const EdgeInsets.symmetric(horizontal: 4.0)
       : const EdgeInsets.all(8.0);
   double get appHabitDisplayListTileHeight => flag ? 48.0 : 64.0;
+  double get appHabitDisplayColumnExtent => flag ? 44.0 : 60.0;
 }
