@@ -30,6 +30,12 @@ Widget _searchBarHost(HabitSummaryViewModel vm) => ChangeNotifierProvider.value(
   ),
 );
 
+Widget _viewBarHost() => const MaterialApp(
+  localizationsDelegates: L10n.localizationsDelegates,
+  supportedLocales: L10n.supportedLocales,
+  home: Scaffold(body: CustomScrollView(slivers: [SliverViewTopAppBar()])),
+);
+
 final class _TestHabitSummaryViewModel extends HabitSummaryViewModel {
   @override
   Future<void> resortData({bool listen = true}) async {
@@ -56,6 +62,26 @@ void main() {
     expect(find.byType(CupertinoSliverNavigationBar), findsNothing);
   });
 
+  testWidgets('search and view app bars share the 56 toolbar extent', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(500, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final vm = HabitSummaryViewModel();
+    addTearDown(vm.dispose);
+
+    await tester.pumpWidget(_searchBarHost(vm));
+    var appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
+    expect(appBar.toolbarHeight, kToolbarHeight);
+    expect(find.byType(SearchBar), findsNothing);
+    expect(find.byKey(const ValueKey('activate-search')), findsOneWidget);
+
+    await tester.pumpWidget(_viewBarHost());
+    appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
+    expect(appBar.toolbarHeight, kToolbarHeight);
+  });
+
   testWidgets('search adapter synchronizes input and external VM exit', (
     tester,
   ) async {
@@ -64,7 +90,7 @@ void main() {
     await tester.pumpWidget(_searchBarHost(vm));
 
     await tester.tap(find.byKey(const ValueKey('activate-search')));
-    await tester.pump();
+    await tester.pumpAndSettle();
     expect(vm.isInSearchMode, isTrue);
 
     await tester.enterText(find.byType(SearchBar), 'alpha');
@@ -86,6 +112,8 @@ void main() {
     addTearDown(vm.dispose);
     await tester.pumpWidget(_searchBarHost(vm));
 
+    await tester.tap(find.byKey(const ValueKey('activate-search')));
+    await tester.pumpAndSettle();
     await tester.enterText(find.byType(SearchBar), 'alpha');
     await tester.enterText(find.byType(SearchBar), '');
     await tester.pump();
@@ -95,6 +123,26 @@ void main() {
     searchBar.onTapOutside!(const PointerDownEvent());
     await tester.pump();
     expect(vm.isInSearchMode, isFalse);
+  });
+
+  testWidgets('filter-only search expands the compact search bar', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(500, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final vm = _TestHabitSummaryViewModel();
+    addTearDown(vm.dispose);
+    await tester.pumpWidget(_searchBarHost(vm));
+
+    expect(find.byType(SearchBar), findsNothing);
+    vm.onSearchOngoingChanged(true);
+    await tester.pumpAndSettle();
+
+    expect(vm.isInSearchMode, isTrue);
+    expect(vm.searchOptions.keyword, isEmpty);
+    expect(vm.searchOptions.activated, isTrue);
+    expect(find.byType(SearchBar), findsOneWidget);
   });
 
   testWidgets('breakpoint rebuild preserves controller, focus and filters', (
@@ -107,6 +155,8 @@ void main() {
     addTearDown(vm.dispose);
     await tester.pumpWidget(_searchBarHost(vm));
 
+    await tester.tap(find.byKey(const ValueKey('activate-search')));
+    await tester.pumpAndSettle();
     await tester.enterText(find.byType(SearchBar), 'kept');
     vm.onSearchOngoingChanged(true);
     await tester.pump();
@@ -129,6 +179,8 @@ void main() {
     final vm = HabitSummaryViewModel();
     addTearDown(vm.dispose);
     await tester.pumpWidget(_searchBarHost(vm));
+    await tester.tap(find.byKey(const ValueKey('activate-search')));
+    await tester.pumpAndSettle();
     await tester.enterText(find.byType(SearchBar), 'restored');
     await tester.pump();
 

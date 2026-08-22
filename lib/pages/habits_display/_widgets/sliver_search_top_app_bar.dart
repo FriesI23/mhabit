@@ -19,20 +19,17 @@ import '../../../common/consts.dart';
 import '../../../extensions/window_size_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_form.dart';
-import '../../../widgets/widgets.dart';
 import '../_providers/habit_summary.dart';
 import '../styles.dart';
 import 'search_filter.dart';
 
 class SliverSearchTopAppBar extends StatefulWidget {
-  final double? height;
   final MenuController? searchFilterMenuController;
   final VoidCallback? onInfoButtonPressed;
   final VoidCallback? onMenuButtonPressed;
 
   const SliverSearchTopAppBar({
     super.key,
-    this.height,
     this.searchFilterMenuController,
     this.onInfoButtonPressed,
     this.onMenuButtonPressed,
@@ -44,9 +41,6 @@ class SliverSearchTopAppBar extends StatefulWidget {
 
 class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
     with RestorationMixin {
-  static const double _searchBarHeight = 48.0;
-  static const double _maxSearchWidth = 312.0;
-
   late HabitSummaryViewModel _vm;
   late final FocusNode _focusNode;
   late final RestorableTextEditingController _controller;
@@ -119,7 +113,9 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
   void _activateSearch() {
     if (!_isViewModelMounted) return;
     _vm.enterSearchMode();
-    if (!_focusNode.hasFocus) _focusNode.requestFocus();
+    if (_isViewModelMounted && _vm.isInSearchMode && !_focusNode.hasFocus) {
+      _focusNode.requestFocus();
+    }
   }
 
   void _dismissSearch() {
@@ -217,10 +213,7 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
       onSearchActivated: _activateSearch,
       onSearchDismissed: _dismissSearch,
       onTapOutside: _onTapOutside,
-      materialStyle: MaterialSliverSearchBarStyle(
-        toolbarHeight: widget.height ?? kSearchAppBarHeight,
-        searchBarHeight: _searchBarHeight,
-        maxSearchWidth: _maxSearchWidth,
+      materialStyle: const MaterialSliverSearchBarStyle(
         scrolledUnderElevation: kCommonEvalation,
         shadowColor: Colors.transparent,
       ),

@@ -82,7 +82,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
   late final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
   final MenuController _searchFilterMenuController = MenuController();
-  late final double _toolbarHeight;
+  static const double _toolbarHeight = kToolbarHeight;
 
   static const Duration _bottomNavAnimationDuration = Duration(
     milliseconds: 250,
@@ -111,8 +111,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
     _horizonalScrollControllerGroup.addOffsetChangedListener(
       _onHorizonalOffsetChanged,
     );
-    final vm = context.read<AppExperimentalFeatureViewModel>();
-    _toolbarHeight = vm.habitSearch ? kSearchAppBarHeight : kToolbarHeight;
     _scrollVisibilityDispatcher = VerticalScrollVisibilityDispatcher(
       toolbarHeight: _toolbarHeight,
       onVisibilityChanged: widget.onBottomNavVisibilityChanged,
@@ -1099,7 +1097,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
                   builder: (context, enableSearch, child) {
                     if (enableSearch) {
                       return SliverSearchTopAppBar(
-                        height: _toolbarHeight,
                         searchFilterMenuController: _searchFilterMenuController,
                         onInfoButtonPressed: _openHabitSummaryStatisticsDialog,
                         onMenuButtonPressed: _openHabitSummaryMenuDialog,

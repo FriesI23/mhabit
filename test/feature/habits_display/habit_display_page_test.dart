@@ -538,7 +538,7 @@ void main() {
     );
     expect(
       tester.widget<RefreshIndicator>(find.byType(RefreshIndicator)).edgeOffset,
-      112,
+      104,
     );
 
     final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar).last);
@@ -553,7 +553,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
 
-    expect(pinnedTop, 64);
+    expect(pinnedTop, 56);
     expect(tester.getTopLeft(calendar).dy, 0);
   });
 
@@ -594,7 +594,7 @@ void main() {
     );
     expect(
       tester.widget<RefreshIndicator>(find.byType(RefreshIndicator)).edgeOffset,
-      108,
+      100,
     );
   });
 }
