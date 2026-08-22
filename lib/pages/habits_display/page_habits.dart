@@ -81,6 +81,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
   late AppCompactUISwitcherViewModel _uiSwitcher;
 
   late final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
+  final MenuController _searchFilterMenuController = MenuController();
   late final double _toolbarHeight;
 
   static const Duration _bottomNavAnimationDuration = Duration(
@@ -1099,6 +1100,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
                     if (enableSearch) {
                       return SliverSearchTopAppBar(
                         height: _toolbarHeight,
+                        searchFilterMenuController: _searchFilterMenuController,
                         onInfoButtonPressed: _openHabitSummaryStatisticsDialog,
                         onMenuButtonPressed: _openHabitSummaryMenuDialog,
                       );
@@ -1269,8 +1271,20 @@ class HabitsTabPageState extends State<HabitsTabPage>
     );
   }
 
-  void handleDismissIntent() {
+  void handlePageDismiss() {
     if (!(mounted && _vm.mounted)) return;
+    if (_searchFilterMenuController.isOpen) {
+      _searchFilterMenuController.close();
+      return;
+    }
+    if (_vm.isInEditMode) {
+      _vm.exitEditMode();
+      return;
+    }
+    if (_vm.isInSearchMode) {
+      _vm.exitSearchMode();
+      return;
+    }
     if (_vm.isCalendarExpanded) {
       _vm.collapseCalendar();
     }

@@ -44,7 +44,6 @@ import '../../pages/group_manage/page.dart' show GroupManagePage;
 import '../../pages/habit_detail/page.dart' show HabitDetailPage;
 import '../../pages/habit_edit/page.dart' show HabitEditPage;
 import '../../pages/habits_display/page.dart' show HabitsPage, TodayPage;
-import '../../pages/habits_display/providers.dart' show PageProviders;
 import '../../pages/habits_status_changer/page.dart'
     show HabitsStatusChangerPage;
 import '../../providers/app_ui/app_debugger.dart';
@@ -231,7 +230,7 @@ class _AppEntryState extends State<_AppEntry> {
             ),
             branchBuilder: (context, state, navigationShell) {
               _navigationCoordinator.attachTabShell(navigationShell);
-              return PageProviders(child: navigationShell);
+              return navigationShell;
             },
           ))
         .build(home: config.home);

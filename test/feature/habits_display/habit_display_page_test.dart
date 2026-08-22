@@ -13,11 +13,13 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
+import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/models/habit_group.dart';
@@ -25,6 +27,7 @@ import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/_providers/habits_today.dart';
+import 'package:mhabit/pages/habits_display/page.dart';
 import 'package:mhabit/pages/habits_display/page_habits.dart';
 import 'package:mhabit/pages/habits_display/page_today.dart';
 import 'package:mhabit/pages/habits_display/widgets.dart';
@@ -33,6 +36,7 @@ import 'package:mhabit/providers/app_ui/app_custom_date_format.dart';
 import 'package:mhabit/providers/app_ui/app_developer.dart';
 import 'package:mhabit/providers/app_ui/app_experimental_feature.dart';
 import 'package:mhabit/providers/app_ui/app_first_day.dart';
+import 'package:mhabit/providers/app_ui/app_language.dart';
 import 'package:mhabit/providers/app_ui/app_theme.dart';
 import 'package:mhabit/providers/app_ui/habit_op_config.dart';
 import 'package:mhabit/providers/app_ui/habits_filter.dart';
@@ -45,6 +49,7 @@ import 'package:mhabit/providers/workflow/group_manager.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:mhabit/widgets/widgets.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -178,6 +183,7 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
   required HabitsDisplayAccess access,
   required AppSyncWorkflowAccess sync,
   bool useCompactUi = false,
+  bool useBranchPage = false,
 }) async {
   final customDate = AppCustomDateYmdHmsConfigViewModel()
     ..updateProfile(profile);
@@ -188,6 +194,7 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
   final developer = AppDeveloperViewModel(global: Global());
   final experimental = AppExperimentalFeatureViewModel()
     ..updateProfile(profile);
+  final language = AppLanguageViewModel()..updateProfile(profile);
   final theme = AppThemeViewModel()..updateProfile(profile);
   final scrollBehavior = HabitsRecordScrollBehaviorViewModel()
     ..updateProfile(profile);
@@ -195,9 +202,10 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
   final sort = HabitsSortViewModel()..updateProfile(profile);
   final filter = HabitsFilterViewModel()..updateProfile(profile);
   final appEvent = AppEventBus();
+  final groupManager = _FakeGroupManager();
   final vm = HabitSummaryViewModel()
     ..attachAccess(access)
-    ..attachGroupManager(_FakeGroupManager());
+    ..attachGroupManager(groupManager);
 
   addTearDown(() {
     vm.dispose();
@@ -207,6 +215,7 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
     recordOpConfig.dispose();
     scrollBehavior.dispose();
     theme.dispose();
+    language.dispose();
     experimental.dispose();
     developer.dispose();
     compactUi.dispose();
@@ -214,6 +223,11 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
     customDate.dispose();
   });
 
+  final home = useBranchPage
+      ? const AdaptiveNavScope(barHeight: 0, navHeight: 0, child: HabitsPage())
+      : const Scaffold(
+          body: HabitsTabPage(onBottomNavVisibilityChanged: _ignoreBool),
+        );
   await tester.pumpWidget(
     MultiProvider(
       providers: [
@@ -230,6 +244,7 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
         ChangeNotifierProvider<AppExperimentalFeatureViewModel>.value(
           value: experimental,
         ),
+        ChangeNotifierProvider<AppLanguageViewModel>.value(value: language),
         ChangeNotifierProvider<AppThemeViewModel>.value(value: theme),
         ChangeNotifierProvider<HabitsRecordScrollBehaviorViewModel>.value(
           value: scrollBehavior,
@@ -240,22 +255,25 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
         ChangeNotifierProvider<HabitsSortViewModel>.value(value: sort),
         ChangeNotifierProvider<HabitsFilterViewModel>.value(value: filter),
         ChangeNotifierProvider<AppEventBus>.value(value: appEvent),
+        Provider<GroupManager>.value(value: groupManager),
+        Provider<HabitsDisplayAccess>.value(value: access),
         ListenableProvider<AppSyncTriggerAccess>.value(value: sync),
         ListenableProvider<AppSyncStatusSource>.value(value: sync),
         ListenableProvider<AppSyncWorkflowAccess>.value(value: sync),
       ],
-      child: const ChangelogBanner(
+      child: ChangelogBanner(
         child: MaterialApp(
           localizationsDelegates: L10n.localizationsDelegates,
           supportedLocales: L10n.supportedLocales,
-          home: Scaffold(
-            body: HabitsTabPage(onBottomNavVisibilityChanged: _ignoreBool),
-          ),
+          home: home,
         ),
       ),
     ),
   );
-  return vm;
+  if (!useBranchPage) return vm;
+  return tester
+      .element(find.byType(HabitsTabPage))
+      .read<HabitSummaryViewModel>();
 }
 
 void main() {
@@ -307,6 +325,98 @@ void main() {
 
       expect(find.byType(NotFoundImage), findsOneWidget);
     });
+  });
+
+  testWidgets('framework dismiss intent does not collide with page shortcuts', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+    final vm = await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      useBranchPage: true,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    await tester.enterText(find.byType(SearchBar), 'escape');
+    await tester.pump();
+    expect(vm.isInSearchMode, isTrue);
+    final editableContext = tester.element(find.byType(EditableText));
+
+    expect(
+      () =>
+          Actions.invoke<DismissIntent>(editableContext, const DismissIntent()),
+      returnsNormally,
+    );
+    await tester.pump();
+    expect(vm.isInSearchMode, isTrue);
+    expect(vm.searchOptions.keyword, 'escape');
+    expect(tester.takeException(), isNull);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(vm.isInSearchMode, isFalse);
+    expect(vm.searchOptions, const HabitDisplaySearchOptions.empty());
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('escape closes filter menu before clearing active filters', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+    final vm = await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      useBranchPage: true,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    vm.onSearchOngoingChanged(true);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    final filter = find.byType(SearchFilterPopupMenuButton);
+    expect(filter, findsOneWidget);
+    await tester.tap(
+      find.descendant(of: filter, matching: find.byType(IconButton)),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(find.byType(CheckboxListTile), findsWidgets);
+    final filterController = tester
+        .widget<SearchFilterPopupMenuButton>(filter)
+        .controller!;
+    expect(filterController.isOpen, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(filterController.isOpen, isFalse);
+    expect(vm.isInSearchMode, isTrue);
+    expect(vm.searchOptions.activated, isTrue);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(vm.isInSearchMode, isFalse);
+    expect(vm.searchOptions, const HabitDisplaySearchOptions.empty());
   });
 
   testWidgets('habit rows follow calendar expand and collapse geometry', (

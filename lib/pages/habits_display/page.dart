@@ -21,6 +21,8 @@ import '../common/widgets.dart';
 import '_providers/habit_summary.dart';
 import 'page_habits.dart';
 import 'page_today.dart';
+import 'providers.dart';
+import 'shortcuts.dart';
 
 /// Branch root page for the habits tab.
 ///
@@ -73,12 +75,16 @@ class _HabitsPageState extends State<HabitsPage> {
     return true;
   }
 
-  void _handleDismissIntent() {
-    _habitsTabKey.currentState?.handleDismissIntent();
+  void _handlePageDismiss() {
+    _habitsTabKey.currentState?.handlePageDismiss();
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => HabitsPageProviders(
+    child: PageShortcuts(onDismiss: _handlePageDismiss, child: _build(context)),
+  );
+
+  Widget _build(BuildContext context) {
     final scope = AdaptiveNavScope.of(context);
     return ColorfulNavibar(
       child: PopScopeConsumer<HabitSummaryViewModel>(
@@ -89,19 +95,9 @@ class _HabitsPageState extends State<HabitsPage> {
         },
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          body: Actions(
-            actions: {
-              DismissIntent: CallbackAction(
-                onInvoke: (intent) {
-                  _handleDismissIntent();
-                  return null;
-                },
-              ),
-            },
-            child: HabitsTabPage(
-              key: _habitsTabKey,
-              onBottomNavVisibilityChanged: _handleBottomNavVisibilityChanged,
-            ),
+          body: HabitsTabPage(
+            key: _habitsTabKey,
+            onBottomNavVisibilityChanged: _handleBottomNavVisibilityChanged,
           ),
           floatingActionButton: _buildFloatingActionButton(scope),
         ),
@@ -118,7 +114,10 @@ class TodayPage extends StatelessWidget {
   const TodayPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      TodayPageProviders(child: _build(context));
+
+  Widget _build(BuildContext context) {
     final scope = AdaptiveNavScope.of(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,

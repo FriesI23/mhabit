@@ -353,11 +353,26 @@ void main() {
 
   group('AdaptiveSliverSearchBar', () {
     testWidgets('renders a sliver search app bar', (tester) async {
+      final controller = TextEditingController();
+      final focusNode = FocusNode();
+      addTearDown(controller.dispose);
+      addTearDown(focusNode.dispose);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: CustomScrollView(
-              slivers: [AdaptiveSliverSearchBar(onChanged: (_) {})],
+              slivers: [
+                AdaptiveSliverSearchBar(
+                  title: const Text('title'),
+                  controller: controller,
+                  focusNode: focusNode,
+                  isSearchActive: false,
+                  keyword: '',
+                  onChanged: (_) {},
+                  onSearchActivated: () {},
+                  onSearchDismissed: () {},
+                ),
+              ],
             ),
           ),
         ),

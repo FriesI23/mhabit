@@ -61,6 +61,7 @@ class SearchFilterIcon extends StatelessWidget {
 }
 
 class SearchFilterPopupMenuButton extends StatelessWidget {
+  final MenuController? controller;
   final ValueChanged<bool?>? ongoingChanged;
   final ValueChanged<bool?>? completedChanged;
   final ValueChanged<(HabitType, bool?)>? typeChanged;
@@ -68,6 +69,7 @@ class SearchFilterPopupMenuButton extends StatelessWidget {
 
   const SearchFilterPopupMenuButton({
     super.key,
+    this.controller,
     this.ongoingChanged,
     this.completedChanged,
     this.typeChanged,
@@ -84,6 +86,7 @@ class SearchFilterPopupMenuButton extends StatelessWidget {
           (vm) => vm.searchOptions,
         );
     return MenuAnchor(
+      controller: controller,
       animated: true,
       builder: (context, controller, child) => IconButton(
         icon: SearchFilterIcon(
