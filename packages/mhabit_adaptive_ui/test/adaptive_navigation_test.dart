@@ -196,7 +196,31 @@ class _StubPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: Text(text)));
+    final bottomPadding = MediaQuery.paddingOf(context).bottom;
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(text),
+            SizedBox(
+              key: const ValueKey('branch-bottom-padding'),
+              height: bottomPadding,
+            ),
+            TextButton(
+              key: const ValueKey('show-snackbar'),
+              onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text('saved'),
+                ),
+              ),
+              child: const Text('Show Snackbar'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -306,7 +330,7 @@ void main() {
       expect(scope.visible.value, isTrue);
     });
 
-    testWidgets('animates the bar out when visibility is set to false', (
+    testWidgets('collapses the bar height when visibility is set to false', (
       tester,
     ) async {
       _setSurfaceSize(tester, const Size(400, 800));
@@ -320,13 +344,10 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 250));
 
-      final opacity = tester.widget<AnimatedOpacity>(
-        find.ancestor(
-          of: find.byType(NavigationBar),
-          matching: find.byType(AnimatedOpacity),
-        ),
+      expect(
+        tester.getSize(find.byKey(const ValueKey('bottom-bar'))).height,
+        0,
       );
-      expect(opacity.opacity, 0);
     });
 
     testWidgets(
@@ -478,6 +499,101 @@ void main() {
       final bar = tester.widget<NavigationBar>(find.byType(NavigationBar));
       expect(bar.height, 80.0);
       expect(bar.labelBehavior, NavigationDestinationLabelBehavior.alwaysShow);
+    });
+
+    testWidgets('unrelated MediaQuery changes do not rebuild shell chrome', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      final navigationBar = tester.widget<AdaptiveNavigationBar>(
+        find.byType(AdaptiveNavigationBar),
+      );
+
+      tester.platformDispatcher.textScaleFactorTestValue = 1.25;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await tester.pump();
+
+      expect(
+        MediaQuery.textScalerOf(
+          tester.element(find.text('habits page')),
+        ).scale(100),
+        125,
+      );
+      expect(
+        tester.widget<AdaptiveNavigationBar>(
+          find.byType(AdaptiveNavigationBar),
+        ),
+        same(navigationBar),
+      );
+    });
+
+    testWidgets('compact snackbar is shown once above the navigation bar', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      await tester.tap(find.byKey(const ValueKey('show-snackbar')));
+      await tester.pumpAndSettle();
+
+      final snackBar = find.byType(SnackBar);
+      final navigationBar = find.byType(NavigationBar);
+      expect(snackBar, findsOneWidget);
+      expect(navigationBar, findsOneWidget);
+      expect(
+        tester.getBottomLeft(snackBar).dy,
+        lessThanOrEqualTo(tester.getTopLeft(navigationBar).dy),
+      );
+    });
+
+    testWidgets('floating snackbar follows the collapsing navigation bar', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      await tester.tap(find.byKey(const ValueKey('show-snackbar')));
+      await tester.pumpAndSettle();
+
+      final snackBar = find.byType(SnackBar);
+      final visibleBottom = tester.getBottomLeft(snackBar).dy;
+      final scope = AdaptiveNavScope.of(
+        tester.element(find.text('habits page')),
+      );
+
+      scope.reportScrollWish(false);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 250));
+
+      expect(tester.getBottomLeft(snackBar).dy, greaterThan(visibleBottom));
+      expect(
+        tester.getSize(find.byKey(const ValueKey('bottom-bar'))).height,
+        0,
+      );
+    });
+
+    testWidgets('extendBody keeps the branch bottom padding unchanged', (
+      tester,
+    ) async {
+      tester.view.padding = const FakeViewPadding(bottom: 24);
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(
+        tester.getSize(find.byKey(const ValueKey('branch-bottom-padding'))),
+        const Size(0, 24),
+      );
+      final scope = AdaptiveNavScope.of(
+        tester.element(find.text('habits page')),
+      );
+      expect(scope.barHeight, 80);
+      expect(scope.navHeight, 104);
     });
 
     testWidgets('medium form shows an always-visible collapsible rail', (

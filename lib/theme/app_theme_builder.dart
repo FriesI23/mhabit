@@ -103,6 +103,9 @@ class AppThemeBuilder {
       colorScheme: colorScheme,
       useMaterial3: true,
       appBarTheme: kAppBarTheme,
+      snackBarTheme: const SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+      ),
       menuTheme: _mobileMenuTheme,
       cupertinoOverrideTheme: cupertinoOverrideTheme,
       extensions: [customColor],

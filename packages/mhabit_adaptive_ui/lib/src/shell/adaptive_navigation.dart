@@ -1,5 +1,6 @@
 import 'dart:math' show min;
 
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 
 import '../adaptive/adaptive_navigation_bar.dart';
@@ -168,11 +169,12 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
   @override
   Widget build(BuildContext context) {
     final compact = _form == _ShellForm.bar;
+    final padding = MediaQuery.paddingOf(context);
     const barHeight = _narrowNavHeight;
     // NavigationBar adds a SafeArea around its content, so the rendered bar
     // is barHeight plus the bottom system inset. The scope exposes the
     // total height so branch pages can reserve it.
-    final navHeight = barHeight + MediaQuery.paddingOf(context).bottom;
+    final navHeight = barHeight + padding.bottom;
 
     final naviBarBody = AdaptiveNavigationBar(
       height: barHeight,
@@ -187,64 +189,121 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
       scrollWish: compact ? _scrollWish : null,
       barHeight: compact ? barHeight : 0,
       navHeight: compact ? navHeight : 0,
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        extendBody: true,
+        resizeToAvoidBottomInset: false,
+        // Restore the ambient padding inside the body. Scaffold.extendBody
+        // otherwise replaces the bottom padding with the navigation-bar
+        // height, while branch pages already reserve that space through
+        // AdaptiveNavScope.
+        body: _NavigationShellBody(
+          ambientPadding: padding,
+          form: _form,
+          selectedIndex: widget.selectedIndex,
+          destinations: widget.destinations,
+          onDestinationSelected: _onDestinationSelected,
+          child: widget.child,
+        ),
+        // Owning the bar as Scaffold chrome makes this the root Scaffold for
+        // the ambient ScaffoldMessenger. SnackBars are therefore laid out
+        // above the compact bar instead of being painted below its overlay.
+        bottomNavigationBar: AnimatedSwitcher(
+          duration: _animationDuration,
+          switchInCurve: Curves.easeOut,
+          switchOutCurve: Curves.easeOut,
+          child: compact
+              ? _CompactNavigationBar(
+                  key: const ValueKey('bottom-bar'),
+                  visibility: _navVisibility,
+                  child: naviBarBody,
+                )
+              : const SizedBox.shrink(key: ValueKey('bottom-bar-hidden')),
+        ),
+      ),
+    );
+  }
+}
+
+/// Shell body below the root [Scaffold].
+///
+/// Its build context sees the padding injected by [Scaffold.extendBody], then
+/// restores the ambient padding captured above the Scaffold so branch pages do
+/// not reserve the compact navigation height twice.
+class _NavigationShellBody extends StatelessWidget {
+  const _NavigationShellBody({
+    required this.ambientPadding,
+    required this.form,
+    required this.selectedIndex,
+    required this.destinations,
+    required this.onDestinationSelected,
+    required this.child,
+  });
+
+  final EdgeInsets ambientPadding;
+  final _ShellForm form;
+  final int selectedIndex;
+  final List<NavigationDestination> destinations;
+  final ValueChanged<int> onDestinationSelected;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(padding: ambientPadding),
       child: ColoredBox(
         // Opaque backdrop behind the branch content: the bar is translucent
-        // and slides over it, so without this the window background would
-        // show through the fading bar.
+        // and overlays it, so without this the window background would show
+        // through the fading bar.
         color: Theme.of(context).colorScheme.surface,
-        child: Stack(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Branch content with leading chrome in non-compact forms; the
-            // chrome panel animates its width when the form switches.
-            Positioned.fill(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _NavigationRailRegion(
-                    form: _form,
-                    selectedIndex: widget.selectedIndex,
-                    destinations: widget.destinations,
-                    onDestinationSelected: _onDestinationSelected,
-                  ),
-                  Expanded(child: widget.child),
-                ],
-              ),
+            // Leading chrome in non-compact forms; the panel animates its
+            // width when the form switches.
+            _NavigationRailRegion(
+              form: form,
+              selectedIndex: selectedIndex,
+              destinations: destinations,
+              onDestinationSelected: onDestinationSelected,
             ),
-            // Compact form only: the bottom bar overlays the branch content
-            // and slides over it; pages reserve the bar height via
-            // [AdaptiveNavScope]. Switching forms fades the whole overlay.
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: AnimatedSwitcher(
-                duration: _animationDuration,
-                switchInCurve: Curves.easeOut,
-                switchOutCurve: Curves.easeOut,
-                child: compact
-                    ? MediaQuery.removePadding(
-                        key: const ValueKey('bottom-bar'),
-                        context: context,
-                        removeTop: true,
-                        child: ValueListenableBuilder<bool>(
-                          valueListenable: _navVisibility,
-                          builder: (context, visible, child) => AnimatedSlide(
-                            duration: _animationDuration,
-                            curve: Curves.easeOut,
-                            offset: visible ? Offset.zero : const Offset(0, 1),
-                            child: AnimatedOpacity(
-                              duration: _animationDuration,
-                              opacity: visible ? 1 : 0,
-                              child: child,
-                            ),
-                          ),
-                          child: naviBarBody,
-                        ),
-                      )
-                    : const SizedBox.shrink(key: ValueKey('bottom-bar-hidden')),
-              ),
-            ),
+            Expanded(child: child),
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Compact navigation chrome animated according to [visibility].
+class _CompactNavigationBar extends StatelessWidget {
+  const _CompactNavigationBar({
+    super.key,
+    required this.visibility,
+    required this.child,
+  });
+
+  final ValueListenable<bool> visibility;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: visibility,
+      builder: (context, visible, child) => TweenAnimationBuilder<double>(
+        duration: _animationDuration,
+        curve: Curves.easeOut,
+        tween: Tween<double>(begin: visible ? 1 : 0, end: visible ? 1 : 0),
+        builder: (context, factor, child) => ClipRect(
+          child: Align(
+            alignment: Alignment.topCenter,
+            heightFactor: factor,
+            child: Opacity(opacity: factor, child: child),
+          ),
+        ),
+        child: child,
+      ),
+      child: child,
     );
   }
 }
