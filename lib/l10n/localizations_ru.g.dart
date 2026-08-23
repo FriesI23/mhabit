@@ -15,6 +15,9 @@ class L10nRu extends L10n {
   String get appName => 'Таблица Привычек';
 
   @override
+  String get common_listSeparator => ', ';
+
+  @override
   String get habitEdit_saveButton_text => 'Сохранить';
 
   @override

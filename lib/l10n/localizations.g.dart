@@ -146,6 +146,12 @@ abstract class L10n {
   /// **'Table Habit'**
   String get appName;
 
+  /// Separator used between items in compact localized lists.
+  ///
+  /// In en, this message translates to:
+  /// **', '**
+  String get common_listSeparator;
+
   /// No description provided for @habitEdit_saveButton_text.
   ///
   /// In en, this message translates to:

@@ -5,6 +5,10 @@
         "description": "The human-readable name of the language used for the locale."
     },
     "appName": "桌上習慣",
+    "common_listSeparator": "，",
+    "@common_listSeparator": {
+        "description": "Separator used between items in compact localized lists."
+    },
     "habitEdit_saveButton_text": "儲存",
     "habitEdit_habitName_hintText": "習慣名稱…",
     "habitEdit_colorPicker_title": "選擇顏色",

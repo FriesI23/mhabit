@@ -59,17 +59,14 @@ class TodayTabPageState extends State<TodayTabPage>
 
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
-  late final double _toolbarHeight;
-
   late final VerticalScrollVisibilityDispatcher _scrollVisibilityDispatcher;
 
   @override
   void initState() {
     super.initState();
     _vm = context.read<HabitsTodayViewModel>();
-    _toolbarHeight = kToolbarHeight;
     _scrollVisibilityDispatcher = VerticalScrollVisibilityDispatcher(
-      toolbarHeight: _toolbarHeight,
+      toolbarHeight: kAppToolbarHeight,
       onVisibilityChanged: widget.onBottomNavVisibilityChanged,
       externalVisibility: AdaptiveNavScope.maybeOf(context)?.scrollWish,
     );
@@ -140,7 +137,7 @@ class TodayTabPageState extends State<TodayTabPage>
     //#endregion
 
     super.build(context);
-    const appbarHeight = kToolbarHeight;
+    const appbarHeight = kAppToolbarHeight;
 
     final body = CustomScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
@@ -170,7 +167,7 @@ class TodayTabPageState extends State<TodayTabPage>
         return defaultScrollNotificationPredicate(notification);
       },
       onRefresh: _onRefreshIndicatorTriggered,
-      edgeOffset: kToolbarHeight + MediaQuery.paddingOf(context).top,
+      edgeOffset: kAppToolbarHeight + MediaQuery.paddingOf(context).top,
       child: Stack(children: [image, body]),
     );
     return page;
@@ -243,13 +240,16 @@ class _HabitsGroupView extends StatelessWidget {
             );
           }
 
-          return SliverPadding(
-            padding: kListTileContentPadding,
-            sliver: WindowSizeClassLayoutBuilder.useScreenSize(
-              builder: (context, windowSize, child) =>
-                  windowSize.isTabletFormFactor
-                  ? const _HabitGrid()
-                  : const _HabitList(),
+          return EnhancedSafeArea.edgeToEdgeSafe(
+            withSliver: true,
+            child: SliverPadding(
+              padding: kListTileContentPadding,
+              sliver: WindowSizeClassLayoutBuilder.useScreenSize(
+                builder: (context, windowSize, child) =>
+                    windowSize.isTabletFormFactor
+                    ? const _HabitGrid()
+                    : const _HabitList(),
+              ),
             ),
           );
         },

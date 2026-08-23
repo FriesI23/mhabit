@@ -15,6 +15,9 @@ class L10nAr extends L10n {
   String get appName => 'جدول العادات';
 
   @override
+  String get common_listSeparator => ', ';
+
+  @override
   String get habitEdit_saveButton_text => 'حفظ';
 
   @override

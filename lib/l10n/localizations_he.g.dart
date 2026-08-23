@@ -15,6 +15,9 @@ class L10nHe extends L10n {
   String get appName => 'רשימת הרגלים';
 
   @override
+  String get common_listSeparator => ', ';
+
+  @override
   String get habitEdit_saveButton_text => 'שמירה';
 
   @override

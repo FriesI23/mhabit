@@ -15,6 +15,9 @@ class L10nEu extends L10n {
   String get appName => '🚧(eu) - Table Habit';
 
   @override
+  String get common_listSeparator => ', ';
+
+  @override
   String get habitEdit_saveButton_text => 'Save';
 
   @override

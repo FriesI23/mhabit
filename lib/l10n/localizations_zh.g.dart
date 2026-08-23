@@ -15,6 +15,9 @@ class L10nZh extends L10n {
   String get appName => '桌上习惯';
 
   @override
+  String get common_listSeparator => '，';
+
+  @override
   String get habitEdit_saveButton_text => '保存';
 
   @override
@@ -2084,6 +2087,9 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get appName => '桌上習慣';
+
+  @override
+  String get common_listSeparator => '，';
 
   @override
   String get habitEdit_saveButton_text => '儲存';

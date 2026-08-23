@@ -6,6 +6,10 @@
     },
     "appName": "Table Habit",
     "@appName": {},
+    "common_listSeparator": ", ",
+    "@common_listSeparator": {
+        "description": "Separator used between items in compact localized lists."
+    },
     "habitEdit_saveButton_text": "Save",
     "@habitEdit_saveButton_text": {},
     "habitEdit_habitName_hintText": "Habit Name ...",

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart' show CupertinoNavigationBar;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
@@ -24,7 +25,10 @@ void main() {
     focusNode.dispose();
   });
 
-  AdaptiveSliverSearchBar buildBar({AdaptiveStyle? forcedStyle}) {
+  AdaptiveSliverSearchBar buildBar({
+    AdaptiveStyle? forcedStyle,
+    bool pinned = true,
+  }) {
     const arguments = (
       title: Text('Habits'),
       leading: Icon(Icons.info_outline),
@@ -45,6 +49,7 @@ void main() {
         onChanged: (_) {},
         onSearchActivated: () {},
         onSearchDismissed: () {},
+        pinned: pinned,
       ),
       AdaptiveStyle.material => AdaptiveSliverSearchBar.material(
         title: arguments.title,
@@ -59,6 +64,7 @@ void main() {
         onChanged: (_) {},
         onSearchActivated: () {},
         onSearchDismissed: () {},
+        pinned: pinned,
       ),
       AdaptiveStyle.apple => AdaptiveSliverSearchBar.apple(
         title: arguments.title,
@@ -73,6 +79,7 @@ void main() {
         onChanged: (_) {},
         onSearchActivated: () {},
         onSearchDismissed: () {},
+        pinned: pinned,
       ),
     };
   }
@@ -98,16 +105,21 @@ void main() {
     expect(renderer.searchTrailing, isNotNull);
   });
 
-  testWidgets('Apple default dispatch falls back to Material', (tester) async {
+  testWidgets('Apple default dispatch builds the Cupertino renderer', (
+    tester,
+  ) async {
+    final bar = buildBar();
+    expect(bar.cupertinoMaxSearchWidth, 240);
     await tester.pumpWidget(
-      _host(platform: TargetPlatform.iOS, searchBar: buildBar()),
+      _host(platform: TargetPlatform.iOS, searchBar: bar),
     );
 
-    expect(find.byType(MaterialSliverSearchBar), findsOneWidget);
-    expect(find.byType(SliverAppBar), findsOneWidget);
+    expect(find.byType(CupertinoSliverSearchBar), findsOneWidget);
+    expect(find.byType(CupertinoNavigationBar), findsOneWidget);
+    expect(find.byType(MaterialSliverSearchBar), findsNothing);
   });
 
-  testWidgets('.apple explicitly uses the Material fallback', (tester) async {
+  testWidgets('.apple explicitly uses the Cupertino renderer', (tester) async {
     await tester.pumpWidget(
       _host(
         platform: TargetPlatform.android,
@@ -115,7 +127,8 @@ void main() {
       ),
     );
 
-    expect(find.byType(MaterialSliverSearchBar), findsOneWidget);
+    expect(find.byType(CupertinoSliverSearchBar), findsOneWidget);
+    expect(find.byType(MaterialSliverSearchBar), findsNothing);
   });
 
   testWidgets('.material overrides an Apple platform', (tester) async {
@@ -127,5 +140,35 @@ void main() {
     );
 
     expect(find.byType(MaterialSliverSearchBar), findsOneWidget);
+  });
+
+  testWidgets('forwards the pinned policy to both renderers', (tester) async {
+    await tester.pumpWidget(
+      _host(
+        platform: TargetPlatform.android,
+        searchBar: buildBar(pinned: false),
+      ),
+    );
+    expect(
+      tester
+          .widget<MaterialSliverSearchBar>(find.byType(MaterialSliverSearchBar))
+          .pinned,
+      isFalse,
+    );
+
+    await tester.pumpWidget(
+      _host(
+        platform: TargetPlatform.iOS,
+        searchBar: buildBar(forcedStyle: AdaptiveStyle.apple, pinned: false),
+      ),
+    );
+    expect(
+      tester
+          .widget<CupertinoSliverSearchBar>(
+            find.byType(CupertinoSliverSearchBar),
+          )
+          .pinned,
+      isFalse,
+    );
   });
 }

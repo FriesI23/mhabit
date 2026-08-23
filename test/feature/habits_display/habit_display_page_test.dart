@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart'
+    show CupertinoButton, CupertinoNavigationBar;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/habit_color.dart';
@@ -135,6 +138,7 @@ Future<void> _pumpTodayTabPage(
   required ProfileViewModel profile,
   required HabitsDisplayAccess access,
   required AppSyncWorkflowAccess sync,
+  TargetPlatform platform = TargetPlatform.android,
 }) async {
   final customDate = AppCustomDateYmdHmsConfigViewModel()
     ..updateProfile(profile);
@@ -166,10 +170,11 @@ Future<void> _pumpTodayTabPage(
         ListenableProvider<AppSyncStatusSource>.value(value: sync),
         ListenableProvider<AppSyncWorkflowAccess>.value(value: sync),
       ],
-      child: const MaterialApp(
+      child: MaterialApp(
+        theme: ThemeData(platform: platform),
         localizationsDelegates: L10n.localizationsDelegates,
         supportedLocales: L10n.supportedLocales,
-        home: Scaffold(
+        home: const Scaffold(
           body: TodayTabPage(onBottomNavVisibilityChanged: _ignoreBool),
         ),
       ),
@@ -184,6 +189,7 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
   required AppSyncWorkflowAccess sync,
   bool useCompactUi = false,
   bool useBranchPage = false,
+  TargetPlatform platform = TargetPlatform.android,
 }) async {
   final customDate = AppCustomDateYmdHmsConfigViewModel()
     ..updateProfile(profile);
@@ -263,6 +269,7 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
       ],
       child: ChangelogBanner(
         child: MaterialApp(
+          theme: ThemeData(platform: platform),
           localizationsDelegates: L10n.localizationsDelegates,
           supportedLocales: L10n.supportedLocales,
           home: home,
@@ -325,6 +332,47 @@ void main() {
 
       expect(find.byType(NotFoundImage), findsOneWidget);
     });
+  });
+
+  testWidgets('Today theme switch uses the adaptive icon button', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+
+    await _pumpTodayTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      platform: TargetPlatform.iOS,
+    );
+
+    expect(find.byType(AppThemeSwitchButton), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(AppThemeSwitchButton),
+        matching: find.byType(AdaptiveIconButton),
+      ),
+      findsOneWidget,
+    );
+    final todayHeader = tester.widget<SliverPersistentHeader>(
+      find.byType(SliverPersistentHeader),
+    );
+    expect(todayHeader.delegate.minExtent, kAppToolbarHeight);
+    expect(todayHeader.delegate.maxExtent, kAppToolbarHeight);
+    expect(
+      find.descendant(
+        of: find.byType(AppThemeSwitchButton),
+        matching: find.byType(CupertinoButton),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('framework dismiss intent does not collide with page shortcuts', (
@@ -538,7 +586,7 @@ void main() {
     );
     expect(
       tester.widget<RefreshIndicator>(find.byType(RefreshIndicator)).edgeOffset,
-      104,
+      100,
     );
 
     final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar).last);
@@ -553,8 +601,62 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
 
-    expect(pinnedTop, 56);
+    expect(pinnedTop, 52);
     expect(tester.getTopLeft(calendar).dy, 0);
+  });
+
+  testWidgets('Apple appbar and calendar share one pinned glass surface', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+
+    await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      platform: TargetPlatform.iOS,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    final calendar = find.byType(SliverCalendarBar);
+    final calendarBar = find.byKey(const ValueKey('cupertino-calendar-bar'));
+    expect(calendarBar, findsNothing);
+    final searchHeaderFinder = find.byKey(
+      const ValueKey('cupertino-sliver-search-bar'),
+    );
+    final searchHeader = tester.widget<SliverPersistentHeader>(
+      searchHeaderFinder,
+    );
+    expect(searchHeader.pinned, isTrue);
+    expect(searchHeader.delegate.minExtent, 100);
+    expect(searchHeader.delegate.maxExtent, 100);
+    expect(
+      find.ancestor(of: calendar, matching: find.byType(SliverAppBar)),
+      findsNothing,
+    );
+    expect(
+      find.descendant(
+        of: searchHeaderFinder,
+        matching: find.byType(CupertinoNavigationBar),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: searchHeaderFinder,
+        matching: find.byType(BackdropFilter),
+      ),
+      findsOneWidget,
+    );
+    expect(find.byType(PinnedHeaderSliver), findsNothing);
   });
 
   testWidgets('calendar uses compact header geometry', (tester) async {
@@ -594,7 +696,7 @@ void main() {
     );
     expect(
       tester.widget<RefreshIndicator>(find.byType(RefreshIndicator)).edgeOffset,
-      100,
+      96,
     );
   });
 }

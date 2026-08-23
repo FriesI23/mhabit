@@ -33,7 +33,7 @@ class SliverViewTopAppBar extends StatelessWidget {
 
   const SliverViewTopAppBar({
     super.key,
-    this.height,
+    this.height = kAppToolbarHeight,
     this.onInfoButtonPressed,
     this.onMenuButtonPressed,
   });
@@ -62,7 +62,7 @@ class SliverEditTopAppBar extends StatelessWidget {
 
   const SliverEditTopAppBar({
     super.key,
-    this.height,
+    this.height = kAppToolbarHeight,
     this.onLeadingButtonPressed,
     this.action,
   });

@@ -14,6 +14,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/app_ui/app_theme.dart';
@@ -33,10 +34,7 @@ class AppThemeSwitchButton extends StatelessWidget {
       AppThemeType.dark => const Icon(Icons.dark_mode_rounded),
       _ => const Icon(MdiIcons.themeLightDark),
     };
-    // TODO(adaptive-ui::apple): the inner IconButton is Material-styled
-    // (ripple, padding); replace with an Adaptive action button when this
-    // surface gets its apple variant.
-    return IconButton(
+    return AdaptiveIconButton(
       onPressed: () =>
           context.read<AppThemeViewModel>().onTapChangeThemeType(brightness),
       icon: icon,

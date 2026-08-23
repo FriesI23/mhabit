@@ -11,11 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
+import '../../../extensions/iterable_extensions.dart';
 import '../../../extensions/window_size_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_form.dart';
@@ -27,13 +29,17 @@ class SliverSearchTopAppBar extends StatefulWidget {
   final MenuController? searchFilterMenuController;
   final VoidCallback? onInfoButtonPressed;
   final VoidCallback? onMenuButtonPressed;
+  final Widget? cupertinoBottom;
+  final double cupertinoBottomExtent;
 
   const SliverSearchTopAppBar({
     super.key,
     this.searchFilterMenuController,
     this.onInfoButtonPressed,
     this.onMenuButtonPressed,
-  });
+    this.cupertinoBottom,
+    this.cupertinoBottomExtent = 0.0,
+  }) : assert(cupertinoBottom != null || cupertinoBottomExtent == 0.0);
 
   @override
   State<SliverSearchTopAppBar> createState() => _SliverSearchTopAppBarState();
@@ -112,9 +118,10 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
 
   void _activateSearch() {
     if (!_isViewModelMounted) return;
-    _vm.enterSearchMode();
-    if (_isViewModelMounted && _vm.isInSearchMode && !_focusNode.hasFocus) {
-      _focusNode.requestFocus();
+    if (context.adaptiveStyle == AdaptiveStyle.material) {
+      _vm.enterSearchMode();
+      if (!_isViewModelMounted || !_vm.isInSearchMode) return;
+      if (!_focusNode.hasFocus) _focusNode.requestFocus();
     }
   }
 
@@ -186,23 +193,169 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
     },
   );
 
+  List<CupertinoSliverSearchBarAction> _buildCupertinoSearchFilterActions(
+    L10n? l10n,
+  ) {
+    final options = _vm.searchOptions;
+    Widget selectionIcon(
+      bool selected,
+      IconData regular,
+      IconData selectedIcon,
+    ) => Icon(selected ? selectedIcon : regular);
+    final statusSummary = [
+      if (options.activated)
+        l10n?.habitDisplay_searchFilter_ongoing ?? 'Ongoing',
+      if (options.completed)
+        l10n?.habitDisplay_searchFilter_completed ?? 'Completed',
+    ].joinLocalized(l10n);
+    final typeSummary = [
+      for (final type in HabitType.values)
+        if (type != HabitType.unknown && options.types.contains(type))
+          type.getTypeName(l10n),
+    ].joinLocalized(l10n);
+    return [
+      CupertinoSliverSearchBarAction(
+        id: 'habit-filter',
+        label: l10n?.habitDisplay_searchFilter_tooltips ?? 'Show Filters',
+        retentionPriority: -100,
+        icon: Icon(
+          options.isFilterEmpty
+              ? CupertinoIcons.line_horizontal_3_decrease_circle
+              : CupertinoIcons.line_horizontal_3_decrease_circle_fill,
+        ),
+        children: [
+          CupertinoSliverSearchBarAction(
+            id: 'habit-filter-status',
+            label: l10n?.habitDisplay_sortType_status ?? 'Completion Status',
+            subtitle: statusSummary,
+            icon: Icon(
+              options.activated || options.completed
+                  ? CupertinoIcons.check_mark_circled_solid
+                  : CupertinoIcons.check_mark_circled,
+            ),
+            children: [
+              CupertinoSliverSearchBarAction(
+                id: 'habit-filter-ongoing',
+                label: l10n?.habitDisplay_searchFilter_ongoing ?? 'Ongoing',
+                tooltip: l10n?.habitDisplay_searchFilter_ongoing_desc,
+                icon: selectionIcon(
+                  options.activated,
+                  CupertinoIcons.play_circle,
+                  CupertinoIcons.play_circle_fill,
+                ),
+                onPressed: () => _onOngoingFilterChanged(!options.activated),
+              ),
+              CupertinoSliverSearchBarAction(
+                id: 'habit-filter-completed',
+                label: l10n?.habitDisplay_searchFilter_completed ?? 'Completed',
+                icon: selectionIcon(
+                  options.completed,
+                  CupertinoIcons.check_mark_circled,
+                  CupertinoIcons.check_mark_circled_solid,
+                ),
+                onPressed: () => _onCompletedFilterChanged(!options.completed),
+              ),
+            ],
+          ),
+          CupertinoSliverSearchBarAction(
+            id: 'habit-filter-types',
+            label:
+                l10n?.habitDisplay_searchFilter_habitType_groupTitle ??
+                'Habit Type',
+            subtitle: typeSummary,
+            icon: Icon(
+              options.types.isEmpty
+                  ? CupertinoIcons.square_grid_2x2
+                  : CupertinoIcons.square_grid_2x2_fill,
+            ),
+            children: [
+              for (final type in HabitType.values)
+                if (type != HabitType.unknown)
+                  CupertinoSliverSearchBarAction(
+                    id: 'habit-filter-type-${type.name}',
+                    label: type.getTypeName(l10n),
+                    icon: selectionIcon(
+                      options.types.contains(type),
+                      type == HabitType.normal
+                          ? CupertinoIcons.plus_circle
+                          : CupertinoIcons.minus_circle,
+                      type == HabitType.normal
+                          ? CupertinoIcons.plus_circle_fill
+                          : CupertinoIcons.minus_circle_fill,
+                    ),
+                    onPressed: () => _onTypeFilterChanged((
+                      type,
+                      !options.types.contains(type),
+                    )),
+                  ),
+            ],
+          ),
+          if (!options.isFilterEmpty)
+            const CupertinoSliverSearchBarMenuDivider(),
+          if (!options.isFilterEmpty)
+            CupertinoSliverSearchBarAction(
+              id: 'habit-filter-clear',
+              label:
+                  l10n?.habitDisplay_searchFilter_clearFilter ??
+                  'Clear Filters',
+              icon: const Icon(CupertinoIcons.clear_circled_solid),
+              isDestructive: true,
+              onPressed: _onClearFilterPressed,
+            ),
+        ],
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    final infoButton = IconButton(
+    final infoButton = AdaptiveIconButton(
       onPressed: widget.onInfoButtonPressed,
       icon: const Icon(Icons.article_outlined),
     );
-    final menuButton = IconButton(
+    final menuButton = AdaptiveIconButton(
       onPressed: widget.onMenuButtonPressed,
       icon: const Icon(Icons.settings_outlined),
       tooltip: l10n?.habitDisplay_settingButton_tooltip,
     );
+    final settingsLabel =
+        l10n?.habitDisplay_settingButton_tooltip ?? 'Settings';
+    const statisticsLabel = 'Statistics';
     return AdaptiveSliverSearchBar(
       title: Text(l10n?.appName ?? appName),
-      leading: infoButton,
-      actions: [menuButton],
+      actions: [infoButton, menuButton],
       searchTrailing: _buildSearchFilter(),
+      cupertinoActions: [
+        CupertinoSliverSearchBarAction(
+          id: 'habit-statistics',
+          label: statisticsLabel,
+          icon: const Icon(Icons.article_outlined),
+          onPressed: widget.onInfoButtonPressed ?? () {},
+          isEnabled: widget.onInfoButtonPressed != null,
+          primaryBuilder: (_) => AdaptiveIconButton.apple(
+            onPressed: widget.onInfoButtonPressed,
+            icon: const Icon(Icons.article_outlined),
+          ),
+        ),
+        CupertinoSliverSearchBarAction(
+          id: 'habit-settings',
+          label: settingsLabel,
+          tooltip: settingsLabel,
+          icon: const Icon(Icons.settings_outlined),
+          onPressed: widget.onMenuButtonPressed ?? () {},
+          isEnabled: widget.onMenuButtonPressed != null,
+          retentionPriority: 50,
+          primaryBuilder: (_) => AdaptiveIconButton.apple(
+            onPressed: widget.onMenuButtonPressed,
+            tooltip: settingsLabel,
+            icon: const Icon(Icons.settings_outlined),
+          ),
+        ),
+        ..._buildCupertinoSearchFilterActions(l10n),
+      ],
+      cupertinoBottom: widget.cupertinoBottom,
+      cupertinoBottomExtent: widget.cupertinoBottomExtent,
       controller: _controller.value,
       focusNode: _focusNode,
       isSearchActive: _vm.isInSearchMode,
@@ -214,6 +367,7 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
       onSearchDismissed: _dismissSearch,
       onTapOutside: _onTapOutside,
       materialStyle: const MaterialSliverSearchBarStyle(
+        toolbarHeight: kAppToolbarHeight,
         scrolledUnderElevation: kCommonEvalation,
         shadowColor: Colors.transparent,
       ),

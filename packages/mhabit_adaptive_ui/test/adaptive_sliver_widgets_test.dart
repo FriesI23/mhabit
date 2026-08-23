@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart' show CupertinoSliverNavigationBar;
+import 'package:flutter/cupertino.dart'
+    show CupertinoNavigationBar, CupertinoSliverNavigationBar;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -202,6 +203,31 @@ void main() {
         ),
       );
       expect(find.byType(CupertinoSliverNavigationBar), findsOneWidget);
+    });
+
+    testWidgets('apple fixed height uses the standalone toolbar renderer', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                AdaptiveSliverAppBar.apple(
+                  title: Text('title'),
+                  height: 52,
+                  actions: [Icon(Icons.settings)],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(CupertinoNavigationBar), findsOneWidget);
+      expect(find.byType(CupertinoSliverNavigationBar), findsNothing);
+      expect(find.text('title'), findsOneWidget);
+      expect(find.byIcon(Icons.settings), findsOneWidget);
     });
 
     testWidgets('material knobs pass through to the SliverAppBar', (

@@ -14,7 +14,17 @@
 
 import 'dart:math' as math;
 
+import '../l10n/localizations.dart';
 import '../models/habit_summary.dart';
+
+extension LocalizedStringIterableExtension on Iterable<String> {
+  String? joinLocalized(L10n? l10n, {String? separator}) {
+    final values = toList(growable: false);
+    return values.isEmpty
+        ? null
+        : values.join(separator ?? l10n?.common_listSeparator ?? ', ');
+  }
+}
 
 extension SortPostionRankExtension on Iterable<num> {
   List<num> makeUniqueAndIncreasing(

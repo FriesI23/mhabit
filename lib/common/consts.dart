@@ -179,6 +179,8 @@ const appFlaborStore = 'f_store';
 //#endregion
 
 //#region components
+const double kAppToolbarHeight = 52.0;
+
 const double dialogshowTitleMaxHeight = 400.0;
 
 const skipReasonChipTextList = [

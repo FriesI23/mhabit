@@ -15,6 +15,9 @@ class L10nFa extends L10n {
   String get appName => 'زیگ عادت‌ها';
 
   @override
+  String get common_listSeparator => ', ';
+
+  @override
   String get habitEdit_saveButton_text => 'ذخیره';
 
   @override

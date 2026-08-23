@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../adaptive_style.dart';
+import '../cupertino/cupertino_sliver_search_bar.dart';
 import '../material/material_sliver_search_bar.dart';
 
 const List<Widget> _kDefaultActions = <Widget>[];
@@ -8,9 +9,8 @@ const List<Widget> _kDefaultActions = <Widget>[];
 /// Adaptive sliver search bar.
 ///
 /// Must be placed in a viewport `slivers:` list. The default constructor
-/// resolves the style from the current platform; `.material` forces the
-/// Material style. The Apple style currently falls back to the Material
-/// implementation.
+/// resolves the style from the current platform; named constructors force a
+/// renderer style.
 class AdaptiveSliverSearchBar extends StatelessWidget {
   const AdaptiveSliverSearchBar({
     super.key,
@@ -29,6 +29,11 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
     this.onSubmitted,
     this.onTapOutside,
     this.materialStyle = const MaterialSliverSearchBarStyle(),
+    this.cupertinoMaxSearchWidth = 240.0,
+    this.cupertinoActions = const [],
+    this.cupertinoBottom,
+    this.cupertinoBottomExtent = 0.0,
+    this.pinned = true,
   }) : style = null;
 
   const AdaptiveSliverSearchBar.material({
@@ -48,6 +53,11 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
     this.onSubmitted,
     this.onTapOutside,
     this.materialStyle = const MaterialSliverSearchBarStyle(),
+    this.cupertinoMaxSearchWidth = 240.0,
+    this.cupertinoActions = const [],
+    this.cupertinoBottom,
+    this.cupertinoBottomExtent = 0.0,
+    this.pinned = true,
   }) : style = AdaptiveStyle.material;
 
   const AdaptiveSliverSearchBar.apple({
@@ -67,6 +77,11 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
     this.onSubmitted,
     this.onTapOutside,
     this.materialStyle = const MaterialSliverSearchBarStyle(),
+    this.cupertinoMaxSearchWidth = 240.0,
+    this.cupertinoActions = const [],
+    this.cupertinoBottom,
+    this.cupertinoBottomExtent = 0.0,
+    this.pinned = true,
   }) : style = AdaptiveStyle.apple;
 
   final AdaptiveStyle? style;
@@ -85,15 +100,43 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
   final VoidCallback onSearchDismissed;
   final TapRegionCallback? onTapOutside;
   final MaterialSliverSearchBarStyle materialStyle;
+  final double cupertinoMaxSearchWidth;
+  final List<CupertinoSliverSearchBarAction> cupertinoActions;
+  final Widget? cupertinoBottom;
+  final double cupertinoBottomExtent;
+  final bool pinned;
 
   @override
   Widget build(BuildContext context) {
     final effective = style ?? context.adaptiveStyle;
     return switch (effective) {
-      // TODO(adaptive-ui::apple): Supply the Cupertino renderer in Phase 3-2f.
-      AdaptiveStyle.apple || AdaptiveStyle.material => _buildMaterial(),
+      AdaptiveStyle.apple => _buildCupertino(),
+      AdaptiveStyle.material => _buildMaterial(),
     };
   }
+
+  Widget _buildCupertino() => CupertinoSliverSearchBar(
+    title: title,
+    leading: leading,
+    actions: cupertinoActions,
+    fixedActions: cupertinoActions.isEmpty
+        ? <Widget>[...actions, ?searchTrailing]
+        : const <Widget>[],
+    controller: controller,
+    focusNode: focusNode,
+    isSearchActive: isSearchActive,
+    keyword: keyword,
+    hintText: hintText,
+    maxSearchWidth: cupertinoMaxSearchWidth,
+    bottom: cupertinoBottom,
+    bottomExtent: cupertinoBottomExtent,
+    pinned: pinned,
+    onChanged: onChanged,
+    onSubmitted: onSubmitted,
+    onSearchActivated: onSearchActivated,
+    onSearchDismissed: onSearchDismissed,
+    onTapOutside: onTapOutside,
+  );
 
   Widget _buildMaterial() => MaterialSliverSearchBar(
     title: title,
@@ -111,5 +154,6 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
     onSearchDismissed: onSearchDismissed,
     onTapOutside: onTapOutside,
     style: materialStyle,
+    pinned: pinned,
   );
 }

@@ -1,5 +1,6 @@
 {
   "ar": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
@@ -90,6 +91,7 @@
   ],
 
   "cs": [
+    "common_listSeparator",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_habitFreq_show_perweek",
     "habitEdit_habitFreq_show_permonth",
@@ -126,6 +128,7 @@
   ],
 
   "de": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
@@ -336,6 +339,7 @@
   ],
 
   "es": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
@@ -472,6 +476,7 @@
   ],
 
   "eu": [
+    "common_listSeparator",
     "habitEdit_saveButton_text",
     "habitEdit_habitName_hintText",
     "habitEdit_colorPicker_title",
@@ -1031,6 +1036,7 @@
   ],
 
   "fa": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
@@ -1259,6 +1265,7 @@
   ],
 
   "fr": [
+    "common_listSeparator",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_tintToggleLabel",
     "habitDisplay_exportHabitsSuccSnackbarText",
@@ -1431,7 +1438,12 @@
     "appSetting_manageGroups_subtitleText"
   ],
 
+  "he": [
+    "common_listSeparator"
+  ],
+
   "hu": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
@@ -1522,6 +1534,7 @@
   ],
 
   "it": [
+    "common_listSeparator",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_tintToggleLabel",
     "habitEdit_colorPicker_tintedLabel",
@@ -1719,6 +1732,7 @@
   ],
 
   "ja": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
@@ -1825,6 +1839,7 @@
   ],
 
   "nb": [
+    "common_listSeparator",
     "habitEdit_saveButton_text",
     "habitEdit_habitName_hintText",
     "habitEdit_colorPicker_title",
@@ -2384,6 +2399,7 @@
   ],
 
   "pl": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
@@ -2494,6 +2510,7 @@
   ],
 
   "pt": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
@@ -2737,6 +2754,7 @@
   ],
 
   "ru": [
+    "common_listSeparator",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
     "habitEdit_colorPicker_tintToggleLabel",
@@ -2846,6 +2864,7 @@
   ],
 
   "tr": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
@@ -2935,6 +2954,7 @@
   ],
 
   "uk": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_tintedLabel",
@@ -2974,6 +2994,7 @@
   ],
 
   "vi": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",

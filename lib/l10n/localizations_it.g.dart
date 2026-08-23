@@ -15,6 +15,9 @@ class L10nIt extends L10n {
   String get appName => 'Table Habit';
 
   @override
+  String get common_listSeparator => ', ';
+
+  @override
   String get habitEdit_saveButton_text => 'Salva';
 
   @override

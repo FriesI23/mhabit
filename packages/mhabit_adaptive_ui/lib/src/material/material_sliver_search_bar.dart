@@ -41,6 +41,7 @@ class MaterialSliverSearchBar extends StatelessWidget {
     this.onSubmitted,
     this.onTapOutside,
     this.style = const MaterialSliverSearchBarStyle(),
+    this.pinned = true,
   });
 
   final Widget title;
@@ -58,6 +59,7 @@ class MaterialSliverSearchBar extends StatelessWidget {
   final VoidCallback onSearchDismissed;
   final TapRegionCallback? onTapOutside;
   final MaterialSliverSearchBarStyle style;
+  final bool pinned;
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +87,7 @@ class MaterialSliverSearchBar extends StatelessWidget {
       key: const ValueKey('material-sliver-search-bar'),
       floating: true,
       snap: true,
-      pinned: true,
+      pinned: pinned,
       centerTitle: false,
       toolbarHeight: style.toolbarHeight,
       scrolledUnderElevation: style.scrolledUnderElevation,
