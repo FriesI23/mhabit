@@ -11,13 +11,13 @@ import 'adaptive_nav_visibility.dart';
 
 /// Adaptive navigation chrome around [child].
 ///
-/// The form follows the window's width class ([WindowSize.of]): compact
-/// keeps the bottom [NavigationBar] overlay; medium keeps a collapsible
-/// [NavigationRail] collapsed by default; expanded, large, and extra-large
-/// keep the collapsible rail extended by default. The three-tier Apple
-/// classification (iOS) maps compact / expanded / large onto the first
-/// three forms. The chrome animates when the form changes; the content area
-/// always fills the remaining width without a maximum-width cap.
+/// The form follows the window's width and height classes ([WindowSize.of]):
+/// compact width keeps the bottom [NavigationBar] overlay; medium width keeps
+/// a collapsible [NavigationRail] collapsed by default; wider windows use an
+/// extended rail unless their height is compact, in which case the rail also
+/// defaults to collapsed. A null height preserves the width-only behavior.
+/// The chrome animates when the form changes; the content area always fills
+/// the remaining width without a maximum-width cap.
 ///
 /// The extended rail width follows the window width between the M3 drawer
 /// bounds — the interval's upper bound grows up to the M3 recommended width
@@ -109,7 +109,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final form = _formFor(WindowSize.of(context).width);
+    final form = _formFor(WindowSize.of(context));
     if (form == _form) return;
     _form = form;
     if (form == _ShellForm.bar) {
@@ -152,18 +152,18 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
     widget.onDestinationSelected(index);
   }
 
-  /// Maps a width class to the shell form.
-  /// Width-class to navigation-form mapping shared by all styles: compact
-  /// keeps the bottom bar, medium keeps a rail collapsed by default, and
-  /// everything from expanded on keeps the rail extended by default.
+  /// Maps both window axes to the shell form, shared by all styles.
   ///
-  /// The Apple chain only produces compact / medium / large, so this single
-  /// mapping covers it without a platform branch.
-  _ShellForm _formFor(WindowSizeClass widthClass) {
-    if (widthClass == WindowSizeClass.compact) return _ShellForm.bar;
-    return widthClass == WindowSizeClass.medium
-        ? _ShellForm.railCollapsed
-        : _ShellForm.railExtended;
+  /// Width remains authoritative for compact and medium. Wider windows fall
+  /// back to a collapsed rail when height is compact; an unclassified height
+  /// preserves the previous width-only extended-rail behavior.
+  _ShellForm _formFor(WindowSize windowSize) {
+    if (windowSize.width == WindowSizeClass.compact) return _ShellForm.bar;
+    if (windowSize.width == WindowSizeClass.medium ||
+        windowSize.height == WindowSizeClass.compact) {
+      return _ShellForm.railCollapsed;
+    }
+    return _ShellForm.railExtended;
   }
 
   @override

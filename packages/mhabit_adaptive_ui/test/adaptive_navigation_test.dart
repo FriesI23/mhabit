@@ -688,6 +688,130 @@ void main() {
       expect(scope.visible.value, isTrue);
     });
 
+    testWidgets(
+      'expanded compact-height defaults collapsed and remains expandable',
+      (tester) async {
+        _setSurfaceSize(tester, const Size(1000, 479));
+        final router = _buildRouter();
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+        NavigationRail rail() =>
+            tester.widget<NavigationRail>(find.byType(NavigationRail));
+        expect(rail().extended, isFalse);
+
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle();
+        expect(rail().extended, isTrue);
+      },
+    );
+
+    testWidgets('large compact-height defaults to a collapsed rail', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1400, 479));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isFalse,
+      );
+    });
+
+    testWidgets('expanded medium-height boundary defaults extended', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1000, 480));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isTrue,
+      );
+    });
+
+    testWidgets('apple large compact-height defaults to a collapsed rail', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      _setSurfaceSize(tester, const Size(1000, 479));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isFalse,
+      );
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('compact and medium widths remain authoritative over height', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 1000));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(find.byType(NavigationBar), findsOneWidget);
+
+      tester.view.physicalSize = const Size(700, 1000);
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isFalse,
+      );
+
+      tester.view.physicalSize = const Size(700, 400);
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isFalse,
+      );
+    });
+
+    testWidgets('unclassified height preserves width-only shell behavior', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1000, 300));
+      final router = _buildRouter();
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: router,
+          builder: (context, child) => BreakpointsScope(
+            breakpoints: const CustomBreakpoints(width: [600, 840]),
+            child: child!,
+          ),
+        ),
+      );
+
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isTrue,
+      );
+    });
+
+    testWidgets('height boundary switches the rail default form at runtime', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1000, 479));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      NavigationRail rail() =>
+          tester.widget<NavigationRail>(find.byType(NavigationRail));
+      expect(rail().extended, isFalse);
+
+      tester.view.physicalSize = const Size(1000, 480);
+      await tester.pumpAndSettle();
+      expect(rail().extended, isTrue);
+
+      tester.view.physicalSize = const Size(1000, 479);
+      await tester.pumpAndSettle();
+      expect(rail().extended, isFalse);
+    });
+
     testWidgets('macOS classifies with apple tiers', (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
       _setSurfaceSize(tester, const Size(700, 600));
