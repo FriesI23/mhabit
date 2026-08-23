@@ -111,7 +111,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     _scrollVisibilityDispatcher = VerticalScrollVisibilityDispatcher(
       toolbarHeight: _toolbarHeight,
       onVisibilityChanged: widget.onBottomNavVisibilityChanged,
-      externalVisibility: AdaptiveNavScope.maybeOf(context)?.scrollWish,
+      externalVisibility: AdaptiveNavScope.maybeRead(context)?.scrollWish,
     );
   }
 

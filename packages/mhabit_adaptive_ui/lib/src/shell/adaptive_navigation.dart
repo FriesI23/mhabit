@@ -170,6 +170,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
   Widget build(BuildContext context) {
     final compact = _form == _ShellForm.bar;
     final padding = MediaQuery.paddingOf(context);
+    final viewPadding = MediaQuery.viewPaddingOf(context);
     const barHeight = _narrowNavHeight;
     // NavigationBar adds a SafeArea around its content, so the rendered bar
     // is barHeight plus the bottom system inset. The scope exposes the
@@ -199,6 +200,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
         // AdaptiveNavScope.
         body: _NavigationShellBody(
           ambientPadding: padding,
+          ambientViewPadding: viewPadding,
           form: _form,
           selectedIndex: widget.selectedIndex,
           destinations: widget.destinations,
@@ -228,11 +230,13 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
 /// Shell body below the root [Scaffold].
 ///
 /// Its build context sees the padding injected by [Scaffold.extendBody], then
-/// restores the ambient padding captured above the Scaffold so branch pages do
-/// not reserve the compact navigation height twice.
+/// restores the ambient padding and view padding captured above the Scaffold
+/// so branch pages do not reserve the compact navigation height twice and
+/// nested Scaffolds still keep floating widgets above system insets.
 class _NavigationShellBody extends StatelessWidget {
   const _NavigationShellBody({
     required this.ambientPadding,
+    required this.ambientViewPadding,
     required this.form,
     required this.selectedIndex,
     required this.destinations,
@@ -241,6 +245,7 @@ class _NavigationShellBody extends StatelessWidget {
   });
 
   final EdgeInsets ambientPadding;
+  final EdgeInsets ambientViewPadding;
   final _ShellForm form;
   final int selectedIndex;
   final List<NavigationDestination> destinations;
@@ -250,7 +255,9 @@ class _NavigationShellBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
-      data: MediaQuery.of(context).copyWith(padding: ambientPadding),
+      data: MediaQuery.of(
+        context,
+      ).copyWith(padding: ambientPadding, viewPadding: ambientViewPadding),
       child: ColoredBox(
         // Opaque backdrop behind the branch content: the bar is translucent
         // and overlays it, so without this the window background would show

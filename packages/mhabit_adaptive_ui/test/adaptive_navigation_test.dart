@@ -224,6 +224,45 @@ class _StubPage extends StatelessWidget {
   }
 }
 
+class _FabStubPage extends StatelessWidget {
+  const _FabStubPage();
+
+  @override
+  Widget build(BuildContext context) {
+    final scope = AdaptiveNavScope.of(context);
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      floatingActionButton: ValueListenableBuilder<bool>(
+        valueListenable: scope.visible,
+        builder: (context, visible, child) => Padding(
+          padding: EdgeInsets.only(bottom: visible ? scope.barHeight : 0),
+          child: child,
+        ),
+        child: const FloatingActionButton(
+          key: ValueKey('test-fab'),
+          onPressed: null,
+        ),
+      ),
+    );
+  }
+}
+
+class _ScopeLookupProbe extends StatelessWidget {
+  const _ScopeLookupProbe({required this.listen, required this.onBuild});
+
+  final bool listen;
+  final ValueChanged<double> onBuild;
+
+  @override
+  Widget build(BuildContext context) {
+    final scope = listen
+        ? AdaptiveNavScope.maybeOf(context)
+        : AdaptiveNavScope.maybeRead(context);
+    onBuild(scope!.barHeight);
+    return const SizedBox.shrink();
+  }
+}
+
 /// Pins the test surface to [size] logical pixels for this test.
 ///
 /// The default test surface is 800x600, which already classifies as medium;
@@ -235,6 +274,38 @@ void _setSurfaceSize(WidgetTester tester, Size size) {
 }
 
 void main() {
+  testWidgets('scope lookups distinguish listening from read access', (
+    tester,
+  ) async {
+    final barHeight = ValueNotifier(80.0);
+    final listeningBuilds = <double>[];
+    final readBuilds = <double>[];
+    addTearDown(barHeight.dispose);
+
+    await tester.pumpWidget(
+      ValueListenableBuilder<double>(
+        valueListenable: barHeight,
+        child: Column(
+          children: [
+            _ScopeLookupProbe(listen: true, onBuild: listeningBuilds.add),
+            _ScopeLookupProbe(listen: false, onBuild: readBuilds.add),
+          ],
+        ),
+        builder: (context, value, child) =>
+            AdaptiveNavScope(barHeight: value, navHeight: value, child: child!),
+      ),
+    );
+
+    expect(listeningBuilds, [80]);
+    expect(readBuilds, [80]);
+
+    barHeight.value = 0;
+    await tester.pump();
+
+    expect(listeningBuilds, [80, 0]);
+    expect(readBuilds, [80]);
+  });
+
   group('AdaptiveNavigationShell', () {
     testWidgets('renders destinations and switches branch on tap', (
       tester,
@@ -595,6 +666,54 @@ void main() {
       expect(scope.barHeight, 80);
       expect(scope.navHeight, 104);
     });
+
+    for (final bottomInset in [24.0, 34.0]) {
+      testWidgets(
+        'compact FAB clears bar and system inset at ${bottomInset}dp',
+        (tester) async {
+          tester.view.padding = FakeViewPadding(bottom: bottomInset);
+          tester.view.viewPadding = FakeViewPadding(bottom: bottomInset);
+          _setSurfaceSize(tester, const Size(400, 800));
+
+          await tester.pumpWidget(
+            MaterialApp(
+              home: AdaptiveNavigationShell(
+                selectedIndex: 0,
+                destinations: const [
+                  NavigationDestination(
+                    icon: Icon(Icons.home_outlined),
+                    label: 'Habits',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(Icons.calendar_today_outlined),
+                    label: 'Today',
+                  ),
+                ],
+                onDestinationSelected: (_) {},
+                child: const _FabStubPage(),
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          final fab = find.byKey(const ValueKey('test-fab'));
+          final barTop = tester.getTopLeft(find.byType(NavigationBar)).dy;
+          expect(
+            tester.getBottomRight(fab).dy,
+            barTop - kFloatingActionButtonMargin,
+          );
+
+          final scope = AdaptiveNavScope.of(tester.element(fab));
+          scope.reportScrollWish(false);
+          await tester.pumpAndSettle();
+
+          expect(
+            tester.getBottomRight(fab).dy,
+            800 - bottomInset - kFloatingActionButtonMargin,
+          );
+        },
+      );
+    }
 
     testWidgets('medium form shows an always-visible collapsible rail', (
       tester,

@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
@@ -30,6 +32,7 @@ import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:mhabit/widgets/widgets.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -54,6 +57,14 @@ final class _FakeHabitDetailAccess extends StubHabitDetailAccess {
     }
     return seedData;
   }
+}
+
+final class _PendingHabitDetailAccess extends StubHabitDetailAccess {
+  final Completer<HabitDetailData?> _completer = Completer();
+
+  @override
+  Future<HabitDetailData?> loadHabitDetailData(HabitUUID uuid) =>
+      _completer.future;
 }
 
 HabitSummaryData _buildHabitSummaryData({
@@ -99,6 +110,7 @@ Future<void> _pumpHabitDetailPage(
   required HabitDetailAccess access,
   required ValueNotifier<int> rebuildToken,
   required HabitUUID habitUUID,
+  bool wrapWithAdaptiveShell = false,
 }) async {
   final customDate = AppCustomDateYmdHmsConfigViewModel()
     ..updateProfile(profile);
@@ -128,10 +140,29 @@ Future<void> _pumpHabitDetailPage(
       child: MaterialApp(
         home: ValueListenableBuilder<int>(
           valueListenable: rebuildToken,
-          builder: (context, _, child) => HabitDetailPage(
-            habitUUID: habitUUID,
-            color: const HabitColor.builtIn(HabitColorType.cc1),
-          ),
+          builder: (context, _, child) {
+            final page = HabitDetailPage(
+              habitUUID: habitUUID,
+              color: const HabitColor.builtIn(HabitColorType.cc1),
+            );
+            if (!wrapWithAdaptiveShell) return page;
+            return AdaptiveNavigationShell(
+              selectedIndex: 0,
+              compactRouteVisible: false,
+              destinations: const [
+                NavigationDestination(
+                  icon: Icon(Icons.home_outlined),
+                  label: 'Habits',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.calendar_today_outlined),
+                  label: 'Today',
+                ),
+              ],
+              onDestinationSelected: (_) {},
+              child: page,
+            );
+          },
         ),
       ),
     ),
@@ -219,6 +250,45 @@ void main() {
 
       expect(find.text('Sample Habit'), findsOneWidget);
       expect(find.text('Try Again'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'HabitDetailPage updates its FAB inset after portrait to landscape',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(400, 800);
+      addTearDown(tester.view.reset);
+
+      final profile = await _loadProfile();
+      final detailData = _buildHabitDetailData();
+      final access = _PendingHabitDetailAccess();
+      final rebuildToken = ValueNotifier(0);
+
+      addTearDown(() {
+        rebuildToken.dispose();
+        profile.dispose();
+      });
+
+      await _pumpHabitDetailPage(
+        tester,
+        profile: profile,
+        access: access,
+        rebuildToken: rebuildToken,
+        habitUUID: detailData.data.uuid,
+        wrapWithAdaptiveShell: true,
+      );
+      await tester.pump(const Duration(milliseconds: 300));
+
+      final fab = find.byType(FloatingActionButton);
+      expect(fab, findsOneWidget);
+      expect(800 - tester.getBottomRight(fab).dy, kFloatingActionButtonMargin);
+
+      tester.view.physicalSize = const Size(800, 400);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(400 - tester.getBottomRight(fab).dy, kFloatingActionButtonMargin);
     },
   );
 }

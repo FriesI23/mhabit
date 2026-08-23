@@ -68,7 +68,7 @@ class TodayTabPageState extends State<TodayTabPage>
     _scrollVisibilityDispatcher = VerticalScrollVisibilityDispatcher(
       toolbarHeight: kAppToolbarHeight,
       onVisibilityChanged: widget.onBottomNavVisibilityChanged,
-      externalVisibility: AdaptiveNavScope.maybeOf(context)?.scrollWish,
+      externalVisibility: AdaptiveNavScope.maybeRead(context)?.scrollWish,
     );
   }
 

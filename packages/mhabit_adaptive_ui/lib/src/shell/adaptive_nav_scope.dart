@@ -69,12 +69,23 @@ class AdaptiveNavScope extends InheritedWidget {
   final double navHeight;
 
   /// Reads the scope and rebuilds the caller when it changes.
-  static AdaptiveNavScope of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<AdaptiveNavScope>()!;
+  ///
+  /// Throws when no scope exists in [context]. Use [maybeOf] when the scope is
+  /// optional.
+  static AdaptiveNavScope of(BuildContext context) => maybeOf(context)!;
 
-  /// Reads the scope without depending on it, for handlers that only
-  /// report scroll wishes.
+  /// Reads the optional scope and rebuilds the caller when it changes.
   static AdaptiveNavScope? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<AdaptiveNavScope>();
+
+  /// Reads the scope without establishing a dependency.
+  ///
+  /// Use this for callbacks and one-time controller wiring that must not
+  /// rebuild when the scope changes. Throws when no scope exists in [context].
+  static AdaptiveNavScope read(BuildContext context) => maybeRead(context)!;
+
+  /// Reads the optional scope without establishing a dependency.
+  static AdaptiveNavScope? maybeRead(BuildContext context) =>
       context.getInheritedWidgetOfExactType<AdaptiveNavScope>();
 
   @override
