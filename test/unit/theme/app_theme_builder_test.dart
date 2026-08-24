@@ -31,6 +31,7 @@ void main() {
         expect(theme.brightness, Brightness.light);
         expect(theme.colorScheme.brightness, Brightness.light);
         expect(theme.appBarTheme, same(kAppBarTheme));
+        expect(theme.snackBarTheme.behavior, SnackBarBehavior.floating);
         expect(theme.extensions.values.whereType<CustomColors>(), hasLength(1));
       },
     );

@@ -196,7 +196,70 @@ class _StubPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: Text(text)));
+    final bottomPadding = MediaQuery.paddingOf(context).bottom;
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(text),
+            SizedBox(
+              key: const ValueKey('branch-bottom-padding'),
+              height: bottomPadding,
+            ),
+            TextButton(
+              key: const ValueKey('show-snackbar'),
+              onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text('saved'),
+                ),
+              ),
+              child: const Text('Show Snackbar'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FabStubPage extends StatelessWidget {
+  const _FabStubPage();
+
+  @override
+  Widget build(BuildContext context) {
+    final scope = AdaptiveNavScope.of(context);
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      floatingActionButton: ValueListenableBuilder<bool>(
+        valueListenable: scope.visible,
+        builder: (context, visible, child) => Padding(
+          padding: EdgeInsets.only(bottom: visible ? scope.barHeight : 0),
+          child: child,
+        ),
+        child: const FloatingActionButton(
+          key: ValueKey('test-fab'),
+          onPressed: null,
+        ),
+      ),
+    );
+  }
+}
+
+class _ScopeLookupProbe extends StatelessWidget {
+  const _ScopeLookupProbe({required this.listen, required this.onBuild});
+
+  final bool listen;
+  final ValueChanged<double> onBuild;
+
+  @override
+  Widget build(BuildContext context) {
+    final scope = listen
+        ? AdaptiveNavScope.maybeOf(context)
+        : AdaptiveNavScope.maybeRead(context);
+    onBuild(scope!.barHeight);
+    return const SizedBox.shrink();
   }
 }
 
@@ -211,6 +274,38 @@ void _setSurfaceSize(WidgetTester tester, Size size) {
 }
 
 void main() {
+  testWidgets('scope lookups distinguish listening from read access', (
+    tester,
+  ) async {
+    final barHeight = ValueNotifier(80.0);
+    final listeningBuilds = <double>[];
+    final readBuilds = <double>[];
+    addTearDown(barHeight.dispose);
+
+    await tester.pumpWidget(
+      ValueListenableBuilder<double>(
+        valueListenable: barHeight,
+        child: Column(
+          children: [
+            _ScopeLookupProbe(listen: true, onBuild: listeningBuilds.add),
+            _ScopeLookupProbe(listen: false, onBuild: readBuilds.add),
+          ],
+        ),
+        builder: (context, value, child) =>
+            AdaptiveNavScope(barHeight: value, navHeight: value, child: child!),
+      ),
+    );
+
+    expect(listeningBuilds, [80]);
+    expect(readBuilds, [80]);
+
+    barHeight.value = 0;
+    await tester.pump();
+
+    expect(listeningBuilds, [80, 0]);
+    expect(readBuilds, [80]);
+  });
+
   group('AdaptiveNavigationShell', () {
     testWidgets('renders destinations and switches branch on tap', (
       tester,
@@ -306,7 +401,7 @@ void main() {
       expect(scope.visible.value, isTrue);
     });
 
-    testWidgets('animates the bar out when visibility is set to false', (
+    testWidgets('collapses the bar height when visibility is set to false', (
       tester,
     ) async {
       _setSurfaceSize(tester, const Size(400, 800));
@@ -320,13 +415,10 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 250));
 
-      final opacity = tester.widget<AnimatedOpacity>(
-        find.ancestor(
-          of: find.byType(NavigationBar),
-          matching: find.byType(AnimatedOpacity),
-        ),
+      expect(
+        tester.getSize(find.byKey(const ValueKey('bottom-bar'))).height,
+        0,
       );
-      expect(opacity.opacity, 0);
     });
 
     testWidgets(
@@ -480,6 +572,215 @@ void main() {
       expect(bar.labelBehavior, NavigationDestinationLabelBehavior.alwaysShow);
     });
 
+    testWidgets('unrelated MediaQuery changes do not rebuild shell chrome', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      final navigationBar = tester.widget<AdaptiveNavigationBar>(
+        find.byType(AdaptiveNavigationBar),
+      );
+
+      tester.platformDispatcher.textScaleFactorTestValue = 1.25;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await tester.pump();
+
+      expect(
+        MediaQuery.textScalerOf(
+          tester.element(find.text('habits page')),
+        ).scale(100),
+        125,
+      );
+      expect(
+        tester.widget<AdaptiveNavigationBar>(
+          find.byType(AdaptiveNavigationBar),
+        ),
+        same(navigationBar),
+      );
+    });
+
+    testWidgets('compact snackbar is shown once above the navigation bar', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      await tester.tap(find.byKey(const ValueKey('show-snackbar')));
+      await tester.pumpAndSettle();
+
+      final snackBar = find.byType(SnackBar);
+      final navigationBar = find.byType(NavigationBar);
+      expect(snackBar, findsOneWidget);
+      expect(navigationBar, findsOneWidget);
+      expect(
+        tester.getBottomLeft(snackBar).dy,
+        lessThanOrEqualTo(tester.getTopLeft(navigationBar).dy),
+      );
+    });
+
+    testWidgets('floating snackbar follows the collapsing navigation bar', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      await tester.tap(find.byKey(const ValueKey('show-snackbar')));
+      await tester.pumpAndSettle();
+
+      final snackBar = find.byType(SnackBar);
+      final visibleBottom = tester.getBottomLeft(snackBar).dy;
+      final scope = AdaptiveNavScope.of(
+        tester.element(find.text('habits page')),
+      );
+
+      scope.reportScrollWish(false);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 250));
+
+      expect(tester.getBottomLeft(snackBar).dy, greaterThan(visibleBottom));
+      expect(
+        tester.getSize(find.byKey(const ValueKey('bottom-bar'))).height,
+        0,
+      );
+    });
+
+    testWidgets('extendBody keeps the branch bottom padding unchanged', (
+      tester,
+    ) async {
+      tester.view.padding = const FakeViewPadding(bottom: 24);
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(
+        tester.getSize(find.byKey(const ValueKey('branch-bottom-padding'))),
+        const Size(0, 24),
+      );
+      final scope = AdaptiveNavScope.of(
+        tester.element(find.text('habits page')),
+      );
+      expect(scope.barHeight, 80);
+      expect(scope.navHeight, 104);
+    });
+
+    for (final bottomInset in [24.0, 34.0]) {
+      testWidgets(
+        'compact FAB clears bar and system inset at ${bottomInset}dp',
+        (tester) async {
+          tester.view.padding = FakeViewPadding(bottom: bottomInset);
+          tester.view.viewPadding = FakeViewPadding(bottom: bottomInset);
+          _setSurfaceSize(tester, const Size(400, 800));
+
+          await tester.pumpWidget(
+            MaterialApp(
+              home: AdaptiveNavigationShell(
+                selectedIndex: 0,
+                destinations: const [
+                  NavigationDestination(
+                    icon: Icon(Icons.home_outlined),
+                    label: 'Habits',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(Icons.calendar_today_outlined),
+                    label: 'Today',
+                  ),
+                ],
+                onDestinationSelected: (_) {},
+                child: const _FabStubPage(),
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          final fab = find.byKey(const ValueKey('test-fab'));
+          final barTop = tester.getTopLeft(find.byType(NavigationBar)).dy;
+          expect(
+            tester.getBottomRight(fab).dy,
+            barTop - kFloatingActionButtonMargin,
+          );
+
+          final scope = AdaptiveNavScope.of(tester.element(fab));
+          scope.reportScrollWish(false);
+          await tester.pumpAndSettle();
+
+          expect(
+            tester.getBottomRight(fab).dy,
+            800 - bottomInset - kFloatingActionButtonMargin,
+          );
+        },
+      );
+    }
+
+    testWidgets('contextual suppression is independent and resets on branch', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      var scope = AdaptiveNavScope.of(tester.element(find.text('habits page')));
+      scope.reportContextualChromeSuppressed(true);
+      await tester.pumpAndSettle();
+      expect(scope.visible.value, isFalse);
+      expect(scope.scrollWish.value, isTrue);
+
+      router.push('/habits/detail');
+      await tester.pumpAndSettle();
+      router.pop();
+      await tester.pumpAndSettle();
+      scope = AdaptiveNavScope.of(tester.element(find.text('habits page')));
+      expect(scope.visible.value, isFalse);
+
+      scope.reportScrollWish(false);
+      scope.reportContextualChromeSuppressed(false);
+      await tester.pumpAndSettle();
+      expect(scope.visible.value, isFalse);
+
+      scope.reportScrollWish(true);
+      scope.reportContextualChromeSuppressed(true);
+      router.go('/today');
+      await tester.pumpAndSettle();
+
+      scope = AdaptiveNavScope.of(tester.element(find.text('today page')));
+      expect(scope.visible.value, isTrue);
+      expect(scope.scrollWish.value, isTrue);
+    });
+
+    testWidgets('contextual suppression survives medium to compact resize', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(700, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      final mediumScope = AdaptiveNavScope.of(
+        tester.element(find.text('habits page')),
+      );
+      mediumScope.reportContextualChromeSuppressed(true);
+      await tester.pump();
+      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(find.byType(NavigationBar), findsNothing);
+
+      tester.view.physicalSize = const Size(400, 800);
+      await tester.pump();
+
+      final compactScope = AdaptiveNavScope.of(
+        tester.element(find.text('habits page')),
+      );
+      expect(compactScope.visible.value, isFalse);
+      expect(find.byType(NavigationBar), findsNothing);
+
+      compactScope.reportContextualChromeSuppressed(false);
+      await tester.pump();
+      expect(find.byType(NavigationBar), findsOneWidget);
+    });
+
     testWidgets('medium form shows an always-visible collapsible rail', (
       tester,
     ) async {
@@ -570,6 +871,130 @@ void main() {
       );
       expect(scope.barHeight, 0);
       expect(scope.visible.value, isTrue);
+    });
+
+    testWidgets(
+      'expanded compact-height defaults collapsed and remains expandable',
+      (tester) async {
+        _setSurfaceSize(tester, const Size(1000, 479));
+        final router = _buildRouter();
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+        NavigationRail rail() =>
+            tester.widget<NavigationRail>(find.byType(NavigationRail));
+        expect(rail().extended, isFalse);
+
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle();
+        expect(rail().extended, isTrue);
+      },
+    );
+
+    testWidgets('large compact-height defaults to a collapsed rail', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1400, 479));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isFalse,
+      );
+    });
+
+    testWidgets('expanded medium-height boundary defaults extended', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1000, 480));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isTrue,
+      );
+    });
+
+    testWidgets('apple large compact-height defaults to a collapsed rail', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      _setSurfaceSize(tester, const Size(1000, 479));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isFalse,
+      );
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('compact and medium widths remain authoritative over height', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 1000));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(find.byType(NavigationBar), findsOneWidget);
+
+      tester.view.physicalSize = const Size(700, 1000);
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isFalse,
+      );
+
+      tester.view.physicalSize = const Size(700, 400);
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isFalse,
+      );
+    });
+
+    testWidgets('unclassified height preserves width-only shell behavior', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1000, 300));
+      final router = _buildRouter();
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: router,
+          builder: (context, child) => BreakpointsScope(
+            breakpoints: const CustomBreakpoints(width: [600, 840]),
+            child: child!,
+          ),
+        ),
+      );
+
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isTrue,
+      );
+    });
+
+    testWidgets('height boundary switches the rail default form at runtime', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1000, 479));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      NavigationRail rail() =>
+          tester.widget<NavigationRail>(find.byType(NavigationRail));
+      expect(rail().extended, isFalse);
+
+      tester.view.physicalSize = const Size(1000, 480);
+      await tester.pumpAndSettle();
+      expect(rail().extended, isTrue);
+
+      tester.view.physicalSize = const Size(1000, 479);
+      await tester.pumpAndSettle();
+      expect(rail().extended, isFalse);
     });
 
     testWidgets('macOS classifies with apple tiers', (tester) async {

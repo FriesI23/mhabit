@@ -12,21 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart'
+    show
+        CupertinoButton,
+        CupertinoMenuItem,
+        CupertinoNavigationBar,
+        CupertinoPopupSurface,
+        CupertinoSliverNavigationBar;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mhabit/common/types.dart';
+import 'package:mhabit/extensions/adaptive_style_extensions.dart';
 import 'package:mhabit/l10n/localizations.dart';
+import 'package:mhabit/models/habit_color.dart';
+import 'package:mhabit/models/habit_date.dart';
+import 'package:mhabit/models/habit_display.dart';
+import 'package:mhabit/models/habit_form.dart';
+import 'package:mhabit/models/habit_freq.dart';
+import 'package:mhabit/models/habit_group.dart';
 import 'package:mhabit/models/habit_summary.dart';
-import 'package:mhabit/pages/common/_widgets/not_found_image.dart';
+import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/_providers/habits_today.dart';
+import 'package:mhabit/pages/habits_display/page.dart';
 import 'package:mhabit/pages/habits_display/page_habits.dart';
 import 'package:mhabit/pages/habits_display/page_today.dart';
+import 'package:mhabit/pages/habits_display/widgets.dart';
 import 'package:mhabit/providers/app_ui/app_compact_ui_switcher.dart';
 import 'package:mhabit/providers/app_ui/app_custom_date_format.dart';
 import 'package:mhabit/providers/app_ui/app_developer.dart';
 import 'package:mhabit/providers/app_ui/app_experimental_feature.dart';
 import 'package:mhabit/providers/app_ui/app_first_day.dart';
+import 'package:mhabit/providers/app_ui/app_language.dart';
 import 'package:mhabit/providers/app_ui/app_theme.dart';
 import 'package:mhabit/providers/app_ui/habit_op_config.dart';
 import 'package:mhabit/providers/app_ui/habits_filter.dart';
@@ -35,11 +54,16 @@ import 'package:mhabit/providers/app_ui/habits_sort.dart';
 import 'package:mhabit/providers/support/global.dart';
 import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/app_sync.dart';
+import 'package:mhabit/providers/workflow/group_manager.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
+import 'package:mhabit/routes/app_router.dart';
+import 'package:mhabit/routes/helpers/habits_status_changer_helper.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:mhabit/widgets/widgets.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sliver_tools/sliver_tools.dart' show SliverAnimatedSwitcher;
 
 import '../../support/stub/app_sync.dart';
 import '../../support/stub/habits_display_access.dart';
@@ -55,6 +79,60 @@ final class _FailingHabitsDisplayAccess extends StubHabitsDisplayAccess {
 
 final class _FakeAppSyncWorkflowAccess extends StubAppSyncWorkflowAccess {}
 
+final class _FakeGroupManager extends GroupManager {
+  @override
+  Future<GroupCollection?> tryLoadGroupCollection() async =>
+      GroupCollection.fromDBQueryResult([]);
+}
+
+final class _LoadedHabitsDisplayAccess extends StubHabitsDisplayAccess {
+  final int habitCount;
+
+  _LoadedHabitsDisplayAccess({this.habitCount = 1});
+
+  @override
+  Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
+    HabitSummaryDataCollection? initedCollection,
+    List<String>? habitsColmns,
+    List<HabitUUID>? habitUUIDs,
+  }) async {
+    final collection = initedCollection ?? HabitSummaryDataCollection();
+    for (var i = 0; i < habitCount; i++) {
+      collection.addHabit(_buildHabitSummaryData(i), forceAdd: true);
+    }
+    return collection;
+  }
+}
+
+final class _TestAppCompactUISwitcherViewModel
+    extends AppCompactUISwitcherViewModel {
+  final bool useCompactUi;
+
+  _TestAppCompactUISwitcherViewModel({required this.useCompactUi});
+
+  @override
+  bool get flag => useCompactUi;
+}
+
+HabitSummaryData _buildHabitSummaryData(int index) {
+  final startDate = HabitDate.now().subtractDays(1);
+  return HabitSummaryData(
+    id: index + 1,
+    uuid: '11111111-1111-4111-8111-${(index + 1).toString().padLeft(12, '0')}',
+    type: HabitType.normal,
+    name: 'Geometry regression habit $index',
+    desc: '',
+    color: const HabitColor.builtIn(HabitColorType.cc1),
+    dailyGoal: 1,
+    targetDays: 1,
+    frequency: HabitFrequency.daily,
+    startDate: startDate,
+    status: HabitStatus.activated,
+    sortPostion: index + 1,
+    createTime: DateTime.utc(startDate.year, startDate.month, startDate.day),
+  );
+}
+
 void _ignoreBool(bool _) {}
 
 Future<ProfileViewModel> _loadProfile() async {
@@ -69,6 +147,7 @@ Future<void> _pumpTodayTabPage(
   required ProfileViewModel profile,
   required HabitsDisplayAccess access,
   required AppSyncWorkflowAccess sync,
+  TargetPlatform platform = TargetPlatform.android,
 }) async {
   final customDate = AppCustomDateYmdHmsConfigViewModel()
     ..updateProfile(profile);
@@ -100,10 +179,11 @@ Future<void> _pumpTodayTabPage(
         ListenableProvider<AppSyncStatusSource>.value(value: sync),
         ListenableProvider<AppSyncWorkflowAccess>.value(value: sync),
       ],
-      child: const MaterialApp(
+      child: MaterialApp(
+        theme: ThemeData(platform: platform),
         localizationsDelegates: L10n.localizationsDelegates,
         supportedLocales: L10n.supportedLocales,
-        home: Scaffold(
+        home: const Scaffold(
           body: TodayTabPage(onBottomNavVisibilityChanged: _ignoreBool),
         ),
       ),
@@ -111,19 +191,27 @@ Future<void> _pumpTodayTabPage(
   );
 }
 
-Future<void> _pumpHabitsTabPage(
+Future<HabitSummaryViewModel> _pumpHabitsTabPage(
   WidgetTester tester, {
   required ProfileViewModel profile,
   required HabitsDisplayAccess access,
   required AppSyncWorkflowAccess sync,
+  bool useCompactUi = false,
+  bool useBranchPage = false,
+  bool useAdaptiveShell = false,
+  TargetPlatform platform = TargetPlatform.android,
+  Widget Function(Widget home)? appBuilder,
 }) async {
   final customDate = AppCustomDateYmdHmsConfigViewModel()
     ..updateProfile(profile);
   final firstDay = AppFirstDayViewModel()..updateProfile(profile);
-  final compactUi = AppCompactUISwitcherViewModel()..updateProfile(profile);
+  final compactUi = _TestAppCompactUISwitcherViewModel(
+    useCompactUi: useCompactUi,
+  )..updateProfile(profile);
   final developer = AppDeveloperViewModel(global: Global());
   final experimental = AppExperimentalFeatureViewModel()
     ..updateProfile(profile);
+  final language = AppLanguageViewModel()..updateProfile(profile);
   final theme = AppThemeViewModel()..updateProfile(profile);
   final scrollBehavior = HabitsRecordScrollBehaviorViewModel()
     ..updateProfile(profile);
@@ -131,7 +219,10 @@ Future<void> _pumpHabitsTabPage(
   final sort = HabitsSortViewModel()..updateProfile(profile);
   final filter = HabitsFilterViewModel()..updateProfile(profile);
   final appEvent = AppEventBus();
-  final vm = HabitSummaryViewModel()..attachAccess(access);
+  final groupManager = _FakeGroupManager();
+  final vm = HabitSummaryViewModel()
+    ..attachAccess(access)
+    ..attachGroupManager(groupManager);
 
   addTearDown(() {
     vm.dispose();
@@ -141,6 +232,7 @@ Future<void> _pumpHabitsTabPage(
     recordOpConfig.dispose();
     scrollBehavior.dispose();
     theme.dispose();
+    language.dispose();
     experimental.dispose();
     developer.dispose();
     compactUi.dispose();
@@ -148,6 +240,32 @@ Future<void> _pumpHabitsTabPage(
     customDate.dispose();
   });
 
+  final home = useAdaptiveShell
+      ? AdaptiveNavigationShell(
+          selectedIndex: 0,
+          destinations: const [
+            NavigationDestination(icon: Icon(Icons.list), label: 'Habits'),
+            NavigationDestination(
+              icon: Icon(Icons.calendar_today),
+              label: 'Today',
+            ),
+          ],
+          onDestinationSelected: (_) {},
+          child: const HabitsPage(),
+        )
+      : useBranchPage
+      ? const AdaptiveNavScope(barHeight: 0, navHeight: 0, child: HabitsPage())
+      : const Scaffold(
+          body: HabitsTabPage(onBottomNavVisibilityChanged: _ignoreBool),
+        );
+  final app =
+      appBuilder?.call(home) ??
+      MaterialApp(
+        theme: ThemeData(platform: platform),
+        localizationsDelegates: L10n.localizationsDelegates,
+        supportedLocales: L10n.supportedLocales,
+        home: home,
+      );
   await tester.pumpWidget(
     MultiProvider(
       providers: [
@@ -164,6 +282,7 @@ Future<void> _pumpHabitsTabPage(
         ChangeNotifierProvider<AppExperimentalFeatureViewModel>.value(
           value: experimental,
         ),
+        ChangeNotifierProvider<AppLanguageViewModel>.value(value: language),
         ChangeNotifierProvider<AppThemeViewModel>.value(value: theme),
         ChangeNotifierProvider<HabitsRecordScrollBehaviorViewModel>.value(
           value: scrollBehavior,
@@ -174,21 +293,19 @@ Future<void> _pumpHabitsTabPage(
         ChangeNotifierProvider<HabitsSortViewModel>.value(value: sort),
         ChangeNotifierProvider<HabitsFilterViewModel>.value(value: filter),
         ChangeNotifierProvider<AppEventBus>.value(value: appEvent),
+        Provider<GroupManager>.value(value: groupManager),
+        Provider<HabitsDisplayAccess>.value(value: access),
         ListenableProvider<AppSyncTriggerAccess>.value(value: sync),
         ListenableProvider<AppSyncStatusSource>.value(value: sync),
         ListenableProvider<AppSyncWorkflowAccess>.value(value: sync),
       ],
-      child: const ChangelogBanner(
-        child: MaterialApp(
-          localizationsDelegates: L10n.localizationsDelegates,
-          supportedLocales: L10n.supportedLocales,
-          home: Scaffold(
-            body: HabitsTabPage(onBottomNavVisibilityChanged: _ignoreBool),
-          ),
-        ),
-      ),
+      child: ChangelogBanner(child: app),
     ),
   );
+  if (!(useBranchPage || useAdaptiveShell)) return vm;
+  return tester
+      .element(find.byType(HabitsTabPage))
+      .read<HabitSummaryViewModel>();
 }
 
 void main() {
@@ -240,5 +357,573 @@ void main() {
 
       expect(find.byType(NotFoundImage), findsOneWidget);
     });
+  });
+
+  testWidgets('Today uses a Cupertino large title and adaptive icon button', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+
+    await _pumpTodayTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      platform: TargetPlatform.iOS,
+    );
+
+    expect(find.byType(AppThemeSwitchButton), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(AppThemeSwitchButton),
+        matching: find.byType(AdaptiveIconButton),
+      ),
+      findsOneWidget,
+    );
+    final todayBar = tester.widget<CupertinoSliverNavigationBar>(
+      find.byType(CupertinoSliverNavigationBar),
+    );
+    expect(todayBar.largeTitle, isA<Text>());
+    expect((todayBar.largeTitle! as Text).data, 'Today');
+    expect(todayBar.middle, isNull);
+    expect(
+      find.descendant(
+        of: find.byType(AppThemeSwitchButton),
+        matching: find.byType(CupertinoButton),
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('framework dismiss intent does not collide with page shortcuts', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+    final vm = await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      useBranchPage: true,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    await tester.enterText(find.byType(SearchBar), 'escape');
+    await tester.pump();
+    expect(vm.isInSearchMode, isTrue);
+    final editableContext = tester.element(find.byType(EditableText));
+
+    expect(
+      () =>
+          Actions.invoke<DismissIntent>(editableContext, const DismissIntent()),
+      returnsNormally,
+    );
+    await tester.pump();
+    expect(vm.isInSearchMode, isTrue);
+    expect(vm.searchOptions.keyword, 'escape');
+    expect(tester.takeException(), isNull);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(vm.isInSearchMode, isFalse);
+    expect(vm.searchOptions, const HabitDisplaySearchOptions.empty());
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('back keeps a non-empty search while dismissing the keyboard', (
+    tester,
+  ) async {
+    tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+    addTearDown(tester.view.resetViewInsets);
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+    final vm = await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      useBranchPage: true,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    await tester.tap(find.byKey(const ValueKey('activate-search')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.enterText(find.byType(SearchBar), 'kept');
+    vm.expandCalendar();
+    await tester.pump();
+    var searchBar = tester.widget<SearchBar>(find.byType(SearchBar));
+    expect(searchBar.focusNode?.hasFocus, isTrue);
+
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+
+    searchBar = tester.widget<SearchBar>(find.byType(SearchBar));
+    expect(searchBar.focusNode?.hasFocus, isFalse);
+    expect(vm.isInSearchMode, isTrue);
+    expect(vm.isCalendarExpanded, isTrue);
+    expect(vm.searchOptions.keyword, 'kept');
+
+    tester.view.resetViewInsets();
+    await tester.pump();
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(vm.isInSearchMode, isFalse);
+    expect(vm.isCalendarExpanded, isFalse);
+    expect(vm.searchOptions, const HabitDisplaySearchOptions.empty());
+  });
+
+  testWidgets('escape closes filter menu before clearing active filters', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+    final vm = await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      useBranchPage: true,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    vm.onSearchOngoingChanged(true);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    final filter = find.byType(SearchFilterPopupMenuButton);
+    expect(filter, findsOneWidget);
+    await tester.tap(
+      find.descendant(of: filter, matching: find.byType(IconButton)),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(find.byType(CheckboxListTile), findsWidgets);
+    final filterController = tester
+        .widget<SearchFilterPopupMenuButton>(filter)
+        .controller!;
+    expect(filterController.isOpen, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(filterController.isOpen, isFalse);
+    expect(vm.isInSearchMode, isTrue);
+    expect(vm.searchOptions.activated, isTrue);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(vm.isInSearchMode, isFalse);
+    expect(vm.searchOptions, const HabitDisplaySearchOptions.empty());
+  });
+
+  testWidgets('habit rows follow calendar expand and collapse geometry', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+
+    final vm = await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pump(const Duration(milliseconds: 600));
+
+    expect(vm.hasLoaded, isTrue);
+    expect(vm.currentHabitList, isNotEmpty);
+    final calendar = find.byType(SliverCalendarBar);
+    final calendarList = find.descendant(
+      of: calendar,
+      matching: find.byType(ListView),
+    );
+    final displayRow = find.byType(HabitDisplayListTile);
+    final row = find.byType(HabitSummaryListTile);
+    final rowList = find.descendant(of: row, matching: find.byType(ListView));
+    final rowTrack = find.ancestor(
+      of: rowList,
+      matching: find.byType(AnimatedContainer),
+    );
+    expect(row, findsOneWidget);
+    expect(displayRow, findsOneWidget);
+    expect(rowTrack, findsOneWidget);
+    expect(tester.getSize(calendarList).height, 48);
+    expect(tester.getSize(rowList).height, 64);
+    final calendarGeometry = tester
+        .widget<SliverCalendarBar>(calendar)
+        .geometry;
+    final rowGeometry = tester
+        .widget<HabitDisplayListTile>(displayRow)
+        .geometry;
+    expect(rowGeometry.columnExtent, calendarGeometry.columnExtent);
+    expect(rowGeometry.viewportFraction, calendarGeometry.viewportFraction);
+    final collapsedWidth = tester.getSize(rowTrack).width;
+    expect(
+      tester.widget<HabitSummaryListTile>(row).geometry.viewportFraction,
+      0.5,
+    );
+
+    vm.expandCalendar();
+    await tester.pump();
+    expect(
+      tester.widget<HabitSummaryListTile>(row).geometry.viewportFraction,
+      0.85,
+    );
+    expect(
+      tester.widget<HabitDisplayListTile>(displayRow).geometry.columnExtent,
+      tester.widget<SliverCalendarBar>(calendar).geometry.columnExtent,
+    );
+    expect(
+      tester.widget<HabitDisplayListTile>(displayRow).geometry.viewportFraction,
+      tester.widget<SliverCalendarBar>(calendar).geometry.viewportFraction,
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+    final expandedWidth = tester.getSize(rowTrack).width;
+
+    vm.collapseCalendar();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(expandedWidth, greaterThan(collapsedWidth));
+    expect(tester.getSize(rowTrack).width, collapsedWidth);
+  });
+
+  testWidgets('calendar uses pinned regular header geometry', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(800, 400));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess(habitCount: 20);
+    final sync = _FakeAppSyncWorkflowAccess();
+
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+
+    await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pump(const Duration(milliseconds: 600));
+
+    final calendar = find.byType(SliverCalendarBar);
+    expect(calendar, findsOneWidget);
+    expect(
+      find.ancestor(of: calendar, matching: find.byType(SliverAppBar)),
+      findsOneWidget,
+    );
+    expect(tester.getSize(calendar).height, 48);
+    expect(
+      tester.widget<SliverCalendarBar>(calendar).geometry.columnExtent,
+      60,
+    );
+    expect(
+      tester.widget<SliverCalendarBar>(calendar).itemPadding,
+      const EdgeInsets.symmetric(horizontal: 8),
+    );
+    expect(
+      tester.widget<RefreshIndicator>(find.byType(RefreshIndicator)).edgeOffset,
+      AppAdaptiveStyle.materialToolbarHeight + 48,
+    );
+
+    final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar).last);
+    expect(appBar.toolbarHeight, 48);
+    expect(appBar.pinned, isTrue);
+    expect(appBar.primary, isFalse);
+    expect(appBar.backgroundColor, isNull);
+    expect(appBar.scrolledUnderElevation, kCommonEvalation);
+    final pinnedTop = tester.getTopLeft(calendar).dy;
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    expect(pinnedTop, AppAdaptiveStyle.materialToolbarHeight);
+    expect(tester.getTopLeft(calendar).dy, 0);
+  });
+
+  testWidgets('Apple appbar and calendar share one pinned glass surface', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+
+    await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      platform: TargetPlatform.iOS,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    final calendar = find.byType(SliverCalendarBar);
+    final calendarBar = find.byKey(const ValueKey('cupertino-calendar-bar'));
+    expect(calendarBar, findsNothing);
+    final searchHeaderFinder = find.byKey(
+      const ValueKey('cupertino-sliver-search-bar'),
+    );
+    final searchHeader = tester.widget<SliverPersistentHeader>(
+      searchHeaderFinder,
+    );
+    expect(searchHeader.pinned, isTrue);
+    expect(searchHeader.delegate.minExtent, 100);
+    expect(searchHeader.delegate.maxExtent, 100);
+    expect(
+      find.ancestor(of: calendar, matching: find.byType(SliverAppBar)),
+      findsNothing,
+    );
+    expect(
+      find.descendant(
+        of: searchHeaderFinder,
+        matching: find.byType(CupertinoNavigationBar),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: searchHeaderFinder,
+        matching: find.byType(BackdropFilter),
+      ),
+      findsOneWidget,
+    );
+    expect(find.byType(PinnedHeaderSliver), findsNothing);
+  });
+
+  testWidgets('Apple compact selection swaps FAB for the contextual toolbar', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 800);
+    tester.view.devicePixelRatio = 1;
+    tester.view.viewPadding = const FakeViewPadding(bottom: 24);
+    tester.view.padding = const FakeViewPadding(bottom: 24);
+    addTearDown(tester.view.reset);
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+
+    final vm = await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      useAdaptiveShell: true,
+      platform: TargetPlatform.iOS,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    final appBarSwitcher = tester.widget<SliverAnimatedSwitcher>(
+      find.descendant(
+        of: find.byType(HabitDisplayAppBar),
+        matching: find.byType(SliverAnimatedSwitcher),
+      ),
+    );
+    expect(appBarSwitcher.duration, Duration.zero);
+    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(vm.selectedHabitsCount, 0);
+    await tester.tap(
+      find.byKey(const ValueKey('cupertino-search-overflow-collapsed')),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.tap(find.widgetWithText(CupertinoMenuItem, 'Select'));
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    expect(tester.takeException(), isNull);
+    expect(find.byType(CupertinoPopupSurface), findsNothing);
+    expect(vm.isInEditMode, isTrue);
+    expect(vm.selectedHabitsCount, 0);
+    expect(find.byType(CupertinoSliverSelectAppBar), findsOneWidget);
+    expect(find.byType(CupertinoSelectBottomToolbar), findsOneWidget);
+    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.byType(ScrollingFAB), findsNothing);
+    final placeholder = tester.widget<FixedPagePlaceHolder>(
+      find.byType(FixedPagePlaceHolder).last,
+    );
+    expect(
+      placeholder.minHeight,
+      tester.getSize(find.byType(CupertinoSelectBottomToolbar)).height,
+    );
+    expect(placeholder.fixedButtonNaviHeight, isFalse);
+
+    tester.view.physicalSize = const Size(700, 800);
+    await tester.pump();
+    expect(find.byType(NavigationRail), findsOneWidget);
+    expect(find.byType(NavigationBar), findsNothing);
+
+    tester.view.physicalSize = const Size(390, 800);
+    await tester.pump();
+    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.byType(CupertinoSelectBottomToolbar), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('cupertino-select-done')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(vm.isInEditMode, isFalse);
+    expect(find.byType(CupertinoSelectBottomToolbar), findsNothing);
+    expect(find.byType(ScrollingFAB), findsOneWidget);
+  });
+
+  testWidgets('Apple Status Modify routes the selected habit UUIDs', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess(habitCount: 2);
+    final sync = _FakeAppSyncWorkflowAccess();
+    List<HabitUUID>? routedUuids;
+    late final GoRouter router;
+    addTearDown(() {
+      router.dispose();
+      sync.dispose();
+      profile.dispose();
+    });
+
+    final vm = await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      useBranchPage: true,
+      platform: TargetPlatform.iOS,
+      appBuilder: (home) {
+        router = GoRouter(
+          routes: [
+            GoRoute(path: '/', builder: (_, _) => home),
+            GoRoute(
+              path: '/habits/status',
+              name: AppRoute.habitsStatus.name,
+              builder: (_, state) {
+                routedUuids = state.unpackHabitsStatusChanger().uuidList;
+                return const Scaffold(body: Text('Status route'));
+              },
+            ),
+          ],
+        );
+        return MaterialApp.router(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          localizationsDelegates: L10n.localizationsDelegates,
+          supportedLocales: L10n.supportedLocales,
+          routerConfig: router,
+        );
+      },
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    vm.switchToEditMode();
+    vm.selectHabit(_buildHabitSummaryData(0).uuid, listen: false);
+    vm.selectHabit(_buildHabitSummaryData(1).uuid);
+    await tester.pump();
+    final toolbar = tester.widget<CupertinoSelectBottomToolbar>(
+      find.byType(CupertinoSelectBottomToolbar),
+    );
+    toolbar.actions
+        .firstWhere((action) => action.id == 'habit-status-modify')
+        .onPressed!();
+    await tester.pumpAndSettle();
+
+    expect(routedUuids, [
+      _buildHabitSummaryData(0).uuid,
+      _buildHabitSummaryData(1).uuid,
+    ]);
+  });
+
+  testWidgets('calendar uses compact header geometry', (tester) async {
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+
+    await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      useCompactUi: true,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    final calendar = find.byType(SliverCalendarBar);
+    final calendarList = find.descendant(
+      of: calendar,
+      matching: find.byType(ListView),
+    );
+    expect(tester.getSize(calendar).height, 44);
+    expect(tester.getSize(calendarList).height, 44);
+    expect(
+      tester.widget<SliverCalendarBar>(calendar).geometry.columnExtent,
+      44,
+    );
+    expect(
+      tester.widget<SliverCalendarBar>(calendar).itemPadding,
+      const EdgeInsets.symmetric(horizontal: 4),
+    );
+    expect(
+      tester.widget<RefreshIndicator>(find.byType(RefreshIndicator)).edgeOffset,
+      AppAdaptiveStyle.materialToolbarHeight + 44,
+    );
   });
 }

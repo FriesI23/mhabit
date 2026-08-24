@@ -44,10 +44,10 @@ import '../../pages/group_manage/page.dart' show GroupManagePage;
 import '../../pages/habit_detail/page.dart' show HabitDetailPage;
 import '../../pages/habit_edit/page.dart' show HabitEditPage;
 import '../../pages/habits_display/page.dart' show HabitsPage, TodayPage;
-import '../../pages/habits_display/providers.dart' show PageProviders;
 import '../../pages/habits_status_changer/page.dart'
     show HabitsStatusChangerPage;
 import '../../providers/app_ui/app_debugger.dart';
+import '../../providers/app_ui/app_developer.dart';
 import '../../providers/app_ui/app_language.dart';
 import '../../providers/app_ui/app_launch_entry.dart';
 import '../../providers/app_ui/app_theme.dart';
@@ -112,6 +112,7 @@ class AppEntry extends StatelessWidget {
     AppThemeColorProfileHandler.new,
     AppLastChangelogVersionProfileHandler.new,
     NaturalSortExperimentalFeature.new,
+    AdaptiveStyleOverrideProfileHandler.new,
   ];
 
   const AppEntry({super.key});
@@ -231,7 +232,7 @@ class _AppEntryState extends State<_AppEntry> {
             ),
             branchBuilder: (context, state, navigationShell) {
               _navigationCoordinator.attachTabShell(navigationShell);
-              return PageProviders(child: navigationShell);
+              return navigationShell;
             },
           ))
         .build(home: config.home);
@@ -259,21 +260,28 @@ class _AppEntryState extends State<_AppEntry> {
           final disableAnimations = context.select<AnimationScaleSync, bool>(
             (vm) => vm.disableAnimations,
           );
-          return AppRootView.router(
-            themeMode: transToMaterialThemeType(themeMode),
-            language: language,
-            disableAnimations: disableAnimations,
-            lightThemeBuilder: () => const AppThemeBuilder().buildLight(
-              themeColor: themeColor,
-              themeMainColor: themeMainColor,
-              dynamicScheme: lightDynamic,
+          final adaptiveStyleOverride = context
+              .select<AppDeveloperViewModel, AdaptiveStyle?>(
+                (vm) => vm.adaptiveStyleOverride,
+              );
+          return AdaptiveStyleScope(
+            override: adaptiveStyleOverride,
+            child: AppRootView.router(
+              themeMode: transToMaterialThemeType(themeMode),
+              language: language,
+              disableAnimations: disableAnimations,
+              lightThemeBuilder: () => const AppThemeBuilder().buildLight(
+                themeColor: themeColor,
+                themeMainColor: themeMainColor,
+                dynamicScheme: lightDynamic,
+              ),
+              darkThemeBuilder: () => const AppThemeBuilder().buildDark(
+                themeColor: themeColor,
+                themeMainColor: themeMainColor,
+                dynamicScheme: darkDynamic,
+              ),
+              config: _router,
             ),
-            darkThemeBuilder: () => const AppThemeBuilder().buildDark(
-              themeColor: themeColor,
-              themeMainColor: themeMainColor,
-              dynamicScheme: darkDynamic,
-            ),
-            config: _router,
           );
         },
       ),

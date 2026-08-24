@@ -6,6 +6,10 @@
     },
     "appName": "Table Habit",
     "@appName": {},
+    "common_listSeparator": ", ",
+    "@common_listSeparator": {
+        "description": "Separator used between items in compact localized lists."
+    },
     "habitEdit_saveButton_text": "Save",
     "@habitEdit_saveButton_text": {},
     "habitEdit_habitName_hintText": "Habit Name ...",
@@ -328,6 +332,25 @@
     "@habitDisplay_exportAllHabitsSuccSnackbarText": {},
     "habitDisplay_editPopMenu_selectAll": "Select All",
     "@habitDisplay_editPopMenu_selectAll": {},
+    "habitDisplay_selectButton_label": "Select",
+    "@habitDisplay_selectButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Select\" system action."
+    },
+    "habitDisplay_doneButton_label": "Done",
+    "@habitDisplay_doneButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Done\" system bar button item."
+    },
+    "habitDisplay_selectedHabits_title": "Selected {count}",
+    "@habitDisplay_selectedHabits_title": {
+        "description": "Apple selection AppBar title showing the number of selected habits",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of selected habits",
+                "example": "3"
+            }
+        }
+    },
     "habitDisplay_editPopMenu_export": "Export",
     "@habitDisplay_editPopMenu_export": {},
     "habitDisplay_editPopMenu_delete": "Delete",

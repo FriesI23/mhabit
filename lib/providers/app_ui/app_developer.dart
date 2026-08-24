@@ -13,12 +13,29 @@
 // limitations under the License.
 
 import 'package:flutter/foundation.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
+import '../../models/app_adaptive_style_mode.dart';
+import '../../storage/profile/handlers.dart';
+import '../../storage/profile_provider.dart';
 import '../support/global.dart';
 
-class AppDeveloperViewModel extends ChangeNotifier with GlobalLoadedMixin {
-  AppDeveloperViewModel({required Global global}) {
+class AppDeveloperViewModel extends ChangeNotifier
+    with GlobalLoadedMixin, ProfileHandlerLoadedMixin {
+  AdaptiveStyleOverrideProfileHandler? _adaptiveStyleOverride;
+
+  AppDeveloperViewModel({required Global global, ProfileViewModel? profile}) {
     updateGlobal(global);
+    if (profile != null) updateProfile(profile);
+  }
+
+  @override
+  void updateProfile(ProfileViewModel newProfile) {
+    final previousMode = adaptiveStyleMode;
+    super.updateProfile(newProfile);
+    _adaptiveStyleOverride = newProfile
+        .getHandler<AdaptiveStyleOverrideProfileHandler>();
+    if (adaptiveStyleMode != previousMode) notifyListeners();
   }
 
   bool get isInDevelopMode => g.isInDevelopMode;
@@ -40,4 +57,19 @@ class AppDeveloperViewModel extends ChangeNotifier with GlobalLoadedMixin {
   }
 
   bool get showDebugMenuOnDisplayView => isInDevelopMode && displayDebugMenu;
+
+  AppAdaptiveStyleMode get adaptiveStyleMode =>
+      _adaptiveStyleOverride?.get() ?? AppAdaptiveStyleMode.automatic;
+
+  AdaptiveStyle? get adaptiveStyleOverride => switch (adaptiveStyleMode) {
+    AppAdaptiveStyleMode.automatic => null,
+    AppAdaptiveStyleMode.material => AdaptiveStyle.material,
+    AppAdaptiveStyleMode.apple => AdaptiveStyle.apple,
+  };
+
+  Future<void> setAdaptiveStyleMode(AppAdaptiveStyleMode mode) async {
+    if (adaptiveStyleMode == mode) return;
+    await _adaptiveStyleOverride?.set(mode);
+    notifyListeners();
+  }
 }

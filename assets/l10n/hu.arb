@@ -249,6 +249,14 @@
     },
     "habitDisplay_exportAllHabitsSuccSnackbarText": "Összes szokás exportálva",
     "habitDisplay_editPopMenu_selectAll": "Összes kijelölése",
+    "habitDisplay_selectButton_label": "Kijelölés",
+    "@habitDisplay_selectButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Select\" system action."
+    },
+    "habitDisplay_doneButton_label": "Kész",
+    "@habitDisplay_doneButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Done\" system bar button item."
+    },
     "habitDisplay_editPopMenu_export": "Exportálás",
     "habitDisplay_editPopMenu_delete": "Törlés",
     "habitDisplay_editPopMenu_clone": "Sablon",

@@ -33,10 +33,30 @@ import '_providers/habits_today.dart';
 
 export '_providers/habit_summary.dart' show HabitDetailAdapter;
 
-class PageProviders extends SingleChildStatelessWidget {
-  const PageProviders({super.key, super.child});
+class HabitsPageProviders extends SingleChildStatelessWidget {
+  const HabitsPageProviders({super.key, super.child});
 
-  Iterable<SingleChildWidget> _buildPageViewModel() => [
+  List<SingleChildWidget> _buildViewModels() => [
+    ViewModelProxyProvider<ProfileViewModel, HabitsSortViewModel>(
+      create: (context) => HabitsSortViewModel(),
+      update: (context, profile, previous) => previous..updateProfile(profile),
+    ),
+    ViewModelProxyProvider<ProfileViewModel, HabitsFilterViewModel>(
+      create: (context) => HabitsFilterViewModel(),
+      update: (context, profile, previous) => previous..updateProfile(profile),
+    ),
+    ViewModelProxyProvider<ProfileViewModel, HabitsGroupingViewModel>(
+      create: (context) => HabitsGroupingViewModel(),
+      update: (context, profile, previous) => previous..updateProfile(profile),
+    ),
+    ViewModelProxyProvider<
+      AppExperimentalFeatureViewModel,
+      HabitsGroupingViewModel
+    >(
+      update: (context, experimental, previous) =>
+          previous..updateExperimentalGrouping(experimental.habitGrouping),
+      post: (t, _, vm) => vm.requestReload(),
+    ),
     ChangeNotifierProvider<HabitSummaryViewModel>(
       create: (context) => HabitSummaryViewModel(),
     ),
@@ -93,7 +113,25 @@ class PageProviders extends SingleChildStatelessWidget {
     ),
   ];
 
-  Iterable<SingleChildWidget> _buildTodayViewModel() => [
+  @override
+  Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
+    providers: _buildViewModels(),
+    builder: (context, child) {
+      context.read<HabitSummaryViewModel>().loadData();
+      return child!;
+    },
+    child: child,
+  );
+}
+
+class TodayPageProviders extends SingleChildStatelessWidget {
+  const TodayPageProviders({super.key, super.child});
+
+  List<SingleChildWidget> _buildViewModels() => [
+    ViewModelProxyProvider<ProfileViewModel, HabitsSortViewModel>(
+      create: (context) => HabitsSortViewModel(),
+      update: (context, profile, previous) => previous..updateProfile(profile),
+    ),
     ChangeNotifierProvider<HabitsTodayViewModel>(
       create: (context) => HabitsTodayViewModel(),
     ),
@@ -132,38 +170,6 @@ class PageProviders extends SingleChildStatelessWidget {
   ];
 
   @override
-  Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
-    providers: [
-      ViewModelProxyProvider<ProfileViewModel, HabitsSortViewModel>(
-        create: (context) => HabitsSortViewModel(),
-        update: (context, profile, previous) =>
-            previous..updateProfile(profile),
-      ),
-      ViewModelProxyProvider<ProfileViewModel, HabitsFilterViewModel>(
-        create: (context) => HabitsFilterViewModel(),
-        update: (context, profile, previous) =>
-            previous..updateProfile(profile),
-      ),
-      ViewModelProxyProvider<ProfileViewModel, HabitsGroupingViewModel>(
-        create: (context) => HabitsGroupingViewModel(),
-        update: (context, profile, previous) =>
-            previous..updateProfile(profile),
-      ),
-      ViewModelProxyProvider<
-        AppExperimentalFeatureViewModel,
-        HabitsGroupingViewModel
-      >(
-        update: (context, experimental, previous) =>
-            previous..updateExperimentalGrouping(experimental.habitGrouping),
-        post: (t, _, vm) => vm.requestReload(),
-      ),
-      ..._buildPageViewModel(),
-      ..._buildTodayViewModel(),
-    ],
-    builder: (context, child) {
-      context.read<HabitSummaryViewModel>().loadData();
-      return child!;
-    },
-    child: child,
-  );
+  Widget buildWithChild(BuildContext context, Widget? child) =>
+      MultiProvider(providers: _buildViewModels(), child: child);
 }

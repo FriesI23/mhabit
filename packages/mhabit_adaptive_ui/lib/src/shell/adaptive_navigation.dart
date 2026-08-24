@@ -1,5 +1,6 @@
 import 'dart:math' show min;
 
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 
 import '../adaptive/adaptive_navigation_bar.dart';
@@ -10,13 +11,13 @@ import 'adaptive_nav_visibility.dart';
 
 /// Adaptive navigation chrome around [child].
 ///
-/// The form follows the window's width class ([WindowSize.of]): compact
-/// keeps the bottom [NavigationBar] overlay; medium keeps a collapsible
-/// [NavigationRail] collapsed by default; expanded, large, and extra-large
-/// keep the collapsible rail extended by default. The three-tier Apple
-/// classification (iOS) maps compact / expanded / large onto the first
-/// three forms. The chrome animates when the form changes; the content area
-/// always fills the remaining width without a maximum-width cap.
+/// The form follows the window's width and height classes ([WindowSize.of]):
+/// compact width keeps the bottom [NavigationBar] overlay; medium width keeps
+/// a collapsible [NavigationRail] collapsed by default; wider windows use an
+/// extended rail unless their height is compact, in which case the rail also
+/// defaults to collapsed. A null height preserves the width-only behavior.
+/// The chrome animates when the form changes; the content area always fills
+/// the remaining width without a maximum-width cap.
 ///
 /// The extended rail width follows the window width between the M3 drawer
 /// bounds — the interval's upper bound grows up to the M3 recommended width
@@ -98,17 +99,21 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
   final AdaptiveScrollWishController _scrollWish =
       AdaptiveScrollWishController();
 
+  final AdaptiveContextualChromeController _contextualChrome =
+      AdaptiveContextualChromeController();
+
   @override
   void initState() {
     super.initState();
     _scrollWish.addListener(_recomputeVisibility);
+    _contextualChrome.addListener(_recomputeVisibility);
     _recomputeVisibility();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final form = _formFor(WindowSize.of(context).width);
+    final form = _formFor(WindowSize.of(context));
     if (form == _form) return;
     _form = form;
     if (form == _ShellForm.bar) {
@@ -128,51 +133,60 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
     }
     if (oldWidget.selectedIndex == widget.selectedIndex) return;
     _scrollWish.reset();
+    _contextualChrome.reset();
     _recomputeVisibility();
   }
 
   @override
   void dispose() {
     _scrollWish.removeListener(_recomputeVisibility);
+    _contextualChrome.removeListener(_recomputeVisibility);
     _scrollWish.dispose();
+    _contextualChrome.dispose();
     _navVisibility.dispose();
     super.dispose();
   }
 
   void _recomputeVisibility() {
     if (!mounted || _form != _ShellForm.bar) return;
-    final visible = widget.compactRouteVisible && _scrollWish.value;
+    final visible =
+        widget.compactRouteVisible &&
+        _scrollWish.value &&
+        !_contextualChrome.value;
     if (_navVisibility.value == visible) return;
     visible ? _navVisibility.show() : _navVisibility.hide();
   }
 
   void _onDestinationSelected(int index) {
     _scrollWish.reset();
+    _contextualChrome.reset();
     widget.onDestinationSelected(index);
   }
 
-  /// Maps a width class to the shell form.
-  /// Width-class to navigation-form mapping shared by all styles: compact
-  /// keeps the bottom bar, medium keeps a rail collapsed by default, and
-  /// everything from expanded on keeps the rail extended by default.
+  /// Maps both window axes to the shell form, shared by all styles.
   ///
-  /// The Apple chain only produces compact / medium / large, so this single
-  /// mapping covers it without a platform branch.
-  _ShellForm _formFor(WindowSizeClass widthClass) {
-    if (widthClass == WindowSizeClass.compact) return _ShellForm.bar;
-    return widthClass == WindowSizeClass.medium
-        ? _ShellForm.railCollapsed
-        : _ShellForm.railExtended;
+  /// Width remains authoritative for compact and medium. Wider windows fall
+  /// back to a collapsed rail when height is compact; an unclassified height
+  /// preserves the previous width-only extended-rail behavior.
+  _ShellForm _formFor(WindowSize windowSize) {
+    if (windowSize.width == WindowSizeClass.compact) return _ShellForm.bar;
+    if (windowSize.width == WindowSizeClass.medium ||
+        windowSize.height == WindowSizeClass.compact) {
+      return _ShellForm.railCollapsed;
+    }
+    return _ShellForm.railExtended;
   }
 
   @override
   Widget build(BuildContext context) {
     final compact = _form == _ShellForm.bar;
+    final padding = MediaQuery.paddingOf(context);
+    final viewPadding = MediaQuery.viewPaddingOf(context);
     const barHeight = _narrowNavHeight;
     // NavigationBar adds a SafeArea around its content, so the rendered bar
     // is barHeight plus the bottom system inset. The scope exposes the
     // total height so branch pages can reserve it.
-    final navHeight = barHeight + MediaQuery.paddingOf(context).bottom;
+    final navHeight = barHeight + padding.bottom;
 
     final naviBarBody = AdaptiveNavigationBar(
       height: barHeight,
@@ -185,66 +199,132 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
     return AdaptiveNavScope(
       visible: compact ? _navVisibility : null,
       scrollWish: compact ? _scrollWish : null,
+      contextualChrome: _contextualChrome,
       barHeight: compact ? barHeight : 0,
       navHeight: compact ? navHeight : 0,
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        extendBody: true,
+        resizeToAvoidBottomInset: false,
+        // Restore the ambient padding inside the body. Scaffold.extendBody
+        // otherwise replaces the bottom padding with the navigation-bar
+        // height, while branch pages already reserve that space through
+        // AdaptiveNavScope.
+        body: _NavigationShellBody(
+          ambientPadding: padding,
+          ambientViewPadding: viewPadding,
+          form: _form,
+          selectedIndex: widget.selectedIndex,
+          destinations: widget.destinations,
+          onDestinationSelected: _onDestinationSelected,
+          child: widget.child,
+        ),
+        // Owning the bar as Scaffold chrome makes this the root Scaffold for
+        // the ambient ScaffoldMessenger. SnackBars are therefore laid out
+        // above the compact bar instead of being painted below its overlay.
+        bottomNavigationBar: AnimatedSwitcher(
+          duration: _animationDuration,
+          switchInCurve: Curves.easeOut,
+          switchOutCurve: Curves.easeOut,
+          child: compact
+              ? ValueListenableBuilder<bool>(
+                  key: const ValueKey('bottom-bar'),
+                  valueListenable: _contextualChrome,
+                  builder: (context, suppressed, child) => suppressed
+                      ? const SizedBox.shrink()
+                      : _CompactNavigationBar(
+                          visibility: _navVisibility,
+                          child: child!,
+                        ),
+                  child: naviBarBody,
+                )
+              : const SizedBox.shrink(key: ValueKey('bottom-bar-hidden')),
+        ),
+      ),
+    );
+  }
+}
+
+/// Shell body below the root [Scaffold].
+///
+/// Its build context sees the padding injected by [Scaffold.extendBody], then
+/// restores the ambient padding and view padding captured above the Scaffold
+/// so branch pages do not reserve the compact navigation height twice and
+/// nested Scaffolds still keep floating widgets above system insets.
+class _NavigationShellBody extends StatelessWidget {
+  const _NavigationShellBody({
+    required this.ambientPadding,
+    required this.ambientViewPadding,
+    required this.form,
+    required this.selectedIndex,
+    required this.destinations,
+    required this.onDestinationSelected,
+    required this.child,
+  });
+
+  final EdgeInsets ambientPadding;
+  final EdgeInsets ambientViewPadding;
+  final _ShellForm form;
+  final int selectedIndex;
+  final List<NavigationDestination> destinations;
+  final ValueChanged<int> onDestinationSelected;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return MediaQuery(
+      data: MediaQuery.of(
+        context,
+      ).copyWith(padding: ambientPadding, viewPadding: ambientViewPadding),
       child: ColoredBox(
         // Opaque backdrop behind the branch content: the bar is translucent
-        // and slides over it, so without this the window background would
-        // show through the fading bar.
+        // and overlays it, so without this the window background would show
+        // through the fading bar.
         color: Theme.of(context).colorScheme.surface,
-        child: Stack(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Branch content with leading chrome in non-compact forms; the
-            // chrome panel animates its width when the form switches.
-            Positioned.fill(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _NavigationRailRegion(
-                    form: _form,
-                    selectedIndex: widget.selectedIndex,
-                    destinations: widget.destinations,
-                    onDestinationSelected: _onDestinationSelected,
-                  ),
-                  Expanded(child: widget.child),
-                ],
-              ),
+            // Leading chrome in non-compact forms; the panel animates its
+            // width when the form switches.
+            _NavigationRailRegion(
+              form: form,
+              selectedIndex: selectedIndex,
+              destinations: destinations,
+              onDestinationSelected: onDestinationSelected,
             ),
-            // Compact form only: the bottom bar overlays the branch content
-            // and slides over it; pages reserve the bar height via
-            // [AdaptiveNavScope]. Switching forms fades the whole overlay.
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: AnimatedSwitcher(
-                duration: _animationDuration,
-                switchInCurve: Curves.easeOut,
-                switchOutCurve: Curves.easeOut,
-                child: compact
-                    ? MediaQuery.removePadding(
-                        key: const ValueKey('bottom-bar'),
-                        context: context,
-                        removeTop: true,
-                        child: ValueListenableBuilder<bool>(
-                          valueListenable: _navVisibility,
-                          builder: (context, visible, child) => AnimatedSlide(
-                            duration: _animationDuration,
-                            curve: Curves.easeOut,
-                            offset: visible ? Offset.zero : const Offset(0, 1),
-                            child: AnimatedOpacity(
-                              duration: _animationDuration,
-                              opacity: visible ? 1 : 0,
-                              child: child,
-                            ),
-                          ),
-                          child: naviBarBody,
-                        ),
-                      )
-                    : const SizedBox.shrink(key: ValueKey('bottom-bar-hidden')),
-              ),
-            ),
+            Expanded(child: child),
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Compact navigation chrome animated according to [visibility].
+class _CompactNavigationBar extends StatelessWidget {
+  const _CompactNavigationBar({required this.visibility, required this.child});
+
+  final ValueListenable<bool> visibility;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: visibility,
+      builder: (context, visible, child) => TweenAnimationBuilder<double>(
+        duration: _animationDuration,
+        curve: Curves.easeOut,
+        tween: Tween<double>(begin: visible ? 1 : 0, end: visible ? 1 : 0),
+        builder: (context, factor, child) => ClipRect(
+          child: Align(
+            alignment: Alignment.topCenter,
+            heightFactor: factor,
+            child: Opacity(opacity: factor, child: child),
+          ),
+        ),
+        child: child,
+      ),
+      child: child,
     );
   }
 }

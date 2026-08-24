@@ -21,10 +21,12 @@ class AdaptiveNavScope extends InheritedWidget {
     required super.child,
     this._visible,
     this._scrollWish,
+    this._contextualChrome,
   });
 
   final AdaptiveNavVisibilityController? _visible;
   final AdaptiveScrollWishController? _scrollWish;
+  final AdaptiveContextualChromeController? _contextualChrome;
 
   /// Fallback listenable for non-compact forms; always true, never notifies.
   static const ConstValueListenable<bool> _alwaysTrue = ConstValueListenable(
@@ -55,6 +57,14 @@ class AdaptiveNavScope extends InheritedWidget {
   /// navigation is always visible.
   void reportScrollWish(bool visible) => _scrollWish?.report(visible);
 
+  /// Suppresses compact navigation for a contextual command surface.
+  ///
+  /// Unlike [reportScrollWish], this value is not affected by scrolling.
+  /// Reports remain active across shell-form changes so a compact bar cannot
+  /// flash while a contextual surface is resizing from a wider layout.
+  void reportContextualChromeSuppressed(bool suppressed) =>
+      _contextualChrome?.report(suppressed);
+
   /// Content height of the bar, excluding the bottom safe-area inset.
   ///
   /// Use this to lift floating widgets (e.g. FABs) above the bar: Scaffold
@@ -69,18 +79,30 @@ class AdaptiveNavScope extends InheritedWidget {
   final double navHeight;
 
   /// Reads the scope and rebuilds the caller when it changes.
-  static AdaptiveNavScope of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<AdaptiveNavScope>()!;
+  ///
+  /// Throws when no scope exists in [context]. Use [maybeOf] when the scope is
+  /// optional.
+  static AdaptiveNavScope of(BuildContext context) => maybeOf(context)!;
 
-  /// Reads the scope without depending on it, for handlers that only
-  /// report scroll wishes.
+  /// Reads the optional scope and rebuilds the caller when it changes.
   static AdaptiveNavScope? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<AdaptiveNavScope>();
+
+  /// Reads the scope without establishing a dependency.
+  ///
+  /// Use this for callbacks and one-time controller wiring that must not
+  /// rebuild when the scope changes. Throws when no scope exists in [context].
+  static AdaptiveNavScope read(BuildContext context) => maybeRead(context)!;
+
+  /// Reads the optional scope without establishing a dependency.
+  static AdaptiveNavScope? maybeRead(BuildContext context) =>
       context.getInheritedWidgetOfExactType<AdaptiveNavScope>();
 
   @override
   bool updateShouldNotify(AdaptiveNavScope oldWidget) =>
       _visible != oldWidget._visible ||
       _scrollWish != oldWidget._scrollWish ||
+      _contextualChrome != oldWidget._contextualChrome ||
       barHeight != oldWidget.barHeight ||
       navHeight != oldWidget.navHeight;
 }

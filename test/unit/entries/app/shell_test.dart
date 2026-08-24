@@ -6,7 +6,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mhabit/entries/app/shell.dart';
 import 'package:mhabit/models/app_entry.dart';
+import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/providers/app_ui/app_launch_entry.dart';
+import 'package:mhabit/routes/app_router.dart';
 import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +22,11 @@ class _RecordingLaunchEntryViewModel extends AppLaunchEntryViewModel {
   }
 }
 
+class _BlockingPopViewModel extends ChangeNotifier implements PopScopeHandler {
+  @override
+  bool get canPop => false;
+}
+
 class _StubPage extends StatelessWidget {
   const _StubPage(this.label);
 
@@ -31,7 +38,24 @@ class _StubPage extends StatelessWidget {
   }
 }
 
-GoRouter _buildRouter(List<AdaptiveBranchRouteObserver> observers) {
+GoRouter _buildRouter(
+  List<AdaptiveBranchRouteObserver> observers, {
+  Widget habitsPage = const _StubPage('habits page'),
+}) {
+  final branches = [
+    BranchRouterBuilder()
+      ..addHabits(builder: (_, _) => habitsPage)
+      ..addHabitDetail(builder: (_, _) => const _StubPage('detail page')),
+    BranchRouterBuilder()
+      ..addToday(builder: (_, _) => const _StubPage('today page')),
+  ];
+  final appFlow = AppFlowRouterBuilder()
+    ..addHabitCreate(builder: (_, _) => const _StubPage('create page'))
+    ..addHabitEdit(
+      builder: (_, state) => state.uri.queryParameters['block'] == 'true'
+          ? const PopScope<void>(canPop: false, child: _StubPage('edit page'))
+          : const _StubPage('edit page'),
+    );
   final appFlowObserver = AdaptiveBranchRouteObserver();
   final appChromeNavigatorKey = GlobalKey<NavigatorState>();
   final coordinator = AppNavigationCoordinator(
@@ -41,67 +65,21 @@ GoRouter _buildRouter(List<AdaptiveBranchRouteObserver> observers) {
     initialIndex: 0,
   );
   addTearDown(coordinator.dispose);
-  return GoRouter(
-    initialLocation: '/habits',
-    routes: [
-      ShellRoute(
-        navigatorKey: appChromeNavigatorKey,
-        observers: [appFlowObserver],
-        builder: (context, state, child) =>
-            AppNavigationShell(coordinator: coordinator, child: child),
-        routes: [
-          StatefulShellRoute.indexedStack(
-            builder: (context, state, navigationShell) {
-              coordinator.attachTabShell(navigationShell);
-              return navigationShell;
-            },
-            branches: [
-              StatefulShellBranch(
-                observers: [observers[0]],
-                routes: [
-                  GoRoute(
-                    path: '/habits',
-                    name: 'habits',
-                    builder: (_, _) => const _StubPage('habits page'),
-                  ),
-                  GoRoute(
-                    path: '/habits/detail',
-                    name: 'habits-detail',
-                    builder: (_, _) => const _StubPage('detail page'),
-                  ),
-                ],
-              ),
-              StatefulShellBranch(
-                observers: [observers[1]],
-                routes: [
-                  GoRoute(
-                    path: '/today',
-                    name: 'today',
-                    builder: (_, _) => const _StubPage('today page'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          GoRoute(
-            path: '/habit/create',
-            name: 'habit/create',
-            builder: (_, _) => const _StubPage('create page'),
-          ),
-          GoRoute(
-            path: '/habit/edit',
-            name: 'habit/edit',
-            builder: (_, state) => state.uri.queryParameters['block'] == 'true'
-                ? const PopScope<void>(
-                    canPop: false,
-                    child: _StubPage('edit page'),
-                  )
-                : const _StubPage('edit page'),
-          ),
-        ],
-      ),
-    ],
-  );
+  final routerBuilder = AppRouterBuilder()
+    ..addShellRoute(
+      branches: branches,
+      appFlow: appFlow,
+      branchObservers: observers,
+      observers: [appFlowObserver],
+      navigatorKey: appChromeNavigatorKey,
+      builder: (context, state, child) =>
+          AppNavigationShell(coordinator: coordinator, child: child),
+      branchBuilder: (context, state, navigationShell) {
+        coordinator.attachTabShell(navigationShell);
+        return navigationShell;
+      },
+    );
+  return routerBuilder.build(home: AppRoute.habits);
 }
 
 void _setCompactSurface(WidgetTester tester) {
@@ -251,6 +229,7 @@ void main() {
     tester,
   ) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
+    addTearDown(() => debugDefaultTargetPlatformOverride = null);
     final frameworkHandlesBack = <bool>[];
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
       SystemChannels.platform,
@@ -296,7 +275,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('dialog'), findsOneWidget);
-    expect(observers[0].routeNameStack, ['habits', 'habits-detail']);
+    expect(observers[0].routeNameStack, [
+      AppRoute.habits.name,
+      AppRoute.habitDetail.name,
+    ]);
     expect(AdaptiveNavScope.of(detailContext).visible.value, isFalse);
 
     await _commitPredictiveBack(tester);
@@ -304,7 +286,10 @@ void main() {
     expect(find.text('dialog'), findsNothing);
     expect(find.text('detail page'), findsOneWidget);
     expect(frameworkHandlesBack.last, isTrue);
-    expect(observers[0].routeNameStack, ['habits', 'habits-detail']);
+    expect(observers[0].routeNameStack, [
+      AppRoute.habits.name,
+      AppRoute.habitDetail.name,
+    ]);
     expect(
       AdaptiveNavScope.of(
         tester.element(find.text('detail page')),
@@ -358,6 +343,75 @@ void main() {
     );
   });
 
+  testWidgets('restores branch PopScope handling after a root dialog', (
+    tester,
+  ) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.android;
+    addTearDown(() => debugDefaultTargetPlatformOverride = null);
+    final frameworkHandlesBack = <bool>[];
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        if (call.method == 'SystemNavigator.setFrameworkHandlesBack') {
+          frameworkHandlesBack.add(call.arguments as bool);
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+    await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+      'flutter/lifecycle',
+      const StringCodec().encodeMessage(AppLifecycleState.resumed.toString()),
+      (data) {},
+    );
+    _setCompactSurface(tester);
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    var blockedPops = 0;
+    final popViewModel = _BlockingPopViewModel();
+    addTearDown(popViewModel.dispose);
+    final router = _buildRouter(
+      observers,
+      habitsPage: ChangeNotifierProvider<_BlockingPopViewModel>.value(
+        value: popViewModel,
+        child: PopScopeConsumer<_BlockingPopViewModel>(
+          onCannotPop: (context, vm, result) => blockedPops++,
+          child: const _StubPage('search page'),
+        ),
+      ),
+    );
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+    showDialog<void>(
+      context: tester.element(find.text('search page')),
+      builder: (context) => const AlertDialog(title: Text('dialog')),
+    );
+    await tester.pumpAndSettle();
+
+    await _commitPredictiveBack(tester);
+
+    expect(find.text('dialog'), findsNothing);
+    expect(find.text('search page'), findsOneWidget);
+    expect(frameworkHandlesBack.last, isTrue);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(blockedPops, 1);
+    expect(find.text('search page'), findsOneWidget);
+    debugDefaultTargetPlatformOverride = null;
+  });
+
   testWidgets('preserves a branch stack across rail destination switches', (
     tester,
   ) async {
@@ -385,7 +439,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('detail page'), findsOneWidget);
-    expect(observers[0].routeNameStack, ['habits', 'habits-detail']);
+    expect(observers[0].routeNameStack, [
+      AppRoute.habits.name,
+      AppRoute.habitDetail.name,
+    ]);
   });
 
   testWidgets('pushes create inside app chrome and returns to habits', (
@@ -452,7 +509,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('detail page'), findsOneWidget);
-    expect(observers[0].routeNameStack, ['habits', 'habits-detail']);
+    expect(observers[0].routeNameStack, [
+      AppRoute.habits.name,
+      AppRoute.habitDetail.name,
+    ]);
   });
 
   testWidgets('returns from edit to the source today branch', (tester) async {

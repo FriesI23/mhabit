@@ -17,6 +17,7 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
+import '../../../extensions/adaptive_style_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_stat.dart';
 import '../../../providers/app_ui/app_experimental_feature.dart';
@@ -33,7 +34,7 @@ class SliverViewTopAppBar extends StatelessWidget {
 
   const SliverViewTopAppBar({
     super.key,
-    this.height,
+    this.height = AppAdaptiveStyle.materialToolbarHeight,
     this.onInfoButtonPressed,
     this.onMenuButtonPressed,
   });
@@ -62,7 +63,7 @@ class SliverEditTopAppBar extends StatelessWidget {
 
   const SliverEditTopAppBar({
     super.key,
-    this.height,
+    this.height = AppAdaptiveStyle.materialToolbarHeight,
     this.onLeadingButtonPressed,
     this.action,
   });

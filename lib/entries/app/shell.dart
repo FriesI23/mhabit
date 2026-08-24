@@ -84,8 +84,13 @@ class _AppNavigationShellState extends State<AppNavigationShell> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope<void>(
-      canPop: !widget.coordinator.activeBranchCanPop,
+    return NavigatorPopHandler<Object?>(
+      onPopWithResult: (result) {
+        final navigator = widget.coordinator.appChromeNavigatorKey.currentState;
+        if (navigator != null) {
+          unawaited(navigator.maybePop<Object?>(result));
+        }
+      },
       child: ColorfulNavibar(
         child: L10nBuilder(
           builder: (context, l10n) => AdaptiveNavigationShell(
@@ -143,7 +148,6 @@ class AppNavigationCoordinator extends ChangeNotifier {
 
   int get selectedIndex => _selectedIndex;
   bool get compactRouteVisible => _compactRouteVisible;
-  bool get activeBranchCanPop => (_activeBranchObserver?.depth ?? 0) > 1;
 
   void attachTabShell(StatefulNavigationShell navigationShell) {
     _navigationShell = navigationShell;

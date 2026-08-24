@@ -3,6 +3,7 @@
     "habitDisplay_searchFilter_completed": "habitDisplay_statsMenu_completedTileText",
     "habitToday_appBar_title": "calendarPicker_clip_today",
     "habitDisplay_tab_today_label": "habitToday_appBar_title",
+    "habitDisplay_selectedHabits_title": "groupManage_selectionAppbar_title",
     "common_loadError_retryText": "habitDetail_notFoundRetryText",
     "common_habitColorType_custom": "habitEdit_colorPicker_customSectionLabel",
     "habitDisplay_groupType_name": "habitDisplay_sortType_name",

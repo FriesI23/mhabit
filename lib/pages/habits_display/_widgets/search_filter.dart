@@ -61,6 +61,7 @@ class SearchFilterIcon extends StatelessWidget {
 }
 
 class SearchFilterPopupMenuButton extends StatelessWidget {
+  final MenuController? controller;
   final ValueChanged<bool?>? ongoingChanged;
   final ValueChanged<bool?>? completedChanged;
   final ValueChanged<(HabitType, bool?)>? typeChanged;
@@ -68,6 +69,7 @@ class SearchFilterPopupMenuButton extends StatelessWidget {
 
   const SearchFilterPopupMenuButton({
     super.key,
+    this.controller,
     this.ongoingChanged,
     this.completedChanged,
     this.typeChanged,
@@ -84,8 +86,9 @@ class SearchFilterPopupMenuButton extends StatelessWidget {
           (vm) => vm.searchOptions,
         );
     return MenuAnchor(
+      controller: controller,
       animated: true,
-      builder: (context, controller, child) => IconButton(
+      builder: (context, controller, child) => AdaptiveIconButton(
         icon: SearchFilterIcon(
           filtered: !options.isFilterEmpty,
           opacity: controller.isOpen ? 0.2 : 1.0,
@@ -158,7 +161,7 @@ class SearchFilterIconButton extends StatelessWidget {
         .select<HabitSummaryViewModel, HabitDisplaySearchOptions>(
           (vm) => vm.searchOptions,
         );
-    return IconButton(
+    return AdaptiveIconButton(
       tooltip: l10n?.habitDisplay_searchFilter_tooltips,
       icon: SearchFilterIcon(filtered: !options.isFilterEmpty),
       onPressed: onPreesed,

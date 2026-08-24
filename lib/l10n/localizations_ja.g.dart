@@ -15,6 +15,9 @@ class L10nJa extends L10n {
   String get appName => 'Table Habit';
 
   @override
+  String get common_listSeparator => ', ';
+
+  @override
   String get habitEdit_saveButton_text => '保存';
 
   @override
@@ -335,6 +338,17 @@ class L10nJa extends L10n {
 
   @override
   String get habitDisplay_editPopMenu_selectAll => 'すべて選択';
+
+  @override
+  String get habitDisplay_selectButton_label => '選択';
+
+  @override
+  String get habitDisplay_doneButton_label => '完了';
+
+  @override
+  String habitDisplay_selectedHabits_title(int count) {
+    return 'Selected $count';
+  }
 
   @override
   String get habitDisplay_editPopMenu_export => 'エクスポート';

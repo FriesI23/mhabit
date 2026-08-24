@@ -15,6 +15,9 @@ class L10nTr extends L10n {
   String get appName => 'Table Habit';
 
   @override
+  String get common_listSeparator => ', ';
+
+  @override
   String get habitEdit_saveButton_text => 'Kaydet';
 
   @override
@@ -345,6 +348,17 @@ class L10nTr extends L10n {
 
   @override
   String get habitDisplay_editPopMenu_selectAll => 'Hepsini Seç';
+
+  @override
+  String get habitDisplay_selectButton_label => 'Seç';
+
+  @override
+  String get habitDisplay_doneButton_label => 'Bitti';
+
+  @override
+  String habitDisplay_selectedHabits_title(int count) {
+    return 'Selected $count';
+  }
 
   @override
   String get habitDisplay_editPopMenu_export => 'Dışa aktar';

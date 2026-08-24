@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
@@ -229,8 +231,41 @@ class AppRouterBuilder with _AppRouteAdder {
   @override
   final List<RouteBase> _routes = [];
 
+  /// Builds the state-preserving tab container and composes each branch
+  /// Navigator's back handling into the enclosing shell route.
+  static Widget _buildBranchNavigatorContainer(
+    BuildContext context,
+    StatefulNavigationShell navigationShell,
+    List<Widget> children,
+  ) {
+    final currentIndex = navigationShell.currentIndex;
+    final branches = navigationShell.route.branches;
+    assert(branches.length == children.length);
+    return IndexedStack(
+      index: currentIndex,
+      children: [
+        for (final (index, child) in children.indexed)
+          NavigatorPopHandler<Object?>(
+            enabled: index == currentIndex,
+            onPopWithResult: index == currentIndex
+                ? (result) {
+                    final navigator = branches[index].navigatorKey.currentState;
+                    if (navigator != null) {
+                      unawaited(navigator.maybePop<Object?>(result));
+                    }
+                  }
+                : null,
+            child: Offstage(
+              offstage: index != currentIndex,
+              child: TickerMode(enabled: index == currentIndex, child: child),
+            ),
+          ),
+      ],
+    );
+  }
+
   /// Registers an app-chrome [ShellRoute] containing a tab
-  /// [StatefulShellRoute.indexedStack].
+  /// [StatefulShellRoute] with an indexed, state-preserving branch container.
   ///
   /// Each [BranchRouterBuilder] in [branches] becomes a [StatefulShellBranch]
   /// of the inner shell. [appFlow] routes become siblings of that tab shell on
@@ -255,8 +290,9 @@ class AppRouterBuilder with _AppRouteAdder {
         observers: observers,
         navigatorKey: navigatorKey,
         routes: [
-          StatefulShellRoute.indexedStack(
+          StatefulShellRoute(
             builder: branchBuilder,
+            navigatorContainerBuilder: _buildBranchNavigatorContainer,
             branches: [
               for (final (index, branch) in branches.indexed)
                 StatefulShellBranch(

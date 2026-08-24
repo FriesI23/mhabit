@@ -11,204 +11,155 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart' hide PreferredSize;
+import 'package:flutter/cupertino.dart' show CupertinoButton, CupertinoIcons;
+import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
+import '../../../extensions/adaptive_style_extensions.dart';
+import '../../../extensions/iterable_extensions.dart';
 import '../../../extensions/window_size_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_form.dart';
-import '../../../widgets/widgets.dart';
 import '../_providers/habit_summary.dart';
 import '../styles.dart';
 import 'search_filter.dart';
 
-class SliverSearchTopAppBar extends StatelessWidget {
-  final double? height;
+class SliverSearchTopAppBar extends StatefulWidget {
+  final AdaptiveStyle style;
+  final MenuController? searchFilterMenuController;
   final VoidCallback? onInfoButtonPressed;
   final VoidCallback? onMenuButtonPressed;
+  final VoidCallback? onSelectButtonPressed;
+  final Widget? cupertinoBottom;
+  final double cupertinoBottomExtent;
 
-  const SliverSearchTopAppBar({
+  const SliverSearchTopAppBar.material({
     super.key,
-    this.height,
+    this.searchFilterMenuController,
     this.onInfoButtonPressed,
     this.onMenuButtonPressed,
-  });
+    this.onSelectButtonPressed,
+  }) : style = AdaptiveStyle.material,
+       cupertinoBottom = null,
+       cupertinoBottomExtent = 0.0;
+
+  const SliverSearchTopAppBar.apple({
+    super.key,
+    this.searchFilterMenuController,
+    this.onInfoButtonPressed,
+    this.onMenuButtonPressed,
+    this.onSelectButtonPressed,
+    this.cupertinoBottom,
+    this.cupertinoBottomExtent = 0.0,
+  }) : style = AdaptiveStyle.apple,
+       assert(cupertinoBottom != null || cupertinoBottomExtent == 0.0);
 
   @override
-  Widget build(BuildContext context) {
-    return _AppBar(
-      height: height ?? kSearchAppBarHeight,
-      scrolledUnderElevation: kCommonEvalation,
-      searchBar: const _SearchBar(key: ValueKey("search-bar"), height: 48.0),
-      bottom: PreferredSize.zero,
-      shawdowColor: Colors.transparent,
-      onInfoButtonPressed: onInfoButtonPressed,
-      onMenuButtonPressed: onMenuButtonPressed,
-    );
-  }
+  State<SliverSearchTopAppBar> createState() => _SliverSearchTopAppBarState();
 }
 
-class _SearchBar extends StatefulWidget {
-  static const double kSearchFullWidthLimit = 312.0;
-  static const double kSearchHeight = 48.0;
-
-  final FocusNode? focusNode;
-  final TextEditingController? controller;
-  final double? height;
-
-  const _SearchBar({super.key, this.height})
-    : focusNode = null,
-      controller = null;
-
-  @override
-  State<_SearchBar> createState() => _SearchBarState();
-}
-
-class _SearchBarState extends State<_SearchBar> with RestorationMixin {
+class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
+    with RestorationMixin {
   late HabitSummaryViewModel _vm;
-  late bool _scrolledUnder;
-  late bool _prevSearchMode;
-  FocusNode? _focusNode;
-  RestorableTextEditingController? _controller;
+  late final FocusNode _focusNode;
+  late final RestorableTextEditingController _controller;
+  late bool _previousSearchMode;
   bool _changed = false;
-
-  FocusNode get _effectiveFocusNode =>
-      widget.focusNode ?? (_focusNode ??= FocusNode());
-  TextEditingController get _effectiveController =>
-      widget.controller ?? (_controller!.value);
-
-  double get _effectiveHeight => widget.height ?? _SearchBar.kSearchHeight;
 
   @override
   void initState() {
     super.initState();
-
     _vm = context.read<HabitSummaryViewModel>()
       ..addListener(_onViewModelNotified);
-    _scrolledUnder = false;
-    _prevSearchMode = _vm.isInSearchMode;
-    if (widget.controller == null) {
-      _createLocalController(TextEditingValue(text: _vm.searchOptions.keyword));
-    }
+    _focusNode = FocusNode();
+    _controller = RestorableTextEditingController.fromValue(
+      TextEditingValue(text: _vm.searchOptions.keyword),
+    );
+    _previousSearchMode = _vm.isInSearchMode;
   }
 
   @override
-  void didUpdateWidget(covariant _SearchBar oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (widget.controller == null && oldWidget.controller != null) {
-      _createLocalController(oldWidget.controller!.value);
-    } else if (widget.controller != null && oldWidget.controller == null) {
-      unregisterFromRestoration(_controller!);
-      _controller!.dispose();
-      _controller = null;
-    }
-
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     final vm = context.read<HabitSummaryViewModel>();
-    if (vm != _vm) {
-      _vm.removeListener(_onViewModelNotified);
-      _vm = vm..addListener(_onViewModelNotified);
-      _effectiveController.text = _vm.searchOptions.keyword;
-      _prevSearchMode = _vm.isInSearchMode;
-      if (_effectiveController.text.isNotEmpty) _changed = true;
-    }
+    if (vm == _vm) return;
+    _vm.removeListener(_onViewModelNotified);
+    _vm = vm..addListener(_onViewModelNotified);
+    _controller.value.text = _vm.searchOptions.keyword;
+    _previousSearchMode = _vm.isInSearchMode;
+    _changed = _controller.value.text.isNotEmpty;
   }
 
   @override
   void dispose() {
-    _controller?.dispose();
-    _focusNode?.dispose();
     _vm.removeListener(_onViewModelNotified);
+    _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
-  //#region controller
   @override
   String? get restorationId => 'controller';
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
-    if (_controller != null) {
-      _registerController();
+    registerForRestoration(_controller, 'controller');
+    final restoredText = _controller.value.text;
+    if (restoredText != _vm.searchOptions.keyword) {
+      _vm.onSeachKeywordChanged(restoredText, listen: false);
+      _previousSearchMode = _vm.isInSearchMode;
+      _changed = restoredText.isNotEmpty;
     }
   }
-
-  void _registerController() {
-    assert(_controller != null);
-    registerForRestoration(_controller!, 'controller');
-  }
-
-  void _createLocalController([TextEditingValue? value]) {
-    assert(_controller == null);
-    _controller = value == null
-        ? RestorableTextEditingController()
-        : RestorableTextEditingController.fromValue(value);
-    if (!restorePending) {
-      _registerController();
-    }
-  }
-  //#endregion
 
   void _onViewModelNotified() {
-    if (_effectiveController.text != _vm.searchOptions.keyword) {
-      _effectiveController.text = _vm.searchOptions.keyword;
+    if (!mounted) return;
+    final keyword = _vm.searchOptions.keyword;
+    if (_controller.value.text != keyword) {
+      _controller.value.text = keyword;
       _changed = true;
     }
-    if (_prevSearchMode && !_vm.isInSearchMode) {
-      _effectiveFocusNode.unfocus();
+    if (_previousSearchMode && !_vm.isInSearchMode) {
+      _focusNode.unfocus();
     }
-    _prevSearchMode = _vm.isInSearchMode;
+    _previousSearchMode = _vm.isInSearchMode;
     if (!_vm.isInSearchMode) _changed = false;
+    setState(() {});
   }
 
-  bool get isViewModelMounted => mounted && _vm.mounted;
+  bool get _isViewModelMounted => mounted && _vm.mounted;
 
-  void _enterSeach() {
-    if (!isViewModelMounted) return;
-    _vm.enterSearchMode();
-    if (!_effectiveFocusNode.hasFocus) _effectiveFocusNode.requestFocus();
-  }
-
-  void _exitSearch() {
-    if (!isViewModelMounted) return;
+  void _dismissSearch() {
+    if (!_isViewModelMounted) return;
     _vm.exitSearchMode();
-    if (_effectiveFocusNode.hasFocus) _effectiveFocusNode.unfocus();
+    if (_focusNode.hasFocus) _focusNode.unfocus();
     _changed = false;
   }
 
-  void _onSearchButtonPressed() {
-    _enterSeach();
-  }
-
-  void _onCloseButtonPressed() {
-    _exitSearch();
-  }
-
   void _onTapOutside(PointerDownEvent event) {
-    if (_effectiveFocusNode.hasFocus) _effectiveFocusNode.unfocus();
+    if (_focusNode.hasFocus) _focusNode.unfocus();
     if (_vm.searchOptions.isNotEmpty || !_changed) return;
-    _exitSearch();
+    _dismissSearch();
   }
 
   void _onChanged(String text) {
-    if (!isViewModelMounted) return;
+    if (!_isViewModelMounted) return;
     _vm.onSeachKeywordChanged(text);
     _changed = true;
   }
 
-  void _onSubmitted(String text) => _changed ? _onChanged(text) : null;
+  void _onSubmitted(String text) {
+    if (_changed) _onChanged(text);
+  }
 
-  void _onOngingFilterChanged(bool? value) {
-    if (value == null) return;
-    _vm.onSearchOngoingChanged(value);
+  void _onOngoingFilterChanged(bool? value) {
+    if (value != null) _vm.onSearchOngoingChanged(value);
   }
 
   void _onCompletedFilterChanged(bool? value) {
-    if (value == null) return;
-    _vm.onSearchCompletedChanged(value);
+    if (value != null) _vm.onSearchCompletedChanged(value);
   }
 
   void _onTypeFilterChanged((HabitType, bool?) value) {
@@ -217,11 +168,9 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
     _vm.onSearchHabitTypeChanged(type, include);
   }
 
-  void _onClearFilterPressed() {
-    _vm.onClearSearchFilter();
-  }
+  void _onClearFilterPressed() => _vm.onClearSearchFilter();
 
-  void _openSearchFilterBottonSheet() async {
+  Future<void> _openSearchFilterBottomSheet() async {
     final result = await showSearchFilterBottomSheet(
       context: context,
       options: _vm.searchOptions,
@@ -230,217 +179,263 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
     _vm.onSearchFilterChanged(result);
   }
 
-  /// From Material3 Design Duidelines
-  ///
-  /// > The search container of the search app bar should fill 100% of the space
-  /// > between leading and trailing app bar elements until it reaches 312dp.
-  /// > Then, it should only grow further to fill 50% of that space.
-  ///
-  /// see: https://m3.material.io/components/app-bars/guidelines#3f4c81c8-4af9-402e-a322-5d638dcfb337
-  BoxConstraints calcSearchBarConstraints(BoxConstraints constraints) {
-    const maxSearchWidth = _SearchBar.kSearchFullWidthLimit;
-    final availableWidth = constraints.maxWidth;
-    final width = availableWidth <= maxSearchWidth
-        ? availableWidth
-        : maxSearchWidth + (availableWidth - maxSearchWidth) / 2;
-    return BoxConstraints.tightFor(height: _effectiveHeight, width: width);
+  List<CupertinoSliverSearchBarAction> _buildCupertinoSearchFilterActions(
+    L10n? l10n,
+    bool overflowOnly,
+  ) {
+    final options = _vm.searchOptions;
+    Widget selectionIcon(
+      bool selected,
+      IconData regular,
+      IconData selectedIcon,
+    ) => Icon(selected ? selectedIcon : regular);
+    final statusSummary = [
+      if (options.activated)
+        l10n?.habitDisplay_searchFilter_ongoing ?? 'Ongoing',
+      if (options.completed)
+        l10n?.habitDisplay_searchFilter_completed ?? 'Completed',
+    ].joinLocalized(l10n);
+    final typeSummary = [
+      for (final type in HabitType.values)
+        if (type != HabitType.unknown && options.types.contains(type))
+          type.getTypeName(l10n),
+    ].joinLocalized(l10n);
+    return [
+      CupertinoSliverSearchBarAction(
+        id: 'habit-filter',
+        label: l10n?.habitDisplay_searchFilter_tooltips ?? 'Show Filters',
+        retentionPriority: -100,
+        overflowOnly: overflowOnly,
+        icon: Icon(
+          options.isFilterEmpty
+              ? CupertinoIcons.line_horizontal_3_decrease_circle
+              : CupertinoIcons.line_horizontal_3_decrease_circle_fill,
+        ),
+        children: [
+          CupertinoSliverSearchBarAction(
+            id: 'habit-filter-status',
+            label: l10n?.habitDisplay_sortType_status ?? 'Completion Status',
+            subtitle: statusSummary,
+            icon: Icon(
+              options.activated || options.completed
+                  ? CupertinoIcons.check_mark_circled_solid
+                  : CupertinoIcons.check_mark_circled,
+            ),
+            children: [
+              CupertinoSliverSearchBarAction(
+                id: 'habit-filter-ongoing',
+                label: l10n?.habitDisplay_searchFilter_ongoing ?? 'Ongoing',
+                tooltip: l10n?.habitDisplay_searchFilter_ongoing_desc,
+                icon: selectionIcon(
+                  options.activated,
+                  CupertinoIcons.play_circle,
+                  CupertinoIcons.play_circle_fill,
+                ),
+                onPressed: () => _onOngoingFilterChanged(!options.activated),
+              ),
+              CupertinoSliverSearchBarAction(
+                id: 'habit-filter-completed',
+                label: l10n?.habitDisplay_searchFilter_completed ?? 'Completed',
+                icon: selectionIcon(
+                  options.completed,
+                  CupertinoIcons.check_mark_circled,
+                  CupertinoIcons.check_mark_circled_solid,
+                ),
+                onPressed: () => _onCompletedFilterChanged(!options.completed),
+              ),
+            ],
+          ),
+          CupertinoSliverSearchBarAction(
+            id: 'habit-filter-types',
+            label:
+                l10n?.habitDisplay_searchFilter_habitType_groupTitle ??
+                'Habit Type',
+            subtitle: typeSummary,
+            icon: Icon(
+              options.types.isEmpty
+                  ? CupertinoIcons.square_grid_2x2
+                  : CupertinoIcons.square_grid_2x2_fill,
+            ),
+            children: [
+              for (final type in HabitType.values)
+                if (type != HabitType.unknown)
+                  CupertinoSliverSearchBarAction(
+                    id: 'habit-filter-type-${type.name}',
+                    label: type.getTypeName(l10n),
+                    icon: selectionIcon(
+                      options.types.contains(type),
+                      type == HabitType.normal
+                          ? CupertinoIcons.plus_circle
+                          : CupertinoIcons.minus_circle,
+                      type == HabitType.normal
+                          ? CupertinoIcons.plus_circle_fill
+                          : CupertinoIcons.minus_circle_fill,
+                    ),
+                    onPressed: () => _onTypeFilterChanged((
+                      type,
+                      !options.types.contains(type),
+                    )),
+                  ),
+            ],
+          ),
+          if (!options.isFilterEmpty)
+            const CupertinoSliverSearchBarMenuDivider(),
+          if (!options.isFilterEmpty)
+            CupertinoSliverSearchBarAction(
+              id: 'habit-filter-clear',
+              label:
+                  l10n?.habitDisplay_searchFilter_clearFilter ??
+                  'Clear Filters',
+              icon: const Icon(CupertinoIcons.clear_circled_solid),
+              isDestructive: true,
+              onPressed: _onClearFilterPressed,
+            ),
+        ],
+      ),
+    ];
   }
-
-  WidgetStateProperty<Color?>? getLightOverlayColor(ColorScheme colors) =>
-      WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.pressed)) {
-          return colors.onSurfaceVariant.withValues(alpha: 0.1);
-        }
-        if (states.contains(WidgetState.hovered)) {
-          return colors.onSurfaceVariant.withValues(alpha: 0.08);
-        }
-        if (states.contains(WidgetState.focused)) {
-          return Colors.transparent;
-        }
-        return Colors.transparent;
-      });
 
   @override
-  Widget build(BuildContext context) {
-    final settings = context
-        .dependOnInheritedWidgetOfExactType<FlexibleSpaceBarSettings>();
-    final current = settings?.isScrolledUnder ?? false;
-    if (_scrolledUnder != current) {
-      _scrolledUnder = current;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {});
-      });
-    }
-
-    Widget buildSearchFilter() => Builder(
-      builder: (context) {
-        // TODO(adaptive-ui::platform): move filter presentation behind an
-        // adaptive widget.
-        final windowSize = WindowSize.of(context);
-        final isLargeLayout = switch (defaultTargetPlatform) {
-          TargetPlatform.android ||
-          TargetPlatform.iOS => windowSize.isTabletFormFactor,
-          _ => true,
-        };
-        return isLargeLayout
-            ? SearchFilterPopupMenuButton(
-                ongoingChanged: _onOngingFilterChanged,
-                completedChanged: _onCompletedFilterChanged,
-                typeChanged: _onTypeFilterChanged,
-                onClearFilterPressed: _onClearFilterPressed,
-              )
-            : SearchFilterIconButton(onPreesed: _openSearchFilterBottonSheet);
-      },
-    );
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final l10n = L10n.of(context);
-        final colors = Theme.of(context).colorScheme;
-        final brightness = Theme.of(context).brightness;
-
-        return SearchBar(
-          focusNode: _effectiveFocusNode,
-          controller: _effectiveController,
-          textInputAction: TextInputAction.search,
-          overlayColor: getLightOverlayColor(colors),
-          backgroundColor: _scrolledUnder
-              ? WidgetStatePropertyAll(
-                  brightness == Brightness.dark
-                      ? colors.surfaceContainer
-                      : colors.surfaceContainerLowest,
-                )
-              : null,
-          elevation: const WidgetStatePropertyAll(0.0),
-          constraints: calcSearchBarConstraints(constraints),
-          hintText: l10n?.habitDisplay_searchBar_hintText,
-          leading: _SearchIconButton(
-            onSearchButtonPressed: _onSearchButtonPressed,
-            onCloseButtonPressed: _onCloseButtonPressed,
-          ),
-          trailing: [buildSearchFilter()],
-          onTapOutside: _onTapOutside,
-          onChanged: _onChanged,
-          onSubmitted: _onSubmitted,
-        );
-      },
-    );
-  }
+  Widget build(BuildContext context) => switch (widget.style) {
+    AdaptiveStyle.material => _buildMaterial(context),
+    AdaptiveStyle.apple => _buildApple(context),
+  };
 }
 
-class _AppBar extends StatelessWidget {
-  final double? scrolledUnderElevation;
-  final Widget? searchBar;
-  final PreferredSizeWidget? bottom;
-  final double? height;
-  final Color? shawdowColor;
-  final VoidCallback? onInfoButtonPressed;
-  final VoidCallback? onMenuButtonPressed;
+extension _MaterialSliverSearchTopAppBarStateExtension
+    on _SliverSearchTopAppBarState {
+  void _onMaterialSearchActivated() {
+    if (!_isViewModelMounted) return;
+    _vm.enterSearchMode();
+    if (!_isViewModelMounted || !_vm.isInSearchMode) return;
+    if (!_focusNode.hasFocus) _focusNode.requestFocus();
+  }
 
-  const _AppBar({
-    this.scrolledUnderElevation,
-    this.searchBar,
-    this.bottom,
-    this.height,
-    this.shawdowColor,
-    this.onInfoButtonPressed,
-    this.onMenuButtonPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildMaterial(BuildContext context) {
     final l10n = L10n.of(context);
-
-    final infoButton = IconButton(
-      onPressed: onInfoButtonPressed,
+    final infoButton = AdaptiveIconButton.material(
+      onPressed: widget.onInfoButtonPressed,
       icon: const Icon(Icons.article_outlined),
     );
-    final menuButton = IconButton(
-      onPressed: onMenuButtonPressed,
+    final menuButton = AdaptiveIconButton.material(
+      onPressed: widget.onMenuButtonPressed,
       icon: const Icon(Icons.settings_outlined),
       tooltip: l10n?.habitDisplay_settingButton_tooltip,
     );
-    final searchBar = this.searchBar;
-    const sliverAppBarKey = ValueKey("bar");
-    return Builder(
-      builder: (context) {
-        // The app-bar form follows the window width, not the content-region
-        // width: in non-compact forms the rail sits beside the content area,
-        // so the two have diverged. The app bar is window chrome.
-        final isLarge = WindowSize.of(context).width >= WindowSizeClass.medium;
-        return isLarge
-            ? SliverAppBar(
-                key: sliverAppBarKey,
-                floating: true,
-                snap: true,
-                pinned: true,
-                centerTitle: false,
-                toolbarHeight: height ?? kToolbarHeight,
-                scrolledUnderElevation: scrolledUnderElevation,
-                shadowColor: shawdowColor,
-                leading: infoButton,
-                title: Text(l10n?.appName ?? appName),
-                bottom: bottom,
-                actions: [
-                  if (searchBar != null)
-                    ConstrainedBox(
-                      constraints: const BoxConstraints.tightFor(
-                        width: _SearchBar.kSearchFullWidthLimit,
-                      ),
-                      child: searchBar,
-                    ),
-                  menuButton,
-                ],
-              )
-            : SliverAppBar(
-                key: sliverAppBarKey,
-                floating: true,
-                snap: true,
-                pinned: true,
-                centerTitle: false,
-                toolbarHeight: height ?? kToolbarHeight,
-                scrolledUnderElevation: scrolledUnderElevation,
-                shadowColor: shawdowColor,
-                title: searchBar,
-                bottom: bottom,
-                actions: [infoButton, menuButton],
-              );
-      },
+    return AdaptiveSliverSearchBar.material(
+      title: Text(l10n?.appName ?? appName),
+      actions: [infoButton, menuButton],
+      searchTrailing: Builder(
+        builder: (context) {
+          final windowSize = WindowSize.of(context);
+          final isLargeLayout = switch (DeviceContext.of(context).platform) {
+            TargetPlatform.android ||
+            TargetPlatform.iOS => windowSize.isTabletFormFactor,
+            _ => true,
+          };
+          return isLargeLayout
+              ? SearchFilterPopupMenuButton(
+                  controller: widget.searchFilterMenuController,
+                  ongoingChanged: _onOngoingFilterChanged,
+                  completedChanged: _onCompletedFilterChanged,
+                  typeChanged: _onTypeFilterChanged,
+                  onClearFilterPressed: _onClearFilterPressed,
+                )
+              : SearchFilterIconButton(onPreesed: _openSearchFilterBottomSheet);
+        },
+      ),
+      controller: _controller.value,
+      focusNode: _focusNode,
+      isSearchActive: _vm.isInSearchMode,
+      keyword: _vm.searchOptions.keyword,
+      hintText: l10n?.habitDisplay_searchBar_hintText,
+      onChanged: _onChanged,
+      onSubmitted: _onSubmitted,
+      onSearchActivated: _onMaterialSearchActivated,
+      onSearchDismissed: _dismissSearch,
+      onTapOutside: _onTapOutside,
+      materialStyle: const MaterialSliverSearchBarStyle(
+        toolbarHeight: AppAdaptiveStyle.materialToolbarHeight,
+        scrolledUnderElevation: kCommonEvalation,
+        shadowColor: Colors.transparent,
+      ),
     );
   }
 }
 
-class _SearchIconButton extends StatelessWidget {
-  static const animateDuration = Duration(milliseconds: 300);
+extension _AppleSliverSearchTopAppBarStateExtension
+    on _SliverSearchTopAppBarState {
+  void _onAppleSearchActivated() {}
 
-  final VoidCallback? onSearchButtonPressed;
-  final VoidCallback? onCloseButtonPressed;
-
-  const _SearchIconButton({
-    this.onSearchButtonPressed,
-    this.onCloseButtonPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isInSearchMode = context.select<HabitSummaryViewModel, bool>(
-      (vm) => vm.isInSearchMode,
-    );
-    return AnimatedCrossFade(
-      firstChild: IconButton(
-        key: const ValueKey(1),
-        onPressed: onCloseButtonPressed,
-        icon: const Icon(Icons.close),
+  Widget _buildApple(BuildContext context) {
+    final l10n = L10n.of(context);
+    final settingsLabel =
+        l10n?.habitDisplay_settingButton_tooltip ?? 'Settings';
+    final selectLabel = l10n?.habitDisplay_selectButton_label ?? 'Select';
+    final compact = WindowSize.of(context).width == WindowSizeClass.compact;
+    const statisticsLabel = 'Statistics';
+    final cupertinoActions = [
+      CupertinoSliverSearchBarAction(
+        id: 'habit-select',
+        label: selectLabel,
+        icon: const Icon(CupertinoIcons.checkmark_alt_circle),
+        onPressed: widget.onSelectButtonPressed ?? () {},
+        isEnabled: widget.onSelectButtonPressed != null,
+        overflowOnly: compact,
+        retentionPriority: 100,
+        primaryBuilder: (_) => CupertinoButton(
+          key: const ValueKey('habit-select-primary'),
+          padding: EdgeInsets.zero,
+          minimumSize: const Size(44, 44),
+          onPressed: widget.onSelectButtonPressed,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(selectLabel, maxLines: 1, softWrap: false),
+          ),
+        ),
       ),
-      secondChild: IconButton(
-        key: const ValueKey(2),
-        onPressed: onSearchButtonPressed,
-        icon: const Icon(Icons.search_outlined),
+      CupertinoSliverSearchBarAction(
+        id: 'habit-statistics',
+        label: statisticsLabel,
+        icon: const Icon(Icons.article_outlined),
+        onPressed: widget.onInfoButtonPressed ?? () {},
+        isEnabled: widget.onInfoButtonPressed != null,
+        primaryBuilder: (_) => AdaptiveIconButton.apple(
+          onPressed: widget.onInfoButtonPressed,
+          icon: const Icon(Icons.article_outlined),
+        ),
       ),
-      crossFadeState: isInSearchMode
-          ? CrossFadeState.showFirst
-          : CrossFadeState.showSecond,
-      duration: animateDuration,
+      CupertinoSliverSearchBarAction(
+        id: 'habit-settings',
+        label: settingsLabel,
+        tooltip: settingsLabel,
+        icon: const Icon(Icons.settings_outlined),
+        onPressed: widget.onMenuButtonPressed ?? () {},
+        isEnabled: widget.onMenuButtonPressed != null,
+        retentionPriority: 50,
+        primaryBuilder: (_) => AdaptiveIconButton.apple(
+          onPressed: widget.onMenuButtonPressed,
+          tooltip: settingsLabel,
+          icon: const Icon(Icons.settings_outlined),
+        ),
+      ),
+      ..._buildCupertinoSearchFilterActions(l10n, compact),
+    ];
+    return AdaptiveSliverSearchBar.apple(
+      title: Text(l10n?.appName ?? appName),
+      cupertinoActions: cupertinoActions,
+      cupertinoBottom: widget.cupertinoBottom,
+      cupertinoBottomExtent: widget.cupertinoBottomExtent,
+      controller: _controller.value,
+      focusNode: _focusNode,
+      isSearchActive: _vm.isInSearchMode,
+      keyword: _vm.searchOptions.keyword,
+      hintText: l10n?.habitDisplay_searchBar_hintText,
+      onChanged: _onChanged,
+      onSubmitted: _onSubmitted,
+      onSearchActivated: _onAppleSearchActivated,
+      onSearchDismissed: _dismissSearch,
+      onTapOutside: _onTapOutside,
     );
   }
 }

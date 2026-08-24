@@ -42,3 +42,19 @@ class AdaptiveScrollWishController extends ValueNotifier<bool> {
   /// branch stack returns to its root.
   void reset() => report(true);
 }
+
+/// Independent contextual-chrome suppression input for compact navigation.
+///
+/// This is intentionally separate from scroll wishes: selection surfaces may
+/// suppress navigation while scrolling continues to report its own intent.
+class AdaptiveContextualChromeController extends ValueNotifier<bool> {
+  AdaptiveContextualChromeController({bool suppressed = false})
+    : super(suppressed);
+
+  void report(bool suppressed) {
+    if (value == suppressed) return;
+    value = suppressed;
+  }
+
+  void reset() => report(false);
+}

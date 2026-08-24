@@ -1,18 +1,19 @@
-import 'package:flutter/cupertino.dart' show CupertinoSliverNavigationBar;
+import 'package:flutter/cupertino.dart'
+    show CupertinoNavigationBar, CupertinoSliverNavigationBar;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 void main() {
-  group('AdaptiveStyleContext', () {
+  group('AdaptiveStyle.of', () {
     testWidgets('maps iOS to apple', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(platform: TargetPlatform.iOS),
           home: Builder(
             builder: (context) {
-              expect(context.adaptiveStyle, AdaptiveStyle.apple);
+              expect(AdaptiveStyle.of(context), AdaptiveStyle.apple);
               return const SizedBox.shrink();
             },
           ),
@@ -26,7 +27,7 @@ void main() {
           theme: ThemeData(platform: TargetPlatform.android),
           home: Builder(
             builder: (context) {
-              expect(context.adaptiveStyle, AdaptiveStyle.material);
+              expect(AdaptiveStyle.of(context), AdaptiveStyle.material);
               return const SizedBox.shrink();
             },
           ),
@@ -204,6 +205,56 @@ void main() {
       expect(find.byType(CupertinoSliverNavigationBar), findsOneWidget);
     });
 
+    testWidgets('apple fixed height uses the standalone toolbar renderer', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                AdaptiveSliverAppBar.apple(
+                  title: Text('title'),
+                  height: 52,
+                  actions: [Icon(Icons.settings)],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(CupertinoNavigationBar), findsOneWidget);
+      expect(find.byType(CupertinoSliverNavigationBar), findsNothing);
+      expect(find.text('title'), findsOneWidget);
+      expect(find.byIcon(Icons.settings), findsOneWidget);
+    });
+
+    testWidgets('apple collapsible config takes precedence over fixed height', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                AdaptiveSliverAppBar.apple(
+                  title: Text('title'),
+                  height: 52,
+                  styles: AppBarStyles(
+                    apple: AppBarAppleStyle(collapsible: true),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(CupertinoSliverNavigationBar), findsOneWidget);
+      expect(find.byType(CupertinoNavigationBar), findsNothing);
+    });
+
     testWidgets('material knobs pass through to the SliverAppBar', (
       tester,
     ) async {
@@ -334,7 +385,11 @@ void main() {
 
     test('AppBarAppleStyle.copyWith overrides only the given fields', () {
       const base = AppBarAppleStyle();
-      final updated = base.copyWith(enableBackgroundFilterBlur: false);
+      final updated = base.copyWith(
+        collapsible: true,
+        enableBackgroundFilterBlur: false,
+      );
+      expect(updated.collapsible, isTrue);
       expect(updated.enableBackgroundFilterBlur, isFalse);
       expect(updated.stretch, base.stretch);
       expect(updated.border, base.border);
@@ -353,11 +408,26 @@ void main() {
 
   group('AdaptiveSliverSearchBar', () {
     testWidgets('renders a sliver search app bar', (tester) async {
+      final controller = TextEditingController();
+      final focusNode = FocusNode();
+      addTearDown(controller.dispose);
+      addTearDown(focusNode.dispose);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: CustomScrollView(
-              slivers: [AdaptiveSliverSearchBar(onChanged: (_) {})],
+              slivers: [
+                AdaptiveSliverSearchBar(
+                  title: const Text('title'),
+                  controller: controller,
+                  focusNode: focusNode,
+                  isSearchActive: false,
+                  keyword: '',
+                  onChanged: (_) {},
+                  onSearchActivated: () {},
+                  onSearchDismissed: () {},
+                ),
+              ],
             ),
           ),
         ),

@@ -15,6 +15,9 @@ class L10nHe extends L10n {
   String get appName => 'רשימת הרגלים';
 
   @override
+  String get common_listSeparator => ', ';
+
+  @override
   String get habitEdit_saveButton_text => 'שמירה';
 
   @override
@@ -341,6 +344,17 @@ class L10nHe extends L10n {
 
   @override
   String get habitDisplay_editPopMenu_selectAll => 'לבחור הכול';
+
+  @override
+  String get habitDisplay_selectButton_label => 'בחירה';
+
+  @override
+  String get habitDisplay_doneButton_label => 'סיום';
+
+  @override
+  String habitDisplay_selectedHabits_title(int count) {
+    return 'נבחרו $count';
+  }
 
   @override
   String get habitDisplay_editPopMenu_export => 'ייצוא';

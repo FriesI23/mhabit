@@ -5,6 +5,10 @@
         "description": "The human-readable name of the language used for the locale."
     },
     "appName": "桌上習慣",
+    "common_listSeparator": "，",
+    "@common_listSeparator": {
+        "description": "Separator used between items in compact localized lists."
+    },
     "habitEdit_saveButton_text": "儲存",
     "habitEdit_habitName_hintText": "習慣名稱…",
     "habitEdit_colorPicker_title": "選擇顏色",
@@ -239,6 +243,25 @@
     },
     "habitDisplay_exportAllHabitsSuccSnackbarText": "已匯出所有習慣",
     "habitDisplay_editPopMenu_selectAll": "全選",
+    "habitDisplay_selectButton_label": "選取",
+    "@habitDisplay_selectButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Select\" system action."
+    },
+    "habitDisplay_doneButton_label": "完成",
+    "@habitDisplay_doneButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Done\" system bar button item."
+    },
+    "habitDisplay_selectedHabits_title": "已選擇 {count} 項",
+    "@habitDisplay_selectedHabits_title": {
+        "description": "Apple selection AppBar title showing the number of selected habits",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of selected habits",
+                "example": "3"
+            }
+        }
+    },
     "habitDisplay_editPopMenu_export": "匯出",
     "habitDisplay_editPopMenu_delete": "刪除",
     "habitDisplay_editPopMenu_clone": "複製為範本",

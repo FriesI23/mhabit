@@ -235,6 +235,14 @@
     },
     "habitDisplay_exportAllHabitsSuccSnackbarText": "全ての習慣をエクスポートしました",
     "habitDisplay_editPopMenu_selectAll": "すべて選択",
+    "habitDisplay_selectButton_label": "選択",
+    "@habitDisplay_selectButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Select\" system action."
+    },
+    "habitDisplay_doneButton_label": "完了",
+    "@habitDisplay_doneButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Done\" system bar button item."
+    },
     "habitDisplay_editPopMenu_export": "エクスポート",
     "habitDisplay_editPopMenu_delete": "削除",
     "habitDisplay_editPopMenu_clone": "テンプレート",

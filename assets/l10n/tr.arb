@@ -249,6 +249,14 @@
     },
     "habitDisplay_exportAllHabitsSuccSnackbarText": "Bütün Alışkanlıklar Dışa Aktarıldı",
     "habitDisplay_editPopMenu_selectAll": "Hepsini Seç",
+    "habitDisplay_selectButton_label": "Seç",
+    "@habitDisplay_selectButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Select\" system action."
+    },
+    "habitDisplay_doneButton_label": "Bitti",
+    "@habitDisplay_doneButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Done\" system bar button item."
+    },
     "habitDisplay_editPopMenu_export": "Dışa aktar",
     "habitDisplay_editPopMenu_delete": "Sil",
     "habitDisplay_editPopMenu_clone": "Şablon",
