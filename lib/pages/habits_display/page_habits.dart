@@ -28,6 +28,7 @@ import 'package:tuple/tuple.dart';
 import '../../common/consts.dart';
 import '../../common/enums.dart';
 import '../../common/types.dart';
+import '../../extensions/adaptive_style_extensions.dart';
 import '../../extensions/color_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
@@ -65,8 +66,13 @@ import 'widgets.dart';
 
 class HabitsTabPage extends StatefulWidget {
   final ValueChanged<bool> onBottomNavVisibilityChanged;
+  final HabitDisplayContextualChrome? contextualChrome;
 
-  const HabitsTabPage({super.key, required this.onBottomNavVisibilityChanged});
+  const HabitsTabPage({
+    super.key,
+    required this.onBottomNavVisibilityChanged,
+    this.contextualChrome,
+  });
 
   @override
   HabitsTabPageState createState() => HabitsTabPageState();
@@ -79,13 +85,12 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
   late final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
   final MenuController _searchFilterMenuController = MenuController();
-  static const double _toolbarHeight = kAppToolbarHeight;
-
   static const Duration _bottomNavAnimationDuration = Duration(
     milliseconds: 250,
   );
 
-  late final VerticalScrollVisibilityDispatcher _scrollVisibilityDispatcher;
+  late VerticalScrollVisibilityDispatcher _scrollVisibilityDispatcher;
+  double? _scrollVisibilityToolbarHeight;
 
   late StreamSubscription<Duration?> _scrollCalendarToStartSub;
   Completer<void>? _horizonalScrolling;
@@ -108,16 +113,23 @@ class HabitsTabPageState extends State<HabitsTabPage>
     _horizonalScrollControllerGroup.addOffsetChangedListener(
       _onHorizonalOffsetChanged,
     );
-    _scrollVisibilityDispatcher = VerticalScrollVisibilityDispatcher(
-      toolbarHeight: _toolbarHeight,
-      onVisibilityChanged: widget.onBottomNavVisibilityChanged,
-      externalVisibility: AdaptiveNavScope.maybeRead(context)?.scrollWish,
-    );
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final toolbarHeight = AdaptiveStyle.of(context).appToolbarHeight;
+    if (_scrollVisibilityToolbarHeight != toolbarHeight) {
+      if (_scrollVisibilityToolbarHeight != null) {
+        _scrollVisibilityDispatcher.dispose();
+      }
+      _scrollVisibilityDispatcher = VerticalScrollVisibilityDispatcher(
+        toolbarHeight: toolbarHeight,
+        onVisibilityChanged: widget.onBottomNavVisibilityChanged,
+        externalVisibility: AdaptiveNavScope.maybeRead(context)?.scrollWish,
+      );
+      _scrollVisibilityToolbarHeight = toolbarHeight;
+    }
     final vm = context.read<HabitSummaryViewModel>();
     if (vm != _vm) {
       _vm = vm;
@@ -137,7 +149,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
     _cancelExpandTimer();
     _scrollCalendarToStartSub.cancel();
-    _scrollVisibilityDispatcher.dispose();
+    if (_scrollVisibilityToolbarHeight != null) {
+      _scrollVisibilityDispatcher.dispose();
+    }
     super.dispose();
   }
 
@@ -849,6 +863,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..clearSnackBars();
+      _suppressAppleContextualChrome();
       viewmodel.switchToEditMode();
       final data = viewmodel.getHabitBySortId(index);
       if (data is HabitSummaryDataSortCache) {
@@ -1033,6 +1048,28 @@ class HabitsTabPageState extends State<HabitsTabPage>
     viewmodel.exitEditMode();
   }
 
+  void _onHabitSelectButtonPressed() {
+    if (!(mounted && _vm.mounted)) return;
+    _suppressAppleContextualChrome();
+    _vm.switchToEditMode();
+  }
+
+  void _suppressAppleContextualChrome() {
+    if (AdaptiveStyle.of(context) != AdaptiveStyle.apple) return;
+    AdaptiveNavScope.maybeRead(context)?.reportContextualChromeSuppressed(true);
+  }
+
+  Future<void> _onHabitStatusModifyPressed() async {
+    if (!(mounted && _vm.mounted)) return;
+    final uuidList = _vm
+        .getSelectedHabitsData()
+        .nonNulls
+        .map((data) => data.uuid)
+        .toList();
+    if (uuidList.isEmpty) return;
+    await naviToHabitsStatusChangerPage(context: context, uuidList: uuidList);
+  }
+
   Widget _buildScrollablePlaceHolder(BuildContext context) {
     return SliverList(delegate: debugBuildSliverScrollDelegate(childCount: 0));
   }
@@ -1047,6 +1084,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     final displayPageOccupyPrt = context.select<AppThemeViewModel, int>(
       (vm) => vm.displayPageOccupyPrt,
     );
+    final toolbarHeight = AdaptiveStyle.of(context).appToolbarHeight;
     final (
       calendarHeaderHeight,
       calendarHeaderItemPadding,
@@ -1072,26 +1110,30 @@ class HabitsTabPageState extends State<HabitsTabPage>
       return HabitDisplayAppBar(
         geometry: geometry,
         isCalendarExpanded: isCalendarExpanded,
-        toolbarHeight: _toolbarHeight,
+        toolbarHeight: toolbarHeight,
         calendarHeight: calendarHeaderHeight,
         calendarItemPadding: calendarHeaderItemPadding,
         calendarTrackPadding: trackPadding,
         horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
         searchFilterMenuController: _searchFilterMenuController,
-        onCalendarToggleExpandPressed: _onAppbarLeftButtonPressed,
-        onEditLeadingButtonPressed: _onHabitEditAppbarLeadingButtonPressed,
-        onInfoButtonPressed: _openHabitSummaryStatisticsDialog,
-        onMenuButtonPressed: _openHabitSummaryMenuDialog,
-        editAction: SliverEditTopAppBarAction(
+        viewCallbacks: HabitDisplayViewAppBarCallbacks(
+          onInfo: _openHabitSummaryStatisticsDialog,
+          onSettings: _openHabitSummaryMenuDialog,
+          onSelect: _onHabitSelectButtonPressed,
+        ),
+        selectCallbacks: HabitDisplaySelectAppBarCallbacks(
+          onDone: _onHabitEditAppbarLeadingButtonPressed,
+          onSelectAll: _onAppbarSelectAllActionPressed,
           onEdit: _onAppbarEditActionPressed,
           onUnarchive: _onAppbarUnArchiveActionPressed,
           onArchive: _onAppbarArchiveActionPressed,
-          onSelectAll: _onAppbarSelectAllActionPressed,
           onClone: _onAppbarCloneActionPressed,
-          onExportAll: _onAppbarExportAllActionPressed,
+          onExport: _onAppbarExportAllActionPressed,
           onDelete: _onAppbarDeleteActionPressed,
           onGroupModify: _openHabitGroupModifyDialog,
+          onStatusModify: _onHabitStatusModifyPressed,
         ),
+        onCalendarToggleExpandPressed: _onAppbarLeftButtonPressed,
       );
     }
     //#endregion
@@ -1147,9 +1189,19 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
     //#region bottom placeholder
     Widget buildBottomPlaceHolder(BuildContext context) {
-      final navHeight = AdaptiveNavScope.maybeOf(context)?.navHeight;
+      final isInEditMode = context.select<HabitSummaryViewModel, bool>(
+        (vm) => vm.isInEditMode,
+      );
+      final chrome =
+          widget.contextualChrome ??
+          context.resolveHabitDisplayContextualChrome(
+            isSelectionMode: isInEditMode,
+          );
       return SliverToBoxAdapter(
-        child: FixedPagePlaceHolder(minHeight: navHeight),
+        child: FixedPagePlaceHolder(
+          minHeight: chrome.bottomPlaceholderHeight,
+          fixedButtonNaviHeight: chrome.fixedButtonNavigationHeight,
+        ),
       );
     }
     //#endregion
@@ -1157,7 +1209,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     //#region: empty image
     Widget buildEmptyImage(BuildContext context) {
       return _EmptyImage(
-        pinnedHeaderExtent: _toolbarHeight + calendarHeaderHeight,
+        pinnedHeaderExtent: toolbarHeight + calendarHeaderHeight,
       );
     }
     //#endregion
@@ -1175,7 +1227,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
       },
       onRefresh: _onRefreshIndicatorTriggered,
       edgeOffset:
-          _toolbarHeight +
+          toolbarHeight +
           calendarHeaderHeight +
           MediaQuery.paddingOf(context).top,
       triggerMode: RefreshIndicatorTriggerMode.onEdge,
@@ -1204,12 +1256,16 @@ class HabitsTabPageState extends State<HabitsTabPage>
     // Bar content height without the bottom safe-area inset; Scaffold
     // already clears the inset for the FAB.
     required double bottomNavHeight,
+    required HabitDisplayContextualChrome contextualChrome,
   }) {
     final fab = _FAB(
       onPressed: _onFABPressed,
       onClosed: _onCreateNewHabitPageClosed,
       editModeOnPressed: _onFABPressed,
     );
+    if (contextualChrome.hideFloatingActionButton) {
+      return const SizedBox.shrink();
+    }
     return AnimatedPadding(
       duration: _bottomNavAnimationDuration,
       curve: Curves.easeOut,
@@ -1226,6 +1282,17 @@ class HabitsTabPageState extends State<HabitsTabPage>
       ),
     );
   }
+
+  Widget buildSelectionBottomToolbar() => HabitCupertinoSelectBottomToolbar(
+    onExport: _onAppbarExportAllActionPressed,
+    onUnarchive: _onAppbarUnArchiveActionPressed,
+    onArchive: _onAppbarArchiveActionPressed,
+    onDelete: _onAppbarDeleteActionPressed,
+    onGroupModify: _openHabitGroupModifyDialog,
+    onStatusModify: _onHabitStatusModifyPressed,
+    onEdit: _onAppbarEditActionPressed,
+    onClone: _onAppbarCloneActionPressed,
+  );
 
   void handlePageDismiss() {
     if (!(mounted && _vm.mounted)) return;

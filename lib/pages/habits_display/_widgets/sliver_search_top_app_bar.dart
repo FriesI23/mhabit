@@ -11,12 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
+import 'package:flutter/cupertino.dart' show CupertinoButton, CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
+import '../../../extensions/adaptive_style_extensions.dart';
 import '../../../extensions/iterable_extensions.dart';
 import '../../../extensions/window_size_extensions.dart';
 import '../../../l10n/localizations.dart';
@@ -26,20 +27,34 @@ import '../styles.dart';
 import 'search_filter.dart';
 
 class SliverSearchTopAppBar extends StatefulWidget {
+  final AdaptiveStyle style;
   final MenuController? searchFilterMenuController;
   final VoidCallback? onInfoButtonPressed;
   final VoidCallback? onMenuButtonPressed;
+  final VoidCallback? onSelectButtonPressed;
   final Widget? cupertinoBottom;
   final double cupertinoBottomExtent;
 
-  const SliverSearchTopAppBar({
+  const SliverSearchTopAppBar.material({
     super.key,
     this.searchFilterMenuController,
     this.onInfoButtonPressed,
     this.onMenuButtonPressed,
+    this.onSelectButtonPressed,
+  }) : style = AdaptiveStyle.material,
+       cupertinoBottom = null,
+       cupertinoBottomExtent = 0.0;
+
+  const SliverSearchTopAppBar.apple({
+    super.key,
+    this.searchFilterMenuController,
+    this.onInfoButtonPressed,
+    this.onMenuButtonPressed,
+    this.onSelectButtonPressed,
     this.cupertinoBottom,
     this.cupertinoBottomExtent = 0.0,
-  }) : assert(cupertinoBottom != null || cupertinoBottomExtent == 0.0);
+  }) : style = AdaptiveStyle.apple,
+       assert(cupertinoBottom != null || cupertinoBottomExtent == 0.0);
 
   @override
   State<SliverSearchTopAppBar> createState() => _SliverSearchTopAppBarState();
@@ -116,15 +131,6 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
 
   bool get _isViewModelMounted => mounted && _vm.mounted;
 
-  void _activateSearch() {
-    if (!_isViewModelMounted) return;
-    if (context.adaptiveStyle == AdaptiveStyle.material) {
-      _vm.enterSearchMode();
-      if (!_isViewModelMounted || !_vm.isInSearchMode) return;
-      if (!_focusNode.hasFocus) _focusNode.requestFocus();
-    }
-  }
-
   void _dismissSearch() {
     if (!_isViewModelMounted) return;
     _vm.exitSearchMode();
@@ -195,6 +201,7 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
 
   List<CupertinoSliverSearchBarAction> _buildCupertinoSearchFilterActions(
     L10n? l10n,
+    bool overflowOnly,
   ) {
     final options = _vm.searchOptions;
     Widget selectionIcon(
@@ -218,6 +225,7 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
         id: 'habit-filter',
         label: l10n?.habitDisplay_searchFilter_tooltips ?? 'Show Filters',
         retentionPriority: -100,
+        overflowOnly: overflowOnly,
         icon: Icon(
           options.isFilterEmpty
               ? CupertinoIcons.line_horizontal_3_decrease_circle
@@ -308,52 +316,116 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => switch (widget.style) {
+    AdaptiveStyle.material => _buildMaterial(context),
+    AdaptiveStyle.apple => _buildApple(context),
+  };
+}
+
+extension _MaterialSliverSearchTopAppBarStateExtension
+    on _SliverSearchTopAppBarState {
+  void _onMaterialSearchActivated() {
+    if (!_isViewModelMounted) return;
+    _vm.enterSearchMode();
+    if (!_isViewModelMounted || !_vm.isInSearchMode) return;
+    if (!_focusNode.hasFocus) _focusNode.requestFocus();
+  }
+
+  Widget _buildMaterial(BuildContext context) {
     final l10n = L10n.of(context);
-    final infoButton = AdaptiveIconButton(
+    final infoButton = AdaptiveIconButton.material(
       onPressed: widget.onInfoButtonPressed,
       icon: const Icon(Icons.article_outlined),
     );
-    final menuButton = AdaptiveIconButton(
+    final menuButton = AdaptiveIconButton.material(
       onPressed: widget.onMenuButtonPressed,
       icon: const Icon(Icons.settings_outlined),
       tooltip: l10n?.habitDisplay_settingButton_tooltip,
     );
-    final settingsLabel =
-        l10n?.habitDisplay_settingButton_tooltip ?? 'Settings';
-    const statisticsLabel = 'Statistics';
-    return AdaptiveSliverSearchBar(
+    return AdaptiveSliverSearchBar.material(
       title: Text(l10n?.appName ?? appName),
       actions: [infoButton, menuButton],
       searchTrailing: _buildSearchFilter(),
-      cupertinoActions: [
-        CupertinoSliverSearchBarAction(
-          id: 'habit-statistics',
-          label: statisticsLabel,
-          icon: const Icon(Icons.article_outlined),
-          onPressed: widget.onInfoButtonPressed ?? () {},
-          isEnabled: widget.onInfoButtonPressed != null,
-          primaryBuilder: (_) => AdaptiveIconButton.apple(
-            onPressed: widget.onInfoButtonPressed,
-            icon: const Icon(Icons.article_outlined),
+      controller: _controller.value,
+      focusNode: _focusNode,
+      isSearchActive: _vm.isInSearchMode,
+      keyword: _vm.searchOptions.keyword,
+      hintText: l10n?.habitDisplay_searchBar_hintText,
+      onChanged: _onChanged,
+      onSubmitted: _onSubmitted,
+      onSearchActivated: _onMaterialSearchActivated,
+      onSearchDismissed: _dismissSearch,
+      onTapOutside: _onTapOutside,
+      materialStyle: const MaterialSliverSearchBarStyle(
+        toolbarHeight: AppAdaptiveStyle.materialToolbarHeight,
+        scrolledUnderElevation: kCommonEvalation,
+        shadowColor: Colors.transparent,
+      ),
+    );
+  }
+}
+
+extension _AppleSliverSearchTopAppBarStateExtension
+    on _SliverSearchTopAppBarState {
+  void _onAppleSearchActivated() {}
+
+  Widget _buildApple(BuildContext context) {
+    final l10n = L10n.of(context);
+    final settingsLabel =
+        l10n?.habitDisplay_settingButton_tooltip ?? 'Settings';
+    final selectLabel = l10n?.habitDisplay_selectButton_label ?? 'Select';
+    final compact = WindowSize.of(context).width == WindowSizeClass.compact;
+    const statisticsLabel = 'Statistics';
+    final cupertinoActions = [
+      CupertinoSliverSearchBarAction(
+        id: 'habit-select',
+        label: selectLabel,
+        icon: const Icon(CupertinoIcons.checkmark_alt_circle),
+        onPressed: widget.onSelectButtonPressed ?? () {},
+        isEnabled: widget.onSelectButtonPressed != null,
+        overflowOnly: compact,
+        retentionPriority: 100,
+        primaryBuilder: (_) => CupertinoButton(
+          key: const ValueKey('habit-select-primary'),
+          padding: EdgeInsets.zero,
+          minimumSize: const Size(44, 44),
+          onPressed: widget.onSelectButtonPressed,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(selectLabel, maxLines: 1, softWrap: false),
           ),
         ),
-        CupertinoSliverSearchBarAction(
-          id: 'habit-settings',
-          label: settingsLabel,
+      ),
+      CupertinoSliverSearchBarAction(
+        id: 'habit-statistics',
+        label: statisticsLabel,
+        icon: const Icon(Icons.article_outlined),
+        onPressed: widget.onInfoButtonPressed ?? () {},
+        isEnabled: widget.onInfoButtonPressed != null,
+        primaryBuilder: (_) => AdaptiveIconButton.apple(
+          onPressed: widget.onInfoButtonPressed,
+          icon: const Icon(Icons.article_outlined),
+        ),
+      ),
+      CupertinoSliverSearchBarAction(
+        id: 'habit-settings',
+        label: settingsLabel,
+        tooltip: settingsLabel,
+        icon: const Icon(Icons.settings_outlined),
+        onPressed: widget.onMenuButtonPressed ?? () {},
+        isEnabled: widget.onMenuButtonPressed != null,
+        retentionPriority: 50,
+        primaryBuilder: (_) => AdaptiveIconButton.apple(
+          onPressed: widget.onMenuButtonPressed,
           tooltip: settingsLabel,
           icon: const Icon(Icons.settings_outlined),
-          onPressed: widget.onMenuButtonPressed ?? () {},
-          isEnabled: widget.onMenuButtonPressed != null,
-          retentionPriority: 50,
-          primaryBuilder: (_) => AdaptiveIconButton.apple(
-            onPressed: widget.onMenuButtonPressed,
-            tooltip: settingsLabel,
-            icon: const Icon(Icons.settings_outlined),
-          ),
         ),
-        ..._buildCupertinoSearchFilterActions(l10n),
-      ],
+      ),
+      ..._buildCupertinoSearchFilterActions(l10n, compact),
+    ];
+    return AdaptiveSliverSearchBar.apple(
+      title: Text(l10n?.appName ?? appName),
+      cupertinoActions: cupertinoActions,
       cupertinoBottom: widget.cupertinoBottom,
       cupertinoBottomExtent: widget.cupertinoBottomExtent,
       controller: _controller.value,
@@ -363,14 +435,9 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
       hintText: l10n?.habitDisplay_searchBar_hintText,
       onChanged: _onChanged,
       onSubmitted: _onSubmitted,
-      onSearchActivated: _activateSearch,
+      onSearchActivated: _onAppleSearchActivated,
       onSearchDismissed: _dismissSearch,
       onTapOutside: _onTapOutside,
-      materialStyle: const MaterialSliverSearchBarStyle(
-        toolbarHeight: kAppToolbarHeight,
-        scrolledUnderElevation: kCommonEvalation,
-        shadowColor: Colors.transparent,
-      ),
     );
   }
 }

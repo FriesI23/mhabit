@@ -352,6 +352,17 @@ class L10nRu extends L10n {
   String get habitDisplay_editPopMenu_selectAll => 'Выбрать всё';
 
   @override
+  String get habitDisplay_selectButton_label => 'Выбрать';
+
+  @override
+  String get habitDisplay_doneButton_label => 'Готово';
+
+  @override
+  String habitDisplay_selectedHabits_title(int count) {
+    return 'Selected $count';
+  }
+
+  @override
   String get habitDisplay_editPopMenu_export => 'Экспорт';
 
   @override

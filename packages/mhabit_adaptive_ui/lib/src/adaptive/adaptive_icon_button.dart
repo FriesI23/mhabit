@@ -39,7 +39,7 @@ class AdaptiveIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      switch (style ?? context.adaptiveStyle) {
+      switch (style ?? AdaptiveStyle.of(context)) {
         AdaptiveStyle.material => IconButton(
           icon: icon,
           tooltip: tooltip,

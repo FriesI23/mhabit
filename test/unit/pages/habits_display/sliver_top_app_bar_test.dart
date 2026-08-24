@@ -14,6 +14,7 @@
 
 import 'package:flutter/cupertino.dart'
     show
+        CupertinoButton,
         CupertinoIcons,
         CupertinoMenuDivider,
         CupertinoMenuItem,
@@ -23,11 +24,14 @@ import 'package:flutter/cupertino.dart'
         CupertinoSliverNavigationBar;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mhabit/common/consts.dart';
+import 'package:mhabit/extensions/adaptive_style_extensions.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/habit_form.dart';
+import 'package:mhabit/models/habit_stat.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/widgets.dart';
+import 'package:mhabit/providers/app_ui/app_experimental_feature.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 Widget _searchBarHost(
@@ -35,25 +39,31 @@ Widget _searchBarHost(
   TargetPlatform platform = TargetPlatform.android,
   VoidCallback? onInfoButtonPressed,
   VoidCallback? onMenuButtonPressed,
-}) => ChangeNotifierProvider.value(
-  value: vm,
-  child: MaterialApp(
-    theme: ThemeData(platform: platform),
-    restorationScopeId: 'app',
-    localizationsDelegates: L10n.localizationsDelegates,
-    supportedLocales: L10n.supportedLocales,
-    home: Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverSearchTopAppBar(
-            onInfoButtonPressed: onInfoButtonPressed,
-            onMenuButtonPressed: onMenuButtonPressed,
-          ),
-        ],
-      ),
+  VoidCallback? onSelectButtonPressed,
+}) {
+  final searchBar = switch (platform) {
+    TargetPlatform.iOS || TargetPlatform.macOS => SliverSearchTopAppBar.apple(
+      onInfoButtonPressed: onInfoButtonPressed,
+      onMenuButtonPressed: onMenuButtonPressed,
+      onSelectButtonPressed: onSelectButtonPressed,
     ),
-  ),
-);
+    _ => SliverSearchTopAppBar.material(
+      onInfoButtonPressed: onInfoButtonPressed,
+      onMenuButtonPressed: onMenuButtonPressed,
+      onSelectButtonPressed: onSelectButtonPressed,
+    ),
+  };
+  return ChangeNotifierProvider.value(
+    value: vm,
+    child: MaterialApp(
+      theme: ThemeData(platform: platform),
+      restorationScopeId: 'app',
+      localizationsDelegates: L10n.localizationsDelegates,
+      supportedLocales: L10n.supportedLocales,
+      home: Scaffold(body: CustomScrollView(slivers: [searchBar])),
+    ),
+  );
+}
 
 Widget _viewBarHost() => const MaterialApp(
   localizationsDelegates: L10n.localizationsDelegates,
@@ -66,6 +76,15 @@ final class _TestHabitSummaryViewModel extends HabitSummaryViewModel {
   Future<void> resortData({bool listen = true}) async {
     if (listen) notifyListeners();
   }
+}
+
+final class _SelectionHabitSummaryViewModel extends HabitSummaryViewModel {
+  _SelectionHabitSummaryViewModel(this.stat);
+
+  final HabitSummarySelectedStatistic stat;
+
+  @override
+  HabitSummarySelectedStatistic get selectStatistic => stat;
 }
 
 void main() {
@@ -87,6 +106,235 @@ void main() {
     expect(find.byType(CupertinoSliverNavigationBar), findsNothing);
   });
 
+  testWidgets('Material selection renderer builds the Material branch', (
+    tester,
+  ) async {
+    void onEdit() {}
+    void onSelectAll() {}
+    void onExport(BuildContext context) {}
+
+    final vm = _SelectionHabitSummaryViewModel(
+      HabitSummarySelectedStatistic(activated: 1),
+    );
+    final experimental = AppExperimentalFeatureViewModel();
+    addTearDown(vm.dispose);
+    addTearDown(experimental.dispose);
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<HabitSummaryViewModel>.value(value: vm),
+          ChangeNotifierProvider<AppExperimentalFeatureViewModel>.value(
+            value: experimental,
+          ),
+        ],
+        child: MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.android),
+          home: CustomScrollView(
+            slivers: [
+              MaterialSliverSelectAppBar(
+                onEdit: onEdit,
+                onSelectAll: onSelectAll,
+                onExport: onExport,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(SliverAppBar), findsOneWidget);
+    expect(find.byType(CupertinoSliverSelectAppBar), findsNothing);
+    final action = tester.widget<SliverEditTopAppBarAction>(
+      find.byType(SliverEditTopAppBarAction),
+    );
+    expect(action.onEdit, same(onEdit));
+    expect(action.onSelectAll, same(onSelectAll));
+    expect(action.onExportAll, same(onExport));
+  });
+
+  testWidgets('Apple selection renderer fixes Select All and Done', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final vm = _SelectionHabitSummaryViewModel(
+      HabitSummarySelectedStatistic(activated: 1, archived: 1),
+    );
+    final experimental = AppExperimentalFeatureViewModel();
+    BuildContext? exportContext;
+    addTearDown(vm.dispose);
+    addTearDown(experimental.dispose);
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<HabitSummaryViewModel>.value(value: vm),
+          ChangeNotifierProvider<AppExperimentalFeatureViewModel>.value(
+            value: experimental,
+          ),
+        ],
+        child: MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          localizationsDelegates: L10n.localizationsDelegates,
+          supportedLocales: L10n.supportedLocales,
+          home: CustomScrollView(
+            slivers: [
+              AppleSliverSelectAppBar(
+                onDone: () {},
+                onSelectAll: () {},
+                onExport: (context) => exportContext = context,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(CupertinoSliverSelectAppBar), findsOneWidget);
+    expect(find.text('Selected 2'), findsOneWidget);
+    expect(find.text('Select All'), findsOneWidget);
+    expect(find.byKey(const ValueKey('cupertino-select-done')), findsOneWidget);
+    final appBar = tester.widget<CupertinoSliverSelectAppBar>(
+      find.byType(CupertinoSliverSelectAppBar),
+    );
+    appBar.actions
+        .firstWhere((action) => action.id == 'habit-export')
+        .onPressed!();
+    expect(exportContext, isNotNull);
+    expect(exportContext!.mounted, isTrue);
+  });
+
+  test('Apple selection descriptors keep order and state semantics', () {
+    final actions = buildAppleSelectActions(
+      l10n: null,
+      stat: HabitSummarySelectedStatistic(activated: 1, archived: 1),
+      grouping: true,
+      hasSelection: true,
+      onExport: () {},
+      onUnarchive: () {},
+      onArchive: () {},
+      onDelete: () {},
+      onGroupModify: () {},
+      onStatusModify: () {},
+      onEdit: () {},
+      onClone: () {},
+    );
+
+    expect(actions.map((action) => action.id), [
+      'habit-edit',
+      'habit-export',
+      'habit-unarchive',
+      'habit-archive',
+      'habit-delete',
+      'habit-group-modify',
+      'habit-status-modify',
+      'habit-clone',
+    ]);
+    expect(actions.every((action) => action.enabled), isTrue);
+    expect(
+      actions
+          .where((action) => action.overflowBelowLarge)
+          .map((action) => action.id),
+      ['habit-group-modify', 'habit-clone'],
+    );
+    final status = actions.firstWhere(
+      (action) => action.id == 'habit-status-modify',
+    );
+    expect(status.retentionPriority, 1000);
+    expect(status.presentation, CupertinoSelectActionPresentation.iconAndLabel);
+    expect(
+      actions
+          .where(
+            (action) =>
+                action.presentation ==
+                CupertinoSelectActionPresentation.iconOnly,
+          )
+          .map((action) => action.id),
+      [
+        'habit-edit',
+        'habit-export',
+        'habit-unarchive',
+        'habit-archive',
+        'habit-delete',
+      ],
+    );
+
+    final empty = buildAppleSelectActions(
+      l10n: null,
+      stat: HabitSummarySelectedStatistic(),
+      grouping: true,
+      hasSelection: false,
+    );
+    expect(
+      empty
+          .where((action) => action.visible)
+          .every((action) => !action.enabled),
+      isTrue,
+    );
+    expect(
+      empty.firstWhere((action) => action.id == 'habit-edit').visible,
+      isFalse,
+    );
+    expect(
+      empty.firstWhere((action) => action.id == 'habit-clone').visible,
+      isFalse,
+    );
+  });
+
+  testWidgets('Apple Search Select enters edit mode without preselection', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final vm = _TestHabitSummaryViewModel();
+    addTearDown(vm.dispose);
+
+    await tester.pumpWidget(
+      _searchBarHost(
+        vm,
+        platform: TargetPlatform.iOS,
+        onSelectButtonPressed: vm.switchToEditMode,
+      ),
+    );
+
+    expect(find.widgetWithText(CupertinoButton, 'Select'), findsOneWidget);
+    final selectLabel = tester.widget<Text>(find.text('Select'));
+    expect(selectLabel.maxLines, 1);
+    expect(selectLabel.softWrap, isFalse);
+    await tester.tap(find.widgetWithText(CupertinoButton, 'Select'));
+    await tester.pump();
+    expect(vm.isInEditMode, isTrue);
+    expect(vm.selectedHabitsCount, 0);
+  });
+
+  testWidgets('Apple view app bar exposes Select without Search', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    var selected = false;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(platform: TargetPlatform.iOS),
+        localizationsDelegates: L10n.localizationsDelegates,
+        supportedLocales: L10n.supportedLocales,
+        home: CustomScrollView(
+          slivers: [AppleSliverViewTopAppBar(onSelect: () => selected = true)],
+        ),
+      ),
+    );
+
+    final select = find.widgetWithText(CupertinoButton, 'Select');
+    expect(select, findsOneWidget);
+    await tester.tap(select);
+    expect(selected, isTrue);
+  });
+
   testWidgets('search and view app bars share the app toolbar extent', (
     tester,
   ) async {
@@ -98,7 +346,7 @@ void main() {
 
     await tester.pumpWidget(_searchBarHost(vm));
     var appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
-    expect(appBar.toolbarHeight, kAppToolbarHeight);
+    expect(appBar.toolbarHeight, AppAdaptiveStyle.materialToolbarHeight);
     expect(appBar.pinned, isTrue);
     expect(appBar.primary, isTrue);
     expect(find.byType(SearchBar), findsNothing);
@@ -106,7 +354,7 @@ void main() {
 
     await tester.pumpWidget(_viewBarHost());
     appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
-    expect(appBar.toolbarHeight, kAppToolbarHeight);
+    expect(appBar.toolbarHeight, AppAdaptiveStyle.materialToolbarHeight);
   });
 
   testWidgets('search adapter synchronizes input and external VM exit', (
@@ -335,6 +583,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(SearchFilterBottomSheet), findsNothing);
     expect(find.byType(CupertinoPopupSurface), findsOneWidget);
+    expect(find.text('Select'), findsOneWidget);
     expect(find.text('Show Filters'), findsOneWidget);
     expect(find.text('By Status'), findsNothing);
     expect(find.text('Habit Type'), findsNothing);

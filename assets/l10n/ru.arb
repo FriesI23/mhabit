@@ -225,6 +225,14 @@
         }
     },
     "habitDisplay_editPopMenu_selectAll": "Выбрать всё",
+    "habitDisplay_selectButton_label": "Выбрать",
+    "@habitDisplay_selectButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Select\" system action."
+    },
+    "habitDisplay_doneButton_label": "Готово",
+    "@habitDisplay_doneButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Done\" system bar button item."
+    },
     "habitDisplay_editPopMenu_export": "Экспорт",
     "habitDisplay_editPopMenu_delete": "Удалить",
     "habitDisplay_editPopMenu_clone": "Шаблон",

@@ -235,6 +235,14 @@
     },
     "habitDisplay_exportAllHabitsSuccSnackbarText": "Hábitos exportados",
     "habitDisplay_editPopMenu_selectAll": "Seleccionar todo",
+    "habitDisplay_selectButton_label": "Seleccionar",
+    "@habitDisplay_selectButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Select\" system action."
+    },
+    "habitDisplay_doneButton_label": "OK",
+    "@habitDisplay_doneButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Done\" system bar button item."
+    },
     "habitDisplay_editPopMenu_export": "Exportar",
     "habitDisplay_editPopMenu_delete": "Borrar",
     "habitDisplay_editPopMenu_clone": "Plantilla",

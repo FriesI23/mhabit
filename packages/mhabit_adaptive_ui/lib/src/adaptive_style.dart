@@ -7,7 +7,14 @@ import 'package:flutter/material.dart';
 /// [AdaptiveStyle.apple] is resolved for iOS and macOS; everything else
 /// resolves to [AdaptiveStyle.material]. Adaptive components fall back to
 /// material when they do not provide an Apple-specific implementation.
-enum AdaptiveStyle { material, apple }
+enum AdaptiveStyle {
+  material,
+  apple;
+
+  /// Resolves the adaptive style for [context].
+  static AdaptiveStyle of(BuildContext context) =>
+      resolveAdaptiveStyle(context);
+}
 
 /// Overrides the platform-derived adaptive style for this subtree.
 ///
@@ -40,9 +47,3 @@ AdaptiveStyle resolveAdaptiveStyle(BuildContext context) =>
       TargetPlatform.iOS || TargetPlatform.macOS => AdaptiveStyle.apple,
       _ => AdaptiveStyle.material,
     };
-
-/// Convenience accessors for adaptive components built from [BuildContext].
-extension AdaptiveStyleContext on BuildContext {
-  /// The adaptive style resolved for this context.
-  AdaptiveStyle get adaptiveStyle => resolveAdaptiveStyle(this);
-}

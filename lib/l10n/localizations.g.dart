@@ -650,6 +650,24 @@ abstract class L10n {
   /// **'Select All'**
   String get habitDisplay_editPopMenu_selectAll;
 
+  /// Mirrors Apple's localized UIKitCore Localizable.strings "Select" system action.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get habitDisplay_selectButton_label;
+
+  /// Mirrors Apple's localized UIKitCore Localizable.strings "Done" system bar button item.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get habitDisplay_doneButton_label;
+
+  /// Apple selection AppBar title showing the number of selected habits
+  ///
+  /// In en, this message translates to:
+  /// **'Selected {count}'**
+  String habitDisplay_selectedHabits_title(int count);
+
   /// No description provided for @habitDisplay_editPopMenu_export.
   ///
   /// In en, this message translates to:

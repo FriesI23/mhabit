@@ -83,6 +83,7 @@ class AppBarMaterialStyle {
 /// fields fall back to the Cupertino defaults.
 class AppBarAppleStyle {
   const AppBarAppleStyle({
+    this.collapsible = false,
     this.enableBackgroundFilterBlur = true,
     this.border,
     this.backgroundColor,
@@ -90,6 +91,7 @@ class AppBarAppleStyle {
     this.stretch = false,
   });
 
+  final bool collapsible;
   final bool enableBackgroundFilterBlur;
   final Border? border;
   final Color? backgroundColor;
@@ -97,12 +99,14 @@ class AppBarAppleStyle {
   final bool stretch;
 
   AppBarAppleStyle copyWith({
+    bool? collapsible,
     bool? enableBackgroundFilterBlur,
     Border? border,
     Color? backgroundColor,
     EdgeInsetsDirectional? padding,
     bool? stretch,
   }) => AppBarAppleStyle(
+    collapsible: collapsible ?? this.collapsible,
     enableBackgroundFilterBlur:
         enableBackgroundFilterBlur ?? this.enableBackgroundFilterBlur,
     border: border ?? this.border,
@@ -114,6 +118,7 @@ class AppBarAppleStyle {
   @override
   bool operator ==(Object other) =>
       other is AppBarAppleStyle &&
+      other.collapsible == collapsible &&
       other.enableBackgroundFilterBlur == enableBackgroundFilterBlur &&
       other.border == border &&
       other.backgroundColor == backgroundColor &&
@@ -122,6 +127,7 @@ class AppBarAppleStyle {
 
   @override
   int get hashCode => Object.hash(
+    collapsible,
     enableBackgroundFilterBlur,
     border,
     backgroundColor,
@@ -170,8 +176,9 @@ class AppBarStyles {
 ///
 /// Shared parameters live at the top level; style-divergent knobs live in
 /// [AppBarStyles]. Material resolves [height] as [SliverAppBar.toolbarHeight].
-/// Apple uses a fixed, centered toolbar when [height] is provided; otherwise
-/// it keeps the native collapsing navigation bar behavior.
+/// Apple uses a fixed, centered toolbar when [height] is provided unless
+/// [AppBarAppleStyle.collapsible] requests the native collapsing navigation
+/// bar behavior.
 class AdaptiveSliverAppBar extends StatelessWidget {
   const AdaptiveSliverAppBar({
     super.key,
@@ -213,7 +220,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effective = style ?? context.adaptiveStyle;
+    final effective = style ?? AdaptiveStyle.of(context);
     return switch (effective) {
       AdaptiveStyle.material => _buildMaterial(
         styles?.material ?? const AppBarMaterialStyle(),
@@ -254,7 +261,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     actions: actions,
     leading: leading,
     onLeadingPressed: onLeadingPressed,
-    height: height,
+    height: config.collapsible ? null : height,
     enableBackgroundFilterBlur: config.enableBackgroundFilterBlur,
     border: config.border,
     backgroundColor: config.backgroundColor,

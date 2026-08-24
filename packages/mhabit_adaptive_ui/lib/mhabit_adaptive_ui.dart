@@ -16,6 +16,7 @@ export 'src/breakpoints/breakpoints.dart';
 export 'src/breakpoints/device_context.dart';
 export 'src/breakpoints/window_size_class.dart';
 export 'src/cupertino/cupertino_sliver_search_bar.dart';
+export 'src/cupertino/cupertino_sliver_select_app_bar.dart';
 export 'src/material/material_expandable_search_bar.dart';
 export 'src/material/material_sliver_search_bar.dart';
 export 'src/shell/adaptive_branch_route_observer.dart';

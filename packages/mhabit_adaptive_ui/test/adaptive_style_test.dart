@@ -16,7 +16,7 @@ Widget _styleLabel({
         child ??
         Builder(
           builder: (context) => Text(
-            context.adaptiveStyle.name,
+            AdaptiveStyle.of(context).name,
             textDirection: TextDirection.ltr,
           ),
         ),
@@ -68,7 +68,7 @@ void main() {
             builder: (context, value, child) => AdaptiveStyleScope(
               override: value,
               child: Builder(
-                builder: (context) => Text(context.adaptiveStyle.name),
+                builder: (context) => Text(AdaptiveStyle.of(context).name),
               ),
             ),
           ),

@@ -351,6 +351,17 @@ class L10nUk extends L10n {
   String get habitDisplay_editPopMenu_selectAll => 'Виберіть усі';
 
   @override
+  String get habitDisplay_selectButton_label => 'Вибрати';
+
+  @override
+  String get habitDisplay_doneButton_label => 'Готово';
+
+  @override
+  String habitDisplay_selectedHabits_title(int count) {
+    return 'Selected $count';
+  }
+
+  @override
   String get habitDisplay_editPopMenu_export => 'Експорт';
 
   @override

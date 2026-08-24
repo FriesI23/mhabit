@@ -99,10 +99,14 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
   final AdaptiveScrollWishController _scrollWish =
       AdaptiveScrollWishController();
 
+  final AdaptiveContextualChromeController _contextualChrome =
+      AdaptiveContextualChromeController();
+
   @override
   void initState() {
     super.initState();
     _scrollWish.addListener(_recomputeVisibility);
+    _contextualChrome.addListener(_recomputeVisibility);
     _recomputeVisibility();
   }
 
@@ -129,26 +133,33 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
     }
     if (oldWidget.selectedIndex == widget.selectedIndex) return;
     _scrollWish.reset();
+    _contextualChrome.reset();
     _recomputeVisibility();
   }
 
   @override
   void dispose() {
     _scrollWish.removeListener(_recomputeVisibility);
+    _contextualChrome.removeListener(_recomputeVisibility);
     _scrollWish.dispose();
+    _contextualChrome.dispose();
     _navVisibility.dispose();
     super.dispose();
   }
 
   void _recomputeVisibility() {
     if (!mounted || _form != _ShellForm.bar) return;
-    final visible = widget.compactRouteVisible && _scrollWish.value;
+    final visible =
+        widget.compactRouteVisible &&
+        _scrollWish.value &&
+        !_contextualChrome.value;
     if (_navVisibility.value == visible) return;
     visible ? _navVisibility.show() : _navVisibility.hide();
   }
 
   void _onDestinationSelected(int index) {
     _scrollWish.reset();
+    _contextualChrome.reset();
     widget.onDestinationSelected(index);
   }
 
@@ -188,6 +199,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
     return AdaptiveNavScope(
       visible: compact ? _navVisibility : null,
       scrollWish: compact ? _scrollWish : null,
+      contextualChrome: _contextualChrome,
       barHeight: compact ? barHeight : 0,
       navHeight: compact ? navHeight : 0,
       child: Scaffold(
@@ -215,9 +227,15 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
           switchInCurve: Curves.easeOut,
           switchOutCurve: Curves.easeOut,
           child: compact
-              ? _CompactNavigationBar(
+              ? ValueListenableBuilder<bool>(
                   key: const ValueKey('bottom-bar'),
-                  visibility: _navVisibility,
+                  valueListenable: _contextualChrome,
+                  builder: (context, suppressed, child) => suppressed
+                      ? const SizedBox.shrink()
+                      : _CompactNavigationBar(
+                          visibility: _navVisibility,
+                          child: child!,
+                        ),
                   child: naviBarBody,
                 )
               : const SizedBox.shrink(key: ValueKey('bottom-bar-hidden')),
@@ -284,11 +302,7 @@ class _NavigationShellBody extends StatelessWidget {
 
 /// Compact navigation chrome animated according to [visibility].
 class _CompactNavigationBar extends StatelessWidget {
-  const _CompactNavigationBar({
-    super.key,
-    required this.visibility,
-    required this.child,
-  });
+  const _CompactNavigationBar({required this.visibility, required this.child});
 
   final ValueListenable<bool> visibility;
   final Widget child;

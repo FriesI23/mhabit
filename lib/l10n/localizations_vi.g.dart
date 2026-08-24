@@ -352,6 +352,17 @@ class L10nVi extends L10n {
   String get habitDisplay_editPopMenu_selectAll => 'Chọn tất cả';
 
   @override
+  String get habitDisplay_selectButton_label => 'Chọn';
+
+  @override
+  String get habitDisplay_doneButton_label => 'Xong';
+
+  @override
+  String habitDisplay_selectedHabits_title(int count) {
+    return 'Selected $count';
+  }
+
+  @override
   String get habitDisplay_editPopMenu_export => 'Xuất';
 
   @override

@@ -13,12 +13,18 @@
 // limitations under the License.
 
 import 'package:flutter/cupertino.dart'
-    show CupertinoButton, CupertinoNavigationBar;
+    show
+        CupertinoButton,
+        CupertinoMenuItem,
+        CupertinoNavigationBar,
+        CupertinoPopupSurface,
+        CupertinoSliverNavigationBar;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mhabit/common/consts.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mhabit/common/types.dart';
+import 'package:mhabit/extensions/adaptive_style_extensions.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
@@ -50,11 +56,14 @@ import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/app_sync.dart';
 import 'package:mhabit/providers/workflow/group_manager.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
+import 'package:mhabit/routes/app_router.dart';
+import 'package:mhabit/routes/helpers/habits_status_changer_helper.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sliver_tools/sliver_tools.dart' show SliverAnimatedSwitcher;
 
 import '../../support/stub/app_sync.dart';
 import '../../support/stub/habits_display_access.dart';
@@ -189,7 +198,9 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
   required AppSyncWorkflowAccess sync,
   bool useCompactUi = false,
   bool useBranchPage = false,
+  bool useAdaptiveShell = false,
   TargetPlatform platform = TargetPlatform.android,
+  Widget Function(Widget home)? appBuilder,
 }) async {
   final customDate = AppCustomDateYmdHmsConfigViewModel()
     ..updateProfile(profile);
@@ -229,11 +240,32 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
     customDate.dispose();
   });
 
-  final home = useBranchPage
+  final home = useAdaptiveShell
+      ? AdaptiveNavigationShell(
+          selectedIndex: 0,
+          destinations: const [
+            NavigationDestination(icon: Icon(Icons.list), label: 'Habits'),
+            NavigationDestination(
+              icon: Icon(Icons.calendar_today),
+              label: 'Today',
+            ),
+          ],
+          onDestinationSelected: (_) {},
+          child: const HabitsPage(),
+        )
+      : useBranchPage
       ? const AdaptiveNavScope(barHeight: 0, navHeight: 0, child: HabitsPage())
       : const Scaffold(
           body: HabitsTabPage(onBottomNavVisibilityChanged: _ignoreBool),
         );
+  final app =
+      appBuilder?.call(home) ??
+      MaterialApp(
+        theme: ThemeData(platform: platform),
+        localizationsDelegates: L10n.localizationsDelegates,
+        supportedLocales: L10n.supportedLocales,
+        home: home,
+      );
   await tester.pumpWidget(
     MultiProvider(
       providers: [
@@ -267,17 +299,10 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
         ListenableProvider<AppSyncStatusSource>.value(value: sync),
         ListenableProvider<AppSyncWorkflowAccess>.value(value: sync),
       ],
-      child: ChangelogBanner(
-        child: MaterialApp(
-          theme: ThemeData(platform: platform),
-          localizationsDelegates: L10n.localizationsDelegates,
-          supportedLocales: L10n.supportedLocales,
-          home: home,
-        ),
-      ),
+      child: ChangelogBanner(child: app),
     ),
   );
-  if (!useBranchPage) return vm;
+  if (!(useBranchPage || useAdaptiveShell)) return vm;
   return tester
       .element(find.byType(HabitsTabPage))
       .read<HabitSummaryViewModel>();
@@ -334,9 +359,12 @@ void main() {
     });
   });
 
-  testWidgets('Today theme switch uses the adaptive icon button', (
+  testWidgets('Today uses a Cupertino large title and adaptive icon button', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(390, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
     final profile = await _loadProfile();
     final access = _LoadedHabitsDisplayAccess();
     final sync = _FakeAppSyncWorkflowAccess();
@@ -361,11 +389,12 @@ void main() {
       ),
       findsOneWidget,
     );
-    final todayHeader = tester.widget<SliverPersistentHeader>(
-      find.byType(SliverPersistentHeader),
+    final todayBar = tester.widget<CupertinoSliverNavigationBar>(
+      find.byType(CupertinoSliverNavigationBar),
     );
-    expect(todayHeader.delegate.minExtent, kAppToolbarHeight);
-    expect(todayHeader.delegate.maxExtent, kAppToolbarHeight);
+    expect(todayBar.largeTitle, isA<Text>());
+    expect((todayBar.largeTitle! as Text).data, 'Today');
+    expect(todayBar.middle, isNull);
     expect(
       find.descendant(
         of: find.byType(AppThemeSwitchButton),
@@ -586,7 +615,7 @@ void main() {
     );
     expect(
       tester.widget<RefreshIndicator>(find.byType(RefreshIndicator)).edgeOffset,
-      100,
+      AppAdaptiveStyle.materialToolbarHeight + 48,
     );
 
     final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar).last);
@@ -601,7 +630,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
 
-    expect(pinnedTop, 52);
+    expect(pinnedTop, AppAdaptiveStyle.materialToolbarHeight);
     expect(tester.getTopLeft(calendar).dy, 0);
   });
 
@@ -659,6 +688,154 @@ void main() {
     expect(find.byType(PinnedHeaderSliver), findsNothing);
   });
 
+  testWidgets('Apple compact selection swaps FAB for the contextual toolbar', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 800);
+    tester.view.devicePixelRatio = 1;
+    tester.view.viewPadding = const FakeViewPadding(bottom: 24);
+    tester.view.padding = const FakeViewPadding(bottom: 24);
+    addTearDown(tester.view.reset);
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+
+    final vm = await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      useAdaptiveShell: true,
+      platform: TargetPlatform.iOS,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    final appBarSwitcher = tester.widget<SliverAnimatedSwitcher>(
+      find.descendant(
+        of: find.byType(HabitDisplayAppBar),
+        matching: find.byType(SliverAnimatedSwitcher),
+      ),
+    );
+    expect(appBarSwitcher.duration, Duration.zero);
+    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(vm.selectedHabitsCount, 0);
+    await tester.tap(
+      find.byKey(const ValueKey('cupertino-search-overflow-collapsed')),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.tap(find.widgetWithText(CupertinoMenuItem, 'Select'));
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    expect(tester.takeException(), isNull);
+    expect(find.byType(CupertinoPopupSurface), findsNothing);
+    expect(vm.isInEditMode, isTrue);
+    expect(vm.selectedHabitsCount, 0);
+    expect(find.byType(CupertinoSliverSelectAppBar), findsOneWidget);
+    expect(find.byType(CupertinoSelectBottomToolbar), findsOneWidget);
+    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.byType(ScrollingFAB), findsNothing);
+    final placeholder = tester.widget<FixedPagePlaceHolder>(
+      find.byType(FixedPagePlaceHolder).last,
+    );
+    expect(
+      placeholder.minHeight,
+      tester.getSize(find.byType(CupertinoSelectBottomToolbar)).height,
+    );
+    expect(placeholder.fixedButtonNaviHeight, isFalse);
+
+    tester.view.physicalSize = const Size(700, 800);
+    await tester.pump();
+    expect(find.byType(NavigationRail), findsOneWidget);
+    expect(find.byType(NavigationBar), findsNothing);
+
+    tester.view.physicalSize = const Size(390, 800);
+    await tester.pump();
+    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.byType(CupertinoSelectBottomToolbar), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('cupertino-select-done')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(vm.isInEditMode, isFalse);
+    expect(find.byType(CupertinoSelectBottomToolbar), findsNothing);
+    expect(find.byType(ScrollingFAB), findsOneWidget);
+  });
+
+  testWidgets('Apple Status Modify routes the selected habit UUIDs', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess(habitCount: 2);
+    final sync = _FakeAppSyncWorkflowAccess();
+    List<HabitUUID>? routedUuids;
+    late final GoRouter router;
+    addTearDown(() {
+      router.dispose();
+      sync.dispose();
+      profile.dispose();
+    });
+
+    final vm = await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      useBranchPage: true,
+      platform: TargetPlatform.iOS,
+      appBuilder: (home) {
+        router = GoRouter(
+          routes: [
+            GoRoute(path: '/', builder: (_, _) => home),
+            GoRoute(
+              path: '/habits/status',
+              name: AppRoute.habitsStatus.name,
+              builder: (_, state) {
+                routedUuids = state.unpackHabitsStatusChanger().uuidList;
+                return const Scaffold(body: Text('Status route'));
+              },
+            ),
+          ],
+        );
+        return MaterialApp.router(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          localizationsDelegates: L10n.localizationsDelegates,
+          supportedLocales: L10n.supportedLocales,
+          routerConfig: router,
+        );
+      },
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    vm.switchToEditMode();
+    vm.selectHabit(_buildHabitSummaryData(0).uuid, listen: false);
+    vm.selectHabit(_buildHabitSummaryData(1).uuid);
+    await tester.pump();
+    final toolbar = tester.widget<CupertinoSelectBottomToolbar>(
+      find.byType(CupertinoSelectBottomToolbar),
+    );
+    toolbar.actions
+        .firstWhere((action) => action.id == 'habit-status-modify')
+        .onPressed!();
+    await tester.pumpAndSettle();
+
+    expect(routedUuids, [
+      _buildHabitSummaryData(0).uuid,
+      _buildHabitSummaryData(1).uuid,
+    ]);
+  });
+
   testWidgets('calendar uses compact header geometry', (tester) async {
     final profile = await _loadProfile();
     final access = _LoadedHabitsDisplayAccess();
@@ -696,7 +873,7 @@ void main() {
     );
     expect(
       tester.widget<RefreshIndicator>(find.byType(RefreshIndicator)).edgeOffset,
-      96,
+      AppAdaptiveStyle.materialToolbarHeight + 44,
     );
   });
 }

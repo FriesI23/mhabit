@@ -41,7 +41,7 @@ class AdaptiveNavigationRail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effective = style ?? context.adaptiveStyle;
+    final effective = style ?? AdaptiveStyle.of(context);
     return switch (effective) {
       // TODO(adaptive-ui::apple): apple style (HIG sidebar rail).
       AdaptiveStyle.apple || AdaptiveStyle.material => _buildMaterial(),

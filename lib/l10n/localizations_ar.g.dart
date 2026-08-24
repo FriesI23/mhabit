@@ -346,6 +346,17 @@ class L10nAr extends L10n {
   String get habitDisplay_editPopMenu_selectAll => 'اختيار الكل';
 
   @override
+  String get habitDisplay_selectButton_label => 'تحديد';
+
+  @override
+  String get habitDisplay_doneButton_label => 'تم';
+
+  @override
+  String habitDisplay_selectedHabits_title(int count) {
+    return 'Selected $count';
+  }
+
+  @override
   String get habitDisplay_editPopMenu_export => 'تصدير';
 
   @override

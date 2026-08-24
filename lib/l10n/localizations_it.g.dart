@@ -352,6 +352,17 @@ class L10nIt extends L10n {
   String get habitDisplay_editPopMenu_selectAll => 'Seleziona tutto';
 
   @override
+  String get habitDisplay_selectButton_label => 'Seleziona';
+
+  @override
+  String get habitDisplay_doneButton_label => 'Fine';
+
+  @override
+  String habitDisplay_selectedHabits_title(int count) {
+    return 'Selected $count';
+  }
+
+  @override
   String get habitDisplay_editPopMenu_export => 'Esporta';
 
   @override

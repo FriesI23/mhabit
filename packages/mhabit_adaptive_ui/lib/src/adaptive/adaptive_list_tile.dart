@@ -35,7 +35,7 @@ class AdaptiveListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effective = style ?? context.adaptiveStyle;
+    final effective = style ?? AdaptiveStyle.of(context);
     return switch (effective) {
       // TODO(adaptive-ui::apple): apple style (Cupertino separator style, 44pt).
       AdaptiveStyle.apple || AdaptiveStyle.material => _buildMaterial(),

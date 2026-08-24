@@ -5,6 +5,14 @@
         "description": "The human-readable name of the language used for the locale."
     },
     "appName": "🚧(nb_NO) - Table Habit",
+    "habitDisplay_selectButton_label": "Marker",
+    "@habitDisplay_selectButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Select\" system action."
+    },
+    "habitDisplay_doneButton_label": "Ferdig",
+    "@habitDisplay_doneButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Done\" system bar button item."
+    },
     "changelog_banner_title": "What's New in v{version}",
     "@changelog_banner_title": {
         "description": "Title in the MaterialBanner showing the current version changelog on first open after upgrade.",

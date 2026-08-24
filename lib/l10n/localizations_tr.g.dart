@@ -350,6 +350,17 @@ class L10nTr extends L10n {
   String get habitDisplay_editPopMenu_selectAll => 'Hepsini Seç';
 
   @override
+  String get habitDisplay_selectButton_label => 'Seç';
+
+  @override
+  String get habitDisplay_doneButton_label => 'Bitti';
+
+  @override
+  String habitDisplay_selectedHabits_title(int count) {
+    return 'Selected $count';
+  }
+
+  @override
   String get habitDisplay_editPopMenu_export => 'Dışa aktar';
 
   @override

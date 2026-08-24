@@ -715,6 +715,72 @@ void main() {
       );
     }
 
+    testWidgets('contextual suppression is independent and resets on branch', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      var scope = AdaptiveNavScope.of(tester.element(find.text('habits page')));
+      scope.reportContextualChromeSuppressed(true);
+      await tester.pumpAndSettle();
+      expect(scope.visible.value, isFalse);
+      expect(scope.scrollWish.value, isTrue);
+
+      router.push('/habits/detail');
+      await tester.pumpAndSettle();
+      router.pop();
+      await tester.pumpAndSettle();
+      scope = AdaptiveNavScope.of(tester.element(find.text('habits page')));
+      expect(scope.visible.value, isFalse);
+
+      scope.reportScrollWish(false);
+      scope.reportContextualChromeSuppressed(false);
+      await tester.pumpAndSettle();
+      expect(scope.visible.value, isFalse);
+
+      scope.reportScrollWish(true);
+      scope.reportContextualChromeSuppressed(true);
+      router.go('/today');
+      await tester.pumpAndSettle();
+
+      scope = AdaptiveNavScope.of(tester.element(find.text('today page')));
+      expect(scope.visible.value, isTrue);
+      expect(scope.scrollWish.value, isTrue);
+    });
+
+    testWidgets('contextual suppression survives medium to compact resize', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(700, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      final mediumScope = AdaptiveNavScope.of(
+        tester.element(find.text('habits page')),
+      );
+      mediumScope.reportContextualChromeSuppressed(true);
+      await tester.pump();
+      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(find.byType(NavigationBar), findsNothing);
+
+      tester.view.physicalSize = const Size(400, 800);
+      await tester.pump();
+
+      final compactScope = AdaptiveNavScope.of(
+        tester.element(find.text('habits page')),
+      );
+      expect(compactScope.visible.value, isFalse);
+      expect(find.byType(NavigationBar), findsNothing);
+
+      compactScope.reportContextualChromeSuppressed(false);
+      await tester.pump();
+      expect(find.byType(NavigationBar), findsOneWidget);
+    });
+
     testWidgets('medium form shows an always-visible collapsible rail', (
       tester,
     ) async {

@@ -253,6 +253,14 @@
     },
     "habitDisplay_exportAllHabitsSuccSnackbarText": "Експортовано всі звички",
     "habitDisplay_editPopMenu_selectAll": "Виберіть усі",
+    "habitDisplay_selectButton_label": "Вибрати",
+    "@habitDisplay_selectButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Select\" system action."
+    },
+    "habitDisplay_doneButton_label": "Готово",
+    "@habitDisplay_doneButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Done\" system bar button item."
+    },
     "habitDisplay_editPopMenu_export": "Експорт",
     "habitDisplay_editPopMenu_delete": "Видалити",
     "habitDisplay_editPopMenu_clone": "Шаблон",

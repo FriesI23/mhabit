@@ -13,10 +13,10 @@ packages:
     dependency: transitive
     description:
       name: adaptive_actions
-      sha256: "2ffaf05c94d2be8135b20d8ac140fb60968a1e0c54252f0f77d9cbaf54bd736c"
+      sha256: "4c7b5bb2a858505c1e00d27b221b044d2435d7cd55039ebd0761ddbc473d76cc"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.0"
+    version: "0.2.2"
   analyzer:
     dependency: "direct dev"
     description:

@@ -8,6 +8,9 @@ import '../breakpoints/breakpoints.dart';
 import '../breakpoints/window_size_class.dart';
 import 'cupertino_toolbar_padding.dart';
 
+typedef _CupertinoSearchOverflowPressed =
+    void Function(bool searchExpanded, VoidCallback openOverflowMenu);
+
 const List<CupertinoSliverSearchBarAction> _kDefaultActions =
     <CupertinoSliverSearchBarAction>[];
 const List<CupertinoSliverSearchBarMenuEntry> _kDefaultChildActions =
@@ -44,6 +47,7 @@ final class CupertinoSliverSearchBarAction
     this.tooltip,
     this.isEnabled = true,
     this.isDestructive = false,
+    this.overflowOnly = false,
     this.retentionPriority = 0,
     this.primaryBuilder,
   }) : assert(onPressed != null || children.length > 0);
@@ -57,6 +61,7 @@ final class CupertinoSliverSearchBarAction
   final List<CupertinoSliverSearchBarMenuEntry> children;
   final bool isEnabled;
   final bool isDestructive;
+  final bool overflowOnly;
 
   /// Higher values keep the action in the toolbar for longer.
   final int retentionPriority;
@@ -207,15 +212,20 @@ class _CupertinoSliverSearchBarState extends State<CupertinoSliverSearchBar> {
     }
   }
 
-  bool _collapseSearchForOverflow() {
-    if (!_expanded || widget.keyword.isNotEmpty) return false;
+  void _handleOverflowPressed(
+    bool searchExpanded,
+    VoidCallback openOverflowMenu,
+  ) {
+    if (!searchExpanded || !_expanded || widget.keyword.isNotEmpty) {
+      openOverflowMenu();
+      return;
+    }
     setState(() {
       _expanded = false;
       _keepSearchExpandedForMenu = false;
       _focusSearchWhenOverflowCloses = false;
     });
     widget.focusNode.unfocus();
-    return true;
   }
 
   @override
@@ -271,7 +281,7 @@ class _CupertinoSliverSearchBarState extends State<CupertinoSliverSearchBar> {
                     onTapOutside: widget.onTapOutside,
                     onOverflowMenuOpened: _handleOverflowMenuOpened,
                     onOverflowMenuClosed: _handleOverflowMenuClosed,
-                    onCollapseSearchForOverflow: _collapseSearchForOverflow,
+                    onOverflowPressed: _handleOverflowPressed,
                   ),
                 ),
               ),
@@ -341,7 +351,7 @@ class _CupertinoSearchToolbar extends StatelessWidget {
     this.onTapOutside,
     this.onOverflowMenuOpened,
     this.onOverflowMenuClosed,
-    required this.onCollapseSearchForOverflow,
+    required this.onOverflowPressed,
   });
 
   final Widget title;
@@ -362,7 +372,7 @@ class _CupertinoSearchToolbar extends StatelessWidget {
   final TapRegionCallback? onTapOutside;
   final VoidCallback? onOverflowMenuOpened;
   final VoidCallback? onOverflowMenuClosed;
-  final bool Function() onCollapseSearchForOverflow;
+  final _CupertinoSearchOverflowPressed onOverflowPressed;
 
   double _measureTitleExtent(BuildContext context) {
     final title = this.title;
@@ -459,7 +469,7 @@ class _CupertinoSearchToolbar extends StatelessWidget {
                       searchExpanded: expanded,
                       onOverflowMenuOpened: onOverflowMenuOpened,
                       onOverflowMenuClosed: onOverflowMenuClosed,
-                      onCollapseSearchForOverflow: onCollapseSearchForOverflow,
+                      onOverflowPressed: onOverflowPressed,
                     ),
                   ),
                   _CupertinoExpandableSearchItem(
@@ -513,7 +523,7 @@ class _CupertinoCommandRegion extends StatelessWidget {
     required this.searchExpanded,
     required this.onOverflowMenuOpened,
     required this.onOverflowMenuClosed,
-    required this.onCollapseSearchForOverflow,
+    required this.onOverflowPressed,
   });
 
   final Widget title;
@@ -525,7 +535,7 @@ class _CupertinoCommandRegion extends StatelessWidget {
   final bool searchExpanded;
   final VoidCallback? onOverflowMenuOpened;
   final VoidCallback? onOverflowMenuClosed;
-  final bool Function() onCollapseSearchForOverflow;
+  final _CupertinoSearchOverflowPressed onOverflowPressed;
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
@@ -606,8 +616,7 @@ class _CupertinoCommandRegion extends StatelessWidget {
                         searchExpanded: searchExpanded,
                         onOverflowMenuOpened: onOverflowMenuOpened,
                         onOverflowMenuClosed: onOverflowMenuClosed,
-                        onCollapseSearchForOverflow:
-                            onCollapseSearchForOverflow,
+                        onOverflowPressed: onOverflowPressed,
                       ),
                     ...fixedActions,
                   ],
@@ -627,7 +636,7 @@ class _CupertinoSearchActions extends StatelessWidget {
     required this.searchExpanded,
     required this.onOverflowMenuOpened,
     required this.onOverflowMenuClosed,
-    required this.onCollapseSearchForOverflow,
+    required this.onOverflowPressed,
   });
 
   final List<CupertinoSliverSearchBarAction> actions;
@@ -635,7 +644,7 @@ class _CupertinoSearchActions extends StatelessWidget {
   final bool searchExpanded;
   final VoidCallback? onOverflowMenuOpened;
   final VoidCallback? onOverflowMenuClosed;
-  final bool Function() onCollapseSearchForOverflow;
+  final _CupertinoSearchOverflowPressed onOverflowPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -674,6 +683,7 @@ class _CupertinoSearchActions extends StatelessWidget {
                 onInvoke: (callback) => callback(),
                 onOverflowMenuOpened: onOverflowMenuOpened,
                 onOverflowMenuClosed: onOverflowMenuClosed,
+                invokeAfterMenuClosed: true,
                 iconBuilder: (context, action) =>
                     actionsById[action.id.value]?.icon,
                 actionButtonBuilder:
@@ -685,11 +695,7 @@ class _CupertinoSearchActions extends StatelessWidget {
                 overflowButtonBuilder: (context, onPressed, defaultBuilder) =>
                     defaultBuilder(
                       context,
-                      searchExpanded
-                          ? () {
-                              if (!onCollapseSearchForOverflow()) onPressed();
-                            }
-                          : onPressed,
+                      () => onOverflowPressed(searchExpanded, onPressed),
                       icon: overflowIcon,
                     ),
                 fadeDuration: const Duration(milliseconds: 300),
@@ -728,13 +734,17 @@ adaptive_actions.AdaptiveAction<VoidCallback> _toAdaptiveAction(
     iconKey: action.id,
     isDestructive: action.isDestructive,
   );
-  final placementPolicy = adaptive_actions.ActionPlacementPolicy(
-    automaticPreference: adaptive_actions.AutomaticPlacementPreference(
-      retentionPriority: adaptive_actions.PrimaryRetentionPriority.custom(
-        action.retentionPriority,
-      ),
-    ),
-  );
+  final placementPolicy = action.overflowOnly
+      ? adaptive_actions.ActionPlacementPolicy(
+          placement: adaptive_actions.ActionPlacement.overflowOnly,
+        )
+      : adaptive_actions.ActionPlacementPolicy(
+          automaticPreference: adaptive_actions.AutomaticPlacementPreference(
+            retentionPriority: adaptive_actions.PrimaryRetentionPriority.custom(
+              action.retentionPriority,
+            ),
+          ),
+        );
   final children = action.children.map(_toAdaptiveMenuEntry);
   final onPressed = action.onPressed;
   if (action.children.isEmpty) {

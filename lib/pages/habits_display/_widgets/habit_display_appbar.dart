@@ -19,8 +19,8 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-import '../../../common/consts.dart';
 import '../../../common/enums.dart';
+import '../../../extensions/adaptive_style_extensions.dart';
 import '../../../logging/helper.dart';
 import '../../../models/habit_summary.dart';
 import '../../../providers/app_ui/app_experimental_feature.dart';
@@ -30,7 +30,50 @@ import '../../common/widgets.dart';
 import '../_providers/habit_summary.dart';
 import '../styles.dart';
 import 'sliver_calendar_bar.dart';
+import 'sliver_select_top_app_bar.dart';
 import 'sliver_top_app_bar.dart';
+
+typedef HabitDisplayContextCallback = void Function(BuildContext context);
+
+class HabitDisplayViewAppBarCallbacks {
+  const HabitDisplayViewAppBarCallbacks({
+    this.onInfo,
+    this.onSettings,
+    this.onSelect,
+  });
+
+  final VoidCallback? onInfo;
+  final VoidCallback? onSettings;
+  final VoidCallback? onSelect;
+}
+
+class HabitDisplaySelectAppBarCallbacks {
+  const HabitDisplaySelectAppBarCallbacks({
+    this.onDone,
+    this.onSelectAll,
+    this.onEdit,
+    this.onUnarchive,
+    this.onArchive,
+    this.onClone,
+    this.onExport,
+    this.onDelete,
+    this.onGroupModify,
+    this.onStatusModify,
+  });
+
+  final VoidCallback? onDone;
+  final VoidCallback? onSelectAll;
+  final VoidCallback? onEdit;
+  final VoidCallback? onUnarchive;
+  final VoidCallback? onArchive;
+  final VoidCallback? onClone;
+  final HabitDisplayContextCallback? onExport;
+  final VoidCallback? onDelete;
+  final VoidCallback? onGroupModify;
+  final VoidCallback? onStatusModify;
+}
+
+enum _HabitDisplayAppBarMode { view, search, select }
 
 class HabitDisplayAppBar extends StatelessWidget {
   const HabitDisplayAppBar({
@@ -40,14 +83,12 @@ class HabitDisplayAppBar extends StatelessWidget {
     required this.calendarHeight,
     required this.calendarItemPadding,
     required this.calendarTrackPadding,
-    this.toolbarHeight = kAppToolbarHeight,
+    required this.viewCallbacks,
+    required this.selectCallbacks,
+    this.toolbarHeight = AppAdaptiveStyle.materialToolbarHeight,
     this.horizonalScrollControllerGroup,
     this.searchFilterMenuController,
-    this.editAction,
     this.onCalendarToggleExpandPressed,
-    this.onEditLeadingButtonPressed,
-    this.onInfoButtonPressed,
-    this.onMenuButtonPressed,
   });
 
   final HabitListTileGeometry geometry;
@@ -56,13 +97,11 @@ class HabitDisplayAppBar extends StatelessWidget {
   final double calendarHeight;
   final EdgeInsetsGeometry calendarItemPadding;
   final EdgeInsets calendarTrackPadding;
+  final HabitDisplayViewAppBarCallbacks viewCallbacks;
+  final HabitDisplaySelectAppBarCallbacks selectCallbacks;
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
   final MenuController? searchFilterMenuController;
-  final Widget? editAction;
   final ValueChanged<bool>? onCalendarToggleExpandPressed;
-  final VoidCallback? onEditLeadingButtonPressed;
-  final VoidCallback? onInfoButtonPressed;
-  final VoidCallback? onMenuButtonPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -73,10 +112,11 @@ class HabitDisplayAppBar extends StatelessWidget {
     final enableSearch = context.select<AppExperimentalFeatureViewModel, bool>(
       (vm) => vm.habitSearch,
     );
-    final combinesBars =
-        context.adaptiveStyle == AdaptiveStyle.apple &&
-        !state.isInEditMode &&
-        enableSearch;
+    final mode = state.isInEditMode
+        ? _HabitDisplayAppBarMode.select
+        : enableSearch
+        ? _HabitDisplayAppBarMode.search
+        : _HabitDisplayAppBarMode.view;
     final calendarContent = _CalendarBarContent(
       geometry: geometry,
       isCalendarExpanded: isCalendarExpanded,
@@ -86,49 +126,148 @@ class HabitDisplayAppBar extends StatelessWidget {
       horizonalScrollControllerGroup: horizonalScrollControllerGroup,
       onCalendarToggleExpandPressed: onCalendarToggleExpandPressed,
     );
-
-    final appBar = state.isInEditMode
-        ? SliverEditTopAppBar(
-            height: toolbarHeight,
-            onLeadingButtonPressed: onEditLeadingButtonPressed,
-            action: editAction,
-          )
-        : enableSearch
-        ? SliverSearchTopAppBar(
-            searchFilterMenuController: searchFilterMenuController,
-            onInfoButtonPressed: onInfoButtonPressed,
-            onMenuButtonPressed: onMenuButtonPressed,
-            cupertinoBottom: combinesBars ? calendarContent : null,
-            cupertinoBottomExtent: combinesBars ? calendarHeight : 0.0,
-          )
-        : SliverViewTopAppBar(
-            height: toolbarHeight,
-            onInfoButtonPressed: onInfoButtonPressed,
-            onMenuButtonPressed: onMenuButtonPressed,
-          );
-
     appLog.build.debug(context, ex: [state], name: 'HabitDisplay.Appbar');
+    return switch (AdaptiveStyle.of(context)) {
+      AdaptiveStyle.material => _MaterialHabitDisplayAppBar(
+        mode: mode,
+        toolbarHeight: toolbarHeight,
+        calendarHeight: calendarHeight,
+        calendarContent: calendarContent,
+        searchFilterMenuController: searchFilterMenuController,
+        viewCallbacks: viewCallbacks,
+        selectCallbacks: selectCallbacks,
+      ),
+      AdaptiveStyle.apple => _AppleHabitDisplayAppBar(
+        mode: mode,
+        calendarHeight: calendarHeight,
+        calendarContent: calendarContent,
+        searchFilterMenuController: searchFilterMenuController,
+        viewCallbacks: viewCallbacks,
+        selectCallbacks: selectCallbacks,
+      ),
+    };
+  }
+}
+
+class _MaterialHabitDisplayAppBar extends StatelessWidget {
+  const _MaterialHabitDisplayAppBar({
+    required this.mode,
+    required this.toolbarHeight,
+    required this.calendarHeight,
+    required this.calendarContent,
+    required this.searchFilterMenuController,
+    required this.viewCallbacks,
+    required this.selectCallbacks,
+  });
+
+  final _HabitDisplayAppBarMode mode;
+  final double toolbarHeight;
+  final double calendarHeight;
+  final Widget calendarContent;
+  final MenuController? searchFilterMenuController;
+  final HabitDisplayViewAppBarCallbacks viewCallbacks;
+  final HabitDisplaySelectAppBarCallbacks selectCallbacks;
+
+  @override
+  Widget build(BuildContext context) {
+    final appBar = switch (mode) {
+      _HabitDisplayAppBarMode.view => SliverViewTopAppBar(
+        height: toolbarHeight,
+        onInfoButtonPressed: viewCallbacks.onInfo,
+        onMenuButtonPressed: viewCallbacks.onSettings,
+      ),
+      _HabitDisplayAppBarMode.search => SliverSearchTopAppBar.material(
+        searchFilterMenuController: searchFilterMenuController,
+        onInfoButtonPressed: viewCallbacks.onInfo,
+        onMenuButtonPressed: viewCallbacks.onSettings,
+        onSelectButtonPressed: viewCallbacks.onSelect,
+      ),
+      _HabitDisplayAppBarMode.select => MaterialSliverSelectAppBar(
+        height: toolbarHeight,
+        onDone: selectCallbacks.onDone,
+        onSelectAll: selectCallbacks.onSelectAll,
+        onEdit: selectCallbacks.onEdit,
+        onUnarchive: selectCallbacks.onUnarchive,
+        onArchive: selectCallbacks.onArchive,
+        onClone: selectCallbacks.onClone,
+        onExport: selectCallbacks.onExport,
+        onDelete: selectCallbacks.onDelete,
+        onGroupModify: selectCallbacks.onGroupModify,
+      ),
+    };
     return MultiSliver(
       children: [
-        SliverAnimatedSwitcher(
-          duration: kEditModeChangeAnimateDuration,
-          child: appBar,
+        SliverAnimatedSwitcher(duration: Duration.zero, child: appBar),
+        _MaterialCalendarBar(
+          height: calendarHeight,
+          isInEditMode: mode == _HabitDisplayAppBarMode.select,
+          child: calendarContent,
         ),
-        if (!combinesBars)
-          _CalendarBar(
-            height: calendarHeight,
-            isInEditMode: state.isInEditMode,
-            child: calendarContent,
-          ),
-        if (context.adaptiveStyle == AdaptiveStyle.material)
-          const PinnedHeaderSliver(child: HabitDivider(height: 1)),
+        const PinnedHeaderSliver(child: HabitDivider(height: 1)),
       ],
     );
   }
 }
 
-class _CalendarBar extends StatelessWidget {
-  const _CalendarBar({
+class _AppleHabitDisplayAppBar extends StatelessWidget {
+  const _AppleHabitDisplayAppBar({
+    required this.mode,
+    required this.calendarHeight,
+    required this.calendarContent,
+    required this.searchFilterMenuController,
+    required this.viewCallbacks,
+    required this.selectCallbacks,
+  });
+
+  final _HabitDisplayAppBarMode mode;
+  final double calendarHeight;
+  final Widget calendarContent;
+  final MenuController? searchFilterMenuController;
+  final HabitDisplayViewAppBarCallbacks viewCallbacks;
+  final HabitDisplaySelectAppBarCallbacks selectCallbacks;
+
+  @override
+  Widget build(BuildContext context) {
+    final combinesBars = mode == _HabitDisplayAppBarMode.search;
+    final appBar = switch (mode) {
+      _HabitDisplayAppBarMode.view => AppleSliverViewTopAppBar(
+        onSelect: viewCallbacks.onSelect,
+        onInfo: viewCallbacks.onInfo,
+        onSettings: viewCallbacks.onSettings,
+      ),
+      _HabitDisplayAppBarMode.search => SliverSearchTopAppBar.apple(
+        searchFilterMenuController: searchFilterMenuController,
+        onInfoButtonPressed: viewCallbacks.onInfo,
+        onMenuButtonPressed: viewCallbacks.onSettings,
+        onSelectButtonPressed: viewCallbacks.onSelect,
+        cupertinoBottom: calendarContent,
+        cupertinoBottomExtent: calendarHeight,
+      ),
+      _HabitDisplayAppBarMode.select => AppleSliverSelectAppBar(
+        onDone: selectCallbacks.onDone,
+        onSelectAll: selectCallbacks.onSelectAll,
+        onEdit: selectCallbacks.onEdit,
+        onUnarchive: selectCallbacks.onUnarchive,
+        onArchive: selectCallbacks.onArchive,
+        onClone: selectCallbacks.onClone,
+        onExport: selectCallbacks.onExport,
+        onDelete: selectCallbacks.onDelete,
+        onGroupModify: selectCallbacks.onGroupModify,
+        onStatusModify: selectCallbacks.onStatusModify,
+      ),
+    };
+    return MultiSliver(
+      children: [
+        SliverAnimatedSwitcher(duration: Duration.zero, child: appBar),
+        if (!combinesBars)
+          _AppleCalendarBar(height: calendarHeight, child: calendarContent),
+      ],
+    );
+  }
+}
+
+class _MaterialCalendarBar extends StatelessWidget {
+  const _MaterialCalendarBar({
     required this.height,
     required this.isInEditMode,
     required this.child,
@@ -139,42 +278,49 @@ class _CalendarBar extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => switch (context.adaptiveStyle) {
-    AdaptiveStyle.material => SliverAppBar(
-      pinned: true,
-      shadowColor: Theme.of(context).colorScheme.shadow,
-      backgroundColor: isInEditMode
-          ? Theme.of(context).colorScheme.surface
-          : null,
-      scrolledUnderElevation: isInEditMode ? 0.0 : kCommonEvalation,
-      titleSpacing: 0.0,
-      primary: false,
-      toolbarHeight: height,
-      title: child,
-    ),
-    AdaptiveStyle.apple => SliverPersistentHeader(
-      key: const ValueKey('cupertino-calendar-bar'),
-      pinned: true,
-      delegate: _CalendarHeaderDelegate(
-        extent: height,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            MediaQuery.removePadding(
-              context: context,
-              removeTop: true,
-              child: const CupertinoNavigationBar(
-                automaticallyImplyLeading: false,
-                transitionBetweenRoutes: false,
-                border: null,
-              ),
+  Widget build(BuildContext context) => SliverAppBar(
+    pinned: true,
+    shadowColor: Theme.of(context).colorScheme.shadow,
+    backgroundColor: isInEditMode
+        ? Theme.of(context).colorScheme.surface
+        : null,
+    scrolledUnderElevation: isInEditMode ? 0.0 : kCommonEvalation,
+    titleSpacing: 0.0,
+    primary: false,
+    toolbarHeight: height,
+    title: child,
+  );
+}
+
+class _AppleCalendarBar extends StatelessWidget {
+  const _AppleCalendarBar({required this.height, required this.child});
+
+  final double height;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => SliverPersistentHeader(
+    key: const ValueKey('cupertino-calendar-bar'),
+    pinned: true,
+    delegate: _CalendarHeaderDelegate(
+      extent: height,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          MediaQuery.removePadding(
+            context: context,
+            removeTop: true,
+            child: const CupertinoNavigationBar(
+              automaticallyImplyLeading: false,
+              transitionBetweenRoutes: false,
+              border: null,
             ),
-            child,
-          ],
-        ),
+          ),
+          child,
+        ],
       ),
     ),
-  };
+  );
 }
 
 class _CalendarBarContent extends StatelessWidget {

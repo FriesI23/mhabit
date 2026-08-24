@@ -9,7 +9,7 @@ environment:
   flutter: ">=3.44.0"
 
 dependencies:
-  adaptive_actions: ^0.2.0
+  adaptive_actions: ^0.2.2
   flutter:
     sdk: flutter
 

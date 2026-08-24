@@ -40,7 +40,7 @@ abstract interface class Breakpoints {
   /// 3. [MaterialBreakpoints] as the final fallback.
   static Breakpoints of(BuildContext context) =>
       BreakpointsScope.maybeOf(context)?.breakpoints ??
-      switch (context.adaptiveStyle) {
+      switch (AdaptiveStyle.of(context)) {
         AdaptiveStyle.apple => const AppleBreakpoints(),
         AdaptiveStyle.material => const MaterialBreakpoints(),
       };

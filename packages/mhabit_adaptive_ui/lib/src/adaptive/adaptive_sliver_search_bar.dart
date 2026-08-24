@@ -108,7 +108,7 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effective = style ?? context.adaptiveStyle;
+    final effective = style ?? AdaptiveStyle.of(context);
     return switch (effective) {
       AdaptiveStyle.apple => _buildCupertino(),
       AdaptiveStyle.material => _buildMaterial(),

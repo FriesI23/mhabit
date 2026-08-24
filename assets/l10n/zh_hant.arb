@@ -243,6 +243,25 @@
     },
     "habitDisplay_exportAllHabitsSuccSnackbarText": "已匯出所有習慣",
     "habitDisplay_editPopMenu_selectAll": "全選",
+    "habitDisplay_selectButton_label": "選取",
+    "@habitDisplay_selectButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Select\" system action."
+    },
+    "habitDisplay_doneButton_label": "完成",
+    "@habitDisplay_doneButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Done\" system bar button item."
+    },
+    "habitDisplay_selectedHabits_title": "已選擇 {count} 項",
+    "@habitDisplay_selectedHabits_title": {
+        "description": "Apple selection AppBar title showing the number of selected habits",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of selected habits",
+                "example": "3"
+            }
+        }
+    },
     "habitDisplay_editPopMenu_export": "匯出",
     "habitDisplay_editPopMenu_delete": "刪除",
     "habitDisplay_editPopMenu_clone": "複製為範本",

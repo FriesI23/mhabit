@@ -350,6 +350,17 @@ class L10nHu extends L10n {
   String get habitDisplay_editPopMenu_selectAll => 'Összes kijelölése';
 
   @override
+  String get habitDisplay_selectButton_label => 'Kijelölés';
+
+  @override
+  String get habitDisplay_doneButton_label => 'Kész';
+
+  @override
+  String habitDisplay_selectedHabits_title(int count) {
+    return 'Selected $count';
+  }
+
+  @override
   String get habitDisplay_editPopMenu_export => 'Exportálás';
 
   @override
