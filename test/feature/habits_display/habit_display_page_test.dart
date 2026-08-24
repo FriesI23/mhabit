@@ -447,6 +447,56 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('back keeps a non-empty search while dismissing the keyboard', (
+    tester,
+  ) async {
+    tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+    addTearDown(tester.view.resetViewInsets);
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+    final vm = await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      useBranchPage: true,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    await tester.tap(find.byKey(const ValueKey('activate-search')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.enterText(find.byType(SearchBar), 'kept');
+    vm.expandCalendar();
+    await tester.pump();
+    var searchBar = tester.widget<SearchBar>(find.byType(SearchBar));
+    expect(searchBar.focusNode?.hasFocus, isTrue);
+
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+
+    searchBar = tester.widget<SearchBar>(find.byType(SearchBar));
+    expect(searchBar.focusNode?.hasFocus, isFalse);
+    expect(vm.isInSearchMode, isTrue);
+    expect(vm.isCalendarExpanded, isTrue);
+    expect(vm.searchOptions.keyword, 'kept');
+
+    tester.view.resetViewInsets();
+    await tester.pump();
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(vm.isInSearchMode, isFalse);
+    expect(vm.isCalendarExpanded, isFalse);
+    expect(vm.searchOptions, const HabitDisplaySearchOptions.empty());
+  });
+
   testWidgets('escape closes filter menu before clearing active filters', (
     tester,
   ) async {

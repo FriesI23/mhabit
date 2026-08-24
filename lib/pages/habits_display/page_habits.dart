@@ -1026,6 +1026,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
   Future<bool> onWillPop() async {
     if (!mounted) return true;
+    if (_dismissKeyboardBeforeSearchExit()) return false;
     var count = 0;
     if (_vm.isInEditMode) {
       _vm.exitEditMode();
@@ -1040,6 +1041,16 @@ class HabitsTabPageState extends State<HabitsTabPage>
       count++;
     }
     return count <= 0;
+  }
+
+  bool _dismissKeyboardBeforeSearchExit() {
+    if (!_vm.isInSearchMode ||
+        _vm.searchOptions.keyword.isEmpty ||
+        View.of(context).viewInsets.bottom <= 0) {
+      return false;
+    }
+    FocusManager.instance.primaryFocus?.unfocus();
+    return true;
   }
 
   void _onHabitEditAppbarLeadingButtonPressed() {
