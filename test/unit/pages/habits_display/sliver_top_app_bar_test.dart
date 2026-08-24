@@ -283,6 +283,64 @@ void main() {
     );
   });
 
+  test('Apple selection descriptors isolate active and archived commands', () {
+    void callback() {}
+
+    List<CupertinoSelectAction> build(HabitSummarySelectedStatistic stat) =>
+        buildAppleSelectActions(
+          l10n: null,
+          stat: stat,
+          grouping: true,
+          hasSelection: stat.selected > 0,
+          onExport: callback,
+          onUnarchive: callback,
+          onArchive: callback,
+          onDelete: callback,
+          onGroupModify: callback,
+          onStatusModify: callback,
+          onEdit: callback,
+          onClone: callback,
+        );
+
+    final activeOnly = build(HabitSummarySelectedStatistic(activated: 1));
+    expect(
+      activeOnly.firstWhere((action) => action.id == 'habit-archive').visible,
+      isTrue,
+    );
+    expect(
+      activeOnly.firstWhere((action) => action.id == 'habit-unarchive').visible,
+      isFalse,
+    );
+    expect(
+      activeOnly.firstWhere((action) => action.id == 'habit-edit').visible,
+      isTrue,
+    );
+    expect(
+      activeOnly.firstWhere((action) => action.id == 'habit-clone').visible,
+      isTrue,
+    );
+
+    final archivedOnly = build(HabitSummarySelectedStatistic(archived: 2));
+    expect(
+      archivedOnly.firstWhere((action) => action.id == 'habit-archive').visible,
+      isFalse,
+    );
+    expect(
+      archivedOnly
+          .firstWhere((action) => action.id == 'habit-unarchive')
+          .visible,
+      isTrue,
+    );
+    expect(
+      archivedOnly.firstWhere((action) => action.id == 'habit-edit').visible,
+      isFalse,
+    );
+    expect(
+      archivedOnly.firstWhere((action) => action.id == 'habit-clone').visible,
+      isFalse,
+    );
+  });
+
   testWidgets('Apple Search Select enters edit mode without preselection', (
     tester,
   ) async {

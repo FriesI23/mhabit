@@ -64,6 +64,34 @@ void main() {
     );
   });
 
+  testWidgets('compact long labels keep fixed edge actions reachable', (
+    tester,
+  ) async {
+    _setSurfaceSize(tester, const Size(320, 800));
+    await tester.pumpWidget(
+      _sliverHost(
+        CupertinoSliverSelectAppBar(
+          title: const Text(
+            '123456789 habits selected with a deliberately long title',
+          ),
+          selectAllLabel:
+              'Select every habit in this deliberately long translation',
+          doneLabel: 'Finish this deliberately long selection operation',
+          onSelectAll: () {},
+          onDone: () {},
+        ),
+      ),
+    );
+
+    final selectAll = find.byKey(const ValueKey('cupertino-select-all-top'));
+    final done = find.byKey(const ValueKey('cupertino-select-done'));
+    expect(selectAll, findsOneWidget);
+    expect(done, findsOneWidget);
+    expect(tester.getRect(selectAll).left, greaterThanOrEqualTo(0));
+    expect(tester.getRect(done).right, lessThanOrEqualTo(320));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'medium overflows uncommon commands and large expands labels when space allows',
     (tester) async {
@@ -324,5 +352,33 @@ void main() {
       find.byKey(const ValueKey('cupertino-select-all-bottom')),
       findsNothing,
     );
+  });
+
+  testWidgets('compact bottom toolbar retains More when commands overflow', (
+    tester,
+  ) async {
+    _setSurfaceSize(tester, const Size(320, 800));
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: Align(
+          alignment: Alignment.bottomCenter,
+          child: CupertinoSelectBottomToolbar(
+            actions: List.generate(
+              8,
+              (index) => CupertinoSelectAction(
+                id: 'command-$index',
+                label: 'Command $index',
+                icon: const Icon(CupertinoIcons.square_grid_2x2),
+                onPressed: () {},
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(CupertinoIcons.ellipsis), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }
