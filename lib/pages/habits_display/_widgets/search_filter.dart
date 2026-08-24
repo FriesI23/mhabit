@@ -23,12 +23,6 @@ import '../../../models/habit_form.dart';
 import '../../../widgets/widgets.dart';
 import '../_providers/habit_summary.dart';
 
-Widget _buildSearchFilterButton({
-  required Widget icon,
-  required String? tooltip,
-  required VoidCallback? onPressed,
-}) => AdaptiveIconButton(icon: icon, tooltip: tooltip, onPressed: onPressed);
-
 Future<HabitDisplaySearchOptions?> showSearchFilterBottomSheet({
   required BuildContext context,
   HabitDisplaySearchOptions? options,
@@ -94,7 +88,7 @@ class SearchFilterPopupMenuButton extends StatelessWidget {
     return MenuAnchor(
       controller: controller,
       animated: true,
-      builder: (context, controller, child) => _buildSearchFilterButton(
+      builder: (context, controller, child) => AdaptiveIconButton(
         icon: SearchFilterIcon(
           filtered: !options.isFilterEmpty,
           opacity: controller.isOpen ? 0.2 : 1.0,
@@ -167,7 +161,7 @@ class SearchFilterIconButton extends StatelessWidget {
         .select<HabitSummaryViewModel, HabitDisplaySearchOptions>(
           (vm) => vm.searchOptions,
         );
-    return _buildSearchFilterButton(
+    return AdaptiveIconButton(
       tooltip: l10n?.habitDisplay_searchFilter_tooltips,
       icon: SearchFilterIcon(filtered: !options.isFilterEmpty),
       onPressed: onPreesed,

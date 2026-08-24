@@ -152,7 +152,7 @@ class _CupertinoToolbar extends StatelessWidget {
   Widget build(BuildContext context) => DefaultTextStyle(
     style: CupertinoTheme.of(context).textTheme.navTitleTextStyle,
     child: Padding(
-      padding: padding ?? cupertinoToolbarPaddingOf(context),
+      padding: padding ?? CupertinoToolbarPadding.resolve(context),
       child: NavigationToolbar(
         leading: leading,
         middle: title,

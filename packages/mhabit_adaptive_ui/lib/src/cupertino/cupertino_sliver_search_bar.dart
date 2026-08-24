@@ -135,9 +135,9 @@ class _CupertinoSliverSearchBarState extends State<CupertinoSliverSearchBar> {
   static const double _toolbarItemExtent = 44.0;
 
   late bool _expanded;
-  var _overflowMenuOpen = false;
-  var _keepSearchExpandedForMenu = false;
-  var _focusSearchWhenOverflowCloses = false;
+  bool _overflowMenuOpen = false;
+  bool _keepSearchExpandedForMenu = false;
+  bool _focusSearchWhenOverflowCloses = false;
 
   @override
   void initState() {
@@ -396,7 +396,7 @@ class _CupertinoSearchToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: cupertinoToolbarPaddingOf(context),
+    padding: CupertinoToolbarPadding.resolve(context),
     child: LayoutBuilder(
       builder: (context, constraints) {
         const itemExtent = _CupertinoSliverSearchBarState._toolbarItemExtent;
@@ -818,8 +818,8 @@ class _CupertinoExpandableSearchItemState
   static const Duration _duration = Duration(milliseconds: 300);
 
   late bool _showSearchField;
-  var _animateWidth = false;
-  var _autofocusSearchField = false;
+  bool _animateWidth = false;
+  bool _autofocusSearchField = false;
 
   @override
   void initState() {

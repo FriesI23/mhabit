@@ -66,7 +66,7 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
   late final FocusNode _focusNode;
   late final RestorableTextEditingController _controller;
   late bool _previousSearchMode;
-  var _changed = false;
+  bool _changed = false;
 
   @override
   void initState() {
@@ -178,26 +178,6 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
     if (!mounted || result == null) return;
     _vm.onSearchFilterChanged(result);
   }
-
-  Widget _buildSearchFilter() => Builder(
-    builder: (context) {
-      final windowSize = WindowSize.of(context);
-      final isLargeLayout = switch (DeviceContext.of(context).platform) {
-        TargetPlatform.android ||
-        TargetPlatform.iOS => windowSize.isTabletFormFactor,
-        _ => true,
-      };
-      return isLargeLayout
-          ? SearchFilterPopupMenuButton(
-              controller: widget.searchFilterMenuController,
-              ongoingChanged: _onOngoingFilterChanged,
-              completedChanged: _onCompletedFilterChanged,
-              typeChanged: _onTypeFilterChanged,
-              onClearFilterPressed: _onClearFilterPressed,
-            )
-          : SearchFilterIconButton(onPreesed: _openSearchFilterBottomSheet);
-    },
-  );
 
   List<CupertinoSliverSearchBarAction> _buildCupertinoSearchFilterActions(
     L10n? l10n,
@@ -345,7 +325,25 @@ extension _MaterialSliverSearchTopAppBarStateExtension
     return AdaptiveSliverSearchBar.material(
       title: Text(l10n?.appName ?? appName),
       actions: [infoButton, menuButton],
-      searchTrailing: _buildSearchFilter(),
+      searchTrailing: Builder(
+        builder: (context) {
+          final windowSize = WindowSize.of(context);
+          final isLargeLayout = switch (DeviceContext.of(context).platform) {
+            TargetPlatform.android ||
+            TargetPlatform.iOS => windowSize.isTabletFormFactor,
+            _ => true,
+          };
+          return isLargeLayout
+              ? SearchFilterPopupMenuButton(
+                  controller: widget.searchFilterMenuController,
+                  ongoingChanged: _onOngoingFilterChanged,
+                  completedChanged: _onCompletedFilterChanged,
+                  typeChanged: _onTypeFilterChanged,
+                  onClearFilterPressed: _onClearFilterPressed,
+                )
+              : SearchFilterIconButton(onPreesed: _openSearchFilterBottomSheet);
+        },
+      ),
       controller: _controller.value,
       focusNode: _focusNode,
       isSearchActive: _vm.isInSearchMode,

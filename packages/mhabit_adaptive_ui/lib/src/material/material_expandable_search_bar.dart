@@ -54,7 +54,7 @@ class _MaterialExpandableSearchBarState
   static const Duration _iconAnimationDuration = Duration(milliseconds: 300);
 
   late bool _showSearchBar;
-  var _animateWidth = false;
+  bool _animateWidth = false;
   double? _lastExpandedWidth;
 
   @override
