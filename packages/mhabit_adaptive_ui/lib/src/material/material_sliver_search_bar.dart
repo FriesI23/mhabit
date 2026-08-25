@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../breakpoints/window_size_class.dart';
+import '../window_control/material_app_bar.dart';
 import 'material_expandable_search_bar.dart';
 
 const List<Widget> _kDefaultActions = <Widget>[];
@@ -83,7 +84,7 @@ class MaterialSliverSearchBar extends StatelessWidget {
 
     // TODO(adaptive-actions): Migrate the Material and Cupertino action
     // regions after adaptive_actions is published as a stable package.
-    return SliverAppBar(
+    return WindowControlSliverAppBar(
       key: const ValueKey('material-sliver-search-bar'),
       floating: true,
       snap: true,

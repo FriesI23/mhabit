@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart' hide PreferredSize;
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../widgets/widgets.dart';
 
@@ -30,7 +31,7 @@ class HabitStatusChangerAppbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverAppBar(
+    return WindowControlSliverAppBar(
       leading: PageBackButton(
         reason: PageBackReason.close,
         onPressed: onCloseButtonPressed,

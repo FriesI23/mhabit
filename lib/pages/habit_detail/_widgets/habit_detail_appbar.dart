@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../extensions/custom_color_extensions.dart';
 import '../../../models/habit_color.dart';
@@ -41,7 +42,7 @@ class HabitDetailAppBar extends StatelessWidget {
         : null;
     final titleFont = themeData.textTheme.titleLarge;
 
-    return SliverAppBar(
+    return WindowControlSliverAppBar(
       pinned: true,
       title: SingleChildScrollView(
         scrollDirection: Axis.horizontal,

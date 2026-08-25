@@ -4,14 +4,28 @@ import 'package:flutter/widgets.dart';
 
 import '../breakpoints/breakpoints.dart';
 import '../breakpoints/window_size_class.dart';
+import '../window_control/toolbar_geometry.dart';
 
-const double _cupertinoToolbarEdgePadding = 16.0;
 const double _maximumPhoneSafeAreaBonus = 16.0;
 
 /// Keeps the standard Cupertino edge margin while adding only a small
 /// hardware-aware cushion on phone-shaped windows.
 abstract final class CupertinoToolbarPadding {
-  static EdgeInsets resolve(BuildContext context) {
+  static EdgeInsets resolve(
+    BuildContext context, {
+    EdgeInsetsDirectional? contentPadding,
+    EdgeInsetsDirectional edgePadding = cupertinoWindowControlEdgePadding,
+  }) => resolveDirectional(
+    context,
+    contentPadding: contentPadding,
+    edgePadding: edgePadding,
+  ).resolve(Directionality.of(context));
+
+  static EdgeInsetsDirectional resolveDirectional(
+    BuildContext context, {
+    EdgeInsetsDirectional? contentPadding,
+    EdgeInsetsDirectional edgePadding = cupertinoWindowControlEdgePadding,
+  }) {
     final mediaQuery = MediaQuery.of(context);
     final breakpoints = Breakpoints.of(context);
     final widthClass = breakpoints.widthClass(mediaQuery.size.width);
@@ -20,15 +34,25 @@ abstract final class CupertinoToolbarPadding {
         widthClass == WindowSizeClass.compact ||
         heightClass == WindowSizeClass.compact;
     final safePadding = mediaQuery.padding;
-    final leftBonus = isPhoneFormFactor
-        ? math.min(safePadding.left, _maximumPhoneSafeAreaBonus)
+    final textDirection = Directionality.of(context);
+    final safeStart = textDirection == TextDirection.ltr
+        ? safePadding.left
+        : safePadding.right;
+    final safeEnd = textDirection == TextDirection.ltr
+        ? safePadding.right
+        : safePadding.left;
+    final startBonus = contentPadding == null && isPhoneFormFactor
+        ? math.min(safeStart, _maximumPhoneSafeAreaBonus)
         : 0.0;
-    final rightBonus = isPhoneFormFactor
-        ? math.min(safePadding.right, _maximumPhoneSafeAreaBonus)
+    final endBonus = contentPadding == null && isPhoneFormFactor
+        ? math.min(safeEnd, _maximumPhoneSafeAreaBonus)
         : 0.0;
-    return EdgeInsets.only(
-      left: _cupertinoToolbarEdgePadding + leftBonus,
-      right: _cupertinoToolbarEdgePadding + rightBonus,
+    final effectiveContentPadding = contentPadding ?? edgePadding;
+    return EdgeInsetsDirectional.fromSTEB(
+      effectiveContentPadding.start + startBonus,
+      effectiveContentPadding.top,
+      effectiveContentPadding.end + endBonus,
+      effectiveContentPadding.bottom,
     );
   }
 }

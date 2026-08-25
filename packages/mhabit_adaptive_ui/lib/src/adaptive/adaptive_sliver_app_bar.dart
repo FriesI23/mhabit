@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../adaptive_style.dart';
 import '../cupertino/cupertino_sliver_app_bar.dart';
+import '../window_control/material_app_bar.dart';
+import '../window_control/toolbar_geometry.dart';
 
 const List<Widget> _kDefaultActions = <Widget>[];
 
 /// Style config for the Material branch of [AdaptiveSliverAppBar].
 ///
-/// Every field maps 1:1 to a [SliverAppBar] parameter; constructor defaults
-/// reproduce the pre-config baseline, so partial overrides only need to
-/// specify the deltas.
+/// App-bar fields map to [SliverAppBar]. [windowControlEdgePadding] is the
+/// Material visual baseline added only on sides with window-control avoidance.
 class AppBarMaterialStyle {
   const AppBarMaterialStyle({
     this.centerTitle = true,
@@ -20,6 +21,7 @@ class AppBarMaterialStyle {
     this.scrolledUnderElevation,
     this.shadowColor = Colors.transparent,
     this.bottom,
+    this.windowControlEdgePadding = materialWindowControlEdgePadding,
   });
 
   final bool centerTitle;
@@ -31,6 +33,9 @@ class AppBarMaterialStyle {
   final Color? shadowColor;
   final PreferredSizeWidget? bottom;
 
+  /// {@macro mhabit.windowControlEdgePadding}
+  final EdgeInsetsDirectional windowControlEdgePadding;
+
   AppBarMaterialStyle copyWith({
     bool? centerTitle,
     bool? floating,
@@ -40,6 +45,7 @@ class AppBarMaterialStyle {
     double? scrolledUnderElevation,
     Color? shadowColor,
     PreferredSizeWidget? bottom,
+    EdgeInsetsDirectional? windowControlEdgePadding,
   }) => AppBarMaterialStyle(
     centerTitle: centerTitle ?? this.centerTitle,
     floating: floating ?? this.floating,
@@ -50,6 +56,8 @@ class AppBarMaterialStyle {
         scrolledUnderElevation ?? this.scrolledUnderElevation,
     shadowColor: shadowColor ?? this.shadowColor,
     bottom: bottom ?? this.bottom,
+    windowControlEdgePadding:
+        windowControlEdgePadding ?? this.windowControlEdgePadding,
   );
 
   @override
@@ -62,7 +70,8 @@ class AppBarMaterialStyle {
       other.forceElevated == forceElevated &&
       other.scrolledUnderElevation == scrolledUnderElevation &&
       other.shadowColor == shadowColor &&
-      other.bottom == bottom;
+      other.bottom == bottom &&
+      other.windowControlEdgePadding == windowControlEdgePadding;
 
   @override
   int get hashCode => Object.hash(
@@ -74,13 +83,15 @@ class AppBarMaterialStyle {
     scrolledUnderElevation,
     shadowColor,
     bottom,
+    windowControlEdgePadding,
   );
 }
 
 /// Style config for the apple branch of [AdaptiveSliverAppBar].
 ///
-/// Every field maps to a [CupertinoSliverNavigationBar] parameter; null
-/// fields fall back to the Cupertino defaults.
+/// App-bar fields map to [CupertinoSliverNavigationBar].
+/// [windowControlEdgePadding] is the Cupertino visual baseline retained before
+/// adding window-control avoidance.
 class AppBarAppleStyle {
   const AppBarAppleStyle({
     this.collapsible = false,
@@ -89,6 +100,7 @@ class AppBarAppleStyle {
     this.backgroundColor,
     this.padding,
     this.stretch = false,
+    this.windowControlEdgePadding = cupertinoWindowControlEdgePadding,
   });
 
   final bool collapsible;
@@ -98,6 +110,9 @@ class AppBarAppleStyle {
   final EdgeInsetsDirectional? padding;
   final bool stretch;
 
+  /// {@macro mhabit.windowControlEdgePadding}
+  final EdgeInsetsDirectional windowControlEdgePadding;
+
   AppBarAppleStyle copyWith({
     bool? collapsible,
     bool? enableBackgroundFilterBlur,
@@ -105,6 +120,7 @@ class AppBarAppleStyle {
     Color? backgroundColor,
     EdgeInsetsDirectional? padding,
     bool? stretch,
+    EdgeInsetsDirectional? windowControlEdgePadding,
   }) => AppBarAppleStyle(
     collapsible: collapsible ?? this.collapsible,
     enableBackgroundFilterBlur:
@@ -113,6 +129,8 @@ class AppBarAppleStyle {
     backgroundColor: backgroundColor ?? this.backgroundColor,
     padding: padding ?? this.padding,
     stretch: stretch ?? this.stretch,
+    windowControlEdgePadding:
+        windowControlEdgePadding ?? this.windowControlEdgePadding,
   );
 
   @override
@@ -123,7 +141,8 @@ class AppBarAppleStyle {
       other.border == border &&
       other.backgroundColor == backgroundColor &&
       other.padding == padding &&
-      other.stretch == stretch;
+      other.stretch == stretch &&
+      other.windowControlEdgePadding == windowControlEdgePadding;
 
   @override
   int get hashCode => Object.hash(
@@ -133,6 +152,7 @@ class AppBarAppleStyle {
     backgroundColor,
     padding,
     stretch,
+    windowControlEdgePadding,
   );
 }
 
@@ -233,7 +253,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
 
   Widget _buildMaterial(AppBarMaterialStyle config) {
     // Equivalent of the app's current `SliverTopAppBar` baseline.
-    return SliverAppBar(
+    return WindowControlSliverAppBar(
       floating: config.floating,
       snap: config.snap,
       pinned: config.pinned,
@@ -253,6 +273,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
                   icon: const Icon(Icons.arrow_back),
                 )),
       actions: actions.isEmpty ? null : actions,
+      windowControlEdgePadding: config.windowControlEdgePadding,
     );
   }
 
@@ -267,5 +288,6 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     backgroundColor: config.backgroundColor,
     padding: config.padding,
     stretch: config.stretch,
+    windowControlEdgePadding: config.windowControlEdgePadding,
   );
 }

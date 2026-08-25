@@ -16,6 +16,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../assets/assets.dart';
@@ -104,7 +105,7 @@ class _PageState extends State<_Page> {
     }
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: WindowControlAppBar(
         leading: const PageBackButton(reason: PageBackReason.back),
         title: L10nBuilder(
           builder: (context, l10n) => l10n != null

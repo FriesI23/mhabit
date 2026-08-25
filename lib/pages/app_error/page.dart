@@ -16,6 +16,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../common/app_info.dart';
@@ -104,7 +105,7 @@ class AppErrorPage extends StatelessWidget {
       ),
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
+          WindowControlSliverAppBar(
             title: L10nBuilder(
               builder: (context, l10n) => Text(
                 l10n?.common_errorPage_title ?? "Unhandled Exception",

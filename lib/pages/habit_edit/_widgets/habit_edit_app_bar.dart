@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../extensions/custom_color_extensions.dart';
 import '../../../l10n/localizations.dart';
@@ -88,7 +89,7 @@ class HabitEditAppBar extends StatelessWidget {
       );
     }
 
-    return SliverAppBar.large(
+    return WindowControlSliverAppBar.large(
       pinned: true,
       scrolledUnderElevation: scrolledUnderElevation,
       shadowColor: themeData.colorScheme.shadow,

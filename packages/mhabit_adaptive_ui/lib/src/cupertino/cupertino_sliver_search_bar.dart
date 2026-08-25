@@ -6,6 +6,7 @@ import 'package:flutter/material.dart' show Easing;
 
 import '../breakpoints/breakpoints.dart';
 import '../breakpoints/window_size_class.dart';
+import '../window_control/toolbar_geometry.dart';
 import 'cupertino_toolbar_padding.dart';
 
 typedef _CupertinoSearchOverflowPressed =
@@ -395,118 +396,130 @@ class _CupertinoSearchToolbar extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: CupertinoToolbarPadding.resolve(context),
-    child: LayoutBuilder(
-      builder: (context, constraints) {
-        const itemExtent = _CupertinoSliverSearchBarState._toolbarItemExtent;
-        const minimumPersistentSearchWidth = 100.0;
-        final preferredTitleExtent = _measureTitleExtent(context);
-        final leadingWidth = leading == null ? 0.0 : itemExtent;
-        final fixedActionWidth = fixedActions.length * itemExtent;
-        final availableWidth = math.max(
-          0.0,
-          constraints.maxWidth - leadingWidth,
-        );
-        final fullActionWidth = actions.length * itemExtent + fixedActionWidth;
-        final minimumAdaptiveWidth = actions.isEmpty ? 0.0 : itemExtent;
-        final automaticSearchWidth = math.max(
-          0.0,
-          availableWidth - fullActionWidth,
-        );
-        final effectiveMinimumPersistentWidth = math.min(
-          minimumPersistentSearchWidth,
-          math.max(itemExtent, maxSearchWidth),
-        );
-        final persistent =
-            preferPersistentSearch &&
-            automaticSearchWidth >= effectiveMinimumPersistentWidth;
-        final expanded = persistent || manuallyExpanded;
-        final preferredSearchWidth = persistent
-            ? math.min(maxSearchWidth, automaticSearchWidth)
-            : expanded
-            ? maxSearchWidth
-            : itemExtent;
-        final searchWidth = math.min(
-          preferredSearchWidth,
-          math.max(
+  Widget build(BuildContext context) {
+    final contentPadding = CupertinoToolbarPadding.resolveDirectional(context);
+    final insets = WindowControlToolbarGeometry.resolve(
+      context,
+      edgePadding: contentPadding,
+    ).cupertinoInsets;
+    return Padding(
+      padding: EdgeInsets.only(top: insets.top, bottom: insets.bottom),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          const itemExtent = _CupertinoSliverSearchBarState._toolbarItemExtent;
+          const minimumPersistentSearchWidth = 100.0;
+          final preferredTitleExtent = _measureTitleExtent(context);
+          final leadingWidth = leading == null ? 0.0 : itemExtent;
+          final fixedActionWidth = fixedActions.length * itemExtent;
+          final contentWidth = math.max(
             0.0,
-            availableWidth - fixedActionWidth - minimumAdaptiveWidth,
-          ),
-        );
-        final showCenteredTitle = showTitle && centerTitle && !expanded;
-        final centeredTitleActionLimit = showCenteredTitle
-            ? math.max(
-                0.0,
-                constraints.maxWidth / 2 -
-                    preferredTitleExtent / 2 -
-                    searchWidth,
-              )
-            : null;
-        return Stack(
-          fit: StackFit.expand,
-          children: [
-            TextFieldTapRegion(
-              onTapOutside: onTapOutside,
-              child: Row(
-                children: [
-                  if (leading case final leading?)
-                    SizedBox(
-                      width: itemExtent,
-                      height: itemExtent,
-                      child: leading,
-                    ),
-                  Expanded(
-                    child: _CupertinoCommandRegion(
-                      title: title,
-                      showTitle: showTitle && !centerTitle,
-                      maxActionRegionWidth: centeredTitleActionLimit,
-                      preferredTitleExtent: expanded
-                          ? 0.0
-                          : preferredTitleExtent,
-                      actions: actions,
-                      fixedActions: fixedActions,
-                      searchExpanded: expanded,
-                      onOverflowMenuOpened: onOverflowMenuOpened,
-                      onOverflowMenuClosed: onOverflowMenuClosed,
-                      onOverflowPressed: onOverflowPressed,
-                    ),
-                  ),
-                  _CupertinoExpandableSearchItem(
-                    expanded: expanded,
-                    persistent: persistent,
-                    controller: controller,
-                    focusNode: focusNode,
-                    hintText: hintText,
-                    maxSearchWidth: searchWidth,
-                    onChanged: onChanged,
-                    onSubmitted: onSubmitted,
-                    onSearchActivated: onSearchActivated,
-                  ),
-                ],
-              ),
+            constraints.maxWidth - insets.start - insets.end,
+          );
+          final availableWidth = math.max(0.0, contentWidth - leadingWidth);
+          final fullActionWidth =
+              actions.length * itemExtent + fixedActionWidth;
+          final minimumAdaptiveWidth = actions.isEmpty ? 0.0 : itemExtent;
+          final automaticSearchWidth = math.max(
+            0.0,
+            availableWidth - fullActionWidth,
+          );
+          final effectiveMinimumPersistentWidth = math.min(
+            minimumPersistentSearchWidth,
+            math.max(itemExtent, maxSearchWidth),
+          );
+          final persistent =
+              preferPersistentSearch &&
+              automaticSearchWidth >= effectiveMinimumPersistentWidth;
+          final expanded = persistent || manuallyExpanded;
+          final preferredSearchWidth = persistent
+              ? math.min(maxSearchWidth, automaticSearchWidth)
+              : expanded
+              ? maxSearchWidth
+              : itemExtent;
+          final searchWidth = math.min(
+            preferredSearchWidth,
+            math.max(
+              0.0,
+              availableWidth - fixedActionWidth - minimumAdaptiveWidth,
             ),
-            if (showCenteredTitle)
-              IgnorePointer(
-                child: Center(
-                  child: SizedBox(
-                    key: const ValueKey('cupertino-search-title'),
-                    width: preferredTitleExtent,
-                    child: DefaultTextStyle.merge(
-                      maxLines: 1,
-                      softWrap: false,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      child: title,
+          );
+          final showCenteredTitle = showTitle && centerTitle && !expanded;
+          final centeredTitleActionLimit = showCenteredTitle
+              ? math.max(
+                  0.0,
+                  constraints.maxWidth / 2 -
+                      preferredTitleExtent / 2 -
+                      searchWidth -
+                      insets.end,
+                )
+              : null;
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              TextFieldTapRegion(
+                onTapOutside: onTapOutside,
+                child: Row(
+                  children: [
+                    SizedBox(width: insets.start),
+                    if (leading case final leading?)
+                      SizedBox(
+                        width: itemExtent,
+                        height: itemExtent,
+                        child: leading,
+                      ),
+                    Expanded(
+                      child: _CupertinoCommandRegion(
+                        title: title,
+                        showTitle: showTitle && !centerTitle,
+                        maxActionRegionWidth: centeredTitleActionLimit,
+                        preferredTitleExtent: expanded
+                            ? 0.0
+                            : preferredTitleExtent,
+                        actions: actions,
+                        fixedActions: fixedActions,
+                        searchExpanded: expanded,
+                        onOverflowMenuOpened: onOverflowMenuOpened,
+                        onOverflowMenuClosed: onOverflowMenuClosed,
+                        onOverflowPressed: onOverflowPressed,
+                      ),
+                    ),
+                    _CupertinoExpandableSearchItem(
+                      expanded: expanded,
+                      persistent: persistent,
+                      controller: controller,
+                      focusNode: focusNode,
+                      hintText: hintText,
+                      maxSearchWidth: searchWidth,
+                      onChanged: onChanged,
+                      onSubmitted: onSubmitted,
+                      onSearchActivated: onSearchActivated,
+                    ),
+                    SizedBox(width: insets.end),
+                  ],
+                ),
+              ),
+              if (showCenteredTitle)
+                IgnorePointer(
+                  child: Center(
+                    child: SizedBox(
+                      key: const ValueKey('cupertino-search-title'),
+                      width: preferredTitleExtent,
+                      child: DefaultTextStyle.merge(
+                        maxLines: 1,
+                        softWrap: false,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        child: title,
+                      ),
                     ),
                   ),
                 ),
-              ),
-          ],
-        );
-      },
-    ),
-  );
+            ],
+          );
+        },
+      ),
+    );
+  }
 }
 
 class _CupertinoCommandRegion extends StatelessWidget {

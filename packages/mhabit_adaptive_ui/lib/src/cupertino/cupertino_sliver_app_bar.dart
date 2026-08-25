@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 
 import '../breakpoints/window_size_class.dart';
+import '../window_control/cupertino_navigation_bar.dart';
+import '../window_control/toolbar_geometry.dart';
 import 'cupertino_toolbar_padding.dart';
 
 const List<Widget> _kDefaultActions = <Widget>[];
@@ -19,6 +21,8 @@ class CupertinoSliverAppBar extends StatelessWidget {
     this.backgroundColor,
     this.padding,
     this.stretch = false,
+    this.windowControlAvoidance,
+    this.windowControlEdgePadding = cupertinoWindowControlEdgePadding,
   });
 
   final Widget title;
@@ -31,6 +35,8 @@ class CupertinoSliverAppBar extends StatelessWidget {
   final Color? backgroundColor;
   final EdgeInsetsDirectional? padding;
   final bool stretch;
+  final EdgeInsetsDirectional? windowControlAvoidance;
+  final EdgeInsetsDirectional windowControlEdgePadding;
 
   Widget? get _effectiveLeading =>
       leading ??
@@ -59,6 +65,8 @@ class CupertinoSliverAppBar extends StatelessWidget {
         border: border,
         backgroundColor: backgroundColor,
         padding: padding,
+        windowControlAvoidance: windowControlAvoidance,
+        windowControlEdgePadding: windowControlEdgePadding,
       );
     }
     return _CollapsibleCupertinoSliverAppBar(
@@ -70,6 +78,8 @@ class CupertinoSliverAppBar extends StatelessWidget {
       backgroundColor: backgroundColor,
       padding: padding,
       stretch: stretch,
+      windowControlAvoidance: windowControlAvoidance,
+      windowControlEdgePadding: windowControlEdgePadding,
     );
   }
 }
@@ -84,6 +94,8 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
     required this.border,
     required this.backgroundColor,
     required this.padding,
+    required this.windowControlAvoidance,
+    required this.windowControlEdgePadding,
   });
 
   final Widget title;
@@ -94,6 +106,8 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
   final Border? border;
   final Color? backgroundColor;
   final EdgeInsetsDirectional? padding;
+  final EdgeInsetsDirectional? windowControlAvoidance;
+  final EdgeInsetsDirectional windowControlEdgePadding;
 
   @override
   Widget build(BuildContext context) {
@@ -125,6 +139,8 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
                   leading: leading,
                   trailing: trailing,
                   padding: padding,
+                  windowControlAvoidance: windowControlAvoidance,
+                  windowControlEdgePadding: windowControlEdgePadding,
                 ),
               ),
             ],
@@ -141,26 +157,51 @@ class _CupertinoToolbar extends StatelessWidget {
     required this.leading,
     required this.trailing,
     required this.padding,
+    required this.windowControlAvoidance,
+    required this.windowControlEdgePadding,
   });
 
   final Widget title;
   final Widget? leading;
   final Widget? trailing;
   final EdgeInsetsDirectional? padding;
+  final EdgeInsetsDirectional? windowControlAvoidance;
+  final EdgeInsetsDirectional windowControlEdgePadding;
 
   @override
-  Widget build(BuildContext context) => DefaultTextStyle(
-    style: CupertinoTheme.of(context).textTheme.navTitleTextStyle,
-    child: Padding(
-      padding: padding ?? CupertinoToolbarPadding.resolve(context),
-      child: NavigationToolbar(
-        leading: leading,
-        middle: title,
-        trailing: trailing,
-        middleSpacing: 6.0,
+  Widget build(BuildContext context) {
+    final contentPadding = CupertinoToolbarPadding.resolveDirectional(
+      context,
+      contentPadding: padding,
+      edgePadding: windowControlEdgePadding,
+    );
+    final geometry = WindowControlToolbarGeometry.resolve(
+      context,
+      avoidance: windowControlAvoidance,
+      edgePadding: contentPadding,
+    );
+    final insets = geometry.cupertinoInsets;
+    final effectiveLeading = Padding(
+      padding: EdgeInsetsDirectional.only(start: insets.start),
+      child: leading ?? const SizedBox.shrink(),
+    );
+    final effectiveTrailing = Padding(
+      padding: EdgeInsetsDirectional.only(end: insets.end),
+      child: trailing ?? const SizedBox.shrink(),
+    );
+    return DefaultTextStyle(
+      style: CupertinoTheme.of(context).textTheme.navTitleTextStyle,
+      child: Padding(
+        padding: EdgeInsets.only(top: insets.top, bottom: insets.bottom),
+        child: NavigationToolbar(
+          leading: effectiveLeading,
+          middle: title,
+          trailing: effectiveTrailing,
+          middleSpacing: 6.0,
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _CollapsibleCupertinoSliverAppBar extends StatelessWidget {
@@ -173,6 +214,8 @@ class _CollapsibleCupertinoSliverAppBar extends StatelessWidget {
     required this.backgroundColor,
     required this.padding,
     required this.stretch,
+    required this.windowControlAvoidance,
+    required this.windowControlEdgePadding,
   });
 
   final Widget title;
@@ -183,6 +226,8 @@ class _CollapsibleCupertinoSliverAppBar extends StatelessWidget {
   final Color? backgroundColor;
   final EdgeInsetsDirectional? padding;
   final bool stretch;
+  final EdgeInsetsDirectional? windowControlAvoidance;
+  final EdgeInsetsDirectional windowControlEdgePadding;
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +237,7 @@ class _CollapsibleCupertinoSliverAppBar extends StatelessWidget {
         MediaQuery.orientationOf(context) == Orientation.portrait;
     final useLargeTitle =
         isPortrait || WindowSize.of(context).width == WindowSizeClass.compact;
-    return CupertinoSliverNavigationBar(
+    return WindowControlCupertinoSliverNavigationBar(
       middle: useLargeTitle ? null : title,
       largeTitle: useLargeTitle ? title : null,
       leading: leading,
@@ -200,8 +245,14 @@ class _CollapsibleCupertinoSliverAppBar extends StatelessWidget {
       enableBackgroundFilterBlur: enableBackgroundFilterBlur,
       border: border,
       backgroundColor: backgroundColor,
-      padding: padding,
+      padding: CupertinoToolbarPadding.resolveDirectional(
+        context,
+        contentPadding: padding,
+        edgePadding: windowControlEdgePadding,
+      ),
       stretch: stretch,
+      windowControlAvoidance: windowControlAvoidance,
+      windowControlEdgePadding: EdgeInsetsDirectional.zero,
     );
   }
 }

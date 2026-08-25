@@ -23,3 +23,6 @@ export 'src/shell/adaptive_branch_route_observer.dart';
 export 'src/shell/adaptive_nav_scope.dart';
 export 'src/shell/adaptive_nav_visibility.dart';
 export 'src/shell/adaptive_navigation.dart';
+export 'src/window_control/cupertino_navigation_bar.dart';
+export 'src/window_control/material_app_bar.dart';
+export 'src/window_control/window_control_layout.dart';

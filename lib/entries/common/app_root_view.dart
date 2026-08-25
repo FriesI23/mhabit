@@ -14,6 +14,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../common/consts.dart';
 import '../../common/global.dart';
@@ -67,7 +68,7 @@ class AppRootView extends StatelessWidget {
       disableAnimations:
           disableAnimations || MediaQuery.disableAnimationsOf(context),
     ),
-    child: UnfocusOnTap(child: child),
+    child: AdaptiveWindowControlLayout(child: UnfocusOnTap(child: child)),
   );
 
   String _onGenerateTitle(BuildContext context) =>
