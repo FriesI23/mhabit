@@ -311,6 +311,45 @@ void _resetWindowControlLayoutMock() {
 }
 
 void main() {
+  group('NavigationRailExtent', () {
+    test('fixed target clamps to the available interval', () {
+      const extent = NavigationRailExtent(224);
+
+      expect(extent.resolve(1600), 224);
+      expect(extent.resolve(800), 216);
+    });
+
+    test('ratio resolves between the available bounds', () {
+      const extent = NavigationRailExtent.fromRatio(0.5);
+
+      expect(extent.resolve(1600), 270);
+      expect(extent.resolve(800), 198);
+    });
+
+    test('owns interval growth and manual clamping', () {
+      const extent = NavigationRailExtent(
+        240,
+        collapsed: 64,
+        minimum: 200,
+        maximum: 320,
+        rampStart: 800,
+        rampEnd: 1400,
+      );
+
+      expect(extent.collapsed, 64);
+      expect(extent.upperBoundAt(1100), 260);
+      expect(extent.resolve(1100), 240);
+      expect(extent.clamp(300, windowWidth: 1100), 260);
+    });
+
+    test('requires the extended minimum to fit the collapsed rail', () {
+      expect(
+        () => NavigationRailExtent(100, collapsed: 200),
+        throwsAssertionError,
+      );
+    });
+  });
+
   testWidgets('scope lookups distinguish listening from read access', (
     tester,
   ) async {
@@ -1192,10 +1231,38 @@ void main() {
 
       expect(find.byType(NavigationDrawer), findsNothing);
       expect(find.byType(NavigationRail), findsOneWidget);
-      // Auto width tops out at 180 + 0.7 * (360 - 180) = 306.
+      // Auto width uses the compact fixed target inside the interval.
       final panel = tester.widget<NavigationRail>(find.byType(NavigationRail));
-      expect(panel.minExtendedWidth, closeTo(306, 0.01));
+      expect(panel.minExtendedWidth, closeTo(224, 0.01));
       expect(find.byIcon(Icons.menu_open), findsOneWidget);
+    });
+
+    testWidgets('accepts a ratio-based automatic rail extent', (tester) async {
+      _setSurfaceSize(tester, const Size(1800, 800));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AdaptiveNavigationShell(
+            selectedIndex: 0,
+            destinations: const [
+              NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+              NavigationDestination(
+                icon: Icon(Icons.settings),
+                label: 'Settings',
+              ),
+            ],
+            onDestinationSelected: (_) {},
+            railExtent: const NavigationRailExtent.fromRatio(
+              0.5,
+              collapsed: 64,
+            ),
+            child: const SizedBox(),
+          ),
+        ),
+      );
+
+      final panel = tester.widget<NavigationRail>(find.byType(NavigationRail));
+      expect(panel.minWidth, 64);
+      expect(panel.minExtendedWidth, closeTo(270, 0.01));
     });
 
     testWidgets('rail auto width follows the window within the interval', (
@@ -1207,16 +1274,14 @@ void main() {
 
       NavigationRail panel() =>
           tester.widget<NavigationRail>(find.byType(NavigationRail));
-      // Upper bound: 180 + 180 * (1200-600)/1000 = 288;
-      // auto: 180 + 0.7 * 108 = 255.6.
-      expect(panel().minExtendedWidth, closeTo(255.6, 0.01));
+      // The fixed 224dp target fits the current 180-288dp interval.
+      expect(panel().minExtendedWidth, closeTo(224, 0.01));
 
-      tester.view.physicalSize = const Size(900, 800);
+      tester.view.physicalSize = const Size(840, 800);
       await tester.pumpAndSettle();
 
-      // Upper bound: 180 + 180 * (900-600)/1000 = 234;
-      // auto: 180 + 0.7 * 54 = 217.8.
-      expect(panel().minExtendedWidth, closeTo(217.8, 0.01));
+      // The interval's 223.2dp upper bound clamps the fixed target.
+      expect(panel().minExtendedWidth, closeTo(223.2, 0.01));
     });
 
     testWidgets('drag resizes the rail and clamps to the interval', (
@@ -1228,7 +1293,7 @@ void main() {
 
       NavigationRail panel() =>
           tester.widget<NavigationRail>(find.byType(NavigationRail));
-      expect(panel().minExtendedWidth, closeTo(306, 0.01));
+      expect(panel().minExtendedWidth, closeTo(224, 0.01));
 
       // Drag far left: many small moves accumulate and clamp to the minimum.
       var gesture = await tester.startGesture(
@@ -1290,39 +1355,40 @@ void main() {
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      // Drag slightly narrower than the auto width (306) -> 276.
+      // Drag slightly narrower than the auto width (224) -> 219.
       final gesture = await tester.startGesture(
         tester.getCenter(find.byKey(const ValueKey('rail-resize-handle'))),
       );
-      for (var i = 0; i < 3; i++) {
-        await gesture.moveBy(const Offset(-10, 0));
-        await tester.pump();
-      }
+      await gesture.moveBy(const Offset(-5, 0));
+      await tester.pump();
       await gesture.up();
       await tester.pumpAndSettle();
       NavigationRail panel() =>
           tester.widget<NavigationRail>(find.byType(NavigationRail));
-      expect(panel().minExtendedWidth, closeTo(276, 0.01));
+      expect(panel().minExtendedWidth, closeTo(219, 0.01));
 
-      // 1400: auto 280.8 > manual -> manual holds.
+      // The fixed auto target remains above the manual width, so it holds.
       tester.view.physicalSize = const Size(1400, 800);
       await tester.pumpAndSettle();
-      expect(panel().minExtendedWidth, closeTo(276, 0.01));
+      expect(panel().minExtendedWidth, closeTo(219, 0.01));
 
-      // 1300: auto 268.2 < manual -> follows the auto value down.
-      tester.view.physicalSize = const Size(1300, 800);
+      // Medium resets to collapsed; expanding it applies the interval-clamped
+      // auto width because it has fallen below the remembered manual width.
+      tester.view.physicalSize = const Size(700, 800);
       await tester.pumpAndSettle();
-      expect(panel().minExtendedWidth, closeTo(268.2, 0.01));
+      await tester.tap(find.byIcon(Icons.menu));
+      await tester.pumpAndSettle();
+      expect(panel().minExtendedWidth, closeTo(198, 0.01));
 
-      // 1150: auto 249.3 -> keeps following the auto value.
-      tester.view.physicalSize = const Size(1150, 800);
+      // The auto value keeps following the interval down.
+      tester.view.physicalSize = const Size(650, 800);
       await tester.pumpAndSettle();
-      expect(panel().minExtendedWidth, closeTo(249.3, 0.01));
+      expect(panel().minExtendedWidth, closeTo(189, 0.01));
 
       // Grow back: the remembered manual value resumes.
       tester.view.physicalSize = const Size(1800, 800);
       await tester.pumpAndSettle();
-      expect(panel().minExtendedWidth, closeTo(276, 0.01));
+      expect(panel().minExtendedWidth, closeTo(219, 0.01));
     });
 
     testWidgets('drag while the panel animation is running does not crash', (
@@ -1463,7 +1529,7 @@ void main() {
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      // Drag slightly narrower than the auto width (306) -> 276.
+      // Drag slightly narrower than the auto width (224) -> 194.
       final gesture = await tester.startGesture(
         tester.getCenter(find.byKey(const ValueKey('rail-resize-handle'))),
       );
@@ -1484,7 +1550,7 @@ void main() {
       tester.view.physicalSize = const Size(1800, 800);
       await tester.pumpAndSettle();
       final rail = tester.widget<NavigationRail>(find.byType(NavigationRail));
-      expect(rail.minExtendedWidth, closeTo(276, 0.01));
+      expect(rail.minExtendedWidth, closeTo(194, 0.01));
     });
   });
 

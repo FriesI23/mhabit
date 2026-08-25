@@ -10,6 +10,86 @@ import '../window_control/window_control_layout.dart';
 import 'adaptive_nav_scope.dart';
 import 'adaptive_nav_visibility.dart';
 
+/// Extended navigation rail sizing configuration.
+///
+/// [collapsed] controls the icon-only rail. The extended interval grows from
+/// [minimum] to [maximum] as the window moves from [rampStart] to [rampEnd].
+/// The default constructor expresses a fixed logical-pixel target inside that
+/// interval. Use [fromRatio] to express a relative position instead, where 0
+/// selects the minimum and 1 the current upper bound.
+class NavigationRailExtent {
+  const NavigationRailExtent(
+    double width, {
+    this.collapsed = 72.0,
+    this.minimum = 180.0,
+    this.maximum = 360.0,
+    this.rampStart = 600.0,
+    this.rampEnd = 1600.0,
+  }) : assert(width >= 0),
+       assert(collapsed > 0),
+       assert(minimum > 0),
+       assert(minimum >= collapsed),
+       assert(maximum >= minimum),
+       assert(rampEnd > rampStart),
+       _width = width,
+       _ratio = null;
+
+  const NavigationRailExtent.fromRatio(
+    double ratio, {
+    this.collapsed = 72.0,
+    this.minimum = 180.0,
+    this.maximum = 360.0,
+    this.rampStart = 600.0,
+    this.rampEnd = 1600.0,
+  }) : assert(ratio >= 0 && ratio <= 1),
+       assert(collapsed > 0),
+       assert(minimum > 0),
+       assert(minimum >= collapsed),
+       assert(maximum >= minimum),
+       assert(rampEnd > rampStart),
+       _width = null,
+       _ratio = ratio;
+
+  /// Width of the collapsed icon rail.
+  final double collapsed;
+
+  /// Smallest extended rail width.
+  final double minimum;
+
+  /// Largest extended rail width available to manual resizing.
+  final double maximum;
+
+  /// Window width where the available upper bound equals [minimum].
+  final double rampStart;
+
+  /// Window width where the available upper bound reaches [maximum].
+  final double rampEnd;
+
+  final double? _width;
+  final double? _ratio;
+
+  /// Largest rail width available at [windowWidth].
+  double upperBoundAt(double windowWidth) {
+    final t = ((windowWidth - rampStart) / (rampEnd - rampStart)).clamp(
+      0.0,
+      1.0,
+    );
+    return minimum + (maximum - minimum) * t;
+  }
+
+  /// Resolves the automatic rail width at [windowWidth].
+  double resolve(double windowWidth) {
+    final upperBound = upperBoundAt(windowWidth);
+    final width = _width;
+    if (width != null) return width.clamp(minimum, upperBound);
+    return minimum + (upperBound - minimum) * _ratio!;
+  }
+
+  /// Clamps a manually requested [width] to the interval at [windowWidth].
+  double clamp(double width, {required double windowWidth}) =>
+      width.clamp(minimum, upperBoundAt(windowWidth));
+}
+
 /// Adaptive navigation chrome around [child].
 ///
 /// The form follows the window's width and height classes ([WindowSize.of]):
@@ -20,13 +100,12 @@ import 'adaptive_nav_visibility.dart';
 /// The chrome animates when the form changes; the content area always fills
 /// the remaining width without a maximum-width cap.
 ///
-/// The extended rail width follows the window width between the M3 drawer
-/// bounds — the interval's upper bound grows up to the M3 recommended width
-/// at the extra-large boundary, and the default sits inside the interval
-/// rather than at an extreme. Users can drag the rail's trailing edge within
-/// the current interval; a manual value stays in memory and hands off
-/// continuously to the automatic width when the window shrinks (the system
-/// never rewrites it, so it resumes when the window grows back).
+/// The extended rail uses a compact fixed target, clamped to the width
+/// currently available in the resizable interval. Users can drag the rail's
+/// trailing edge farther, up to the M3 drawer width, within that interval; a
+/// manual value stays in memory and hands off continuously to the automatic
+/// width when the window shrinks (the system never rewrites it, so it resumes
+/// when the window grows back).
 ///
 /// In the compact form, bar visibility is derived from
 /// [compactRouteVisible] and the page's current scroll wish
@@ -41,6 +120,7 @@ class AdaptiveNavigationShell extends StatefulWidget {
     required this.destinations,
     required this.onDestinationSelected,
     this.compactRouteVisible = true,
+    this.railExtent = const NavigationRailExtent(224.0),
   });
 
   /// Content displayed beside or underneath the navigation chrome.
@@ -63,6 +143,13 @@ class AdaptiveNavigationShell extends StatefulWidget {
   /// visibility also respects the page's current scroll wish. Ignored in
   /// non-compact forms, where navigation is always visible.
   final bool compactRouteVisible;
+
+  /// Extended-rail sizing configuration.
+  ///
+  /// Controls the automatic width, resizable interval, and its window-width
+  /// growth. This is a component-level layout input only and defaults to a
+  /// compact 224dp target inside the 180–360dp interval.
+  final NavigationRailExtent railExtent;
 
   @override
   State<AdaptiveNavigationShell> createState() =>
@@ -221,6 +308,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
           selectedIndex: widget.selectedIndex,
           destinations: widget.destinations,
           onDestinationSelected: _onDestinationSelected,
+          railExtent: widget.railExtent,
           child: widget.child,
         ),
         // Owning the bar as Scaffold chrome makes this the root Scaffold
@@ -310,6 +398,7 @@ class _NavigationShellBody extends StatelessWidget {
     required this.selectedIndex,
     required this.destinations,
     required this.onDestinationSelected,
+    required this.railExtent,
     required this.child,
   });
 
@@ -319,6 +408,7 @@ class _NavigationShellBody extends StatelessWidget {
   final int selectedIndex;
   final List<NavigationDestination> destinations;
   final ValueChanged<int> onDestinationSelected;
+  final NavigationRailExtent railExtent;
   final Widget child;
 
   @override
@@ -342,6 +432,7 @@ class _NavigationShellBody extends StatelessWidget {
               selectedIndex: selectedIndex,
               destinations: destinations,
               onDestinationSelected: onDestinationSelected,
+              railExtent: railExtent,
             ),
             Expanded(child: child),
           ],
@@ -394,12 +485,14 @@ class _NavigationRailRegion extends StatefulWidget {
     required this.selectedIndex,
     required this.destinations,
     required this.onDestinationSelected,
+    required this.railExtent,
   });
 
   final _ShellForm form;
   final int selectedIndex;
   final List<NavigationDestination> destinations;
   final ValueChanged<int> onDestinationSelected;
+  final NavigationRailExtent railExtent;
 
   @override
   State<_NavigationRailRegion> createState() => _NavigationRailRegionState();
@@ -407,22 +500,6 @@ class _NavigationRailRegion extends StatefulWidget {
 
 class _NavigationRailRegionState extends State<_NavigationRailRegion> {
   static const double _minimumRailButtonExtent = 44.0;
-
-  /// Extended rail width bounds.
-  static const double _railMinWidth = 180.0;
-  static const double _railMaxWidth = 360.0;
-
-  /// Collapsed rail width (icon rail).
-  static const double _railCollapsedWidth = 72.0;
-
-  /// Where the auto width sits inside the effective interval (interior, not
-  /// an extreme).
-  static const double _railAutoRatio = 0.7;
-
-  /// Window widths between which the effective interval grows from
-  /// [_railMinWidth] to [_railMaxWidth].
-  static const double _railWidthRampStart = 600.0;
-  static const double _railWidthRampEnd = 1600.0;
 
   /// Whether the rail is extended.
   ///
@@ -444,7 +521,7 @@ class _NavigationRailRegionState extends State<_NavigationRailRegion> {
 
   /// Accumulated rail width during a drag; assigned to [_manualWidth] on
   /// every update.
-  double _dragCurrentWidth = _railMinWidth;
+  double _dragCurrentWidth = 0.0;
 
   /// Whether a rail resize drag is in progress (disables width animation).
   bool _dragging = false;
@@ -462,22 +539,9 @@ class _NavigationRailRegionState extends State<_NavigationRailRegion> {
     _extended = widget.form == _ShellForm.railExtended;
   }
 
-  /// Drag upper bound at [windowWidth]: the interval grows from
-  /// [_railMinWidth] at the medium boundary to the full [_railMaxWidth] at
-  /// the extra-large boundary.
-  double _railUpperBound(double windowWidth) {
-    final t =
-        ((windowWidth - _railWidthRampStart) /
-                (_railWidthRampEnd - _railWidthRampStart))
-            .clamp(0.0, 1.0);
-    return _railMinWidth + (_railMaxWidth - _railMinWidth) * t;
-  }
-
-  /// Auto rail width at [windowWidth]: interior of the effective interval,
-  /// reaching its maximum at the extra-large boundary.
+  /// Auto rail width at [windowWidth], resolved by the configured extent.
   double _railAutoWidth(double windowWidth) =>
-      _railMinWidth +
-      (_railUpperBound(windowWidth) - _railMinWidth) * _railAutoRatio;
+      widget.railExtent.resolve(windowWidth);
 
   /// Effective extended rail width at [windowWidth].
   ///
@@ -490,7 +554,7 @@ class _NavigationRailRegionState extends State<_NavigationRailRegion> {
     final manual = _manualWidth;
     if (manual == null) return _railAutoWidth(windowWidth);
     final bound = _manualAboveAuto
-        ? _railUpperBound(windowWidth)
+        ? widget.railExtent.upperBoundAt(windowWidth)
         : _railAutoWidth(windowWidth);
     return min(manual, bound);
   }
@@ -532,7 +596,7 @@ class _NavigationRailRegionState extends State<_NavigationRailRegion> {
   Widget _buildRail(BuildContext context, double windowWidth) {
     final width = _extended
         ? _effectiveRailWidth(windowWidth)
-        : _railCollapsedWidth;
+        : widget.railExtent.collapsed;
     final horizontalAvoidance =
         AdaptiveWindowControlLayoutScope.railHorizontalAvoidanceOf(context);
     final verticalAvoidance =
@@ -555,7 +619,7 @@ class _NavigationRailRegionState extends State<_NavigationRailRegion> {
           selectedIndex: widget.selectedIndex,
           onDestinationSelected: widget.onDestinationSelected,
           extended: _extended,
-          minWidth: _railCollapsedWidth,
+          minWidth: widget.railExtent.collapsed,
           minExtendedWidth: width,
           leading: SizedBox(
             width: width,
@@ -607,9 +671,9 @@ class _NavigationRailRegionState extends State<_NavigationRailRegion> {
         },
         onHorizontalDragUpdate: (details) {
           setState(() {
-            _dragCurrentWidth = (_dragCurrentWidth + details.delta.dx).clamp(
-              _railMinWidth,
-              _railUpperBound(windowWidth),
+            _dragCurrentWidth = widget.railExtent.clamp(
+              _dragCurrentWidth + details.delta.dx,
+              windowWidth: windowWidth,
             );
             _manualWidth = _dragCurrentWidth;
             _manualAboveAuto = _dragCurrentWidth > _railAutoWidth(windowWidth);
