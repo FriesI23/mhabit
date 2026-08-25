@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
@@ -273,6 +274,42 @@ void _setSurfaceSize(WidgetTester tester, Size size) {
   addTearDown(tester.view.reset);
 }
 
+const MethodChannel _windowControlChannel = MethodChannel(
+  'ios_window_control_layout',
+);
+
+Map<String, double> _windowInsets({
+  double start = 0,
+  double top = 0,
+  double end = 0,
+  double bottom = 0,
+}) => <String, double>{
+  'start': start,
+  'top': top,
+  'end': end,
+  'bottom': bottom,
+};
+
+void _mockWindowControlLayout() {
+  debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(_windowControlChannel, (call) async {
+        return <String, Object>{
+          'schemaVersion': 1,
+          'isAvailable': true,
+          'baseMargins': _windowInsets(),
+          'horizontalMargins': _windowInsets(start: 40, end: 12),
+          'verticalMargins': _windowInsets(top: 64),
+        };
+      });
+}
+
+void _resetWindowControlLayoutMock() {
+  debugDefaultTargetPlatformOverride = null;
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(_windowControlChannel, null);
+}
+
 void main() {
   testWidgets('scope lookups distinguish listening from read access', (
     tester,
@@ -307,6 +344,115 @@ void main() {
   });
 
   group('AdaptiveNavigationShell', () {
+    testWidgets('provides adaptive window control layout to branch content', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      final context = tester.element(find.text('habits page'));
+      final layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
+      expect(layout.horizontalAvoidance, EdgeInsetsDirectional.zero);
+      expect(layout.verticalAvoidance, EdgeInsetsDirectional.zero);
+      expect(layout.owner, WindowControlLayoutOwner.appBar);
+    });
+
+    testWidgets('assigns avoidance to app bar or rail without overlap', (
+      tester,
+    ) async {
+      _mockWindowControlLayout();
+      try {
+        _setSurfaceSize(tester, const Size(400, 800));
+        final router = _buildRouter();
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        var context = tester.element(find.text('habits page'));
+        var layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
+        expect(
+          layout.appBarHorizontalAvoidance,
+          const EdgeInsetsDirectional.only(start: 40, end: 12),
+        );
+        expect(layout.railHorizontalAvoidance, EdgeInsetsDirectional.zero);
+        expect(layout.railVerticalAvoidance, EdgeInsetsDirectional.zero);
+
+        tester.view.physicalSize = const Size(700, 800);
+        await tester.pumpAndSettle();
+
+        context = tester.element(find.text('habits page'));
+        layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
+        expect(layout.appBarHorizontalAvoidance, EdgeInsetsDirectional.zero);
+        expect(
+          layout.railHorizontalAvoidance,
+          const EdgeInsetsDirectional.only(start: 40, end: 12),
+        );
+        expect(
+          layout.railVerticalAvoidance,
+          const EdgeInsetsDirectional.only(top: 64),
+        );
+
+        final safeSpan = find.byKey(const ValueKey('rail-leading-safe-span'));
+        final toggle = find.byKey(const ValueKey('rail-toggle-button'));
+        expect(
+          tester.getTopLeft(toggle).dy - tester.getTopLeft(safeSpan).dy,
+          64,
+        );
+
+        await tester.tap(toggle);
+        await tester.pumpAndSettle();
+
+        final rail = find.byKey(const ValueKey('rail-panel'));
+        expect(
+          tester.getCenter(toggle).dx,
+          moreOrLessEquals(
+            tester.getTopLeft(rail).dx + tester.getSize(rail).width / 2 + 14,
+            epsilon: 0.01,
+          ),
+        );
+      } finally {
+        _resetWindowControlLayoutMock();
+      }
+    });
+
+    testWidgets('extended rail centers in the RTL safe span', (tester) async {
+      _mockWindowControlLayout();
+      try {
+        _setSurfaceSize(tester, const Size(1000, 800));
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Directionality(
+              textDirection: TextDirection.rtl,
+              child: AdaptiveNavigationShell(
+                selectedIndex: 0,
+                destinations: const [
+                  NavigationDestination(
+                    icon: Icon(Icons.home_outlined),
+                    label: 'Habits',
+                  ),
+                ],
+                onDestinationSelected: (_) {},
+                child: const Text('content'),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final rail = find.byKey(const ValueKey('rail-panel'));
+        final toggle = find.byKey(const ValueKey('rail-toggle-button'));
+        expect(
+          tester.getCenter(toggle).dx,
+          moreOrLessEquals(
+            tester.getTopLeft(rail).dx + tester.getSize(rail).width / 2 - 14,
+            epsilon: 0.01,
+          ),
+        );
+      } finally {
+        _resetWindowControlLayoutMock();
+      }
+    });
+
     testWidgets('renders destinations and switches branch on tap', (
       tester,
     ) async {

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../adaptive/adaptive_navigation_bar.dart';
 import '../adaptive/adaptive_navigation_rail.dart';
 import '../breakpoints/window_size_class.dart';
+import '../window_control/window_control_layout.dart';
 import 'adaptive_nav_scope.dart';
 import 'adaptive_nav_visibility.dart';
 
@@ -180,6 +181,9 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
   @override
   Widget build(BuildContext context) {
     final compact = _form == _ShellForm.bar;
+    final windowControlLayout = AdaptiveWindowControlLayoutScope.maybeOf(
+      context,
+    );
     final padding = MediaQuery.paddingOf(context);
     final viewPadding = MediaQuery.viewPaddingOf(context);
     const barHeight = _narrowNavHeight;
@@ -196,7 +200,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
       onDestinationSelected: _onDestinationSelected,
     );
 
-    return AdaptiveNavScope(
+    final shell = AdaptiveNavScope(
       visible: compact ? _navVisibility : null,
       scrollWish: compact ? _scrollWish : null,
       contextualChrome: _contextualChrome,
@@ -219,9 +223,9 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
           onDestinationSelected: _onDestinationSelected,
           child: widget.child,
         ),
-        // Owning the bar as Scaffold chrome makes this the root Scaffold for
-        // the ambient ScaffoldMessenger. SnackBars are therefore laid out
-        // above the compact bar instead of being painted below its overlay.
+        // Owning the bar as Scaffold chrome makes this the root Scaffold
+        // for the ambient ScaffoldMessenger. SnackBars are therefore laid
+        // out above the compact bar instead of below its overlay.
         bottomNavigationBar: AnimatedSwitcher(
           duration: _animationDuration,
           switchInCurve: Curves.easeOut,
@@ -241,6 +245,53 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
               : const SizedBox.shrink(key: ValueKey('bottom-bar-hidden')),
         ),
       ),
+    );
+    if (windowControlLayout != null) {
+      return _WindowControlLayoutOwner(
+        horizontalAvoidance: windowControlLayout.horizontalAvoidance,
+        verticalAvoidance: windowControlLayout.verticalAvoidance,
+        railOwnsAvoidance: !compact,
+        child: shell,
+      );
+    }
+    return AdaptiveWindowControlLayout(
+      child: Builder(
+        builder: (context) {
+          final layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
+          return _WindowControlLayoutOwner(
+            horizontalAvoidance: layout.horizontalAvoidance,
+            verticalAvoidance: layout.verticalAvoidance,
+            railOwnsAvoidance: !compact,
+            child: shell,
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _WindowControlLayoutOwner extends StatelessWidget {
+  const _WindowControlLayoutOwner({
+    required this.horizontalAvoidance,
+    required this.verticalAvoidance,
+    required this.railOwnsAvoidance,
+    required this.child,
+  });
+
+  final EdgeInsetsDirectional horizontalAvoidance;
+  final EdgeInsetsDirectional verticalAvoidance;
+  final bool railOwnsAvoidance;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return AdaptiveWindowControlLayoutScope(
+      horizontalAvoidance: horizontalAvoidance,
+      verticalAvoidance: verticalAvoidance,
+      owner: railOwnsAvoidance
+          ? WindowControlLayoutOwner.rail
+          : WindowControlLayoutOwner.appBar,
+      child: child,
     );
   }
 }
@@ -355,6 +406,8 @@ class _NavigationRailRegion extends StatefulWidget {
 }
 
 class _NavigationRailRegionState extends State<_NavigationRailRegion> {
+  static const double _minimumRailButtonExtent = 44.0;
+
   /// Extended rail width bounds.
   static const double _railMinWidth = 180.0;
   static const double _railMaxWidth = 360.0;
@@ -461,7 +514,7 @@ class _NavigationRailRegionState extends State<_NavigationRailRegion> {
         _ShellForm.railCollapsed || _ShellForm.railExtended => Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildRail(windowWidth),
+            _buildRail(context, windowWidth),
             // Divider between the rail and the branch content, matching
             // the NavigationDrawer sample layout.
             const VerticalDivider(width: 1),
@@ -476,10 +529,24 @@ class _NavigationRailRegionState extends State<_NavigationRailRegion> {
   /// The extended width follows the auto value unless a manual value
   /// applies (inside the current interval); collapsed keeps the fixed
   /// icon-rail width.
-  Widget _buildRail(double windowWidth) {
+  Widget _buildRail(BuildContext context, double windowWidth) {
     final width = _extended
         ? _effectiveRailWidth(windowWidth)
         : _railCollapsedWidth;
+    final horizontalAvoidance =
+        AdaptiveWindowControlLayoutScope.railHorizontalAvoidanceOf(context);
+    final verticalAvoidance =
+        AdaptiveWindowControlLayoutScope.railVerticalAvoidanceOf(context);
+    final safeWidth =
+        width - horizontalAvoidance.start - horizontalAvoidance.end;
+    final useVerticalFallback =
+        !_extended && safeWidth < _minimumRailButtonExtent;
+    final leadingHorizontalAvoidance = useVerticalFallback
+        ? EdgeInsetsDirectional.zero
+        : horizontalAvoidance;
+    final leadingTopAvoidance = useVerticalFallback
+        ? verticalAvoidance.top
+        : 0.0;
 
     return Stack(
       children: [
@@ -490,12 +557,26 @@ class _NavigationRailRegionState extends State<_NavigationRailRegion> {
           extended: _extended,
           minWidth: _railCollapsedWidth,
           minExtendedWidth: width,
-          leading: IconButton(
-            tooltip: _extended
-                ? 'Collapse navigation rail'
-                : 'Expand navigation rail',
-            icon: Icon(_extended ? Icons.menu_open : Icons.menu),
-            onPressed: () => setState(() => _extended = !_extended),
+          leading: SizedBox(
+            width: width,
+            child: Padding(
+              key: const ValueKey('rail-leading-safe-span'),
+              padding: EdgeInsetsDirectional.only(
+                start: leadingHorizontalAvoidance.start,
+                top: leadingTopAvoidance,
+                end: leadingHorizontalAvoidance.end,
+              ),
+              child: Align(
+                child: IconButton(
+                  key: const ValueKey('rail-toggle-button'),
+                  tooltip: _extended
+                      ? 'Collapse navigation rail'
+                      : 'Expand navigation rail',
+                  icon: Icon(_extended ? Icons.menu_open : Icons.menu),
+                  onPressed: () => setState(() => _extended = !_extended),
+                ),
+              ),
+            ),
           ),
           destinations: widget.destinations,
         ),

@@ -30,6 +30,8 @@ import 'package:mhabit/providers/workflow/app_reminder.dart';
 import 'package:mhabit/providers/workflow/app_sync.dart';
 import 'package:mhabit/storage/db_helper_provider.dart';
 import 'package:mhabit/storage/profile_provider.dart';
+import 'package:mhabit/widgets/widgets.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -138,5 +140,9 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.text('Settings'), findsOneWidget);
+    expect(find.byType(WindowControlAppBar), findsOneWidget);
+    final appBar = tester.widget<AppBar>(find.byType(AppBar));
+    expect(appBar.leading, isA<PageBackButton>());
+    expect(appBar.title, isA<L10nBuilder>());
   });
 }

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
@@ -108,7 +109,7 @@ final class _PageState extends State<_Page> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
+          WindowControlSliverAppBar(
             leading: const PageBackButton(reason: PageBackReason.back),
             title: L10nBuilder(
               builder: (context, l10n) =>

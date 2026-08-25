@@ -12,10 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mhabit/entries/common/app_root_view.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+
+const MethodChannel _windowControlChannel = MethodChannel(
+  'ios_window_control_layout',
+);
+
+Map<String, double> _insets({double start = 0, double end = 0}) =>
+    <String, double>{'start': start, 'top': 0, 'end': end, 'bottom': 0};
 
 void main() {
   group('AppRootView', () {
@@ -102,6 +112,62 @@ void main() {
       expect(find.text('home-key-test'), findsOneWidget);
       expect(find.byType(MaterialApp), findsOneWidget);
       expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('window-control layout reaches root GoRouter pages', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(_windowControlChannel, (_) async {
+            return <String, Object>{
+              'schemaVersion': 1,
+              'isAvailable': true,
+              'baseMargins': _insets(),
+              'horizontalMargins': _insets(start: 40, end: 12),
+              'verticalMargins': _insets(),
+            };
+          });
+      final router = GoRouter(
+        initialLocation: '/',
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (context, _) => Scaffold(
+              body: TextButton(
+                onPressed: () => context.push('/settings'),
+                child: const Text('open page'),
+              ),
+            ),
+          ),
+          GoRoute(
+            path: '/settings',
+            builder: (_, _) => const Scaffold(
+              appBar: WindowControlAppBar(
+                leading: SizedBox.expand(key: ValueKey('pushed-leading')),
+              ),
+            ),
+          ),
+        ],
+      );
+      try {
+        await tester.pumpWidget(
+          AppRootView.router(themeMode: ThemeMode.system, config: router),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('open page'));
+        await tester.pumpAndSettle();
+
+        expect(
+          tester.getTopLeft(find.byKey(const ValueKey('pushed-leading'))).dx,
+          52,
+        );
+      } finally {
+        router.dispose();
+        debugDefaultTargetPlatformOverride = null;
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(_windowControlChannel, null);
+      }
     });
   });
 }

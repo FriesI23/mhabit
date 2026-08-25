@@ -8,16 +8,22 @@ Widget _host(
   CupertinoSliverSearchBar searchBar, {
   TextDirection textDirection = TextDirection.ltr,
   double? contentWidth,
+  EdgeInsetsDirectional appBarAvoidance = EdgeInsetsDirectional.zero,
 }) => MaterialApp(
   theme: ThemeData(platform: TargetPlatform.iOS),
   home: Directionality(
     textDirection: textDirection,
-    child: Scaffold(
-      body: Align(
-        alignment: Alignment.topLeft,
-        child: SizedBox(
-          width: contentWidth,
-          child: CustomScrollView(slivers: [searchBar]),
+    child: AdaptiveWindowControlLayoutScope(
+      horizontalAvoidance: appBarAvoidance,
+      verticalAvoidance: EdgeInsetsDirectional.zero,
+      owner: WindowControlLayoutOwner.appBar,
+      child: Scaffold(
+        body: Align(
+          alignment: Alignment.topLeft,
+          child: SizedBox(
+            width: contentWidth,
+            child: CustomScrollView(slivers: [searchBar]),
+          ),
         ),
       ),
     ),
@@ -238,6 +244,33 @@ void main() {
     tester.view.physicalSize = const Size(1000, 800);
     await tester.pumpAndSettle();
     expect(tester.getTopRight(searchRegion).dx, 1000 - 16);
+  });
+
+  testWidgets('adds window-control avoidance to Cupertino toolbar padding', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      _host(
+        buildBar(),
+        appBarAvoidance: const EdgeInsetsDirectional.only(start: 40, end: 12),
+      ),
+    );
+
+    final searchRegion = find.byKey(
+      const ValueKey('cupertino-expandable-search-region'),
+    );
+    expect(tester.getTopRight(searchRegion).dx, 800 - 16 - 12);
+    expect(
+      tester.getTopLeft(find.byKey(const ValueKey('info'))).dx,
+      greaterThanOrEqualTo(16 + 40),
+    );
+    expect(
+      tester.getCenter(find.byKey(const ValueKey('cupertino-search-title'))).dx,
+      closeTo(400, 1),
+    );
   });
 
   testWidgets('bottom shares the toolbar glass and extends its pinned extent', (

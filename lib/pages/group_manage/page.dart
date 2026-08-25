@@ -387,7 +387,7 @@ class _GroupManageSliverAppBar extends StatelessWidget {
       final effectiveSortType = context
           .read<GroupManageViewModel>()
           .effectiveSortType;
-      return SliverAppBar(
+      return WindowControlSliverAppBar(
         pinned: true,
         forceElevated: true,
         scrolledUnderElevation: _kCommonEvalation,
@@ -432,7 +432,7 @@ class _GroupManageSliverAppBar extends StatelessWidget {
         ],
       );
     }
-    return SliverAppBar(
+    return WindowControlSliverAppBar(
       floating: true,
       snap: true,
       pinned: true,

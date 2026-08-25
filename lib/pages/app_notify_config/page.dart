@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../l10n/localizations.dart';
@@ -44,7 +45,7 @@ class _AppNotifyConfigView extends State<AppNotifyConfigView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: WindowControlAppBar(
         leading: const PageBackButton(reason: PageBackReason.back),
         title: L10nBuilder(
           builder: (context, l10n) =>

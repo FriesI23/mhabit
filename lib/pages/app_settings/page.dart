@@ -934,7 +934,7 @@ class _PageState extends State<_Page> with XShare {
 
     return ColorfulNavibar(
       child: Scaffold(
-        appBar: AppBar(
+        appBar: WindowControlAppBar(
           title: L10nBuilder(
             builder: (context, l10n) => l10n != null
                 ? Text(l10n.appSetting_appbar_titleText)

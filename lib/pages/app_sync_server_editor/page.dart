@@ -264,7 +264,7 @@ class _PageFullScreenDialog extends StatelessWidget {
   Widget build(BuildContext context) => Dialog.fullscreen(
     child: ColorfulNavibar(
       child: Scaffold(
-        appBar: AppBar(
+        appBar: WindowControlAppBar(
           leading: PageBackButton(
             reason: PageBackReason.close,
             onPressed: onCancelButtonPressed,
