@@ -2,6 +2,12 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.26.15+188-pre
+
+- Feature: expand adaptive navigation, search, filtering, and selection
+  actions (#646)
+- Feature: avoid window controls in adaptive app bars and navigation rails (#647)
+
 ## 1.26.14+187
 
 - Update Czech, German, Italian, and Russian translations and contributor credits (#645)
