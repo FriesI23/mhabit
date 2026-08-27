@@ -74,6 +74,13 @@ class _HabitsPageState extends State<HabitsPage> {
     _habitsTabKey.currentState?.handlePageDismiss();
   }
 
+  void _handleHabitCreated(HabitDBCell result) {
+    if (!mounted) return;
+    final vm = context.read<HabitSummaryViewModel>();
+    if (!vm.mounted) return;
+    vm.addNewData(HabitSummaryData.fromDBQueryCell(result));
+  }
+
   @override
   Widget build(BuildContext context) => HabitsPageProviders(
     child: PageShortcuts(onDismiss: _handlePageDismiss, child: _build()),
@@ -86,13 +93,6 @@ class _HabitsPageState extends State<HabitsPage> {
       final chrome = context.resolveHabitDisplayContextualChrome(
         isSelectionMode: isInEditMode,
       );
-      void onHabitCreated(HabitDBCell result) {
-        if (!context.mounted) return;
-        final vm = context.read<HabitSummaryViewModel>();
-        if (!vm.mounted) return;
-        vm.addNewData(HabitSummaryData.fromDBQueryCell(result));
-      }
-
       return _AdaptiveNavContextualChromeSuppression(
         enabled: chrome.suppressShellChrome,
         child: ColorfulNavibar(
@@ -107,13 +107,13 @@ class _HabitsPageState extends State<HabitsPage> {
               resizeToAvoidBottomInset: false,
               body: HabitsTabPage(
                 key: _habitsTabKey,
-                onHabitCreated: onHabitCreated,
+                onHabitCreated: _handleHabitCreated,
                 contextualChrome: chrome,
               ),
               floatingActionButton: _buildFloatingActionButton(
                 scope,
                 chrome,
-                onHabitCreated,
+                _handleHabitCreated,
               ),
               bottomNavigationBar: chrome.showSelectionBottomToolbar
                   ? _habitsTabKey.currentState?.buildSelectionBottomToolbar()

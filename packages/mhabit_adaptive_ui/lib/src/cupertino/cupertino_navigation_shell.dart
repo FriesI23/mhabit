@@ -123,7 +123,6 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
             CompactNavigationChromeTransition(
               visibility: state.visible,
               collapseLayout: true,
-              progressKey: const ValueKey('compact-navigation-chrome-opacity'),
               topClipOverflow: CupertinoFloatingGlassSurface.shadowClipOverflow,
               child: CupertinoAdaptiveNavigationBar(
                 selectedIndex: widget.selectedIndex,

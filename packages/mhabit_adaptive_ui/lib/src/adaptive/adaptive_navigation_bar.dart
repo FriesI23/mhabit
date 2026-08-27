@@ -22,10 +22,10 @@ class AdaptiveNavigationBar extends StatelessWidget {
     required this.selectedIndex,
     required this.onDestinationSelected,
     required this.destinations,
-    this.presentation = AdaptiveNavigationBarPresentation.expanded,
+    this.presentation,
     this.onExpandRequested,
-    this.materialStyle = const MaterialNavigationBarStyle(),
-    this.appleStyle = const AppleNavigationBarStyle(),
+    this.materialStyle,
+    this.appleStyle,
   }) : assert(
          presentation != AdaptiveNavigationBarPresentation.minimized ||
              onExpandRequested != null,
@@ -38,10 +38,10 @@ class AdaptiveNavigationBar extends StatelessWidget {
     required this.selectedIndex,
     required this.onDestinationSelected,
     required this.destinations,
-    this.materialStyle = const MaterialNavigationBarStyle(),
-  }) : presentation = AdaptiveNavigationBarPresentation.expanded,
+    this.materialStyle,
+  }) : presentation = null,
        onExpandRequested = null,
-       appleStyle = const AppleNavigationBarStyle(),
+       appleStyle = null,
        style = AdaptiveStyle.material;
 
   /// Creates a navigation bar that always uses the Apple renderer.
@@ -50,14 +50,14 @@ class AdaptiveNavigationBar extends StatelessWidget {
     required this.selectedIndex,
     required this.onDestinationSelected,
     required this.destinations,
-    this.presentation = AdaptiveNavigationBarPresentation.expanded,
+    this.presentation,
     this.onExpandRequested,
-    this.appleStyle = const AppleNavigationBarStyle(),
+    this.appleStyle,
   }) : assert(
          presentation != AdaptiveNavigationBarPresentation.minimized ||
              onExpandRequested != null,
        ),
-       materialStyle = const MaterialNavigationBarStyle(),
+       materialStyle = null,
        style = AdaptiveStyle.apple;
 
   /// Explicit renderer style, or null to resolve it from the context.
@@ -73,36 +73,43 @@ class AdaptiveNavigationBar extends StatelessWidget {
   final List<AdaptiveNavigationDestination> destinations;
 
   /// Expanded or minimized presentation used by the Apple renderer.
-  final AdaptiveNavigationBarPresentation presentation;
+  ///
+  /// A null value resolves to [AdaptiveNavigationBarPresentation.expanded].
+  final AdaptiveNavigationBarPresentation? presentation;
 
   /// Called when a minimized Apple bar requests expansion.
   final VoidCallback? onExpandRequested;
 
-  /// Material-specific visual configuration.
-  final MaterialNavigationBarStyle materialStyle;
+  /// Material-specific visual configuration, or null for the defaults.
+  final MaterialNavigationBarStyle? materialStyle;
 
-  /// Apple-specific geometry and spacing configuration.
-  final AppleNavigationBarStyle appleStyle;
+  /// Apple-specific geometry and spacing configuration, or null for defaults.
+  final AppleNavigationBarStyle? appleStyle;
 
   @override
   Widget build(BuildContext context) {
     final effective = style ?? AdaptiveStyle.of(context);
+    final effectivePresentation =
+        presentation ?? AdaptiveNavigationBarPresentation.expanded;
+    final effectiveMaterialStyle =
+        materialStyle ?? const MaterialNavigationBarStyle();
+    final effectiveAppleStyle = appleStyle ?? const AppleNavigationBarStyle();
     return switch (effective) {
       AdaptiveStyle.apple => CupertinoAdaptiveNavigationBar(
         selectedIndex: selectedIndex,
         onDestinationSelected: onDestinationSelected,
         onExpandRequested: onExpandRequested ?? () {},
         destinations: destinations,
-        presentation: presentation,
-        expandedNavigationWidth: appleStyle.expandedNavigationWidth,
-        floatingBottomMargin: appleStyle.floatingBottomMargin,
+        presentation: effectivePresentation,
+        expandedNavigationWidth: effectiveAppleStyle.expandedNavigationWidth,
+        floatingBottomMargin: effectiveAppleStyle.floatingBottomMargin,
       ),
       AdaptiveStyle.material => MaterialAdaptiveNavigationBar(
         selectedIndex: selectedIndex,
         onDestinationSelected: onDestinationSelected,
         destinations: destinations,
-        height: materialStyle.height,
-        labelBehavior: materialStyle.labelBehavior,
+        height: effectiveMaterialStyle.height,
+        labelBehavior: effectiveMaterialStyle.labelBehavior,
       ),
     };
   }

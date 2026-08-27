@@ -400,9 +400,6 @@ class CupertinoNavigationPrimaryActionHost extends StatelessWidget {
           builder: (context, extent, child) =>
               CompactNavigationChromeTransition(
                 visibility: visibility,
-                progressKey: const ValueKey(
-                  'apple-primary-action-chrome-opacity',
-                ),
                 child: _PrimaryActionAnimatedSwitcher(
                   action: !compact && !routeVisible ? null : primaryAction,
                   extent: extent,

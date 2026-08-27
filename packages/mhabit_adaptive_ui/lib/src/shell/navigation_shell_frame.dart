@@ -314,7 +314,6 @@ class CompactNavigationChromeTransition extends StatelessWidget {
     required this.visibility,
     required this.child,
     this.collapseLayout = false,
-    this.progressKey,
     this.topClipOverflow = 0,
   });
 
@@ -326,9 +325,6 @@ class CompactNavigationChromeTransition extends StatelessWidget {
 
   /// Whether hidden chrome also collapses its layout height.
   final bool collapseLayout;
-
-  /// Optional key applied to the opacity that exposes transition progress.
-  final Key? progressKey;
 
   /// Extra paint area retained above a collapsing clip boundary.
   final double topClipOverflow;
@@ -347,7 +343,7 @@ class CompactNavigationChromeTransition extends StatelessWidget {
       builder: (context, factor, child) {
         final faded = IgnorePointer(
           ignoring: factor == 0,
-          child: Opacity(key: progressKey, opacity: factor, child: child),
+          child: Opacity(opacity: factor, child: child),
         );
         if (!collapseLayout) {
           return FractionalTranslation(

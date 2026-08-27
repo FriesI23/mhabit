@@ -216,14 +216,7 @@ void main() {
       verticalAvoidance: EdgeInsetsDirectional.zero,
       cornerRadii: const BorderRadius.all(Radius.circular(62)),
     ));
-    final geometryBuilds =
-        <
-          ({
-            EdgeInsetsDirectional horizontalAvoidance,
-            EdgeInsetsDirectional verticalAvoidance,
-            BorderRadius effectiveCornerRadii,
-          })?
-        >[];
+    final geometryBuilds = <AdaptiveWindowSafeAreaGeometry?>[];
     addTearDown(layout.dispose);
 
     await tester.pumpWidget(
@@ -249,14 +242,22 @@ void main() {
       ),
     );
     expect(geometryBuilds, [
-      (
-        horizontalAvoidance: const EdgeInsetsDirectional.only(
-          start: 24,
-          end: 18,
-        ),
-        verticalAvoidance: EdgeInsetsDirectional.zero,
-        effectiveCornerRadii: const BorderRadius.all(Radius.circular(62)),
-      ),
+      isA<AdaptiveWindowSafeAreaGeometry>()
+          .having(
+            (geometry) => geometry.horizontalAvoidance,
+            'horizontalAvoidance',
+            const EdgeInsetsDirectional.only(start: 24, end: 18),
+          )
+          .having(
+            (geometry) => geometry.verticalAvoidance,
+            'verticalAvoidance',
+            EdgeInsetsDirectional.zero,
+          )
+          .having(
+            (geometry) => geometry.effectiveCornerRadii,
+            'effectiveCornerRadii',
+            const BorderRadius.all(Radius.circular(62)),
+          ),
     ]);
 
     layout.value = (
@@ -291,14 +292,7 @@ void main() {
 class _SafeAreaGeometryProbe extends StatelessWidget {
   const _SafeAreaGeometryProbe({required this.onBuild});
 
-  final ValueChanged<
-    ({
-      EdgeInsetsDirectional horizontalAvoidance,
-      EdgeInsetsDirectional verticalAvoidance,
-      BorderRadius effectiveCornerRadii,
-    })?
-  >
-  onBuild;
+  final ValueChanged<AdaptiveWindowSafeAreaGeometry?> onBuild;
 
   @override
   Widget build(BuildContext context) {

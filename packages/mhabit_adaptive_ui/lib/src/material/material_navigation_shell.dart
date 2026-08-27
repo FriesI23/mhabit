@@ -60,7 +60,6 @@ class MaterialNavigationShell extends StatelessWidget {
           CompactNavigationChromeTransition(
             visibility: state.visible,
             collapseLayout: true,
-            progressKey: const ValueKey('compact-navigation-chrome-opacity'),
             child: MaterialAdaptiveNavigationBar(
               selectedIndex: selectedIndex,
               onDestinationSelected: state.onDestinationSelected,

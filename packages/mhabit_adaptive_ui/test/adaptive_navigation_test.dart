@@ -715,25 +715,28 @@ void main() {
         CupertinoNavigationPrimaryActionButton,
       );
       expect(outgoingAction, findsOneWidget);
+      final outgoingActionOpacityFinder = find.ancestor(
+        of: outgoingAction,
+        matching: find.byType(Opacity),
+      );
+      final outgoingBarOpacityFinder = find.ancestor(
+        of: find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
+        matching: find.byType(Opacity),
+      );
+      expect(outgoingActionOpacityFinder, findsOneWidget);
+      expect(outgoingBarOpacityFinder, findsOneWidget);
       final outgoingActionOpacity = tester.widget<Opacity>(
-        find.byKey(const ValueKey('apple-primary-action-chrome-opacity')),
+        outgoingActionOpacityFinder,
       );
       final outgoingBarOpacity = tester.widget<Opacity>(
-        find.byKey(const ValueKey('compact-navigation-chrome-opacity')),
+        outgoingBarOpacityFinder,
       );
       expect(outgoingActionOpacity.opacity, inExclusiveRange(0, 1));
       expect(outgoingActionOpacity.opacity, outgoingBarOpacity.opacity);
 
       await tester.pumpAndSettle();
       expect(outgoingAction, findsOneWidget);
-      expect(
-        tester
-            .widget<Opacity>(
-              find.byKey(const ValueKey('apple-primary-action-chrome-opacity')),
-            )
-            .opacity,
-        0,
-      );
+      expect(tester.widget<Opacity>(outgoingActionOpacityFinder).opacity, 0);
 
       state.setRouteVisible(true);
       await tester.pump();
@@ -743,11 +746,21 @@ void main() {
         CupertinoNavigationPrimaryActionButton,
       );
       expect(incomingAction, findsOneWidget);
+      final incomingActionOpacityFinder = find.ancestor(
+        of: incomingAction,
+        matching: find.byType(Opacity),
+      );
+      final incomingBarOpacityFinder = find.ancestor(
+        of: find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
+        matching: find.byType(Opacity),
+      );
+      expect(incomingActionOpacityFinder, findsOneWidget);
+      expect(incomingBarOpacityFinder, findsOneWidget);
       final incomingActionOpacity = tester.widget<Opacity>(
-        find.byKey(const ValueKey('apple-primary-action-chrome-opacity')),
+        incomingActionOpacityFinder,
       );
       final incomingBarOpacity = tester.widget<Opacity>(
-        find.byKey(const ValueKey('compact-navigation-chrome-opacity')),
+        incomingBarOpacityFinder,
       );
       expect(incomingActionOpacity.opacity, inExclusiveRange(0, 1));
       expect(incomingActionOpacity.opacity, incomingBarOpacity.opacity);

@@ -7,7 +7,6 @@ export 'src/adaptive/adaptive_icon_button.dart';
 export 'src/adaptive/adaptive_list_tile.dart';
 export 'src/adaptive/adaptive_navigation_bar.dart';
 export 'src/adaptive/adaptive_navigation_destination.dart';
-export 'src/adaptive/adaptive_navigation_rail.dart';
 export 'src/adaptive/adaptive_scaffold.dart';
 export 'src/adaptive/adaptive_sliver_app_bar.dart';
 export 'src/adaptive/adaptive_sliver_search_bar.dart';

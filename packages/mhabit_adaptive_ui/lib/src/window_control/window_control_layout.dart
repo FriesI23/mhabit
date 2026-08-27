@@ -10,6 +10,36 @@ enum _WindowControlLayoutAspect {
   safeAreaGeometry,
 }
 
+/// Complete corner-adapted safe-area geometry reported by UIKit.
+@immutable
+final class AdaptiveWindowSafeAreaGeometry {
+  const AdaptiveWindowSafeAreaGeometry({
+    required this.horizontalAvoidance,
+    required this.verticalAvoidance,
+    required this.effectiveCornerRadii,
+  });
+
+  /// Additional horizontal safe-area avoidance.
+  final EdgeInsetsDirectional horizontalAvoidance;
+
+  /// Additional vertical safe-area avoidance.
+  final EdgeInsetsDirectional verticalAvoidance;
+
+  /// Effective physical corner radii for the current window.
+  final BorderRadius effectiveCornerRadii;
+
+  @override
+  bool operator ==(Object other) =>
+      other is AdaptiveWindowSafeAreaGeometry &&
+      other.horizontalAvoidance == horizontalAvoidance &&
+      other.verticalAvoidance == verticalAvoidance &&
+      other.effectiveCornerRadii == effectiveCornerRadii;
+
+  @override
+  int get hashCode =>
+      Object.hash(horizontalAvoidance, verticalAvoidance, effectiveCornerRadii);
+}
+
 /// Queries iOS window-control layout once above an application's navigators.
 ///
 /// Root routes and overlays default to app-bar ownership. A nested
@@ -125,12 +155,9 @@ class AdaptiveWindowControlLayoutScope extends InheritedModel<Object> {
   /// one snapshot, rebuilding when any of that geometry changes.
   ///
   /// Returns null unless the complete geometry is available.
-  static ({
-    EdgeInsetsDirectional horizontalAvoidance,
-    EdgeInsetsDirectional verticalAvoidance,
-    BorderRadius effectiveCornerRadii,
-  })?
-  safeAreaGeometryOf(BuildContext context) {
+  static AdaptiveWindowSafeAreaGeometry? safeAreaGeometryOf(
+    BuildContext context,
+  ) {
     final scope = InheritedModel.inheritFrom<AdaptiveWindowControlLayoutScope>(
       context,
       aspect: _WindowControlLayoutAspect.safeAreaGeometry,
@@ -142,7 +169,7 @@ class AdaptiveWindowControlLayoutScope extends InheritedModel<Object> {
             verticalAvoidance == null ||
             effectiveCornerRadii == null
         ? null
-        : (
+        : AdaptiveWindowSafeAreaGeometry(
             horizontalAvoidance: horizontalAvoidance,
             verticalAvoidance: verticalAvoidance,
             effectiveCornerRadii: effectiveCornerRadii,

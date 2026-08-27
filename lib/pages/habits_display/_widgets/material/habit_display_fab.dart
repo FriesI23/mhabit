@@ -15,7 +15,6 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tuple/tuple.dart';
 
 import '../../../../storage/db/handlers/habit.dart';
 import '../../../../widgets/widgets.dart';
@@ -45,6 +44,19 @@ class HabitDisplayMaterialFab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fab = Selector<HabitSummaryViewModel, (bool, bool, int)>(
+      selector: (context, viewmodel) => (
+        viewmodel.isAppbarPinned,
+        viewmodel.isInEditMode,
+        viewmodel.selectedHabitsCount,
+      ),
+      shouldRebuild: (previous, next) => previous != next,
+      builder: (context, value, child) => _buildOpenContainer(
+        context,
+        isAppbarPinned: value.$1,
+        isInEditMode: value.$2,
+      ),
+    );
     if (hidden) return const SizedBox.shrink();
     return AnimatedPadding(
       duration: _bottomNavAnimationDuration,
@@ -57,26 +69,11 @@ class HabitDisplayMaterialFab extends StatelessWidget {
         child: AnimatedOpacity(
           duration: _bottomNavAnimationDuration,
           opacity: bottomNavVisible ? 1 : 0,
-          child: _buildFab(context),
+          child: fab,
         ),
       ),
     );
   }
-
-  Widget _buildFab(BuildContext context) =>
-      Selector<HabitSummaryViewModel, Tuple3<bool, bool, int>>(
-        selector: (context, viewmodel) => Tuple3(
-          viewmodel.isAppbarPinned,
-          viewmodel.isInEditMode,
-          viewmodel.selectedHabitsCount,
-        ),
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, value, child) => _buildOpenContainer(
-          context,
-          isAppbarPinned: value.item1,
-          isInEditMode: value.item2,
-        ),
-      );
 
   Widget _buildOpenContainer(
     BuildContext context, {
@@ -114,7 +111,10 @@ class HabitDisplayMaterialFab extends StatelessWidget {
 
     return _HabitDisplayMaterialOpenContainer<Object?>(
       closeBuilder: (context, action) => ScrollingFAB.small(
-        onPressed: () => _handlePressed(context, action),
+        onPressed: () {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+          action();
+        },
         label: labelBuilder(context),
         icon: iconBuilder(context),
         isExtended: isInEditMode || isAppbarPinned,
@@ -135,11 +135,6 @@ class HabitDisplayMaterialFab extends StatelessWidget {
         }
       },
     );
-  }
-
-  void _handlePressed(BuildContext context, VoidCallback action) {
-    Navigator.of(context).popUntil((route) => route.isFirst);
-    action();
   }
 }
 
