@@ -1,10 +1,10 @@
-// Copyright 2023 Fries_I23
+// Copyright 2026 Fries_I23
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//     https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,45 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:animations/animations.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
-import '../../../widgets/widgets.dart';
+import '../../../storage/db/handlers/habit.dart';
+import 'apple/habit_display_fab.dart';
 
-class HabitDisplayFAB<T> extends StatelessWidget {
-  final double? closedElevation;
-  final CloseContainerBuilder closeBuilder;
-  final OpenContainerBuilder<T> openBuilder;
-  final ClosedCallback<T?>? onClosed;
-
-  const HabitDisplayFAB({
+/// Dispatches the Habits-display FAB region to the active visual style.
+///
+/// Material owns its FAB through the enclosing Scaffold slot. Apple declares
+/// its action here while the adaptive shell owns the persistent button.
+class HabitDisplayFabRegion extends StatelessWidget {
+  const HabitDisplayFabRegion({
     super.key,
-    this.closedElevation,
-    required this.closeBuilder,
-    required this.openBuilder,
-    this.onClosed,
+    required this.appleVisible,
+    required this.onCreated,
+    required this.child,
   });
 
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData themeData = Theme.of(context);
+  final bool appleVisible;
+  final ValueChanged<HabitDBCell> onCreated;
+  final Widget child;
 
-    return OpenContainer<T>(
-      transitionDuration: const Duration(milliseconds: 250),
-      transitionType: ContainerTransitionType.fadeThrough,
-      middleColor: themeData.colorScheme.primaryContainer.withValues(
-        alpha: 0.5,
-      ),
-      closedShape: kDefaultScrollingFABShape,
-      closedColor: themeData.colorScheme.surface,
-      closedElevation: closedElevation ?? kDefaultScrollingFABElevation,
-      closedBuilder: closeBuilder,
-      openElevation: 0.0,
-      openShape: kDefaultScrollingFABShape,
-      openColor: themeData.colorScheme.primaryContainer,
-      openBuilder: openBuilder,
-      onClosed: onClosed,
-      tappable: false,
-    );
-  }
+  @override
+  Widget build(BuildContext context) => switch (AdaptiveStyle.of(context)) {
+    AdaptiveStyle.material => child,
+    AdaptiveStyle.apple => HabitDisplayAppleFab(
+      visible: appleVisible,
+      onCreated: onCreated,
+      child: child,
+    ),
+  };
 }

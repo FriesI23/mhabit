@@ -17,10 +17,13 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../extensions/navigator_extensions.dart';
+import '../../models/habit_summary.dart';
+import '../../storage/db/handlers/habit.dart';
 import '../../widgets/widgets.dart';
 import '../common/widgets.dart';
 import '_providers/habit_summary.dart';
 import '_widgets/habit_display_contextual_chrome.dart';
+import '_widgets/material/habit_display_fab.dart';
 import 'page_habits.dart';
 import 'page_today.dart';
 import 'providers.dart';
@@ -29,8 +32,7 @@ import 'shortcuts.dart';
 /// Branch root page for the habits tab.
 ///
 /// Owns the tab's FAB, back-gesture interception, and dismiss intent. The
-/// bottom bar and its visibility belong to the enclosing
-/// [AdaptiveNavigationShell] and are exposed through [AdaptiveNavScope].
+/// enclosing [AdaptiveNavigationShell] owns navigation scroll behavior.
 class HabitsPage extends StatefulWidget {
   const HabitsPage({super.key});
 
@@ -39,38 +41,25 @@ class HabitsPage extends StatefulWidget {
 }
 
 class _HabitsPageState extends State<HabitsPage> {
-  bool _fabRebuildPending = false;
-
   final GlobalKey<HabitsTabPageState> _habitsTabKey = GlobalKey();
-
-  void _handleBottomNavVisibilityChanged(bool visible) {
-    AdaptiveNavScope.maybeRead(context)?.reportScrollWish(visible);
-  }
 
   Widget? _buildFloatingActionButton(
     AdaptiveNavScope scope,
     HabitDisplayContextualChrome chrome,
+    ValueChanged<HabitDBCell> onCreated,
   ) {
-    final state = _habitsTabKey.currentState;
-    if (state == null) {
-      if (!_fabRebuildPending) {
-        _fabRebuildPending = true;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!mounted) return;
-          _fabRebuildPending = false;
-          setState(() {});
-        });
-      }
-      return null;
-    }
-    return ValueListenableBuilder<bool>(
-      valueListenable: scope.visible,
-      builder: (context, visible, child) => state.buildFloatingActionButton(
-        bottomNavVisible: visible,
-        bottomNavHeight: scope.barHeight,
-        contextualChrome: chrome,
+    return switch (AdaptiveStyle.of(context)) {
+      AdaptiveStyle.material => ValueListenableBuilder<bool>(
+        valueListenable: scope.visible,
+        builder: (context, visible, child) => HabitDisplayMaterialFab(
+          hidden: chrome.hideFloatingActionButton,
+          bottomNavVisible: visible,
+          bottomNavHeight: scope.barHeight,
+          onCreated: onCreated,
+        ),
       ),
-    );
+      AdaptiveStyle.apple => null,
+    };
   }
 
   Future<bool> _handleWillPop() async {
@@ -97,6 +86,13 @@ class _HabitsPageState extends State<HabitsPage> {
       final chrome = context.resolveHabitDisplayContextualChrome(
         isSelectionMode: isInEditMode,
       );
+      void onHabitCreated(HabitDBCell result) {
+        if (!context.mounted) return;
+        final vm = context.read<HabitSummaryViewModel>();
+        if (!vm.mounted) return;
+        vm.addNewData(HabitSummaryData.fromDBQueryCell(result));
+      }
+
       return _AdaptiveNavContextualChromeSuppression(
         enabled: chrome.suppressShellChrome,
         child: ColorfulNavibar(
@@ -111,10 +107,14 @@ class _HabitsPageState extends State<HabitsPage> {
               resizeToAvoidBottomInset: false,
               body: HabitsTabPage(
                 key: _habitsTabKey,
-                onBottomNavVisibilityChanged: _handleBottomNavVisibilityChanged,
+                onHabitCreated: onHabitCreated,
                 contextualChrome: chrome,
               ),
-              floatingActionButton: _buildFloatingActionButton(scope, chrome),
+              floatingActionButton: _buildFloatingActionButton(
+                scope,
+                chrome,
+                onHabitCreated,
+              ),
               bottomNavigationBar: chrome.showSelectionBottomToolbar
                   ? _habitsTabKey.currentState?.buildSelectionBottomToolbar()
                   : null,
@@ -148,7 +148,8 @@ class _AdaptiveNavContextualChromeSuppressionState
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _scope = AdaptiveNavScope.maybeRead(context);
+    _scope = AdaptiveNavScope.maybeOf(context);
+    _reported = null;
     _scheduleReport();
   }
 
@@ -184,8 +185,8 @@ class _AdaptiveNavContextualChromeSuppressionState
 
 /// Branch root page for the today tab.
 ///
-/// Passes the reserved bar height from [AdaptiveNavScope] to [TodayTabPage]
-/// and reports its scroll-driven visibility changes back to the shell.
+/// Passes the reserved bar height from [AdaptiveNavScope] to [TodayTabPage].
+/// The enclosing shell observes active vertical scrolling directly.
 class TodayPage extends StatelessWidget {
   const TodayPage({super.key});
 
@@ -197,10 +198,7 @@ class TodayPage extends StatelessWidget {
     final scope = AdaptiveNavScope.of(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: TodayTabPage(
-        bottomNavigationHeight: scope.navHeight,
-        onBottomNavVisibilityChanged: scope.reportScrollWish,
-      ),
+      body: TodayTabPage(bottomNavigationHeight: scope.navHeight),
     );
   }
 }

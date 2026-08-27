@@ -2,47 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../adaptive_style.dart';
 import '../cupertino/cupertino_adaptive_navigation_bar.dart';
-import 'adaptive_navigation_bar_presentation.dart';
+import '../material/material_navigation_bar.dart';
 import 'adaptive_navigation_destination.dart';
 
-/// Material-only visual configuration for [AdaptiveNavigationBar].
-class MaterialNavigationBarStyle {
-  const MaterialNavigationBarStyle({this.height, this.labelBehavior});
-
-  final double? height;
-  final NavigationDestinationLabelBehavior? labelBehavior;
-}
-
-/// Apple-only visual configuration for [AdaptiveNavigationBar].
-class AppleNavigationBarStyle {
-  /// Creates Apple navigation-bar styling.
-  ///
-  /// A null or infinite [expandedNavigationWidth] uses all available width.
-  const AppleNavigationBarStyle({
-    this.expandedNavigationWidth,
-    this.floatingBottomMargin,
-  }) : assert(expandedNavigationWidth == null || expandedNavigationWidth > 0),
-       assert(
-         floatingBottomMargin == null ||
-             (floatingBottomMargin >= 0 &&
-                 floatingBottomMargin < double.infinity),
-       );
-
-  /// Preferred width of the expanded destination surface.
-  ///
-  /// A null or infinite value fills the space available before the trailing
-  /// action boundary. A finite value is clamped when the compact width is
-  /// smaller, while any remaining space stays flexible.
-  final double? expandedNavigationWidth;
-
-  /// Overrides the distance between the floating surfaces and the bottom.
-  ///
-  /// When null, the renderer combines UIKit's reported boundary geometry with
-  /// Flutter's bottom view padding and its visual baseline. Values must be
-  /// finite and non-negative; values smaller than the renderer's minimum
-  /// surface margin are clamped.
-  final double? floatingBottomMargin;
-}
+export '../cupertino/cupertino_adaptive_navigation_bar.dart'
+    show AdaptiveNavigationBarPresentation, AppleNavigationBarStyle;
+export '../material/material_navigation_bar.dart'
+    show MaterialNavigationBarStyle;
 
 /// Adaptive bottom navigation bar (box, for a `Scaffold.bottomNavigationBar`
 /// slot).
@@ -50,6 +16,7 @@ class AppleNavigationBarStyle {
 /// The default constructor resolves the style from the current platform;
 /// `.material` and `.apple` force a renderer.
 class AdaptiveNavigationBar extends StatelessWidget {
+  /// Creates a navigation bar using the ambient adaptive style.
   const AdaptiveNavigationBar({
     super.key,
     required this.selectedIndex,
@@ -65,6 +32,7 @@ class AdaptiveNavigationBar extends StatelessWidget {
        ),
        style = null;
 
+  /// Creates a navigation bar that always uses the Material renderer.
   const AdaptiveNavigationBar.material({
     super.key,
     required this.selectedIndex,
@@ -76,6 +44,7 @@ class AdaptiveNavigationBar extends StatelessWidget {
        appleStyle = const AppleNavigationBarStyle(),
        style = AdaptiveStyle.material;
 
+  /// Creates a navigation bar that always uses the Apple renderer.
   const AdaptiveNavigationBar.apple({
     super.key,
     required this.selectedIndex,
@@ -91,13 +60,28 @@ class AdaptiveNavigationBar extends StatelessWidget {
        materialStyle = const MaterialNavigationBarStyle(),
        style = AdaptiveStyle.apple;
 
+  /// Explicit renderer style, or null to resolve it from the context.
   final AdaptiveStyle? style;
+
+  /// Zero-based index of the selected destination.
   final int selectedIndex;
+
+  /// Called with the index of a destination selected by the user.
   final ValueChanged<int> onDestinationSelected;
+
+  /// Top-level destinations rendered by the bar.
   final List<AdaptiveNavigationDestination> destinations;
+
+  /// Expanded or minimized presentation used by the Apple renderer.
   final AdaptiveNavigationBarPresentation presentation;
+
+  /// Called when a minimized Apple bar requests expansion.
   final VoidCallback? onExpandRequested;
+
+  /// Material-specific visual configuration.
   final MaterialNavigationBarStyle materialStyle;
+
+  /// Apple-specific geometry and spacing configuration.
   final AppleNavigationBarStyle appleStyle;
 
   @override
@@ -113,33 +97,13 @@ class AdaptiveNavigationBar extends StatelessWidget {
         expandedNavigationWidth: appleStyle.expandedNavigationWidth,
         floatingBottomMargin: appleStyle.floatingBottomMargin,
       ),
-      AdaptiveStyle.material => _buildMaterial(context),
-    };
-  }
-
-  Widget _buildMaterial(BuildContext context) {
-    // NavigationBar has no built-in blur or opacity, so translucency comes
-    // from the background color's alpha. Keep the default theme otherwise.
-    final backgroundColor = Theme.of(
-      context,
-    ).colorScheme.surfaceContainer.withValues(alpha: 0.8);
-    return NavigationBarTheme(
-      data: NavigationBarThemeData(backgroundColor: backgroundColor),
-      child: NavigationBar(
+      AdaptiveStyle.material => MaterialAdaptiveNavigationBar(
         selectedIndex: selectedIndex,
-        destinations: [
-          for (final destination in destinations)
-            NavigationDestination(
-              icon: destination.icons.material,
-              selectedIcon: destination.icons.materialSelected,
-              label: destination.label,
-              tooltip: destination.effectiveSemanticsLabel,
-            ),
-        ],
         onDestinationSelected: onDestinationSelected,
+        destinations: destinations,
         height: materialStyle.height,
         labelBehavior: materialStyle.labelBehavior,
       ),
-    );
+    };
   }
 }

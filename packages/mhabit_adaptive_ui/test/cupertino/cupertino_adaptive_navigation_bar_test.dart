@@ -3,10 +3,12 @@ import 'dart:ui' show Tristate;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, debugDefaultTargetPlatformOverride;
-import 'package:flutter/material.dart' show Icons;
+import 'package:flutter/material.dart' show FloatingActionButton, Icons, Theme;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_adaptive_navigation_bar.dart';
+import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_navigation_primary_action.dart';
 
 const _destinations = [
   AdaptiveNavigationDestination(
@@ -48,6 +50,13 @@ const _destinations = [
   ),
 ];
 
+const _testPrimaryAction = CupertinoNavigationPrimaryAction(
+  id: 'test-primary-action',
+  label: 'Primary action',
+  icon: Icon(CupertinoIcons.add, key: ValueKey('test-primary-action-icon')),
+  onPressed: null,
+);
+
 Widget _wrap({
   required AdaptiveNavigationBarPresentation presentation,
   required ValueChanged<int> onDestinationSelected,
@@ -62,6 +71,7 @@ Widget _wrap({
   BorderRadius? effectiveCornerRadii,
   AppleNavigationBarStyle appleStyle = const AppleNavigationBarStyle(),
   CupertinoThemeData? theme,
+  CupertinoNavigationPrimaryAction? primaryAction = _testPrimaryAction,
 }) {
   return CupertinoApp(
     theme: theme,
@@ -82,13 +92,15 @@ Widget _wrap({
           textDirection: textDirection,
           child: Align(
             alignment: Alignment.bottomCenter,
-            child: AdaptiveNavigationBar.apple(
+            child: CupertinoAdaptiveNavigationBar(
               selectedIndex: selectedIndex,
               onDestinationSelected: onDestinationSelected,
               onExpandRequested: onExpandRequested,
               destinations: _destinations,
               presentation: presentation,
-              appleStyle: appleStyle,
+              primaryAction: primaryAction,
+              expandedNavigationWidth: appleStyle.expandedNavigationWidth,
+              floatingBottomMargin: appleStyle.floatingBottomMargin,
             ),
           ),
         ),
@@ -98,7 +110,159 @@ Widget _wrap({
 }
 
 void main() {
-  group('AdaptiveNavigationBar.apple', () {
+  group('CupertinoAdaptiveNavigationBar', () {
+    testWidgets('renders and activates the independent primary action', (
+      tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(400, 800);
+      addTearDown(tester.view.reset);
+      var pressed = 0;
+      final action = CupertinoNavigationPrimaryAction(
+        id: 'new-habit',
+        label: 'New Habit',
+        icon: const Icon(CupertinoIcons.add),
+        onPressed: () => pressed += 1,
+      );
+
+      await tester.pumpWidget(
+        _wrap(
+          presentation: AdaptiveNavigationBarPresentation.expanded,
+          onDestinationSelected: (_) {},
+          onExpandRequested: () {},
+          primaryAction: action,
+        ),
+      );
+
+      final button = find.byType(CupertinoNavigationPrimaryActionButton);
+      expect(button, findsOneWidget);
+      final fab = find.descendant(
+        of: button,
+        matching: find.byType(FloatingActionButton),
+      );
+      expect(fab, findsOneWidget);
+      expect(tester.widget<FloatingActionButton>(fab).heroTag, action.id);
+      expect(
+        find.descendant(of: fab, matching: find.byType(Hero)),
+        findsOneWidget,
+      );
+      expect(tester.getSize(button), const Size.square(50));
+      final actionSurface = find.descendant(
+        of: button,
+        matching: find.byKey(
+          const ValueKey('cupertino-primary-action-surface'),
+        ),
+      );
+      expect(actionSurface, findsOneWidget);
+      expect(
+        find.descendant(
+          of: actionSurface,
+          matching: find.byType(BackdropFilter),
+        ),
+        findsOneWidget,
+      );
+      final actionBackground = tester.widget<ColoredBox>(
+        find.descendant(of: actionSurface, matching: find.byType(ColoredBox)),
+      );
+      final colorScheme = Theme.of(tester.element(button)).colorScheme;
+      expect(
+        actionBackground.color,
+        colorScheme.primaryContainer.withValues(alpha: 0.82),
+      );
+      expect(
+        IconTheme.of(
+          tester.element(
+            find.descendant(
+              of: button,
+              matching: find.byIcon(CupertinoIcons.add),
+            ),
+          ),
+        ).size,
+        22,
+      );
+      expect(find.bySemanticsLabel('New Habit'), findsOneWidget);
+      await tester.tap(button);
+      expect(pressed, 1);
+
+      await tester.pumpWidget(
+        _wrap(
+          presentation: AdaptiveNavigationBarPresentation.minimized,
+          onDestinationSelected: (_) {},
+          onExpandRequested: () {},
+          primaryAction: action,
+          disableAnimations: true,
+        ),
+      );
+      expect(tester.getSize(button), const Size.square(44));
+      await tester.tap(button);
+      expect(pressed, 2);
+    });
+
+    testWidgets('uses the FAB default Hero identity when id is omitted', (
+      tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(400, 800);
+      addTearDown(tester.view.reset);
+      const action = CupertinoNavigationPrimaryAction(
+        label: 'Default identity action',
+        icon: Icon(CupertinoIcons.add),
+        onPressed: null,
+      );
+
+      await tester.pumpWidget(
+        _wrap(
+          presentation: AdaptiveNavigationBarPresentation.expanded,
+          onDestinationSelected: (_) {},
+          onExpandRequested: () {},
+          primaryAction: action,
+        ),
+      );
+
+      final fab = find.byType(FloatingActionButton);
+      expect(fab, findsOneWidget);
+      expect(tester.widget<FloatingActionButton>(fab).heroTag, isNotNull);
+      expect(
+        tester.widget<FloatingActionButton>(fab).heroTag,
+        isNot(action.id),
+      );
+      expect(
+        find.descendant(of: fab, matching: find.byType(Hero)),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('disables Hero identity for an explicit null id', (
+      tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(400, 800);
+      addTearDown(tester.view.reset);
+      const action = CupertinoNavigationPrimaryAction(
+        id: null,
+        label: 'No Hero action',
+        icon: Icon(CupertinoIcons.add),
+        onPressed: null,
+      );
+
+      await tester.pumpWidget(
+        _wrap(
+          presentation: AdaptiveNavigationBarPresentation.expanded,
+          onDestinationSelected: (_) {},
+          onExpandRequested: () {},
+          primaryAction: action,
+        ),
+      );
+
+      final fab = find.byType(FloatingActionButton);
+      expect(fab, findsOneWidget);
+      expect(tester.widget<FloatingActionButton>(fab).heroTag, isNull);
+      expect(
+        find.descendant(of: fab, matching: find.byType(Hero)),
+        findsNothing,
+      );
+    });
+
     testWidgets('renders every Apple destination in the expanded surface', (
       tester,
     ) async {
@@ -129,7 +293,7 @@ void main() {
       );
       expect(
         tester.getSize(
-          find.byKey(const ValueKey('cupertino-primary-action-placeholder')),
+          find.byKey(const ValueKey('cupertino-primary-action-slot')),
         ),
         const Size.square(50),
       );
@@ -155,6 +319,34 @@ void main() {
       expect(selected, [2]);
     });
 
+    testWidgets('removes the trailing surface when no action is supplied', (
+      tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(400, 800);
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(
+        _wrap(
+          presentation: AdaptiveNavigationBarPresentation.expanded,
+          onDestinationSelected: (_) {},
+          onExpandRequested: () {},
+          primaryAction: null,
+        ),
+      );
+
+      expect(
+        find.byKey(const ValueKey('cupertino-primary-action-slot')),
+        findsNothing,
+      );
+      expect(
+        tester.getSize(
+          find.byKey(const ValueKey('cupertino-navigation-surface')),
+        ),
+        const Size(376, 50),
+      );
+    });
+
     testWidgets('does not treat rectangular view padding as bottom geometry', (
       tester,
     ) async {
@@ -176,7 +368,7 @@ void main() {
         const ValueKey('cupertino-navigation-surface'),
       );
       final placeholder = find.byKey(
-        const ValueKey('cupertino-primary-action-placeholder'),
+        const ValueKey('cupertino-primary-action-slot'),
       );
       expect(tester.getTopRight(navigation).dx, 388);
       expect(tester.getTopLeft(placeholder).dx, 12);
@@ -207,7 +399,7 @@ void main() {
         const ValueKey('cupertino-navigation-surface'),
       );
       final placeholder = find.byKey(
-        const ValueKey('cupertino-primary-action-placeholder'),
+        const ValueKey('cupertino-primary-action-slot'),
       );
       expect(tester.getTopLeft(navigation).dx, inInclusiveRange(31, 32));
       expect(
@@ -250,7 +442,7 @@ void main() {
           const ValueKey('cupertino-navigation-surface'),
         );
         final placeholder = find.byKey(
-          const ValueKey('cupertino-primary-action-placeholder'),
+          const ValueKey('cupertino-primary-action-slot'),
         );
         expect(tester.getTopLeft(navigation).dx, inInclusiveRange(32, 33));
         expect(
@@ -288,7 +480,7 @@ void main() {
         const ValueKey('cupertino-navigation-surface'),
       );
       final placeholder = find.byKey(
-        const ValueKey('cupertino-primary-action-placeholder'),
+        const ValueKey('cupertino-primary-action-slot'),
       );
       expect(tester.getBottomLeft(navigation).dy, 772);
       expect(tester.getTopLeft(navigation).dx, 28);
@@ -341,7 +533,7 @@ void main() {
         const ValueKey('cupertino-navigation-surface'),
       );
       final placeholder = find.byKey(
-        const ValueKey('cupertino-primary-action-placeholder'),
+        const ValueKey('cupertino-primary-action-slot'),
       );
       expect(tester.getTopLeft(navigation).dx, 20);
       expect(tester.getTopRight(placeholder).dx, 780);
@@ -367,7 +559,7 @@ void main() {
         const ValueKey('cupertino-navigation-surface'),
       );
       final placeholder = find.byKey(
-        const ValueKey('cupertino-primary-action-placeholder'),
+        const ValueKey('cupertino-primary-action-slot'),
       );
 
       await tester.pumpWidget(build(0));
@@ -407,7 +599,7 @@ void main() {
           ),
         ),
       );
-      expect(find.byType(BackdropFilter), findsNothing);
+      expect(find.byType(BackdropFilter), findsOneWidget);
     });
 
     testWidgets('drag previews and selects an expanded destination', (
@@ -533,7 +725,7 @@ void main() {
         const ValueKey('cupertino-navigation-surface'),
       );
       final placeholder = find.byKey(
-        const ValueKey('cupertino-primary-action-placeholder'),
+        const ValueKey('cupertino-primary-action-slot'),
       );
       expect(tester.getSize(surface), const Size.square(44));
       expect(tester.getTopLeft(surface).dx, 12);
@@ -570,7 +762,7 @@ void main() {
         tester.semantics.simulatedAccessibilityTraversal().where(
           (node) => node.getSemanticsData().flagsCollection.isButton,
         ),
-        hasLength(1),
+        hasLength(2),
       );
 
       await tester.drag(surface, const Offset(20, 0));
@@ -605,7 +797,7 @@ void main() {
         const ValueKey('cupertino-navigation-surface'),
       );
       final placeholder = find.byKey(
-        const ValueKey('cupertino-primary-action-placeholder'),
+        const ValueKey('cupertino-primary-action-slot'),
       );
       expect(tester.getTopRight(surface).dx, 388);
       expect(tester.getTopLeft(placeholder).dx, 12);
@@ -628,7 +820,7 @@ void main() {
         const ValueKey('cupertino-navigation-surface'),
       );
       final placeholder = find.byKey(
-        const ValueKey('cupertino-primary-action-placeholder'),
+        const ValueKey('cupertino-primary-action-slot'),
       );
       final bar = find.byKey(
         const ValueKey('cupertino-adaptive-navigation-bar'),
@@ -641,7 +833,7 @@ void main() {
         find.byKey(const ValueKey('today-apple-selected')),
       );
       final placeholderIconElement = tester.element(
-        find.byKey(const ValueKey('cupertino-primary-action-placeholder-icon')),
+        find.byKey(const ValueKey('test-primary-action-icon')),
       );
       await tester.pumpWidget(
         build(AdaptiveNavigationBarPresentation.minimized),
@@ -656,11 +848,7 @@ void main() {
         same(selectedIconElement),
       );
       expect(
-        tester.element(
-          find.byKey(
-            const ValueKey('cupertino-primary-action-placeholder-icon'),
-          ),
-        ),
+        tester.element(find.byKey(const ValueKey('test-primary-action-icon'))),
         same(placeholderIconElement),
       );
       expect(find.byType(AnimatedSwitcher), findsNothing);

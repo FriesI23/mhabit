@@ -1,19 +1,72 @@
 import 'dart:math' as math;
-import 'dart:ui' show ImageFilter, lerpDouble;
+import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart'
-    show TargetPlatform, defaultTargetPlatform, immutable, kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb;
 
-import '../adaptive/adaptive_navigation_bar_presentation.dart';
 import '../adaptive/adaptive_navigation_destination.dart';
-import '../window_control/window_control_layout.dart';
+import 'cupertino_floating_surface.dart';
+import 'cupertino_navigation_primary_action.dart';
+
+/// Visible presentation of an Apple compact navigation bar.
+///
+/// Hidden chrome is expressed by the shell not laying out the bar.
+///
+/// ```text
+/// expanded   [ Home | Stats | Settings ]   [ + ]
+/// minimized  [ Home ]                      [ + ]
+/// ```
+enum AdaptiveNavigationBarPresentation {
+  /// Displays every destination in the navigation surface.
+  expanded,
+
+  /// Displays only the selected destination until expansion is requested.
+  minimized,
+}
+
+/// Apple-only visual configuration for `AdaptiveNavigationBar` and the
+/// Cupertino navigation shell.
+class AppleNavigationBarStyle {
+  /// Creates Apple navigation-bar styling.
+  ///
+  /// A null or infinite [expandedNavigationWidth] uses all available width.
+  ///
+  /// ```text
+  /// [<-- expandedNavigationWidth -->] gap [action]
+  /// ============================================= screen bottom
+  ///            floatingBottomMargin
+  /// ```
+  const AppleNavigationBarStyle({
+    this.expandedNavigationWidth,
+    this.floatingBottomMargin,
+  }) : assert(expandedNavigationWidth == null || expandedNavigationWidth > 0),
+       assert(
+         floatingBottomMargin == null ||
+             (floatingBottomMargin >= 0 &&
+                 floatingBottomMargin < double.infinity),
+       );
+
+  /// Preferred width of the expanded destination surface.
+  ///
+  /// A null or infinite value fills the space available before the trailing
+  /// action boundary. A finite value is clamped when less space is available,
+  /// while any remaining space stays flexible.
+  final double? expandedNavigationWidth;
+
+  /// Overrides the distance between the floating surfaces and the bottom.
+  ///
+  /// When null, the renderer combines UIKit's reported boundary geometry with
+  /// Flutter's bottom view padding and its visual baseline. Values must be
+  /// finite and non-negative; values smaller than the renderer's minimum
+  /// surface margin are clamped.
+  final double? floatingBottomMargin;
+}
 
 /// An Apple-styled bottom bar for compact top-level navigation.
 ///
-/// The bar renders [destinations] in a leading floating surface and reserves a
-/// separate, non-interactive trailing surface for a future primary action. In
-/// the [AdaptiveNavigationBarPresentation.expanded] presentation, every
+/// The bar renders [destinations] in a leading floating surface and can render
+/// [primaryAction] in an independent trailing surface. In the
+/// [AdaptiveNavigationBarPresentation.expanded] presentation, every
 /// destination is visible and users can either tap a destination or drag
 /// horizontally across the surface before releasing to select one. In the
 /// [AdaptiveNavigationBarPresentation.minimized] presentation, only the
@@ -30,14 +83,13 @@ import '../window_control/window_control_layout.dart';
 /// Most callers should use `AdaptiveNavigationBar.apple` or
 /// `AdaptiveNavigationShell` instead of constructing this renderer directly.
 class CupertinoAdaptiveNavigationBar extends StatelessWidget {
+  /// Height of the floating navigation surface, excluding its bottom margin.
   static const double contentHeight = 50.0;
   static const double _minimumTapExtent = 44.0;
   static const double _minimizedSurfaceExtent = _minimumTapExtent;
   static const double _surfaceGap = 8.0;
-  static const double _surfaceRadius = contentHeight / 2;
   static const double _iconSize = 24.0;
   static const double _labelBottomPadding = 3.0;
-  static const double _blurSigma = 10.0;
   static const Duration _transitionDuration = Duration(milliseconds: 250);
 
   /// Returns the stable outer height required by the floating bar.
@@ -47,18 +99,11 @@ class CupertinoAdaptiveNavigationBar extends StatelessWidget {
   /// renderer combines its visual baseline with UIKit's corner-adaptation
   /// avoidance and falls back to Flutter's bottom view padding.
   static double heightOf(BuildContext context, {double? floatingBottomMargin}) {
-    final viewPadding = MediaQuery.viewPaddingOf(context);
-    final safeAreaGeometry =
-        AdaptiveWindowControlLayoutScope.safeAreaGeometryOf(context);
-    final verticalSafeAreaAvoidance = safeAreaGeometry?.verticalAvoidance
-        .resolve(Directionality.of(context));
-    final resolvedFloatingMargin =
-        _NavigationBarBoundaryInsets.floatingMarginFor(
-          viewPadding: viewPadding,
-          verticalSafeAreaAvoidance: verticalSafeAreaAvoidance,
-          configuredMargin: floatingBottomMargin,
-        );
-    return contentHeight + resolvedFloatingMargin;
+    final geometry = CupertinoFloatingSurfaceGeometry.resolveOf(
+      context,
+      floatingBottomMargin: floatingBottomMargin,
+    );
+    return contentHeight + geometry.floatingMargin;
   }
 
   /// Creates an Apple-styled compact navigation bar.
@@ -67,7 +112,7 @@ class CupertinoAdaptiveNavigationBar extends StatelessWidget {
   /// [onDestinationSelected] is called for expanded tap and drag selections,
   /// while [onExpandRequested] is reserved for the minimized selected item.
   /// A null or infinite [expandedNavigationWidth] fills the width available
-  /// before the trailing placeholder; a finite value is clamped to fit.
+  /// before the optional trailing action; a finite value is clamped to fit.
   /// A null [floatingBottomMargin] combines the visual baseline with UIKit's
   /// corner-adaptation avoidance, then falls back to Flutter geometry.
   const CupertinoAdaptiveNavigationBar({
@@ -77,6 +122,8 @@ class CupertinoAdaptiveNavigationBar extends StatelessWidget {
     required this.onExpandRequested,
     required this.destinations,
     required this.presentation,
+    this.primaryAction,
+    this.reservePrimaryActionSpace = false,
     required this.expandedNavigationWidth,
     this.floatingBottomMargin,
   }) : assert(
@@ -101,10 +148,16 @@ class CupertinoAdaptiveNavigationBar extends StatelessWidget {
   /// selected destination.
   final AdaptiveNavigationBarPresentation presentation;
 
+  /// Optional page action rendered in the independent trailing surface.
+  final CupertinoNavigationPrimaryAction? primaryAction;
+
+  /// Whether layout should leave the trailing action gap to an external host.
+  final bool reservePrimaryActionSpace;
+
   /// Preferred width of the expanded destination surface.
   ///
   /// A null or infinite value fills the available width before the trailing
-  /// placeholder. A finite value is clamped when less space is available.
+  /// action. A finite value is clamped when less space is available.
   final double? expandedNavigationWidth;
 
   /// Overrides the distance between the floating surfaces and the bottom.
@@ -117,17 +170,9 @@ class CupertinoAdaptiveNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final disableAnimations = MediaQuery.disableAnimationsOf(context);
     final duration = disableAnimations ? Duration.zero : _transitionDuration;
-    final directionality = Directionality.of(context);
-    final safeAreaGeometry =
-        AdaptiveWindowControlLayoutScope.safeAreaGeometryOf(context);
-    final verticalSafeAreaAvoidance = safeAreaGeometry?.verticalAvoidance
-        .resolve(directionality);
-    final boundaryInsets = _NavigationBarBoundaryInsets.resolve(
-      viewPadding: MediaQuery.viewPaddingOf(context),
-      verticalSafeAreaAvoidance: verticalSafeAreaAvoidance,
-      effectiveCornerRadii: safeAreaGeometry?.effectiveCornerRadii,
+    final boundaryInsets = CupertinoFloatingSurfaceGeometry.resolveOf(
+      context,
       floatingBottomMargin: floatingBottomMargin,
-      displayCornerRadii: MediaQuery.displayCornerRadiiOf(context),
     );
 
     return SizedBox(
@@ -141,125 +186,13 @@ class CupertinoAdaptiveNavigationBar extends StatelessWidget {
           onExpandRequested: onExpandRequested,
           destinations: destinations,
           presentation: presentation,
+          primaryAction: primaryAction,
+          reservePrimaryActionSpace: reservePrimaryActionSpace,
           expandedNavigationWidth: expandedNavigationWidth,
           duration: duration,
         ),
       ),
     );
-  }
-}
-
-@immutable
-class _NavigationBarBoundaryInsets {
-  const _NavigationBarBoundaryInsets({
-    required this.horizontalPadding,
-    required this.floatingMargin,
-  });
-
-  static const double _minimumHorizontalMargin = 12.0;
-  static const double _minimumSurfaceMargin = 8.0;
-  static const double _fallbackMaximumFloatingMargin = 28.0;
-  // Xcode's 3x iPhone 16 Pro and Pro Max framebuffer masks both resolve to
-  // approximately 62.5pt. Round up for a conservative pre-iOS 26 fallback.
-  static const BorderRadius _legacyIosFallbackCornerRadii = BorderRadius.only(
-    bottomLeft: Radius.circular(63.0),
-    bottomRight: Radius.circular(63.0),
-  );
-
-  final EdgeInsets horizontalPadding;
-  final double floatingMargin;
-
-  static _NavigationBarBoundaryInsets resolve({
-    required EdgeInsets viewPadding,
-    required EdgeInsets? verticalSafeAreaAvoidance,
-    required BorderRadius? effectiveCornerRadii,
-    required double? floatingBottomMargin,
-    required BorderRadius? displayCornerRadii,
-  }) {
-    final floatingMargin = floatingMarginFor(
-      viewPadding: viewPadding,
-      verticalSafeAreaAvoidance: verticalSafeAreaAvoidance,
-      configuredMargin: floatingBottomMargin,
-    );
-    final cornerRadii =
-        effectiveCornerRadii ??
-        displayCornerRadii ??
-        ((!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS)
-            ? _legacyIosFallbackCornerRadii
-            : null);
-    // UIKit's horizontal safe-area adaptation is edge-wide and may include
-    // top window controls on iPad. Bottom chrome instead derives its local
-    // horizontal boundary from the two physical bottom corner radii.
-    final (leftMargin, rightMargin) = cornerRadii == null
-        ? _fallbackHorizontalMargins(floatingMargin)
-        : _reportedCornerHorizontalMargins(
-            radii: cornerRadii,
-            floatingMargin: floatingMargin,
-          );
-
-    return _NavigationBarBoundaryInsets(
-      horizontalPadding: EdgeInsets.only(left: leftMargin, right: rightMargin),
-      floatingMargin: floatingMargin,
-    );
-  }
-
-  static double floatingMarginFor({
-    required EdgeInsets viewPadding,
-    required EdgeInsets? verticalSafeAreaAvoidance,
-    required double? configuredMargin,
-  }) {
-    final baselineMargin = math.max(
-      _minimumSurfaceMargin,
-      math.min(_fallbackMaximumFloatingMargin, viewPadding.bottom),
-    );
-    final requestedMargin =
-        configuredMargin ??
-        math.max(baselineMargin, verticalSafeAreaAvoidance?.bottom ?? 0);
-    return math.max(_minimumSurfaceMargin, requestedMargin);
-  }
-
-  static (double, double) _fallbackHorizontalMargins(double floatingMargin) {
-    // Without corner geometry, keep a Calendar-style visual margin derived
-    // from the persistent bottom inset.
-    final fallbackMargin = math.max(_minimumHorizontalMargin, floatingMargin);
-    return (fallbackMargin, fallbackMargin);
-  }
-
-  static (double, double) _reportedCornerHorizontalMargins({
-    required BorderRadius radii,
-    required double floatingMargin,
-  }) {
-    final visualMargin = math.max(_minimumHorizontalMargin, floatingMargin);
-    return (
-      math.max(
-        visualMargin,
-        _horizontalInsetAt(
-          radius: radii.bottomLeft,
-          distanceFromBottom: floatingMargin,
-        ),
-      ),
-      math.max(
-        visualMargin,
-        _horizontalInsetAt(
-          radius: radii.bottomRight,
-          distanceFromBottom: floatingMargin,
-        ),
-      ),
-    );
-  }
-
-  static double _horizontalInsetAt({
-    required Radius radius,
-    required double distanceFromBottom,
-  }) {
-    if (radius.x <= 0 || radius.y <= 0 || distanceFromBottom >= radius.y) {
-      return 0;
-    }
-    // Intersect the reported elliptical display corner with the surface's
-    // bottom edge, then keep the surface outside that boundary.
-    final normalizedY = (radius.y - distanceFromBottom) / radius.y;
-    final normalizedX = math.sqrt(math.max(0, 1 - normalizedY * normalizedY));
-    return radius.x * (1 - normalizedX);
   }
 }
 
@@ -270,6 +203,8 @@ class _NavigationBarLayout extends StatelessWidget {
     required this.onExpandRequested,
     required this.destinations,
     required this.presentation,
+    required this.primaryAction,
+    required this.reservePrimaryActionSpace,
     required this.expandedNavigationWidth,
     required this.duration,
   });
@@ -279,6 +214,8 @@ class _NavigationBarLayout extends StatelessWidget {
   final VoidCallback onExpandRequested;
   final List<AdaptiveNavigationDestination> destinations;
   final AdaptiveNavigationBarPresentation presentation;
+  final CupertinoNavigationPrimaryAction? primaryAction;
+  final bool reservePrimaryActionSpace;
   final double? expandedNavigationWidth;
   final Duration duration;
 
@@ -291,11 +228,15 @@ class _NavigationBarLayout extends StatelessWidget {
         height: CupertinoAdaptiveNavigationBar.contentHeight,
         child: LayoutBuilder(
           builder: (context, constraints) {
+            final hasTrailingAction =
+                primaryAction != null || reservePrimaryActionSpace;
             final maximumNavigationExtent = math.max(
               CupertinoAdaptiveNavigationBar._minimizedSurfaceExtent,
               constraints.maxWidth -
-                  CupertinoAdaptiveNavigationBar.contentHeight -
-                  CupertinoAdaptiveNavigationBar._surfaceGap,
+                  (hasTrailingAction
+                      ? CupertinoAdaptiveNavigationBar.contentHeight +
+                            CupertinoAdaptiveNavigationBar._surfaceGap
+                      : 0),
             );
             final expandedExtent = _resolveExpandedExtent(
               maximumNavigationExtent,
@@ -314,6 +255,7 @@ class _NavigationBarLayout extends StatelessWidget {
                     onExpandRequested: onExpandRequested,
                     destinations: destinations,
                     presentation: presentation,
+                    primaryAction: primaryAction,
                     presentationProgress: presentationProgress,
                     expandedNavigationWidth: expandedExtent,
                     duration: duration,
@@ -341,6 +283,7 @@ class _NavigationBarSurfaces extends StatelessWidget {
     required this.onExpandRequested,
     required this.destinations,
     required this.presentation,
+    required this.primaryAction,
     required this.presentationProgress,
     required this.expandedNavigationWidth,
     required this.duration,
@@ -351,6 +294,7 @@ class _NavigationBarSurfaces extends StatelessWidget {
   final VoidCallback onExpandRequested;
   final List<AdaptiveNavigationDestination> destinations;
   final AdaptiveNavigationBarPresentation presentation;
+  final CupertinoNavigationPrimaryAction? primaryAction;
   final double presentationProgress;
   final double expandedNavigationWidth;
   final Duration duration;
@@ -379,7 +323,7 @@ class _NavigationBarSurfaces extends StatelessWidget {
           bottom: 0,
           width: navigationExtent,
           height: surfaceHeight,
-          child: _GlassSurface(
+          child: CupertinoFloatingGlassSurface(
             child: _NavigationSurfaceContent(
               selectedIndex: selectedIndex,
               onDestinationSelected: onDestinationSelected,
@@ -392,14 +336,18 @@ class _NavigationBarSurfaces extends StatelessWidget {
             ),
           ),
         ),
-        PositionedDirectional(
-          key: const ValueKey('cupertino-primary-action-placeholder'),
-          end: 0,
-          bottom: 0,
-          width: surfaceHeight,
-          height: surfaceHeight,
-          child: const _PrimaryActionPlaceholder(),
-        ),
+        if (primaryAction != null)
+          PositionedDirectional(
+            key: const ValueKey('cupertino-primary-action-slot'),
+            end: 0,
+            bottom: 0,
+            width: surfaceHeight,
+            height: surfaceHeight,
+            child: CupertinoNavigationPrimaryActionButton(
+              action: primaryAction!,
+              extent: surfaceHeight,
+            ),
+          ),
       ],
     );
   }
@@ -708,83 +656,6 @@ class _NavigationDestinationInteraction extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-// TODO: Replace this placeholder with the primary action host in Phase 3-6.
-/// Reserves the renderer-owned trailing geometry for the Phase 3-6 action
-/// host without exposing an action, hit target, or semantics ahead of time.
-class _PrimaryActionPlaceholder extends StatelessWidget {
-  const _PrimaryActionPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    final color = CupertinoDynamicColor.resolve(
-      CupertinoTheme.of(context).primaryColor,
-      context,
-    );
-    return ExcludeSemantics(
-      child: IgnorePointer(
-        child: _GlassSurface(
-          child: Center(
-            child: Icon(
-              CupertinoIcons.search,
-              key: const ValueKey('cupertino-primary-action-placeholder-icon'),
-              color: color,
-              size: CupertinoAdaptiveNavigationBar._iconSize,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _GlassSurface extends StatelessWidget {
-  const _GlassSurface({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final backgroundColor = CupertinoDynamicColor.resolve(
-      CupertinoTheme.of(context).barBackgroundColor,
-      context,
-    );
-    final borderRadius = BorderRadius.circular(
-      CupertinoAdaptiveNavigationBar._surfaceRadius,
-    );
-
-    // Mirrors the translucent background treatment in CupertinoTabBar.build
-    // from Flutter's packages/flutter/lib/src/cupertino/bottom_tab_bar.dart.
-    // The rounded clipping and shadow adapt that full-width bar treatment to
-    // this renderer's floating surfaces.
-    Widget surface = ColoredBox(color: backgroundColor, child: child);
-    if (backgroundColor.a != 1.0) {
-      surface = BackdropFilter(
-        filter: ImageFilter.blur(
-          sigmaX: CupertinoAdaptiveNavigationBar._blurSigma,
-          sigmaY: CupertinoAdaptiveNavigationBar._blurSigma,
-        ),
-        child: surface,
-      );
-    }
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(
-          CupertinoAdaptiveNavigationBar._surfaceRadius,
-        ),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x26000000),
-            blurRadius: 16,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(borderRadius: borderRadius, child: surface),
     );
   }
 }

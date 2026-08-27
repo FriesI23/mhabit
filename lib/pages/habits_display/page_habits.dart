@@ -15,7 +15,6 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:animations/animations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
@@ -23,7 +22,6 @@ import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:tuple/tuple.dart';
 
 import '../../common/consts.dart';
 import '../../common/enums.dart';
@@ -57,20 +55,18 @@ import '../../widgets/widgets.dart';
 import '../common/debug.dart';
 import '../common/widgets.dart';
 import '../habit_detail/page.dart' as habit_detail;
-import '../habit_edit/page.dart' as habit_edit;
-import '../habits_status_changer/page.dart' as habits_status_changer;
 import '_providers/habit_summary.dart';
 import '_providers/habits_grouping.dart';
 import 'helpers.dart';
 import 'widgets.dart';
 
 class HabitsTabPage extends StatefulWidget {
-  final ValueChanged<bool> onBottomNavVisibilityChanged;
+  final ValueChanged<HabitDBCell> onHabitCreated;
   final HabitDisplayContextualChrome? contextualChrome;
 
   const HabitsTabPage({
     super.key,
-    required this.onBottomNavVisibilityChanged,
+    required this.onHabitCreated,
     this.contextualChrome,
   });
 
@@ -85,12 +81,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
   late final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
   final MenuController _searchFilterMenuController = MenuController();
-  static const Duration _bottomNavAnimationDuration = Duration(
-    milliseconds: 250,
-  );
-
-  late VerticalScrollVisibilityDispatcher _scrollVisibilityDispatcher;
-  double? _scrollVisibilityToolbarHeight;
 
   late StreamSubscription<Duration?> _scrollCalendarToStartSub;
   Completer<void>? _horizonalScrolling;
@@ -118,18 +108,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final toolbarHeight = AdaptiveStyle.of(context).appToolbarHeight;
-    if (_scrollVisibilityToolbarHeight != toolbarHeight) {
-      if (_scrollVisibilityToolbarHeight != null) {
-        _scrollVisibilityDispatcher.dispose();
-      }
-      _scrollVisibilityDispatcher = VerticalScrollVisibilityDispatcher(
-        toolbarHeight: toolbarHeight,
-        onVisibilityChanged: widget.onBottomNavVisibilityChanged,
-        externalVisibility: AdaptiveNavScope.maybeRead(context)?.scrollWish,
-      );
-      _scrollVisibilityToolbarHeight = toolbarHeight;
-    }
     final vm = context.read<HabitSummaryViewModel>();
     if (vm != _vm) {
       _vm = vm;
@@ -149,9 +127,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
     _cancelExpandTimer();
     _scrollCalendarToStartSub.cancel();
-    if (_scrollVisibilityToolbarHeight != null) {
-      _scrollVisibilityDispatcher.dispose();
-    }
     super.dispose();
   }
 
@@ -632,22 +607,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
     }
   }
 
-  Future<void> _onFABPressed(VoidCallback action) async {
-    if (!mounted) return;
-    Navigator.of(context).popUntil((route) => route.isFirst);
-    action();
-  }
-
-  void _onCreateNewHabitPageClosed(HabitDBCell result) {
-    if (!mounted) return;
-    _onNewHabitCreated(result);
-  }
-
-  void _onNewHabitCreated(HabitDBCell result) async {
-    if (!(mounted && _vm.mounted)) return;
-    _vm.addNewData(HabitSummaryData.fromDBQueryCell(result));
-  }
-
   Future<bool> _enterHabitEditPage({
     Duration exitEditModeDuration = kEditModeChangeAnimateDuration,
     required HabitForm Function(HabitDBCell) formBuilder,
@@ -1089,6 +1048,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
   Widget build(BuildContext context) {
     super.build(context);
     appLog.build.debug(context);
+    final isInEditMode = context.select<HabitSummaryViewModel, bool>(
+      (vm) => vm.isInEditMode,
+    );
     final isCalendarExpanded = context.select<HabitSummaryViewModel, bool>(
       (vm) => vm.isCalendarExpanded,
     );
@@ -1225,70 +1187,41 @@ class HabitsTabPageState extends State<HabitsTabPage>
     }
     //#endregion
 
-    return RefreshIndicator(
-      notificationPredicate: (notification) {
-        final context = notification.context;
-        if (context == null) {
+    return HabitDisplayFabRegion(
+      appleVisible: !isInEditMode,
+      onCreated: widget.onHabitCreated,
+      child: RefreshIndicator(
+        notificationPredicate: (notification) {
+          final context = notification.context;
+          if (context == null) {
+            return defaultScrollNotificationPredicate(notification);
+          }
+          final summary = context.read<HabitSummaryViewModel>();
+          final sync = context.read<AppSyncWorkflowAccess>();
+          if (summary.isInEditMode || !sync.canStartSync) return false;
           return defaultScrollNotificationPredicate(notification);
-        }
-        final summary = context.read<HabitSummaryViewModel>();
-        final sync = context.read<AppSyncWorkflowAccess>();
-        if (summary.isInEditMode || !sync.canStartSync) return false;
-        return defaultScrollNotificationPredicate(notification);
-      },
-      onRefresh: _onRefreshIndicatorTriggered,
-      edgeOffset:
-          toolbarHeight +
-          calendarHeaderHeight +
-          MediaQuery.paddingOf(context).top,
-      triggerMode: RefreshIndicatorTriggerMode.onEdge,
-      child: Stack(
-        children: [
-          buildEmptyImage(context),
-          CustomScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            controller: _scrollVisibilityDispatcher.controller,
-            slivers: [
-              buildAppbar(context),
-              const ChangelogBannerSliver(),
-              buildHabits(context),
-              buildDevelopSliverList(context),
-              buildBottomPlaceHolder(context),
-              if (kDebugMode) _buildScrollablePlaceHolder(context),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildFloatingActionButton({
-    required bool bottomNavVisible,
-    // Bar content height without the bottom safe-area inset; Scaffold
-    // already clears the inset for the FAB.
-    required double bottomNavHeight,
-    required HabitDisplayContextualChrome contextualChrome,
-  }) {
-    final fab = _FAB(
-      onPressed: _onFABPressed,
-      onClosed: _onCreateNewHabitPageClosed,
-      editModeOnPressed: _onFABPressed,
-    );
-    if (contextualChrome.hideFloatingActionButton) {
-      return const SizedBox.shrink();
-    }
-    return AnimatedPadding(
-      duration: _bottomNavAnimationDuration,
-      curve: Curves.easeOut,
-      padding: EdgeInsets.only(bottom: bottomNavVisible ? bottomNavHeight : 0),
-      child: AnimatedSlide(
-        duration: _bottomNavAnimationDuration,
-        curve: Curves.easeOut,
-        offset: bottomNavVisible ? Offset.zero : const Offset(0, 1),
-        child: AnimatedOpacity(
-          duration: _bottomNavAnimationDuration,
-          opacity: bottomNavVisible ? 1 : 0,
-          child: fab,
+        },
+        onRefresh: _onRefreshIndicatorTriggered,
+        edgeOffset:
+            toolbarHeight +
+            calendarHeaderHeight +
+            MediaQuery.paddingOf(context).top,
+        triggerMode: RefreshIndicatorTriggerMode.onEdge,
+        child: Stack(
+          children: [
+            buildEmptyImage(context),
+            CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                buildAppbar(context),
+                const ChangelogBannerSliver(),
+                buildHabits(context),
+                buildDevelopSliverList(context),
+                buildBottomPlaceHolder(context),
+                if (kDebugMode) _buildScrollablePlaceHolder(context),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -1821,93 +1754,4 @@ class _EmptyImageState extends State<_EmptyImage> {
       ),
     );
   }
-}
-
-class _FAB extends StatelessWidget {
-  final void Function(VoidCallback action)? onPressed;
-  final ClosedCallback<HabitDBCell>? onClosed;
-  final void Function(VoidCallback action)? editModeOnPressed;
-
-  const _FAB({this.onPressed, this.onClosed, this.editModeOnPressed});
-
-  Widget _buildFAB(
-    BuildContext context, {
-    required bool isAppbarPinned,
-    required bool isInEditMode,
-  }) {
-    Widget iconBuidler(BuildContext context) => AnimatedCrossFade(
-      firstChild: const Icon(Icons.add),
-      secondChild: const Icon(Icons.calendar_view_day_rounded),
-      crossFadeState: isInEditMode
-          ? CrossFadeState.showSecond
-          : CrossFadeState.showFirst,
-      duration: kFABModeChangeDuration,
-    );
-
-    Widget labelBuilder(BuildContext context) => AnimatedCrossFade(
-      firstChild: L10nBuilder(
-        builder: (context, l10n) => l10n != null
-            ? Text(l10n.habitDisplay_fab_text)
-            : const Text('New Habit'),
-      ),
-      secondChild: const SizedBox(),
-      crossFadeState: isInEditMode
-          ? CrossFadeState.showSecond
-          : CrossFadeState.showFirst,
-      duration: kFABModeChangeDuration,
-    );
-
-    final selectedUUIDList = context
-        .read<HabitSummaryViewModel>()
-        .getSelectedHabitsData()
-        .nonNulls
-        .map((e) => e.uuid)
-        .toList();
-
-    Widget habitsStatusChangerPageBuilder(BuildContext context) =>
-        habits_status_changer.HabitsStatusChangerPage(
-          uuidList: selectedUUIDList,
-        );
-
-    return HabitDisplayFAB<Object?>(
-      closeBuilder: (context, action) {
-        return ScrollingFAB.small(
-          onPressed: () =>
-              (isInEditMode ? editModeOnPressed : onPressed)?.call(action),
-          label: labelBuilder(context),
-          icon: iconBuidler(context),
-          isExtended: isInEditMode ? true : isAppbarPinned,
-        );
-      },
-      openBuilder: (context, action) => isInEditMode
-          ? habitsStatusChangerPageBuilder(context)
-          : const habit_edit.HabitEditPage(showInFullscreenDialog: true),
-      onClosed: (data) {
-        switch (data) {
-          case HabitDBCell():
-            return onClosed?.call(data);
-          case null:
-            return;
-          default:
-            throw FlutterError("unhandled container close type, $data");
-        }
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) =>
-      Selector<HabitSummaryViewModel, Tuple3<bool, bool, int>>(
-        selector: (context, viewmodel) => Tuple3(
-          viewmodel.isAppbarPinned,
-          viewmodel.isInEditMode,
-          viewmodel.selectedHabitsCount,
-        ),
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, value, child) => _buildFAB(
-          context,
-          isAppbarPinned: value.item1,
-          isInEditMode: value.item2,
-        ),
-      );
 }

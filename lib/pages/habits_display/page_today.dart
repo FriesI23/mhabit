@@ -40,13 +40,8 @@ import 'widgets.dart';
 
 class TodayTabPage extends StatefulWidget {
   final double bottomNavigationHeight;
-  final ValueChanged<bool> onBottomNavVisibilityChanged;
 
-  const TodayTabPage({
-    super.key,
-    this.bottomNavigationHeight = 0.0,
-    required this.onBottomNavVisibilityChanged,
-  });
+  const TodayTabPage({super.key, this.bottomNavigationHeight = 0.0});
 
   @override
   State<TodayTabPage> createState() => TodayTabPageState();
@@ -60,9 +55,6 @@ class TodayTabPageState extends State<TodayTabPage>
 
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
-  late VerticalScrollVisibilityDispatcher _scrollVisibilityDispatcher;
-  double? _scrollVisibilityToolbarHeight;
-
   @override
   void initState() {
     super.initState();
@@ -72,18 +64,6 @@ class TodayTabPageState extends State<TodayTabPage>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final toolbarHeight = AdaptiveStyle.of(context).appToolbarHeight;
-    if (_scrollVisibilityToolbarHeight != toolbarHeight) {
-      if (_scrollVisibilityToolbarHeight != null) {
-        _scrollVisibilityDispatcher.dispose();
-      }
-      _scrollVisibilityDispatcher = VerticalScrollVisibilityDispatcher(
-        toolbarHeight: toolbarHeight,
-        onVisibilityChanged: widget.onBottomNavVisibilityChanged,
-        externalVisibility: AdaptiveNavScope.maybeRead(context)?.scrollWish,
-      );
-      _scrollVisibilityToolbarHeight = toolbarHeight;
-    }
     final vm = context.read<HabitsTodayViewModel>();
     if (vm != _vm) {
       _vm = vm;
@@ -110,9 +90,6 @@ class TodayTabPageState extends State<TodayTabPage>
   @override
   void dispose() {
     _startSyncSub?.cancel();
-    if (_scrollVisibilityToolbarHeight != null) {
-      _scrollVisibilityDispatcher.dispose();
-    }
     super.dispose();
   }
 
@@ -152,7 +129,6 @@ class TodayTabPageState extends State<TodayTabPage>
 
     final body = CustomScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
-      controller: _scrollVisibilityDispatcher.controller,
       slivers: [
         _Appbar(toolbarHeight: appbarHeight),
         const _HabitsGroupView(),

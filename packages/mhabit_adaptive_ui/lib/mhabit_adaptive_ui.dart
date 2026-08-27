@@ -6,7 +6,6 @@ export 'src/adaptive/adaptive_dialog.dart';
 export 'src/adaptive/adaptive_icon_button.dart';
 export 'src/adaptive/adaptive_list_tile.dart';
 export 'src/adaptive/adaptive_navigation_bar.dart';
-export 'src/adaptive/adaptive_navigation_bar_presentation.dart';
 export 'src/adaptive/adaptive_navigation_destination.dart';
 export 'src/adaptive/adaptive_navigation_rail.dart';
 export 'src/adaptive/adaptive_scaffold.dart';
@@ -17,6 +16,11 @@ export 'src/adaptive_style.dart';
 export 'src/breakpoints/breakpoints.dart';
 export 'src/breakpoints/device_context.dart';
 export 'src/breakpoints/window_size_class.dart';
+export 'src/cupertino/cupertino_floating_surface.dart';
+export 'src/cupertino/cupertino_navigation_primary_action.dart'
+    show
+        CupertinoNavigationPrimaryAction,
+        CupertinoNavigationPrimaryActionRegion;
 export 'src/cupertino/cupertino_sliver_search_bar.dart';
 export 'src/cupertino/cupertino_sliver_select_app_bar.dart';
 export 'src/material/material_expandable_search_bar.dart';

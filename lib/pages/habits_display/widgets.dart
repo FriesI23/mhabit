@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export '_widgets/apple/habit_display_fab.dart';
 export '_widgets/habit_display_appbar.dart';
 export '_widgets/habit_display_contextual_chrome.dart';
 export '_widgets/habit_display_develop_list.dart';
@@ -27,6 +28,7 @@ export '_widgets/habit_display_sort_type_picker.dart';
 export '_widgets/habit_display_stats_menu.dart';
 export '_widgets/habit_today_card.dart';
 export '_widgets/habit_today_list_card.dart';
+export '_widgets/material/habit_display_fab.dart';
 export '_widgets/search_filter.dart';
 export '_widgets/sliver_calendar_bar.dart';
 export '_widgets/sliver_select_top_app_bar.dart';

@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mhabit/entries/app/shell.dart';
 import 'package:mhabit/models/app_entry.dart';
 import 'package:mhabit/pages/common/widgets.dart';
+import 'package:mhabit/pages/habits_display/_widgets/apple/habit_display_fab.dart';
 import 'package:mhabit/providers/app_ui/app_launch_entry.dart';
 import 'package:mhabit/routes/app_router.dart';
 import 'package:mhabit/widgets/widgets.dart';
@@ -37,6 +38,35 @@ class _StubPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(body: Center(child: Text(label)));
   }
+}
+
+class _PrimaryActionStubPage extends StatelessWidget {
+  const _PrimaryActionStubPage();
+
+  static final CupertinoNavigationPrimaryAction _action =
+      CupertinoNavigationPrimaryAction(
+        id: 'stub-primary-action',
+        label: 'New Habit',
+        icon: const Icon(Icons.add),
+        onPressed: () {},
+      );
+
+  @override
+  Widget build(BuildContext context) => CupertinoNavigationPrimaryActionRegion(
+    action: _action,
+    child: const Scaffold(body: Center(child: Text('habits action page'))),
+  );
+}
+
+class _NavigatingPrimaryActionStubPage extends StatelessWidget {
+  const _NavigatingPrimaryActionStubPage();
+
+  @override
+  Widget build(BuildContext context) => HabitDisplayAppleFab(
+    visible: true,
+    onCreated: (_) {},
+    child: const Scaffold(body: Center(child: Text('habits action page'))),
+  );
 }
 
 GoRouter _buildRouter(
@@ -235,6 +265,104 @@ void main() {
     expect(find.text('today page'), findsOneWidget);
     expect(find.byIcon(CupertinoIcons.today_fill), findsOneWidget);
     expect(launchEntry.entries, [AppEntrys.habitToday]);
+  });
+
+  testWidgets('restores an Apple primary action after a branch round trip', (
+    tester,
+  ) async {
+    _setCompactSurface(tester);
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(
+      observers,
+      habitsPage: const _PrimaryActionStubPage(),
+    );
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+      platform: TargetPlatform.iOS,
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('cupertino-primary-action-surface')),
+      findsOneWidget,
+    );
+
+    await tester.tap(
+      find.byKey(const ValueKey('cupertino-navigation-destination-1')),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      TickerMode.valuesOf(
+        tester.element(find.text('habits action page', skipOffstage: false)),
+      ).enabled,
+      isFalse,
+    );
+    expect(
+      find.byKey(const ValueKey('cupertino-primary-action-surface')),
+      findsNothing,
+    );
+
+    await tester.tap(
+      find.byKey(const ValueKey('cupertino-navigation-destination-0')),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('cupertino-primary-action-surface')),
+      findsOneWidget,
+    );
+
+    await tester.tap(
+      find.byKey(const ValueKey('cupertino-navigation-destination-1')),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('cupertino-primary-action-surface')),
+      findsNothing,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('restores the medium Apple action after app flow pop', (
+    tester,
+  ) async {
+    _setSurface(tester, const Size(700, 800));
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(
+      observers,
+      habitsPage: const _NavigatingPrimaryActionStubPage(),
+    );
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+      platform: TargetPlatform.iOS,
+    );
+    await tester.pumpAndSettle();
+
+    final action = find.byKey(
+      const ValueKey('cupertino-primary-action-surface'),
+    );
+    expect(action, findsOneWidget);
+
+    await tester.tap(action);
+    await tester.pumpAndSettle();
+    expect(find.text('create page'), findsOneWidget);
+
+    router.pop();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    expect(action, findsOneWidget);
   });
 
   testWidgets('keeps the compact bar visible during lazy branch activation', (
