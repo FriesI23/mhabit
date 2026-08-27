@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'dart:ui' show ImageFilter;
 
-import 'package:adaptive_actions/cupertino.dart' as adaptive_actions;
+import 'package:adaptive_actions/cupertino.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../breakpoints/breakpoints.dart';
@@ -263,7 +263,10 @@ class _CupertinoSelectBottomContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsetsDirectional.symmetric(horizontal: 8),
-    child: _CupertinoSelectActions(actions: actions),
+    child: _CupertinoSelectActions(
+      actions: actions,
+      layoutDelegate: const _TrailingOverflowLayoutDelegate(),
+    ),
   );
 }
 
@@ -368,9 +371,10 @@ class _FixedTextAction extends StatelessWidget {
 }
 
 class _CupertinoSelectActions extends StatelessWidget {
-  const _CupertinoSelectActions({required this.actions});
+  const _CupertinoSelectActions({required this.actions, this.layoutDelegate});
 
   final List<CupertinoSelectAction> actions;
+  final ActionRegionLayoutDelegate? layoutDelegate;
 
   @override
   Widget build(BuildContext context) {
@@ -394,47 +398,41 @@ class _CupertinoSelectActions extends StatelessWidget {
               alignment: AlignmentDirectional.centerEnd,
               child: KeyedSubtree(
                 key: const ValueKey('cupertino-select-adaptive-actions'),
-                child:
-                    adaptive_actions.CupertinoAdaptiveActions<
-                      VoidCallback
-                    >.moreAction(
-                      key: ValueKey(('cupertino-select-tier', large)),
-                      actions: adaptive_actions.ActionCollection<VoidCallback>(
-                        roots: visibleActions.map(
-                          (action) => _toAdaptiveAction(action, large: large),
-                        ),
-                      ),
-                      primaryCapacity: capacity,
-                      presentationForAction: (context, action) =>
-                          switch (actionsById[action.id.value]?.presentation) {
-                            CupertinoSelectActionPresentation.iconOnly =>
-                              adaptive_actions
-                                  .CupertinoActionPresentation
-                                  .iconOnly,
-                            CupertinoSelectActionPresentation.iconAndLabel =>
-                              adaptive_actions
-                                  .CupertinoActionPresentation
-                                  .extended,
-                            null => null,
-                          },
-                      onInvoke: (callback) => callback(),
-                      invokeAfterMenuClosed: true,
-                      iconBuilder: (context, action) {
-                        final descriptor = actionsById[action.id.value];
-                        return descriptor?.icon;
-                      },
-                      actionButtonBuilder:
-                          (context, action, onPressed, defaultBuilder) {
-                            final descriptor = actionsById[action.id.value];
-                            final custom = descriptor?.primaryBuilder;
-                            if (custom != null) {
-                              return custom(context, onPressed);
-                            }
-                            return defaultBuilder(context, action, onPressed);
-                          },
-                      fadeDuration: Duration.zero,
-                      resizeDuration: Duration.zero,
+                child: CupertinoAdaptiveActions<VoidCallback>.moreAction(
+                  key: ValueKey(('cupertino-select-tier', large)),
+                  actions: ActionCollection<VoidCallback>(
+                    roots: visibleActions.map(
+                      (action) => _toAdaptiveAction(action, large: large),
                     ),
+                  ),
+                  primaryCapacity: capacity,
+                  presentationForAction: (context, action) =>
+                      switch (actionsById[action.id.value]?.presentation) {
+                        CupertinoSelectActionPresentation.iconOnly =>
+                          CupertinoActionPresentation.iconOnly,
+                        CupertinoSelectActionPresentation.iconAndLabel =>
+                          CupertinoActionPresentation.extended,
+                        null => null,
+                      },
+                  onInvoke: (callback) => callback(),
+                  invokeAfterMenuClosed: true,
+                  iconBuilder: (context, action) {
+                    final descriptor = actionsById[action.id.value];
+                    return descriptor?.icon;
+                  },
+                  actionButtonBuilder:
+                      (context, action, onPressed, defaultBuilder) {
+                        final descriptor = actionsById[action.id.value];
+                        final custom = descriptor?.primaryBuilder;
+                        if (custom != null) {
+                          return custom(context, onPressed);
+                        }
+                        return defaultBuilder(context, action, onPressed);
+                      },
+                  layoutDelegate: layoutDelegate,
+                  fadeDuration: Duration.zero,
+                  resizeDuration: Duration.zero,
+                ),
               ),
             ),
           ),
@@ -444,12 +442,34 @@ class _CupertinoSelectActions extends StatelessWidget {
   }
 }
 
-adaptive_actions.AdaptiveAction<VoidCallback> _toAdaptiveAction(
+final class _TrailingOverflowLayoutDelegate
+    implements ActionRegionLayoutDelegate {
+  const _TrailingOverflowLayoutDelegate();
+
+  @override
+  ActionRegionLayoutReservation reserve(
+    ActionRegionLayoutReservationInput input,
+  ) => ActionRegionLayoutReservation();
+
+  @override
+  ActionRegionLayoutPlan layout(ActionRegionLayoutInput input) {
+    final entries = <ActionRegionLayoutEntry>[];
+    for (final slot in input.slots) {
+      if (slot.id.isOverflow && entries.isNotEmpty) {
+        entries.add(ActionRegionLayoutEntry.flexGap());
+      }
+      entries.add(ActionRegionLayoutEntry.slot(slot.id));
+    }
+    return ActionRegionLayoutPlan(entries: entries);
+  }
+}
+
+AdaptiveAction<VoidCallback> _toAdaptiveAction(
   CupertinoSelectAction action, {
   required bool large,
-}) => adaptive_actions.AdaptiveAction<VoidCallback>.action(
-  id: adaptive_actions.ActionId(action.id),
-  metadata: adaptive_actions.ActionMetadata(
+}) => AdaptiveAction<VoidCallback>.action(
+  id: ActionId(action.id),
+  metadata: ActionMetadata(
     label: action.label,
     tooltip: action.label,
     iconKey: action.id,
@@ -458,12 +478,10 @@ adaptive_actions.AdaptiveAction<VoidCallback> _toAdaptiveAction(
   payload: action.onPressed ?? () {},
   isEnabled: action.enabled && action.onPressed != null,
   placementPolicy: action.overflowOnly || (action.overflowBelowLarge && !large)
-      ? adaptive_actions.ActionPlacementPolicy(
-          placement: adaptive_actions.ActionPlacement.overflowOnly,
-        )
-      : adaptive_actions.ActionPlacementPolicy(
-          automaticPreference: adaptive_actions.AutomaticPlacementPreference(
-            retentionPriority: adaptive_actions.PrimaryRetentionPriority.custom(
+      ? ActionPlacementPolicy(placement: ActionPlacement.overflowOnly)
+      : ActionPlacementPolicy(
+          automaticPreference: AutomaticPlacementPreference(
+            retentionPriority: PrimaryRetentionPriority.custom(
               action.retentionPriority,
             ),
           ),
