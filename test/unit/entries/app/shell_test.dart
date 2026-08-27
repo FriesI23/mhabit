@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -96,6 +97,7 @@ Future<void> _pumpApp(
   WidgetTester tester, {
   required GoRouter router,
   required AppLaunchEntryViewModel launchEntry,
+  TargetPlatform platform = TargetPlatform.android,
 }) {
   return tester.pumpWidget(
     ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
@@ -103,6 +105,7 @@ Future<void> _pumpApp(
       child: MaterialApp.router(
         routerConfig: router,
         theme: ThemeData(
+          platform: platform,
           pageTransitionsTheme: const PageTransitionsTheme(
             builders: {
               TargetPlatform.android:
@@ -193,6 +196,44 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('today page'), findsOneWidget);
+    expect(launchEntry.entries, [AppEntrys.habitToday]);
+  });
+
+  testWidgets('uses Apple destination icons and switches branch', (
+    tester,
+  ) async {
+    _setCompactSurface(tester);
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers);
+    final launchEntry = _RecordingLaunchEntryViewModel();
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: launchEntry,
+      platform: TargetPlatform.iOS,
+    );
+
+    expect(
+      find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
+      findsOneWidget,
+    );
+    expect(
+      tester.getSize(
+        find.byKey(const ValueKey('cupertino-navigation-surface')),
+      ),
+      const Size(220, 50),
+    );
+    expect(find.byType(NavigationBar), findsNothing);
+
+    await tester.tap(find.byIcon(CupertinoIcons.today));
+    await tester.pumpAndSettle();
+
+    expect(find.text('today page'), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.today_fill), findsOneWidget);
     expect(launchEntry.entries, [AppEntrys.habitToday]);
   });
 

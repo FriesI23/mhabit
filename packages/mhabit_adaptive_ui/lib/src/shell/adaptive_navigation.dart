@@ -1,11 +1,15 @@
-import 'dart:math' show min;
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 
 import '../adaptive/adaptive_navigation_bar.dart';
+import '../adaptive/adaptive_navigation_bar_presentation.dart';
+import '../adaptive/adaptive_navigation_destination.dart';
 import '../adaptive/adaptive_navigation_rail.dart';
+import '../adaptive_style.dart';
 import '../breakpoints/window_size_class.dart';
+import '../cupertino/cupertino_adaptive_navigation_bar.dart';
 import '../window_control/window_control_layout.dart';
 import 'adaptive_nav_scope.dart';
 import 'adaptive_nav_visibility.dart';
@@ -93,8 +97,8 @@ class NavigationRailExtent {
 /// Adaptive navigation chrome around [child].
 ///
 /// The form follows the window's width and height classes ([WindowSize.of]):
-/// compact width keeps the bottom [NavigationBar] overlay; medium width keeps
-/// a collapsible [NavigationRail] collapsed by default; wider windows use an
+/// compact width keeps the adaptive bottom bar; medium width keeps a
+/// collapsible [NavigationRail] collapsed by default; wider windows use an
 /// extended rail unless their height is compact, in which case the rail also
 /// defaults to collapsed. A null height preserves the width-only behavior.
 /// The chrome animates when the form changes; the content area always fills
@@ -107,11 +111,11 @@ class NavigationRailExtent {
 /// width when the window shrinks (the system never rewrites it, so it resumes
 /// when the window grows back).
 ///
-/// In the compact form, bar visibility is derived from
-/// [compactRouteVisible] and the page's current scroll wish
-/// ([AdaptiveNavScope.reportScrollWish]). Route and navigation-stack ownership
-/// stays with the caller. In non-compact forms the navigation is always
-/// visible; [compactRouteVisible] and scroll wishes are ignored.
+/// In the compact form, route and contextual suppression hide either renderer.
+/// A false page scroll wish ([AdaptiveNavScope.reportScrollWish]) hides the
+/// Material bar but minimizes the Apple bar. Route and navigation-stack
+/// ownership stays with the caller. In non-compact forms the navigation is
+/// always visible; [compactRouteVisible] and scroll wishes are ignored.
 class AdaptiveNavigationShell extends StatefulWidget {
   const AdaptiveNavigationShell({
     super.key,
@@ -121,6 +125,7 @@ class AdaptiveNavigationShell extends StatefulWidget {
     required this.onDestinationSelected,
     this.compactRouteVisible = true,
     this.railExtent = const NavigationRailExtent(224.0),
+    this.appleBarStyle = const AppleNavigationBarStyle(),
   });
 
   /// Content displayed beside or underneath the navigation chrome.
@@ -129,10 +134,10 @@ class AdaptiveNavigationShell extends StatefulWidget {
   /// Currently selected destination index.
   final int selectedIndex;
 
-  /// Bottom navigation destinations.
+  /// Top-level navigation destinations.
   ///
   /// Non-compact forms map these to [NavigationRailDestination]s.
-  final List<NavigationDestination> destinations;
+  final List<AdaptiveNavigationDestination> destinations;
 
   /// Called when a destination is selected.
   final ValueChanged<int> onDestinationSelected;
@@ -151,6 +156,9 @@ class AdaptiveNavigationShell extends StatefulWidget {
   /// compact 224dp target inside the 180–360dp interval.
   final NavigationRailExtent railExtent;
 
+  /// Apple compact navigation-bar geometry.
+  final AppleNavigationBarStyle appleBarStyle;
+
   @override
   State<AdaptiveNavigationShell> createState() =>
       _AdaptiveNavigationShellState();
@@ -158,7 +166,7 @@ class AdaptiveNavigationShell extends StatefulWidget {
 
 /// Navigation forms of [AdaptiveNavigationShell].
 enum _ShellForm {
-  /// Compact: bottom [NavigationBar] overlay.
+  /// Compact: adaptive bottom navigation bar.
   bar,
 
   /// Collapsible [NavigationRail], collapsed by default.
@@ -173,13 +181,15 @@ enum _ShellForm {
 const Duration _animationDuration = Duration(milliseconds: 250);
 
 class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
-  static const double _narrowNavHeight = 80.0;
+  static const double _materialBarHeight = 80.0;
 
   /// Current shell form, tracked in [didChangeDependencies].
   _ShellForm _form = _ShellForm.bar;
 
-  /// Whether the bottom bar is actually shown, derived from the route stack
-  /// and [_scrollWish].
+  /// Current adaptive renderer, tracked in [didChangeDependencies].
+  AdaptiveStyle _style = AdaptiveStyle.material;
+
+  /// Whether compact navigation chrome occupies layout space.
   final AdaptiveNavVisibilityController _navVisibility =
       AdaptiveNavVisibilityController();
 
@@ -195,16 +205,17 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
     super.initState();
     _scrollWish.addListener(_recomputeVisibility);
     _contextualChrome.addListener(_recomputeVisibility);
-    _recomputeVisibility();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _style = AdaptiveStyle.of(context);
     final form = _formFor(WindowSize.of(context));
-    if (form == _form) return;
-    _form = form;
-    if (form == _ShellForm.bar) {
+    if (form != _form) {
+      _form = form;
+    }
+    if (_form == _ShellForm.bar) {
       _recomputeVisibility();
     } else {
       // The navigation is always visible outside the compact form.
@@ -239,7 +250,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
     if (!mounted || _form != _ShellForm.bar) return;
     final visible =
         widget.compactRouteVisible &&
-        _scrollWish.value &&
+        (_style == AdaptiveStyle.apple || _scrollWish.value) &&
         !_contextualChrome.value;
     if (_navVisibility.value == visible) return;
     visible ? _navVisibility.show() : _navVisibility.hide();
@@ -250,6 +261,8 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
     _contextualChrome.reset();
     widget.onDestinationSelected(index);
   }
+
+  void _expandAppleBar() => _scrollWish.reset();
 
   /// Maps both window axes to the shell form, shared by all styles.
   ///
@@ -273,18 +286,35 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
     );
     final padding = MediaQuery.paddingOf(context);
     final viewPadding = MediaQuery.viewPaddingOf(context);
-    const barHeight = _narrowNavHeight;
-    // NavigationBar adds a SafeArea around its content, so the rendered bar
-    // is barHeight plus the bottom system inset. The scope exposes the
-    // total height so branch pages can reserve it.
-    final navHeight = barHeight + padding.bottom;
+    final barHeight = _style == AdaptiveStyle.apple
+        ? CupertinoAdaptiveNavigationBar.contentHeight
+        : _materialBarHeight;
+    // The scope exposes the renderer's full envelope so branch pages reserve
+    // the same space as the compact chrome. Apple also keeps a small floating
+    // margin on windows without a system bottom inset.
+    final navHeight = _style == AdaptiveStyle.apple
+        ? CupertinoAdaptiveNavigationBar.heightOf(
+            context,
+            floatingBottomMargin: widget.appleBarStyle.floatingBottomMargin,
+          )
+        : barHeight + padding.bottom;
 
-    final naviBarBody = AdaptiveNavigationBar(
-      height: barHeight,
-      selectedIndex: widget.selectedIndex,
-      labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-      destinations: widget.destinations,
-      onDestinationSelected: _onDestinationSelected,
+    final naviBarBody = ValueListenableBuilder<bool>(
+      valueListenable: _scrollWish,
+      builder: (context, scrollWish, child) => AdaptiveNavigationBar(
+        selectedIndex: widget.selectedIndex,
+        presentation: _style == AdaptiveStyle.apple && !scrollWish
+            ? AdaptiveNavigationBarPresentation.minimized
+            : AdaptiveNavigationBarPresentation.expanded,
+        onExpandRequested: _expandAppleBar,
+        materialStyle: const MaterialNavigationBarStyle(
+          height: _materialBarHeight,
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+        ),
+        appleStyle: widget.appleBarStyle,
+        destinations: widget.destinations,
+        onDestinationSelected: _onDestinationSelected,
+      ),
     );
 
     final shell = AdaptiveNavScope(
@@ -315,7 +345,11 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
         // for the ambient ScaffoldMessenger. SnackBars are therefore laid
         // out above the compact bar instead of below its overlay.
         bottomNavigationBar: AnimatedSwitcher(
-          duration: _animationDuration,
+          duration:
+              _style == AdaptiveStyle.apple &&
+                  MediaQuery.disableAnimationsOf(context)
+              ? Duration.zero
+              : _animationDuration,
           switchInCurve: Curves.easeOut,
           switchOutCurve: Curves.easeOut,
           child: compact
@@ -338,6 +372,11 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
       return _WindowControlLayoutOwner(
         horizontalAvoidance: windowControlLayout.horizontalAvoidance,
         verticalAvoidance: windowControlLayout.verticalAvoidance,
+        horizontalSafeAreaAvoidance:
+            windowControlLayout.horizontalSafeAreaAvoidance,
+        verticalSafeAreaAvoidance:
+            windowControlLayout.verticalSafeAreaAvoidance,
+        effectiveCornerRadii: windowControlLayout.effectiveCornerRadii,
         railOwnsAvoidance: !compact,
         child: shell,
       );
@@ -349,6 +388,9 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
           return _WindowControlLayoutOwner(
             horizontalAvoidance: layout.horizontalAvoidance,
             verticalAvoidance: layout.verticalAvoidance,
+            horizontalSafeAreaAvoidance: layout.horizontalSafeAreaAvoidance,
+            verticalSafeAreaAvoidance: layout.verticalSafeAreaAvoidance,
+            effectiveCornerRadii: layout.effectiveCornerRadii,
             railOwnsAvoidance: !compact,
             child: shell,
           );
@@ -362,12 +404,18 @@ class _WindowControlLayoutOwner extends StatelessWidget {
   const _WindowControlLayoutOwner({
     required this.horizontalAvoidance,
     required this.verticalAvoidance,
+    required this.horizontalSafeAreaAvoidance,
+    required this.verticalSafeAreaAvoidance,
+    required this.effectiveCornerRadii,
     required this.railOwnsAvoidance,
     required this.child,
   });
 
   final EdgeInsetsDirectional horizontalAvoidance;
   final EdgeInsetsDirectional verticalAvoidance;
+  final EdgeInsetsDirectional? horizontalSafeAreaAvoidance;
+  final EdgeInsetsDirectional? verticalSafeAreaAvoidance;
+  final BorderRadius? effectiveCornerRadii;
   final bool railOwnsAvoidance;
   final Widget child;
 
@@ -376,6 +424,9 @@ class _WindowControlLayoutOwner extends StatelessWidget {
     return AdaptiveWindowControlLayoutScope(
       horizontalAvoidance: horizontalAvoidance,
       verticalAvoidance: verticalAvoidance,
+      horizontalSafeAreaAvoidance: horizontalSafeAreaAvoidance,
+      verticalSafeAreaAvoidance: verticalSafeAreaAvoidance,
+      effectiveCornerRadii: effectiveCornerRadii,
       owner: railOwnsAvoidance
           ? WindowControlLayoutOwner.rail
           : WindowControlLayoutOwner.appBar,
@@ -406,7 +457,7 @@ class _NavigationShellBody extends StatelessWidget {
   final EdgeInsets ambientViewPadding;
   final _ShellForm form;
   final int selectedIndex;
-  final List<NavigationDestination> destinations;
+  final List<AdaptiveNavigationDestination> destinations;
   final ValueChanged<int> onDestinationSelected;
   final NavigationRailExtent railExtent;
   final Widget child;
@@ -490,7 +541,7 @@ class _NavigationRailRegion extends StatefulWidget {
 
   final _ShellForm form;
   final int selectedIndex;
-  final List<NavigationDestination> destinations;
+  final List<AdaptiveNavigationDestination> destinations;
   final ValueChanged<int> onDestinationSelected;
   final NavigationRailExtent railExtent;
 
@@ -556,7 +607,7 @@ class _NavigationRailRegionState extends State<_NavigationRailRegion> {
     final bound = _manualAboveAuto
         ? widget.railExtent.upperBoundAt(windowWidth)
         : _railAutoWidth(windowWidth);
-    return min(manual, bound);
+    return math.min(manual, bound);
   }
 
   @override

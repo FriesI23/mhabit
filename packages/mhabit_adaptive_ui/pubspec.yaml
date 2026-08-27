@@ -12,7 +12,7 @@ dependencies:
   adaptive_actions: ^0.2.2
   flutter:
     sdk: flutter
-  ios_window_control_layout: ^0.1.1
+  ios_window_control_layout: ^0.3.0
 
 dev_dependencies:
   flutter_test:

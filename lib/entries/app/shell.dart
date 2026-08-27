@@ -15,7 +15,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +23,7 @@ import '../../models/app_entry.dart';
 import '../../providers/app_ui/app_launch_entry.dart';
 import '../../routes/app_router.dart';
 import '../../widgets/widgets.dart';
+import 'navigation_destination.dart';
 
 /// [AdaptiveNavigationShell] wired up for the app: localized destinations,
 /// app navigation-bar styling, launch-entry persistence on branch switches,
@@ -96,15 +96,14 @@ class _AppNavigationShellState extends State<AppNavigationShell> {
           builder: (context, l10n) => AdaptiveNavigationShell(
             selectedIndex: widget.coordinator.selectedIndex,
             compactRouteVisible: widget.coordinator.compactRouteVisible,
+            appleBarStyle: const AppleNavigationBarStyle(
+              expandedNavigationWidth: 220.0,
+            ),
             destinations: [
-              NavigationDestination(
-                icon: const Icon(Icons.home_outlined),
-                selectedIcon: const Icon(Icons.home),
+              AppNavigationDestinations.habits(
                 label: l10n?.habitDisplay_tab_habits_label ?? 'Habits',
               ),
-              NavigationDestination(
-                icon: const Icon(MdiIcons.calendarTodayOutline),
-                selectedIcon: const Icon(MdiIcons.calendarToday),
+              AppNavigationDestinations.today(
                 label: l10n?.habitDisplay_tab_today_label ?? 'Today',
               ),
             ],

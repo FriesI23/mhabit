@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../adaptive_style.dart';
+import 'adaptive_navigation_destination.dart';
 
 /// Adaptive navigation rail (the medium+ chrome of the navigation shell).
 ///
@@ -33,7 +34,7 @@ class AdaptiveNavigationRail extends StatelessWidget {
   final AdaptiveStyle? style;
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
-  final List<NavigationDestination> destinations;
+  final List<AdaptiveNavigationDestination> destinations;
   final bool extended;
   final double minWidth;
   final double minExtendedWidth;
@@ -59,9 +60,15 @@ class AdaptiveNavigationRail extends StatelessWidget {
       destinations: [
         for (final destination in destinations)
           NavigationRailDestination(
-            icon: destination.icon,
-            selectedIcon: destination.selectedIcon,
-            label: Text(destination.label),
+            icon: destination.icons.material,
+            selectedIcon: destination.icons.materialSelected,
+            label: destination.semanticsLabel == null
+                ? Text(destination.label)
+                : Semantics(
+                    label: destination.effectiveSemanticsLabel,
+                    excludeSemantics: true,
+                    child: Text(destination.label),
+                  ),
           ),
       ],
     );

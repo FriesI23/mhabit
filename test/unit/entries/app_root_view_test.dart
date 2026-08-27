@@ -24,8 +24,17 @@ const MethodChannel _windowControlChannel = MethodChannel(
   'ios_window_control_layout',
 );
 
-Map<String, double> _insets({double start = 0, double end = 0}) =>
-    <String, double>{'start': start, 'top': 0, 'end': end, 'bottom': 0};
+Map<String, double> _insets({
+  double start = 0,
+  double top = 0,
+  double end = 0,
+  double bottom = 0,
+}) => <String, double>{
+  'start': start,
+  'top': top,
+  'end': end,
+  'bottom': bottom,
+};
 
 void main() {
   group('AppRootView', () {
@@ -121,11 +130,20 @@ void main() {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(_windowControlChannel, (_) async {
             return <String, Object>{
-              'schemaVersion': 1,
+              'schemaVersion': 3,
               'isAvailable': true,
               'baseMargins': _insets(),
               'horizontalMargins': _insets(start: 40, end: 12),
               'verticalMargins': _insets(),
+              'baseSafeArea': _insets(bottom: 34),
+              'horizontalSafeArea': _insets(start: 24, end: 18, bottom: 34),
+              'verticalSafeArea': _insets(bottom: 34),
+              'effectiveCornerRadii': <String, double>{
+                'topLeft': 62,
+                'topRight': 62,
+                'bottomLeft': 62,
+                'bottomRight': 62,
+              },
             };
           });
       final router = GoRouter(

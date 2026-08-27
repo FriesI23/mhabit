@@ -244,10 +244,23 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
       ? AdaptiveNavigationShell(
           selectedIndex: 0,
           destinations: const [
-            NavigationDestination(icon: Icon(Icons.list), label: 'Habits'),
-            NavigationDestination(
-              icon: Icon(Icons.calendar_today),
+            AdaptiveNavigationDestination(
+              label: 'Habits',
+              icons: NavigationDestinationIcons(
+                material: Icon(Icons.list),
+                materialSelected: Icon(Icons.list),
+                apple: Icon(Icons.list),
+                appleSelected: Icon(Icons.list),
+              ),
+            ),
+            AdaptiveNavigationDestination(
               label: 'Today',
+              icons: NavigationDestinationIcons(
+                material: Icon(Icons.calendar_today),
+                materialSelected: Icon(Icons.calendar_today),
+                apple: Icon(Icons.calendar_today),
+                appleSelected: Icon(Icons.calendar_today),
+              ),
             ),
           ],
           onDestinationSelected: (_) {},
@@ -738,6 +751,53 @@ void main() {
     expect(find.byType(PinnedHeaderSliver), findsNothing);
   });
 
+  testWidgets('Apple compact bar minimizes and restores with page scrolling', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess(habitCount: 12);
+    final sync = _FakeAppSyncWorkflowAccess();
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+
+    await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      useAdaptiveShell: true,
+      platform: TargetPlatform.iOS,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    expect(
+      find.byKey(const ValueKey('cupertino-navigation-expanded')),
+      findsOneWidget,
+    );
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+    await tester.pump(const Duration(milliseconds: 350));
+
+    expect(
+      find.byKey(const ValueKey('cupertino-navigation-minimized')),
+      findsOneWidget,
+    );
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, 100));
+    await tester.pump(const Duration(milliseconds: 350));
+
+    expect(
+      find.byKey(const ValueKey('cupertino-navigation-expanded')),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('Apple compact selection swaps FAB for the contextual toolbar', (
     tester,
   ) async {
@@ -772,7 +832,11 @@ void main() {
       ),
     );
     expect(appBarSwitcher.duration, Duration.zero);
-    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
+      findsOneWidget,
+    );
+    expect(find.byType(NavigationBar), findsNothing);
     expect(vm.selectedHabitsCount, 0);
     await tester.tap(
       find.byKey(const ValueKey('cupertino-search-overflow-collapsed')),
@@ -790,7 +854,10 @@ void main() {
     expect(vm.selectedHabitsCount, 0);
     expect(find.byType(CupertinoSliverSelectAppBar), findsOneWidget);
     expect(find.byType(CupertinoSelectBottomToolbar), findsOneWidget);
-    expect(find.byType(NavigationBar), findsNothing);
+    expect(
+      find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
+      findsNothing,
+    );
     expect(find.byType(ScrollingFAB), findsNothing);
     final placeholder = tester.widget<FixedPagePlaceHolder>(
       find.byType(FixedPagePlaceHolder).last,
@@ -808,7 +875,10 @@ void main() {
 
     tester.view.physicalSize = const Size(390, 800);
     await tester.pump();
-    expect(find.byType(NavigationBar), findsNothing);
+    expect(
+      find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
+      findsNothing,
+    );
     expect(find.byType(CupertinoSelectBottomToolbar), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('cupertino-select-done')));
@@ -816,6 +886,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 600));
     expect(vm.isInEditMode, isFalse);
     expect(find.byType(CupertinoSelectBottomToolbar), findsNothing);
+    expect(
+      find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
+      findsOneWidget,
+    );
     expect(find.byType(ScrollingFAB), findsOneWidget);
   });
 

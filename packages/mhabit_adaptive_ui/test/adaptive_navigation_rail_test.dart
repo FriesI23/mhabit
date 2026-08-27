@@ -9,10 +9,14 @@ Widget _wrap(Widget child) => MaterialApp(home: Scaffold(body: child));
 void main() {
   group('AdaptiveNavigationRail', () {
     const destinations = [
-      NavigationDestination(
-        icon: Icon(Icons.home_outlined),
-        selectedIcon: Icon(Icons.home),
+      AdaptiveNavigationDestination(
         label: 'Habits',
+        icons: NavigationDestinationIcons(
+          material: Icon(Icons.home_outlined),
+          materialSelected: Icon(Icons.home),
+          apple: Icon(Icons.home_outlined),
+          appleSelected: Icon(Icons.home),
+        ),
       ),
     ];
 

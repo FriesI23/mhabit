@@ -150,13 +150,23 @@ Future<void> _pumpHabitDetailPage(
               selectedIndex: 0,
               compactRouteVisible: false,
               destinations: const [
-                NavigationDestination(
-                  icon: Icon(Icons.home_outlined),
+                AdaptiveNavigationDestination(
                   label: 'Habits',
+                  icons: NavigationDestinationIcons(
+                    material: Icon(Icons.home_outlined),
+                    materialSelected: Icon(Icons.home_outlined),
+                    apple: Icon(Icons.home_outlined),
+                    appleSelected: Icon(Icons.home_outlined),
+                  ),
                 ),
-                NavigationDestination(
-                  icon: Icon(Icons.calendar_today_outlined),
+                AdaptiveNavigationDestination(
                   label: 'Today',
+                  icons: NavigationDestinationIcons(
+                    material: Icon(Icons.calendar_today_outlined),
+                    materialSelected: Icon(Icons.calendar_today_outlined),
+                    apple: Icon(Icons.calendar_today_outlined),
+                    appleSelected: Icon(Icons.calendar_today_outlined),
+                  ),
                 ),
               ],
               onDestinationSelected: (_) {},

@@ -33,21 +33,21 @@ class AdaptiveNavScope extends InheritedWidget {
     true,
   );
 
-  /// Whether the bottom navigation bar is currently visible.
+  /// Whether compact navigation chrome currently occupies its envelope.
   ///
-  /// Derived by the shell from [scrollWish], the branch stack depth, and
-  /// the bar visibility policy. Pages read it to coordinate FAB /
-  /// placeholder animations, e.g. through [ValueListenableBuilder]; the
-  /// [ValueListenable] view is read-only by construction. Non-compact forms
-  /// expose a constant-true listenable.
+  /// Apple minimized chrome remains visible; route or contextual suppression
+  /// makes it false. Material also makes it false for a hidden scroll wish.
+  /// Pages read it to coordinate FAB / placeholder animations, e.g. through
+  /// [ValueListenableBuilder]; the [ValueListenable] view is read-only by
+  /// construction. Non-compact forms expose a constant-true listenable.
   ValueListenable<bool> get visible => _visible ?? _alwaysTrue;
 
-  /// Whether the active page wants the bottom bar visible.
+  /// Whether the active page wants expanded/visible navigation chrome.
   ///
   /// Exposed as a read-only [ValueListenable]; pages report changes
-  /// through [reportScrollWish]. The shell combines the wish with the
-  /// route stack policy to derive [visible]. Non-compact forms expose a
-  /// constant-true listenable.
+  /// through [reportScrollWish]. A false wish hides Material chrome and
+  /// minimizes Apple chrome. Non-compact forms expose a constant-true
+  /// listenable.
   ValueListenable<bool> get scrollWish => _scrollWish ?? _alwaysTrue;
 
   /// Reports the page's scroll-driven visibility wish to the shell.
@@ -72,8 +72,8 @@ class AdaptiveNavScope extends InheritedWidget {
   /// would double-count the inset. Always 0 in non-compact forms.
   final double barHeight;
 
-  /// Total rendered height of the bottom bar, including the bottom
-  /// safe-area inset (NavigationBar wraps its content in a SafeArea).
+  /// Total rendered height of the bottom bar, including the system bottom
+  /// safe-area inset.
   ///
   /// Always 0 in non-compact forms.
   final double navHeight;
