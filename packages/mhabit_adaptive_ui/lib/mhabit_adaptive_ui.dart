@@ -17,9 +17,7 @@ export 'src/breakpoints/device_context.dart';
 export 'src/breakpoints/window_size_class.dart';
 export 'src/cupertino/cupertino_floating_surface.dart';
 export 'src/cupertino/cupertino_navigation_primary_action.dart'
-    show
-        CupertinoNavigationPrimaryAction,
-        CupertinoNavigationPrimaryActionRegion;
+    show CupertinoNavigationPrimaryAction;
 export 'src/cupertino/cupertino_sliver_search_bar.dart';
 export 'src/cupertino/cupertino_sliver_select_app_bar.dart';
 export 'src/material/material_expandable_search_bar.dart';

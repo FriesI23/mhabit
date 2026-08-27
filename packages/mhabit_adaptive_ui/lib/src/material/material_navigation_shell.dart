@@ -15,6 +15,7 @@ class MaterialNavigationShell extends StatelessWidget {
     required this.destinations,
     required this.onDestinationSelected,
     required this.compactRouteVisible,
+    required this.contextualChromeSuppressed,
     required this.railExtent,
   });
 
@@ -35,6 +36,9 @@ class MaterialNavigationShell extends StatelessWidget {
   /// Whether route structure allows compact navigation to be shown.
   final bool compactRouteVisible;
 
+  /// Whether contextual commands suppress compact navigation chrome.
+  final bool contextualChromeSuppressed;
+
   /// Automatic and manually resizable rail-width policy.
   final NavigationRailExtent railExtent;
 
@@ -45,6 +49,7 @@ class MaterialNavigationShell extends StatelessWidget {
       destinations: destinations,
       onDestinationSelected: onDestinationSelected,
       compactRouteVisible: compactRouteVisible,
+      contextualChromeSuppressed: contextualChromeSuppressed,
       barHeight: _barHeight,
       navHeight: _barHeight + MediaQuery.paddingOf(context).bottom,
       keepVisibleOnScroll: false,

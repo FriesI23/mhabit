@@ -822,7 +822,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..clearSnackBars();
-      _suppressAppleContextualChrome();
       viewmodel.switchToEditMode();
       final data = viewmodel.getHabitBySortId(index);
       if (data is HabitSummaryDataSortCache) {
@@ -1020,13 +1019,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
   void _onHabitSelectButtonPressed() {
     if (!(mounted && _vm.mounted)) return;
-    _suppressAppleContextualChrome();
     _vm.switchToEditMode();
-  }
-
-  void _suppressAppleContextualChrome() {
-    if (AdaptiveStyle.of(context) != AdaptiveStyle.apple) return;
-    AdaptiveNavScope.maybeRead(context)?.reportContextualChromeSuppressed(true);
   }
 
   Future<void> _onHabitStatusModifyPressed() async {
@@ -1048,9 +1041,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
   Widget build(BuildContext context) {
     super.build(context);
     appLog.build.debug(context);
-    final isInEditMode = context.select<HabitSummaryViewModel, bool>(
-      (vm) => vm.isInEditMode,
-    );
     final isCalendarExpanded = context.select<HabitSummaryViewModel, bool>(
       (vm) => vm.isCalendarExpanded,
     );
@@ -1187,42 +1177,38 @@ class HabitsTabPageState extends State<HabitsTabPage>
     }
     //#endregion
 
-    return HabitDisplayFabRegion(
-      appleVisible: !isInEditMode,
-      onCreated: widget.onHabitCreated,
-      child: RefreshIndicator(
-        notificationPredicate: (notification) {
-          final context = notification.context;
-          if (context == null) {
-            return defaultScrollNotificationPredicate(notification);
-          }
-          final summary = context.read<HabitSummaryViewModel>();
-          final sync = context.read<AppSyncWorkflowAccess>();
-          if (summary.isInEditMode || !sync.canStartSync) return false;
+    return RefreshIndicator(
+      notificationPredicate: (notification) {
+        final context = notification.context;
+        if (context == null) {
           return defaultScrollNotificationPredicate(notification);
-        },
-        onRefresh: _onRefreshIndicatorTriggered,
-        edgeOffset:
-            toolbarHeight +
-            calendarHeaderHeight +
-            MediaQuery.paddingOf(context).top,
-        triggerMode: RefreshIndicatorTriggerMode.onEdge,
-        child: Stack(
-          children: [
-            buildEmptyImage(context),
-            CustomScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              slivers: [
-                buildAppbar(context),
-                const ChangelogBannerSliver(),
-                buildHabits(context),
-                buildDevelopSliverList(context),
-                buildBottomPlaceHolder(context),
-                if (kDebugMode) _buildScrollablePlaceHolder(context),
-              ],
-            ),
-          ],
-        ),
+        }
+        final summary = context.read<HabitSummaryViewModel>();
+        final sync = context.read<AppSyncWorkflowAccess>();
+        if (summary.isInEditMode || !sync.canStartSync) return false;
+        return defaultScrollNotificationPredicate(notification);
+      },
+      onRefresh: _onRefreshIndicatorTriggered,
+      edgeOffset:
+          toolbarHeight +
+          calendarHeaderHeight +
+          MediaQuery.paddingOf(context).top,
+      triggerMode: RefreshIndicatorTriggerMode.onEdge,
+      child: Stack(
+        children: [
+          buildEmptyImage(context),
+          CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              buildAppbar(context),
+              const ChangelogBannerSliver(),
+              buildHabits(context),
+              buildDevelopSliverList(context),
+              buildBottomPlaceHolder(context),
+              if (kDebugMode) _buildScrollablePlaceHolder(context),
+            ],
+          ),
+        ],
       ),
     );
   }

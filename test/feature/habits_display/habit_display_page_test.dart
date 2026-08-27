@@ -38,6 +38,7 @@ import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/_providers/habits_today.dart';
+import 'package:mhabit/pages/habits_display/navigation_chrome.dart';
 import 'package:mhabit/pages/habits_display/page.dart';
 import 'package:mhabit/pages/habits_display/page_habits.dart';
 import 'package:mhabit/pages/habits_display/page_today.dart';
@@ -72,6 +73,31 @@ import '../../support/stub/app_sync.dart';
 import '../../support/stub/habits_display_access.dart';
 
 void _ignoreHabitDBCell(HabitDBCell _) {}
+
+class _TestHabitDisplayNavigationChrome
+    implements HabitDisplayNavigationChrome {
+  VoidCallback? _primaryAction;
+  final contextualChromeSuppressed = ValueNotifier(false);
+
+  void invokePrimaryAction() => _primaryAction?.call();
+
+  void dispose() => contextualChromeSuppressed.dispose();
+
+  @override
+  void registerPrimaryAction(VoidCallback action) {
+    _primaryAction = action;
+  }
+
+  @override
+  void unregisterPrimaryAction(VoidCallback action) {
+    if (identical(_primaryAction, action)) _primaryAction = null;
+  }
+
+  @override
+  void setContextualChromeSuppressed(bool suppressed) {
+    contextualChromeSuppressed.value = suppressed;
+  }
+}
 
 final class _FailingHabitsDisplayAccess extends StubHabitsDisplayAccess {
   @override
@@ -288,9 +314,11 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
   final vm = HabitSummaryViewModel()
     ..attachAccess(access)
     ..attachGroupManager(groupManager);
+  final navigationChrome = _TestHabitDisplayNavigationChrome();
 
   addTearDown(() {
     vm.dispose();
+    navigationChrome.dispose();
     appEvent.dispose();
     filter.dispose();
     sort.dispose();
@@ -306,30 +334,43 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
   });
 
   final home = useAdaptiveShell
-      ? AdaptiveNavigationShell(
-          selectedIndex: 0,
-          destinations: const [
-            AdaptiveNavigationDestination(
-              label: 'Habits',
-              icons: NavigationDestinationIcons(
-                material: Icon(Icons.list),
-                materialSelected: Icon(Icons.list),
-                apple: Icon(Icons.list),
-                appleSelected: Icon(Icons.list),
+      ? ListenableBuilder(
+          listenable: navigationChrome.contextualChromeSuppressed,
+          builder: (context, child) => AdaptiveNavigationShell(
+            selectedIndex: 0,
+            contextualChromeSuppressed:
+                navigationChrome.contextualChromeSuppressed.value,
+            applePrimaryAction:
+                navigationChrome.contextualChromeSuppressed.value
+                ? null
+                : CupertinoNavigationPrimaryAction(
+                    label: 'New Habit',
+                    icon: const Icon(Icons.add),
+                    onPressed: navigationChrome.invokePrimaryAction,
+                  ),
+            destinations: const [
+              AdaptiveNavigationDestination(
+                label: 'Habits',
+                icons: NavigationDestinationIcons(
+                  material: Icon(Icons.list),
+                  materialSelected: Icon(Icons.list),
+                  apple: Icon(Icons.list),
+                  appleSelected: Icon(Icons.list),
+                ),
               ),
-            ),
-            AdaptiveNavigationDestination(
-              label: 'Today',
-              icons: NavigationDestinationIcons(
-                material: Icon(Icons.calendar_today),
-                materialSelected: Icon(Icons.calendar_today),
-                apple: Icon(Icons.calendar_today),
-                appleSelected: Icon(Icons.calendar_today),
+              AdaptiveNavigationDestination(
+                label: 'Today',
+                icons: NavigationDestinationIcons(
+                  material: Icon(Icons.calendar_today),
+                  materialSelected: Icon(Icons.calendar_today),
+                  apple: Icon(Icons.calendar_today),
+                  appleSelected: Icon(Icons.calendar_today),
+                ),
               ),
-            ),
-          ],
-          onDestinationSelected: (_) {},
-          child: const HabitsPage(),
+            ],
+            onDestinationSelected: (_) {},
+            child: const HabitsPage(),
+          ),
         )
       : useBranchPage
       ? const AdaptiveNavScope(barHeight: 0, navHeight: 0, child: HabitsPage())
@@ -345,6 +386,7 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
   await tester.pumpWidget(
     MultiProvider(
       providers: [
+        Provider<HabitDisplayNavigationChrome>.value(value: navigationChrome),
         ChangeNotifierProvider<ProfileViewModel>.value(value: profile),
         if (provideOuterHabitSummary)
           ChangeNotifierProvider<HabitSummaryViewModel>.value(value: vm),

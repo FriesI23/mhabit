@@ -21,7 +21,7 @@ final class _CupertinoDefaultHeroTag {
 /// A Cupertino navigation shell primary-action description.
 @immutable
 final class CupertinoNavigationPrimaryAction {
-  /// Creates a page-owned primary action.
+  /// Creates a primary-action description.
   ///
   /// The action is interactive only when [enabled] is true and [onPressed] is
   /// non-null.
@@ -57,188 +57,6 @@ final class CupertinoNavigationPrimaryAction {
 
   /// Whether the action uses the prominent primary-container colors.
   final bool prominent;
-}
-
-/// Registers a page-owned action with the nearest Cupertino navigation shell.
-///
-/// Only an active [TickerMode] subtree reports its action. Switching the shell
-/// destination advances the owning generation so the old branch releases its
-/// action. Owner checks prevent a delayed release from clearing a newer
-/// branch's action.
-///
-/// ```text
-/// page
-///  `-- CupertinoNavigationPrimaryActionRegion
-///          | reports action
-///          v
-///      scope/controller --> shell host --> [ + ]
-/// ```
-class CupertinoNavigationPrimaryActionRegion extends StatefulWidget {
-  /// Creates a region that reports [action] while [child] is active.
-  const CupertinoNavigationPrimaryActionRegion({
-    super.key,
-    required this.action,
-    required this.child,
-  });
-
-  /// Page-owned action reported to the nearest Cupertino navigation shell.
-  ///
-  /// A null value releases any action previously reported by this region.
-  final CupertinoNavigationPrimaryAction? action;
-
-  /// Page subtree associated with [action].
-  final Widget child;
-
-  @override
-  State<CupertinoNavigationPrimaryActionRegion> createState() =>
-      _CupertinoNavigationPrimaryActionRegionState();
-}
-
-class _CupertinoNavigationPrimaryActionRegionState
-    extends State<CupertinoNavigationPrimaryActionRegion> {
-  final Object _owner = Object();
-  CupertinoNavigationPrimaryActionScope? _scope;
-  CupertinoNavigationPrimaryAction? _reportedAction;
-  int? _reportedGeneration;
-  bool _reportPending = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final nextScope = CupertinoNavigationPrimaryActionScope.maybeOf(context);
-    final nextGeneration = nextScope?.generation;
-    if (!identical(_scope, nextScope)) {
-      final previousScope = _scope;
-      _scope = nextScope;
-      _reportedAction = null;
-      _reportedGeneration = nextGeneration;
-      if (previousScope != null) {
-        WidgetsBinding.instance.addPostFrameCallback(
-          (_) => previousScope.release(_owner),
-        );
-      }
-    } else if (_reportedGeneration != nextGeneration) {
-      _reportedAction = null;
-      _reportedGeneration = nextGeneration;
-    }
-    _scheduleReport();
-  }
-
-  @override
-  void didUpdateWidget(
-    covariant CupertinoNavigationPrimaryActionRegion oldWidget,
-  ) {
-    super.didUpdateWidget(oldWidget);
-    if (!identical(oldWidget.action, widget.action)) _scheduleReport();
-  }
-
-  void _scheduleReport() {
-    if (_reportPending) return;
-    _reportPending = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _reportPending = false;
-      if (!mounted) return;
-      final action = TickerMode.valuesOf(context).enabled
-          ? widget.action
-          : null;
-      final generation = _scope?.generation;
-      if (_reportedGeneration == generation &&
-          identical(_reportedAction, action)) {
-        return;
-      }
-      _reportedGeneration = generation;
-      _reportedAction = action;
-      _scope?.report(_owner, action);
-    });
-  }
-
-  @override
-  void dispose() {
-    final scope = _scope;
-    if (scope != null) {
-      WidgetsBinding.instance.addPostFrameCallback(
-        (_) => scope.release(_owner),
-      );
-    }
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    TickerMode.valuesOf(context);
-    return widget.child;
-  }
-}
-
-/// Holds the primary action currently owned by an active page region.
-class CupertinoNavigationPrimaryActionController
-    extends ValueNotifier<CupertinoNavigationPrimaryAction?> {
-  /// Creates a controller with no registered action.
-  CupertinoNavigationPrimaryActionController() : super(null);
-
-  Object? _owner;
-  bool _disposed = false;
-
-  /// Registers [action] as the value currently owned by [owner].
-  void report(Object owner, CupertinoNavigationPrimaryAction? action) {
-    if (_disposed) return;
-    if (action == null) {
-      release(owner);
-      return;
-    }
-    _owner = owner;
-    if (identical(value, action)) return;
-    value = action;
-  }
-
-  /// Clears the current action when it is still owned by [owner].
-  void release(Object owner) {
-    if (_disposed || !identical(_owner, owner)) return;
-    _owner = null;
-    if (value == null) return;
-    value = null;
-  }
-
-  @override
-  void dispose() {
-    _disposed = true;
-    super.dispose();
-  }
-}
-
-/// Exposes primary-action registration to page regions below the shell.
-class CupertinoNavigationPrimaryActionScope extends InheritedWidget {
-  /// Creates a registration scope for [controller] and [generation].
-  const CupertinoNavigationPrimaryActionScope({
-    super.key,
-    required this.controller,
-    required this.generation,
-    required super.child,
-  });
-
-  /// Controller that owns the action reported by the active region.
-  final CupertinoNavigationPrimaryActionController controller;
-
-  /// Destination generation used to invalidate an action from an old branch.
-  final int generation;
-
-  /// Registers [action] as the value currently owned by [owner].
-  void report(Object owner, CupertinoNavigationPrimaryAction? action) =>
-      controller.report(owner, action);
-
-  /// Clears the current action when it is still owned by [owner].
-  void release(Object owner) => controller.release(owner);
-
-  /// Returns the nearest scope, or null when no Cupertino shell is present.
-  static CupertinoNavigationPrimaryActionScope? maybeOf(BuildContext context) =>
-      context
-          .dependOnInheritedWidgetOfExactType<
-            CupertinoNavigationPrimaryActionScope
-          >();
-
-  @override
-  bool updateShouldNotify(CupertinoNavigationPrimaryActionScope oldWidget) =>
-      controller != oldWidget.controller || generation != oldWidget.generation;
 }
 
 /// Renders a Cupertino primary action as a floating circular button.
@@ -338,10 +156,9 @@ class CupertinoNavigationPrimaryActionButton extends StatelessWidget {
       ),
       child: fab,
     );
-    final actionIdentity =
-        identical(action.id, _defaultHeroTag) || action.id == null
-        ? action
-        : action.id!;
+    final actionIdentity = identical(action.id, _defaultHeroTag)
+        ? _defaultHeroTag
+        : action.id ?? action;
     return SizedBox.square(
       key: ValueKey<Object>(actionIdentity),
       dimension: extent,
@@ -357,7 +174,7 @@ class CupertinoNavigationPrimaryActionButton extends StatelessWidget {
   }
 }
 
-/// Bridges the shell's action state to its animated floating button.
+/// Renders the shell's selected action as an animated floating button.
 class CupertinoNavigationPrimaryActionHost extends StatelessWidget {
   /// Creates a host for the shell's current [action].
   const CupertinoNavigationPrimaryActionHost({
@@ -369,8 +186,8 @@ class CupertinoNavigationPrimaryActionHost extends StatelessWidget {
     required this.routeVisible,
   });
 
-  /// Listenable action reported by the active page region.
-  final ValueListenable<CupertinoNavigationPrimaryAction?> action;
+  /// Action selected declaratively by the navigation-shell owner.
+  final CupertinoNavigationPrimaryAction? action;
 
   /// Whether compact Apple navigation is expanded rather than minimized.
   final ValueListenable<bool> scrollWish;
@@ -387,25 +204,21 @@ class CupertinoNavigationPrimaryActionHost extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final disableAnimations = MediaQuery.disableAnimationsOf(context);
-    return ValueListenableBuilder<CupertinoNavigationPrimaryAction?>(
-      valueListenable: action,
-      builder: (context, primaryAction, child) => ValueListenableBuilder<bool>(
-        valueListenable: scrollWish,
-        builder: (context, expanded, child) => TweenAnimationBuilder<double>(
-          duration: disableAnimations
-              ? Duration.zero
-              : navigationShellAnimationDuration,
-          curve: Curves.easeOut,
-          tween: Tween(end: compact && !expanded ? 44 : 50),
-          builder: (context, extent, child) =>
-              CompactNavigationChromeTransition(
-                visibility: visibility,
-                child: _PrimaryActionAnimatedSwitcher(
-                  action: !compact && !routeVisible ? null : primaryAction,
-                  extent: extent,
-                  disableAnimations: disableAnimations,
-                ),
-              ),
+    return ValueListenableBuilder<bool>(
+      valueListenable: scrollWish,
+      builder: (context, expanded, child) => TweenAnimationBuilder<double>(
+        duration: disableAnimations
+            ? Duration.zero
+            : navigationShellAnimationDuration,
+        curve: Curves.easeOut,
+        tween: Tween(end: compact && !expanded ? 44 : 50),
+        builder: (context, extent, child) => CompactNavigationChromeTransition(
+          visibility: visibility,
+          child: _PrimaryActionAnimatedSwitcher(
+            action: !compact && !routeVisible ? null : action,
+            extent: extent,
+            disableAnimations: disableAnimations,
+          ),
         ),
       ),
     );
@@ -447,12 +260,11 @@ class _PrimaryActionAnimatedSwitcherState
   @override
   Widget build(BuildContext context) {
     final action = widget.action;
-    final actionIdentity =
-        action == null ||
-            identical(action.id, _defaultHeroTag) ||
-            action.id == null
-        ? action
-        : action.id;
+    final actionIdentity = action == null
+        ? null
+        : identical(action.id, _defaultHeroTag)
+        ? _defaultHeroTag
+        : action.id ?? action;
     if (!_started) return const SizedBox.shrink();
     return AnimatedSwitcher(
       duration: widget.disableAnimations

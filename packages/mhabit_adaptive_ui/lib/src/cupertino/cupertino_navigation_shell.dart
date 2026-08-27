@@ -9,7 +9,7 @@ import 'cupertino_navigation_primary_action.dart';
 import 'cupertino_navigation_sidebar.dart';
 
 /// Composes the Cupertino renderers around style-neutral shell mechanics.
-class CupertinoNavigationShell extends StatefulWidget {
+class CupertinoNavigationShell extends StatelessWidget {
   /// Creates Cupertino navigation chrome around [child].
   const CupertinoNavigationShell({
     super.key,
@@ -18,6 +18,8 @@ class CupertinoNavigationShell extends StatefulWidget {
     required this.destinations,
     required this.onDestinationSelected,
     required this.compactRouteVisible,
+    required this.contextualChromeSuppressed,
+    required this.primaryAction,
     required this.railExtent,
     required this.appleBarStyle,
   });
@@ -37,6 +39,12 @@ class CupertinoNavigationShell extends StatefulWidget {
   /// Whether route structure allows compact navigation to be shown.
   final bool compactRouteVisible;
 
+  /// Whether contextual commands suppress compact navigation chrome.
+  final bool contextualChromeSuppressed;
+
+  /// App-selected primary action for the active branch.
+  final CupertinoNavigationPrimaryAction? primaryAction;
+
   /// Width policy used by the temporary medium-and-wider rail renderer.
   final NavigationRailExtent railExtent;
 
@@ -44,41 +52,18 @@ class CupertinoNavigationShell extends StatefulWidget {
   final AppleNavigationBarStyle appleBarStyle;
 
   @override
-  State<CupertinoNavigationShell> createState() =>
-      _CupertinoNavigationShellState();
-}
-
-class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
-  final CupertinoNavigationPrimaryActionController _primaryAction =
-      CupertinoNavigationPrimaryActionController();
-  int _primaryActionGeneration = 0;
-
-  @override
-  void didUpdateWidget(covariant CupertinoNavigationShell oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.selectedIndex != widget.selectedIndex) {
-      _primaryActionGeneration += 1;
-    }
-  }
-
-  @override
-  void dispose() {
-    _primaryAction.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final disableAnimations = MediaQuery.disableAnimationsOf(context);
     return NavigationShellFrame(
-      selectedIndex: widget.selectedIndex,
-      destinations: widget.destinations,
-      onDestinationSelected: widget.onDestinationSelected,
-      compactRouteVisible: widget.compactRouteVisible,
+      selectedIndex: selectedIndex,
+      destinations: destinations,
+      onDestinationSelected: onDestinationSelected,
+      compactRouteVisible: compactRouteVisible,
+      contextualChromeSuppressed: contextualChromeSuppressed,
       barHeight: CupertinoAdaptiveNavigationBar.contentHeight,
       navHeight: CupertinoAdaptiveNavigationBar.heightOf(
         context,
-        floatingBottomMargin: widget.appleBarStyle.floatingBottomMargin,
+        floatingBottomMargin: appleBarStyle.floatingBottomMargin,
       ),
       keepVisibleOnScroll: true,
       switchDuration: disableAnimations
@@ -87,27 +72,23 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
       leadingBuilder: (context, form, onSelected) =>
           CupertinoNavigationSidebarCompatibility(
             form: form,
-            selectedIndex: widget.selectedIndex,
-            destinations: widget.destinations,
+            selectedIndex: selectedIndex,
+            destinations: destinations,
             onDestinationSelected: onSelected,
-            railExtent: widget.railExtent,
+            railExtent: railExtent,
           ),
       compactNavigationBuilder: _buildCompactNavigation,
       floatingActionButtonBuilder: (context, state) =>
           CupertinoNavigationPrimaryActionHost(
-            action: _primaryAction,
+            action: primaryAction,
             scrollWish: state.scrollWish,
             visibility: state.visible,
             compact: state.compact,
-            routeVisible: widget.compactRouteVisible,
+            routeVisible: compactRouteVisible,
           ),
       floatingActionButtonLocation:
           CupertinoNavigationPrimaryActionButton.floatingLocationOf(context),
-      child: CupertinoNavigationPrimaryActionScope(
-        controller: _primaryAction,
-        generation: _primaryActionGeneration,
-        child: widget.child,
-      ),
+      child: child,
     );
   }
 
@@ -115,30 +96,26 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
     BuildContext context,
     NavigationShellChromeState state,
   ) {
-    return ValueListenableBuilder<CupertinoNavigationPrimaryAction?>(
-      valueListenable: _primaryAction,
-      builder: (context, primaryAction, child) => ValueListenableBuilder<bool>(
-        valueListenable: state.scrollWish,
-        builder: (context, scrollWish, child) =>
-            CompactNavigationChromeTransition(
-              visibility: state.visible,
-              collapseLayout: true,
-              topClipOverflow: CupertinoFloatingGlassSurface.shadowClipOverflow,
-              child: CupertinoAdaptiveNavigationBar(
-                selectedIndex: widget.selectedIndex,
-                presentation: scrollWish
-                    ? AdaptiveNavigationBarPresentation.expanded
-                    : AdaptiveNavigationBarPresentation.minimized,
-                onExpandRequested: () => state.reportScrollWish(true),
-                reservePrimaryActionSpace: primaryAction != null,
-                expandedNavigationWidth:
-                    widget.appleBarStyle.expandedNavigationWidth,
-                floatingBottomMargin: widget.appleBarStyle.floatingBottomMargin,
-                destinations: widget.destinations,
-                onDestinationSelected: state.onDestinationSelected,
-              ),
+    return ValueListenableBuilder<bool>(
+      valueListenable: state.scrollWish,
+      builder: (context, scrollWish, child) =>
+          CompactNavigationChromeTransition(
+            visibility: state.visible,
+            collapseLayout: true,
+            topClipOverflow: CupertinoFloatingGlassSurface.shadowClipOverflow,
+            child: CupertinoAdaptiveNavigationBar(
+              selectedIndex: selectedIndex,
+              presentation: scrollWish
+                  ? AdaptiveNavigationBarPresentation.expanded
+                  : AdaptiveNavigationBarPresentation.minimized,
+              onExpandRequested: () => state.reportScrollWish(true),
+              reservePrimaryActionSpace: primaryAction != null,
+              expandedNavigationWidth: appleBarStyle.expandedNavigationWidth,
+              floatingBottomMargin: appleBarStyle.floatingBottomMargin,
+              destinations: destinations,
+              onDestinationSelected: state.onDestinationSelected,
             ),
-      ),
+          ),
     );
   }
 }

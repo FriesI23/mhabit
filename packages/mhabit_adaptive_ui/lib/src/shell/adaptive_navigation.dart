@@ -4,6 +4,8 @@ import '../adaptive/adaptive_navigation_destination.dart';
 import '../adaptive_style.dart';
 import '../cupertino/cupertino_adaptive_navigation_bar.dart'
     show AppleNavigationBarStyle;
+import '../cupertino/cupertino_navigation_primary_action.dart'
+    show CupertinoNavigationPrimaryAction;
 import '../cupertino/cupertino_navigation_shell.dart';
 import '../material/material_navigation_rail.dart' show NavigationRailExtent;
 import '../material/material_navigation_shell.dart';
@@ -41,6 +43,8 @@ class AdaptiveNavigationShell extends StatefulWidget {
     required this.destinations,
     required this.onDestinationSelected,
     this.compactRouteVisible = true,
+    this.contextualChromeSuppressed = false,
+    this.applePrimaryAction,
     this.railExtent = const NavigationRailExtent(224.0),
     this.appleBarStyle = const AppleNavigationBarStyle(),
   });
@@ -62,6 +66,15 @@ class AdaptiveNavigationShell extends StatefulWidget {
   /// The caller owns route-stack interpretation. Ignored in non-compact forms,
   /// where navigation remains visible.
   final bool compactRouteVisible;
+
+  /// Whether a contextual command surface suppresses compact navigation.
+  final bool contextualChromeSuppressed;
+
+  /// Primary action rendered by Apple navigation chrome.
+  ///
+  /// Material renderers ignore this app-selected action and continue to use
+  /// page-owned Scaffold FAB slots.
+  final CupertinoNavigationPrimaryAction? applePrimaryAction;
 
   /// Extended-rail sizing and manual-resize policy.
   final NavigationRailExtent railExtent;
@@ -88,6 +101,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
         destinations: widget.destinations,
         onDestinationSelected: widget.onDestinationSelected,
         compactRouteVisible: widget.compactRouteVisible,
+        contextualChromeSuppressed: widget.contextualChromeSuppressed,
         railExtent: widget.railExtent,
         child: child,
       ),
@@ -96,6 +110,8 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
         destinations: widget.destinations,
         onDestinationSelected: widget.onDestinationSelected,
         compactRouteVisible: widget.compactRouteVisible,
+        contextualChromeSuppressed: widget.contextualChromeSuppressed,
+        primaryAction: widget.applePrimaryAction,
         railExtent: widget.railExtent,
         appleBarStyle: widget.appleBarStyle,
         child: child,

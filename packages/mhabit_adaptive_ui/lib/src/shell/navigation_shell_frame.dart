@@ -83,6 +83,7 @@ class NavigationShellFrame extends StatefulWidget {
     required this.destinations,
     required this.onDestinationSelected,
     required this.compactRouteVisible,
+    required this.contextualChromeSuppressed,
     required this.barHeight,
     required this.navHeight,
     required this.keepVisibleOnScroll,
@@ -107,6 +108,9 @@ class NavigationShellFrame extends StatefulWidget {
 
   /// Whether route structure allows compact navigation to be shown.
   final bool compactRouteVisible;
+
+  /// Whether contextual commands suppress compact navigation chrome.
+  final bool contextualChromeSuppressed;
 
   /// Height of the compact navigation surface without its outer inset.
   final double barHeight;
@@ -144,14 +148,11 @@ class _NavigationShellFrameState extends State<NavigationShellFrame> {
       AdaptiveNavVisibilityController();
   final AdaptiveScrollWishController _scrollWish =
       AdaptiveScrollWishController();
-  final AdaptiveContextualChromeController _contextualChrome =
-      AdaptiveContextualChromeController();
 
   @override
   void initState() {
     super.initState();
     _scrollWish.addListener(_recomputeVisibility);
-    _contextualChrome.addListener(_recomputeVisibility);
   }
 
   @override
@@ -171,22 +172,24 @@ class _NavigationShellFrameState extends State<NavigationShellFrame> {
     final branchChanged = oldWidget.selectedIndex != widget.selectedIndex;
     final routeVisibilityChanged =
         oldWidget.compactRouteVisible != widget.compactRouteVisible;
+    final contextualVisibilityChanged =
+        oldWidget.contextualChromeSuppressed !=
+        widget.contextualChromeSuppressed;
     if (routeVisibilityChanged) {
       _scrollWish.reset();
+    }
+    if (routeVisibilityChanged || contextualVisibilityChanged) {
       _recomputeVisibility();
     }
     if (!branchChanged) return;
     _scrollWish.reset();
-    _contextualChrome.reset();
     _recomputeVisibility();
   }
 
   @override
   void dispose() {
     _scrollWish.removeListener(_recomputeVisibility);
-    _contextualChrome.removeListener(_recomputeVisibility);
     _scrollWish.dispose();
-    _contextualChrome.dispose();
     _navVisibility.dispose();
     super.dispose();
   }
@@ -196,14 +199,13 @@ class _NavigationShellFrameState extends State<NavigationShellFrame> {
     final visible =
         widget.compactRouteVisible &&
         (widget.keepVisibleOnScroll || _scrollWish.value) &&
-        !_contextualChrome.value;
+        !widget.contextualChromeSuppressed;
     if (_navVisibility.value == visible) return;
     visible ? _navVisibility.show() : _navVisibility.hide();
   }
 
   void _onDestinationSelected(int index) {
     _scrollWish.reset();
-    _contextualChrome.reset();
     widget.onDestinationSelected(index);
   }
 
@@ -237,7 +239,6 @@ class _NavigationShellFrameState extends State<NavigationShellFrame> {
     final shell = AdaptiveNavScope(
       visible: compact ? _navVisibility : null,
       scrollWish: compact ? _scrollWish : null,
-      contextualChrome: _contextualChrome,
       barHeight: compact ? widget.barHeight : 0,
       navHeight: compact ? widget.navHeight : 0,
       child: Scaffold(

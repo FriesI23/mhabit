@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -5,12 +7,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mhabit/entries/app/navigation_chrome.dart';
 import 'package:mhabit/entries/app/shell.dart';
 import 'package:mhabit/models/app_entry.dart';
 import 'package:mhabit/pages/common/widgets.dart';
-import 'package:mhabit/pages/habits_display/_widgets/apple/habit_display_fab.dart';
+import 'package:mhabit/pages/habits_display/navigation_chrome.dart';
 import 'package:mhabit/providers/app_ui/app_launch_entry.dart';
 import 'package:mhabit/routes/app_router.dart';
+import 'package:mhabit/routes/navigator_helpers.dart';
 import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
@@ -43,30 +47,45 @@ class _StubPage extends StatelessWidget {
 class _PrimaryActionStubPage extends StatelessWidget {
   const _PrimaryActionStubPage();
 
-  static final CupertinoNavigationPrimaryAction _action =
-      CupertinoNavigationPrimaryAction(
-        id: 'stub-primary-action',
-        label: 'New Habit',
-        icon: const Icon(Icons.add),
-        onPressed: () {},
-      );
-
   @override
-  Widget build(BuildContext context) => CupertinoNavigationPrimaryActionRegion(
-    action: _action,
-    child: const Scaffold(body: Center(child: Text('habits action page'))),
-  );
+  Widget build(BuildContext context) =>
+      const Scaffold(body: Center(child: Text('habits action page')));
 }
 
-class _NavigatingPrimaryActionStubPage extends StatelessWidget {
+class _NavigatingPrimaryActionStubPage extends StatefulWidget {
   const _NavigatingPrimaryActionStubPage();
 
   @override
-  Widget build(BuildContext context) => HabitDisplayAppleFab(
-    visible: true,
-    onCreated: (_) {},
-    child: const Scaffold(body: Center(child: Text('habits action page'))),
-  );
+  State<_NavigatingPrimaryActionStubPage> createState() =>
+      _NavigatingPrimaryActionStubPageState();
+}
+
+class _NavigatingPrimaryActionStubPageState
+    extends State<_NavigatingPrimaryActionStubPage> {
+  HabitDisplayNavigationChrome? _navigationChrome;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final navigationChrome = context.read<HabitDisplayNavigationChrome>();
+    if (identical(_navigationChrome, navigationChrome)) return;
+    _navigationChrome?.unregisterPrimaryAction(_handlePressed);
+    _navigationChrome = navigationChrome..registerPrimaryAction(_handlePressed);
+  }
+
+  @override
+  void dispose() {
+    _navigationChrome?.unregisterPrimaryAction(_handlePressed);
+    super.dispose();
+  }
+
+  void _handlePressed() {
+    unawaited(naviToHabitCreatePage(context: context));
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      const Scaffold(body: Center(child: Text('habits action page')));
 }
 
 GoRouter _buildRouter(
@@ -95,16 +114,39 @@ GoRouter _buildRouter(
     appChromeNavigatorKey: appChromeNavigatorKey,
     initialIndex: 0,
   );
+  final chromeController = AppNavigationChromeController();
+  final habitChrome = HabitDisplayNavigationChrome(
+    registerPrimaryAction: (action) => chromeController.registerPrimaryAction(
+      AppNavigationBranch.habits,
+      action,
+    ),
+    unregisterPrimaryAction: (action) => chromeController
+        .unregisterPrimaryAction(AppNavigationBranch.habits, action),
+    setContextualChromeSuppressed: (suppressed) => chromeController
+        .setContextualChromeSuppressed(AppNavigationBranch.habits, suppressed),
+  );
   addTearDown(coordinator.dispose);
+  addTearDown(chromeController.dispose);
   final routerBuilder = AppRouterBuilder()
+    ..addSettings(builder: (_, _) => const _StubPage('settings page'))
     ..addShellRoute(
       branches: branches,
       appFlow: appFlow,
       branchObservers: observers,
       observers: [appFlowObserver],
       navigatorKey: appChromeNavigatorKey,
-      builder: (context, state, child) =>
-          AppNavigationShell(coordinator: coordinator, child: child),
+      builder: (context, state, child) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider<AppNavigationCoordinator>.value(
+            value: coordinator,
+          ),
+          ChangeNotifierProvider<AppNavigationChromeController>.value(
+            value: chromeController,
+          ),
+          Provider<HabitDisplayNavigationChrome>.value(value: habitChrome),
+        ],
+        child: AppNavigationShell(child: child),
+      ),
       branchBuilder: (context, state, navigationShell) {
         coordinator.attachTabShell(navigationShell);
         return navigationShell;
@@ -325,6 +367,32 @@ void main() {
       find.byKey(const ValueKey('cupertino-primary-action-surface')),
       findsNothing,
     );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('entering settings keeps the Apple primary-action Hero unique', (
+    tester,
+  ) async {
+    _setCompactSurface(tester);
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers);
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+      platform: TargetPlatform.iOS,
+    );
+    await tester.pumpAndSettle();
+
+    router.push('/settings');
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('settings page'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

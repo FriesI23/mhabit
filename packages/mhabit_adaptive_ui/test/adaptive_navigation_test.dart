@@ -66,6 +66,9 @@ class _TestRouter extends RouterConfig<Object> {
   void push(String location) => delegate.push(location);
 
   void pop() => delegate.pop();
+
+  void setContextualChromeSuppressed(bool suppressed) =>
+      delegate.setContextualChromeSuppressed(suppressed);
 }
 
 class _TestRouteEntry {
@@ -102,6 +105,13 @@ class _TestRouterDelegate extends RouterDelegate<Object>
 
   final List<List<_TestRouteEntry>> _branchStacks = [[], []];
   int _selectedIndex = 0;
+  bool _contextualChromeSuppressed = false;
+
+  void setContextualChromeSuppressed(bool suppressed) {
+    if (_contextualChromeSuppressed == suppressed) return;
+    _contextualChromeSuppressed = suppressed;
+    notifyListeners();
+  }
 
   @override
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -179,6 +189,7 @@ class _TestRouterDelegate extends RouterDelegate<Object>
             selectedIndex: _selectedIndex,
             destinations: destinations,
             compactRouteVisible: _compactRouteVisible,
+            contextualChromeSuppressed: _contextualChromeSuppressed,
             onDestinationSelected: _selectDestination,
             child: _StubPage(text: currentEntry.label),
           ),
@@ -295,6 +306,7 @@ class _BranchContractHarnessState extends State<_BranchContractHarness> {
   Widget build(BuildContext context) => AdaptiveNavigationShell(
     selectedIndex: _selectedIndex,
     compactRouteVisible: _routeVisible,
+    applePrimaryAction: _selectedIndex == 0 ? _habitsAction : null,
     destinations: const [
       AdaptiveNavigationDestination(
         label: 'Habits',
@@ -324,23 +336,18 @@ class _BranchContractHarnessState extends State<_BranchContractHarness> {
             offstage: index != _selectedIndex,
             child: TickerMode(
               enabled: index == _selectedIndex,
-              child: CupertinoNavigationPrimaryActionRegion(
-                action: index == 0 ? _habitsAction : null,
-                child: Scaffold(
-                  body: CustomScrollView(
-                    key: ValueKey(
-                      index == 0 ? 'habits-scroll' : 'today-scroll',
-                    ),
-                    slivers: [
-                      SliverList.builder(
-                        itemCount: 40,
-                        itemBuilder: (context, itemIndex) => SizedBox(
-                          height: 56,
-                          child: Text('branch $index item $itemIndex'),
-                        ),
+              child: Scaffold(
+                body: CustomScrollView(
+                  key: ValueKey(index == 0 ? 'habits-scroll' : 'today-scroll'),
+                  slivers: [
+                    SliverList.builder(
+                      itemCount: 40,
+                      itemBuilder: (context, itemIndex) => SizedBox(
+                        height: 56,
+                        child: Text('branch $index item $itemIndex'),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -648,6 +655,56 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.byType(CupertinoNavigationPrimaryActionButton), findsNothing);
+    });
+
+    testWidgets('rebuilding the default primary action keeps one Hero', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          home: StatefulBuilder(
+            builder: (context, setState) => AdaptiveNavigationShell(
+              selectedIndex: 0,
+              applePrimaryAction: CupertinoNavigationPrimaryAction(
+                label: 'New Habit',
+                icon: const Icon(Icons.add),
+                onPressed: () {},
+              ),
+              destinations: const [
+                AdaptiveNavigationDestination(
+                  label: 'Habits',
+                  icons: NavigationDestinationIcons(
+                    material: Icon(Icons.home_outlined),
+                    materialSelected: Icon(Icons.home),
+                    apple: Icon(Icons.home_outlined),
+                    appleSelected: Icon(Icons.home),
+                  ),
+                ),
+              ],
+              onDestinationSelected: (_) {},
+              child: Center(
+                child: TextButton(
+                  onPressed: () => setState(() {}),
+                  child: const Text('Rebuild'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Rebuild'));
+      await tester.pump();
+
+      expect(tester.takeException(), isNull);
+      expect(find.byType(Hero), findsOneWidget);
+      expect(
+        find.byType(CupertinoNavigationPrimaryActionButton),
+        findsOneWidget,
+      );
     });
 
     testWidgets('observes vertical scrolling from every active branch', (
@@ -1359,7 +1416,7 @@ void main() {
         );
         scope.reportScrollWish(false);
         await tester.pumpAndSettle();
-        scope.reportContextualChromeSuppressed(true);
+        router.setContextualChromeSuppressed(true);
         await tester.pumpAndSettle();
 
         expect(scope.visible.value, isFalse);
@@ -1368,7 +1425,7 @@ void main() {
           0,
         );
 
-        scope.reportContextualChromeSuppressed(false);
+        router.setContextualChromeSuppressed(false);
         await tester.pumpAndSettle();
 
         expect(scope.visible.value, isTrue);
@@ -1531,7 +1588,7 @@ void main() {
       );
     }
 
-    testWidgets('contextual suppression is independent and resets on branch', (
+    testWidgets('contextual suppression follows the declarative shell input', (
       tester,
     ) async {
       _setSurfaceSize(tester, const Size(400, 800));
@@ -1540,7 +1597,7 @@ void main() {
       await tester.pumpAndSettle();
 
       var scope = AdaptiveNavScope.of(tester.element(find.text('habits page')));
-      scope.reportContextualChromeSuppressed(true);
+      router.setContextualChromeSuppressed(true);
       await tester.pumpAndSettle();
       expect(scope.visible.value, isFalse);
       expect(scope.scrollWish.value, isTrue);
@@ -1553,12 +1610,13 @@ void main() {
       expect(scope.visible.value, isFalse);
 
       scope.reportScrollWish(false);
-      scope.reportContextualChromeSuppressed(false);
+      router.setContextualChromeSuppressed(false);
       await tester.pumpAndSettle();
       expect(scope.visible.value, isFalse);
 
       scope.reportScrollWish(true);
-      scope.reportContextualChromeSuppressed(true);
+      router.setContextualChromeSuppressed(true);
+      router.setContextualChromeSuppressed(false);
       router.go('/today');
       await tester.pumpAndSettle();
 
@@ -1575,10 +1633,7 @@ void main() {
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
       await tester.pumpAndSettle();
 
-      final mediumScope = AdaptiveNavScope.of(
-        tester.element(find.text('habits page')),
-      );
-      mediumScope.reportContextualChromeSuppressed(true);
+      router.setContextualChromeSuppressed(true);
       await tester.pump();
       expect(find.byType(NavigationRail), findsOneWidget);
       expect(find.byType(NavigationBar), findsNothing);
@@ -1596,7 +1651,7 @@ void main() {
         0,
       );
 
-      compactScope.reportContextualChromeSuppressed(false);
+      router.setContextualChromeSuppressed(false);
       await tester.pumpAndSettle();
       expect(find.byType(NavigationBar), findsOneWidget);
       expect(

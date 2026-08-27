@@ -21,12 +21,10 @@ class AdaptiveNavScope extends InheritedWidget {
     required super.child,
     this._visible,
     this._scrollWish,
-    this._contextualChrome,
   });
 
   final AdaptiveNavVisibilityController? _visible;
   final AdaptiveScrollWishController? _scrollWish;
-  final AdaptiveContextualChromeController? _contextualChrome;
 
   /// Fallback listenable for non-compact forms; always true, never notifies.
   static const ConstValueListenable<bool> _alwaysTrue = ConstValueListenable(
@@ -56,14 +54,6 @@ class AdaptiveNavScope extends InheritedWidget {
   /// Use this for specialized non-scroll policy. Ignored in non-compact forms,
   /// where navigation is always visible.
   void reportScrollWish(bool visible) => _scrollWish?.report(visible);
-
-  /// Suppresses compact navigation for a contextual command surface.
-  ///
-  /// Unlike [reportScrollWish], this value is not affected by scrolling.
-  /// Reports remain active across shell-form changes so a compact bar cannot
-  /// flash while a contextual surface is resizing from a wider layout.
-  void reportContextualChromeSuppressed(bool suppressed) =>
-      _contextualChrome?.report(suppressed);
 
   /// Content height of the bar, excluding the bottom safe-area inset.
   ///
@@ -102,7 +92,6 @@ class AdaptiveNavScope extends InheritedWidget {
   bool updateShouldNotify(AdaptiveNavScope oldWidget) =>
       _visible != oldWidget._visible ||
       _scrollWish != oldWidget._scrollWish ||
-      _contextualChrome != oldWidget._contextualChrome ||
       barHeight != oldWidget.barHeight ||
       navHeight != oldWidget.navHeight;
 }

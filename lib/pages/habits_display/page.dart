@@ -16,14 +16,17 @@ import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
+import '../../extensions/context_extensions.dart';
 import '../../extensions/navigator_extensions.dart';
 import '../../models/habit_summary.dart';
+import '../../routes/navigator_helpers.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../widgets/widgets.dart';
 import '../common/widgets.dart';
 import '_providers/habit_summary.dart';
 import '_widgets/habit_display_contextual_chrome.dart';
 import '_widgets/material/habit_display_fab.dart';
+import 'navigation_chrome.dart';
 import 'page_habits.dart';
 import 'page_today.dart';
 import 'providers.dart';
@@ -33,15 +36,77 @@ import 'shortcuts.dart';
 ///
 /// Owns the tab's FAB, back-gesture interception, and dismiss intent. The
 /// enclosing [AdaptiveNavigationShell] owns navigation scroll behavior.
-class HabitsPage extends StatefulWidget {
+class HabitsPage extends StatelessWidget {
   const HabitsPage({super.key});
 
   @override
-  State<HabitsPage> createState() => _HabitsPageState();
+  Widget build(BuildContext context) =>
+      const HabitsPageProviders(child: _HabitsPageBody());
 }
 
-class _HabitsPageState extends State<HabitsPage> {
+class _HabitsPageBody extends StatefulWidget {
+  const _HabitsPageBody();
+
+  @override
+  State<_HabitsPageBody> createState() => _HabitsPageBodyState();
+}
+
+class _HabitsPageBodyState extends State<_HabitsPageBody> {
   final GlobalKey<HabitsTabPageState> _habitsTabKey = GlobalKey();
+  HabitSummaryViewModel? _summary;
+  HabitDisplayNavigationChrome? _navigationChrome;
+  bool _navigationPending = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final summary = context.read<HabitSummaryViewModel>();
+    if (!identical(_summary, summary)) {
+      _summary?.removeListener(_syncNavigationChrome);
+      _summary = summary..addListener(_syncNavigationChrome);
+    }
+    final navigationChrome = context.maybeRead<HabitDisplayNavigationChrome>();
+    if (!identical(_navigationChrome, navigationChrome)) {
+      _navigationChrome?.unregisterPrimaryAction(_handleCreateHabitPressed);
+      _navigationChrome = navigationChrome
+        ?..registerPrimaryAction(_handleCreateHabitPressed);
+    }
+    _syncNavigationChrome();
+  }
+
+  @override
+  void dispose() {
+    _summary?.removeListener(_syncNavigationChrome);
+    _navigationChrome?.unregisterPrimaryAction(_handleCreateHabitPressed);
+    _navigationChrome?.setContextualChromeSuppressed(false);
+    super.dispose();
+  }
+
+  void _syncNavigationChrome() {
+    _navigationChrome?.setContextualChromeSuppressed(
+      _summary?.isInEditMode ?? false,
+    );
+  }
+
+  Future<void> _handleCreateHabitPressed() async {
+    if (!mounted || _navigationPending) return;
+    _navigationPending = true;
+    try {
+      Navigator.of(context).popUntil((route) => route.isFirst);
+      final result = await naviToHabitCreatePage(context: context);
+      if (!mounted || result == null) return;
+      _handleHabitCreated(result);
+    } finally {
+      _navigationPending = false;
+    }
+  }
+
+  void _handleHabitCreated(HabitDBCell result) {
+    if (!mounted) return;
+    final vm = context.read<HabitSummaryViewModel>();
+    if (!vm.mounted) return;
+    vm.addNewData(HabitSummaryData.fromDBQueryCell(result));
+  }
 
   Widget? _buildFloatingActionButton(
     AdaptiveNavScope scope,
@@ -75,112 +140,44 @@ class _HabitsPageState extends State<HabitsPage> {
   }
 
   @override
-  Widget build(BuildContext context) => HabitsPageProviders(
-    child: PageShortcuts(onDismiss: _handlePageDismiss, child: _build()),
-  );
+  Widget build(BuildContext context) =>
+      PageShortcuts(onDismiss: _handlePageDismiss, child: _build());
 
   Widget _build() => Selector<HabitSummaryViewModel, bool>(
     selector: (context, vm) => vm.isInEditMode,
     builder: (context, isInEditMode, _) {
-      void onHabitCreated(HabitDBCell result) {
-        if (!context.mounted) return;
-        final vm = context.read<HabitSummaryViewModel>();
-        if (!vm.mounted) return;
-        vm.addNewData(HabitSummaryData.fromDBQueryCell(result));
-      }
-
       final scope = AdaptiveNavScope.of(context);
       final chrome = context.resolveHabitDisplayContextualChrome(
         isSelectionMode: isInEditMode,
       );
-      return _AdaptiveNavContextualChromeSuppression(
-        enabled: chrome.suppressShellChrome,
-        child: ColorfulNavibar(
-          child: PopScopeConsumer<HabitSummaryViewModel>(
-            onCannotPop: (ctx, vm, result) async {
-              if (await _handleWillPop() && ctx.mounted) {
-                Navigator.of(ctx).popOrExit(result);
-              }
-            },
-            child: Scaffold(
-              extendBody: chrome.extendBody,
-              resizeToAvoidBottomInset: false,
-              body: HabitsTabPage(
-                key: _habitsTabKey,
-                onHabitCreated: onHabitCreated,
-                contextualChrome: chrome,
-              ),
-              floatingActionButton: _buildFloatingActionButton(
-                scope,
-                chrome,
-                onHabitCreated,
-              ),
-              bottomNavigationBar: chrome.showSelectionBottomToolbar
-                  ? _habitsTabKey.currentState?.buildSelectionBottomToolbar()
-                  : null,
+      return ColorfulNavibar(
+        child: PopScopeConsumer<HabitSummaryViewModel>(
+          onCannotPop: (ctx, vm, result) async {
+            if (await _handleWillPop() && ctx.mounted) {
+              Navigator.of(ctx).popOrExit(result);
+            }
+          },
+          child: Scaffold(
+            extendBody: chrome.extendBody,
+            resizeToAvoidBottomInset: false,
+            body: HabitsTabPage(
+              key: _habitsTabKey,
+              onHabitCreated: _handleHabitCreated,
+              contextualChrome: chrome,
             ),
+            floatingActionButton: _buildFloatingActionButton(
+              scope,
+              chrome,
+              _handleHabitCreated,
+            ),
+            bottomNavigationBar: chrome.showSelectionBottomToolbar
+                ? _habitsTabKey.currentState?.buildSelectionBottomToolbar()
+                : null,
           ),
         ),
       );
     },
   );
-}
-
-class _AdaptiveNavContextualChromeSuppression extends StatefulWidget {
-  const _AdaptiveNavContextualChromeSuppression({
-    required this.enabled,
-    required this.child,
-  });
-
-  final bool enabled;
-  final Widget child;
-
-  @override
-  State<_AdaptiveNavContextualChromeSuppression> createState() =>
-      _AdaptiveNavContextualChromeSuppressionState();
-}
-
-class _AdaptiveNavContextualChromeSuppressionState
-    extends State<_AdaptiveNavContextualChromeSuppression> {
-  AdaptiveNavScope? _scope;
-  bool? _reported;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _scope = AdaptiveNavScope.maybeOf(context);
-    _reported = null;
-    _scheduleReport();
-  }
-
-  @override
-  void didUpdateWidget(
-    covariant _AdaptiveNavContextualChromeSuppression oldWidget,
-  ) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.enabled != widget.enabled) _scheduleReport();
-  }
-
-  void _scheduleReport() {
-    final suppressed = widget.enabled && TickerMode.valuesOf(context).enabled;
-    if (_reported == suppressed) return;
-    _reported = suppressed;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || _reported != suppressed) return;
-      _scope?.reportContextualChromeSuppressed(suppressed);
-    });
-  }
-
-  @override
-  void dispose() {
-    if (_reported == true) {
-      _scope?.reportContextualChromeSuppressed(false);
-    }
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => widget.child;
 }
 
 /// Branch root page for the today tab.
