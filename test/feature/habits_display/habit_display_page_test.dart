@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart'
     show
         CupertinoButton,
@@ -78,6 +80,22 @@ final class _FailingHabitsDisplayAccess extends StubHabitsDisplayAccess {
     List<String>? habitsColmns,
     List<HabitUUID>? habitUUIDs,
   }) async => throw StateError('load failed');
+}
+
+final class _PendingHabitsDisplayAccess extends StubHabitsDisplayAccess {
+  final Completer<HabitSummaryDataCollection> _loadCompleter = Completer();
+
+  @override
+  Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
+    HabitSummaryDataCollection? initedCollection,
+    List<String>? habitsColmns,
+    List<HabitUUID>? habitUUIDs,
+  }) => _loadCompleter.future;
+
+  void completeLoad() {
+    if (_loadCompleter.isCompleted) return;
+    _loadCompleter.complete(HabitSummaryDataCollection());
+  }
 }
 
 final class _FakeAppSyncWorkflowAccess extends StubAppSyncWorkflowAccess {}
@@ -245,6 +263,7 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
   bool useCompactUi = false,
   bool useBranchPage = false,
   bool useAdaptiveShell = false,
+  bool provideOuterHabitSummary = true,
   TargetPlatform platform = TargetPlatform.android,
   Widget Function(Widget home)? appBuilder,
 }) async {
@@ -327,7 +346,8 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<ProfileViewModel>.value(value: profile),
-        ChangeNotifierProvider<HabitSummaryViewModel>.value(value: vm),
+        if (provideOuterHabitSummary)
+          ChangeNotifierProvider<HabitSummaryViewModel>.value(value: vm),
         ChangeNotifierProvider<AppCustomDateYmdHmsConfigViewModel>.value(
           value: customDate,
         ),
@@ -366,6 +386,62 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
 }
 
 void main() {
+  testWidgets('created habit updates the page-owned summary provider', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final access = _PendingHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+    final vm = await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      useBranchPage: true,
+      provideOuterHabitSummary: false,
+    );
+
+    const uuid = '11111111-1111-4111-8111-999999999999';
+    const created = HabitDBCell(
+      id: 999,
+      type: 1,
+      createT: 100000,
+      modifyT: 100000,
+      uuid: uuid,
+      status: 1,
+      name: 'Created habit',
+      desc: '',
+      color: 1,
+      dailyGoal: 1,
+      dailyGoalUnit: 'times',
+      freqType: 3,
+      freqCustom: '[1, 1]',
+      startDate: 20000,
+      targetDays: 30,
+      sortPosition: 999,
+    );
+
+    expect(
+      () => tester
+          .widget<HabitsTabPage>(find.byType(HabitsTabPage))
+          .onHabitCreated(created),
+      returnsNormally,
+    );
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(vm.getHabit(uuid)?.name, 'Created habit');
+
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pumpWidget(const SizedBox.shrink());
+    access.completeLoad();
+    await tester.pump();
+  });
+
   group('Display page load errors', () {
     testWidgets('TodayTabPage shows error placeholder on load error', (
       tester,
