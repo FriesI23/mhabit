@@ -1,0 +1,4 @@
+- Fix: keep compact navigation stable during gentle scrolling and minimize or
+  restore it on intentional swipes (#652)
+- Fix: restore standard floating-navigation margins on rectangular-screen
+  phones while preserving rounded-screen spacing

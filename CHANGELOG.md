@@ -2,6 +2,13 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.27.1+190-pre
+
+- Fix: keep compact navigation stable during gentle scrolling and minimize or
+  restore it on intentional swipes (#652)
+- Fix: restore standard floating-navigation margins on rectangular-screen
+  phones while preserving rounded-screen spacing
+
 ## 1.27.0+189-pre
 
 - Feature: add adaptive navigation bars and rails, floating compact
