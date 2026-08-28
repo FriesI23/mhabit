@@ -617,6 +617,20 @@ void main() {
         find.byType(CupertinoNavigationPrimaryActionButton),
         findsOneWidget,
       );
+      final navigationSurface = find.byKey(
+        const ValueKey('cupertino-navigation-surface'),
+      );
+      final primaryActionSurface = find.byKey(
+        const ValueKey('cupertino-primary-action-surface'),
+      );
+      expect(
+        tester.getTopLeft(primaryActionSurface).dy,
+        tester.getTopLeft(navigationSurface).dy,
+      );
+      expect(
+        tester.getBottomLeft(primaryActionSurface).dy,
+        tester.getBottomLeft(navigationSurface).dy,
+      );
       final navigationClip = find.descendant(
         of: find.byKey(const ValueKey('bottom-bar')),
         matching: find.byWidgetPredicate(
@@ -680,6 +694,37 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(CupertinoNavigationPrimaryActionButton), findsNothing);
     });
+
+    testWidgets(
+      'aligns compact primary action with capped bottom fallback margin',
+      (tester) async {
+        tester.view.padding = const FakeViewPadding(bottom: 40);
+        tester.view.viewPadding = const FakeViewPadding(bottom: 40);
+        _setSurfaceSize(tester, const Size(400, 800));
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(platform: TargetPlatform.iOS),
+            home: const _BranchContractHarness(),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final navigationSurface = find.byKey(
+          const ValueKey('cupertino-navigation-surface'),
+        );
+        final primaryActionSurface = find.byKey(
+          const ValueKey('cupertino-primary-action-surface'),
+        );
+        expect(
+          tester.getTopLeft(primaryActionSurface).dy,
+          tester.getTopLeft(navigationSurface).dy,
+        );
+        expect(
+          tester.getBottomLeft(primaryActionSurface).dy,
+          tester.getBottomLeft(navigationSurface).dy,
+        );
+      },
+    );
 
     testWidgets('rebuilding the default primary action keeps one Hero', (
       tester,

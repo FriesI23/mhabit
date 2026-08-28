@@ -130,6 +130,27 @@ void main() {
         expect(override.scaffoldBackgroundColor, scheme.surface);
       });
     });
+
+    test('uses a distinct elevated bar surface in dark mode', () {
+      _withPlatform(TargetPlatform.macOS, () {
+        final theme = builder.buildDark(
+          themeColor: const SystemAppThemeColor(),
+          themeMainColor: fallbackMainColor,
+        );
+        final scheme = theme.colorScheme;
+        final override = theme.cupertinoOverrideTheme;
+        expect(override, isNotNull);
+        expect(
+          override!.barBackgroundColor,
+          scheme.surfaceContainerHigh.withValues(alpha: 0.8),
+        );
+        expect(
+          override.barBackgroundColor,
+          isNot(scheme.surface.withValues(alpha: 0.8)),
+        );
+        expect(override.scaffoldBackgroundColor, scheme.surface);
+      });
+    });
   });
 
   group('AppThemeBuilder.getThemeColor', () {

@@ -154,8 +154,7 @@ class _CupertinoEndFloatLocation extends FloatingActionButtonLocation {
             fabSize.width,
       TextDirection.rtl => math.max(leftMargin, geometry.minInsets.left),
     };
-    final safeMargin = math.max(bottomMargin, geometry.minViewPadding.bottom);
-    var y = geometry.scaffoldSize.height - fabSize.height - safeMargin;
+    var y = geometry.scaffoldSize.height - fabSize.height - bottomMargin;
     if (geometry.snackBarSize.height > 0) {
       y = math.min(
         y,
@@ -204,10 +203,16 @@ class CupertinoFloatingGlassSurface extends StatelessWidget {
   /// the shadow remains intact without exposing hidden layout content.
   static const double shadowClipOverflow = 32.0;
 
-  static const BoxShadow _shadow = BoxShadow(
+  static const BoxShadow _lightShadow = BoxShadow(
     color: Color(0x26000000),
     blurRadius: 16,
     offset: Offset(0, 4),
+  );
+
+  static const BoxShadow _darkShadow = BoxShadow(
+    color: Color(0x99000000),
+    blurRadius: 20,
+    offset: Offset(0, 2),
   );
 
   /// Content painted above the translucent surface.
@@ -224,6 +229,7 @@ class CupertinoFloatingGlassSurface extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dark = CupertinoTheme.brightnessOf(context) == Brightness.dark;
     final resolvedBackground =
         backgroundColor ??
         CupertinoDynamicColor.resolve(
@@ -237,12 +243,26 @@ class CupertinoFloatingGlassSurface extends StatelessWidget {
         child: surface,
       );
     }
+    Widget clippedSurface = ClipRRect(
+      borderRadius: borderRadius,
+      child: surface,
+    );
+    if (dark) {
+      clippedSurface = DecoratedBox(
+        position: DecorationPosition.foreground,
+        decoration: BoxDecoration(
+          borderRadius: borderRadius,
+          border: Border.all(color: const Color(0x24FFFFFF), width: 0.5),
+        ),
+        child: clippedSurface,
+      );
+    }
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: borderRadius,
-        boxShadow: const [_shadow],
+        boxShadow: [dark ? _darkShadow : _lightShadow],
       ),
-      child: ClipRRect(borderRadius: borderRadius, child: surface),
+      child: clippedSurface,
     );
   }
 }

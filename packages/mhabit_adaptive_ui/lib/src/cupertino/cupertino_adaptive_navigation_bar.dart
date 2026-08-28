@@ -324,6 +324,7 @@ class _NavigationBarSurfaces extends StatelessWidget {
           width: navigationExtent,
           height: surfaceHeight,
           child: CupertinoFloatingGlassSurface(
+            borderRadius: BorderRadius.circular(surfaceHeight / 2),
             child: _NavigationSurfaceContent(
               selectedIndex: selectedIndex,
               onDestinationSelected: onDestinationSelected,

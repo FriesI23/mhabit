@@ -92,7 +92,11 @@ class AppThemeBuilder {
         : CupertinoThemeData(
             brightness: colorScheme.brightness,
             primaryColor: colorScheme.primary,
-            barBackgroundColor: colorScheme.surface.withValues(alpha: 0.8),
+            barBackgroundColor:
+                (colorScheme.brightness == Brightness.dark
+                        ? colorScheme.surfaceContainerHigh
+                        : colorScheme.surface)
+                    .withValues(alpha: 0.8),
             scaffoldBackgroundColor: colorScheme.surface,
           );
     return ThemeData(

@@ -321,6 +321,68 @@ void main() {
       expect(selected, [2]);
     });
 
+    testWidgets('aligns dark surfaces with shared elevation treatment', (
+      tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(400, 800);
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(
+        _wrap(
+          presentation: AdaptiveNavigationBarPresentation.expanded,
+          onDestinationSelected: (_) {},
+          onExpandRequested: () {},
+          theme: const CupertinoThemeData(brightness: Brightness.dark),
+        ),
+      );
+
+      final navigation = find.byKey(
+        const ValueKey('cupertino-navigation-surface'),
+      );
+      final action = find.byKey(
+        const ValueKey('cupertino-primary-action-slot'),
+      );
+      expect(tester.getTopLeft(navigation).dy, tester.getTopLeft(action).dy);
+      expect(
+        tester.getBottomLeft(navigation).dy,
+        tester.getBottomLeft(action).dy,
+      );
+
+      final surfaces = find.byType(CupertinoFloatingGlassSurface);
+      expect(surfaces, findsNWidgets(2));
+      for (final surface in surfaces.evaluate()) {
+        final decoratedBox = find.descendant(
+          of: find.byWidget(surface.widget),
+          matching: find.byType(DecoratedBox),
+        );
+        final decorations = tester
+            .widgetList<DecoratedBox>(decoratedBox)
+            .map((box) => box.decoration)
+            .whereType<BoxDecoration>();
+        final shadowDecorations = decorations.where(
+          (decoration) => decoration.boxShadow?.isNotEmpty ?? false,
+        );
+        expect(shadowDecorations, hasLength(1));
+        final shadowDecoration = shadowDecorations.single;
+        expect(shadowDecoration.borderRadius, BorderRadius.circular(25));
+        expect(shadowDecoration.boxShadow, hasLength(1));
+        expect(
+          shadowDecoration.boxShadow!.single.color,
+          const Color(0x99000000),
+        );
+
+        final borderDecorations = decorations.where(
+          (decoration) => decoration.border != null,
+        );
+        expect(borderDecorations, hasLength(1));
+        expect(
+          borderDecorations.single.borderRadius,
+          BorderRadius.circular(25),
+        );
+      }
+    });
+
     testWidgets('removes the trailing surface when no action is supplied', (
       tester,
     ) async {
