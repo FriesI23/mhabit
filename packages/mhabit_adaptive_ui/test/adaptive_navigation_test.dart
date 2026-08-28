@@ -245,6 +245,28 @@ class _StubPage extends StatelessWidget {
   }
 }
 
+class _BranchInsetsProbe extends StatelessWidget {
+  const _BranchInsetsProbe();
+
+  @override
+  Widget build(BuildContext context) {
+    final padding = MediaQuery.paddingOf(context);
+    final viewPadding = MediaQuery.viewPaddingOf(context);
+    return Column(
+      children: [
+        SizedBox(
+          key: const ValueKey('branch-horizontal-padding'),
+          width: padding.left + padding.right,
+        ),
+        SizedBox(
+          key: const ValueKey('branch-horizontal-view-padding'),
+          width: viewPadding.left + viewPadding.right,
+        ),
+      ],
+    );
+  }
+}
+
 class _FabStubPage extends StatelessWidget {
   const _FabStubPage();
 
@@ -1529,6 +1551,73 @@ void main() {
       expect(scope.barHeight, 80);
       expect(scope.navHeight, 104);
     });
+
+    for (final textDirection in TextDirection.values) {
+      testWidgets('rail owns the branch start inset in $textDirection', (
+        tester,
+      ) async {
+        tester.view.padding = const FakeViewPadding(left: 44, right: 20);
+        tester.view.viewPadding = const FakeViewPadding(left: 50, right: 30);
+        _setSurfaceSize(tester, const Size(800, 400));
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Directionality(
+              textDirection: textDirection,
+              child: AdaptiveNavigationShell(
+                selectedIndex: 0,
+                destinations: const [
+                  AdaptiveNavigationDestination(
+                    label: 'Habits',
+                    icons: NavigationDestinationIcons(
+                      material: Icon(Icons.home_outlined),
+                      materialSelected: Icon(Icons.home),
+                      apple: Icon(Icons.home_outlined),
+                      appleSelected: Icon(Icons.home),
+                    ),
+                  ),
+                ],
+                onDestinationSelected: (_) {},
+                child: const _BranchInsetsProbe(),
+              ),
+            ),
+          ),
+        );
+
+        final expectedBranchInset = switch (textDirection) {
+          TextDirection.ltr => 20.0,
+          TextDirection.rtl => 44.0,
+        };
+        final expectedBranchViewInset = switch (textDirection) {
+          TextDirection.ltr => 36.0,
+          TextDirection.rtl => 60.0,
+        };
+        expect(
+          tester
+              .getSize(find.byKey(const ValueKey('branch-horizontal-padding')))
+              .width,
+          expectedBranchInset,
+        );
+        expect(
+          tester
+              .getSize(
+                find.byKey(const ValueKey('branch-horizontal-view-padding')),
+              )
+              .width,
+          expectedBranchViewInset,
+        );
+
+        final railContext = tester.element(find.byType(NavigationRail));
+        expect(
+          MediaQuery.paddingOf(railContext),
+          const EdgeInsets.only(left: 44, right: 20),
+        );
+        expect(
+          MediaQuery.viewPaddingOf(railContext),
+          const EdgeInsets.only(left: 50, right: 30),
+        );
+      });
+    }
 
     for (final bottomInset in [24.0, 34.0]) {
       testWidgets(

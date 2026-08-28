@@ -440,10 +440,35 @@ class _NavigationShellBody extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             leadingBuilder(context, form, onDestinationSelected),
-            Expanded(child: child),
+            Expanded(
+              child: _NavigationShellBranch(form: form, child: child),
+            ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _NavigationShellBranch extends StatelessWidget {
+  const _NavigationShellBranch({required this.form, required this.child});
+
+  final NavigationShellForm form;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (form == NavigationShellForm.bar) return child;
+
+    // NavigationRail's SafeArea owns the shell's logical-start system inset.
+    // Remove that consumed inset from the sibling branch so page SafeAreas do
+    // not reserve it again. Keep the opposite side available to page content.
+    final removeLeft = Directionality.of(context) == TextDirection.ltr;
+    return MediaQuery.removePadding(
+      context: context,
+      removeLeft: removeLeft,
+      removeRight: !removeLeft,
+      child: child,
     );
   }
 }
