@@ -265,6 +265,25 @@
     },
     "habitDisplay_exportAllHabitsSuccSnackbarText": "Všechny návyky exportovány",
     "habitDisplay_editPopMenu_selectAll": "Vybrat vše",
+    "habitDisplay_selectButton_label": "Vybrat",
+    "@habitDisplay_selectButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Select\" system action."
+    },
+    "habitDisplay_doneButton_label": "Hotovo",
+    "@habitDisplay_doneButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Done\" system bar button item."
+    },
+    "habitDisplay_selectedHabits_title": "{count} vybráno",
+    "@habitDisplay_selectedHabits_title": {
+        "description": "Apple selection AppBar title showing the number of selected habits",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of selected habits",
+                "example": "3"
+            }
+        }
+    },
     "habitDisplay_editPopMenu_export": "Export",
     "habitDisplay_editPopMenu_delete": "Smazat",
     "habitDisplay_editPopMenu_clone": "Šablona",

@@ -22,6 +22,7 @@ import 'package:provider/provider.dart';
 
 import '../../common/consts.dart';
 import '../../common/types.dart';
+import '../../extensions/adaptive_style_extensions.dart';
 import '../../extensions/window_size_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
@@ -39,13 +40,8 @@ import 'widgets.dart';
 
 class TodayTabPage extends StatefulWidget {
   final double bottomNavigationHeight;
-  final ValueChanged<bool> onBottomNavVisibilityChanged;
 
-  const TodayTabPage({
-    super.key,
-    this.bottomNavigationHeight = 0.0,
-    required this.onBottomNavVisibilityChanged,
-  });
+  const TodayTabPage({super.key, this.bottomNavigationHeight = 0.0});
 
   @override
   State<TodayTabPage> createState() => TodayTabPageState();
@@ -59,20 +55,10 @@ class TodayTabPageState extends State<TodayTabPage>
 
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
-  late final double _toolbarHeight;
-
-  late final VerticalScrollVisibilityDispatcher _scrollVisibilityDispatcher;
-
   @override
   void initState() {
     super.initState();
     _vm = context.read<HabitsTodayViewModel>();
-    _toolbarHeight = kToolbarHeight;
-    _scrollVisibilityDispatcher = VerticalScrollVisibilityDispatcher(
-      toolbarHeight: _toolbarHeight,
-      onVisibilityChanged: widget.onBottomNavVisibilityChanged,
-      externalVisibility: AdaptiveNavScope.maybeOf(context)?.scrollWish,
-    );
   }
 
   @override
@@ -104,7 +90,6 @@ class TodayTabPageState extends State<TodayTabPage>
   @override
   void dispose() {
     _startSyncSub?.cancel();
-    _scrollVisibilityDispatcher.dispose();
     super.dispose();
   }
 
@@ -140,20 +125,19 @@ class TodayTabPageState extends State<TodayTabPage>
     //#endregion
 
     super.build(context);
-    const appbarHeight = kToolbarHeight;
+    final appbarHeight = AdaptiveStyle.of(context).appToolbarHeight;
 
     final body = CustomScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
-      controller: _scrollVisibilityDispatcher.controller,
       slivers: [
-        const _Appbar(toolbarHeight: appbarHeight),
+        _Appbar(toolbarHeight: appbarHeight),
         const _HabitsGroupView(),
         const _DevelopTile(),
         buildBottomPlaceHolder(context),
       ],
     );
-    const image = _TodayDoneImage(
-      changedAnimateDuration: Duration(milliseconds: 300),
+    final image = _TodayDoneImage(
+      changedAnimateDuration: const Duration(milliseconds: 300),
       offsetHeight: -appbarHeight,
     );
     final page = RefreshIndicator(
@@ -170,7 +154,7 @@ class TodayTabPageState extends State<TodayTabPage>
         return defaultScrollNotificationPredicate(notification);
       },
       onRefresh: _onRefreshIndicatorTriggered,
-      edgeOffset: kToolbarHeight + MediaQuery.paddingOf(context).top,
+      edgeOffset: appbarHeight + MediaQuery.paddingOf(context).top,
       child: Stack(children: [image, body]),
     );
     return page;
@@ -193,6 +177,7 @@ class _Appbar extends StatelessWidget {
           snap: false,
           pinned: false,
         ),
+        apple: AppBarAppleStyle(collapsible: true),
       ),
       title: Text(l10n?.habitToday_appBar_title ?? "Today"),
       actions: const [AppThemeSwitchButton()],
@@ -243,13 +228,16 @@ class _HabitsGroupView extends StatelessWidget {
             );
           }
 
-          return SliverPadding(
-            padding: kListTileContentPadding,
-            sliver: WindowSizeClassLayoutBuilder.useScreenSize(
-              builder: (context, windowSize, child) =>
-                  windowSize.isTabletFormFactor
-                  ? const _HabitGrid()
-                  : const _HabitList(),
+          return EnhancedSafeArea.edgeToEdgeSafe(
+            withSliver: true,
+            child: SliverPadding(
+              padding: kListTileContentPadding,
+              sliver: WindowSizeClassLayoutBuilder.useScreenSize(
+                builder: (context, windowSize, child) =>
+                    windowSize.isTabletFormFactor
+                    ? const _HabitGrid()
+                    : const _HabitList(),
+              ),
             ),
           );
         },

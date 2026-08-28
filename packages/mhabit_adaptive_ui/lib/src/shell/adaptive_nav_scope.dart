@@ -8,12 +8,12 @@ import 'adaptive_nav_visibility.dart';
 /// branches.
 ///
 /// In the compact form, branch pages read [visible] to coordinate FAB /
-/// placeholder animations with the bottom bar, call [reportScrollWish] to
-/// report scroll-driven visibility changes, and reserve [navHeight]. In
-/// non-compact forms (medium+) the navigation is always visible: [visible]
-/// and [scrollWish] are constant true, [barHeight] / [navHeight] are 0, and
-/// [reportScrollWish] is ignored, so pages keep their wiring unchanged.
+/// floating-action animations with the bottom bar and reserve [navHeight].
+/// The shell derives [scrollWish] from active vertical user scrolling;
+/// [reportScrollWish] remains available for explicit non-scroll policy. In
+/// non-compact forms (medium+) navigation is always visible.
 class AdaptiveNavScope extends InheritedWidget {
+  /// Creates a navigation scope for a shell branch subtree.
   const AdaptiveNavScope({
     super.key,
     required this.barHeight,
@@ -31,28 +31,28 @@ class AdaptiveNavScope extends InheritedWidget {
     true,
   );
 
-  /// Whether the bottom navigation bar is currently visible.
+  /// Whether compact navigation chrome currently occupies its envelope.
   ///
-  /// Derived by the shell from [scrollWish], the branch stack depth, and
-  /// the bar visibility policy. Pages read it to coordinate FAB /
-  /// placeholder animations, e.g. through [ValueListenableBuilder]; the
-  /// [ValueListenable] view is read-only by construction. Non-compact forms
-  /// expose a constant-true listenable.
+  /// Apple minimized chrome remains visible; route or contextual suppression
+  /// makes it false. Material also makes it false for a hidden scroll wish.
+  /// Pages read it to coordinate FAB animations, e.g. through
+  /// [ValueListenableBuilder]; the [ValueListenable] view is read-only by
+  /// construction. Non-compact forms expose a constant-true listenable.
   ValueListenable<bool> get visible => _visible ?? _alwaysTrue;
 
-  /// Whether the active page wants the bottom bar visible.
+  /// Whether the active page wants expanded/visible navigation chrome.
   ///
-  /// Exposed as a read-only [ValueListenable]; pages report changes
-  /// through [reportScrollWish]. The shell combines the wish with the
-  /// route stack policy to derive [visible]. Non-compact forms expose a
-  /// constant-true listenable.
+  /// Exposed as a read-only [ValueListenable]. The shell normally derives it
+  /// from active vertical scrolling; a false wish hides Material chrome and
+  /// minimizes Apple chrome. Non-compact forms expose a constant-true
+  /// listenable.
   ValueListenable<bool> get scrollWish => _scrollWish ?? _alwaysTrue;
 
-  /// Reports the page's scroll-driven visibility wish to the shell.
+  /// Reports an explicit visibility wish to the shell.
   ///
-  /// Call this from scroll handlers; the shell may override the wish with
-  /// the route stack policy. Ignored in non-compact forms, where the
-  /// navigation is always visible.
+  /// Normal vertical page scrolling is observed automatically by the shell.
+  /// Use this for specialized non-scroll policy. Ignored in non-compact forms,
+  /// where navigation is always visible.
   void reportScrollWish(bool visible) => _scrollWish?.report(visible);
 
   /// Content height of the bar, excluding the bottom safe-area inset.
@@ -62,19 +62,30 @@ class AdaptiveNavScope extends InheritedWidget {
   /// would double-count the inset. Always 0 in non-compact forms.
   final double barHeight;
 
-  /// Total rendered height of the bottom bar, including the bottom
-  /// safe-area inset (NavigationBar wraps its content in a SafeArea).
+  /// Total rendered height of the bottom bar, including the system bottom
+  /// safe-area inset.
   ///
   /// Always 0 in non-compact forms.
   final double navHeight;
 
   /// Reads the scope and rebuilds the caller when it changes.
-  static AdaptiveNavScope of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<AdaptiveNavScope>()!;
+  ///
+  /// Throws when no scope exists in [context]. Use [maybeOf] when the scope is
+  /// optional.
+  static AdaptiveNavScope of(BuildContext context) => maybeOf(context)!;
 
-  /// Reads the scope without depending on it, for handlers that only
-  /// report scroll wishes.
+  /// Reads the optional scope and rebuilds the caller when it changes.
   static AdaptiveNavScope? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<AdaptiveNavScope>();
+
+  /// Reads the scope without establishing a dependency.
+  ///
+  /// Use this for callbacks and one-time controller wiring that must not
+  /// rebuild when the scope changes. Throws when no scope exists in [context].
+  static AdaptiveNavScope read(BuildContext context) => maybeRead(context)!;
+
+  /// Reads the optional scope without establishing a dependency.
+  static AdaptiveNavScope? maybeRead(BuildContext context) =>
       context.getInheritedWidgetOfExactType<AdaptiveNavScope>();
 
   @override

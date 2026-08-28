@@ -1,0 +1,3 @@
+- Feature: expand adaptive navigation, search, filtering, and selection
+  actions (#646)
+- Feature: avoid window controls in adaptive app bars and navigation rails (#647)

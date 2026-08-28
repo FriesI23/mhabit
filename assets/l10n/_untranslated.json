@@ -1,5 +1,6 @@
 {
   "ar": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
@@ -8,6 +9,7 @@
     "habitEdit_colorPicker_untintedLabel",
     "habitEdit_colorPicker_tintToggleOnHint",
     "habitEdit_colorPicker_tintToggleOffHint",
+    "habitDisplay_selectedHabits_title",
     "habitDisplay_groupType_createDate",
     "habitDisplay_groupType_habitCount",
     "habitDisplay_groupTypeDialog_title",
@@ -89,7 +91,12 @@
     "appSetting_manageGroups_subtitleText"
   ],
 
+  "cs": [
+    "common_listSeparator"
+  ],
+
   "de": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
@@ -99,6 +106,7 @@
     "habitEdit_colorPicker_tintToggleOnHint",
     "habitEdit_colorPicker_tintToggleOffHint",
     "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_selectedHabits_title",
     "habitDisplay_groupType_createDate",
     "habitDisplay_groupType_habitCount",
     "habitDisplay_groupTypeDialog_title",
@@ -300,6 +308,7 @@
   ],
 
   "es": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
@@ -310,6 +319,7 @@
     "habitEdit_colorPicker_tintToggleOffHint",
     "habitDisplay_notFoundImage_text_01",
     "habitDisplay_notFoundImage_text_02",
+    "habitDisplay_selectedHabits_title",
     "habitDisplay_groupType_createDate",
     "habitDisplay_groupType_habitCount",
     "habitDisplay_groupTypeDialog_title",
@@ -436,6 +446,7 @@
   ],
 
   "eu": [
+    "common_listSeparator",
     "habitEdit_saveButton_text",
     "habitEdit_habitName_hintText",
     "habitEdit_colorPicker_title",
@@ -519,6 +530,9 @@
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
     "habitDisplay_editPopMenu_selectAll",
+    "habitDisplay_selectButton_label",
+    "habitDisplay_doneButton_label",
+    "habitDisplay_selectedHabits_title",
     "habitDisplay_editPopMenu_export",
     "habitDisplay_editPopMenu_delete",
     "habitDisplay_editPopMenu_clone",
@@ -995,6 +1009,7 @@
   ],
 
   "fa": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
@@ -1008,6 +1023,9 @@
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
+    "habitDisplay_selectButton_label",
+    "habitDisplay_doneButton_label",
+    "habitDisplay_selectedHabits_title",
     "habitDisplay_groupType_createDate",
     "habitDisplay_groupType_habitCount",
     "habitDisplay_groupTypeDialog_title",
@@ -1223,9 +1241,11 @@
   ],
 
   "fr": [
+    "common_listSeparator",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_tintToggleLabel",
     "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_selectedHabits_title",
     "habitDisplay_groupType_createDate",
     "habitDisplay_groupType_habitCount",
     "habitDisplay_groupTypeDialog_title",
@@ -1395,7 +1415,12 @@
     "appSetting_manageGroups_subtitleText"
   ],
 
+  "he": [
+    "common_listSeparator"
+  ],
+
   "hu": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
@@ -1404,6 +1429,7 @@
     "habitEdit_colorPicker_untintedLabel",
     "habitEdit_colorPicker_tintToggleOnHint",
     "habitEdit_colorPicker_tintToggleOffHint",
+    "habitDisplay_selectedHabits_title",
     "habitDisplay_groupType_createDate",
     "habitDisplay_groupType_habitCount",
     "habitDisplay_groupTypeDialog_title",
@@ -1486,6 +1512,7 @@
   ],
 
   "it": [
+    "common_listSeparator",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_tintToggleLabel",
     "habitEdit_colorPicker_tintedLabel",
@@ -1497,6 +1524,7 @@
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
+    "habitDisplay_selectedHabits_title",
     "habitDisplay_groupType_habitCount",
     "habitDisplay_groupTypeDialog_title",
     "habitDisplay_groupTypeDialog_none",
@@ -1683,6 +1711,7 @@
   ],
 
   "ja": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
@@ -1693,6 +1722,7 @@
     "habitEdit_colorPicker_tintToggleOffHint",
     "habitDisplay_notFoundImage_text_01",
     "habitDisplay_notFoundImage_text_02",
+    "habitDisplay_selectedHabits_title",
     "habitDisplay_groupType_createDate",
     "habitDisplay_groupType_habitCount",
     "habitDisplay_groupTypeDialog_title",
@@ -1789,6 +1819,7 @@
   ],
 
   "nb": [
+    "common_listSeparator",
     "habitEdit_saveButton_text",
     "habitEdit_habitName_hintText",
     "habitEdit_colorPicker_title",
@@ -1872,6 +1903,7 @@
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
     "habitDisplay_editPopMenu_selectAll",
+    "habitDisplay_selectedHabits_title",
     "habitDisplay_editPopMenu_export",
     "habitDisplay_editPopMenu_delete",
     "habitDisplay_editPopMenu_clone",
@@ -2348,6 +2380,7 @@
   ],
 
   "nl": [
+    "common_listSeparator",
     "habitEdit_saveButton_text",
     "habitEdit_habitName_hintText",
     "habitEdit_colorPicker_title",
@@ -2431,6 +2464,9 @@
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
     "habitDisplay_editPopMenu_selectAll",
+    "habitDisplay_selectButton_label",
+    "habitDisplay_doneButton_label",
+    "habitDisplay_selectedHabits_title",
     "habitDisplay_editPopMenu_export",
     "habitDisplay_editPopMenu_delete",
     "habitDisplay_editPopMenu_clone",
@@ -2912,6 +2948,7 @@
   ],
 
   "pl": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
@@ -2922,6 +2959,7 @@
     "habitEdit_colorPicker_tintToggleOffHint",
     "habitDisplay_notFoundImage_text_01",
     "habitDisplay_notFoundImage_text_02",
+    "habitDisplay_selectedHabits_title",
     "habitDisplay_groupType_createDate",
     "habitDisplay_groupType_habitCount",
     "habitDisplay_groupTypeDialog_title",
@@ -3022,6 +3060,7 @@
   ],
 
   "pt": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
@@ -3038,6 +3077,7 @@
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
+    "habitDisplay_selectedHabits_title",
     "habitDisplay_groupType_createDate",
     "habitDisplay_groupType_habitCount",
     "habitDisplay_groupTypeDialog_title",
@@ -3265,6 +3305,7 @@
   ],
 
   "ru": [
+    "common_listSeparator",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
     "habitEdit_colorPicker_tintToggleLabel",
@@ -3276,6 +3317,7 @@
     "habitDisplay_notFoundImage_text_02",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
+    "habitDisplay_selectedHabits_title",
     "habitDisplay_groupType_createDate",
     "habitDisplay_groupType_habitCount",
     "habitDisplay_groupTypeDialog_title",
@@ -3374,6 +3416,7 @@
   ],
 
   "tr": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
@@ -3382,6 +3425,7 @@
     "habitEdit_colorPicker_untintedLabel",
     "habitEdit_colorPicker_tintToggleOnHint",
     "habitEdit_colorPicker_tintToggleOffHint",
+    "habitDisplay_selectedHabits_title",
     "habitDisplay_groupType_createDate",
     "habitDisplay_groupType_habitCount",
     "habitDisplay_groupTypeDialog_title",
@@ -3463,10 +3507,12 @@
   ],
 
   "uk": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_tintedLabel",
     "habitEdit_colorPicker_untintedLabel",
+    "habitDisplay_selectedHabits_title",
     "habitDisplay_groupType_habitCount",
     "habitDisplay_groupTypeDialog_none",
     "habitDisplay_groupModifyConfirm_bodyRemoveStat",
@@ -3502,6 +3548,7 @@
   ],
 
   "vi": [
+    "common_listSeparator",
     "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
     "habitEdit_colorPicker_cancel",
@@ -3510,6 +3557,7 @@
     "habitEdit_colorPicker_untintedLabel",
     "habitEdit_colorPicker_tintToggleOnHint",
     "habitEdit_colorPicker_tintToggleOffHint",
+    "habitDisplay_selectedHabits_title",
     "habitDisplay_groupType_createDate",
     "habitDisplay_groupType_habitCount",
     "habitDisplay_groupTypeDialog_title",

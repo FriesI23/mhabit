@@ -96,6 +96,37 @@ void main() {
       expect(Breakpoints.of(context), same(apple));
     });
 
+    testWidgets('style override selects material breakpoints on macOS', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.macOS),
+          home: const AdaptiveStyleScope(
+            override: AdaptiveStyle.material,
+            child: SizedBox(key: ValueKey('box')),
+          ),
+        ),
+      );
+      final context = tester.element(find.byKey(const ValueKey('box')));
+      expect(Breakpoints.of(context), same(material));
+    });
+
+    testWidgets('style override selects apple breakpoints on material', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: AdaptiveStyleScope(
+            override: AdaptiveStyle.apple,
+            child: SizedBox(key: ValueKey('box')),
+          ),
+        ),
+      );
+      final context = tester.element(find.byKey(const ValueKey('box')));
+      expect(Breakpoints.of(context), same(apple));
+    });
+
     testWidgets('prefers the scope over the platform default', (tester) async {
       const custom = CustomBreakpoints(width: [300]);
       await tester.pumpWidget(

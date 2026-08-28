@@ -2,22 +2,20 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.26.12+185-pre
+## 1.26.15+188-pre
 
-- Update Czech translation, thanks to Pavel Borecki's contribution on Weblate (#643)
+- Feature: expand adaptive navigation, search, filtering, and selection
+  actions (#646)
+- Feature: avoid window controls in adaptive app bars and navigation rails (#647)
+
+## 1.26.14+187
+
+- Update Czech, German, Italian, and Russian translations and contributor credits (#645)
 - Upgrade to Flutter 3.44.9 and refresh dependencies and build tooling (#644)
 - Enable menu animations for search filters and group actions, with safeguards
   for debug builds (#644)
 - Improve donation flow, error logging, and habit record query reliability (#644)
 - Preserve consecutive back navigation for dialogs and nested detail pages
-
-## 1.26.10+183-pre
-
-- Improve adaptive layouts and navigation across screen sizes (#642)
-
-## 1.26.9+182-pre
-
-- Improve navigation reliability and tab navigation experience (#638, #640)
 
 ## 1.26.7+180
 

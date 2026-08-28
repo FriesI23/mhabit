@@ -16,6 +16,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:open_file/open_file.dart' show OpenFile;
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -170,8 +171,8 @@ class _PageState extends State<_Page> with XShare {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: const PageBackButton(),
+      appBar: const WindowControlAppBar(
+        leading: PageBackButton(),
         automaticallyImplyLeading: false,
       ),
       floatingActionButton: Builder(

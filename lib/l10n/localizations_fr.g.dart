@@ -15,6 +15,9 @@ class L10nFr extends L10n {
   String get appName => 'Table Habit';
 
   @override
+  String get common_listSeparator => ', ';
+
+  @override
   String get habitEdit_saveButton_text => 'Sauvegarder';
 
   @override
@@ -348,6 +351,17 @@ class L10nFr extends L10n {
 
   @override
   String get habitDisplay_editPopMenu_selectAll => 'Tout sélectionner';
+
+  @override
+  String get habitDisplay_selectButton_label => 'Sélectionner';
+
+  @override
+  String get habitDisplay_doneButton_label => 'OK';
+
+  @override
+  String habitDisplay_selectedHabits_title(int count) {
+    return 'Selected $count';
+  }
 
   @override
   String get habitDisplay_editPopMenu_export => 'Exporter';

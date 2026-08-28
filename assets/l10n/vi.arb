@@ -249,6 +249,14 @@
     },
     "habitDisplay_exportAllHabitsSuccSnackbarText": "Đã xuất tất cả thói quen",
     "habitDisplay_editPopMenu_selectAll": "Chọn tất cả",
+    "habitDisplay_selectButton_label": "Chọn",
+    "@habitDisplay_selectButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Select\" system action."
+    },
+    "habitDisplay_doneButton_label": "Xong",
+    "@habitDisplay_doneButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Done\" system bar button item."
+    },
     "habitDisplay_editPopMenu_export": "Xuất",
     "habitDisplay_editPopMenu_delete": "Xóa",
     "habitDisplay_editPopMenu_clone": "Mẫu",

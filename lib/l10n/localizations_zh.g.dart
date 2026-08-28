@@ -15,6 +15,9 @@ class L10nZh extends L10n {
   String get appName => '桌上习惯';
 
   @override
+  String get common_listSeparator => '，';
+
+  @override
   String get habitEdit_saveButton_text => '保存';
 
   @override
@@ -332,6 +335,17 @@ class L10nZh extends L10n {
 
   @override
   String get habitDisplay_editPopMenu_selectAll => '全选';
+
+  @override
+  String get habitDisplay_selectButton_label => '选择';
+
+  @override
+  String get habitDisplay_doneButton_label => '完成';
+
+  @override
+  String habitDisplay_selectedHabits_title(int count) {
+    return '已选择 $count 项';
+  }
 
   @override
   String get habitDisplay_editPopMenu_export => '导出';
@@ -2086,6 +2100,9 @@ class L10nZhHant extends L10nZh {
   String get appName => '桌上習慣';
 
   @override
+  String get common_listSeparator => '，';
+
+  @override
   String get habitEdit_saveButton_text => '儲存';
 
   @override
@@ -2360,6 +2377,17 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get habitDisplay_editPopMenu_selectAll => '全選';
+
+  @override
+  String get habitDisplay_selectButton_label => '選取';
+
+  @override
+  String get habitDisplay_doneButton_label => '完成';
+
+  @override
+  String habitDisplay_selectedHabits_title(int count) {
+    return '已選擇 $count 項';
+  }
 
   @override
   String get habitDisplay_editPopMenu_export => '匯出';

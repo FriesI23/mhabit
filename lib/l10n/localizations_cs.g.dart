@@ -15,6 +15,9 @@ class L10nCs extends L10n {
   String get appName => 'Table Habit';
 
   @override
+  String get common_listSeparator => ', ';
+
+  @override
   String get habitEdit_saveButton_text => 'Uložit';
 
   @override
@@ -345,6 +348,17 @@ class L10nCs extends L10n {
 
   @override
   String get habitDisplay_editPopMenu_selectAll => 'Vybrat vše';
+
+  @override
+  String get habitDisplay_selectButton_label => 'Vybrat';
+
+  @override
+  String get habitDisplay_doneButton_label => 'Hotovo';
+
+  @override
+  String habitDisplay_selectedHabits_title(int count) {
+    return '$count vybráno';
+  }
 
   @override
   String get habitDisplay_editPopMenu_export => 'Export';

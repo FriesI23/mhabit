@@ -29,8 +29,6 @@ import '../../../widgets/widgets.dart';
 
 const kDefaultHabitSummaryListTileHeight = 64.0;
 const kMaxHabitSummaryListTileTextScale = 1.3;
-const double kDefaultHabitSummaryListTileExtendedPrt = 0.85;
-const double kDefaultHabitSummaryListTileCollapsePrt = 0.5;
 const int kHabitSummaryListTilMinShowDate = 1;
 
 class HabitSummaryListTile extends StatefulWidget {
@@ -44,7 +42,8 @@ class HabitSummaryListTile extends StatefulWidget {
   final double? _height;
   final EdgeInsets? _titlePadding;
   final EdgeInsets? itemPadding;
-  final int? collapsePrt;
+  final EdgeInsets trackPadding;
+  final HabitListTileGeometry geometry;
   final Widget Function(
     BuildContext context,
     Widget cell,
@@ -52,7 +51,6 @@ class HabitSummaryListTile extends StatefulWidget {
   )?
   cellBuilder;
   final HabitListTilePhysicsBuilder? scrollPhysicsBuilder;
-  final ScrollController? verticalScrollController;
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
   final OnHabitSummaryPressCallback? onCellPressed;
   final OnHabitSummaryPressCallback? onCellLongPressed;
@@ -70,10 +68,10 @@ class HabitSummaryListTile extends StatefulWidget {
     this._height,
     this._titlePadding,
     this.itemPadding,
-    this.collapsePrt,
+    this.trackPadding = kDefaultHabitListTileTrackPadding,
+    required this.geometry,
     this.cellBuilder,
     this.scrollPhysicsBuilder,
-    this.verticalScrollController,
     this.horizonalScrollControllerGroup,
     this.onCellPressed,
     this.onCellLongPressed,
@@ -107,10 +105,6 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
   double get height => widget._height != null
       ? widget._height!
       : kDefaultHabitSummaryListTileHeight;
-
-  double get collapsePrt => widget.collapsePrt != null
-      ? widget.collapsePrt! / 100
-      : kDefaultHabitSummaryListTileCollapsePrt;
 
   HabitSummaryData get data => widget.data;
 
@@ -165,7 +159,7 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
   Widget? _buildCellItem(
     BuildContext context,
     int index,
-    double realHeight,
+    double columnExtent,
     DateTime crtDate,
   ) {
     final showDate = HabitRecordDate.dateTime(
@@ -204,7 +198,7 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
     );
 
     return ConstrainedBox(
-      constraints: BoxConstraints.tightFor(width: realHeight),
+      constraints: BoxConstraints.tightFor(width: columnExtent),
       child: FittedBox(
         child: widget.cellBuilder != null
             ? widget.cellBuilder!(context, recordCell, showDate)
@@ -264,28 +258,32 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
       );
     }
 
-    return HabitListTile(
-      leftChild: leftPartBuilder(),
-      stackedChild: titlePartBuilder(widget.isExtended),
-      sizePrt: widget.isExtended
-          ? kDefaultHabitSummaryListTileExtendedPrt
-          : collapsePrt,
-      stackAutoWrap: !widget.isExtended,
-      canScroll: widget.canScroll ?? widget.isExtended,
-      mainScrollController: widget.verticalScrollController,
-      listScrollController: _horizonalScrollController,
-      itemCount: limitItemCount,
-      itemBuilder: (context, index, realHeight) =>
-          _buildCellItem(context, index, realHeight, crtDate),
-      backgroundColor: widget.isSelected
-          ? widget.selectColor ??
-                themeColor?.selectedColor ??
-                defaultThemeColor.selectedColor
-          : null,
+    final backgroundColor = widget.isSelected
+        ? widget.selectColor ??
+              themeColor?.selectedColor ??
+              defaultThemeColor.selectedColor
+        : null;
+    final track = Padding(
+      padding: widget.trackPadding,
+      child: HabitListTile(
+        leftChild: leftPartBuilder(),
+        stackedChild: titlePartBuilder(widget.isExtended),
+        geometry: widget.geometry,
+        stackAutoWrap: !widget.isExtended,
+        canScroll: widget.canScroll ?? widget.isExtended,
+        listScrollController: _horizonalScrollController,
+        itemCount: limitItemCount,
+        itemBuilder: (context, index, columnExtent) =>
+            _buildCellItem(context, index, columnExtent, crtDate),
+        minItemCoun: kHabitSummaryListTilMinShowDate,
+        scrollPhysicsBuilder: widget.scrollPhysicsBuilder,
+      ),
+    );
+    return SizedBox(
       height: getTextScaler(context).scale(height),
-      itemHeight: height,
-      minItemCoun: kHabitSummaryListTilMinShowDate,
-      scrollPhysicsBuilder: widget.scrollPhysicsBuilder,
+      child: backgroundColor == null
+          ? track
+          : ColoredBox(color: backgroundColor, child: track),
     );
   }
 

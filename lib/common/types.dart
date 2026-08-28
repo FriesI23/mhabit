@@ -75,4 +75,4 @@ typedef OnHabitSummaryPressCallback =
     );
 
 typedef HabitListTilePhysicsBuilder =
-    ScrollPhysics? Function(double itemSize, double length);
+    ScrollPhysics? Function(double itemSize, double viewportExtent);

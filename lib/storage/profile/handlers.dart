@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export 'handlers/adaptive_style_override.dart';
 export 'handlers/app_experimental_feature.dart';
 export 'handlers/app_flags.dart';
 export 'handlers/app_language.dart';

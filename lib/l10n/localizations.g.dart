@@ -148,6 +148,12 @@ abstract class L10n {
   /// **'Table Habit'**
   String get appName;
 
+  /// Separator used between items in compact localized lists.
+  ///
+  /// In en, this message translates to:
+  /// **', '**
+  String get common_listSeparator;
+
   /// No description provided for @habitEdit_saveButton_text.
   ///
   /// In en, this message translates to:
@@ -645,6 +651,24 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Select All'**
   String get habitDisplay_editPopMenu_selectAll;
+
+  /// Mirrors Apple's localized UIKitCore Localizable.strings "Select" system action.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get habitDisplay_selectButton_label;
+
+  /// Mirrors Apple's localized UIKitCore Localizable.strings "Done" system bar button item.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get habitDisplay_doneButton_label;
+
+  /// Apple selection AppBar title showing the number of selected habits
+  ///
+  /// In en, this message translates to:
+  /// **'Selected {count}'**
+  String habitDisplay_selectedHabits_title(int count);
 
   /// No description provided for @habitDisplay_editPopMenu_export.
   ///

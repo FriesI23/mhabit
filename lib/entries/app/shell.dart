@@ -14,8 +14,8 @@
 
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
-import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +24,8 @@ import '../../models/app_entry.dart';
 import '../../providers/app_ui/app_launch_entry.dart';
 import '../../routes/app_router.dart';
 import '../../widgets/widgets.dart';
+import 'navigation_chrome.dart';
+import 'navigation_destination.dart';
 
 /// [AdaptiveNavigationShell] wired up for the app: localized destinations,
 /// app navigation-bar styling, launch-entry persistence on branch switches,
@@ -32,10 +34,12 @@ class AppNavigationShell extends StatefulWidget {
   const AppNavigationShell({
     super.key,
     required this.coordinator,
+    required this.chromeController,
     required this.child,
   });
 
   final AppNavigationCoordinator coordinator;
+  final AppNavigationChromeController chromeController;
   final Widget child;
 
   @override
@@ -48,18 +52,15 @@ class _AppNavigationShellState extends State<AppNavigationShell> {
   @override
   void initState() {
     super.initState();
-    _lastSelectedIndex = widget.coordinator.selectedIndex;
-    widget.coordinator.addListener(_handleNavigationChanged);
+    _bindCoordinator(widget.coordinator);
   }
 
   @override
   void didUpdateWidget(covariant AppNavigationShell oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.coordinator != widget.coordinator) {
-      oldWidget.coordinator.removeListener(_handleNavigationChanged);
-      _lastSelectedIndex = widget.coordinator.selectedIndex;
-      widget.coordinator.addListener(_handleNavigationChanged);
-    }
+    if (identical(oldWidget.coordinator, widget.coordinator)) return;
+    oldWidget.coordinator.removeListener(_handleNavigationChanged);
+    _bindCoordinator(widget.coordinator);
   }
 
   @override
@@ -68,45 +69,108 @@ class _AppNavigationShellState extends State<AppNavigationShell> {
     super.dispose();
   }
 
+  void _bindCoordinator(AppNavigationCoordinator coordinator) {
+    _lastSelectedIndex = coordinator.selectedIndex;
+    coordinator.addListener(_handleNavigationChanged);
+  }
+
   void _handleNavigationChanged() {
-    final nextIndex = widget.coordinator.selectedIndex;
+    final coordinator = widget.coordinator;
+    final nextIndex = coordinator.selectedIndex;
     if (nextIndex != _lastSelectedIndex) {
       _lastSelectedIndex = nextIndex;
-      final newLaunchEntry = AppEntrys.getFromDBCode(nextIndex + 1);
-      if (newLaunchEntry != null && context.mounted) {
+      final branch = AppNavigationBranch.fromNavigationIndex(nextIndex);
+      if (context.mounted) {
         context.read<AppLaunchEntryViewModel>().setNewLaunchEntry(
-          newLaunchEntry,
+          switch (branch) {
+            AppNavigationBranch.habits => AppEntrys.habitDisplay,
+            AppNavigationBranch.today => AppEntrys.habitToday,
+          },
         );
       }
     }
-    if (mounted) setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return PopScope<void>(
-      canPop: !widget.coordinator.activeBranchCanPop,
+    return NavigatorPopHandler<Object?>(
+      onPopWithResult: (result) {
+        final navigator = widget.coordinator.appChromeNavigatorKey.currentState;
+        if (navigator != null) {
+          unawaited(navigator.maybePop<Object?>(result));
+        }
+      },
       child: ColorfulNavibar(
-        child: L10nBuilder(
-          builder: (context, l10n) => AdaptiveNavigationShell(
+        child: ListenableBuilder(
+          listenable: widget.coordinator,
+          builder: (context, _) => _AppNavigationShellChrome(
+            coordinator: widget.coordinator,
+            chromeController: widget.chromeController,
             selectedIndex: widget.coordinator.selectedIndex,
             compactRouteVisible: widget.coordinator.compactRouteVisible,
-            destinations: [
-              NavigationDestination(
-                icon: const Icon(Icons.home_outlined),
-                selectedIcon: const Icon(Icons.home),
-                label: l10n?.habitDisplay_tab_habits_label ?? 'Habits',
-              ),
-              NavigationDestination(
-                icon: const Icon(MdiIcons.calendarTodayOutline),
-                selectedIcon: const Icon(MdiIcons.calendarToday),
-                label: l10n?.habitDisplay_tab_today_label ?? 'Today',
-              ),
-            ],
-            onDestinationSelected: widget.coordinator.selectBranch,
             child: widget.child,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _AppNavigationShellChrome extends StatelessWidget {
+  const _AppNavigationShellChrome({
+    required this.coordinator,
+    required this.chromeController,
+    required this.selectedIndex,
+    required this.compactRouteVisible,
+    required this.child,
+  });
+
+  final AppNavigationCoordinator coordinator;
+  final AppNavigationChromeController chromeController;
+  final int selectedIndex;
+  final bool compactRouteVisible;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final branch = AppNavigationBranch.fromNavigationIndex(selectedIndex);
+    return L10nBuilder(
+      builder: (context, l10n) => ListenableBuilder(
+        listenable: chromeController,
+        builder: (context, _) {
+          final chrome = chromeController.chromeFor(branch);
+          return AdaptiveNavigationShell(
+            selectedIndex: selectedIndex,
+            compactRouteVisible: compactRouteVisible,
+            contextualChromeSuppressed: chrome.contextualChromeSuppressed,
+            applePrimaryAction: chrome.contextualChromeSuppressed
+                ? null
+                : switch (chrome.primaryAction) {
+                    AppNavigationPrimaryAction.createHabit =>
+                      CupertinoNavigationPrimaryAction(
+                        id: 'habit-display-create-primary-action',
+                        label: l10n?.habitDisplay_fab_text ?? 'New Habit',
+                        icon: const Icon(CupertinoIcons.add),
+                        onPressed: () =>
+                            chromeController.invokePrimaryAction(branch),
+                      ),
+                    null => null,
+                  },
+            appleBarStyle: const AppleNavigationBarStyle(
+              expandedNavigationWidth: 220.0,
+            ),
+            destinations: [
+              AppNavigationDestinations.habits(
+                label: l10n?.habitDisplay_tab_habits_label ?? 'Habits',
+              ),
+              AppNavigationDestinations.today(
+                label: l10n?.habitDisplay_tab_today_label ?? 'Today',
+              ),
+            ],
+            onDestinationSelected: coordinator.selectBranch,
+            child: child,
+          );
+        },
       ),
     );
   }
@@ -143,8 +207,6 @@ class AppNavigationCoordinator extends ChangeNotifier {
 
   int get selectedIndex => _selectedIndex;
   bool get compactRouteVisible => _compactRouteVisible;
-  bool get activeBranchCanPop => (_activeBranchObserver?.depth ?? 0) > 1;
-
   void attachTabShell(StatefulNavigationShell navigationShell) {
     _navigationShell = navigationShell;
     _synchronize(scheduleNotification: true);

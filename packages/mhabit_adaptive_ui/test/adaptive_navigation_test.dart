@@ -1,11 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_navigation_primary_action.dart';
 
 _TestRouter _buildRouter({
-  List<NavigationDestination>? destinations,
+  List<AdaptiveNavigationDestination>? destinations,
   ValueChanged<int>? onBranchChanged,
   List<AdaptiveBranchRouteObserver>? observers,
   bool Function(List<String?> routeNames)? barVisibilityPolicy,
@@ -14,15 +16,23 @@ _TestRouter _buildRouter({
     destinations:
         destinations ??
         const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
+          AdaptiveNavigationDestination(
             label: 'Habits',
+            icons: NavigationDestinationIcons(
+              material: Icon(Icons.home_outlined),
+              materialSelected: Icon(Icons.home),
+              apple: Icon(Icons.home_outlined),
+              appleSelected: Icon(Icons.home),
+            ),
           ),
-          NavigationDestination(
-            icon: Icon(Icons.calendar_today_outlined),
-            selectedIcon: Icon(Icons.calendar_today),
+          AdaptiveNavigationDestination(
             label: 'Today',
+            icons: NavigationDestinationIcons(
+              material: Icon(Icons.calendar_today_outlined),
+              materialSelected: Icon(Icons.calendar_today),
+              apple: Icon(Icons.calendar_today_outlined),
+              appleSelected: Icon(Icons.calendar_today),
+            ),
           ),
         ],
     onBranchChanged: onBranchChanged,
@@ -33,7 +43,7 @@ _TestRouter _buildRouter({
 
 class _TestRouter extends RouterConfig<Object> {
   factory _TestRouter({
-    required List<NavigationDestination> destinations,
+    required List<AdaptiveNavigationDestination> destinations,
     required List<AdaptiveBranchRouteObserver> observers,
     ValueChanged<int>? onBranchChanged,
     bool Function(List<String?> routeNames)? barVisibilityPolicy,
@@ -56,6 +66,9 @@ class _TestRouter extends RouterConfig<Object> {
   void push(String location) => delegate.push(location);
 
   void pop() => delegate.pop();
+
+  void setContextualChromeSuppressed(bool suppressed) =>
+      delegate.setContextualChromeSuppressed(suppressed);
 }
 
 class _TestRouteEntry {
@@ -85,13 +98,20 @@ class _TestRouterDelegate extends RouterDelegate<Object>
     );
   }
 
-  final List<NavigationDestination> destinations;
+  final List<AdaptiveNavigationDestination> destinations;
   final List<AdaptiveBranchRouteObserver> observers;
   final ValueChanged<int>? onBranchChanged;
   final bool Function(List<String?> routeNames)? barVisibilityPolicy;
 
   final List<List<_TestRouteEntry>> _branchStacks = [[], []];
   int _selectedIndex = 0;
+  bool _contextualChromeSuppressed = false;
+
+  void setContextualChromeSuppressed(bool suppressed) {
+    if (_contextualChromeSuppressed == suppressed) return;
+    _contextualChromeSuppressed = suppressed;
+    notifyListeners();
+  }
 
   @override
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -169,6 +189,7 @@ class _TestRouterDelegate extends RouterDelegate<Object>
             selectedIndex: _selectedIndex,
             destinations: destinations,
             compactRouteVisible: _compactRouteVisible,
+            contextualChromeSuppressed: _contextualChromeSuppressed,
             onDestinationSelected: _selectDestination,
             child: _StubPage(text: currentEntry.label),
           ),
@@ -196,7 +217,169 @@ class _StubPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: Text(text)));
+    final bottomPadding = MediaQuery.paddingOf(context).bottom;
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(text),
+            SizedBox(
+              key: const ValueKey('branch-bottom-padding'),
+              height: bottomPadding,
+            ),
+            TextButton(
+              key: const ValueKey('show-snackbar'),
+              onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text('saved'),
+                ),
+              ),
+              child: const Text('Show Snackbar'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BranchInsetsProbe extends StatelessWidget {
+  const _BranchInsetsProbe();
+
+  @override
+  Widget build(BuildContext context) {
+    final padding = MediaQuery.paddingOf(context);
+    final viewPadding = MediaQuery.viewPaddingOf(context);
+    return Column(
+      children: [
+        SizedBox(
+          key: const ValueKey('branch-horizontal-padding'),
+          width: padding.left + padding.right,
+        ),
+        SizedBox(
+          key: const ValueKey('branch-horizontal-view-padding'),
+          width: viewPadding.left + viewPadding.right,
+        ),
+      ],
+    );
+  }
+}
+
+class _FabStubPage extends StatelessWidget {
+  const _FabStubPage();
+
+  @override
+  Widget build(BuildContext context) {
+    final scope = AdaptiveNavScope.of(context);
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      floatingActionButton: ValueListenableBuilder<bool>(
+        valueListenable: scope.visible,
+        builder: (context, visible, child) => Padding(
+          padding: EdgeInsets.only(bottom: visible ? scope.barHeight : 0),
+          child: child,
+        ),
+        child: const FloatingActionButton(
+          key: ValueKey('test-fab'),
+          onPressed: null,
+        ),
+      ),
+    );
+  }
+}
+
+class _ScopeLookupProbe extends StatelessWidget {
+  const _ScopeLookupProbe({required this.listen, required this.onBuild});
+
+  final bool listen;
+  final ValueChanged<double> onBuild;
+
+  @override
+  Widget build(BuildContext context) {
+    final scope = listen
+        ? AdaptiveNavScope.maybeOf(context)
+        : AdaptiveNavScope.maybeRead(context);
+    onBuild(scope!.barHeight);
+    return const SizedBox.shrink();
+  }
+}
+
+class _BranchContractHarness extends StatefulWidget {
+  const _BranchContractHarness();
+
+  @override
+  State<_BranchContractHarness> createState() => _BranchContractHarnessState();
+}
+
+class _BranchContractHarnessState extends State<_BranchContractHarness> {
+  int _selectedIndex = 0;
+  bool _routeVisible = true;
+  late final CupertinoNavigationPrimaryAction _habitsAction =
+      CupertinoNavigationPrimaryAction(
+        id: 'test-habits-action',
+        label: 'New Habit',
+        icon: const Icon(Icons.add),
+        onPressed: () {},
+      );
+
+  @override
+  Widget build(BuildContext context) => AdaptiveNavigationShell(
+    selectedIndex: _selectedIndex,
+    compactRouteVisible: _routeVisible,
+    applePrimaryAction: _selectedIndex == 0 ? _habitsAction : null,
+    destinations: const [
+      AdaptiveNavigationDestination(
+        label: 'Habits',
+        icons: NavigationDestinationIcons(
+          material: Icon(Icons.home_outlined),
+          materialSelected: Icon(Icons.home),
+          apple: Icon(Icons.home_outlined),
+          appleSelected: Icon(Icons.home),
+        ),
+      ),
+      AdaptiveNavigationDestination(
+        label: 'Today',
+        icons: NavigationDestinationIcons(
+          material: Icon(Icons.calendar_today_outlined),
+          materialSelected: Icon(Icons.calendar_today),
+          apple: Icon(Icons.calendar_today_outlined),
+          appleSelected: Icon(Icons.calendar_today),
+        ),
+      ),
+    ],
+    onDestinationSelected: (index) => setState(() => _selectedIndex = index),
+    child: IndexedStack(
+      index: _selectedIndex,
+      children: [
+        for (final index in [0, 1])
+          Offstage(
+            offstage: index != _selectedIndex,
+            child: TickerMode(
+              enabled: index == _selectedIndex,
+              child: Scaffold(
+                body: CustomScrollView(
+                  key: ValueKey(index == 0 ? 'habits-scroll' : 'today-scroll'),
+                  slivers: [
+                    SliverList.builder(
+                      itemCount: 40,
+                      itemBuilder: (context, itemIndex) => SizedBox(
+                        height: 56,
+                        child: Text('branch $index item $itemIndex'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+      ],
+    ),
+  );
+
+  void setRouteVisible(bool visible) {
+    setState(() => _routeVisible = visible);
   }
 }
 
@@ -210,8 +393,638 @@ void _setSurfaceSize(WidgetTester tester, Size size) {
   addTearDown(tester.view.reset);
 }
 
+const MethodChannel _windowControlChannel = MethodChannel(
+  'ios_window_control_layout',
+);
+
+Map<String, double> _windowInsets({
+  double start = 0,
+  double top = 0,
+  double end = 0,
+  double bottom = 0,
+}) => <String, double>{
+  'start': start,
+  'top': top,
+  'end': end,
+  'bottom': bottom,
+};
+
+Map<String, double> _windowCornerRadii({
+  double topLeft = 0,
+  double topRight = 0,
+  double bottomLeft = 0,
+  double bottomRight = 0,
+}) => <String, double>{
+  'topLeft': topLeft,
+  'topRight': topRight,
+  'bottomLeft': bottomLeft,
+  'bottomRight': bottomRight,
+};
+
+void _mockWindowControlLayout() {
+  debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(_windowControlChannel, (call) async {
+        return <String, Object>{
+          'schemaVersion': 3,
+          'isAvailable': true,
+          'baseMargins': _windowInsets(),
+          'horizontalMargins': _windowInsets(start: 40, end: 12),
+          'verticalMargins': _windowInsets(top: 64),
+          'baseSafeArea': _windowInsets(bottom: 34),
+          'horizontalSafeArea': _windowInsets(start: 24, end: 18, bottom: 34),
+          'verticalSafeArea': _windowInsets(bottom: 34),
+          'effectiveCornerRadii': _windowCornerRadii(
+            topLeft: 62,
+            topRight: 62,
+            bottomLeft: 62,
+            bottomRight: 62,
+          ),
+        };
+      });
+}
+
+void _resetWindowControlLayoutMock() {
+  debugDefaultTargetPlatformOverride = null;
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(_windowControlChannel, null);
+}
+
 void main() {
+  group('NavigationRailExtent', () {
+    test('fixed target clamps to the available interval', () {
+      const extent = NavigationRailExtent(224);
+
+      expect(extent.resolve(1600), 224);
+      expect(extent.resolve(800), 216);
+    });
+
+    test('ratio resolves between the available bounds', () {
+      const extent = NavigationRailExtent.fromRatio(0.5);
+
+      expect(extent.resolve(1600), 270);
+      expect(extent.resolve(800), 198);
+    });
+
+    test('owns interval growth and manual clamping', () {
+      const extent = NavigationRailExtent(
+        240,
+        collapsed: 64,
+        minimum: 200,
+        maximum: 320,
+        rampStart: 800,
+        rampEnd: 1400,
+      );
+
+      expect(extent.collapsed, 64);
+      expect(extent.upperBoundAt(1100), 260);
+      expect(extent.resolve(1100), 240);
+      expect(extent.clamp(300, windowWidth: 1100), 260);
+    });
+
+    test('requires the extended minimum to fit the collapsed rail', () {
+      expect(
+        () => NavigationRailExtent(100, collapsed: 200),
+        throwsAssertionError,
+      );
+    });
+  });
+
+  testWidgets('scope lookups distinguish listening from read access', (
+    tester,
+  ) async {
+    final barHeight = ValueNotifier(80.0);
+    final listeningBuilds = <double>[];
+    final readBuilds = <double>[];
+    addTearDown(barHeight.dispose);
+
+    await tester.pumpWidget(
+      ValueListenableBuilder<double>(
+        valueListenable: barHeight,
+        child: Column(
+          children: [
+            _ScopeLookupProbe(listen: true, onBuild: listeningBuilds.add),
+            _ScopeLookupProbe(listen: false, onBuild: readBuilds.add),
+          ],
+        ),
+        builder: (context, value, child) =>
+            AdaptiveNavScope(barHeight: value, navHeight: value, child: child!),
+      ),
+    );
+
+    expect(listeningBuilds, [80]);
+    expect(readBuilds, [80]);
+
+    barHeight.value = 0;
+    await tester.pump();
+
+    expect(listeningBuilds, [80, 0]);
+    expect(readBuilds, [80]);
+  });
+
   group('AdaptiveNavigationShell', () {
+    testWidgets('style switching preserves branch content state', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      final style = ValueNotifier(AdaptiveStyle.material);
+      addTearDown(style.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ValueListenableBuilder<AdaptiveStyle>(
+            valueListenable: style,
+            builder: (context, value, child) => AdaptiveStyleScope(
+              override: value,
+              child: AdaptiveNavigationShell(
+                selectedIndex: 0,
+                destinations: const [
+                  AdaptiveNavigationDestination(
+                    label: 'Habits',
+                    icons: NavigationDestinationIcons(
+                      material: Icon(Icons.home_outlined),
+                      materialSelected: Icon(Icons.home),
+                      apple: Icon(Icons.home_outlined),
+                      appleSelected: Icon(Icons.home),
+                    ),
+                  ),
+                  AdaptiveNavigationDestination(
+                    label: 'Today',
+                    icons: NavigationDestinationIcons(
+                      material: Icon(Icons.today_outlined),
+                      materialSelected: Icon(Icons.today),
+                      apple: Icon(Icons.today_outlined),
+                      appleSelected: Icon(Icons.today),
+                    ),
+                  ),
+                ],
+                onDestinationSelected: (_) {},
+                child: const _StatefulBranchProbe(),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('branch count 0'));
+      await tester.pump();
+      expect(find.text('branch count 1'), findsOneWidget);
+
+      style.value = AdaptiveStyle.apple;
+      await tester.pumpAndSettle();
+
+      expect(find.text('branch count 1'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('material shell does not host the Cupertino primary action', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.android),
+          home: const _BranchContractHarness(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(NavigationBar), findsOneWidget);
+      expect(find.byType(CupertinoNavigationPrimaryActionButton), findsNothing);
+      expect(
+        find.byKey(const ValueKey('cupertino-primary-action-surface')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('animates and restores the branch primary action', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          home: const _BranchContractHarness(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byType(CupertinoNavigationPrimaryActionButton),
+        findsOneWidget,
+      );
+      final navigationClip = find.descendant(
+        of: find.byKey(const ValueKey('bottom-bar')),
+        matching: find.byWidgetPredicate(
+          (widget) => widget is ClipRect && widget.clipper != null,
+        ),
+      );
+      expect(navigationClip, findsOneWidget);
+      final clipWidget = tester.widget<ClipRect>(navigationClip);
+      expect(clipWidget.clipper, isNotNull);
+      expect(
+        clipWidget.clipper!.getClip(tester.getSize(navigationClip)).top,
+        -CupertinoFloatingGlassSurface.shadowClipOverflow,
+      );
+
+      await tester.tap(
+        find.byKey(const ValueKey('cupertino-navigation-destination-1')),
+      );
+      await tester.pump();
+      expect(
+        find.byType(CupertinoNavigationPrimaryActionButton),
+        findsOneWidget,
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 125));
+      final outgoingFade = tester.widget<FadeTransition>(
+        find.ancestor(
+          of: find.byType(CupertinoNavigationPrimaryActionButton),
+          matching: find.byType(FadeTransition),
+        ),
+      );
+      expect(outgoingFade.opacity.value, inExclusiveRange(0, 1));
+      await tester.pumpAndSettle();
+      expect(find.byType(CupertinoNavigationPrimaryActionButton), findsNothing);
+
+      await tester.tap(
+        find.byKey(const ValueKey('cupertino-navigation-destination-0')),
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(
+        find.byType(CupertinoNavigationPrimaryActionButton),
+        findsOneWidget,
+      );
+      await tester.pump(const Duration(milliseconds: 125));
+      final incomingFade = tester.widget<FadeTransition>(
+        find.ancestor(
+          of: find.byType(CupertinoNavigationPrimaryActionButton),
+          matching: find.byType(FadeTransition),
+        ),
+      );
+      expect(incomingFade.opacity.value, inExclusiveRange(0, 1));
+      await tester.pumpAndSettle();
+      expect(
+        find.byType(CupertinoNavigationPrimaryActionButton),
+        findsOneWidget,
+      );
+
+      await tester.tap(
+        find.byKey(const ValueKey('cupertino-navigation-destination-1')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(CupertinoNavigationPrimaryActionButton), findsNothing);
+    });
+
+    testWidgets('rebuilding the default primary action keeps one Hero', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          home: StatefulBuilder(
+            builder: (context, setState) => AdaptiveNavigationShell(
+              selectedIndex: 0,
+              applePrimaryAction: CupertinoNavigationPrimaryAction(
+                label: 'New Habit',
+                icon: const Icon(Icons.add),
+                onPressed: () {},
+              ),
+              destinations: const [
+                AdaptiveNavigationDestination(
+                  label: 'Habits',
+                  icons: NavigationDestinationIcons(
+                    material: Icon(Icons.home_outlined),
+                    materialSelected: Icon(Icons.home),
+                    apple: Icon(Icons.home_outlined),
+                    appleSelected: Icon(Icons.home),
+                  ),
+                ),
+              ],
+              onDestinationSelected: (_) {},
+              child: Center(
+                child: TextButton(
+                  onPressed: () => setState(() {}),
+                  child: const Text('Rebuild'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Rebuild'));
+      await tester.pump();
+
+      expect(tester.takeException(), isNull);
+      expect(find.byType(Hero), findsOneWidget);
+      expect(
+        find.byType(CupertinoNavigationPrimaryActionButton),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('observes vertical scrolling from every active branch', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          home: const _BranchContractHarness(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(
+        find.byKey(const ValueKey('cupertino-navigation-destination-1')),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('cupertino-navigation-expanded')),
+        findsOneWidget,
+      );
+
+      await tester.drag(
+        find.byKey(const ValueKey('today-scroll')),
+        const Offset(0, -300),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('cupertino-navigation-minimized')),
+        findsOneWidget,
+      );
+
+      await tester.drag(
+        find.byKey(const ValueKey('today-scroll')),
+        const Offset(0, 150),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('cupertino-navigation-expanded')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('animates the Apple action with route visibility', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          home: const _BranchContractHarness(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final state = tester.state<_BranchContractHarnessState>(
+        find.byType(_BranchContractHarness),
+      );
+      state.setRouteVisible(false);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 125));
+
+      final outgoingAction = find.byType(
+        CupertinoNavigationPrimaryActionButton,
+      );
+      expect(outgoingAction, findsOneWidget);
+      final outgoingActionOpacityFinder = find.ancestor(
+        of: outgoingAction,
+        matching: find.byType(Opacity),
+      );
+      final outgoingBarOpacityFinder = find.ancestor(
+        of: find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
+        matching: find.byType(Opacity),
+      );
+      expect(outgoingActionOpacityFinder, findsOneWidget);
+      expect(outgoingBarOpacityFinder, findsOneWidget);
+      final outgoingActionOpacity = tester.widget<Opacity>(
+        outgoingActionOpacityFinder,
+      );
+      final outgoingBarOpacity = tester.widget<Opacity>(
+        outgoingBarOpacityFinder,
+      );
+      expect(outgoingActionOpacity.opacity, inExclusiveRange(0, 1));
+      expect(outgoingActionOpacity.opacity, outgoingBarOpacity.opacity);
+
+      await tester.pumpAndSettle();
+      expect(outgoingAction, findsOneWidget);
+      expect(tester.widget<Opacity>(outgoingActionOpacityFinder).opacity, 0);
+
+      state.setRouteVisible(true);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 125));
+
+      final incomingAction = find.byType(
+        CupertinoNavigationPrimaryActionButton,
+      );
+      expect(incomingAction, findsOneWidget);
+      final incomingActionOpacityFinder = find.ancestor(
+        of: incomingAction,
+        matching: find.byType(Opacity),
+      );
+      final incomingBarOpacityFinder = find.ancestor(
+        of: find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
+        matching: find.byType(Opacity),
+      );
+      expect(incomingActionOpacityFinder, findsOneWidget);
+      expect(incomingBarOpacityFinder, findsOneWidget);
+      final incomingActionOpacity = tester.widget<Opacity>(
+        incomingActionOpacityFinder,
+      );
+      final incomingBarOpacity = tester.widget<Opacity>(
+        incomingBarOpacityFinder,
+      );
+      expect(incomingActionOpacity.opacity, inExclusiveRange(0, 1));
+      expect(incomingActionOpacity.opacity, incomingBarOpacity.opacity);
+
+      await tester.pumpAndSettle();
+      expect(incomingAction, findsOneWidget);
+    });
+
+    testWidgets(
+      'medium route change starts the Apple action exit immediately',
+      (tester) async {
+        _setSurfaceSize(tester, const Size(700, 800));
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(platform: TargetPlatform.iOS),
+            home: const _BranchContractHarness(),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final state = tester.state<_BranchContractHarnessState>(
+          find.byType(_BranchContractHarness),
+        );
+        state.setRouteVisible(false);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 125));
+
+        final outgoingAction = find.byType(
+          CupertinoNavigationPrimaryActionButton,
+        );
+        expect(outgoingAction, findsOneWidget);
+        final fades = tester.widgetList<FadeTransition>(
+          find.ancestor(
+            of: outgoingAction,
+            matching: find.byType(FadeTransition),
+          ),
+        );
+        expect(
+          fades.any(
+            (transition) =>
+                transition.opacity.value > 0 && transition.opacity.value < 1,
+          ),
+          isTrue,
+        );
+
+        await tester.pumpAndSettle();
+        expect(outgoingAction, findsNothing);
+      },
+    );
+
+    testWidgets('provides adaptive window control layout to branch content', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      final context = tester.element(find.text('habits page'));
+      final layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
+      expect(layout.horizontalAvoidance, EdgeInsetsDirectional.zero);
+      expect(layout.verticalAvoidance, EdgeInsetsDirectional.zero);
+      expect(layout.horizontalSafeAreaAvoidance, isNull);
+      expect(layout.verticalSafeAreaAvoidance, isNull);
+      expect(layout.effectiveCornerRadii, isNull);
+      expect(layout.owner, WindowControlLayoutOwner.appBar);
+    });
+
+    testWidgets('assigns avoidance to app bar or rail without overlap', (
+      tester,
+    ) async {
+      _mockWindowControlLayout();
+      try {
+        _setSurfaceSize(tester, const Size(400, 800));
+        final router = _buildRouter();
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        var context = tester.element(find.text('habits page'));
+        var layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
+        expect(
+          layout.appBarHorizontalAvoidance,
+          const EdgeInsetsDirectional.only(start: 40, end: 12),
+        );
+        expect(layout.railHorizontalAvoidance, EdgeInsetsDirectional.zero);
+        expect(layout.railVerticalAvoidance, EdgeInsetsDirectional.zero);
+        expect(
+          layout.horizontalSafeAreaAvoidance,
+          const EdgeInsetsDirectional.fromSTEB(24, 0, 18, 0),
+        );
+        expect(layout.verticalSafeAreaAvoidance, EdgeInsetsDirectional.zero);
+        expect(
+          layout.effectiveCornerRadii,
+          const BorderRadius.all(Radius.circular(62)),
+        );
+
+        tester.view.physicalSize = const Size(700, 800);
+        await tester.pumpAndSettle();
+
+        context = tester.element(find.text('habits page'));
+        layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
+        expect(layout.appBarHorizontalAvoidance, EdgeInsetsDirectional.zero);
+        expect(
+          layout.railHorizontalAvoidance,
+          const EdgeInsetsDirectional.only(start: 40, end: 12),
+        );
+        expect(
+          layout.railVerticalAvoidance,
+          const EdgeInsetsDirectional.only(top: 64),
+        );
+        expect(
+          layout.horizontalSafeAreaAvoidance,
+          const EdgeInsetsDirectional.fromSTEB(24, 0, 18, 0),
+        );
+        expect(layout.verticalSafeAreaAvoidance, EdgeInsetsDirectional.zero);
+        expect(
+          layout.effectiveCornerRadii,
+          const BorderRadius.all(Radius.circular(62)),
+        );
+
+        final safeSpan = find.byKey(const ValueKey('rail-leading-safe-span'));
+        final toggle = find.byKey(const ValueKey('rail-toggle-button'));
+        expect(
+          tester.getTopLeft(toggle).dy - tester.getTopLeft(safeSpan).dy,
+          64,
+        );
+
+        await tester.tap(toggle);
+        await tester.pumpAndSettle();
+
+        final rail = find.byKey(const ValueKey('rail-panel'));
+        expect(
+          tester.getCenter(toggle).dx,
+          moreOrLessEquals(
+            tester.getTopLeft(rail).dx + tester.getSize(rail).width / 2 + 14,
+            epsilon: 0.01,
+          ),
+        );
+      } finally {
+        _resetWindowControlLayoutMock();
+      }
+    });
+
+    testWidgets('extended rail centers in the RTL safe span', (tester) async {
+      _mockWindowControlLayout();
+      try {
+        _setSurfaceSize(tester, const Size(1000, 800));
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Directionality(
+              textDirection: TextDirection.rtl,
+              child: AdaptiveNavigationShell(
+                selectedIndex: 0,
+                destinations: const [
+                  AdaptiveNavigationDestination(
+                    label: 'Habits',
+                    icons: NavigationDestinationIcons(
+                      material: Icon(Icons.home_outlined),
+                      materialSelected: Icon(Icons.home_outlined),
+                      apple: Icon(Icons.home_outlined),
+                      appleSelected: Icon(Icons.home_outlined),
+                    ),
+                  ),
+                ],
+                onDestinationSelected: (_) {},
+                child: const Text('content'),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final rail = find.byKey(const ValueKey('rail-panel'));
+        final toggle = find.byKey(const ValueKey('rail-toggle-button'));
+        expect(
+          tester.getCenter(toggle).dx,
+          moreOrLessEquals(
+            tester.getTopLeft(rail).dx + tester.getSize(rail).width / 2 - 14,
+            epsilon: 0.01,
+          ),
+        );
+      } finally {
+        _resetWindowControlLayoutMock();
+      }
+    });
+
     testWidgets('renders destinations and switches branch on tap', (
       tester,
     ) async {
@@ -306,7 +1119,7 @@ void main() {
       expect(scope.visible.value, isTrue);
     });
 
-    testWidgets('animates the bar out when visibility is set to false', (
+    testWidgets('collapses the bar height when visibility is set to false', (
       tester,
     ) async {
       _setSurfaceSize(tester, const Size(400, 800));
@@ -320,13 +1133,10 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 250));
 
-      final opacity = tester.widget<AnimatedOpacity>(
-        find.ancestor(
-          of: find.byType(NavigationBar),
-          matching: find.byType(AnimatedOpacity),
-        ),
+      expect(
+        tester.getSize(find.byKey(const ValueKey('bottom-bar'))).height,
+        0,
       );
-      expect(opacity.opacity, 0);
     });
 
     testWidgets(
@@ -480,6 +1290,465 @@ void main() {
       expect(bar.labelBehavior, NavigationDestinationLabelBehavior.alwaysShow);
     });
 
+    testWidgets(
+      'apple compact minimizes in a fixed envelope and tap only expands',
+      (tester) async {
+        tester.view.padding = const FakeViewPadding(bottom: 34);
+        tester.view.viewPadding = const FakeViewPadding(bottom: 34);
+        _setSurfaceSize(tester, const Size(400, 800));
+        final branchChanges = <int>[];
+        final router = _buildRouter(onBranchChanged: branchChanges.add);
+        await tester.pumpWidget(
+          MaterialApp.router(
+            theme: ThemeData(platform: TargetPlatform.iOS),
+            routerConfig: router,
+          ),
+        );
+
+        final scope = AdaptiveNavScope.of(
+          tester.element(find.text('habits page')),
+        );
+        expect(scope.barHeight, 50);
+        expect(scope.navHeight, 78);
+        expect(
+          tester.getSize(find.byKey(const ValueKey('bottom-bar'))).height,
+          78,
+        );
+        expect(
+          find.byKey(const ValueKey('cupertino-navigation-expanded')),
+          findsOneWidget,
+        );
+
+        scope.reportScrollWish(false);
+        await tester.pumpAndSettle();
+
+        expect(scope.visible.value, isTrue);
+        expect(
+          tester.getSize(find.byKey(const ValueKey('bottom-bar'))).height,
+          78,
+        );
+        expect(
+          find.byKey(const ValueKey('cupertino-navigation-minimized')),
+          findsOneWidget,
+        );
+
+        await tester.tap(
+          find.byKey(const ValueKey('cupertino-navigation-surface')),
+        );
+        await tester.pumpAndSettle();
+
+        expect(scope.scrollWish.value, isTrue);
+        expect(
+          find.byKey(const ValueKey('cupertino-navigation-expanded')),
+          findsOneWidget,
+        );
+        expect(branchChanges, isEmpty);
+      },
+    );
+
+    testWidgets('apple branch switch resets minimized chrome to expanded', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      final branchChanges = <int>[];
+      final router = _buildRouter(onBranchChanged: branchChanges.add);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          routerConfig: router,
+        ),
+      );
+
+      var scope = AdaptiveNavScope.of(tester.element(find.text('habits page')));
+      scope.reportScrollWish(false);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('cupertino-navigation-minimized')),
+        findsOneWidget,
+      );
+
+      router.go('/today');
+      await tester.pumpAndSettle();
+
+      scope = AdaptiveNavScope.of(tester.element(find.text('today page')));
+      expect(scope.scrollWish.value, isTrue);
+      expect(
+        find.byKey(const ValueKey('cupertino-navigation-expanded')),
+        findsOneWidget,
+      );
+      expect(branchChanges, [1]);
+    });
+
+    testWidgets('apple route hidden takes priority and pop restores expanded', (
+      tester,
+    ) async {
+      final observers = [
+        AdaptiveBranchRouteObserver(),
+        AdaptiveBranchRouteObserver(),
+      ];
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter(observers: observers);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          routerConfig: router,
+        ),
+      );
+
+      var scope = AdaptiveNavScope.of(tester.element(find.text('habits page')));
+      scope.reportScrollWish(false);
+      await tester.pumpAndSettle();
+
+      router.push('/habits/detail');
+      await tester.pumpAndSettle();
+
+      scope = AdaptiveNavScope.of(tester.element(find.text('detail page')));
+      expect(scope.visible.value, isFalse);
+      expect(
+        tester.getSize(find.byKey(const ValueKey('bottom-bar'))).height,
+        0,
+      );
+
+      router.pop();
+      await tester.pumpAndSettle();
+
+      scope = AdaptiveNavScope.of(tester.element(find.text('habits page')));
+      expect(scope.visible.value, isTrue);
+      expect(scope.scrollWish.value, isTrue);
+      expect(
+        find.byKey(const ValueKey('cupertino-navigation-expanded')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets(
+      'apple contextual hidden restores the current minimized state',
+      (tester) async {
+        _setSurfaceSize(tester, const Size(400, 800));
+        final router = _buildRouter();
+        await tester.pumpWidget(
+          MaterialApp.router(
+            theme: ThemeData(platform: TargetPlatform.iOS),
+            routerConfig: router,
+          ),
+        );
+
+        final scope = AdaptiveNavScope.of(
+          tester.element(find.text('habits page')),
+        );
+        scope.reportScrollWish(false);
+        await tester.pumpAndSettle();
+        router.setContextualChromeSuppressed(true);
+        await tester.pumpAndSettle();
+
+        expect(scope.visible.value, isFalse);
+        expect(
+          tester.getSize(find.byKey(const ValueKey('bottom-bar'))).height,
+          0,
+        );
+
+        router.setContextualChromeSuppressed(false);
+        await tester.pumpAndSettle();
+
+        expect(scope.visible.value, isTrue);
+        expect(scope.scrollWish.value, isFalse);
+        expect(
+          find.byKey(const ValueKey('cupertino-navigation-minimized')),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets('unrelated MediaQuery changes do not rebuild shell chrome', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      final navigationBar = tester.widget<NavigationBar>(
+        find.byType(NavigationBar),
+      );
+
+      tester.platformDispatcher.textScaleFactorTestValue = 1.25;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await tester.pump();
+
+      expect(
+        MediaQuery.textScalerOf(
+          tester.element(find.text('habits page')),
+        ).scale(100),
+        125,
+      );
+      expect(
+        tester.widget<NavigationBar>(find.byType(NavigationBar)),
+        same(navigationBar),
+      );
+    });
+
+    testWidgets('compact snackbar is shown once above the navigation bar', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      await tester.tap(find.byKey(const ValueKey('show-snackbar')));
+      await tester.pumpAndSettle();
+
+      final snackBar = find.byType(SnackBar);
+      final navigationBar = find.byType(NavigationBar);
+      expect(snackBar, findsOneWidget);
+      expect(navigationBar, findsOneWidget);
+      expect(
+        tester.getBottomLeft(snackBar).dy,
+        lessThanOrEqualTo(tester.getTopLeft(navigationBar).dy),
+      );
+    });
+
+    testWidgets('floating snackbar follows the collapsing navigation bar', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      await tester.tap(find.byKey(const ValueKey('show-snackbar')));
+      await tester.pumpAndSettle();
+
+      final snackBar = find.byType(SnackBar);
+      final visibleBottom = tester.getBottomLeft(snackBar).dy;
+      final scope = AdaptiveNavScope.of(
+        tester.element(find.text('habits page')),
+      );
+
+      scope.reportScrollWish(false);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 250));
+
+      expect(tester.getBottomLeft(snackBar).dy, greaterThan(visibleBottom));
+      expect(
+        tester.getSize(find.byKey(const ValueKey('bottom-bar'))).height,
+        0,
+      );
+    });
+
+    testWidgets('extendBody keeps the branch bottom padding unchanged', (
+      tester,
+    ) async {
+      tester.view.padding = const FakeViewPadding(bottom: 24);
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(
+        tester.getSize(find.byKey(const ValueKey('branch-bottom-padding'))),
+        const Size(0, 24),
+      );
+      final scope = AdaptiveNavScope.of(
+        tester.element(find.text('habits page')),
+      );
+      expect(scope.barHeight, 80);
+      expect(scope.navHeight, 104);
+    });
+
+    for (final textDirection in TextDirection.values) {
+      testWidgets('rail owns the branch start inset in $textDirection', (
+        tester,
+      ) async {
+        tester.view.padding = const FakeViewPadding(left: 44, right: 20);
+        tester.view.viewPadding = const FakeViewPadding(left: 50, right: 30);
+        _setSurfaceSize(tester, const Size(800, 400));
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Directionality(
+              textDirection: textDirection,
+              child: AdaptiveNavigationShell(
+                selectedIndex: 0,
+                destinations: const [
+                  AdaptiveNavigationDestination(
+                    label: 'Habits',
+                    icons: NavigationDestinationIcons(
+                      material: Icon(Icons.home_outlined),
+                      materialSelected: Icon(Icons.home),
+                      apple: Icon(Icons.home_outlined),
+                      appleSelected: Icon(Icons.home),
+                    ),
+                  ),
+                ],
+                onDestinationSelected: (_) {},
+                child: const _BranchInsetsProbe(),
+              ),
+            ),
+          ),
+        );
+
+        final expectedBranchInset = switch (textDirection) {
+          TextDirection.ltr => 20.0,
+          TextDirection.rtl => 44.0,
+        };
+        final expectedBranchViewInset = switch (textDirection) {
+          TextDirection.ltr => 36.0,
+          TextDirection.rtl => 60.0,
+        };
+        expect(
+          tester
+              .getSize(find.byKey(const ValueKey('branch-horizontal-padding')))
+              .width,
+          expectedBranchInset,
+        );
+        expect(
+          tester
+              .getSize(
+                find.byKey(const ValueKey('branch-horizontal-view-padding')),
+              )
+              .width,
+          expectedBranchViewInset,
+        );
+
+        final railContext = tester.element(find.byType(NavigationRail));
+        expect(
+          MediaQuery.paddingOf(railContext),
+          const EdgeInsets.only(left: 44, right: 20),
+        );
+        expect(
+          MediaQuery.viewPaddingOf(railContext),
+          const EdgeInsets.only(left: 50, right: 30),
+        );
+      });
+    }
+
+    for (final bottomInset in [24.0, 34.0]) {
+      testWidgets(
+        'compact FAB clears bar and system inset at ${bottomInset}dp',
+        (tester) async {
+          tester.view.padding = FakeViewPadding(bottom: bottomInset);
+          tester.view.viewPadding = FakeViewPadding(bottom: bottomInset);
+          _setSurfaceSize(tester, const Size(400, 800));
+
+          await tester.pumpWidget(
+            MaterialApp(
+              home: AdaptiveNavigationShell(
+                selectedIndex: 0,
+                destinations: const [
+                  AdaptiveNavigationDestination(
+                    label: 'Habits',
+                    icons: NavigationDestinationIcons(
+                      material: Icon(Icons.home_outlined),
+                      materialSelected: Icon(Icons.home_outlined),
+                      apple: Icon(Icons.home_outlined),
+                      appleSelected: Icon(Icons.home_outlined),
+                    ),
+                  ),
+                  AdaptiveNavigationDestination(
+                    label: 'Today',
+                    icons: NavigationDestinationIcons(
+                      material: Icon(Icons.calendar_today_outlined),
+                      materialSelected: Icon(Icons.calendar_today_outlined),
+                      apple: Icon(Icons.calendar_today_outlined),
+                      appleSelected: Icon(Icons.calendar_today_outlined),
+                    ),
+                  ),
+                ],
+                onDestinationSelected: (_) {},
+                child: const _FabStubPage(),
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          final fab = find.byKey(const ValueKey('test-fab'));
+          final barTop = tester.getTopLeft(find.byType(NavigationBar)).dy;
+          expect(
+            tester.getBottomRight(fab).dy,
+            barTop - kFloatingActionButtonMargin,
+          );
+
+          final scope = AdaptiveNavScope.of(tester.element(fab));
+          scope.reportScrollWish(false);
+          await tester.pumpAndSettle();
+
+          expect(
+            tester.getBottomRight(fab).dy,
+            800 - bottomInset - kFloatingActionButtonMargin,
+          );
+        },
+      );
+    }
+
+    testWidgets('contextual suppression follows the declarative shell input', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      var scope = AdaptiveNavScope.of(tester.element(find.text('habits page')));
+      router.setContextualChromeSuppressed(true);
+      await tester.pumpAndSettle();
+      expect(scope.visible.value, isFalse);
+      expect(scope.scrollWish.value, isTrue);
+
+      router.push('/habits/detail');
+      await tester.pumpAndSettle();
+      router.pop();
+      await tester.pumpAndSettle();
+      scope = AdaptiveNavScope.of(tester.element(find.text('habits page')));
+      expect(scope.visible.value, isFalse);
+
+      scope.reportScrollWish(false);
+      router.setContextualChromeSuppressed(false);
+      await tester.pumpAndSettle();
+      expect(scope.visible.value, isFalse);
+
+      scope.reportScrollWish(true);
+      router.setContextualChromeSuppressed(true);
+      router.setContextualChromeSuppressed(false);
+      router.go('/today');
+      await tester.pumpAndSettle();
+
+      scope = AdaptiveNavScope.of(tester.element(find.text('today page')));
+      expect(scope.visible.value, isTrue);
+      expect(scope.scrollWish.value, isTrue);
+    });
+
+    testWidgets('contextual suppression survives medium to compact resize', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(700, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      router.setContextualChromeSuppressed(true);
+      await tester.pump();
+      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(find.byType(NavigationBar), findsNothing);
+
+      tester.view.physicalSize = const Size(400, 800);
+      await tester.pump();
+
+      final compactScope = AdaptiveNavScope.of(
+        tester.element(find.text('habits page')),
+      );
+      expect(compactScope.visible.value, isFalse);
+      await tester.pumpAndSettle();
+      expect(
+        tester.getSize(find.byKey(const ValueKey('bottom-bar'))).height,
+        0,
+      );
+
+      router.setContextualChromeSuppressed(false);
+      await tester.pumpAndSettle();
+      expect(find.byType(NavigationBar), findsOneWidget);
+      expect(
+        tester.getSize(find.byKey(const ValueKey('bottom-bar'))).height,
+        greaterThan(0),
+      );
+    });
+
     testWidgets('medium form shows an always-visible collapsible rail', (
       tester,
     ) async {
@@ -572,6 +1841,130 @@ void main() {
       expect(scope.visible.value, isTrue);
     });
 
+    testWidgets(
+      'expanded compact-height defaults collapsed and remains expandable',
+      (tester) async {
+        _setSurfaceSize(tester, const Size(1000, 479));
+        final router = _buildRouter();
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+        NavigationRail rail() =>
+            tester.widget<NavigationRail>(find.byType(NavigationRail));
+        expect(rail().extended, isFalse);
+
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle();
+        expect(rail().extended, isTrue);
+      },
+    );
+
+    testWidgets('large compact-height defaults to a collapsed rail', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1400, 479));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isFalse,
+      );
+    });
+
+    testWidgets('expanded medium-height boundary defaults extended', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1000, 480));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isTrue,
+      );
+    });
+
+    testWidgets('apple large compact-height defaults to a collapsed rail', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      _setSurfaceSize(tester, const Size(1000, 479));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isFalse,
+      );
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('compact and medium widths remain authoritative over height', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 1000));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(find.byType(NavigationBar), findsOneWidget);
+
+      tester.view.physicalSize = const Size(700, 1000);
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isFalse,
+      );
+
+      tester.view.physicalSize = const Size(700, 400);
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isFalse,
+      );
+    });
+
+    testWidgets('unclassified height preserves width-only shell behavior', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1000, 300));
+      final router = _buildRouter();
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: router,
+          builder: (context, child) => BreakpointsScope(
+            breakpoints: const CustomBreakpoints(width: [600, 840]),
+            child: child!,
+          ),
+        ),
+      );
+
+      expect(
+        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+        isTrue,
+      );
+    });
+
+    testWidgets('height boundary switches the rail default form at runtime', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1000, 479));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      NavigationRail rail() =>
+          tester.widget<NavigationRail>(find.byType(NavigationRail));
+      expect(rail().extended, isFalse);
+
+      tester.view.physicalSize = const Size(1000, 480);
+      await tester.pumpAndSettle();
+      expect(rail().extended, isTrue);
+
+      tester.view.physicalSize = const Size(1000, 479);
+      await tester.pumpAndSettle();
+      expect(rail().extended, isFalse);
+    });
+
     testWidgets('macOS classifies with apple tiers', (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
       _setSurfaceSize(tester, const Size(700, 600));
@@ -621,10 +2014,51 @@ void main() {
 
       expect(find.byType(NavigationDrawer), findsNothing);
       expect(find.byType(NavigationRail), findsOneWidget);
-      // Auto width tops out at 180 + 0.7 * (360 - 180) = 306.
+      // Auto width uses the compact fixed target inside the interval.
       final panel = tester.widget<NavigationRail>(find.byType(NavigationRail));
-      expect(panel.minExtendedWidth, closeTo(306, 0.01));
+      expect(panel.minExtendedWidth, closeTo(224, 0.01));
       expect(find.byIcon(Icons.menu_open), findsOneWidget);
+    });
+
+    testWidgets('accepts a ratio-based automatic rail extent', (tester) async {
+      _setSurfaceSize(tester, const Size(1800, 800));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AdaptiveNavigationShell(
+            selectedIndex: 0,
+            destinations: const [
+              AdaptiveNavigationDestination(
+                label: 'Home',
+                icons: NavigationDestinationIcons(
+                  material: Icon(Icons.home),
+                  materialSelected: Icon(Icons.home),
+                  apple: Icon(Icons.home),
+                  appleSelected: Icon(Icons.home),
+                ),
+              ),
+              AdaptiveNavigationDestination(
+                label: 'Settings',
+                icons: NavigationDestinationIcons(
+                  material: Icon(Icons.settings),
+                  materialSelected: Icon(Icons.settings),
+                  apple: Icon(Icons.settings),
+                  appleSelected: Icon(Icons.settings),
+                ),
+              ),
+            ],
+            onDestinationSelected: (_) {},
+            railExtent: const NavigationRailExtent.fromRatio(
+              0.5,
+              collapsed: 64,
+            ),
+            child: const SizedBox(),
+          ),
+        ),
+      );
+
+      final panel = tester.widget<NavigationRail>(find.byType(NavigationRail));
+      expect(panel.minWidth, 64);
+      expect(panel.minExtendedWidth, closeTo(270, 0.01));
     });
 
     testWidgets('rail auto width follows the window within the interval', (
@@ -636,16 +2070,14 @@ void main() {
 
       NavigationRail panel() =>
           tester.widget<NavigationRail>(find.byType(NavigationRail));
-      // Upper bound: 180 + 180 * (1200-600)/1000 = 288;
-      // auto: 180 + 0.7 * 108 = 255.6.
-      expect(panel().minExtendedWidth, closeTo(255.6, 0.01));
+      // The fixed 224dp target fits the current 180-288dp interval.
+      expect(panel().minExtendedWidth, closeTo(224, 0.01));
 
-      tester.view.physicalSize = const Size(900, 800);
+      tester.view.physicalSize = const Size(840, 800);
       await tester.pumpAndSettle();
 
-      // Upper bound: 180 + 180 * (900-600)/1000 = 234;
-      // auto: 180 + 0.7 * 54 = 217.8.
-      expect(panel().minExtendedWidth, closeTo(217.8, 0.01));
+      // The interval's 223.2dp upper bound clamps the fixed target.
+      expect(panel().minExtendedWidth, closeTo(223.2, 0.01));
     });
 
     testWidgets('drag resizes the rail and clamps to the interval', (
@@ -657,7 +2089,7 @@ void main() {
 
       NavigationRail panel() =>
           tester.widget<NavigationRail>(find.byType(NavigationRail));
-      expect(panel().minExtendedWidth, closeTo(306, 0.01));
+      expect(panel().minExtendedWidth, closeTo(224, 0.01));
 
       // Drag far left: many small moves accumulate and clamp to the minimum.
       var gesture = await tester.startGesture(
@@ -719,39 +2151,40 @@ void main() {
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      // Drag slightly narrower than the auto width (306) -> 276.
+      // Drag slightly narrower than the auto width (224) -> 219.
       final gesture = await tester.startGesture(
         tester.getCenter(find.byKey(const ValueKey('rail-resize-handle'))),
       );
-      for (var i = 0; i < 3; i++) {
-        await gesture.moveBy(const Offset(-10, 0));
-        await tester.pump();
-      }
+      await gesture.moveBy(const Offset(-5, 0));
+      await tester.pump();
       await gesture.up();
       await tester.pumpAndSettle();
       NavigationRail panel() =>
           tester.widget<NavigationRail>(find.byType(NavigationRail));
-      expect(panel().minExtendedWidth, closeTo(276, 0.01));
+      expect(panel().minExtendedWidth, closeTo(219, 0.01));
 
-      // 1400: auto 280.8 > manual -> manual holds.
+      // The fixed auto target remains above the manual width, so it holds.
       tester.view.physicalSize = const Size(1400, 800);
       await tester.pumpAndSettle();
-      expect(panel().minExtendedWidth, closeTo(276, 0.01));
+      expect(panel().minExtendedWidth, closeTo(219, 0.01));
 
-      // 1300: auto 268.2 < manual -> follows the auto value down.
-      tester.view.physicalSize = const Size(1300, 800);
+      // Medium resets to collapsed; expanding it applies the interval-clamped
+      // auto width because it has fallen below the remembered manual width.
+      tester.view.physicalSize = const Size(700, 800);
       await tester.pumpAndSettle();
-      expect(panel().minExtendedWidth, closeTo(268.2, 0.01));
+      await tester.tap(find.byIcon(Icons.menu));
+      await tester.pumpAndSettle();
+      expect(panel().minExtendedWidth, closeTo(198, 0.01));
 
-      // 1150: auto 249.3 -> keeps following the auto value.
-      tester.view.physicalSize = const Size(1150, 800);
+      // The auto value keeps following the interval down.
+      tester.view.physicalSize = const Size(650, 800);
       await tester.pumpAndSettle();
-      expect(panel().minExtendedWidth, closeTo(249.3, 0.01));
+      expect(panel().minExtendedWidth, closeTo(189, 0.01));
 
       // Grow back: the remembered manual value resumes.
       tester.view.physicalSize = const Size(1800, 800);
       await tester.pumpAndSettle();
-      expect(panel().minExtendedWidth, closeTo(276, 0.01));
+      expect(panel().minExtendedWidth, closeTo(219, 0.01));
     });
 
     testWidgets('drag while the panel animation is running does not crash', (
@@ -795,34 +2228,35 @@ void main() {
       expect(find.byKey(const ValueKey('rail-resize-handle')), findsOneWidget);
     });
 
-    testWidgets('apple platforms keep three tiers without a drawer', (
-      tester,
-    ) async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-      _setSurfaceSize(tester, const Size(700, 600));
-      final router = _buildRouter();
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    testWidgets(
+      'apple medium+ uses the documented rail compatibility fallback',
+      (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        _setSurfaceSize(tester, const Size(700, 600));
+        final router = _buildRouter();
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      // Apple medium maps to the collapsible rail, collapsed by default.
-      expect(find.byType(NavigationRail), findsOneWidget);
-      expect(
-        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
-        isFalse,
-      );
+        // Apple medium maps to the collapsible rail, collapsed by default.
+        expect(find.byType(NavigationRail), findsOneWidget);
+        expect(
+          tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+          isFalse,
+        );
 
-      tester.view.physicalSize = const Size(1300, 800);
-      await tester.pumpAndSettle();
+        tester.view.physicalSize = const Size(1300, 800);
+        await tester.pumpAndSettle();
 
-      // Apple large maps to the collapsible rail, extended by default; no
-      // drawer tier exists on Apple platforms.
-      expect(
-        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
-        isTrue,
-      );
-      expect(find.byType(NavigationDrawer), findsNothing);
-      expect(find.byIcon(Icons.menu_open), findsOneWidget);
-      debugDefaultTargetPlatformOverride = null;
-    });
+        // Apple large maps to the collapsible rail, extended by default; no
+        // drawer tier exists on Apple platforms.
+        expect(
+          tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+          isTrue,
+        );
+        expect(find.byType(NavigationDrawer), findsNothing);
+        expect(find.byIcon(Icons.menu_open), findsOneWidget);
+        debugDefaultTargetPlatformOverride = null;
+      },
+    );
 
     testWidgets('switches forms when crossing the compact/medium boundary', (
       tester,
@@ -892,7 +2326,7 @@ void main() {
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      // Drag slightly narrower than the auto width (306) -> 276.
+      // Drag slightly narrower than the auto width (224) -> 194.
       final gesture = await tester.startGesture(
         tester.getCenter(find.byKey(const ValueKey('rail-resize-handle'))),
       );
@@ -913,7 +2347,7 @@ void main() {
       tester.view.physicalSize = const Size(1800, 800);
       await tester.pumpAndSettle();
       final rail = tester.widget<NavigationRail>(find.byType(NavigationRail));
-      expect(rail.minExtendedWidth, closeTo(276, 0.01));
+      expect(rail.minExtendedWidth, closeTo(194, 0.01));
     });
   });
 
@@ -951,4 +2385,25 @@ void main() {
       expect(observer.topRouteName, 'replaced');
     });
   });
+}
+
+class _StatefulBranchProbe extends StatefulWidget {
+  const _StatefulBranchProbe();
+
+  @override
+  State<_StatefulBranchProbe> createState() => _StatefulBranchProbeState();
+}
+
+class _StatefulBranchProbeState extends State<_StatefulBranchProbe> {
+  int _count = 0;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    body: Center(
+      child: ElevatedButton(
+        onPressed: () => setState(() => _count += 1),
+        child: Text('branch count $_count'),
+      ),
+    ),
+  );
 }

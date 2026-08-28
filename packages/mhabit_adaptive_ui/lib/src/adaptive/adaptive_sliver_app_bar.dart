@@ -1,17 +1,16 @@
-import 'package:flutter/cupertino.dart'
-    show CupertinoButton, CupertinoIcons, CupertinoSliverNavigationBar;
 import 'package:flutter/material.dart';
 
 import '../adaptive_style.dart';
-import '../breakpoints/window_size_class.dart';
+import '../cupertino/cupertino_sliver_app_bar.dart';
+import '../window_control/material_app_bar.dart';
+import '../window_control/toolbar_geometry.dart';
 
 const List<Widget> _kDefaultActions = <Widget>[];
 
 /// Style config for the Material branch of [AdaptiveSliverAppBar].
 ///
-/// Every field maps 1:1 to a [SliverAppBar] parameter; constructor defaults
-/// reproduce the pre-config baseline, so partial overrides only need to
-/// specify the deltas.
+/// App-bar fields map to [SliverAppBar]. [windowControlEdgePadding] is the
+/// Material visual baseline added only on sides with window-control avoidance.
 class AppBarMaterialStyle {
   const AppBarMaterialStyle({
     this.centerTitle = true,
@@ -22,6 +21,7 @@ class AppBarMaterialStyle {
     this.scrolledUnderElevation,
     this.shadowColor = Colors.transparent,
     this.bottom,
+    this.windowControlEdgePadding = materialWindowControlEdgePadding,
   });
 
   final bool centerTitle;
@@ -33,6 +33,9 @@ class AppBarMaterialStyle {
   final Color? shadowColor;
   final PreferredSizeWidget? bottom;
 
+  /// {@macro mhabit.windowControlEdgePadding}
+  final EdgeInsetsDirectional windowControlEdgePadding;
+
   AppBarMaterialStyle copyWith({
     bool? centerTitle,
     bool? floating,
@@ -42,6 +45,7 @@ class AppBarMaterialStyle {
     double? scrolledUnderElevation,
     Color? shadowColor,
     PreferredSizeWidget? bottom,
+    EdgeInsetsDirectional? windowControlEdgePadding,
   }) => AppBarMaterialStyle(
     centerTitle: centerTitle ?? this.centerTitle,
     floating: floating ?? this.floating,
@@ -52,6 +56,8 @@ class AppBarMaterialStyle {
         scrolledUnderElevation ?? this.scrolledUnderElevation,
     shadowColor: shadowColor ?? this.shadowColor,
     bottom: bottom ?? this.bottom,
+    windowControlEdgePadding:
+        windowControlEdgePadding ?? this.windowControlEdgePadding,
   );
 
   @override
@@ -64,7 +70,8 @@ class AppBarMaterialStyle {
       other.forceElevated == forceElevated &&
       other.scrolledUnderElevation == scrolledUnderElevation &&
       other.shadowColor == shadowColor &&
-      other.bottom == bottom;
+      other.bottom == bottom &&
+      other.windowControlEdgePadding == windowControlEdgePadding;
 
   @override
   int get hashCode => Object.hash(
@@ -76,59 +83,76 @@ class AppBarMaterialStyle {
     scrolledUnderElevation,
     shadowColor,
     bottom,
+    windowControlEdgePadding,
   );
 }
 
 /// Style config for the apple branch of [AdaptiveSliverAppBar].
 ///
-/// Every field maps to a [CupertinoSliverNavigationBar] parameter; null
-/// fields fall back to the Cupertino defaults.
+/// App-bar fields map to [CupertinoSliverNavigationBar].
+/// [windowControlEdgePadding] is the Cupertino visual baseline retained before
+/// adding window-control avoidance.
 class AppBarAppleStyle {
   const AppBarAppleStyle({
+    this.collapsible = false,
     this.enableBackgroundFilterBlur = true,
     this.border,
     this.backgroundColor,
     this.padding,
     this.stretch = false,
+    this.windowControlEdgePadding = cupertinoWindowControlEdgePadding,
   });
 
+  final bool collapsible;
   final bool enableBackgroundFilterBlur;
   final Border? border;
   final Color? backgroundColor;
   final EdgeInsetsDirectional? padding;
   final bool stretch;
 
+  /// {@macro mhabit.windowControlEdgePadding}
+  final EdgeInsetsDirectional windowControlEdgePadding;
+
   AppBarAppleStyle copyWith({
+    bool? collapsible,
     bool? enableBackgroundFilterBlur,
     Border? border,
     Color? backgroundColor,
     EdgeInsetsDirectional? padding,
     bool? stretch,
+    EdgeInsetsDirectional? windowControlEdgePadding,
   }) => AppBarAppleStyle(
+    collapsible: collapsible ?? this.collapsible,
     enableBackgroundFilterBlur:
         enableBackgroundFilterBlur ?? this.enableBackgroundFilterBlur,
     border: border ?? this.border,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     padding: padding ?? this.padding,
     stretch: stretch ?? this.stretch,
+    windowControlEdgePadding:
+        windowControlEdgePadding ?? this.windowControlEdgePadding,
   );
 
   @override
   bool operator ==(Object other) =>
       other is AppBarAppleStyle &&
+      other.collapsible == collapsible &&
       other.enableBackgroundFilterBlur == enableBackgroundFilterBlur &&
       other.border == border &&
       other.backgroundColor == backgroundColor &&
       other.padding == padding &&
-      other.stretch == stretch;
+      other.stretch == stretch &&
+      other.windowControlEdgePadding == windowControlEdgePadding;
 
   @override
   int get hashCode => Object.hash(
+    collapsible,
     enableBackgroundFilterBlur,
     border,
     backgroundColor,
     padding,
     stretch,
+    windowControlEdgePadding,
   );
 }
 
@@ -171,10 +195,10 @@ class AppBarStyles {
 /// (`CupertinoSliverNavigationBar`).
 ///
 /// Shared parameters live at the top level; style-divergent knobs live in
-/// [AppBarStyles]. [height] is style-dependent: Material resolves it as
-/// [SliverAppBar.toolbarHeight] (default `kToolbarHeight`), apple ignores it
-/// (fixed HIG bar height; the title renders as a collapsing large title in
-/// portrait).
+/// [AppBarStyles]. Material resolves [height] as [SliverAppBar.toolbarHeight].
+/// Apple uses a fixed, centered toolbar when [height] is provided unless
+/// [AppBarAppleStyle.collapsible] requests the native collapsing navigation
+/// bar behavior.
 class AdaptiveSliverAppBar extends StatelessWidget {
   const AdaptiveSliverAppBar({
     super.key,
@@ -216,13 +240,12 @@ class AdaptiveSliverAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effective = style ?? context.adaptiveStyle;
+    final effective = style ?? AdaptiveStyle.of(context);
     return switch (effective) {
       AdaptiveStyle.material => _buildMaterial(
         styles?.material ?? const AppBarMaterialStyle(),
       ),
       AdaptiveStyle.apple => _buildApple(
-        context,
         styles?.apple ?? const AppBarAppleStyle(),
       ),
     };
@@ -230,7 +253,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
 
   Widget _buildMaterial(AppBarMaterialStyle config) {
     // Equivalent of the app's current `SliverTopAppBar` baseline.
-    return SliverAppBar(
+    return WindowControlSliverAppBar(
       floating: config.floating,
       snap: config.snap,
       pinned: config.pinned,
@@ -250,42 +273,21 @@ class AdaptiveSliverAppBar extends StatelessWidget {
                   icon: const Icon(Icons.arrow_back),
                 )),
       actions: actions.isEmpty ? null : actions,
+      windowControlEdgePadding: config.windowControlEdgePadding,
     );
   }
 
-  Widget _buildApple(BuildContext context, AppBarAppleStyle config) {
-    // The title presentation follows the same breakpoint chain as the shell
-    // (`WindowSize.of`), so window drags transition the title and the
-    // layout at the same widths: compact (and portrait) keep the collapsing
-    // large title, wider windows use a consistent centered middle. Portrait
-    // always needs the large-title slot (SDK assert). Note: in portrait the
-    // SDK decides the expanded large title by aspect ratio, not by the width
-    // class, so a medium-class portrait window still shows the large title
-    // (accepted limitation; only landscape is width-aligned).
-    final isPortrait =
-        MediaQuery.orientationOf(context) == Orientation.portrait;
-    final useLargeTitle =
-        isPortrait || WindowSize.of(context).width == WindowSizeClass.compact;
-    return CupertinoSliverNavigationBar(
-      middle: useLargeTitle ? null : title,
-      largeTitle: useLargeTitle ? title : null,
-      leading:
-          leading ??
-          (onLeadingPressed == null
-              ? null
-              : CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: onLeadingPressed,
-                  child: const Icon(CupertinoIcons.back),
-                )),
-      trailing: actions.isEmpty
-          ? null
-          : Row(mainAxisSize: MainAxisSize.min, children: actions),
-      enableBackgroundFilterBlur: config.enableBackgroundFilterBlur,
-      border: config.border,
-      backgroundColor: config.backgroundColor,
-      padding: config.padding,
-      stretch: config.stretch,
-    );
-  }
+  Widget _buildApple(AppBarAppleStyle config) => CupertinoSliverAppBar(
+    title: title,
+    actions: actions,
+    leading: leading,
+    onLeadingPressed: onLeadingPressed,
+    height: config.collapsible ? null : height,
+    enableBackgroundFilterBlur: config.enableBackgroundFilterBlur,
+    border: config.border,
+    backgroundColor: config.backgroundColor,
+    padding: config.padding,
+    stretch: config.stretch,
+    windowControlEdgePadding: config.windowControlEdgePadding,
+  );
 }

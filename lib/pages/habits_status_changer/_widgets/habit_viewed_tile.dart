@@ -19,6 +19,7 @@ import '../../../logging/helper.dart';
 import '../../../models/habit_date.dart';
 import '../../../models/habit_summary.dart';
 import '../../../theme/color.dart';
+import '../../../widgets/widgets.dart' show HabitListTileGeometry;
 import '../../common/widgets.dart';
 
 class HabitSpecialDateViewedTile extends StatelessWidget {
@@ -38,7 +39,10 @@ class HabitSpecialDateViewedTile extends StatelessWidget {
       data: data,
       startDate: date,
       endDate: date,
-      collapsePrt: 30,
+      geometry: const HabitListTileGeometry(
+        columnExtent: 60,
+        viewportFraction: 0.3,
+      ),
       isExtended: false,
       cellBuilder: (context, cell, date) {
         if (date != this.date || date.isBefore(data.startDate)) return cell;

@@ -50,7 +50,7 @@ extension on AppEventSubscriptions {
 /// Owns group-list loading, selection state, skip-confirm persistence, and
 /// the confirm-orchestration logic (one-step vs two-step flow).  Created
 /// when the dialog opens and disposed when it closes — not added to
-/// [PageProviders].
+/// `HabitsPageProviders`.
 ///
 /// Subscribes to [AppEventBus] so the group list refreshes automatically
 /// when groups are created / updated / deleted elsewhere while the dialog

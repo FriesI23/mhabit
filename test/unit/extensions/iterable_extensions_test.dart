@@ -14,7 +14,10 @@
 
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:ui' show Locale;
+
 import 'package:mhabit/extensions/iterable_extensions.dart';
+import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_display.dart';
@@ -53,6 +56,42 @@ HabitSummaryDataCollection _buildCollection(Iterable<HabitSummaryData> habits) {
   }
   return collection;
 }
+
+void testLocalizedStringIterableExtension() =>
+    group('test LocalizedStringIterableExtension', () {
+      test('uses the localized separator and optional override', () {
+        final l10n = lookupL10n(const Locale('en'));
+        expect(<String>[].joinLocalized(l10n), isNull);
+        expect(['Ongoing'].joinLocalized(l10n), 'Ongoing');
+        expect(
+          ['Ongoing', 'Completed'].joinLocalized(l10n),
+          'Ongoing, Completed',
+        );
+        expect(
+          ['Ongoing', 'Completed'].joinLocalized(l10n, separator: ' / '),
+          'Ongoing / Completed',
+        );
+        expect(
+          ['Ongoing', 'Completed'].joinLocalized(null),
+          'Ongoing, Completed',
+        );
+      });
+
+      test('uses configured English and Chinese list separators', () {
+        expect(lookupL10n(const Locale('en')).common_listSeparator, ', ');
+        expect(lookupL10n(const Locale('zh')).common_listSeparator, '，');
+        expect(
+          lookupL10n(
+            const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
+          ).common_listSeparator,
+          '，',
+        );
+        expect(
+          ['进行中', '已完成'].joinLocalized(lookupL10n(const Locale('zh'))),
+          '进行中，已完成',
+        );
+      });
+    });
 
 void testSortPostionRankExtension() =>
     group("test SortPostionRankExtension", () {
@@ -245,6 +284,7 @@ void testHabitSummaryDataIterableExtension() => group(
 );
 
 void main() {
+  testLocalizedStringIterableExtension();
   testSortPostionRankExtension();
   testHabitSummaryDataIterableExtension();
 }

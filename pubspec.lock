@@ -9,6 +9,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "99.0.0"
+  adaptive_actions:
+    dependency: transitive
+    description:
+      name: adaptive_actions
+      sha256: "43f45c4a90bc57c9947bd1dbdb26cf6bd468c5ea04e04d0cbc049569c24979ba"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
   analyzer:
     dependency: "direct dev"
     description:
@@ -878,6 +886,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  ios_window_control_layout:
+    dependency: transitive
+    description:
+      name: ios_window_control_layout
+      sha256: "5cbec9b909458871216560d2a7c975b39856e2a09717793c7a3508d7b3120ab4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
   jni:
     dependency: transitive
     description:

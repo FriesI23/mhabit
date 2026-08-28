@@ -43,20 +43,29 @@ final class LoopImporterVersion extends ImporterVersion {
       Uri.parse('https://github.com/iSoron/uhabits/releases/tag/v$version');
 }
 
+/// Identifies a supported third-party import file format.
+enum ThirdPartyImportFormat {
+  /// Loop Habit Tracker CSV export packaged as a ZIP archive.
+  loopCsvArchive,
+}
+
 /// Identifies a supported third-party habit tracker that mhabit can import from.
 enum ThirdPartyProvider {
   /// [Loop Habit Tracker](https://github.com/iSoron/uhabits) CSV export.
-  loopHabitTracker(fileExtensions: ['zip'], displayName: 'Loop Habit Tracker');
-
-  /// File extensions accepted by the file picker for this provider.
-  final List<String> fileExtensions;
+  loopHabitTracker(
+    displayName: 'Loop Habit Tracker',
+    importFormats: [ThirdPartyImportFormat.loopCsvArchive],
+  );
 
   /// Human-readable name shown in the UI (confirm dialogs, error messages).
   final String displayName;
 
+  /// Import file formats produced by this provider.
+  final List<ThirdPartyImportFormat> importFormats;
+
   const ThirdPartyProvider({
-    required this.fileExtensions,
     required this.displayName,
+    required this.importFormats,
   });
 }
 

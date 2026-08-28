@@ -21,7 +21,6 @@ import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
-import 'package:tuple/tuple.dart';
 
 import '../../common/consts.dart';
 import '../../common/enums.dart';
@@ -31,6 +30,7 @@ import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../logging/logger_stack.dart';
+import '../../models/app_adaptive_style_mode.dart';
 import '../../models/app_event.dart';
 import '../../models/app_reminder_config.dart';
 import '../../models/custom_date_format.dart';
@@ -456,6 +456,11 @@ class _PageState extends State<_Page> with XShare {
   void _onDisplayDebugMenuSelectChanged(bool value) {
     if (!mounted) return;
     context.read<AppDeveloperViewModel>().switchDisplayDebugMenu(value);
+  }
+
+  void _onAdaptiveStyleModeChanged(AppAdaptiveStyleMode value) {
+    if (!mounted) return;
+    context.read<AppDeveloperViewModel>().setAdaptiveStyleMode(value);
   }
 
   void _onExportDBTilePressed(BuildContext context) async {
@@ -901,14 +906,16 @@ class _PageState extends State<_Page> with XShare {
     ];
 
     Widget buildDevelopSubGroup(BuildContext context) =>
-        Selector<AppDeveloperViewModel, Tuple2<bool, bool>>(
+        Selector<AppDeveloperViewModel, (bool, bool, AppAdaptiveStyleMode)>(
           selector: (context, vm) =>
-              Tuple2(vm.isInDevelopMode, vm.displayDebugMenu),
+              (vm.isInDevelopMode, vm.displayDebugMenu, vm.adaptiveStyleMode),
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) => AppSettingDevelopSubGroup(
-            isInDevelopMode: value.item1,
-            isDisplayDebugMenuSelect: value.item2,
+            isInDevelopMode: value.$1,
+            isDisplayDebugMenuSelect: value.$2,
+            adaptiveStyleMode: value.$3,
             onDisplayDebugMenuSelectChanged: _onDisplayDebugMenuSelectChanged,
+            onAdaptiveStyleModeChanged: _onAdaptiveStyleModeChanged,
             onExportDBTilePressed: _onExportDBTilePressed,
             onClearDBTilePressed: _onClearDBTilePressed,
           ),
@@ -927,7 +934,7 @@ class _PageState extends State<_Page> with XShare {
 
     return ColorfulNavibar(
       child: Scaffold(
-        appBar: AppBar(
+        appBar: WindowControlAppBar(
           title: L10nBuilder(
             builder: (context, l10n) => l10n != null
                 ? Text(l10n.appSetting_appbar_titleText)

@@ -265,6 +265,25 @@
     },
     "habitDisplay_exportAllHabitsSuccSnackbarText": "כל ההרגלים יוצאו",
     "habitDisplay_editPopMenu_selectAll": "לבחור הכול",
+    "habitDisplay_selectButton_label": "בחירה",
+    "@habitDisplay_selectButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Select\" system action."
+    },
+    "habitDisplay_doneButton_label": "סיום",
+    "@habitDisplay_doneButton_label": {
+        "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Done\" system bar button item."
+    },
+    "habitDisplay_selectedHabits_title": "נבחרו {count}",
+    "@habitDisplay_selectedHabits_title": {
+        "description": "Apple selection AppBar title showing the number of selected habits",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of selected habits",
+                "example": "3"
+            }
+        }
+    },
     "habitDisplay_editPopMenu_export": "ייצוא",
     "habitDisplay_editPopMenu_delete": "מחיקה",
     "habitDisplay_editPopMenu_clone": "תבנית",

@@ -153,10 +153,14 @@ class AppProviders extends SingleChildStatelessWidget {
   ];
 
   Iterable<SingleChildWidget> _buildRootAdjacentSupportProviders() => [
-    ViewModelProxyProvider<Global, AppDeveloperViewModel>(
-      create: (context) =>
-          AppDeveloperViewModel(global: context.read<Global>()),
-      update: (context, value, previous) => previous..updateGlobal(value),
+    ViewModelProxyProvider2<Global, ProfileViewModel, AppDeveloperViewModel>(
+      create: (context) => AppDeveloperViewModel(
+        global: context.read<Global>(),
+        profile: context.read<ProfileViewModel>(),
+      ),
+      update: (context, global, profile, previous) => previous
+        ..updateGlobal(global)
+        ..updateProfile(profile),
     ),
     ViewModelProxyProvider<HabitExportAccess, HabitFileExportRunner>(
       create: (context) => HabitFileExportRunner(),

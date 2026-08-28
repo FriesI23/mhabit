@@ -14,7 +14,7 @@
 
 import 'package:flutter/widgets.dart';
 
-class CurrentRouteObserver extends NavigatorObserver {
+class CurrentRouteObserver extends NavigatorObserver with ChangeNotifier {
   RouteSettings? route;
 
   String? get routeName => route?.name;
@@ -22,10 +22,12 @@ class CurrentRouteObserver extends NavigatorObserver {
   @override
   void didPush(Route route, Route? previousRoute) {
     this.route = route.settings;
+    notifyListeners();
   }
 
   @override
   void didPop(Route route, Route? previousRoute) {
     this.route = previousRoute?.settings;
+    notifyListeners();
   }
 }

@@ -82,6 +82,7 @@ class HabitDailyStatusContainer extends StatelessWidget {
         customBorder: const CircleBorder(),
         excludeFromSemantics: true,
         child: IconButton(
+          padding: EdgeInsets.zero,
           iconSize: getIconSize(),
           icon: HabitDailyStatusIcon(
             habitDailyStatus: habitDailyStatus,
