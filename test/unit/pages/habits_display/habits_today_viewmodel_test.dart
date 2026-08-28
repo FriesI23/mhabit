@@ -28,6 +28,31 @@ Map<AppEventPageSource, Set<AppEventFunctionSource>> _trace(
 
 void main() {
   group('HabitsTodayViewModel:event', () {
+    test('reloads when a habit is created', () async {
+      final bus = AppEventBus();
+      final vm = HabitsTodayViewModel();
+      vm.updateAppEvent(bus);
+      addTearDown(() {
+        vm.dispose();
+        bus.dispose();
+      });
+
+      vm.consumeForceReloadFlag();
+
+      bus.push(
+        const HabitDataChangedEvent(
+          uuidList: ['u1'],
+          changeType: HabitDataChangeType.created,
+          trace: {
+            AppEventPageSource.habitEdit: {AppEventFunctionSource.habitCreated},
+          },
+        ),
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      expect(vm.consumeForceReloadFlag(), isTrue);
+    });
+
     test(
       'reloads when RecordsChangedEvent contains today in dateList',
       () async {

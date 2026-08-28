@@ -15,12 +15,57 @@
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/exceptions.dart';
 import 'package:mhabit/models/thirdparty_import.dart';
 import 'package:mhabit/providers/workflow/thirdparty_file_importer.dart';
 
 void main() {
+  group('ThirdPartyImportOwner.loadHabitsData', () {
+    const provider = ThirdPartyProvider.loopHabitTracker;
+
+    test('passes ZIP filters for extension and Apple UTI', () async {
+      List<XTypeGroup>? capturedTypeGroups;
+      final owner = ThirdPartyImportOwner(
+        pickFile: ({required acceptedTypeGroups}) async {
+          capturedTypeGroups = acceptedTypeGroups;
+          return null;
+        },
+      );
+      addTearDown(owner.dispose);
+
+      expect(await owner.loadHabitsData(provider), isNull);
+      expect(capturedTypeGroups, hasLength(1));
+
+      final typeGroup = capturedTypeGroups!.single;
+      expect(typeGroup.extensions, ['zip']);
+      expect(typeGroup.uniformTypeIdentifiers, ['public.zip-archive']);
+    });
+
+    test('keeps picker failure distinct from user cancellation', () async {
+      final owner = ThirdPartyImportOwner(
+        pickFile: ({required acceptedTypeGroups}) async {
+          throw StateError('picker unavailable');
+        },
+      );
+      addTearDown(owner.dispose);
+
+      await expectLater(
+        owner.loadHabitsData(provider),
+        throwsA(
+          isA<ThirdPartyImportException>()
+              .having((e) => e.type, 'type', ThirdPartyImportErrorType.unknown)
+              .having(
+                (e) => e.detail,
+                'detail',
+                contains('picker unavailable'),
+              ),
+        ),
+      );
+    });
+  });
+
   group('ThirdPartyImportOwner.parseThirdPartyFile error handling', () {
     final owner = ThirdPartyImportOwner();
     const provider = ThirdPartyProvider.loopHabitTracker;
