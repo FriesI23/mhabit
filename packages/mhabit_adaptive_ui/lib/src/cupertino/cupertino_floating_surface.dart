@@ -203,16 +203,10 @@ class CupertinoFloatingGlassSurface extends StatelessWidget {
   /// the shadow remains intact without exposing hidden layout content.
   static const double shadowClipOverflow = 32.0;
 
-  static const BoxShadow _lightShadow = BoxShadow(
+  static const BoxShadow _shadow = BoxShadow(
     color: Color(0x26000000),
     blurRadius: 16,
     offset: Offset(0, 4),
-  );
-
-  static const BoxShadow _darkShadow = BoxShadow(
-    color: Color(0x99000000),
-    blurRadius: 20,
-    offset: Offset(0, 2),
   );
 
   /// Content painted above the translucent surface.
@@ -260,7 +254,7 @@ class CupertinoFloatingGlassSurface extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: borderRadius,
-        boxShadow: [dark ? _darkShadow : _lightShadow],
+        boxShadow: const [_shadow],
       ),
       child: clippedSurface,
     );

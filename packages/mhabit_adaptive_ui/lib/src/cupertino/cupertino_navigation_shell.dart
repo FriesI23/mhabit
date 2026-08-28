@@ -55,6 +55,10 @@ class CupertinoNavigationShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final disableAnimations = MediaQuery.disableAnimationsOf(context);
+    final scaffoldBackground = CupertinoDynamicColor.resolve(
+      CupertinoTheme.of(context).scaffoldBackgroundColor,
+      context,
+    );
     return NavigationShellFrame(
       selectedIndex: selectedIndex,
       destinations: destinations,
@@ -93,7 +97,10 @@ class CupertinoNavigationShell extends StatelessWidget {
           ),
       floatingActionButtonLocation:
           CupertinoNavigationPrimaryActionButton.floatingLocationOf(context),
-      child: child,
+      child: CupertinoPageScaffoldBackgroundColor(
+        color: scaffoldBackground,
+        child: child,
+      ),
     );
   }
 

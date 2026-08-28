@@ -1,3 +1,8 @@
+import 'package:flutter/cupertino.dart'
+    show
+        CupertinoPageScaffoldBackgroundColor,
+        CupertinoSliverNavigationBar,
+        CupertinoThemeData;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -579,6 +584,89 @@ void main() {
         find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
         findsOneWidget,
       );
+    });
+
+    testWidgets('apple shell enables automatic app bar background visibility', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      const scaffoldBackground = Color(0xFF000000);
+      const barBackground = Color(0xCC303036);
+      Color? scopedBackground;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            platform: TargetPlatform.iOS,
+            brightness: Brightness.dark,
+            cupertinoOverrideTheme: const CupertinoThemeData(
+              brightness: Brightness.dark,
+              scaffoldBackgroundColor: scaffoldBackground,
+              barBackgroundColor: barBackground,
+            ),
+          ),
+          home: AdaptiveNavigationShell(
+            selectedIndex: 0,
+            destinations: const [
+              AdaptiveNavigationDestination(
+                label: 'Habits',
+                icons: NavigationDestinationIcons(
+                  material: Icon(Icons.home_outlined),
+                  materialSelected: Icon(Icons.home),
+                  apple: Icon(Icons.home_outlined),
+                  appleSelected: Icon(Icons.home),
+                ),
+              ),
+              AdaptiveNavigationDestination(
+                label: 'Today',
+                icons: NavigationDestinationIcons(
+                  material: Icon(Icons.today_outlined),
+                  materialSelected: Icon(Icons.today),
+                  apple: Icon(Icons.today_outlined),
+                  appleSelected: Icon(Icons.today),
+                ),
+              ),
+            ],
+            onDestinationSelected: (_) {},
+            child: Builder(
+              builder: (context) {
+                scopedBackground = CupertinoPageScaffoldBackgroundColor.maybeOf(
+                  context,
+                );
+                return const CustomScrollView(
+                  slivers: [
+                    AdaptiveSliverAppBar.apple(title: Text('Habits')),
+                    SliverToBoxAdapter(child: SizedBox(height: 1600)),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      Color renderedAppBarBackground() {
+        final decorations = tester
+            .widgetList<DecoratedBox>(
+              find.descendant(
+                of: find.byType(CupertinoSliverNavigationBar),
+                matching: find.byType(DecoratedBox),
+              ),
+            )
+            .map((box) => box.decoration)
+            .whereType<BoxDecoration>()
+            .where((decoration) => decoration.color != null);
+        expect(decorations, hasLength(1));
+        return decorations.single.color!;
+      }
+
+      expect(scopedBackground, scaffoldBackground);
+      expect(renderedAppBarBackground(), scaffoldBackground);
+
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
+      await tester.pumpAndSettle();
+
+      expect(renderedAppBarBackground(), barBackground);
     });
 
     testWidgets('material shell does not host the Cupertino primary action', (

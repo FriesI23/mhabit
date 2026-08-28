@@ -369,8 +369,10 @@ void main() {
         expect(shadowDecoration.boxShadow, hasLength(1));
         expect(
           shadowDecoration.boxShadow!.single.color,
-          const Color(0x99000000),
+          const Color(0x26000000),
         );
+        expect(shadowDecoration.boxShadow!.single.blurRadius, 16);
+        expect(shadowDecoration.boxShadow!.single.offset, const Offset(0, 4));
 
         final borderDecorations = decorations.where(
           (decoration) => decoration.border != null,
