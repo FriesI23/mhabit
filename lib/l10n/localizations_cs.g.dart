@@ -18,7 +18,7 @@ class L10nCs extends L10n {
   String get habitEdit_saveButton_text => 'Uložit';
 
   @override
-  String get habitEdit_habitName_hintText => 'Název zvyku ...';
+  String get habitEdit_habitName_hintText => 'Název návyku …';
 
   @override
   String get habitEdit_colorPicker_title => 'Zvolte barvu';
@@ -29,7 +29,7 @@ class L10nCs extends L10n {
   @override
   String habitEdit_colorPicker_customSectionLabel(String tinted) {
     String _temp0 = intl.Intl.selectLogic(tinted, {
-      'true': 'Custom (Tinted)',
+      'true': 'Custom (Uživatelsky určené)',
       'false': 'Custom',
       'other': 'Custom',
     });
@@ -40,24 +40,24 @@ class L10nCs extends L10n {
   String get habitEdit_colorPicker_cancel => 'Zrušit';
 
   @override
-  String get habitEdit_colorPicker_tintToggleLabel => 'Odstín motivu';
+  String get habitEdit_colorPicker_tintToggleLabel => 'Tónovat do motivu barev';
 
   @override
   String get habitEdit_colorPicker_tintedLabel => 'Tónované';
 
   @override
-  String get habitEdit_colorPicker_untintedLabel => 'Nezabarvené';
+  String get habitEdit_colorPicker_untintedLabel => 'Netónované';
 
   @override
   String get habitEdit_colorPicker_tintToggleOnHint =>
-      'Odstíny mohou posunout výslednou barvu vůči té, kterou jste zvolili.';
+      'Tónování může posunout výslednou barvu vůči té, kterou jste vybrali.';
 
   @override
   String get habitEdit_colorPicker_tintToggleOffHint =>
       'Některé barvy mohou zhoršit čitelnost textu v případě světlého nebo tmavého motivu vzhledu.';
 
   @override
-  String get habitEdit_habitTypeDialog_title => 'Typ zvyku';
+  String get habitEdit_habitTypeDialog_title => 'Typ návyku';
 
   @override
   String get habitEdit_habitType_positiveText => 'Pozitivní';
@@ -77,17 +77,17 @@ class L10nCs extends L10n {
 
   @override
   String habitEdit_habitDailyGoal_errorText01(num number) {
-    return 'denní cíl musí být > $number';
+    return 'je třeba, aby denní cíl byl > $number';
   }
 
   @override
   String habitEdit_habitDailyGoal_errorText02(num number) {
-    return 'denní cíl musí být ≤ $number';
+    return 'je třeba, aby denní cíl byl ≤ $number';
   }
 
   @override
   String habitEdit_habitDailyGoal_negativeErrorText01(num number) {
-    return 'denní cíl musí být ≥ $number';
+    return 'je třeba, aby denní cíl byl ≥ $number';
   }
 
   @override
@@ -104,7 +104,7 @@ class L10nCs extends L10n {
 
   @override
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal) {
-    return 'neplatná hodna, musí být prázdné, nebo ≥ $dailyGoal';
+    return 'neplatná hodnota – je třeba aby buď nebylo vyplněné nebo bylo ≥ $dailyGoal';
   }
 
   @override
@@ -118,7 +118,7 @@ class L10nCs extends L10n {
   String get habitEdit_habitFreq_daily => 'Denní';
 
   @override
-  String get habitEdit_habitFreq_perweek_text => '%%time%% za týden';
+  String get habitEdit_habitFreq_perweek_text => '%%time%% krát za týden';
 
   @override
   String get habitEdit_habitFreq_permonth_text => '%%time%% krát za měsíc';
@@ -135,8 +135,8 @@ class L10nCs extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: 'At least $freq times per week',
-      one: 'Per week',
+      other: 'Alespoň $freq krát týdně',
+      one: 'Týdně',
     );
     return '$_temp0';
   }
@@ -146,8 +146,8 @@ class L10nCs extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: 'At least $freq times per month',
-      one: 'Per month',
+      other: 'Alespoň $freq krát za měsíc',
+      one: 'Měsíčně',
     );
     return '$_temp0';
   }
@@ -157,8 +157,8 @@ class L10nCs extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: 'At least $freq times in every $days days',
-      one: 'In every $days days',
+      other: 'Alespoň $freq krát za každé $days dny',
+      one: 'Každé $days dny',
     );
     return '$_temp0';
   }
@@ -195,7 +195,7 @@ class L10nCs extends L10n {
 
   @override
   String get habitEdit_reminderQuest_hintText =>
-      'Otázka, např. Cvičil jsi dnes?';
+      'Otázka, např. Cvičili jste dnes?';
 
   @override
   String get habitEdit_reminder_dialogTitle => 'Zvolte typ připomenutí';
@@ -214,10 +214,10 @@ class L10nCs extends L10n {
   String get habitEdit_reminder_dialogType_month => 'Měsíčně';
 
   @override
-  String get habitEdit_reminder_dialogConfirm => 'Potvrdit';
+  String get habitEdit_reminder_dialogConfirm => 'potvrdit';
 
   @override
-  String get habitEdit_reminder_dialogCancel => 'Zrušit';
+  String get habitEdit_reminder_dialogCancel => 'zrušit';
 
   @override
   String get habitEdit_reminder_cancelDialogTitle => 'Potvrdit';
@@ -227,34 +227,35 @@ class L10nCs extends L10n {
       'Potvrzujete odstranění této připomínky';
 
   @override
-  String get habitEdit_reminder_cancelDialogConfirm => 'Potvrdit';
+  String get habitEdit_reminder_cancelDialogConfirm => 'potvrdit';
 
   @override
-  String get habitEdit_reminder_cancelDialogCancel => 'Zrušit';
+  String get habitEdit_reminder_cancelDialogCancel => 'zrušit';
 
   @override
-  String get habitEdit_reminder_weekdayText_monday => 'Po';
+  String get habitEdit_reminder_weekdayText_monday => 'po';
 
   @override
-  String get habitEdit_reminder_weekdayText_tuesday => 'Út';
+  String get habitEdit_reminder_weekdayText_tuesday => 'út';
 
   @override
-  String get habitEdit_reminder_weekdayText_wednesday => 'St';
+  String get habitEdit_reminder_weekdayText_wednesday => 'st';
 
   @override
-  String get habitEdit_reminder_weekdayText_thursday => 'Čt';
+  String get habitEdit_reminder_weekdayText_thursday => 'čt';
 
   @override
-  String get habitEdit_reminder_weekdayText_friday => 'Pá';
+  String get habitEdit_reminder_weekdayText_friday => 'pá';
 
   @override
-  String get habitEdit_reminder_weekdayText_saturday => 'So';
+  String get habitEdit_reminder_weekdayText_saturday => 'so';
 
   @override
-  String get habitEdit_reminder_weekdayText_sunday => 'Ne';
+  String get habitEdit_reminder_weekdayText_sunday => 'ne';
 
   @override
-  String get habitEdit_desc_hintText => 'Memo, podporuje Markdown';
+  String get habitEdit_desc_hintText =>
+      'Poznámka (je možné použít Markdown formátování)';
 
   @override
   String get habitEdit_create_datetime_prefix => 'Vytvořeno: ';
@@ -263,7 +264,7 @@ class L10nCs extends L10n {
   String get habitEdit_modify_datetime_prefix => 'Upraveno: ';
 
   @override
-  String get habitDisplay_fab_text => 'Nový zvyk';
+  String get habitDisplay_fab_text => 'Nový návyk';
 
   @override
   String get habitDisplay_emptyImage_text_01 =>
@@ -274,7 +275,7 @@ class L10nCs extends L10n {
 
   @override
   String habitDisplay_notFoundImage_text_02(String keyword) {
-    return 'Žádné odpovídající zvyky pro \"$keyword\"';
+    return 'Žádné odpovídající návyky pro „$keyword“';
   }
 
   @override
@@ -297,7 +298,7 @@ class L10nCs extends L10n {
       'Vrátit označené skupiny nazpět z archivu?';
 
   @override
-  String get habitDisplay_unarchiveHabitsConfirmDialog_confirm => 'Potvrdit';
+  String get habitDisplay_unarchiveHabitsConfirmDialog_confirm => 'potvrdit';
 
   @override
   String get habitDisplay_unarchiveHabitsConfirmDialog_cancel => 'zrušit';
@@ -332,8 +333,8 @@ class L10nCs extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Exported $count habits.',
-      one: 'Exported habit.',
+      other: 'Exportováno $count návyků.',
+      one: 'Návyk exportován.',
     );
     return '$_temp0';
   }
@@ -477,8 +478,8 @@ class L10nCs extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count habits will change from \"$fromGroup\" to \"$toGroup\"',
-      one: '$count habit will change from \"$fromGroup\" to \"$toGroup\"',
+      other: '$count návyků se změní z „$fromGroup“ na „$toGroup“',
+      one: '$count návyk se změní z „$fromGroup“ na „$toGroup“',
     );
     return '$_temp0';
   }
@@ -491,8 +492,8 @@ class L10nCs extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count uncategorized habits will be added to \"$toGroup\"',
-      one: '$count uncategorized habit will be added to \"$toGroup\"',
+      other: '$count nezařazených návyků bude přidáno do „$toGroup“',
+      one: '$count nezařazený návyk bude přidán do „$toGroup“',
     );
     return '$_temp0';
   }
@@ -502,8 +503,8 @@ class L10nCs extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count habits will have their groups removed',
-      one: '$count habit will have its group removed',
+      other: '$count návykům bude odebrána jejich skupina',
+      one: '$count návyku bude odebrána jeho skupina',
     );
     return '$_temp0';
   }
@@ -516,8 +517,8 @@ class L10nCs extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Moved $count habits to \"$groupName\"',
-      one: 'Moved habit to \"$groupName\"',
+      other: '$count návyků přesunuto do „$groupName“',
+      one: 'Návyk přesunut do „$groupName“',
     );
     return '$_temp0';
   }
@@ -527,8 +528,8 @@ class L10nCs extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Removed groups from $count habits',
-      one: 'Removed group from habit',
+      other: '$count návykům odebrány skupiny',
+      one: 'Návyku odebrána skupina',
     );
     return '$_temp0';
   }
@@ -544,7 +545,7 @@ class L10nCs extends L10n {
   String get habitDisplay_sortDirection_asc => '(Vzest)';
 
   @override
-  String get habitDisplay_sortDirection_Desc => '(Popis)';
+  String get habitDisplay_sortDirection_Desc => '(Sest)';
 
   @override
   String get habitDisplay_sortType_manual => 'Moje pořadí';
@@ -568,7 +569,7 @@ class L10nCs extends L10n {
   String get habitDisplay_sortTypeDialog_title => 'Seřadit';
 
   @override
-  String get habitDisplay_sortTypeDialog_confirm => 'Potvrdit';
+  String get habitDisplay_sortTypeDialog_confirm => 'potvrdit';
 
   @override
   String get habitDisplay_sortTypeDialog_cancel => 'zrušit';
@@ -577,7 +578,7 @@ class L10nCs extends L10n {
   String get habitDisplay_debug_debugSubgroup_title => '🛠️ Ladění';
 
   @override
-  String get habitDisplay_searchBar_hintText => 'Vyhledat zvyky';
+  String get habitDisplay_searchBar_hintText => 'Prohledat návyky';
 
   @override
   String get habitDisplay_searchFilter_ongoing => 'Probíhající';
@@ -590,7 +591,7 @@ class L10nCs extends L10n {
   String get habitDisplay_searchFilter_completed => 'Dokončené';
 
   @override
-  String get habitDisplay_searchFilter_habitType_groupTitle => 'Typ zvyku';
+  String get habitDisplay_searchFilter_habitType_groupTitle => 'Typ návyku';
 
   @override
   String get habitDisplay_searchFilter_tooltips => 'Zobrazit filtry';
@@ -599,7 +600,7 @@ class L10nCs extends L10n {
   String get habitDisplay_searchFilter_clearFilter => 'Vymazat filtry';
 
   @override
-  String get habitDisplay_tab_habits_label => 'Zvyky';
+  String get habitDisplay_tab_habits_label => 'Návyky';
 
   @override
   String get habitDisplay_tab_today_label => 'Dnes';
@@ -640,7 +641,7 @@ class L10nCs extends L10n {
   String get habitDetail_editPopMenu_clone => 'Šablona';
 
   @override
-  String get habitDetail_confirmDialog_confirm => 'Potvrdit';
+  String get habitDetail_confirmDialog_confirm => 'potvrdit';
 
   @override
   String get habitDetail_confirmDialog_cancel => 'zrušit';
@@ -650,7 +651,7 @@ class L10nCs extends L10n {
 
   @override
   String get habitDetail_unarchiveConfirmDialog_titleText =>
-      'Vyndat zvyk zpět z archivu?';
+      'Vrátit návyk nazpět z archivu?';
 
   @override
   String get habitDetail_deleteConfirmDialog_titleText => 'Smazat návyk?';
@@ -680,8 +681,8 @@ class L10nCs extends L10n {
       habitType,
       locale: localeName,
       other: '',
-      two: 'SUBSTANDARD',
-      one: 'INCOMPLETE',
+      two: 'NEDOSTATEČNÉ',
+      one: 'NEÚPLNÝ',
     );
     return '$_temp0';
   }
@@ -692,8 +693,8 @@ class L10nCs extends L10n {
       habitType,
       locale: localeName,
       other: '',
-      two: 'IMPECCABLE',
-      one: 'OVERFULFIL',
+      two: 'DOKONALÉ',
+      one: 'PŘESPLNĚN',
     );
     return '$_temp0';
   }
@@ -703,8 +704,8 @@ class L10nCs extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       habitType,
       locale: localeName,
-      other: 'Goal',
-      two: 'Threshold',
+      other: 'Cíl',
+      two: 'Práh',
     );
     return '$_temp0';
   }
@@ -715,14 +716,14 @@ class L10nCs extends L10n {
   }
 
   @override
-  String get habitDetail_descDailyGoal_unitEmptyText => 'null';
+  String get habitDetail_descDailyGoal_unitEmptyText => 'nic';
 
   @override
   String habitDetail_descTargetDays_titleText(int habitType) {
     String _temp0 = intl.Intl.pluralLogic(
       habitType,
       locale: localeName,
-      other: 'Days',
+      other: 'Dnů',
     );
     return '$_temp0';
   }
@@ -1098,7 +1099,7 @@ class L10nCs extends L10n {
       'Při importu došlo k neočekávané chybě.';
 
   @override
-  String get appSetting_importDialog_confirm_confirmText => 'Potvrdit';
+  String get appSetting_importDialog_confirm_confirmText => 'potvrdit';
 
   @override
   String get appSetting_importDialog_confirm_cancelText => 'zrušit';
@@ -1172,7 +1173,7 @@ class L10nCs extends L10n {
 
   @override
   String get appSetting_clearCache_snackBar_partSuccText =>
-      'Vymazání mezipaměti neúplného se nezdařilo';
+      'Vymazání mezipaměti neúplných se nezdařilo';
 
   @override
   String get appSetting_clearCache_snackBar_succText =>
@@ -1285,11 +1286,11 @@ class L10nCs extends L10n {
   @override
   String appSync_webdav_resultStatus(String status) {
     String _temp0 = intl.Intl.selectLogic(status, {
-      'success': 'Completed',
-      'cancelled': 'Canceled',
-      'failed': 'Failed',
-      'multi': 'Multiple statuses',
-      'other': 'Unknown status',
+      'success': 'Dokončeno',
+      'cancelled': 'Zrušeno',
+      'failed': 'Nezdařilo se',
+      'multi': 'Vícero stavů',
+      'other': 'Neznámý stav',
     });
     return '$_temp0';
   }
@@ -1297,11 +1298,11 @@ class L10nCs extends L10n {
   @override
   String appSync_webdav_resultStatus_withReason(String status, String reason) {
     String _temp0 = intl.Intl.selectLogic(status, {
-      'success': 'Completed due to $reason',
-      'cancelled': 'Canceled due to $reason',
-      'failed': 'Failed due to $reason',
-      'multi': 'Multiple statuses due to $reason',
-      'other': 'Unknown status',
+      'success': 'Dokončeno z důvodu $reason',
+      'cancelled': 'Zrušeno z důvodu $reason',
+      'failed': 'Nezdařilo se z důvodu $reason',
+      'multi': 'Vícero stavů z důvodu $reason',
+      'other': 'Neznámý stav',
     });
     return '$_temp0';
   }
@@ -1309,11 +1310,11 @@ class L10nCs extends L10n {
   @override
   String appSync_webdav_resultReason(String reason) {
     String _temp0 = intl.Intl.selectLogic(reason, {
-      'error': 'Error',
-      'userAction': 'User action required',
-      'missingHabitUuid': 'Missing habit UUID',
-      'empty': 'Empty data',
-      'other': 'Unknown reason',
+      'error': 'Chyba',
+      'userAction': 'Je zapotřebí akce uživatele',
+      'missingHabitUuid': 'Chybí UUID návyku',
+      'empty': 'Prázdná data',
+      'other': 'Neznámý důvod',
     });
     return '$_temp0';
   }
@@ -1348,9 +1349,9 @@ class L10nCs extends L10n {
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
     String _temp0 = intl.Intl.selectLogic(isEmpty, {
-      'true': 'No log founded',
-      'false': 'Tap to export',
-      'other': 'loading...',
+      'true': 'Nenalezeny žádné záznamy události',
+      'false': 'Exportujete klepnutím',
+      'other': 'načítání…',
     });
     return '$_temp0';
   }
@@ -1358,13 +1359,13 @@ class L10nCs extends L10n {
   @override
   String appSync_syncServerType_text(String name, String isCurrent) {
     String _temp0 = intl.Intl.selectLogic(isCurrent, {
-      'true': 'Current: ',
+      'true': 'Stávající: ',
       'other': '',
     });
     String _temp1 = intl.Intl.selectLogic(name, {
       'webdav': 'WebDAV',
-      'fake': 'Fake (Only For Debugger)',
-      'other': 'Unknown ($name)',
+      'fake': 'Nastrčené (pouze pro nástroj pro ladění)',
+      'other': 'Neznámé ($name)',
     });
     return '$_temp0$_temp1';
   }
@@ -1372,9 +1373,9 @@ class L10nCs extends L10n {
   @override
   String appSync_networkType_text(String type) {
     String _temp0 = intl.Intl.selectLogic(type, {
-      'mobile': 'Mobile',
+      'mobile': 'Mobilní',
       'wifi': 'Wifi',
-      'other': 'Unknown',
+      'other': 'Neznámé',
     });
     return '$_temp0';
   }
@@ -1382,12 +1383,12 @@ class L10nCs extends L10n {
   @override
   String appSync_syncInterval_text(String name) {
     String _temp0 = intl.Intl.selectLogic(name, {
-      'manual': 'Manual',
-      'minute5': '5 Minutes',
-      'minute15': '15 Minutes',
-      'minute30': '30 Minutes',
-      'hour1': '1 Hour',
-      'other': 'Unknown',
+      'manual': 'Ruční',
+      'minute5': '5 minut',
+      'minute15': '15 minut',
+      'minute30': '30 minut',
+      'hour1': '1 hodina',
+      'other': 'Neznámé',
     });
     return '$_temp0';
   }
@@ -1472,9 +1473,9 @@ class L10nCs extends L10n {
       seconds,
       locale: localeName,
       other: '$seconds$unit',
-      zero: 'Infinite',
+      zero: 'Nekonečně',
     );
-    return 'Default: $_temp0';
+    return 'Výchozí: $_temp0';
   }
 
   @override
@@ -1493,9 +1494,9 @@ class L10nCs extends L10n {
       seconds,
       locale: localeName,
       other: '$seconds$unit',
-      zero: 'Infinite',
+      zero: 'Nekonečno',
     );
-    return 'Default: $_temp0';
+    return 'Výchozí: $_temp0';
   }
 
   @override
@@ -1511,9 +1512,9 @@ class L10nCs extends L10n {
       count,
       locale: localeName,
       other: '$count',
-      zero: 'Retry disabled',
+      zero: 'Znovu zkusit zakázané',
     );
-    return 'Default: $_temp0';
+    return 'Výchozí: $_temp0';
   }
 
   @override
@@ -1523,15 +1524,15 @@ class L10nCs extends L10n {
   @override
   String appSync_serverEditor_netTypeTile_typeTooltip(String type) {
     String _temp0 = intl.Intl.selectLogic(type, {
-      'mobile': 'Sync on Cellular Network',
-      'wifi': 'Sync on Wifi',
-      'other': 'Unknown',
+      'mobile': 'Synchronizovat na mobilní síti',
+      'wifi': 'Synchronizovat na Wifi',
+      'other': 'Neznámé',
     });
     return '$_temp0';
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_lowDataText => 'LowData';
+  String get appSync_serverEditor_netTypeTile_lowDataText => 'Málo dat';
 
   @override
   String get appSync_noti_readyToSync_body => 'Příprava synchronizace…';
@@ -1539,9 +1540,9 @@ class L10nCs extends L10n {
   @override
   String appSync_noti_syncing_title(String synced, String type) {
     String _temp0 = intl.Intl.selectLogic(synced, {
-      'synced': 'Synced ($type)',
-      'failed': 'Sync Failed ($type)',
-      'other': 'Syncing ($type)',
+      'synced': 'Synchronizováno ($type)',
+      'failed': 'Synchronizace se nezdařila ($type)',
+      'other': 'Synchronizování ($type)',
     });
     return '$_temp0';
   }
@@ -1564,7 +1565,7 @@ class L10nCs extends L10n {
 
   @override
   String experimentalFeatures_warnTile_titleText(String syncName) {
-    return 'Experimental feature ($syncName) is disabled, but the function is still running.';
+    return 'Experimentální funkce ($syncName) je zakázána, ale funkce je pořád ještě spuštěná.';
   }
 
   @override
@@ -1716,10 +1717,10 @@ class L10nCs extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'status of $count habits',
-      one: 'habit\'s status',
+      other: 'stav $count návyků',
+      one: 'stav návyku',
     );
-    return 'Modified $_temp0';
+    return 'Změněno $_temp0';
   }
 
   @override
@@ -1861,7 +1862,7 @@ class L10nCs extends L10n {
 
   @override
   String get common_customDateTimeFormatPicker_applyHeapmap_text =>
-      'Uplatnit na kalendář';
+      'Použít na kalendář';
 
   @override
   String get common_customDateTimeFormatPicker_cancelButton_text => 'zrušit';
@@ -1904,18 +1905,18 @@ class L10nCs extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       number,
       locale: localeName,
-      other: '$number habits',
-      one: '1 habit',
-      zero: 'current habit',
+      other: '$number návyků',
+      one: '1 návyk',
+      zero: 'stávající návyk',
     );
-    return 'Export $_temp0?';
+    return 'Exportovat $_temp0?';
   }
 
   @override
   String get exportConfirmDialog_option_includeRecords => 'zahrnout záznamy';
 
   @override
-  String get exportConfirmDialog_option_includeGroups => 'zahrnují skupiny';
+  String get exportConfirmDialog_option_includeGroups => 'zahrnout skupiny';
 
   @override
   String exportConfirmDialog_tile_includeRecords(int count) {
@@ -2020,10 +2021,10 @@ class L10nCs extends L10n {
   @override
   String confirmDialog_confirm_text(String type) {
     String _temp0 = intl.Intl.selectLogic(type, {
-      'save': 'Save',
-      'exit': 'Exit',
-      'delete': 'Delete',
-      'other': 'Confirm',
+      'save': 'Uložit',
+      'exit': 'Ukončit',
+      'delete': 'Smazat',
+      'other': 'Potvrdit',
     });
     return '$_temp0';
   }
@@ -2132,8 +2133,8 @@ class L10nCs extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Habits in these $count groups will become uncategorized.',
-      one: 'Habits in this group will become uncategorized.',
+      other: 'Návyky v těchto $count skupinách se stanou nezařazenými.',
+      one: 'Návyky v této skupině se stanou nezařazenými.',
     );
     return '$_temp0';
   }
