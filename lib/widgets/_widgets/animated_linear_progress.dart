@@ -71,7 +71,6 @@ class _AnimatedLinearProgress extends State<AnimatedLinearProgress>
   void dispose() {
     _animation?.removeListener(_onAnimationNotified);
     _controller.dispose();
-    debugPrint(widget.value.toString());
     super.dispose();
   }
 
