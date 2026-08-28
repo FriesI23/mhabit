@@ -22,6 +22,23 @@ import '../../models/loop_import.dart';
 import '../../models/thirdparty_import.dart';
 import '../support/commons.dart';
 
+typedef ThirdPartyFilePicker =
+    Future<XFile?> Function({required List<XTypeGroup> acceptedTypeGroups});
+
+Future<XFile?> _openThirdPartyFile({
+  required List<XTypeGroup> acceptedTypeGroups,
+}) => openFile(acceptedTypeGroups: acceptedTypeGroups);
+
+extension _ThirdPartyImportFormatFileSelector on ThirdPartyImportFormat {
+  XTypeGroup get fileTypeGroup => switch (this) {
+    ThirdPartyImportFormat.loopCsvArchive => const XTypeGroup(
+      label: 'Loop Habit Tracker export',
+      extensions: ['zip'],
+      uniformTypeIdentifiers: ['public.zip-archive'],
+    ),
+  };
+}
+
 /// Return the [ThirdPartyImporter.supportedVersion] for [provider].
 ///
 /// This is a thin lookup so callers (e.g. the provider selection dialog)
@@ -36,7 +53,11 @@ ImporterVersion getThirdPartyImporterVersion(ThirdPartyProvider provider) {
 
 final class ThirdPartyImportOwner extends ChangeNotifier
     implements ProviderMounted {
+  final ThirdPartyFilePicker _pickFile;
   bool _mounted = true;
+
+  ThirdPartyImportOwner({ThirdPartyFilePicker? pickFile})
+    : _pickFile = pickFile ?? _openThirdPartyFile;
 
   @override
   void dispose() {
@@ -87,26 +108,33 @@ final class ThirdPartyImportOwner extends ChangeNotifier
     return result;
   }
 
-  /// Open a file picker filtered to [provider]'s file extensions, read the
-  /// selected file, parse it, and return importable JSON.
+  /// Open a file picker filtered to [provider]'s supported file types, read
+  /// the selected file, parse it, and return importable JSON.
   ///
   /// Returns `null` when the user cancels the file picker.
   Future<Iterable<Object?>?> loadHabitsData(
     ThirdPartyProvider provider, {
     bool listen = true,
   }) async {
-    final file =
-        await openFile(
-          acceptedTypeGroups: [XTypeGroup(extensions: provider.fileExtensions)],
-        ).catchError((e, s) {
-          appLog.load.error(
-            '$runtimeType.loadHabitsData',
-            ex: ["Can't open file picker"],
-            error: e,
-            stackTrace: LoggerStackTrace.from(s),
-          );
-          return null;
-        });
+    final XFile? file;
+    try {
+      file = await _pickFile(
+        acceptedTypeGroups: provider.importFormats
+            .map((format) => format.fileTypeGroup)
+            .toList(),
+      );
+    } catch (e, s) {
+      appLog.load.error(
+        '$runtimeType.loadHabitsData',
+        ex: ["Can't open file picker"],
+        error: e,
+        stackTrace: LoggerStackTrace.from(s),
+      );
+      throw ThirdPartyImportException(
+        ThirdPartyImportErrorType.unknown,
+        detail: e.toString(),
+      );
+    }
 
     if (file == null) return null;
 
