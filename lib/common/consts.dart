@@ -89,6 +89,8 @@ const appSupportedLocales = [
   Locale.fromSubtags(languageCode: 'ja'),
   // TODO(l10n::nb_NO): remove kDebugMode below after translation
   if (kDebugMode) Locale.fromSubtags(languageCode: 'nb', countryCode: 'NO'),
+  // TODO(l10n::nl): remove kDebugMode below after translation
+  if (kDebugMode) Locale.fromSubtags(languageCode: 'nl'),
   Locale.fromSubtags(languageCode: 'pl'),
   Locale.fromSubtags(languageCode: 'pt', countryCode: 'BR'),
   Locale.fromSubtags(languageCode: 'ru'),

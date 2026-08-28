@@ -98,6 +98,9 @@
 		D97345C12FB56395002015C2 /* eu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eu; path = "eu.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
 		D97345C22FB56395002015C2 /* eu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eu; path = "eu.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
 		D97345C32FB56395002015C2 /* eu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eu; path = "eu.lproj/store-InfoPlist.strings"; sourceTree = "<group>"; };
+		DA2828032FC0A00100D17C01 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = "nl.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
+		DA2828042FC0A00100D17C01 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = "nl.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
+		DA2828052FC0A00100D17C01 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = "nl.lproj/store-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9B660252F06A14000E2373D /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = "hu.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9B660262F06A14000E2373D /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = "hu.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9B660272F06A14100E2373D /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = "hu.lproj/store-InfoPlist.strings"; sourceTree = "<group>"; };
@@ -362,6 +365,7 @@
 				zh,
 				hu,
 				eu,
+				nl,
 			);
 			mainGroup = 33CC10E42044A3C60003C045;
 			packageReferences = (
@@ -512,6 +516,7 @@
 				D9D35CFB2EDC73350006DF01 /* zh */,
 				D9B660272F06A14100E2373D /* hu */,
 				D97345C32FB56395002015C2 /* eu */,
+				DA2828052FC0A00100D17C01 /* nl */,
 			);
 			name = "store-InfoPlist.strings";
 			sourceTree = "<group>";
@@ -540,6 +545,7 @@
 				D9D35CF92EDC73340006DF01 /* zh */,
 				D9B660252F06A14000E2373D /* hu */,
 				D97345C12FB56395002015C2 /* eu */,
+				DA2828032FC0A00100D17C01 /* nl */,
 			);
 			name = "dev-InfoPlist.strings";
 			sourceTree = "<group>";
@@ -568,6 +574,7 @@
 				D9D35CFA2EDC73350006DF01 /* zh */,
 				D9B660262F06A14000E2373D /* hu */,
 				D97345C22FB56395002015C2 /* eu */,
+				DA2828042FC0A00100D17C01 /* nl */,
 			);
 			name = "generic-InfoPlist.strings";
 			sourceTree = "<group>";

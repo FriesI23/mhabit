@@ -18,6 +18,7 @@ import 'localizations_hu.g.dart';
 import 'localizations_it.g.dart';
 import 'localizations_ja.g.dart';
 import 'localizations_nb.g.dart';
+import 'localizations_nl.g.dart';
 import 'localizations_pl.g.dart';
 import 'localizations_pt.g.dart';
 import 'localizations_ru.g.dart';
@@ -124,6 +125,7 @@ abstract class L10n {
     Locale('it'),
     Locale('ja'),
     Locale('nb'),
+    Locale('nl'),
     Locale('pl'),
     Locale('pt'),
     Locale('ru'),
@@ -3573,6 +3575,7 @@ class _L10nDelegate extends LocalizationsDelegate<L10n> {
     'it',
     'ja',
     'nb',
+    'nl',
     'pl',
     'pt',
     'ru',
@@ -3627,6 +3630,8 @@ L10n lookupL10n(Locale locale) {
       return L10nJa();
     case 'nb':
       return L10nNb();
+    case 'nl':
+      return L10nNl();
     case 'pl':
       return L10nPl();
     case 'pt':

@@ -1,0 +1,8 @@
+{
+    "@@locale": "nl",
+    "localeScriptName": "Nederlands",
+    "@localeScriptName": {
+        "description": "The human-readable name of the language used for the locale."
+    },
+    "appName": "🚧(nl) - Table Habit"
+}
