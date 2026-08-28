@@ -80,6 +80,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
   late AppCompactUISwitcherViewModel _uiSwitcher;
 
   late final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
+  final ScrollController _verticalScrollController = ScrollController();
   final MenuController _searchFilterMenuController = MenuController();
 
   late StreamSubscription<Duration?> _scrollCalendarToStartSub;
@@ -127,6 +128,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
     _cancelExpandTimer();
     _scrollCalendarToStartSub.cancel();
+    _verticalScrollController.dispose();
     super.dispose();
   }
 
@@ -1198,6 +1200,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
         children: [
           buildEmptyImage(context),
           CustomScrollView(
+            controller: _verticalScrollController,
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
               buildAppbar(context),
