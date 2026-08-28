@@ -1,4 +1,4 @@
-# Release: v1.27.2+191-pre
+# Release: v1.27.3+192
 
 > This release combines all pre-release changes starting with
 > `pre-v1.26.15+188`.
@@ -40,4 +40,4 @@
 - Update Czech translation, thanks to Pavel Borecki's contribution on Weblate
   (#651)
 
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.26.14+187...pre-v1.27.2+191)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.26.14+187...v1.27.3+192)

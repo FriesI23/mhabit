@@ -2,7 +2,7 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.27.2+191-pre
+## 1.27.3+192
 
 - Feature: expand adaptive navigation, search, filters, and selection actions
   (#646, #649)
