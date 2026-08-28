@@ -1,0 +1,9 @@
+- Feature: expand adaptive navigation, search, filters, and selection actions
+  (#646, #649)
+- Feature: keep navigation clear of window controls (#647)
+- Fix: improve navigation insets, imports, and Today refresh (#650)
+- Fix: stabilize compact navigation on scroll (#652)
+- Fix: preserve habit-list position after viewing details
+- Fix: refine floating-navigation spacing, dark surfaces, action alignment, and
+  scroll transitions
+- Add Dutch and update Czech translation (#651)

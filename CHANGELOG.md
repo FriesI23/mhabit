@@ -2,29 +2,17 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.27.1+190-pre
+## 1.27.2+191-pre
 
-- Fix: keep compact navigation stable during gentle scrolling and minimize or
-  restore it on intentional swipes (#652)
-- Fix: restore standard floating-navigation margins on rectangular-screen
-  phones while preserving rounded-screen spacing
-
-## 1.27.0+189-pre
-
-- Feature: add adaptive navigation bars and rails, floating compact
-  navigation, and contextual habit-selection actions (#649)
-- Fix: improve navigation inset handling, file imports, and Today refresh
-  behavior (#650)
-- Fix: preserve the habit-list scroll position after returning from habit details
-- Add Dutch language support (#651)
-- Update Czech translation, thanks to Pavel Borecki's contribution on Weblate
-  (#651)
-
-## 1.26.15+188-pre
-
-- Feature: expand adaptive navigation, search, filtering, and selection
-  actions (#646)
-- Feature: avoid window controls in adaptive app bars and navigation rails (#647)
+- Feature: expand adaptive navigation, search, filters, and selection actions
+  (#646, #649)
+- Feature: keep navigation clear of window controls (#647)
+- Fix: improve navigation insets, imports, and Today refresh (#650)
+- Fix: stabilize compact navigation on scroll (#652)
+- Fix: preserve habit-list position after viewing details
+- Fix: refine floating-navigation spacing, dark surfaces, action alignment, and
+  scroll transitions
+- Add Dutch and update Czech translation (#651)
 
 ## 1.26.14+187
 
