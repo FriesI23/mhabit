@@ -43,6 +43,7 @@ import '../../pages/expermental_features/page.dart'
 import '../../pages/group_manage/page.dart' show GroupManagePage;
 import '../../pages/habit_detail/page.dart' show HabitDetailPage;
 import '../../pages/habit_edit/page.dart' show HabitEditPage;
+import '../../pages/habits_display/navigation_chrome.dart';
 import '../../pages/habits_display/page.dart' show HabitsPage, TodayPage;
 import '../../pages/habits_status_changer/page.dart'
     show HabitsStatusChangerPage;
@@ -72,6 +73,7 @@ import '../../utils/app_clock.dart';
 import '../../widgets/widgets.dart';
 import '../app_error/entry.dart';
 import '../common/app_root_view.dart';
+import 'navigation_chrome.dart';
 import 'providers.dart';
 import 'shell.dart';
 
@@ -143,6 +145,8 @@ class _AppEntry extends StatefulWidget {
 
 class _AppEntryState extends State<_AppEntry> {
   late final AppNavigationCoordinator _navigationCoordinator;
+  late final AppNavigationChromeController _navigationChromeController;
+  late final HabitDisplayNavigationChrome _habitDisplayNavigationChrome;
   late final GoRouter _router;
 
   @override
@@ -150,10 +154,27 @@ class _AppEntryState extends State<_AppEntry> {
     super.initState();
     final launchEntry = context.read<AppLaunchEntryViewModel>().launchEntry;
     final config = switch (launchEntry) {
-      AppEntrys.habitToday => (home: AppRoute.today, initialBranchIndex: 1),
-      AppEntrys.undefined ||
-      AppEntrys.habitDisplay => (home: AppRoute.habits, initialBranchIndex: 0),
+      AppEntrys.habitToday => (
+        home: AppRoute.today,
+        initialBranchIndex: AppNavigationBranch.today.navigationIndex,
+      ),
+      AppEntrys.undefined || AppEntrys.habitDisplay => (
+        home: AppRoute.habits,
+        initialBranchIndex: AppNavigationBranch.habits.navigationIndex,
+      ),
     };
+    _navigationChromeController = AppNavigationChromeController();
+    _habitDisplayNavigationChrome = HabitDisplayNavigationChrome(
+      registerPrimaryAction: (action) => _navigationChromeController
+          .registerPrimaryAction(AppNavigationBranch.habits, action),
+      unregisterPrimaryAction: (action) => _navigationChromeController
+          .unregisterPrimaryAction(AppNavigationBranch.habits, action),
+      setContextualChromeSuppressed: (suppressed) =>
+          _navigationChromeController.setContextualChromeSuppressed(
+            AppNavigationBranch.habits,
+            suppressed,
+          ),
+    );
     _router = _buildRouter(config);
   }
 
@@ -226,6 +247,7 @@ class _AppEntryState extends State<_AppEntry> {
               child: AppPostInit(
                 child: AppNavigationShell(
                   coordinator: _navigationCoordinator,
+                  chromeController: _navigationChromeController,
                   child: child,
                 ),
               ),
@@ -242,6 +264,7 @@ class _AppEntryState extends State<_AppEntry> {
   void dispose() {
     _router.dispose();
     _navigationCoordinator.dispose();
+    _navigationChromeController.dispose();
     super.dispose();
   }
 
@@ -266,21 +289,28 @@ class _AppEntryState extends State<_AppEntry> {
               );
           return AdaptiveStyleScope(
             override: adaptiveStyleOverride,
-            child: AppRootView.router(
-              themeMode: transToMaterialThemeType(themeMode),
-              language: language,
-              disableAnimations: disableAnimations,
-              lightThemeBuilder: () => const AppThemeBuilder().buildLight(
-                themeColor: themeColor,
-                themeMainColor: themeMainColor,
-                dynamicScheme: lightDynamic,
+            child: MultiProvider(
+              providers: [
+                Provider<HabitDisplayNavigationChrome>.value(
+                  value: _habitDisplayNavigationChrome,
+                ),
+              ],
+              child: AppRootView.router(
+                themeMode: transToMaterialThemeType(themeMode),
+                language: language,
+                disableAnimations: disableAnimations,
+                lightThemeBuilder: () => const AppThemeBuilder().buildLight(
+                  themeColor: themeColor,
+                  themeMainColor: themeMainColor,
+                  dynamicScheme: lightDynamic,
+                ),
+                darkThemeBuilder: () => const AppThemeBuilder().buildDark(
+                  themeColor: themeColor,
+                  themeMainColor: themeMainColor,
+                  dynamicScheme: darkDynamic,
+                ),
+                config: _router,
               ),
-              darkThemeBuilder: () => const AppThemeBuilder().buildDark(
-                themeColor: themeColor,
-                themeMainColor: themeMainColor,
-                dynamicScheme: darkDynamic,
-              ),
-              config: _router,
             ),
           );
         },

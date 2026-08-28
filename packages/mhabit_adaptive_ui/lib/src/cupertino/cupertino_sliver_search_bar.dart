@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:adaptive_actions/cupertino.dart' as adaptive_actions;
+import 'package:adaptive_actions/cupertino.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Easing;
 
@@ -662,7 +662,7 @@ class _CupertinoSearchActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final actionsById = _indexActions(actions);
-    final collection = adaptive_actions.ActionCollection<VoidCallback>(
+    final collection = ActionCollection<VoidCallback>(
       roots: actions.map(_toAdaptiveAction),
     );
     final pointsRight =
@@ -684,36 +684,31 @@ class _CupertinoSearchActions extends StatelessWidget {
           alignment: AlignmentDirectional.centerEnd,
           minWidth: 0,
           maxWidth: double.infinity,
-          child:
-              adaptive_actions.CupertinoAdaptiveActions<
-                VoidCallback
-              >.moreAction(
-                key: const ValueKey('cupertino-search-adaptive-actions'),
-                actions: collection,
-                primaryCapacity: primaryCapacity,
-                presentationOverride:
-                    adaptive_actions.CupertinoActionPresentation.iconOnly,
-                onInvoke: (callback) => callback(),
-                onOverflowMenuOpened: onOverflowMenuOpened,
-                onOverflowMenuClosed: onOverflowMenuClosed,
-                invokeAfterMenuClosed: true,
-                iconBuilder: (context, action) =>
-                    actionsById[action.id.value]?.icon,
-                actionButtonBuilder:
-                    (context, action, onPressed, defaultBuilder) {
-                      final descriptor = actionsById[action.id.value];
-                      return descriptor?.primaryBuilder?.call(context) ??
-                          defaultBuilder(context, action, onPressed);
-                    },
-                overflowButtonBuilder: (context, onPressed, defaultBuilder) =>
-                    defaultBuilder(
-                      context,
-                      () => onOverflowPressed(searchExpanded, onPressed),
-                      icon: overflowIcon,
-                    ),
-                fadeDuration: const Duration(milliseconds: 300),
-                resizeDuration: const Duration(milliseconds: 300),
-              ),
+          child: CupertinoAdaptiveActions<VoidCallback>.moreAction(
+            key: const ValueKey('cupertino-search-adaptive-actions'),
+            actions: collection,
+            primaryCapacity: primaryCapacity,
+            presentationOverride: CupertinoActionPresentation.iconOnly,
+            onInvoke: (callback) => callback(),
+            onOverflowMenuOpened: onOverflowMenuOpened,
+            onOverflowMenuClosed: onOverflowMenuClosed,
+            invokeAfterMenuClosed: true,
+            iconBuilder: (context, action) =>
+                actionsById[action.id.value]?.icon,
+            actionButtonBuilder: (context, action, onPressed, defaultBuilder) {
+              final descriptor = actionsById[action.id.value];
+              return descriptor?.primaryBuilder?.call(context) ??
+                  defaultBuilder(context, action, onPressed);
+            },
+            overflowButtonBuilder: (context, onPressed, defaultBuilder) =>
+                defaultBuilder(
+                  context,
+                  () => onOverflowPressed(searchExpanded, onPressed),
+                  icon: overflowIcon,
+                ),
+            fadeDuration: const Duration(milliseconds: 300),
+            resizeDuration: const Duration(milliseconds: 300),
+          ),
         ),
       ),
     );
@@ -737,10 +732,10 @@ Map<String, CupertinoSliverSearchBarAction> _indexActions(
   return result;
 }
 
-adaptive_actions.AdaptiveAction<VoidCallback> _toAdaptiveAction(
+AdaptiveAction<VoidCallback> _toAdaptiveAction(
   CupertinoSliverSearchBarAction action,
 ) {
-  final metadata = adaptive_actions.ActionMetadata(
+  final metadata = ActionMetadata(
     label: action.label,
     subtitle: action.subtitle,
     tooltip: action.tooltip,
@@ -748,12 +743,10 @@ adaptive_actions.AdaptiveAction<VoidCallback> _toAdaptiveAction(
     isDestructive: action.isDestructive,
   );
   final placementPolicy = action.overflowOnly
-      ? adaptive_actions.ActionPlacementPolicy(
-          placement: adaptive_actions.ActionPlacement.overflowOnly,
-        )
-      : adaptive_actions.ActionPlacementPolicy(
-          automaticPreference: adaptive_actions.AutomaticPlacementPreference(
-            retentionPriority: adaptive_actions.PrimaryRetentionPriority.custom(
+      ? ActionPlacementPolicy(placement: ActionPlacement.overflowOnly)
+      : ActionPlacementPolicy(
+          automaticPreference: AutomaticPlacementPreference(
+            retentionPriority: PrimaryRetentionPriority.custom(
               action.retentionPriority,
             ),
           ),
@@ -761,8 +754,8 @@ adaptive_actions.AdaptiveAction<VoidCallback> _toAdaptiveAction(
   final children = action.children.map(_toAdaptiveMenuEntry);
   final onPressed = action.onPressed;
   if (action.children.isEmpty) {
-    return adaptive_actions.AdaptiveAction<VoidCallback>.action(
-      id: adaptive_actions.ActionId(action.id),
+    return AdaptiveAction<VoidCallback>.action(
+      id: ActionId(action.id),
       metadata: metadata,
       payload: onPressed!,
       isEnabled: action.isEnabled,
@@ -770,16 +763,16 @@ adaptive_actions.AdaptiveAction<VoidCallback> _toAdaptiveAction(
     );
   }
   if (onPressed == null) {
-    return adaptive_actions.AdaptiveAction<VoidCallback>.menu(
-      id: adaptive_actions.ActionId(action.id),
+    return AdaptiveAction<VoidCallback>.menu(
+      id: ActionId(action.id),
       metadata: metadata,
       children: children,
       isEnabled: action.isEnabled,
       placementPolicy: placementPolicy,
     );
   }
-  return adaptive_actions.AdaptiveAction<VoidCallback>.composite(
-    id: adaptive_actions.ActionId(action.id),
+  return AdaptiveAction<VoidCallback>.composite(
+    id: ActionId(action.id),
     metadata: metadata,
     payload: onPressed,
     children: children,
@@ -788,12 +781,12 @@ adaptive_actions.AdaptiveAction<VoidCallback> _toAdaptiveAction(
   );
 }
 
-adaptive_actions.AdaptiveMenuEntry<VoidCallback> _toAdaptiveMenuEntry(
+AdaptiveMenuEntry<VoidCallback> _toAdaptiveMenuEntry(
   CupertinoSliverSearchBarMenuEntry entry,
 ) => switch (entry) {
   final CupertinoSliverSearchBarAction action => _toAdaptiveAction(action),
   CupertinoSliverSearchBarMenuDivider() =>
-    const adaptive_actions.AdaptiveMenuDivider<VoidCallback>.menuOnly(),
+    const AdaptiveMenuDivider<VoidCallback>.menuOnly(),
 };
 
 class _CupertinoExpandableSearchItem extends StatefulWidget {

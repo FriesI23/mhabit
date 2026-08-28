@@ -381,4 +381,41 @@ void main() {
     expect(find.byIcon(CupertinoIcons.ellipsis), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('compact bottom toolbar separates More at the trailing edge', (
+    tester,
+  ) async {
+    _setSurfaceSize(tester, const Size(320, 800));
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: Align(
+          alignment: Alignment.bottomCenter,
+          child: CupertinoSelectBottomToolbar(
+            actions: [
+              CupertinoSelectAction(
+                id: 'edit',
+                label: 'Edit',
+                icon: const Icon(CupertinoIcons.pencil),
+                onPressed: () {},
+              ),
+              CupertinoSelectAction(
+                id: 'overflow-only',
+                label: 'Overflow only',
+                icon: const Icon(CupertinoIcons.archivebox),
+                onPressed: () {},
+                overflowOnly: true,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    final primaryCenter = tester.getCenter(find.byIcon(CupertinoIcons.pencil));
+    final moreCenter = tester.getCenter(find.byIcon(CupertinoIcons.ellipsis));
+    expect(moreCenter.dx - primaryCenter.dx, greaterThan(44));
+    expect(moreCenter.dx, 290);
+    expect(tester.takeException(), isNull);
+  });
 }

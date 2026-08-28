@@ -3,6 +3,43 @@ import 'package:ios_window_control_layout/ios_window_control_layout.dart';
 
 enum WindowControlLayoutOwner { appBar, rail }
 
+enum _WindowControlLayoutAspect {
+  appBarHorizontalAvoidance,
+  railHorizontalAvoidance,
+  railVerticalAvoidance,
+  safeAreaGeometry,
+}
+
+/// Complete corner-adapted safe-area geometry reported by UIKit.
+@immutable
+final class AdaptiveWindowSafeAreaGeometry {
+  const AdaptiveWindowSafeAreaGeometry({
+    required this.horizontalAvoidance,
+    required this.verticalAvoidance,
+    required this.effectiveCornerRadii,
+  });
+
+  /// Additional horizontal safe-area avoidance.
+  final EdgeInsetsDirectional horizontalAvoidance;
+
+  /// Additional vertical safe-area avoidance.
+  final EdgeInsetsDirectional verticalAvoidance;
+
+  /// Effective physical corner radii for the current window.
+  final BorderRadius effectiveCornerRadii;
+
+  @override
+  bool operator ==(Object other) =>
+      other is AdaptiveWindowSafeAreaGeometry &&
+      other.horizontalAvoidance == horizontalAvoidance &&
+      other.verticalAvoidance == verticalAvoidance &&
+      other.effectiveCornerRadii == effectiveCornerRadii;
+
+  @override
+  int get hashCode =>
+      Object.hash(horizontalAvoidance, verticalAvoidance, effectiveCornerRadii);
+}
+
 /// Queries iOS window-control layout once above an application's navigators.
 ///
 /// Root routes and overlays default to app-bar ownership. A nested
@@ -20,6 +57,15 @@ class AdaptiveWindowControlLayout extends StatelessWidget {
         return AdaptiveWindowControlLayoutScope(
           horizontalAvoidance: layout.horizontalAvoidance,
           verticalAvoidance: layout.verticalAvoidance,
+          horizontalSafeAreaAvoidance: layout.isAvailable
+              ? layout.horizontalSafeAreaAvoidance
+              : null,
+          verticalSafeAreaAvoidance: layout.isAvailable
+              ? layout.verticalSafeAreaAvoidance
+              : null,
+          effectiveCornerRadii: layout.isAvailable
+              ? layout.effectiveCornerRadii
+              : null,
           owner: WindowControlLayoutOwner.appBar,
           child: child,
         );
@@ -32,17 +78,34 @@ class AdaptiveWindowControlLayout extends StatelessWidget {
 ///
 /// The application root defaults to app-bar ownership. A navigation shell
 /// overrides this scope so rail layouts expose avoidance to the rail instead.
-class AdaptiveWindowControlLayoutScope extends InheritedWidget {
+class AdaptiveWindowControlLayoutScope extends InheritedModel<Object> {
   const AdaptiveWindowControlLayoutScope({
     super.key,
     required this.horizontalAvoidance,
     required this.verticalAvoidance,
+    this.horizontalSafeAreaAvoidance,
+    this.verticalSafeAreaAvoidance,
+    this.effectiveCornerRadii,
     required this.owner,
     required super.child,
   });
 
   final EdgeInsetsDirectional horizontalAvoidance;
   final EdgeInsetsDirectional verticalAvoidance;
+
+  /// UIKit's additional horizontal corner-adapted safe-area insets.
+  ///
+  /// A null value means the current platform cannot report this boundary.
+  final EdgeInsetsDirectional? horizontalSafeAreaAvoidance;
+
+  /// UIKit's additional vertical corner-adapted safe-area insets.
+  ///
+  /// A null value means the current platform cannot report this boundary.
+  final EdgeInsetsDirectional? verticalSafeAreaAvoidance;
+
+  /// UIKit's effective physical corner radii, when available.
+  final BorderRadius? effectiveCornerRadii;
+
   final WindowControlLayoutOwner owner;
 
   EdgeInsetsDirectional get appBarHorizontalAvoidance =>
@@ -66,18 +129,85 @@ class AdaptiveWindowControlLayoutScope extends InheritedWidget {
       .dependOnInheritedWidgetOfExactType<AdaptiveWindowControlLayoutScope>();
 
   static EdgeInsetsDirectional appBarAvoidanceOf(BuildContext context) =>
-      maybeOf(context)?.appBarHorizontalAvoidance ?? EdgeInsetsDirectional.zero;
+      InheritedModel.inheritFrom<AdaptiveWindowControlLayoutScope>(
+        context,
+        aspect: _WindowControlLayoutAspect.appBarHorizontalAvoidance,
+      )?.appBarHorizontalAvoidance ??
+      EdgeInsetsDirectional.zero;
 
   static EdgeInsetsDirectional railHorizontalAvoidanceOf(
     BuildContext context,
-  ) => maybeOf(context)?.railHorizontalAvoidance ?? EdgeInsetsDirectional.zero;
+  ) =>
+      InheritedModel.inheritFrom<AdaptiveWindowControlLayoutScope>(
+        context,
+        aspect: _WindowControlLayoutAspect.railHorizontalAvoidance,
+      )?.railHorizontalAvoidance ??
+      EdgeInsetsDirectional.zero;
 
   static EdgeInsetsDirectional railVerticalAvoidanceOf(BuildContext context) =>
-      maybeOf(context)?.railVerticalAvoidance ?? EdgeInsetsDirectional.zero;
+      InheritedModel.inheritFrom<AdaptiveWindowControlLayoutScope>(
+        context,
+        aspect: _WindowControlLayoutAspect.railVerticalAvoidance,
+      )?.railVerticalAvoidance ??
+      EdgeInsetsDirectional.zero;
+
+  /// Returns UIKit's corner-adapted safe-area avoidance and effective radii as
+  /// one snapshot, rebuilding when any of that geometry changes.
+  ///
+  /// Returns null unless the complete geometry is available.
+  static AdaptiveWindowSafeAreaGeometry? safeAreaGeometryOf(
+    BuildContext context,
+  ) {
+    final scope = InheritedModel.inheritFrom<AdaptiveWindowControlLayoutScope>(
+      context,
+      aspect: _WindowControlLayoutAspect.safeAreaGeometry,
+    );
+    final horizontalAvoidance = scope?.horizontalSafeAreaAvoidance;
+    final verticalAvoidance = scope?.verticalSafeAreaAvoidance;
+    final effectiveCornerRadii = scope?.effectiveCornerRadii;
+    return horizontalAvoidance == null ||
+            verticalAvoidance == null ||
+            effectiveCornerRadii == null
+        ? null
+        : AdaptiveWindowSafeAreaGeometry(
+            horizontalAvoidance: horizontalAvoidance,
+            verticalAvoidance: verticalAvoidance,
+            effectiveCornerRadii: effectiveCornerRadii,
+          );
+  }
 
   @override
   bool updateShouldNotify(AdaptiveWindowControlLayoutScope oldWidget) =>
       horizontalAvoidance != oldWidget.horizontalAvoidance ||
       verticalAvoidance != oldWidget.verticalAvoidance ||
+      horizontalSafeAreaAvoidance != oldWidget.horizontalSafeAreaAvoidance ||
+      verticalSafeAreaAvoidance != oldWidget.verticalSafeAreaAvoidance ||
+      effectiveCornerRadii != oldWidget.effectiveCornerRadii ||
       owner != oldWidget.owner;
+
+  @override
+  bool updateShouldNotifyDependent(
+    AdaptiveWindowControlLayoutScope oldWidget,
+    Set<Object> dependencies,
+  ) {
+    for (final aspect in _WindowControlLayoutAspect.values) {
+      if (!dependencies.contains(aspect)) continue;
+      final changed = switch (aspect) {
+        _WindowControlLayoutAspect.appBarHorizontalAvoidance =>
+          appBarHorizontalAvoidance != oldWidget.appBarHorizontalAvoidance,
+        _WindowControlLayoutAspect.railHorizontalAvoidance =>
+          railHorizontalAvoidance != oldWidget.railHorizontalAvoidance,
+        _WindowControlLayoutAspect.railVerticalAvoidance =>
+          railVerticalAvoidance != oldWidget.railVerticalAvoidance,
+        _WindowControlLayoutAspect.safeAreaGeometry =>
+          horizontalSafeAreaAvoidance !=
+                  oldWidget.horizontalSafeAreaAvoidance ||
+              verticalSafeAreaAvoidance !=
+                  oldWidget.verticalSafeAreaAvoidance ||
+              effectiveCornerRadii != oldWidget.effectiveCornerRadii,
+      };
+      if (changed) return true;
+    }
+    return false;
+  }
 }

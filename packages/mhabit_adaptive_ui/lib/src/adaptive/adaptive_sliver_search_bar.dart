@@ -28,7 +28,7 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
     this.hintText,
     this.onSubmitted,
     this.onTapOutside,
-    this.materialStyle = const MaterialSliverSearchBarStyle(),
+    this.materialStyle,
     this.cupertinoMaxSearchWidth = 240.0,
     this.cupertinoActions = const [],
     this.cupertinoBottom,
@@ -52,7 +52,7 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
     this.hintText,
     this.onSubmitted,
     this.onTapOutside,
-    this.materialStyle = const MaterialSliverSearchBarStyle(),
+    this.materialStyle,
     this.cupertinoMaxSearchWidth = 240.0,
     this.cupertinoActions = const [],
     this.cupertinoBottom,
@@ -76,7 +76,7 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
     this.hintText,
     this.onSubmitted,
     this.onTapOutside,
-    this.materialStyle = const MaterialSliverSearchBarStyle(),
+    this.materialStyle,
     this.cupertinoMaxSearchWidth = 240.0,
     this.cupertinoActions = const [],
     this.cupertinoBottom,
@@ -99,7 +99,9 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
   final VoidCallback onSearchActivated;
   final VoidCallback onSearchDismissed;
   final TapRegionCallback? onTapOutside;
-  final MaterialSliverSearchBarStyle materialStyle;
+
+  /// Material-specific visual configuration, or null for the defaults.
+  final MaterialSliverSearchBarStyle? materialStyle;
   final double cupertinoMaxSearchWidth;
   final List<CupertinoSliverSearchBarAction> cupertinoActions;
   final Widget? cupertinoBottom;
@@ -138,22 +140,26 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
     onTapOutside: onTapOutside,
   );
 
-  Widget _buildMaterial() => MaterialSliverSearchBar(
-    title: title,
-    leading: leading,
-    actions: actions,
-    searchTrailing: searchTrailing,
-    controller: controller,
-    focusNode: focusNode,
-    isSearchActive: isSearchActive,
-    keyword: keyword,
-    hintText: hintText,
-    onChanged: onChanged,
-    onSubmitted: onSubmitted,
-    onSearchActivated: onSearchActivated,
-    onSearchDismissed: onSearchDismissed,
-    onTapOutside: onTapOutside,
-    style: materialStyle,
-    pinned: pinned,
-  );
+  Widget _buildMaterial() {
+    final effectiveMaterialStyle =
+        materialStyle ?? const MaterialSliverSearchBarStyle();
+    return MaterialSliverSearchBar(
+      title: title,
+      leading: leading,
+      actions: actions,
+      searchTrailing: searchTrailing,
+      controller: controller,
+      focusNode: focusNode,
+      isSearchActive: isSearchActive,
+      keyword: keyword,
+      hintText: hintText,
+      onChanged: onChanged,
+      onSubmitted: onSubmitted,
+      onSearchActivated: onSearchActivated,
+      onSearchDismissed: onSearchDismissed,
+      onTapOutside: onTapOutside,
+      style: effectiveMaterialStyle,
+      pinned: pinned,
+    );
+  }
 }

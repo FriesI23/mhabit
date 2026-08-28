@@ -8,12 +8,12 @@ import 'adaptive_nav_visibility.dart';
 /// branches.
 ///
 /// In the compact form, branch pages read [visible] to coordinate FAB /
-/// placeholder animations with the bottom bar, call [reportScrollWish] to
-/// report scroll-driven visibility changes, and reserve [navHeight]. In
-/// non-compact forms (medium+) the navigation is always visible: [visible]
-/// and [scrollWish] are constant true, [barHeight] / [navHeight] are 0, and
-/// [reportScrollWish] is ignored, so pages keep their wiring unchanged.
+/// floating-action animations with the bottom bar and reserve [navHeight].
+/// The shell derives [scrollWish] from active vertical user scrolling;
+/// [reportScrollWish] remains available for explicit non-scroll policy. In
+/// non-compact forms (medium+) navigation is always visible.
 class AdaptiveNavScope extends InheritedWidget {
+  /// Creates a navigation scope for a shell branch subtree.
   const AdaptiveNavScope({
     super.key,
     required this.barHeight,
@@ -21,49 +21,39 @@ class AdaptiveNavScope extends InheritedWidget {
     required super.child,
     this._visible,
     this._scrollWish,
-    this._contextualChrome,
   });
 
   final AdaptiveNavVisibilityController? _visible;
   final AdaptiveScrollWishController? _scrollWish;
-  final AdaptiveContextualChromeController? _contextualChrome;
 
   /// Fallback listenable for non-compact forms; always true, never notifies.
   static const ConstValueListenable<bool> _alwaysTrue = ConstValueListenable(
     true,
   );
 
-  /// Whether the bottom navigation bar is currently visible.
+  /// Whether compact navigation chrome currently occupies its envelope.
   ///
-  /// Derived by the shell from [scrollWish], the branch stack depth, and
-  /// the bar visibility policy. Pages read it to coordinate FAB /
-  /// placeholder animations, e.g. through [ValueListenableBuilder]; the
-  /// [ValueListenable] view is read-only by construction. Non-compact forms
-  /// expose a constant-true listenable.
+  /// Apple minimized chrome remains visible; route or contextual suppression
+  /// makes it false. Material also makes it false for a hidden scroll wish.
+  /// Pages read it to coordinate FAB animations, e.g. through
+  /// [ValueListenableBuilder]; the [ValueListenable] view is read-only by
+  /// construction. Non-compact forms expose a constant-true listenable.
   ValueListenable<bool> get visible => _visible ?? _alwaysTrue;
 
-  /// Whether the active page wants the bottom bar visible.
+  /// Whether the active page wants expanded/visible navigation chrome.
   ///
-  /// Exposed as a read-only [ValueListenable]; pages report changes
-  /// through [reportScrollWish]. The shell combines the wish with the
-  /// route stack policy to derive [visible]. Non-compact forms expose a
-  /// constant-true listenable.
+  /// Exposed as a read-only [ValueListenable]. The shell normally derives it
+  /// from active vertical scrolling; a false wish hides Material chrome and
+  /// minimizes Apple chrome. Non-compact forms expose a constant-true
+  /// listenable.
   ValueListenable<bool> get scrollWish => _scrollWish ?? _alwaysTrue;
 
-  /// Reports the page's scroll-driven visibility wish to the shell.
+  /// Reports an explicit visibility wish to the shell.
   ///
-  /// Call this from scroll handlers; the shell may override the wish with
-  /// the route stack policy. Ignored in non-compact forms, where the
-  /// navigation is always visible.
+  /// Normal vertical page scrolling is observed automatically by the shell.
+  /// Use this for specialized non-scroll policy. Ignored in non-compact forms,
+  /// where navigation is always visible.
   void reportScrollWish(bool visible) => _scrollWish?.report(visible);
-
-  /// Suppresses compact navigation for a contextual command surface.
-  ///
-  /// Unlike [reportScrollWish], this value is not affected by scrolling.
-  /// Reports remain active across shell-form changes so a compact bar cannot
-  /// flash while a contextual surface is resizing from a wider layout.
-  void reportContextualChromeSuppressed(bool suppressed) =>
-      _contextualChrome?.report(suppressed);
 
   /// Content height of the bar, excluding the bottom safe-area inset.
   ///
@@ -72,8 +62,8 @@ class AdaptiveNavScope extends InheritedWidget {
   /// would double-count the inset. Always 0 in non-compact forms.
   final double barHeight;
 
-  /// Total rendered height of the bottom bar, including the bottom
-  /// safe-area inset (NavigationBar wraps its content in a SafeArea).
+  /// Total rendered height of the bottom bar, including the system bottom
+  /// safe-area inset.
   ///
   /// Always 0 in non-compact forms.
   final double navHeight;
@@ -102,7 +92,6 @@ class AdaptiveNavScope extends InheritedWidget {
   bool updateShouldNotify(AdaptiveNavScope oldWidget) =>
       _visible != oldWidget._visible ||
       _scrollWish != oldWidget._scrollWish ||
-      _contextualChrome != oldWidget._contextualChrome ||
       barHeight != oldWidget.barHeight ||
       navHeight != oldWidget.navHeight;
 }

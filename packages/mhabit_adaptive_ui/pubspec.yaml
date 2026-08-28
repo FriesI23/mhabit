@@ -9,10 +9,10 @@ environment:
   flutter: ">=3.44.0"
 
 dependencies:
-  adaptive_actions: ^0.2.2
+  adaptive_actions: ^0.3.0
   flutter:
     sdk: flutter
-  ios_window_control_layout: ^0.1.1
+  ios_window_control_layout: ^0.3.0
 
 dev_dependencies:
   flutter_test:

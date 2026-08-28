@@ -206,4 +206,97 @@ void main() {
       32,
     );
   });
+
+  testWidgets('safe-area geometry ignores unrelated scope updates', (
+    tester,
+  ) async {
+    final layout = ValueNotifier((
+      avoidance: EdgeInsetsDirectional.zero,
+      horizontalAvoidance: const EdgeInsetsDirectional.only(start: 24, end: 18),
+      verticalAvoidance: EdgeInsetsDirectional.zero,
+      cornerRadii: const BorderRadius.all(Radius.circular(62)),
+    ));
+    final geometryBuilds = <AdaptiveWindowSafeAreaGeometry?>[];
+    addTearDown(layout.dispose);
+
+    await tester.pumpWidget(
+      ValueListenableBuilder<
+        ({
+          EdgeInsetsDirectional avoidance,
+          EdgeInsetsDirectional horizontalAvoidance,
+          EdgeInsetsDirectional verticalAvoidance,
+          BorderRadius cornerRadii,
+        })
+      >(
+        valueListenable: layout,
+        child: _SafeAreaGeometryProbe(onBuild: geometryBuilds.add),
+        builder: (context, value, child) => AdaptiveWindowControlLayoutScope(
+          horizontalAvoidance: value.avoidance,
+          verticalAvoidance: EdgeInsetsDirectional.zero,
+          horizontalSafeAreaAvoidance: value.horizontalAvoidance,
+          verticalSafeAreaAvoidance: value.verticalAvoidance,
+          effectiveCornerRadii: value.cornerRadii,
+          owner: WindowControlLayoutOwner.appBar,
+          child: child!,
+        ),
+      ),
+    );
+    expect(geometryBuilds, [
+      isA<AdaptiveWindowSafeAreaGeometry>()
+          .having(
+            (geometry) => geometry.horizontalAvoidance,
+            'horizontalAvoidance',
+            const EdgeInsetsDirectional.only(start: 24, end: 18),
+          )
+          .having(
+            (geometry) => geometry.verticalAvoidance,
+            'verticalAvoidance',
+            EdgeInsetsDirectional.zero,
+          )
+          .having(
+            (geometry) => geometry.effectiveCornerRadii,
+            'effectiveCornerRadii',
+            const BorderRadius.all(Radius.circular(62)),
+          ),
+    ]);
+
+    layout.value = (
+      avoidance: const EdgeInsetsDirectional.only(start: 40),
+      horizontalAvoidance: layout.value.horizontalAvoidance,
+      verticalAvoidance: layout.value.verticalAvoidance,
+      cornerRadii: layout.value.cornerRadii,
+    );
+    await tester.pump();
+    expect(geometryBuilds, hasLength(1));
+
+    layout.value = (
+      avoidance: layout.value.avoidance,
+      horizontalAvoidance: layout.value.horizontalAvoidance,
+      verticalAvoidance: const EdgeInsetsDirectional.only(bottom: 4),
+      cornerRadii: layout.value.cornerRadii,
+    );
+    await tester.pump();
+    expect(geometryBuilds, hasLength(2));
+
+    layout.value = (
+      avoidance: layout.value.avoidance,
+      horizontalAvoidance: layout.value.horizontalAvoidance,
+      verticalAvoidance: layout.value.verticalAvoidance,
+      cornerRadii: const BorderRadius.all(Radius.circular(61)),
+    );
+    await tester.pump();
+    expect(geometryBuilds, hasLength(3));
+  });
+}
+
+class _SafeAreaGeometryProbe extends StatelessWidget {
+  const _SafeAreaGeometryProbe({required this.onBuild});
+
+  final ValueChanged<AdaptiveWindowSafeAreaGeometry?> onBuild;
+
+  @override
+  Widget build(BuildContext context) {
+    onBuild(AdaptiveWindowControlLayoutScope.safeAreaGeometryOf(context));
+    return const SizedBox.shrink();
+  }
 }

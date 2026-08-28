@@ -1,14 +1,20 @@
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mhabit/entries/app/navigation_chrome.dart';
 import 'package:mhabit/entries/app/shell.dart';
 import 'package:mhabit/models/app_entry.dart';
 import 'package:mhabit/pages/common/widgets.dart';
+import 'package:mhabit/pages/habits_display/navigation_chrome.dart';
 import 'package:mhabit/providers/app_ui/app_launch_entry.dart';
 import 'package:mhabit/routes/app_router.dart';
+import 'package:mhabit/routes/navigator_helpers.dart';
 import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +33,26 @@ class _BlockingPopViewModel extends ChangeNotifier implements PopScopeHandler {
   bool get canPop => false;
 }
 
+class _MutableNavigationCoordinator extends AppNavigationCoordinator {
+  _MutableNavigationCoordinator({required super.initialIndex})
+    : _selectedIndex = initialIndex,
+      super(
+        branchObservers: const [],
+        appFlowObserver: AdaptiveBranchRouteObserver(),
+        appChromeNavigatorKey: GlobalKey<NavigatorState>(),
+      );
+
+  int _selectedIndex;
+
+  @override
+  int get selectedIndex => _selectedIndex;
+
+  void selectIndex(int index) {
+    _selectedIndex = index;
+    notifyListeners();
+  }
+}
+
 class _StubPage extends StatelessWidget {
   const _StubPage(this.label);
 
@@ -36,6 +62,50 @@ class _StubPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(body: Center(child: Text(label)));
   }
+}
+
+class _PrimaryActionStubPage extends StatelessWidget {
+  const _PrimaryActionStubPage();
+
+  @override
+  Widget build(BuildContext context) =>
+      const Scaffold(body: Center(child: Text('habits action page')));
+}
+
+class _NavigatingPrimaryActionStubPage extends StatefulWidget {
+  const _NavigatingPrimaryActionStubPage();
+
+  @override
+  State<_NavigatingPrimaryActionStubPage> createState() =>
+      _NavigatingPrimaryActionStubPageState();
+}
+
+class _NavigatingPrimaryActionStubPageState
+    extends State<_NavigatingPrimaryActionStubPage> {
+  HabitDisplayNavigationChrome? _navigationChrome;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final navigationChrome = context.read<HabitDisplayNavigationChrome>();
+    if (identical(_navigationChrome, navigationChrome)) return;
+    _navigationChrome?.unregisterPrimaryAction(_handlePressed);
+    _navigationChrome = navigationChrome..registerPrimaryAction(_handlePressed);
+  }
+
+  @override
+  void dispose() {
+    _navigationChrome?.unregisterPrimaryAction(_handlePressed);
+    super.dispose();
+  }
+
+  void _handlePressed() {
+    unawaited(naviToHabitCreatePage(context: context));
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      const Scaffold(body: Center(child: Text('habits action page')));
 }
 
 GoRouter _buildRouter(
@@ -64,16 +134,37 @@ GoRouter _buildRouter(
     appChromeNavigatorKey: appChromeNavigatorKey,
     initialIndex: 0,
   );
+  final chromeController = AppNavigationChromeController();
+  final habitChrome = HabitDisplayNavigationChrome(
+    registerPrimaryAction: (action) => chromeController.registerPrimaryAction(
+      AppNavigationBranch.habits,
+      action,
+    ),
+    unregisterPrimaryAction: (action) => chromeController
+        .unregisterPrimaryAction(AppNavigationBranch.habits, action),
+    setContextualChromeSuppressed: (suppressed) => chromeController
+        .setContextualChromeSuppressed(AppNavigationBranch.habits, suppressed),
+  );
   addTearDown(coordinator.dispose);
+  addTearDown(chromeController.dispose);
   final routerBuilder = AppRouterBuilder()
+    ..addSettings(builder: (_, _) => const _StubPage('settings page'))
     ..addShellRoute(
       branches: branches,
       appFlow: appFlow,
       branchObservers: observers,
       observers: [appFlowObserver],
       navigatorKey: appChromeNavigatorKey,
-      builder: (context, state, child) =>
-          AppNavigationShell(coordinator: coordinator, child: child),
+      builder: (context, state, child) => MultiProvider(
+        providers: [
+          Provider<HabitDisplayNavigationChrome>.value(value: habitChrome),
+        ],
+        child: AppNavigationShell(
+          coordinator: coordinator,
+          chromeController: chromeController,
+          child: child,
+        ),
+      ),
       branchBuilder: (context, state, navigationShell) {
         coordinator.attachTabShell(navigationShell);
         return navigationShell;
@@ -96,6 +187,7 @@ Future<void> _pumpApp(
   WidgetTester tester, {
   required GoRouter router,
   required AppLaunchEntryViewModel launchEntry,
+  TargetPlatform platform = TargetPlatform.android,
 }) {
   return tester.pumpWidget(
     ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
@@ -103,6 +195,7 @@ Future<void> _pumpApp(
       child: MaterialApp.router(
         routerConfig: router,
         theme: ThemeData(
+          platform: platform,
           pageTransitionsTheme: const PageTransitionsTheme(
             builders: {
               TargetPlatform.android:
@@ -136,6 +229,65 @@ Future<void> _commitPredictiveBack(WidgetTester tester) async {
 }
 
 void main() {
+  testWidgets('moves its listener when the coordinator instance changes', (
+    tester,
+  ) async {
+    _setCompactSurface(tester);
+    final firstCoordinator = _MutableNavigationCoordinator(initialIndex: 0);
+    final secondCoordinator = _MutableNavigationCoordinator(initialIndex: 0);
+    final chromeController = AppNavigationChromeController();
+    final launchEntry = _RecordingLaunchEntryViewModel();
+    addTearDown(firstCoordinator.dispose);
+    addTearDown(secondCoordinator.dispose);
+    addTearDown(chromeController.dispose);
+    addTearDown(launchEntry.dispose);
+
+    Widget buildApp(AppNavigationCoordinator coordinator) =>
+        ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
+          value: launchEntry,
+          child: MaterialApp(
+            home: AppNavigationShell(
+              coordinator: coordinator,
+              chromeController: chromeController,
+              child: const _StubPage('content'),
+            ),
+          ),
+        );
+
+    await tester.pumpWidget(buildApp(firstCoordinator));
+    firstCoordinator.selectIndex(1);
+    await tester.pump();
+    expect(launchEntry.entries, [AppEntrys.habitToday]);
+
+    await tester.pumpWidget(buildApp(secondCoordinator));
+    expect(
+      tester
+          .widget<AdaptiveNavigationShell>(find.byType(AdaptiveNavigationShell))
+          .selectedIndex,
+      0,
+    );
+
+    firstCoordinator.selectIndex(0);
+    await tester.pump();
+    expect(
+      tester
+          .widget<AdaptiveNavigationShell>(find.byType(AdaptiveNavigationShell))
+          .selectedIndex,
+      0,
+    );
+
+    secondCoordinator.selectIndex(1);
+    await tester.pump();
+
+    expect(
+      tester
+          .widget<AdaptiveNavigationShell>(find.byType(AdaptiveNavigationShell))
+          .selectedIndex,
+      1,
+    );
+    expect(launchEntry.entries, [AppEntrys.habitToday, AppEntrys.habitToday]);
+  });
+
   testWidgets('derives compact bar visibility from the active branch stack', (
     tester,
   ) async {
@@ -194,6 +346,168 @@ void main() {
 
     expect(find.text('today page'), findsOneWidget);
     expect(launchEntry.entries, [AppEntrys.habitToday]);
+  });
+
+  testWidgets('uses Apple destination icons and switches branch', (
+    tester,
+  ) async {
+    _setCompactSurface(tester);
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers);
+    final launchEntry = _RecordingLaunchEntryViewModel();
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: launchEntry,
+      platform: TargetPlatform.iOS,
+    );
+
+    expect(
+      find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
+      findsOneWidget,
+    );
+    expect(
+      tester.getSize(
+        find.byKey(const ValueKey('cupertino-navigation-surface')),
+      ),
+      const Size(220, 50),
+    );
+    expect(find.byType(NavigationBar), findsNothing);
+
+    await tester.tap(find.byIcon(CupertinoIcons.today));
+    await tester.pumpAndSettle();
+
+    expect(find.text('today page'), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.today_fill), findsOneWidget);
+    expect(launchEntry.entries, [AppEntrys.habitToday]);
+  });
+
+  testWidgets('restores an Apple primary action after a branch round trip', (
+    tester,
+  ) async {
+    _setCompactSurface(tester);
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(
+      observers,
+      habitsPage: const _PrimaryActionStubPage(),
+    );
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+      platform: TargetPlatform.iOS,
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('cupertino-primary-action-surface')),
+      findsOneWidget,
+    );
+
+    await tester.tap(
+      find.byKey(const ValueKey('cupertino-navigation-destination-1')),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      TickerMode.valuesOf(
+        tester.element(find.text('habits action page', skipOffstage: false)),
+      ).enabled,
+      isFalse,
+    );
+    expect(
+      find.byKey(const ValueKey('cupertino-primary-action-surface')),
+      findsNothing,
+    );
+
+    await tester.tap(
+      find.byKey(const ValueKey('cupertino-navigation-destination-0')),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('cupertino-primary-action-surface')),
+      findsOneWidget,
+    );
+
+    await tester.tap(
+      find.byKey(const ValueKey('cupertino-navigation-destination-1')),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('cupertino-primary-action-surface')),
+      findsNothing,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('entering settings keeps the Apple primary-action Hero unique', (
+    tester,
+  ) async {
+    _setCompactSurface(tester);
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers);
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+      platform: TargetPlatform.iOS,
+    );
+    await tester.pumpAndSettle();
+
+    router.push('/settings');
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('settings page'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('restores the medium Apple action after app flow pop', (
+    tester,
+  ) async {
+    _setSurface(tester, const Size(700, 800));
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(
+      observers,
+      habitsPage: const _NavigatingPrimaryActionStubPage(),
+    );
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+      platform: TargetPlatform.iOS,
+    );
+    await tester.pumpAndSettle();
+
+    final action = find.byKey(
+      const ValueKey('cupertino-primary-action-surface'),
+    );
+    expect(action, findsOneWidget);
+
+    await tester.tap(action);
+    await tester.pumpAndSettle();
+    expect(find.text('create page'), findsOneWidget);
+
+    router.pop();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    expect(action, findsOneWidget);
   });
 
   testWidgets('keeps the compact bar visible during lazy branch activation', (
