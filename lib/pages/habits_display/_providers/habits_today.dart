@@ -360,6 +360,7 @@ class HabitsTodayViewModel extends ChangeNotifier
     _reloadBridge.eventSubs
       ?..subscribe<ReloadDataEvent>()
       ..subscribe<HabitStatusChangedEvent>()
+      ..subscribe<HabitDataChangedEvent>()
       ..subscribe<HabitRecordsChangedEvent>();
   }
 
