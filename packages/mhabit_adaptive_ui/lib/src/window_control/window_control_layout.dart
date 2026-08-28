@@ -8,6 +8,7 @@ enum _WindowControlLayoutAspect {
   railHorizontalAvoidance,
   railVerticalAvoidance,
   safeAreaGeometry,
+  rectangularDisplay,
 }
 
 /// Complete corner-adapted safe-area geometry reported by UIKit.
@@ -45,7 +46,14 @@ final class AdaptiveWindowSafeAreaGeometry {
 /// Root routes and overlays default to app-bar ownership. A nested
 /// [AdaptiveNavigationShell] overrides that allocation when a rail is visible.
 class AdaptiveWindowControlLayout extends StatelessWidget {
-  const AdaptiveWindowControlLayout({super.key, required this.child});
+  const AdaptiveWindowControlLayout({
+    super.key,
+    this.usesRectangularDisplay = false,
+    required this.child,
+  });
+
+  /// Whether the current display has rectangular physical corners.
+  final bool usesRectangularDisplay;
 
   final Widget child;
 
@@ -66,6 +74,7 @@ class AdaptiveWindowControlLayout extends StatelessWidget {
           effectiveCornerRadii: layout.isAvailable
               ? layout.effectiveCornerRadii
               : null,
+          usesRectangularDisplay: usesRectangularDisplay,
           owner: WindowControlLayoutOwner.appBar,
           child: child,
         );
@@ -86,6 +95,7 @@ class AdaptiveWindowControlLayoutScope extends InheritedModel<Object> {
     this.horizontalSafeAreaAvoidance,
     this.verticalSafeAreaAvoidance,
     this.effectiveCornerRadii,
+    this.usesRectangularDisplay = false,
     required this.owner,
     required super.child,
   });
@@ -105,6 +115,9 @@ class AdaptiveWindowControlLayoutScope extends InheritedModel<Object> {
 
   /// UIKit's effective physical corner radii, when available.
   final BorderRadius? effectiveCornerRadii;
+
+  /// Whether the current display has rectangular physical corners.
+  final bool usesRectangularDisplay;
 
   final WindowControlLayoutOwner owner;
 
@@ -151,6 +164,14 @@ class AdaptiveWindowControlLayoutScope extends InheritedModel<Object> {
       )?.railVerticalAvoidance ??
       EdgeInsetsDirectional.zero;
 
+  /// Whether the current display has rectangular physical corners.
+  static bool usesRectangularDisplayOf(BuildContext context) =>
+      InheritedModel.inheritFrom<AdaptiveWindowControlLayoutScope>(
+        context,
+        aspect: _WindowControlLayoutAspect.rectangularDisplay,
+      )?.usesRectangularDisplay ??
+      false;
+
   /// Returns UIKit's corner-adapted safe-area avoidance and effective radii as
   /// one snapshot, rebuilding when any of that geometry changes.
   ///
@@ -183,6 +204,7 @@ class AdaptiveWindowControlLayoutScope extends InheritedModel<Object> {
       horizontalSafeAreaAvoidance != oldWidget.horizontalSafeAreaAvoidance ||
       verticalSafeAreaAvoidance != oldWidget.verticalSafeAreaAvoidance ||
       effectiveCornerRadii != oldWidget.effectiveCornerRadii ||
+      usesRectangularDisplay != oldWidget.usesRectangularDisplay ||
       owner != oldWidget.owner;
 
   @override
@@ -205,6 +227,8 @@ class AdaptiveWindowControlLayoutScope extends InheritedModel<Object> {
               verticalSafeAreaAvoidance !=
                   oldWidget.verticalSafeAreaAvoidance ||
               effectiveCornerRadii != oldWidget.effectiveCornerRadii,
+        _WindowControlLayoutAspect.rectangularDisplay =>
+          usesRectangularDisplay != oldWidget.usesRectangularDisplay,
       };
       if (changed) return true;
     }

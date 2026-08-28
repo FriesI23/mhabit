@@ -529,6 +529,7 @@ class _WindowControlLayoutOwner extends StatelessWidget {
       horizontalSafeAreaAvoidance: layout.horizontalSafeAreaAvoidance,
       verticalSafeAreaAvoidance: layout.verticalSafeAreaAvoidance,
       effectiveCornerRadii: layout.effectiveCornerRadii,
+      usesRectangularDisplay: layout.usesRectangularDisplay,
       owner: railOwnsAvoidance
           ? WindowControlLayoutOwner.rail
           : WindowControlLayoutOwner.appBar,

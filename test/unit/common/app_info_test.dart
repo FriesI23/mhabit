@@ -17,6 +17,23 @@ import 'package:mhabit/common/app_info.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 void main() {
+  group('isRectangularIPhoneMachineIdentifier', () {
+    test('recognizes home-button iPhones supported by iOS 15', () {
+      expect(isRectangularIPhoneMachineIdentifier('iPhone8,1'), isTrue);
+      expect(isRectangularIPhoneMachineIdentifier('iPhone9,3'), isTrue);
+      expect(isRectangularIPhoneMachineIdentifier('iPhone10,5'), isTrue);
+      expect(isRectangularIPhoneMachineIdentifier('iPhone12,8'), isTrue);
+      expect(isRectangularIPhoneMachineIdentifier('iPhone14,6'), isTrue);
+    });
+
+    test('keeps rounded and non-iPhone devices on the fallback path', () {
+      expect(isRectangularIPhoneMachineIdentifier('iPhone10,3'), isFalse);
+      expect(isRectangularIPhoneMachineIdentifier('iPhone13,2'), isFalse);
+      expect(isRectangularIPhoneMachineIdentifier('iPad14,3'), isFalse);
+      expect(isRectangularIPhoneMachineIdentifier('unknown'), isFalse);
+    });
+  });
+
   group('AppInfo.changelogVersion', () {
     test('returns "version+buildNumber" format after init', () async {
       PackageInfo.setMockInitialValues(

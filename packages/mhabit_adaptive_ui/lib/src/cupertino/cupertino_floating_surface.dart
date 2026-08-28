@@ -40,6 +40,8 @@ final class CupertinoFloatingSurfaceGeometry {
     final viewPadding = MediaQuery.viewPaddingOf(context);
     final safeAreaGeometry =
         AdaptiveWindowControlLayoutScope.safeAreaGeometryOf(context);
+    final usesRectangularDisplay =
+        AdaptiveWindowControlLayoutScope.usesRectangularDisplayOf(context);
     final verticalSafeAreaAvoidance = safeAreaGeometry?.verticalAvoidance
         .resolve(directionality);
     final floatingMargin = _floatingMarginFor(
@@ -50,7 +52,9 @@ final class CupertinoFloatingSurfaceGeometry {
     final cornerRadii =
         safeAreaGeometry?.effectiveCornerRadii ??
         MediaQuery.displayCornerRadiiOf(context) ??
-        ((!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS)
+        ((!kIsWeb &&
+                defaultTargetPlatform == TargetPlatform.iOS &&
+                !usesRectangularDisplay)
             ? _legacyIosFallbackCornerRadii
             : null);
     final (leftMargin, rightMargin) = cornerRadii == null

@@ -69,6 +69,7 @@ Widget _wrap({
   EdgeInsetsDirectional? horizontalSafeAreaAvoidance,
   EdgeInsetsDirectional? verticalSafeAreaAvoidance,
   BorderRadius? effectiveCornerRadii,
+  bool usesRectangularDisplay = false,
   AppleNavigationBarStyle appleStyle = const AppleNavigationBarStyle(),
   CupertinoThemeData? theme,
   CupertinoNavigationPrimaryAction? primaryAction = _testPrimaryAction,
@@ -87,6 +88,7 @@ Widget _wrap({
         horizontalSafeAreaAvoidance: horizontalSafeAreaAvoidance,
         verticalSafeAreaAvoidance: verticalSafeAreaAvoidance,
         effectiveCornerRadii: effectiveCornerRadii,
+        usesRectangularDisplay: usesRectangularDisplay,
         owner: WindowControlLayoutOwner.appBar,
         child: Directionality(
           textDirection: textDirection,
@@ -454,6 +456,37 @@ void main() {
       }
     });
 
+    testWidgets('uses ordinary margins for a known rectangular iPhone', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      try {
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = const Size(400, 800);
+        addTearDown(tester.view.reset);
+
+        await tester.pumpWidget(
+          _wrap(
+            presentation: AdaptiveNavigationBarPresentation.expanded,
+            onDestinationSelected: (_) {},
+            onExpandRequested: () {},
+            usesRectangularDisplay: true,
+          ),
+        );
+
+        final navigation = find.byKey(
+          const ValueKey('cupertino-navigation-surface'),
+        );
+        final placeholder = find.byKey(
+          const ValueKey('cupertino-primary-action-slot'),
+        );
+        expect(tester.getTopLeft(navigation).dx, 12);
+        expect(400 - tester.getTopRight(placeholder).dx, 12);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+
     testWidgets('uses UIKit geometry and allows style override', (
       tester,
     ) async {
@@ -473,6 +506,7 @@ void main() {
           ),
           verticalSafeAreaAvoidance: EdgeInsetsDirectional.zero,
           effectiveCornerRadii: const BorderRadius.all(Radius.circular(62)),
+          usesRectangularDisplay: true,
         ),
       );
 

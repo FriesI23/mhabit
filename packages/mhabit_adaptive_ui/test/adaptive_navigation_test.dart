@@ -1099,7 +1099,28 @@ void main() {
       expect(layout.horizontalSafeAreaAvoidance, isNull);
       expect(layout.verticalSafeAreaAvoidance, isNull);
       expect(layout.effectiveCornerRadii, isNull);
+      expect(layout.usesRectangularDisplay, isFalse);
       expect(layout.owner, WindowControlLayoutOwner.appBar);
+    });
+
+    testWidgets('preserves rectangular display geometry in the shell', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(
+        AdaptiveWindowControlLayoutScope(
+          horizontalAvoidance: EdgeInsetsDirectional.zero,
+          verticalAvoidance: EdgeInsetsDirectional.zero,
+          usesRectangularDisplay: true,
+          owner: WindowControlLayoutOwner.appBar,
+          child: MaterialApp.router(routerConfig: router),
+        ),
+      );
+
+      final context = tester.element(find.text('habits page'));
+      final layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
+      expect(layout.usesRectangularDisplay, isTrue);
     });
 
     testWidgets('assigns avoidance to app bar or rail without overlap', (

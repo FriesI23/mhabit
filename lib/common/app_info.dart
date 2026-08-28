@@ -26,10 +26,34 @@ import 'flavor.dart';
 
 enum LinuxPlatformArchitecture { x86_64, aarch64 }
 
+const _rectangularIPhoneMachineIdentifiers = <String>{
+  'iPhone8,1',
+  'iPhone8,2',
+  'iPhone8,4',
+  'iPhone9,1',
+  'iPhone9,2',
+  'iPhone9,3',
+  'iPhone9,4',
+  'iPhone10,1',
+  'iPhone10,2',
+  'iPhone10,4',
+  'iPhone10,5',
+  'iPhone12,8',
+  'iPhone14,6',
+};
+
+/// Whether [machineIdentifier] belongs to an iPhone with a rectangular screen.
+///
+/// The list starts at the application's iOS 15 deployment target and includes
+/// the later second- and third-generation iPhone SE models.
+bool isRectangularIPhoneMachineIdentifier(String machineIdentifier) =>
+    _rectangularIPhoneMachineIdentifiers.contains(machineIdentifier);
+
 class AppInfo implements AsyncInitialization {
   static final AppInfo _singleton = AppInfo._internal();
 
   AndroidBuildVersion? _androidBuildVersion;
+  String? _iosMachineIdentifier;
   LinuxPlatformArchitecture? _linuxArchitecture;
   late String _packageName;
   late String _appName;
@@ -63,12 +87,20 @@ class AppInfo implements AsyncInitialization {
 
   LinuxPlatformArchitecture? get linuxArchitecture => _linuxArchitecture;
 
+  /// Whether the current device is a known rectangular-screen iPhone.
+  bool get usesRectangularIPhoneDisplay =>
+      _iosMachineIdentifier != null &&
+      isRectangularIPhoneMachineIdentifier(_iosMachineIdentifier!);
+
   @override
   Future<void> init() async {
     final deviceInfo = DeviceInfoPlugin();
     if (Platform.isAndroid) {
       final androidInfo = await deviceInfo.androidInfo;
       _androidBuildVersion = androidInfo.version;
+    } else if (Platform.isIOS) {
+      final iosInfo = await deviceInfo.iosInfo;
+      _iosMachineIdentifier = iosInfo.utsname.machine;
     } else if (Platform.isLinux) {
       final result = await Process.run('uname', ['-m']);
       _linuxArchitecture = result.stdout.toString().contains('aarch64')
