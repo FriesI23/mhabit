@@ -307,7 +307,9 @@ class _ScopeLookupProbe extends StatelessWidget {
 }
 
 class _BranchContractHarness extends StatefulWidget {
-  const _BranchContractHarness();
+  const _BranchContractHarness({this.itemCount = 40});
+
+  final int itemCount;
 
   @override
   State<_BranchContractHarness> createState() => _BranchContractHarnessState();
@@ -363,7 +365,7 @@ class _BranchContractHarnessState extends State<_BranchContractHarness> {
                   key: ValueKey(index == 0 ? 'habits-scroll' : 'today-scroll'),
                   slivers: [
                     SliverList.builder(
-                      itemCount: 40,
+                      itemCount: widget.itemCount,
                       itemBuilder: (context, itemIndex) => SizedBox(
                         height: 56,
                         child: Text('branch $index item $itemIndex'),
@@ -765,6 +767,30 @@ void main() {
         const Offset(0, 150),
       );
       await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('cupertino-navigation-expanded')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('keeps Apple navigation expanded without scroll extent', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          home: const _BranchContractHarness(itemCount: 1),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.drag(
+        find.byKey(const ValueKey('habits-scroll')),
+        const Offset(0, -300),
+      );
+      await tester.pumpAndSettle();
+
       expect(
         find.byKey(const ValueKey('cupertino-navigation-expanded')),
         findsOneWidget,

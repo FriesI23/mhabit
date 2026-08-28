@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show ScrollDirection;
 
 import '../adaptive/adaptive_navigation_destination.dart';
 import '../breakpoints/window_size_class.dart';
@@ -388,24 +387,24 @@ class _NavigationScrollWishObserver extends StatelessWidget {
   final ValueChanged<bool> onVisibilityChanged;
   final Widget child;
 
-  bool _handleNotification(UserScrollNotification notification) {
+  bool _handleNotification(ScrollNotification notification) {
     if (notification.depth != 0 || notification.metrics.axis != Axis.vertical) {
       return false;
     }
-    switch (notification.direction) {
-      case ScrollDirection.forward:
-        onVisibilityChanged(true);
-      case ScrollDirection.reverse:
-        onVisibilityChanged(false);
-      case ScrollDirection.idle:
-        break;
+    if (notification.metrics.extentBefore <= 0) {
+      onVisibilityChanged(true);
+      return false;
     }
+    if (notification is! ScrollUpdateNotification) return false;
+    final delta = notification.scrollDelta;
+    if (delta == null || delta == 0) return false;
+    onVisibilityChanged(delta < 0);
     return false;
   }
 
   @override
   Widget build(BuildContext context) =>
-      NotificationListener<UserScrollNotification>(
+      NotificationListener<ScrollNotification>(
         onNotification: _handleNotification,
         child: child,
       );
