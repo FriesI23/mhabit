@@ -1,12 +1,13 @@
 import 'package:flutter/foundation.dart' show ValueListenable;
+import 'package:flutter/gestures.dart' show kMinFlingVelocity, kTouchSlop;
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show ScrollDirection;
 
 import '../adaptive/adaptive_navigation_destination.dart';
 import '../breakpoints/window_size_class.dart';
 import '../window_control/window_control_layout.dart';
 import 'adaptive_nav_scope.dart';
 import 'adaptive_nav_visibility.dart';
+import 'navigation_scroll_wish_policy.dart';
 
 /// Navigation form selected from the current window size classes.
 ///
@@ -87,6 +88,7 @@ class NavigationShellFrame extends StatefulWidget {
     required this.barHeight,
     required this.navHeight,
     required this.keepVisibleOnScroll,
+    required this.scrollWishPolicy,
     required this.leadingBuilder,
     required this.compactNavigationBuilder,
     this.floatingActionButtonBuilder,
@@ -122,6 +124,9 @@ class NavigationShellFrame extends StatefulWidget {
   ///
   /// The themed renderer may still present a minimized surface inside it.
   final bool keepVisibleOnScroll;
+
+  /// Converts compact vertical scrolling into navigation presentation wishes.
+  final NavigationScrollWishPolicy scrollWishPolicy;
 
   /// Builds the rail region for non-compact shell forms.
   final NavigationShellLeadingBuilder leadingBuilder;
@@ -247,6 +252,7 @@ class _NavigationShellFrameState extends State<NavigationShellFrame> {
         resizeToAvoidBottomInset: false,
         body: _NavigationScrollWishObserver(
           onVisibilityChanged: _scrollWish.report,
+          policy: widget.scrollWishPolicy,
           child: _NavigationShellBody(
             ambientPadding: padding,
             ambientViewPadding: viewPadding,
@@ -379,35 +385,66 @@ class _CompactNavigationClipper extends CustomClipper<Rect> {
       oldClipper.topOverflow != topOverflow;
 }
 
-class _NavigationScrollWishObserver extends StatelessWidget {
+class _NavigationScrollWishObserver extends StatefulWidget {
   const _NavigationScrollWishObserver({
     required this.onVisibilityChanged,
+    required this.policy,
     required this.child,
   });
 
   final ValueChanged<bool> onVisibilityChanged;
+  final NavigationScrollWishPolicy policy;
   final Widget child;
 
-  bool _handleNotification(UserScrollNotification notification) {
+  @override
+  State<_NavigationScrollWishObserver> createState() =>
+      _NavigationScrollWishObserverState();
+}
+
+class _NavigationScrollWishObserverState
+    extends State<_NavigationScrollWishObserver> {
+  late NavigationScrollWishTracker _tracker = widget.policy.createTracker();
+
+  @override
+  void didUpdateWidget(covariant _NavigationScrollWishObserver oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.policy == widget.policy) return;
+    _tracker = widget.policy.createTracker();
+  }
+
+  bool _handleNotification(ScrollNotification notification) {
     if (notification.depth != 0 || notification.metrics.axis != Axis.vertical) {
       return false;
     }
-    switch (notification.direction) {
-      case ScrollDirection.forward:
-        onVisibilityChanged(true);
-      case ScrollDirection.reverse:
-        onVisibilityChanged(false);
-      case ScrollDirection.idle:
-        break;
+    if (notification case ScrollStartNotification(:final dragDetails)) {
+      _tracker.start(dragDetails?.sourceTimeStamp);
+    } else if (notification is ScrollEndNotification) {
+      _tracker.end();
     }
+    if (notification is! ScrollUpdateNotification) return false;
+    final delta = notification.scrollDelta;
+    if (delta == null || delta == 0) return false;
+    final scrollable = notification.context == null
+        ? null
+        : Scrollable.maybeOf(notification.context!);
+    final physics = scrollable?.position.physics;
+    final wish = _tracker.update(
+      extentBefore: notification.metrics.extentBefore,
+      delta: delta,
+      directDrag: notification.dragDetails != null,
+      timestamp: notification.dragDetails?.sourceTimeStamp,
+      minFlingDistance: physics?.minFlingDistance ?? kTouchSlop,
+      minFlingVelocity: physics?.minFlingVelocity ?? kMinFlingVelocity,
+    );
+    if (wish != null) widget.onVisibilityChanged(wish);
     return false;
   }
 
   @override
   Widget build(BuildContext context) =>
-      NotificationListener<UserScrollNotification>(
+      NotificationListener<ScrollNotification>(
         onNotification: _handleNotification,
-        child: child,
+        child: widget.child,
       );
 }
 

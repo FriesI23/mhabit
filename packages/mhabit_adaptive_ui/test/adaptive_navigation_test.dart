@@ -307,7 +307,9 @@ class _ScopeLookupProbe extends StatelessWidget {
 }
 
 class _BranchContractHarness extends StatefulWidget {
-  const _BranchContractHarness();
+  const _BranchContractHarness({this.itemCount = 40});
+
+  final int itemCount;
 
   @override
   State<_BranchContractHarness> createState() => _BranchContractHarnessState();
@@ -363,7 +365,7 @@ class _BranchContractHarnessState extends State<_BranchContractHarness> {
                   key: ValueKey(index == 0 ? 'habits-scroll' : 'today-scroll'),
                   slivers: [
                     SliverList.builder(
-                      itemCount: 40,
+                      itemCount: widget.itemCount,
                       itemBuilder: (context, itemIndex) => SizedBox(
                         height: 56,
                         child: Text('branch $index item $itemIndex'),
@@ -750,9 +752,10 @@ void main() {
         findsOneWidget,
       );
 
-      await tester.drag(
+      await tester.fling(
         find.byKey(const ValueKey('today-scroll')),
         const Offset(0, -300),
+        1200,
       );
       await tester.pumpAndSettle();
       expect(
@@ -760,15 +763,207 @@ void main() {
         findsOneWidget,
       );
 
-      await tester.drag(
+      await tester.fling(
         find.byKey(const ValueKey('today-scroll')),
         const Offset(0, 150),
+        1200,
       );
       await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('cupertino-navigation-expanded')),
         findsOneWidget,
       );
+    });
+
+    testWidgets('keeps Apple navigation expanded without scroll extent', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          home: const _BranchContractHarness(itemCount: 1),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.drag(
+        find.byKey(const ValueKey('habits-scroll')),
+        const Offset(0, -300),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('cupertino-navigation-expanded')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('keeps Apple navigation expanded during a slow drag', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          home: const _BranchContractHarness(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.timedDrag(
+        find.byKey(const ValueKey('habits-scroll')),
+        const Offset(0, -80),
+        const Duration(seconds: 2),
+      );
+      await tester.pumpAndSettle();
+
+      final scrollable = Scrollable.of(
+        tester.element(find.text('branch 0 item 1')),
+      );
+      expect(scrollable.position.pixels, greaterThan(0));
+      expect(
+        find.byKey(const ValueKey('cupertino-navigation-expanded')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('minimizes Apple navigation during a fast direct drag', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          home: const _BranchContractHarness(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final scroll = find.byKey(const ValueKey('habits-scroll'));
+      final gesture = await tester.startGesture(tester.getCenter(scroll));
+      await gesture.moveBy(
+        const Offset(0, -24),
+        timeStamp: const Duration(milliseconds: 16),
+      );
+      await tester.pump();
+      await gesture.moveBy(
+        const Offset(0, -48),
+        timeStamp: const Duration(milliseconds: 32),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('cupertino-navigation-minimized')),
+        findsOneWidget,
+      );
+      await gesture.up(timeStamp: const Duration(milliseconds: 48));
+    });
+
+    testWidgets('keeps Apple navigation minimized during a slow reverse drag', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          home: const _BranchContractHarness(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final item = find.text('branch 0 item 1');
+      final scrollable = Scrollable.of(tester.element(item));
+      scrollable.position.jumpTo(300);
+      final scope = AdaptiveNavScope.of(tester.element(item));
+      scope.reportScrollWish(false);
+      await tester.pumpAndSettle();
+
+      await tester.timedDrag(
+        find.byKey(const ValueKey('habits-scroll')),
+        const Offset(0, 80),
+        const Duration(seconds: 2),
+      );
+      await tester.pumpAndSettle();
+
+      expect(scrollable.position.pixels, greaterThan(0));
+      expect(
+        find.byKey(const ValueKey('cupertino-navigation-minimized')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('expands Apple navigation during a fast direct reverse drag', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          home: const _BranchContractHarness(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final item = find.text('branch 0 item 1');
+      final scrollable = Scrollable.of(tester.element(item));
+      scrollable.position.jumpTo(300);
+      final scope = AdaptiveNavScope.of(tester.element(item));
+      scope.reportScrollWish(false);
+      await tester.pumpAndSettle();
+
+      final scroll = find.byKey(const ValueKey('habits-scroll'));
+      final gesture = await tester.startGesture(tester.getCenter(scroll));
+      await gesture.moveBy(
+        const Offset(0, 24),
+        timeStamp: const Duration(milliseconds: 16),
+      );
+      await tester.pump();
+      await gesture.moveBy(
+        const Offset(0, 48),
+        timeStamp: const Duration(milliseconds: 32),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('cupertino-navigation-expanded')),
+        findsOneWidget,
+      );
+      await gesture.up(timeStamp: const Duration(milliseconds: 48));
+    });
+
+    testWidgets('keeps Material navigation direction-driven in both ways', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.android),
+          home: const _BranchContractHarness(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.timedDrag(
+        find.byKey(const ValueKey('habits-scroll')),
+        const Offset(0, -80),
+        const Duration(seconds: 2),
+      );
+      await tester.pumpAndSettle();
+
+      final scope = AdaptiveNavScope.of(
+        tester.element(find.text('branch 0 item 1')),
+      );
+      expect(scope.visible.value, isFalse);
+
+      await tester.timedDrag(
+        find.byKey(const ValueKey('habits-scroll')),
+        const Offset(0, 20),
+        const Duration(seconds: 1),
+      );
+      await tester.pumpAndSettle();
+
+      expect(scope.visible.value, isTrue);
     });
 
     testWidgets('animates the Apple action with route visibility', (

@@ -427,6 +427,24 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
       .read<HabitSummaryViewModel>();
 }
 
+Future<void> _fastDirectDrag(
+  WidgetTester tester,
+  Finder finder, {
+  required double direction,
+}) async {
+  final gesture = await tester.startGesture(tester.getCenter(finder));
+  await gesture.moveBy(
+    Offset(0, 48 * direction),
+    timeStamp: const Duration(milliseconds: 16),
+  );
+  await tester.pump();
+  await gesture.moveBy(
+    Offset(0, 96 * direction),
+    timeStamp: const Duration(milliseconds: 32),
+  );
+  await gesture.cancel(timeStamp: const Duration(milliseconds: 48));
+}
+
 void main() {
   testWidgets('created habit updates the page-owned summary provider', (
     tester,
@@ -963,7 +981,7 @@ void main() {
     await tester.pump();
     expect(compactPrimaryAction, findsOneWidget);
 
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+    await _fastDirectDrag(tester, find.byType(CustomScrollView), direction: -1);
     await tester.pump(const Duration(milliseconds: 350));
 
     expect(
@@ -973,7 +991,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     expect(tester.getSize(compactPrimaryAction), const Size.square(44));
 
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, 100));
+    await _fastDirectDrag(tester, find.byType(CustomScrollView), direction: 1);
     await tester.pump(const Duration(milliseconds: 350));
 
     expect(
@@ -1012,14 +1030,14 @@ void main() {
       findsOneWidget,
     );
 
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+    await _fastDirectDrag(tester, find.byType(CustomScrollView), direction: -1);
     await tester.pump(const Duration(milliseconds: 350));
     expect(
       find.byKey(const ValueKey('cupertino-navigation-minimized')),
       findsOneWidget,
     );
 
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, 150));
+    await _fastDirectDrag(tester, find.byType(CustomScrollView), direction: 1);
     await tester.pump(const Duration(milliseconds: 350));
     expect(
       find.byKey(const ValueKey('cupertino-navigation-expanded')),

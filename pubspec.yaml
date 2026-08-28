@@ -76,22 +76,24 @@ melos:
         dart run melos run format
     test:
       description: Run the root app and internal package test suites.
-      run: |
-        flutter test --reporter github
-        dart run melos exec \
-          --category=internal_packages \
-          --no-flutter \
-          --dir-exists=test \
-          --fail-fast \
-          --concurrency=1 \
-          -- "dart test --reporter github"
-        dart run melos exec \
-          --category=internal_packages \
-          --flutter \
-          --dir-exists=test \
-          --fail-fast \
-          --concurrency=1 \
-          -- "flutter test --reporter github"
+      steps:
+        - flutter test --reporter github
+        - >-
+          dart run melos exec \
+            --category=internal_packages \
+            --no-flutter \
+            --dir-exists=test \
+            --fail-fast \
+            --concurrency=1 \
+            -- "dart test --reporter github"
+        - >-
+          dart run melos exec \
+            --category=internal_packages \
+            --flutter \
+            --dir-exists=test \
+            --fail-fast \
+            --concurrency=1 \
+            -- "flutter test --reporter github"
     test-ci:
       description: |
         Run app and package test suites for CI with machine-readable results.

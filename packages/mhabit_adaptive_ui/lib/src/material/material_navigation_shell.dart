@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../adaptive/adaptive_navigation_destination.dart';
+import '../shell/navigation_scroll_wish_policy.dart';
 import '../shell/navigation_shell_frame.dart';
 import 'material_navigation_bar.dart';
 import 'material_navigation_rail.dart';
@@ -53,6 +54,7 @@ class MaterialNavigationShell extends StatelessWidget {
       barHeight: _barHeight,
       navHeight: _barHeight + MediaQuery.paddingOf(context).bottom,
       keepVisibleOnScroll: false,
+      scrollWishPolicy: const NavigationScrollWishPolicy.directional(),
       leadingBuilder: (context, form, onSelected) =>
           MaterialNavigationRailRegion(
             form: form,

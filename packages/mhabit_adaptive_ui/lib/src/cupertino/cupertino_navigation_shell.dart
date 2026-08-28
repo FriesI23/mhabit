@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 import '../adaptive/adaptive_navigation_destination.dart';
 import '../material/material_navigation_rail.dart' show NavigationRailExtent;
+import '../shell/navigation_scroll_wish_policy.dart';
 import '../shell/navigation_shell_frame.dart';
 import 'cupertino_adaptive_navigation_bar.dart';
 import 'cupertino_floating_surface.dart';
@@ -66,6 +67,10 @@ class CupertinoNavigationShell extends StatelessWidget {
         floatingBottomMargin: appleBarStyle.floatingBottomMargin,
       ),
       keepVisibleOnScroll: true,
+      scrollWishPolicy: const NavigationScrollWishPolicy.flingThreshold(
+        distanceFactor: 1.5,
+        velocityFactor: 1.5,
+      ),
       switchDuration: disableAnimations
           ? Duration.zero
           : navigationShellAnimationDuration,
