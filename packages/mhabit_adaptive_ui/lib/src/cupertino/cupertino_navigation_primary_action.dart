@@ -19,6 +19,23 @@ final class _CupertinoDefaultHeroTag {
 }
 
 /// A Cupertino navigation shell primary-action description.
+///
+/// This is an app-selected shell command, not a page-owned Material FAB. The
+/// renderer currently uses [FloatingActionButton] only as a Flutter layout,
+/// interaction, and Hero primitive.
+///
+/// The shell places the action at the trailing bottom edge (`*`) beside compact
+/// navigation or independently of the sidebar in wider layouts:
+///
+/// ```text
+/// compact                 medium / expanded
+/// +------------------+    +------+-----------+
+/// | content          |    | side | content   |
+/// | [ navigation ] * |    | bar  |         * |
+/// +------------------+    +------+-----------+
+///
+/// * = primary action
+/// ```
 @immutable
 final class CupertinoNavigationPrimaryAction {
   /// Creates a primary-action description.

@@ -33,6 +33,26 @@ class _BlockingPopViewModel extends ChangeNotifier implements PopScopeHandler {
   bool get canPop => false;
 }
 
+class _MutableNavigationCoordinator extends AppNavigationCoordinator {
+  _MutableNavigationCoordinator({required super.initialIndex})
+    : _selectedIndex = initialIndex,
+      super(
+        branchObservers: const [],
+        appFlowObserver: AdaptiveBranchRouteObserver(),
+        appChromeNavigatorKey: GlobalKey<NavigatorState>(),
+      );
+
+  int _selectedIndex;
+
+  @override
+  int get selectedIndex => _selectedIndex;
+
+  void selectIndex(int index) {
+    _selectedIndex = index;
+    notifyListeners();
+  }
+}
+
 class _StubPage extends StatelessWidget {
   const _StubPage(this.label);
 
@@ -137,15 +157,13 @@ GoRouter _buildRouter(
       navigatorKey: appChromeNavigatorKey,
       builder: (context, state, child) => MultiProvider(
         providers: [
-          ChangeNotifierProvider<AppNavigationCoordinator>.value(
-            value: coordinator,
-          ),
-          ChangeNotifierProvider<AppNavigationChromeController>.value(
-            value: chromeController,
-          ),
           Provider<HabitDisplayNavigationChrome>.value(value: habitChrome),
         ],
-        child: AppNavigationShell(child: child),
+        child: AppNavigationShell(
+          coordinator: coordinator,
+          chromeController: chromeController,
+          child: child,
+        ),
       ),
       branchBuilder: (context, state, navigationShell) {
         coordinator.attachTabShell(navigationShell);
@@ -211,6 +229,65 @@ Future<void> _commitPredictiveBack(WidgetTester tester) async {
 }
 
 void main() {
+  testWidgets('moves its listener when the coordinator instance changes', (
+    tester,
+  ) async {
+    _setCompactSurface(tester);
+    final firstCoordinator = _MutableNavigationCoordinator(initialIndex: 0);
+    final secondCoordinator = _MutableNavigationCoordinator(initialIndex: 0);
+    final chromeController = AppNavigationChromeController();
+    final launchEntry = _RecordingLaunchEntryViewModel();
+    addTearDown(firstCoordinator.dispose);
+    addTearDown(secondCoordinator.dispose);
+    addTearDown(chromeController.dispose);
+    addTearDown(launchEntry.dispose);
+
+    Widget buildApp(AppNavigationCoordinator coordinator) =>
+        ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
+          value: launchEntry,
+          child: MaterialApp(
+            home: AppNavigationShell(
+              coordinator: coordinator,
+              chromeController: chromeController,
+              child: const _StubPage('content'),
+            ),
+          ),
+        );
+
+    await tester.pumpWidget(buildApp(firstCoordinator));
+    firstCoordinator.selectIndex(1);
+    await tester.pump();
+    expect(launchEntry.entries, [AppEntrys.habitToday]);
+
+    await tester.pumpWidget(buildApp(secondCoordinator));
+    expect(
+      tester
+          .widget<AdaptiveNavigationShell>(find.byType(AdaptiveNavigationShell))
+          .selectedIndex,
+      0,
+    );
+
+    firstCoordinator.selectIndex(0);
+    await tester.pump();
+    expect(
+      tester
+          .widget<AdaptiveNavigationShell>(find.byType(AdaptiveNavigationShell))
+          .selectedIndex,
+      0,
+    );
+
+    secondCoordinator.selectIndex(1);
+    await tester.pump();
+
+    expect(
+      tester
+          .widget<AdaptiveNavigationShell>(find.byType(AdaptiveNavigationShell))
+          .selectedIndex,
+      1,
+    );
+    expect(launchEntry.entries, [AppEntrys.habitToday, AppEntrys.habitToday]);
+  });
+
   testWidgets('derives compact bar visibility from the active branch stack', (
     tester,
   ) async {

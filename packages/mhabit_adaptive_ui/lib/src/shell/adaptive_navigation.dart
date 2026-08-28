@@ -70,10 +70,12 @@ class AdaptiveNavigationShell extends StatefulWidget {
   /// Whether a contextual command surface suppresses compact navigation.
   final bool contextualChromeSuppressed;
 
-  /// Primary action rendered by Apple navigation chrome.
+  /// App-selected primary command rendered at the Apple shell's trailing
+  /// bottom edge.
   ///
-  /// Material renderers ignore this app-selected action and continue to use
-  /// page-owned Scaffold FAB slots.
+  /// This is not a page-owned Material FAB. Material renderers ignore the
+  /// command and continue to use page-owned Scaffold FAB slots. See
+  /// [CupertinoNavigationPrimaryAction] for placement diagrams.
   final CupertinoNavigationPrimaryAction? applePrimaryAction;
 
   /// Extended-rail sizing and manual-resize policy.

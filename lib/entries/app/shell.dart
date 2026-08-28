@@ -31,8 +31,15 @@ import 'navigation_destination.dart';
 /// app navigation-bar styling, launch-entry persistence on branch switches,
 /// and the route-level bar visibility policy.
 class AppNavigationShell extends StatefulWidget {
-  const AppNavigationShell({super.key, required this.child});
+  const AppNavigationShell({
+    super.key,
+    required this.coordinator,
+    required this.chromeController,
+    required this.child,
+  });
 
+  final AppNavigationCoordinator coordinator;
+  final AppNavigationChromeController chromeController;
   final Widget child;
 
   @override
@@ -40,35 +47,45 @@ class AppNavigationShell extends StatefulWidget {
 }
 
 class _AppNavigationShellState extends State<AppNavigationShell> {
-  AppNavigationCoordinator? _coordinator;
-  var _lastSelectedIndex = 0;
+  late int _lastSelectedIndex;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final coordinator = context.read<AppNavigationCoordinator>();
-    if (identical(_coordinator, coordinator)) return;
-    _coordinator?.removeListener(_handleNavigationChanged);
-    _coordinator = coordinator;
-    _lastSelectedIndex = coordinator.selectedIndex;
-    coordinator.addListener(_handleNavigationChanged);
+  void initState() {
+    super.initState();
+    _bindCoordinator(widget.coordinator);
+  }
+
+  @override
+  void didUpdateWidget(covariant AppNavigationShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (identical(oldWidget.coordinator, widget.coordinator)) return;
+    oldWidget.coordinator.removeListener(_handleNavigationChanged);
+    _bindCoordinator(widget.coordinator);
   }
 
   @override
   void dispose() {
-    _coordinator?.removeListener(_handleNavigationChanged);
+    widget.coordinator.removeListener(_handleNavigationChanged);
     super.dispose();
   }
 
+  void _bindCoordinator(AppNavigationCoordinator coordinator) {
+    _lastSelectedIndex = coordinator.selectedIndex;
+    coordinator.addListener(_handleNavigationChanged);
+  }
+
   void _handleNavigationChanged() {
-    final coordinator = _coordinator!;
+    final coordinator = widget.coordinator;
     final nextIndex = coordinator.selectedIndex;
     if (nextIndex != _lastSelectedIndex) {
       _lastSelectedIndex = nextIndex;
-      final newLaunchEntry = AppEntrys.getFromDBCode(nextIndex + 1);
-      if (newLaunchEntry != null && context.mounted) {
+      final branch = AppNavigationBranch.fromNavigationIndex(nextIndex);
+      if (context.mounted) {
         context.read<AppLaunchEntryViewModel>().setNewLaunchEntry(
-          newLaunchEntry,
+          switch (branch) {
+            AppNavigationBranch.habits => AppEntrys.habitDisplay,
+            AppNavigationBranch.today => AppEntrys.habitToday,
+          },
         );
       }
     }
@@ -76,28 +93,53 @@ class _AppNavigationShellState extends State<AppNavigationShell> {
 
   @override
   Widget build(BuildContext context) {
-    final coordinator = _coordinator!;
-    final (selectedIndex, compactRouteVisible) = context
-        .select<AppNavigationCoordinator, (int, bool)>(
-          (coordinator) =>
-              (coordinator.selectedIndex, coordinator.compactRouteVisible),
-        );
-    final branch = AppNavigationBranch.fromIndex(selectedIndex);
-    final chrome = context
-        .select<AppNavigationChromeController, AppNavigationBranchChrome>(
-          (controller) => controller.chromeFor(branch),
-        );
-    final chromeController = context.read<AppNavigationChromeController>();
     return NavigatorPopHandler<Object?>(
       onPopWithResult: (result) {
-        final navigator = coordinator.appChromeNavigatorKey.currentState;
+        final navigator = widget.coordinator.appChromeNavigatorKey.currentState;
         if (navigator != null) {
           unawaited(navigator.maybePop<Object?>(result));
         }
       },
       child: ColorfulNavibar(
-        child: L10nBuilder(
-          builder: (context, l10n) => AdaptiveNavigationShell(
+        child: ListenableBuilder(
+          listenable: widget.coordinator,
+          builder: (context, _) => _AppNavigationShellChrome(
+            coordinator: widget.coordinator,
+            chromeController: widget.chromeController,
+            selectedIndex: widget.coordinator.selectedIndex,
+            compactRouteVisible: widget.coordinator.compactRouteVisible,
+            child: widget.child,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AppNavigationShellChrome extends StatelessWidget {
+  const _AppNavigationShellChrome({
+    required this.coordinator,
+    required this.chromeController,
+    required this.selectedIndex,
+    required this.compactRouteVisible,
+    required this.child,
+  });
+
+  final AppNavigationCoordinator coordinator;
+  final AppNavigationChromeController chromeController;
+  final int selectedIndex;
+  final bool compactRouteVisible;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final branch = AppNavigationBranch.fromNavigationIndex(selectedIndex);
+    return L10nBuilder(
+      builder: (context, l10n) => ListenableBuilder(
+        listenable: chromeController,
+        builder: (context, _) {
+          final chrome = chromeController.chromeFor(branch);
+          return AdaptiveNavigationShell(
             selectedIndex: selectedIndex,
             compactRouteVisible: compactRouteVisible,
             contextualChromeSuppressed: chrome.contextualChromeSuppressed,
@@ -126,9 +168,9 @@ class _AppNavigationShellState extends State<AppNavigationShell> {
               ),
             ],
             onDestinationSelected: coordinator.selectBranch,
-            child: widget.child,
-          ),
-        ),
+            child: child,
+          );
+        },
       ),
     );
   }

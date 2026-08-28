@@ -2,6 +2,21 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/entries/app/navigation_chrome.dart';
 
 void main() {
+  test('maps navigation branches through explicit router indexes', () {
+    expect(
+      AppNavigationBranch.fromNavigationIndex(0),
+      AppNavigationBranch.habits,
+    );
+    expect(
+      AppNavigationBranch.fromNavigationIndex(1),
+      AppNavigationBranch.today,
+    );
+    expect(
+      () => AppNavigationBranch.fromNavigationIndex(2),
+      throwsArgumentError,
+    );
+  });
+
   test('keeps chrome state independent for each navigation branch', () {
     final controller = AppNavigationChromeController();
     addTearDown(controller.dispose);

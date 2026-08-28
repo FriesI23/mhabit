@@ -154,9 +154,14 @@ class _AppEntryState extends State<_AppEntry> {
     super.initState();
     final launchEntry = context.read<AppLaunchEntryViewModel>().launchEntry;
     final config = switch (launchEntry) {
-      AppEntrys.habitToday => (home: AppRoute.today, initialBranchIndex: 1),
-      AppEntrys.undefined ||
-      AppEntrys.habitDisplay => (home: AppRoute.habits, initialBranchIndex: 0),
+      AppEntrys.habitToday => (
+        home: AppRoute.today,
+        initialBranchIndex: AppNavigationBranch.today.navigationIndex,
+      ),
+      AppEntrys.undefined || AppEntrys.habitDisplay => (
+        home: AppRoute.habits,
+        initialBranchIndex: AppNavigationBranch.habits.navigationIndex,
+      ),
     };
     _navigationChromeController = AppNavigationChromeController();
     _habitDisplayNavigationChrome = HabitDisplayNavigationChrome(
@@ -239,7 +244,13 @@ class _AppEntryState extends State<_AppEntry> {
             navigatorKey: appChromeNavigatorKey,
             observers: [appFlowObserver],
             builder: (context, state, child) => ChangelogBanner(
-              child: AppPostInit(child: AppNavigationShell(child: child)),
+              child: AppPostInit(
+                child: AppNavigationShell(
+                  coordinator: _navigationCoordinator,
+                  chromeController: _navigationChromeController,
+                  child: child,
+                ),
+              ),
             ),
             branchBuilder: (context, state, navigationShell) {
               _navigationCoordinator.attachTabShell(navigationShell);
@@ -280,12 +291,6 @@ class _AppEntryState extends State<_AppEntry> {
             override: adaptiveStyleOverride,
             child: MultiProvider(
               providers: [
-                ChangeNotifierProvider<AppNavigationCoordinator>.value(
-                  value: _navigationCoordinator,
-                ),
-                ChangeNotifierProvider<AppNavigationChromeController>.value(
-                  value: _navigationChromeController,
-                ),
                 Provider<HabitDisplayNavigationChrome>.value(
                   value: _habitDisplayNavigationChrome,
                 ),
