@@ -1,0 +1,8 @@
+- Feature: add adaptive navigation bars and rails, floating compact
+  navigation, and contextual habit-selection actions (#649)
+- Fix: improve navigation inset handling, file imports, and Today refresh
+  behavior (#650)
+- Fix: preserve the habit-list scroll position after returning from habit details
+- Add Dutch language support (#651)
+- Update Czech translation, thanks to Pavel Borecki's contribution on Weblate
+  (#651)

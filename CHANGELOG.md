@@ -2,6 +2,17 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.27.0+189-pre
+
+- Feature: add adaptive navigation bars and rails, floating compact
+  navigation, and contextual habit-selection actions (#649)
+- Fix: improve navigation inset handling, file imports, and Today refresh
+  behavior (#650)
+- Fix: preserve the habit-list scroll position after returning from habit details
+- Add Dutch language support (#651)
+- Update Czech translation, thanks to Pavel Borecki's contribution on Weblate
+  (#651)
+
 ## 1.26.15+188-pre
 
 - Feature: expand adaptive navigation, search, filtering, and selection
