@@ -66,7 +66,14 @@ jobs:
         shell: pwsh
         env:
           MSIX_PATH: ${{ steps.build.outputs.msix-path }}
-        run: msstore publish $env:MSIX_PATH -id ${{ vars.MSSTORE_PRODUCT_ID }} --noCommit
+        # FIXME: Remove this workaround after the upstream fix is released:
+        # https://github.com/microsoft/msstore-cli/issues/162
+        # Workaround: pass --uploadTimeout 300 explicitly.
+        run: >
+          msstore publish $env:MSIX_PATH
+          -id ${{ vars.MSSTORE_PRODUCT_ID }}
+          --noCommit
+          --uploadTimeout 300
       # Logic lives in scripts/msstore/update_changelog.ps1 (reusable,
       # runnable locally the same way fastlane lanes are); this step is
       # just the call + the data it needs.
