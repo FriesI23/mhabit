@@ -10,6 +10,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_navigation_primary_action.dart';
+import 'package:mhabit_adaptive_ui/src/shell/navigation_scroll_wish_policy.dart';
+import 'package:mhabit_adaptive_ui/src/shell/navigation_shell_frame.dart';
 
 _TestRouter _buildRouter({
   List<AdaptiveNavigationDestination>? destinations,
@@ -530,6 +532,77 @@ void main() {
   });
 
   group('AdaptiveNavigationShell', () {
+    testWidgets(
+      'frame delegates body composition with restored ambient geometry',
+      (tester) async {
+        tester.view.padding = const FakeViewPadding(left: 44, right: 20);
+        tester.view.viewPadding = const FakeViewPadding(left: 50, right: 30);
+        _setSurfaceSize(tester, const Size(700, 800));
+        final selected = <int>[];
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: NavigationShellFrame(
+              selectedIndex: 0,
+              onDestinationSelected: selected.add,
+              compactRouteVisible: true,
+              contextualChromeSuppressed: false,
+              barHeight: 80,
+              navHeight: 80,
+              keepVisibleOnScroll: false,
+              scrollWishPolicy: const NavigationScrollWishPolicy.directional(),
+              formResolver: (_) => NavigationShellForm.constrainedSide,
+              bodyBuilder: (context, form, onSelected, child) {
+                final padding = MediaQuery.paddingOf(context);
+                final viewPadding = MediaQuery.viewPaddingOf(context);
+                final owner = AdaptiveWindowControlLayoutScope.maybeOf(
+                  context,
+                )!.owner;
+                return Stack(
+                  key: const ValueKey('custom-shell-body'),
+                  children: [
+                    child,
+                    SizedBox(
+                      key: const ValueKey('custom-shell-geometry'),
+                      width: padding.left + padding.right,
+                      height: viewPadding.left + viewPadding.right,
+                    ),
+                    TextButton(
+                      key: const ValueKey('custom-shell-destination'),
+                      onPressed: () => onSelected(1),
+                      child: Text('${form.name}:${owner.name}'),
+                    ),
+                  ],
+                );
+              },
+              windowControlOwnerResolver: (_) =>
+                  WindowControlLayoutOwner.sideNavigation,
+              compactNavigationBuilder: (_, _) => const SizedBox.shrink(),
+              child: const Text('branch'),
+            ),
+          ),
+        );
+
+        expect(
+          find.descendant(
+            of: find.byKey(const ValueKey('custom-shell-body')),
+            matching: find.byType(Row),
+          ),
+          findsNothing,
+        );
+        expect(
+          tester.getSize(find.byKey(const ValueKey('custom-shell-geometry'))),
+          const Size(64, 80),
+        );
+        expect(find.text('constrainedSide:sideNavigation'), findsOneWidget);
+
+        await tester.tap(
+          find.byKey(const ValueKey('custom-shell-destination')),
+        );
+        expect(selected, [1]);
+      },
+    );
+
     testWidgets('style switching preserves branch content state', (
       tester,
     ) async {
@@ -575,14 +648,43 @@ void main() {
       await tester.tap(find.text('branch count 0'));
       await tester.pump();
       expect(find.text('branch count 1'), findsOneWidget);
+      final branchState = tester.state<_StatefulBranchProbeState>(
+        find.byType(_StatefulBranchProbe),
+      );
 
       style.value = AdaptiveStyle.apple;
       await tester.pumpAndSettle();
 
       expect(find.text('branch count 1'), findsOneWidget);
       expect(
+        tester.state<_StatefulBranchProbeState>(
+          find.byType(_StatefulBranchProbe),
+        ),
+        same(branchState),
+      );
+      expect(
         find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
         findsOneWidget,
+      );
+
+      tester.view.physicalSize = const Size(700, 800);
+      await tester.pumpAndSettle();
+      expect(find.text('branch count 1'), findsOneWidget);
+      expect(
+        tester.state<_StatefulBranchProbeState>(
+          find.byType(_StatefulBranchProbe),
+        ),
+        same(branchState),
+      );
+
+      tester.view.physicalSize = const Size(1000, 479);
+      await tester.pumpAndSettle();
+      expect(find.text('branch count 1'), findsOneWidget);
+      expect(
+        tester.state<_StatefulBranchProbeState>(
+          find.byType(_StatefulBranchProbe),
+        ),
+        same(branchState),
       );
     });
 
@@ -1256,7 +1358,7 @@ void main() {
       expect(layout.usesRectangularDisplay, isTrue);
     });
 
-    testWidgets('assigns avoidance to app bar or rail without overlap', (
+    testWidgets('assigns avoidance to app bar or side navigation', (
       tester,
     ) async {
       _mockWindowControlLayout();
@@ -1268,12 +1370,19 @@ void main() {
 
         var context = tester.element(find.text('habits page'));
         var layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
+        expect(layout.owner, WindowControlLayoutOwner.appBar);
         expect(
           layout.appBarHorizontalAvoidance,
           const EdgeInsetsDirectional.only(start: 40, end: 12),
         );
-        expect(layout.railHorizontalAvoidance, EdgeInsetsDirectional.zero);
-        expect(layout.railVerticalAvoidance, EdgeInsetsDirectional.zero);
+        expect(
+          layout.sideNavigationHorizontalAvoidance,
+          EdgeInsetsDirectional.zero,
+        );
+        expect(
+          layout.sideNavigationVerticalAvoidance,
+          EdgeInsetsDirectional.zero,
+        );
         expect(
           layout.horizontalSafeAreaAvoidance,
           const EdgeInsetsDirectional.fromSTEB(24, 0, 18, 0),
@@ -1289,13 +1398,14 @@ void main() {
 
         context = tester.element(find.text('habits page'));
         layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
+        expect(layout.owner, WindowControlLayoutOwner.sideNavigation);
         expect(layout.appBarHorizontalAvoidance, EdgeInsetsDirectional.zero);
         expect(
-          layout.railHorizontalAvoidance,
+          layout.sideNavigationHorizontalAvoidance,
           const EdgeInsetsDirectional.only(start: 40, end: 12),
         );
         expect(
-          layout.railVerticalAvoidance,
+          layout.sideNavigationVerticalAvoidance,
           const EdgeInsetsDirectional.only(top: 64),
         );
         expect(
@@ -1855,6 +1965,21 @@ void main() {
       );
     });
 
+    testWidgets('side form snackbar remains owned by the root scaffold', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(700, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      await tester.tap(find.byKey(const ValueKey('show-snackbar')));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(SnackBar), findsOneWidget);
+      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(find.byType(NavigationBar), findsNothing);
+    });
+
     testWidgets('floating snackbar follows the collapsing navigation bar', (
       tester,
     ) async {
@@ -2234,7 +2359,7 @@ void main() {
       );
     });
 
-    testWidgets('apple large compact-height defaults to a collapsed rail', (
+    testWidgets('apple large ignores compact height for its side form', (
       tester,
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
@@ -2244,7 +2369,7 @@ void main() {
 
       expect(
         tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
-        isFalse,
+        isTrue,
       );
       debugDefaultTargetPlatformOverride = null;
     });
@@ -2578,25 +2703,38 @@ void main() {
     });
 
     testWidgets(
-      'apple medium+ uses the documented rail compatibility fallback',
+      'apple boundaries use the documented rail compatibility fallback',
       (tester) async {
         debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-        _setSurfaceSize(tester, const Size(700, 600));
+        _setSurfaceSize(tester, const Size(599, 479));
         final router = _buildRouter();
         await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-        // Apple medium maps to the collapsible rail, collapsed by default.
+        expect(
+          find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
+          findsOneWidget,
+        );
+        expect(find.byType(NavigationRail), findsNothing);
+
+        tester.view.physicalSize = const Size(600, 479);
+        await tester.pumpAndSettle();
+
         expect(find.byType(NavigationRail), findsOneWidget);
         expect(
           tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
           isFalse,
         );
 
-        tester.view.physicalSize = const Size(1300, 800);
+        tester.view.physicalSize = const Size(905, 479);
+        await tester.pumpAndSettle();
+        expect(
+          tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
+          isFalse,
+        );
+
+        tester.view.physicalSize = const Size(906, 479);
         await tester.pumpAndSettle();
 
-        // Apple large maps to the collapsible rail, extended by default; no
-        // drawer tier exists on Apple platforms.
         expect(
           tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
           isTrue,

@@ -173,7 +173,7 @@ class MaterialNavigationRailRegion extends StatefulWidget {
     required this.railExtent,
   });
 
-  /// Current compact, collapsed-rail, or extended-rail shell form.
+  /// Current compact, constrained-side, or expanded-side shell form.
   final NavigationShellForm form;
 
   /// Zero-based index of the selected destination.
@@ -206,14 +206,14 @@ class _MaterialNavigationRailRegionState
   @override
   void initState() {
     super.initState();
-    _extended = widget.form == NavigationShellForm.railExtended;
+    _extended = widget.form == NavigationShellForm.expandedSide;
   }
 
   @override
   void didUpdateWidget(covariant MaterialNavigationRailRegion oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.form == widget.form) return;
-    _extended = widget.form == NavigationShellForm.railExtended;
+    _extended = widget.form == NavigationShellForm.expandedSide;
   }
 
   double _railAutoWidth(double windowWidth) =>
@@ -239,9 +239,9 @@ class _MaterialNavigationRailRegionState
       alignment: Alignment.centerLeft,
       clipBehavior: Clip.hardEdge,
       child: switch (widget.form) {
-        NavigationShellForm.bar => const SizedBox(width: 0),
-        NavigationShellForm.railCollapsed ||
-        NavigationShellForm.railExtended => Row(
+        NavigationShellForm.compact => const SizedBox(width: 0),
+        NavigationShellForm.constrainedSide ||
+        NavigationShellForm.expandedSide => Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             _buildRail(context, windowWidth),
@@ -257,9 +257,13 @@ class _MaterialNavigationRailRegionState
         ? _effectiveRailWidth(windowWidth)
         : widget.railExtent.collapsed;
     final horizontalAvoidance =
-        AdaptiveWindowControlLayoutScope.railHorizontalAvoidanceOf(context);
+        AdaptiveWindowControlLayoutScope.sideNavigationHorizontalAvoidanceOf(
+          context,
+        );
     final verticalAvoidance =
-        AdaptiveWindowControlLayoutScope.railVerticalAvoidanceOf(context);
+        AdaptiveWindowControlLayoutScope.sideNavigationVerticalAvoidanceOf(
+          context,
+        );
     final safeWidth =
         width - horizontalAvoidance.start - horizontalAvoidance.end;
     final useVerticalFallback =

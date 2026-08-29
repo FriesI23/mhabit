@@ -15,25 +15,22 @@ export '../material/material_navigation_rail.dart' show NavigationRailExtent;
 /// Adaptive navigation chrome around [child].
 ///
 /// The shell resolves the active visual style, while Material and Cupertino
-/// renderers own their platform policy. Compact windows use a bottom bar,
-/// medium windows use a collapsed rail, and wider windows use an extended rail
-/// unless their height is compact.
+/// renderers own their form resolution, body composition, inset policy, and
+/// window-control ownership. Compact windows use bottom navigation. Material
+/// side forms use collapsed or extended rails; Apple medium and large forms
+/// are reserved for overlay and beside sidebars respectively.
 ///
 /// ```text
-/// compact          medium            expanded
-/// +----------+     +--+---------+    +------+-------+
-/// | content  |     |  | content |    | rail |content|
-/// +----------+     |r |         |    |      |       |
-/// | nav bar  |     |a |         |    |      |       |
-/// +----------+     |i |         |    +------+-------+
-///                  |l |         |
-///                  +--+---------+
+/// form              Material              Apple
+/// compact           bottom bar            bottom Tab Bar
+/// constrained side  collapsed rail        medium overlay Sidebar
+/// expanded side     extended rail         large beside Sidebar
 /// ```
 ///
-/// The extended rail uses [railExtent] for its automatic width and resizable
-/// interval. In compact form, route visibility, contextual chrome, and scroll
-/// direction determine whether Material navigation is hidden or Apple
-/// navigation is minimized. Non-compact navigation remains visible.
+/// Until the Apple sidebar renderer lands, Apple side forms preserve the
+/// documented Material-rail compatibility fallback. In compact form, route
+/// visibility, contextual chrome, and scroll direction determine whether
+/// Material navigation is hidden or Apple navigation is minimized.
 class AdaptiveNavigationShell extends StatefulWidget {
   /// Creates adaptive navigation chrome around [child].
   const AdaptiveNavigationShell({
@@ -78,7 +75,10 @@ class AdaptiveNavigationShell extends StatefulWidget {
   /// [CupertinoNavigationPrimaryAction] for placement diagrams.
   final CupertinoNavigationPrimaryAction? applePrimaryAction;
 
-  /// Extended-rail sizing and manual-resize policy.
+  /// Full-width side-navigation sizing and manual-resize policy.
+  ///
+  /// Material also uses [NavigationRailExtent.collapsed] for its icon rail.
+  /// The Apple sidebar uses only the resolved/clamped full-width interval.
   final NavigationRailExtent railExtent;
 
   /// Apple compact navigation-bar geometry and spacing.

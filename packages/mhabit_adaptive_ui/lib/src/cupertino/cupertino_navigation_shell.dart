@@ -1,15 +1,35 @@
 import 'package:flutter/cupertino.dart';
 
 import '../adaptive/adaptive_navigation_destination.dart';
+import '../breakpoints/window_size_class.dart';
 import '../material/material_navigation_rail.dart' show NavigationRailExtent;
 import '../shell/navigation_scroll_wish_policy.dart';
 import '../shell/navigation_shell_frame.dart';
+import '../window_control/window_control_layout.dart';
 import 'cupertino_adaptive_navigation_bar.dart';
 import 'cupertino_floating_surface.dart';
 import 'cupertino_navigation_primary_action.dart';
 import 'cupertino_navigation_sidebar.dart';
 
 /// Composes the Cupertino renderers around style-neutral shell mechanics.
+///
+/// Forms are resolved only from Apple width classes; compact height never
+/// downgrades a wider window to constrained side navigation.
+///
+/// ```text
+/// compact          constrained side  expanded side
+/// +----------+     +------------+    +------+-------+
+/// | content  |     |  overlay   |    | side |content|
+/// +----------+     |  Sidebar   |    | bar  |       |
+/// | Tab Bar  |     +------------+    |      |       |
+/// +----------+                       +------+-------+
+/// ```
+///
+/// The side-form diagrams show the target Cupertino presentation. The
+/// compatibility rail preserves current behavior until the Sidebar renderer
+/// replaces it. In compact form, route and contextual state control visibility
+/// while scroll direction selects the expanded or minimized Tab Bar
+/// presentation.
 class CupertinoNavigationShell extends StatelessWidget {
   /// Creates Cupertino navigation chrome around [child].
   const CupertinoNavigationShell({
@@ -46,7 +66,7 @@ class CupertinoNavigationShell extends StatelessWidget {
   /// App-selected primary action for the active branch.
   final CupertinoNavigationPrimaryAction? primaryAction;
 
-  /// Width policy used by the temporary medium-and-wider rail renderer.
+  /// Full-width policy shared by the compatibility rail and future sidebar.
   final NavigationRailExtent railExtent;
 
   /// Geometry and spacing for the compact Apple navigation bar.
@@ -61,7 +81,6 @@ class CupertinoNavigationShell extends StatelessWidget {
     );
     return NavigationShellFrame(
       selectedIndex: selectedIndex,
-      destinations: destinations,
       onDestinationSelected: onDestinationSelected,
       compactRouteVisible: compactRouteVisible,
       contextualChromeSuppressed: contextualChromeSuppressed,
@@ -78,14 +97,17 @@ class CupertinoNavigationShell extends StatelessWidget {
       switchDuration: disableAnimations
           ? Duration.zero
           : navigationShellAnimationDuration,
-      leadingBuilder: (context, form, onSelected) =>
+      formResolver: _resolveCupertinoNavigationShellForm,
+      bodyBuilder: (context, form, onSelected, child) =>
           CupertinoNavigationSidebarCompatibility(
             form: form,
             selectedIndex: selectedIndex,
             destinations: destinations,
             onDestinationSelected: onSelected,
             railExtent: railExtent,
+            child: child,
           ),
+      windowControlOwnerResolver: _resolveCupertinoWindowControlOwner,
       compactNavigationBuilder: _buildCompactNavigation,
       floatingActionButtonBuilder: (context, state) =>
           CupertinoNavigationPrimaryActionHost(
@@ -131,3 +153,21 @@ class CupertinoNavigationShell extends StatelessWidget {
     );
   }
 }
+
+NavigationShellForm _resolveCupertinoNavigationShellForm(
+  WindowSize windowSize,
+) => switch (windowSize.width) {
+  WindowSizeClass.compact => NavigationShellForm.compact,
+  WindowSizeClass.medium => NavigationShellForm.constrainedSide,
+  WindowSizeClass.expanded ||
+  WindowSizeClass.large ||
+  WindowSizeClass.extraLarge => NavigationShellForm.expandedSide,
+};
+
+WindowControlLayoutOwner _resolveCupertinoWindowControlOwner(
+  NavigationShellForm form,
+) => switch (form) {
+  NavigationShellForm.compact => WindowControlLayoutOwner.appBar,
+  NavigationShellForm.constrainedSide ||
+  NavigationShellForm.expandedSide => WindowControlLayoutOwner.sideNavigation,
+};

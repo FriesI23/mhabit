@@ -2,45 +2,52 @@ import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/gestures.dart' show kMinFlingVelocity, kTouchSlop;
 import 'package:flutter/material.dart';
 
-import '../adaptive/adaptive_navigation_destination.dart';
 import '../breakpoints/window_size_class.dart';
 import '../window_control/window_control_layout.dart';
 import 'adaptive_nav_scope.dart';
 import 'adaptive_nav_visibility.dart';
 import 'navigation_scroll_wish_policy.dart';
 
-/// Navigation form selected from the current window size classes.
+/// Style-neutral space available to a navigation renderer.
 ///
 /// ```text
-/// bar              railCollapsed      railExtended
-/// +----------+     +--+----------+    +------+------+
-/// | content  |     |r | content  |    | rail |content|
-/// +----------+     |a |          |    |      |       |
-/// | nav bar  |     |i |          |    |      |       |
-/// +----------+     |l |          |    +------+-------+
-///                  +--+----------+
+/// compact          constrained side   expanded side
+/// +----------+     +-------------+    +-------------+
+/// | content  |     | renderer    |    | renderer    |
+/// +----------+     | composition |    | composition |
+/// | nav      |     +-------------+    +-------------+
+/// +----------+
 /// ```
 enum NavigationShellForm {
   /// Compact bottom navigation below the branch content.
-  bar,
+  compact,
 
-  /// Medium-and-wider side rail initially showing icons only.
-  railCollapsed,
+  /// Side navigation with constrained horizontal space.
+  constrainedSide,
 
-  /// Wide side rail initially showing icons and labels.
-  railExtended,
+  /// Side navigation with expanded horizontal space.
+  expandedSide,
 }
 
 /// Default duration for navigation form and compact-chrome transitions.
 const Duration navigationShellAnimationDuration = Duration(milliseconds: 250);
 
-/// Builds the leading rail region for the current shell form.
-typedef NavigationShellLeadingBuilder =
+/// Resolves style-neutral shell space from the current window classes.
+typedef NavigationShellFormResolver =
+    NavigationShellForm Function(WindowSize windowSize);
+
+/// Composes branch content and navigation chrome for the current form.
+typedef NavigationShellBodyBuilder =
     Widget Function(
       BuildContext context,
       NavigationShellForm form,
       ValueChanged<int> onDestinationSelected,
+      Widget child,
     );
+
+/// Selects the window-control owner for the current shell form.
+typedef NavigationShellWindowControlOwnerResolver =
+    WindowControlLayoutOwner Function(NavigationShellForm form);
 
 /// Builds compact navigation or floating action chrome from shell state.
 typedef NavigationShellChromeBuilder =
@@ -81,7 +88,6 @@ class NavigationShellFrame extends StatefulWidget {
     super.key,
     required this.child,
     required this.selectedIndex,
-    required this.destinations,
     required this.onDestinationSelected,
     required this.compactRouteVisible,
     required this.contextualChromeSuppressed,
@@ -89,7 +95,9 @@ class NavigationShellFrame extends StatefulWidget {
     required this.navHeight,
     required this.keepVisibleOnScroll,
     required this.scrollWishPolicy,
-    required this.leadingBuilder,
+    required this.formResolver,
+    required this.bodyBuilder,
+    required this.windowControlOwnerResolver,
     required this.compactNavigationBuilder,
     this.floatingActionButtonBuilder,
     this.floatingActionButtonLocation,
@@ -101,9 +109,6 @@ class NavigationShellFrame extends StatefulWidget {
 
   /// Zero-based index of the selected destination.
   final int selectedIndex;
-
-  /// Top-level destinations supplied to themed renderers.
-  final List<AdaptiveNavigationDestination> destinations;
 
   /// Called with the index of a destination selected by the user.
   final ValueChanged<int> onDestinationSelected;
@@ -128,8 +133,14 @@ class NavigationShellFrame extends StatefulWidget {
   /// Converts compact vertical scrolling into navigation presentation wishes.
   final NavigationScrollWishPolicy scrollWishPolicy;
 
-  /// Builds the rail region for non-compact shell forms.
-  final NavigationShellLeadingBuilder leadingBuilder;
+  /// Resolves the renderer-neutral form from the current window classes.
+  final NavigationShellFormResolver formResolver;
+
+  /// Owns branch/chrome composition and renderer-local inset policy.
+  final NavigationShellBodyBuilder bodyBuilder;
+
+  /// Selects which chrome consumes platform window-control avoidance.
+  final NavigationShellWindowControlOwnerResolver windowControlOwnerResolver;
 
   /// Builds compact navigation from the current chrome state.
   final NavigationShellChromeBuilder compactNavigationBuilder;
@@ -148,7 +159,7 @@ class NavigationShellFrame extends StatefulWidget {
 }
 
 class _NavigationShellFrameState extends State<NavigationShellFrame> {
-  NavigationShellForm _form = NavigationShellForm.bar;
+  NavigationShellForm _form = NavigationShellForm.compact;
   final AdaptiveNavVisibilityController _navVisibility =
       AdaptiveNavVisibilityController();
   final AdaptiveScrollWishController _scrollWish =
@@ -163,8 +174,8 @@ class _NavigationShellFrameState extends State<NavigationShellFrame> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _form = _formFor(WindowSize.of(context));
-    if (_form == NavigationShellForm.bar) {
+    _form = widget.formResolver(WindowSize.of(context));
+    if (_form == NavigationShellForm.compact) {
       _recomputeVisibility();
     } else {
       _navVisibility.show();
@@ -200,7 +211,7 @@ class _NavigationShellFrameState extends State<NavigationShellFrame> {
   }
 
   void _recomputeVisibility() {
-    if (!mounted || _form != NavigationShellForm.bar) return;
+    if (!mounted || _form != NavigationShellForm.compact) return;
     final visible =
         widget.compactRouteVisible &&
         (widget.keepVisibleOnScroll || _scrollWish.value) &&
@@ -214,20 +225,9 @@ class _NavigationShellFrameState extends State<NavigationShellFrame> {
     widget.onDestinationSelected(index);
   }
 
-  NavigationShellForm _formFor(WindowSize windowSize) {
-    if (windowSize.width == WindowSizeClass.compact) {
-      return NavigationShellForm.bar;
-    }
-    if (windowSize.width == WindowSizeClass.medium ||
-        windowSize.height == WindowSizeClass.compact) {
-      return NavigationShellForm.railCollapsed;
-    }
-    return NavigationShellForm.railExtended;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final compact = _form == NavigationShellForm.bar;
+    final compact = _form == NavigationShellForm.compact;
     final windowControlLayout = AdaptiveWindowControlLayoutScope.maybeOf(
       context,
     );
@@ -253,11 +253,11 @@ class _NavigationShellFrameState extends State<NavigationShellFrame> {
         body: _NavigationScrollWishObserver(
           onVisibilityChanged: _scrollWish.report,
           policy: widget.scrollWishPolicy,
-          child: _NavigationShellBody(
+          child: _NavigationShellBodyHost(
             ambientPadding: padding,
             ambientViewPadding: viewPadding,
             form: _form,
-            leadingBuilder: widget.leadingBuilder,
+            bodyBuilder: widget.bodyBuilder,
             onDestinationSelected: _onDestinationSelected,
             child: widget.child,
           ),
@@ -283,7 +283,7 @@ class _NavigationShellFrameState extends State<NavigationShellFrame> {
     return _withWindowControlOwner(
       context,
       layout: windowControlLayout,
-      railOwnsAvoidance: !compact,
+      owner: widget.windowControlOwnerResolver(_form),
       shell: shell,
     );
   }
@@ -291,13 +291,13 @@ class _NavigationShellFrameState extends State<NavigationShellFrame> {
   Widget _withWindowControlOwner(
     BuildContext context, {
     required AdaptiveWindowControlLayoutScope? layout,
-    required bool railOwnsAvoidance,
+    required WindowControlLayoutOwner owner,
     required Widget shell,
   }) {
     if (layout != null) {
       return _WindowControlLayoutOwner(
         layout: layout,
-        railOwnsAvoidance: railOwnsAvoidance,
+        owner: owner,
         child: shell,
       );
     }
@@ -305,7 +305,7 @@ class _NavigationShellFrameState extends State<NavigationShellFrame> {
       child: Builder(
         builder: (context) => _WindowControlLayoutOwner(
           layout: AdaptiveWindowControlLayoutScope.maybeOf(context)!,
-          railOwnsAvoidance: railOwnsAvoidance,
+          owner: owner,
           child: shell,
         ),
       ),
@@ -448,12 +448,13 @@ class _NavigationScrollWishObserverState
       );
 }
 
-class _NavigationShellBody extends StatelessWidget {
-  const _NavigationShellBody({
+/// Restores shell-entry geometry without imposing renderer composition.
+class _NavigationShellBodyHost extends StatelessWidget {
+  const _NavigationShellBodyHost({
     required this.ambientPadding,
     required this.ambientViewPadding,
     required this.form,
-    required this.leadingBuilder,
+    required this.bodyBuilder,
     required this.onDestinationSelected,
     required this.child,
   });
@@ -461,64 +462,31 @@ class _NavigationShellBody extends StatelessWidget {
   final EdgeInsets ambientPadding;
   final EdgeInsets ambientViewPadding;
   final NavigationShellForm form;
-  final NavigationShellLeadingBuilder leadingBuilder;
+  final NavigationShellBodyBuilder bodyBuilder;
   final ValueChanged<int> onDestinationSelected;
   final Widget child;
 
   @override
-  Widget build(BuildContext context) {
-    return MediaQuery(
-      data: MediaQuery.of(
-        context,
-      ).copyWith(padding: ambientPadding, viewPadding: ambientViewPadding),
-      child: ColoredBox(
-        color: Theme.of(context).colorScheme.surface,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            leadingBuilder(context, form, onDestinationSelected),
-            Expanded(
-              child: _NavigationShellBranch(form: form, child: child),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _NavigationShellBranch extends StatelessWidget {
-  const _NavigationShellBranch({required this.form, required this.child});
-
-  final NavigationShellForm form;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    if (form == NavigationShellForm.bar) return child;
-
-    // NavigationRail's SafeArea owns the shell's logical-start system inset.
-    // Remove that consumed inset from the sibling branch so page SafeAreas do
-    // not reserve it again. Keep the opposite side available to page content.
-    final removeLeft = Directionality.of(context) == TextDirection.ltr;
-    return MediaQuery.removePadding(
-      context: context,
-      removeLeft: removeLeft,
-      removeRight: !removeLeft,
-      child: child,
-    );
-  }
+  Widget build(BuildContext context) => MediaQuery(
+    data: MediaQuery.of(
+      context,
+    ).copyWith(padding: ambientPadding, viewPadding: ambientViewPadding),
+    child: Builder(
+      builder: (context) =>
+          bodyBuilder(context, form, onDestinationSelected, child),
+    ),
+  );
 }
 
 class _WindowControlLayoutOwner extends StatelessWidget {
   const _WindowControlLayoutOwner({
     required this.layout,
-    required this.railOwnsAvoidance,
+    required this.owner,
     required this.child,
   });
 
   final AdaptiveWindowControlLayoutScope layout;
-  final bool railOwnsAvoidance;
+  final WindowControlLayoutOwner owner;
   final Widget child;
 
   @override
@@ -530,9 +498,7 @@ class _WindowControlLayoutOwner extends StatelessWidget {
       verticalSafeAreaAvoidance: layout.verticalSafeAreaAvoidance,
       effectiveCornerRadii: layout.effectiveCornerRadii,
       usesRectangularDisplay: layout.usesRectangularDisplay,
-      owner: railOwnsAvoidance
-          ? WindowControlLayoutOwner.rail
-          : WindowControlLayoutOwner.appBar,
+      owner: owner,
       child: child,
     );
   }

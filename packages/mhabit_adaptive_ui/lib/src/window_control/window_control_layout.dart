@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:ios_window_control_layout/ios_window_control_layout.dart';
 
-enum WindowControlLayoutOwner { appBar, rail }
+/// Chrome subtree that consumes platform window-control avoidance.
+enum WindowControlLayoutOwner {
+  /// Page app bars consume the window-control region.
+  appBar,
+
+  /// The active side-navigation renderer consumes the window-control region.
+  sideNavigation,
+}
 
 enum _WindowControlLayoutAspect {
   appBarHorizontalAvoidance,
-  railHorizontalAvoidance,
-  railVerticalAvoidance,
+  sideNavigationHorizontalAvoidance,
+  sideNavigationVerticalAvoidance,
   safeAreaGeometry,
   rectangularDisplay,
 }
@@ -44,7 +51,8 @@ final class AdaptiveWindowSafeAreaGeometry {
 /// Queries iOS window-control layout once above an application's navigators.
 ///
 /// Root routes and overlays default to app-bar ownership. A nested
-/// [AdaptiveNavigationShell] overrides that allocation when a rail is visible.
+/// [AdaptiveNavigationShell] overrides that allocation when side navigation
+/// owns the window controls.
 class AdaptiveWindowControlLayout extends StatelessWidget {
   const AdaptiveWindowControlLayout({
     super.key,
@@ -86,7 +94,8 @@ class AdaptiveWindowControlLayout extends StatelessWidget {
 /// Distributes platform window-control avoidance between chrome consumers.
 ///
 /// The application root defaults to app-bar ownership. A navigation shell
-/// overrides this scope so rail layouts expose avoidance to the rail instead.
+/// overrides this scope so side-navigation layouts expose avoidance to their
+/// renderer instead.
 class AdaptiveWindowControlLayoutScope extends InheritedModel<Object> {
   const AdaptiveWindowControlLayoutScope({
     super.key,
@@ -126,13 +135,15 @@ class AdaptiveWindowControlLayoutScope extends InheritedModel<Object> {
       ? horizontalAvoidance
       : EdgeInsetsDirectional.zero;
 
-  EdgeInsetsDirectional get railHorizontalAvoidance =>
-      owner == WindowControlLayoutOwner.rail
+  /// Horizontal avoidance exposed to the active side-navigation renderer.
+  EdgeInsetsDirectional get sideNavigationHorizontalAvoidance =>
+      owner == WindowControlLayoutOwner.sideNavigation
       ? horizontalAvoidance
       : EdgeInsetsDirectional.zero;
 
-  EdgeInsetsDirectional get railVerticalAvoidance =>
-      owner == WindowControlLayoutOwner.rail
+  /// Vertical avoidance exposed to the active side-navigation renderer.
+  EdgeInsetsDirectional get sideNavigationVerticalAvoidance =>
+      owner == WindowControlLayoutOwner.sideNavigation
       ? verticalAvoidance
       : EdgeInsetsDirectional.zero;
 
@@ -148,20 +159,24 @@ class AdaptiveWindowControlLayoutScope extends InheritedModel<Object> {
       )?.appBarHorizontalAvoidance ??
       EdgeInsetsDirectional.zero;
 
-  static EdgeInsetsDirectional railHorizontalAvoidanceOf(
+  /// Returns horizontal avoidance owned by side navigation.
+  static EdgeInsetsDirectional sideNavigationHorizontalAvoidanceOf(
     BuildContext context,
   ) =>
       InheritedModel.inheritFrom<AdaptiveWindowControlLayoutScope>(
         context,
-        aspect: _WindowControlLayoutAspect.railHorizontalAvoidance,
-      )?.railHorizontalAvoidance ??
+        aspect: _WindowControlLayoutAspect.sideNavigationHorizontalAvoidance,
+      )?.sideNavigationHorizontalAvoidance ??
       EdgeInsetsDirectional.zero;
 
-  static EdgeInsetsDirectional railVerticalAvoidanceOf(BuildContext context) =>
+  /// Returns vertical avoidance owned by side navigation.
+  static EdgeInsetsDirectional sideNavigationVerticalAvoidanceOf(
+    BuildContext context,
+  ) =>
       InheritedModel.inheritFrom<AdaptiveWindowControlLayoutScope>(
         context,
-        aspect: _WindowControlLayoutAspect.railVerticalAvoidance,
-      )?.railVerticalAvoidance ??
+        aspect: _WindowControlLayoutAspect.sideNavigationVerticalAvoidance,
+      )?.sideNavigationVerticalAvoidance ??
       EdgeInsetsDirectional.zero;
 
   /// Whether the current display has rectangular physical corners.
@@ -217,10 +232,12 @@ class AdaptiveWindowControlLayoutScope extends InheritedModel<Object> {
       final changed = switch (aspect) {
         _WindowControlLayoutAspect.appBarHorizontalAvoidance =>
           appBarHorizontalAvoidance != oldWidget.appBarHorizontalAvoidance,
-        _WindowControlLayoutAspect.railHorizontalAvoidance =>
-          railHorizontalAvoidance != oldWidget.railHorizontalAvoidance,
-        _WindowControlLayoutAspect.railVerticalAvoidance =>
-          railVerticalAvoidance != oldWidget.railVerticalAvoidance,
+        _WindowControlLayoutAspect.sideNavigationHorizontalAvoidance =>
+          sideNavigationHorizontalAvoidance !=
+              oldWidget.sideNavigationHorizontalAvoidance,
+        _WindowControlLayoutAspect.sideNavigationVerticalAvoidance =>
+          sideNavigationVerticalAvoidance !=
+              oldWidget.sideNavigationVerticalAvoidance,
         _WindowControlLayoutAspect.safeAreaGeometry =>
           horizontalSafeAreaAvoidance !=
                   oldWidget.horizontalSafeAreaAvoidance ||

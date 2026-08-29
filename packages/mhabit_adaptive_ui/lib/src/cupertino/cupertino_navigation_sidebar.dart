@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 import '../adaptive/adaptive_navigation_destination.dart';
 import '../material/material_navigation_rail.dart';
@@ -10,7 +10,7 @@ import '../shell/navigation_shell_frame.dart';
 /// the Phase 3-4 HIG sidebar. This fallback is intentionally Cupertino-owned;
 /// it must not be treated as a common rail or an Apple sidebar implementation.
 class CupertinoNavigationSidebarCompatibility extends StatelessWidget {
-  /// Creates the temporary rail renderer for the current shell [form].
+  /// Creates the temporary rail body for the current shell [form].
   const CupertinoNavigationSidebarCompatibility({
     super.key,
     required this.form,
@@ -18,9 +18,10 @@ class CupertinoNavigationSidebarCompatibility extends StatelessWidget {
     required this.destinations,
     required this.onDestinationSelected,
     required this.railExtent,
+    required this.child,
   });
 
-  /// Current compact, collapsed-rail, or extended-rail shell form.
+  /// Current compact, constrained-side, or expanded-side shell form.
   final NavigationShellForm form;
 
   /// Zero-based index of the selected destination.
@@ -35,12 +36,51 @@ class CupertinoNavigationSidebarCompatibility extends StatelessWidget {
   /// Automatic and manually resizable rail-width policy.
   final NavigationRailExtent railExtent;
 
+  /// Stable branch content composed beside the compatibility rail.
+  final Widget child;
+
   @override
-  Widget build(BuildContext context) => MaterialNavigationRailRegion(
-    form: form,
-    selectedIndex: selectedIndex,
-    destinations: destinations,
-    onDestinationSelected: onDestinationSelected,
-    railExtent: railExtent,
+  Widget build(BuildContext context) => ColoredBox(
+    color: Theme.of(context).colorScheme.surface,
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        MaterialNavigationRailRegion(
+          form: form,
+          selectedIndex: selectedIndex,
+          destinations: destinations,
+          onDestinationSelected: onDestinationSelected,
+          railExtent: railExtent,
+        ),
+        Expanded(
+          child: _CupertinoCompatibilityBranch(form: form, child: child),
+        ),
+      ],
+    ),
   );
+}
+
+class _CupertinoCompatibilityBranch extends StatelessWidget {
+  const _CupertinoCompatibilityBranch({
+    required this.form,
+    required this.child,
+  });
+
+  final NavigationShellForm form;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (form == NavigationShellForm.compact) return child;
+
+    // The compatibility rail consumes logical-start padding until the real
+    // Cupertino sidebar replaces this body in Phase 3-4c.
+    final removeLeft = Directionality.of(context) == TextDirection.ltr;
+    return MediaQuery.removePadding(
+      context: context,
+      removeLeft: removeLeft,
+      removeRight: !removeLeft,
+      child: child,
+    );
+  }
 }

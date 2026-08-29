@@ -91,7 +91,7 @@ void main() {
     expect(wrappedGeometry, stockGeometry);
   });
 
-  testWidgets('Material explicit zero and rail owner disable avoidance', (
+  testWidgets('Material explicit zero and side owner disable avoidance', (
     tester,
   ) async {
     tester.view.devicePixelRatio = 1;
@@ -116,7 +116,10 @@ void main() {
     }
 
     expect(await leadingLeft(explicitAvoidance: EdgeInsetsDirectional.zero), 0);
-    expect(await leadingLeft(owner: WindowControlLayoutOwner.rail), 0);
+    expect(
+      await leadingLeft(owner: WindowControlLayoutOwner.sideNavigation),
+      0,
+    );
   });
 
   testWidgets('Material edge padding is configurable and directional', (
