@@ -49,7 +49,7 @@ class AdaptiveNavigationShell extends StatefulWidget {
     this.compactRouteVisible = true,
     this.contextualChromeSuppressed = false,
     this.applePrimaryAction,
-    this.sideNavigationExtent = const SideNavigationExtent(224.0),
+    this.sideNavigationExtent = const SideNavigationExtent(200.0),
     this.materialRailStyle = const MaterialNavigationRailStyle(),
     this.sideNavigationDragHandleBuilder,
     this.appleBarStyle = const AppleNavigationBarStyle(),

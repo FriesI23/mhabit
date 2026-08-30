@@ -102,7 +102,7 @@ class AppThemeBuilder {
             barBackgroundColor: _appleGlassBackgroundColor,
             scaffoldBackgroundColor: colorScheme.surface,
           );
-    return ThemeData(
+    final theme = ThemeData(
       fontFamily: getFontFamily(),
       fontFamilyFallback: getFontFamilyFallbacks(),
       pageTransitionsTheme: pageTransitionsTheme,
@@ -116,6 +116,12 @@ class AppThemeBuilder {
       menuTheme: _mobileMenuTheme,
       cupertinoOverrideTheme: cupertinoOverrideTheme,
       extensions: [customColor],
+    );
+    return theme.copyWith(
+      navigationRailTheme: theme.navigationRailTheme.copyWith(
+        backgroundColor: theme.colorScheme.surfaceContainer,
+        elevation: 1.0,
+      ),
     );
   }
 

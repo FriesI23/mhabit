@@ -16,6 +16,15 @@ void _withPlatform(TargetPlatform platform, void Function() body) {
   body();
 }
 
+void _expectMaterialRailSurface(ThemeData theme) {
+  expect(theme.appBarTheme, same(kAppBarTheme));
+  expect(
+    theme.navigationRailTheme.backgroundColor,
+    theme.colorScheme.surfaceContainer,
+  );
+  expect(theme.navigationRailTheme.elevation, 1.0);
+}
+
 void main() {
   const builder = AppThemeBuilder();
   const fallbackMainColor = Color(0xFF112233);
@@ -31,7 +40,7 @@ void main() {
         expect(theme.useMaterial3, isTrue);
         expect(theme.brightness, Brightness.light);
         expect(theme.colorScheme.brightness, Brightness.light);
-        expect(theme.appBarTheme, same(kAppBarTheme));
+        _expectMaterialRailSurface(theme);
         expect(theme.snackBarTheme.behavior, SnackBarBehavior.floating);
         expect(theme.extensions.values.whereType<CustomColors>(), hasLength(1));
       },
@@ -44,6 +53,7 @@ void main() {
       );
       expect(theme.brightness, Brightness.dark);
       expect(theme.colorScheme.brightness, Brightness.dark);
+      _expectMaterialRailSurface(theme);
     });
 
     test('system path keeps the explicit brightness with a null scheme', () {
@@ -59,6 +69,7 @@ void main() {
           );
           expect(theme.brightness, Brightness.light, reason: '$platform');
           expect(theme.cupertinoOverrideTheme, isNull, reason: '$platform');
+          _expectMaterialRailSurface(theme);
         });
       }
     });

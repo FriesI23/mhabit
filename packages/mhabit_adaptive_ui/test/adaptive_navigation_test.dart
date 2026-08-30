@@ -521,8 +521,10 @@ void main() {
 
     test('material rail style owns its collapsed extent', () {
       const style = MaterialNavigationRailStyle(collapsedExtent: 64);
+      const defaults = MaterialNavigationRailStyle();
 
       expect(style.collapsedExtent, 64);
+      expect(defaults.collapsedExtent, 96);
       expect(
         () => MaterialNavigationRailStyle(collapsedExtent: 0),
         throwsAssertionError,
@@ -2627,7 +2629,7 @@ void main() {
       expect(find.byType(NavigationRail), findsOneWidget);
       // Auto width uses the compact fixed target inside the interval.
       final panel = tester.widget<NavigationRail>(find.byType(NavigationRail));
-      expect(panel.minExtendedWidth, closeTo(224, 0.01));
+      expect(panel.minExtendedWidth, closeTo(200, 0.01));
       expect(find.byIcon(Icons.menu_open), findsOneWidget);
     });
 
@@ -2681,14 +2683,14 @@ void main() {
 
       NavigationRail panel() =>
           tester.widget<NavigationRail>(find.byType(NavigationRail));
-      // The fixed 224dp target fits the current 180-288dp interval.
-      expect(panel().minExtendedWidth, closeTo(224, 0.01));
+      // The compact 200dp target fits the current 180-288dp interval.
+      expect(panel().minExtendedWidth, closeTo(200, 0.01));
 
       tester.view.physicalSize = const Size(840, 800);
       await tester.pumpAndSettle();
 
-      // The interval's 223.2dp upper bound clamps the fixed target.
-      expect(panel().minExtendedWidth, closeTo(223.2, 0.01));
+      // The compact target remains inside the narrower interval.
+      expect(panel().minExtendedWidth, closeTo(200, 0.01));
     });
 
     testWidgets('drag resizes the rail and clamps to the interval', (
@@ -2700,7 +2702,7 @@ void main() {
 
       NavigationRail panel() =>
           tester.widget<NavigationRail>(find.byType(NavigationRail));
-      expect(panel().minExtendedWidth, closeTo(224, 0.01));
+      expect(panel().minExtendedWidth, closeTo(200, 0.01));
       final dragBar = find.byKey(
         const ValueKey('material-side-navigation-drag-bar'),
       );
@@ -2721,20 +2723,17 @@ void main() {
         Theme.of(tester.element(dragBar)).colorScheme.onSurfaceVariant,
       );
 
-      // Drag far left: many small moves accumulate and clamp to the minimum.
-      var gesture = await tester.startGesture(
-        tester.getCenter(find.byKey(const ValueKey('rail-resize-handle'))),
+      // Drag to the minimum without crossing it.
+      await tester.drag(
+        find.byKey(const ValueKey('rail-resize-handle')),
+        const Offset(-20, 0),
       );
-      for (var i = 0; i < 60; i++) {
-        await gesture.moveBy(const Offset(-10, 0));
-        await tester.pump();
-      }
-      await gesture.up();
       await tester.pumpAndSettle();
       expect(panel().minExtendedWidth, 180.0);
+      expect(panel().extended, isTrue);
 
       // Drag far right: clamps to the maximum width.
-      gesture = await tester.startGesture(
+      final gesture = await tester.startGesture(
         tester.getCenter(find.byKey(const ValueKey('rail-resize-handle'))),
       );
       for (var i = 0; i < 60; i++) {
@@ -2765,8 +2764,8 @@ void main() {
         expect(
           tester.getCenter(resizeHandle).dx,
           direction == TextDirection.ltr
-              ? tester.getTopRight(railPanel).dx - 4
-              : tester.getTopLeft(railPanel).dx + 4,
+              ? tester.getTopRight(railPanel).dx - 8
+              : tester.getTopLeft(railPanel).dx + 8,
         );
 
         final logicalDrag = direction == TextDirection.ltr
@@ -2784,7 +2783,7 @@ void main() {
                 ),
               )
               .minExtendedWidth,
-          greaterThan(224),
+          greaterThan(200),
         );
       });
     }
@@ -2824,7 +2823,7 @@ void main() {
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      // Drag slightly narrower than the auto width (224) -> 219.
+      // Drag slightly narrower than the auto width (200) -> 195.
       final gesture = await tester.startGesture(
         tester.getCenter(find.byKey(const ValueKey('rail-resize-handle'))),
       );
@@ -2834,20 +2833,20 @@ void main() {
       await tester.pumpAndSettle();
       NavigationRail panel() =>
           tester.widget<NavigationRail>(find.byType(NavigationRail));
-      expect(panel().minExtendedWidth, closeTo(219, 0.01));
+      expect(panel().minExtendedWidth, closeTo(195, 0.01));
 
       // The fixed auto target remains above the manual width, so it holds.
       tester.view.physicalSize = const Size(1400, 800);
       await tester.pumpAndSettle();
-      expect(panel().minExtendedWidth, closeTo(219, 0.01));
+      expect(panel().minExtendedWidth, closeTo(195, 0.01));
 
       // Medium resets to collapsed; expanding it applies the interval-clamped
       // auto width because it has fallen below the remembered manual width.
-      tester.view.physicalSize = const Size(700, 800);
+      tester.view.physicalSize = const Size(680, 800);
       await tester.pumpAndSettle();
       await tester.tap(find.byIcon(Icons.menu));
       await tester.pumpAndSettle();
-      expect(panel().minExtendedWidth, closeTo(198, 0.01));
+      expect(panel().minExtendedWidth, closeTo(194.4, 0.01));
 
       // The auto value keeps following the interval down.
       tester.view.physicalSize = const Size(650, 800);
@@ -2857,7 +2856,203 @@ void main() {
       // Grow back: the remembered manual value resumes.
       tester.view.physicalSize = const Size(1800, 800);
       await tester.pumpAndSettle();
-      expect(panel().minExtendedWidth, closeTo(219, 0.01));
+      expect(panel().minExtendedWidth, closeTo(195, 0.01));
+    });
+
+    testWidgets('material rail uses the M3 collapsed destination layout', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(700, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      final rail = tester.widget<NavigationRail>(find.byType(NavigationRail));
+      final destination = find.byKey(
+        const ValueKey('material-rail-destination-0'),
+      );
+      final destinationSlot = find.byKey(
+        const ValueKey('material-rail-destination-slot-0'),
+      );
+      final indicator = find.descendant(
+        of: destination,
+        matching: find.byKey(const ValueKey('material-rail-indicator')),
+      );
+      final collapsedLabel = find.descendant(
+        of: destinationSlot,
+        matching: find.byKey(const ValueKey('material-rail-collapsed-label')),
+      );
+      final expandedLabel = find.descendant(
+        of: destination,
+        matching: find.byKey(const ValueKey('material-rail-expanded-label')),
+      );
+
+      expect(tester.getSize(destination), const Size(56, 32));
+      expect(rail.minWidth, 96);
+      expect(tester.getSize(indicator), const Size(56, 32));
+      expect(tester.widget<Opacity>(collapsedLabel).opacity, 1);
+      expect(tester.widget<Opacity>(expandedLabel).opacity, 0);
+      expect(
+        tester.getCenter(find.byIcon(Icons.home)).dx,
+        tester.getCenter(destination).dx,
+      );
+      expect(
+        tester.getRect(destination).overlaps(tester.getRect(collapsedLabel)),
+        isFalse,
+      );
+    });
+
+    testWidgets('material rail frames the complete expanded destination', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      final destination = find.byKey(
+        const ValueKey('material-rail-destination-0'),
+      );
+      final indicator = find.descendant(
+        of: destination,
+        matching: find.byKey(const ValueKey('material-rail-indicator')),
+      );
+      final expandedLabel = find.descendant(
+        of: destination,
+        matching: find.byKey(const ValueKey('material-rail-expanded-label')),
+      );
+      final indicatorRect = tester.getRect(indicator);
+
+      expect(tester.getSize(destination), const Size(160, 56));
+      expect(tester.getSize(indicator), const Size(160, 56));
+      expect(tester.widget<Opacity>(expandedLabel).opacity, 1);
+      expect(
+        indicatorRect.contains(tester.getCenter(find.byIcon(Icons.home))),
+        isTrue,
+      );
+      expect(indicatorRect.contains(tester.getCenter(expandedLabel)), isTrue);
+      expect(
+        tester.getRect(
+          find.descendant(of: destination, matching: find.byType(InkWell)),
+        ),
+        tester.getRect(destination),
+      );
+    });
+
+    testWidgets('material rail destinations follow the rail animation', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(700, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      final destination = find.byKey(
+        const ValueKey('material-rail-destination-0'),
+      );
+      final destinationSlot = find.byKey(
+        const ValueKey('material-rail-destination-slot-0'),
+      );
+      final indicator = find.descendant(
+        of: destination,
+        matching: find.byKey(const ValueKey('material-rail-indicator')),
+      );
+      final collapsedLabel = find.descendant(
+        of: destinationSlot,
+        matching: find.byKey(const ValueKey('material-rail-collapsed-label')),
+      );
+      final expandedLabel = find.descendant(
+        of: destination,
+        matching: find.byKey(const ValueKey('material-rail-expanded-label')),
+      );
+      final todayDestination = find.byKey(
+        const ValueKey('material-rail-destination-1'),
+      );
+      final collapsedCenterY = tester.getCenter(destination).dy;
+      final collapsedTodayCenterY = tester.getCenter(todayDestination).dy;
+
+      await tester.tap(find.byKey(const ValueKey('rail-toggle-button')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(tester.getSize(destination).width, inExclusiveRange(56, 158));
+      expect(tester.getSize(indicator).width, inExclusiveRange(56, 158));
+      expect(tester.getSize(destination).height, inExclusiveRange(32, 56));
+      expect(tester.getSize(indicator).height, inExclusiveRange(32, 56));
+      expect(tester.getCenter(destination).dy, collapsedCenterY);
+      expect(tester.getCenter(todayDestination).dy, collapsedTodayCenterY);
+      expect(
+        tester.widget<Opacity>(collapsedLabel).opacity,
+        inExclusiveRange(0, 1),
+      );
+      expect(
+        tester.widget<Opacity>(expandedLabel).opacity,
+        inExclusiveRange(0, 1),
+      );
+
+      await tester.pumpAndSettle();
+      expect(tester.getSize(destination).width, closeTo(158, 0.01));
+      expect(tester.getSize(indicator).width, closeTo(158, 0.01));
+      expect(tester.getCenter(destination).dy, collapsedCenterY);
+      expect(tester.getCenter(todayDestination).dy, collapsedTodayCenterY);
+
+      await tester.tap(find.byKey(const ValueKey('rail-toggle-button')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(tester.getSize(destination).width, inExclusiveRange(56, 158));
+      expect(tester.getSize(indicator).width, inExclusiveRange(56, 158));
+      expect(tester.getSize(destination).height, inExclusiveRange(32, 56));
+      expect(tester.getSize(indicator).height, inExclusiveRange(32, 56));
+      expect(tester.getCenter(destination).dy, collapsedCenterY);
+      expect(tester.getCenter(todayDestination).dy, collapsedTodayCenterY);
+      expect(
+        tester.widget<Opacity>(collapsedLabel).opacity,
+        inExclusiveRange(0, 1),
+      );
+      expect(
+        tester.widget<Opacity>(expandedLabel).opacity,
+        inExclusiveRange(0, 1),
+      );
+
+      await tester.pumpAndSettle();
+      expect(tester.getSize(destination), const Size(56, 32));
+      expect(tester.getSize(indicator), const Size(56, 32));
+      expect(tester.getCenter(destination).dy, collapsedCenterY);
+      expect(tester.getCenter(todayDestination).dy, collapsedTodayCenterY);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('material rail tap target matches each destination button', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(700, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      final todayButton = find.byKey(
+        const ValueKey('material-rail-destination-1'),
+      );
+      final todaySlot = find.byKey(
+        const ValueKey('material-rail-destination-slot-1'),
+      );
+      final todayLabel = find.descendant(
+        of: todaySlot,
+        matching: find.byKey(const ValueKey('material-rail-collapsed-label')),
+      );
+      final buttonRect = tester.getRect(todayButton);
+      await tester.tapAt(Offset(buttonRect.right + 4, buttonRect.center.dy));
+      await tester.pumpAndSettle();
+      expect(find.text('habits page'), findsOneWidget);
+
+      await tester.tapAt(tester.getCenter(todayLabel));
+      await tester.pumpAndSettle();
+      expect(find.text('habits page'), findsOneWidget);
+
+      await tester.tap(todayButton);
+      await tester.pumpAndSettle();
+      expect(find.text('today page'), findsOneWidget);
     });
 
     testWidgets('drag while the panel animation is running does not crash', (
@@ -2889,16 +3084,194 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    for (final direction in TextDirection.values) {
+      testWidgets(
+        'material rail toggle keeps its logical-start anchor in $direction',
+        (tester) async {
+          _setSurfaceSize(tester, const Size(1800, 800));
+          final router = _buildRouter();
+          await tester.pumpWidget(
+            MaterialApp.router(
+              routerConfig: router,
+              builder: (context, child) =>
+                  Directionality(textDirection: direction, child: child!),
+            ),
+          );
+
+          final toggle = find.byKey(const ValueKey('rail-toggle-button'));
+          final expandedCenter = tester.getCenter(toggle);
+          final expandedTop = tester.getTopLeft(toggle).dy;
+          expect(expandedTop, 0);
+
+          await tester.tap(toggle);
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 100));
+          expect(tester.getCenter(toggle).dx, closeTo(expandedCenter.dx, 0.01));
+          expect(tester.getTopLeft(toggle).dy, expandedTop);
+
+          await tester.pumpAndSettle();
+          expect(tester.getCenter(toggle).dx, closeTo(expandedCenter.dx, 0.01));
+          expect(tester.getTopLeft(toggle).dy, expandedTop);
+        },
+      );
+    }
+
+    testWidgets('material rail toggle keeps the iPad window-control fallback', (
+      tester,
+    ) async {
+      _mockWindowControlLayout();
+      try {
+        _setSurfaceSize(tester, const Size(700, 800));
+        final router = _buildRouter();
+        await tester.pumpWidget(
+          MaterialApp.router(
+            routerConfig: router,
+            builder: (context, child) => AdaptiveStyleScope(
+              override: AdaptiveStyle.material,
+              child: child!,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final toggle = find.byKey(const ValueKey('rail-toggle-button'));
+        Padding safeSpan() => tester.widget<Padding>(
+          find.byKey(const ValueKey('rail-leading-safe-span')),
+        );
+        final collapsedCenter = tester.getCenter(toggle);
+        expect(tester.getTopLeft(toggle).dy, 0);
+        expect(
+          safeSpan().padding,
+          const EdgeInsetsDirectional.only(start: 40, end: 12),
+        );
+
+        await tester.tap(toggle);
+        await tester.pumpAndSettle();
+
+        expect(tester.getCenter(toggle).dx, closeTo(collapsedCenter.dx, 0.01));
+        expect(tester.getTopLeft(toggle).dy, 0);
+        expect(
+          safeSpan().padding,
+          const EdgeInsetsDirectional.only(start: 40, end: 12),
+        );
+      } finally {
+        _resetWindowControlLayoutMock();
+      }
+    });
+
     testWidgets('collapsed rail hides the resize handle', (tester) async {
       _setSurfaceSize(tester, const Size(700, 600));
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
       expect(find.byKey(const ValueKey('rail-resize-handle')), findsNothing);
+      expect(
+        find.byKey(const ValueKey('rail-collapsed-resize-handle')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('material-side-navigation-drag-bar')),
+        findsNothing,
+      );
 
       await tester.tap(find.byIcon(Icons.menu));
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('rail-resize-handle')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('rail-collapsed-resize-handle')),
+        findsNothing,
+      );
+    });
+
+    for (final direction in TextDirection.values) {
+      testWidgets(
+        'material rail collapses and reopens by dragging in $direction',
+        (tester) async {
+          _setSurfaceSize(tester, const Size(1800, 800));
+          final router = _buildRouter();
+          await tester.pumpWidget(
+            MaterialApp.router(
+              routerConfig: router,
+              builder: (context, child) =>
+                  Directionality(textDirection: direction, child: child!),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          final collapseOffset = direction == TextDirection.ltr
+              ? const Offset(-100, 0)
+              : const Offset(100, 0);
+          await tester.drag(
+            find.byKey(const ValueKey('rail-resize-handle')),
+            collapseOffset,
+          );
+          await tester.pumpAndSettle();
+
+          NavigationRail rail() =>
+              tester.widget<NavigationRail>(find.byType(NavigationRail));
+          expect(rail().extended, isFalse);
+          expect(
+            find.byKey(const ValueKey('rail-resize-handle')),
+            findsNothing,
+          );
+          expect(
+            find.byKey(const ValueKey('material-side-navigation-drag-bar')),
+            findsNothing,
+          );
+
+          final expandOffset = direction == TextDirection.ltr
+              ? const Offset(24, 0)
+              : const Offset(-24, 0);
+          await tester.drag(
+            find.byKey(const ValueKey('rail-resize-gesture-handle')),
+            expandOffset,
+          );
+          await tester.pumpAndSettle();
+
+          expect(rail().extended, isTrue);
+          expect(
+            find.byKey(const ValueKey('rail-resize-handle')),
+            findsOneWidget,
+          );
+          expect(
+            find.byKey(const ValueKey('material-side-navigation-drag-bar')),
+            findsOneWidget,
+          );
+        },
+      );
+    }
+
+    testWidgets('material rail keeps one drag active across collapse', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1800, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      NavigationRail rail() =>
+          tester.widget<NavigationRail>(find.byType(NavigationRail));
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.byKey(const ValueKey('rail-resize-handle'))),
+      );
+
+      await gesture.moveBy(const Offset(-100, 0));
+      await tester.pumpAndSettle();
+      expect(rail().extended, isFalse);
+      expect(
+        find.byKey(const ValueKey('rail-collapsed-resize-handle')),
+        findsOneWidget,
+      );
+
+      // The pointer is still down. Reversing the same gesture must reopen the
+      // rail without requiring the user to release and grab it again.
+      await gesture.moveBy(const Offset(100, 0));
+      await tester.pumpAndSettle();
+      expect(rail().extended, isTrue);
+      expect(find.byKey(const ValueKey('rail-resize-handle')), findsOneWidget);
+
+      await gesture.up();
+      await tester.pumpAndSettle();
     });
 
     testWidgets('apple boundaries use beside Sidebar from medium upward', (
@@ -3570,7 +3943,7 @@ void main() {
         Size panelSize() => tester.getSize(
           find.byKey(const ValueKey('cupertino-sidebar-panel')),
         );
-        expect(panelSize().width, 224);
+        expect(panelSize().width, 200);
         final resizeHandle = find.byKey(
           const ValueKey('cupertino-sidebar-resize-handle'),
         );
@@ -3607,7 +3980,7 @@ void main() {
         await tester.drag(resizeHandle, logicalDrag);
         await tester.pumpAndSettle();
         final resizedWidth = panelSize().width;
-        expect(resizedWidth, greaterThan(224));
+        expect(resizedWidth, greaterThan(200));
 
         await tester.tap(
           find.byKey(const ValueKey('cupertino-sidebar-toggle')),
@@ -4011,12 +4384,12 @@ void main() {
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      // Drag slightly narrower than the auto width (224) -> 194.
+      // Drag wider than the auto width (200) -> 230.
       final gesture = await tester.startGesture(
         tester.getCenter(find.byKey(const ValueKey('rail-resize-handle'))),
       );
       for (var i = 0; i < 3; i++) {
-        await gesture.moveBy(const Offset(-10, 0));
+        await gesture.moveBy(const Offset(10, 0));
         await tester.pump();
       }
       await gesture.up();
@@ -4032,7 +4405,7 @@ void main() {
       tester.view.physicalSize = const Size(1800, 800);
       await tester.pumpAndSettle();
       final rail = tester.widget<NavigationRail>(find.byType(NavigationRail));
-      expect(rail.minExtendedWidth, closeTo(194, 0.01));
+      expect(rail.minExtendedWidth, closeTo(230, 0.01));
     });
   });
 
