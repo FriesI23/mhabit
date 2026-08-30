@@ -6,6 +6,7 @@ import 'package:flutter/material.dart' show Easing;
 
 import '../breakpoints/breakpoints.dart';
 import '../breakpoints/window_size_class.dart';
+import '../shell/navigation_sidebar_app_bar_leading.dart';
 import '../window_control/toolbar_geometry.dart';
 import 'cupertino_toolbar_padding.dart';
 
@@ -80,7 +81,7 @@ final class CupertinoSliverSearchBarAction
 /// a large title.
 /// Business state and the text controller stay with the caller.
 class CupertinoSliverSearchBar extends StatefulWidget {
-  static const double toolbarHeight = 52.0;
+  static const double toolbarHeight = 44.0;
 
   const CupertinoSliverSearchBar({
     super.key,
@@ -231,11 +232,14 @@ class _CupertinoSliverSearchBarState extends State<CupertinoSliverSearchBar> {
 
   @override
   Widget build(BuildContext context) {
+    final sidebarLeading = NavigationSidebarAppBarLeading.maybeOf(context);
     final screenWidth = MediaQuery.sizeOf(context).width;
     final widthClass = Breakpoints.of(context).widthClass(screenWidth);
     final isCompact = !(widthClass >= WindowSizeClass.medium);
     final isLarge = widthClass >= WindowSizeClass.large;
-    final topPadding = MediaQuery.paddingOf(context).top;
+    final topPadding =
+        MediaQuery.paddingOf(context).top +
+        (sidebarLeading?.toolbarTopInset ?? 0);
     final extent =
         topPadding +
         CupertinoSliverSearchBar.toolbarHeight +
@@ -254,6 +258,8 @@ class _CupertinoSliverSearchBarState extends State<CupertinoSliverSearchBar> {
               const CupertinoNavigationBar(
                 automaticallyImplyLeading: false,
                 transitionBetweenRoutes: false,
+                automaticBackgroundVisibility: false,
+                backgroundColor: CupertinoColors.transparent,
                 border: null,
               ),
               Positioned(
@@ -268,6 +274,7 @@ class _CupertinoSliverSearchBarState extends State<CupertinoSliverSearchBar> {
                     showTitle: !isLarge,
                     centerTitle: !isCompact && !isLarge,
                     preferPersistentSearch: isLarge,
+                    sidebarLeading: sidebarLeading,
                     leading: widget.leading,
                     actions: widget.actions,
                     fixedActions: widget.fixedActions,
@@ -338,6 +345,7 @@ class _CupertinoSearchToolbar extends StatelessWidget {
     required this.showTitle,
     required this.centerTitle,
     required this.preferPersistentSearch,
+    required this.sidebarLeading,
     required this.leading,
     required this.actions,
     required this.fixedActions,
@@ -359,6 +367,7 @@ class _CupertinoSearchToolbar extends StatelessWidget {
   final bool showTitle;
   final bool centerTitle;
   final bool preferPersistentSearch;
+  final NavigationSidebarAppBarLeading? sidebarLeading;
   final Widget? leading;
   final List<CupertinoSliverSearchBarAction> actions;
   final List<Widget> fixedActions;
@@ -398,8 +407,10 @@ class _CupertinoSearchToolbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final contentPadding = CupertinoToolbarPadding.resolveDirectional(context);
+    final sidebarLeading = this.sidebarLeading;
     final insets = WindowControlToolbarGeometry.resolve(
       context,
+      avoidance: sidebarLeading?.toolbarAvoidance,
       edgePadding: contentPadding,
     ).cupertinoInsets;
     return Padding(
@@ -409,7 +420,12 @@ class _CupertinoSearchToolbar extends StatelessWidget {
           const itemExtent = _CupertinoSliverSearchBarState._toolbarItemExtent;
           const minimumPersistentSearchWidth = 100.0;
           final preferredTitleExtent = _measureTitleExtent(context);
-          final leadingWidth = leading == null ? 0.0 : itemExtent;
+          final leadingRegion = _CupertinoSearchToolbarLeading(
+            sidebarLeading: sidebarLeading,
+            leading: leading,
+            itemExtent: itemExtent,
+          );
+          final leadingWidth = leadingRegion.width;
           final fixedActionWidth = fixedActions.length * itemExtent;
           final contentWidth = math.max(
             0.0,
@@ -461,12 +477,7 @@ class _CupertinoSearchToolbar extends StatelessWidget {
                 child: Row(
                   children: [
                     SizedBox(width: insets.start),
-                    if (leading case final leading?)
-                      SizedBox(
-                        width: itemExtent,
-                        height: itemExtent,
-                        child: leading,
-                      ),
+                    leadingRegion,
                     Expanded(
                       child: _CupertinoCommandRegion(
                         title: title,
@@ -518,6 +529,40 @@ class _CupertinoSearchToolbar extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+class _CupertinoSearchToolbarLeading extends StatelessWidget {
+  const _CupertinoSearchToolbarLeading({
+    required this.sidebarLeading,
+    required this.leading,
+    required this.itemExtent,
+  });
+
+  final NavigationSidebarAppBarLeading? sidebarLeading;
+  final Widget? leading;
+  final double itemExtent;
+
+  double get width =>
+      (sidebarLeading?.reservedExtent ?? 0) +
+      (leading == null ? 0 : itemExtent);
+
+  @override
+  Widget build(BuildContext context) {
+    final sidebarLeading = this.sidebarLeading;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (sidebarLeading case final sidebarLeading?)
+          SizedBox(
+            key: const ValueKey('cupertino-sidebar-leading-anchor'),
+            width: sidebarLeading.reservedExtent,
+            height: itemExtent,
+          ),
+        if (leading case final leading?)
+          SizedBox(width: itemExtent, height: itemExtent, child: leading),
+      ],
     );
   }
 }

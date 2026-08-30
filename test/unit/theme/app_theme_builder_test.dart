@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart' show CupertinoDynamicColor;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -112,7 +113,7 @@ void main() {
   });
 
   group('AppThemeBuilder cupertino mapping', () {
-    test('follows the resolved scheme colors', () {
+    test('maps scheme chrome and uses the neutral apple glass tint', () {
       _withPlatform(TargetPlatform.macOS, () {
         final theme = builder.buildLight(
           themeColor: const SystemAppThemeColor(),
@@ -125,32 +126,39 @@ void main() {
         expect(override.primaryColor, scheme.primary);
         expect(
           override.barBackgroundColor,
-          scheme.surface.withValues(alpha: 0.8),
+          const CupertinoDynamicColor.withBrightness(
+            debugLabel: 'mhabitAppleGlassBackground',
+            color: Color(0xCCFFFFFF),
+            darkColor: Color(0x0FFFFFFF),
+          ),
         );
         expect(override.scaffoldBackgroundColor, scheme.surface);
       });
     });
 
-    test('uses a distinct elevated bar surface in dark mode', () {
-      _withPlatform(TargetPlatform.macOS, () {
-        final theme = builder.buildDark(
-          themeColor: const SystemAppThemeColor(),
-          themeMainColor: fallbackMainColor,
-        );
-        final scheme = theme.colorScheme;
-        final override = theme.cupertinoOverrideTheme;
-        expect(override, isNotNull);
-        expect(
-          override!.barBackgroundColor,
-          scheme.surfaceContainerHigh.withValues(alpha: 0.8),
-        );
-        expect(
-          override.barBackgroundColor,
-          isNot(scheme.surface.withValues(alpha: 0.8)),
-        );
-        expect(override.scaffoldBackgroundColor, scheme.surface);
-      });
-    });
+    test(
+      'keeps dark apple glass independent from elevated scheme surfaces',
+      () {
+        _withPlatform(TargetPlatform.macOS, () {
+          final theme = builder.buildDark(
+            themeColor: const SystemAppThemeColor(),
+            themeMainColor: fallbackMainColor,
+          );
+          final scheme = theme.colorScheme;
+          final override = theme.cupertinoOverrideTheme;
+          expect(override, isNotNull);
+          expect(
+            override!.barBackgroundColor,
+            isNot(scheme.surfaceContainerHigh.withValues(alpha: 0.8)),
+          );
+          expect(
+            override.barBackgroundColor,
+            isNot(scheme.surface.withValues(alpha: 0.8)),
+          );
+          expect(override.scaffoldBackgroundColor, scheme.surface);
+        });
+      },
+    );
   });
 
   group('AppThemeBuilder.getThemeColor', () {

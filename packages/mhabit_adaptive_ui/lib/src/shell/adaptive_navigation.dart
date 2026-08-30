@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show MaterialLocalizations;
 import 'package:flutter/widgets.dart';
 
 import '../adaptive/adaptive_navigation_destination.dart';
@@ -17,20 +18,21 @@ export '../material/material_navigation_rail.dart' show NavigationRailExtent;
 /// The shell resolves the active visual style, while Material and Cupertino
 /// renderers own their form resolution, body composition, inset policy, and
 /// window-control ownership. Compact windows use bottom navigation. Material
-/// side forms use collapsed or extended rails; Apple medium and large forms
-/// are reserved for overlay and beside sidebars respectively.
+/// side forms use collapsed or extended rails; Apple medium and larger forms
+/// use one hideable beside Sidebar.
 ///
 /// ```text
 /// form              Material              Apple
 /// compact           bottom bar            bottom Tab Bar
-/// constrained side  collapsed rail        medium overlay Sidebar
-/// expanded side     extended rail         large beside Sidebar
+/// constrained side  collapsed rail        beside Sidebar
+/// expanded side     extended rail         beside Sidebar
 /// ```
 ///
-/// Until the Apple sidebar renderer lands, Apple side forms preserve the
-/// documented Material-rail compatibility fallback. In compact form, route
-/// visibility, contextual chrome, and scroll direction determine whether
-/// Material navigation is hidden or Apple navigation is minimized.
+/// Apple side forms share the same visibility and width state. Hiding the
+/// Sidebar removes it completely instead of leaving an icon-only rail. In
+/// compact form, route visibility, contextual chrome, and scroll direction
+/// determine whether Material navigation is hidden or Apple navigation is
+/// minimized.
 class AdaptiveNavigationShell extends StatefulWidget {
   /// Creates adaptive navigation chrome around [child].
   const AdaptiveNavigationShell({
@@ -96,6 +98,14 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
 
   @override
   Widget build(BuildContext context) {
+    final materialLocalizations = Localizations.of<MaterialLocalizations>(
+      context,
+      MaterialLocalizations,
+    );
+    final expandNavigationLabel =
+        materialLocalizations?.collapsedIconTapHint ?? 'Expand';
+    final collapseNavigationLabel =
+        materialLocalizations?.expandedIconTapHint ?? 'Collapse';
     final child = KeyedSubtree(key: _childKey, child: widget.child);
     return switch (AdaptiveStyle.of(context)) {
       AdaptiveStyle.material => MaterialNavigationShell(
@@ -105,6 +115,8 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
         compactRouteVisible: widget.compactRouteVisible,
         contextualChromeSuppressed: widget.contextualChromeSuppressed,
         railExtent: widget.railExtent,
+        expandNavigationLabel: expandNavigationLabel,
+        collapseNavigationLabel: collapseNavigationLabel,
         child: child,
       ),
       AdaptiveStyle.apple => CupertinoNavigationShell(

@@ -17,6 +17,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart'
     show
         CupertinoButton,
+        CupertinoColors,
         CupertinoMenuItem,
         CupertinoNavigationBar,
         CupertinoPopupSurface,
@@ -597,6 +598,41 @@ void main() {
     );
   });
 
+  testWidgets('Today medium uses the fixed native blurred toolbar surface', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(700, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+
+    await _pumpTodayTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      platform: TargetPlatform.iOS,
+    );
+
+    expect(find.byType(CupertinoSliverNavigationBar), findsNothing);
+    final navigationBar = tester.widget<CupertinoNavigationBar>(
+      find.byType(CupertinoNavigationBar),
+    );
+    expect(navigationBar.enableBackgroundFilterBlur, isTrue);
+    expect(navigationBar.automaticBackgroundVisibility, isFalse);
+    final header = tester.widget<SliverPersistentHeader>(
+      find.byType(SliverPersistentHeader),
+    );
+    expect(header.delegate.minExtent, 44);
+    expect(header.delegate.maxExtent, 44);
+  });
+
   testWidgets('framework dismiss intent does not collide with page shortcuts', (
     tester,
   ) async {
@@ -908,8 +944,8 @@ void main() {
       searchHeaderFinder,
     );
     expect(searchHeader.pinned, isTrue);
-    expect(searchHeader.delegate.minExtent, 100);
-    expect(searchHeader.delegate.maxExtent, 100);
+    expect(searchHeader.delegate.minExtent, 92);
+    expect(searchHeader.delegate.maxExtent, 92);
     expect(
       find.ancestor(of: calendar, matching: find.byType(SliverAppBar)),
       findsNothing,
@@ -921,12 +957,25 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(
+    final habitsNavigationBar = tester.widget<CupertinoNavigationBar>(
       find.descendant(
         of: searchHeaderFinder,
-        matching: find.byType(BackdropFilter),
+        matching: find.byType(CupertinoNavigationBar),
       ),
-      findsOneWidget,
+    );
+    expect(habitsNavigationBar.enableBackgroundFilterBlur, isTrue);
+    expect(habitsNavigationBar.automaticBackgroundVisibility, isFalse);
+    expect(habitsNavigationBar.backgroundColor, CupertinoColors.transparent);
+    expect(
+      tester
+          .widgetList<BackdropFilter>(
+            find.descendant(
+              of: searchHeaderFinder,
+              matching: find.byType(BackdropFilter),
+            ),
+          )
+          .where((filter) => filter.enabled),
+      hasLength(1),
     );
     expect(find.byType(PinnedHeaderSliver), findsNothing);
   });
@@ -1115,7 +1164,10 @@ void main() {
 
     tester.view.physicalSize = const Size(700, 800);
     await tester.pump();
-    expect(find.byType(NavigationRail), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('cupertino-sidebar-panel')),
+      findsOneWidget,
+    );
     expect(find.byType(NavigationBar), findsNothing);
 
     tester.view.physicalSize = const Size(390, 800);
@@ -1232,7 +1284,10 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 350));
 
-    expect(find.byType(NavigationRail), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('cupertino-sidebar-panel')),
+      findsOneWidget,
+    );
     expect(compactButton, findsOneWidget);
     expect(tester.element(compactButton), same(compactButtonElement));
     expect(find.byType(ScrollingFAB), findsNothing);

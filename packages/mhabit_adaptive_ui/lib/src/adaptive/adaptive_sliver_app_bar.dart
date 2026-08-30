@@ -98,6 +98,7 @@ class AppBarAppleStyle {
     this.enableBackgroundFilterBlur = true,
     this.border,
     this.backgroundColor,
+    this.automaticBackgroundVisibility = true,
     this.padding,
     this.stretch = false,
     this.windowControlEdgePadding = cupertinoWindowControlEdgePadding,
@@ -107,6 +108,7 @@ class AppBarAppleStyle {
   final bool enableBackgroundFilterBlur;
   final Border? border;
   final Color? backgroundColor;
+  final bool automaticBackgroundVisibility;
   final EdgeInsetsDirectional? padding;
   final bool stretch;
 
@@ -118,6 +120,7 @@ class AppBarAppleStyle {
     bool? enableBackgroundFilterBlur,
     Border? border,
     Color? backgroundColor,
+    bool? automaticBackgroundVisibility,
     EdgeInsetsDirectional? padding,
     bool? stretch,
     EdgeInsetsDirectional? windowControlEdgePadding,
@@ -127,6 +130,8 @@ class AppBarAppleStyle {
         enableBackgroundFilterBlur ?? this.enableBackgroundFilterBlur,
     border: border ?? this.border,
     backgroundColor: backgroundColor ?? this.backgroundColor,
+    automaticBackgroundVisibility:
+        automaticBackgroundVisibility ?? this.automaticBackgroundVisibility,
     padding: padding ?? this.padding,
     stretch: stretch ?? this.stretch,
     windowControlEdgePadding:
@@ -140,6 +145,7 @@ class AppBarAppleStyle {
       other.enableBackgroundFilterBlur == enableBackgroundFilterBlur &&
       other.border == border &&
       other.backgroundColor == backgroundColor &&
+      other.automaticBackgroundVisibility == automaticBackgroundVisibility &&
       other.padding == padding &&
       other.stretch == stretch &&
       other.windowControlEdgePadding == windowControlEdgePadding;
@@ -150,6 +156,7 @@ class AppBarAppleStyle {
     enableBackgroundFilterBlur,
     border,
     backgroundColor,
+    automaticBackgroundVisibility,
     padding,
     stretch,
     windowControlEdgePadding,
@@ -286,6 +293,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     enableBackgroundFilterBlur: config.enableBackgroundFilterBlur,
     border: config.border,
     backgroundColor: config.backgroundColor,
+    automaticBackgroundVisibility: config.automaticBackgroundVisibility,
     padding: config.padding,
     stretch: config.stretch,
     windowControlEdgePadding: config.windowControlEdgePadding,

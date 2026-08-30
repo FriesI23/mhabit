@@ -40,6 +40,8 @@ class MaterialNavigationShell extends StatelessWidget {
     required this.compactRouteVisible,
     required this.contextualChromeSuppressed,
     required this.railExtent,
+    required this.expandNavigationLabel,
+    required this.collapseNavigationLabel,
   });
 
   static const double _barHeight = 80.0;
@@ -65,6 +67,12 @@ class MaterialNavigationShell extends StatelessWidget {
   /// Automatic and manually resizable rail-width policy.
   final NavigationRailExtent railExtent;
 
+  /// Localized action label used when side navigation can expand.
+  final String expandNavigationLabel;
+
+  /// Localized action label used when side navigation can collapse.
+  final String collapseNavigationLabel;
+
   @override
   Widget build(BuildContext context) {
     return NavigationShellFrame(
@@ -84,6 +92,8 @@ class MaterialNavigationShell extends StatelessWidget {
             destinations: destinations,
             onDestinationSelected: onSelected,
             railExtent: railExtent,
+            expandNavigationLabel: expandNavigationLabel,
+            collapseNavigationLabel: collapseNavigationLabel,
             child: child,
           ),
       windowControlOwnerResolver: _resolveMaterialWindowControlOwner,
@@ -129,6 +139,8 @@ class _MaterialNavigationShellBody extends StatelessWidget {
     required this.destinations,
     required this.onDestinationSelected,
     required this.railExtent,
+    required this.expandNavigationLabel,
+    required this.collapseNavigationLabel,
     required this.child,
   });
 
@@ -137,6 +149,8 @@ class _MaterialNavigationShellBody extends StatelessWidget {
   final List<AdaptiveNavigationDestination> destinations;
   final ValueChanged<int> onDestinationSelected;
   final NavigationRailExtent railExtent;
+  final String expandNavigationLabel;
+  final String collapseNavigationLabel;
   final Widget child;
 
   @override
@@ -151,6 +165,8 @@ class _MaterialNavigationShellBody extends StatelessWidget {
           destinations: destinations,
           onDestinationSelected: onDestinationSelected,
           railExtent: railExtent,
+          expandNavigationLabel: expandNavigationLabel,
+          collapseNavigationLabel: collapseNavigationLabel,
         ),
         Expanded(
           child: _MaterialNavigationBranch(form: form, child: child),

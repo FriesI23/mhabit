@@ -321,6 +321,46 @@ void main() {
       expect(selected, [2]);
     });
 
+    testWidgets('keeps selected and unselected foregrounds opaque', (
+      tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(400, 800);
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(
+        _wrap(
+          presentation: AdaptiveNavigationBarPresentation.expanded,
+          onDestinationSelected: (_) {},
+          onExpandRequested: () {},
+          theme: const CupertinoThemeData(primaryColor: Color(0x80336699)),
+        ),
+      );
+
+      final selectedIcon = find.byKey(const ValueKey('today-apple-selected'));
+      final unselectedIcon = find.byKey(const ValueKey('habits-apple'));
+      final selectedIconColor = IconTheme.of(
+        tester.element(selectedIcon),
+      ).color!;
+      final unselectedIconColor = IconTheme.of(
+        tester.element(unselectedIcon),
+      ).color!;
+      final selectedLabelColor = tester
+          .widget<Text>(find.text('Today'))
+          .style!
+          .color!;
+      final unselectedLabelColor = tester
+          .widget<Text>(find.text('Habits'))
+          .style!
+          .color!;
+
+      expect(selectedIconColor.a, 1);
+      expect(unselectedIconColor.a, 1);
+      expect(selectedLabelColor, selectedIconColor);
+      expect(unselectedLabelColor, unselectedIconColor);
+      expect(unselectedIconColor, CupertinoColors.black);
+    });
+
     testWidgets('aligns dark surfaces with shared elevation treatment', (
       tester,
     ) async {

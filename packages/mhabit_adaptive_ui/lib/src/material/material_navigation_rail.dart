@@ -171,6 +171,8 @@ class MaterialNavigationRailRegion extends StatefulWidget {
     required this.destinations,
     required this.onDestinationSelected,
     required this.railExtent,
+    required this.expandNavigationLabel,
+    required this.collapseNavigationLabel,
   });
 
   /// Current compact, constrained-side, or expanded-side shell form.
@@ -187,6 +189,12 @@ class MaterialNavigationRailRegion extends StatefulWidget {
 
   /// Automatic and manually resizable rail-width policy.
   final NavigationRailExtent railExtent;
+
+  /// Localized action label used while the rail is collapsed.
+  final String expandNavigationLabel;
+
+  /// Localized action label used while the rail is expanded.
+  final String collapseNavigationLabel;
 
   @override
   State<MaterialNavigationRailRegion> createState() =>
@@ -297,8 +305,8 @@ class _MaterialNavigationRailRegionState
                 child: IconButton(
                   key: const ValueKey('rail-toggle-button'),
                   tooltip: _extended
-                      ? 'Collapse navigation rail'
-                      : 'Expand navigation rail',
+                      ? widget.collapseNavigationLabel
+                      : widget.expandNavigationLabel,
                   icon: Icon(_extended ? Icons.menu_open : Icons.menu),
                   onPressed: () => setState(() => _extended = !_extended),
                 ),

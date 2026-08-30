@@ -10,8 +10,10 @@ import 'adaptive_nav_visibility.dart';
 /// In the compact form, branch pages read [visible] to coordinate FAB /
 /// floating-action animations with the bottom bar and reserve [navHeight].
 /// The shell derives [scrollWish] from active vertical user scrolling;
-/// [reportScrollWish] remains available for explicit non-scroll policy. In
-/// non-compact forms (medium+) navigation is always visible.
+/// [reportScrollWish] remains available for explicit non-scroll policy.
+/// Non-compact forms expose constant-true listenables because this scope only
+/// describes the compact chrome envelope, not renderer-owned side-navigation
+/// visibility.
 class AdaptiveNavScope extends InheritedWidget {
   /// Creates a navigation scope for a shell branch subtree.
   const AdaptiveNavScope({
@@ -52,7 +54,7 @@ class AdaptiveNavScope extends InheritedWidget {
   ///
   /// Normal vertical page scrolling is observed automatically by the shell.
   /// Use this for specialized non-scroll policy. Ignored in non-compact forms,
-  /// where navigation is always visible.
+  /// where side-navigation visibility belongs to the themed renderer.
   void reportScrollWish(bool visible) => _scrollWish?.report(visible);
 
   /// Content height of the bar, excluding the bottom safe-area inset.

@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart' show CupertinoThemeData;
+import 'package:flutter/cupertino.dart'
+    show CupertinoDynamicColor, CupertinoThemeData;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -23,6 +24,12 @@ import '../models/app_theme_color.dart';
 import '../widgets/_widgets/predictive_back_page_transitions_builder.dart';
 import '../widgets/styles.dart';
 import 'color.dart';
+
+const _appleGlassBackgroundColor = CupertinoDynamicColor.withBrightness(
+  debugLabel: 'mhabitAppleGlassBackground',
+  color: Color(0xCCFFFFFF),
+  darkColor: Color(0x0FFFFFFF),
+);
 
 /// Assembles the app [ThemeData] from the resolved theme-color inputs.
 ///
@@ -92,11 +99,7 @@ class AppThemeBuilder {
         : CupertinoThemeData(
             brightness: colorScheme.brightness,
             primaryColor: colorScheme.primary,
-            barBackgroundColor:
-                (colorScheme.brightness == Brightness.dark
-                        ? colorScheme.surfaceContainerHigh
-                        : colorScheme.surface)
-                    .withValues(alpha: 0.8),
+            barBackgroundColor: _appleGlassBackgroundColor,
             scaffoldBackgroundColor: colorScheme.surface,
           );
     return ThemeData(

@@ -19,17 +19,15 @@ import 'cupertino_navigation_sidebar.dart';
 /// ```text
 /// compact          constrained side  expanded side
 /// +----------+     +------------+    +------+-------+
-/// | content  |     |  overlay   |    | side |content|
-/// +----------+     |  Sidebar   |    | bar  |       |
-/// | Tab Bar  |     +------------+    |      |       |
-/// +----------+                       +------+-------+
+/// | content  |     | side |body |    | side |content|
+/// +----------+     | bar  |     |    | bar  |       |
+/// | Tab Bar  |     |      |     |    |      |       |
+/// +----------+     +------+-----+    +------+-------+
 /// ```
 ///
-/// The side-form diagrams show the target Cupertino presentation. The
-/// compatibility rail preserves current behavior until the Sidebar renderer
-/// replaces it. In compact form, route and contextual state control visibility
-/// while scroll direction selects the expanded or minimized Tab Bar
-/// presentation.
+/// Medium and larger widths use the same hideable beside presentation. In
+/// compact form, route and contextual state control visibility while scroll
+/// direction selects the expanded or minimized Tab Bar presentation.
 class CupertinoNavigationShell extends StatelessWidget {
   /// Creates Cupertino navigation chrome around [child].
   const CupertinoNavigationShell({
@@ -43,6 +41,8 @@ class CupertinoNavigationShell extends StatelessWidget {
     required this.primaryAction,
     required this.railExtent,
     required this.appleBarStyle,
+    this.expandNavigationLabel,
+    this.collapseNavigationLabel,
   });
 
   /// Content displayed beside or underneath the navigation chrome.
@@ -66,11 +66,21 @@ class CupertinoNavigationShell extends StatelessWidget {
   /// App-selected primary action for the active branch.
   final CupertinoNavigationPrimaryAction? primaryAction;
 
-  /// Full-width policy shared by the compatibility rail and future sidebar.
+  /// Full-width policy used by the Sidebar panel.
   final NavigationRailExtent railExtent;
 
   /// Geometry and spacing for the compact Apple navigation bar.
   final AppleNavigationBarStyle appleBarStyle;
+
+  /// Localized action label used when the Sidebar can be shown.
+  ///
+  /// Defaults to the closest available Flutter localization.
+  final String? expandNavigationLabel;
+
+  /// Localized action label used when the Sidebar can be hidden.
+  ///
+  /// Defaults to the closest available Flutter localization.
+  final String? collapseNavigationLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -99,12 +109,14 @@ class CupertinoNavigationShell extends StatelessWidget {
           : navigationShellAnimationDuration,
       formResolver: _resolveCupertinoNavigationShellForm,
       bodyBuilder: (context, form, onSelected, child) =>
-          CupertinoNavigationSidebarCompatibility(
+          CupertinoNavigationSidebar(
             form: form,
             selectedIndex: selectedIndex,
             destinations: destinations,
             onDestinationSelected: onSelected,
             railExtent: railExtent,
+            expandNavigationLabel: expandNavigationLabel,
+            collapseNavigationLabel: collapseNavigationLabel,
             child: child,
           ),
       windowControlOwnerResolver: _resolveCupertinoWindowControlOwner,

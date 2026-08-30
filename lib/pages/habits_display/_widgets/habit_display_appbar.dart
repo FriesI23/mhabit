@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart' show CupertinoNavigationBar;
+import 'package:flutter/cupertino.dart'
+    show CupertinoColors, CupertinoNavigationBar;
 import 'package:flutter/material.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
@@ -313,6 +314,8 @@ class _AppleCalendarBar extends StatelessWidget {
             child: const CupertinoNavigationBar(
               automaticallyImplyLeading: false,
               transitionBetweenRoutes: false,
+              automaticBackgroundVisibility: false,
+              backgroundColor: CupertinoColors.transparent,
               border: null,
             ),
           ),
