@@ -13,44 +13,62 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-
-import '../../common/utils.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 enum PageBackReason { back, close }
 
+@Deprecated(
+  'Use AdaptiveBackButton with AdaptiveBackButtonType instead. '
+  'PageBackButton is a temporary compatibility wrapper and will be removed.',
+)
 class PageBackButton extends StatelessWidget {
   final PageBackReason reason;
   final Color? color;
   final VoidCallback? onPressed;
+  final AdaptiveStyle? style;
 
   const PageBackButton({
     super.key,
     this.reason = PageBackReason.back,
     this.color,
     this.onPressed,
-  });
+  }) : style = null;
 
-  void _onPressedCallback(BuildContext context) => dismissAllToolTips().then(
-    (_) => context.mounted ? Navigator.maybePop(context) : false,
-  );
+  const PageBackButton.material({
+    super.key,
+    this.reason = PageBackReason.back,
+    this.color,
+    this.onPressed,
+  }) : style = AdaptiveStyle.material;
+
+  const PageBackButton.apple({
+    super.key,
+    this.reason = PageBackReason.back,
+    this.color,
+    this.onPressed,
+  }) : style = AdaptiveStyle.apple;
 
   @override
-  Widget build(BuildContext context) {
-    switch (reason) {
-      case PageBackReason.back:
-        return Center(
-          child: BackButton(
-            onPressed: onPressed ?? () => _onPressedCallback(context),
-            color: color,
-          ),
-        );
-      case PageBackReason.close:
-        return Center(
-          child: CloseButton(
-            onPressed: onPressed ?? () => _onPressedCallback(context),
-            color: color,
-          ),
-        );
-    }
-  }
+  Widget build(BuildContext context) => switch (style) {
+    AdaptiveStyle.material => AdaptiveBackButton.material(
+      type: _adaptiveType,
+      color: color,
+      onPressed: onPressed,
+    ),
+    AdaptiveStyle.apple => AdaptiveBackButton.apple(
+      type: _adaptiveType,
+      color: color,
+      onPressed: onPressed,
+    ),
+    null => AdaptiveBackButton(
+      type: _adaptiveType,
+      color: color,
+      onPressed: onPressed,
+    ),
+  };
+
+  AdaptiveBackButtonType get _adaptiveType => switch (reason) {
+    PageBackReason.back => AdaptiveBackButtonType.back,
+    PageBackReason.close => AdaptiveBackButtonType.close,
+  };
 }

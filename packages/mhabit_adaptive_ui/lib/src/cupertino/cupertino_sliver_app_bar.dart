@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
+import '../adaptive/app_bar_apple_style.dart';
 import '../breakpoints/window_size_class.dart';
 import '../shell/navigation_sidebar_app_bar_leading.dart';
 import '../window_control/cupertino_navigation_bar.dart';
@@ -17,14 +18,8 @@ class CupertinoSliverAppBar extends StatelessWidget {
     this.leading,
     this.onLeadingPressed,
     this.height,
-    this.enableBackgroundFilterBlur = true,
-    this.border,
-    this.backgroundColor,
-    this.automaticBackgroundVisibility = true,
-    this.padding,
-    this.stretch = false,
+    required this.style,
     this.windowControlAvoidance,
-    this.windowControlEdgePadding = cupertinoWindowControlEdgePadding,
   });
 
   final Widget title;
@@ -32,14 +27,8 @@ class CupertinoSliverAppBar extends StatelessWidget {
   final Widget? leading;
   final VoidCallback? onLeadingPressed;
   final double? height;
-  final bool enableBackgroundFilterBlur;
-  final Border? border;
-  final Color? backgroundColor;
-  final bool automaticBackgroundVisibility;
-  final EdgeInsetsDirectional? padding;
-  final bool stretch;
+  final AppBarAppleStyle style;
   final EdgeInsetsDirectional? windowControlAvoidance;
-  final EdgeInsetsDirectional windowControlEdgePadding;
 
   Widget? _effectiveTrailing(List<Widget> effectiveActions) =>
       effectiveActions.isEmpty
@@ -68,26 +57,26 @@ class CupertinoSliverAppBar extends StatelessWidget {
         leading: effectiveLeading,
         trailing: effectiveTrailing,
         toolbarHeight: height,
-        enableBackgroundFilterBlur: enableBackgroundFilterBlur,
-        border: border,
-        backgroundColor: backgroundColor,
-        padding: padding,
+        enableBackgroundFilterBlur: style.enableBackgroundFilterBlur,
+        border: style.border,
+        backgroundColor: style.backgroundColor,
+        padding: style.padding,
         windowControlAvoidance: effectiveWindowControlAvoidance,
-        windowControlEdgePadding: windowControlEdgePadding,
+        windowControlEdgePadding: style.windowControlEdgePadding,
       );
     }
     return _CollapsibleCupertinoSliverAppBar(
       title: title,
       leading: effectiveLeading,
       trailing: effectiveTrailing,
-      enableBackgroundFilterBlur: enableBackgroundFilterBlur,
-      border: border,
-      backgroundColor: backgroundColor,
-      automaticBackgroundVisibility: automaticBackgroundVisibility,
-      padding: padding,
-      stretch: stretch,
+      enableBackgroundFilterBlur: style.enableBackgroundFilterBlur,
+      border: style.border,
+      backgroundColor: style.backgroundColor,
+      automaticBackgroundVisibility: style.automaticBackgroundVisibility,
+      padding: style.padding,
+      stretch: style.stretch,
       windowControlAvoidance: effectiveWindowControlAvoidance,
-      windowControlEdgePadding: windowControlEdgePadding,
+      windowControlEdgePadding: style.windowControlEdgePadding,
     );
   }
 }

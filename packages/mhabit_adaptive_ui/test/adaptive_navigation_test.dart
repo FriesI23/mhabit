@@ -813,7 +813,7 @@ void main() {
       );
     });
 
-    testWidgets('apple shell enables automatic app bar background visibility', (
+    testWidgets('apple shell keeps the shared transparent app bar surface', (
       tester,
     ) async {
       _setSurfaceSize(tester, const Size(400, 800));
@@ -888,12 +888,12 @@ void main() {
       }
 
       expect(scopedBackground, scaffoldBackground);
-      expect(renderedAppBarBackground(), scaffoldBackground);
+      expect(renderedAppBarBackground(), CupertinoColors.transparent);
 
       await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
       await tester.pumpAndSettle();
 
-      expect(renderedAppBarBackground(), barBackground);
+      expect(renderedAppBarBackground(), CupertinoColors.transparent);
     });
 
     testWidgets('material shell does not host the Cupertino primary action', (

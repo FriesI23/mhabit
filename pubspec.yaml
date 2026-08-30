@@ -145,6 +145,7 @@ mhabit_color_builder:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  adaptive_actions: ^0.3.0
   flutter:
     sdk: flutter
   flutter_localizations:

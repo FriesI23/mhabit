@@ -14,9 +14,11 @@
 
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
+import 'package:mhabit/extensions/adaptive_style_extensions.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_detail.dart';
@@ -69,6 +71,7 @@ final class _PendingHabitDetailAccess extends StubHabitDetailAccess {
 
 HabitSummaryData _buildHabitSummaryData({
   String uuid = '11111111-1111-4111-8111-111111111111',
+  HabitStatus status = HabitStatus.activated,
 }) {
   final startDate = HabitDate.now().subtractDays(1);
   return HabitSummaryData(
@@ -82,14 +85,16 @@ HabitSummaryData _buildHabitSummaryData({
     targetDays: 1,
     frequency: HabitFrequency.daily,
     startDate: startDate,
-    status: HabitStatus.activated,
+    status: status,
     sortPostion: 1,
     createTime: DateTime.utc(startDate.year, startDate.month, startDate.day),
   );
 }
 
-HabitDetailData _buildHabitDetailData() {
-  final data = _buildHabitSummaryData();
+HabitDetailData _buildHabitDetailData({
+  HabitStatus status = HabitStatus.activated,
+}) {
+  final data = _buildHabitSummaryData(status: status);
   return HabitDetailData(
     data: data,
     modifyT: DateTime.utc(2026, 1, 1),
@@ -111,6 +116,7 @@ Future<void> _pumpHabitDetailPage(
   required ValueNotifier<int> rebuildToken,
   required HabitUUID habitUUID,
   bool wrapWithAdaptiveShell = false,
+  TargetPlatform? platform,
 }) async {
   final customDate = AppCustomDateYmdHmsConfigViewModel()
     ..updateProfile(profile);
@@ -138,6 +144,7 @@ Future<void> _pumpHabitDetailPage(
         ChangeNotifierProvider<AppEventBus>.value(value: appEvent),
       ],
       child: MaterialApp(
+        theme: platform == null ? null : ThemeData(platform: platform),
         home: ValueListenableBuilder<int>(
           valueListenable: rebuildToken,
           builder: (context, _, child) {
@@ -301,4 +308,190 @@ void main() {
       expect(400 - tester.getBottomRight(fab).dy, kFloatingActionButtonMargin);
     },
   );
+
+  testWidgets('HabitDetailPage action menu keeps order and archive callback', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final detailData = _buildHabitDetailData();
+    final access = _FakeHabitDetailAccess(seedData: detailData);
+    final rebuildToken = ValueNotifier(0);
+
+    addTearDown(() {
+      rebuildToken.dispose();
+      profile.dispose();
+    });
+
+    await _pumpHabitDetailPage(
+      tester,
+      profile: profile,
+      access: access,
+      rebuildToken: rebuildToken,
+      habitUUID: detailData.data.uuid,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pump(const Duration(milliseconds: 350));
+
+    final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
+    expect(appBar.toolbarHeight, AppAdaptiveStyle.materialToolbarHeight);
+    expect(find.byIcon(Icons.edit_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.archive_outlined), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Archive'), findsNothing);
+    expect(find.text('Unarchive'), findsNothing);
+    expect(find.text('Clone'), findsOneWidget);
+    expect(find.text('Export'), findsOneWidget);
+    expect(find.text('Delete'), findsOneWidget);
+
+    await tester.tapAt(Offset.zero);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.archive_outlined));
+    await tester.pumpAndSettle();
+    expect(find.text('Archive Habit?'), findsOneWidget);
+  });
+
+  testWidgets('HabitDetailPage substitutes unarchive without other changes', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final detailData = _buildHabitDetailData(status: HabitStatus.archived);
+    final access = _FakeHabitDetailAccess(seedData: detailData);
+    final rebuildToken = ValueNotifier(0);
+
+    addTearDown(() {
+      rebuildToken.dispose();
+      profile.dispose();
+    });
+
+    await _pumpHabitDetailPage(
+      tester,
+      profile: profile,
+      access: access,
+      rebuildToken: rebuildToken,
+      habitUUID: detailData.data.uuid,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pump(const Duration(milliseconds: 350));
+
+    expect(find.byIcon(Icons.unarchive_rounded), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await tester.pumpAndSettle();
+    expect(find.text('Unarchive'), findsNothing);
+    expect(find.text('Archive'), findsNothing);
+    expect(find.text('Clone'), findsOneWidget);
+    expect(find.text('Export'), findsOneWidget);
+    expect(find.text('Delete'), findsOneWidget);
+  });
+
+  testWidgets('HabitDetailPage Apple actions keep 44pt targets and callbacks', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final detailData = _buildHabitDetailData();
+    final access = _FakeHabitDetailAccess(seedData: detailData);
+    final rebuildToken = ValueNotifier(0);
+
+    addTearDown(() {
+      rebuildToken.dispose();
+      profile.dispose();
+    });
+
+    await _pumpHabitDetailPage(
+      tester,
+      profile: profile,
+      access: access,
+      rebuildToken: rebuildToken,
+      habitUUID: detailData.data.uuid,
+      platform: TargetPlatform.iOS,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pump(const Duration(milliseconds: 350));
+
+    final edit = find.byIcon(CupertinoIcons.pencil);
+    final archive = find.byIcon(CupertinoIcons.archivebox);
+    final more = find.byIcon(CupertinoIcons.ellipsis);
+    expect(find.byType(CupertinoNavigationBar), findsOneWidget);
+    final header = tester.widget<SliverPersistentHeader>(
+      find.byType(SliverPersistentHeader),
+    );
+    expect(header.delegate.minExtent, AppAdaptiveStyle.appleToolbarHeight);
+    expect(header.delegate.maxExtent, AppAdaptiveStyle.appleToolbarHeight);
+    expect(edit, findsOneWidget);
+    expect(archive, findsOneWidget);
+    expect(more, findsOneWidget);
+    expect(
+      tester
+          .getSize(
+            find
+                .ancestor(of: edit, matching: find.byType(CupertinoButton))
+                .first,
+          )
+          .height,
+      greaterThanOrEqualTo(44),
+    );
+    expect(
+      tester
+          .getSize(
+            find
+                .ancestor(of: more, matching: find.byType(CupertinoButton))
+                .first,
+          )
+          .height,
+      greaterThanOrEqualTo(44),
+    );
+
+    await tester.tap(archive);
+    await tester.pumpAndSettle();
+    expect(find.text('Archive Habit?'), findsOneWidget);
+  });
+
+  testWidgets('HabitDetailPage Apple actions collapse by retention priority', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1000, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final profile = await _loadProfile();
+    final detailData = _buildHabitDetailData();
+    final access = _FakeHabitDetailAccess(seedData: detailData);
+    final rebuildToken = ValueNotifier(0);
+
+    addTearDown(() {
+      rebuildToken.dispose();
+      profile.dispose();
+    });
+
+    await _pumpHabitDetailPage(
+      tester,
+      profile: profile,
+      access: access,
+      rebuildToken: rebuildToken,
+      habitUUID: detailData.data.uuid,
+      platform: TargetPlatform.iOS,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pump(const Duration(milliseconds: 350));
+
+    expect(find.byIcon(CupertinoIcons.pencil), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.archivebox), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.square_on_square), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.share_up), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.delete), findsNothing);
+    expect(find.byIcon(CupertinoIcons.ellipsis), findsOneWidget);
+
+    tester.view.physicalSize = const Size(700, 800);
+    await tester.pump();
+
+    expect(find.byIcon(CupertinoIcons.pencil), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.archivebox), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.square_on_square), findsNothing);
+    expect(find.byIcon(CupertinoIcons.share_up), findsNothing);
+    expect(find.byIcon(CupertinoIcons.ellipsis), findsOneWidget);
+  });
 }

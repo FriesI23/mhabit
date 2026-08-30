@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
+import '../../../extensions/adaptive_style_extensions.dart';
 import '../../../extensions/custom_color_extensions.dart';
 import '../../../models/habit_color.dart';
 import '../../../theme/color.dart';
@@ -41,9 +42,17 @@ class HabitDetailAppBar extends StatelessWidget {
         ? colorData?.getColor(color!, brightness: themeData.brightness)
         : null;
     final titleFont = themeData.textTheme.titleLarge;
+    final toolbarHeight = AdaptiveStyle.of(context).appToolbarHeight;
 
-    return WindowControlSliverAppBar(
-      pinned: true,
+    return AdaptiveSliverAppBar(
+      height: toolbarHeight,
+      styles: const AppBarStyles(
+        material: AppBarMaterialStyle(
+          floating: false,
+          snap: false,
+          pinned: true,
+        ),
+      ),
       title: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: title != null

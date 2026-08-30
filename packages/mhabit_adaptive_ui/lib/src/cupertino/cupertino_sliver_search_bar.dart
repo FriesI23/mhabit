@@ -4,6 +4,7 @@ import 'package:adaptive_actions/cupertino.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Easing;
 
+import '../adaptive/app_bar_apple_style.dart';
 import '../breakpoints/breakpoints.dart';
 import '../breakpoints/window_size_class.dart';
 import '../shell/navigation_sidebar_app_bar_leading.dart';
@@ -103,6 +104,7 @@ class CupertinoSliverSearchBar extends StatefulWidget {
     this.bottom,
     this.bottomExtent = 0.0,
     this.pinned = true,
+    this.style,
   }) : assert(bottomExtent >= 0.0),
        assert(bottom != null || bottomExtent == 0.0);
 
@@ -127,6 +129,9 @@ class CupertinoSliverSearchBar extends StatefulWidget {
   final Widget? bottom;
   final double bottomExtent;
   final bool pinned;
+  final AppBarAppleStyle? style;
+
+  AppBarAppleStyle get _effectiveStyle => style ?? const AppBarAppleStyle();
 
   @override
   State<CupertinoSliverSearchBar> createState() =>
@@ -232,6 +237,7 @@ class _CupertinoSliverSearchBarState extends State<CupertinoSliverSearchBar> {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveStyle = widget._effectiveStyle;
     final sidebarLeading = NavigationSidebarAppBarLeading.maybeOf(context);
     final screenWidth = MediaQuery.sizeOf(context).width;
     final widthClass = Breakpoints.of(context).widthClass(screenWidth);
@@ -255,11 +261,12 @@ class _CupertinoSliverSearchBarState extends State<CupertinoSliverSearchBar> {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              const CupertinoNavigationBar(
+              CupertinoNavigationBar(
                 automaticallyImplyLeading: false,
                 transitionBetweenRoutes: false,
-                automaticBackgroundVisibility: false,
-                backgroundColor: CupertinoColors.transparent,
+                automaticBackgroundVisibility:
+                    effectiveStyle.automaticBackgroundVisibility,
+                backgroundColor: effectiveStyle.backgroundColor,
                 border: null,
               ),
               Positioned(

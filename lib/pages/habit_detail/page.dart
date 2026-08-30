@@ -12,8 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:adaptive_actions/core.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
@@ -59,6 +62,16 @@ import '_providers/habit_detail_scorechart.dart';
 import 'widgets.dart';
 
 const _largeScreenTwoChartBetween = 16.0;
+const _appBarActionSlotExtent = 48.0;
+
+enum _DetailAppBarAction { edit, unarchive, archive, delete, export, clone }
+
+final _detailEditActionId = ActionId('habit-detail.edit');
+final _detailUnarchiveActionId = ActionId('habit-detail.unarchive');
+final _detailArchiveActionId = ActionId('habit-detail.archive');
+final _detailCloneActionId = ActionId('habit-detail.clone');
+final _detailExportActionId = ActionId('habit-detail.export');
+final _detailDeleteActionId = ActionId('habit-detail.delete');
 
 /// Keeps the page's bar reservation and FAB lift in sync with the shell's
 /// bottom-bar hide/show animation.
@@ -187,6 +200,26 @@ class _PageState extends State<_Page>
     ),
   );
 
+  void _onAppbarActionInvoked(
+    BuildContext context,
+    _DetailAppBarAction action,
+  ) {
+    switch (action) {
+      case _DetailAppBarAction.edit:
+        _onAppbarEditActionPressed();
+      case _DetailAppBarAction.unarchive:
+        _openHabitUnarchiveConfirmDialog();
+      case _DetailAppBarAction.archive:
+        _openHabitArchiveConfirmDialog();
+      case _DetailAppBarAction.clone:
+        _onAppbarCloneActionPressed();
+      case _DetailAppBarAction.export:
+        _exportHabitAndShared(context);
+      case _DetailAppBarAction.delete:
+        _openHabitDeleteConfirmDialog();
+    }
+  }
+
   void _openRetryButtonPressed() {
     if (!(mounted && _vm.mounted)) return;
     _vm.requestReload();
@@ -292,31 +325,30 @@ class _PageState extends State<_Page>
     _onHabitStatusChangeConfirmed();
   }
 
-  void _exportHabitAndShared(BuildContext context) async {
+  void _exportHabitAndShared(BuildContext shareAnchorContext) async {
     HabitFileExportRunner fileExporter;
 
-    if (!context.mounted) return;
+    if (!mounted) return;
     final confirmResult = await showExporterConfirmDialog(
       context: context,
       exportAll: false,
     );
 
-    if (!context.mounted || confirmResult == null) return;
+    if (!mounted || confirmResult == null) return;
     fileExporter = context.read<HabitFileExportRunner>();
     final filePath = await fileExporter.exportHabitData(
       widget.habitUUID,
       withRecords: confirmResult.contains(ExporterConfirmResultType.records),
       withGroups: confirmResult.contains(ExporterConfirmResultType.groups),
     );
-    if (!context.mounted || filePath == null) return;
+    if (!mounted || filePath == null) return;
     trySaveFiles(
       [XFile(filePath)],
       defaultTargetPlatform,
-      context: context,
+      context: shareAnchorContext.mounted ? shareAnchorContext : context,
       text: 'Export Habit',
     ).then((result) {
-      context = this.context;
-      if (!(result && context.mounted)) return;
+      if (!(result && mounted)) return;
       final snackBar = buildSnackBarWithDismiss(
         context,
         content: L10nBuilder(
@@ -382,59 +414,6 @@ class _PageState extends State<_Page>
     appLog.build.debug(context);
 
     Widget buildAppbar(BuildContext context) {
-      Widget buildAppbarAction(BuildContext context, HabitColor? habitColor) {
-        return Selector<HabitDetailViewModel, bool>(
-          selector: (context, viewmodel) => viewmodel.isHabitArchived,
-          shouldRebuild: (previous, next) => previous != next,
-          builder: (context, isArchived, child) {
-            final themeData = Theme.of(context);
-            final colorData = themeData.extension<CustomColors>();
-            final l10n = L10n.of(context);
-            final color = habitColor != null
-                ? colorData?.getColor(
-                    habitColor,
-                    brightness: themeData.brightness,
-                  )
-                : Colors.transparent;
-            return AppBarActions<
-              DetailAppbarActionItemConfig,
-              DetailAppbarActionItemCell
-            >(
-              popupMenuButtonIcon: Icon(Icons.adaptive.more, color: color),
-              actionConfigs: [
-                DetailAppbarActionItemConfig.edit(
-                  text: l10n?.habitDetail_editButton_tooltip ?? "Edit Habit",
-                  color: color,
-                  callback: _onAppbarEditActionPressed,
-                ),
-                DetailAppbarActionItemConfig.unarchive(
-                  visible: isArchived,
-                  text: l10n?.habitDetail_editPopMenu_unarchive ?? "Unarchive",
-                  callback: _openHabitUnarchiveConfirmDialog,
-                ),
-                DetailAppbarActionItemConfig.archive(
-                  visible: !isArchived,
-                  text: l10n?.habitDetail_editPopMenu_archive ?? "Archive",
-                  callback: _openHabitArchiveConfirmDialog,
-                ),
-                DetailAppbarActionItemConfig.clone(
-                  text: l10n?.habitDetail_editPopMenu_clone ?? "Clone",
-                  callback: _onAppbarCloneActionPressed,
-                ),
-                DetailAppbarActionItemConfig.export(
-                  text: l10n?.habitDetail_editPopMenu_export ?? "Export",
-                  callback: () => _exportHabitAndShared(context),
-                ),
-                DetailAppbarActionItemConfig.delete(
-                  text: l10n?.habitDetail_editPopMenu_delete ?? "Delete",
-                  callback: _openHabitDeleteConfirmDialog,
-                ),
-              ],
-            );
-          },
-        );
-      }
-
       return Selector<HabitDetailViewModel, HabitColor?>(
         selector: (context, viewmodel) => viewmodel.habitColor,
         shouldRebuild: (previous, next) => previous != next,
@@ -449,7 +428,10 @@ class _PageState extends State<_Page>
                 builder: (context, title, child) => Text(title),
               ),
             ),
-            actionBuilder: (context) => buildAppbarAction(context, habitColor),
+            actionBuilder: (context) => _HabitDetailAppBarActions(
+              habitColor: habitColor,
+              onInvoke: _onAppbarActionInvoked,
+            ),
           );
         },
       );
@@ -1203,6 +1185,152 @@ class _OtherInfo extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+class _HabitDetailAppBarActions extends StatelessWidget {
+  final HabitColor? habitColor;
+  final AdaptiveAppBarActionCallback<_DetailAppBarAction> onInvoke;
+
+  const _HabitDetailAppBarActions({
+    required this.habitColor,
+    required this.onInvoke,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector<HabitDetailViewModel, bool>(
+      selector: (context, viewmodel) => viewmodel.isHabitArchived,
+      shouldRebuild: (previous, next) => previous != next,
+      builder: (context, isArchived, child) {
+        final themeData = Theme.of(context);
+        final colorData = themeData.extension<CustomColors>();
+        final l10n = L10n.of(context);
+        final actionLayout = _resolveLayout(context);
+        final color = habitColor != null
+            ? colorData?.getColor(habitColor!, brightness: themeData.brightness)
+            : Colors.transparent;
+        final actionCollection = ActionCollection<_DetailAppBarAction>(
+          roots: [
+            AdaptiveAction.action(
+              id: _detailEditActionId,
+              metadata: ActionMetadata(
+                label: l10n?.habitDetail_editButton_tooltip ?? 'Edit Habit',
+                tooltip: l10n?.habitDetail_editButton_tooltip ?? 'Edit Habit',
+              ),
+              payload: _DetailAppBarAction.edit,
+              placementPolicy: ActionPlacementPolicy(
+                placement: ActionPlacement.pinned,
+              ),
+            ),
+            if (isArchived)
+              AdaptiveAction.action(
+                id: _detailUnarchiveActionId,
+                metadata: ActionMetadata(
+                  label: l10n?.habitDetail_editPopMenu_unarchive ?? 'Unarchive',
+                ),
+                payload: _DetailAppBarAction.unarchive,
+                placementPolicy: ActionPlacementPolicy(
+                  automaticPreference: AutomaticPlacementPreference(
+                    retentionPriority: PrimaryRetentionPriority.high,
+                  ),
+                ),
+              )
+            else
+              AdaptiveAction.action(
+                id: _detailArchiveActionId,
+                metadata: ActionMetadata(
+                  label: l10n?.habitDetail_editPopMenu_archive ?? 'Archive',
+                ),
+                payload: _DetailAppBarAction.archive,
+                placementPolicy: ActionPlacementPolicy(
+                  automaticPreference: AutomaticPlacementPreference(
+                    retentionPriority: PrimaryRetentionPriority.high,
+                  ),
+                ),
+              ),
+            AdaptiveAction.action(
+              id: _detailCloneActionId,
+              metadata: ActionMetadata(
+                label: l10n?.habitDetail_editPopMenu_clone ?? 'Clone',
+              ),
+              payload: _DetailAppBarAction.clone,
+              placementPolicy: ActionPlacementPolicy(
+                automaticPreference: AutomaticPlacementPreference(
+                  retentionPriority: PrimaryRetentionPriority.normal,
+                ),
+              ),
+            ),
+            AdaptiveAction.action(
+              id: _detailExportActionId,
+              metadata: ActionMetadata(
+                label: l10n?.habitDetail_editPopMenu_export ?? 'Export',
+              ),
+              payload: _DetailAppBarAction.export,
+              placementPolicy: ActionPlacementPolicy(
+                automaticPreference: AutomaticPlacementPreference(
+                  retentionPriority: PrimaryRetentionPriority.low,
+                ),
+              ),
+            ),
+            AdaptiveAction.action(
+              id: _detailDeleteActionId,
+              metadata: ActionMetadata(
+                label: l10n?.habitDetail_editPopMenu_delete ?? 'Delete',
+              ),
+              payload: _DetailAppBarAction.delete,
+              placementPolicy: ActionPlacementPolicy(
+                placement: ActionPlacement.overflowOnly,
+              ),
+            ),
+          ],
+        );
+        return AdaptiveAppBarActions<_DetailAppBarAction>(
+          collection: actionCollection,
+          primaryCapacity: actionLayout.primaryCapacity,
+          maxPrimaryActions: actionLayout.maxPrimaryActions,
+          onInvoke: onInvoke,
+          materialIconBuilder: (context, action) => Icon(
+            switch (action.payload) {
+              _DetailAppBarAction.edit => Icons.edit_rounded,
+              _DetailAppBarAction.unarchive => Icons.unarchive_rounded,
+              _DetailAppBarAction.archive => Icons.archive_outlined,
+              _DetailAppBarAction.clone => Icons.copy_rounded,
+              _DetailAppBarAction.export => MdiIcons.export,
+              _DetailAppBarAction.delete => Icons.delete_outline,
+              null => Icons.more_horiz,
+            },
+            color: action.payload == _DetailAppBarAction.edit ? color : null,
+          ),
+          appleIconBuilder: (context, action) => Icon(switch (action.payload) {
+            _DetailAppBarAction.edit => CupertinoIcons.pencil,
+            _DetailAppBarAction.unarchive => CupertinoIcons.tray_arrow_up,
+            _DetailAppBarAction.archive => CupertinoIcons.archivebox,
+            _DetailAppBarAction.clone => CupertinoIcons.square_on_square,
+            _DetailAppBarAction.export => CupertinoIcons.share_up,
+            _DetailAppBarAction.delete => CupertinoIcons.delete,
+            null => CupertinoIcons.ellipsis,
+          }, color: action.payload == _DetailAppBarAction.edit ? color : null),
+          materialOverflowIcon: Icon(Icons.adaptive.more, color: color),
+          appleOverflowIcon: Icon(CupertinoIcons.ellipsis, color: color),
+        );
+      },
+    );
+  }
+
+  ({int maxPrimaryActions, double primaryCapacity}) _resolveLayout(
+    BuildContext context,
+  ) {
+    final maxPrimaryActions = switch (WindowSize.of(context).width) {
+      WindowSizeClass.compact => 1,
+      WindowSizeClass.medium => 2,
+      WindowSizeClass.expanded => 3,
+      WindowSizeClass.large || WindowSizeClass.extraLarge => 4,
+    };
+    return (
+      maxPrimaryActions: maxPrimaryActions,
+      primaryCapacity: (maxPrimaryActions + 1) * _appBarActionSlotExtent,
     );
   }
 }

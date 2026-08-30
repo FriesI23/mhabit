@@ -10,7 +10,7 @@ packages:
     source: hosted
     version: "99.0.0"
   adaptive_actions:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: adaptive_actions
       sha256: "43f45c4a90bc57c9947bd1dbdb26cf6bd468c5ea04e04d0cbc049569c24979ba"

@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart'
-    show CupertinoNavigationBar, CupertinoSliverNavigationBar;
+    show CupertinoColors, CupertinoNavigationBar, CupertinoSliverNavigationBar;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -84,6 +84,8 @@ void main() {
       final bar = tester.widget<CupertinoSliverNavigationBar>(
         find.byType(CupertinoSliverNavigationBar),
       );
+      expect(bar.backgroundColor, CupertinoColors.transparent);
+      expect(bar.automaticBackgroundVisibility, isFalse);
       expect(bar.middle, isNotNull);
       expect(bar.largeTitle, isNull);
     });
@@ -226,6 +228,11 @@ void main() {
 
       expect(find.byType(CupertinoNavigationBar), findsOneWidget);
       expect(find.byType(CupertinoSliverNavigationBar), findsNothing);
+      final bar = tester.widget<CupertinoNavigationBar>(
+        find.byType(CupertinoNavigationBar),
+      );
+      expect(bar.backgroundColor, CupertinoColors.transparent);
+      expect(bar.automaticBackgroundVisibility, isFalse);
       expect(find.text('title'), findsOneWidget);
       expect(find.byIcon(Icons.settings), findsOneWidget);
     });
@@ -374,6 +381,30 @@ void main() {
       expect(appBar.centerTitle, isTrue);
     });
 
+    testWidgets('material toolbar height overrides the shared height', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                AdaptiveSliverAppBar.material(
+                  title: Text('title'),
+                  height: 52,
+                  styles: AppBarStyles(
+                    material: AppBarMaterialStyle(toolbarHeight: 56),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
+      expect(appBar.toolbarHeight, 56);
+    });
+
     testWidgets('apple config passes through to the Cupertino bar', (
       tester,
     ) async {
@@ -387,6 +418,8 @@ void main() {
                   styles: AppBarStyles(
                     apple: AppBarAppleStyle(
                       enableBackgroundFilterBlur: false,
+                      backgroundColor: Color(0xFF123456),
+                      automaticBackgroundVisibility: true,
                       stretch: true,
                     ),
                   ),
@@ -400,6 +433,8 @@ void main() {
         find.byType(CupertinoSliverNavigationBar),
       );
       expect(bar.enableBackgroundFilterBlur, isFalse);
+      expect(bar.backgroundColor, const Color(0xFF123456));
+      expect(bar.automaticBackgroundVisibility, isTrue);
       expect(bar.stretch, isTrue);
     });
 
@@ -497,12 +532,17 @@ void main() {
   group('AppBar style configs', () {
     test('AppBarMaterialStyle.copyWith overrides only the given fields', () {
       const original = AppBarMaterialStyle();
-      final updated = original.copyWith(floating: false, pinned: false);
+      final updated = original.copyWith(
+        floating: false,
+        pinned: false,
+        toolbarHeight: 56,
+      );
       expect(updated.floating, isFalse);
       expect(updated.pinned, isFalse);
       expect(updated.snap, original.snap);
       expect(updated.centerTitle, original.centerTitle);
       expect(updated.forceElevated, original.forceElevated);
+      expect(updated.toolbarHeight, 56);
       expect(
         updated.windowControlEdgePadding,
         original.windowControlEdgePadding,
@@ -528,6 +568,8 @@ void main() {
       expect(updated.enableBackgroundFilterBlur, isFalse);
       expect(updated.stretch, original.stretch);
       expect(updated.border, original.border);
+      expect(original.backgroundColor, CupertinoColors.transparent);
+      expect(original.automaticBackgroundVisibility, isFalse);
       expect(
         updated.windowControlEdgePadding,
         original.windowControlEdgePadding,

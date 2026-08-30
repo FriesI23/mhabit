@@ -4,6 +4,7 @@ import 'dart:ui' show ImageFilter;
 import 'package:adaptive_actions/cupertino.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../adaptive/app_bar_apple_style.dart';
 import '../breakpoints/breakpoints.dart';
 import '../breakpoints/window_size_class.dart';
 import 'cupertino_sliver_app_bar.dart';
@@ -63,12 +64,14 @@ class CupertinoSliverSelectAppBar extends StatelessWidget {
     required this.onSelectAll,
     required this.onDone,
     this.actions = _kDefaultActions,
+    this.style,
   }) : _viewMode = false;
 
   const CupertinoSliverSelectAppBar.view({
     super.key,
     required this.title,
     this.actions = _kDefaultActions,
+    this.style,
   }) : selectAllLabel = '',
        doneLabel = '',
        onSelectAll = null,
@@ -81,7 +84,10 @@ class CupertinoSliverSelectAppBar extends StatelessWidget {
   final VoidCallback? onSelectAll;
   final VoidCallback? onDone;
   final List<CupertinoSelectAction> actions;
+  final AppBarAppleStyle? style;
   final bool _viewMode;
+
+  AppBarAppleStyle get _effectiveStyle => style ?? const AppBarAppleStyle();
 
   @override
   Widget build(BuildContext context) {
@@ -91,8 +97,7 @@ class CupertinoSliverSelectAppBar extends StatelessWidget {
     return CupertinoSliverAppBar(
       key: const ValueKey('cupertino-sliver-select-app-bar'),
       height: toolbarHeight,
-      backgroundColor: CupertinoColors.transparent,
-      border: null,
+      style: _effectiveStyle,
       title: _viewMode
           ? _CupertinoSelectEntryToolbar(title: title, actions: actions)
           : _CupertinoSelectTopToolbar(

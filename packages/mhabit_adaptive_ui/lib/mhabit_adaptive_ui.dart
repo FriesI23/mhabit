@@ -1,6 +1,8 @@
 /// Adaptive UI components for mhabit.
 library;
 
+export 'src/adaptive/adaptive_app_bar_actions.dart';
+export 'src/adaptive/adaptive_back_button.dart';
 export 'src/adaptive/adaptive_bottom_sheet.dart';
 export 'src/adaptive/adaptive_dialog.dart';
 export 'src/adaptive/adaptive_icon_button.dart';
