@@ -46,6 +46,23 @@ class CupertinoNavigationShell extends StatelessWidget {
     this.collapseNavigationLabel,
   });
 
+  NavigationShellForm _resolveForm(WindowSize windowSize) =>
+      switch (windowSize.width) {
+        WindowSizeClass.compact => NavigationShellForm.compact,
+        WindowSizeClass.medium => NavigationShellForm.constrainedSide,
+        WindowSizeClass.expanded ||
+        WindowSizeClass.large ||
+        WindowSizeClass.extraLarge => NavigationShellForm.expandedSide,
+      };
+
+  WindowControlLayoutOwner _resolveWindowControlOwner(
+    NavigationShellForm form,
+  ) => switch (form) {
+    NavigationShellForm.compact => WindowControlLayoutOwner.appBar,
+    NavigationShellForm.constrainedSide ||
+    NavigationShellForm.expandedSide => WindowControlLayoutOwner.sideNavigation,
+  };
+
   /// Content displayed beside or underneath the navigation chrome.
   final Widget child;
 
@@ -111,7 +128,7 @@ class CupertinoNavigationShell extends StatelessWidget {
       switchDuration: disableAnimations
           ? Duration.zero
           : navigationShellAnimationDuration,
-      formResolver: _resolveCupertinoNavigationShellForm,
+      formResolver: _resolveForm,
       bodyBuilder: (context, form, onSelected, child) =>
           CupertinoNavigationSidebar(
             form: form,
@@ -124,7 +141,7 @@ class CupertinoNavigationShell extends StatelessWidget {
             collapseNavigationLabel: collapseNavigationLabel,
             child: child,
           ),
-      windowControlOwnerResolver: _resolveCupertinoWindowControlOwner,
+      windowControlOwnerResolver: _resolveWindowControlOwner,
       compactNavigationBuilder: _buildCompactNavigation,
       floatingActionButtonBuilder: (context, state) =>
           CupertinoNavigationPrimaryActionHost(
@@ -170,21 +187,3 @@ class CupertinoNavigationShell extends StatelessWidget {
     );
   }
 }
-
-NavigationShellForm _resolveCupertinoNavigationShellForm(
-  WindowSize windowSize,
-) => switch (windowSize.width) {
-  WindowSizeClass.compact => NavigationShellForm.compact,
-  WindowSizeClass.medium => NavigationShellForm.constrainedSide,
-  WindowSizeClass.expanded ||
-  WindowSizeClass.large ||
-  WindowSizeClass.extraLarge => NavigationShellForm.expandedSide,
-};
-
-WindowControlLayoutOwner _resolveCupertinoWindowControlOwner(
-  NavigationShellForm form,
-) => switch (form) {
-  NavigationShellForm.compact => WindowControlLayoutOwner.appBar,
-  NavigationShellForm.constrainedSide ||
-  NavigationShellForm.expandedSide => WindowControlLayoutOwner.sideNavigation,
-};

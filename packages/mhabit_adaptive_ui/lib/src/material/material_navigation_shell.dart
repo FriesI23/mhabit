@@ -49,6 +49,23 @@ class MaterialNavigationShell extends StatelessWidget {
 
   static const double _barHeight = 80.0;
 
+  NavigationShellForm _resolveForm(WindowSize windowSize) =>
+      switch (windowSize.width) {
+        WindowSizeClass.compact => NavigationShellForm.compact,
+        WindowSizeClass.medium => NavigationShellForm.constrainedSide,
+        _ when windowSize.height == WindowSizeClass.compact =>
+          NavigationShellForm.constrainedSide,
+        _ => NavigationShellForm.expandedSide,
+      };
+
+  WindowControlLayoutOwner _resolveWindowControlOwner(
+    NavigationShellForm form,
+  ) => switch (form) {
+    NavigationShellForm.compact => WindowControlLayoutOwner.appBar,
+    NavigationShellForm.constrainedSide ||
+    NavigationShellForm.expandedSide => WindowControlLayoutOwner.sideNavigation,
+  };
+
   /// Content displayed beside or underneath the navigation chrome.
   final Widget child;
 
@@ -93,7 +110,7 @@ class MaterialNavigationShell extends StatelessWidget {
       navHeight: _barHeight + MediaQuery.paddingOf(context).bottom,
       keepVisibleOnScroll: false,
       scrollWishPolicy: const NavigationScrollWishPolicy.directional(),
-      formResolver: _resolveMaterialNavigationShellForm,
+      formResolver: _resolveForm,
       bodyBuilder: (context, form, onSelected, child) =>
           _MaterialNavigationShellBody(
             form: form,
@@ -107,7 +124,7 @@ class MaterialNavigationShell extends StatelessWidget {
             collapseNavigationLabel: collapseNavigationLabel,
             child: child,
           ),
-      windowControlOwnerResolver: _resolveMaterialWindowControlOwner,
+      windowControlOwnerResolver: _resolveWindowControlOwner,
       compactNavigationBuilder: (context, state) =>
           CompactNavigationChromeTransition(
             visibility: state.visible,
@@ -124,24 +141,6 @@ class MaterialNavigationShell extends StatelessWidget {
     );
   }
 }
-
-NavigationShellForm _resolveMaterialNavigationShellForm(
-  WindowSize windowSize,
-) => switch (windowSize.width) {
-  WindowSizeClass.compact => NavigationShellForm.compact,
-  WindowSizeClass.medium => NavigationShellForm.constrainedSide,
-  _ when windowSize.height == WindowSizeClass.compact =>
-    NavigationShellForm.constrainedSide,
-  _ => NavigationShellForm.expandedSide,
-};
-
-WindowControlLayoutOwner _resolveMaterialWindowControlOwner(
-  NavigationShellForm form,
-) => switch (form) {
-  NavigationShellForm.compact => WindowControlLayoutOwner.appBar,
-  NavigationShellForm.constrainedSide ||
-  NavigationShellForm.expandedSide => WindowControlLayoutOwner.sideNavigation,
-};
 
 class _MaterialNavigationShellBody extends StatelessWidget {
   const _MaterialNavigationShellBody({

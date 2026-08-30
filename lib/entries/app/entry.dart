@@ -287,6 +287,10 @@ class _AppEntryState extends State<_AppEntry> {
               .select<AppDeveloperViewModel, AdaptiveStyle?>(
                 (vm) => vm.adaptiveStyleOverride,
               );
+          final textDirectionOverride = context
+              .select<AppDeveloperViewModel, TextDirection?>(
+                (vm) => vm.textDirectionOverride,
+              );
           return AdaptiveStyleScope(
             override: adaptiveStyleOverride,
             child: MultiProvider(
@@ -299,6 +303,7 @@ class _AppEntryState extends State<_AppEntry> {
                 themeMode: transToMaterialThemeType(themeMode),
                 language: language,
                 disableAnimations: disableAnimations,
+                textDirectionOverride: textDirectionOverride,
                 lightThemeBuilder: () => const AppThemeBuilder().buildLight(
                   themeColor: themeColor,
                   themeMainColor: themeMainColor,

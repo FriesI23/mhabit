@@ -25,6 +25,8 @@ import '../widgets/_widgets/predictive_back_page_transitions_builder.dart';
 import '../widgets/styles.dart';
 import 'color.dart';
 
+// Tuned from composited iOS 26 native navigation screenshots. Apple does not
+// publish equivalent Liquid Glass alpha constants for custom Flutter chrome.
 const _appleGlassBackgroundColor = CupertinoDynamicColor.withBrightness(
   debugLabel: 'mhabitAppleGlassBackground',
   color: Color(0xCCFFFFFF),

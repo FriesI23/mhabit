@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart' show TextDirection;
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../models/app_adaptive_style_mode.dart';
@@ -23,6 +24,7 @@ import '../support/global.dart';
 class AppDeveloperViewModel extends ChangeNotifier
     with GlobalLoadedMixin, ProfileHandlerLoadedMixin {
   AdaptiveStyleOverrideProfileHandler? _adaptiveStyleOverride;
+  TextDirection? _textDirectionOverride;
 
   AppDeveloperViewModel({required Global global, ProfileViewModel? profile}) {
     updateGlobal(global);
@@ -67,9 +69,17 @@ class AppDeveloperViewModel extends ChangeNotifier
     AppAdaptiveStyleMode.apple => AdaptiveStyle.apple,
   };
 
+  TextDirection? get textDirectionOverride => _textDirectionOverride;
+
   Future<void> setAdaptiveStyleMode(AppAdaptiveStyleMode mode) async {
     if (adaptiveStyleMode == mode) return;
     await _adaptiveStyleOverride?.set(mode);
+    notifyListeners();
+  }
+
+  void setTextDirectionOverride(TextDirection? textDirection) {
+    if (_textDirectionOverride == textDirection) return;
+    _textDirectionOverride = textDirection;
     notifyListeners();
   }
 }
