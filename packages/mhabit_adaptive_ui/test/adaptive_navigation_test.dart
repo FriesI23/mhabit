@@ -281,6 +281,7 @@ class _BranchInsetsProbe extends StatelessWidget {
   Widget build(BuildContext context) {
     final padding = MediaQuery.paddingOf(context);
     final viewPadding = MediaQuery.viewPaddingOf(context);
+    final viewInsets = MediaQuery.viewInsetsOf(context);
     return Column(
       key: const ValueKey('branch-layout-probe'),
       children: [
@@ -289,8 +290,21 @@ class _BranchInsetsProbe extends StatelessWidget {
           width: padding.left + padding.right,
         ),
         SizedBox(
+          key: const ValueKey('branch-vertical-padding'),
+          height: padding.top + padding.bottom,
+        ),
+        SizedBox(
           key: const ValueKey('branch-horizontal-view-padding'),
           width: viewPadding.left + viewPadding.right,
+        ),
+        SizedBox(
+          key: const ValueKey('branch-vertical-view-padding'),
+          height: viewPadding.top + viewPadding.bottom,
+        ),
+        SizedBox(
+          key: const ValueKey('branch-view-insets'),
+          width: viewInsets.left + viewInsets.right,
+          height: viewInsets.top + viewInsets.bottom,
         ),
       ],
     );
@@ -4143,6 +4157,85 @@ void main() {
       },
     );
 
+    testWidgets('apple Sidebar preserves all branch media insets', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      tester.view.padding = const FakeViewPadding(
+        left: 11,
+        top: 22,
+        right: 33,
+        bottom: 44,
+      );
+      tester.view.viewPadding = const FakeViewPadding(
+        left: 15,
+        top: 26,
+        right: 37,
+        bottom: 48,
+      );
+      tester.view.viewInsets = const FakeViewPadding(
+        left: 3,
+        top: 5,
+        right: 7,
+        bottom: 90,
+      );
+      _setSurfaceSize(tester, const Size(700, 600));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AdaptiveNavigationShell(
+            selectedIndex: 0,
+            destinations: const [
+              AdaptiveNavigationDestination(
+                label: 'Habits',
+                icons: NavigationDestinationIcons(
+                  material: Icon(Icons.home_outlined),
+                  materialSelected: Icon(Icons.home),
+                  apple: Icon(CupertinoIcons.home),
+                  appleSelected: Icon(CupertinoIcons.house_fill),
+                ),
+              ),
+            ],
+            onDestinationSelected: (_) {},
+            child: const _BranchInsetsProbe(),
+          ),
+        ),
+      );
+
+      expect(
+        tester
+            .getSize(find.byKey(const ValueKey('branch-horizontal-padding')))
+            .width,
+        44,
+      );
+      expect(
+        tester
+            .getSize(find.byKey(const ValueKey('branch-vertical-padding')))
+            .height,
+        66,
+      );
+      expect(
+        tester
+            .getSize(
+              find.byKey(const ValueKey('branch-horizontal-view-padding')),
+            )
+            .width,
+        52,
+      );
+      expect(
+        tester
+            .getSize(find.byKey(const ValueKey('branch-vertical-view-padding')))
+            .height,
+        74,
+      );
+      expect(
+        tester.getSize(find.byKey(const ValueKey('branch-view-insets'))),
+        const Size(10, 95),
+      );
+      debugDefaultTargetPlatformOverride = null;
+    });
+
     testWidgets('apple Sidebar disables visibility animation immediately', (
       tester,
     ) async {
@@ -4194,6 +4287,92 @@ void main() {
       expect(destinationSemantics.flagsCollection.isButton, isTrue);
       expect(find.bySemanticsLabel('Show Snackbar'), findsOneWidget);
       semanticsHandle.dispose();
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('apple Sidebar supports keyboard activation', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      _setSurfaceSize(tester, const Size(700, 600));
+      final selected = <int>[];
+      final router = _buildRouter(onBranchChanged: selected.add);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      final selectedButton = tester.widget<CupertinoButton>(
+        find.descendant(
+          of: find.byKey(const ValueKey('cupertino-sidebar-destination-0')),
+          matching: find.byType(CupertinoButton),
+        ),
+      );
+      expect(selectedButton.autofocus, isTrue);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await tester.pumpAndSettle();
+
+      expect(selected, [1]);
+      expect(find.text('today page'), findsOneWidget);
+
+      final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
+      final toggleButton = tester.widget<CupertinoButton>(toggle);
+      toggleButton.focusNode!.requestFocus();
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-panel')),
+        findsNothing,
+      );
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('apple Sidebar remains usable at large text scale', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      tester.platformDispatcher.textScaleFactorTestValue = 3;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      _setSurfaceSize(tester, const Size(700, 240));
+      final router = _buildRouter(
+        destinations: const [
+          AdaptiveNavigationDestination(
+            label: 'A very long habits destination label',
+            icons: NavigationDestinationIcons(
+              material: Icon(Icons.home_outlined),
+              materialSelected: Icon(Icons.home),
+              apple: Icon(CupertinoIcons.home),
+              appleSelected: Icon(CupertinoIcons.house_fill),
+            ),
+          ),
+          AdaptiveNavigationDestination(
+            label: 'Today',
+            icons: NavigationDestinationIcons(
+              material: Icon(Icons.calendar_today_outlined),
+              materialSelected: Icon(Icons.calendar_today),
+              apple: Icon(CupertinoIcons.calendar),
+              appleSelected: Icon(CupertinoIcons.calendar_today),
+            ),
+          ),
+        ],
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      final destinationButtons = tester.widgetList<CupertinoButton>(
+        find.descendant(
+          of: find.byKey(const ValueKey('cupertino-sidebar-destination-list')),
+          matching: find.byType(CupertinoButton),
+        ),
+      );
+      expect(destinationButtons, hasLength(2));
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-resize-handle')),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
       debugDefaultTargetPlatformOverride = null;
     });
 
