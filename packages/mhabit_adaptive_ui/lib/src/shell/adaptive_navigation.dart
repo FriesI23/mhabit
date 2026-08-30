@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show MaterialLocalizations;
 import 'package:flutter/widgets.dart';
 
 import '../adaptive/adaptive_navigation_destination.dart';
@@ -7,33 +8,36 @@ import '../cupertino/cupertino_adaptive_navigation_bar.dart'
 import '../cupertino/cupertino_navigation_primary_action.dart'
     show CupertinoNavigationPrimaryAction;
 import '../cupertino/cupertino_navigation_shell.dart';
-import '../material/material_navigation_rail.dart' show NavigationRailExtent;
+import '../material/material_navigation_rail.dart'
+    show MaterialNavigationRailStyle;
 import '../material/material_navigation_shell.dart';
+import 'side_navigation.dart';
 
-export '../material/material_navigation_rail.dart' show NavigationRailExtent;
+export '../material/material_navigation_rail.dart'
+    show MaterialNavigationRailStyle;
+export 'side_navigation.dart'
+    show SideNavigationDragHandleBuilder, SideNavigationExtent;
 
 /// Adaptive navigation chrome around [child].
 ///
 /// The shell resolves the active visual style, while Material and Cupertino
-/// renderers own their platform policy. Compact windows use a bottom bar,
-/// medium windows use a collapsed rail, and wider windows use an extended rail
-/// unless their height is compact.
+/// renderers own their form resolution, body composition, inset policy, and
+/// window-control ownership. Compact windows use bottom navigation. Material
+/// side forms use collapsed or extended rails; Apple medium and larger forms
+/// use one hideable beside Sidebar.
 ///
 /// ```text
-/// compact          medium            expanded
-/// +----------+     +--+---------+    +------+-------+
-/// | content  |     |  | content |    | rail |content|
-/// +----------+     |r |         |    |      |       |
-/// | nav bar  |     |a |         |    |      |       |
-/// +----------+     |i |         |    +------+-------+
-///                  |l |         |
-///                  +--+---------+
+/// form              Material              Apple
+/// compact           bottom bar            bottom Tab Bar
+/// constrained side  collapsed rail        beside Sidebar
+/// expanded side     extended rail         beside Sidebar
 /// ```
 ///
-/// The extended rail uses [railExtent] for its automatic width and resizable
-/// interval. In compact form, route visibility, contextual chrome, and scroll
-/// direction determine whether Material navigation is hidden or Apple
-/// navigation is minimized. Non-compact navigation remains visible.
+/// Apple side forms share the same visibility and width state. Hiding the
+/// Sidebar removes it completely instead of leaving an icon-only rail. In
+/// compact form, route visibility, contextual chrome, and scroll direction
+/// determine whether Material navigation is hidden or Apple navigation is
+/// minimized.
 class AdaptiveNavigationShell extends StatefulWidget {
   /// Creates adaptive navigation chrome around [child].
   const AdaptiveNavigationShell({
@@ -45,7 +49,9 @@ class AdaptiveNavigationShell extends StatefulWidget {
     this.compactRouteVisible = true,
     this.contextualChromeSuppressed = false,
     this.applePrimaryAction,
-    this.railExtent = const NavigationRailExtent(224.0),
+    this.sideNavigationExtent = const SideNavigationExtent(200.0),
+    this.materialRailStyle = const MaterialNavigationRailStyle(),
+    this.sideNavigationDragHandleBuilder,
     this.appleBarStyle = const AppleNavigationBarStyle(),
   });
 
@@ -78,8 +84,19 @@ class AdaptiveNavigationShell extends StatefulWidget {
   /// [CupertinoNavigationPrimaryAction] for placement diagrams.
   final CupertinoNavigationPrimaryAction? applePrimaryAction;
 
-  /// Extended-rail sizing and manual-resize policy.
-  final NavigationRailExtent railExtent;
+  /// Full-width side-navigation sizing and manual-resize policy.
+  ///
+  /// Both renderers use this policy for their full-width side navigation.
+  final SideNavigationExtent sideNavigationExtent;
+
+  /// Material-specific NavigationRail geometry.
+  final MaterialNavigationRailStyle materialRailStyle;
+
+  /// Optional visual displayed inside the side-navigation resize target.
+  ///
+  /// When null, Material displays its default drag bar while Cupertino keeps
+  /// the target visually empty. An explicit builder is used by both renderers.
+  final SideNavigationDragHandleBuilder? sideNavigationDragHandleBuilder;
 
   /// Apple compact navigation-bar geometry and spacing.
   final AppleNavigationBarStyle appleBarStyle;
@@ -96,6 +113,14 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
 
   @override
   Widget build(BuildContext context) {
+    final materialLocalizations = Localizations.of<MaterialLocalizations>(
+      context,
+      MaterialLocalizations,
+    );
+    final expandNavigationLabel =
+        materialLocalizations?.collapsedIconTapHint ?? 'Expand';
+    final collapseNavigationLabel =
+        materialLocalizations?.expandedIconTapHint ?? 'Collapse';
     final child = KeyedSubtree(key: _childKey, child: widget.child);
     return switch (AdaptiveStyle.of(context)) {
       AdaptiveStyle.material => MaterialNavigationShell(
@@ -104,7 +129,11 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
         onDestinationSelected: widget.onDestinationSelected,
         compactRouteVisible: widget.compactRouteVisible,
         contextualChromeSuppressed: widget.contextualChromeSuppressed,
-        railExtent: widget.railExtent,
+        sideNavigationExtent: widget.sideNavigationExtent,
+        railStyle: widget.materialRailStyle,
+        dragHandleBuilder: widget.sideNavigationDragHandleBuilder,
+        expandNavigationLabel: expandNavigationLabel,
+        collapseNavigationLabel: collapseNavigationLabel,
         child: child,
       ),
       AdaptiveStyle.apple => CupertinoNavigationShell(
@@ -114,7 +143,8 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
         compactRouteVisible: widget.compactRouteVisible,
         contextualChromeSuppressed: widget.contextualChromeSuppressed,
         primaryAction: widget.applePrimaryAction,
-        railExtent: widget.railExtent,
+        sideNavigationExtent: widget.sideNavigationExtent,
+        dragHandleBuilder: widget.sideNavigationDragHandleBuilder,
         appleBarStyle: widget.appleBarStyle,
         child: child,
       ),

@@ -30,6 +30,7 @@ class AppRootView extends StatelessWidget {
   final ThemeData Function()? lightThemeBuilder;
   final ThemeData Function()? darkThemeBuilder;
   final bool disableAnimations;
+  final TextDirection? textDirectionOverride;
 
   const AppRootView({
     super.key,
@@ -39,6 +40,7 @@ class AppRootView extends StatelessWidget {
     this.darkThemeBuilder,
     this.child,
     this.disableAnimations = false,
+    this.textDirectionOverride,
   }) : routerConfig = null;
 
   const AppRootView.router({
@@ -49,6 +51,7 @@ class AppRootView extends StatelessWidget {
     this.darkThemeBuilder,
     required GoRouter config,
     this.disableAnimations = false,
+    this.textDirectionOverride,
   }) : child = null,
        routerConfig = config;
 
@@ -60,20 +63,27 @@ class AppRootView extends StatelessWidget {
     this.darkThemeBuilder,
     this.child,
     this.disableAnimations = false,
+    this.textDirectionOverride,
   }) : routerConfig = null;
 
   bool get _useRouter => routerConfig != null;
 
-  Widget _builder(BuildContext context, Widget? child) => MediaQuery(
-    data: MediaQuery.of(context).copyWith(
-      disableAnimations:
-          disableAnimations || MediaQuery.disableAnimationsOf(context),
-    ),
-    child: AdaptiveWindowControlLayout(
-      usesRectangularDisplay: AppInfo().usesRectangularIPhoneDisplay,
-      child: UnfocusOnTap(child: child),
-    ),
-  );
+  Widget _builder(BuildContext context, Widget? child) {
+    final content = MediaQuery(
+      data: MediaQuery.of(context).copyWith(
+        disableAnimations:
+            disableAnimations || MediaQuery.disableAnimationsOf(context),
+      ),
+      child: AdaptiveWindowControlLayout(
+        usesRectangularDisplay: AppInfo().usesRectangularIPhoneDisplay,
+        child: UnfocusOnTap(child: child),
+      ),
+    );
+    final textDirection = textDirectionOverride;
+    return textDirection == null
+        ? content
+        : Directionality(textDirection: textDirection, child: content);
+  }
 
   String _onGenerateTitle(BuildContext context) =>
       L10n.of(context)?.appName ?? appName;

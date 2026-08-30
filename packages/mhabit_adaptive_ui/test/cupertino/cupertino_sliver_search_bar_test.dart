@@ -9,9 +9,10 @@ Widget _host(
   TextDirection textDirection = TextDirection.ltr,
   double? contentWidth,
   EdgeInsetsDirectional appBarAvoidance = EdgeInsetsDirectional.zero,
-}) => MaterialApp(
-  theme: ThemeData(platform: TargetPlatform.iOS),
-  home: Directionality(
+  Color? pageBackground,
+  Brightness brightness = Brightness.light,
+}) {
+  final content = Directionality(
     textDirection: textDirection,
     child: AdaptiveWindowControlLayoutScope(
       horizontalAvoidance: appBarAvoidance,
@@ -27,8 +28,17 @@ Widget _host(
         ),
       ),
     ),
-  ),
-);
+  );
+  return MaterialApp(
+    theme: ThemeData(platform: TargetPlatform.iOS, brightness: brightness),
+    home: pageBackground == null
+        ? content
+        : CupertinoPageScaffoldBackgroundColor(
+            color: pageBackground,
+            child: content,
+          ),
+  );
+}
 
 void main() {
   late TextEditingController controller;
@@ -208,18 +218,18 @@ void main() {
           .border,
       isNull,
     );
-    expect(tester.getSize(find.byType(CupertinoNavigationBar)).height, 52);
+    expect(tester.getSize(find.byType(CupertinoNavigationBar)).height, 44);
     final header = tester.widget<SliverPersistentHeader>(
       find.byType(SliverPersistentHeader),
     );
     expect(header.pinned, isTrue);
-    expect(header.delegate.minExtent, 52);
-    expect(header.delegate.maxExtent, 52);
+    expect(header.delegate.minExtent, 44);
+    expect(header.delegate.maxExtent, 44);
     expect(
       tester
           .getCenter(find.byKey(const ValueKey('activate-cupertino-search')))
           .dy,
-      26,
+      22,
     );
   });
 
@@ -294,16 +304,28 @@ void main() {
     final header = tester.widget<SliverPersistentHeader>(
       find.byType(SliverPersistentHeader),
     );
-    expect(header.delegate.minExtent, 100);
-    expect(header.delegate.maxExtent, 100);
-    expect(tester.getSize(find.byType(CupertinoNavigationBar)).height, 100);
+    expect(header.delegate.minExtent, 92);
+    expect(header.delegate.maxExtent, 92);
+    expect(tester.getSize(find.byType(CupertinoNavigationBar)).height, 92);
     expect(
       tester
           .getTopLeft(find.byKey(const ValueKey('cupertino-search-bottom')))
           .dy,
-      52,
+      44,
     );
-    expect(find.byType(BackdropFilter), findsOneWidget);
+    final navigationBar = tester.widget<CupertinoNavigationBar>(
+      find.byType(CupertinoNavigationBar),
+    );
+    expect(navigationBar.enableBackgroundFilterBlur, isTrue);
+    expect(navigationBar.automaticBackgroundVisibility, isFalse);
+    expect(navigationBar.backgroundColor, CupertinoColors.transparent);
+    expect(navigationBar.border, isNull);
+    expect(
+      tester
+          .widgetList<BackdropFilter>(find.byType(BackdropFilter))
+          .where((filter) => filter.enabled),
+      hasLength(1),
+    );
   });
 
   testWidgets('supports a primary cascading action menu', (tester) async {

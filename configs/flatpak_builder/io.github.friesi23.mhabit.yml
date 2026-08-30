@@ -50,6 +50,24 @@ modules:
         url: https://github.com/open-source-parsers/jsoncpp/archive/refs/tags/1.9.6.tar.gz
         sha256: f93b6dd7ce796b13d02c108bc9f79812245a82e577581c4c9aabe57075c90ea2
 
+  # Bundle a deterministic CJK font. The app registers this OTF directly with
+  # Flutter at startup instead of relying only on Flatpak's fontconfig bridge.
+  - name: noto-sans-cjk
+    buildsystem: simple
+    build-commands:
+      - install -Dm644 NotoSansCJKsc-Regular.otf /app/share/fonts/NotoSansCJKsc-Regular.otf
+      - install -Dm644 NotoSansCJK.LICENSE.txt /app/share/licenses/${FLATPAK_ID}/NotoSansCJK.LICENSE.txt
+      - fc-cache -f /app/share/fonts
+      - fc-match -f '%{file}\n' 'Noto Sans CJK SC' | grep -Fx /app/share/fonts/NotoSansCJKsc-Regular.otf
+    sources:
+      - type: file
+        url: https://cdn.jsdelivr.net/gh/notofonts/noto-cjk@Sans2.004/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf
+        sha256: 2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b
+      - type: file
+        url: https://cdn.jsdelivr.net/gh/notofonts/noto-cjk@Sans2.004/LICENSE
+        sha256: 6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2
+        dest-filename: NotoSansCJK.LICENSE.txt
+
   - name: mhabit
     buildsystem: simple
     build-options:

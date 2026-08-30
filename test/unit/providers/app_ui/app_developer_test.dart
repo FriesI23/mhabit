@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/widgets.dart' show TextDirection;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/app_adaptive_style_mode.dart';
 import 'package:mhabit/providers/app_ui/app_developer.dart';
@@ -142,5 +143,26 @@ void main() {
         profile.dispose();
       },
     );
+  });
+
+  test('text direction override is in-memory only', () async {
+    final profile = await _loadProfile();
+    final firstViewModel = AppDeveloperViewModel(
+      global: Global(),
+      profile: profile,
+    );
+
+    firstViewModel.setTextDirectionOverride(TextDirection.rtl);
+    expect(firstViewModel.textDirectionOverride, TextDirection.rtl);
+    firstViewModel.dispose();
+
+    final secondViewModel = AppDeveloperViewModel(
+      global: Global(),
+      profile: profile,
+    );
+    expect(secondViewModel.textDirectionOverride, isNull);
+
+    secondViewModel.dispose();
+    profile.dispose();
   });
 }

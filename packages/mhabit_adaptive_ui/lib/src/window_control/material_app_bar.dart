@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../shell/navigation_sidebar_app_bar_leading.dart';
 import 'toolbar_geometry.dart';
 
 /// A Material [AppBar] whose leading and action slots avoid window controls.
@@ -510,19 +511,30 @@ _MaterialToolbarSlots _resolveMaterialToolbarSlots(
   required EdgeInsetsDirectional? avoidance,
   required EdgeInsetsDirectional edgePadding,
 }) {
+  final sidebarLeading = NavigationSidebarAppBarLeading.maybeOf(context);
+  final effectiveEdgePadding = sidebarLeading == null
+      ? edgePadding
+      : EdgeInsetsDirectional.fromSTEB(
+          cupertinoWindowControlEdgePadding.start,
+          edgePadding.top,
+          edgePadding.end,
+          edgePadding.bottom,
+        );
   final geometry = WindowControlToolbarGeometry.resolve(
     context,
-    avoidance: avoidance,
-    edgePadding: edgePadding,
+    avoidance: avoidance ?? sidebarLeading?.toolbarAvoidance,
+    edgePadding: effectiveEdgePadding,
   );
   final startInset = geometry.materialStartInset;
   final endInset = geometry.materialEndInset;
-  final scaffold = startInset > 0 || endInset > 0
+  final scaffold = startInset > 0 || endInset > 0 || sidebarLeading != null
       ? Scaffold.maybeOf(context)
       : null;
   var effectiveLeading = leading;
   var effectiveAutomaticallyImplyLeading = automaticallyImplyLeading;
-  if (startInset > 0 && effectiveLeading == null && automaticallyImplyLeading) {
+  if ((startInset > 0 || sidebarLeading != null) &&
+      effectiveLeading == null &&
+      automaticallyImplyLeading) {
     final route = ModalRoute.of(context);
     if (scaffold?.hasDrawer ?? false) {
       effectiveLeading = const DrawerButton();
@@ -532,7 +544,9 @@ _MaterialToolbarSlots _resolveMaterialToolbarSlots(
           : const BackButton();
     }
   }
-  if (startInset > 0) effectiveAutomaticallyImplyLeading = false;
+  if (startInset > 0 || sidebarLeading != null) {
+    effectiveAutomaticallyImplyLeading = false;
+  }
 
   List<Widget>? effectiveActions = actions;
   var effectiveAutomaticallyImplyActions = automaticallyImplyActions;
@@ -546,7 +560,28 @@ _MaterialToolbarSlots _resolveMaterialToolbarSlots(
 
   Widget? paddedLeading;
   double? effectiveLeadingWidth = leadingWidth;
-  if (startInset > 0 && effectiveLeading != null) {
+  final sidebarExtent = sidebarLeading?.reservedExtent ?? 0;
+  if (sidebarLeading != null) {
+    final baseLeadingWidth = effectiveLeading == null
+        ? 0.0
+        : leadingWidth ??
+              AppBarTheme.of(context).leadingWidth ??
+              kToolbarHeight;
+    paddedLeading = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (startInset > 0) SizedBox(width: startInset),
+        SizedBox(
+          key: const ValueKey('cupertino-sidebar-leading-anchor'),
+          width: sidebarExtent,
+          height: NavigationSidebarAppBarLeading.buttonExtent,
+        ),
+        if (effectiveLeading case final effectiveLeading?)
+          SizedBox(width: baseLeadingWidth, child: effectiveLeading),
+      ],
+    );
+    effectiveLeadingWidth = startInset + sidebarExtent + baseLeadingWidth;
+  } else if (startInset > 0 && effectiveLeading != null) {
     final baseLeadingWidth =
         leadingWidth ?? AppBarTheme.of(context).leadingWidth ?? kToolbarHeight;
     paddedLeading = Padding(
@@ -565,7 +600,7 @@ _MaterialToolbarSlots _resolveMaterialToolbarSlots(
   }
 
   return _MaterialToolbarSlots(
-    leading: startInset > 0 ? paddedLeading : leading,
+    leading: startInset > 0 || sidebarLeading != null ? paddedLeading : leading,
     automaticallyImplyLeading: effectiveAutomaticallyImplyLeading,
     leadingWidth: effectiveLeadingWidth,
     actions: effectiveActions,

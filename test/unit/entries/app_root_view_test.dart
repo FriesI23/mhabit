@@ -81,6 +81,20 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('text direction override reaches the app content', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const AppRootView(
+          themeMode: ThemeMode.system,
+          textDirectionOverride: TextDirection.rtl,
+          child: _TextDirectionProbe(),
+        ),
+      );
+
+      expect(find.text('rtl'), findsOneWidget);
+    });
+
     testWidgets(
       'router path: no navigatorKey/navigatorObservers on MaterialApp',
       (tester) async {
@@ -188,4 +202,11 @@ void main() {
       }
     });
   });
+}
+
+class _TextDirectionProbe extends StatelessWidget {
+  const _TextDirectionProbe();
+
+  @override
+  Widget build(BuildContext context) => Text(Directionality.of(context).name);
 }

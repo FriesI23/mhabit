@@ -20,8 +20,10 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
   final bool isInDevelopMode;
   final bool isDisplayDebugMenuSelect;
   final AppAdaptiveStyleMode adaptiveStyleMode;
+  final TextDirection? textDirectionOverride;
   final ValueChanged<bool>? onDisplayDebugMenuSelectChanged;
   final ValueChanged<AppAdaptiveStyleMode>? onAdaptiveStyleModeChanged;
+  final ValueChanged<TextDirection?>? onTextDirectionOverrideChanged;
   final void Function(BuildContext context)? onExportDBTilePressed;
   final void Function(BuildContext context)? onClearDBTilePressed;
 
@@ -30,8 +32,10 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
     this.isInDevelopMode = false,
     this.isDisplayDebugMenuSelect = false,
     this.adaptiveStyleMode = AppAdaptiveStyleMode.automatic,
+    this.textDirectionOverride,
     this.onDisplayDebugMenuSelectChanged,
     this.onAdaptiveStyleModeChanged,
+    this.onTextDirectionOverrideChanged,
     this.onExportDBTilePressed,
     this.onClearDBTilePressed,
   });
@@ -45,6 +49,14 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
     ];
     final selectedStyleLabel = adaptiveStyleOptions
         .firstWhere((option) => option.value == adaptiveStyleMode)
+        .label;
+    const List<({TextDirection? value, String label})> textDirectionOptions = [
+      (value: null, label: 'Auto'),
+      (value: TextDirection.ltr, label: 'LTR'),
+      (value: TextDirection.rtl, label: 'RTL'),
+    ];
+    final selectedTextDirectionLabel = textDirectionOptions
+        .firstWhere((option) => option.value == textDirectionOverride)
         .label;
 
     return ExpandedSection(
@@ -83,6 +95,35 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
                 iconAlignment: IconAlignment.end,
                 icon: const Icon(Icons.arrow_drop_down),
                 label: Text(selectedStyleLabel),
+              ),
+            ),
+          ),
+          ListTile(
+            title: const Text('Text direction'),
+            trailing: MenuAnchor(
+              menuChildren: [
+                for (final option in textDirectionOptions)
+                  MenuItemButton(
+                    leadingIcon: Opacity(
+                      opacity: option.value == textDirectionOverride ? 1 : 0,
+                      child: const Icon(Icons.check),
+                    ),
+                    onPressed: onTextDirectionOverrideChanged == null
+                        ? null
+                        : () => onTextDirectionOverrideChanged!(option.value),
+                    child: Text(option.label),
+                  ),
+              ],
+              builder: (context, controller, child) => TextButton.icon(
+                key: const ValueKey('developer-text-direction-control'),
+                onPressed: onTextDirectionOverrideChanged == null
+                    ? null
+                    : () => controller.isOpen
+                          ? controller.close()
+                          : controller.open(),
+                iconAlignment: IconAlignment.end,
+                icon: const Icon(Icons.arrow_drop_down),
+                label: Text(selectedTextDirectionLabel),
               ),
             ),
           ),

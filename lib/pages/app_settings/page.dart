@@ -463,6 +463,11 @@ class _PageState extends State<_Page> with XShare {
     context.read<AppDeveloperViewModel>().setAdaptiveStyleMode(value);
   }
 
+  void _onTextDirectionOverrideChanged(TextDirection? value) {
+    if (!mounted) return;
+    context.read<AppDeveloperViewModel>().setTextDirectionOverride(value);
+  }
+
   void _onExportDBTilePressed(BuildContext context) async {
     if (!context.mounted) return;
     final dbPath = path.join(
@@ -906,16 +911,25 @@ class _PageState extends State<_Page> with XShare {
     ];
 
     Widget buildDevelopSubGroup(BuildContext context) =>
-        Selector<AppDeveloperViewModel, (bool, bool, AppAdaptiveStyleMode)>(
-          selector: (context, vm) =>
-              (vm.isInDevelopMode, vm.displayDebugMenu, vm.adaptiveStyleMode),
+        Selector<
+          AppDeveloperViewModel,
+          (bool, bool, AppAdaptiveStyleMode, TextDirection?)
+        >(
+          selector: (context, vm) => (
+            vm.isInDevelopMode,
+            vm.displayDebugMenu,
+            vm.adaptiveStyleMode,
+            vm.textDirectionOverride,
+          ),
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) => AppSettingDevelopSubGroup(
             isInDevelopMode: value.$1,
             isDisplayDebugMenuSelect: value.$2,
             adaptiveStyleMode: value.$3,
+            textDirectionOverride: value.$4,
             onDisplayDebugMenuSelectChanged: _onDisplayDebugMenuSelectChanged,
             onAdaptiveStyleModeChanged: _onAdaptiveStyleModeChanged,
+            onTextDirectionOverrideChanged: _onTextDirectionOverrideChanged,
             onExportDBTilePressed: _onExportDBTilePressed,
             onClearDBTilePressed: _onClearDBTilePressed,
           ),

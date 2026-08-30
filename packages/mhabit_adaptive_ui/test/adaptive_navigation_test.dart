@@ -1,5 +1,12 @@
+import 'dart:ui' show PointerDeviceKind, Tristate;
+
 import 'package:flutter/cupertino.dart'
     show
+        CupertinoButton,
+        CupertinoButtonSize,
+        CupertinoColors,
+        CupertinoIcons,
+        CupertinoNavigationBar,
         CupertinoPageScaffoldBackgroundColor,
         CupertinoSliverNavigationBar,
         CupertinoThemeData;
@@ -10,6 +17,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_navigation_primary_action.dart';
+import 'package:mhabit_adaptive_ui/src/shell/navigation_scroll_wish_policy.dart';
+import 'package:mhabit_adaptive_ui/src/shell/navigation_shell_frame.dart';
+import 'package:mhabit_adaptive_ui/src/shell/side_navigation.dart';
 
 _TestRouter _buildRouter({
   List<AdaptiveNavigationDestination>? destinations,
@@ -224,27 +234,41 @@ class _StubPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.paddingOf(context).bottom;
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(text),
-            SizedBox(
-              key: const ValueKey('branch-bottom-padding'),
-              height: bottomPadding,
+      body: CustomScrollView(
+        slivers: [
+          const AdaptiveSliverAppBar(
+            title: Text('Test page'),
+            leading: Icon(
+              Icons.article_outlined,
+              key: ValueKey('test-page-leading'),
             ),
-            TextButton(
-              key: const ValueKey('show-snackbar'),
-              onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  behavior: SnackBarBehavior.floating,
-                  content: Text('saved'),
-                ),
+          ),
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(text),
+                  SizedBox(
+                    key: const ValueKey('branch-bottom-padding'),
+                    height: bottomPadding,
+                  ),
+                  TextButton(
+                    key: const ValueKey('show-snackbar'),
+                    onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: Text('saved'),
+                      ),
+                    ),
+                    child: const Text('Show Snackbar'),
+                  ),
+                ],
               ),
-              child: const Text('Show Snackbar'),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -257,15 +281,30 @@ class _BranchInsetsProbe extends StatelessWidget {
   Widget build(BuildContext context) {
     final padding = MediaQuery.paddingOf(context);
     final viewPadding = MediaQuery.viewPaddingOf(context);
+    final viewInsets = MediaQuery.viewInsetsOf(context);
     return Column(
+      key: const ValueKey('branch-layout-probe'),
       children: [
         SizedBox(
           key: const ValueKey('branch-horizontal-padding'),
           width: padding.left + padding.right,
         ),
         SizedBox(
+          key: const ValueKey('branch-vertical-padding'),
+          height: padding.top + padding.bottom,
+        ),
+        SizedBox(
           key: const ValueKey('branch-horizontal-view-padding'),
           width: viewPadding.left + viewPadding.right,
+        ),
+        SizedBox(
+          key: const ValueKey('branch-vertical-view-padding'),
+          height: viewPadding.top + viewPadding.bottom,
+        ),
+        SizedBox(
+          key: const ValueKey('branch-view-insets'),
+          width: viewInsets.left + viewInsets.right,
+          height: viewInsets.top + viewInsets.bottom,
         ),
       ],
     );
@@ -458,42 +497,130 @@ void _resetWindowControlLayoutMock() {
 }
 
 void main() {
-  group('NavigationRailExtent', () {
+  group('SideNavigationExtent', () {
     test('fixed target clamps to the available interval', () {
-      const extent = NavigationRailExtent(224);
+      const extent = SideNavigationExtent(224);
 
       expect(extent.resolve(1600), 224);
       expect(extent.resolve(800), 216);
     });
 
     test('ratio resolves between the available bounds', () {
-      const extent = NavigationRailExtent.fromRatio(0.5);
+      const extent = SideNavigationExtent.fromRatio(0.5);
 
       expect(extent.resolve(1600), 270);
       expect(extent.resolve(800), 198);
     });
 
     test('owns interval growth and manual clamping', () {
-      const extent = NavigationRailExtent(
+      const extent = SideNavigationExtent(
         240,
-        collapsed: 64,
         minimum: 200,
         maximum: 320,
         rampStart: 800,
         rampEnd: 1400,
       );
 
-      expect(extent.collapsed, 64);
       expect(extent.upperBoundAt(1100), 260);
       expect(extent.resolve(1100), 240);
       expect(extent.clamp(300, windowWidth: 1100), 260);
     });
 
-    test('requires the extended minimum to fit the collapsed rail', () {
+    test('requires a valid full-width interval', () {
       expect(
-        () => NavigationRailExtent(100, collapsed: 200),
+        () => SideNavigationExtent(100, minimum: 200, maximum: 100),
         throwsAssertionError,
       );
+    });
+
+    test('material rail style owns its collapsed extent', () {
+      const style = MaterialNavigationRailStyle(collapsedExtent: 64);
+      const defaults = MaterialNavigationRailStyle();
+
+      expect(style.collapsedExtent, 64);
+      expect(defaults.collapsedExtent, 96);
+      expect(
+        () => MaterialNavigationRailStyle(collapsedExtent: 0),
+        throwsAssertionError,
+      );
+    });
+  });
+
+  group('SideNavigationResizeState', () {
+    const extent = SideNavigationExtent(224);
+
+    test('clamps and hands a wider manual width to the available interval', () {
+      final state = SideNavigationResizeState();
+
+      expect(state.effectiveWidth(extent, windowWidth: 1800), 224);
+      state.startDrag(extent, windowWidth: 1800);
+      expect(state.dragging, isTrue);
+      state.updateDrag(500, extent, windowWidth: 1800);
+      state.endDrag();
+
+      expect(state.dragging, isFalse);
+      expect(state.effectiveWidth(extent, windowWidth: 1800), 360);
+      expect(state.effectiveWidth(extent, windowWidth: 900), 234);
+      expect(state.effectiveWidth(extent, windowWidth: 1800), 360);
+    });
+
+    test('hands a narrower manual width to auto and restores it later', () {
+      final state = SideNavigationResizeState();
+
+      state.startDrag(extent, windowWidth: 1800);
+      state.updateDrag(-5, extent, windowWidth: 1800);
+      state.endDrag();
+
+      expect(state.effectiveWidth(extent, windowWidth: 1400), 219);
+      expect(state.effectiveWidth(extent, windowWidth: 700), 198);
+      expect(state.effectiveWidth(extent, windowWidth: 1800), 219);
+    });
+
+    testWidgets('handle clears dragged state when a gesture is cancelled', (
+      tester,
+    ) async {
+      final observedStates = <Set<WidgetState>>[];
+      final logicalDeltas = <double>[];
+      var starts = 0;
+      var ends = 0;
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.rtl,
+          child: Center(
+            child: SizedBox(
+              height: 100,
+              child: SideNavigationResizeHandle(
+                hitExtent: 16,
+                dragHandleBuilder: (context, states) {
+                  observedStates.add(Set<WidgetState>.of(states));
+                  return const SizedBox.shrink();
+                },
+                onResizeStart: () => starts += 1,
+                onResizeUpdate: logicalDeltas.add,
+                onResizeEnd: () => ends += 1,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.byType(SideNavigationResizeHandle)),
+      );
+      await gesture.moveBy(const Offset(-30, 0));
+      await tester.pump();
+      expect(starts, 1);
+      expect(logicalDeltas, isNotEmpty);
+      expect(logicalDeltas, everyElement(greaterThan(0)));
+      expect(
+        observedStates.any((states) => states.contains(WidgetState.dragged)),
+        isTrue,
+      );
+
+      await gesture.cancel();
+      await tester.pump();
+      expect(ends, 1);
+      expect(observedStates.last.contains(WidgetState.dragged), isFalse);
     });
   });
 
@@ -530,6 +657,77 @@ void main() {
   });
 
   group('AdaptiveNavigationShell', () {
+    testWidgets(
+      'frame delegates body composition with restored ambient geometry',
+      (tester) async {
+        tester.view.padding = const FakeViewPadding(left: 44, right: 20);
+        tester.view.viewPadding = const FakeViewPadding(left: 50, right: 30);
+        _setSurfaceSize(tester, const Size(700, 800));
+        final selected = <int>[];
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: NavigationShellFrame(
+              selectedIndex: 0,
+              onDestinationSelected: selected.add,
+              compactRouteVisible: true,
+              contextualChromeSuppressed: false,
+              barHeight: 80,
+              navHeight: 80,
+              keepVisibleOnScroll: false,
+              scrollWishPolicy: const NavigationScrollWishPolicy.directional(),
+              formResolver: (_) => NavigationShellForm.constrainedSide,
+              bodyBuilder: (context, form, onSelected, child) {
+                final padding = MediaQuery.paddingOf(context);
+                final viewPadding = MediaQuery.viewPaddingOf(context);
+                final owner = AdaptiveWindowControlLayoutScope.maybeOf(
+                  context,
+                )!.owner;
+                return Stack(
+                  key: const ValueKey('custom-shell-body'),
+                  children: [
+                    child,
+                    SizedBox(
+                      key: const ValueKey('custom-shell-geometry'),
+                      width: padding.left + padding.right,
+                      height: viewPadding.left + viewPadding.right,
+                    ),
+                    TextButton(
+                      key: const ValueKey('custom-shell-destination'),
+                      onPressed: () => onSelected(1),
+                      child: Text('${form.name}:${owner.name}'),
+                    ),
+                  ],
+                );
+              },
+              windowControlOwnerResolver: (_) =>
+                  WindowControlLayoutOwner.sideNavigation,
+              compactNavigationBuilder: (_, _) => const SizedBox.shrink(),
+              child: const Text('branch'),
+            ),
+          ),
+        );
+
+        expect(
+          find.descendant(
+            of: find.byKey(const ValueKey('custom-shell-body')),
+            matching: find.byType(Row),
+          ),
+          findsNothing,
+        );
+        expect(
+          tester.getSize(find.byKey(const ValueKey('custom-shell-geometry'))),
+          const Size(64, 80),
+        );
+        expect(find.text('constrainedSide:sideNavigation'), findsOneWidget);
+
+        await tester.tap(
+          find.byKey(const ValueKey('custom-shell-destination')),
+        );
+        expect(selected, [1]);
+      },
+    );
+
     testWidgets('style switching preserves branch content state', (
       tester,
     ) async {
@@ -575,14 +773,43 @@ void main() {
       await tester.tap(find.text('branch count 0'));
       await tester.pump();
       expect(find.text('branch count 1'), findsOneWidget);
+      final branchState = tester.state<_StatefulBranchProbeState>(
+        find.byType(_StatefulBranchProbe),
+      );
 
       style.value = AdaptiveStyle.apple;
       await tester.pumpAndSettle();
 
       expect(find.text('branch count 1'), findsOneWidget);
       expect(
+        tester.state<_StatefulBranchProbeState>(
+          find.byType(_StatefulBranchProbe),
+        ),
+        same(branchState),
+      );
+      expect(
         find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
         findsOneWidget,
+      );
+
+      tester.view.physicalSize = const Size(700, 800);
+      await tester.pumpAndSettle();
+      expect(find.text('branch count 1'), findsOneWidget);
+      expect(
+        tester.state<_StatefulBranchProbeState>(
+          find.byType(_StatefulBranchProbe),
+        ),
+        same(branchState),
+      );
+
+      tester.view.physicalSize = const Size(1000, 479);
+      await tester.pumpAndSettle();
+      expect(find.text('branch count 1'), findsOneWidget);
+      expect(
+        tester.state<_StatefulBranchProbeState>(
+          find.byType(_StatefulBranchProbe),
+        ),
+        same(branchState),
       );
     });
 
@@ -1256,7 +1483,7 @@ void main() {
       expect(layout.usesRectangularDisplay, isTrue);
     });
 
-    testWidgets('assigns avoidance to app bar or rail without overlap', (
+    testWidgets('assigns avoidance to app bar or side navigation', (
       tester,
     ) async {
       _mockWindowControlLayout();
@@ -1268,12 +1495,19 @@ void main() {
 
         var context = tester.element(find.text('habits page'));
         var layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
+        expect(layout.owner, WindowControlLayoutOwner.appBar);
         expect(
           layout.appBarHorizontalAvoidance,
           const EdgeInsetsDirectional.only(start: 40, end: 12),
         );
-        expect(layout.railHorizontalAvoidance, EdgeInsetsDirectional.zero);
-        expect(layout.railVerticalAvoidance, EdgeInsetsDirectional.zero);
+        expect(
+          layout.sideNavigationHorizontalAvoidance,
+          EdgeInsetsDirectional.zero,
+        );
+        expect(
+          layout.sideNavigationVerticalAvoidance,
+          EdgeInsetsDirectional.zero,
+        );
         expect(
           layout.horizontalSafeAreaAvoidance,
           const EdgeInsetsDirectional.fromSTEB(24, 0, 18, 0),
@@ -1289,13 +1523,14 @@ void main() {
 
         context = tester.element(find.text('habits page'));
         layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
+        expect(layout.owner, WindowControlLayoutOwner.sideNavigation);
         expect(layout.appBarHorizontalAvoidance, EdgeInsetsDirectional.zero);
         expect(
-          layout.railHorizontalAvoidance,
+          layout.sideNavigationHorizontalAvoidance,
           const EdgeInsetsDirectional.only(start: 40, end: 12),
         );
         expect(
-          layout.railVerticalAvoidance,
+          layout.sideNavigationVerticalAvoidance,
           const EdgeInsetsDirectional.only(top: 64),
         );
         expect(
@@ -1308,30 +1543,43 @@ void main() {
           const BorderRadius.all(Radius.circular(62)),
         );
 
-        final safeSpan = find.byKey(const ValueKey('rail-leading-safe-span'));
-        final toggle = find.byKey(const ValueKey('rail-toggle-button'));
         expect(
-          tester.getTopLeft(toggle).dy - tester.getTopLeft(safeSpan).dy,
-          64,
+          tester
+              .getTopLeft(
+                find.byKey(
+                  const ValueKey('cupertino-sidebar-destination-list'),
+                ),
+              )
+              .dx,
+          12,
         );
 
+        final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
+        expect(
+          tester.getTopRight(toggle).dx,
+          tester
+                  .getTopRight(
+                    find.byKey(const ValueKey('cupertino-sidebar-surface')),
+                  )
+                  .dx -
+              12,
+        );
+        expect(tester.getTopLeft(toggle).dy, 12);
         await tester.tap(toggle);
         await tester.pumpAndSettle();
-
-        final rail = find.byKey(const ValueKey('rail-panel'));
         expect(
-          tester.getCenter(toggle).dx,
-          moreOrLessEquals(
-            tester.getTopLeft(rail).dx + tester.getSize(rail).width / 2 + 14,
-            epsilon: 0.01,
-          ),
+          find.byKey(const ValueKey('cupertino-sidebar-panel')),
+          findsNothing,
         );
+        expect(tester.getTopLeft(toggle).dx, 56);
       } finally {
         _resetWindowControlLayoutMock();
       }
     });
 
-    testWidgets('extended rail centers in the RTL safe span', (tester) async {
+    testWidgets('apple beside Sidebar uses the RTL side-navigation safe span', (
+      tester,
+    ) async {
       _mockWindowControlLayout();
       try {
         _setSurfaceSize(tester, const Size(1000, 800));
@@ -1360,14 +1608,16 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        final rail = find.byKey(const ValueKey('rail-panel'));
-        final toggle = find.byKey(const ValueKey('rail-toggle-button'));
+        expect(find.byType(NavigationRail), findsNothing);
         expect(
-          tester.getCenter(toggle).dx,
-          moreOrLessEquals(
-            tester.getTopLeft(rail).dx + tester.getSize(rail).width / 2 - 14,
-            epsilon: 0.01,
-          ),
+          tester
+              .getTopRight(
+                find.byKey(
+                  const ValueKey('cupertino-sidebar-destination-list'),
+                ),
+              )
+              .dx,
+          988,
         );
       } finally {
         _resetWindowControlLayoutMock();
@@ -1855,6 +2105,21 @@ void main() {
       );
     });
 
+    testWidgets('side form snackbar remains owned by the root scaffold', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(700, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      await tester.tap(find.byKey(const ValueKey('show-snackbar')));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(SnackBar), findsOneWidget);
+      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(find.byType(NavigationBar), findsNothing);
+    });
+
     testWidgets('floating snackbar follows the collapsing navigation bar', (
       tester,
     ) async {
@@ -2234,7 +2499,7 @@ void main() {
       );
     });
 
-    testWidgets('apple large compact-height defaults to a collapsed rail', (
+    testWidgets('apple large ignores compact height and uses beside Sidebar', (
       tester,
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
@@ -2242,9 +2507,14 @@ void main() {
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
+      expect(find.byType(NavigationRail), findsNothing);
       expect(
-        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
-        isFalse,
+        find.byKey(const ValueKey('cupertino-sidebar-beside-host')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-panel')),
+        findsOneWidget,
       );
       debugDefaultTargetPlatformOverride = null;
     });
@@ -2316,18 +2586,26 @@ void main() {
 
     testWidgets('macOS classifies with apple tiers', (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
       _setSurfaceSize(tester, const Size(700, 600));
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      // macOS resolves the three-tier apple system, so 700dp classifies as
-      // medium: a rail collapsed by default.
-      expect(find.byType(NavigationRail), findsOneWidget);
+      // macOS resolves the three-tier Apple system, so 700dp classifies as
+      // medium and uses the same visible beside Sidebar as larger windows.
+      expect(find.byType(NavigationRail), findsNothing);
       expect(
-        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
-        isFalse,
+        find.byKey(const ValueKey('cupertino-sidebar-beside-host')),
+        findsOneWidget,
       );
-      expect(find.byIcon(Icons.menu), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-panel')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-toggle')),
+        findsOneWidget,
+      );
       debugDefaultTargetPlatformOverride = null;
     });
 
@@ -2365,7 +2643,7 @@ void main() {
       expect(find.byType(NavigationRail), findsOneWidget);
       // Auto width uses the compact fixed target inside the interval.
       final panel = tester.widget<NavigationRail>(find.byType(NavigationRail));
-      expect(panel.minExtendedWidth, closeTo(224, 0.01));
+      expect(panel.minExtendedWidth, closeTo(200, 0.01));
       expect(find.byIcon(Icons.menu_open), findsOneWidget);
     });
 
@@ -2396,9 +2674,9 @@ void main() {
               ),
             ],
             onDestinationSelected: (_) {},
-            railExtent: const NavigationRailExtent.fromRatio(
-              0.5,
-              collapsed: 64,
+            sideNavigationExtent: const SideNavigationExtent.fromRatio(0.5),
+            materialRailStyle: const MaterialNavigationRailStyle(
+              collapsedExtent: 64,
             ),
             child: const SizedBox(),
           ),
@@ -2419,14 +2697,14 @@ void main() {
 
       NavigationRail panel() =>
           tester.widget<NavigationRail>(find.byType(NavigationRail));
-      // The fixed 224dp target fits the current 180-288dp interval.
-      expect(panel().minExtendedWidth, closeTo(224, 0.01));
+      // The compact 200dp target fits the current 180-288dp interval.
+      expect(panel().minExtendedWidth, closeTo(200, 0.01));
 
       tester.view.physicalSize = const Size(840, 800);
       await tester.pumpAndSettle();
 
-      // The interval's 223.2dp upper bound clamps the fixed target.
-      expect(panel().minExtendedWidth, closeTo(223.2, 0.01));
+      // The compact target remains inside the narrower interval.
+      expect(panel().minExtendedWidth, closeTo(200, 0.01));
     });
 
     testWidgets('drag resizes the rail and clamps to the interval', (
@@ -2438,22 +2716,38 @@ void main() {
 
       NavigationRail panel() =>
           tester.widget<NavigationRail>(find.byType(NavigationRail));
-      expect(panel().minExtendedWidth, closeTo(224, 0.01));
-
-      // Drag far left: many small moves accumulate and clamp to the minimum.
-      var gesture = await tester.startGesture(
-        tester.getCenter(find.byKey(const ValueKey('rail-resize-handle'))),
+      expect(panel().minExtendedWidth, closeTo(200, 0.01));
+      final dragBar = find.byKey(
+        const ValueKey('material-side-navigation-drag-bar'),
       );
-      for (var i = 0; i < 60; i++) {
-        await gesture.moveBy(const Offset(-10, 0));
-        await tester.pump();
-      }
-      await gesture.up();
+      expect(dragBar, findsOneWidget);
+      expect(tester.getSize(dragBar), const Size(4, 32));
+      final decoration =
+          tester
+                  .widget<DecoratedBox>(
+                    find.descendant(
+                      of: dragBar,
+                      matching: find.byType(DecoratedBox),
+                    ),
+                  )
+                  .decoration
+              as BoxDecoration;
+      expect(
+        decoration.color,
+        Theme.of(tester.element(dragBar)).colorScheme.onSurfaceVariant,
+      );
+
+      // Drag to the minimum without crossing it.
+      await tester.drag(
+        find.byKey(const ValueKey('rail-resize-handle')),
+        const Offset(-20, 0),
+      );
       await tester.pumpAndSettle();
       expect(panel().minExtendedWidth, 180.0);
+      expect(panel().extended, isTrue);
 
       // Drag far right: clamps to the maximum width.
-      gesture = await tester.startGesture(
+      final gesture = await tester.startGesture(
         tester.getCenter(find.byKey(const ValueKey('rail-resize-handle'))),
       );
       for (var i = 0; i < 60; i++) {
@@ -2464,6 +2758,49 @@ void main() {
       await tester.pumpAndSettle();
       expect(panel().minExtendedWidth, 360.0);
     });
+
+    for (final direction in TextDirection.values) {
+      testWidgets('material rail resizes from its logical end in $direction', (
+        tester,
+      ) async {
+        _setSurfaceSize(tester, const Size(1000, 600));
+        final router = _buildRouter();
+        await tester.pumpWidget(
+          MaterialApp.router(
+            routerConfig: router,
+            builder: (context, child) =>
+                Directionality(textDirection: direction, child: child!),
+          ),
+        );
+
+        final railPanel = find.byKey(const ValueKey('rail-panel'));
+        final resizeHandle = find.byKey(const ValueKey('rail-resize-handle'));
+        expect(
+          tester.getCenter(resizeHandle).dx,
+          direction == TextDirection.ltr
+              ? tester.getTopRight(railPanel).dx - 8
+              : tester.getTopLeft(railPanel).dx + 8,
+        );
+
+        final logicalDrag = direction == TextDirection.ltr
+            ? const Offset(30, 0)
+            : const Offset(-30, 0);
+        await tester.drag(resizeHandle, logicalDrag);
+        await tester.pumpAndSettle();
+
+        expect(
+          tester
+              .widget<NavigationRail>(
+                find.descendant(
+                  of: railPanel,
+                  matching: find.byType(NavigationRail),
+                ),
+              )
+              .minExtendedWidth,
+          greaterThan(200),
+        );
+      });
+    }
 
     testWidgets('manual width above auto hands off along the interval', (
       tester,
@@ -2500,7 +2837,7 @@ void main() {
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      // Drag slightly narrower than the auto width (224) -> 219.
+      // Drag slightly narrower than the auto width (200) -> 195.
       final gesture = await tester.startGesture(
         tester.getCenter(find.byKey(const ValueKey('rail-resize-handle'))),
       );
@@ -2510,20 +2847,20 @@ void main() {
       await tester.pumpAndSettle();
       NavigationRail panel() =>
           tester.widget<NavigationRail>(find.byType(NavigationRail));
-      expect(panel().minExtendedWidth, closeTo(219, 0.01));
+      expect(panel().minExtendedWidth, closeTo(195, 0.01));
 
       // The fixed auto target remains above the manual width, so it holds.
       tester.view.physicalSize = const Size(1400, 800);
       await tester.pumpAndSettle();
-      expect(panel().minExtendedWidth, closeTo(219, 0.01));
+      expect(panel().minExtendedWidth, closeTo(195, 0.01));
 
       // Medium resets to collapsed; expanding it applies the interval-clamped
       // auto width because it has fallen below the remembered manual width.
-      tester.view.physicalSize = const Size(700, 800);
+      tester.view.physicalSize = const Size(680, 800);
       await tester.pumpAndSettle();
       await tester.tap(find.byIcon(Icons.menu));
       await tester.pumpAndSettle();
-      expect(panel().minExtendedWidth, closeTo(198, 0.01));
+      expect(panel().minExtendedWidth, closeTo(194.4, 0.01));
 
       // The auto value keeps following the interval down.
       tester.view.physicalSize = const Size(650, 800);
@@ -2533,7 +2870,203 @@ void main() {
       // Grow back: the remembered manual value resumes.
       tester.view.physicalSize = const Size(1800, 800);
       await tester.pumpAndSettle();
-      expect(panel().minExtendedWidth, closeTo(219, 0.01));
+      expect(panel().minExtendedWidth, closeTo(195, 0.01));
+    });
+
+    testWidgets('material rail uses the M3 collapsed destination layout', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(700, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      final rail = tester.widget<NavigationRail>(find.byType(NavigationRail));
+      final destination = find.byKey(
+        const ValueKey('material-rail-destination-0'),
+      );
+      final destinationSlot = find.byKey(
+        const ValueKey('material-rail-destination-slot-0'),
+      );
+      final indicator = find.descendant(
+        of: destination,
+        matching: find.byKey(const ValueKey('material-rail-indicator')),
+      );
+      final collapsedLabel = find.descendant(
+        of: destinationSlot,
+        matching: find.byKey(const ValueKey('material-rail-collapsed-label')),
+      );
+      final expandedLabel = find.descendant(
+        of: destination,
+        matching: find.byKey(const ValueKey('material-rail-expanded-label')),
+      );
+
+      expect(tester.getSize(destination), const Size(56, 32));
+      expect(rail.minWidth, 96);
+      expect(tester.getSize(indicator), const Size(56, 32));
+      expect(tester.widget<Opacity>(collapsedLabel).opacity, 1);
+      expect(tester.widget<Opacity>(expandedLabel).opacity, 0);
+      expect(
+        tester.getCenter(find.byIcon(Icons.home)).dx,
+        tester.getCenter(destination).dx,
+      );
+      expect(
+        tester.getRect(destination).overlaps(tester.getRect(collapsedLabel)),
+        isFalse,
+      );
+    });
+
+    testWidgets('material rail frames the complete expanded destination', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1400, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      final destination = find.byKey(
+        const ValueKey('material-rail-destination-0'),
+      );
+      final indicator = find.descendant(
+        of: destination,
+        matching: find.byKey(const ValueKey('material-rail-indicator')),
+      );
+      final expandedLabel = find.descendant(
+        of: destination,
+        matching: find.byKey(const ValueKey('material-rail-expanded-label')),
+      );
+      final indicatorRect = tester.getRect(indicator);
+
+      expect(tester.getSize(destination), const Size(160, 56));
+      expect(tester.getSize(indicator), const Size(160, 56));
+      expect(tester.widget<Opacity>(expandedLabel).opacity, 1);
+      expect(
+        indicatorRect.contains(tester.getCenter(find.byIcon(Icons.home))),
+        isTrue,
+      );
+      expect(indicatorRect.contains(tester.getCenter(expandedLabel)), isTrue);
+      expect(
+        tester.getRect(
+          find.descendant(of: destination, matching: find.byType(InkWell)),
+        ),
+        tester.getRect(destination),
+      );
+    });
+
+    testWidgets('material rail destinations follow the rail animation', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(700, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      final destination = find.byKey(
+        const ValueKey('material-rail-destination-0'),
+      );
+      final destinationSlot = find.byKey(
+        const ValueKey('material-rail-destination-slot-0'),
+      );
+      final indicator = find.descendant(
+        of: destination,
+        matching: find.byKey(const ValueKey('material-rail-indicator')),
+      );
+      final collapsedLabel = find.descendant(
+        of: destinationSlot,
+        matching: find.byKey(const ValueKey('material-rail-collapsed-label')),
+      );
+      final expandedLabel = find.descendant(
+        of: destination,
+        matching: find.byKey(const ValueKey('material-rail-expanded-label')),
+      );
+      final todayDestination = find.byKey(
+        const ValueKey('material-rail-destination-1'),
+      );
+      final collapsedCenterY = tester.getCenter(destination).dy;
+      final collapsedTodayCenterY = tester.getCenter(todayDestination).dy;
+
+      await tester.tap(find.byKey(const ValueKey('rail-toggle-button')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(tester.getSize(destination).width, inExclusiveRange(56, 158));
+      expect(tester.getSize(indicator).width, inExclusiveRange(56, 158));
+      expect(tester.getSize(destination).height, inExclusiveRange(32, 56));
+      expect(tester.getSize(indicator).height, inExclusiveRange(32, 56));
+      expect(tester.getCenter(destination).dy, collapsedCenterY);
+      expect(tester.getCenter(todayDestination).dy, collapsedTodayCenterY);
+      expect(
+        tester.widget<Opacity>(collapsedLabel).opacity,
+        inExclusiveRange(0, 1),
+      );
+      expect(
+        tester.widget<Opacity>(expandedLabel).opacity,
+        inExclusiveRange(0, 1),
+      );
+
+      await tester.pumpAndSettle();
+      expect(tester.getSize(destination).width, closeTo(158, 0.01));
+      expect(tester.getSize(indicator).width, closeTo(158, 0.01));
+      expect(tester.getCenter(destination).dy, collapsedCenterY);
+      expect(tester.getCenter(todayDestination).dy, collapsedTodayCenterY);
+
+      await tester.tap(find.byKey(const ValueKey('rail-toggle-button')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(tester.getSize(destination).width, inExclusiveRange(56, 158));
+      expect(tester.getSize(indicator).width, inExclusiveRange(56, 158));
+      expect(tester.getSize(destination).height, inExclusiveRange(32, 56));
+      expect(tester.getSize(indicator).height, inExclusiveRange(32, 56));
+      expect(tester.getCenter(destination).dy, collapsedCenterY);
+      expect(tester.getCenter(todayDestination).dy, collapsedTodayCenterY);
+      expect(
+        tester.widget<Opacity>(collapsedLabel).opacity,
+        inExclusiveRange(0, 1),
+      );
+      expect(
+        tester.widget<Opacity>(expandedLabel).opacity,
+        inExclusiveRange(0, 1),
+      );
+
+      await tester.pumpAndSettle();
+      expect(tester.getSize(destination), const Size(56, 32));
+      expect(tester.getSize(indicator), const Size(56, 32));
+      expect(tester.getCenter(destination).dy, collapsedCenterY);
+      expect(tester.getCenter(todayDestination).dy, collapsedTodayCenterY);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('material rail tap target matches each destination button', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(700, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      final todayButton = find.byKey(
+        const ValueKey('material-rail-destination-1'),
+      );
+      final todaySlot = find.byKey(
+        const ValueKey('material-rail-destination-slot-1'),
+      );
+      final todayLabel = find.descendant(
+        of: todaySlot,
+        matching: find.byKey(const ValueKey('material-rail-collapsed-label')),
+      );
+      final buttonRect = tester.getRect(todayButton);
+      await tester.tapAt(Offset(buttonRect.right + 4, buttonRect.center.dy));
+      await tester.pumpAndSettle();
+      expect(find.text('habits page'), findsOneWidget);
+
+      await tester.tapAt(tester.getCenter(todayLabel));
+      await tester.pumpAndSettle();
+      expect(find.text('habits page'), findsOneWidget);
+
+      await tester.tap(todayButton);
+      await tester.pumpAndSettle();
+      expect(find.text('today page'), findsOneWidget);
     });
 
     testWidgets('drag while the panel animation is running does not crash', (
@@ -2565,47 +3098,1402 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    for (final direction in TextDirection.values) {
+      testWidgets(
+        'material rail toggle keeps its logical-start anchor in $direction',
+        (tester) async {
+          _setSurfaceSize(tester, const Size(1800, 800));
+          final router = _buildRouter();
+          await tester.pumpWidget(
+            MaterialApp.router(
+              routerConfig: router,
+              builder: (context, child) =>
+                  Directionality(textDirection: direction, child: child!),
+            ),
+          );
+
+          final toggle = find.byKey(const ValueKey('rail-toggle-button'));
+          final expandedCenter = tester.getCenter(toggle);
+          final expandedTop = tester.getTopLeft(toggle).dy;
+          expect(expandedTop, 0);
+
+          await tester.tap(toggle);
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 100));
+          expect(tester.getCenter(toggle).dx, closeTo(expandedCenter.dx, 0.01));
+          expect(tester.getTopLeft(toggle).dy, expandedTop);
+
+          await tester.pumpAndSettle();
+          expect(tester.getCenter(toggle).dx, closeTo(expandedCenter.dx, 0.01));
+          expect(tester.getTopLeft(toggle).dy, expandedTop);
+        },
+      );
+    }
+
+    testWidgets('material rail toggle keeps the iPad window-control fallback', (
+      tester,
+    ) async {
+      _mockWindowControlLayout();
+      try {
+        _setSurfaceSize(tester, const Size(700, 800));
+        final router = _buildRouter();
+        await tester.pumpWidget(
+          MaterialApp.router(
+            routerConfig: router,
+            builder: (context, child) => AdaptiveStyleScope(
+              override: AdaptiveStyle.material,
+              child: child!,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final toggle = find.byKey(const ValueKey('rail-toggle-button'));
+        Padding safeSpan() => tester.widget<Padding>(
+          find.byKey(const ValueKey('rail-leading-safe-span')),
+        );
+        final collapsedCenter = tester.getCenter(toggle);
+        expect(tester.getTopLeft(toggle).dy, 0);
+        expect(
+          safeSpan().padding,
+          const EdgeInsetsDirectional.only(start: 40, end: 12),
+        );
+
+        await tester.tap(toggle);
+        await tester.pumpAndSettle();
+
+        expect(tester.getCenter(toggle).dx, closeTo(collapsedCenter.dx, 0.01));
+        expect(tester.getTopLeft(toggle).dy, 0);
+        expect(
+          safeSpan().padding,
+          const EdgeInsetsDirectional.only(start: 40, end: 12),
+        );
+      } finally {
+        _resetWindowControlLayoutMock();
+      }
+    });
+
     testWidgets('collapsed rail hides the resize handle', (tester) async {
       _setSurfaceSize(tester, const Size(700, 600));
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
       expect(find.byKey(const ValueKey('rail-resize-handle')), findsNothing);
+      expect(
+        find.byKey(const ValueKey('rail-collapsed-resize-handle')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('material-side-navigation-drag-bar')),
+        findsNothing,
+      );
 
       await tester.tap(find.byIcon(Icons.menu));
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('rail-resize-handle')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('rail-collapsed-resize-handle')),
+        findsNothing,
+      );
+    });
+
+    for (final direction in TextDirection.values) {
+      testWidgets(
+        'material rail collapses and reopens by dragging in $direction',
+        (tester) async {
+          _setSurfaceSize(tester, const Size(1800, 800));
+          final router = _buildRouter();
+          await tester.pumpWidget(
+            MaterialApp.router(
+              routerConfig: router,
+              builder: (context, child) =>
+                  Directionality(textDirection: direction, child: child!),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          final collapseOffset = direction == TextDirection.ltr
+              ? const Offset(-100, 0)
+              : const Offset(100, 0);
+          await tester.drag(
+            find.byKey(const ValueKey('rail-resize-handle')),
+            collapseOffset,
+          );
+          await tester.pumpAndSettle();
+
+          NavigationRail rail() =>
+              tester.widget<NavigationRail>(find.byType(NavigationRail));
+          expect(rail().extended, isFalse);
+          expect(
+            find.byKey(const ValueKey('rail-resize-handle')),
+            findsNothing,
+          );
+          expect(
+            find.byKey(const ValueKey('material-side-navigation-drag-bar')),
+            findsNothing,
+          );
+
+          final expandOffset = direction == TextDirection.ltr
+              ? const Offset(24, 0)
+              : const Offset(-24, 0);
+          await tester.drag(
+            find.byKey(const ValueKey('rail-resize-gesture-handle')),
+            expandOffset,
+          );
+          await tester.pumpAndSettle();
+
+          expect(rail().extended, isTrue);
+          expect(
+            find.byKey(const ValueKey('rail-resize-handle')),
+            findsOneWidget,
+          );
+          expect(
+            find.byKey(const ValueKey('material-side-navigation-drag-bar')),
+            findsOneWidget,
+          );
+        },
+      );
+    }
+
+    testWidgets('material rail keeps one drag active across collapse', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1800, 800));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      NavigationRail rail() =>
+          tester.widget<NavigationRail>(find.byType(NavigationRail));
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.byKey(const ValueKey('rail-resize-handle'))),
+      );
+
+      await gesture.moveBy(const Offset(-100, 0));
+      await tester.pumpAndSettle();
+      expect(rail().extended, isFalse);
+      expect(
+        find.byKey(const ValueKey('rail-collapsed-resize-handle')),
+        findsOneWidget,
+      );
+
+      // The pointer is still down. Reversing the same gesture must reopen the
+      // rail without requiring the user to release and grab it again.
+      await gesture.moveBy(const Offset(100, 0));
+      await tester.pumpAndSettle();
+      expect(rail().extended, isTrue);
+      expect(find.byKey(const ValueKey('rail-resize-handle')), findsOneWidget);
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('apple boundaries use beside Sidebar from medium upward', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      _setSurfaceSize(tester, const Size(599, 479));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(
+        find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-beside-host')),
+        findsNothing,
+      );
+
+      for (final width in [600.0, 905.0, 906.0, 1400.0]) {
+        tester.view.physicalSize = Size(width, 479);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(NavigationRail), findsNothing);
+        expect(find.byType(NavigationDrawer), findsNothing);
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-beside-host')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-panel')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-resize-handle')),
+          findsOneWidget,
+        );
+        final sidebarSurface = find.byKey(
+          const ValueKey('cupertino-sidebar-surface'),
+        );
+        final sidebarNavigationBar = find.descendant(
+          of: sidebarSurface,
+          matching: find.byType(CupertinoNavigationBar),
+        );
+        expect(sidebarNavigationBar, findsOneWidget);
+        final navigationBar = tester.widget<CupertinoNavigationBar>(
+          sidebarNavigationBar,
+        );
+        expect(navigationBar.enableBackgroundFilterBlur, isTrue);
+        expect(navigationBar.backgroundColor, CupertinoColors.transparent);
+        final destinationList = find.byKey(
+          const ValueKey('cupertino-sidebar-destination-list'),
+        );
+        expect(
+          tester.getTopLeft(destinationList).dy -
+              tester.getTopLeft(sidebarSurface).dy,
+          0,
+        );
+        final firstDestination = find.byKey(
+          const ValueKey('cupertino-sidebar-destination-0'),
+        );
+        expect(
+          tester.getTopLeft(firstDestination).dy -
+              tester.getTopLeft(sidebarSurface).dy,
+          greaterThanOrEqualTo(68),
+        );
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-scrim')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-edge-gesture')),
+          findsOneWidget,
+        );
+      }
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('apple Sidebar spaces destinations below toolbar blur', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      _setSurfaceSize(tester, const Size(700, 160));
+      final router = _buildRouter(
+        destinations: List<AdaptiveNavigationDestination>.generate(
+          6,
+          (index) => AdaptiveNavigationDestination(
+            label: 'Destination $index',
+            icons: const NavigationDestinationIcons(
+              material: Icon(Icons.circle_outlined),
+              materialSelected: Icon(Icons.circle),
+              apple: Icon(CupertinoIcons.circle),
+              appleSelected: Icon(CupertinoIcons.circle_fill),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      final surface = find.byKey(const ValueKey('cupertino-sidebar-surface'));
+      final list = find.byKey(
+        const ValueKey('cupertino-sidebar-destination-list'),
+      );
+      final secondDestination = find.byKey(
+        const ValueKey('cupertino-sidebar-destination-1'),
+      );
+      final surfaceTop = tester.getTopLeft(surface).dy;
+
+      expect(tester.getTopLeft(list).dy, surfaceTop);
+      expect(
+        tester.getTopLeft(secondDestination).dy,
+        greaterThan(surfaceTop + 44),
+      );
+
+      await tester.drag(list, const Offset(0, -100));
+      await tester.pumpAndSettle();
+
+      final scrolledTop = tester.getTopLeft(secondDestination).dy;
+      expect(scrolledTop, greaterThan(surfaceTop));
+      expect(scrolledTop, lessThan(surfaceTop + 44));
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('apple Sidebar visibility survives width-class round trips', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      _setSurfaceSize(tester, const Size(700, 600));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-panel')),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.byKey(const ValueKey('cupertino-sidebar-toggle')));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-panel')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-resize-handle')),
+        findsNothing,
+      );
+
+      tester.view.physicalSize = const Size(906, 600);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-panel')),
+        findsNothing,
+      );
+
+      tester.view.physicalSize = const Size(599, 600);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
+        findsOneWidget,
+      );
+
+      tester.view.physicalSize = const Size(700, 600);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-panel')),
+        findsNothing,
+      );
+
+      await tester.tap(find.byKey(const ValueKey('cupertino-sidebar-toggle')));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-panel')),
+        findsOneWidget,
+      );
+      debugDefaultTargetPlatformOverride = null;
     });
 
     testWidgets(
-      'apple medium+ uses the documented rail compatibility fallback',
+      'apple detail routes retain the hidden Sidebar command and avoidance',
+      (tester) async {
+        _mockWindowControlLayout();
+        try {
+          _setSurfaceSize(tester, const Size(700, 600));
+          final router = _buildRouter();
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+          await tester.pumpAndSettle();
+
+          final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
+          final toggleElement = tester.element(toggle);
+          await tester.tap(toggle);
+          await tester.pumpAndSettle();
+          router.push('/habits/detail');
+          await tester.pumpAndSettle();
+
+          final pageLeading = find.byKey(const ValueKey('test-page-leading'));
+          expect(find.text('detail page'), findsOneWidget);
+          expect(toggle.hitTestable(), findsOneWidget);
+          expect(tester.element(toggle), same(toggleElement));
+          expect(tester.getTopLeft(toggle).dx, 56);
+          expect(
+            tester.getTopLeft(pageLeading).dx,
+            greaterThanOrEqualTo(tester.getTopRight(toggle).dx),
+          );
+        } finally {
+          _resetWindowControlLayoutMock();
+        }
+      },
+    );
+
+    for (final sliver in [false, true]) {
+      testWidgets(
+        'apple Sidebar command precedes existing ${sliver ? 'sliver ' : ''}app bar leading',
+        (tester) async {
+          _mockWindowControlLayout();
+          try {
+            _setSurfaceSize(tester, const Size(700, 600));
+            await tester.pumpWidget(
+              MaterialApp(
+                home: AdaptiveNavigationShell(
+                  selectedIndex: 0,
+                  destinations: const [
+                    AdaptiveNavigationDestination(
+                      label: 'Habits',
+                      icons: NavigationDestinationIcons(
+                        material: Icon(Icons.home_outlined),
+                        materialSelected: Icon(Icons.home),
+                        apple: Icon(CupertinoIcons.home),
+                        appleSelected: Icon(CupertinoIcons.house_fill),
+                      ),
+                    ),
+                  ],
+                  onDestinationSelected: (_) {},
+                  child: Scaffold(
+                    appBar: sliver
+                        ? null
+                        : const WindowControlAppBar(
+                            leading: BackButton(
+                              key: ValueKey('test-existing-leading'),
+                            ),
+                          ),
+                    body: sliver
+                        ? const CustomScrollView(
+                            slivers: [
+                              WindowControlSliverAppBar(
+                                leading: BackButton(
+                                  key: ValueKey('test-existing-leading'),
+                                ),
+                              ),
+                              SliverFillRemaining(child: SizedBox.shrink()),
+                            ],
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                ),
+              ),
+            );
+            await tester.pumpAndSettle();
+
+            await tester.tap(
+              find.byKey(const ValueKey('cupertino-sidebar-toggle')),
+            );
+            await tester.pumpAndSettle();
+
+            final toggle = find.byKey(
+              const ValueKey('cupertino-sidebar-toggle'),
+            );
+            final existingLeading = find.byKey(
+              const ValueKey('test-existing-leading'),
+            );
+            expect(toggle.hitTestable(), findsOneWidget);
+            expect(tester.getTopLeft(toggle).dx, 56);
+            expect(
+              tester.getTopLeft(existingLeading).dx,
+              greaterThanOrEqualTo(tester.getTopRight(toggle).dx),
+            );
+          } finally {
+            _resetWindowControlLayoutMock();
+          }
+        },
+      );
+    }
+
+    for (final direction in TextDirection.values) {
+      testWidgets('apple hidden Sidebar opens from its edge in $direction', (
+        tester,
+      ) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+        _setSurfaceSize(tester, const Size(700, 600));
+        final router = _buildRouter();
+        await tester.pumpWidget(
+          MaterialApp.router(
+            routerConfig: router,
+            builder: (context, child) =>
+                Directionality(textDirection: direction, child: child!),
+          ),
+        );
+
+        await tester.tap(
+          find.byKey(const ValueKey('cupertino-sidebar-toggle')),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-panel')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-edge-gesture')),
+          findsOneWidget,
+        );
+
+        final edgeStart = direction == TextDirection.ltr
+            ? const Offset(5, 300)
+            : const Offset(695, 300);
+        final outsideStart = direction == TextDirection.ltr
+            ? const Offset(25, 300)
+            : const Offset(675, 300);
+        final openingDelta = direction == TextDirection.ltr
+            ? const Offset(40, 0)
+            : const Offset(-40, 0);
+
+        await tester.dragFrom(edgeStart, -openingDelta);
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-panel')),
+          findsNothing,
+        );
+
+        await tester.dragFrom(outsideStart, openingDelta);
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-panel')),
+          findsNothing,
+        );
+
+        await tester.dragFrom(edgeStart, openingDelta);
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-panel')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-edge-gesture')),
+          findsOneWidget,
+        );
+        debugDefaultTargetPlatformOverride = null;
+      });
+    }
+
+    testWidgets('apple Sidebar switches branch without closing', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      _setSurfaceSize(tester, const Size(700, 600));
+      final selected = <int>[];
+      final router = _buildRouter(onBranchChanged: selected.add);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      final destinationButtons = find.descendant(
+        of: find.byKey(const ValueKey('cupertino-sidebar-destination-list')),
+        matching: find.byType(CupertinoButton),
+      );
+      expect(destinationButtons, findsNWidgets(2));
+      for (final button in tester.widgetList<CupertinoButton>(
+        destinationButtons,
+      )) {
+        expect(button.sizeStyle, CupertinoButtonSize.medium);
+        expect(button.minimumSize, const Size(0, 44));
+        expect(button.pressedOpacity, 0.4);
+      }
+      await tester.tap(
+        find.byKey(const ValueKey('cupertino-sidebar-destination-1')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(selected, [1]);
+      expect(find.text('today page'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-panel')),
+        findsOneWidget,
+      );
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets(
+      'apple Sidebar keeps one tooltip-enabled toggle across hosts and routes',
       (tester) async {
         debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+        tester.view.padding = const FakeViewPadding(top: 12);
+        tester.view.viewPadding = const FakeViewPadding(top: 12);
         _setSurfaceSize(tester, const Size(700, 600));
         final router = _buildRouter();
         await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-        // Apple medium maps to the collapsible rail, collapsed by default.
-        expect(find.byType(NavigationRail), findsOneWidget);
+        final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
+        final anchor = find.byKey(
+          const ValueKey('cupertino-sidebar-leading-anchor'),
+        );
+        final localizations = MaterialLocalizations.of(tester.element(toggle));
+        final toggleElement = tester.element(toggle);
+
+        expect(toggle, findsOneWidget);
+        expect(toggle.hitTestable(), findsOneWidget);
+        expect(tester.getSize(toggle), const Size.square(44));
         expect(
-          tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
-          isFalse,
+          tester
+                  .getTopRight(
+                    find.byKey(const ValueKey('cupertino-sidebar-surface')),
+                  )
+                  .dx -
+              tester.getTopRight(toggle).dx,
+          8,
+        );
+        expect(tester.getSize(anchor).width, 0);
+        expect(
+          tester
+              .widget<Tooltip>(
+                find.ancestor(of: toggle, matching: find.byType(Tooltip)),
+              )
+              .message,
+          localizations.expandedIconTapHint,
         );
 
-        tester.view.physicalSize = const Size(1300, 800);
+        await tester.tap(toggle);
         await tester.pumpAndSettle();
 
-        // Apple large maps to the collapsible rail, extended by default; no
-        // drawer tier exists on Apple platforms.
+        expect(toggle, findsOneWidget);
+        expect(tester.element(toggle), same(toggleElement));
+        expect(tester.getSize(anchor), const Size.square(44));
+        expect(tester.getTopLeft(toggle), tester.getTopLeft(anchor));
         expect(
-          tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
-          isTrue,
+          tester
+              .widget<Tooltip>(
+                find.ancestor(of: toggle, matching: find.byType(Tooltip)),
+              )
+              .message,
+          localizations.collapsedIconTapHint,
         );
-        expect(find.byType(NavigationDrawer), findsNothing);
-        expect(find.byIcon(Icons.menu_open), findsOneWidget);
+
+        final hiddenPosition = tester.getTopLeft(toggle);
+        router.push('/habits/detail');
+        await tester.pumpAndSettle();
+        expect(tester.element(toggle), same(toggleElement));
+        expect(tester.getTopLeft(toggle), hiddenPosition);
         debugDefaultTargetPlatformOverride = null;
       },
     );
+
+    testWidgets('apple Sidebar preserves one interactive toggle and focus', (
+      tester,
+    ) async {
+      final semantics = tester.ensureSemantics();
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      _setSurfaceSize(tester, const Size(700, 600));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
+      final localizations = MaterialLocalizations.of(tester.element(toggle));
+      final toggleElement = tester.element(toggle);
+      final button = tester.widget<CupertinoButton>(toggle);
+      button.focusNode!.requestFocus();
+      await tester.pump();
+      expect(button.focusNode!.hasFocus, isTrue);
+
+      await tester.tap(toggle);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 125));
+
+      expect(toggle, findsOneWidget);
+      expect(tester.element(toggle), same(toggleElement));
+      expect(
+        tester.widget<CupertinoButton>(toggle).focusNode!.hasFocus,
+        isTrue,
+      );
+      expect(
+        find
+                .bySemanticsLabel(localizations.expandedIconTapHint)
+                .evaluate()
+                .length +
+            find
+                .bySemanticsLabel(localizations.collapsedIconTapHint)
+                .evaluate()
+                .length,
+        1,
+      );
+
+      await tester.pumpAndSettle();
+      expect(tester.element(toggle), same(toggleElement));
+      expect(
+        tester.widget<CupertinoButton>(toggle).focusNode!.hasFocus,
+        isTrue,
+      );
+
+      await tester.tap(toggle);
+      await tester.pumpAndSettle();
+      expect(tester.element(toggle), same(toggleElement));
+      expect(
+        tester.widget<CupertinoButton>(toggle).focusNode!.hasFocus,
+        isTrue,
+      );
+      semantics.dispose();
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('apple macOS Sidebar keeps a compact inset toolbar', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      _setSurfaceSize(tester, const Size(700, 600));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
+      final tooltip = find.ancestor(of: toggle, matching: find.byType(Tooltip));
+      expect(
+        tester.getCenter(toggle).dy,
+        tester.getCenter(find.byKey(const ValueKey('test-page-leading'))).dy,
+      );
+      expect(
+        tester
+            .getTopLeft(find.byKey(const ValueKey('cupertino-sidebar-surface')))
+            .dy,
+        12,
+      );
+      final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      addTearDown(mouse.removePointer);
+      await mouse.addPointer(location: Offset.zero);
+      await mouse.moveTo(tester.getCenter(toggle));
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(tooltip, findsOneWidget);
+      expect(
+        find.text(tester.widget<Tooltip>(tooltip).message!),
+        findsOneWidget,
+      );
+
+      await mouse.down(tester.getCenter(toggle));
+      await mouse.up();
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-panel')),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets(
+      'apple hidden Sidebar toggle anchors to the search command bar',
+      (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+        _setSurfaceSize(tester, const Size(700, 600));
+        final controller = TextEditingController();
+        final focusNode = FocusNode();
+        addTearDown(controller.dispose);
+        addTearDown(focusNode.dispose);
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: AdaptiveNavigationShell(
+              selectedIndex: 0,
+              destinations: const [
+                AdaptiveNavigationDestination(
+                  label: 'Habits',
+                  icons: NavigationDestinationIcons(
+                    material: Icon(Icons.home_outlined),
+                    materialSelected: Icon(Icons.home),
+                    apple: Icon(Icons.home_outlined),
+                    appleSelected: Icon(Icons.home),
+                  ),
+                ),
+                AdaptiveNavigationDestination(
+                  label: 'Today',
+                  icons: NavigationDestinationIcons(
+                    material: Icon(Icons.calendar_today_outlined),
+                    materialSelected: Icon(Icons.calendar_today),
+                    apple: Icon(Icons.calendar_today_outlined),
+                    appleSelected: Icon(Icons.calendar_today),
+                  ),
+                ),
+              ],
+              onDestinationSelected: (_) {},
+              child: Scaffold(
+                body: CustomScrollView(
+                  slivers: [
+                    AdaptiveSliverSearchBar.apple(
+                      title: const Text('Habits'),
+                      leading: const Icon(
+                        Icons.article_outlined,
+                        key: ValueKey('test-search-leading'),
+                      ),
+                      controller: controller,
+                      focusNode: focusNode,
+                      isSearchActive: false,
+                      keyword: '',
+                      onChanged: (_) {},
+                      onSearchActivated: () {},
+                      onSearchDismissed: () {},
+                    ),
+                    const SliverFillRemaining(child: SizedBox.shrink()),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+
+        final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
+        final anchor = find.byKey(
+          const ValueKey('cupertino-sidebar-leading-anchor'),
+        );
+        final header = tester.widget<SliverPersistentHeader>(
+          find.byType(SliverPersistentHeader),
+        );
+
+        expect(header.delegate.minExtent, 56);
+        expect(header.delegate.maxExtent, 56);
+        final toggleElement = tester.element(toggle);
+        expect(toggle, findsOneWidget);
+        expect(toggle.hitTestable(), findsOneWidget);
+        expect(tester.getSize(anchor).width, 0);
+
+        await tester.tap(toggle);
+        await tester.pumpAndSettle();
+
+        expect(toggle.hitTestable(), findsOneWidget);
+        expect(tester.element(toggle), same(toggleElement));
+        expect(tester.getSize(anchor), const Size.square(44));
+        expect(tester.getTopLeft(anchor).dy, 12);
+        expect(tester.getTopLeft(toggle), tester.getTopLeft(anchor));
+        expect(
+          tester
+              .getTopLeft(find.byKey(const ValueKey('test-search-leading')))
+              .dx,
+          greaterThan(tester.getTopLeft(toggle).dx),
+        );
+        debugDefaultTargetPlatformOverride = null;
+      },
+    );
+
+    for (final direction in TextDirection.values) {
+      testWidgets('apple Sidebar resizes and remembers width in $direction', (
+        tester,
+      ) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+        _setSurfaceSize(tester, const Size(1000, 600));
+        final router = _buildRouter();
+        await tester.pumpWidget(
+          MaterialApp.router(
+            routerConfig: router,
+            builder: (context, child) =>
+                Directionality(textDirection: direction, child: child!),
+          ),
+        );
+
+        Size panelSize() => tester.getSize(
+          find.byKey(const ValueKey('cupertino-sidebar-panel')),
+        );
+        expect(panelSize().width, 200);
+        final resizeHandle = find.byKey(
+          const ValueKey('cupertino-sidebar-resize-handle'),
+        );
+        expect(
+          find.byKey(const ValueKey('material-side-navigation-drag-bar')),
+          findsNothing,
+        );
+        expect(tester.getSize(resizeHandle).width, 16);
+        expect(tester.getSize(resizeHandle).height, panelSize().height - 50);
+        expect(
+          tester.getCenter(resizeHandle).dx,
+          direction == TextDirection.ltr
+              ? tester
+                        .getTopRight(
+                          find.byKey(
+                            const ValueKey('cupertino-sidebar-surface'),
+                          ),
+                        )
+                        .dx -
+                    8
+              : tester
+                        .getTopLeft(
+                          find.byKey(
+                            const ValueKey('cupertino-sidebar-surface'),
+                          ),
+                        )
+                        .dx +
+                    8,
+        );
+
+        final logicalDrag = direction == TextDirection.ltr
+            ? const Offset(30, 0)
+            : const Offset(-30, 0);
+        await tester.drag(resizeHandle, logicalDrag);
+        await tester.pumpAndSettle();
+        final resizedWidth = panelSize().width;
+        expect(resizedWidth, greaterThan(200));
+
+        await tester.tap(
+          find.byKey(const ValueKey('cupertino-sidebar-toggle')),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(
+          find.byKey(const ValueKey('cupertino-sidebar-toggle')),
+        );
+        await tester.pumpAndSettle();
+        expect(panelSize().width, resizedWidth);
+
+        tester.view.physicalSize = const Size(599, 600);
+        await tester.pumpAndSettle();
+        tester.view.physicalSize = const Size(1000, 600);
+        await tester.pumpAndSettle();
+        expect(panelSize().width, resizedWidth);
+        debugDefaultTargetPlatformOverride = null;
+      });
+    }
+
+    for (final platform in <TargetPlatform>[
+      TargetPlatform.android,
+      TargetPlatform.iOS,
+    ]) {
+      testWidgets('custom drag handle builder is adaptive on $platform', (
+        tester,
+      ) async {
+        debugDefaultTargetPlatformOverride = platform;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+        _setSurfaceSize(tester, const Size(1000, 600));
+        final observedStates = <Set<WidgetState>>[];
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: AdaptiveNavigationShell(
+              selectedIndex: 0,
+              destinations: const [
+                AdaptiveNavigationDestination(
+                  label: 'Habits',
+                  icons: NavigationDestinationIcons(
+                    material: Icon(Icons.home_outlined),
+                    materialSelected: Icon(Icons.home),
+                    apple: Icon(CupertinoIcons.home),
+                    appleSelected: Icon(CupertinoIcons.house_fill),
+                  ),
+                ),
+              ],
+              onDestinationSelected: (_) {},
+              sideNavigationDragHandleBuilder: (context, states) {
+                observedStates.add(Set<WidgetState>.of(states));
+                return const SizedBox(
+                  key: ValueKey('custom-side-navigation-drag-bar'),
+                  width: 3,
+                  height: 24,
+                );
+              },
+              child: const Scaffold(body: SizedBox.expand()),
+            ),
+          ),
+        );
+
+        final customBar = find.byKey(
+          const ValueKey('custom-side-navigation-drag-bar'),
+        );
+        final resizeHandle = find.byKey(
+          ValueKey(
+            platform == TargetPlatform.iOS
+                ? 'cupertino-sidebar-resize-handle'
+                : 'rail-resize-handle',
+          ),
+        );
+        expect(customBar, findsOneWidget);
+        expect(tester.getSize(customBar), const Size(3, 24));
+
+        final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+        addTearDown(mouse.removePointer);
+        await mouse.addPointer(location: Offset.zero);
+        await mouse.moveTo(tester.getCenter(resizeHandle));
+        await tester.pump();
+        expect(
+          observedStates.any((states) => states.contains(WidgetState.hovered)),
+          isTrue,
+        );
+
+        await mouse.down(tester.getCenter(resizeHandle));
+        await mouse.moveBy(const Offset(10, 0));
+        await tester.pump();
+        expect(
+          observedStates.any((states) => states.contains(WidgetState.dragged)),
+          isTrue,
+        );
+        await mouse.up();
+        await tester.pumpAndSettle();
+        expect(observedStates.last.contains(WidgetState.dragged), isFalse);
+        debugDefaultTargetPlatformOverride = null;
+      });
+    }
+
+    testWidgets(
+      'apple beside span constrains the branch without changing media',
+      (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+        tester.view.padding = const FakeViewPadding(left: 44, right: 20);
+        tester.view.viewPadding = const FakeViewPadding(left: 50, right: 30);
+        _setSurfaceSize(tester, const Size(700, 600));
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: AdaptiveNavigationShell(
+              selectedIndex: 0,
+              destinations: const [
+                AdaptiveNavigationDestination(
+                  label: 'Habits',
+                  icons: NavigationDestinationIcons(
+                    material: Icon(Icons.home_outlined),
+                    materialSelected: Icon(Icons.home),
+                    apple: Icon(CupertinoIcons.home),
+                    appleSelected: Icon(CupertinoIcons.house_fill),
+                  ),
+                ),
+              ],
+              onDestinationSelected: (_) {},
+              child: const _BranchInsetsProbe(),
+            ),
+          ),
+        );
+
+        Size branchPadding() => tester.getSize(
+          find.byKey(const ValueKey('branch-horizontal-padding')),
+        );
+        Size branchViewPadding() => tester.getSize(
+          find.byKey(const ValueKey('branch-horizontal-view-padding')),
+        );
+        final branch = find.byKey(const ValueKey('branch-layout-probe'));
+        final surface = find.byKey(const ValueKey('cupertino-sidebar-surface'));
+        final surfaceWidget = tester.widget<CupertinoFloatingGlassSurface>(
+          surface,
+        );
+
+        expect(branchPadding().width, 64);
+        expect(branchViewPadding().width, 80);
+        expect(tester.getTopLeft(branch).dx, 254);
+        expect(tester.getTopLeft(surface), const Offset(44, 12));
+        expect(tester.getSize(surface), const Size(198, 576));
+        expect(
+          surfaceWidget.borderRadius,
+          const BorderRadius.all(Radius.circular(25)),
+        );
+        expect(surfaceWidget.blurSigma, 10);
+
+        await tester.tap(
+          find.byKey(const ValueKey('cupertino-sidebar-toggle')),
+        );
+        await tester.pumpAndSettle();
+        expect(branchPadding().width, 64);
+        expect(branchViewPadding().width, 80);
+        expect(tester.getTopLeft(branch).dx, 0);
+        debugDefaultTargetPlatformOverride = null;
+      },
+    );
+
+    testWidgets('apple Sidebar preserves all branch media insets', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      tester.view.padding = const FakeViewPadding(
+        left: 11,
+        top: 22,
+        right: 33,
+        bottom: 44,
+      );
+      tester.view.viewPadding = const FakeViewPadding(
+        left: 15,
+        top: 26,
+        right: 37,
+        bottom: 48,
+      );
+      tester.view.viewInsets = const FakeViewPadding(
+        left: 3,
+        top: 5,
+        right: 7,
+        bottom: 90,
+      );
+      _setSurfaceSize(tester, const Size(700, 600));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AdaptiveNavigationShell(
+            selectedIndex: 0,
+            destinations: const [
+              AdaptiveNavigationDestination(
+                label: 'Habits',
+                icons: NavigationDestinationIcons(
+                  material: Icon(Icons.home_outlined),
+                  materialSelected: Icon(Icons.home),
+                  apple: Icon(CupertinoIcons.home),
+                  appleSelected: Icon(CupertinoIcons.house_fill),
+                ),
+              ),
+            ],
+            onDestinationSelected: (_) {},
+            child: const _BranchInsetsProbe(),
+          ),
+        ),
+      );
+
+      expect(
+        tester
+            .getSize(find.byKey(const ValueKey('branch-horizontal-padding')))
+            .width,
+        44,
+      );
+      expect(
+        tester
+            .getSize(find.byKey(const ValueKey('branch-vertical-padding')))
+            .height,
+        66,
+      );
+      expect(
+        tester
+            .getSize(
+              find.byKey(const ValueKey('branch-horizontal-view-padding')),
+            )
+            .width,
+        52,
+      );
+      expect(
+        tester
+            .getSize(find.byKey(const ValueKey('branch-vertical-view-padding')))
+            .height,
+        74,
+      );
+      expect(
+        tester.getSize(find.byKey(const ValueKey('branch-view-insets'))),
+        const Size(10, 95),
+      );
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('apple Sidebar disables visibility animation immediately', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      _setSurfaceSize(tester, const Size(700, 600));
+      final router = _buildRouter();
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: router,
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(disableAnimations: true),
+            child: child!,
+          ),
+        ),
+      );
+
+      await tester.tap(find.byKey(const ValueKey('cupertino-sidebar-toggle')));
+      await tester.pump();
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-panel')),
+        findsNothing,
+      );
+
+      await tester.tap(find.byKey(const ValueKey('cupertino-sidebar-toggle')));
+      await tester.pump();
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-panel')),
+        findsOneWidget,
+      );
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('apple Sidebar exposes selected destination semantics', (
+      tester,
+    ) async {
+      final semanticsHandle = tester.ensureSemantics();
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      _setSurfaceSize(tester, const Size(700, 600));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      final destinationSemantics = tester.getSemantics(
+        find.byKey(const ValueKey('cupertino-sidebar-destination-0')),
+      );
+      expect(destinationSemantics.label, 'Habits');
+      expect(destinationSemantics.flagsCollection.isSelected, Tristate.isTrue);
+      expect(destinationSemantics.flagsCollection.isButton, isTrue);
+      expect(find.bySemanticsLabel('Show Snackbar'), findsOneWidget);
+      semanticsHandle.dispose();
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('apple Sidebar supports keyboard activation', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      _setSurfaceSize(tester, const Size(700, 600));
+      final selected = <int>[];
+      final router = _buildRouter(onBranchChanged: selected.add);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      final selectedButton = tester.widget<CupertinoButton>(
+        find.descendant(
+          of: find.byKey(const ValueKey('cupertino-sidebar-destination-0')),
+          matching: find.byType(CupertinoButton),
+        ),
+      );
+      expect(selectedButton.autofocus, isTrue);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await tester.pumpAndSettle();
+
+      expect(selected, [1]);
+      expect(find.text('today page'), findsOneWidget);
+
+      final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
+      final toggleButton = tester.widget<CupertinoButton>(toggle);
+      toggleButton.focusNode!.requestFocus();
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-panel')),
+        findsNothing,
+      );
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('apple Sidebar remains usable at large text scale', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      tester.platformDispatcher.textScaleFactorTestValue = 3;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      _setSurfaceSize(tester, const Size(700, 240));
+      final router = _buildRouter(
+        destinations: const [
+          AdaptiveNavigationDestination(
+            label: 'A very long habits destination label',
+            icons: NavigationDestinationIcons(
+              material: Icon(Icons.home_outlined),
+              materialSelected: Icon(Icons.home),
+              apple: Icon(CupertinoIcons.home),
+              appleSelected: Icon(CupertinoIcons.house_fill),
+            ),
+          ),
+          AdaptiveNavigationDestination(
+            label: 'Today',
+            icons: NavigationDestinationIcons(
+              material: Icon(Icons.calendar_today_outlined),
+              materialSelected: Icon(Icons.calendar_today),
+              apple: Icon(CupertinoIcons.calendar),
+              appleSelected: Icon(CupertinoIcons.calendar_today),
+            ),
+          ),
+        ],
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      final destinationButtons = tester.widgetList<CupertinoButton>(
+        find.descendant(
+          of: find.byKey(const ValueKey('cupertino-sidebar-destination-list')),
+          matching: find.byType(CupertinoButton),
+        ),
+      );
+      expect(destinationButtons, hasLength(2));
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-resize-handle')),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('apple Sidebar destination foregrounds stay opaque', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      _setSurfaceSize(tester, const Size(700, 600));
+      final router = _buildRouter();
+      await tester.pumpWidget(
+        MaterialApp.router(
+          theme: ThemeData(
+            cupertinoOverrideTheme: const CupertinoThemeData(
+              primaryColor: Color(0x80336699),
+            ),
+          ),
+          routerConfig: router,
+        ),
+      );
+
+      CupertinoButton destinationButton(int index) =>
+          tester.widget<CupertinoButton>(
+            find.descendant(
+              of: find.byKey(ValueKey('cupertino-sidebar-destination-$index')),
+              matching: find.byType(CupertinoButton),
+            ),
+          );
+
+      expect(destinationButton(0).foregroundColor!.a, 1);
+      expect(destinationButton(1).foregroundColor!.a, 1);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets(
+      'apple Sidebar resolves the Cupertino bar surface in dark mode',
+      (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+        _setSurfaceSize(tester, const Size(700, 600));
+        const barBackground = Color(0xCC112233);
+        final router = _buildRouter();
+        await tester.pumpWidget(
+          MaterialApp.router(
+            theme: ThemeData.dark().copyWith(
+              cupertinoOverrideTheme: const CupertinoThemeData(
+                barBackgroundColor: barBackground,
+              ),
+            ),
+            routerConfig: router,
+          ),
+        );
+
+        final surfaceFinder = find.byKey(
+          const ValueKey('cupertino-sidebar-surface'),
+        );
+        final surface = tester.widget<CupertinoFloatingGlassSurface>(
+          surfaceFinder,
+        );
+        final coloredSurfaces = tester.widgetList<ColoredBox>(
+          find.descendant(of: surfaceFinder, matching: find.byType(ColoredBox)),
+        );
+        expect(
+          surface.borderRadius,
+          const BorderRadius.all(Radius.circular(25)),
+        );
+        expect(surface.blurSigma, 10);
+        expect(
+          coloredSurfaces.any((surface) => surface.color == barBackground),
+          isTrue,
+        );
+        expect(
+          find.descendant(
+            of: surfaceFinder,
+            matching: find.byType(BackdropFilter),
+          ),
+          findsNWidgets(2),
+        );
+        expect(find.byType(NavigationRail), findsNothing);
+        debugDefaultTargetPlatformOverride = null;
+      },
+    );
+
+    testWidgets('navigation toggles use Flutter localization labels', (
+      tester,
+    ) async {
+      final semantics = tester.ensureSemantics();
+      _setSurfaceSize(tester, const Size(700, 600));
+      var router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      final materialContext = tester.element(
+        find.byKey(const ValueKey('rail-toggle-button')),
+      );
+      final localizations = MaterialLocalizations.of(materialContext);
+      expect(
+        tester
+            .widget<IconButton>(
+              find.byKey(const ValueKey('rail-toggle-button')),
+            )
+            .tooltip,
+        localizations.collapsedIconTapHint,
+      );
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(
+        find.bySemanticsLabel(localizations.expandedIconTapHint),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('cupertino-sidebar-toggle')));
+      await tester.pumpAndSettle();
+      expect(
+        find.bySemanticsLabel(localizations.collapsedIconTapHint),
+        findsOneWidget,
+      );
+      semantics.dispose();
+      debugDefaultTargetPlatformOverride = null;
+    });
 
     testWidgets('switches forms when crossing the compact/medium boundary', (
       tester,
@@ -2675,12 +4563,12 @@ void main() {
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      // Drag slightly narrower than the auto width (224) -> 194.
+      // Drag wider than the auto width (200) -> 230.
       final gesture = await tester.startGesture(
         tester.getCenter(find.byKey(const ValueKey('rail-resize-handle'))),
       );
       for (var i = 0; i < 3; i++) {
-        await gesture.moveBy(const Offset(-10, 0));
+        await gesture.moveBy(const Offset(10, 0));
         await tester.pump();
       }
       await gesture.up();
@@ -2696,7 +4584,7 @@ void main() {
       tester.view.physicalSize = const Size(1800, 800);
       await tester.pumpAndSettle();
       final rail = tester.widget<NavigationRail>(find.byType(NavigationRail));
-      expect(rail.minExtendedWidth, closeTo(194, 0.01));
+      expect(rail.minExtendedWidth, closeTo(230, 0.01));
     });
   });
 

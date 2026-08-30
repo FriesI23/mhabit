@@ -435,11 +435,11 @@ class _NavigationSurfaceContentState extends State<_NavigationSurfaceContent> {
     final activeColor = CupertinoDynamicColor.resolve(
       theme.primaryColor,
       context,
-    );
+    ).withValues(alpha: 1);
     final inactiveColor = CupertinoDynamicColor.resolve(
-      CupertinoColors.inactiveGray,
+      CupertinoColors.label,
       context,
-    );
+    ).withValues(alpha: 1);
     final destinationExtent =
         widget.expandedNavigationWidth / widget.destinations.length;
 

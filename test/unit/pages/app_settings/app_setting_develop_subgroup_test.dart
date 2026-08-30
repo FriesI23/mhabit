@@ -42,8 +42,10 @@ Widget _host(AppDeveloperViewModel viewModel) =>
                 isInDevelopMode: value.isInDevelopMode,
                 isDisplayDebugMenuSelect: value.displayDebugMenu,
                 adaptiveStyleMode: value.adaptiveStyleMode,
+                textDirectionOverride: value.textDirectionOverride,
                 onDisplayDebugMenuSelectChanged: value.switchDisplayDebugMenu,
                 onAdaptiveStyleModeChanged: value.setAdaptiveStyleMode,
+                onTextDirectionOverrideChanged: value.setTextDirectionOverride,
               ),
             ),
           ),
@@ -87,7 +89,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final control = find.byKey(const ValueKey('developer-ui-style-control'));
-    expect(find.byType(MenuAnchor), findsOneWidget);
+    expect(find.byType(MenuAnchor), findsNWidgets(2));
     final tile = find.ancestor(of: control, matching: find.byType(ListTile));
     expect(
       tester.getCenter(control).dx,
@@ -110,5 +112,42 @@ void main() {
     await tester.tap(find.text('Apple'));
     await tester.pumpAndSettle();
     expect(viewModel.adaptiveStyleMode, AppAdaptiveStyleMode.apple);
+  });
+
+  testWidgets('text direction control switches three in-memory states', (
+    tester,
+  ) async {
+    final (profile, viewModel) = await _loadViewModel();
+    addTearDown(profile.dispose);
+    addTearDown(viewModel.dispose);
+
+    await tester.pumpWidget(_host(viewModel));
+    await tester.pumpAndSettle();
+
+    final control = find.byKey(
+      const ValueKey('developer-text-direction-control'),
+    );
+    expect(
+      find.descendant(of: control, matching: find.text('Auto')),
+      findsOneWidget,
+    );
+
+    await tester.tap(control);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('LTR'));
+    await tester.pumpAndSettle();
+    expect(viewModel.textDirectionOverride, TextDirection.ltr);
+
+    await tester.tap(control);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('RTL'));
+    await tester.pumpAndSettle();
+    expect(viewModel.textDirectionOverride, TextDirection.rtl);
+
+    await tester.tap(control);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Auto'));
+    await tester.pumpAndSettle();
+    expect(viewModel.textDirectionOverride, isNull);
   });
 }

@@ -169,15 +169,22 @@ class _Appbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
+    final useLargeTitle =
+        WindowSize.of(context).width == WindowSizeClass.compact;
+    final pageBackground = Theme.of(context).colorScheme.surface;
     return AdaptiveSliverAppBar(
       height: toolbarHeight,
-      styles: const AppBarStyles(
-        material: AppBarMaterialStyle(
+      styles: AppBarStyles(
+        material: const AppBarMaterialStyle(
           floating: false,
           snap: false,
           pinned: false,
         ),
-        apple: AppBarAppleStyle(collapsible: true),
+        apple: AppBarAppleStyle(
+          collapsible: useLargeTitle,
+          automaticBackgroundVisibility: false,
+          backgroundColor: pageBackground.withValues(alpha: 0.82),
+        ),
       ),
       title: Text(l10n?.habitToday_appBar_title ?? "Today"),
       actions: const [AppThemeSwitchButton()],

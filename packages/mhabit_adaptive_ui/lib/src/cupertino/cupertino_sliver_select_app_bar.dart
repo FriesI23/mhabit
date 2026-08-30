@@ -53,7 +53,7 @@ final class CupertinoSelectAction {
 /// commands in the bottom toolbar; wider layouts place them through
 /// adaptive_actions without allowing them to overlap the title.
 class CupertinoSliverSelectAppBar extends StatelessWidget {
-  static const double toolbarHeight = 52.0;
+  static const double toolbarHeight = 44.0;
 
   const CupertinoSliverSelectAppBar({
     super.key,
@@ -91,6 +91,7 @@ class CupertinoSliverSelectAppBar extends StatelessWidget {
     return CupertinoSliverAppBar(
       key: const ValueKey('cupertino-sliver-select-app-bar'),
       height: toolbarHeight,
+      backgroundColor: CupertinoColors.transparent,
       border: null,
       title: _viewMode
           ? _CupertinoSelectEntryToolbar(title: title, actions: actions)
