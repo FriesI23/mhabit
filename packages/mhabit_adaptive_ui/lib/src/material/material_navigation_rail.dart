@@ -1,102 +1,17 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 
 import '../adaptive/adaptive_navigation_destination.dart';
 import '../shell/navigation_shell_frame.dart';
+import '../shell/side_navigation.dart';
 import '../window_control/window_control_layout.dart';
 
-/// Extended navigation rail sizing configuration.
-///
-/// [collapsed] controls the icon-only rail. The extended interval grows from
-/// [minimum] to [maximum] as the window moves from [rampStart] to [rampEnd].
-/// The default constructor expresses a fixed logical-pixel target inside that
-/// interval. Use [fromRatio] to express a relative position instead, where 0
-/// selects the minimum and 1 the current upper bound.
-///
-/// ```text
-/// window width  rampStart ------------------------- rampEnd
-/// upper bound   minimum        /------------------- maximum
-/// actual width  clamp(requested, minimum..upper bound)
-/// ```
-class NavigationRailExtent {
-  /// Creates an extent with a fixed preferred extended [width].
-  ///
-  /// The preferred width is clamped to the interval available at runtime.
-  const NavigationRailExtent(
-    double width, {
-    this.collapsed = 72.0,
-    this.minimum = 180.0,
-    this.maximum = 360.0,
-    this.rampStart = 600.0,
-    this.rampEnd = 1600.0,
-  }) : assert(width >= 0),
-       assert(collapsed > 0),
-       assert(minimum > 0),
-       assert(minimum >= collapsed),
-       assert(maximum >= minimum),
-       assert(rampEnd > rampStart),
-       _width = width,
-       _ratio = null;
+/// Material-specific NavigationRail geometry.
+class MaterialNavigationRailStyle {
+  const MaterialNavigationRailStyle({this.collapsedExtent = 72.0})
+    : assert(collapsedExtent > 0);
 
-  /// Creates an extent at [ratio] within the available extended interval.
-  ///
-  /// A ratio of zero selects [minimum], while one selects the current upper
-  /// bound.
-  const NavigationRailExtent.fromRatio(
-    double ratio, {
-    this.collapsed = 72.0,
-    this.minimum = 180.0,
-    this.maximum = 360.0,
-    this.rampStart = 600.0,
-    this.rampEnd = 1600.0,
-  }) : assert(ratio >= 0 && ratio <= 1),
-       assert(collapsed > 0),
-       assert(minimum > 0),
-       assert(minimum >= collapsed),
-       assert(maximum >= minimum),
-       assert(rampEnd > rampStart),
-       _width = null,
-       _ratio = ratio;
-
-  /// Width of the collapsed icon rail.
-  final double collapsed;
-
-  /// Smallest extended rail width.
-  final double minimum;
-
-  /// Largest extended rail width available to manual resizing.
-  final double maximum;
-
-  /// Window width where the available upper bound equals [minimum].
-  final double rampStart;
-
-  /// Window width where the available upper bound reaches [maximum].
-  final double rampEnd;
-
-  final double? _width;
-  final double? _ratio;
-
-  /// Returns the largest rail width available at [windowWidth].
-  double upperBoundAt(double windowWidth) {
-    final t = ((windowWidth - rampStart) / (rampEnd - rampStart)).clamp(
-      0.0,
-      1.0,
-    );
-    return minimum + (maximum - minimum) * t;
-  }
-
-  /// Resolves the automatic rail width at [windowWidth].
-  double resolve(double windowWidth) {
-    final upperBound = upperBoundAt(windowWidth);
-    final width = _width;
-    if (width != null) return width.clamp(minimum, upperBound);
-    return minimum + (upperBound - minimum) * _ratio!;
-  }
-
-  /// Clamps a manually requested [width] to the interval at [windowWidth].
-  double clamp(double width, {required double windowWidth}) =>
-      width.clamp(minimum, upperBoundAt(windowWidth));
+  /// Width of the collapsed icon-only rail.
+  final double collapsedExtent;
 }
 
 /// Renders adaptive destinations with a Material [NavigationRail].
@@ -170,7 +85,9 @@ class MaterialNavigationRailRegion extends StatefulWidget {
     required this.selectedIndex,
     required this.destinations,
     required this.onDestinationSelected,
-    required this.railExtent,
+    required this.sideNavigationExtent,
+    required this.style,
+    required this.dragHandleBuilder,
     required this.expandNavigationLabel,
     required this.collapseNavigationLabel,
   });
@@ -188,7 +105,13 @@ class MaterialNavigationRailRegion extends StatefulWidget {
   final ValueChanged<int> onDestinationSelected;
 
   /// Automatic and manually resizable rail-width policy.
-  final NavigationRailExtent railExtent;
+  final SideNavigationExtent sideNavigationExtent;
+
+  /// Material-specific rail geometry.
+  final MaterialNavigationRailStyle style;
+
+  /// Visual displayed in the rail's resize target.
+  final SideNavigationDragHandleBuilder? dragHandleBuilder;
 
   /// Localized action label used while the rail is collapsed.
   final String expandNavigationLabel;
@@ -206,10 +129,7 @@ class _MaterialNavigationRailRegionState
   static const double _minimumRailButtonExtent = 44.0;
 
   bool _extended = false;
-  double? _manualWidth;
-  bool _manualAboveAuto = false;
-  double _dragCurrentWidth = 0.0;
-  bool _dragging = false;
+  final SideNavigationResizeState _resizeState = SideNavigationResizeState();
 
   @override
   void initState() {
@@ -224,23 +144,11 @@ class _MaterialNavigationRailRegionState
     _extended = widget.form == NavigationShellForm.expandedSide;
   }
 
-  double _railAutoWidth(double windowWidth) =>
-      widget.railExtent.resolve(windowWidth);
-
-  double _effectiveRailWidth(double windowWidth) {
-    final manual = _manualWidth;
-    if (manual == null) return _railAutoWidth(windowWidth);
-    final bound = _manualAboveAuto
-        ? widget.railExtent.upperBoundAt(windowWidth)
-        : _railAutoWidth(windowWidth);
-    return math.min(manual, bound);
-  }
-
   @override
   Widget build(BuildContext context) {
     final windowWidth = MediaQuery.sizeOf(context).width;
     return AnimatedSize(
-      duration: _dragging
+      duration: _resizeState.dragging
           ? const Duration(milliseconds: 1)
           : navigationShellAnimationDuration,
       curve: Curves.easeOut,
@@ -249,21 +157,18 @@ class _MaterialNavigationRailRegionState
       child: switch (widget.form) {
         NavigationShellForm.compact => const SizedBox(width: 0),
         NavigationShellForm.constrainedSide ||
-        NavigationShellForm.expandedSide => Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildRail(context, windowWidth),
-            const VerticalDivider(width: 1),
-          ],
-        ),
+        NavigationShellForm.expandedSide => _buildRail(context, windowWidth),
       },
     );
   }
 
   Widget _buildRail(BuildContext context, double windowWidth) {
     final width = _extended
-        ? _effectiveRailWidth(windowWidth)
-        : widget.railExtent.collapsed;
+        ? _resizeState.effectiveWidth(
+            widget.sideNavigationExtent,
+            windowWidth: windowWidth,
+          )
+        : widget.style.collapsedExtent;
     final horizontalAvoidance =
         AdaptiveWindowControlLayoutScope.sideNavigationHorizontalAvoidanceOf(
           context,
@@ -290,7 +195,7 @@ class _MaterialNavigationRailRegionState
           selectedIndex: widget.selectedIndex,
           onDestinationSelected: widget.onDestinationSelected,
           extended: _extended,
-          minWidth: widget.railExtent.collapsed,
+          minWidth: widget.style.collapsedExtent,
           minExtendedWidth: width,
           leading: SizedBox(
             width: width,
@@ -316,8 +221,8 @@ class _MaterialNavigationRailRegionState
           destinations: widget.destinations,
         ),
         if (_extended)
-          Positioned(
-            right: 0,
+          PositionedDirectional(
+            end: 0,
             top: 0,
             bottom: 0,
             child: _buildResizeHandle(windowWidth),
@@ -327,31 +232,38 @@ class _MaterialNavigationRailRegionState
   }
 
   Widget _buildResizeHandle(double windowWidth) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.resizeColumn,
-      child: GestureDetector(
-        key: const ValueKey('rail-resize-handle'),
-        behavior: HitTestBehavior.opaque,
-        onHorizontalDragStart: (details) {
-          setState(() {
-            _dragging = true;
-            _dragCurrentWidth = _effectiveRailWidth(windowWidth);
-          });
-        },
-        onHorizontalDragUpdate: (details) {
-          setState(() {
-            _dragCurrentWidth = widget.railExtent.clamp(
-              _dragCurrentWidth + details.delta.dx,
-              windowWidth: windowWidth,
-            );
-            _manualWidth = _dragCurrentWidth;
-            _manualAboveAuto = _dragCurrentWidth > _railAutoWidth(windowWidth);
-          });
-        },
-        onHorizontalDragEnd: (_) => setState(() => _dragging = false),
-        onHorizontalDragCancel: () => setState(() => _dragging = false),
-        child: const SizedBox(width: 8, height: double.infinity),
+    return SideNavigationResizeHandle(
+      key: const ValueKey('rail-resize-handle'),
+      hitExtent: 8,
+      dragHandleBuilder: widget.dragHandleBuilder ?? _materialDragHandle,
+      onResizeStart: () => setState(
+        () => _resizeState.startDrag(
+          widget.sideNavigationExtent,
+          windowWidth: windowWidth,
+        ),
       ),
+      onResizeUpdate: (delta) => setState(
+        () => _resizeState.updateDrag(
+          delta,
+          widget.sideNavigationExtent,
+          windowWidth: windowWidth,
+        ),
+      ),
+      onResizeEnd: () => setState(_resizeState.endDrag),
     );
   }
+}
+
+Widget _materialDragHandle(BuildContext context, Set<WidgetState> _) {
+  return SizedBox(
+    key: const ValueKey('material-side-navigation-drag-bar'),
+    width: 4,
+    height: 32,
+    child: DecoratedBox(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+        borderRadius: const BorderRadius.all(Radius.circular(2)),
+      ),
+    ),
+  );
 }

@@ -4,6 +4,7 @@ import '../adaptive/adaptive_navigation_destination.dart';
 import '../breakpoints/window_size_class.dart';
 import '../shell/navigation_scroll_wish_policy.dart';
 import '../shell/navigation_shell_frame.dart';
+import '../shell/side_navigation.dart';
 import '../window_control/window_control_layout.dart';
 import 'material_navigation_bar.dart';
 import 'material_navigation_rail.dart';
@@ -25,7 +26,7 @@ import 'material_navigation_rail.dart';
 ///                  +--+---------+
 /// ```
 ///
-/// The extended rail uses [railExtent] for its automatic width and resizable
+/// The extended rail uses [sideNavigationExtent] for its automatic width and resizable
 /// interval. In compact form, route visibility, contextual chrome, and scroll
 /// direction determine whether navigation is hidden. Side navigation remains
 /// visible.
@@ -39,7 +40,9 @@ class MaterialNavigationShell extends StatelessWidget {
     required this.onDestinationSelected,
     required this.compactRouteVisible,
     required this.contextualChromeSuppressed,
-    required this.railExtent,
+    required this.sideNavigationExtent,
+    required this.railStyle,
+    required this.dragHandleBuilder,
     required this.expandNavigationLabel,
     required this.collapseNavigationLabel,
   });
@@ -65,7 +68,13 @@ class MaterialNavigationShell extends StatelessWidget {
   final bool contextualChromeSuppressed;
 
   /// Automatic and manually resizable rail-width policy.
-  final NavigationRailExtent railExtent;
+  final SideNavigationExtent sideNavigationExtent;
+
+  /// Material-specific rail geometry.
+  final MaterialNavigationRailStyle railStyle;
+
+  /// Visual displayed inside the rail resize target.
+  final SideNavigationDragHandleBuilder? dragHandleBuilder;
 
   /// Localized action label used when side navigation can expand.
   final String expandNavigationLabel;
@@ -91,7 +100,9 @@ class MaterialNavigationShell extends StatelessWidget {
             selectedIndex: selectedIndex,
             destinations: destinations,
             onDestinationSelected: onSelected,
-            railExtent: railExtent,
+            sideNavigationExtent: sideNavigationExtent,
+            railStyle: railStyle,
+            dragHandleBuilder: dragHandleBuilder,
             expandNavigationLabel: expandNavigationLabel,
             collapseNavigationLabel: collapseNavigationLabel,
             child: child,
@@ -138,7 +149,9 @@ class _MaterialNavigationShellBody extends StatelessWidget {
     required this.selectedIndex,
     required this.destinations,
     required this.onDestinationSelected,
-    required this.railExtent,
+    required this.sideNavigationExtent,
+    required this.railStyle,
+    required this.dragHandleBuilder,
     required this.expandNavigationLabel,
     required this.collapseNavigationLabel,
     required this.child,
@@ -148,7 +161,9 @@ class _MaterialNavigationShellBody extends StatelessWidget {
   final int selectedIndex;
   final List<AdaptiveNavigationDestination> destinations;
   final ValueChanged<int> onDestinationSelected;
-  final NavigationRailExtent railExtent;
+  final SideNavigationExtent sideNavigationExtent;
+  final MaterialNavigationRailStyle railStyle;
+  final SideNavigationDragHandleBuilder? dragHandleBuilder;
   final String expandNavigationLabel;
   final String collapseNavigationLabel;
   final Widget child;
@@ -164,7 +179,9 @@ class _MaterialNavigationShellBody extends StatelessWidget {
           selectedIndex: selectedIndex,
           destinations: destinations,
           onDestinationSelected: onDestinationSelected,
-          railExtent: railExtent,
+          sideNavigationExtent: sideNavigationExtent,
+          style: railStyle,
+          dragHandleBuilder: dragHandleBuilder,
           expandNavigationLabel: expandNavigationLabel,
           collapseNavigationLabel: collapseNavigationLabel,
         ),

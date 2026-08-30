@@ -8,10 +8,15 @@ import '../cupertino/cupertino_adaptive_navigation_bar.dart'
 import '../cupertino/cupertino_navigation_primary_action.dart'
     show CupertinoNavigationPrimaryAction;
 import '../cupertino/cupertino_navigation_shell.dart';
-import '../material/material_navigation_rail.dart' show NavigationRailExtent;
+import '../material/material_navigation_rail.dart'
+    show MaterialNavigationRailStyle;
 import '../material/material_navigation_shell.dart';
+import 'side_navigation.dart';
 
-export '../material/material_navigation_rail.dart' show NavigationRailExtent;
+export '../material/material_navigation_rail.dart'
+    show MaterialNavigationRailStyle;
+export 'side_navigation.dart'
+    show SideNavigationDragHandleBuilder, SideNavigationExtent;
 
 /// Adaptive navigation chrome around [child].
 ///
@@ -44,7 +49,9 @@ class AdaptiveNavigationShell extends StatefulWidget {
     this.compactRouteVisible = true,
     this.contextualChromeSuppressed = false,
     this.applePrimaryAction,
-    this.railExtent = const NavigationRailExtent(224.0),
+    this.sideNavigationExtent = const SideNavigationExtent(224.0),
+    this.materialRailStyle = const MaterialNavigationRailStyle(),
+    this.sideNavigationDragHandleBuilder,
     this.appleBarStyle = const AppleNavigationBarStyle(),
   });
 
@@ -79,9 +86,17 @@ class AdaptiveNavigationShell extends StatefulWidget {
 
   /// Full-width side-navigation sizing and manual-resize policy.
   ///
-  /// Material also uses [NavigationRailExtent.collapsed] for its icon rail.
-  /// The Apple sidebar uses only the resolved/clamped full-width interval.
-  final NavigationRailExtent railExtent;
+  /// Both renderers use this policy for their full-width side navigation.
+  final SideNavigationExtent sideNavigationExtent;
+
+  /// Material-specific NavigationRail geometry.
+  final MaterialNavigationRailStyle materialRailStyle;
+
+  /// Optional visual displayed inside the side-navigation resize target.
+  ///
+  /// When null, Material displays its default drag bar while Cupertino keeps
+  /// the target visually empty. An explicit builder is used by both renderers.
+  final SideNavigationDragHandleBuilder? sideNavigationDragHandleBuilder;
 
   /// Apple compact navigation-bar geometry and spacing.
   final AppleNavigationBarStyle appleBarStyle;
@@ -114,7 +129,9 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
         onDestinationSelected: widget.onDestinationSelected,
         compactRouteVisible: widget.compactRouteVisible,
         contextualChromeSuppressed: widget.contextualChromeSuppressed,
-        railExtent: widget.railExtent,
+        sideNavigationExtent: widget.sideNavigationExtent,
+        railStyle: widget.materialRailStyle,
+        dragHandleBuilder: widget.sideNavigationDragHandleBuilder,
         expandNavigationLabel: expandNavigationLabel,
         collapseNavigationLabel: collapseNavigationLabel,
         child: child,
@@ -126,7 +143,8 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
         compactRouteVisible: widget.compactRouteVisible,
         contextualChromeSuppressed: widget.contextualChromeSuppressed,
         primaryAction: widget.applePrimaryAction,
-        railExtent: widget.railExtent,
+        sideNavigationExtent: widget.sideNavigationExtent,
+        dragHandleBuilder: widget.sideNavigationDragHandleBuilder,
         appleBarStyle: widget.appleBarStyle,
         child: child,
       ),

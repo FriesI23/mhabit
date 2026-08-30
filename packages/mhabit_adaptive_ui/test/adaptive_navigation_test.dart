@@ -19,6 +19,7 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_navigation_primary_action.dart';
 import 'package:mhabit_adaptive_ui/src/shell/navigation_scroll_wish_policy.dart';
 import 'package:mhabit_adaptive_ui/src/shell/navigation_shell_frame.dart';
+import 'package:mhabit_adaptive_ui/src/shell/side_navigation.dart';
 
 _TestRouter _buildRouter({
   List<AdaptiveNavigationDestination>? destinations,
@@ -482,42 +483,128 @@ void _resetWindowControlLayoutMock() {
 }
 
 void main() {
-  group('NavigationRailExtent', () {
+  group('SideNavigationExtent', () {
     test('fixed target clamps to the available interval', () {
-      const extent = NavigationRailExtent(224);
+      const extent = SideNavigationExtent(224);
 
       expect(extent.resolve(1600), 224);
       expect(extent.resolve(800), 216);
     });
 
     test('ratio resolves between the available bounds', () {
-      const extent = NavigationRailExtent.fromRatio(0.5);
+      const extent = SideNavigationExtent.fromRatio(0.5);
 
       expect(extent.resolve(1600), 270);
       expect(extent.resolve(800), 198);
     });
 
     test('owns interval growth and manual clamping', () {
-      const extent = NavigationRailExtent(
+      const extent = SideNavigationExtent(
         240,
-        collapsed: 64,
         minimum: 200,
         maximum: 320,
         rampStart: 800,
         rampEnd: 1400,
       );
 
-      expect(extent.collapsed, 64);
       expect(extent.upperBoundAt(1100), 260);
       expect(extent.resolve(1100), 240);
       expect(extent.clamp(300, windowWidth: 1100), 260);
     });
 
-    test('requires the extended minimum to fit the collapsed rail', () {
+    test('requires a valid full-width interval', () {
       expect(
-        () => NavigationRailExtent(100, collapsed: 200),
+        () => SideNavigationExtent(100, minimum: 200, maximum: 100),
         throwsAssertionError,
       );
+    });
+
+    test('material rail style owns its collapsed extent', () {
+      const style = MaterialNavigationRailStyle(collapsedExtent: 64);
+
+      expect(style.collapsedExtent, 64);
+      expect(
+        () => MaterialNavigationRailStyle(collapsedExtent: 0),
+        throwsAssertionError,
+      );
+    });
+  });
+
+  group('SideNavigationResizeState', () {
+    const extent = SideNavigationExtent(224);
+
+    test('clamps and hands a wider manual width to the available interval', () {
+      final state = SideNavigationResizeState();
+
+      expect(state.effectiveWidth(extent, windowWidth: 1800), 224);
+      state.startDrag(extent, windowWidth: 1800);
+      expect(state.dragging, isTrue);
+      state.updateDrag(500, extent, windowWidth: 1800);
+      state.endDrag();
+
+      expect(state.dragging, isFalse);
+      expect(state.effectiveWidth(extent, windowWidth: 1800), 360);
+      expect(state.effectiveWidth(extent, windowWidth: 900), 234);
+      expect(state.effectiveWidth(extent, windowWidth: 1800), 360);
+    });
+
+    test('hands a narrower manual width to auto and restores it later', () {
+      final state = SideNavigationResizeState();
+
+      state.startDrag(extent, windowWidth: 1800);
+      state.updateDrag(-5, extent, windowWidth: 1800);
+      state.endDrag();
+
+      expect(state.effectiveWidth(extent, windowWidth: 1400), 219);
+      expect(state.effectiveWidth(extent, windowWidth: 700), 198);
+      expect(state.effectiveWidth(extent, windowWidth: 1800), 219);
+    });
+
+    testWidgets('handle clears dragged state when a gesture is cancelled', (
+      tester,
+    ) async {
+      final observedStates = <Set<WidgetState>>[];
+      final logicalDeltas = <double>[];
+      var starts = 0;
+      var ends = 0;
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.rtl,
+          child: Center(
+            child: SizedBox(
+              height: 100,
+              child: SideNavigationResizeHandle(
+                hitExtent: 16,
+                dragHandleBuilder: (context, states) {
+                  observedStates.add(Set<WidgetState>.of(states));
+                  return const SizedBox.shrink();
+                },
+                onResizeStart: () => starts += 1,
+                onResizeUpdate: logicalDeltas.add,
+                onResizeEnd: () => ends += 1,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.byType(SideNavigationResizeHandle)),
+      );
+      await gesture.moveBy(const Offset(-30, 0));
+      await tester.pump();
+      expect(starts, 1);
+      expect(logicalDeltas, isNotEmpty);
+      expect(logicalDeltas, everyElement(greaterThan(0)));
+      expect(
+        observedStates.any((states) => states.contains(WidgetState.dragged)),
+        isTrue,
+      );
+
+      await gesture.cancel();
+      await tester.pump();
+      expect(ends, 1);
+      expect(observedStates.last.contains(WidgetState.dragged), isFalse);
     });
   });
 
@@ -2571,9 +2658,9 @@ void main() {
               ),
             ],
             onDestinationSelected: (_) {},
-            railExtent: const NavigationRailExtent.fromRatio(
-              0.5,
-              collapsed: 64,
+            sideNavigationExtent: const SideNavigationExtent.fromRatio(0.5),
+            materialRailStyle: const MaterialNavigationRailStyle(
+              collapsedExtent: 64,
             ),
             child: const SizedBox(),
           ),
@@ -2614,6 +2701,25 @@ void main() {
       NavigationRail panel() =>
           tester.widget<NavigationRail>(find.byType(NavigationRail));
       expect(panel().minExtendedWidth, closeTo(224, 0.01));
+      final dragBar = find.byKey(
+        const ValueKey('material-side-navigation-drag-bar'),
+      );
+      expect(dragBar, findsOneWidget);
+      expect(tester.getSize(dragBar), const Size(4, 32));
+      final decoration =
+          tester
+                  .widget<DecoratedBox>(
+                    find.descendant(
+                      of: dragBar,
+                      matching: find.byType(DecoratedBox),
+                    ),
+                  )
+                  .decoration
+              as BoxDecoration;
+      expect(
+        decoration.color,
+        Theme.of(tester.element(dragBar)).colorScheme.onSurfaceVariant,
+      );
 
       // Drag far left: many small moves accumulate and clamp to the minimum.
       var gesture = await tester.startGesture(
@@ -2639,6 +2745,49 @@ void main() {
       await tester.pumpAndSettle();
       expect(panel().minExtendedWidth, 360.0);
     });
+
+    for (final direction in TextDirection.values) {
+      testWidgets('material rail resizes from its logical end in $direction', (
+        tester,
+      ) async {
+        _setSurfaceSize(tester, const Size(1000, 600));
+        final router = _buildRouter();
+        await tester.pumpWidget(
+          MaterialApp.router(
+            routerConfig: router,
+            builder: (context, child) =>
+                Directionality(textDirection: direction, child: child!),
+          ),
+        );
+
+        final railPanel = find.byKey(const ValueKey('rail-panel'));
+        final resizeHandle = find.byKey(const ValueKey('rail-resize-handle'));
+        expect(
+          tester.getCenter(resizeHandle).dx,
+          direction == TextDirection.ltr
+              ? tester.getTopRight(railPanel).dx - 4
+              : tester.getTopLeft(railPanel).dx + 4,
+        );
+
+        final logicalDrag = direction == TextDirection.ltr
+            ? const Offset(30, 0)
+            : const Offset(-30, 0);
+        await tester.drag(resizeHandle, logicalDrag);
+        await tester.pumpAndSettle();
+
+        expect(
+          tester
+              .widget<NavigationRail>(
+                find.descendant(
+                  of: railPanel,
+                  matching: find.byType(NavigationRail),
+                ),
+              )
+              .minExtendedWidth,
+          greaterThan(224),
+        );
+      });
+    }
 
     testWidgets('manual width above auto hands off along the interval', (
       tester,
@@ -3425,6 +3574,10 @@ void main() {
         final resizeHandle = find.byKey(
           const ValueKey('cupertino-sidebar-resize-handle'),
         );
+        expect(
+          find.byKey(const ValueKey('material-side-navigation-drag-bar')),
+          findsNothing,
+        );
         expect(tester.getSize(resizeHandle).width, 16);
         expect(tester.getSize(resizeHandle).height, panelSize().height - 50);
         expect(
@@ -3471,6 +3624,84 @@ void main() {
         tester.view.physicalSize = const Size(1000, 600);
         await tester.pumpAndSettle();
         expect(panelSize().width, resizedWidth);
+        debugDefaultTargetPlatformOverride = null;
+      });
+    }
+
+    for (final platform in <TargetPlatform>[
+      TargetPlatform.android,
+      TargetPlatform.iOS,
+    ]) {
+      testWidgets('custom drag handle builder is adaptive on $platform', (
+        tester,
+      ) async {
+        debugDefaultTargetPlatformOverride = platform;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+        _setSurfaceSize(tester, const Size(1000, 600));
+        final observedStates = <Set<WidgetState>>[];
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: AdaptiveNavigationShell(
+              selectedIndex: 0,
+              destinations: const [
+                AdaptiveNavigationDestination(
+                  label: 'Habits',
+                  icons: NavigationDestinationIcons(
+                    material: Icon(Icons.home_outlined),
+                    materialSelected: Icon(Icons.home),
+                    apple: Icon(CupertinoIcons.home),
+                    appleSelected: Icon(CupertinoIcons.house_fill),
+                  ),
+                ),
+              ],
+              onDestinationSelected: (_) {},
+              sideNavigationDragHandleBuilder: (context, states) {
+                observedStates.add(Set<WidgetState>.of(states));
+                return const SizedBox(
+                  key: ValueKey('custom-side-navigation-drag-bar'),
+                  width: 3,
+                  height: 24,
+                );
+              },
+              child: const Scaffold(body: SizedBox.expand()),
+            ),
+          ),
+        );
+
+        final customBar = find.byKey(
+          const ValueKey('custom-side-navigation-drag-bar'),
+        );
+        final resizeHandle = find.byKey(
+          ValueKey(
+            platform == TargetPlatform.iOS
+                ? 'cupertino-sidebar-resize-handle'
+                : 'rail-resize-handle',
+          ),
+        );
+        expect(customBar, findsOneWidget);
+        expect(tester.getSize(customBar), const Size(3, 24));
+
+        final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+        addTearDown(mouse.removePointer);
+        await mouse.addPointer(location: Offset.zero);
+        await mouse.moveTo(tester.getCenter(resizeHandle));
+        await tester.pump();
+        expect(
+          observedStates.any((states) => states.contains(WidgetState.hovered)),
+          isTrue,
+        );
+
+        await mouse.down(tester.getCenter(resizeHandle));
+        await mouse.moveBy(const Offset(10, 0));
+        await tester.pump();
+        expect(
+          observedStates.any((states) => states.contains(WidgetState.dragged)),
+          isTrue,
+        );
+        await mouse.up();
+        await tester.pumpAndSettle();
+        expect(observedStates.last.contains(WidgetState.dragged), isFalse);
         debugDefaultTargetPlatformOverride = null;
       });
     }

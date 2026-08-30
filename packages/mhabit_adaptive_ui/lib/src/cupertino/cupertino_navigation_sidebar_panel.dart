@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 import '../adaptive/adaptive_navigation_destination.dart';
 import '../shell/navigation_shell_frame.dart';
+import '../shell/side_navigation.dart';
 import 'cupertino_floating_surface.dart';
 
 /// Floating surface and destination presentation for a Cupertino Sidebar.
@@ -22,6 +23,7 @@ class CupertinoNavigationSidebarPanel extends StatelessWidget {
     required this.destinations,
     required this.onDestinationSelected,
     required this.dragging,
+    required this.dragHandleBuilder,
     required this.onResizeStart,
     required this.onResizeUpdate,
     required this.onResizeEnd,
@@ -33,6 +35,7 @@ class CupertinoNavigationSidebarPanel extends StatelessWidget {
   final List<AdaptiveNavigationDestination> destinations;
   final ValueChanged<int> onDestinationSelected;
   final bool dragging;
+  final SideNavigationDragHandleBuilder? dragHandleBuilder;
   final VoidCallback onResizeStart;
   final ValueChanged<double> onResizeUpdate;
   final VoidCallback onResizeEnd;
@@ -54,8 +57,6 @@ class CupertinoNavigationSidebarPanel extends StatelessWidget {
         ),
       ),
     );
-
-    final direction = Directionality.of(context);
 
     final destinationList = ListView.builder(
       key: const ValueKey('cupertino-sidebar-destination-list'),
@@ -88,31 +89,19 @@ class CupertinoNavigationSidebarPanel extends StatelessWidget {
       ),
     );
 
-    final resizeHandleTarget = GestureDetector(
+    final resizeHandleTarget = SideNavigationResizeHandle(
       key: const ValueKey('cupertino-sidebar-resize-handle'),
-      behavior: HitTestBehavior.opaque,
-      onHorizontalDragStart: (_) => onResizeStart(),
-      onHorizontalDragUpdate: (details) {
-        final logicalDelta = direction == TextDirection.ltr
-            ? details.delta.dx
-            : -details.delta.dx;
-        onResizeUpdate(logicalDelta);
-      },
-      onHorizontalDragEnd: (_) => onResizeEnd(),
-      onHorizontalDragCancel: onResizeEnd,
-      child: const SizedBox(width: _resizeHandleWidth, height: double.infinity),
+      hitExtent: _resizeHandleWidth,
+      dragHandleBuilder: dragHandleBuilder,
+      onResizeStart: onResizeStart,
+      onResizeUpdate: onResizeUpdate,
+      onResizeEnd: onResizeEnd,
     );
     final resizeHandle = PositionedDirectional(
       end: 0,
       top: _resizeHandleCornerInset,
       bottom: _resizeHandleCornerInset,
-      child: MouseRegion(
-        cursor: SystemMouseCursors.resizeColumn,
-        child: IgnorePointer(
-          ignoring: !contentActive,
-          child: resizeHandleTarget,
-        ),
-      ),
+      child: IgnorePointer(ignoring: !contentActive, child: resizeHandleTarget),
     );
 
     final panel = SizedBox(

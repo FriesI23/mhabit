@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 
 import '../adaptive/adaptive_navigation_destination.dart';
 import '../breakpoints/window_size_class.dart';
-import '../material/material_navigation_rail.dart' show NavigationRailExtent;
 import '../shell/navigation_scroll_wish_policy.dart';
 import '../shell/navigation_shell_frame.dart';
+import '../shell/side_navigation.dart';
 import '../window_control/window_control_layout.dart';
 import 'cupertino_adaptive_navigation_bar.dart';
 import 'cupertino_floating_surface.dart';
@@ -39,7 +39,8 @@ class CupertinoNavigationShell extends StatelessWidget {
     required this.compactRouteVisible,
     required this.contextualChromeSuppressed,
     required this.primaryAction,
-    required this.railExtent,
+    required this.sideNavigationExtent,
+    required this.dragHandleBuilder,
     required this.appleBarStyle,
     this.expandNavigationLabel,
     this.collapseNavigationLabel,
@@ -67,7 +68,10 @@ class CupertinoNavigationShell extends StatelessWidget {
   final CupertinoNavigationPrimaryAction? primaryAction;
 
   /// Full-width policy used by the Sidebar panel.
-  final NavigationRailExtent railExtent;
+  final SideNavigationExtent sideNavigationExtent;
+
+  /// Optional visual displayed inside the Sidebar resize target.
+  final SideNavigationDragHandleBuilder? dragHandleBuilder;
 
   /// Geometry and spacing for the compact Apple navigation bar.
   final AppleNavigationBarStyle appleBarStyle;
@@ -114,7 +118,8 @@ class CupertinoNavigationShell extends StatelessWidget {
             selectedIndex: selectedIndex,
             destinations: destinations,
             onDestinationSelected: onSelected,
-            railExtent: railExtent,
+            sideNavigationExtent: sideNavigationExtent,
+            dragHandleBuilder: dragHandleBuilder,
             expandNavigationLabel: expandNavigationLabel,
             collapseNavigationLabel: collapseNavigationLabel,
             child: child,

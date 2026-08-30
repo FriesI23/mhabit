@@ -5,9 +5,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' show MaterialLocalizations;
 
 import '../adaptive/adaptive_navigation_destination.dart';
-import '../material/material_navigation_rail.dart' show NavigationRailExtent;
 import '../shell/navigation_shell_frame.dart';
 import '../shell/navigation_sidebar_app_bar_leading.dart';
+import '../shell/side_navigation.dart';
 import '../window_control/window_control_layout.dart';
 import 'cupertino_navigation_sidebar_button.dart';
 import 'cupertino_navigation_sidebar_panel.dart';
@@ -23,7 +23,8 @@ class CupertinoNavigationSidebar extends StatefulWidget {
     required this.selectedIndex,
     required this.destinations,
     required this.onDestinationSelected,
-    required this.railExtent,
+    required this.sideNavigationExtent,
+    required this.dragHandleBuilder,
     this.expandNavigationLabel,
     this.collapseNavigationLabel,
     required this.child,
@@ -33,7 +34,8 @@ class CupertinoNavigationSidebar extends StatefulWidget {
   final int selectedIndex;
   final List<AdaptiveNavigationDestination> destinations;
   final ValueChanged<int> onDestinationSelected;
-  final NavigationRailExtent railExtent;
+  final SideNavigationExtent sideNavigationExtent;
+  final SideNavigationDragHandleBuilder? dragHandleBuilder;
 
   /// Optional override for the localized action label used when showing.
   final String? expandNavigationLabel;
@@ -68,10 +70,7 @@ class _CupertinoNavigationSidebarState extends State<CupertinoNavigationSidebar>
     debugLabel: 'cupertino-sidebar-toggle',
   );
   bool _visible = true;
-  double? _manualWidth;
-  bool _manualAboveAuto = false;
-  double _dragCurrentWidth = 0;
-  bool _dragging = false;
+  final SideNavigationResizeState _resizeState = SideNavigationResizeState();
   double _edgeDragDistance = 0;
 
   @override
@@ -89,18 +88,6 @@ class _CupertinoNavigationSidebarState extends State<CupertinoNavigationSidebar>
     super.dispose();
   }
 
-  double _automaticWidth(double windowWidth) =>
-      widget.railExtent.resolve(windowWidth);
-
-  double _effectiveWidth(double windowWidth) {
-    final manualWidth = _manualWidth;
-    if (manualWidth == null) return _automaticWidth(windowWidth);
-    final bound = _manualAboveAuto
-        ? widget.railExtent.upperBoundAt(windowWidth)
-        : _automaticWidth(windowWidth);
-    return math.min(manualWidth, bound);
-  }
-
   void _toggle() {
     setState(() => _visible = !_visible);
     if (_visible) {
@@ -111,26 +98,27 @@ class _CupertinoNavigationSidebarState extends State<CupertinoNavigationSidebar>
   }
 
   void _handleResizeStart(double windowWidth) {
-    setState(() {
-      _dragging = true;
-      _dragCurrentWidth = _effectiveWidth(windowWidth);
-    });
+    setState(
+      () => _resizeState.startDrag(
+        widget.sideNavigationExtent,
+        windowWidth: windowWidth,
+      ),
+    );
   }
 
   void _handleResizeUpdate(double logicalDelta, double windowWidth) {
-    setState(() {
-      _dragCurrentWidth = widget.railExtent.clamp(
-        _dragCurrentWidth + logicalDelta,
+    setState(
+      () => _resizeState.updateDrag(
+        logicalDelta,
+        widget.sideNavigationExtent,
         windowWidth: windowWidth,
-      );
-      _manualWidth = _dragCurrentWidth;
-      _manualAboveAuto = _dragCurrentWidth > _automaticWidth(windowWidth);
-    });
+      ),
+    );
   }
 
   void _handleResizeEnd() {
-    if (!_dragging) return;
-    setState(() => _dragging = false);
+    if (!_resizeState.dragging) return;
+    setState(_resizeState.endDrag);
   }
 
   void _handleEdgeDragStart() => _edgeDragDistance = 0;
@@ -167,7 +155,10 @@ class _CupertinoNavigationSidebarState extends State<CupertinoNavigationSidebar>
         materialLocalizations?.expandedIconTapHint ??
         'Collapse';
     final windowWidth = MediaQuery.sizeOf(context).width;
-    final panelWidth = _effectiveWidth(windowWidth);
+    final panelWidth = _resizeState.effectiveWidth(
+      widget.sideNavigationExtent,
+      windowWidth: windowWidth,
+    );
     final mediaPadding = MediaQuery.paddingOf(context);
     final direction = Directionality.of(context);
     final leadingSafeMargin = math.max(
@@ -225,7 +216,8 @@ class _CupertinoNavigationSidebarState extends State<CupertinoNavigationSidebar>
                   selectedIndex: widget.selectedIndex,
                   destinations: widget.destinations,
                   onDestinationSelected: widget.onDestinationSelected,
-                  dragging: _dragging,
+                  dragging: _resizeState.dragging,
+                  dragHandleBuilder: widget.dragHandleBuilder,
                   onResizeStart: () => _handleResizeStart(windowWidth),
                   onResizeUpdate: (delta) =>
                       _handleResizeUpdate(delta, windowWidth),
