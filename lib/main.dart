@@ -21,6 +21,7 @@ import 'common/app_info.dart';
 import 'entries/app/entry.dart';
 import 'logging/logger_manager.dart';
 import 'reminders/notification_service.dart';
+import 'theme/linux_bundled_font.dart';
 import 'utils/local_timezone.dart';
 import 'widgets/bingding.dart';
 
@@ -31,6 +32,7 @@ Future<void> main() async {
     WidgetsFlutterBinding.ensureInitialized();
   }
 
+  await loadLinuxBundledFont();
   await AppLoggerMananger(t: AppLoggerHandlerType.debugging).init();
   await AppInfo().init();
   await NotificationService().init();

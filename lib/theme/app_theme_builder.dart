@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/cupertino.dart'
-    show CupertinoDynamicColor, CupertinoThemeData;
+    show CupertinoDynamicColor, CupertinoTextThemeData, CupertinoThemeData;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -24,6 +24,7 @@ import '../models/app_theme_color.dart';
 import '../widgets/_widgets/predictive_back_page_transitions_builder.dart';
 import '../widgets/styles.dart';
 import 'color.dart';
+import 'linux_bundled_font.dart';
 
 // Tuned from composited iOS 26 native navigation screenshots. Apple does not
 // publish equivalent Liquid Glass alpha constants for custom Flutter chrome.
@@ -32,6 +33,20 @@ const _appleGlassBackgroundColor = CupertinoDynamicColor.withBrightness(
   color: Color(0xCCFFFFFF),
   darkColor: Color(0x0FFFFFFF),
 );
+
+const _linuxFontFamilyFallbacks = [
+  'Ubuntu',
+  'Adwaita Sans',
+  'Cantarell',
+  'DejaVu Sans',
+  'Liberation Sans',
+  'Arial',
+  'Noto Color Emoji',
+  'Noto Sans CJK SC',
+  'Noto Sans CJK TC',
+  'Noto Sans CJK JP',
+  'Noto Sans CJK KR',
+];
 
 /// Assembles the app [ThemeData] from the resolved theme-color inputs.
 ///
@@ -94,17 +109,7 @@ class AppThemeBuilder {
     final colorScheme = mainColor != null
         ? ColorScheme.fromSeed(seedColor: mainColor, brightness: brightness)
         : systemScheme;
-    // Maps the app scheme onto Cupertino components so apple variants follow
-    // the app's dynamic color instead of the Cupertino default blue.
-    final cupertinoOverrideTheme = colorScheme == null
-        ? null
-        : CupertinoThemeData(
-            brightness: colorScheme.brightness,
-            primaryColor: colorScheme.primary,
-            barBackgroundColor: _appleGlassBackgroundColor,
-            scaffoldBackgroundColor: colorScheme.surface,
-          );
-    final theme = ThemeData(
+    final baseTheme = ThemeData(
       fontFamily: getFontFamily(),
       fontFamilyFallback: getFontFamilyFallbacks(),
       pageTransitionsTheme: pageTransitionsTheme,
@@ -116,8 +121,28 @@ class AppThemeBuilder {
         behavior: SnackBarBehavior.floating,
       ),
       menuTheme: _mobileMenuTheme,
-      cupertinoOverrideTheme: cupertinoOverrideTheme,
       extensions: [customColor],
+    );
+    final cupertinoTextTheme = _getCupertinoTextTheme(
+      primaryColor: baseTheme.colorScheme.primary,
+    );
+    // Maps the app scheme onto Cupertino components so apple variants follow
+    // the app's dynamic color instead of the Cupertino default blue. Linux
+    // also keeps a text-only override when using the system Material scheme.
+    final cupertinoOverrideTheme =
+        colorScheme == null && cupertinoTextTheme == null
+        ? null
+        : CupertinoThemeData(
+            brightness: colorScheme?.brightness,
+            primaryColor: colorScheme?.primary,
+            textTheme: cupertinoTextTheme,
+            barBackgroundColor: colorScheme == null
+                ? null
+                : _appleGlassBackgroundColor,
+            scaffoldBackgroundColor: colorScheme?.surface,
+          );
+    final theme = baseTheme.copyWith(
+      cupertinoOverrideTheme: cupertinoOverrideTheme,
     );
     return theme.copyWith(
       navigationRailTheme: theme.navigationRailTheme.copyWith(
@@ -128,40 +153,41 @@ class AppThemeBuilder {
   }
 
   String? getFontFamily() {
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.linux:
-        final arch = AppInfo().linuxArchitecture;
-        return switch (arch) {
-          LinuxPlatformArchitecture.aarch64 => 'Roboto',
-          _ => null,
-        };
-      default:
-        return null;
-    }
+    return switch (defaultTargetPlatform) {
+      TargetPlatform.linux => linuxBundledFontFamily,
+      _ => null,
+    };
   }
 
   List<String>? getFontFamilyFallbacks() {
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.linux:
-        final arch = AppInfo().linuxArchitecture;
-        return switch (arch) {
-          LinuxPlatformArchitecture.aarch64 => const [
-            'Ubuntu',
-            'Cantarell',
-            'DejaVu Sans',
-            'Liberation Sans',
-            'Arial',
-            'Noto Color Emoji',
-            'Noto Sans CJK SC',
-            'Noto Sans CJK TC',
-            'Noto Sans CJK JP',
-            'Noto Sans CJK KR',
-          ],
-          _ => null,
-        };
-      default:
-        return null;
-    }
+    return switch (defaultTargetPlatform) {
+      TargetPlatform.linux => _linuxFontFamilyFallbacks,
+      _ => null,
+    };
+  }
+
+  CupertinoTextThemeData? _getCupertinoTextTheme({Color? primaryColor}) {
+    if (defaultTargetPlatform != TargetPlatform.linux) return null;
+
+    final defaults = CupertinoTextThemeData(
+      primaryColor: primaryColor ?? const CupertinoThemeData().primaryColor,
+    );
+    TextStyle withLinuxFonts(TextStyle style) => style.copyWith(
+      fontFamily: linuxBundledFontFamily,
+      fontFamilyFallback: _linuxFontFamilyFallbacks,
+    );
+
+    return defaults.copyWith(
+      textStyle: withLinuxFonts(defaults.textStyle),
+      actionTextStyle: withLinuxFonts(defaults.actionTextStyle),
+      actionSmallTextStyle: withLinuxFonts(defaults.actionSmallTextStyle),
+      tabLabelTextStyle: withLinuxFonts(defaults.tabLabelTextStyle),
+      navTitleTextStyle: withLinuxFonts(defaults.navTitleTextStyle),
+      navLargeTitleTextStyle: withLinuxFonts(defaults.navLargeTitleTextStyle),
+      navActionTextStyle: withLinuxFonts(defaults.navActionTextStyle),
+      pickerTextStyle: withLinuxFonts(defaults.pickerTextStyle),
+      dateTimePickerTextStyle: withLinuxFonts(defaults.dateTimePickerTextStyle),
+    );
   }
 
   static MenuThemeData? get _mobileMenuTheme => switch (defaultTargetPlatform) {

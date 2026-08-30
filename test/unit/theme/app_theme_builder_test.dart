@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart' show CupertinoDynamicColor;
+import 'package:flutter/cupertino.dart'
+    show CupertinoDynamicColor, CupertinoTextThemeData;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,6 +9,7 @@ import 'package:mhabit/models/app_theme_color.dart';
 import 'package:mhabit/models/habit_color_type.dart';
 import 'package:mhabit/theme/app_theme_builder.dart';
 import 'package:mhabit/theme/color.dart';
+import 'package:mhabit/theme/linux_bundled_font.dart';
 import 'package:mhabit/widgets/styles.dart';
 
 void _withPlatform(TargetPlatform platform, void Function() body) {
@@ -57,11 +59,7 @@ void main() {
     });
 
     test('system path keeps the explicit brightness with a null scheme', () {
-      for (final platform in [
-        TargetPlatform.windows,
-        TargetPlatform.linux,
-        TargetPlatform.fuchsia,
-      ]) {
+      for (final platform in [TargetPlatform.windows, TargetPlatform.fuchsia]) {
         _withPlatform(platform, () {
           final theme = builder.buildLight(
             themeColor: const SystemAppThemeColor(),
@@ -72,6 +70,27 @@ void main() {
           _expectMaterialRailSurface(theme);
         });
       }
+    });
+
+    test('linux system path retains the Cupertino font override', () {
+      _withPlatform(TargetPlatform.linux, () {
+        final theme = builder.buildLight(
+          themeColor: const SystemAppThemeColor(),
+          themeMainColor: fallbackMainColor,
+        );
+        expect(theme.brightness, Brightness.light);
+        expect(theme.cupertinoOverrideTheme?.textTheme, isNotNull);
+        expect(
+          theme.cupertinoOverrideTheme!.textTheme!.actionTextStyle.color,
+          theme.colorScheme.primary,
+        );
+        expect(theme.textTheme.bodyMedium!.fontFamily, linuxBundledFontFamily);
+        expect(
+          theme.textTheme.bodyMedium!.fontFamilyFallback,
+          contains('Noto Sans CJK SC'),
+        );
+        _expectMaterialRailSurface(theme);
+      });
     });
   });
 
@@ -170,13 +189,57 @@ void main() {
         });
       },
     );
+
+    test('uses Linux fonts for every Cupertino text role', () {
+      _withPlatform(TargetPlatform.linux, () {
+        final theme = builder.buildLight(
+          themeColor: const PrimaryAppThemeColor(),
+          themeMainColor: fallbackMainColor,
+        );
+        final CupertinoTextThemeData textTheme =
+            theme.cupertinoOverrideTheme!.textTheme!;
+        final styles = <TextStyle>[
+          textTheme.textStyle,
+          textTheme.actionTextStyle,
+          textTheme.actionSmallTextStyle,
+          textTheme.tabLabelTextStyle,
+          textTheme.navTitleTextStyle,
+          textTheme.navLargeTitleTextStyle,
+          textTheme.navActionTextStyle,
+          textTheme.pickerTextStyle,
+          textTheme.dateTimePickerTextStyle,
+        ];
+
+        for (final style in styles) {
+          expect(style.fontFamily, linuxBundledFontFamily);
+          expect(style.fontFamilyFallback, contains('Noto Sans CJK SC'));
+        }
+      });
+    });
+
+    test('does not override Cupertino typography outside Linux', () {
+      _withPlatform(TargetPlatform.macOS, () {
+        final theme = builder.buildLight(
+          themeColor: const PrimaryAppThemeColor(),
+          themeMainColor: fallbackMainColor,
+        );
+        expect(theme.cupertinoOverrideTheme!.textTheme, isNull);
+      });
+    });
   });
 
   group('AppThemeBuilder.getThemeColor', () {
-    test('font family stays null off the linux aarch64 path', () {
+    test('font family stays null outside Linux', () {
       _withPlatform(TargetPlatform.macOS, () {
         expect(builder.getFontFamily(), isNull);
         expect(builder.getFontFamilyFallbacks(), isNull);
+      });
+    });
+
+    test('font family and CJK fallbacks apply to every Linux architecture', () {
+      _withPlatform(TargetPlatform.linux, () {
+        expect(builder.getFontFamily(), linuxBundledFontFamily);
+        expect(builder.getFontFamilyFallbacks(), contains('Noto Sans CJK SC'));
       });
     });
 
