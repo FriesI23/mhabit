@@ -42,7 +42,6 @@ export '_widgets/group_title_list_tile.dart';
 export '_widgets/habit_color_wheel_editor.dart';
 export '_widgets/habit_daily_status_container.dart';
 export '_widgets/habit_divider.dart';
-export '_widgets/habit_form_flexible_space_bar.dart';
 export '_widgets/habit_freq_chart.dart';
 export '_widgets/habit_list_tile.dart';
 export '_widgets/habit_progress_indicator.dart';

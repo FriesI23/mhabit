@@ -12,6 +12,18 @@ import '../adaptive_style.dart';
 typedef AdaptiveAppBarActionCallback<T extends Object> =
     void Function(BuildContext anchorContext, T value);
 
+/// Decorates one renderer-owned primary action button.
+///
+/// [child] retains the platform button, invocation anchor, and resolved
+/// presentation. Use [action] to apply state to one declared action without
+/// wrapping the complete action collection.
+typedef AdaptiveAppBarPrimaryActionDecorator<T extends Object> =
+    Widget Function(
+      BuildContext context,
+      AdaptiveAction<T> action,
+      Widget child,
+    );
+
 /// Adaptive trailing actions for an app bar or navigation bar.
 ///
 /// The caller owns the platform-neutral [collection] and payload handling.
@@ -29,6 +41,7 @@ class AdaptiveAppBarActions<T extends Object> extends StatelessWidget {
     this.materialOverflowIcon,
     this.appleOverflowIcon,
     this.overflowTooltip,
+    this.primaryActionDecorator,
   }) : assert(primaryCapacity >= 0 && primaryCapacity < double.infinity),
        assert(maxPrimaryActions == null || maxPrimaryActions >= 0),
        style = null;
@@ -44,6 +57,7 @@ class AdaptiveAppBarActions<T extends Object> extends StatelessWidget {
     this.materialOverflowIcon,
     this.appleOverflowIcon,
     this.overflowTooltip,
+    this.primaryActionDecorator,
   }) : assert(primaryCapacity >= 0 && primaryCapacity < double.infinity),
        assert(maxPrimaryActions == null || maxPrimaryActions >= 0),
        style = AdaptiveStyle.material;
@@ -59,6 +73,7 @@ class AdaptiveAppBarActions<T extends Object> extends StatelessWidget {
     this.materialOverflowIcon,
     this.appleOverflowIcon,
     this.overflowTooltip,
+    this.primaryActionDecorator,
   }) : assert(primaryCapacity >= 0 && primaryCapacity < double.infinity),
        assert(maxPrimaryActions == null || maxPrimaryActions >= 0),
        style = AdaptiveStyle.apple;
@@ -73,6 +88,7 @@ class AdaptiveAppBarActions<T extends Object> extends StatelessWidget {
   final Widget? materialOverflowIcon;
   final Widget? appleOverflowIcon;
   final String? overflowTooltip;
+  final AdaptiveAppBarPrimaryActionDecorator<T>? primaryActionDecorator;
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +125,9 @@ class AdaptiveAppBarActions<T extends Object> extends StatelessWidget {
           builder: (anchorContext) {
             final payload = action.payload;
             if (payload != null) primaryAnchors[payload] = anchorContext;
-            return defaultBuilder(anchorContext, action, onPressed);
+            final child = defaultBuilder(anchorContext, action, onPressed);
+            return primaryActionDecorator?.call(anchorContext, action, child) ??
+                child;
           },
         );
       },
@@ -144,7 +162,9 @@ class AdaptiveAppBarActions<T extends Object> extends StatelessWidget {
           builder: (anchorContext) {
             final payload = action.payload;
             if (payload != null) primaryAnchors[payload] = anchorContext;
-            return defaultBuilder(anchorContext, action, onPressed);
+            final child = defaultBuilder(anchorContext, action, onPressed);
+            return primaryActionDecorator?.call(anchorContext, action, child) ??
+                child;
           },
         );
       },

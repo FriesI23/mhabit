@@ -162,6 +162,64 @@ void main() {
     expect(invocationCount, 0);
   });
 
+  testWidgets('decorates only the resolved primary action button', (
+    tester,
+  ) async {
+    Widget decorate(
+      BuildContext context,
+      AdaptiveAction<String> action,
+      Widget child,
+    ) => KeyedSubtree(
+      key: ValueKey('decorated-${action.id.value}'),
+      child: child,
+    );
+
+    await tester.pumpWidget(
+      _host(
+        actions: AdaptiveAppBarActions<String>.material(
+          collection: _collection(),
+          onInvoke: (_, _) {},
+          primaryCapacity: 96,
+          maxPrimaryActions: 1,
+          materialIconBuilder: (context, action) => const Icon(Icons.edit),
+          primaryActionDecorator: decorate,
+        ),
+      ),
+    );
+    expect(find.byKey(const ValueKey('decorated-edit')), findsOneWidget);
+    expect(find.byKey(const ValueKey('decorated-archive')), findsNothing);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('decorated-edit')),
+        matching: find.byIcon(Icons.edit),
+      ),
+      findsOneWidget,
+    );
+
+    await tester.pumpWidget(
+      _host(
+        actions: AdaptiveAppBarActions<String>.apple(
+          collection: _collection(),
+          onInvoke: (_, _) {},
+          primaryCapacity: 96,
+          maxPrimaryActions: 1,
+          appleIconBuilder: (context, action) =>
+              const Icon(CupertinoIcons.pencil),
+          primaryActionDecorator: decorate,
+        ),
+      ),
+    );
+    expect(find.byKey(const ValueKey('decorated-edit')), findsOneWidget);
+    expect(find.byKey(const ValueKey('decorated-archive')), findsNothing);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('decorated-edit')),
+        matching: find.byIcon(CupertinoIcons.pencil),
+      ),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('apple controls keep 44 point targets and logical RTL order', (
     tester,
   ) async {

@@ -13,6 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   ios_window_control_layout: ^0.3.0
+  sliver_tools: ^0.2.9
 
 dev_dependencies:
   flutter_test:
