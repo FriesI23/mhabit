@@ -65,14 +65,22 @@ class CupertinoSliverSelectAppBar extends StatelessWidget {
     required this.onDone,
     this.actions = _kDefaultActions,
     this.style,
-  }) : _viewMode = false;
+    this.bottom,
+    this.bottomExtent = 0.0,
+  }) : assert(bottomExtent >= 0.0),
+       assert(bottom != null || bottomExtent == 0.0),
+       _viewMode = false;
 
   const CupertinoSliverSelectAppBar.view({
     super.key,
     required this.title,
     this.actions = _kDefaultActions,
     this.style,
-  }) : selectAllLabel = '',
+    this.bottom,
+    this.bottomExtent = 0.0,
+  }) : assert(bottomExtent >= 0.0),
+       assert(bottom != null || bottomExtent == 0.0),
+       selectAllLabel = '',
        doneLabel = '',
        onSelectAll = null,
        onDone = null,
@@ -85,6 +93,8 @@ class CupertinoSliverSelectAppBar extends StatelessWidget {
   final VoidCallback? onDone;
   final List<CupertinoSelectAction> actions;
   final AppBarAppleStyle? style;
+  final Widget? bottom;
+  final double bottomExtent;
   final bool _viewMode;
 
   AppBarAppleStyle get _effectiveStyle => style ?? const AppBarAppleStyle();
@@ -97,6 +107,8 @@ class CupertinoSliverSelectAppBar extends StatelessWidget {
     return CupertinoSliverAppBar(
       key: const ValueKey('cupertino-sliver-select-app-bar'),
       height: toolbarHeight,
+      bottom: bottom,
+      bottomExtent: bottomExtent,
       style: _effectiveStyle,
       title: _viewMode
           ? _CupertinoSelectEntryToolbar(title: title, actions: actions)
@@ -138,7 +150,7 @@ class CupertinoSelectBottomToolbar extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: ColoredBox(
-          color: background.withValues(alpha: 0.82),
+          color: background,
           child: SafeArea(
             top: false,
             minimum: EdgeInsets.zero,

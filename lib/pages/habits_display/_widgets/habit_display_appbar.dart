@@ -229,7 +229,7 @@ class _AppleHabitDisplayAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final combinesBars = mode == _HabitDisplayAppBarMode.search;
+    final combinesBars = mode != _HabitDisplayAppBarMode.view;
     final appBar = switch (mode) {
       _HabitDisplayAppBarMode.view => AppleSliverViewTopAppBar(
         onSelect: viewCallbacks.onSelect,
@@ -255,6 +255,8 @@ class _AppleHabitDisplayAppBar extends StatelessWidget {
         onDelete: selectCallbacks.onDelete,
         onGroupModify: selectCallbacks.onGroupModify,
         onStatusModify: selectCallbacks.onStatusModify,
+        bottom: calendarContent,
+        bottomExtent: calendarHeight,
       ),
     };
     return MultiSliver(
@@ -314,6 +316,7 @@ class _AppleCalendarBar extends StatelessWidget {
             child: const CupertinoNavigationBar(
               automaticallyImplyLeading: false,
               transitionBetweenRoutes: false,
+              automaticBackgroundVisibility: false,
               backgroundColor: CupertinoColors.transparent,
               border: null,
             ),

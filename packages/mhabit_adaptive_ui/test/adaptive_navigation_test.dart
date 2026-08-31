@@ -472,8 +472,10 @@ void _mockWindowControlLayout() {
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
       .setMockMethodCallHandler(_windowControlChannel, (call) async {
         return <String, Object>{
-          'schemaVersion': 3,
+          'schemaVersion': 4,
           'isAvailable': true,
+          'isPad': true,
+          'isFullScreen': false,
           'baseMargins': _windowInsets(),
           'horizontalMargins': _windowInsets(start: 40, end: 12),
           'verticalMargins': _windowInsets(top: 64),
@@ -813,7 +815,7 @@ void main() {
       );
     });
 
-    testWidgets('apple shell enables blur only after content scrolls under', (
+    testWidgets('apple shell keeps the shared transparent app bar blur', (
       tester,
     ) async {
       _setSurfaceSize(tester, const Size(400, 800));
@@ -898,8 +900,8 @@ void main() {
           .enabled;
 
       expect(scopedBackground, scaffoldBackground);
-      expect(renderedAppBarBackground(), scaffoldBackground);
-      expect(backgroundFilterEnabled(), isFalse);
+      expect(renderedAppBarBackground(), CupertinoColors.transparent);
+      expect(backgroundFilterEnabled(), isTrue);
 
       await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
       await tester.pumpAndSettle();
@@ -1466,6 +1468,7 @@ void main() {
 
       final context = tester.element(find.text('habits page'));
       final layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
+      expect(layout.hasWindowControlAvoidance, isFalse);
       expect(layout.horizontalAvoidance, EdgeInsetsDirectional.zero);
       expect(layout.verticalAvoidance, EdgeInsetsDirectional.zero);
       expect(layout.horizontalSafeAreaAvoidance, isNull);
@@ -1482,6 +1485,7 @@ void main() {
       final router = _buildRouter();
       await tester.pumpWidget(
         AdaptiveWindowControlLayoutScope(
+          hasWindowControlAvoidance: true,
           horizontalAvoidance: EdgeInsetsDirectional.zero,
           verticalAvoidance: EdgeInsetsDirectional.zero,
           usesRectangularDisplay: true,
@@ -1492,6 +1496,7 @@ void main() {
 
       final context = tester.element(find.text('habits page'));
       final layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
+      expect(layout.hasWindowControlAvoidance, isTrue);
       expect(layout.usesRectangularDisplay, isTrue);
     });
 
@@ -1507,6 +1512,7 @@ void main() {
 
         var context = tester.element(find.text('habits page'));
         var layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
+        expect(layout.hasWindowControlAvoidance, isTrue);
         expect(layout.owner, WindowControlLayoutOwner.appBar);
         expect(
           layout.appBarHorizontalAvoidance,
@@ -1535,6 +1541,7 @@ void main() {
 
         context = tester.element(find.text('habits page'));
         layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
+        expect(layout.hasWindowControlAvoidance, isTrue);
         expect(layout.owner, WindowControlLayoutOwner.sideNavigation);
         expect(layout.appBarHorizontalAvoidance, EdgeInsetsDirectional.zero);
         expect(
@@ -3348,7 +3355,7 @@ void main() {
           sidebarNavigationBar,
         );
         expect(navigationBar.enableBackgroundFilterBlur, isTrue);
-        expect(navigationBar.automaticBackgroundVisibility, isTrue);
+        expect(navigationBar.automaticBackgroundVisibility, isFalse);
         expect(navigationBar.backgroundColor, CupertinoColors.transparent);
         final destinationList = find.byKey(
           const ValueKey('cupertino-sidebar-destination-list'),

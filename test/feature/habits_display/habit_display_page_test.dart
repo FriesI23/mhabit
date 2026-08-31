@@ -590,6 +590,12 @@ void main() {
     expect((todayBar.largeTitle! as Text).data, 'Today');
     expect(todayBar.middle, isNull);
     expect(
+      tester
+          .widgetList<SliverPadding>(find.byType(SliverPadding))
+          .map((padding) => padding.padding),
+      contains(const EdgeInsetsDirectional.only(start: 16, top: 10, end: 24)),
+    );
+    expect(
       find.descendant(
         of: find.byType(AppThemeSwitchButton),
         matching: find.byType(CupertinoButton),
@@ -625,7 +631,7 @@ void main() {
       find.byType(CupertinoNavigationBar),
     );
     expect(navigationBar.enableBackgroundFilterBlur, isTrue);
-    expect(navigationBar.automaticBackgroundVisibility, isTrue);
+    expect(navigationBar.automaticBackgroundVisibility, isFalse);
     expect(navigationBar.backgroundColor, CupertinoColors.transparent);
     final header = tester.widget<SliverPersistentHeader>(
       find.byType(SliverPersistentHeader),
@@ -965,7 +971,7 @@ void main() {
       ),
     );
     expect(habitsNavigationBar.enableBackgroundFilterBlur, isTrue);
-    expect(habitsNavigationBar.automaticBackgroundVisibility, isTrue);
+    expect(habitsNavigationBar.automaticBackgroundVisibility, isFalse);
     expect(habitsNavigationBar.backgroundColor, CupertinoColors.transparent);
     expect(
       tester
@@ -1151,6 +1157,26 @@ void main() {
     expect(vm.isInEditMode, isTrue);
     expect(vm.selectedHabitsCount, 0);
     expect(find.byType(CupertinoSliverSelectAppBar), findsOneWidget);
+    expect(find.byKey(const ValueKey('cupertino-calendar-bar')), findsNothing);
+    final selectHeader = tester.widget<SliverPersistentHeader>(
+      find.descendant(
+        of: find.byType(CupertinoSliverSelectAppBar),
+        matching: find.byType(SliverPersistentHeader),
+      ),
+    );
+    expect(selectHeader.delegate.minExtent, 92);
+    expect(selectHeader.delegate.maxExtent, 92);
+    expect(
+      tester
+          .widgetList<BackdropFilter>(
+            find.descendant(
+              of: find.byType(CupertinoSliverSelectAppBar),
+              matching: find.byType(BackdropFilter),
+            ),
+          )
+          .where((filter) => filter.enabled),
+      hasLength(1),
+    );
     expect(find.byType(CupertinoSelectBottomToolbar), findsOneWidget);
     expect(tester.getSize(find.byKey(const ValueKey('bottom-bar'))).height, 0);
     expect(find.byType(ScrollingFAB), findsNothing);

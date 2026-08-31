@@ -71,6 +71,7 @@ class AdaptiveWindowControlLayout extends StatelessWidget {
       builder: (context) {
         final layout = IosWindowControlLayout.of(context);
         return AdaptiveWindowControlLayoutScope(
+          hasWindowControlAvoidance: layout.hasWindowControlAvoidance,
           horizontalAvoidance: layout.horizontalAvoidance,
           verticalAvoidance: layout.verticalAvoidance,
           horizontalSafeAreaAvoidance: layout.isAvailable
@@ -99,6 +100,7 @@ class AdaptiveWindowControlLayout extends StatelessWidget {
 class AdaptiveWindowControlLayoutScope extends InheritedModel<Object> {
   const AdaptiveWindowControlLayoutScope({
     super.key,
+    this.hasWindowControlAvoidance = false,
     required this.horizontalAvoidance,
     required this.verticalAvoidance,
     this.horizontalSafeAreaAvoidance,
@@ -108,6 +110,10 @@ class AdaptiveWindowControlLayoutScope extends InheritedModel<Object> {
     required this.owner,
     required super.child,
   });
+
+  /// Whether the native layout reports an iPad windowed scene whose window
+  /// controls require horizontal avoidance.
+  final bool hasWindowControlAvoidance;
 
   final EdgeInsetsDirectional horizontalAvoidance;
   final EdgeInsetsDirectional verticalAvoidance;
@@ -214,6 +220,7 @@ class AdaptiveWindowControlLayoutScope extends InheritedModel<Object> {
 
   @override
   bool updateShouldNotify(AdaptiveWindowControlLayoutScope oldWidget) =>
+      hasWindowControlAvoidance != oldWidget.hasWindowControlAvoidance ||
       horizontalAvoidance != oldWidget.horizontalAvoidance ||
       verticalAvoidance != oldWidget.verticalAvoidance ||
       horizontalSafeAreaAvoidance != oldWidget.horizontalSafeAreaAvoidance ||

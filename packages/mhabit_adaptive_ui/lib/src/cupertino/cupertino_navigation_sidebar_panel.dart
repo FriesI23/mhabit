@@ -51,6 +51,7 @@ class CupertinoNavigationSidebarPanel extends StatelessWidget {
         child: CupertinoNavigationBar(
           automaticallyImplyLeading: false,
           transitionBetweenRoutes: false,
+          automaticBackgroundVisibility: false,
           backgroundColor: CupertinoColors.transparent,
           border: null,
         ),

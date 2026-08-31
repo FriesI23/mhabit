@@ -314,6 +314,12 @@ class _AppEntryState extends State<_AppEntry> {
                   themeMainColor: themeMainColor,
                   dynamicScheme: darkDynamic,
                 ),
+                elevatedDarkThemeBuilder: () =>
+                    const AppThemeBuilder().buildElevatedDark(
+                      themeColor: themeColor,
+                      themeMainColor: themeMainColor,
+                      dynamicScheme: darkDynamic,
+                    ),
                 config: _router,
               ),
             ),

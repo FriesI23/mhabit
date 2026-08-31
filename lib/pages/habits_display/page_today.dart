@@ -212,6 +212,10 @@ class _HabitsGroupView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final contentPadding = switch (AdaptiveStyle.of(context)) {
+      AdaptiveStyle.apple => kListTileContentPadding.copyWith(top: 10.0),
+      _ => kListTileContentPadding,
+    };
     return Selector<HabitsTodayViewModel, (bool, bool)>(
       selector: (context, vm) => (vm.hasLoad, vm.consumeForceReloadFlag()),
       shouldRebuild: (previous, next) => previous.$1 != next.$1 || next.$2,
@@ -233,7 +237,7 @@ class _HabitsGroupView extends StatelessWidget {
           return EnhancedSafeArea.edgeToEdgeSafe(
             withSliver: true,
             child: SliverPadding(
-              padding: kListTileContentPadding,
+              padding: contentPadding,
               sliver: WindowSizeClassLayoutBuilder.useScreenSize(
                 builder: (context, windowSize, child) =>
                     windowSize.isTabletFormFactor

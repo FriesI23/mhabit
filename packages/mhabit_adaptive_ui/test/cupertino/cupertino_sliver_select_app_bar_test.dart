@@ -21,6 +21,70 @@ Widget _sliverHost(
 );
 
 void main() {
+  testWidgets('bottom toolbar preserves the resolved dark glass alpha', (
+    tester,
+  ) async {
+    const darkGlass = Color(0x0FFFFFFF);
+    await tester.pumpWidget(
+      const CupertinoApp(
+        theme: CupertinoThemeData(
+          brightness: Brightness.dark,
+          barBackgroundColor: CupertinoDynamicColor.withBrightness(
+            color: Color(0xCCFFFFFF),
+            darkColor: darkGlass,
+          ),
+        ),
+        home: CupertinoSelectBottomToolbar(),
+      ),
+    );
+
+    final surfaceFinder = find.descendant(
+      of: find.byType(CupertinoSelectBottomToolbar),
+      matching: find.byType(ColoredBox),
+    );
+    final surface = tester.widget<ColoredBox>(surfaceFinder);
+    expect(surface.color.a, darkGlass.a);
+  });
+
+  testWidgets('bottom shares one pinned blur surface with the select toolbar', (
+    tester,
+  ) async {
+    _setSurfaceSize(tester, const Size(390, 800));
+    await tester.pumpWidget(
+      _sliverHost(
+        CupertinoSliverSelectAppBar(
+          title: const Text('3'),
+          selectAllLabel: 'Select All',
+          doneLabel: 'Done',
+          onSelectAll: () {},
+          onDone: () {},
+          bottom: const ColoredBox(
+            key: ValueKey('select-calendar'),
+            color: CupertinoColors.transparent,
+          ),
+          bottomExtent: 48,
+        ),
+      ),
+    );
+
+    final header = tester.widget<SliverPersistentHeader>(
+      find.byType(SliverPersistentHeader),
+    );
+    expect(header.delegate.minExtent, 92);
+    expect(header.delegate.maxExtent, 92);
+    expect(tester.getSize(find.byType(CupertinoNavigationBar)).height, 92);
+    expect(
+      tester.getTopLeft(find.byKey(const ValueKey('select-calendar'))).dy,
+      44,
+    );
+    expect(
+      tester
+          .widgetList<BackdropFilter>(find.byType(BackdropFilter))
+          .where((filter) => filter.enabled),
+      hasLength(1),
+    );
+  });
+
   testWidgets('compact top fixes Select All and Done around the title', (
     tester,
   ) async {

@@ -143,7 +143,10 @@ class AppleSliverSelectAppBar extends StatelessWidget {
     this.onDelete,
     this.onGroupModify,
     this.onStatusModify,
-  });
+    this.bottom,
+    this.bottomExtent = 0.0,
+  }) : assert(bottomExtent >= 0.0),
+       assert(bottom != null || bottomExtent == 0.0);
 
   final VoidCallback? onDone;
   final VoidCallback? onSelectAll;
@@ -155,6 +158,8 @@ class AppleSliverSelectAppBar extends StatelessWidget {
   final VoidCallback? onDelete;
   final VoidCallback? onGroupModify;
   final VoidCallback? onStatusModify;
+  final Widget? bottom;
+  final double bottomExtent;
 
   @override
   Widget build(BuildContext context) {
@@ -177,6 +182,8 @@ class AppleSliverSelectAppBar extends StatelessWidget {
       doneLabel: l10n?.habitDisplay_doneButton_label ?? 'Done',
       onSelectAll: onSelectAll,
       onDone: onDone,
+      bottom: bottom,
+      bottomExtent: bottomExtent,
       actions: buildAppleSelectActions(
         l10n: l10n,
         stat: stat,

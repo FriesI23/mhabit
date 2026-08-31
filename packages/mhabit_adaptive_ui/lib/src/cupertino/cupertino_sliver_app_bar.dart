@@ -18,15 +18,21 @@ class CupertinoSliverAppBar extends StatelessWidget {
     this.leading,
     this.onLeadingPressed,
     this.height,
+    this.bottom,
+    this.bottomExtent = 0.0,
     required this.style,
     this.windowControlAvoidance,
-  });
+  }) : assert(bottomExtent >= 0.0),
+       assert(bottom != null || bottomExtent == 0.0),
+       assert(bottom == null || height != null);
 
   final Widget title;
   final List<Widget> actions;
   final Widget? leading;
   final VoidCallback? onLeadingPressed;
   final double? height;
+  final Widget? bottom;
+  final double bottomExtent;
   final AppBarAppleStyle style;
   final EdgeInsetsDirectional? windowControlAvoidance;
 
@@ -57,6 +63,8 @@ class CupertinoSliverAppBar extends StatelessWidget {
         leading: effectiveLeading,
         trailing: effectiveTrailing,
         toolbarHeight: height,
+        bottom: bottom,
+        bottomExtent: bottomExtent,
         enableBackgroundFilterBlur: style.enableBackgroundFilterBlur,
         automaticBackgroundVisibility: style.automaticBackgroundVisibility,
         border: style.border,
@@ -126,6 +134,8 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
     required this.leading,
     required this.trailing,
     required this.toolbarHeight,
+    required this.bottom,
+    required this.bottomExtent,
     required this.enableBackgroundFilterBlur,
     required this.automaticBackgroundVisibility,
     required this.border,
@@ -139,6 +149,8 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
   final Widget? leading;
   final Widget? trailing;
   final double toolbarHeight;
+  final Widget? bottom;
+  final double bottomExtent;
   final bool enableBackgroundFilterBlur;
   final bool automaticBackgroundVisibility;
   final Border? border;
@@ -153,7 +165,7 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
     final topPadding =
         MediaQuery.paddingOf(context).top +
         (sidebarLeading?.toolbarTopInset ?? 0);
-    final extent = topPadding + toolbarHeight;
+    final extent = topPadding + toolbarHeight + bottomExtent;
     return SliverPersistentHeader(
       pinned: true,
       delegate: _FixedCupertinoToolbarDelegate(
@@ -185,6 +197,14 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
                   windowControlEdgePadding: windowControlEdgePadding,
                 ),
               ),
+              if (bottom case final bottom?)
+                Positioned(
+                  top: topPadding + toolbarHeight,
+                  left: 0,
+                  right: 0,
+                  height: bottomExtent,
+                  child: bottom,
+                ),
             ],
           ),
         ),
