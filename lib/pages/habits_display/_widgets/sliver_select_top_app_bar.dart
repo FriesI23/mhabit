@@ -55,15 +55,13 @@ class AppleSliverViewTopAppBar extends StatelessWidget {
           enabled: onSelect != null,
           overflowOnly: compact,
           retentionPriority: 100,
+          presentation: CupertinoSelectActionPresentation.iconAndLabel,
           primaryBuilder: (context, _) => CupertinoButton(
             key: const ValueKey('habit-select-primary'),
             padding: EdgeInsets.zero,
             minimumSize: const Size(44, 44),
             onPressed: onSelect,
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(selectLabel, maxLines: 1, softWrap: false),
-            ),
+            child: Text(selectLabel, maxLines: 1, softWrap: false),
           ),
         ),
         CupertinoSelectAction(

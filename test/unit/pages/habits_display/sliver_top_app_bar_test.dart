@@ -40,6 +40,7 @@ Widget _searchBarHost(
   VoidCallback? onInfoButtonPressed,
   VoidCallback? onMenuButtonPressed,
   VoidCallback? onSelectButtonPressed,
+  Locale? locale,
 }) {
   final searchBar = switch (platform) {
     TargetPlatform.iOS || TargetPlatform.macOS => SliverSearchTopAppBar.apple(
@@ -57,6 +58,7 @@ Widget _searchBarHost(
     value: vm,
     child: MaterialApp(
       theme: ThemeData(platform: platform),
+      locale: locale,
       restorationScopeId: 'app',
       localizationsDelegates: L10n.localizationsDelegates,
       supportedLocales: L10n.supportedLocales,
@@ -391,6 +393,54 @@ void main() {
     expect(select, findsOneWidget);
     await tester.tap(select);
     expect(selected, isTrue);
+  });
+
+  testWidgets('Apple habits Select keeps its localized intrinsic label width', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final vm = _TestHabitSummaryViewModel();
+    addTearDown(vm.dispose);
+
+    await tester.pumpWidget(
+      _searchBarHost(
+        vm,
+        platform: TargetPlatform.iOS,
+        onSelectButtonPressed: () {},
+      ),
+    );
+    var select = find.widgetWithText(CupertinoButton, 'Select');
+    expect(select, findsOneWidget);
+    expect(tester.getSize(select).width, greaterThan(44));
+    expect(
+      find.descendant(of: select, matching: find.byType(FittedBox)),
+      findsNothing,
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(platform: TargetPlatform.iOS),
+        locale: const Locale('fr'),
+        localizationsDelegates: L10n.localizationsDelegates,
+        supportedLocales: L10n.supportedLocales,
+        home: CustomScrollView(
+          slivers: [AppleSliverViewTopAppBar(onSelect: () {})],
+        ),
+      ),
+    );
+    select = find.widgetWithText(CupertinoButton, 'Sélectionner');
+    expect(select, findsOneWidget);
+    expect(tester.getSize(select).width, greaterThan(44));
+    expect(
+      find.descendant(of: select, matching: find.byType(FittedBox)),
+      findsNothing,
+    );
+    final label = tester.widget<Text>(find.text('Sélectionner'));
+    expect(label.maxLines, 1);
+    expect(label.softWrap, isFalse);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('search and view app bars share the app toolbar extent', (

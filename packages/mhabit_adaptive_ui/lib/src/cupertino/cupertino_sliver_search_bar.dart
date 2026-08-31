@@ -23,6 +23,8 @@ const List<Widget> _kDefaultFixedActions = <Widget>[];
 typedef CupertinoSliverSearchBarPrimaryActionBuilder =
     Widget Function(BuildContext context);
 
+enum CupertinoSliverSearchBarActionPresentation { iconOnly, iconAndLabel }
+
 /// An action or visual divider inside a Cupertino search-bar action menu.
 sealed class CupertinoSliverSearchBarMenuEntry {
   const CupertinoSliverSearchBarMenuEntry();
@@ -52,6 +54,7 @@ final class CupertinoSliverSearchBarAction
     this.isDestructive = false,
     this.overflowOnly = false,
     this.retentionPriority = 0,
+    this.presentation = CupertinoSliverSearchBarActionPresentation.iconOnly,
     this.primaryBuilder,
   }) : assert(onPressed != null || children.length > 0);
 
@@ -68,6 +71,9 @@ final class CupertinoSliverSearchBarAction
 
   /// Higher values keep the action in the toolbar for longer.
   final int retentionPriority;
+
+  /// The width profile used for primary placement resolution.
+  final CupertinoSliverSearchBarActionPresentation presentation;
 
   /// Optional primary-only presentation. Overflow remains renderer-owned.
   final CupertinoSliverSearchBarPrimaryActionBuilder? primaryBuilder;
@@ -740,7 +746,14 @@ class _CupertinoSearchActions extends StatelessWidget {
             key: const ValueKey('cupertino-search-adaptive-actions'),
             actions: collection,
             primaryCapacity: primaryCapacity,
-            presentationOverride: CupertinoActionPresentation.iconOnly,
+            presentationForAction: (context, action) =>
+                switch (actionsById[action.id.value]?.presentation) {
+                  CupertinoSliverSearchBarActionPresentation.iconOnly =>
+                    CupertinoActionPresentation.iconOnly,
+                  CupertinoSliverSearchBarActionPresentation.iconAndLabel =>
+                    CupertinoActionPresentation.extended,
+                  null => null,
+                },
             onInvoke: (callback) => callback(),
             onOverflowMenuOpened: onOverflowMenuOpened,
             onOverflowMenuClosed: onOverflowMenuClosed,

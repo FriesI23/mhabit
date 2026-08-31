@@ -16,6 +16,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/extensions/adaptive_style_extensions.dart';
+import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_color_type.dart';
 import 'package:mhabit/pages/habit_detail/_widgets/habit_detail_appbar.dart';
@@ -24,10 +25,14 @@ import 'package:mhabit/pages/habits_status_changer/_widgets/habit_status_changer
 import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
-Widget _host(Widget appBar, {TargetPlatform? platform}) => MaterialApp(
-  theme: platform == null ? null : ThemeData(platform: platform),
-  home: Scaffold(body: CustomScrollView(slivers: [appBar])),
-);
+Widget _host(Widget appBar, {TargetPlatform? platform, Locale? locale}) =>
+    MaterialApp(
+      theme: platform == null ? null : ThemeData(platform: platform),
+      locale: locale,
+      localizationsDelegates: L10n.localizationsDelegates,
+      supportedLocales: L10n.supportedLocales,
+      home: Scaffold(body: CustomScrollView(slivers: [appBar])),
+    );
 
 Finder get _adaptiveAppBarActions => find.byWidgetPredicate(
   (widget) => widget is AdaptiveAppBarActions,
@@ -146,6 +151,47 @@ void main() {
 
     await tester.tap(find.text('Save'));
     expect(saved, isTrue);
+  });
+
+  testWidgets('HabitEditAppBar keeps localized Save labels on one line', (
+    tester,
+  ) async {
+    final controller = TextEditingController(text: 'Habit');
+    addTearDown(controller.dispose);
+    final cases = <({TargetPlatform? platform, Locale locale, String label})>[
+      (platform: null, locale: const Locale('zh'), label: '保存'),
+      (platform: TargetPlatform.iOS, locale: const Locale('zh'), label: '保存'),
+      (platform: null, locale: const Locale('fr'), label: 'Sauvegarder'),
+      (
+        platform: TargetPlatform.iOS,
+        locale: const Locale('fr'),
+        label: 'Sauvegarder',
+      ),
+    ];
+
+    for (final testCase in cases) {
+      await tester.pumpWidget(
+        _host(
+          HabitEditAppBar(
+            name: 'Habit',
+            color: const HabitColor.builtIn(HabitColorType.cc1),
+            controller: controller,
+            autofocus: false,
+            isAppbarPinned: false,
+            showInFullscreenDialog: false,
+            onSaveButtonPressed: () {},
+          ),
+          platform: testCase.platform,
+          locale: testCase.locale,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final label = tester.widget<Text>(find.text(testCase.label));
+      expect(label.maxLines, 1);
+      expect(label.softWrap, isFalse);
+      expect(tester.takeException(), isNull);
+    }
   });
 
   testWidgets('HabitEditAppBar Apple uses fixed bar and inset name field', (
