@@ -142,6 +142,7 @@ class AdaptiveAppBarActions<T extends Object> extends StatelessWidget {
       overflowIcon: materialOverflowIcon ?? const Icon(Icons.more_vert),
       overflowTooltip: overflowTooltip,
       presentationOverride: MaterialActionPresentation.iconOnly,
+      style: const MaterialAdaptiveActionsStyle(iconSize: 24),
       fadeDuration: Duration.zero,
       resizeDuration: Duration.zero,
     );

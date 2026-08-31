@@ -136,6 +136,10 @@ void main() {
     expect(find.byIcon(Icons.edit), findsOneWidget);
     expect(find.byIcon(Icons.archive_outlined), findsNothing);
     expect(find.byIcon(Icons.more_vert), findsOneWidget);
+    final actions = tester.widget<MaterialAdaptiveActions<String>>(
+      find.byType(MaterialAdaptiveActions<String>),
+    );
+    expect(actions.style.iconSize, 24);
 
     await tester.tap(find.byIcon(Icons.edit));
     expect(invoked, 'edit');

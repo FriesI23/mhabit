@@ -341,7 +341,7 @@ void main() {
       find.byType(CupertinoNavigationBar),
     );
     expect(navigationBar.enableBackgroundFilterBlur, isTrue);
-    expect(navigationBar.automaticBackgroundVisibility, isFalse);
+    expect(navigationBar.automaticBackgroundVisibility, isTrue);
     expect(navigationBar.backgroundColor, CupertinoColors.transparent);
     expect(navigationBar.border, isNull);
     expect(

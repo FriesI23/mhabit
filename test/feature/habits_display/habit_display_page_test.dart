@@ -625,7 +625,7 @@ void main() {
       find.byType(CupertinoNavigationBar),
     );
     expect(navigationBar.enableBackgroundFilterBlur, isTrue);
-    expect(navigationBar.automaticBackgroundVisibility, isFalse);
+    expect(navigationBar.automaticBackgroundVisibility, isTrue);
     expect(navigationBar.backgroundColor, CupertinoColors.transparent);
     final header = tester.widget<SliverPersistentHeader>(
       find.byType(SliverPersistentHeader),
@@ -965,7 +965,7 @@ void main() {
       ),
     );
     expect(habitsNavigationBar.enableBackgroundFilterBlur, isTrue);
-    expect(habitsNavigationBar.automaticBackgroundVisibility, isFalse);
+    expect(habitsNavigationBar.automaticBackgroundVisibility, isTrue);
     expect(habitsNavigationBar.backgroundColor, CupertinoColors.transparent);
     expect(
       tester

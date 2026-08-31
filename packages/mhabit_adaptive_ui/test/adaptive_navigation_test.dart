@@ -813,7 +813,7 @@ void main() {
       );
     });
 
-    testWidgets('apple shell keeps the shared transparent app bar surface', (
+    testWidgets('apple shell enables blur only after content scrolls under', (
       tester,
     ) async {
       _setSurfaceSize(tester, const Size(400, 800));
@@ -887,13 +887,25 @@ void main() {
         return decorations.single.color!;
       }
 
+      bool backgroundFilterEnabled() => tester
+          .widgetList<BackdropFilter>(
+            find.descendant(
+              of: find.byType(CupertinoSliverNavigationBar),
+              matching: find.byType(BackdropFilter),
+            ),
+          )
+          .single
+          .enabled;
+
       expect(scopedBackground, scaffoldBackground);
-      expect(renderedAppBarBackground(), CupertinoColors.transparent);
+      expect(renderedAppBarBackground(), scaffoldBackground);
+      expect(backgroundFilterEnabled(), isFalse);
 
       await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
       await tester.pumpAndSettle();
 
       expect(renderedAppBarBackground(), CupertinoColors.transparent);
+      expect(backgroundFilterEnabled(), isTrue);
     });
 
     testWidgets('material shell does not host the Cupertino primary action', (
@@ -3336,6 +3348,7 @@ void main() {
           sidebarNavigationBar,
         );
         expect(navigationBar.enableBackgroundFilterBlur, isTrue);
+        expect(navigationBar.automaticBackgroundVisibility, isTrue);
         expect(navigationBar.backgroundColor, CupertinoColors.transparent);
         final destinationList = find.byKey(
           const ValueKey('cupertino-sidebar-destination-list'),

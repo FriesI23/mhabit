@@ -314,7 +314,6 @@ class _AppleCalendarBar extends StatelessWidget {
             child: const CupertinoNavigationBar(
               automaticallyImplyLeading: false,
               transitionBetweenRoutes: false,
-              automaticBackgroundVisibility: false,
               backgroundColor: CupertinoColors.transparent,
               border: null,
             ),

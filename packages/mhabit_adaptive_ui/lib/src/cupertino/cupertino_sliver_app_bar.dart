@@ -58,6 +58,7 @@ class CupertinoSliverAppBar extends StatelessWidget {
         trailing: effectiveTrailing,
         toolbarHeight: height,
         enableBackgroundFilterBlur: style.enableBackgroundFilterBlur,
+        automaticBackgroundVisibility: style.automaticBackgroundVisibility,
         border: style.border,
         backgroundColor: style.backgroundColor,
         padding: style.padding,
@@ -126,6 +127,7 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
     required this.trailing,
     required this.toolbarHeight,
     required this.enableBackgroundFilterBlur,
+    required this.automaticBackgroundVisibility,
     required this.border,
     required this.backgroundColor,
     required this.padding,
@@ -138,6 +140,7 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
   final Widget? trailing;
   final double toolbarHeight;
   final bool enableBackgroundFilterBlur;
+  final bool automaticBackgroundVisibility;
   final Border? border;
   final Color? backgroundColor;
   final EdgeInsetsDirectional? padding;
@@ -163,7 +166,7 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
               CupertinoNavigationBar(
                 automaticallyImplyLeading: false,
                 transitionBetweenRoutes: false,
-                automaticBackgroundVisibility: false,
+                automaticBackgroundVisibility: automaticBackgroundVisibility,
                 enableBackgroundFilterBlur: enableBackgroundFilterBlur,
                 border: border,
                 backgroundColor: backgroundColor,

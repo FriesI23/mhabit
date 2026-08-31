@@ -9,7 +9,7 @@ class AppBarAppleStyle {
     this.enableBackgroundFilterBlur = true,
     this.border,
     this.backgroundColor = CupertinoColors.transparent,
-    this.automaticBackgroundVisibility = false,
+    this.automaticBackgroundVisibility = true,
     this.padding,
     this.stretch = false,
     this.windowControlEdgePadding = cupertinoWindowControlEdgePadding,

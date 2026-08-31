@@ -1291,18 +1291,16 @@ class _HabitDetailAppBarActions extends StatelessWidget {
           primaryCapacity: actionLayout.primaryCapacity,
           maxPrimaryActions: actionLayout.maxPrimaryActions,
           onInvoke: onInvoke,
-          materialIconBuilder: (context, action) => Icon(
-            switch (action.payload) {
-              _DetailAppBarAction.edit => Icons.edit_rounded,
-              _DetailAppBarAction.unarchive => Icons.unarchive_rounded,
-              _DetailAppBarAction.archive => Icons.archive_outlined,
-              _DetailAppBarAction.clone => Icons.copy_rounded,
-              _DetailAppBarAction.export => MdiIcons.export,
-              _DetailAppBarAction.delete => Icons.delete_outline,
-              null => Icons.more_horiz,
-            },
-            color: action.payload == _DetailAppBarAction.edit ? color : null,
-          ),
+          materialIconBuilder: (context, action) =>
+              Icon(switch (action.payload) {
+                _DetailAppBarAction.edit => Icons.edit_rounded,
+                _DetailAppBarAction.unarchive => Icons.unarchive_rounded,
+                _DetailAppBarAction.archive => Icons.archive_outlined,
+                _DetailAppBarAction.clone => Icons.copy_rounded,
+                _DetailAppBarAction.export => MdiIcons.export,
+                _DetailAppBarAction.delete => Icons.delete_outline,
+                null => Icons.more_horiz,
+              }, color: color),
           appleIconBuilder: (context, action) => Icon(switch (action.payload) {
             _DetailAppBarAction.edit => CupertinoIcons.pencil,
             _DetailAppBarAction.unarchive => CupertinoIcons.tray_arrow_up,
@@ -1311,7 +1309,7 @@ class _HabitDetailAppBarActions extends StatelessWidget {
             _DetailAppBarAction.export => CupertinoIcons.share_up,
             _DetailAppBarAction.delete => CupertinoIcons.delete,
             null => CupertinoIcons.ellipsis,
-          }, color: action.payload == _DetailAppBarAction.edit ? color : null),
+          }, color: color),
           materialOverflowIcon: Icon(Icons.adaptive.more, color: color),
           appleOverflowIcon: Icon(CupertinoIcons.ellipsis, color: color),
         );

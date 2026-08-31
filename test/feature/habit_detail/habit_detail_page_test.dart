@@ -33,6 +33,7 @@ import 'package:mhabit/providers/support/global.dart';
 import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/profile_provider.dart';
+import 'package:mhabit/theme/color.dart';
 import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
@@ -144,7 +145,7 @@ Future<void> _pumpHabitDetailPage(
         ChangeNotifierProvider<AppEventBus>.value(value: appEvent),
       ],
       child: MaterialApp(
-        theme: platform == null ? null : ThemeData(platform: platform),
+        theme: ThemeData(platform: platform, extensions: [lightCustomColors]),
         home: ValueListenableBuilder<int>(
           valueListenable: rebuildToken,
           builder: (context, _, child) {
@@ -335,9 +336,31 @@ void main() {
 
     final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
     expect(appBar.toolbarHeight, AppAdaptiveStyle.materialToolbarHeight);
-    expect(find.byIcon(Icons.edit_rounded), findsOneWidget);
-    expect(find.byIcon(Icons.archive_outlined), findsOneWidget);
-    await tester.tap(find.byIcon(Icons.more_vert));
+    final edit = find.byIcon(Icons.edit_rounded);
+    final archive = find.byIcon(Icons.archive_outlined);
+    final more = find.byIcon(Icons.more_vert);
+    expect(edit, findsOneWidget);
+    expect(archive, findsOneWidget);
+    expect(tester.widget<Icon>(edit).color, lightCustomColors.cc1);
+    expect(tester.widget<Icon>(archive).color, lightCustomColors.cc1);
+    expect(tester.widget<Icon>(more).color, lightCustomColors.cc1);
+    expect(
+      tester
+          .widget<IconButton>(
+            find.ancestor(of: edit, matching: find.byType(IconButton)),
+          )
+          .iconSize,
+      24,
+    );
+    expect(
+      tester
+          .widget<IconButton>(
+            find.ancestor(of: more, matching: find.byType(IconButton)),
+          )
+          .iconSize,
+      24,
+    );
+    await tester.tap(more);
     await tester.pumpAndSettle();
 
     expect(find.text('Archive'), findsNothing);
@@ -424,6 +447,9 @@ void main() {
     expect(edit, findsOneWidget);
     expect(archive, findsOneWidget);
     expect(more, findsOneWidget);
+    expect(tester.widget<Icon>(edit).color, lightCustomColors.cc1);
+    expect(tester.widget<Icon>(archive).color, lightCustomColors.cc1);
+    expect(tester.widget<Icon>(more).color, lightCustomColors.cc1);
     expect(
       tester
           .getSize(
