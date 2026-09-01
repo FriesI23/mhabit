@@ -140,7 +140,8 @@ class AppBarStyles {
 /// [AppBarStyles]. Material resolves [height] as [SliverAppBar.toolbarHeight].
 /// Apple uses a fixed, centered toolbar when [height] is provided unless
 /// [AppBarAppleStyle.collapsible] requests the native collapsing navigation
-/// bar behavior.
+/// bar behavior. A shared [bottom] is hosted below the fixed toolbar on both
+/// renderers; a Material-only [AppBarMaterialStyle.bottom] overrides it.
 class AdaptiveSliverAppBar extends StatelessWidget {
   const AdaptiveSliverAppBar({
     super.key,
@@ -149,8 +150,10 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.leading,
     this.onLeadingPressed,
     this.height,
+    this.bottom,
     this.styles,
-  }) : style = null;
+  }) : assert(bottom == null || height != null),
+       style = null;
 
   const AdaptiveSliverAppBar.material({
     super.key,
@@ -159,6 +162,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.leading,
     this.onLeadingPressed,
     this.height,
+    this.bottom,
     this.styles,
   }) : style = AdaptiveStyle.material;
 
@@ -169,8 +173,10 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.leading,
     this.onLeadingPressed,
     this.height,
+    this.bottom,
     this.styles,
-  }) : style = AdaptiveStyle.apple;
+  }) : assert(bottom == null || height != null),
+       style = AdaptiveStyle.apple;
 
   final AdaptiveStyle? style;
   final Widget title;
@@ -178,6 +184,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
   final Widget? leading;
   final VoidCallback? onLeadingPressed;
   final double? height;
+  final PreferredSizeWidget? bottom;
   final AppBarStyles? styles;
 
   AppBarMaterialStyle get _effectiveMaterialStyle =>
@@ -206,8 +213,9 @@ class AdaptiveSliverAppBar extends StatelessWidget {
       forceElevated: config.forceElevated,
       scrolledUnderElevation: config.scrolledUnderElevation,
       shadowColor: config.shadowColor,
-      bottom: config.bottom,
+      bottom: config.bottom ?? bottom,
       title: title,
+      automaticallyImplyLeading: leading == null && onLeadingPressed == null,
       leading:
           leading ??
           (onLeadingPressed == null
@@ -227,6 +235,8 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     leading: leading,
     onLeadingPressed: onLeadingPressed,
     height: effectiveStyle.collapsible ? null : height,
+    bottom: bottom,
+    bottomExtent: bottom?.preferredSize.height ?? 0.0,
     style: effectiveStyle,
   );
 }

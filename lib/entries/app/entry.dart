@@ -209,6 +209,12 @@ class _AppEntryState extends State<_AppEntry> {
           final (habitId: _, initForm: initForm) = state.unpackHabitEdit();
           return HabitEditPage(initForm: initForm);
         },
+      )
+      ..addHabitsStatus(
+        builder: (_, state) {
+          final (:uuidList) = state.unpackHabitsStatusChanger();
+          return HabitsStatusChangerPage(uuidList: uuidList);
+        },
       );
     final appFlowObserver = AdaptiveBranchRouteObserver();
     final appChromeNavigatorKey = GlobalKey<NavigatorState>();
@@ -229,12 +235,6 @@ class _AppEntryState extends State<_AppEntry> {
             builder: (_, state) {
               final (:selectedGroupId) = state.unpackGroupManage();
               return GroupManagePage(initialGroupUUID: selectedGroupId);
-            },
-          )
-          ..addHabitsStatus(
-            builder: (_, state) {
-              final (:uuidList) = state.unpackHabitsStatusChanger();
-              return HabitsStatusChangerPage(uuidList: uuidList);
             },
           )
           ..addShellRoute(

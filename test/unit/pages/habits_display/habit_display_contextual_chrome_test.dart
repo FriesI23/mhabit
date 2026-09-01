@@ -14,7 +14,7 @@ Widget _testApp({required TargetPlatform platform, required Widget child}) =>
     );
 
 void main() {
-  testWidgets('Material selection keeps the regular page chrome', (
+  testWidgets('Material selection suppresses the shell but keeps its FAB', (
     tester,
   ) async {
     late HabitDisplayContextualChrome chrome;
@@ -32,7 +32,7 @@ void main() {
       ),
     );
 
-    expect(chrome.suppressShellChrome, isFalse);
+    expect(chrome.suppressShellChrome, isTrue);
     expect(chrome.hideFloatingActionButton, isFalse);
     expect(chrome.showSelectionBottomToolbar, isFalse);
     expect(chrome.extendBody, isFalse);

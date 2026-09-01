@@ -40,7 +40,7 @@ class HabitDisplayContextualChrome {
         appleSelection &&
         WindowSize.of(context).width == WindowSizeClass.compact;
     return HabitDisplayContextualChrome._(
-      suppressShellChrome: appleSelection,
+      suppressShellChrome: isSelectionMode,
       hideFloatingActionButton: appleSelection,
       showSelectionBottomToolbar: compactAppleSelection,
       extendBody: compactAppleSelection,

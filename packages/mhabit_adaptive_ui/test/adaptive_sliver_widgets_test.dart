@@ -405,6 +405,64 @@ void main() {
       expect(appBar.toolbarHeight, 56);
     });
 
+    testWidgets('shared bottom is hosted by the Material bar', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                AdaptiveSliverAppBar.material(
+                  title: Text('title'),
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(48),
+                    child: SizedBox(key: ValueKey('shared-bottom'), height: 48),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
+      expect(appBar.bottom?.preferredSize.height, 48);
+      expect(
+        tester.getSize(find.byKey(const ValueKey('shared-bottom'))).height,
+        48,
+      );
+    });
+
+    testWidgets('shared bottom is hosted below the fixed Apple toolbar', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          home: const Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                AdaptiveSliverAppBar(
+                  title: Text('title'),
+                  height: 52,
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(48),
+                    child: SizedBox(key: ValueKey('shared-bottom'), height: 48),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(CupertinoNavigationBar), findsOneWidget);
+      expect(find.byType(CupertinoSliverNavigationBar), findsNothing);
+      expect(
+        tester.getSize(find.byKey(const ValueKey('shared-bottom'))).height,
+        48,
+      );
+    });
+
     testWidgets('apple config passes through to the Cupertino bar', (
       tester,
     ) async {

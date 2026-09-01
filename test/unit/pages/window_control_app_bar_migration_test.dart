@@ -381,18 +381,50 @@ void main() {
       final wrapper = tester.widget<WindowControlSliverAppBar>(
         find.byType(WindowControlSliverAppBar),
       );
+      final adaptive = tester.widget<AdaptiveSliverAppBar>(
+        find.byType(AdaptiveSliverAppBar),
+      );
       final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
       expect(wrapper.pinned, isTrue);
       expect(wrapper.floating, isTrue);
       expect(wrapper.automaticallyImplyLeading, isFalse);
       expect(wrapper.bottom?.preferredSize.height, kToolbarHeight);
+      expect(adaptive.bottom?.preferredSize.height, kToolbarHeight);
       expect(find.text('Batch'), findsOneWidget);
       expect(find.byKey(const ValueKey('batch-bottom')), findsOneWidget);
       expect(appBar.pinned, isTrue);
       expect(appBar.floating, isTrue);
 
-      await tester.tap(find.byType(PageBackButton));
+      await tester.tap(find.byType(AdaptiveBackButton));
       expect(closed, isTrue);
     },
   );
+
+  testWidgets('HabitStatusChangerAppbar uses Apple close and shared bottom', (
+    tester,
+  ) async {
+    var closed = false;
+    await tester.pumpWidget(
+      _host(
+        HabitStatusChangerAppbar(
+          title: const Text('Batch'),
+          bottomWidget: const SizedBox(key: ValueKey('batch-bottom')),
+          onCloseButtonPressed: () => closed = true,
+        ),
+        platform: TargetPlatform.iOS,
+      ),
+    );
+
+    expect(find.byType(AdaptiveSliverAppBar), findsOneWidget);
+    expect(find.byType(CupertinoNavigationBar), findsOneWidget);
+    expect(find.byType(CupertinoSliverNavigationBar), findsNothing);
+    expect(find.byIcon(CupertinoIcons.xmark), findsOneWidget);
+    expect(
+      tester.getSize(find.byKey(const ValueKey('batch-bottom'))).height,
+      kToolbarHeight,
+    );
+
+    await tester.tap(find.byType(AdaptiveBackButton));
+    expect(closed, isTrue);
+  });
 }

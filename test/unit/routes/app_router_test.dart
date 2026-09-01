@@ -66,7 +66,7 @@ void main() {
               ))
               .build();
       final shell = router.configuration.routes.first as ShellRoute;
-      final route = shell.routes[1] as GoRoute;
+      final route = shell.routes[0] as GoRoute;
       expect(route.path, '/habit/create');
       expect(route.name, AppRoute.habitCreate.name);
       expect(route.builder, isNotNull);
@@ -87,7 +87,7 @@ void main() {
               ))
               .build();
       final shell = router.configuration.routes.first as ShellRoute;
-      final route = shell.routes[1] as GoRoute;
+      final route = shell.routes[0] as GoRoute;
       expect(route.path, '/habit/edit');
       expect(route.name, AppRoute.habitEdit.name);
       expect(route.builder, isNotNull);
@@ -296,6 +296,10 @@ void main() {
         isFalse,
       );
       expect(appShellFlowVisibilityPolicy([AppRoute.habitEdit.name]), isFalse);
+      expect(
+        appShellFlowVisibilityPolicy([AppRoute.habitsStatus.name]),
+        isFalse,
+      );
     });
   });
 
@@ -310,7 +314,8 @@ void main() {
 
     AppFlowRouterBuilder buildAppFlowRoutes() => AppFlowRouterBuilder()
       ..addHabitCreate(builder: (_, _) => const SizedBox.shrink())
-      ..addHabitEdit(builder: (_, _) => const SizedBox.shrink());
+      ..addHabitEdit(builder: (_, _) => const SizedBox.shrink())
+      ..addHabitsStatus(builder: (_, _) => const SizedBox.shrink());
 
     test('addShellRoute nests tab branches under an app chrome shell', () {
       final router =
@@ -325,9 +330,13 @@ void main() {
       expect(routes, hasLength(1));
       final appChromeShell = routes.first as ShellRoute;
       expect(appChromeShell.builder, isNotNull);
-      expect(appChromeShell.routes, hasLength(3));
+      expect(appChromeShell.routes, hasLength(4));
 
-      final tabShell = appChromeShell.routes.first as StatefulShellRoute;
+      expect((appChromeShell.routes[0] as GoRoute).path, '/habit/create');
+      expect((appChromeShell.routes[1] as GoRoute).path, '/habit/edit');
+      expect((appChromeShell.routes[2] as GoRoute).path, '/habits/status');
+
+      final tabShell = appChromeShell.routes[3] as StatefulShellRoute;
       expect(tabShell.builder, isNotNull);
       expect(tabShell.branches, hasLength(2));
 
@@ -345,8 +354,6 @@ void main() {
         expect(goRoute.path, path);
         expect(goRoute.name, name);
       }
-      expect((appChromeShell.routes[1] as GoRoute).path, '/habit/create');
-      expect((appChromeShell.routes[2] as GoRoute).path, '/habit/edit');
     });
 
     test('shell route coexists with root-level routes', () {
@@ -364,8 +371,10 @@ void main() {
       expect(routes, hasLength(2));
       expect(routes[0], isA<ShellRoute>());
       final appChromeShell = routes[0] as ShellRoute;
-      expect((appChromeShell.routes[1] as GoRoute).path, '/habit/create');
-      expect((appChromeShell.routes[2] as GoRoute).path, '/habit/edit');
+      expect((appChromeShell.routes[0] as GoRoute).path, '/habit/create');
+      expect((appChromeShell.routes[1] as GoRoute).path, '/habit/edit');
+      expect((appChromeShell.routes[2] as GoRoute).path, '/habits/status');
+      expect(appChromeShell.routes[3], isA<StatefulShellRoute>());
       expect((routes[1] as GoRoute).path, '/group/manage');
     });
   });

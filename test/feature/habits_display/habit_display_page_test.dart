@@ -1460,6 +1460,105 @@ void main() {
     ]);
   });
 
+  testWidgets('Material Status Modify routes the selected habit UUIDs', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess(habitCount: 2);
+    final sync = _FakeAppSyncWorkflowAccess();
+    List<HabitUUID>? routedUuids;
+    late final GoRouter router;
+    addTearDown(() {
+      router.dispose();
+      sync.dispose();
+      profile.dispose();
+    });
+
+    final vm = await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      useAdaptiveShell: true,
+      platform: TargetPlatform.android,
+      appBuilder: (home) {
+        router = GoRouter(
+          routes: [
+            GoRoute(path: '/', builder: (_, _) => home),
+            GoRoute(
+              path: '/habits/status',
+              name: AppRoute.habitsStatus.name,
+              builder: (_, state) {
+                routedUuids = state.unpackHabitsStatusChanger().uuidList;
+                return const Scaffold(body: Text('Status route'));
+              },
+            ),
+          ],
+        );
+        return MaterialApp.router(
+          theme: ThemeData(platform: TargetPlatform.android),
+          localizationsDelegates: L10n.localizationsDelegates,
+          supportedLocales: L10n.supportedLocales,
+          routerConfig: router,
+        );
+      },
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    final fabSwitcher = find.descendant(
+      of: find.byType(ScrollingFAB),
+      matching: find.byType(AnimatedSwitcher),
+    );
+    expect(fabSwitcher, findsOneWidget);
+    final fabSwitcherElement = tester.element(fabSwitcher);
+
+    vm.switchToEditMode();
+    vm.selectHabit(_buildHabitSummaryData(0).uuid, listen: false);
+    vm.selectHabit(_buildHabitSummaryData(1).uuid);
+    await tester.pump();
+    expect(tester.element(fabSwitcher), same(fabSwitcherElement));
+    expect(
+      tester
+          .widgetList<AnimatedCrossFade>(
+            find.descendant(
+              of: find.byType(ScrollingFAB),
+              matching: find.byType(AnimatedCrossFade),
+            ),
+          )
+          .map((crossFade) => crossFade.crossFadeState),
+      contains(CrossFadeState.showSecond),
+    );
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(
+      tester
+          .widgetList<FadeTransition>(
+            find.descendant(
+              of: fabSwitcher,
+              matching: find.byType(FadeTransition),
+            ),
+          )
+          .map((transition) => transition.opacity.value),
+      contains(inExclusiveRange(0, 1)),
+    );
+    await tester.pump(const Duration(milliseconds: 250));
+    expect(tester.getSize(find.byKey(const ValueKey('bottom-bar'))).height, 0);
+    expect(find.byType(NavigationBar).hitTestable(), findsNothing);
+    expect(find.byType(FloatingActionButton).hitTestable(), findsOneWidget);
+
+    await tester.tap(find.byType(FloatingActionButton).hitTestable());
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    expect(routedUuids, [
+      _buildHabitSummaryData(0).uuid,
+      _buildHabitSummaryData(1).uuid,
+    ]);
+  });
+
   testWidgets('calendar uses compact header geometry', (tester) async {
     final profile = await _loadProfile();
     final access = _LoadedHabitsDisplayAccess();
