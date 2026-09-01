@@ -8,6 +8,7 @@ import '../adaptive/app_bar_apple_style.dart';
 import '../breakpoints/breakpoints.dart';
 import '../breakpoints/window_size_class.dart';
 import '../shell/navigation_sidebar_app_bar_leading.dart';
+import '../window_control/cupertino_navigation_bar.dart';
 import '../window_control/toolbar_geometry.dart';
 import 'cupertino_toolbar_padding.dart';
 
@@ -267,7 +268,7 @@ class _CupertinoSliverSearchBarState extends State<CupertinoSliverSearchBar> {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              CupertinoNavigationBar(
+              WindowControlCupertinoNavigationBar(
                 automaticallyImplyLeading: false,
                 transitionBetweenRoutes: false,
                 automaticBackgroundVisibility:

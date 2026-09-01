@@ -77,6 +77,7 @@ class WindowControlCupertinoNavigationBar extends StatelessWidget
 
   CupertinoNavigationBar _createNavigationBar({
     EdgeInsetsDirectional? effectivePadding,
+    required Color? effectiveBackgroundColor,
   }) => CupertinoNavigationBar(
     leading: leading,
     automaticallyImplyLeading: automaticallyImplyLeading,
@@ -85,7 +86,7 @@ class WindowControlCupertinoNavigationBar extends StatelessWidget
     middle: middle,
     trailing: trailing,
     border: border,
-    backgroundColor: backgroundColor,
+    backgroundColor: effectiveBackgroundColor,
     automaticBackgroundVisibility: automaticBackgroundVisibility,
     enableBackgroundFilterBlur: enableBackgroundFilterBlur,
     brightness: brightness,
@@ -97,12 +98,19 @@ class WindowControlCupertinoNavigationBar extends StatelessWidget
   // Delegate framework-owned geometry and dynamic-color resolution instead of
   // copying Flutter's private navigation-bar behavior into this wrapper.
   @override
-  Size get preferredSize =>
-      _createNavigationBar(effectivePadding: padding).preferredSize;
+  Size get preferredSize => _createNavigationBar(
+    effectivePadding: padding,
+    effectiveBackgroundColor: backgroundColor,
+  ).preferredSize;
 
   @override
   bool shouldFullyObstruct(BuildContext context) => _createNavigationBar(
     effectivePadding: padding,
+    effectiveBackgroundColor: _resolveAutomaticBackgroundColor(
+      context,
+      backgroundColor: backgroundColor,
+      automaticBackgroundVisibility: automaticBackgroundVisibility,
+    ),
   ).shouldFullyObstruct(context);
 
   @override
@@ -112,6 +120,11 @@ class WindowControlCupertinoNavigationBar extends StatelessWidget
       padding: padding,
       avoidance: windowControlAvoidance,
       edgePadding: windowControlEdgePadding,
+    ),
+    effectiveBackgroundColor: _resolveAutomaticBackgroundColor(
+      context,
+      backgroundColor: backgroundColor,
+      automaticBackgroundVisibility: automaticBackgroundVisibility,
     ),
   );
 }
@@ -203,7 +216,11 @@ class WindowControlCupertinoSliverNavigationBar extends StatelessWidget {
     middle: middle,
     trailing: trailing,
     border: border,
-    backgroundColor: backgroundColor,
+    backgroundColor: _resolveAutomaticBackgroundColor(
+      context,
+      backgroundColor: backgroundColor,
+      automaticBackgroundVisibility: automaticBackgroundVisibility,
+    ),
     automaticBackgroundVisibility: automaticBackgroundVisibility,
     enableBackgroundFilterBlur: enableBackgroundFilterBlur,
     brightness: brightness,
@@ -216,6 +233,29 @@ class WindowControlCupertinoSliverNavigationBar extends StatelessWidget {
     stretch: stretch,
     bottom: bottom,
   );
+}
+
+Color? _resolveAutomaticBackgroundColor(
+  BuildContext context, {
+  required Color? backgroundColor,
+  required bool automaticBackgroundVisibility,
+}) {
+  if (!automaticBackgroundVisibility || backgroundColor == null) {
+    return backgroundColor;
+  }
+  final resolvedBackground = CupertinoDynamicColor.resolve(
+    backgroundColor,
+    context,
+  );
+  if (resolvedBackground.a != 0.0) return backgroundColor;
+
+  final pageBackground =
+      CupertinoPageScaffoldBackgroundColor.maybeOf(context) ??
+      CupertinoTheme.of(context).scaffoldBackgroundColor;
+  return CupertinoDynamicColor.resolve(
+    pageBackground,
+    context,
+  ).withValues(alpha: 0.0);
 }
 
 EdgeInsetsDirectional _resolveCupertinoPadding(

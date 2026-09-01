@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart'
     show
         CupertinoButton,
         CupertinoButtonSize,
-        CupertinoColors,
         CupertinoIcons,
         CupertinoNavigationBar,
         CupertinoPageScaffoldBackgroundColor,
@@ -815,18 +814,26 @@ void main() {
       );
     });
 
-    testWidgets('apple shell keeps the shared transparent app bar blur', (
+    testWidgets('apple shell preserves page RGB through transparent blur', (
       tester,
     ) async {
       _setSurfaceSize(tester, const Size(400, 800));
-      const scaffoldBackground = Color(0xFF000000);
+      const scaffoldBackground = Color(0xFF1E1E1E);
+      const transparentScaffoldBackground = Color(0x001E1E1E);
       const barBackground = Color(0xCC303036);
+      final scrollController = ScrollController();
+      addTearDown(scrollController.dispose);
       Color? scopedBackground;
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(
             platform: TargetPlatform.iOS,
             brightness: Brightness.dark,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.blue,
+              brightness: Brightness.dark,
+              surface: scaffoldBackground,
+            ),
             cupertinoOverrideTheme: const CupertinoThemeData(
               brightness: Brightness.dark,
               scaffoldBackgroundColor: scaffoldBackground,
@@ -861,8 +868,9 @@ void main() {
                 scopedBackground = CupertinoPageScaffoldBackgroundColor.maybeOf(
                   context,
                 );
-                return const CustomScrollView(
-                  slivers: [
+                return CustomScrollView(
+                  controller: scrollController,
+                  slivers: const [
                     AdaptiveSliverAppBar.apple(title: Text('Habits')),
                     SliverToBoxAdapter(child: SizedBox(height: 1600)),
                   ],
@@ -900,14 +908,125 @@ void main() {
           .enabled;
 
       expect(scopedBackground, scaffoldBackground);
-      expect(renderedAppBarBackground(), CupertinoColors.transparent);
+      expect(
+        tester
+            .widget<CupertinoSliverNavigationBar>(
+              find.byType(CupertinoSliverNavigationBar),
+            )
+            .backgroundColor,
+        transparentScaffoldBackground,
+      );
+      expect(renderedAppBarBackground(), scaffoldBackground);
+      expect(backgroundFilterEnabled(), isFalse);
+
+      // The large title collapses before Flutter's 10px scroll-under color
+      // transition. Offset 57 is halfway through that transition.
+      scrollController.jumpTo(57);
+      await tester.pump();
+      await tester.pump();
+
+      expect(
+        renderedAppBarBackground(),
+        Color.lerp(scaffoldBackground, transparentScaffoldBackground, 0.5),
+      );
       expect(backgroundFilterEnabled(), isTrue);
 
-      await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
+      scrollController.jumpTo(400);
       await tester.pumpAndSettle();
 
-      expect(renderedAppBarBackground(), CupertinoColors.transparent);
+      expect(renderedAppBarBackground(), transparentScaffoldBackground);
       expect(backgroundFilterEnabled(), isTrue);
+    });
+
+    testWidgets('idle Apple app bar follows the animated Scaffold surface', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(400, 800));
+      const lightSurface = Color(0xFFF7F7F7);
+      const darkSurface = Color(0xFF1E1E1E);
+      final themeMode = ValueNotifier(ThemeMode.light);
+      addTearDown(themeMode.dispose);
+
+      ThemeData theme(Brightness brightness, Color surface) => ThemeData(
+        platform: TargetPlatform.iOS,
+        brightness: brightness,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: brightness,
+          surface: surface,
+        ),
+        cupertinoOverrideTheme: CupertinoThemeData(
+          brightness: brightness,
+          scaffoldBackgroundColor: surface,
+        ),
+      );
+
+      await tester.pumpWidget(
+        ValueListenableBuilder<ThemeMode>(
+          valueListenable: themeMode,
+          builder: (context, mode, child) => MaterialApp(
+            theme: theme(Brightness.light, lightSurface),
+            darkTheme: theme(Brightness.dark, darkSurface),
+            themeMode: mode,
+            home: AdaptiveNavigationShell(
+              selectedIndex: 0,
+              destinations: const [
+                AdaptiveNavigationDestination(
+                  label: 'Habits',
+                  icons: NavigationDestinationIcons(
+                    material: Icon(Icons.home_outlined),
+                    materialSelected: Icon(Icons.home),
+                    apple: Icon(Icons.home_outlined),
+                    appleSelected: Icon(Icons.home),
+                  ),
+                ),
+              ],
+              onDestinationSelected: (_) {},
+              child: const CustomScrollView(
+                slivers: [
+                  AdaptiveSliverAppBar.apple(height: 44, title: Text('Habits')),
+                  SliverToBoxAdapter(child: SizedBox(height: 1000)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      Color renderedAppBarBackground() => tester
+          .widgetList<DecoratedBox>(
+            find.descendant(
+              of: find.byType(CupertinoNavigationBar),
+              matching: find.byType(DecoratedBox),
+            ),
+          )
+          .map((box) => box.decoration)
+          .whereType<BoxDecoration>()
+          .singleWhere((decoration) => decoration.color != null)
+          .color!;
+
+      Color renderedScaffoldBackground() =>
+          tester.widget<Scaffold>(find.byType(Scaffold)).backgroundColor!;
+
+      themeMode.value = ThemeMode.dark;
+      await tester.pump();
+      for (final elapsed in const [50, 50, 50, 50]) {
+        await tester.pump(Duration(milliseconds: elapsed));
+        expect(renderedAppBarBackground(), renderedScaffoldBackground());
+        expect(
+          tester
+              .widgetList<BackdropFilter>(
+                find.descendant(
+                  of: find.byType(CupertinoNavigationBar),
+                  matching: find.byType(BackdropFilter),
+                ),
+              )
+              .single
+              .enabled,
+          isFalse,
+        );
+      }
     });
 
     testWidgets('material shell does not host the Cupertino primary action', (
@@ -3355,8 +3474,8 @@ void main() {
           sidebarNavigationBar,
         );
         expect(navigationBar.enableBackgroundFilterBlur, isTrue);
-        expect(navigationBar.automaticBackgroundVisibility, isFalse);
-        expect(navigationBar.backgroundColor, CupertinoColors.transparent);
+        expect(navigationBar.automaticBackgroundVisibility, isTrue);
+        expect(navigationBar.backgroundColor?.a, 0.0);
         final destinationList = find.byKey(
           const ValueKey('cupertino-sidebar-destination-list'),
         );

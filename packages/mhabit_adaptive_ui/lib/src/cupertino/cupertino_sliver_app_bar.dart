@@ -175,7 +175,7 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              CupertinoNavigationBar(
+              WindowControlCupertinoNavigationBar(
                 automaticallyImplyLeading: false,
                 transitionBetweenRoutes: false,
                 automaticBackgroundVisibility: automaticBackgroundVisibility,

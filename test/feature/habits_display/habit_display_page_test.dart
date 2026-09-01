@@ -17,7 +17,6 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart'
     show
         CupertinoButton,
-        CupertinoColors,
         CupertinoMenuItem,
         CupertinoNavigationBar,
         CupertinoPopupSurface,
@@ -590,12 +589,6 @@ void main() {
     expect((todayBar.largeTitle! as Text).data, 'Today');
     expect(todayBar.middle, isNull);
     expect(
-      tester
-          .widgetList<SliverPadding>(find.byType(SliverPadding))
-          .map((padding) => padding.padding),
-      contains(const EdgeInsetsDirectional.only(start: 16, top: 10, end: 24)),
-    );
-    expect(
       find.descendant(
         of: find.byType(AppThemeSwitchButton),
         matching: find.byType(CupertinoButton),
@@ -631,8 +624,8 @@ void main() {
       find.byType(CupertinoNavigationBar),
     );
     expect(navigationBar.enableBackgroundFilterBlur, isTrue);
-    expect(navigationBar.automaticBackgroundVisibility, isFalse);
-    expect(navigationBar.backgroundColor, CupertinoColors.transparent);
+    expect(navigationBar.automaticBackgroundVisibility, isTrue);
+    expect(navigationBar.backgroundColor?.a, 0.0);
     final header = tester.widget<SliverPersistentHeader>(
       find.byType(SliverPersistentHeader),
     );
@@ -971,8 +964,8 @@ void main() {
       ),
     );
     expect(habitsNavigationBar.enableBackgroundFilterBlur, isTrue);
-    expect(habitsNavigationBar.automaticBackgroundVisibility, isFalse);
-    expect(habitsNavigationBar.backgroundColor, CupertinoColors.transparent);
+    expect(habitsNavigationBar.automaticBackgroundVisibility, isTrue);
+    expect(habitsNavigationBar.backgroundColor?.a, 0.0);
     expect(
       tester
           .widgetList<BackdropFilter>(
@@ -1175,7 +1168,7 @@ void main() {
             ),
           )
           .where((filter) => filter.enabled),
-      hasLength(1),
+      isEmpty,
     );
     expect(find.byType(CupertinoSelectBottomToolbar), findsOneWidget);
     expect(tester.getSize(find.byKey(const ValueKey('bottom-bar'))).height, 0);

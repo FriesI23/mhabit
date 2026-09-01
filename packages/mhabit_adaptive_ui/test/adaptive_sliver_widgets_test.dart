@@ -84,8 +84,8 @@ void main() {
       final bar = tester.widget<CupertinoSliverNavigationBar>(
         find.byType(CupertinoSliverNavigationBar),
       );
-      expect(bar.backgroundColor, CupertinoColors.transparent);
-      expect(bar.automaticBackgroundVisibility, isFalse);
+      expect(bar.backgroundColor?.a, 0.0);
+      expect(bar.automaticBackgroundVisibility, isTrue);
       expect(bar.middle, isNotNull);
       expect(bar.largeTitle, isNull);
     });
@@ -231,8 +231,8 @@ void main() {
       final bar = tester.widget<CupertinoNavigationBar>(
         find.byType(CupertinoNavigationBar),
       );
-      expect(bar.backgroundColor, CupertinoColors.transparent);
-      expect(bar.automaticBackgroundVisibility, isFalse);
+      expect(bar.backgroundColor?.a, 0.0);
+      expect(bar.automaticBackgroundVisibility, isTrue);
       expect(find.text('title'), findsOneWidget);
       expect(find.byIcon(Icons.settings), findsOneWidget);
     });
@@ -627,7 +627,7 @@ void main() {
       expect(updated.stretch, original.stretch);
       expect(updated.border, original.border);
       expect(original.backgroundColor, CupertinoColors.transparent);
-      expect(original.automaticBackgroundVisibility, isFalse);
+      expect(original.automaticBackgroundVisibility, isTrue);
       expect(
         updated.windowControlEdgePadding,
         original.windowControlEdgePadding,
