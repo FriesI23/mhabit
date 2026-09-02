@@ -56,6 +56,27 @@ Widget _host({
   ),
 );
 
+Widget _sliverHost({required Widget actions, required bool apple}) =>
+    MaterialApp(
+      home: Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            if (apple)
+              AdaptiveSliverAppBar.apple(
+                title: const Text('Title'),
+                height: 44,
+                actions: [actions],
+              )
+            else
+              AdaptiveSliverAppBar.material(
+                title: const Text('Title'),
+                actions: [actions],
+              ),
+          ],
+        ),
+      ),
+    );
+
 Rect _rectFor(BuildContext context) {
   final box = context.findRenderObject()! as RenderBox;
   return box.localToGlobal(Offset.zero) & box.size;
@@ -270,13 +291,64 @@ void main() {
     expect(tester.getCenter(edit).dx, greaterThan(tester.getCenter(more).dx));
   });
 
+  testWidgets('material reports the exact primary or overflow trigger anchor', (
+    tester,
+  ) async {
+    BuildContext? anchorContext;
+    String? invoked;
+    await tester.pumpWidget(
+      _sliverHost(
+        apple: false,
+        actions: AdaptiveAppBarActions<String>.material(
+          collection: _collection(),
+          onInvoke: (context, payload) {
+            anchorContext = context;
+            invoked = payload;
+          },
+          primaryCapacity: 96,
+          maxPrimaryActions: 1,
+          materialIconBuilder: (context, action) =>
+              Icon(action.id == _editId ? Icons.edit : Icons.archive_outlined),
+        ),
+      ),
+    );
+
+    final editButton = find
+        .ancestor(
+          of: find.byIcon(Icons.edit),
+          matching: find.byType(IconButton),
+        )
+        .first;
+    await tester.tap(editButton);
+    expect(invoked, 'edit');
+    expect(_rectFor(anchorContext!), tester.getRect(editButton));
+
+    anchorContext = null;
+    invoked = null;
+    final moreButton = find
+        .ancestor(
+          of: find.byIcon(Icons.more_vert),
+          matching: find.byType(IconButton),
+        )
+        .first;
+    final moreRect = tester.getRect(moreButton);
+    await tester.tap(moreButton);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Archive'));
+    await tester.pumpAndSettle();
+
+    expect(invoked, 'archive');
+    expect(_rectFor(anchorContext!), moreRect);
+  });
+
   testWidgets('apple reports the exact primary or overflow trigger anchor', (
     tester,
   ) async {
     BuildContext? anchorContext;
     String? invoked;
     await tester.pumpWidget(
-      _host(
+      _sliverHost(
+        apple: true,
         actions: AdaptiveAppBarActions<String>.apple(
           collection: _collection(),
           onInvoke: (context, payload) {

@@ -41,6 +41,8 @@ class MaterialAppBarActions<T extends Object> extends StatelessWidget {
       maxPrimaryActions: maxPrimaryActions,
       iconBuilder: iconBuilder,
       actionButtonBuilder: (context, action, onPressed, defaultBuilder) {
+        /// Keeps the anchor context inside the concrete button subtree because
+        /// the callback context can resolve to a RenderSliver in a pinned bar.
         return Builder(
           builder: (anchorContext) {
             final payload = action.payload;
@@ -52,6 +54,8 @@ class MaterialAppBarActions<T extends Object> extends StatelessWidget {
         );
       },
       overflowButtonBuilder: (context, onPressed, defaultBuilder) {
+        /// Keeps the anchor context inside the concrete button subtree because
+        /// the callback context can resolve to a RenderSliver in a pinned bar.
         return Builder(
           builder: (anchorContext) {
             overflowAnchor = anchorContext;
