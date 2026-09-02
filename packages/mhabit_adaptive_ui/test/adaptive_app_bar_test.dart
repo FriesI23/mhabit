@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+import 'package:mhabit_adaptive_ui/src/shell/navigation_sidebar_app_bar_leading.dart';
 
 Widget _host({required Widget appBar, TargetPlatform? platform}) => MaterialApp(
   theme: platform == null ? null : ThemeData(platform: platform),
@@ -80,6 +81,35 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(tester.getSize(find.byType(CupertinoNavigationBar)).height, 68);
+  });
+
+  testWidgets('Apple app bar keeps sidebar and page leading separate', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(platform: TargetPlatform.iOS),
+        home: const NavigationSidebarAppBarLeading(
+          toolbarAvoidance: EdgeInsets.zero,
+          toolbarTopInset: 0,
+          progress: 1,
+          child: Scaffold(
+            appBar: AdaptiveAppBar(
+              title: Text('About'),
+              leading: AdaptiveBackButton(type: AdaptiveBackButtonType.back),
+              automaticallyImplyLeading: false,
+              toolbarHeight: 44,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      find.byKey(const ValueKey('cupertino-sidebar-leading-anchor')),
+      findsOneWidget,
+    );
+    expect(find.byIcon(CupertinoIcons.back), findsOneWidget);
   });
 
   test('Apple app bar fixes its preferred toolbar height to 44pt', () {

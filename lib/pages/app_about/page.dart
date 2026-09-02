@@ -21,6 +21,7 @@ import 'package:provider/provider.dart';
 
 import '../../assets/assets.dart';
 import '../../common/app_info.dart';
+import '../../extensions/adaptive_style_extensions.dart';
 import '../../logging/helper.dart';
 import '../../models/contributor.dart';
 import '../../providers/support/about_info.dart';
@@ -105,8 +106,10 @@ class _PageState extends State<_Page> {
     }
 
     return Scaffold(
-      appBar: WindowControlAppBar(
-        leading: const PageBackButton(reason: PageBackReason.back),
+      appBar: AdaptiveAppBar(
+        toolbarHeight: AdaptiveStyle.of(context).appToolbarHeight,
+        leading: const AdaptiveBackButton(type: AdaptiveBackButtonType.back),
+        automaticallyImplyLeading: false,
         title: L10nBuilder(
           builder: (context, l10n) => l10n != null
               ? Text(l10n.appAbout_appbarTile_titleText)

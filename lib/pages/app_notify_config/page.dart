@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
+import '../../extensions/adaptive_style_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../providers/workflow/app_notify_config.dart';
 import '../../reminders/notification_channel.dart';
@@ -45,8 +46,10 @@ class _AppNotifyConfigView extends State<AppNotifyConfigView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: WindowControlAppBar(
-        leading: const PageBackButton(reason: PageBackReason.back),
+      appBar: AdaptiveAppBar(
+        toolbarHeight: AdaptiveStyle.of(context).appToolbarHeight,
+        leading: const AdaptiveBackButton(type: AdaptiveBackButtonType.back),
+        automaticallyImplyLeading: false,
         title: L10nBuilder(
           builder: (context, l10n) =>
               Text(l10n?.appSetting_notify_titleTile ?? "Notifications"),
