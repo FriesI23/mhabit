@@ -357,10 +357,12 @@ class _MaterialNavigationRailPanel extends StatelessWidget {
         );
     final toggleAnchorWidth = width < collapsedWidth ? width : collapsedWidth;
     final safeWidth =
-        toggleAnchorWidth - horizontalAvoidance.start - horizontalAvoidance.end;
+        toggleAnchorWidth -
+        horizontalAvoidance.left -
+        horizontalAvoidance.right;
     final useVerticalFallback = safeWidth < _minimumRailButtonExtent;
     final leadingHorizontalAvoidance = useVerticalFallback
-        ? EdgeInsetsDirectional.zero
+        ? EdgeInsets.zero
         : horizontalAvoidance;
     final leadingTopAvoidance = useVerticalFallback
         ? verticalAvoidance.top
@@ -375,10 +377,10 @@ class _MaterialNavigationRailPanel extends StatelessWidget {
       minWidth: collapsedWidth,
       minExtendedWidth: expandedWidth,
       leading: Padding(
-        padding: EdgeInsetsDirectional.only(
-          start: leadingHorizontalAvoidance.start,
+        padding: EdgeInsets.only(
+          left: leadingHorizontalAvoidance.left,
           top: leadingTopAvoidance,
-          end: leadingHorizontalAvoidance.end,
+          right: leadingHorizontalAvoidance.right,
         ),
         child: const Align(
           child: SizedBox.square(dimension: kMinInteractiveDimension),
@@ -434,10 +436,10 @@ class _MaterialNavigationRailPanel extends StatelessWidget {
             width: toggleAnchorWidth,
             child: Padding(
               key: const ValueKey('rail-leading-safe-span'),
-              padding: EdgeInsetsDirectional.only(
-                start: leadingHorizontalAvoidance.start,
+              padding: EdgeInsets.only(
+                left: leadingHorizontalAvoidance.left,
                 top: leadingTopAvoidance,
-                end: leadingHorizontalAvoidance.end,
+                right: leadingHorizontalAvoidance.right,
               ),
               child: Align(
                 heightFactor: 1,

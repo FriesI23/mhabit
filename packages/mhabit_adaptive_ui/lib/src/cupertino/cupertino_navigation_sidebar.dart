@@ -178,24 +178,38 @@ class _CupertinoNavigationSidebarState extends State<CupertinoNavigationSidebar>
         AdaptiveWindowControlLayoutScope.sideNavigationHorizontalAvoidanceOf(
           context,
         );
+    final appBarAvoidance = AdaptiveWindowControlLayoutScope.appBarAvoidanceOf(
+      context,
+    );
+    final sideNavigationStart = direction == TextDirection.ltr
+        ? sideNavigationAvoidance.left
+        : sideNavigationAvoidance.right;
+    final sideNavigationEnd = direction == TextDirection.ltr
+        ? sideNavigationAvoidance.right
+        : sideNavigationAvoidance.left;
     final visibleButtonStart =
         leadingSafeMargin +
         panelWidth -
-        math.max(sideNavigationAvoidance.end, _panelToggleTrailingPadding) -
+        math.max(sideNavigationEnd, _panelToggleTrailingPadding) -
         NavigationSidebarAppBarLeading.buttonExtent;
-    final hiddenButtonStart =
-        sideNavigationAvoidance.start + _appBarLeadingPadding;
+    final hiddenButtonStart = sideNavigationStart + _appBarLeadingPadding;
     return AnimatedBuilder(
       animation: _curvedAnimation,
       builder: (context, child) {
         final progress = _curvedAnimation.value;
         final panelActive = _animation.value > 0;
         final appBarProgress = 1 - progress;
-        final toolbarAvoidance = EdgeInsetsDirectional.lerp(
-          EdgeInsetsDirectional.zero,
+        final returningSideAvoidance = EdgeInsets.lerp(
+          EdgeInsets.zero,
           sideNavigationAvoidance,
           appBarProgress,
         )!;
+        final toolbarAvoidance = EdgeInsets.fromLTRB(
+          appBarAvoidance.left + returningSideAvoidance.left,
+          0,
+          appBarAvoidance.right + returningSideAvoidance.right,
+          0,
+        );
         final buttonStart =
             hiddenButtonStart +
             (visibleButtonStart - hiddenButtonStart) * progress;

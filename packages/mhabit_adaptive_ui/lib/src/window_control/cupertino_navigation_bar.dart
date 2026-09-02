@@ -70,7 +70,7 @@ class WindowControlCupertinoNavigationBar extends StatelessWidget
   final PreferredSizeWidget? bottom;
 
   /// {@macro mhabit.windowControlAvoidance}
-  final EdgeInsetsDirectional? windowControlAvoidance;
+  final EdgeInsets? windowControlAvoidance;
 
   /// {@macro mhabit.windowControlEdgePadding}
   final EdgeInsetsDirectional windowControlEdgePadding;
@@ -201,7 +201,7 @@ class WindowControlCupertinoSliverNavigationBar extends StatelessWidget {
   final PreferredSizeWidget? bottom;
 
   /// {@macro mhabit.windowControlAvoidance}
-  final EdgeInsetsDirectional? windowControlAvoidance;
+  final EdgeInsets? windowControlAvoidance;
 
   /// {@macro mhabit.windowControlEdgePadding}
   final EdgeInsetsDirectional windowControlEdgePadding;
@@ -261,7 +261,7 @@ Color? _resolveAutomaticBackgroundColor(
 EdgeInsetsDirectional _resolveCupertinoPadding(
   BuildContext context, {
   required EdgeInsetsDirectional? padding,
-  required EdgeInsetsDirectional? avoidance,
+  required EdgeInsets? avoidance,
   required EdgeInsetsDirectional edgePadding,
 }) {
   final geometry = WindowControlToolbarGeometry.resolve(

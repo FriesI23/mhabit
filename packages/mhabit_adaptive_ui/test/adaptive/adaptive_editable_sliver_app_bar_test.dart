@@ -380,14 +380,11 @@ void main() {
           platform: TargetPlatform.iOS,
           appBar: buildBar(),
           wrap: (child) => AdaptiveWindowControlLayoutScope(
-            horizontalAvoidance: const EdgeInsetsDirectional.only(
-              start: 40,
-              end: 12,
-            ),
-            verticalAvoidance: EdgeInsetsDirectional.zero,
+            horizontalAvoidance: const EdgeInsets.only(left: 40, right: 12),
+            verticalAvoidance: EdgeInsets.zero,
             owner: WindowControlLayoutOwner.appBar,
             child: NavigationSidebarAppBarLeading(
-              toolbarAvoidance: const EdgeInsetsDirectional.only(start: 40),
+              toolbarAvoidance: const EdgeInsets.only(left: 40),
               toolbarTopInset: 0,
               progress: 1,
               child: child,

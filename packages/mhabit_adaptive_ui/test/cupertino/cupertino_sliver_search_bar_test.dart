@@ -8,7 +8,7 @@ Widget _host(
   CupertinoSliverSearchBar searchBar, {
   TextDirection textDirection = TextDirection.ltr,
   double? contentWidth,
-  EdgeInsetsDirectional appBarAvoidance = EdgeInsetsDirectional.zero,
+  EdgeInsets appBarAvoidance = EdgeInsets.zero,
   Color? pageBackground,
   Brightness brightness = Brightness.light,
 }) {
@@ -16,7 +16,7 @@ Widget _host(
     textDirection: textDirection,
     child: AdaptiveWindowControlLayoutScope(
       horizontalAvoidance: appBarAvoidance,
-      verticalAvoidance: EdgeInsetsDirectional.zero,
+      verticalAvoidance: EdgeInsets.zero,
       owner: WindowControlLayoutOwner.appBar,
       child: Scaffold(
         body: Align(
@@ -265,7 +265,7 @@ void main() {
     await tester.pumpWidget(
       _host(
         buildBar(),
-        appBarAvoidance: const EdgeInsetsDirectional.only(start: 40, end: 12),
+        appBarAvoidance: const EdgeInsets.only(left: 40, right: 12),
       ),
     );
 

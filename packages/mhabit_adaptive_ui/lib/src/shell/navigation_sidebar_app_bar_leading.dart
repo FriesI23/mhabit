@@ -16,8 +16,8 @@ class NavigationSidebarAppBarLeading extends InheritedWidget {
 
   static const double buttonExtent = 44;
 
-  /// Logical toolbar space occupied by platform window controls.
-  final EdgeInsetsDirectional toolbarAvoidance;
+  /// Physical toolbar space occupied by platform window controls.
+  final EdgeInsets toolbarAvoidance;
 
   /// Extra top inset used to align a toolbar with floating side navigation.
   final double toolbarTopInset;

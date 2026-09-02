@@ -34,7 +34,7 @@ class CupertinoSliverAppBar extends StatelessWidget {
   final Widget? bottom;
   final double bottomExtent;
   final AppBarAppleStyle style;
-  final EdgeInsetsDirectional? windowControlAvoidance;
+  final EdgeInsets? windowControlAvoidance;
 
   Widget? _effectiveTrailing(List<Widget> effectiveActions) =>
       effectiveActions.isEmpty
@@ -156,7 +156,7 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
   final Border? border;
   final Color? backgroundColor;
   final EdgeInsetsDirectional? padding;
-  final EdgeInsetsDirectional? windowControlAvoidance;
+  final EdgeInsets? windowControlAvoidance;
   final EdgeInsetsDirectional windowControlEdgePadding;
 
   @override
@@ -227,7 +227,7 @@ class _CupertinoToolbar extends StatelessWidget {
   final Widget? leading;
   final Widget? trailing;
   final EdgeInsetsDirectional? padding;
-  final EdgeInsetsDirectional? windowControlAvoidance;
+  final EdgeInsets? windowControlAvoidance;
   final EdgeInsetsDirectional windowControlEdgePadding;
 
   @override
@@ -290,7 +290,7 @@ class _CollapsibleCupertinoSliverAppBar extends StatelessWidget {
   final bool automaticBackgroundVisibility;
   final EdgeInsetsDirectional? padding;
   final bool stretch;
-  final EdgeInsetsDirectional? windowControlAvoidance;
+  final EdgeInsets? windowControlAvoidance;
   final EdgeInsetsDirectional windowControlEdgePadding;
 
   @override

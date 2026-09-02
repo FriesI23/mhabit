@@ -268,8 +268,8 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: AdaptiveWindowControlLayoutScope(
-            horizontalAvoidance: EdgeInsetsDirectional.only(start: 40, end: 12),
-            verticalAvoidance: EdgeInsetsDirectional.zero,
+            horizontalAvoidance: EdgeInsets.only(left: 40, right: 12),
+            verticalAvoidance: EdgeInsets.zero,
             owner: WindowControlLayoutOwner.appBar,
             child: Scaffold(
               body: CustomScrollView(
@@ -301,8 +301,8 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: AdaptiveWindowControlLayoutScope(
-            horizontalAvoidance: EdgeInsetsDirectional.only(start: 40, end: 12),
-            verticalAvoidance: EdgeInsetsDirectional.zero,
+            horizontalAvoidance: EdgeInsets.only(left: 40, right: 12),
+            verticalAvoidance: EdgeInsets.zero,
             owner: WindowControlLayoutOwner.appBar,
             child: Scaffold(
               body: CustomScrollView(
@@ -478,8 +478,8 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: AdaptiveWindowControlLayoutScope(
-            horizontalAvoidance: EdgeInsetsDirectional.only(start: 10),
-            verticalAvoidance: EdgeInsetsDirectional.zero,
+            horizontalAvoidance: EdgeInsets.only(left: 10),
+            verticalAvoidance: EdgeInsets.zero,
             owner: WindowControlLayoutOwner.appBar,
             child: Scaffold(
               body: CustomScrollView(
@@ -506,8 +506,8 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: AdaptiveWindowControlLayoutScope(
-            horizontalAvoidance: EdgeInsetsDirectional.only(start: 10),
-            verticalAvoidance: EdgeInsetsDirectional.zero,
+            horizontalAvoidance: EdgeInsets.only(left: 10),
+            verticalAvoidance: EdgeInsets.zero,
             owner: WindowControlLayoutOwner.appBar,
             child: Scaffold(
               body: CustomScrollView(

@@ -443,14 +443,14 @@ const MethodChannel _windowControlChannel = MethodChannel(
 );
 
 Map<String, double> _windowInsets({
-  double start = 0,
+  double left = 0,
   double top = 0,
-  double end = 0,
+  double right = 0,
   double bottom = 0,
 }) => <String, double>{
-  'start': start,
+  'left': left,
   'top': top,
-  'end': end,
+  'right': right,
   'bottom': bottom,
 };
 
@@ -471,15 +471,15 @@ void _mockWindowControlLayout() {
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
       .setMockMethodCallHandler(_windowControlChannel, (call) async {
         return <String, Object>{
-          'schemaVersion': 4,
+          'schemaVersion': 5,
           'isAvailable': true,
           'isPad': true,
           'isFullScreen': false,
           'baseMargins': _windowInsets(),
-          'horizontalMargins': _windowInsets(start: 40, end: 12),
+          'horizontalMargins': _windowInsets(left: 40, right: 12),
           'verticalMargins': _windowInsets(top: 64),
           'baseSafeArea': _windowInsets(bottom: 34),
-          'horizontalSafeArea': _windowInsets(start: 24, end: 18, bottom: 34),
+          'horizontalSafeArea': _windowInsets(left: 24, right: 18, bottom: 34),
           'verticalSafeArea': _windowInsets(bottom: 34),
           'effectiveCornerRadii': _windowCornerRadii(
             topLeft: 62,
@@ -1592,8 +1592,8 @@ void main() {
       final context = tester.element(find.text('habits page'));
       final layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
       expect(layout.hasWindowControlAvoidance, isFalse);
-      expect(layout.horizontalAvoidance, EdgeInsetsDirectional.zero);
-      expect(layout.verticalAvoidance, EdgeInsetsDirectional.zero);
+      expect(layout.horizontalAvoidance, EdgeInsets.zero);
+      expect(layout.verticalAvoidance, EdgeInsets.zero);
       expect(layout.horizontalSafeAreaAvoidance, isNull);
       expect(layout.verticalSafeAreaAvoidance, isNull);
       expect(layout.effectiveCornerRadii, isNull);
@@ -1609,8 +1609,8 @@ void main() {
       await tester.pumpWidget(
         AdaptiveWindowControlLayoutScope(
           hasWindowControlAvoidance: true,
-          horizontalAvoidance: EdgeInsetsDirectional.zero,
-          verticalAvoidance: EdgeInsetsDirectional.zero,
+          horizontalAvoidance: EdgeInsets.zero,
+          verticalAvoidance: EdgeInsets.zero,
           usesRectangularDisplay: true,
           owner: WindowControlLayoutOwner.appBar,
           child: MaterialApp.router(routerConfig: router),
@@ -1638,22 +1638,19 @@ void main() {
         expect(layout.hasWindowControlAvoidance, isTrue);
         expect(layout.owner, WindowControlLayoutOwner.appBar);
         expect(
-          layout.appBarHorizontalAvoidance,
-          const EdgeInsetsDirectional.only(start: 40, end: 12),
+          layout.appBarHorizontalAvoidanceFor(TextDirection.ltr),
+          const EdgeInsets.only(left: 40, right: 12),
         );
         expect(
-          layout.sideNavigationHorizontalAvoidance,
-          EdgeInsetsDirectional.zero,
+          layout.sideNavigationHorizontalAvoidanceFor(TextDirection.ltr),
+          EdgeInsets.zero,
         );
-        expect(
-          layout.sideNavigationVerticalAvoidance,
-          EdgeInsetsDirectional.zero,
-        );
+        expect(layout.sideNavigationVerticalAvoidance, EdgeInsets.zero);
         expect(
           layout.horizontalSafeAreaAvoidance,
-          const EdgeInsetsDirectional.fromSTEB(24, 0, 18, 0),
+          const EdgeInsets.fromLTRB(24, 0, 18, 0),
         );
-        expect(layout.verticalSafeAreaAvoidance, EdgeInsetsDirectional.zero);
+        expect(layout.verticalSafeAreaAvoidance, EdgeInsets.zero);
         expect(
           layout.effectiveCornerRadii,
           const BorderRadius.all(Radius.circular(62)),
@@ -1666,20 +1663,31 @@ void main() {
         layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
         expect(layout.hasWindowControlAvoidance, isTrue);
         expect(layout.owner, WindowControlLayoutOwner.sideNavigation);
-        expect(layout.appBarHorizontalAvoidance, EdgeInsetsDirectional.zero);
         expect(
-          layout.sideNavigationHorizontalAvoidance,
-          const EdgeInsetsDirectional.only(start: 40, end: 12),
+          layout.appBarHorizontalAvoidanceFor(TextDirection.ltr),
+          const EdgeInsets.only(right: 12),
+        );
+        expect(
+          layout.sideNavigationHorizontalAvoidanceFor(TextDirection.ltr),
+          const EdgeInsets.only(left: 40),
+        );
+        expect(
+          layout.appBarHorizontalAvoidanceFor(TextDirection.rtl),
+          const EdgeInsets.only(left: 40),
+        );
+        expect(
+          layout.sideNavigationHorizontalAvoidanceFor(TextDirection.rtl),
+          const EdgeInsets.only(right: 12),
         );
         expect(
           layout.sideNavigationVerticalAvoidance,
-          const EdgeInsetsDirectional.only(top: 64),
+          const EdgeInsets.only(top: 64),
         );
         expect(
           layout.horizontalSafeAreaAvoidance,
-          const EdgeInsetsDirectional.fromSTEB(24, 0, 18, 0),
+          const EdgeInsets.fromLTRB(24, 0, 18, 0),
         );
-        expect(layout.verticalSafeAreaAvoidance, EdgeInsetsDirectional.zero);
+        expect(layout.verticalSafeAreaAvoidance, EdgeInsets.zero);
         expect(
           layout.effectiveCornerRadii,
           const BorderRadius.all(Radius.circular(62)),
@@ -1704,7 +1712,7 @@ void main() {
                     find.byKey(const ValueKey('cupertino-sidebar-surface')),
                   )
                   .dx -
-              12,
+              8,
         );
         expect(tester.getTopLeft(toggle).dy, 12);
         await tester.tap(toggle);
@@ -3304,20 +3312,14 @@ void main() {
         );
         final collapsedCenter = tester.getCenter(toggle);
         expect(tester.getTopLeft(toggle).dy, 0);
-        expect(
-          safeSpan().padding,
-          const EdgeInsetsDirectional.only(start: 40, end: 12),
-        );
+        expect(safeSpan().padding, const EdgeInsets.only(left: 40));
 
         await tester.tap(toggle);
         await tester.pumpAndSettle();
 
         expect(tester.getCenter(toggle).dx, closeTo(collapsedCenter.dx, 0.01));
         expect(tester.getTopLeft(toggle).dy, 0);
-        expect(
-          safeSpan().padding,
-          const EdgeInsetsDirectional.only(start: 40, end: 12),
-        );
+        expect(safeSpan().padding, const EdgeInsets.only(left: 40));
       } finally {
         _resetWindowControlLayoutMock();
       }

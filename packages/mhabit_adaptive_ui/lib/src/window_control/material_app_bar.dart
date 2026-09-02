@@ -115,7 +115,7 @@ class WindowControlAppBar extends StatelessWidget
   final EdgeInsetsGeometry? actionsPadding;
 
   /// {@macro mhabit.windowControlAvoidance}
-  final EdgeInsetsDirectional? windowControlAvoidance;
+  final EdgeInsets? windowControlAvoidance;
 
   /// {@macro mhabit.windowControlEdgePadding}
   final EdgeInsetsDirectional windowControlEdgePadding;
@@ -351,7 +351,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
   final EdgeInsetsGeometry? actionsPadding;
 
   /// {@macro mhabit.windowControlAvoidance}
-  final EdgeInsetsDirectional? windowControlAvoidance;
+  final EdgeInsets? windowControlAvoidance;
 
   /// {@macro mhabit.windowControlEdgePadding}
   final EdgeInsetsDirectional windowControlEdgePadding;
@@ -508,7 +508,7 @@ _MaterialToolbarSlots _resolveMaterialToolbarSlots(
   required List<Widget>? actions,
   required bool automaticallyImplyActions,
   required double? leadingWidth,
-  required EdgeInsetsDirectional? avoidance,
+  required EdgeInsets? avoidance,
   required EdgeInsetsDirectional edgePadding,
 }) {
   final sidebarLeading = NavigationSidebarAppBarLeading.maybeOf(context);
