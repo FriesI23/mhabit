@@ -39,13 +39,11 @@ class HabitDisplayViewAppBarCallbacks {
   const HabitDisplayViewAppBarCallbacks({
     this.onInfo,
     this.onSettings,
-    this.onOpenSettings,
     this.onSelect,
   });
 
   final VoidCallback? onInfo;
   final VoidCallback? onSettings;
-  final VoidCallback? onOpenSettings;
   final VoidCallback? onSelect;
 }
 
@@ -177,13 +175,11 @@ class _MaterialHabitDisplayAppBar extends StatelessWidget {
         height: toolbarHeight,
         onInfoButtonPressed: viewCallbacks.onInfo,
         onMenuButtonPressed: viewCallbacks.onSettings,
-        onOpenSettingsPressed: viewCallbacks.onOpenSettings,
       ),
       _HabitDisplayAppBarMode.search => SliverSearchTopAppBar.material(
         searchFilterMenuController: searchFilterMenuController,
         onInfoButtonPressed: viewCallbacks.onInfo,
         onMenuButtonPressed: viewCallbacks.onSettings,
-        onOpenSettingsPressed: viewCallbacks.onOpenSettings,
         onSelectButtonPressed: viewCallbacks.onSelect,
       ),
       _HabitDisplayAppBarMode.select => MaterialSliverSelectAppBar(
@@ -238,13 +234,11 @@ class _AppleHabitDisplayAppBar extends StatelessWidget {
         onSelect: viewCallbacks.onSelect,
         onInfo: viewCallbacks.onInfo,
         onSettings: viewCallbacks.onSettings,
-        onOpenSettings: viewCallbacks.onOpenSettings,
       ),
       _HabitDisplayAppBarMode.search => SliverSearchTopAppBar.apple(
         searchFilterMenuController: searchFilterMenuController,
         onInfoButtonPressed: viewCallbacks.onInfo,
         onMenuButtonPressed: viewCallbacks.onSettings,
-        onOpenSettingsPressed: viewCallbacks.onOpenSettings,
         onSelectButtonPressed: viewCallbacks.onSelect,
         cupertinoBottom: calendarContent,
         cupertinoBottomExtent: calendarHeight,

@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 
 import '../utils.dart';
 import 'adaptive_nav_visibility.dart';
-import 'navigation_shell_form.dart';
 
 /// Inherited scope exposed by the adaptive navigation shell to its
 /// branches.
@@ -12,15 +11,13 @@ import 'navigation_shell_form.dart';
 /// floating-action animations with the bottom bar and reserve [navHeight].
 /// The shell derives [scrollWish] from active vertical user scrolling;
 /// [reportScrollWish] remains available for explicit non-scroll policy.
-/// [form] exposes the renderer-resolved shell presentation without requiring
-/// branch pages to repeat platform-specific breakpoint rules. Non-compact
-/// forms expose constant-true listenables because this scope does not describe
-/// renderer-owned side-navigation visibility.
+/// Non-compact forms expose constant-true listenables because this scope only
+/// describes the compact chrome envelope, not renderer-owned side-navigation
+/// visibility.
 class AdaptiveNavScope extends InheritedWidget {
   /// Creates a navigation scope for a shell branch subtree.
   const AdaptiveNavScope({
     super.key,
-    required this.form,
     required this.barHeight,
     required this.navHeight,
     required super.child,
@@ -30,9 +27,6 @@ class AdaptiveNavScope extends InheritedWidget {
 
   final AdaptiveNavVisibilityController? _visible;
   final AdaptiveScrollWishController? _scrollWish;
-
-  /// Resolved navigation form used by the containing shell.
-  final NavigationShellForm form;
 
   /// Fallback listenable for non-compact forms; always true, never notifies.
   static const ConstValueListenable<bool> _alwaysTrue = ConstValueListenable(
@@ -100,7 +94,6 @@ class AdaptiveNavScope extends InheritedWidget {
   bool updateShouldNotify(AdaptiveNavScope oldWidget) =>
       _visible != oldWidget._visible ||
       _scrollWish != oldWidget._scrollWish ||
-      form != oldWidget.form ||
       barHeight != oldWidget.barHeight ||
       navHeight != oldWidget.navHeight;
 }

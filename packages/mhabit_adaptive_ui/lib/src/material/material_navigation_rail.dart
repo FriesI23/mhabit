@@ -3,7 +3,6 @@ import 'dart:ui' show lerpDouble;
 import 'package:flutter/material.dart';
 
 import '../adaptive/adaptive_navigation_destination.dart';
-import '../shell/navigation_shell_form.dart';
 import '../shell/navigation_shell_frame.dart';
 import '../shell/side_navigation.dart';
 import '../window_control/window_control_layout.dart';
@@ -139,9 +138,6 @@ class MaterialNavigationRailRegion extends StatefulWidget {
     required this.selectedIndex,
     required this.destinations,
     required this.onDestinationSelected,
-    required this.auxiliaryDestinations,
-    required this.selectedAuxiliaryIndex,
-    required this.onAuxiliaryDestinationSelected,
     required this.sideNavigationExtent,
     required this.style,
     required this.dragHandleBuilder,
@@ -160,9 +156,6 @@ class MaterialNavigationRailRegion extends StatefulWidget {
 
   /// Called with the index of a destination selected by the user.
   final ValueChanged<int> onDestinationSelected;
-  final List<AdaptiveNavigationDestination> auxiliaryDestinations;
-  final int? selectedAuxiliaryIndex;
-  final ValueChanged<int>? onAuxiliaryDestinationSelected;
 
   /// Automatic and manually resizable rail-width policy.
   final SideNavigationExtent sideNavigationExtent;
@@ -230,9 +223,6 @@ class _MaterialNavigationRailRegionState
           selectedIndex: widget.selectedIndex,
           destinations: widget.destinations,
           onDestinationSelected: widget.onDestinationSelected,
-          auxiliaryDestinations: widget.auxiliaryDestinations,
-          selectedAuxiliaryIndex: widget.selectedAuxiliaryIndex,
-          onAuxiliaryDestinationSelected: widget.onAuxiliaryDestinationSelected,
           extended: _extended,
           collapsedWidth: widget.style.collapsedExtent,
           expandedWidth: expandedWidth,
@@ -309,9 +299,6 @@ class _MaterialNavigationRailPanel extends StatelessWidget {
     required this.selectedIndex,
     required this.destinations,
     required this.onDestinationSelected,
-    required this.auxiliaryDestinations,
-    required this.selectedAuxiliaryIndex,
-    required this.onAuxiliaryDestinationSelected,
     required this.extended,
     required this.collapsedWidth,
     required this.expandedWidth,
@@ -325,14 +312,10 @@ class _MaterialNavigationRailPanel extends StatelessWidget {
   });
 
   static const double _minimumRailButtonExtent = 44.0;
-  static const double _auxiliaryDestinationSpacing = 6.0;
 
   final int selectedIndex;
   final List<AdaptiveNavigationDestination> destinations;
   final ValueChanged<int> onDestinationSelected;
-  final List<AdaptiveNavigationDestination> auxiliaryDestinations;
-  final int? selectedAuxiliaryIndex;
-  final ValueChanged<int>? onAuxiliaryDestinationSelected;
   final bool extended;
   final double collapsedWidth;
   final double expandedWidth;
@@ -365,116 +348,71 @@ class _MaterialNavigationRailPanel extends StatelessWidget {
     final leadingTopAvoidance = useVerticalFallback
         ? verticalAvoidance.top
         : 0.0;
-    final isRtl = Directionality.of(context) == TextDirection.rtl;
-
-    final primaryDestinationRail = MaterialAdaptiveNavigationRail(
-      key: const ValueKey('rail-panel'),
-      selectedIndex: selectedAuxiliaryIndex == null ? selectedIndex : -1,
-      onDestinationSelected: onDestinationSelected,
-      extended: extended,
-      minWidth: collapsedWidth,
-      minExtendedWidth: expandedWidth,
-      leading: Padding(
-        padding: EdgeInsetsDirectional.only(
-          start: leadingHorizontalAvoidance.start,
-          top: leadingTopAvoidance,
-          end: leadingHorizontalAvoidance.end,
-        ),
-        child: const Align(
-          child: SizedBox.square(dimension: kMinInteractiveDimension),
-        ),
-      ),
-      destinations: destinations,
-    );
-
-    final auxiliaryDestinationList = Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (final (index, destination) in auxiliaryDestinations.indexed) ...[
-          MaterialWideNavigationRailButton(
-            slotKey: ValueKey(
-              'material-rail-auxiliary-destination-slot-$index',
-            ),
-            buttonKey: ValueKey('material-rail-auxiliary-destination-$index'),
-            animation: AlwaysStoppedAnimation(extended ? 1 : 0),
-            collapsedRailWidth: collapsedWidth,
-            expandedRailWidth: expandedWidth,
-            destination: destination,
-            selected: selectedAuxiliaryIndex == index,
-            onPressed: () => onAuxiliaryDestinationSelected?.call(index),
-          ),
-          if (index != auxiliaryDestinations.length - 1)
-            const SizedBox(height: _auxiliaryDestinationSpacing),
-        ],
-      ],
-    );
-    final auxiliaryDestinationLayer = auxiliaryDestinations.isEmpty
-        ? null
-        : Positioned.fill(
-            child: SafeArea(
-              left: !isRtl,
-              right: isRtl,
-              child: Align(
-                alignment: AlignmentDirectional.bottomStart,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: auxiliaryDestinationList,
-                ),
-              ),
-            ),
-          );
-
-    final navigationToggleLayer = Positioned.fill(
-      child: SafeArea(
-        left: !isRtl,
-        right: isRtl,
-        child: Align(
-          alignment: AlignmentDirectional.topStart,
-          child: SizedBox(
-            width: toggleAnchorWidth,
-            child: Padding(
-              key: const ValueKey('rail-leading-safe-span'),
-              padding: EdgeInsetsDirectional.only(
-                start: leadingHorizontalAvoidance.start,
-                top: leadingTopAvoidance,
-                end: leadingHorizontalAvoidance.end,
-              ),
-              child: Align(
-                heightFactor: 1,
-                child: IconButton(
-                  key: const ValueKey('rail-toggle-button'),
-                  tooltip: extended
-                      ? collapseNavigationLabel
-                      : expandNavigationLabel,
-                  icon: Icon(extended ? Icons.menu_open : Icons.menu),
-                  onPressed: onToggle,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-
-    final navigationResizeHandle = PositionedDirectional(
-      end: 0,
-      top: 0,
-      bottom: 0,
-      child: _MaterialNavigationRailResizeHandle(
-        extended: extended,
-        dragHandleBuilder: dragHandleBuilder,
-        onResizeStart: onResizeStart,
-        onResizeUpdate: onResizeUpdate,
-        onResizeEnd: onResizeEnd,
-      ),
-    );
 
     return Stack(
       children: [
-        primaryDestinationRail,
-        ?auxiliaryDestinationLayer,
-        navigationToggleLayer,
-        navigationResizeHandle,
+        MaterialAdaptiveNavigationRail(
+          key: const ValueKey('rail-panel'),
+          selectedIndex: selectedIndex,
+          onDestinationSelected: onDestinationSelected,
+          extended: extended,
+          minWidth: collapsedWidth,
+          minExtendedWidth: expandedWidth,
+          leading: Padding(
+            padding: EdgeInsetsDirectional.only(
+              start: leadingHorizontalAvoidance.start,
+              top: leadingTopAvoidance,
+              end: leadingHorizontalAvoidance.end,
+            ),
+            child: const Align(
+              child: SizedBox.square(dimension: kMinInteractiveDimension),
+            ),
+          ),
+          destinations: destinations,
+        ),
+        Positioned.fill(
+          child: SafeArea(
+            left: Directionality.of(context) != TextDirection.rtl,
+            right: Directionality.of(context) == TextDirection.rtl,
+            child: Align(
+              alignment: AlignmentDirectional.topStart,
+              child: SizedBox(
+                width: toggleAnchorWidth,
+                child: Padding(
+                  key: const ValueKey('rail-leading-safe-span'),
+                  padding: EdgeInsetsDirectional.only(
+                    start: leadingHorizontalAvoidance.start,
+                    top: leadingTopAvoidance,
+                    end: leadingHorizontalAvoidance.end,
+                  ),
+                  child: Align(
+                    heightFactor: 1,
+                    child: IconButton(
+                      key: const ValueKey('rail-toggle-button'),
+                      tooltip: extended
+                          ? collapseNavigationLabel
+                          : expandNavigationLabel,
+                      icon: Icon(extended ? Icons.menu_open : Icons.menu),
+                      onPressed: onToggle,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        PositionedDirectional(
+          end: 0,
+          top: 0,
+          bottom: 0,
+          child: _MaterialNavigationRailResizeHandle(
+            extended: extended,
+            dragHandleBuilder: dragHandleBuilder,
+            onResizeStart: onResizeStart,
+            onResizeUpdate: onResizeUpdate,
+            onResizeEnd: onResizeEnd,
+          ),
+        ),
       ],
     );
   }

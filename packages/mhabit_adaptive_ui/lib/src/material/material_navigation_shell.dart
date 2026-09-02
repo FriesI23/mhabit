@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../adaptive/adaptive_navigation_destination.dart';
 import '../breakpoints/window_size_class.dart';
 import '../shell/navigation_scroll_wish_policy.dart';
-import '../shell/navigation_shell_form.dart';
 import '../shell/navigation_shell_frame.dart';
 import '../shell/side_navigation.dart';
 import '../window_control/window_control_layout.dart';
@@ -39,9 +38,6 @@ class MaterialNavigationShell extends StatelessWidget {
     required this.selectedIndex,
     required this.destinations,
     required this.onDestinationSelected,
-    required this.auxiliaryDestinations,
-    required this.selectedAuxiliaryIndex,
-    required this.onAuxiliaryDestinationSelected,
     required this.compactRouteVisible,
     required this.contextualChromeSuppressed,
     required this.sideNavigationExtent,
@@ -81,9 +77,6 @@ class MaterialNavigationShell extends StatelessWidget {
 
   /// Called with the index of a destination selected by the user.
   final ValueChanged<int> onDestinationSelected;
-  final List<AdaptiveNavigationDestination> auxiliaryDestinations;
-  final int? selectedAuxiliaryIndex;
-  final ValueChanged<int>? onAuxiliaryDestinationSelected;
 
   /// Whether route structure allows compact navigation to be shown.
   final bool compactRouteVisible;
@@ -124,9 +117,6 @@ class MaterialNavigationShell extends StatelessWidget {
             selectedIndex: selectedIndex,
             destinations: destinations,
             onDestinationSelected: onSelected,
-            auxiliaryDestinations: auxiliaryDestinations,
-            selectedAuxiliaryIndex: selectedAuxiliaryIndex,
-            onAuxiliaryDestinationSelected: onAuxiliaryDestinationSelected,
             sideNavigationExtent: sideNavigationExtent,
             railStyle: railStyle,
             dragHandleBuilder: dragHandleBuilder,
@@ -158,9 +148,6 @@ class _MaterialNavigationShellBody extends StatelessWidget {
     required this.selectedIndex,
     required this.destinations,
     required this.onDestinationSelected,
-    required this.auxiliaryDestinations,
-    required this.selectedAuxiliaryIndex,
-    required this.onAuxiliaryDestinationSelected,
     required this.sideNavigationExtent,
     required this.railStyle,
     required this.dragHandleBuilder,
@@ -173,9 +160,6 @@ class _MaterialNavigationShellBody extends StatelessWidget {
   final int selectedIndex;
   final List<AdaptiveNavigationDestination> destinations;
   final ValueChanged<int> onDestinationSelected;
-  final List<AdaptiveNavigationDestination> auxiliaryDestinations;
-  final int? selectedAuxiliaryIndex;
-  final ValueChanged<int>? onAuxiliaryDestinationSelected;
   final SideNavigationExtent sideNavigationExtent;
   final MaterialNavigationRailStyle railStyle;
   final SideNavigationDragHandleBuilder? dragHandleBuilder;
@@ -194,9 +178,6 @@ class _MaterialNavigationShellBody extends StatelessWidget {
           selectedIndex: selectedIndex,
           destinations: destinations,
           onDestinationSelected: onDestinationSelected,
-          auxiliaryDestinations: auxiliaryDestinations,
-          selectedAuxiliaryIndex: selectedAuxiliaryIndex,
-          onAuxiliaryDestinationSelected: onAuxiliaryDestinationSelected,
           sideNavigationExtent: sideNavigationExtent,
           style: railStyle,
           dragHandleBuilder: dragHandleBuilder,

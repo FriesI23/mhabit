@@ -71,24 +71,11 @@ bool appShellFlowVisibilityPolicy(List<String?> routeNames) {
     final name
         when name == AppRoute.habitCreate.name ||
             name == AppRoute.habitEdit.name ||
-            name == AppRoute.habitsStatus.name ||
-            isSettingsFlowRouteName(name) =>
+            name == AppRoute.habitsStatus.name =>
       false,
     _ => true,
   };
 }
-
-/// Whether [routeName] belongs to the Settings auxiliary app flow.
-bool isSettingsFlowRouteName(String? routeName) => switch (routeName) {
-  final name
-      when name == AppRoute.settings.name ||
-          name == AppRoute.settingsAbout.name ||
-          name == AppRoute.settingsSync.name ||
-          name == AppRoute.settingsNotify.name ||
-          name == AppRoute.experimental.name =>
-    true,
-  _ => false,
-};
 
 /// Shared `add*` helpers for the app's route collectors.
 ///
@@ -147,6 +134,56 @@ mixin _AppRouteAdder {
     );
   }
 
+  void addSettings({required GoRouterWidgetBuilder builder}) {
+    _routes.add(
+      GoRoute(
+        path: _pathFor(AppRoute.settings),
+        name: AppRoute.settings.name,
+        builder: builder,
+      ),
+    );
+  }
+
+  void addSettingsAbout({required GoRouterWidgetBuilder builder}) {
+    _routes.add(
+      GoRoute(
+        path: _pathFor(AppRoute.settingsAbout),
+        name: AppRoute.settingsAbout.name,
+        builder: builder,
+      ),
+    );
+  }
+
+  void addSettingsSync({required GoRouterWidgetBuilder builder}) {
+    _routes.add(
+      GoRoute(
+        path: _pathFor(AppRoute.settingsSync),
+        name: AppRoute.settingsSync.name,
+        builder: builder,
+      ),
+    );
+  }
+
+  void addSettingsNotify({required GoRouterWidgetBuilder builder}) {
+    _routes.add(
+      GoRoute(
+        path: _pathFor(AppRoute.settingsNotify),
+        name: AppRoute.settingsNotify.name,
+        builder: builder,
+      ),
+    );
+  }
+
+  void addExperimental({required GoRouterWidgetBuilder builder}) {
+    _routes.add(
+      GoRoute(
+        path: _pathFor(AppRoute.experimental),
+        name: AppRoute.experimental.name,
+        builder: builder,
+      ),
+    );
+  }
+
   void addDebugger({required GoRouterWidgetBuilder builder}) {
     _routes.add(
       GoRoute(
@@ -189,50 +226,6 @@ class BranchRouterBuilder with _AppRouteAdder {
 class AppFlowRouterBuilder with _AppRouteAdder {
   @override
   final List<RouteBase> _routes = [];
-
-  /// Registers Settings and its page hierarchy as one auxiliary app flow.
-  void addSettingsFlow({
-    required GoRouterPageBuilder settingsBuilder,
-    required GoRouterWidgetBuilder aboutBuilder,
-    required GoRouterWidgetBuilder syncBuilder,
-    required GoRouterWidgetBuilder notifyBuilder,
-    required GoRouterWidgetBuilder experimentalBuilder,
-  }) {
-    _routes
-      ..add(
-        GoRoute(
-          path: _pathFor(AppRoute.settings),
-          name: AppRoute.settings.name,
-          pageBuilder: settingsBuilder,
-          routes: [
-            GoRoute(
-              path: 'about',
-              name: AppRoute.settingsAbout.name,
-              builder: aboutBuilder,
-            ),
-            GoRoute(
-              path: 'sync',
-              name: AppRoute.settingsSync.name,
-              builder: syncBuilder,
-            ),
-            GoRoute(
-              path: 'notify',
-              name: AppRoute.settingsNotify.name,
-              builder: notifyBuilder,
-            ),
-          ],
-        ),
-      )
-      // Keep the published path stable even though this page is entered from
-      // Settings and participates in the same auxiliary presentation state.
-      ..add(
-        GoRoute(
-          path: _pathFor(AppRoute.experimental),
-          name: AppRoute.experimental.name,
-          builder: experimentalBuilder,
-        ),
-      );
-  }
 }
 
 class AppRouterBuilder with _AppRouteAdder {

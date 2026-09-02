@@ -22,10 +22,8 @@ import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
-import 'package:mhabit/routes/app_navigation_coordinator.dart';
 import 'package:mhabit/routes/app_router.dart';
 import 'package:mhabit/routes/navigator_helpers.dart';
-import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 HabitForm _editForm({required String uuid}) => HabitForm(
   name: 'Test Habit',
@@ -143,47 +141,21 @@ void main() {
       );
     });
 
-    testWidgets('naviToAppSettingPage delegates to the app-flow coordinator', (
-      tester,
-    ) async {
-      final navigatorKey = GlobalKey<NavigatorState>();
+    testWidgets('naviToAppSettingPage delegates to pushNamed', (tester) async {
       final router = GoRouter(
-        navigatorKey: navigatorKey,
         initialLocation: '/',
         routes: [
-          GoRoute(path: '/', builder: (_, _) => const Text('home')),
+          GoRoute(path: '/', builder: (_, _) => const SizedBox.shrink()),
           GoRoute(
             path: '/settings',
             name: AppRoute.settings.name,
-            builder: (_, _) => const Text('settings'),
+            builder: (_, _) => const SizedBox.shrink(),
           ),
         ],
       );
-      final coordinator = AppNavigationCoordinator(
-        branchObservers: const [],
-        appFlowObserver: AdaptiveBranchRouteObserver(),
-        appChromeNavigatorKey: navigatorKey,
-        initialIndex: 0,
-      );
-      addTearDown(coordinator.dispose);
-      addTearDown(router.dispose);
-      await tester.pumpWidget(
-        MaterialApp.router(
-          routerConfig: router,
-          builder: (context, child) => AppNavigationCoordinatorScope(
-            coordinator: coordinator,
-            child: child!,
-          ),
-        ),
-      );
-
-      final navigation = naviToAppSettingPage(
-        context: tester.element(find.text('home')),
-      );
-      await tester.pumpAndSettle();
-      await navigation;
-
-      expect(find.text('settings'), findsOneWidget);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      final context = tester.element(find.byType(SizedBox).first);
+      expect(() => naviToAppSettingPage(context: context), returnsNormally);
     });
 
     testWidgets('naviToAppAboutPage delegates to pushNamed', (tester) async {

@@ -7,7 +7,6 @@ Widget _testApp({required TargetPlatform platform, required Widget child}) =>
     MaterialApp(
       theme: ThemeData(platform: platform),
       home: AdaptiveNavScope(
-        form: NavigationShellForm.compact,
         barHeight: 60,
         navHeight: 84,
         child: Scaffold(body: child),

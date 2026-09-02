@@ -22,7 +22,6 @@ import '../models/habit_form.dart';
 import '../pages/habit_detail/page.dart' as habit_detail;
 import '../pages/habits_display/providers.dart' show HabitDetailAdapter;
 import '../storage/db/handlers/habit.dart';
-import 'app_navigation_coordinator.dart';
 import 'app_router.dart';
 import 'helpers/group_manage_helper.dart';
 import 'helpers/habit_create_helper.dart';
@@ -61,9 +60,7 @@ Future<habit_detail.DetailPageReturn?> naviToHabitDetailPage({
 );
 
 Future<void> naviToAppSettingPage({required BuildContext context}) =>
-    AppNavigationCoordinatorScope.of(
-      context,
-    ).openAppFlowRoot(AppRoute.settings.name);
+    context.pushNamed(AppRoute.settings.name);
 
 Future<void> naviToAppAboutPage({required BuildContext context}) =>
     context.pushNamed(AppRoute.settingsAbout.name);

@@ -374,12 +374,7 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
           ),
         )
       : useBranchPage
-      ? const AdaptiveNavScope(
-          form: NavigationShellForm.expandedSide,
-          barHeight: 0,
-          navHeight: 0,
-          child: HabitsPage(),
-        )
+      ? const AdaptiveNavScope(barHeight: 0, navHeight: 0, child: HabitsPage())
       : const Scaffold(body: HabitsTabPage(onHabitCreated: _ignoreHabitDBCell));
   final app =
       appBuilder?.call(home) ??

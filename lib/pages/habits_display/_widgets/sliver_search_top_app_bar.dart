@@ -31,7 +31,6 @@ class SliverSearchTopAppBar extends StatefulWidget {
   final MenuController? searchFilterMenuController;
   final VoidCallback? onInfoButtonPressed;
   final VoidCallback? onMenuButtonPressed;
-  final VoidCallback? onOpenSettingsPressed;
   final VoidCallback? onSelectButtonPressed;
   final Widget? cupertinoBottom;
   final double cupertinoBottomExtent;
@@ -41,7 +40,6 @@ class SliverSearchTopAppBar extends StatefulWidget {
     this.searchFilterMenuController,
     this.onInfoButtonPressed,
     this.onMenuButtonPressed,
-    this.onOpenSettingsPressed,
     this.onSelectButtonPressed,
   }) : style = AdaptiveStyle.material,
        cupertinoBottom = null,
@@ -52,7 +50,6 @@ class SliverSearchTopAppBar extends StatefulWidget {
     this.searchFilterMenuController,
     this.onInfoButtonPressed,
     this.onMenuButtonPressed,
-    this.onOpenSettingsPressed,
     this.onSelectButtonPressed,
     this.cupertinoBottom,
     this.cupertinoBottomExtent = 0.0,
@@ -325,21 +322,9 @@ extension _MaterialSliverSearchTopAppBarStateExtension
       icon: const Icon(Icons.settings_outlined),
       tooltip: l10n?.habitDisplay_settingButton_tooltip,
     );
-    final openSettingsButton = AdaptiveIconButton.material(
-      key: const ValueKey('open-settings-action'),
-      onPressed: widget.onOpenSettingsPressed,
-      icon: const Icon(Icons.settings),
-      tooltip: l10n?.appSetting_appbar_titleText ?? 'Settings',
-    );
     return AdaptiveSliverSearchBar.material(
       title: Text(l10n?.appName ?? appName),
-      actions: [
-        infoButton,
-        menuButton,
-        if (AdaptiveNavScope.maybeOf(context)?.form ==
-            NavigationShellForm.compact)
-          openSettingsButton,
-      ],
+      actions: [infoButton, menuButton],
       searchTrailing: Builder(
         builder: (context) {
           final windowSize = WindowSize.of(context);
@@ -407,22 +392,6 @@ extension _AppleSliverSearchTopAppBarStateExtension
           child: Text(selectLabel, maxLines: 1, softWrap: false),
         ),
       ),
-      if (AdaptiveNavScope.maybeOf(context)?.form ==
-          NavigationShellForm.compact)
-        CupertinoSliverSearchBarAction(
-          id: 'open-settings',
-          label: l10n?.appSetting_appbar_titleText ?? 'Settings',
-          icon: const Icon(CupertinoIcons.settings_solid),
-          onPressed: widget.onOpenSettingsPressed ?? () {},
-          isEnabled: widget.onOpenSettingsPressed != null,
-          retentionPriority: 75,
-          primaryBuilder: (_) => AdaptiveIconButton.apple(
-            key: const ValueKey('open-settings-action'),
-            onPressed: widget.onOpenSettingsPressed,
-            tooltip: l10n?.appSetting_appbar_titleText ?? 'Settings',
-            icon: const Icon(CupertinoIcons.settings_solid),
-          ),
-        ),
       CupertinoSliverSearchBarAction(
         id: 'habit-statistics',
         label: statisticsLabel,

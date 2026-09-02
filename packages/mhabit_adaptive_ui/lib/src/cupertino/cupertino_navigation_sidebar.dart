@@ -5,7 +5,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' show MaterialLocalizations;
 
 import '../adaptive/adaptive_navigation_destination.dart';
-import '../shell/navigation_shell_form.dart';
 import '../shell/navigation_shell_frame.dart';
 import '../shell/navigation_sidebar_app_bar_leading.dart';
 import '../shell/side_navigation.dart';
@@ -24,9 +23,6 @@ class CupertinoNavigationSidebar extends StatefulWidget {
     required this.selectedIndex,
     required this.destinations,
     required this.onDestinationSelected,
-    required this.auxiliaryDestinations,
-    required this.selectedAuxiliaryIndex,
-    required this.onAuxiliaryDestinationSelected,
     required this.sideNavigationExtent,
     required this.dragHandleBuilder,
     this.expandNavigationLabel,
@@ -38,9 +34,6 @@ class CupertinoNavigationSidebar extends StatefulWidget {
   final int selectedIndex;
   final List<AdaptiveNavigationDestination> destinations;
   final ValueChanged<int> onDestinationSelected;
-  final List<AdaptiveNavigationDestination> auxiliaryDestinations;
-  final int? selectedAuxiliaryIndex;
-  final ValueChanged<int>? onAuxiliaryDestinationSelected;
   final SideNavigationExtent sideNavigationExtent;
   final SideNavigationDragHandleBuilder? dragHandleBuilder;
 
@@ -223,10 +216,6 @@ class _CupertinoNavigationSidebarState extends State<CupertinoNavigationSidebar>
                   selectedIndex: widget.selectedIndex,
                   destinations: widget.destinations,
                   onDestinationSelected: widget.onDestinationSelected,
-                  auxiliaryDestinations: widget.auxiliaryDestinations,
-                  selectedAuxiliaryIndex: widget.selectedAuxiliaryIndex,
-                  onAuxiliaryDestinationSelected:
-                      widget.onAuxiliaryDestinationSelected,
                   dragging: _resizeState.dragging,
                   dragHandleBuilder: widget.dragHandleBuilder,
                   onResizeStart: () => _handleResizeStart(windowWidth),

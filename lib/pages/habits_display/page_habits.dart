@@ -1083,7 +1083,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
         viewCallbacks: HabitDisplayViewAppBarCallbacks(
           onInfo: _openHabitSummaryStatisticsDialog,
           onSettings: _openHabitSummaryMenuDialog,
-          onOpenSettings: _openAppSettingsPage,
           onSelect: _onHabitSelectButtonPressed,
         ),
         selectCallbacks: HabitDisplaySelectAppBarCallbacks(

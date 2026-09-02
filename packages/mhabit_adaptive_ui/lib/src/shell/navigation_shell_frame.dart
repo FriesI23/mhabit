@@ -7,10 +7,34 @@ import '../window_control/window_control_layout.dart';
 import 'adaptive_nav_scope.dart';
 import 'adaptive_nav_visibility.dart';
 import 'navigation_scroll_wish_policy.dart';
-import 'navigation_shell_form.dart';
+
+/// Style-neutral space available to a navigation renderer.
+///
+/// ```text
+/// compact          constrained side   expanded side
+/// +----------+     +-------------+    +-------------+
+/// | content  |     | renderer    |    | renderer    |
+/// +----------+     | composition |    | composition |
+/// | nav      |     +-------------+    +-------------+
+/// +----------+
+/// ```
+enum NavigationShellForm {
+  /// Compact bottom navigation below the branch content.
+  compact,
+
+  /// Side navigation with constrained horizontal space.
+  constrainedSide,
+
+  /// Side navigation with expanded horizontal space.
+  expandedSide,
+}
 
 /// Default duration for navigation form and compact-chrome transitions.
 const Duration navigationShellAnimationDuration = Duration(milliseconds: 250);
+
+/// Resolves style-neutral shell space from the current window classes.
+typedef NavigationShellFormResolver =
+    NavigationShellForm Function(WindowSize windowSize);
 
 /// Composes branch content and navigation chrome for the current form.
 typedef NavigationShellBodyBuilder =
@@ -34,15 +58,15 @@ typedef NavigationShellChromeBuilder =
 class NavigationShellChromeState {
   /// Creates a snapshot backed by the shell's visibility listenables.
   const NavigationShellChromeState({
-    required this.form,
+    required this.compact,
     required this.visible,
     required this.scrollWish,
     required this.onDestinationSelected,
     required this.reportScrollWish,
   });
 
-  /// Resolved shell form shared by all chrome builders.
-  final NavigationShellForm form;
+  /// Whether the shell currently uses its compact bottom-bar form.
+  final bool compact;
 
   /// Whether compact navigation chrome should be painted and interactive.
   final ValueListenable<bool> visible;
@@ -210,7 +234,7 @@ class _NavigationShellFrameState extends State<NavigationShellFrame> {
     final padding = MediaQuery.paddingOf(context);
     final viewPadding = MediaQuery.viewPaddingOf(context);
     final chromeState = NavigationShellChromeState(
-      form: _form,
+      compact: compact,
       visible: _navVisibility,
       scrollWish: _scrollWish,
       onDestinationSelected: _onDestinationSelected,
@@ -218,7 +242,6 @@ class _NavigationShellFrameState extends State<NavigationShellFrame> {
     );
 
     final shell = AdaptiveNavScope(
-      form: _form,
       visible: compact ? _navVisibility : null,
       scrollWish: compact ? _scrollWish : null,
       barHeight: compact ? widget.barHeight : 0,

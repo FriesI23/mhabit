@@ -46,9 +46,6 @@ class AdaptiveNavigationShell extends StatefulWidget {
     required this.selectedIndex,
     required this.destinations,
     required this.onDestinationSelected,
-    this.auxiliaryDestinations = const [],
-    this.selectedAuxiliaryIndex,
-    this.onAuxiliaryDestinationSelected,
     this.compactRouteVisible = true,
     this.contextualChromeSuppressed = false,
     this.applePrimaryAction,
@@ -69,16 +66,6 @@ class AdaptiveNavigationShell extends StatefulWidget {
 
   /// Called with the index of a destination selected by the user.
   final ValueChanged<int> onDestinationSelected;
-
-  /// Utility destinations rendered only by side-navigation forms.
-  final List<AdaptiveNavigationDestination> auxiliaryDestinations;
-
-  /// Zero-based index of the selected [auxiliaryDestinations] item, if any.
-  final int? selectedAuxiliaryIndex;
-
-  /// Called with the index of a side-navigation utility destination selected
-  /// by the user.
-  final ValueChanged<int>? onAuxiliaryDestinationSelected;
 
   /// Whether route structure allows compact navigation to be shown.
   ///
@@ -126,19 +113,6 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
 
   @override
   Widget build(BuildContext context) {
-    assert(
-      widget.selectedAuxiliaryIndex == null ||
-          (widget.selectedAuxiliaryIndex! >= 0 &&
-              widget.selectedAuxiliaryIndex! <
-                  widget.auxiliaryDestinations.length),
-      'selectedAuxiliaryIndex must identify an auxiliary destination',
-    );
-    assert(
-      widget.auxiliaryDestinations.isEmpty ||
-          widget.onAuxiliaryDestinationSelected != null,
-      'onAuxiliaryDestinationSelected is required when auxiliary '
-      'destinations are provided',
-    );
     final materialLocalizations = Localizations.of<MaterialLocalizations>(
       context,
       MaterialLocalizations,
@@ -153,9 +127,6 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
         selectedIndex: widget.selectedIndex,
         destinations: widget.destinations,
         onDestinationSelected: widget.onDestinationSelected,
-        auxiliaryDestinations: widget.auxiliaryDestinations,
-        selectedAuxiliaryIndex: widget.selectedAuxiliaryIndex,
-        onAuxiliaryDestinationSelected: widget.onAuxiliaryDestinationSelected,
         compactRouteVisible: widget.compactRouteVisible,
         contextualChromeSuppressed: widget.contextualChromeSuppressed,
         sideNavigationExtent: widget.sideNavigationExtent,
@@ -169,9 +140,6 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
         selectedIndex: widget.selectedIndex,
         destinations: widget.destinations,
         onDestinationSelected: widget.onDestinationSelected,
-        auxiliaryDestinations: widget.auxiliaryDestinations,
-        selectedAuxiliaryIndex: widget.selectedAuxiliaryIndex,
-        onAuxiliaryDestinationSelected: widget.onAuxiliaryDestinationSelected,
         compactRouteVisible: widget.compactRouteVisible,
         contextualChromeSuppressed: widget.contextualChromeSuppressed,
         primaryAction: widget.applePrimaryAction,
