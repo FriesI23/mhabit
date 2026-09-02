@@ -642,8 +642,12 @@ void main() {
             _ScopeLookupProbe(listen: false, onBuild: readBuilds.add),
           ],
         ),
-        builder: (context, value, child) =>
-            AdaptiveNavScope(barHeight: value, navHeight: value, child: child!),
+        builder: (context, value, child) => AdaptiveNavScope(
+          form: NavigationShellForm.compact,
+          barHeight: value,
+          navHeight: value,
+          child: child!,
+        ),
       ),
     );
 
@@ -2603,6 +2607,10 @@ void main() {
         NavigationRail rail() =>
             tester.widget<NavigationRail>(find.byType(NavigationRail));
         expect(rail().extended, isFalse);
+        expect(
+          AdaptiveNavScope.of(tester.element(find.text('habits page'))).form,
+          NavigationShellForm.constrainedSide,
+        );
 
         await tester.tap(find.byIcon(Icons.menu));
         await tester.pumpAndSettle();
@@ -2653,6 +2661,10 @@ void main() {
       expect(
         find.byKey(const ValueKey('cupertino-sidebar-panel')),
         findsOneWidget,
+      );
+      expect(
+        AdaptiveNavScope.of(tester.element(find.text('habits page'))).form,
+        NavigationShellForm.expandedSide,
       );
       debugDefaultTargetPlatformOverride = null;
     });
@@ -4653,6 +4665,7 @@ void main() {
       final mediumScope = AdaptiveNavScope.of(
         tester.element(find.text('habits page')),
       );
+      expect(mediumScope.form, NavigationShellForm.constrainedSide);
       expect(mediumScope.barHeight, 0);
       expect(mediumScope.visible.value, isTrue);
 
@@ -4664,6 +4677,7 @@ void main() {
       final compactScope = AdaptiveNavScope.of(
         tester.element(find.text('habits page')),
       );
+      expect(compactScope.form, NavigationShellForm.compact);
       expect(compactScope.barHeight, 80.0);
     });
 

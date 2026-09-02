@@ -23,6 +23,9 @@ class CupertinoNavigationSidebarPanel extends StatelessWidget {
     required this.selectedIndex,
     required this.destinations,
     required this.onDestinationSelected,
+    required this.auxiliaryDestinations,
+    required this.selectedAuxiliaryIndex,
+    required this.onAuxiliaryDestinationSelected,
     required this.dragging,
     required this.dragHandleBuilder,
     required this.onResizeStart,
@@ -35,6 +38,9 @@ class CupertinoNavigationSidebarPanel extends StatelessWidget {
   final int selectedIndex;
   final List<AdaptiveNavigationDestination> destinations;
   final ValueChanged<int> onDestinationSelected;
+  final List<AdaptiveNavigationDestination> auxiliaryDestinations;
+  final int? selectedAuxiliaryIndex;
+  final ValueChanged<int>? onAuxiliaryDestinationSelected;
   final bool dragging;
   final SideNavigationDragHandleBuilder? dragHandleBuilder;
   final VoidCallback onResizeStart;
@@ -73,9 +79,45 @@ class CupertinoNavigationSidebarPanel extends StatelessWidget {
         onPressed: () => onDestinationSelected(index),
       ),
     );
+    final auxiliaryDestinationList = SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8, bottom: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final (index, destination) in auxiliaryDestinations.indexed)
+              _CupertinoSidebarDestination(
+                key: ValueKey('cupertino-sidebar-auxiliary-destination-$index'),
+                destination: destination,
+                selected: selectedAuxiliaryIndex == index,
+                onPressed: () => onAuxiliaryDestinationSelected?.call(index),
+              ),
+          ],
+        ),
+      ),
+    );
+    final auxiliaryDestinationSeparator = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Container(
+        height: 1,
+        color: CupertinoDynamicColor.resolve(
+          CupertinoColors.separator,
+          context,
+        ),
+      ),
+    );
     final destinationContent = ExcludeSemantics(
       excluding: !contentActive,
-      child: destinationList,
+      child: Column(
+        children: [
+          Expanded(child: destinationList),
+          if (auxiliaryDestinations.isNotEmpty) ...[
+            auxiliaryDestinationSeparator,
+            auxiliaryDestinationList,
+          ],
+        ],
+      ),
     );
     final destinationLayer = Positioned.fill(
       child: IgnorePointer(ignoring: !contentActive, child: destinationContent),

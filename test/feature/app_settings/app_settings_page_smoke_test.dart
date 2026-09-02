@@ -140,6 +140,7 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.text('Settings'), findsOneWidget);
+    expect(find.byType(AdaptiveAppBar), findsOneWidget);
     expect(find.byType(WindowControlAppBar), findsOneWidget);
     final appBar = tester.widget<AppBar>(find.byType(AppBar));
     expect(appBar.leading, isA<PageBackButton>());

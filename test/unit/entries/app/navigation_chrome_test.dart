@@ -1,22 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/entries/app/navigation_chrome.dart';
+import 'package:mhabit/entries/app/navigation_destination.dart';
+import 'package:mhabit/routes/app_navigation_branch.dart';
 
 void main() {
-  test('maps navigation branches through explicit router indexes', () {
-    expect(
-      AppNavigationBranch.fromNavigationIndex(0),
-      AppNavigationBranch.habits,
-    );
-    expect(
-      AppNavigationBranch.fromNavigationIndex(1),
-      AppNavigationBranch.today,
-    );
-    expect(
-      () => AppNavigationBranch.fromNavigationIndex(2),
-      throwsArgumentError,
-    );
-  });
-
   test('keeps chrome state independent for each navigation branch', () {
     final controller = AppNavigationChromeController();
     addTearDown(controller.dispose);
@@ -29,7 +16,6 @@ void main() {
       controller.chromeFor(AppNavigationBranch.today),
       const AppNavigationBranchChrome(),
     );
-
     controller.setContextualChromeSuppressed(AppNavigationBranch.habits, true);
 
     expect(
@@ -61,5 +47,19 @@ void main() {
     controller.unregisterPrimaryAction(AppNavigationBranch.habits, action);
     controller.invokePrimaryAction(AppNavigationBranch.habits);
     expect(invocationCount, 1);
+  });
+
+  test('keeps auxiliary chrome independent from route semantics', () {
+    var selected = false;
+    final chrome = AppNavigationAuxiliaryChrome(
+      destination: AppNavigationDestinations.settings(label: 'Utility'),
+      selected: true,
+      onSelected: () => selected = true,
+    );
+
+    expect(chrome.destination.label, 'Utility');
+    expect(chrome.selected, isTrue);
+    chrome.onSelected();
+    expect(selected, isTrue);
   });
 }
