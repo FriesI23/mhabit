@@ -19,6 +19,8 @@
   settings, page headers, search, selection, and habit actions
 - Fix: keep dialogs above app navigation and refresh selection state after
   reordering or regrouping habits (#656)
+- Feature: allow check-in status to cycle back to unknown after skip, so
+  accidental marks can be reset (#641)
 
 ## 1.27.3+192
 

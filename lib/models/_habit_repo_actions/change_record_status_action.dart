@@ -124,8 +124,6 @@ final class AutoChangeRecordStatusAction
       isNew = true;
     }
 
-    // status changed: unknown -> (done(ok), done(zero), skip)
-    // status changed(with valued): unknown -> (done(value), skip)
     final habitRecordForm = HabitDailyRecordForm.getImp(
       type: data.type,
       value: orgRecord.value,
@@ -136,10 +134,15 @@ final class AutoChangeRecordStatusAction
     final valued = habitRecordForm.isValued;
     switch (orgRecord.status) {
       case HabitRecordStatus.unknown:
-      case HabitRecordStatus.skip:
         record = orgRecord.copyWith(
           status: HabitRecordStatus.done,
           value: valued ? orgRecord.value : data.habitOkValue,
+        );
+        break;
+      case HabitRecordStatus.skip:
+        record = orgRecord.copyWith(
+          status: HabitRecordStatus.unknown,
+          value: 0.0,
         );
         break;
       case HabitRecordStatus.done:
