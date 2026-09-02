@@ -20,6 +20,21 @@ import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
 import 'package:mhabit/providers/workflow/app_event.dart';
 
 void main() {
+  group('HabitSummaryViewModel:selection notifications', () {
+    test('entering edit mode publishes the initial selection atomically', () {
+      final vm = HabitSummaryViewModel();
+      addTearDown(vm.dispose);
+      final observedStates = <(bool, int)>[];
+      vm.addListener(
+        () => observedStates.add((vm.isInEditMode, vm.selectedHabitsCount)),
+      );
+
+      vm.switchToEditMode(initialSelectedHabitUUID: 'habit-1');
+
+      expect(observedStates, [(true, 1)]);
+    });
+  });
+
   group('HabitSummaryViewModel:event', () {
     test(
       'exits edit mode on external ReloadDataEvent with exiEditMode: true',

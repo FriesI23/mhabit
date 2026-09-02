@@ -52,6 +52,16 @@ Widget wrapApp(Widget child) {
   return MaterialApp(home: Scaffold(body: child));
 }
 
+final class _DialogCountingObserver extends NavigatorObserver {
+  int dialogPushes = 0;
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPush(route, previousRoute);
+    if (route is DialogRoute<dynamic>) dialogPushes += 1;
+  }
+}
+
 void main() {
   group('HabitGroupModifyHandler', () {
     group('_buildAffectedHabits', () {
@@ -366,5 +376,46 @@ void main() {
       expect(find.textContaining('Read'), findsOneWidget);
       expect(find.textContaining('Write'), findsOneWidget);
     });
+  });
+
+  testWidgets('group confirmation uses the root navigator by default', (
+    tester,
+  ) async {
+    final rootObserver = _DialogCountingObserver();
+    final branchObserver = _DialogCountingObserver();
+    const affected = [
+      HabitGroupModifyItem(uuid: 'h1', name: 'Read', oldGroupId: null),
+    ];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        navigatorObservers: [rootObserver],
+        home: Navigator(
+          observers: [branchObserver],
+          onGenerateRoute: (_) => MaterialPageRoute<void>(
+            builder: (context) => Scaffold(
+              body: ElevatedButton(
+                onPressed: () => showHabitGroupModifyConfirmDialog(
+                  context: context,
+                  affectedHabits: affected,
+                  targetGroupId: 'g1',
+                  targetGroupName: 'Work',
+                  sourceGroups: const {},
+                  skipFutureEnabled: false,
+                  onSkipFutureChanged: (_) {},
+                ),
+                child: const Text('Open'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+
+    expect(rootObserver.dialogPushes, 1);
+    expect(branchObserver.dialogPushes, 0);
   });
 }

@@ -475,11 +475,15 @@ class HabitSummaryViewModel extends ChangeNotifier
 
   void switchToEditMode({
     bool clearAllSelected = true,
+    HabitUUID? initialSelectedHabitUUID,
     bool listen = true,
   }) async {
     _canBeDragged = false;
     _isInEditMode = true;
     if (clearAllSelected) clearAllSelectHabits();
+    if (initialSelectedHabitUUID != null) {
+      _selectorData.select(initialSelectedHabitUUID);
+    }
     collapseCalendar(listen: false);
     if (!listen) return;
     notifyListeners();
@@ -493,10 +497,6 @@ class HabitSummaryViewModel extends ChangeNotifier
     if (listen) notifyListeners();
   }
 
-  void exitEditModeOnly({bool listen = true}) {
-    _isInEditMode = false;
-    if (listen) notifyListeners();
-  }
   //#endregion
 
   //#region: search mode
@@ -960,7 +960,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     if (movedCache == null) return;
     _applyHabitReorder(index, dropIndex);
     await _writeChangedSortPositionToDB(fromIndex: index, toIndex: dropIndex);
-    exitEditMode(listen: false);
+    exitEditMode();
     _reloadBridge.eventSubs?.pushHabitReordered(movedCache.uuid);
   }
 
@@ -997,9 +997,9 @@ class HabitSummaryViewModel extends ChangeNotifier
     if (oldGroupId != targetGroupUUID) {
       await _access.updateHabitGroupIds([movedUUID], [targetGroupUUID]);
     }
-    await resortData();
+    await resortData(listen: false);
     if (!mounted) return;
-    exitEditMode(listen: false);
+    exitEditMode();
     _reloadBridge.eventSubs?.pushHabitReordered(movedUUID);
   }
 
@@ -1170,9 +1170,9 @@ class HabitSummaryViewModel extends ChangeNotifier
       }
     }
     _groupCollection = await _groupManager.tryLoadGroupCollection();
-    await resortData(listen: listen);
+    await resortData(listen: false);
     if (!mounted) return changedUUIDs.length;
-    exitEditMode(listen: false);
+    exitEditMode(listen: listen);
     _reloadBridge.eventSubs?.pushBatchGroupChanged(changedUUIDs);
 
     return changedUUIDs.length;
