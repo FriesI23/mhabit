@@ -83,8 +83,12 @@ class _HabitsPageBodyState extends State<_HabitsPageBody> {
   }
 
   void _syncNavigationChrome() {
+    if (!mounted) return;
+    final contextualChrome = context.resolveHabitDisplayContextualChrome(
+      isSelectionMode: _summary?.isInEditMode ?? false,
+    );
     _navigationChrome?.setContextualChromeSuppressed(
-      _summary?.isInEditMode ?? false,
+      contextualChrome.suppressShellChrome,
     );
   }
 
@@ -118,6 +122,7 @@ class _HabitsPageBodyState extends State<_HabitsPageBody> {
         valueListenable: scope.visible,
         builder: (context, visible, child) => HabitDisplayMaterialFab(
           hidden: chrome.hideFloatingActionButton,
+          forceVisible: chrome.suppressShellChrome,
           bottomNavVisible: visible,
           bottomNavHeight: scope.barHeight,
           onCreated: onCreated,

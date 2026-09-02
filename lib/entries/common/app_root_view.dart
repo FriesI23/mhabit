@@ -22,13 +22,15 @@ import '../../common/global.dart';
 import '../../l10n/localizations.dart';
 import '../../widgets/widgets.dart';
 
+typedef AppRootThemeBuilder = ThemeData Function(BuildContext context);
+
 class AppRootView extends StatelessWidget {
   final ThemeMode themeMode;
   final Locale? language;
   final Widget? child;
   final GoRouter? routerConfig;
-  final ThemeData Function()? lightThemeBuilder;
-  final ThemeData Function()? darkThemeBuilder;
+  final AppRootThemeBuilder? lightThemeBuilder;
+  final AppRootThemeBuilder? darkThemeBuilder;
   final bool disableAnimations;
   final TextDirection? textDirectionOverride;
 
@@ -66,6 +68,47 @@ class AppRootView extends StatelessWidget {
     this.textDirectionOverride,
   }) : routerConfig = null;
 
+  @override
+  Widget build(BuildContext context) {
+    return AdaptiveWindowControlLayout(
+      usesRectangularDisplay: AppInfo().usesRectangularIPhoneDisplay,
+      child: _AppRootMaterialApp(
+        themeMode: themeMode,
+        language: language,
+        routerConfig: routerConfig,
+        lightThemeBuilder: lightThemeBuilder,
+        darkThemeBuilder: darkThemeBuilder,
+        disableAnimations: disableAnimations,
+        textDirectionOverride: textDirectionOverride,
+        child: child,
+      ),
+    );
+  }
+}
+
+/// Builds the app beneath [AdaptiveWindowControlLayout], where its scope is
+/// available for resolving the window-level theme.
+class _AppRootMaterialApp extends StatelessWidget {
+  final ThemeMode themeMode;
+  final Locale? language;
+  final Widget? child;
+  final GoRouter? routerConfig;
+  final AppRootThemeBuilder? lightThemeBuilder;
+  final AppRootThemeBuilder? darkThemeBuilder;
+  final bool disableAnimations;
+  final TextDirection? textDirectionOverride;
+
+  const _AppRootMaterialApp({
+    required this.themeMode,
+    required this.language,
+    required this.child,
+    required this.routerConfig,
+    required this.lightThemeBuilder,
+    required this.darkThemeBuilder,
+    required this.disableAnimations,
+    required this.textDirectionOverride,
+  });
+
   bool get _useRouter => routerConfig != null;
 
   Widget _builder(BuildContext context, Widget? child) {
@@ -74,10 +117,7 @@ class AppRootView extends StatelessWidget {
         disableAnimations:
             disableAnimations || MediaQuery.disableAnimationsOf(context),
       ),
-      child: AdaptiveWindowControlLayout(
-        usesRectangularDisplay: AppInfo().usesRectangularIPhoneDisplay,
-        child: UnfocusOnTap(child: child),
-      ),
+      child: UnfocusOnTap(child: child),
     );
     final textDirection = textDirectionOverride;
     return textDirection == null
@@ -90,8 +130,8 @@ class AppRootView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lightTheme = lightThemeBuilder?.call();
-    final darkTheme = darkThemeBuilder?.call();
+    final lightTheme = lightThemeBuilder?.call(context);
+    final darkTheme = darkThemeBuilder?.call(context);
 
     Widget routerApp() => MaterialApp.router(
       routerConfig: routerConfig!,

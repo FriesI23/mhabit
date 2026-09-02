@@ -34,6 +34,14 @@ const _appleGlassBackgroundColor = CupertinoDynamicColor.withBrightness(
   darkColor: Color(0x0FFFFFFF),
 );
 
+const _androidDarkSystemBackgroundColor = Color(0xFF0F0F0F);
+const _iOSDarkSystemBackgroundColor = Colors.black;
+
+// UIColor.systemBackground in a dark elevated interface level.
+const _iOSDarkElevatedSystemBackgroundColor = Color(0xFF1C1C1E);
+
+const _macOSDarkSystemBackgroundColor = Color(0xFF1E1E1E);
+
 const _linuxFontFamilyFallbacks = [
   'Ubuntu',
   'Adwaita Sans',
@@ -65,12 +73,15 @@ class AppThemeBuilder {
     ColorScheme? dynamicScheme,
   }) => _build(
     brightness: Brightness.light,
-    systemScheme: getSystemLightColor(),
-    mainColor: getThemeColor(
-      themeColor,
-      themeMainColor: themeMainColor,
-      dynamicScheme: dynamicScheme,
-      customColor: lightCustomColors,
+    colorScheme: _getColorScheme(
+      brightness: Brightness.light,
+      systemScheme: getSystemLightColor(),
+      mainColor: getThemeColor(
+        themeColor,
+        themeMainColor: themeMainColor,
+        dynamicScheme: dynamicScheme,
+        customColor: lightCustomColors,
+      ),
     ),
     customColor: lightCustomColors,
   );
@@ -80,22 +91,64 @@ class AppThemeBuilder {
     required AppThemeColor themeColor,
     required Color themeMainColor,
     ColorScheme? dynamicScheme,
-  }) => _build(
-    brightness: Brightness.dark,
-    systemScheme: getSystemDarkColor(),
-    mainColor: getThemeColor(
+  }) {
+    final mainColor = getThemeColor(
       themeColor,
       themeMainColor: themeMainColor,
       dynamicScheme: dynamicScheme,
       customColor: darkCustomColors,
-    ),
-    customColor: darkCustomColors,
-  );
+    );
+    return _build(
+      brightness: Brightness.dark,
+      colorScheme: _getColorScheme(
+        brightness: Brightness.dark,
+        systemScheme: getSystemDarkColor(),
+        mainColor: mainColor,
+      ),
+      customColor: darkCustomColors,
+    );
+  }
 
-  ThemeData _build({
+  /// Builds the dark theme for an elevated iOS window level.
+  ThemeData buildElevatedDark({
+    required AppThemeColor themeColor,
+    required Color themeMainColor,
+    ColorScheme? dynamicScheme,
+  }) {
+    final mainColor = getThemeColor(
+      themeColor,
+      themeMainColor: themeMainColor,
+      dynamicScheme: dynamicScheme,
+      customColor: darkCustomColors,
+    );
+    final colorScheme = _getColorScheme(
+      brightness: Brightness.dark,
+      systemScheme: getSystemDarkColor(),
+      mainColor: mainColor,
+    );
+    return _build(
+      brightness: Brightness.dark,
+      colorScheme: colorScheme?.copyWith(
+        surface: switch ((mainColor, defaultTargetPlatform)) {
+          (null, TargetPlatform.iOS) => _iOSDarkElevatedSystemBackgroundColor,
+          _ => colorScheme.surfaceContainerLow,
+        },
+      ),
+      customColor: darkCustomColors,
+    );
+  }
+
+  ColorScheme? _getColorScheme({
     required Brightness brightness,
     required ColorScheme? systemScheme,
     required Color? mainColor,
+  }) => mainColor == null
+      ? systemScheme
+      : ColorScheme.fromSeed(seedColor: mainColor, brightness: brightness);
+
+  ThemeData _build({
+    required Brightness brightness,
+    required ColorScheme? colorScheme,
     required CustomColors customColor,
   }) {
     final pageTransitionsTheme = PageTransitionsTheme(
@@ -106,14 +159,11 @@ class AppThemeBuilder {
               const CustomPredictiveBackPageTransitionsBuilder(),
       },
     );
-    final colorScheme = mainColor != null
-        ? ColorScheme.fromSeed(seedColor: mainColor, brightness: brightness)
-        : systemScheme;
     final baseTheme = ThemeData(
       fontFamily: getFontFamily(),
       fontFamilyFallback: getFontFamilyFallbacks(),
       pageTransitionsTheme: pageTransitionsTheme,
-      brightness: mainColor == null ? brightness : null,
+      brightness: colorScheme == null ? brightness : null,
       colorScheme: colorScheme,
       useMaterial3: true,
       appBarTheme: kAppBarTheme,
@@ -240,17 +290,17 @@ class AppThemeBuilder {
     TargetPlatform.android => ColorScheme.fromSeed(
       seedColor: appDefaultThemeMainColor,
       brightness: Brightness.dark,
-      surface: const Color(0xFF0F0F0F),
+      surface: _androidDarkSystemBackgroundColor,
     ),
     TargetPlatform.iOS => ColorScheme.fromSeed(
       seedColor: appDefaultThemeMainColor,
       brightness: Brightness.dark,
-      surface: Colors.black,
+      surface: _iOSDarkSystemBackgroundColor,
     ),
     TargetPlatform.macOS => ColorScheme.fromSeed(
       seedColor: appDefaultThemeMainColor,
       brightness: Brightness.dark,
-      surface: const Color(0xFF1E1E1E),
+      surface: _macOSDarkSystemBackgroundColor,
     ),
     _ => null,
   };

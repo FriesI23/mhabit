@@ -7,6 +7,7 @@ import 'package:flutter/material.dart' show Easing;
 import '../breakpoints/breakpoints.dart';
 import '../breakpoints/window_size_class.dart';
 import '../shell/navigation_sidebar_app_bar_leading.dart';
+import '../window_control/cupertino_navigation_bar.dart';
 import '../window_control/toolbar_geometry.dart';
 import 'cupertino_toolbar_padding.dart';
 
@@ -21,6 +22,8 @@ const List<Widget> _kDefaultFixedActions = <Widget>[];
 
 typedef CupertinoSliverSearchBarPrimaryActionBuilder =
     Widget Function(BuildContext context);
+
+enum CupertinoSliverSearchBarActionPresentation { iconOnly, iconAndLabel }
 
 /// An action or visual divider inside a Cupertino search-bar action menu.
 sealed class CupertinoSliverSearchBarMenuEntry {
@@ -51,6 +54,7 @@ final class CupertinoSliverSearchBarAction
     this.isDestructive = false,
     this.overflowOnly = false,
     this.retentionPriority = 0,
+    this.presentation = CupertinoSliverSearchBarActionPresentation.iconOnly,
     this.primaryBuilder,
   }) : assert(onPressed != null || children.length > 0);
 
@@ -67,6 +71,9 @@ final class CupertinoSliverSearchBarAction
 
   /// Higher values keep the action in the toolbar for longer.
   final int retentionPriority;
+
+  /// The width profile used for primary placement resolution.
+  final CupertinoSliverSearchBarActionPresentation presentation;
 
   /// Optional primary-only presentation. Overflow remains renderer-owned.
   final CupertinoSliverSearchBarPrimaryActionBuilder? primaryBuilder;
@@ -255,10 +262,10 @@ class _CupertinoSliverSearchBarState extends State<CupertinoSliverSearchBar> {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              const CupertinoNavigationBar(
+              const WindowControlCupertinoNavigationBar(
                 automaticallyImplyLeading: false,
                 transitionBetweenRoutes: false,
-                automaticBackgroundVisibility: false,
+                automaticBackgroundVisibility: true,
                 backgroundColor: CupertinoColors.transparent,
                 border: null,
               ),
@@ -733,7 +740,14 @@ class _CupertinoSearchActions extends StatelessWidget {
             key: const ValueKey('cupertino-search-adaptive-actions'),
             actions: collection,
             primaryCapacity: primaryCapacity,
-            presentationOverride: CupertinoActionPresentation.iconOnly,
+            presentationForAction: (context, action) =>
+                switch (actionsById[action.id.value]?.presentation) {
+                  CupertinoSliverSearchBarActionPresentation.iconOnly =>
+                    CupertinoActionPresentation.iconOnly,
+                  CupertinoSliverSearchBarActionPresentation.iconAndLabel =>
+                    CupertinoActionPresentation.extended,
+                  null => null,
+                },
             onInvoke: (callback) => callback(),
             onOverflowMenuOpened: onOverflowMenuOpened,
             onOverflowMenuClosed: onOverflowMenuClosed,

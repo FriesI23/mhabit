@@ -53,12 +53,12 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
     this.onSubmitted,
     this.onTapOutside,
     this.materialStyle,
-    this.cupertinoMaxSearchWidth = 240.0,
-    this.cupertinoActions = const [],
-    this.cupertinoBottom,
-    this.cupertinoBottomExtent = 0.0,
     this.pinned = true,
-  }) : style = AdaptiveStyle.material;
+  }) : cupertinoMaxSearchWidth = 240.0,
+       cupertinoActions = const [],
+       cupertinoBottom = null,
+       cupertinoBottomExtent = 0.0,
+       style = AdaptiveStyle.material;
 
   const AdaptiveSliverSearchBar.apple({
     super.key,
@@ -76,13 +76,13 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
     this.hintText,
     this.onSubmitted,
     this.onTapOutside,
-    this.materialStyle,
     this.cupertinoMaxSearchWidth = 240.0,
     this.cupertinoActions = const [],
     this.cupertinoBottom,
     this.cupertinoBottomExtent = 0.0,
     this.pinned = true,
-  }) : style = AdaptiveStyle.apple;
+  }) : materialStyle = null,
+       style = AdaptiveStyle.apple;
 
   final AdaptiveStyle? style;
   final Widget title;

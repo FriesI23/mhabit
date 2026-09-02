@@ -492,6 +492,7 @@ class _WindowControlLayoutOwner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AdaptiveWindowControlLayoutScope(
+      hasWindowControlAvoidance: layout.hasWindowControlAvoidance,
       horizontalAvoidance: layout.horizontalAvoidance,
       verticalAvoidance: layout.verticalAvoidance,
       horizontalSafeAreaAvoidance: layout.horizontalSafeAreaAvoidance,

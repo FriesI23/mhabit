@@ -383,15 +383,13 @@ extension _AppleSliverSearchTopAppBarStateExtension
         isEnabled: widget.onSelectButtonPressed != null,
         overflowOnly: compact,
         retentionPriority: 100,
+        presentation: CupertinoSliverSearchBarActionPresentation.iconAndLabel,
         primaryBuilder: (_) => CupertinoButton(
           key: const ValueKey('habit-select-primary'),
           padding: EdgeInsets.zero,
           minimumSize: const Size(44, 44),
           onPressed: widget.onSelectButtonPressed,
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(selectLabel, maxLines: 1, softWrap: false),
-          ),
+          child: Text(selectLabel, maxLines: 1, softWrap: false),
         ),
       ),
       CupertinoSliverSearchBarAction(

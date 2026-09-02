@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart' hide PreferredSize;
+import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
-import '../../../widgets/widgets.dart';
+import '../../../extensions/adaptive_style_extensions.dart';
 
 class HabitStatusChangerAppbar extends StatelessWidget {
   final Widget? title;
@@ -31,21 +31,27 @@ class HabitStatusChangerAppbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WindowControlSliverAppBar(
-      leading: PageBackButton(
-        reason: PageBackReason.close,
+    final toolbarHeight = AdaptiveStyle.of(context).appToolbarHeight;
+    return AdaptiveSliverAppBar(
+      height: toolbarHeight,
+      styles: const AppBarStyles(
+        material: AppBarMaterialStyle(
+          floating: true,
+          snap: false,
+          pinned: true,
+        ),
+      ),
+      leading: AdaptiveBackButton(
+        type: AdaptiveBackButtonType.close,
         onPressed: onCloseButtonPressed,
       ),
-      title: title,
+      title: title ?? const SizedBox.shrink(),
       bottom: bottomWidget != null
           ? PreferredSize(
               preferredSize: const Size.fromHeight(kToolbarHeight),
               child: bottomWidget!,
             )
           : null,
-      automaticallyImplyLeading: false,
-      pinned: true,
-      floating: true,
     );
   }
 }

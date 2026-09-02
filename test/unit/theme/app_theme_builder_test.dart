@@ -58,6 +58,52 @@ void main() {
       _expectMaterialRailSurface(theme);
     });
 
+    test(
+      'elevated window background updates the page surface but not the bar',
+      () {
+        final baseTheme = builder.buildDark(
+          themeColor: const PrimaryAppThemeColor(),
+          themeMainColor: fallbackMainColor,
+        );
+        final elevatedTheme = builder.buildElevatedDark(
+          themeColor: const PrimaryAppThemeColor(),
+          themeMainColor: fallbackMainColor,
+        );
+
+        expect(
+          elevatedTheme.colorScheme.surface,
+          baseTheme.colorScheme.surfaceContainerLow,
+        );
+        expect(
+          elevatedTheme.scaffoldBackgroundColor,
+          elevatedTheme.colorScheme.surface,
+        );
+        expect(
+          elevatedTheme.cupertinoOverrideTheme?.scaffoldBackgroundColor,
+          elevatedTheme.colorScheme.surface,
+        );
+        expect(
+          elevatedTheme.cupertinoOverrideTheme?.barBackgroundColor,
+          baseTheme.cupertinoOverrideTheme?.barBackgroundColor,
+        );
+      },
+    );
+
+    test('iOS system theme uses the Apple dark elevated background', () {
+      _withPlatform(TargetPlatform.iOS, () {
+        final elevatedTheme = builder.buildElevatedDark(
+          themeColor: const SystemAppThemeColor(),
+          themeMainColor: fallbackMainColor,
+        );
+
+        expect(elevatedTheme.colorScheme.surface, const Color(0xFF1C1C1E));
+        expect(
+          elevatedTheme.cupertinoOverrideTheme?.scaffoldBackgroundColor,
+          const Color(0xFF1C1C1E),
+        );
+      });
+    });
+
     test('system path keeps the explicit brightness with a null scheme', () {
       for (final platform in [TargetPlatform.windows, TargetPlatform.fuchsia]) {
         _withPlatform(platform, () {

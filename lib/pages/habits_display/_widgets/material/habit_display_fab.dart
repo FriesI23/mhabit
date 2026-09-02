@@ -16,10 +16,10 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../routes/navigator_helpers.dart';
 import '../../../../storage/db/handlers/habit.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../habit_edit/page.dart' as habit_edit;
-import '../../../habits_status_changer/page.dart' as habits_status_changer;
 import '../../_providers/habit_summary.dart';
 import '../../styles.dart';
 
@@ -28,6 +28,7 @@ class HabitDisplayMaterialFab extends StatelessWidget {
   const HabitDisplayMaterialFab({
     super.key,
     required this.hidden,
+    required this.forceVisible,
     required this.bottomNavVisible,
     required this.bottomNavHeight,
     required this.onCreated,
@@ -38,6 +39,7 @@ class HabitDisplayMaterialFab extends StatelessWidget {
   );
 
   final bool hidden;
+  final bool forceVisible;
   final bool bottomNavVisible;
   final double bottomNavHeight;
   final ValueChanged<HabitDBCell> onCreated;
@@ -58,6 +60,7 @@ class HabitDisplayMaterialFab extends StatelessWidget {
       ),
     );
     if (hidden) return const SizedBox.shrink();
+    final visible = forceVisible || bottomNavVisible;
     return AnimatedPadding(
       duration: _bottomNavAnimationDuration,
       curve: Curves.easeOut,
@@ -65,10 +68,10 @@ class HabitDisplayMaterialFab extends StatelessWidget {
       child: AnimatedSlide(
         duration: _bottomNavAnimationDuration,
         curve: Curves.easeOut,
-        offset: bottomNavVisible ? Offset.zero : const Offset(0, 1),
+        offset: visible ? Offset.zero : const Offset(0, 1),
         child: AnimatedOpacity(
           duration: _bottomNavAnimationDuration,
-          opacity: bottomNavVisible ? 1 : 0,
+          opacity: visible ? 1 : 0,
           child: fab,
         ),
       ),
@@ -80,28 +83,6 @@ class HabitDisplayMaterialFab extends StatelessWidget {
     required bool isAppbarPinned,
     required bool isInEditMode,
   }) {
-    Widget iconBuilder(BuildContext context) => AnimatedCrossFade(
-      firstChild: const Icon(Icons.add),
-      secondChild: const Icon(Icons.calendar_view_day_rounded),
-      crossFadeState: isInEditMode
-          ? CrossFadeState.showSecond
-          : CrossFadeState.showFirst,
-      duration: kFABModeChangeDuration,
-    );
-
-    Widget labelBuilder(BuildContext context) => AnimatedCrossFade(
-      firstChild: L10nBuilder(
-        builder: (context, l10n) => l10n != null
-            ? Text(l10n.habitDisplay_fab_text)
-            : const Text('New Habit'),
-      ),
-      secondChild: const SizedBox(),
-      crossFadeState: isInEditMode
-          ? CrossFadeState.showSecond
-          : CrossFadeState.showFirst,
-      duration: kFABModeChangeDuration,
-    );
-
     final selectedUUIDList = context
         .read<HabitSummaryViewModel>()
         .getSelectedHabitsData()
@@ -110,20 +91,25 @@ class HabitDisplayMaterialFab extends StatelessWidget {
         .toList();
 
     return _HabitDisplayMaterialOpenContainer<Object?>(
-      closeBuilder: (context, action) => ScrollingFAB.small(
-        onPressed: () {
-          Navigator.of(context).popUntil((route) => route.isFirst);
-          action();
-        },
-        label: labelBuilder(context),
-        icon: iconBuilder(context),
-        isExtended: isInEditMode || isAppbarPinned,
+      closeBuilder: (context, action) => _HabitDisplayMaterialFabButton(
+        onPressed: isInEditMode
+            ? () async {
+                if (selectedUUIDList.isEmpty) return;
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                await naviToHabitsStatusChangerPage(
+                  context: context,
+                  uuidList: selectedUUIDList,
+                );
+              }
+            : () {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                action();
+              },
+        isAppbarPinned: isAppbarPinned,
+        isInEditMode: isInEditMode,
       ),
-      openBuilder: (context, action) => isInEditMode
-          ? habits_status_changer.HabitsStatusChangerPage(
-              uuidList: selectedUUIDList,
-            )
-          : const habit_edit.HabitEditPage(showInFullscreenDialog: true),
+      openBuilder: (context, action) =>
+          const habit_edit.HabitEditPage(showInFullscreenDialog: true),
       onClosed: (data) {
         switch (data) {
           case HabitDBCell():
@@ -134,6 +120,45 @@ class HabitDisplayMaterialFab extends StatelessWidget {
             throw FlutterError('unhandled container close type, $data');
         }
       },
+    );
+  }
+}
+
+class _HabitDisplayMaterialFabButton extends StatelessWidget {
+  const _HabitDisplayMaterialFabButton({
+    required this.isAppbarPinned,
+    required this.isInEditMode,
+    required this.onPressed,
+  });
+
+  final bool isAppbarPinned;
+  final bool isInEditMode;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final crossFadeState = isInEditMode
+        ? CrossFadeState.showSecond
+        : CrossFadeState.showFirst;
+    return ScrollingFAB.small(
+      onPressed: onPressed,
+      label: AnimatedCrossFade(
+        firstChild: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.habitDisplay_fab_text)
+              : const Text('New Habit'),
+        ),
+        secondChild: const SizedBox(),
+        crossFadeState: crossFadeState,
+        duration: kFABModeChangeDuration,
+      ),
+      icon: AnimatedCrossFade(
+        firstChild: const Icon(Icons.add),
+        secondChild: const Icon(Icons.calendar_view_day_rounded),
+        crossFadeState: crossFadeState,
+        duration: kFABModeChangeDuration,
+      ),
+      isExtended: isInEditMode || isAppbarPinned,
     );
   }
 }

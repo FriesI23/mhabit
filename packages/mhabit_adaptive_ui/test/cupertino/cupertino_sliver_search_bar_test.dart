@@ -317,8 +317,8 @@ void main() {
       find.byType(CupertinoNavigationBar),
     );
     expect(navigationBar.enableBackgroundFilterBlur, isTrue);
-    expect(navigationBar.automaticBackgroundVisibility, isFalse);
-    expect(navigationBar.backgroundColor, CupertinoColors.transparent);
+    expect(navigationBar.automaticBackgroundVisibility, isTrue);
+    expect(navigationBar.backgroundColor?.a, 0.0);
     expect(navigationBar.border, isNull);
     expect(
       tester

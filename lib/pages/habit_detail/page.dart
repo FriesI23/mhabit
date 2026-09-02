@@ -25,7 +25,6 @@ import '../../common/types.dart';
 import '../../extensions/async_extensions.dart';
 import '../../extensions/color_extensions.dart';
 import '../../extensions/context_extensions.dart';
-import '../../extensions/custom_color_extensions.dart';
 import '../../extensions/group_icon_extensions.dart';
 import '../../extensions/num_extensions.dart';
 import '../../l10n/localizations.dart';
@@ -44,7 +43,6 @@ import '../../providers/support/utils.dart';
 import '../../providers/workflow/habits_file_exporter.dart';
 import '../../routes/navigator_helpers.dart';
 import '../../storage/db/handlers/habit.dart';
-import '../../theme/color.dart';
 import '../../theme/icon.dart';
 import '../../utils/xshare.dart';
 import '../../widgets/animations.dart';
@@ -187,6 +185,26 @@ class _PageState extends State<_Page>
     ),
   );
 
+  void _onAppbarActionInvoked(
+    BuildContext context,
+    HabitDetailAppBarAction action,
+  ) {
+    switch (action) {
+      case HabitDetailAppBarAction.edit:
+        _onAppbarEditActionPressed();
+      case HabitDetailAppBarAction.unarchive:
+        _openHabitUnarchiveConfirmDialog();
+      case HabitDetailAppBarAction.archive:
+        _openHabitArchiveConfirmDialog();
+      case HabitDetailAppBarAction.clone:
+        _onAppbarCloneActionPressed();
+      case HabitDetailAppBarAction.export:
+        _exportHabitAndShared(context);
+      case HabitDetailAppBarAction.delete:
+        _openHabitDeleteConfirmDialog();
+    }
+  }
+
   void _openRetryButtonPressed() {
     if (!(mounted && _vm.mounted)) return;
     _vm.requestReload();
@@ -292,31 +310,30 @@ class _PageState extends State<_Page>
     _onHabitStatusChangeConfirmed();
   }
 
-  void _exportHabitAndShared(BuildContext context) async {
+  void _exportHabitAndShared(BuildContext shareAnchorContext) async {
     HabitFileExportRunner fileExporter;
 
-    if (!context.mounted) return;
+    if (!mounted) return;
     final confirmResult = await showExporterConfirmDialog(
       context: context,
       exportAll: false,
     );
 
-    if (!context.mounted || confirmResult == null) return;
+    if (!mounted || confirmResult == null) return;
     fileExporter = context.read<HabitFileExportRunner>();
     final filePath = await fileExporter.exportHabitData(
       widget.habitUUID,
       withRecords: confirmResult.contains(ExporterConfirmResultType.records),
       withGroups: confirmResult.contains(ExporterConfirmResultType.groups),
     );
-    if (!context.mounted || filePath == null) return;
+    if (!mounted || filePath == null) return;
     trySaveFiles(
       [XFile(filePath)],
       defaultTargetPlatform,
-      context: context,
+      context: shareAnchorContext.mounted ? shareAnchorContext : context,
       text: 'Export Habit',
     ).then((result) {
-      context = this.context;
-      if (!(result && context.mounted)) return;
+      if (!(result && mounted)) return;
       final snackBar = buildSnackBarWithDismiss(
         context,
         content: L10nBuilder(
@@ -382,59 +399,6 @@ class _PageState extends State<_Page>
     appLog.build.debug(context);
 
     Widget buildAppbar(BuildContext context) {
-      Widget buildAppbarAction(BuildContext context, HabitColor? habitColor) {
-        return Selector<HabitDetailViewModel, bool>(
-          selector: (context, viewmodel) => viewmodel.isHabitArchived,
-          shouldRebuild: (previous, next) => previous != next,
-          builder: (context, isArchived, child) {
-            final themeData = Theme.of(context);
-            final colorData = themeData.extension<CustomColors>();
-            final l10n = L10n.of(context);
-            final color = habitColor != null
-                ? colorData?.getColor(
-                    habitColor,
-                    brightness: themeData.brightness,
-                  )
-                : Colors.transparent;
-            return AppBarActions<
-              DetailAppbarActionItemConfig,
-              DetailAppbarActionItemCell
-            >(
-              popupMenuButtonIcon: Icon(Icons.adaptive.more, color: color),
-              actionConfigs: [
-                DetailAppbarActionItemConfig.edit(
-                  text: l10n?.habitDetail_editButton_tooltip ?? "Edit Habit",
-                  color: color,
-                  callback: _onAppbarEditActionPressed,
-                ),
-                DetailAppbarActionItemConfig.unarchive(
-                  visible: isArchived,
-                  text: l10n?.habitDetail_editPopMenu_unarchive ?? "Unarchive",
-                  callback: _openHabitUnarchiveConfirmDialog,
-                ),
-                DetailAppbarActionItemConfig.archive(
-                  visible: !isArchived,
-                  text: l10n?.habitDetail_editPopMenu_archive ?? "Archive",
-                  callback: _openHabitArchiveConfirmDialog,
-                ),
-                DetailAppbarActionItemConfig.clone(
-                  text: l10n?.habitDetail_editPopMenu_clone ?? "Clone",
-                  callback: _onAppbarCloneActionPressed,
-                ),
-                DetailAppbarActionItemConfig.export(
-                  text: l10n?.habitDetail_editPopMenu_export ?? "Export",
-                  callback: () => _exportHabitAndShared(context),
-                ),
-                DetailAppbarActionItemConfig.delete(
-                  text: l10n?.habitDetail_editPopMenu_delete ?? "Delete",
-                  callback: _openHabitDeleteConfirmDialog,
-                ),
-              ],
-            );
-          },
-        );
-      }
-
       return Selector<HabitDetailViewModel, HabitColor?>(
         selector: (context, viewmodel) => viewmodel.habitColor,
         shouldRebuild: (previous, next) => previous != next,
@@ -449,7 +413,10 @@ class _PageState extends State<_Page>
                 builder: (context, title, child) => Text(title),
               ),
             ),
-            actionBuilder: (context) => buildAppbarAction(context, habitColor),
+            actionBuilder: (context) => HabitDetailAppBarActions(
+              habitColor: habitColor,
+              onInvoke: _onAppbarActionInvoked,
+            ),
           );
         },
       );

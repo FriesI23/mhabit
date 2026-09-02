@@ -16,11 +16,11 @@ import '../../widgets/widgets.dart' show HabitDivider;
 
 export '_widgets/habit_desc_cell_tile.dart';
 export '_widgets/habit_detail_appbar.dart';
+export '_widgets/habit_detail_appbar_actions.dart';
 export '_widgets/habit_detail_chart_title.dart';
 export '_widgets/habit_detail_desc_tile.dart';
 export '_widgets/habit_detail_fab.dart';
 export '_widgets/habit_detail_freq_chart.dart';
-export '_widgets/habit_detail_popup_menu.dart';
 export '_widgets/habit_detail_score_chart.dart';
 export '_widgets/habit_detail_summary_tile.dart';
 export '_widgets/habit_detail_tile_list.dart';

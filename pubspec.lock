@@ -10,13 +10,13 @@ packages:
     source: hosted
     version: "99.0.0"
   adaptive_actions:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: adaptive_actions
-      sha256: "43f45c4a90bc57c9947bd1dbdb26cf6bd468c5ea04e04d0cbc049569c24979ba"
+      sha256: "5c78f0c7767ac5f320539eb4c29edda6c7123153ad9e70f9e10d26cfa52c1511"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.0"
+    version: "0.4.1"
   analyzer:
     dependency: "direct dev"
     description:
@@ -890,10 +890,10 @@ packages:
     dependency: transitive
     description:
       name: ios_window_control_layout
-      sha256: "5cbec9b909458871216560d2a7c975b39856e2a09717793c7a3508d7b3120ab4"
+      sha256: "916c114da44ba4ef88691ac32bdca7a976ee6f9b5dfc735046a5f4da0ae481fe"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.0"
+    version: "0.4.1"
   jni:
     dependency: transitive
     description:

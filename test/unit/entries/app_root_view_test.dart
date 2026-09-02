@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart' show CupertinoTheme, CupertinoThemeData;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,6 +35,30 @@ Map<String, double> _insets({
   'top': top,
   'end': end,
   'bottom': bottom,
+};
+
+Map<String, Object> _windowControlPayload({
+  required bool hasHorizontalAvoidance,
+  bool hasVerticalAvoidance = false,
+  bool isPad = true,
+  bool isFullScreen = false,
+}) => <String, Object>{
+  'schemaVersion': 4,
+  'isAvailable': true,
+  'isPad': isPad,
+  'isFullScreen': isFullScreen,
+  'baseMargins': _insets(),
+  'horizontalMargins': _insets(start: hasHorizontalAvoidance ? 40 : 0),
+  'verticalMargins': _insets(top: hasVerticalAvoidance ? 20 : 0),
+  'baseSafeArea': _insets(bottom: 34),
+  'horizontalSafeArea': _insets(bottom: 34),
+  'verticalSafeArea': _insets(bottom: 34),
+  'effectiveCornerRadii': <String, double>{
+    'topLeft': 62,
+    'topRight': 62,
+    'bottomLeft': 62,
+    'bottomRight': 62,
+  },
 };
 
 void main() {
@@ -137,6 +162,270 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('theme builders receive the window-control context', (
+      tester,
+    ) async {
+      var lightBuilderHasLayout = false;
+      var darkBuilderHasLayout = false;
+
+      await tester.pumpWidget(
+        AppRootView(
+          themeMode: ThemeMode.system,
+          lightThemeBuilder: (context) {
+            lightBuilderHasLayout =
+                AdaptiveWindowControlLayoutScope.maybeOf(context) != null;
+            return ThemeData.light();
+          },
+          darkThemeBuilder: (context) {
+            darkBuilderHasLayout =
+                AdaptiveWindowControlLayoutScope.maybeOf(context) != null;
+            return ThemeData.dark();
+          },
+          child: const SizedBox(),
+        ),
+      );
+
+      expect(lightBuilderHasLayout, isTrue);
+      expect(darkBuilderHasLayout, isTrue);
+    });
+
+    testWidgets(
+      'apple window transition preserves state and elevates page background',
+      (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        var hasHorizontalAvoidance = false;
+        var isPad = true;
+        var isFullScreen = false;
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(
+              _windowControlChannel,
+              (_) async => _windowControlPayload(
+                hasHorizontalAvoidance: hasHorizontalAvoidance,
+                hasVerticalAvoidance: true,
+                isPad: isPad,
+                isFullScreen: isFullScreen,
+              ),
+            );
+        final colorScheme = ColorScheme.fromSeed(
+          seedColor: const Color(0xFF446688),
+          brightness: Brightness.dark,
+        );
+        final baseBackground = colorScheme.surface;
+        final elevatedBackground = colorScheme.surfaceContainerLow;
+        const probeKey = ValueKey('apple-window-background-probe');
+        final router = GoRouter(
+          routes: [
+            GoRoute(
+              path: '/',
+              builder: (_, _) => const _StatefulProbe(key: probeKey),
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+
+        try {
+          await tester.pumpWidget(
+            AppRootView.router(
+              themeMode: ThemeMode.dark,
+              darkThemeBuilder: (context) {
+                final useElevatedTheme =
+                    defaultTargetPlatform == TargetPlatform.iOS &&
+                    AdaptiveWindowControlLayoutScope.maybeOf(
+                          context,
+                        )?.hasWindowControlAvoidance ==
+                        true;
+                if (!useElevatedTheme) {
+                  return ThemeData(
+                    colorScheme: colorScheme,
+                    scaffoldBackgroundColor: baseBackground,
+                    cupertinoOverrideTheme: CupertinoThemeData(
+                      scaffoldBackgroundColor: baseBackground,
+                    ),
+                  );
+                }
+                final elevatedScheme = colorScheme.copyWith(
+                  surface: elevatedBackground,
+                );
+                return ThemeData(
+                  colorScheme: elevatedScheme,
+                  scaffoldBackgroundColor: baseBackground,
+                  cupertinoOverrideTheme: CupertinoThemeData(
+                    scaffoldBackgroundColor: elevatedBackground,
+                  ),
+                ).copyWith(scaffoldBackgroundColor: elevatedBackground);
+              },
+              config: router,
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          var context = tester.element(find.byKey(probeKey));
+          final probeState = tester.state(find.byKey(probeKey));
+          expect(Theme.of(context).scaffoldBackgroundColor, baseBackground);
+          expect(
+            CupertinoTheme.of(context).scaffoldBackgroundColor,
+            baseBackground,
+          );
+          final initialLayout = AdaptiveWindowControlLayoutScope.maybeOf(
+            context,
+          );
+          expect(
+            initialLayout?.verticalAvoidance,
+            isNot(EdgeInsetsDirectional.zero),
+          );
+          expect(initialLayout?.hasWindowControlAvoidance, isFalse);
+          final baseBarBackground = CupertinoTheme.of(
+            context,
+          ).barBackgroundColor;
+
+          hasHorizontalAvoidance = true;
+          tester.binding.handleMetricsChanged();
+          await tester.pumpAndSettle();
+
+          context = tester.element(find.byKey(probeKey));
+          final layout = AdaptiveWindowControlLayoutScope.maybeOf(context);
+          expect(AdaptiveStyle.of(context), AdaptiveStyle.apple);
+          expect(
+            layout?.horizontalAvoidance,
+            isNot(EdgeInsetsDirectional.zero),
+          );
+          expect(tester.state(find.byKey(probeKey)), same(probeState));
+          expect(Theme.of(context).scaffoldBackgroundColor, elevatedBackground);
+          expect(Theme.of(context).colorScheme.surface, elevatedBackground);
+          expect(
+            tester
+                .widget<MaterialApp>(find.byType(MaterialApp))
+                .darkTheme
+                ?.scaffoldBackgroundColor,
+            elevatedBackground,
+          );
+          expect(
+            CupertinoTheme.of(context).scaffoldBackgroundColor,
+            elevatedBackground,
+          );
+          expect(
+            CupertinoTheme.of(context).barBackgroundColor,
+            baseBarBackground,
+          );
+
+          isPad = false;
+          tester.binding.handleMetricsChanged();
+          await tester.pumpAndSettle();
+
+          context = tester.element(find.byKey(probeKey));
+          expect(tester.state(find.byKey(probeKey)), same(probeState));
+          expect(
+            AdaptiveWindowControlLayoutScope.maybeOf(
+              context,
+            )?.hasWindowControlAvoidance,
+            isFalse,
+          );
+          expect(Theme.of(context).scaffoldBackgroundColor, baseBackground);
+
+          isPad = true;
+          isFullScreen = true;
+          tester.binding.handleMetricsChanged();
+          await tester.pumpAndSettle();
+
+          context = tester.element(find.byKey(probeKey));
+          expect(tester.state(find.byKey(probeKey)), same(probeState));
+          expect(
+            AdaptiveWindowControlLayoutScope.maybeOf(
+              context,
+            )?.hasWindowControlAvoidance,
+            isFalse,
+          );
+          expect(Theme.of(context).scaffoldBackgroundColor, baseBackground);
+
+          isFullScreen = false;
+          tester.binding.handleMetricsChanged();
+          await tester.pumpAndSettle();
+
+          context = tester.element(find.byKey(probeKey));
+          expect(tester.state(find.byKey(probeKey)), same(probeState));
+          expect(
+            AdaptiveWindowControlLayoutScope.maybeOf(
+              context,
+            )?.hasWindowControlAvoidance,
+            isTrue,
+          );
+          expect(Theme.of(context).scaffoldBackgroundColor, elevatedBackground);
+
+          hasHorizontalAvoidance = false;
+          tester.binding.handleMetricsChanged();
+          await tester.pumpAndSettle();
+
+          context = tester.element(find.byKey(probeKey));
+          expect(tester.state(find.byKey(probeKey)), same(probeState));
+          expect(Theme.of(context).scaffoldBackgroundColor, baseBackground);
+          expect(
+            CupertinoTheme.of(context).scaffoldBackgroundColor,
+            baseBackground,
+          );
+          expect(
+            tester
+                .widget<MaterialApp>(find.byType(MaterialApp))
+                .darkTheme
+                ?.scaffoldBackgroundColor,
+            baseBackground,
+          );
+          expect(
+            CupertinoTheme.of(context).barBackgroundColor,
+            baseBarBackground,
+          );
+        } finally {
+          debugDefaultTargetPlatformOverride = null;
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+              .setMockMethodCallHandler(_windowControlChannel, null);
+        }
+      },
+    );
+
+    testWidgets('non-iOS apple platform ignores window background elevation', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      final colorScheme = ColorScheme.fromSeed(
+        seedColor: const Color(0xFF446688),
+        brightness: Brightness.dark,
+      );
+      final baseBackground = colorScheme.surface;
+      const probeKey = ValueKey('non-ios-window-background-probe');
+
+      try {
+        await tester.pumpWidget(
+          AppRootView(
+            themeMode: ThemeMode.dark,
+            darkThemeBuilder: (context) {
+              if (defaultTargetPlatform == TargetPlatform.iOS &&
+                  AdaptiveWindowControlLayoutScope.maybeOf(
+                        context,
+                      )?.hasWindowControlAvoidance ==
+                      true) {
+                throw StateError(
+                  'macOS must not select the iOS elevated theme',
+                );
+              }
+              return ThemeData(
+                platform: TargetPlatform.macOS,
+                colorScheme: colorScheme,
+                scaffoldBackgroundColor: baseBackground,
+              );
+            },
+            child: const SizedBox(key: probeKey),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final context = tester.element(find.byKey(probeKey));
+        expect(AdaptiveStyle.of(context), AdaptiveStyle.apple);
+        expect(Theme.of(context).platform, TargetPlatform.macOS);
+        expect(Theme.of(context).scaffoldBackgroundColor, baseBackground);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+
     testWidgets('window-control layout reaches root GoRouter pages', (
       tester,
     ) async {
@@ -144,8 +433,10 @@ void main() {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(_windowControlChannel, (_) async {
             return <String, Object>{
-              'schemaVersion': 3,
+              'schemaVersion': 4,
               'isAvailable': true,
+              'isPad': true,
+              'isFullScreen': false,
               'baseMargins': _insets(),
               'horizontalMargins': _insets(start: 40, end: 12),
               'verticalMargins': _insets(),
@@ -209,4 +500,16 @@ class _TextDirectionProbe extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(Directionality.of(context).name);
+}
+
+class _StatefulProbe extends StatefulWidget {
+  const _StatefulProbe({super.key});
+
+  @override
+  State<_StatefulProbe> createState() => _StatefulProbeState();
+}
+
+class _StatefulProbeState extends State<_StatefulProbe> {
+  @override
+  Widget build(BuildContext context) => const SizedBox();
 }

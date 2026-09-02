@@ -1,174 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../adaptive_style.dart';
+import '../cupertino/app_bar_apple_style.dart';
 import '../cupertino/cupertino_sliver_app_bar.dart';
-import '../window_control/material_app_bar.dart';
-import '../window_control/toolbar_geometry.dart';
+import '../material/app_bar_material_style.dart';
+import '../material/material_sliver_app_bar.dart';
+
+export '../cupertino/app_bar_apple_style.dart' show AppBarAppleStyle;
+export '../material/app_bar_material_style.dart' show AppBarMaterialStyle;
 
 const List<Widget> _kDefaultActions = <Widget>[];
 
-/// Style config for the Material branch of [AdaptiveSliverAppBar].
-///
-/// App-bar fields map to [SliverAppBar]. [windowControlEdgePadding] is the
-/// Material visual baseline added only on sides with window-control avoidance.
-class AppBarMaterialStyle {
-  const AppBarMaterialStyle({
-    this.centerTitle = true,
-    this.floating = true,
-    this.snap = true,
-    this.pinned = true,
-    this.forceElevated = false,
-    this.scrolledUnderElevation,
-    this.shadowColor = Colors.transparent,
-    this.bottom,
-    this.windowControlEdgePadding = materialWindowControlEdgePadding,
-  });
-
-  final bool centerTitle;
-  final bool floating;
-  final bool snap;
-  final bool pinned;
-  final bool forceElevated;
-  final double? scrolledUnderElevation;
-  final Color? shadowColor;
-  final PreferredSizeWidget? bottom;
-
-  /// {@macro mhabit.windowControlEdgePadding}
-  final EdgeInsetsDirectional windowControlEdgePadding;
-
-  AppBarMaterialStyle copyWith({
-    bool? centerTitle,
-    bool? floating,
-    bool? snap,
-    bool? pinned,
-    bool? forceElevated,
-    double? scrolledUnderElevation,
-    Color? shadowColor,
-    PreferredSizeWidget? bottom,
-    EdgeInsetsDirectional? windowControlEdgePadding,
-  }) => AppBarMaterialStyle(
-    centerTitle: centerTitle ?? this.centerTitle,
-    floating: floating ?? this.floating,
-    snap: snap ?? this.snap,
-    pinned: pinned ?? this.pinned,
-    forceElevated: forceElevated ?? this.forceElevated,
-    scrolledUnderElevation:
-        scrolledUnderElevation ?? this.scrolledUnderElevation,
-    shadowColor: shadowColor ?? this.shadowColor,
-    bottom: bottom ?? this.bottom,
-    windowControlEdgePadding:
-        windowControlEdgePadding ?? this.windowControlEdgePadding,
-  );
-
-  @override
-  bool operator ==(Object other) =>
-      other is AppBarMaterialStyle &&
-      other.centerTitle == centerTitle &&
-      other.floating == floating &&
-      other.snap == snap &&
-      other.pinned == pinned &&
-      other.forceElevated == forceElevated &&
-      other.scrolledUnderElevation == scrolledUnderElevation &&
-      other.shadowColor == shadowColor &&
-      other.bottom == bottom &&
-      other.windowControlEdgePadding == windowControlEdgePadding;
-
-  @override
-  int get hashCode => Object.hash(
-    centerTitle,
-    floating,
-    snap,
-    pinned,
-    forceElevated,
-    scrolledUnderElevation,
-    shadowColor,
-    bottom,
-    windowControlEdgePadding,
-  );
-}
-
-/// Style config for the apple branch of [AdaptiveSliverAppBar].
-///
-/// App-bar fields map to [CupertinoSliverNavigationBar].
-/// [windowControlEdgePadding] is the Cupertino visual baseline retained before
-/// adding window-control avoidance.
-class AppBarAppleStyle {
-  const AppBarAppleStyle({
-    this.collapsible = false,
-    this.enableBackgroundFilterBlur = true,
-    this.border,
-    this.backgroundColor,
-    this.automaticBackgroundVisibility = true,
-    this.padding,
-    this.stretch = false,
-    this.windowControlEdgePadding = cupertinoWindowControlEdgePadding,
-  });
-
-  final bool collapsible;
-  final bool enableBackgroundFilterBlur;
-  final Border? border;
-  final Color? backgroundColor;
-  final bool automaticBackgroundVisibility;
-  final EdgeInsetsDirectional? padding;
-  final bool stretch;
-
-  /// {@macro mhabit.windowControlEdgePadding}
-  final EdgeInsetsDirectional windowControlEdgePadding;
-
-  AppBarAppleStyle copyWith({
-    bool? collapsible,
-    bool? enableBackgroundFilterBlur,
-    Border? border,
-    Color? backgroundColor,
-    bool? automaticBackgroundVisibility,
-    EdgeInsetsDirectional? padding,
-    bool? stretch,
-    EdgeInsetsDirectional? windowControlEdgePadding,
-  }) => AppBarAppleStyle(
-    collapsible: collapsible ?? this.collapsible,
-    enableBackgroundFilterBlur:
-        enableBackgroundFilterBlur ?? this.enableBackgroundFilterBlur,
-    border: border ?? this.border,
-    backgroundColor: backgroundColor ?? this.backgroundColor,
-    automaticBackgroundVisibility:
-        automaticBackgroundVisibility ?? this.automaticBackgroundVisibility,
-    padding: padding ?? this.padding,
-    stretch: stretch ?? this.stretch,
-    windowControlEdgePadding:
-        windowControlEdgePadding ?? this.windowControlEdgePadding,
-  );
-
-  @override
-  bool operator ==(Object other) =>
-      other is AppBarAppleStyle &&
-      other.collapsible == collapsible &&
-      other.enableBackgroundFilterBlur == enableBackgroundFilterBlur &&
-      other.border == border &&
-      other.backgroundColor == backgroundColor &&
-      other.automaticBackgroundVisibility == automaticBackgroundVisibility &&
-      other.padding == padding &&
-      other.stretch == stretch &&
-      other.windowControlEdgePadding == windowControlEdgePadding;
-
-  @override
-  int get hashCode => Object.hash(
-    collapsible,
-    enableBackgroundFilterBlur,
-    border,
-    backgroundColor,
-    automaticBackgroundVisibility,
-    padding,
-    stretch,
-    windowControlEdgePadding,
-  );
-}
-
 /// Per-style config overrides for [AdaptiveSliverAppBar].
-///
-/// Callers select styles by name (no platform branching): the dispatched
-/// style consumes its matching config, the other one is ignored. Null means
-/// "all defaults"; partial overrides fill the rest from the config
-/// constructor defaults.
 class AppBarStyles {
   const AppBarStyles({this.material, this.apple});
 
@@ -202,10 +45,11 @@ class AppBarStyles {
 /// (`CupertinoSliverNavigationBar`).
 ///
 /// Shared parameters live at the top level; style-divergent knobs live in
-/// [AppBarStyles]. Material resolves [height] as [SliverAppBar.toolbarHeight].
-/// Apple uses a fixed, centered toolbar when [height] is provided unless
+/// [styles]. Material resolves [height] as [SliverAppBar.toolbarHeight]. Apple
+/// uses a fixed, centered toolbar when [height] is provided unless
 /// [AppBarAppleStyle.collapsible] requests the native collapsing navigation
-/// bar behavior.
+/// bar behavior. A shared [bottom] is hosted below the fixed toolbar on both
+/// renderers; a Material-only [AppBarMaterialStyle.bottom] overrides it.
 class AdaptiveSliverAppBar extends StatelessWidget {
   const AdaptiveSliverAppBar({
     super.key,
@@ -214,8 +58,10 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.leading,
     this.onLeadingPressed,
     this.height,
+    this.bottom,
     this.styles,
-  }) : style = null;
+  }) : assert(bottom == null || height != null),
+       _adaptiveStyle = null;
 
   const AdaptiveSliverAppBar.material({
     super.key,
@@ -224,8 +70,9 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.leading,
     this.onLeadingPressed,
     this.height,
+    this.bottom,
     this.styles,
-  }) : style = AdaptiveStyle.material;
+  }) : _adaptiveStyle = AdaptiveStyle.material;
 
   const AdaptiveSliverAppBar.apple({
     super.key,
@@ -234,68 +81,51 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.leading,
     this.onLeadingPressed,
     this.height,
+    this.bottom,
     this.styles,
-  }) : style = AdaptiveStyle.apple;
+  }) : assert(bottom == null || height != null),
+       _adaptiveStyle = AdaptiveStyle.apple;
 
-  final AdaptiveStyle? style;
+  final AdaptiveStyle? _adaptiveStyle;
   final Widget title;
   final List<Widget> actions;
   final Widget? leading;
   final VoidCallback? onLeadingPressed;
   final double? height;
+  final PreferredSizeWidget? bottom;
   final AppBarStyles? styles;
+
+  AppBarMaterialStyle get _effectiveMaterialStyle =>
+      styles?.material ?? const AppBarMaterialStyle();
+
+  AppBarAppleStyle get _effectiveAppleStyle =>
+      styles?.apple ?? const AppBarAppleStyle();
 
   @override
   Widget build(BuildContext context) {
-    final effective = style ?? AdaptiveStyle.of(context);
-    return switch (effective) {
-      AdaptiveStyle.material => _buildMaterial(
-        styles?.material ?? const AppBarMaterialStyle(),
+    final effectiveStyle = _adaptiveStyle ?? AdaptiveStyle.of(context);
+    return switch (effectiveStyle) {
+      AdaptiveStyle.material => MaterialSliverAppBar(
+        title: title,
+        actions: actions,
+        leading: leading,
+        onLeadingPressed: onLeadingPressed,
+        height: height,
+        bottom: bottom,
+        style: _effectiveMaterialStyle,
       ),
-      AdaptiveStyle.apple => _buildApple(
-        styles?.apple ?? const AppBarAppleStyle(),
-      ),
+      AdaptiveStyle.apple => _buildApple(_effectiveAppleStyle),
     };
   }
 
-  Widget _buildMaterial(AppBarMaterialStyle config) {
-    // Equivalent of the app's current `SliverTopAppBar` baseline.
-    return WindowControlSliverAppBar(
-      floating: config.floating,
-      snap: config.snap,
-      pinned: config.pinned,
-      centerTitle: config.centerTitle,
-      toolbarHeight: height ?? kToolbarHeight,
-      forceElevated: config.forceElevated,
-      scrolledUnderElevation: config.scrolledUnderElevation,
-      shadowColor: config.shadowColor,
-      bottom: config.bottom,
-      title: title,
-      leading:
-          leading ??
-          (onLeadingPressed == null
-              ? null
-              : IconButton(
-                  onPressed: onLeadingPressed,
-                  icon: const Icon(Icons.arrow_back),
-                )),
-      actions: actions.isEmpty ? null : actions,
-      windowControlEdgePadding: config.windowControlEdgePadding,
-    );
-  }
-
-  Widget _buildApple(AppBarAppleStyle config) => CupertinoSliverAppBar(
+  Widget _buildApple(AppBarAppleStyle effectiveStyle) => CupertinoSliverAppBar(
     title: title,
     actions: actions,
     leading: leading,
     onLeadingPressed: onLeadingPressed,
-    height: config.collapsible ? null : height,
-    enableBackgroundFilterBlur: config.enableBackgroundFilterBlur,
-    border: config.border,
-    backgroundColor: config.backgroundColor,
-    automaticBackgroundVisibility: config.automaticBackgroundVisibility,
-    padding: config.padding,
-    stretch: config.stretch,
-    windowControlEdgePadding: config.windowControlEdgePadding,
+    height: effectiveStyle.collapsible ? null : height,
+    bottom: bottom,
+    bottomExtent: bottom?.preferredSize.height ?? 0.0,
+    style: effectiveStyle,
   );
 }

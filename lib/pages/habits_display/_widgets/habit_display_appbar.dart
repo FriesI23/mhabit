@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart'
-    show CupertinoColors, CupertinoNavigationBar;
+import 'package:flutter/cupertino.dart' show CupertinoColors;
 import 'package:flutter/material.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
@@ -229,7 +228,7 @@ class _AppleHabitDisplayAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final combinesBars = mode == _HabitDisplayAppBarMode.search;
+    final combinesBars = mode != _HabitDisplayAppBarMode.view;
     final appBar = switch (mode) {
       _HabitDisplayAppBarMode.view => AppleSliverViewTopAppBar(
         onSelect: viewCallbacks.onSelect,
@@ -255,6 +254,8 @@ class _AppleHabitDisplayAppBar extends StatelessWidget {
         onDelete: selectCallbacks.onDelete,
         onGroupModify: selectCallbacks.onGroupModify,
         onStatusModify: selectCallbacks.onStatusModify,
+        bottom: calendarContent,
+        bottomExtent: calendarHeight,
       ),
     };
     return MultiSliver(
@@ -311,10 +312,10 @@ class _AppleCalendarBar extends StatelessWidget {
           MediaQuery.removePadding(
             context: context,
             removeTop: true,
-            child: const CupertinoNavigationBar(
+            child: const WindowControlCupertinoNavigationBar(
               automaticallyImplyLeading: false,
               transitionBetweenRoutes: false,
-              automaticBackgroundVisibility: false,
+              automaticBackgroundVisibility: true,
               backgroundColor: CupertinoColors.transparent,
               border: null,
             ),

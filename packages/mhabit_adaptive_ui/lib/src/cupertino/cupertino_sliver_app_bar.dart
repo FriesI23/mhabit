@@ -4,6 +4,7 @@ import '../breakpoints/window_size_class.dart';
 import '../shell/navigation_sidebar_app_bar_leading.dart';
 import '../window_control/cupertino_navigation_bar.dart';
 import '../window_control/toolbar_geometry.dart';
+import 'app_bar_apple_style.dart';
 import 'cupertino_toolbar_padding.dart';
 
 const List<Widget> _kDefaultActions = <Widget>[];
@@ -17,29 +18,23 @@ class CupertinoSliverAppBar extends StatelessWidget {
     this.leading,
     this.onLeadingPressed,
     this.height,
-    this.enableBackgroundFilterBlur = true,
-    this.border,
-    this.backgroundColor,
-    this.automaticBackgroundVisibility = true,
-    this.padding,
-    this.stretch = false,
+    this.bottom,
+    this.bottomExtent = 0.0,
+    required this.style,
     this.windowControlAvoidance,
-    this.windowControlEdgePadding = cupertinoWindowControlEdgePadding,
-  });
+  }) : assert(bottomExtent >= 0.0),
+       assert(bottom != null || bottomExtent == 0.0),
+       assert(bottom == null || height != null);
 
   final Widget title;
   final List<Widget> actions;
   final Widget? leading;
   final VoidCallback? onLeadingPressed;
   final double? height;
-  final bool enableBackgroundFilterBlur;
-  final Border? border;
-  final Color? backgroundColor;
-  final bool automaticBackgroundVisibility;
-  final EdgeInsetsDirectional? padding;
-  final bool stretch;
+  final Widget? bottom;
+  final double bottomExtent;
+  final AppBarAppleStyle style;
   final EdgeInsetsDirectional? windowControlAvoidance;
-  final EdgeInsetsDirectional windowControlEdgePadding;
 
   Widget? _effectiveTrailing(List<Widget> effectiveActions) =>
       effectiveActions.isEmpty
@@ -68,26 +63,29 @@ class CupertinoSliverAppBar extends StatelessWidget {
         leading: effectiveLeading,
         trailing: effectiveTrailing,
         toolbarHeight: height,
-        enableBackgroundFilterBlur: enableBackgroundFilterBlur,
-        border: border,
-        backgroundColor: backgroundColor,
-        padding: padding,
+        bottom: bottom,
+        bottomExtent: bottomExtent,
+        enableBackgroundFilterBlur: style.enableBackgroundFilterBlur,
+        automaticBackgroundVisibility: style.automaticBackgroundVisibility,
+        border: style.border,
+        backgroundColor: style.backgroundColor,
+        padding: style.padding,
         windowControlAvoidance: effectiveWindowControlAvoidance,
-        windowControlEdgePadding: windowControlEdgePadding,
+        windowControlEdgePadding: style.windowControlEdgePadding,
       );
     }
     return _CollapsibleCupertinoSliverAppBar(
       title: title,
       leading: effectiveLeading,
       trailing: effectiveTrailing,
-      enableBackgroundFilterBlur: enableBackgroundFilterBlur,
-      border: border,
-      backgroundColor: backgroundColor,
-      automaticBackgroundVisibility: automaticBackgroundVisibility,
-      padding: padding,
-      stretch: stretch,
+      enableBackgroundFilterBlur: style.enableBackgroundFilterBlur,
+      border: style.border,
+      backgroundColor: style.backgroundColor,
+      automaticBackgroundVisibility: style.automaticBackgroundVisibility,
+      padding: style.padding,
+      stretch: style.stretch,
       windowControlAvoidance: effectiveWindowControlAvoidance,
-      windowControlEdgePadding: windowControlEdgePadding,
+      windowControlEdgePadding: style.windowControlEdgePadding,
     );
   }
 }
@@ -136,7 +134,10 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
     required this.leading,
     required this.trailing,
     required this.toolbarHeight,
+    required this.bottom,
+    required this.bottomExtent,
     required this.enableBackgroundFilterBlur,
+    required this.automaticBackgroundVisibility,
     required this.border,
     required this.backgroundColor,
     required this.padding,
@@ -148,7 +149,10 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
   final Widget? leading;
   final Widget? trailing;
   final double toolbarHeight;
+  final Widget? bottom;
+  final double bottomExtent;
   final bool enableBackgroundFilterBlur;
+  final bool automaticBackgroundVisibility;
   final Border? border;
   final Color? backgroundColor;
   final EdgeInsetsDirectional? padding;
@@ -161,7 +165,7 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
     final topPadding =
         MediaQuery.paddingOf(context).top +
         (sidebarLeading?.toolbarTopInset ?? 0);
-    final extent = topPadding + toolbarHeight;
+    final extent = topPadding + toolbarHeight + bottomExtent;
     return SliverPersistentHeader(
       pinned: true,
       delegate: _FixedCupertinoToolbarDelegate(
@@ -171,10 +175,10 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              CupertinoNavigationBar(
+              WindowControlCupertinoNavigationBar(
                 automaticallyImplyLeading: false,
                 transitionBetweenRoutes: false,
-                automaticBackgroundVisibility: false,
+                automaticBackgroundVisibility: automaticBackgroundVisibility,
                 enableBackgroundFilterBlur: enableBackgroundFilterBlur,
                 border: border,
                 backgroundColor: backgroundColor,
@@ -193,6 +197,14 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
                   windowControlEdgePadding: windowControlEdgePadding,
                 ),
               ),
+              if (bottom case final bottom?)
+                Positioned(
+                  top: topPadding + toolbarHeight,
+                  left: 0,
+                  right: 0,
+                  height: bottomExtent,
+                  child: bottom,
+                ),
             ],
           ),
         ),

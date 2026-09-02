@@ -70,7 +70,8 @@ bool appShellFlowVisibilityPolicy(List<String?> routeNames) {
   return switch (routeNames.single) {
     final name
         when name == AppRoute.habitCreate.name ||
-            name == AppRoute.habitEdit.name =>
+            name == AppRoute.habitEdit.name ||
+            name == AppRoute.habitsStatus.name =>
       false,
     _ => true,
   };
@@ -290,6 +291,10 @@ class AppRouterBuilder with _AppRouteAdder {
         observers: observers,
         navigatorKey: navigatorKey,
         routes: [
+          // Match exact common-flow paths before branch parameters such as
+          // `/habits/:habitId`; otherwise `/habits/status` is consumed as a
+          // Habit Detail route instead of the Status Changer app flow.
+          ...appFlow._routes,
           StatefulShellRoute(
             builder: branchBuilder,
             navigatorContainerBuilder: _buildBranchNavigatorContainer,
@@ -303,7 +308,6 @@ class AppRouterBuilder with _AppRouteAdder {
                 ),
             ],
           ),
-          ...appFlow._routes,
         ],
       ),
     );

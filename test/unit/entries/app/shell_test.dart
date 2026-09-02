@@ -125,7 +125,8 @@ GoRouter _buildRouter(
       builder: (_, state) => state.uri.queryParameters['block'] == 'true'
           ? const PopScope<void>(canPop: false, child: _StubPage('edit page'))
           : const _StubPage('edit page'),
-    );
+    )
+    ..addHabitsStatus(builder: (_, _) => const _StubPage('status page'));
   final appFlowObserver = AdaptiveBranchRouteObserver();
   final appChromeNavigatorKey = GlobalKey<NavigatorState>();
   final coordinator = AppNavigationCoordinator(
@@ -855,6 +856,33 @@ void main() {
     expect(find.text('today page'), findsOneWidget);
   });
 
+  testWidgets('returns from status changer to the source habits stack', (
+    tester,
+  ) async {
+    _setCompactSurface(tester);
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers);
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+
+    router.push('/habits/status');
+    await tester.pumpAndSettle();
+    expect(find.text('status page'), findsOneWidget);
+
+    router.pop();
+    await tester.pumpAndSettle();
+
+    expect(find.text('habits page'), findsOneWidget);
+    expect(observers[0].routeNameStack, [AppRoute.habits.name]);
+  });
+
   testWidgets('rail selection closes app flow before switching branch', (
     tester,
   ) async {
@@ -879,6 +907,33 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('edit page'), findsNothing);
+    expect(find.text('today page'), findsOneWidget);
+  });
+
+  testWidgets('rail selection closes status changer before switching branch', (
+    tester,
+  ) async {
+    _setSurface(tester, const Size(700, 600));
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers);
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+
+    router.push('/habits/status');
+    await tester.pumpAndSettle();
+    expect(find.text('status page'), findsOneWidget);
+
+    await tester.tap(find.byIcon(MdiIcons.calendarTodayOutline));
+    await tester.pumpAndSettle();
+
+    expect(find.text('status page'), findsNothing);
     expect(find.text('today page'), findsOneWidget);
   });
 

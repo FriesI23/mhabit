@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' show Theme;
 
 import '../adaptive/adaptive_navigation_destination.dart';
 import '../breakpoints/window_size_class.dart';
@@ -106,10 +107,11 @@ class CupertinoNavigationShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final disableAnimations = MediaQuery.disableAnimationsOf(context);
-    final scaffoldBackground = CupertinoDynamicColor.resolve(
-      CupertinoTheme.of(context).scaffoldBackgroundColor,
-      context,
-    );
+    // Match the actual Material Scaffold surface during ThemeData animation.
+    // CupertinoThemeData switches brightness discretely at the midpoint,
+    // which otherwise makes an idle automatic navigation bar flash between
+    // its light and dark scaffold colors while the page keeps interpolating.
+    final scaffoldBackground = Theme.of(context).colorScheme.surface;
     return NavigationShellFrame(
       selectedIndex: selectedIndex,
       onDestinationSelected: onDestinationSelected,

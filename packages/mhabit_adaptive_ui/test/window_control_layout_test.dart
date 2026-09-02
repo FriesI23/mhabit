@@ -147,6 +147,65 @@ void main() {
     expect(tester.getTopLeft(find.byKey(const ValueKey('action'))).dx, 14);
   });
 
+  testWidgets(
+    'Cupertino auto visibility preserves page RGB while fading to transparent',
+    (tester) async {
+      const pageBackground = Color(0xFF1E1E1E);
+      const transparentPageBackground = Color(0x001E1E1E);
+      final controller = ScrollController();
+      addTearDown(controller.dispose);
+
+      await tester.pumpWidget(
+        CupertinoApp(
+          theme: const CupertinoThemeData(
+            brightness: Brightness.dark,
+            scaffoldBackgroundColor: pageBackground,
+          ),
+          home: CupertinoPageScaffold(
+            backgroundColor: pageBackground,
+            navigationBar: const WindowControlCupertinoNavigationBar(
+              automaticallyImplyLeading: false,
+              automaticBackgroundVisibility: true,
+              backgroundColor: CupertinoColors.transparent,
+              border: null,
+            ),
+            child: ListView.builder(
+              controller: controller,
+              itemCount: 50,
+              itemBuilder: (context, index) => Text('Item $index'),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final navigationBar = tester.widget<CupertinoNavigationBar>(
+        find.byType(CupertinoNavigationBar),
+      );
+      expect(navigationBar.backgroundColor, transparentPageBackground);
+
+      controller.jumpTo(5);
+      await tester.pump();
+      await tester.pump();
+
+      final background = tester
+          .widgetList<DecoratedBox>(
+            find.descendant(
+              of: find.byType(CupertinoNavigationBar),
+              matching: find.byType(DecoratedBox),
+            ),
+          )
+          .map((box) => box.decoration)
+          .whereType<BoxDecoration>()
+          .singleWhere((decoration) => decoration.color != null)
+          .color;
+      expect(
+        background,
+        Color.lerp(pageBackground, transparentPageBackground, 0.5),
+      );
+    },
+  );
+
   testWidgets('Cupertino keeps middle centered and pads controls internally', (
     tester,
   ) async {

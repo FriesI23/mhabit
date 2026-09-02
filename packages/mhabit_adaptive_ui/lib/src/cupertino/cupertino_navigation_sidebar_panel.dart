@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '../adaptive/adaptive_navigation_destination.dart';
 import '../shell/navigation_shell_frame.dart';
 import '../shell/side_navigation.dart';
+import '../window_control/cupertino_navigation_bar.dart';
 import 'cupertino_floating_surface.dart';
 
 /// Floating surface and destination presentation for a Cupertino Sidebar.
@@ -48,10 +49,10 @@ class CupertinoNavigationSidebarPanel extends StatelessWidget {
       right: 0,
       height: _toolbarHeight,
       child: IgnorePointer(
-        child: CupertinoNavigationBar(
+        child: WindowControlCupertinoNavigationBar(
           automaticallyImplyLeading: false,
           transitionBetweenRoutes: false,
-          automaticBackgroundVisibility: false,
+          automaticBackgroundVisibility: true,
           backgroundColor: CupertinoColors.transparent,
           border: null,
         ),

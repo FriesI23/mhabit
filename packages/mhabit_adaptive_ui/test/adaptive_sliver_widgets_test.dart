@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart'
-    show CupertinoNavigationBar, CupertinoSliverNavigationBar;
+    show CupertinoColors, CupertinoNavigationBar, CupertinoSliverNavigationBar;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -84,6 +84,8 @@ void main() {
       final bar = tester.widget<CupertinoSliverNavigationBar>(
         find.byType(CupertinoSliverNavigationBar),
       );
+      expect(bar.backgroundColor?.a, 0.0);
+      expect(bar.automaticBackgroundVisibility, isTrue);
       expect(bar.middle, isNotNull);
       expect(bar.largeTitle, isNull);
     });
@@ -226,6 +228,11 @@ void main() {
 
       expect(find.byType(CupertinoNavigationBar), findsOneWidget);
       expect(find.byType(CupertinoSliverNavigationBar), findsNothing);
+      final bar = tester.widget<CupertinoNavigationBar>(
+        find.byType(CupertinoNavigationBar),
+      );
+      expect(bar.backgroundColor?.a, 0.0);
+      expect(bar.automaticBackgroundVisibility, isTrue);
       expect(find.text('title'), findsOneWidget);
       expect(find.byIcon(Icons.settings), findsOneWidget);
     });
@@ -374,6 +381,64 @@ void main() {
       expect(appBar.centerTitle, isTrue);
     });
 
+    testWidgets('shared bottom is hosted by the Material bar', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                AdaptiveSliverAppBar.material(
+                  title: Text('title'),
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(48),
+                    child: SizedBox(key: ValueKey('shared-bottom'), height: 48),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
+      expect(appBar.bottom?.preferredSize.height, 48);
+      expect(
+        tester.getSize(find.byKey(const ValueKey('shared-bottom'))).height,
+        48,
+      );
+    });
+
+    testWidgets('shared bottom is hosted below the fixed Apple toolbar', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          home: const Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                AdaptiveSliverAppBar(
+                  title: Text('title'),
+                  height: 52,
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(48),
+                    child: SizedBox(key: ValueKey('shared-bottom'), height: 48),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(CupertinoNavigationBar), findsOneWidget);
+      expect(find.byType(CupertinoSliverNavigationBar), findsNothing);
+      expect(
+        tester.getSize(find.byKey(const ValueKey('shared-bottom'))).height,
+        48,
+      );
+    });
+
     testWidgets('apple config passes through to the Cupertino bar', (
       tester,
     ) async {
@@ -387,6 +452,8 @@ void main() {
                   styles: AppBarStyles(
                     apple: AppBarAppleStyle(
                       enableBackgroundFilterBlur: false,
+                      backgroundColor: Color(0xFF123456),
+                      automaticBackgroundVisibility: true,
                       stretch: true,
                     ),
                   ),
@@ -400,6 +467,8 @@ void main() {
         find.byType(CupertinoSliverNavigationBar),
       );
       expect(bar.enableBackgroundFilterBlur, isFalse);
+      expect(bar.backgroundColor, const Color(0xFF123456));
+      expect(bar.automaticBackgroundVisibility, isTrue);
       expect(bar.stretch, isTrue);
     });
 
@@ -473,25 +542,6 @@ void main() {
         const EdgeInsetsDirectional.only(end: 7),
       );
     });
-
-    testWidgets('forced style ignores the other style config', (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: CustomScrollView(
-              slivers: [
-                AdaptiveSliverAppBar.material(
-                  title: Text('title'),
-                  styles: AppBarStyles(apple: AppBarAppleStyle(stretch: true)),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-      expect(find.byType(SliverAppBar), findsOneWidget);
-      expect(find.byType(CupertinoSliverNavigationBar), findsNothing);
-    });
   });
 
   group('AppBar style configs', () {
@@ -528,6 +578,8 @@ void main() {
       expect(updated.enableBackgroundFilterBlur, isFalse);
       expect(updated.stretch, original.stretch);
       expect(updated.border, original.border);
+      expect(original.backgroundColor, CupertinoColors.transparent);
+      expect(original.automaticBackgroundVisibility, isTrue);
       expect(
         updated.windowControlEdgePadding,
         original.windowControlEdgePadding,
