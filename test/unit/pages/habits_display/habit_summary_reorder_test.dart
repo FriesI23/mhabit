@@ -215,6 +215,29 @@ void main() {
       vm.dispose();
     });
 
+    test('flat reorder publishes only the final non-edit state', () async {
+      final a = _h(id: 1, uuid: 'a', sortPostion: 1);
+      final b = _h(id: 2, uuid: 'b', sortPostion: 2);
+      final access = _ReorderTestAccess([a, b]);
+      final vm = HabitSummaryViewModel()
+        ..attachAccess(access)
+        ..attachGroupManager(_ReorderTestGroupManager([]));
+      addTearDown(vm.dispose);
+
+      await vm.loadData(listen: false);
+      vm.updateHabitDisplayFilter(const HabitsDisplayFilter.withDefault());
+      await vm.resortData(listen: false);
+      vm.switchToEditMode(initialSelectedHabitUUID: a.uuid, listen: false);
+      final observedStates = <(bool, int)>[];
+      vm.addListener(
+        () => observedStates.add((vm.isInEditMode, vm.selectedHabitsCount)),
+      );
+
+      await vm.onHabitReorderComplate(0, 1);
+
+      expect(observedStates, [(false, 0)]);
+    });
+
     // ── grouped reorder ──────────────────────────────────────────
     //  before(flat):  [a(pos=1), b(pos=2), c(pos=3)]
     //  before(group): [H(G1), a, b, H(G2), c]
@@ -641,6 +664,34 @@ void main() {
         vm.dispose();
       },
     );
+
+    test('cross-group move publishes only the final non-edit state', () async {
+      final a = _h(id: 1, uuid: 'a', sortPostion: 10, groupId: 'g1');
+      final b = _h(id: 2, uuid: 'b', sortPostion: 20, groupId: 'g2');
+      final access = _ReorderTestAccess([a, b]);
+      final vm = HabitSummaryViewModel()
+        ..attachAccess(access)
+        ..attachGroupManager(
+          _ReorderTestGroupManager([
+            _g(uuid: 'g1', name: 'G1'),
+            _g(uuid: 'g2', name: 'G2'),
+          ]),
+        );
+      addTearDown(vm.dispose);
+
+      await vm.loadData(listen: false);
+      vm.updateGroupingEnabled(true);
+      await vm.resortData(listen: false);
+      vm.switchToEditMode(initialSelectedHabitUUID: a.uuid, listen: false);
+      final observedStates = <(bool, int)>[];
+      vm.addListener(
+        () => observedStates.add((vm.isInEditMode, vm.selectedHabitsCount)),
+      );
+
+      await vm.onCrossGroupHabitMove(1, 3, 'g2');
+
+      expect(observedStates, [(false, 0)]);
+    });
 
     test('cross-group move to uncategorized sets groupId to null', () async {
       final a = _h(id: 1, uuid: 'a', sortPostion: 10, groupId: 'g1');

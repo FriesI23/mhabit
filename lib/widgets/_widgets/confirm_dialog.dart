@@ -30,6 +30,7 @@ Future<bool?> showConfirmDialog({
   bool skipInitiallyEnabled = false,
   ValueChanged<bool>? onSkipChanged,
   String? skipLabel,
+  bool useRootNavigator = true,
 }) async {
   final effectiveTitle = titleBuilder?.call(context) ?? title;
   final effectiveSubtitle = subtitleBuilder?.call(context) ?? subtitle;
@@ -39,6 +40,7 @@ Future<bool?> showConfirmDialog({
   if (!skipOnConfirm) {
     return showDialog<bool>(
       context: context,
+      useRootNavigator: useRootNavigator,
       builder: (context) => ConfirmDialog(
         title: effectiveTitle,
         subtitle: effectiveSubtitle,
@@ -51,6 +53,7 @@ Future<bool?> showConfirmDialog({
   final l10n = L10n.of(context);
   return showDialog<bool>(
     context: context,
+    useRootNavigator: useRootNavigator,
     builder: (context) {
       var skipValue = skipInitiallyEnabled;
       return StatefulBuilder(

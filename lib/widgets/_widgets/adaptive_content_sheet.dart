@@ -48,6 +48,12 @@ import 'enhanced_safe_area.dart';
 /// *when* [buildBody] is called — typically inside a [Provider] scope so that
 /// [contentBuilder] and [actionsBuilder] have access to the Provider tree.
 ///
+/// [useRootNavigator] controls whether the adaptive route is pushed onto the
+/// root navigator or the nearest navigator. It defaults to `true` so both the
+/// sheet and dialog variants cover the same application-level navigation
+/// scope. Pass `false` when the content is intentionally local to a nested
+/// navigator.
+///
 /// Mode‑specific parameters use `sheet*` / `dialog*` prefixes.
 Future<T?> showAdaptiveContentSheet<T>({
   required BuildContext context,
@@ -58,6 +64,7 @@ Future<T?> showAdaptiveContentSheet<T>({
   List<Widget>? actions,
   List<Widget> Function(BuildContext context, bool isDialog)? actionsBuilder,
   bool showCloseButton = true,
+  bool useRootNavigator = true,
   bool? sheetShowCloseButton,
   // Sheet scaffold
   double sheetInitialChildSize = 0.6,
@@ -136,12 +143,14 @@ Future<T?> showAdaptiveContentSheet<T>({
   return useDialog
       ? showDialog<T>(
           context: context,
+          useRootNavigator: useRootNavigator,
           builder: (ctx) => resolvedBuilder != null
               ? resolvedBuilder(ctx, buildBody)
               : buildBody(ctx),
         )
       : showModalBottomSheet<T>(
           context: context,
+          useRootNavigator: useRootNavigator,
           isScrollControlled: true,
           useSafeArea: true,
           showDragHandle: sheetShowDragHandle,

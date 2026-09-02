@@ -38,6 +38,7 @@ import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/_providers/habits_today.dart';
+import 'package:mhabit/pages/habits_display/helpers.dart';
 import 'package:mhabit/pages/habits_display/navigation_chrome.dart';
 import 'package:mhabit/pages/habits_display/page.dart';
 import 'package:mhabit/pages/habits_display/page_habits.dart';
@@ -1263,6 +1264,44 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.byType(CupertinoSelectBottomToolbar), findsOneWidget);
+  });
+
+  testWidgets('batch group modify notifies only the final selection state', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+    final vm = await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    vm.switchToEditMode();
+    final observedEditModes = <bool>[];
+    vm.addListener(() => observedEditModes.add(vm.isInEditMode));
+
+    final count = await vm.executeBatchGroupModify(
+      affectedHabits: const [
+        HabitGroupModifyItem(
+          uuid: '11111111-1111-4111-8111-000000000001',
+          name: 'Geometry regression habit 0',
+          oldGroupId: null,
+        ),
+      ],
+      targetGroupId: 'group-1',
+    );
+
+    expect(count, 1);
+    expect(observedEditModes, [false]);
+    await tester.pump(const Duration(milliseconds: 350));
   });
 
   testWidgets('Apple medium keeps FAB placement with the Cupertino action', (

@@ -824,11 +824,12 @@ class HabitsTabPageState extends State<HabitsTabPage>
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..clearSnackBars();
-      viewmodel.switchToEditMode();
       final data = viewmodel.getHabitBySortId(index);
-      if (data is HabitSummaryDataSortCache) {
-        viewmodel.selectHabit(data.uuid, listen: false);
-      }
+      viewmodel.switchToEditMode(
+        initialSelectedHabitUUID: data is HabitSummaryDataSortCache
+            ? data.uuid
+            : null,
+      );
     }
 
     final sortOptions = context.read<HabitsSortViewModel>();
@@ -865,7 +866,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     }
 
     if (index != dropIndex && viewmodel.isInEditMode) {
-      viewmodel.exitEditModeOnly();
+      viewmodel.exitEditMode();
     }
     return true;
   }
@@ -920,8 +921,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
       }
 
       finishReorder(viewmodel.onHabitReorderComplate(index, dropIndex));
-    } else if (!viewmodel.isInEditMode) {
-      viewmodel.exitEditMode(listen: false);
     }
     return true;
   }
