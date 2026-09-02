@@ -79,7 +79,6 @@ void main() {
     Widget? bottom,
     double bottomExtent = 0,
     bool pinned = true,
-    AppBarAppleStyle? style,
   }) => CupertinoSliverSearchBar(
     title: Text(title),
     leading: const Icon(CupertinoIcons.info, key: ValueKey('info')),
@@ -125,7 +124,6 @@ void main() {
     bottom: bottom,
     bottomExtent: bottomExtent,
     pinned: pinned,
-    style: style,
     onChanged: changes.add,
     onSubmitted: submissions.add,
     onSearchActivated: () {
@@ -233,28 +231,6 @@ void main() {
           .dy,
       22,
     );
-  });
-
-  testWidgets('resolves its nullable style at the public boundary', (
-    tester,
-  ) async {
-    const color = Color(0xFF123456);
-    await tester.pumpWidget(
-      _host(
-        buildBar(
-          style: const AppBarAppleStyle(
-            backgroundColor: color,
-            automaticBackgroundVisibility: true,
-          ),
-        ),
-      ),
-    );
-
-    final navigationBar = tester.widget<CupertinoNavigationBar>(
-      find.byType(CupertinoNavigationBar),
-    );
-    expect(navigationBar.backgroundColor, color);
-    expect(navigationBar.automaticBackgroundVisibility, isTrue);
   });
 
   testWidgets('caps phone safe padding at 32 and keeps wide layouts at 16', (

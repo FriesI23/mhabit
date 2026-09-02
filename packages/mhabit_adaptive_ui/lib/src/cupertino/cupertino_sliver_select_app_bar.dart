@@ -4,9 +4,9 @@ import 'dart:ui' show ImageFilter;
 import 'package:adaptive_actions/cupertino.dart';
 import 'package:flutter/cupertino.dart';
 
-import '../adaptive/app_bar_apple_style.dart';
 import '../breakpoints/breakpoints.dart';
 import '../breakpoints/window_size_class.dart';
+import 'app_bar_apple_style.dart';
 import 'cupertino_sliver_app_bar.dart';
 
 const List<CupertinoSelectAction> _kDefaultActions = <CupertinoSelectAction>[];

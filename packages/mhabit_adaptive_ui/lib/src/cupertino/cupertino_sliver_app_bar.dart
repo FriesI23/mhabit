@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 
-import '../adaptive/app_bar_apple_style.dart';
 import '../breakpoints/window_size_class.dart';
 import '../shell/navigation_sidebar_app_bar_leading.dart';
 import '../window_control/cupertino_navigation_bar.dart';
 import '../window_control/toolbar_geometry.dart';
+import 'app_bar_apple_style.dart';
 import 'cupertino_toolbar_padding.dart';
 
 const List<Widget> _kDefaultActions = <Widget>[];

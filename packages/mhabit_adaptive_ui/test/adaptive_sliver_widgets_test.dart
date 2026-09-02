@@ -381,30 +381,6 @@ void main() {
       expect(appBar.centerTitle, isTrue);
     });
 
-    testWidgets('material toolbar height overrides the shared height', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: CustomScrollView(
-              slivers: [
-                AdaptiveSliverAppBar.material(
-                  title: Text('title'),
-                  height: 52,
-                  styles: AppBarStyles(
-                    material: AppBarMaterialStyle(toolbarHeight: 56),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-      final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
-      expect(appBar.toolbarHeight, 56);
-    });
-
     testWidgets('shared bottom is hosted by the Material bar', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
@@ -566,41 +542,17 @@ void main() {
         const EdgeInsetsDirectional.only(end: 7),
       );
     });
-
-    testWidgets('forced style ignores the other style config', (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: CustomScrollView(
-              slivers: [
-                AdaptiveSliverAppBar.material(
-                  title: Text('title'),
-                  styles: AppBarStyles(apple: AppBarAppleStyle(stretch: true)),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-      expect(find.byType(SliverAppBar), findsOneWidget);
-      expect(find.byType(CupertinoSliverNavigationBar), findsNothing);
-    });
   });
 
   group('AppBar style configs', () {
     test('AppBarMaterialStyle.copyWith overrides only the given fields', () {
       const original = AppBarMaterialStyle();
-      final updated = original.copyWith(
-        floating: false,
-        pinned: false,
-        toolbarHeight: 56,
-      );
+      final updated = original.copyWith(floating: false, pinned: false);
       expect(updated.floating, isFalse);
       expect(updated.pinned, isFalse);
       expect(updated.snap, original.snap);
       expect(updated.centerTitle, original.centerTitle);
       expect(updated.forceElevated, original.forceElevated);
-      expect(updated.toolbarHeight, 56);
       expect(
         updated.windowControlEdgePadding,
         original.windowControlEdgePadding,

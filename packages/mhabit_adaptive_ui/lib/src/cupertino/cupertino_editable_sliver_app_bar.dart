@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-import '../adaptive/app_bar_apple_style.dart';
 import '../window_control/toolbar_geometry.dart';
+import 'app_bar_apple_style.dart';
 import 'cupertino_sliver_app_bar.dart';
 
 /// Apple configuration for a fixed navigation bar and editable title field.

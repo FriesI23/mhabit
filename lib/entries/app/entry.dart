@@ -304,22 +304,30 @@ class _AppEntryState extends State<_AppEntry> {
                 language: language,
                 disableAnimations: disableAnimations,
                 textDirectionOverride: textDirectionOverride,
-                lightThemeBuilder: () => const AppThemeBuilder().buildLight(
-                  themeColor: themeColor,
-                  themeMainColor: themeMainColor,
-                  dynamicScheme: lightDynamic,
-                ),
-                darkThemeBuilder: () => const AppThemeBuilder().buildDark(
-                  themeColor: themeColor,
-                  themeMainColor: themeMainColor,
-                  dynamicScheme: darkDynamic,
-                ),
-                elevatedDarkThemeBuilder: () =>
+                lightThemeBuilder: (context) =>
+                    const AppThemeBuilder().buildLight(
+                      themeColor: themeColor,
+                      themeMainColor: themeMainColor,
+                      dynamicScheme: lightDynamic,
+                    ),
+                darkThemeBuilder: (context) => switch ((
+                  defaultTargetPlatform,
+                  AdaptiveWindowControlLayoutScope.maybeOf(
+                    context,
+                  )?.hasWindowControlAvoidance,
+                )) {
+                  (TargetPlatform.iOS, true) =>
                     const AppThemeBuilder().buildElevatedDark(
                       themeColor: themeColor,
                       themeMainColor: themeMainColor,
                       dynamicScheme: darkDynamic,
                     ),
+                  _ => const AppThemeBuilder().buildDark(
+                    themeColor: themeColor,
+                    themeMainColor: themeMainColor,
+                    dynamicScheme: darkDynamic,
+                  ),
+                },
                 config: _router,
               ),
             ),

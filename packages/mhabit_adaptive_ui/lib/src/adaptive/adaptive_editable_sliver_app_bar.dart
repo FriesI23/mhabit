@@ -51,7 +51,7 @@ class AdaptiveEditableSliverAppBar extends StatelessWidget {
     this.leading,
     this.actions = const [],
     this.styles,
-  }) : style = null;
+  }) : _adaptiveStyle = null;
 
   const AdaptiveEditableSliverAppBar.material({
     super.key,
@@ -65,7 +65,7 @@ class AdaptiveEditableSliverAppBar extends StatelessWidget {
     this.leading,
     this.actions = const [],
     this.styles,
-  }) : style = AdaptiveStyle.material;
+  }) : _adaptiveStyle = AdaptiveStyle.material;
 
   const AdaptiveEditableSliverAppBar.apple({
     super.key,
@@ -79,9 +79,9 @@ class AdaptiveEditableSliverAppBar extends StatelessWidget {
     this.leading,
     this.actions = const [],
     this.styles,
-  }) : style = AdaptiveStyle.apple;
+  }) : _adaptiveStyle = AdaptiveStyle.apple;
 
-  final AdaptiveStyle? style;
+  final AdaptiveStyle? _adaptiveStyle;
   final String title;
   final TextEditingController controller;
   final bool isCollapsed;
@@ -95,7 +95,7 @@ class AdaptiveEditableSliverAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveStyle = style ?? AdaptiveStyle.of(context);
+    final effectiveStyle = _adaptiveStyle ?? AdaptiveStyle.of(context);
     return switch (effectiveStyle) {
       AdaptiveStyle.material => MaterialEditableSliverAppBar(
         title: title,

@@ -12,11 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:adaptive_actions/core.dart';
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +25,6 @@ import '../../common/types.dart';
 import '../../extensions/async_extensions.dart';
 import '../../extensions/color_extensions.dart';
 import '../../extensions/context_extensions.dart';
-import '../../extensions/custom_color_extensions.dart';
 import '../../extensions/group_icon_extensions.dart';
 import '../../extensions/num_extensions.dart';
 import '../../l10n/localizations.dart';
@@ -47,7 +43,6 @@ import '../../providers/support/utils.dart';
 import '../../providers/workflow/habits_file_exporter.dart';
 import '../../routes/navigator_helpers.dart';
 import '../../storage/db/handlers/habit.dart';
-import '../../theme/color.dart';
 import '../../theme/icon.dart';
 import '../../utils/xshare.dart';
 import '../../widgets/animations.dart';
@@ -62,16 +57,6 @@ import '_providers/habit_detail_scorechart.dart';
 import 'widgets.dart';
 
 const _largeScreenTwoChartBetween = 16.0;
-const _appBarActionSlotExtent = 48.0;
-
-enum _DetailAppBarAction { edit, unarchive, archive, delete, export, clone }
-
-final _detailEditActionId = ActionId('habit-detail.edit');
-final _detailUnarchiveActionId = ActionId('habit-detail.unarchive');
-final _detailArchiveActionId = ActionId('habit-detail.archive');
-final _detailCloneActionId = ActionId('habit-detail.clone');
-final _detailExportActionId = ActionId('habit-detail.export');
-final _detailDeleteActionId = ActionId('habit-detail.delete');
 
 /// Keeps the page's bar reservation and FAB lift in sync with the shell's
 /// bottom-bar hide/show animation.
@@ -202,20 +187,20 @@ class _PageState extends State<_Page>
 
   void _onAppbarActionInvoked(
     BuildContext context,
-    _DetailAppBarAction action,
+    HabitDetailAppBarAction action,
   ) {
     switch (action) {
-      case _DetailAppBarAction.edit:
+      case HabitDetailAppBarAction.edit:
         _onAppbarEditActionPressed();
-      case _DetailAppBarAction.unarchive:
+      case HabitDetailAppBarAction.unarchive:
         _openHabitUnarchiveConfirmDialog();
-      case _DetailAppBarAction.archive:
+      case HabitDetailAppBarAction.archive:
         _openHabitArchiveConfirmDialog();
-      case _DetailAppBarAction.clone:
+      case HabitDetailAppBarAction.clone:
         _onAppbarCloneActionPressed();
-      case _DetailAppBarAction.export:
+      case HabitDetailAppBarAction.export:
         _exportHabitAndShared(context);
-      case _DetailAppBarAction.delete:
+      case HabitDetailAppBarAction.delete:
         _openHabitDeleteConfirmDialog();
     }
   }
@@ -428,7 +413,7 @@ class _PageState extends State<_Page>
                 builder: (context, title, child) => Text(title),
               ),
             ),
-            actionBuilder: (context) => _HabitDetailAppBarActions(
+            actionBuilder: (context) => HabitDetailAppBarActions(
               habitColor: habitColor,
               onInvoke: _onAppbarActionInvoked,
             ),
@@ -1185,150 +1170,6 @@ class _OtherInfo extends StatelessWidget {
             ),
           ),
       ],
-    );
-  }
-}
-
-class _HabitDetailAppBarActions extends StatelessWidget {
-  final HabitColor? habitColor;
-  final AdaptiveAppBarActionCallback<_DetailAppBarAction> onInvoke;
-
-  const _HabitDetailAppBarActions({
-    required this.habitColor,
-    required this.onInvoke,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Selector<HabitDetailViewModel, bool>(
-      selector: (context, viewmodel) => viewmodel.isHabitArchived,
-      shouldRebuild: (previous, next) => previous != next,
-      builder: (context, isArchived, child) {
-        final themeData = Theme.of(context);
-        final colorData = themeData.extension<CustomColors>();
-        final l10n = L10n.of(context);
-        final actionLayout = _resolveLayout(context);
-        final color = habitColor != null
-            ? colorData?.getColor(habitColor!, brightness: themeData.brightness)
-            : Colors.transparent;
-        final actionCollection = ActionCollection<_DetailAppBarAction>(
-          roots: [
-            AdaptiveAction.action(
-              id: _detailEditActionId,
-              metadata: ActionMetadata(
-                label: l10n?.habitDetail_editButton_tooltip ?? 'Edit Habit',
-                tooltip: l10n?.habitDetail_editButton_tooltip ?? 'Edit Habit',
-              ),
-              payload: _DetailAppBarAction.edit,
-              placementPolicy: ActionPlacementPolicy(
-                placement: ActionPlacement.pinned,
-              ),
-            ),
-            if (isArchived)
-              AdaptiveAction.action(
-                id: _detailUnarchiveActionId,
-                metadata: ActionMetadata(
-                  label: l10n?.habitDetail_editPopMenu_unarchive ?? 'Unarchive',
-                ),
-                payload: _DetailAppBarAction.unarchive,
-                placementPolicy: ActionPlacementPolicy(
-                  automaticPreference: AutomaticPlacementPreference(
-                    retentionPriority: PrimaryRetentionPriority.high,
-                  ),
-                ),
-              )
-            else
-              AdaptiveAction.action(
-                id: _detailArchiveActionId,
-                metadata: ActionMetadata(
-                  label: l10n?.habitDetail_editPopMenu_archive ?? 'Archive',
-                ),
-                payload: _DetailAppBarAction.archive,
-                placementPolicy: ActionPlacementPolicy(
-                  automaticPreference: AutomaticPlacementPreference(
-                    retentionPriority: PrimaryRetentionPriority.high,
-                  ),
-                ),
-              ),
-            AdaptiveAction.action(
-              id: _detailCloneActionId,
-              metadata: ActionMetadata(
-                label: l10n?.habitDetail_editPopMenu_clone ?? 'Clone',
-              ),
-              payload: _DetailAppBarAction.clone,
-              placementPolicy: ActionPlacementPolicy(
-                automaticPreference: AutomaticPlacementPreference(
-                  retentionPriority: PrimaryRetentionPriority.normal,
-                ),
-              ),
-            ),
-            AdaptiveAction.action(
-              id: _detailExportActionId,
-              metadata: ActionMetadata(
-                label: l10n?.habitDetail_editPopMenu_export ?? 'Export',
-              ),
-              payload: _DetailAppBarAction.export,
-              placementPolicy: ActionPlacementPolicy(
-                automaticPreference: AutomaticPlacementPreference(
-                  retentionPriority: PrimaryRetentionPriority.low,
-                ),
-              ),
-            ),
-            AdaptiveAction.action(
-              id: _detailDeleteActionId,
-              metadata: ActionMetadata(
-                label: l10n?.habitDetail_editPopMenu_delete ?? 'Delete',
-              ),
-              payload: _DetailAppBarAction.delete,
-              placementPolicy: ActionPlacementPolicy(
-                placement: ActionPlacement.overflowOnly,
-              ),
-            ),
-          ],
-        );
-        return AdaptiveAppBarActions<_DetailAppBarAction>(
-          collection: actionCollection,
-          primaryCapacity: actionLayout.primaryCapacity,
-          maxPrimaryActions: actionLayout.maxPrimaryActions,
-          onInvoke: onInvoke,
-          materialIconBuilder: (context, action) =>
-              Icon(switch (action.payload) {
-                _DetailAppBarAction.edit => Icons.edit_rounded,
-                _DetailAppBarAction.unarchive => Icons.unarchive_rounded,
-                _DetailAppBarAction.archive => Icons.archive_outlined,
-                _DetailAppBarAction.clone => Icons.copy_rounded,
-                _DetailAppBarAction.export => MdiIcons.export,
-                _DetailAppBarAction.delete => Icons.delete_outline,
-                null => Icons.more_horiz,
-              }, color: color),
-          appleIconBuilder: (context, action) => Icon(switch (action.payload) {
-            _DetailAppBarAction.edit => CupertinoIcons.pencil,
-            _DetailAppBarAction.unarchive => CupertinoIcons.tray_arrow_up,
-            _DetailAppBarAction.archive => CupertinoIcons.archivebox,
-            _DetailAppBarAction.clone => CupertinoIcons.square_on_square,
-            _DetailAppBarAction.export => CupertinoIcons.share_up,
-            _DetailAppBarAction.delete => CupertinoIcons.delete,
-            null => CupertinoIcons.ellipsis,
-          }, color: color),
-          materialOverflowIcon: Icon(Icons.adaptive.more, color: color),
-          appleOverflowIcon: Icon(CupertinoIcons.ellipsis, color: color),
-        );
-      },
-    );
-  }
-
-  ({int maxPrimaryActions, double primaryCapacity}) _resolveLayout(
-    BuildContext context,
-  ) {
-    final maxPrimaryActions = switch (WindowSize.of(context).width) {
-      WindowSizeClass.compact => 1,
-      WindowSizeClass.medium => 2,
-      WindowSizeClass.expanded => 3,
-      WindowSizeClass.large || WindowSizeClass.extraLarge => 4,
-    };
-    return (
-      maxPrimaryActions: maxPrimaryActions,
-      primaryCapacity: (maxPrimaryActions + 1) * _appBarActionSlotExtent,
     );
   }
 }

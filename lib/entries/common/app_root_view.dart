@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
@@ -23,7 +22,7 @@ import '../../common/global.dart';
 import '../../l10n/localizations.dart';
 import '../../widgets/widgets.dart';
 
-typedef AppRootThemeBuilder = ThemeData Function();
+typedef AppRootThemeBuilder = ThemeData Function(BuildContext context);
 
 class AppRootView extends StatelessWidget {
   final ThemeMode themeMode;
@@ -32,7 +31,6 @@ class AppRootView extends StatelessWidget {
   final GoRouter? routerConfig;
   final AppRootThemeBuilder? lightThemeBuilder;
   final AppRootThemeBuilder? darkThemeBuilder;
-  final AppRootThemeBuilder? elevatedDarkThemeBuilder;
   final bool disableAnimations;
   final TextDirection? textDirectionOverride;
 
@@ -42,7 +40,6 @@ class AppRootView extends StatelessWidget {
     this.language,
     this.lightThemeBuilder,
     this.darkThemeBuilder,
-    this.elevatedDarkThemeBuilder,
     this.child,
     this.disableAnimations = false,
     this.textDirectionOverride,
@@ -54,7 +51,6 @@ class AppRootView extends StatelessWidget {
     this.language,
     this.lightThemeBuilder,
     this.darkThemeBuilder,
-    this.elevatedDarkThemeBuilder,
     required GoRouter config,
     this.disableAnimations = false,
     this.textDirectionOverride,
@@ -67,7 +63,6 @@ class AppRootView extends StatelessWidget {
     this.language,
     this.lightThemeBuilder,
     this.darkThemeBuilder,
-    this.elevatedDarkThemeBuilder,
     this.child,
     this.disableAnimations = false,
     this.textDirectionOverride,
@@ -83,7 +78,6 @@ class AppRootView extends StatelessWidget {
         routerConfig: routerConfig,
         lightThemeBuilder: lightThemeBuilder,
         darkThemeBuilder: darkThemeBuilder,
-        elevatedDarkThemeBuilder: elevatedDarkThemeBuilder,
         disableAnimations: disableAnimations,
         textDirectionOverride: textDirectionOverride,
         child: child,
@@ -101,7 +95,6 @@ class _AppRootMaterialApp extends StatelessWidget {
   final GoRouter? routerConfig;
   final AppRootThemeBuilder? lightThemeBuilder;
   final AppRootThemeBuilder? darkThemeBuilder;
-  final AppRootThemeBuilder? elevatedDarkThemeBuilder;
   final bool disableAnimations;
   final TextDirection? textDirectionOverride;
 
@@ -112,7 +105,6 @@ class _AppRootMaterialApp extends StatelessWidget {
     required this.routerConfig,
     required this.lightThemeBuilder,
     required this.darkThemeBuilder,
-    required this.elevatedDarkThemeBuilder,
     required this.disableAnimations,
     required this.textDirectionOverride,
   });
@@ -138,17 +130,8 @@ class _AppRootMaterialApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final layout = AdaptiveWindowControlLayoutScope.maybeOf(context);
-    final effectiveDarkThemeBuilder = switch ((
-      defaultTargetPlatform,
-      layout?.hasWindowControlAvoidance,
-    )) {
-      (TargetPlatform.iOS, true) =>
-        elevatedDarkThemeBuilder ?? darkThemeBuilder,
-      _ => darkThemeBuilder,
-    };
-    final lightTheme = lightThemeBuilder?.call();
-    final darkTheme = effectiveDarkThemeBuilder?.call();
+    final lightTheme = lightThemeBuilder?.call(context);
+    final darkTheme = darkThemeBuilder?.call(context);
 
     Widget routerApp() => MaterialApp.router(
       routerConfig: routerConfig!,

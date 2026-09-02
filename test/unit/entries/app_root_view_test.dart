@@ -162,6 +162,33 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('theme builders receive the window-control context', (
+      tester,
+    ) async {
+      var lightBuilderHasLayout = false;
+      var darkBuilderHasLayout = false;
+
+      await tester.pumpWidget(
+        AppRootView(
+          themeMode: ThemeMode.system,
+          lightThemeBuilder: (context) {
+            lightBuilderHasLayout =
+                AdaptiveWindowControlLayoutScope.maybeOf(context) != null;
+            return ThemeData.light();
+          },
+          darkThemeBuilder: (context) {
+            darkBuilderHasLayout =
+                AdaptiveWindowControlLayoutScope.maybeOf(context) != null;
+            return ThemeData.dark();
+          },
+          child: const SizedBox(),
+        ),
+      );
+
+      expect(lightBuilderHasLayout, isTrue);
+      expect(darkBuilderHasLayout, isTrue);
+    });
+
     testWidgets(
       'apple window transition preserves state and elevates page background',
       (tester) async {
@@ -200,14 +227,22 @@ void main() {
           await tester.pumpWidget(
             AppRootView.router(
               themeMode: ThemeMode.dark,
-              darkThemeBuilder: () => ThemeData(
-                colorScheme: colorScheme,
-                scaffoldBackgroundColor: baseBackground,
-                cupertinoOverrideTheme: CupertinoThemeData(
-                  scaffoldBackgroundColor: baseBackground,
-                ),
-              ),
-              elevatedDarkThemeBuilder: () {
+              darkThemeBuilder: (context) {
+                final useElevatedTheme =
+                    defaultTargetPlatform == TargetPlatform.iOS &&
+                    AdaptiveWindowControlLayoutScope.maybeOf(
+                          context,
+                        )?.hasWindowControlAvoidance ==
+                        true;
+                if (!useElevatedTheme) {
+                  return ThemeData(
+                    colorScheme: colorScheme,
+                    scaffoldBackgroundColor: baseBackground,
+                    cupertinoOverrideTheme: CupertinoThemeData(
+                      scaffoldBackgroundColor: baseBackground,
+                    ),
+                  );
+                }
                 final elevatedScheme = colorScheme.copyWith(
                   surface: elevatedBackground,
                 );
@@ -361,14 +396,22 @@ void main() {
         await tester.pumpWidget(
           AppRootView(
             themeMode: ThemeMode.dark,
-            darkThemeBuilder: () => ThemeData(
-              platform: TargetPlatform.macOS,
-              colorScheme: colorScheme,
-              scaffoldBackgroundColor: baseBackground,
-            ),
-            elevatedDarkThemeBuilder: () => throw StateError(
-              'macOS must not select the iOS elevated theme',
-            ),
+            darkThemeBuilder: (context) {
+              if (defaultTargetPlatform == TargetPlatform.iOS &&
+                  AdaptiveWindowControlLayoutScope.maybeOf(
+                        context,
+                      )?.hasWindowControlAvoidance ==
+                      true) {
+                throw StateError(
+                  'macOS must not select the iOS elevated theme',
+                );
+              }
+              return ThemeData(
+                platform: TargetPlatform.macOS,
+                colorScheme: colorScheme,
+                scaffoldBackgroundColor: baseBackground,
+              );
+            },
             child: const SizedBox(key: probeKey),
           ),
         );
