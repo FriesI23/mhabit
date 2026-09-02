@@ -1,0 +1,5 @@
+- Feature: add resizable side navigation for wider layouts (#653)
+- Feature: improve app bars, habit actions, and batch status changes across
+  window sizes (#655)
+- Fix: keep dialogs above app navigation and refresh selection state after
+  reordering or regrouping habits (#656)

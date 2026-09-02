@@ -2,6 +2,14 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.27.4+193-pre
+
+- Feature: add resizable side navigation for wider layouts (#653)
+- Feature: improve app bars, habit actions, and batch status changes across
+  window sizes (#655)
+- Fix: keep dialogs above app navigation and refresh selection state after
+  reordering or regrouping habits (#656)
+
 ## 1.27.3+192
 
 - Feature: expand adaptive navigation, search, filters, and selection actions
