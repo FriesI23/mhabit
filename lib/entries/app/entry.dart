@@ -57,6 +57,9 @@ import '../../providers/workflow/app_reminder.dart';
 import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/habits_manager.dart';
 import '../../reminders/notification_channel.dart';
+import '../../routes/app_flow_page.dart';
+import '../../routes/app_navigation_branch.dart';
+import '../../routes/app_navigation_coordinator.dart';
 import '../../routes/app_router.dart';
 import '../../routes/helpers/group_manage_helper.dart';
 import '../../routes/helpers/habit_create_helper.dart';
@@ -74,10 +77,9 @@ import '../../widgets/widgets.dart';
 import '../app_error/entry.dart';
 import '../common/app_root_view.dart';
 import 'navigation_chrome.dart';
+import 'navigation_destination.dart';
 import 'providers.dart';
 import 'shell.dart';
-
-typedef _AppInitialNavigationConfig = ({AppRoute home, int initialBranchIndex});
 
 /// Note: [AppProviders] are use to build providers that need to be initialized
 /// in [MaterialApp]. An important to note that, e.g., [Localizations] are
@@ -153,15 +155,10 @@ class _AppEntryState extends State<_AppEntry> {
   void initState() {
     super.initState();
     final launchEntry = context.read<AppLaunchEntryViewModel>().launchEntry;
-    final config = switch (launchEntry) {
-      AppEntrys.habitToday => (
-        home: AppRoute.today,
-        initialBranchIndex: AppNavigationBranch.today.navigationIndex,
-      ),
-      AppEntrys.undefined || AppEntrys.habitDisplay => (
-        home: AppRoute.habits,
-        initialBranchIndex: AppNavigationBranch.habits.navigationIndex,
-      ),
+    final initialBranch = switch (launchEntry) {
+      AppEntrys.habitToday => AppNavigationBranch.today,
+      AppEntrys.undefined ||
+      AppEntrys.habitDisplay => AppNavigationBranch.habits,
     };
     _navigationChromeController = AppNavigationChromeController();
     _habitDisplayNavigationChrome = HabitDisplayNavigationChrome(
@@ -175,10 +172,10 @@ class _AppEntryState extends State<_AppEntry> {
             suppressed,
           ),
     );
-    _router = _buildRouter(config);
+    _router = _buildRouter(initialBranch);
   }
 
-  GoRouter _buildRouter(_AppInitialNavigationConfig config) {
+  GoRouter _buildRouter(AppNavigationBranch initialBranch) {
     final branches = [
       BranchRouterBuilder()
         ..addHabits(builder: (_, _) => const HabitsPage())
@@ -198,6 +195,13 @@ class _AppEntryState extends State<_AppEntry> {
       for (final _ in branches) AdaptiveBranchRouteObserver(),
     ];
     final appFlow = AppFlowRouterBuilder()
+      ..addSettingsFlow(
+        settingsBuilder: _buildSettingsPage,
+        aboutBuilder: (_, _) => const AppAboutPage(),
+        syncBuilder: (_, _) => const AppSyncPage(),
+        notifyBuilder: (_, _) => const AppNotifyConfigPage(),
+        experimentalBuilder: (_, _) => const ExpermentalFeaturesPage(),
+      )
       ..addHabitCreate(
         builder: (_, state) {
           final (:initForm) = state.unpackHabitCreate();
@@ -222,14 +226,9 @@ class _AppEntryState extends State<_AppEntry> {
       branchObservers: branchObservers,
       appFlowObserver: appFlowObserver,
       appChromeNavigatorKey: appChromeNavigatorKey,
-      initialIndex: config.initialBranchIndex,
+      initialIndex: initialBranch.navigationIndex,
     );
     return (AppRouterBuilder()
-          ..addSettings(builder: (_, _) => const AppSettingPage())
-          ..addSettingsAbout(builder: (_, _) => const AppAboutPage())
-          ..addSettingsSync(builder: (_, _) => const AppSyncPage())
-          ..addSettingsNotify(builder: (_, _) => const AppNotifyConfigPage())
-          ..addExperimental(builder: (_, _) => const ExpermentalFeaturesPage())
           ..addDebugger(builder: (_, _) => const AppDebuggerPage())
           ..addGroupManage(
             builder: (_, state) {
@@ -248,6 +247,7 @@ class _AppEntryState extends State<_AppEntry> {
                 child: AppNavigationShell(
                   coordinator: _navigationCoordinator,
                   chromeController: _navigationChromeController,
+                  auxiliaryChromeBuilder: _buildAuxiliaryChrome,
                   child: child,
                 ),
               ),
@@ -257,7 +257,44 @@ class _AppEntryState extends State<_AppEntry> {
               return navigationShell;
             },
           ))
-        .build(home: config.home);
+        .build(home: initialBranch.rootRoute);
+  }
+
+  List<AppNavigationAuxiliaryChrome> _buildAuxiliaryChrome(
+    BuildContext context,
+  ) => [
+    AppNavigationAuxiliaryChrome(
+      destination: AppNavigationDestinations.settings(
+        label: L10n.of(context)?.appSetting_appbar_titleText ?? 'Settings',
+      ),
+      selected: isSettingsFlowRouteName(
+        _navigationCoordinator.appFlowTopRouteName,
+      ),
+      onSelected: () =>
+          _navigationCoordinator.openAppFlowRoot(AppRoute.settings.name),
+    ),
+  ];
+
+  Page<void> _buildSettingsPage(BuildContext context, GoRouterState state) {
+    final child = _AppFlowRootPopScope(
+      onRootPop: _navigationCoordinator.returnToPrimaryBranch,
+      child: const AppSettingPage(),
+    );
+    final arguments = <String, String>{
+      ...state.pathParameters,
+      ...state.uri.queryParameters,
+    };
+    return AppFlowPage<void>(
+      key: state.pageKey,
+      name: state.name ?? state.path,
+      arguments: arguments,
+      restorationId: state.pageKey.value,
+      transitionsEnabled: switch (WindowSize.of(context).width) {
+        WindowSizeClass.compact => true,
+        _ => false,
+      },
+      child: child,
+    );
   }
 
   @override
@@ -334,6 +371,24 @@ class _AppEntryState extends State<_AppEntry> {
           );
         },
       ),
+    );
+  }
+}
+
+class _AppFlowRootPopScope extends StatelessWidget {
+  const _AppFlowRootPopScope({required this.onRootPop, required this.child});
+
+  final VoidCallback onRootPop;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope<void>(
+      canPop: ModalRoute.of(context)?.canPop ?? true,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) onRootPop();
+      },
+      child: child,
     );
   }
 }

@@ -39,18 +39,22 @@ Widget _searchBarHost(
   TargetPlatform platform = TargetPlatform.android,
   VoidCallback? onInfoButtonPressed,
   VoidCallback? onMenuButtonPressed,
+  VoidCallback? onOpenSettingsPressed,
   VoidCallback? onSelectButtonPressed,
+  bool compact = false,
   Locale? locale,
 }) {
   final searchBar = switch (platform) {
     TargetPlatform.iOS || TargetPlatform.macOS => SliverSearchTopAppBar.apple(
       onInfoButtonPressed: onInfoButtonPressed,
       onMenuButtonPressed: onMenuButtonPressed,
+      onOpenSettingsPressed: onOpenSettingsPressed,
       onSelectButtonPressed: onSelectButtonPressed,
     ),
     _ => SliverSearchTopAppBar.material(
       onInfoButtonPressed: onInfoButtonPressed,
       onMenuButtonPressed: onMenuButtonPressed,
+      onOpenSettingsPressed: onOpenSettingsPressed,
       onSelectButtonPressed: onSelectButtonPressed,
     ),
   };
@@ -62,7 +66,14 @@ Widget _searchBarHost(
       restorationScopeId: 'app',
       localizationsDelegates: L10n.localizationsDelegates,
       supportedLocales: L10n.supportedLocales,
-      home: Scaffold(body: CustomScrollView(slivers: [searchBar])),
+      home: AdaptiveNavScope(
+        form: compact
+            ? NavigationShellForm.compact
+            : NavigationShellForm.expandedSide,
+        barHeight: compact ? 80 : 0,
+        navHeight: compact ? 80 : 0,
+        child: Scaffold(body: CustomScrollView(slivers: [searchBar])),
+      ),
     ),
   );
 }
@@ -90,6 +101,53 @@ final class _SelectionHabitSummaryViewModel extends HabitSummaryViewModel {
 }
 
 void main() {
+  testWidgets('compact view app bar exposes direct Settings entry', (
+    tester,
+  ) async {
+    var opened = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: AdaptiveNavScope(
+          form: NavigationShellForm.compact,
+          barHeight: 80,
+          navHeight: 80,
+          child: Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                SliverViewTopAppBar(onOpenSettingsPressed: () => opened = true),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final action = find.byKey(const ValueKey('open-settings-action'));
+    expect(action, findsOneWidget);
+    await tester.tap(action);
+    expect(opened, isTrue);
+  });
+
+  testWidgets('compact search app bar exposes direct Settings entry', (
+    tester,
+  ) async {
+    final vm = HabitSummaryViewModel();
+    addTearDown(vm.dispose);
+    var opened = false;
+    await tester.pumpWidget(
+      _searchBarHost(
+        vm,
+        compact: true,
+        onOpenSettingsPressed: () => opened = true,
+      ),
+    );
+
+    final action = find.byKey(const ValueKey('open-settings-action'));
+    expect(action, findsOneWidget);
+    await tester.tap(action);
+    expect(opened, isTrue);
+  });
+
   testWidgets('selection app bar stays Material on iOS', (tester) async {
     final vm = HabitSummaryViewModel();
     addTearDown(vm.dispose);

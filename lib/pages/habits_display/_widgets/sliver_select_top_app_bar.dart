@@ -31,11 +31,13 @@ class AppleSliverViewTopAppBar extends StatelessWidget {
     this.onSelect,
     this.onInfo,
     this.onSettings,
+    this.onOpenSettings,
   });
 
   final VoidCallback? onSelect;
   final VoidCallback? onInfo;
   final VoidCallback? onSettings;
+  final VoidCallback? onOpenSettings;
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +66,16 @@ class AppleSliverViewTopAppBar extends StatelessWidget {
             child: Text(selectLabel, maxLines: 1, softWrap: false),
           ),
         ),
+        if (AdaptiveNavScope.maybeOf(context)?.form ==
+            NavigationShellForm.compact)
+          CupertinoSelectAction(
+            id: 'open-settings',
+            label: settingsLabel,
+            icon: const Icon(CupertinoIcons.settings_solid),
+            onPressed: onOpenSettings,
+            enabled: onOpenSettings != null,
+            retentionPriority: 75,
+          ),
         CupertinoSelectAction(
           id: 'habit-statistics',
           label: 'Statistics',

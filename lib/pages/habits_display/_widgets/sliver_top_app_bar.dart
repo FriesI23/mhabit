@@ -31,12 +31,14 @@ class SliverViewTopAppBar extends StatelessWidget {
   final double? height;
   final VoidCallback? onInfoButtonPressed;
   final VoidCallback? onMenuButtonPressed;
+  final VoidCallback? onOpenSettingsPressed;
 
   const SliverViewTopAppBar({
     super.key,
     this.height = AppAdaptiveStyle.materialToolbarHeight,
     this.onInfoButtonPressed,
     this.onMenuButtonPressed,
+    this.onOpenSettingsPressed,
   });
 
   @override
@@ -52,6 +54,7 @@ class SliverViewTopAppBar extends StatelessWidget {
       shawdowColor: Colors.transparent,
       onInfoButtonPressed: onInfoButtonPressed,
       onMenuButtonPressed: onMenuButtonPressed,
+      onOpenSettingsPressed: onOpenSettingsPressed,
     );
   }
 }
@@ -181,6 +184,7 @@ class _ViewAppBar extends StatelessWidget {
   final Color? shawdowColor;
   final VoidCallback? onInfoButtonPressed;
   final VoidCallback? onMenuButtonPressed;
+  final VoidCallback? onOpenSettingsPressed;
 
   const _ViewAppBar({
     this.scrolledUnderElevation,
@@ -190,6 +194,7 @@ class _ViewAppBar extends StatelessWidget {
     this.shawdowColor,
     this.onInfoButtonPressed,
     this.onMenuButtonPressed,
+    this.onOpenSettingsPressed,
   });
 
   @override
@@ -215,6 +220,14 @@ class _ViewAppBar extends StatelessWidget {
           icon: const Icon(Icons.settings_outlined),
           tooltip: l10n?.habitDisplay_settingButton_tooltip,
         ),
+        if (AdaptiveNavScope.maybeOf(context)?.form ==
+            NavigationShellForm.compact)
+          IconButton(
+            key: const ValueKey('open-settings-action'),
+            onPressed: onOpenSettingsPressed,
+            icon: const Icon(Icons.settings),
+            tooltip: l10n?.appSetting_appbar_titleText ?? 'Settings',
+          ),
       ],
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart' show Theme;
 import '../adaptive/adaptive_navigation_destination.dart';
 import '../breakpoints/window_size_class.dart';
 import '../shell/navigation_scroll_wish_policy.dart';
+import '../shell/navigation_shell_form.dart';
 import '../shell/navigation_shell_frame.dart';
 import '../shell/side_navigation.dart';
 import '../window_control/window_control_layout.dart';
@@ -37,6 +38,9 @@ class CupertinoNavigationShell extends StatelessWidget {
     required this.selectedIndex,
     required this.destinations,
     required this.onDestinationSelected,
+    required this.auxiliaryDestinations,
+    required this.selectedAuxiliaryIndex,
+    required this.onAuxiliaryDestinationSelected,
     required this.compactRouteVisible,
     required this.contextualChromeSuppressed,
     required this.primaryAction,
@@ -75,6 +79,9 @@ class CupertinoNavigationShell extends StatelessWidget {
 
   /// Called with the index of a destination selected by the user.
   final ValueChanged<int> onDestinationSelected;
+  final List<AdaptiveNavigationDestination> auxiliaryDestinations;
+  final int? selectedAuxiliaryIndex;
+  final ValueChanged<int>? onAuxiliaryDestinationSelected;
 
   /// Whether route structure allows compact navigation to be shown.
   final bool compactRouteVisible;
@@ -134,9 +141,12 @@ class CupertinoNavigationShell extends StatelessWidget {
       bodyBuilder: (context, form, onSelected, child) =>
           CupertinoNavigationSidebar(
             form: form,
-            selectedIndex: selectedIndex,
+            selectedIndex: selectedAuxiliaryIndex == null ? selectedIndex : -1,
             destinations: destinations,
             onDestinationSelected: onSelected,
+            auxiliaryDestinations: auxiliaryDestinations,
+            selectedAuxiliaryIndex: selectedAuxiliaryIndex,
+            onAuxiliaryDestinationSelected: onAuxiliaryDestinationSelected,
             sideNavigationExtent: sideNavigationExtent,
             dragHandleBuilder: dragHandleBuilder,
             expandNavigationLabel: expandNavigationLabel,
@@ -150,7 +160,7 @@ class CupertinoNavigationShell extends StatelessWidget {
             action: primaryAction,
             scrollWish: state.scrollWish,
             visibility: state.visible,
-            compact: state.compact,
+            compact: state.form == NavigationShellForm.compact,
             routeVisible: compactRouteVisible,
           ),
       floatingActionButtonLocation:
