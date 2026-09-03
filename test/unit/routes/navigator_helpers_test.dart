@@ -26,6 +26,7 @@ import 'package:mhabit/routes/app_navigation_coordinator.dart';
 import 'package:mhabit/routes/app_router.dart';
 import 'package:mhabit/routes/navigator_helpers.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+import 'package:provider/provider.dart';
 
 HabitForm _editForm({required String uuid}) => HabitForm(
   name: 'Test Habit',
@@ -170,10 +171,11 @@ void main() {
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: router,
-          builder: (context, child) => AppNavigationCoordinatorScope(
-            coordinator: coordinator,
-            child: child!,
-          ),
+          builder: (context, child) =>
+              ChangeNotifierProvider<AppNavigationCoordinator>.value(
+                value: coordinator,
+                child: child!,
+              ),
         ),
       );
 

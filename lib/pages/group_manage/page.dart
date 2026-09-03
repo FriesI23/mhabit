@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
-import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
@@ -23,8 +22,8 @@ import '../../models/habit_display.dart';
 import '../../models/habit_group.dart';
 import '../../models/habit_group_display.dart';
 import '../../providers/app_ui/app_developer.dart';
+import '../../routes/app_navigation_coordinator.dart';
 import '../../widgets/widgets.dart';
-import '../common/widgets.dart';
 import '../habits_display/_widgets/habit_display_group_type_picker.dart';
 import '_providers/group_manage.dart';
 import 'providers.dart';
@@ -50,8 +49,6 @@ class _Page extends StatefulWidget {
   @override
   State<_Page> createState() => _PageState();
 }
-
-const _kCommonEvalation = 2.0;
 
 /// Debug-only: forces the group edit/create dialog to open as a bottom sheet
 /// or a dialog, regardless of screen size. [defaultMode] follows the normal
@@ -201,57 +198,35 @@ class _PageState extends State<_Page> {
     super.dispose();
   }
 
-  void _onGroupTap(String uuid) {
-    final vm = context.read<GroupManageViewModel>();
-    if (vm.selectionMode) {
-      vm.toggleSelection(uuid);
-    } else {
-      _openEditDialog(uuid);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return PopScopeConsumer<GroupManageViewModel>(
-      onCannotPop: (_, vm, _) => vm.exitSelectionMode(),
-      child: ColorfulNavibar(
-        child: Scaffold(
-          body: Selector<GroupManageViewModel, (bool, bool)>(
-            selector: (context, vm) =>
-                (vm.hasLoad, vm.consumeForceReloadFlag()),
-            shouldRebuild: (previous, next) =>
-                previous.$1 != next.$1 || next.$2,
-            builder: (context, _, child) => FutureBuilder(
-              future: loadData(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(child: Text('${snapshot.error}'));
-                }
-                return EnhancedSafeArea.edgeToEdgeSafe(
-                  child: _GroupManageBody(
-                    onGroupTap: _onGroupTap,
-                    onEdit: _openEditDialog,
-                    onDelete: _onSingleDelete,
-                    onSortOpen: _openSortSelector,
-                    onBatchDelete: _onBatchDelete,
-                    onEditSingle: _onEditSingleSelected,
-                    debugMenuBuilder: _buildDevelopMenu,
-                  ),
-                );
-              },
-            ),
+    final child = ColorfulNavibar(
+      child: Scaffold(
+        body: Selector<GroupManageViewModel, (bool, bool)>(
+          selector: (context, vm) => (vm.hasLoad, vm.consumeForceReloadFlag()),
+          shouldRebuild: (previous, next) => previous.$1 != next.$1 || next.$2,
+          builder: (context, _, child) => FutureBuilder(
+            future: loadData(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(child: Text('${snapshot.error}'));
+              }
+              return EnhancedSafeArea.edgeToEdgeSafe(
+                child: _GroupManageBody(
+                  onEdit: _openEditDialog,
+                  onDelete: _onSingleDelete,
+                  onSortOpen: _openSortSelector,
+                  onBatchDelete: _onBatchDelete,
+                  debugMenuBuilder: _buildDevelopMenu,
+                ),
+              );
+            },
           ),
-          floatingActionButton: _buildFab(context),
         ),
+        floatingActionButton: _buildFab(context),
       ),
     );
-  }
-
-  void _onEditSingleSelected() {
-    final vm = context.read<GroupManageViewModel>();
-    if (vm.selectedCount != 1) return;
-    final uuid = vm.selectedUUIDs.first;
-    _openEditDialog(uuid);
+    return _GroupManagePopScope(child: child);
   }
 
   Widget? _buildFab(BuildContext context) {
@@ -279,24 +254,51 @@ class _PageState extends State<_Page> {
   }
 }
 
+class _GroupManagePopScope extends StatelessWidget {
+  const _GroupManagePopScope({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector2<
+      GroupManageViewModel,
+      AppNavigationCoordinator,
+      (bool, bool)
+    >(
+      selector: (_, vm, coordinator) =>
+          (vm.canPop, coordinator.destinationSwitchInProgress),
+      child: child,
+      builder: (context, navigation, child) {
+        final (canPop, destinationSwitchInProgress) = navigation;
+        return PopScope<void>(
+          canPop: canPop || destinationSwitchInProgress,
+          onPopInvokedWithResult: (didPop, _) {
+            if (!didPop) {
+              context.read<GroupManageViewModel>().exitSelectionMode();
+            }
+          },
+          child: child!,
+        );
+      },
+    );
+  }
+}
+
 class _GroupManageBody extends StatelessWidget {
   const _GroupManageBody({
-    required this.onGroupTap,
     required this.onEdit,
     required this.onDelete,
     required this.onSortOpen,
     required this.onBatchDelete,
     required this.debugMenuBuilder,
-    this.onEditSingle,
   });
 
-  final void Function(String uuid) onGroupTap;
-  final void Function(String uuid) onEdit;
-  final void Function(String uuid) onDelete;
+  final ValueChanged<String> onEdit;
+  final ValueChanged<String> onDelete;
   final VoidCallback onSortOpen;
   final VoidCallback onBatchDelete;
   final WidgetBuilder debugMenuBuilder;
-  final VoidCallback? onEditSingle;
 
   @override
   Widget build(BuildContext context) {
@@ -310,36 +312,38 @@ class _GroupManageBody extends StatelessWidget {
     }
 
     return WindowSizeClassLayoutBuilder(
-      builder: (context, windowSize, child) {
-        return CustomScrollView(
-          slivers: [
-            _GroupManageSliverAppBar(
-              onSortOpen: onSortOpen,
-              onBatchDelete: onBatchDelete,
-              onEditSingle: onEditSingle,
+      builder: (context, windowSize, child) => CustomScrollView(
+        slivers: [
+          GroupManageSliverAppBar(
+            onEdit: onEdit,
+            onSortOpen: onSortOpen,
+            onBatchDelete: onBatchDelete,
+          ),
+          if (groupsEmpty)
+            const SliverFillRemaining(
+              hasScrollBody: false,
+              child: _GroupManageEmptyState(),
+            )
+          else ...[
+            _GroupManageContent(
+              widthClass: windowSize.width,
+              onEdit: onEdit,
+              onDelete: onDelete,
             ),
-            if (groupsEmpty)
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: _buildEmptyState(context),
-              )
-            else ...[
-              _GroupManageContent(
-                widthClass: windowSize.width,
-                onGroupTap: onGroupTap,
-                onEdit: onEdit,
-                onDelete: onDelete,
-              ),
-              if (kDebugMode)
-                SliverToBoxAdapter(child: debugMenuBuilder(context)),
-            ],
+            if (kDebugMode)
+              SliverToBoxAdapter(child: debugMenuBuilder(context)),
           ],
-        );
-      },
+        ],
+      ),
     );
   }
+}
 
-  Widget _buildEmptyState(BuildContext context) {
+class _GroupManageEmptyState extends StatelessWidget {
+  const _GroupManageEmptyState();
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = L10n.of(context);
     return Center(
       child: Column(
@@ -364,142 +368,36 @@ class _GroupManageBody extends StatelessWidget {
   }
 }
 
-class _GroupManageSliverAppBar extends StatelessWidget {
-  const _GroupManageSliverAppBar({
-    required this.onSortOpen,
-    required this.onBatchDelete,
-    this.onEditSingle,
-  });
-
-  final VoidCallback onSortOpen;
-  final VoidCallback onBatchDelete;
-  final VoidCallback? onEditSingle;
-
-  @override
-  Widget build(BuildContext context) {
-    final (selectionMode, selectedCount) = context
-        .select<GroupManageViewModel, (bool, int)>(
-          (vm) => (vm.selectionMode, vm.selectedCount),
-        );
-    final l10n = L10n.of(context);
-
-    if (selectionMode) {
-      final effectiveSortType = context
-          .read<GroupManageViewModel>()
-          .effectiveSortType;
-      return WindowControlSliverAppBar(
-        pinned: true,
-        forceElevated: true,
-        scrolledUnderElevation: _kCommonEvalation,
-        shadowColor: Theme.of(context).colorScheme.shadow,
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () =>
-              context.read<GroupManageViewModel>().exitSelectionMode(),
-        ),
-        title: Text(
-          l10n?.groupManage_selectionAppbar_title(selectedCount) ??
-              '$selectedCount selected',
-        ),
-        actions: [
-          if (selectedCount == 1 && onEditSingle != null)
-            IconButton(
-              icon: const Icon(Icons.edit_outlined),
-              tooltip: l10n?.habitEdit_saveButton_text ?? 'Edit',
-              onPressed: onEditSingle,
-            ),
-          IconButton(
-            icon: const Icon(Icons.select_all),
-            tooltip: l10n?.groupManage_selectAll ?? 'Select all',
-            onPressed: () => context.read<GroupManageViewModel>().selectAll(),
-          ),
-          if (effectiveSortType != HabitDisplayGroupType.manual)
-            IconButton(
-              icon: const Icon(Icons.drag_indicator),
-              tooltip: l10n?.groupManage_reorder_tooltip ?? 'Reorder groups',
-              onPressed: () {
-                final vm = context.read<GroupManageViewModel>();
-                vm.setSortOptions(
-                  HabitDisplayGroupType.manual,
-                  HabitDisplaySortDirection.asc,
-                );
-              },
-            ),
-          IconButton(
-            icon: const Icon(Icons.delete_outline),
-            onPressed: selectedCount > 0 ? onBatchDelete : null,
-          ),
-        ],
-      );
-    }
-    return WindowControlSliverAppBar(
-      floating: true,
-      snap: true,
-      pinned: true,
-      title: Text(l10n?.groupManage_appbar_title ?? 'Manage Groups'),
-      leading: const PageBackButton(reason: PageBackReason.back),
-      actions: [
-        Selector<GroupManageViewModel, bool>(
-          selector: (context, vm) => vm.groups.isNotEmpty,
-          builder: (context, hasGroups, child) {
-            if (!hasGroups) return const SizedBox.shrink();
-            return IconButton(
-              icon: const Icon(MdiIcons.sortVariant),
-              tooltip: l10n?.groupManage_reorder_tooltip ?? 'Reorder groups',
-              onPressed: () {
-                final vm = context.read<GroupManageViewModel>();
-                if (vm.effectiveSortType != HabitDisplayGroupType.manual) {
-                  vm.setSortOptions(
-                    HabitDisplayGroupType.manual,
-                    HabitDisplaySortDirection.asc,
-                  );
-                }
-                if (!vm.selectionMode) {
-                  vm.enterSelectionModeWithoutNotification();
-                }
-              },
-            );
-          },
-        ),
-        Selector<
-          GroupManageViewModel,
-          (HabitDisplayGroupType, HabitDisplaySortDirection)
-        >(
-          selector: (context, vm) =>
-              (vm.effectiveSortType, vm.effectiveSortDirection),
-          builder: (context, sort, child) => IconButton(
-            icon: GroupTypeSortIcon(groupType: sort.$1, direction: sort.$2),
-            onPressed: onSortOpen,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _GroupManageContent extends StatelessWidget {
   const _GroupManageContent({
     required this.widthClass,
-    required this.onGroupTap,
     required this.onEdit,
     required this.onDelete,
   });
 
   final WindowSizeClass widthClass;
-  final void Function(String uuid) onGroupTap;
-  final void Function(String uuid) onEdit;
-  final void Function(String uuid) onDelete;
+  final ValueChanged<String> onEdit;
+  final ValueChanged<String> onDelete;
 
   @override
   Widget build(BuildContext context) {
-    // selectedCount is the watch trigger (int changes → new tuple → rebuild).
-    // selectedUUIDs is obtained via read — no separate subscription needed.
+    // selectedCount is the watch trigger (int changes -> new record -> rebuild).
+    // selectedUUIDs is obtained via read; no separate subscription is needed.
     final (groups, selectionMode, _) = context
         .select<GroupManageViewModel, (List<HabitGroupData>, bool, int)>(
           (vm) => (vm.groups, vm.selectionMode, vm.selectedCount),
         );
     final selectedUUIDs = context.read<GroupManageViewModel>().selectedUUIDs;
     final selectedCount = selectedUUIDs.length;
+
+    void onTap(String uuid) {
+      final vm = context.read<GroupManageViewModel>();
+      if (vm.selectionMode) {
+        vm.toggleSelection(uuid);
+      } else {
+        onEdit(uuid);
+      }
+    }
 
     return widthClass >= WindowSizeClass.medium
         ? SliverPadding(
@@ -509,7 +407,7 @@ class _GroupManageContent extends StatelessWidget {
               selectedUUIDs: selectedUUIDs,
               selectionMode: selectionMode,
               selectedCount: selectedCount,
-              onTap: onGroupTap,
+              onTap: onTap,
               onEdit: onEdit,
               onDelete: onDelete,
             ),
@@ -519,7 +417,7 @@ class _GroupManageContent extends StatelessWidget {
             selectedUUIDs: selectedUUIDs,
             selectionMode: selectionMode,
             selectedCount: selectedCount,
-            onTap: onGroupTap,
+            onTap: onTap,
             onEdit: onEdit,
             onDelete: onDelete,
           );

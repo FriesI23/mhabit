@@ -68,6 +68,38 @@ class _StubPage extends StatelessWidget {
   }
 }
 
+class _GroupManageFlowStub extends StatefulWidget {
+  const _GroupManageFlowStub({this.selectionMode = false});
+
+  final bool selectionMode;
+
+  @override
+  State<_GroupManageFlowStub> createState() => _GroupManageFlowStubState();
+}
+
+class _GroupManageFlowStubState extends State<_GroupManageFlowStub> {
+  late bool _selectionMode = widget.selectionMode;
+
+  @override
+  Widget build(BuildContext context) {
+    final destinationSwitchInProgress = context
+        .select<AppNavigationCoordinator, bool>(
+          (coordinator) => coordinator.destinationSwitchInProgress,
+        );
+    return PopScope<void>(
+      canPop: !_selectionMode || destinationSwitchInProgress,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop && _selectionMode) {
+          setState(() => _selectionMode = false);
+        }
+      },
+      child: _StubPage(
+        _selectionMode ? 'group selection page' : 'group manage page',
+      ),
+    );
+  }
+}
+
 class _AppFlowRootStub extends StatelessWidget {
   const _AppFlowRootStub({required this.onRootPop, required this.child});
 
@@ -178,7 +210,12 @@ GoRouter _buildRouter(
           ? const PopScope<void>(canPop: false, child: _StubPage('edit page'))
           : const _StubPage('edit page'),
     )
-    ..addHabitsStatus(builder: (_, _) => const _StubPage('status page'));
+    ..addHabitsStatus(builder: (_, _) => const _StubPage('status page'))
+    ..addGroupManage(
+      builder: (_, state) => _GroupManageFlowStub(
+        selectionMode: state.uri.queryParameters['selecting'] == 'true',
+      ),
+    );
   final appFlowObserver = AdaptiveBranchRouteObserver();
   final appChromeNavigatorKey = GlobalKey<NavigatorState>();
   coordinator = AppNavigationCoordinator(
@@ -218,11 +255,11 @@ GoRouter _buildRouter(
                   destination: AppNavigationDestinations.settings(
                     label: 'Settings',
                   ),
-                  selected: isSettingsFlowRouteName(
-                    coordinator.appFlowTopRouteName,
+                  selected: isSettingsAuxiliaryRouteStack(
+                    coordinator.appFlowObserver.routeNameStack,
                   ),
                   onSelected: () =>
-                      coordinator.openAppFlowRoot(AppRoute.settings.name),
+                      coordinator.selectAppFlowRoot(AppRoute.settings.name),
                 ),
               ],
               child: child,
@@ -623,7 +660,7 @@ void main() {
     );
   });
 
-  testWidgets('publishes only the destination branch when leaving Settings', (
+  testWidgets('persists only the destination branch when leaving Settings', (
     tester,
   ) async {
     _setSurface(tester, const Size(700, 600));
@@ -632,34 +669,21 @@ void main() {
       AdaptiveBranchRouteObserver(),
     ];
     final router = _buildRouter(observers);
+    final launchEntry = _RecordingLaunchEntryViewModel();
     addTearDown(router.dispose);
-    await _pumpApp(
-      tester,
-      router: router,
-      launchEntry: _RecordingLaunchEntryViewModel(),
-    );
+    addTearDown(launchEntry.dispose);
+    await _pumpApp(tester, router: router, launchEntry: launchEntry);
 
     unawaited(
       naviToAppSettingPage(context: tester.element(find.text('habits page'))),
     );
     await tester.pumpAndSettle();
 
-    final coordinator = tester
-        .widget<AppNavigationShell>(find.byType(AppNavigationShell))
-        .coordinator;
-    final reportedIndexes = <int>[];
-    void recordSelectedIndex() {
-      reportedIndexes.add(coordinator.selectedIndex);
-    }
-
-    coordinator.addListener(recordSelectedIndex);
-    addTearDown(() => coordinator.removeListener(recordSelectedIndex));
-
     await tester.tap(find.byKey(const ValueKey('material-rail-destination-1')));
     await tester.pumpAndSettle();
 
     expect(find.text('today page'), findsOneWidget);
-    expect(reportedIndexes, [AppNavigationBranch.today.navigationIndex]);
+    expect(launchEntry.entries, [AppEntrys.habitToday]);
   });
 
   testWidgets('updates the Settings transition after resizing to wide', (
@@ -1348,6 +1372,100 @@ void main() {
     expect(observers[0].routeNameStack, [AppRoute.habits.name]);
   });
 
+  testWidgets('direct Group Manage entry hides compact navigation chrome', (
+    tester,
+  ) async {
+    _setCompactSurface(tester);
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers, home: AppRoute.groupManage);
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+    await tester.pumpAndSettle();
+
+    final page = find.text('group manage page');
+    expect(page, findsOneWidget);
+    expect(AdaptiveNavScope.of(tester.element(page)).visible.value, isFalse);
+  });
+
+  testWidgets('returns from Group Manage to the source habits detail stack', (
+    tester,
+  ) async {
+    _setCompactSurface(tester);
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers);
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+
+    router.push('/habits/detail');
+    await tester.pumpAndSettle();
+    router.push('/group/manage');
+    await tester.pumpAndSettle();
+    expect(find.text('group manage page'), findsOneWidget);
+    expect(
+      tester
+          .widget<AdaptiveNavigationShell>(find.byType(AdaptiveNavigationShell))
+          .selectedAuxiliaryIndex,
+      isNull,
+    );
+
+    router.pop();
+    await tester.pumpAndSettle();
+
+    expect(find.text('detail page'), findsOneWidget);
+    expect(observers[0].routeNameStack, [
+      AppRoute.habits.name,
+      AppRoute.habitDetail.name,
+    ]);
+  });
+
+  testWidgets('returns from Group Manage to the source Settings flow', (
+    tester,
+  ) async {
+    _setSurface(tester, const Size(700, 600));
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers);
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+
+    router.push('/settings');
+    await tester.pumpAndSettle();
+    router.push('/group/manage');
+    await tester.pumpAndSettle();
+    expect(find.text('group manage page'), findsOneWidget);
+    expect(
+      tester
+          .widget<AdaptiveNavigationShell>(find.byType(AdaptiveNavigationShell))
+          .selectedAuxiliaryIndex,
+      0,
+    );
+
+    router.pop();
+    await tester.pumpAndSettle();
+
+    expect(find.text('settings page'), findsOneWidget);
+  });
+
   testWidgets('rail selection closes app flow before switching branch', (
     tester,
   ) async {
@@ -1402,6 +1520,116 @@ void main() {
     expect(find.text('today page'), findsOneWidget);
   });
 
+  testWidgets('rail selection closes Group Manage before switching branch', (
+    tester,
+  ) async {
+    _setSurface(tester, const Size(700, 600));
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers);
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+
+    router.push('/group/manage');
+    await tester.pumpAndSettle();
+    expect(find.text('group manage page'), findsOneWidget);
+
+    await tester.tap(find.byIcon(MdiIcons.calendarTodayOutline));
+    await tester.pumpAndSettle();
+
+    expect(find.text('group manage page'), findsNothing);
+    expect(find.text('today page'), findsOneWidget);
+  });
+
+  testWidgets('Group Manage selection immediately switches from Habits', (
+    tester,
+  ) async {
+    _setSurface(tester, const Size(700, 600));
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers);
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+
+    router.push('/group/manage?selecting=true');
+    await tester.pumpAndSettle();
+    expect(find.text('group selection page'), findsOneWidget);
+
+    await tester.tap(find.byIcon(MdiIcons.calendarTodayOutline));
+    await tester.pumpAndSettle();
+
+    expect(find.text('group manage page'), findsNothing);
+    expect(find.text('today page'), findsOneWidget);
+  });
+
+  testWidgets('Group Manage selection immediately switches from Settings', (
+    tester,
+  ) async {
+    _setSurface(tester, const Size(700, 600));
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers);
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+
+    router.push('/settings');
+    await tester.pumpAndSettle();
+    router.push('/group/manage?selecting=true');
+    await tester.pumpAndSettle();
+    expect(find.text('group selection page'), findsOneWidget);
+
+    await tester.tap(find.byIcon(MdiIcons.calendarTodayOutline));
+    await tester.pumpAndSettle();
+
+    expect(find.text('group manage page'), findsNothing);
+    expect(find.text('settings page'), findsNothing);
+    expect(find.text('today page'), findsOneWidget);
+  });
+
+  testWidgets('Group Manage selection still intercepts normal back', (
+    tester,
+  ) async {
+    _setSurface(tester, const Size(700, 600));
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers);
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+
+    router.push('/group/manage?selecting=true');
+    await tester.pumpAndSettle();
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    expect(find.text('group manage page'), findsOneWidget);
+    expect(find.text('habits page'), findsNothing);
+  });
+
   testWidgets('rail selection respects an app flow PopScope veto', (
     tester,
   ) async {
@@ -1450,6 +1678,32 @@ void main() {
     expect(find.text('edit page'), findsNothing);
     expect(find.text('settings page'), findsOneWidget);
   });
+
+  testWidgets(
+    'Settings auxiliary selection bypasses Group Manage selection mode',
+    (tester) async {
+      _setSurface(tester, const Size(700, 600));
+      final observers = [
+        AdaptiveBranchRouteObserver(),
+        AdaptiveBranchRouteObserver(),
+      ];
+      final router = _buildRouter(observers);
+      addTearDown(router.dispose);
+      await _pumpApp(
+        tester,
+        router: router,
+        launchEntry: _RecordingLaunchEntryViewModel(),
+      );
+
+      router.push('/group/manage?selecting=true');
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.settings_outlined));
+      await tester.pumpAndSettle();
+
+      expect(find.text('group manage page'), findsNothing);
+      expect(find.text('settings page'), findsOneWidget);
+    },
+  );
 
   testWidgets('Settings auxiliary selection respects app flow veto', (
     tester,

@@ -235,6 +235,10 @@ void main() {
         appShellFlowVisibilityPolicy([AppRoute.habitsStatus.name]),
         isFalse,
       );
+      expect(
+        appShellFlowVisibilityPolicy([AppRoute.groupManage.name]),
+        isFalse,
+      );
       expect(appShellFlowVisibilityPolicy([AppRoute.settings.name]), isFalse);
       expect(
         appShellFlowVisibilityPolicy([AppRoute.experimental.name]),
@@ -250,8 +254,28 @@ void main() {
       expect(isSettingsFlowRouteName(AppRoute.settingsSync.name), isTrue);
       expect(isSettingsFlowRouteName(AppRoute.settingsNotify.name), isTrue);
       expect(isSettingsFlowRouteName(AppRoute.experimental.name), isTrue);
+      expect(isSettingsFlowRouteName(AppRoute.groupManage.name), isFalse);
       expect(isSettingsFlowRouteName(AppRoute.habits.name), isFalse);
       expect(isSettingsFlowRouteName(null), isFalse);
+    });
+
+    test('derives Group Manage auxiliary selection from its source stack', () {
+      expect(
+        isSettingsAuxiliaryRouteStack([null, AppRoute.groupManage.name]),
+        isFalse,
+      );
+      expect(
+        isSettingsAuxiliaryRouteStack([
+          null,
+          AppRoute.settings.name,
+          AppRoute.groupManage.name,
+        ]),
+        isTrue,
+      );
+      expect(
+        isSettingsAuxiliaryRouteStack([AppRoute.groupManage.name]),
+        isFalse,
+      );
     });
 
     test('nests Settings pages and preserves Experimental path', () {
@@ -310,7 +334,8 @@ void main() {
     AppFlowRouterBuilder buildAppFlowRoutes() => AppFlowRouterBuilder()
       ..addHabitCreate(builder: (_, _) => const SizedBox.shrink())
       ..addHabitEdit(builder: (_, _) => const SizedBox.shrink())
-      ..addHabitsStatus(builder: (_, _) => const SizedBox.shrink());
+      ..addHabitsStatus(builder: (_, _) => const SizedBox.shrink())
+      ..addGroupManage(builder: (_, _) => const SizedBox.shrink());
 
     test('addShellRoute nests tab branches under an app chrome shell', () {
       final router =
@@ -325,13 +350,18 @@ void main() {
       expect(routes, hasLength(1));
       final appChromeShell = routes.first as ShellRoute;
       expect(appChromeShell.builder, isNotNull);
-      expect(appChromeShell.routes, hasLength(4));
+      expect(appChromeShell.routes, hasLength(5));
 
       expect((appChromeShell.routes[0] as GoRoute).path, '/habit/create');
       expect((appChromeShell.routes[1] as GoRoute).path, '/habit/edit');
       expect((appChromeShell.routes[2] as GoRoute).path, '/habits/status');
+      expect((appChromeShell.routes[3] as GoRoute).path, '/group/manage');
+      expect(
+        (appChromeShell.routes[3] as GoRoute).name,
+        AppRoute.groupManage.name,
+      );
 
-      final tabShell = appChromeShell.routes[3] as StatefulShellRoute;
+      final tabShell = appChromeShell.routes[4] as StatefulShellRoute;
       expect(tabShell.builder, isNotNull);
       expect(tabShell.branches, hasLength(2));
 
@@ -351,7 +381,7 @@ void main() {
       }
     });
 
-    test('shell route coexists with root-level routes', () {
+    test('shell route coexists with remaining root-level routes', () {
       final router =
           (AppRouterBuilder()
                 ..addShellRoute(
@@ -360,7 +390,7 @@ void main() {
                   builder: (_, _, child) => child,
                   branchBuilder: (_, _, _) => const SizedBox.shrink(),
                 )
-                ..addGroupManage(builder: (_, _) => const SizedBox.shrink()))
+                ..addDebugger(builder: (_, _) => const SizedBox.shrink()))
               .build();
       final routes = router.configuration.routes;
       expect(routes, hasLength(2));
@@ -369,8 +399,9 @@ void main() {
       expect((appChromeShell.routes[0] as GoRoute).path, '/habit/create');
       expect((appChromeShell.routes[1] as GoRoute).path, '/habit/edit');
       expect((appChromeShell.routes[2] as GoRoute).path, '/habits/status');
-      expect(appChromeShell.routes[3], isA<StatefulShellRoute>());
-      expect((routes[1] as GoRoute).path, '/group/manage');
+      expect((appChromeShell.routes[3] as GoRoute).path, '/group/manage');
+      expect(appChromeShell.routes[4], isA<StatefulShellRoute>());
+      expect((routes[1] as GoRoute).path, '/debugger');
     });
   });
 }

@@ -72,13 +72,14 @@ bool appShellFlowVisibilityPolicy(List<String?> routeNames) {
         when name == AppRoute.habitCreate.name ||
             name == AppRoute.habitEdit.name ||
             name == AppRoute.habitsStatus.name ||
+            name == AppRoute.groupManage.name ||
             isSettingsFlowRouteName(name) =>
       false,
     _ => true,
   };
 }
 
-/// Whether [routeName] belongs to the Settings auxiliary app flow.
+/// Whether [routeName] belongs to the Settings app flow itself.
 bool isSettingsFlowRouteName(String? routeName) => switch (routeName) {
   final name
       when name == AppRoute.settings.name ||
@@ -89,6 +90,19 @@ bool isSettingsFlowRouteName(String? routeName) => switch (routeName) {
     true,
   _ => false,
 };
+
+/// Whether Settings should be selected in the auxiliary navigation chrome.
+///
+/// Group Manage is a standalone app-flow route, so its selection follows the
+/// route that opened it: a Settings source keeps Settings selected, while a
+/// primary-branch source keeps that branch selected.
+bool isSettingsAuxiliaryRouteStack(List<String?> routeNames) {
+  if (routeNames.isEmpty) return false;
+  final topRouteName = routeNames.last;
+  if (isSettingsFlowRouteName(topRouteName)) return true;
+  if (topRouteName != AppRoute.groupManage.name) return false;
+  return routeNames.take(routeNames.length - 1).any(isSettingsFlowRouteName);
+}
 
 /// Shared `add*` helpers for the app's route collectors.
 ///

@@ -14,6 +14,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import '../common/types.dart';
 import '../models/habit_color.dart';
@@ -60,10 +61,9 @@ Future<habit_detail.DetailPageReturn?> naviToHabitDetailPage({
   summaryAdapter: summaryAdapter,
 );
 
-Future<void> naviToAppSettingPage({required BuildContext context}) =>
-    AppNavigationCoordinatorScope.of(
-      context,
-    ).openAppFlowRoot(AppRoute.settings.name);
+Future<void> naviToAppSettingPage({required BuildContext context}) => context
+    .read<AppNavigationCoordinator>()
+    .openAppFlowRoot(AppRoute.settings.name);
 
 Future<void> naviToAppAboutPage({required BuildContext context}) =>
     context.pushNamed(AppRoute.settingsAbout.name);

@@ -219,6 +219,12 @@ class _AppEntryState extends State<_AppEntry> {
           final (:uuidList) = state.unpackHabitsStatusChanger();
           return HabitsStatusChangerPage(uuidList: uuidList);
         },
+      )
+      ..addGroupManage(
+        builder: (_, state) {
+          final (:selectedGroupId) = state.unpackGroupManage();
+          return GroupManagePage(initialGroupUUID: selectedGroupId);
+        },
       );
     final appFlowObserver = AdaptiveBranchRouteObserver();
     final appChromeNavigatorKey = GlobalKey<NavigatorState>();
@@ -230,12 +236,6 @@ class _AppEntryState extends State<_AppEntry> {
     );
     return (AppRouterBuilder()
           ..addDebugger(builder: (_, _) => const AppDebuggerPage())
-          ..addGroupManage(
-            builder: (_, state) {
-              final (:selectedGroupId) = state.unpackGroupManage();
-              return GroupManagePage(initialGroupUUID: selectedGroupId);
-            },
-          )
           ..addShellRoute(
             appFlow: appFlow,
             branchObservers: branchObservers,
@@ -267,11 +267,11 @@ class _AppEntryState extends State<_AppEntry> {
       destination: AppNavigationDestinations.settings(
         label: L10n.of(context)?.appSetting_appbar_titleText ?? 'Settings',
       ),
-      selected: isSettingsFlowRouteName(
-        _navigationCoordinator.appFlowTopRouteName,
+      selected: isSettingsAuxiliaryRouteStack(
+        _navigationCoordinator.appFlowObserver.routeNameStack,
       ),
       onSelected: () =>
-          _navigationCoordinator.openAppFlowRoot(AppRoute.settings.name),
+          _navigationCoordinator.selectAppFlowRoot(AppRoute.settings.name),
     ),
   ];
 

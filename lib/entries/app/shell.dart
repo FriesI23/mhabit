@@ -30,7 +30,7 @@ import 'navigation_destination.dart';
 /// [AdaptiveNavigationShell] wired up for the app: localized destinations,
 /// app navigation-bar styling, launch-entry persistence on branch switches,
 /// and the route-level bar visibility policy.
-class AppNavigationShell extends StatefulWidget {
+class AppNavigationShell extends StatelessWidget {
   const AppNavigationShell({
     super.key,
     required this.coordinator,
@@ -48,82 +48,83 @@ class AppNavigationShell extends StatefulWidget {
   final AppNavigationAuxiliaryChromeBuilder? auxiliaryChromeBuilder;
 
   @override
-  State<AppNavigationShell> createState() => _AppNavigationShellState();
-}
-
-class _AppNavigationShellState extends State<AppNavigationShell> {
-  late int _lastSelectedIndex;
-
-  @override
-  void initState() {
-    super.initState();
-    _bindCoordinator(widget.coordinator);
-  }
-
-  @override
-  void didUpdateWidget(covariant AppNavigationShell oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (identical(oldWidget.coordinator, widget.coordinator)) return;
-    oldWidget.coordinator.removeListener(_handleNavigationChanged);
-    _bindCoordinator(widget.coordinator);
-  }
-
-  @override
-  void dispose() {
-    widget.coordinator.removeListener(_handleNavigationChanged);
-    super.dispose();
-  }
-
-  void _bindCoordinator(AppNavigationCoordinator coordinator) {
-    _lastSelectedIndex = coordinator.selectedIndex;
-    coordinator.addListener(_handleNavigationChanged);
-  }
-
-  void _handleNavigationChanged() {
-    final coordinator = widget.coordinator;
-    final nextIndex = coordinator.selectedIndex;
-    if (nextIndex != _lastSelectedIndex) {
-      _lastSelectedIndex = nextIndex;
-      final branch = AppNavigationBranch.fromNavigationIndex(nextIndex);
-      if (context.mounted) {
-        context.read<AppLaunchEntryViewModel>().setNewLaunchEntry(
-          switch (branch) {
-            AppNavigationBranch.habits => AppEntrys.habitDisplay,
-            AppNavigationBranch.today => AppEntrys.habitToday,
-          },
-        );
-      }
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return AppNavigationCoordinatorScope(
-      coordinator: widget.coordinator,
+    return ChangeNotifierProvider<AppNavigationCoordinator>.value(
+      value: coordinator,
       child: NavigatorPopHandler<Object?>(
         onPopWithResult: (result) {
-          final navigator =
-              widget.coordinator.appChromeNavigatorKey.currentState;
+          final navigator = coordinator.appChromeNavigatorKey.currentState;
           if (navigator != null) {
             unawaited(navigator.maybePop<Object?>(result));
           }
         },
         child: ColorfulNavibar(
-          child: ListenableBuilder(
-            listenable: widget.coordinator,
-            builder: (context, _) => _AppNavigationShellChrome(
-              chromeController: widget.chromeController,
-              selectedIndex: widget.coordinator.selectedIndex,
-              onDestinationSelected: widget.coordinator.selectBranch,
-              auxiliaryChromeBuilder: widget.auxiliaryChromeBuilder,
-              compactRouteVisible: widget.coordinator.compactRouteVisible,
-              child: widget.child,
+          child: Selector<AppNavigationCoordinator, (int, bool, String?)>(
+            selector: (_, coordinator) => (
+              coordinator.selectedIndex,
+              coordinator.compactRouteVisible,
+              coordinator.appFlowTopRouteName,
             ),
+            child: child,
+            builder: (context, navigation, child) {
+              final (selectedIndex, compactRouteVisible, _) = navigation;
+              return _AppLaunchEntrySelectionEffect(
+                key: ObjectKey(coordinator),
+                selectedIndex: selectedIndex,
+                child: _AppNavigationShellChrome(
+                  chromeController: chromeController,
+                  selectedIndex: selectedIndex,
+                  onDestinationSelected: coordinator.selectBranch,
+                  auxiliaryChromeBuilder: auxiliaryChromeBuilder,
+                  compactRouteVisible: compactRouteVisible,
+                  child: child!,
+                ),
+              );
+            },
           ),
         ),
       ),
     );
   }
+}
+
+class _AppLaunchEntrySelectionEffect extends StatefulWidget {
+  const _AppLaunchEntrySelectionEffect({
+    super.key,
+    required this.selectedIndex,
+    required this.child,
+  });
+
+  final int selectedIndex;
+  final Widget child;
+
+  @override
+  State<_AppLaunchEntrySelectionEffect> createState() =>
+      _AppLaunchEntrySelectionEffectState();
+}
+
+class _AppLaunchEntrySelectionEffectState
+    extends State<_AppLaunchEntrySelectionEffect> {
+  @override
+  void didUpdateWidget(covariant _AppLaunchEntrySelectionEffect oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selectedIndex == widget.selectedIndex) return;
+
+    final branch = AppNavigationBranch.fromNavigationIndex(
+      widget.selectedIndex,
+    );
+    unawaited(
+      context.read<AppLaunchEntryViewModel>().setNewLaunchEntry(
+        switch (branch) {
+          AppNavigationBranch.habits => AppEntrys.habitDisplay,
+          AppNavigationBranch.today => AppEntrys.habitToday,
+        },
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 class _AppNavigationShellChrome extends StatelessWidget {

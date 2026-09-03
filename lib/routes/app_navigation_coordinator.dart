@@ -54,6 +54,7 @@ class AppNavigationCoordinator extends ChangeNotifier {
   int _selectedIndex;
   String? _appFlowTopRouteName;
   bool _compactRouteVisible = true;
+  bool _destinationSwitchInProgress = false;
   bool _notificationScheduled = false;
   int _navigationStateGuardDepth = 0;
   bool _navigationInProgress = false;
@@ -68,6 +69,11 @@ class AppNavigationCoordinator extends ChangeNotifier {
   /// Whether compact navigation chrome should remain visible.
   bool get compactRouteVisible => _compactRouteVisible;
 
+  /// Whether app chrome is switching to a selected destination.
+  ///
+  /// Normal system back does not set this value.
+  bool get destinationSwitchInProgress => _destinationSwitchInProgress;
+
   /// Attaches go_router's stateful navigation shell.
   void attachTabShell(StatefulNavigationShell navigationShell) {
     if (_disposed) return;
@@ -76,13 +82,32 @@ class AppNavigationCoordinator extends ChangeNotifier {
   }
 
   /// Closes the current app flow and selects a primary branch.
-  Future<void> selectBranch(int index) =>
-      _runNavigation(() => _closeAppFlowThenSelectBranch(index));
+  Future<void> selectBranch(int index) async {
+    if (!_beginDestinationNavigation()) return;
+    try {
+      await SchedulerBinding.instance.endOfFrame;
+      if (_disposed) return;
+      await _closeAppFlowThenSelectBranch(index);
+    } finally {
+      _finishDestinationNavigation();
+    }
+  }
+
+  /// Selects an auxiliary app-flow destination from the navigation chrome.
+  Future<void> selectAppFlowRoot(String routeName) async {
+    if (!_beginDestinationNavigation()) return;
+    try {
+      await SchedulerBinding.instance.endOfFrame;
+      if (_disposed) return;
+      await _openAppFlowRootWithNavigationStateGuard(routeName);
+    } finally {
+      _finishDestinationNavigation();
+    }
+  }
 
   /// Opens [routeName] as an app-flow root or pops its child stack back to it.
-  Future<void> openAppFlowRoot(String routeName) => _runNavigation(
-    () => _runWithNavigationStateGuard(() => _openAppFlowRoot(routeName)),
-  );
+  Future<void> openAppFlowRoot(String routeName) =>
+      _runNavigation(() => _openAppFlowRootWithNavigationStateGuard(routeName));
 
   /// Closes the current app flow while preserving the selected branch.
   Future<void> returnToPrimaryBranch() =>
@@ -96,6 +121,30 @@ class AppNavigationCoordinator extends ChangeNotifier {
     } finally {
       _navigationInProgress = false;
     }
+  }
+
+  bool _beginDestinationNavigation() {
+    if (_disposed || _navigationInProgress) return false;
+    _navigationInProgress = true;
+    // Route-level PopScopes observe this intent on the next frame before the
+    // asynchronous chain starts popping the app-flow stack.
+    _setDestinationSwitchInProgress(true);
+    return true;
+  }
+
+  void _finishDestinationNavigation() {
+    if (!_disposed) _setDestinationSwitchInProgress(false);
+    _navigationInProgress = false;
+  }
+
+  void _setDestinationSwitchInProgress(bool value) {
+    if (_destinationSwitchInProgress == value) return;
+    _destinationSwitchInProgress = value;
+    notifyListeners();
+  }
+
+  Future<void> _openAppFlowRootWithNavigationStateGuard(String routeName) {
+    return _runWithNavigationStateGuard(() => _openAppFlowRoot(routeName));
   }
 
   Future<void> _openAppFlowRoot(String routeName) async {
@@ -265,29 +314,4 @@ class AppNavigationCoordinator extends ChangeNotifier {
     }
     super.dispose();
   }
-}
-
-/// Makes the entry-owned navigation coordinator available to route helpers.
-class AppNavigationCoordinatorScope extends InheritedWidget {
-  /// Creates a coordinator scope around app-shell content.
-  const AppNavigationCoordinatorScope({
-    super.key,
-    required this.coordinator,
-    required super.child,
-  });
-
-  /// Coordinator for the containing app navigation shell.
-  final AppNavigationCoordinator coordinator;
-
-  /// Returns the coordinator exposed by the nearest app navigation shell.
-  static AppNavigationCoordinator of(BuildContext context) {
-    final scope = context
-        .getInheritedWidgetOfExactType<AppNavigationCoordinatorScope>();
-    assert(scope != null, 'No AppNavigationCoordinatorScope found in context');
-    return scope!.coordinator;
-  }
-
-  @override
-  bool updateShouldNotify(AppNavigationCoordinatorScope oldWidget) =>
-      !identical(coordinator, oldWidget.coordinator);
 }
