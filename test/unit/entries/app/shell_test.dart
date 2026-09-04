@@ -37,6 +37,28 @@ class _BlockingPopViewModel extends ChangeNotifier implements PopScopeHandler {
   bool get canPop => false;
 }
 
+class _OneShotPopVetoPage extends StatefulWidget {
+  const _OneShotPopVetoPage();
+
+  @override
+  State<_OneShotPopVetoPage> createState() => _OneShotPopVetoPageState();
+}
+
+class _OneShotPopVetoPageState extends State<_OneShotPopVetoPage> {
+  bool _canPop = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope<void>(
+      canPop: _canPop,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) setState(() => _canPop = true);
+      },
+      child: const _StubPage('edit page'),
+    );
+  }
+}
+
 class _MutableNavigationCoordinator extends AppNavigationCoordinator {
   _MutableNavigationCoordinator({required super.initialIndex})
     : _selectedIndex = initialIndex,
@@ -206,9 +228,14 @@ GoRouter _buildRouter(
     )
     ..addHabitCreate(builder: (_, _) => const _StubPage('create page'))
     ..addHabitEdit(
-      builder: (_, state) => state.uri.queryParameters['block'] == 'true'
-          ? const PopScope<void>(canPop: false, child: _StubPage('edit page'))
-          : const _StubPage('edit page'),
+      builder: (_, state) => switch (state.uri.queryParameters['block']) {
+        'true' => const PopScope<void>(
+          canPop: false,
+          child: _StubPage('edit page'),
+        ),
+        'once' => const _OneShotPopVetoPage(),
+        _ => const _StubPage('edit page'),
+      },
     )
     ..addHabitsStatus(builder: (_, _) => const _StubPage('status page'))
     ..addGroupManage(
@@ -679,11 +706,61 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    final coordinator = tester
+        .widget<AppNavigationShell>(find.byType(AppNavigationShell))
+        .coordinator;
+    final selectedIndexes = <int>[];
+    var lastSelectedIndex = coordinator.selectedIndex;
+    coordinator.addListener(() {
+      if (coordinator.selectedIndex == lastSelectedIndex) return;
+      lastSelectedIndex = coordinator.selectedIndex;
+      selectedIndexes.add(lastSelectedIndex);
+    });
+
     await tester.tap(find.byKey(const ValueKey('material-rail-destination-1')));
     await tester.pumpAndSettle();
 
     expect(find.text('today page'), findsOneWidget);
+    expect(selectedIndexes, [AppNavigationBranch.today.navigationIndex]);
     expect(launchEntry.entries, [AppEntrys.habitToday]);
+  });
+
+  testWidgets('publishes destination switch intent around chrome navigation', (
+    tester,
+  ) async {
+    _setSurface(tester, const Size(700, 600));
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers);
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+
+    router.push('/group/manage?selecting=true');
+    await tester.pumpAndSettle();
+    final coordinator = tester
+        .widget<AppNavigationShell>(find.byType(AppNavigationShell))
+        .coordinator;
+    final switchStates = <bool>[];
+    var lastSwitchState = coordinator.destinationSwitchInProgress;
+    coordinator.addListener(() {
+      if (coordinator.destinationSwitchInProgress == lastSwitchState) return;
+      lastSwitchState = coordinator.destinationSwitchInProgress;
+      switchStates.add(lastSwitchState);
+    });
+
+    await tester.tap(find.byIcon(MdiIcons.calendarTodayOutline));
+    await tester.pumpAndSettle();
+
+    expect(find.text('group manage page'), findsNothing);
+    expect(find.text('today page'), findsOneWidget);
+    expect(switchStates, [isTrue, isFalse]);
+    expect(coordinator.destinationSwitchInProgress, isFalse);
   });
 
   testWidgets('updates the Settings transition after resizing to wide', (
@@ -1654,6 +1731,43 @@ void main() {
 
     expect(find.text('edit page'), findsOneWidget);
     expect(find.text('today page'), findsNothing);
+  });
+
+  testWidgets('rail selection can retry after an app flow PopScope veto', (
+    tester,
+  ) async {
+    _setSurface(tester, const Size(700, 600));
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers);
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+
+    router.push('/habit/edit?block=once');
+    await tester.pumpAndSettle();
+    final coordinator = tester
+        .widget<AppNavigationShell>(find.byType(AppNavigationShell))
+        .coordinator;
+
+    await tester.tap(find.byIcon(MdiIcons.calendarTodayOutline));
+    await tester.pumpAndSettle();
+
+    expect(find.text('edit page'), findsOneWidget);
+    expect(find.text('today page'), findsNothing);
+    expect(coordinator.destinationSwitchInProgress, isFalse);
+
+    await tester.tap(find.byIcon(MdiIcons.calendarTodayOutline));
+    await tester.pumpAndSettle();
+
+    expect(find.text('edit page'), findsNothing);
+    expect(find.text('today page'), findsOneWidget);
+    expect(coordinator.destinationSwitchInProgress, isFalse);
   });
 
   testWidgets('Settings auxiliary selection closes app flow', (tester) async {

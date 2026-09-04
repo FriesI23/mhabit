@@ -22,6 +22,94 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'app_navigation_branch.dart';
 import 'app_router.dart';
 
+class _NavigationTransactionController {
+  _NavigationTransactionController({
+    required this.isDisposed,
+    required this.onDestinationSwitchChanged,
+    required this.syncState,
+  });
+
+  final bool Function() isDisposed;
+  final ValueChanged<bool> onDestinationSwitchChanged;
+  final ValueChanged<int?> syncState;
+
+  bool _active = false;
+  bool _holdsUpdates = false;
+  bool _destinationSwitch = false;
+
+  bool get isHoldingUpdates => _holdsUpdates;
+
+  bool tryBegin({bool destinationSwitch = false}) {
+    if (isDisposed() || _active) return false;
+    _active = true;
+    _destinationSwitch = destinationSwitch;
+    if (destinationSwitch) onDestinationSwitchChanged(true);
+    return true;
+  }
+
+  void holdUpdates() {
+    if (!_active) return;
+    _holdsUpdates = true;
+  }
+
+  void finish({int? selectedIndex}) {
+    if (!_active) return;
+    try {
+      final shouldSyncState = _holdsUpdates;
+      _holdsUpdates = false;
+      if (shouldSyncState && !isDisposed()) {
+        syncState(selectedIndex);
+      }
+    } finally {
+      try {
+        if (_destinationSwitch && !isDisposed()) {
+          onDestinationSwitchChanged(false);
+        }
+      } finally {
+        _destinationSwitch = false;
+        _active = false;
+      }
+    }
+  }
+}
+
+class _AppFlowStackController {
+  const _AppFlowStackController({
+    required this.observer,
+    required this.navigatorKey,
+    required this.isDisposed,
+  });
+
+  final AdaptiveBranchRouteObserver observer;
+  final GlobalKey<NavigatorState> navigatorKey;
+  final bool Function() isDisposed;
+
+  Future<bool> popToRoot() => _popUntil(isComplete: () => observer.depth <= 1);
+
+  Future<bool> popToRoute(String routeName) =>
+      _popUntil(isComplete: () => observer.topRouteName == routeName);
+
+  Future<bool> _popUntil({required bool Function() isComplete}) async {
+    final navigator = navigatorKey.currentState;
+    if (navigator == null) return false;
+    final initialDepth = observer.depth;
+    final maximumPopCount = initialDepth > 1 ? initialDepth - 1 : 0;
+
+    for (var attempt = 0; attempt < maximumPopCount; attempt++) {
+      if (isComplete()) return true;
+      final previousDepth = observer.depth;
+      await navigator.maybePop();
+      if (isDisposed()) return false;
+      // maybePop reports whether the back action was handled, not whether a
+      // route was actually removed. A PopScope veto handles the action while
+      // keeping the flow on the stack, so verify the observed stack itself.
+      if (observer.depth >= previousDepth) return false;
+    }
+
+    return isComplete();
+  }
+}
+
 /// Coordinates primary branches with routes in the app-flow navigator.
 ///
 /// One instance is created by each app entry together with its branch
@@ -35,6 +123,17 @@ class AppNavigationCoordinator extends ChangeNotifier {
     required this.appChromeNavigatorKey,
     required int initialIndex,
   }) : _selectedIndex = initialIndex {
+    _transactions = _NavigationTransactionController(
+      isDisposed: () => _disposed,
+      onDestinationSwitchChanged: _setDestinationSwitchInProgress,
+      syncState: (selectedIndex) =>
+          _synchronize(selectedIndexOverride: selectedIndex),
+    );
+    _appFlowStack = _AppFlowStackController(
+      observer: appFlowObserver,
+      navigatorKey: appChromeNavigatorKey,
+      isDisposed: () => _disposed,
+    );
     for (final observer in branchObservers) {
       observer.onStackChanged = _handleStackChanged;
     }
@@ -50,14 +149,14 @@ class AppNavigationCoordinator extends ChangeNotifier {
   /// Navigator key for the app-flow layer.
   final GlobalKey<NavigatorState> appChromeNavigatorKey;
 
+  late final _NavigationTransactionController _transactions;
+  late final _AppFlowStackController _appFlowStack;
   StatefulNavigationShell? _navigationShell;
   int _selectedIndex;
   String? _appFlowTopRouteName;
   bool _compactRouteVisible = true;
   bool _destinationSwitchInProgress = false;
   bool _notificationScheduled = false;
-  int _navigationStateGuardDepth = 0;
-  bool _navigationInProgress = false;
   bool _disposed = false;
 
   /// Index of the currently selected primary branch.
@@ -82,60 +181,18 @@ class AppNavigationCoordinator extends ChangeNotifier {
   }
 
   /// Closes the current app flow and selects a primary branch.
-  Future<void> selectBranch(int index) async {
-    if (!_beginDestinationNavigation()) return;
-    try {
-      await SchedulerBinding.instance.endOfFrame;
-      if (_disposed) return;
-      await _closeAppFlowThenSelectBranch(index);
-    } finally {
-      _finishDestinationNavigation();
-    }
-  }
+  Future<void> selectBranch(int index) =>
+      _goToPrimaryBranch(index, destinationSwitch: true);
 
   /// Selects an auxiliary app-flow destination from the navigation chrome.
-  Future<void> selectAppFlowRoot(String routeName) async {
-    if (!_beginDestinationNavigation()) return;
-    try {
-      await SchedulerBinding.instance.endOfFrame;
-      if (_disposed) return;
-      await _openAppFlowRootWithNavigationStateGuard(routeName);
-    } finally {
-      _finishDestinationNavigation();
-    }
-  }
+  Future<void> selectAppFlowRoot(String routeName) =>
+      _goToAppFlowRoot(routeName, destinationSwitch: true);
 
   /// Opens [routeName] as an app-flow root or pops its child stack back to it.
-  Future<void> openAppFlowRoot(String routeName) =>
-      _runNavigation(() => _openAppFlowRootWithNavigationStateGuard(routeName));
+  Future<void> openAppFlowRoot(String routeName) => _goToAppFlowRoot(routeName);
 
   /// Closes the current app flow while preserving the selected branch.
-  Future<void> returnToPrimaryBranch() =>
-      _runNavigation(() => _closeAppFlowThenSelectBranch(selectedIndex));
-
-  Future<void> _runNavigation(Future<void> Function() action) async {
-    if (_disposed || _navigationInProgress) return;
-    _navigationInProgress = true;
-    try {
-      await action();
-    } finally {
-      _navigationInProgress = false;
-    }
-  }
-
-  bool _beginDestinationNavigation() {
-    if (_disposed || _navigationInProgress) return false;
-    _navigationInProgress = true;
-    // Route-level PopScopes observe this intent on the next frame before the
-    // asynchronous chain starts popping the app-flow stack.
-    _setDestinationSwitchInProgress(true);
-    return true;
-  }
-
-  void _finishDestinationNavigation() {
-    if (!_disposed) _setDestinationSwitchInProgress(false);
-    _navigationInProgress = false;
-  }
+  Future<void> returnToPrimaryBranch() => _goToPrimaryBranch(selectedIndex);
 
   void _setDestinationSwitchInProgress(bool value) {
     if (_destinationSwitchInProgress == value) return;
@@ -143,107 +200,75 @@ class AppNavigationCoordinator extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _openAppFlowRootWithNavigationStateGuard(String routeName) {
-    return _runWithNavigationStateGuard(() => _openAppFlowRoot(routeName));
-  }
+  Future<void> _goToAppFlowRoot(
+    String routeName, {
+    bool destinationSwitch = false,
+  }) async {
+    if (!_transactions.tryBegin(destinationSwitch: destinationSwitch)) return;
+    try {
+      if (destinationSwitch) {
+        await SchedulerBinding.instance.endOfFrame;
+        if (_disposed) return;
+      }
+      _transactions.holdUpdates();
 
-  Future<void> _openAppFlowRoot(String routeName) async {
-    final navigator = appChromeNavigatorKey.currentState;
-    if (navigator == null) return;
+      if (appFlowObserver.routeNameStack.contains(routeName)) {
+        await _appFlowStack.popToRoute(routeName);
+        return;
+      }
+      if (!await _appFlowStack.popToRoot()) return;
+      if (_disposed) return;
 
-    if (appFlowObserver.routeNameStack.contains(routeName)) {
-      await _popAppFlowUntil(
-        navigator: navigator,
-        isComplete: () => appFlowObserver.topRouteName == routeName,
-      );
-      return;
-    }
-    if (!await _closeAppFlow()) return;
-    if (_disposed) return;
-
-    final context = appChromeNavigatorKey.currentContext;
-    if (context == null || !context.mounted) return;
-    final router = GoRouter.of(context);
-    if (_navigationShell == null) {
-      router.goNamed(routeName);
+      final context = appChromeNavigatorKey.currentContext;
+      if (context == null || !context.mounted) return;
+      final router = GoRouter.of(context);
+      if (_navigationShell == null) {
+        router.goNamed(routeName);
+        await SchedulerBinding.instance.endOfFrame;
+        return;
+      }
+      // The returned future completes when the route is later popped. Starting
+      // the push is the end of this navigation transaction; awaiting the result
+      // here would block every later branch or app-flow command.
+      unawaited(router.pushNamed<void>(routeName));
+      // Wait until Navigator publishes the pushed route to the observer before
+      // accepting another command that may inspect the app-flow stack.
       await SchedulerBinding.instance.endOfFrame;
-      return;
+    } finally {
+      _transactions.finish();
     }
-    // The returned future completes when the route is later popped. Starting
-    // the push is the end of this navigation transaction; awaiting the result
-    // here would block every later branch or app-flow command.
-    unawaited(router.pushNamed<void>(routeName));
-    // Wait until Navigator publishes the pushed route to the observer before
-    // accepting another command that may inspect the app-flow stack.
-    await SchedulerBinding.instance.endOfFrame;
   }
 
-  Future<void> _closeAppFlowThenSelectBranch(
+  Future<void> _goToPrimaryBranch(
     int index, {
+    bool destinationSwitch = false,
     bool initialLocation = false,
   }) async {
-    var didSelectBranch = false;
-    await _runWithNavigationStateGuard(() async {
-      if (!await _closeAppFlow()) return;
+    if (!_transactions.tryBegin(destinationSwitch: destinationSwitch)) return;
+    int? nextSelectedIndex;
+    try {
+      if (destinationSwitch) {
+        await SchedulerBinding.instance.endOfFrame;
+        if (_disposed) return;
+      }
+      _transactions.holdUpdates();
+
+      if (!await _appFlowStack.popToRoot()) return;
       if (_disposed) return;
       final navigationShell = _navigationShell;
       if (navigationShell != null) {
         navigationShell.goBranch(index, initialLocation: initialLocation);
-        didSelectBranch = true;
+        nextSelectedIndex = index;
         return;
       }
       final context = appChromeNavigatorKey.currentContext;
       if (context == null || !context.mounted) return;
       final branch = AppNavigationBranch.fromNavigationIndex(index);
       GoRouter.of(context).goNamed(branch.rootRouteName);
-      didSelectBranch = true;
-    }, selectedIndexOverride: () => didSelectBranch ? index : null);
-  }
-
-  Future<void> _runWithNavigationStateGuard(
-    Future<void> Function() action, {
-    int? Function()? selectedIndexOverride,
-  }) async {
-    _navigationStateGuardDepth++;
-    try {
-      await action();
+      nextSelectedIndex = index;
     } finally {
-      _navigationStateGuardDepth--;
-      if (_navigationStateGuardDepth == 0 && !_disposed) {
-        _synchronize(selectedIndexOverride: selectedIndexOverride?.call());
-      }
+      _transactions.finish(selectedIndex: nextSelectedIndex);
     }
-  }
-
-  Future<bool> _closeAppFlow() async {
-    final navigator = appChromeNavigatorKey.currentState;
-    if (navigator == null) return false;
-
-    return _popAppFlowUntil(
-      navigator: navigator,
-      isComplete: () => appFlowObserver.depth <= 1,
-    );
-  }
-
-  Future<bool> _popAppFlowUntil({
-    required NavigatorState navigator,
-    required bool Function() isComplete,
-  }) async {
-    final initialDepth = appFlowObserver.depth;
-    final maximumPopCount = initialDepth > 1 ? initialDepth - 1 : 0;
-
-    for (var attempt = 0; attempt < maximumPopCount; attempt++) {
-      if (isComplete()) return true;
-      final previousDepth = appFlowObserver.depth;
-      await navigator.maybePop();
-      if (_disposed) return false;
-      // maybePop reports whether the back action was handled, not whether a
-      // route was actually removed. A PopScope veto handles the action while
-      // keeping the flow on the stack, so verify the observed stack itself.
-      if (appFlowObserver.depth >= previousDepth) return false;
-    }
-
-    return isComplete();
   }
 
   AdaptiveBranchRouteObserver? _branchObserverAt(int index) {
@@ -271,7 +296,7 @@ class AppNavigationCoordinator extends ChangeNotifier {
     bool scheduleNotification = false,
     int? selectedIndexOverride,
   }) {
-    if (_navigationStateGuardDepth > 0) return;
+    if (_transactions.isHoldingUpdates) return;
     final previousIndex = _selectedIndex;
     final nextIndex =
         selectedIndexOverride ??
@@ -295,7 +320,9 @@ class AppNavigationCoordinator extends ChangeNotifier {
     _notificationScheduled = true;
     scheduleMicrotask(() {
       _notificationScheduled = false;
-      if (!_disposed && _navigationStateGuardDepth == 0) notifyListeners();
+      if (!_disposed && !_transactions.isHoldingUpdates) {
+        notifyListeners();
+      }
     });
   }
 
