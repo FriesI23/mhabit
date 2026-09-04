@@ -143,7 +143,7 @@ void main() {
     expect(find.byType(AdaptiveAppBar), findsOneWidget);
     expect(find.byType(WindowControlAppBar), findsOneWidget);
     final appBar = tester.widget<AppBar>(find.byType(AppBar));
-    expect(appBar.leading, isA<PageBackButton>());
+    expect(appBar.leading, isA<AdaptiveBackButton>());
     expect(appBar.title, isA<L10nBuilder>());
   });
 }

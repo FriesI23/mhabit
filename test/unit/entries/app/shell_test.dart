@@ -691,6 +691,80 @@ void main() {
     );
   });
 
+  for (final testCase
+      in <
+        ({
+          String description,
+          TargetPlatform platform,
+          ValueKey<String> auxiliaryKey,
+        })
+      >[
+        (
+          description: 'Material rail',
+          platform: TargetPlatform.android,
+          auxiliaryKey: const ValueKey('material-rail-auxiliary-destination-0'),
+        ),
+        (
+          description: 'Apple Sidebar',
+          platform: TargetPlatform.iOS,
+          auxiliaryKey: const ValueKey(
+            'cupertino-sidebar-auxiliary-destination-0',
+          ),
+        ),
+      ]) {
+    testWidgets(
+      'Today preserves its branch through the ${testCase.description} Settings entry',
+      (tester) async {
+        _setSurface(tester, const Size(700, 800));
+        final observers = [
+          AdaptiveBranchRouteObserver(),
+          AdaptiveBranchRouteObserver(),
+        ];
+        final router = _buildRouter(observers, home: AppRoute.today);
+        final launchEntry = _RecordingLaunchEntryViewModel();
+        addTearDown(router.dispose);
+        addTearDown(launchEntry.dispose);
+        await _pumpApp(
+          tester,
+          router: router,
+          launchEntry: launchEntry,
+          platform: testCase.platform,
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('today page'), findsOneWidget);
+        expect(find.byKey(testCase.auxiliaryKey), findsOneWidget);
+        var shell = tester.widget<AdaptiveNavigationShell>(
+          find.byType(AdaptiveNavigationShell),
+        );
+        expect(shell.selectedIndex, AppNavigationBranch.today.navigationIndex);
+        expect(shell.selectedAuxiliaryIndex, isNull);
+        expect(launchEntry.entries, [AppEntrys.habitToday]);
+
+        await tester.tap(find.byKey(testCase.auxiliaryKey));
+        await tester.pumpAndSettle();
+
+        expect(find.text('settings page'), findsOneWidget);
+        shell = tester.widget<AdaptiveNavigationShell>(
+          find.byType(AdaptiveNavigationShell),
+        );
+        expect(shell.selectedIndex, AppNavigationBranch.today.navigationIndex);
+        expect(shell.selectedAuxiliaryIndex, 0);
+        expect(launchEntry.entries, [AppEntrys.habitToday]);
+
+        router.pop();
+        await tester.pumpAndSettle();
+
+        expect(find.text('today page'), findsOneWidget);
+        expect(
+          observers[AppNavigationBranch.today.navigationIndex].routeNameStack,
+          [AppRoute.today.name],
+        );
+        expect(launchEntry.entries, [AppEntrys.habitToday]);
+      },
+    );
+  }
+
   testWidgets('persists only the destination branch when leaving Settings', (
     tester,
   ) async {

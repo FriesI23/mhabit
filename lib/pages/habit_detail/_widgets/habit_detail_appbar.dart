@@ -19,7 +19,6 @@ import '../../../extensions/adaptive_style_extensions.dart';
 import '../../../extensions/custom_color_extensions.dart';
 import '../../../models/habit_color.dart';
 import '../../../theme/color.dart';
-import '../../../widgets/widgets.dart';
 
 class HabitDetailAppBar extends StatelessWidget {
   final HabitColor? color;
@@ -64,8 +63,8 @@ class HabitDetailAppBar extends StatelessWidget {
                   : title
             : null,
       ),
-      leading: PageBackButton(
-        reason: PageBackReason.back,
+      leading: AdaptiveBackButton(
+        type: AdaptiveBackButtonType.back,
         color: resolvedColor,
       ),
       actions: [if (actionBuilder != null) actionBuilder!(context)],

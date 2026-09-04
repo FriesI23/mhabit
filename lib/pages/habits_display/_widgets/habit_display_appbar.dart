@@ -234,7 +234,7 @@ class _MaterialCalendarBar extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => WindowControlSliverAppBar(
+  Widget build(BuildContext context) => SliverAppBar(
     pinned: true,
     shadowColor: Theme.of(context).colorScheme.shadow,
     backgroundColor: isInEditMode

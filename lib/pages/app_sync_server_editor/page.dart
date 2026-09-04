@@ -265,8 +265,8 @@ class _PageFullScreenDialog extends StatelessWidget {
     child: ColorfulNavibar(
       child: Scaffold(
         appBar: WindowControlAppBar(
-          leading: PageBackButton(
-            reason: PageBackReason.close,
+          leading: AdaptiveBackButton(
+            type: AdaptiveBackButtonType.close,
             onPressed: onCancelButtonPressed,
           ),
           actions: [AppSyncServerSaveButton(onPressed: onSaveButtonPressed)],

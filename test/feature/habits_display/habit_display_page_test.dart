@@ -580,7 +580,15 @@ void main() {
       platform: TargetPlatform.iOS,
     );
 
+    final adaptiveAppBar = tester.widget<AdaptiveSliverAppBar>(
+      find.byType(AdaptiveSliverAppBar),
+    );
+    expect(adaptiveAppBar.actions, [isA<AppThemeSwitchButton>()]);
     expect(find.byType(AppThemeSwitchButton), findsOneWidget);
+    expect(
+      find.byWidgetPredicate((widget) => widget is AdaptiveAppBarActions),
+      findsNothing,
+    );
     expect(
       find.descendant(
         of: find.byType(AppThemeSwitchButton),
@@ -600,6 +608,38 @@ void main() {
         matching: find.byType(CupertinoButton),
       ),
       findsOneWidget,
+    );
+  });
+
+  testWidgets('Today Material keeps only the theme switch AppBar action', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+
+    await _pumpTodayTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+    );
+
+    final adaptiveAppBar = tester.widget<AdaptiveSliverAppBar>(
+      find.byType(AdaptiveSliverAppBar),
+    );
+    expect(adaptiveAppBar.actions, [isA<AppThemeSwitchButton>()]);
+    expect(find.byType(AppThemeSwitchButton), findsOneWidget);
+    expect(
+      find.byWidgetPredicate((widget) => widget is AdaptiveAppBarActions),
+      findsNothing,
     );
   });
 
@@ -888,6 +928,13 @@ void main() {
     expect(
       find.ancestor(of: calendar, matching: find.byType(SliverAppBar)),
       findsOneWidget,
+    );
+    expect(
+      find.ancestor(
+        of: calendar,
+        matching: find.byType(WindowControlSliverAppBar),
+      ),
+      findsNothing,
     );
     expect(tester.getSize(calendar).height, 48);
     expect(

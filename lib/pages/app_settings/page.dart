@@ -960,8 +960,8 @@ class _PageState extends State<_Page> with XShare {
               (AdaptiveNavScope.maybeOf(context)?.form ??
                       NavigationShellForm.compact) ==
                   NavigationShellForm.compact
-              ? PageBackButton(
-                  reason: PageBackReason.back,
+              ? AdaptiveBackButton(
+                  type: AdaptiveBackButtonType.back,
                   onPressed: () => Navigator.maybePop(context),
                 )
               : null,

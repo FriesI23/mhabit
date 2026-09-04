@@ -19,7 +19,6 @@ import '../../../extensions/custom_color_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_color.dart';
 import '../../../theme/color.dart';
-import '../../../widgets/widgets.dart';
 import 'habit_edit_app_bar_actions.dart';
 
 class HabitEditAppBar extends StatelessWidget {
@@ -64,10 +63,10 @@ class HabitEditAppBar extends StatelessWidget {
       hintText: l10n?.habitEdit_habitName_hintText,
       autofocus: autofocus,
       foregroundColor: foregroundColor,
-      leading: PageBackButton(
-        reason: showInFullscreenDialog
-            ? PageBackReason.close
-            : PageBackReason.back,
+      leading: AdaptiveBackButton(
+        type: showInFullscreenDialog
+            ? AdaptiveBackButtonType.close
+            : AdaptiveBackButtonType.back,
         color: foregroundColor,
       ),
       actions: [

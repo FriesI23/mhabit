@@ -48,7 +48,6 @@ export '_widgets/habit_score_chart.dart';
 export '_widgets/l10n_builder.dart';
 export '_widgets/markdown_block.dart';
 export '_widgets/month_picker_cell.dart';
-export '_widgets/page_back_button.dart';
 export '_widgets/page_loading_indicator.dart';
 export '_widgets/predictive_back_page_transitions_builder.dart';
 export '_widgets/preferred_size.dart';
