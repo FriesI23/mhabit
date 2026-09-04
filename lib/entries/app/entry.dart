@@ -225,7 +225,8 @@ class _AppEntryState extends State<_AppEntry> {
           final (:selectedGroupId) = state.unpackGroupManage();
           return GroupManagePage(initialGroupUUID: selectedGroupId);
         },
-      );
+      )
+      ..addDebugger(builder: (_, _) => const AppDebuggerPage());
     final appFlowObserver = AdaptiveBranchRouteObserver();
     final appChromeNavigatorKey = GlobalKey<NavigatorState>();
     _navigationCoordinator = AppNavigationCoordinator(
@@ -234,29 +235,27 @@ class _AppEntryState extends State<_AppEntry> {
       appChromeNavigatorKey: appChromeNavigatorKey,
       initialIndex: initialBranch.navigationIndex,
     );
-    return (AppRouterBuilder()
-          ..addDebugger(builder: (_, _) => const AppDebuggerPage())
-          ..addShellRoute(
-            appFlow: appFlow,
-            branchObservers: branchObservers,
-            branches: branches,
-            navigatorKey: appChromeNavigatorKey,
-            observers: [appFlowObserver],
-            builder: (context, state, child) => ChangelogBanner(
-              child: AppPostInit(
-                child: AppNavigationShell(
-                  coordinator: _navigationCoordinator,
-                  chromeController: _navigationChromeController,
-                  auxiliaryChromeBuilder: _buildAuxiliaryChrome,
-                  child: child,
-                ),
+    return (AppRouterBuilder()..addShellRoute(
+          appFlow: appFlow,
+          branchObservers: branchObservers,
+          branches: branches,
+          navigatorKey: appChromeNavigatorKey,
+          observers: [appFlowObserver],
+          builder: (context, state, child) => ChangelogBanner(
+            child: AppPostInit(
+              child: AppNavigationShell(
+                coordinator: _navigationCoordinator,
+                chromeController: _navigationChromeController,
+                auxiliaryChromeBuilder: _buildAuxiliaryChrome,
+                child: child,
               ),
             ),
-            branchBuilder: (context, state, navigationShell) {
-              _navigationCoordinator.attachTabShell(navigationShell);
-              return navigationShell;
-            },
-          ))
+          ),
+          branchBuilder: (context, state, navigationShell) {
+            _navigationCoordinator.attachTabShell(navigationShell);
+            return navigationShell;
+          },
+        ))
         .build(home: initialBranch.rootRoute);
   }
 

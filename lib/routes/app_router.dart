@@ -55,6 +55,16 @@ String _pathFor(AppRoute route) => switch (route) {
   AppRoute.habitsStatus => '/habits/status',
 };
 
+String _relativePathFor(AppRoute parent, AppRoute child) {
+  final parentPath = _pathFor(parent);
+  final childPath = _pathFor(child);
+  final childPrefix = '$parentPath/';
+  if (!childPath.startsWith(childPrefix)) {
+    throw StateError('$childPath is not nested under $parentPath');
+  }
+  return childPath.substring(childPrefix.length);
+}
+
 /// Bar visibility policy for the app's branches: the bar is shown only on a
 /// branch's root route and hidden on anything pushed above it.
 bool appShellBarVisibilityPolicy(List<String?> routeNames) =>
@@ -68,41 +78,70 @@ bool appShellBarVisibilityPolicy(List<String?> routeNames) =>
 bool appShellFlowVisibilityPolicy(List<String?> routeNames) {
   if (routeNames.isEmpty) return true;
   if (routeNames.length > 1) return false;
-  return switch (routeNames.single) {
-    final name
-        when name == AppRoute.habitCreate.name ||
-            name == AppRoute.habitEdit.name ||
-            name == AppRoute.habitsStatus.name ||
-            name == AppRoute.groupManage.name ||
-            isSettingsFlowRouteName(name) =>
-      false,
-    _ => true,
+  return switch (_appRouteForName(routeNames.single)) {
+    AppRoute.habitCreate ||
+    AppRoute.habitEdit ||
+    AppRoute.settings ||
+    AppRoute.settingsAbout ||
+    AppRoute.settingsSync ||
+    AppRoute.settingsNotify ||
+    AppRoute.experimental ||
+    AppRoute.debugger ||
+    AppRoute.groupManage ||
+    AppRoute.habitsStatus => false,
+    AppRoute.habits || AppRoute.today || AppRoute.habitDetail || null => true,
   };
 }
 
+enum _SettingsFlowMembership { none, direct, inheritFromImmediateSource }
+
+_SettingsFlowMembership _settingsFlowMembership(AppRoute route) =>
+    switch (route) {
+      AppRoute.settings ||
+      AppRoute.settingsAbout ||
+      AppRoute.settingsSync ||
+      AppRoute.settingsNotify ||
+      AppRoute.experimental => _SettingsFlowMembership.direct,
+      AppRoute.debugger || AppRoute.groupManage =>
+        _SettingsFlowMembership.inheritFromImmediateSource,
+      AppRoute.habits ||
+      AppRoute.today ||
+      AppRoute.habitDetail ||
+      AppRoute.habitCreate ||
+      AppRoute.habitEdit ||
+      AppRoute.habitsStatus => _SettingsFlowMembership.none,
+    };
+
+AppRoute? _appRouteForName(String? name) {
+  for (final route in AppRoute.values) {
+    if (route.name == name) return route;
+  }
+  return null;
+}
+
 /// Whether [routeName] belongs to the Settings app flow itself.
-bool isSettingsFlowRouteName(String? routeName) => switch (routeName) {
-  final name
-      when name == AppRoute.settings.name ||
-          name == AppRoute.settingsAbout.name ||
-          name == AppRoute.settingsSync.name ||
-          name == AppRoute.settingsNotify.name ||
-          name == AppRoute.experimental.name =>
-    true,
-  _ => false,
-};
+bool isSettingsFlowRouteName(String? routeName) {
+  final route = _appRouteForName(routeName);
+  return route != null &&
+      _settingsFlowMembership(route) == _SettingsFlowMembership.direct;
+}
 
 /// Whether Settings should be selected in the auxiliary navigation chrome.
 ///
-/// Group Manage is a standalone app-flow route, so its selection follows the
-/// route that opened it: a Settings source keeps Settings selected, while a
+/// Source-aware routes such as Group Manage and Debugger follow the route that
+/// opened them: a direct Settings source keeps Settings selected, while a
 /// primary-branch source keeps that branch selected.
 bool isSettingsAuxiliaryRouteStack(List<String?> routeNames) {
   if (routeNames.isEmpty) return false;
-  final topRouteName = routeNames.last;
-  if (isSettingsFlowRouteName(topRouteName)) return true;
-  if (topRouteName != AppRoute.groupManage.name) return false;
-  return routeNames.take(routeNames.length - 1).any(isSettingsFlowRouteName);
+  final topRoute = _appRouteForName(routeNames.last);
+  if (topRoute == null) return false;
+  return switch (_settingsFlowMembership(topRoute)) {
+    _SettingsFlowMembership.direct => true,
+    _SettingsFlowMembership.inheritFromImmediateSource =>
+      routeNames.length >= 2 &&
+          isSettingsFlowRouteName(routeNames[routeNames.length - 2]),
+    _SettingsFlowMembership.none => false,
+  };
 }
 
 /// Shared `add*` helpers for the app's route collectors.
@@ -183,17 +222,20 @@ class AppFlowRouterBuilder with _AppRouteAdder {
           pageBuilder: settingsBuilder,
           routes: [
             GoRoute(
-              path: 'about',
+              path: _relativePathFor(AppRoute.settings, AppRoute.settingsAbout),
               name: AppRoute.settingsAbout.name,
               pageBuilder: _appPageBuilder(aboutBuilder),
             ),
             GoRoute(
-              path: 'sync',
+              path: _relativePathFor(AppRoute.settings, AppRoute.settingsSync),
               name: AppRoute.settingsSync.name,
               pageBuilder: _appPageBuilder(syncBuilder),
             ),
             GoRoute(
-              path: 'notify',
+              path: _relativePathFor(
+                AppRoute.settings,
+                AppRoute.settingsNotify,
+              ),
               name: AppRoute.settingsNotify.name,
               pageBuilder: _appPageBuilder(notifyBuilder),
             ),

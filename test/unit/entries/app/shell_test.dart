@@ -11,6 +11,8 @@ import 'package:mhabit/entries/app/navigation_chrome.dart';
 import 'package:mhabit/entries/app/navigation_destination.dart';
 import 'package:mhabit/entries/app/shell.dart';
 import 'package:mhabit/models/app_entry.dart';
+import 'package:mhabit/pages/app_debugger/page.dart'
+    show onDebuggerNotificationTapped;
 import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/pages/habits_display/navigation_chrome.dart';
 import 'package:mhabit/providers/app_ui/app_launch_entry.dart';
@@ -243,7 +245,8 @@ GoRouter _buildRouter(
       builder: (_, state) => _GroupManageFlowStub(
         selectionMode: state.uri.queryParameters['selecting'] == 'true',
       ),
-    );
+    )
+    ..addDebugger(builder: (_, _) => const _StubPage('debugger page'));
   final appFlowObserver = AdaptiveBranchRouteObserver();
   final appChromeNavigatorKey = GlobalKey<NavigatorState>();
   coordinator = AppNavigationCoordinator(
@@ -1553,6 +1556,130 @@ void main() {
     expect(AdaptiveNavScope.of(tester.element(page)).visible.value, isFalse);
   });
 
+  testWidgets('direct Debugger entry hides compact navigation chrome', (
+    tester,
+  ) async {
+    _setCompactSurface(tester);
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers, home: AppRoute.debugger);
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+    await tester.pumpAndSettle();
+
+    final page = find.text('debugger page');
+    expect(page, findsOneWidget);
+    expect(AdaptiveNavScope.of(tester.element(page)).visible.value, isFalse);
+  });
+
+  testWidgets('Debugger returns to its source branch stack', (tester) async {
+    _setCompactSurface(tester);
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers);
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+
+    router.push('/habits/detail');
+    await tester.pumpAndSettle();
+    await onDebuggerNotificationTapped();
+    await tester.pumpAndSettle();
+
+    expect(find.text('debugger page'), findsOneWidget);
+    expect(
+      tester
+          .widget<AdaptiveNavigationShell>(find.byType(AdaptiveNavigationShell))
+          .selectedAuxiliaryIndex,
+      isNull,
+    );
+
+    router.pop();
+    await tester.pumpAndSettle();
+
+    expect(find.text('detail page'), findsOneWidget);
+    expect(observers[0].routeNameStack, [
+      AppRoute.habits.name,
+      AppRoute.habitDetail.name,
+    ]);
+  });
+
+  testWidgets('Debugger preserves its immediate Settings source selection', (
+    tester,
+  ) async {
+    _setSurface(tester, const Size(700, 600));
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers);
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+
+    router.push('/settings');
+    await tester.pumpAndSettle();
+    router.pushNamed(AppRoute.settingsAbout.name);
+    await tester.pumpAndSettle();
+    await onDebuggerNotificationTapped();
+    await tester.pumpAndSettle();
+
+    expect(find.text('debugger page'), findsOneWidget);
+    expect(
+      tester
+          .widget<AdaptiveNavigationShell>(find.byType(AdaptiveNavigationShell))
+          .selectedAuxiliaryIndex,
+      0,
+    );
+
+    router.pop();
+    await tester.pumpAndSettle();
+
+    expect(find.text('about page'), findsOneWidget);
+  });
+
+  testWidgets('repeated Debugger notifications do not push duplicate routes', (
+    tester,
+  ) async {
+    _setCompactSurface(tester);
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers);
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+
+    await onDebuggerNotificationTapped();
+    await tester.pumpAndSettle();
+    await onDebuggerNotificationTapped();
+    await tester.pumpAndSettle();
+
+    final navigators = tester.widgetList<Navigator>(find.byType(Navigator));
+    final debuggerPages = navigators
+        .expand((navigator) => navigator.pages)
+        .where((page) => page.name == AppRoute.debugger.name);
+    expect(debuggerPages, hasLength(1));
+  });
+
   testWidgets('returns from Group Manage to the source habits detail stack', (
     tester,
   ) async {
@@ -1703,6 +1830,33 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('group manage page'), findsNothing);
+    expect(find.text('today page'), findsOneWidget);
+  });
+
+  testWidgets('rail selection closes Debugger before switching branch', (
+    tester,
+  ) async {
+    _setSurface(tester, const Size(700, 600));
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers);
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+
+    router.push('/debugger');
+    await tester.pumpAndSettle();
+    expect(find.text('debugger page'), findsOneWidget);
+
+    await tester.tap(find.byIcon(MdiIcons.calendarTodayOutline));
+    await tester.pumpAndSettle();
+
+    expect(find.text('debugger page'), findsNothing);
     expect(find.text('today page'), findsOneWidget);
   });
 

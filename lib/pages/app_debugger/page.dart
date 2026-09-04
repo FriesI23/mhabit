@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:open_file/open_file.dart' show OpenFile;
 import 'package:provider/provider.dart';
@@ -23,7 +25,8 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../common/app_info.dart';
 import '../../common/consts.dart';
-import '../../common/global.dart' show currentRouteObserver, navigatorKey;
+import '../../common/global.dart' show navigatorKey;
+import '../../extensions/adaptive_style_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../logging/level.dart';
@@ -42,13 +45,15 @@ import 'widgets.dart';
 Future<void> onDebuggerNotificationTapped() async {
   final context = navigatorKey.currentContext;
   if (context == null) return;
-  final currentRouteName = currentRouteObserver.routeName;
+  final router = GoRouter.of(context);
+  final currentRouteName =
+      router.routerDelegate.currentConfiguration.last.route.name;
   appLog.debugger.info(
     "onDebuggerNotificationTapped: navi",
     ex: [AppRoute.debugger.name, currentRouteName],
   );
   if (currentRouteName != AppRoute.debugger.name) {
-    naviToAppDebuggerPage(context: context);
+    unawaited(naviToAppDebuggerPage(context: context));
   }
 }
 
@@ -171,8 +176,13 @@ class _PageState extends State<_Page> with XShare {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const WindowControlAppBar(
-        leading: PageBackButton(),
+      appBar: AdaptiveAppBar(
+        toolbarHeight: AdaptiveStyle.of(context).appToolbarHeight,
+        title: L10nBuilder(
+          builder: (context, l10n) =>
+              Text(l10n?.appSetting_debugger_titleText ?? 'Debugger'),
+        ),
+        leading: const AdaptiveBackButton(type: AdaptiveBackButtonType.back),
         automaticallyImplyLeading: false,
       ),
       floatingActionButton: Builder(
