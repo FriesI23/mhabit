@@ -1,17 +1,52 @@
+import 'package:adaptive_actions/core.dart';
 import 'package:flutter/material.dart';
 
 import '../adaptive_style.dart';
 import '../cupertino/cupertino_sliver_search_bar.dart';
 import '../material/material_sliver_search_bar.dart';
+import 'adaptive_app_bar_actions.dart';
 
-const List<Widget> _kDefaultActions = <Widget>[];
+sealed class SliverSearchBarConfig<T extends Object> {
+  const SliverSearchBarConfig();
+}
+
+final class MaterialSliverSearchBarConfig<T extends Object>
+    extends SliverSearchBarConfig<T> {
+  const MaterialSliverSearchBarConfig({
+    this.style = const MaterialSliverSearchBarStyle(),
+    this.searchTrailing,
+    this.relocatedActionIds = const {},
+    this.actions,
+  });
+
+  final MaterialSliverSearchBarStyle style;
+  final Widget? searchTrailing;
+  final Set<ActionId> relocatedActionIds;
+  final MaterialAppBarActionsConfig<T>? actions;
+}
+
+final class CupertinoSliverSearchBarConfig<T extends Object>
+    extends SliverSearchBarConfig<T> {
+  const CupertinoSliverSearchBarConfig({
+    this.maxSearchWidth = 240.0,
+    this.bottom,
+    this.bottomExtent = 0.0,
+    this.actions,
+  }) : assert(bottom != null || bottomExtent == 0.0);
+
+  final double maxSearchWidth;
+  final Widget? bottom;
+  final double bottomExtent;
+  final CupertinoAppBarActionsConfig<T>? actions;
+}
 
 /// Adaptive sliver search bar.
 ///
-/// Must be placed in a viewport `slivers:` list. The default constructor
-/// resolves the style from the current platform; named constructors force a
-/// renderer style.
-class AdaptiveSliverSearchBar extends StatelessWidget {
+/// Shared search state and action identity stay on this facade. Platform-only
+/// presentation is grouped into [material] and [apple], matching Flutter's
+/// adaptive-widget boundary without spreading renderer-specific parameters
+/// across the common constructor.
+class AdaptiveSliverSearchBar<T extends Object> extends StatelessWidget {
   const AdaptiveSliverSearchBar({
     super.key,
     required this.title,
@@ -22,17 +57,14 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
     required this.onChanged,
     required this.onSearchActivated,
     required this.onSearchDismissed,
+    required this.collection,
+    required this.onInvoke,
     this.leading,
-    this.actions = _kDefaultActions,
-    this.searchTrailing,
     this.hintText,
     this.onSubmitted,
     this.onTapOutside,
-    this.materialStyle,
-    this.cupertinoMaxSearchWidth = 240.0,
-    this.cupertinoActions = const [],
-    this.cupertinoBottom,
-    this.cupertinoBottomExtent = 0.0,
+    this.material,
+    this.apple,
     this.pinned = true,
   }) : style = null;
 
@@ -46,18 +78,15 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
     required this.onChanged,
     required this.onSearchActivated,
     required this.onSearchDismissed,
+    required this.collection,
+    required this.onInvoke,
     this.leading,
-    this.actions = _kDefaultActions,
-    this.searchTrailing,
     this.hintText,
     this.onSubmitted,
     this.onTapOutside,
-    this.materialStyle,
+    this.material,
     this.pinned = true,
-  }) : cupertinoMaxSearchWidth = 240.0,
-       cupertinoActions = const [],
-       cupertinoBottom = null,
-       cupertinoBottomExtent = 0.0,
+  }) : apple = null,
        style = AdaptiveStyle.material;
 
   const AdaptiveSliverSearchBar.apple({
@@ -70,25 +99,22 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
     required this.onChanged,
     required this.onSearchActivated,
     required this.onSearchDismissed,
+    required this.collection,
+    required this.onInvoke,
     this.leading,
-    this.actions = _kDefaultActions,
-    this.searchTrailing,
     this.hintText,
     this.onSubmitted,
     this.onTapOutside,
-    this.cupertinoMaxSearchWidth = 240.0,
-    this.cupertinoActions = const [],
-    this.cupertinoBottom,
-    this.cupertinoBottomExtent = 0.0,
+    this.apple,
     this.pinned = true,
-  }) : materialStyle = null,
+  }) : material = null,
        style = AdaptiveStyle.apple;
 
   final AdaptiveStyle? style;
   final Widget title;
   final Widget? leading;
-  final List<Widget> actions;
-  final Widget? searchTrailing;
+  final ActionCollection<T> collection;
+  final AdaptiveAppBarActionCallback<T> onInvoke;
   final TextEditingController controller;
   final FocusNode focusNode;
   final bool isSearchActive;
@@ -99,13 +125,8 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
   final VoidCallback onSearchActivated;
   final VoidCallback onSearchDismissed;
   final TapRegionCallback? onTapOutside;
-
-  /// Material-specific visual configuration, or null for the defaults.
-  final MaterialSliverSearchBarStyle? materialStyle;
-  final double cupertinoMaxSearchWidth;
-  final List<CupertinoSliverSearchBarAction> cupertinoActions;
-  final Widget? cupertinoBottom;
-  final double cupertinoBottomExtent;
+  final MaterialSliverSearchBarConfig<T>? material;
+  final CupertinoSliverSearchBarConfig<T>? apple;
   final bool pinned;
 
   @override
@@ -117,37 +138,53 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
     };
   }
 
-  Widget _buildCupertino() => CupertinoSliverSearchBar(
-    title: title,
-    leading: leading,
-    actions: cupertinoActions,
-    fixedActions: cupertinoActions.isEmpty
-        ? <Widget>[...actions, ?searchTrailing]
-        : const <Widget>[],
-    controller: controller,
-    focusNode: focusNode,
-    isSearchActive: isSearchActive,
-    keyword: keyword,
-    hintText: hintText,
-    maxSearchWidth: cupertinoMaxSearchWidth,
-    bottom: cupertinoBottom,
-    bottomExtent: cupertinoBottomExtent,
-    pinned: pinned,
-    onChanged: onChanged,
-    onSubmitted: onSubmitted,
-    onSearchActivated: onSearchActivated,
-    onSearchDismissed: onSearchDismissed,
-    onTapOutside: onTapOutside,
-  );
+  Widget _buildCupertino() {
+    final config = apple ?? CupertinoSliverSearchBarConfig<T>();
+    return CupertinoSliverSearchBar<T>(
+      title: title,
+      leading: leading,
+      collection: collection,
+      onInvoke: onInvoke,
+      actions: config.actions,
+      controller: controller,
+      focusNode: focusNode,
+      isSearchActive: isSearchActive,
+      keyword: keyword,
+      hintText: hintText,
+      maxSearchWidth: config.maxSearchWidth,
+      bottom: config.bottom,
+      bottomExtent: config.bottomExtent,
+      pinned: pinned,
+      onChanged: onChanged,
+      onSubmitted: onSubmitted,
+      onSearchActivated: onSearchActivated,
+      onSearchDismissed: onSearchDismissed,
+      onTapOutside: onTapOutside,
+    );
+  }
 
   Widget _buildMaterial() {
-    final effectiveMaterialStyle =
-        materialStyle ?? const MaterialSliverSearchBarStyle();
+    final config = material ?? MaterialSliverSearchBarConfig<T>();
+    final appBarCollection = ActionCollection<T>(
+      roots: [
+        for (final action in collection.roots)
+          if (!config.relocatedActionIds.contains(action.id)) action,
+      ],
+    );
+    final preferredCapacity = appBarCollection.roots.length * 48.0;
     return MaterialSliverSearchBar(
       title: title,
       leading: leading,
-      actions: actions,
-      searchTrailing: searchTrailing,
+      actionsBuilder: (context, primaryCapacity) =>
+          AdaptiveAppBarActions<T>.material(
+            collection: appBarCollection,
+            onInvoke: onInvoke,
+            primaryCapacity: primaryCapacity,
+            maxPrimaryActions: appBarCollection.roots.length,
+            material: config.actions,
+          ),
+      preferredActionCapacity: preferredCapacity,
+      searchTrailing: config.searchTrailing,
       controller: controller,
       focusNode: focusNode,
       isSearchActive: isSearchActive,
@@ -158,7 +195,7 @@ class AdaptiveSliverSearchBar extends StatelessWidget {
       onSearchActivated: onSearchActivated,
       onSearchDismissed: onSearchDismissed,
       onTapOutside: onTapOutside,
-      style: effectiveMaterialStyle,
+      style: config.style,
       pinned: pinned,
     );
   }

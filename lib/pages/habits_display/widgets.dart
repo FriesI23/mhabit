@@ -15,7 +15,6 @@
 export '_widgets/habit_display_appbar.dart';
 export '_widgets/habit_display_contextual_chrome.dart';
 export '_widgets/habit_display_develop_list.dart';
-export '_widgets/habit_display_edit_mode_action.dart';
 export '_widgets/habit_display_empty_image.dart';
 export '_widgets/habit_display_group_modify_confirm_dialog.dart';
 export '_widgets/habit_display_group_modify_dialog.dart';

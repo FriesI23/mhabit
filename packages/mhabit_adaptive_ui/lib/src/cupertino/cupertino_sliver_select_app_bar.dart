@@ -4,56 +4,18 @@ import 'dart:ui' show ImageFilter;
 import 'package:adaptive_actions/cupertino.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../adaptive/adaptive_app_bar_actions.dart';
 import '../breakpoints/breakpoints.dart';
 import '../breakpoints/window_size_class.dart';
 import 'app_bar_apple_style.dart';
 import 'cupertino_sliver_app_bar.dart';
-
-const List<CupertinoSelectAction> _kDefaultActions = <CupertinoSelectAction>[];
-
-typedef CupertinoSelectPrimaryActionBuilder =
-    Widget Function(BuildContext context, VoidCallback? onPressed);
-
-enum CupertinoSelectActionPresentation { iconOnly, iconAndLabel }
-
-/// A controlled command used by the Cupertino selection surfaces.
-@immutable
-final class CupertinoSelectAction {
-  const CupertinoSelectAction({
-    required this.id,
-    required this.label,
-    required this.icon,
-    this.onPressed,
-    this.visible = true,
-    this.enabled = true,
-    this.destructive = false,
-    this.overflowOnly = false,
-    this.overflowBelowLarge = false,
-    this.retentionPriority = 0,
-    this.presentation = CupertinoSelectActionPresentation.iconOnly,
-    this.primaryBuilder,
-  });
-
-  final String id;
-  final String label;
-  final Widget icon;
-  final VoidCallback? onPressed;
-  final bool visible;
-  final bool enabled;
-  final bool destructive;
-  final bool overflowOnly;
-  final bool overflowBelowLarge;
-  final int retentionPriority;
-  final CupertinoSelectActionPresentation presentation;
-  final CupertinoSelectPrimaryActionBuilder? primaryBuilder;
-}
 
 /// Cupertino selection-mode sliver command bar.
 ///
 /// Select All and Done stay fixed at the logical edges. Compact layouts place
 /// commands in the bottom toolbar; wider layouts place them through
 /// adaptive_actions without allowing them to overlap the title.
-class CupertinoSliverSelectAppBar extends StatelessWidget {
+class CupertinoSliverSelectAppBar<T extends Object> extends StatelessWidget {
   static const double toolbarHeight = 44.0;
 
   const CupertinoSliverSelectAppBar({
@@ -63,7 +25,9 @@ class CupertinoSliverSelectAppBar extends StatelessWidget {
     required this.doneLabel,
     required this.onSelectAll,
     required this.onDone,
-    this.actions = _kDefaultActions,
+    required this.collection,
+    required this.onInvoke,
+    this.actions,
     this.style,
     this.bottom,
     this.bottomExtent = 0.0,
@@ -74,7 +38,9 @@ class CupertinoSliverSelectAppBar extends StatelessWidget {
   const CupertinoSliverSelectAppBar.view({
     super.key,
     required this.title,
-    this.actions = _kDefaultActions,
+    required this.collection,
+    required this.onInvoke,
+    this.actions,
     this.style,
     this.bottom,
     this.bottomExtent = 0.0,
@@ -91,7 +57,9 @@ class CupertinoSliverSelectAppBar extends StatelessWidget {
   final String doneLabel;
   final VoidCallback? onSelectAll;
   final VoidCallback? onDone;
-  final List<CupertinoSelectAction> actions;
+  final ActionCollection<T> collection;
+  final AdaptiveAppBarActionCallback<T> onInvoke;
+  final CupertinoAppBarActionsConfig<T>? actions;
   final AppBarAppleStyle? style;
   final Widget? bottom;
   final double bottomExtent;
@@ -111,30 +79,45 @@ class CupertinoSliverSelectAppBar extends StatelessWidget {
       bottomExtent: bottomExtent,
       style: _effectiveStyle,
       title: _viewMode
-          ? _CupertinoSelectEntryToolbar(title: title, actions: actions)
-          : _CupertinoSelectTopToolbar(
+          ? _CupertinoSelectEntryToolbar<T>(
+              title: title,
+              collection: collection,
+              onInvoke: onInvoke,
+              iconBuilder: actions?.iconBuilder,
+              actionButtonBuilder: actions?.actionButtonBuilder,
+              presentationForAction: actions?.presentationForAction,
+            )
+          : _CupertinoSelectTopToolbar<T>(
               compact: compact,
               title: title,
               selectAllLabel: selectAllLabel,
               doneLabel: doneLabel,
               onSelectAll: onSelectAll,
               onDone: onDone,
-              actions: actions,
+              collection: collection,
+              onInvoke: onInvoke,
+              iconBuilder: actions?.iconBuilder,
+              actionButtonBuilder: actions?.actionButtonBuilder,
+              presentationForAction: actions?.presentationForAction,
             ),
     );
   }
 }
 
 /// Fixed compact selection toolbar, including the bottom safe-area inset.
-class CupertinoSelectBottomToolbar extends StatelessWidget {
+class CupertinoSelectBottomToolbar<T extends Object> extends StatelessWidget {
   static const double contentHeight = 44.0;
 
   const CupertinoSelectBottomToolbar({
     super.key,
-    this.actions = _kDefaultActions,
+    required this.collection,
+    required this.onInvoke,
+    this.actions,
   });
 
-  final List<CupertinoSelectAction> actions;
+  final ActionCollection<T> collection;
+  final AdaptiveAppBarActionCallback<T> onInvoke;
+  final CupertinoAppBarActionsConfig<T>? actions;
 
   static double totalHeightOf(BuildContext context) =>
       contentHeight + MediaQuery.viewPaddingOf(context).bottom;
@@ -156,7 +139,17 @@ class CupertinoSelectBottomToolbar extends StatelessWidget {
             minimum: EdgeInsets.zero,
             child: SizedBox(
               height: contentHeight,
-              child: _CupertinoSelectBottomContent(actions: actions),
+              child: Padding(
+                padding: const EdgeInsetsDirectional.symmetric(horizontal: 8),
+                child: _CupertinoSelectActions<T>(
+                  collection: collection,
+                  onInvoke: onInvoke,
+                  iconBuilder: actions?.iconBuilder,
+                  actionButtonBuilder: actions?.actionButtonBuilder,
+                  presentationForAction: actions?.presentationForAction,
+                  layoutDelegate: const _TrailingOverflowLayoutDelegate(),
+                ),
+              ),
             ),
           ),
         ),
@@ -165,7 +158,7 @@ class CupertinoSelectBottomToolbar extends StatelessWidget {
   }
 }
 
-class _CupertinoSelectTopToolbar extends StatelessWidget {
+class _CupertinoSelectTopToolbar<T extends Object> extends StatelessWidget {
   const _CupertinoSelectTopToolbar({
     required this.compact,
     required this.title,
@@ -173,7 +166,11 @@ class _CupertinoSelectTopToolbar extends StatelessWidget {
     required this.doneLabel,
     required this.onSelectAll,
     required this.onDone,
-    required this.actions,
+    required this.collection,
+    required this.onInvoke,
+    required this.iconBuilder,
+    required this.actionButtonBuilder,
+    required this.presentationForAction,
   });
 
   final bool compact;
@@ -182,7 +179,11 @@ class _CupertinoSelectTopToolbar extends StatelessWidget {
   final String doneLabel;
   final VoidCallback? onSelectAll;
   final VoidCallback? onDone;
-  final List<CupertinoSelectAction> actions;
+  final ActionCollection<T> collection;
+  final AdaptiveAppBarActionCallback<T> onInvoke;
+  final CupertinoActionIconBuilder<T>? iconBuilder;
+  final CupertinoActionButtonBuilder<T>? actionButtonBuilder;
+  final CupertinoActionPresentationCallback<T>? presentationForAction;
 
   @override
   Widget build(BuildContext context) => SizedBox.expand(
@@ -210,9 +211,15 @@ class _CupertinoSelectTopToolbar extends StatelessWidget {
         ),
         LayoutId(
           id: _SelectToolbarSlot.actions,
-          child: _CupertinoSelectActions(
-            actions: compact ? _kDefaultActions : actions,
-          ),
+          child: compact
+              ? const SizedBox.shrink()
+              : _CupertinoSelectActions<T>(
+                  collection: collection,
+                  onInvoke: onInvoke,
+                  iconBuilder: iconBuilder,
+                  actionButtonBuilder: actionButtonBuilder,
+                  presentationForAction: presentationForAction,
+                ),
         ),
         LayoutId(
           id: _SelectToolbarSlot.trailing,
@@ -233,20 +240,28 @@ class _CupertinoSelectTopToolbar extends StatelessWidget {
   );
 }
 
-class _CupertinoSelectEntryToolbar extends StatelessWidget {
+class _CupertinoSelectEntryToolbar<T extends Object> extends StatelessWidget {
   const _CupertinoSelectEntryToolbar({
     required this.title,
-    required this.actions,
+    required this.collection,
+    required this.onInvoke,
+    required this.iconBuilder,
+    required this.actionButtonBuilder,
+    required this.presentationForAction,
   });
 
   final Widget title;
-  final List<CupertinoSelectAction> actions;
+  final ActionCollection<T> collection;
+  final AdaptiveAppBarActionCallback<T> onInvoke;
+  final CupertinoActionIconBuilder<T>? iconBuilder;
+  final CupertinoActionButtonBuilder<T>? actionButtonBuilder;
+  final CupertinoActionPresentationCallback<T>? presentationForAction;
 
   @override
   Widget build(BuildContext context) => SizedBox.expand(
     child: LayoutBuilder(
       builder: (context, constraints) {
-        final visibleCount = actions.where((action) => action.visible).length;
+        final visibleCount = collection.roots.length;
         final maxActionWidth = math.max(44.0, constraints.maxWidth - 96.0);
         return Row(
           children: [
@@ -261,26 +276,17 @@ class _CupertinoSelectEntryToolbar extends StatelessWidget {
             if (visibleCount > 0)
               ConstrainedBox(
                 constraints: BoxConstraints(maxWidth: maxActionWidth),
-                child: _CupertinoSelectActions(actions: actions),
+                child: _CupertinoSelectActions<T>(
+                  collection: collection,
+                  onInvoke: onInvoke,
+                  iconBuilder: iconBuilder,
+                  actionButtonBuilder: actionButtonBuilder,
+                  presentationForAction: presentationForAction,
+                ),
               ),
           ],
         );
       },
-    ),
-  );
-}
-
-class _CupertinoSelectBottomContent extends StatelessWidget {
-  const _CupertinoSelectBottomContent({required this.actions});
-
-  final List<CupertinoSelectAction> actions;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsetsDirectional.symmetric(horizontal: 8),
-    child: _CupertinoSelectActions(
-      actions: actions,
-      layoutDelegate: const _TrailingOverflowLayoutDelegate(),
     ),
   );
 }
@@ -385,67 +391,47 @@ class _FixedTextAction extends StatelessWidget {
   );
 }
 
-class _CupertinoSelectActions extends StatelessWidget {
-  const _CupertinoSelectActions({required this.actions, this.layoutDelegate});
+class _CupertinoSelectActions<T extends Object> extends StatelessWidget {
+  const _CupertinoSelectActions({
+    required this.collection,
+    required this.onInvoke,
+    required this.iconBuilder,
+    required this.actionButtonBuilder,
+    required this.presentationForAction,
+    this.layoutDelegate,
+  });
 
-  final List<CupertinoSelectAction> actions;
+  final ActionCollection<T> collection;
+  final AdaptiveAppBarActionCallback<T> onInvoke;
+  final CupertinoActionIconBuilder<T>? iconBuilder;
+  final CupertinoActionButtonBuilder<T>? actionButtonBuilder;
+  final CupertinoActionPresentationCallback<T>? presentationForAction;
   final ActionRegionLayoutDelegate? layoutDelegate;
 
   @override
   Widget build(BuildContext context) {
-    final visibleActions = actions.where((action) => action.visible).toList();
-    if (visibleActions.isEmpty) return const SizedBox.shrink();
+    if (collection.roots.isEmpty) return const SizedBox.shrink();
     return LayoutBuilder(
       builder: (context, constraints) {
         final capacity = constraints.maxWidth;
         if (capacity < 44.0) return const SizedBox.shrink();
-        final widthClass = Breakpoints.of(
-          context,
-        ).widthClass(MediaQuery.sizeOf(context).width);
-        final large = widthClass.index >= WindowSizeClass.large.index;
-        final actionsById = <String, CupertinoSelectAction>{
-          for (final action in visibleActions) action.id: action,
-        };
         return ClipRect(
           child: Align(
             alignment: AlignmentDirectional.centerEnd,
             widthFactor: 1,
             child: KeyedSubtree(
               key: const ValueKey('cupertino-select-adaptive-actions'),
-              child: CupertinoAdaptiveActions<VoidCallback>.moreAction(
-                key: ValueKey(('cupertino-select-tier', large)),
-                actions: ActionCollection<VoidCallback>(
-                  roots: visibleActions.map(
-                    (action) => _toAdaptiveAction(action, large: large),
-                  ),
-                ),
+              child: AdaptiveAppBarActions<T>.apple(
+                key: const ValueKey('cupertino-select-action-host'),
+                collection: collection,
                 primaryCapacity: capacity,
-                presentationForAction: (context, action) =>
-                    switch (actionsById[action.id.value]?.presentation) {
-                      CupertinoSelectActionPresentation.iconOnly =>
-                        CupertinoActionPresentation.iconOnly,
-                      CupertinoSelectActionPresentation.iconAndLabel =>
-                        CupertinoActionPresentation.extended,
-                      null => null,
-                    },
-                onInvoke: (callback) => callback(),
-                invokeAfterMenuClosed: true,
-                iconBuilder: (context, action) {
-                  final descriptor = actionsById[action.id.value];
-                  return descriptor?.icon;
-                },
-                actionButtonBuilder:
-                    (context, action, onPressed, defaultBuilder) {
-                      final descriptor = actionsById[action.id.value];
-                      final custom = descriptor?.primaryBuilder;
-                      if (custom != null) {
-                        return custom(context, onPressed);
-                      }
-                      return defaultBuilder(context, action, onPressed);
-                    },
+                onInvoke: onInvoke,
+                apple: CupertinoAppBarActionsConfig<T>(
+                  presentationForAction: presentationForAction,
+                  iconBuilder: iconBuilder,
+                  actionButtonBuilder: actionButtonBuilder,
+                ),
                 layoutDelegate: layoutDelegate,
-                fadeDuration: Duration.zero,
-                resizeDuration: Duration.zero,
               ),
             ),
           ),
@@ -476,27 +462,3 @@ final class _TrailingOverflowLayoutDelegate
     return ActionRegionLayoutPlan(entries: entries);
   }
 }
-
-AdaptiveAction<VoidCallback> _toAdaptiveAction(
-  CupertinoSelectAction action, {
-  required bool large,
-}) => AdaptiveAction<VoidCallback>.action(
-  id: ActionId(action.id),
-  metadata: ActionMetadata(
-    label: action.label,
-    tooltip: action.label,
-    iconKey: action.id,
-    isDestructive: action.destructive,
-  ),
-  payload: action.onPressed ?? () {},
-  isEnabled: action.enabled && action.onPressed != null,
-  placementPolicy: action.overflowOnly || (action.overflowBelowLarge && !large)
-      ? ActionPlacementPolicy(placement: ActionPlacement.overflowOnly)
-      : ActionPlacementPolicy(
-          automaticPreference: AutomaticPlacementPreference(
-            retentionPriority: PrimaryRetentionPriority.custom(
-              action.retentionPriority,
-            ),
-          ),
-        ),
-);

@@ -33,48 +33,6 @@ import 'sliver_calendar_bar.dart';
 import 'sliver_select_top_app_bar.dart';
 import 'sliver_top_app_bar.dart';
 
-typedef HabitDisplayContextCallback = void Function(BuildContext context);
-
-class HabitDisplayViewAppBarCallbacks {
-  const HabitDisplayViewAppBarCallbacks({
-    this.onInfo,
-    this.onSettings,
-    this.onOpenSettings,
-    this.onSelect,
-  });
-
-  final VoidCallback? onInfo;
-  final VoidCallback? onSettings;
-  final VoidCallback? onOpenSettings;
-  final VoidCallback? onSelect;
-}
-
-class HabitDisplaySelectAppBarCallbacks {
-  const HabitDisplaySelectAppBarCallbacks({
-    this.onDone,
-    this.onSelectAll,
-    this.onEdit,
-    this.onUnarchive,
-    this.onArchive,
-    this.onClone,
-    this.onExport,
-    this.onDelete,
-    this.onGroupModify,
-    this.onStatusModify,
-  });
-
-  final VoidCallback? onDone;
-  final VoidCallback? onSelectAll;
-  final VoidCallback? onEdit;
-  final VoidCallback? onUnarchive;
-  final VoidCallback? onArchive;
-  final VoidCallback? onClone;
-  final HabitDisplayContextCallback? onExport;
-  final VoidCallback? onDelete;
-  final VoidCallback? onGroupModify;
-  final VoidCallback? onStatusModify;
-}
-
 enum _HabitDisplayAppBarMode { view, search, select }
 
 class HabitDisplayAppBar extends StatelessWidget {
@@ -91,6 +49,7 @@ class HabitDisplayAppBar extends StatelessWidget {
     this.horizonalScrollControllerGroup,
     this.searchFilterMenuController,
     this.onCalendarToggleExpandPressed,
+    this.showSelectAction,
   });
 
   final HabitListTileGeometry geometry;
@@ -104,6 +63,7 @@ class HabitDisplayAppBar extends StatelessWidget {
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
   final MenuController? searchFilterMenuController;
   final ValueChanged<bool>? onCalendarToggleExpandPressed;
+  final bool? showSelectAction;
 
   @override
   Widget build(BuildContext context) {
@@ -138,6 +98,7 @@ class HabitDisplayAppBar extends StatelessWidget {
         searchFilterMenuController: searchFilterMenuController,
         viewCallbacks: viewCallbacks,
         selectCallbacks: selectCallbacks,
+        showSelectAction: showSelectAction,
       ),
       AdaptiveStyle.apple => _AppleHabitDisplayAppBar(
         mode: mode,
@@ -146,6 +107,7 @@ class HabitDisplayAppBar extends StatelessWidget {
         searchFilterMenuController: searchFilterMenuController,
         viewCallbacks: viewCallbacks,
         selectCallbacks: selectCallbacks,
+        showSelectAction: showSelectAction,
       ),
     };
   }
@@ -160,6 +122,7 @@ class _MaterialHabitDisplayAppBar extends StatelessWidget {
     required this.searchFilterMenuController,
     required this.viewCallbacks,
     required this.selectCallbacks,
+    required this.showSelectAction,
   });
 
   final _HabitDisplayAppBarMode mode;
@@ -169,15 +132,15 @@ class _MaterialHabitDisplayAppBar extends StatelessWidget {
   final MenuController? searchFilterMenuController;
   final HabitDisplayViewAppBarCallbacks viewCallbacks;
   final HabitDisplaySelectAppBarCallbacks selectCallbacks;
+  final bool? showSelectAction;
 
   @override
   Widget build(BuildContext context) {
     final appBar = switch (mode) {
       _HabitDisplayAppBarMode.view => SliverViewTopAppBar(
         height: toolbarHeight,
-        onInfoButtonPressed: viewCallbacks.onInfo,
-        onMenuButtonPressed: viewCallbacks.onSettings,
-        onOpenSettingsPressed: viewCallbacks.onOpenSettings,
+        callbacks: viewCallbacks,
+        showSelectAction: showSelectAction,
       ),
       _HabitDisplayAppBarMode.search => SliverSearchTopAppBar.material(
         searchFilterMenuController: searchFilterMenuController,
@@ -185,18 +148,11 @@ class _MaterialHabitDisplayAppBar extends StatelessWidget {
         onMenuButtonPressed: viewCallbacks.onSettings,
         onOpenSettingsPressed: viewCallbacks.onOpenSettings,
         onSelectButtonPressed: viewCallbacks.onSelect,
+        showSelectAction: showSelectAction,
       ),
       _HabitDisplayAppBarMode.select => MaterialSliverSelectAppBar(
         height: toolbarHeight,
-        onDone: selectCallbacks.onDone,
-        onSelectAll: selectCallbacks.onSelectAll,
-        onEdit: selectCallbacks.onEdit,
-        onUnarchive: selectCallbacks.onUnarchive,
-        onArchive: selectCallbacks.onArchive,
-        onClone: selectCallbacks.onClone,
-        onExport: selectCallbacks.onExport,
-        onDelete: selectCallbacks.onDelete,
-        onGroupModify: selectCallbacks.onGroupModify,
+        callbacks: selectCallbacks,
       ),
     };
     return MultiSliver(
@@ -221,6 +177,7 @@ class _AppleHabitDisplayAppBar extends StatelessWidget {
     required this.searchFilterMenuController,
     required this.viewCallbacks,
     required this.selectCallbacks,
+    required this.showSelectAction,
   });
 
   final _HabitDisplayAppBarMode mode;
@@ -229,16 +186,15 @@ class _AppleHabitDisplayAppBar extends StatelessWidget {
   final MenuController? searchFilterMenuController;
   final HabitDisplayViewAppBarCallbacks viewCallbacks;
   final HabitDisplaySelectAppBarCallbacks selectCallbacks;
+  final bool? showSelectAction;
 
   @override
   Widget build(BuildContext context) {
     final combinesBars = mode != _HabitDisplayAppBarMode.view;
     final appBar = switch (mode) {
       _HabitDisplayAppBarMode.view => AppleSliverViewTopAppBar(
-        onSelect: viewCallbacks.onSelect,
-        onInfo: viewCallbacks.onInfo,
-        onSettings: viewCallbacks.onSettings,
-        onOpenSettings: viewCallbacks.onOpenSettings,
+        callbacks: viewCallbacks,
+        showSelectAction: showSelectAction,
       ),
       _HabitDisplayAppBarMode.search => SliverSearchTopAppBar.apple(
         searchFilterMenuController: searchFilterMenuController,
@@ -246,20 +202,12 @@ class _AppleHabitDisplayAppBar extends StatelessWidget {
         onMenuButtonPressed: viewCallbacks.onSettings,
         onOpenSettingsPressed: viewCallbacks.onOpenSettings,
         onSelectButtonPressed: viewCallbacks.onSelect,
+        showSelectAction: showSelectAction,
         cupertinoBottom: calendarContent,
         cupertinoBottomExtent: calendarHeight,
       ),
       _HabitDisplayAppBarMode.select => AppleSliverSelectAppBar(
-        onDone: selectCallbacks.onDone,
-        onSelectAll: selectCallbacks.onSelectAll,
-        onEdit: selectCallbacks.onEdit,
-        onUnarchive: selectCallbacks.onUnarchive,
-        onArchive: selectCallbacks.onArchive,
-        onClone: selectCallbacks.onClone,
-        onExport: selectCallbacks.onExport,
-        onDelete: selectCallbacks.onDelete,
-        onGroupModify: selectCallbacks.onGroupModify,
-        onStatusModify: selectCallbacks.onStatusModify,
+        callbacks: selectCallbacks,
         bottom: calendarContent,
         bottomExtent: calendarHeight,
       ),

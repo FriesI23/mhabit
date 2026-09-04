@@ -139,27 +139,30 @@ class HabitDetailAppBarActions extends StatelessWidget {
           primaryCapacity: actionLayout.primaryCapacity,
           maxPrimaryActions: actionLayout.maxPrimaryActions,
           onInvoke: onInvoke,
-          materialIconBuilder: (context, action) =>
-              Icon(switch (action.payload) {
-                HabitDetailAppBarAction.edit => Icons.edit_rounded,
-                HabitDetailAppBarAction.unarchive => Icons.unarchive_rounded,
-                HabitDetailAppBarAction.archive => Icons.archive_outlined,
-                HabitDetailAppBarAction.clone => Icons.copy_rounded,
-                HabitDetailAppBarAction.export => MdiIcons.export,
-                HabitDetailAppBarAction.delete => Icons.delete_outline,
-                null => Icons.more_horiz,
-              }, color: color),
-          appleIconBuilder: (context, action) => Icon(switch (action.payload) {
-            HabitDetailAppBarAction.edit => CupertinoIcons.pencil,
-            HabitDetailAppBarAction.unarchive => CupertinoIcons.tray_arrow_up,
-            HabitDetailAppBarAction.archive => CupertinoIcons.archivebox,
-            HabitDetailAppBarAction.clone => CupertinoIcons.square_on_square,
-            HabitDetailAppBarAction.export => CupertinoIcons.share_up,
-            HabitDetailAppBarAction.delete => CupertinoIcons.delete,
-            null => CupertinoIcons.ellipsis,
-          }, color: color),
-          materialOverflowIcon: Icon(Icons.adaptive.more, color: color),
-          appleOverflowIcon: Icon(CupertinoIcons.ellipsis, color: color),
+          material: MaterialAppBarActionsConfig(
+            iconBuilder: (context, action) => Icon(switch (action.payload) {
+              HabitDetailAppBarAction.edit => Icons.edit_rounded,
+              HabitDetailAppBarAction.unarchive => Icons.unarchive_rounded,
+              HabitDetailAppBarAction.archive => Icons.archive_outlined,
+              HabitDetailAppBarAction.clone => Icons.copy_rounded,
+              HabitDetailAppBarAction.export => MdiIcons.export,
+              HabitDetailAppBarAction.delete => Icons.delete_outline,
+              null => Icons.more_horiz,
+            }, color: color),
+            overflowIcon: Icon(Icons.adaptive.more, color: color),
+          ),
+          apple: CupertinoAppBarActionsConfig(
+            iconBuilder: (context, action) => Icon(switch (action.payload) {
+              HabitDetailAppBarAction.edit => CupertinoIcons.pencil,
+              HabitDetailAppBarAction.unarchive => CupertinoIcons.tray_arrow_up,
+              HabitDetailAppBarAction.archive => CupertinoIcons.archivebox,
+              HabitDetailAppBarAction.clone => CupertinoIcons.square_on_square,
+              HabitDetailAppBarAction.export => CupertinoIcons.share_up,
+              HabitDetailAppBarAction.delete => CupertinoIcons.delete,
+              null => CupertinoIcons.ellipsis,
+            }, color: color),
+            overflowIcon: Icon(CupertinoIcons.ellipsis, color: color),
+          ),
         );
       },
     );

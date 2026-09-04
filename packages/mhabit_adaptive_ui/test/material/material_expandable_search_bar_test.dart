@@ -67,9 +67,6 @@ void main() {
     final region = find.byKey(const ValueKey('expandable-search-region'));
     expect(tester.getSize(region).width, 48);
     expect(find.byType(SearchBar), findsNothing);
-    final collapsedRegion = tester.widget<AnimatedContainer>(region);
-    expect(collapsedRegion.duration, Duration.zero);
-    expect(collapsedRegion.curve, Easing.standard);
 
     await tester.tap(find.byKey(const ValueKey('activate-search')));
     expect(activations, 1);
@@ -81,10 +78,6 @@ void main() {
         onActivated: () => activations++,
         onDismissed: () => dismissals++,
       ),
-    );
-    expect(
-      tester.widget<AnimatedContainer>(region).duration,
-      const Duration(milliseconds: 300),
     );
     await tester.pump(const Duration(milliseconds: 150));
 
@@ -134,6 +127,27 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('compact collapsed title is vertically centered with search', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        expanded: false,
+        width: 220,
+        controller: controller,
+        focusNode: focusNode,
+        onActivated: () => activations++,
+        onDismissed: () => dismissals++,
+      ),
+    );
+
+    final titleCenter = tester.getCenter(find.text('Habits')).dy;
+    final searchCenter = tester
+        .getCenter(find.byKey(const ValueKey('activate-search')))
+        .dy;
+    expect(titleCenter, closeTo(searchCenter, 0.5));
+  });
+
   testWidgets('expanded width follows resized constraints without animation', (
     tester,
   ) async {
@@ -166,6 +180,54 @@ void main() {
 
     expect(tester.getSize(region).width, 280);
     expect(tester.getSize(title).width, 0);
-    expect(tester.widget<AnimatedContainer>(region).duration, Duration.zero);
+  });
+
+  testWidgets('animates while expansion changes the available width', (
+    tester,
+  ) async {
+    final region = find.byKey(const ValueKey('expandable-search-region'));
+    await tester.pumpWidget(
+      _host(
+        expanded: false,
+        width: 220,
+        controller: controller,
+        focusNode: focusNode,
+        onActivated: () => activations++,
+        onDismissed: () => dismissals++,
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        expanded: true,
+        width: 400,
+        controller: controller,
+        focusNode: focusNode,
+        onActivated: () => activations++,
+        onDismissed: () => dismissals++,
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 150));
+    expect(tester.getSize(region).width, greaterThan(48));
+    expect(tester.getSize(region).width, lessThan(312));
+    await tester.pumpAndSettle();
+
+    await tester.pumpWidget(
+      _host(
+        expanded: false,
+        width: 220,
+        controller: controller,
+        focusNode: focusNode,
+        onActivated: () => activations++,
+        onDismissed: () => dismissals++,
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 150));
+    expect(tester.getSize(region).width, greaterThan(48));
+    expect(tester.getSize(region).width, lessThan(220));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SearchBar), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 }

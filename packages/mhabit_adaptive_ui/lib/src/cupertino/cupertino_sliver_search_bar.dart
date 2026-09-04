@@ -4,6 +4,7 @@ import 'package:adaptive_actions/cupertino.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Easing;
 
+import '../adaptive/adaptive_app_bar_actions.dart';
 import '../breakpoints/breakpoints.dart';
 import '../breakpoints/window_size_class.dart';
 import '../shell/navigation_sidebar_app_bar_leading.dart';
@@ -14,71 +15,6 @@ import 'cupertino_toolbar_padding.dart';
 typedef _CupertinoSearchOverflowPressed =
     void Function(bool searchExpanded, VoidCallback openOverflowMenu);
 
-const List<CupertinoSliverSearchBarAction> _kDefaultActions =
-    <CupertinoSliverSearchBarAction>[];
-const List<CupertinoSliverSearchBarMenuEntry> _kDefaultChildActions =
-    <CupertinoSliverSearchBarMenuEntry>[];
-const List<Widget> _kDefaultFixedActions = <Widget>[];
-
-typedef CupertinoSliverSearchBarPrimaryActionBuilder =
-    Widget Function(BuildContext context);
-
-enum CupertinoSliverSearchBarActionPresentation { iconOnly, iconAndLabel }
-
-/// An action or visual divider inside a Cupertino search-bar action menu.
-sealed class CupertinoSliverSearchBarMenuEntry {
-  const CupertinoSliverSearchBarMenuEntry();
-}
-
-/// A visual divider between Cupertino search-bar menu action groups.
-@immutable
-final class CupertinoSliverSearchBarMenuDivider
-    extends CupertinoSliverSearchBarMenuEntry {
-  const CupertinoSliverSearchBarMenuDivider();
-}
-
-/// A semantic toolbar action that can move between the Cupertino navigation
-/// bar and its overflow menu.
-@immutable
-final class CupertinoSliverSearchBarAction
-    extends CupertinoSliverSearchBarMenuEntry {
-  const CupertinoSliverSearchBarAction({
-    required this.id,
-    required this.label,
-    required this.icon,
-    this.subtitle,
-    this.onPressed,
-    this.children = _kDefaultChildActions,
-    this.tooltip,
-    this.isEnabled = true,
-    this.isDestructive = false,
-    this.overflowOnly = false,
-    this.retentionPriority = 0,
-    this.presentation = CupertinoSliverSearchBarActionPresentation.iconOnly,
-    this.primaryBuilder,
-  }) : assert(onPressed != null || children.length > 0);
-
-  final String id;
-  final String label;
-  final String? subtitle;
-  final String? tooltip;
-  final Widget icon;
-  final VoidCallback? onPressed;
-  final List<CupertinoSliverSearchBarMenuEntry> children;
-  final bool isEnabled;
-  final bool isDestructive;
-  final bool overflowOnly;
-
-  /// Higher values keep the action in the toolbar for longer.
-  final int retentionPriority;
-
-  /// The width profile used for primary placement resolution.
-  final CupertinoSliverSearchBarActionPresentation presentation;
-
-  /// Optional primary-only presentation. Overflow remains renderer-owned.
-  final CupertinoSliverSearchBarPrimaryActionBuilder? primaryBuilder;
-}
-
 /// Cupertino presentation for an inline, sliver-based search command bar.
 ///
 /// Search remains at the trailing edge. Compact layouts expand a button toward
@@ -87,7 +23,7 @@ final class CupertinoSliverSearchBarAction
 /// The bar always uses the fixed Cupertino toolbar height and never introduces
 /// a large title.
 /// Business state and the text controller stay with the caller.
-class CupertinoSliverSearchBar extends StatefulWidget {
+class CupertinoSliverSearchBar<T extends Object> extends StatefulWidget {
   static const double toolbarHeight = 44.0;
 
   const CupertinoSliverSearchBar({
@@ -101,8 +37,9 @@ class CupertinoSliverSearchBar extends StatefulWidget {
     required this.onSearchActivated,
     required this.onSearchDismissed,
     this.leading,
-    this.actions = _kDefaultActions,
-    this.fixedActions = _kDefaultFixedActions,
+    required this.collection,
+    required this.onInvoke,
+    this.actions,
     this.hintText,
     this.onSubmitted,
     this.onTapOutside,
@@ -115,11 +52,9 @@ class CupertinoSliverSearchBar extends StatefulWidget {
 
   final Widget title;
   final Widget? leading;
-  final List<CupertinoSliverSearchBarAction> actions;
-
-  /// Compatibility path for callers that still provide presentation-only
-  /// widgets. Semantic [actions] should be preferred when overflow is needed.
-  final List<Widget> fixedActions;
+  final ActionCollection<T> collection;
+  final AdaptiveAppBarActionCallback<T> onInvoke;
+  final CupertinoAppBarActionsConfig<T>? actions;
   final TextEditingController controller;
   final FocusNode focusNode;
   final bool isSearchActive;
@@ -136,11 +71,12 @@ class CupertinoSliverSearchBar extends StatefulWidget {
   final bool pinned;
 
   @override
-  State<CupertinoSliverSearchBar> createState() =>
-      _CupertinoSliverSearchBarState();
+  State<CupertinoSliverSearchBar<T>> createState() =>
+      _CupertinoSliverSearchBarState<T>();
 }
 
-class _CupertinoSliverSearchBarState extends State<CupertinoSliverSearchBar> {
+class _CupertinoSliverSearchBarState<T extends Object>
+    extends State<CupertinoSliverSearchBar<T>> {
   static const double _toolbarItemExtent = 44.0;
 
   late bool _expanded;
@@ -156,7 +92,7 @@ class _CupertinoSliverSearchBarState extends State<CupertinoSliverSearchBar> {
   }
 
   @override
-  void didUpdateWidget(CupertinoSliverSearchBar oldWidget) {
+  void didUpdateWidget(CupertinoSliverSearchBar<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.focusNode != oldWidget.focusNode) {
       oldWidget.focusNode.removeListener(_handleFocusChanged);
@@ -283,8 +219,12 @@ class _CupertinoSliverSearchBarState extends State<CupertinoSliverSearchBar> {
                     preferPersistentSearch: isLarge,
                     sidebarLeading: sidebarLeading,
                     leading: widget.leading,
-                    actions: widget.actions,
-                    fixedActions: widget.fixedActions,
+                    collection: widget.collection,
+                    onInvoke: widget.onInvoke,
+                    iconBuilder: widget.actions?.iconBuilder,
+                    actionButtonBuilder: widget.actions?.actionButtonBuilder,
+                    presentationForAction:
+                        widget.actions?.presentationForAction,
                     manuallyExpanded: _expanded,
                     controller: widget.controller,
                     focusNode: widget.focusNode,
@@ -343,7 +283,7 @@ class _CupertinoSearchToolbarDelegate extends SliverPersistentHeaderDelegate {
       extent != oldDelegate.extent || child != oldDelegate.child;
 }
 
-class _CupertinoSearchToolbar extends StatelessWidget {
+class _CupertinoSearchToolbar<T extends Object> extends StatelessWidget {
   static const double _minimumTitleExtent = 96.0;
   static const double _titleHorizontalPadding = 20.0;
 
@@ -354,8 +294,11 @@ class _CupertinoSearchToolbar extends StatelessWidget {
     required this.preferPersistentSearch,
     required this.sidebarLeading,
     required this.leading,
-    required this.actions,
-    required this.fixedActions,
+    required this.collection,
+    required this.onInvoke,
+    required this.iconBuilder,
+    required this.actionButtonBuilder,
+    required this.presentationForAction,
     required this.manuallyExpanded,
     required this.controller,
     required this.focusNode,
@@ -376,8 +319,11 @@ class _CupertinoSearchToolbar extends StatelessWidget {
   final bool preferPersistentSearch;
   final NavigationSidebarAppBarLeading? sidebarLeading;
   final Widget? leading;
-  final List<CupertinoSliverSearchBarAction> actions;
-  final List<Widget> fixedActions;
+  final ActionCollection<T> collection;
+  final AdaptiveAppBarActionCallback<T> onInvoke;
+  final CupertinoActionIconBuilder<T>? iconBuilder;
+  final CupertinoActionButtonBuilder<T>? actionButtonBuilder;
+  final CupertinoActionPresentationCallback<T>? presentationForAction;
   final bool manuallyExpanded;
   final TextEditingController controller;
   final FocusNode focusNode;
@@ -433,15 +379,15 @@ class _CupertinoSearchToolbar extends StatelessWidget {
             itemExtent: itemExtent,
           );
           final leadingWidth = leadingRegion.width;
-          final fixedActionWidth = fixedActions.length * itemExtent;
           final contentWidth = math.max(
             0.0,
             constraints.maxWidth - insets.start - insets.end,
           );
           final availableWidth = math.max(0.0, contentWidth - leadingWidth);
-          final fullActionWidth =
-              actions.length * itemExtent + fixedActionWidth;
-          final minimumAdaptiveWidth = actions.isEmpty ? 0.0 : itemExtent;
+          final fullActionWidth = collection.roots.length * itemExtent;
+          final minimumAdaptiveWidth = collection.roots.isEmpty
+              ? 0.0
+              : itemExtent;
           final automaticSearchWidth = math.max(
             0.0,
             availableWidth - fullActionWidth,
@@ -461,10 +407,7 @@ class _CupertinoSearchToolbar extends StatelessWidget {
               : itemExtent;
           final searchWidth = math.min(
             preferredSearchWidth,
-            math.max(
-              0.0,
-              availableWidth - fixedActionWidth - minimumAdaptiveWidth,
-            ),
+            math.max(0.0, availableWidth - minimumAdaptiveWidth),
           );
           final showCenteredTitle = showTitle && centerTitle && !expanded;
           final centeredTitleActionLimit = showCenteredTitle
@@ -486,15 +429,18 @@ class _CupertinoSearchToolbar extends StatelessWidget {
                     SizedBox(width: insets.start),
                     leadingRegion,
                     Expanded(
-                      child: _CupertinoCommandRegion(
+                      child: _CupertinoCommandRegion<T>(
                         title: title,
                         showTitle: showTitle && !centerTitle,
                         maxActionRegionWidth: centeredTitleActionLimit,
                         preferredTitleExtent: expanded
                             ? 0.0
                             : preferredTitleExtent,
-                        actions: actions,
-                        fixedActions: fixedActions,
+                        collection: collection,
+                        onInvoke: onInvoke,
+                        iconBuilder: iconBuilder,
+                        actionButtonBuilder: actionButtonBuilder,
+                        presentationForAction: presentationForAction,
                         searchExpanded: expanded,
                         onOverflowMenuOpened: onOverflowMenuOpened,
                         onOverflowMenuClosed: onOverflowMenuClosed,
@@ -574,7 +520,7 @@ class _CupertinoSearchToolbarLeading extends StatelessWidget {
   }
 }
 
-class _CupertinoCommandRegion extends StatelessWidget {
+class _CupertinoCommandRegion<T extends Object> extends StatelessWidget {
   static const double _minimumTitleExtent = 96.0;
   static const double _compactTitleStartPadding = 10.0;
 
@@ -583,8 +529,11 @@ class _CupertinoCommandRegion extends StatelessWidget {
     required this.showTitle,
     required this.maxActionRegionWidth,
     required this.preferredTitleExtent,
-    required this.actions,
-    required this.fixedActions,
+    required this.collection,
+    required this.onInvoke,
+    required this.iconBuilder,
+    required this.actionButtonBuilder,
+    required this.presentationForAction,
     required this.searchExpanded,
     required this.onOverflowMenuOpened,
     required this.onOverflowMenuClosed,
@@ -595,8 +544,11 @@ class _CupertinoCommandRegion extends StatelessWidget {
   final bool showTitle;
   final double? maxActionRegionWidth;
   final double preferredTitleExtent;
-  final List<CupertinoSliverSearchBarAction> actions;
-  final List<Widget> fixedActions;
+  final ActionCollection<T> collection;
+  final AdaptiveAppBarActionCallback<T> onInvoke;
+  final CupertinoActionIconBuilder<T>? iconBuilder;
+  final CupertinoActionButtonBuilder<T>? actionButtonBuilder;
+  final CupertinoActionPresentationCallback<T>? presentationForAction;
   final bool searchExpanded;
   final VoidCallback? onOverflowMenuOpened;
   final VoidCallback? onOverflowMenuClosed;
@@ -606,30 +558,30 @@ class _CupertinoCommandRegion extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
       const itemExtent = _CupertinoSliverSearchBarState._toolbarItemExtent;
-      final fixedActionWidth = fixedActions.length * itemExtent;
       final actionRegionBudget = math.min(
         constraints.maxWidth,
         maxActionRegionWidth ?? constraints.maxWidth,
       );
-      final actionBudget = math.max(0.0, actionRegionBudget - fixedActionWidth);
-      final minimumAdaptiveCapacity = actions.isEmpty ? 0.0 : itemExtent;
+      final actionBudget = math.max(0.0, actionRegionBudget);
+      final minimumAdaptiveCapacity = collection.roots.isEmpty
+          ? 0.0
+          : itemExtent;
       final titlePreservingCapacity = math.max(
         minimumAdaptiveCapacity,
         actionBudget - preferredTitleExtent,
       );
-      final rawAdaptiveCapacity = showTitle
+      final rawAdaptiveCapacity = collection.roots.isEmpty
+          ? 0.0
+          : showTitle
           ? math.min(
-              actions.length * itemExtent,
+              collection.roots.length * itemExtent,
               math.min(actionBudget, titlePreservingCapacity),
             )
           : actionBudget;
       final adaptiveCapacity = rawAdaptiveCapacity < itemExtent
           ? 0.0
           : rawAdaptiveCapacity;
-      final actionRegionWidth = math.min(
-        actionRegionBudget,
-        adaptiveCapacity + fixedActionWidth,
-      );
+      final actionRegionWidth = math.min(actionRegionBudget, adaptiveCapacity);
       final availableTitleWidth = math.max(
         0.0,
         constraints.maxWidth - actionRegionWidth,
@@ -671,20 +623,17 @@ class _CupertinoCommandRegion extends StatelessWidget {
                 width: actionRegionWidth,
                 top: 0,
                 bottom: 0,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (actions.isNotEmpty && adaptiveCapacity > 0)
-                      _CupertinoSearchActions(
-                        actions: actions,
-                        primaryCapacity: adaptiveCapacity,
-                        searchExpanded: searchExpanded,
-                        onOverflowMenuOpened: onOverflowMenuOpened,
-                        onOverflowMenuClosed: onOverflowMenuClosed,
-                        onOverflowPressed: onOverflowPressed,
-                      ),
-                    ...fixedActions,
-                  ],
+                child: _CupertinoSearchActions<T>(
+                  collection: collection,
+                  onInvoke: onInvoke,
+                  iconBuilder: iconBuilder,
+                  actionButtonBuilder: actionButtonBuilder,
+                  presentationForAction: presentationForAction,
+                  primaryCapacity: adaptiveCapacity,
+                  searchExpanded: searchExpanded,
+                  onOverflowMenuOpened: onOverflowMenuOpened,
+                  onOverflowMenuClosed: onOverflowMenuClosed,
+                  onOverflowPressed: onOverflowPressed,
                 ),
               ),
           ],
@@ -694,9 +643,13 @@ class _CupertinoCommandRegion extends StatelessWidget {
   );
 }
 
-class _CupertinoSearchActions extends StatelessWidget {
+class _CupertinoSearchActions<T extends Object> extends StatelessWidget {
   const _CupertinoSearchActions({
-    required this.actions,
+    required this.collection,
+    required this.onInvoke,
+    required this.iconBuilder,
+    required this.actionButtonBuilder,
+    required this.presentationForAction,
     required this.primaryCapacity,
     required this.searchExpanded,
     required this.onOverflowMenuOpened,
@@ -704,7 +657,11 @@ class _CupertinoSearchActions extends StatelessWidget {
     required this.onOverflowPressed,
   });
 
-  final List<CupertinoSliverSearchBarAction> actions;
+  final ActionCollection<T> collection;
+  final AdaptiveAppBarActionCallback<T> onInvoke;
+  final CupertinoActionIconBuilder<T>? iconBuilder;
+  final CupertinoActionButtonBuilder<T>? actionButtonBuilder;
+  final CupertinoActionPresentationCallback<T>? presentationForAction;
   final double primaryCapacity;
   final bool searchExpanded;
   final VoidCallback? onOverflowMenuOpened;
@@ -713,10 +670,6 @@ class _CupertinoSearchActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final actionsById = _indexActions(actions);
-    final collection = ActionCollection<VoidCallback>(
-      roots: actions.map(_toAdaptiveAction),
-    );
     final pointsRight =
         searchExpanded == (Directionality.of(context) == TextDirection.ltr);
     final overflowIcon = Icon(
@@ -736,35 +689,24 @@ class _CupertinoSearchActions extends StatelessWidget {
           alignment: AlignmentDirectional.centerEnd,
           minWidth: 0,
           maxWidth: double.infinity,
-          child: CupertinoAdaptiveActions<VoidCallback>.moreAction(
+          child: AdaptiveAppBarActions<T>.apple(
             key: const ValueKey('cupertino-search-adaptive-actions'),
-            actions: collection,
+            collection: collection,
             primaryCapacity: primaryCapacity,
-            presentationForAction: (context, action) =>
-                switch (actionsById[action.id.value]?.presentation) {
-                  CupertinoSliverSearchBarActionPresentation.iconOnly =>
-                    CupertinoActionPresentation.iconOnly,
-                  CupertinoSliverSearchBarActionPresentation.iconAndLabel =>
-                    CupertinoActionPresentation.extended,
-                  null => null,
-                },
-            onInvoke: (callback) => callback(),
-            onOverflowMenuOpened: onOverflowMenuOpened,
-            onOverflowMenuClosed: onOverflowMenuClosed,
-            invokeAfterMenuClosed: true,
-            iconBuilder: (context, action) =>
-                actionsById[action.id.value]?.icon,
-            actionButtonBuilder: (context, action, onPressed, defaultBuilder) {
-              final descriptor = actionsById[action.id.value];
-              return descriptor?.primaryBuilder?.call(context) ??
-                  defaultBuilder(context, action, onPressed);
-            },
-            overflowButtonBuilder: (context, onPressed, defaultBuilder) =>
-                defaultBuilder(
-                  context,
-                  () => onOverflowPressed(searchExpanded, onPressed),
-                  icon: overflowIcon,
-                ),
+            onInvoke: onInvoke,
+            apple: CupertinoAppBarActionsConfig<T>(
+              presentationForAction: presentationForAction,
+              onOverflowMenuOpened: onOverflowMenuOpened,
+              onOverflowMenuClosed: onOverflowMenuClosed,
+              iconBuilder: iconBuilder,
+              actionButtonBuilder: actionButtonBuilder,
+              overflowButtonBuilder: (context, onPressed, defaultBuilder) =>
+                  defaultBuilder(
+                    context,
+                    () => onOverflowPressed(searchExpanded, onPressed),
+                    icon: overflowIcon,
+                  ),
+            ),
             fadeDuration: const Duration(milliseconds: 300),
             resizeDuration: const Duration(milliseconds: 300),
           ),
@@ -773,80 +715,6 @@ class _CupertinoSearchActions extends StatelessWidget {
     );
   }
 }
-
-Map<String, CupertinoSliverSearchBarAction> _indexActions(
-  Iterable<CupertinoSliverSearchBarAction> roots,
-) {
-  final result = <String, CupertinoSliverSearchBarAction>{};
-  void visit(CupertinoSliverSearchBarAction action) {
-    result[action.id] = action;
-    for (final child in action.children) {
-      if (child case final CupertinoSliverSearchBarAction childAction) {
-        visit(childAction);
-      }
-    }
-  }
-
-  roots.forEach(visit);
-  return result;
-}
-
-AdaptiveAction<VoidCallback> _toAdaptiveAction(
-  CupertinoSliverSearchBarAction action,
-) {
-  final metadata = ActionMetadata(
-    label: action.label,
-    subtitle: action.subtitle,
-    tooltip: action.tooltip,
-    iconKey: action.id,
-    isDestructive: action.isDestructive,
-  );
-  final placementPolicy = action.overflowOnly
-      ? ActionPlacementPolicy(placement: ActionPlacement.overflowOnly)
-      : ActionPlacementPolicy(
-          automaticPreference: AutomaticPlacementPreference(
-            retentionPriority: PrimaryRetentionPriority.custom(
-              action.retentionPriority,
-            ),
-          ),
-        );
-  final children = action.children.map(_toAdaptiveMenuEntry);
-  final onPressed = action.onPressed;
-  if (action.children.isEmpty) {
-    return AdaptiveAction<VoidCallback>.action(
-      id: ActionId(action.id),
-      metadata: metadata,
-      payload: onPressed!,
-      isEnabled: action.isEnabled,
-      placementPolicy: placementPolicy,
-    );
-  }
-  if (onPressed == null) {
-    return AdaptiveAction<VoidCallback>.menu(
-      id: ActionId(action.id),
-      metadata: metadata,
-      children: children,
-      isEnabled: action.isEnabled,
-      placementPolicy: placementPolicy,
-    );
-  }
-  return AdaptiveAction<VoidCallback>.composite(
-    id: ActionId(action.id),
-    metadata: metadata,
-    payload: onPressed,
-    children: children,
-    isEnabled: action.isEnabled,
-    placementPolicy: placementPolicy,
-  );
-}
-
-AdaptiveMenuEntry<VoidCallback> _toAdaptiveMenuEntry(
-  CupertinoSliverSearchBarMenuEntry entry,
-) => switch (entry) {
-  final CupertinoSliverSearchBarAction action => _toAdaptiveAction(action),
-  CupertinoSliverSearchBarMenuDivider() =>
-    const AdaptiveMenuDivider<VoidCallback>.menuOnly(),
-};
 
 class _CupertinoExpandableSearchItem extends StatefulWidget {
   const _CupertinoExpandableSearchItem({

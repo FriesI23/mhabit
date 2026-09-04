@@ -1,3 +1,4 @@
+import 'package:adaptive_actions/core.dart';
 import 'package:flutter/cupertino.dart'
     show CupertinoColors, CupertinoNavigationBar, CupertinoSliverNavigationBar;
 import 'package:flutter/material.dart';
@@ -610,6 +611,8 @@ void main() {
               slivers: [
                 AdaptiveSliverSearchBar(
                   title: const Text('title'),
+                  collection: ActionCollection<String>(roots: const []),
+                  onInvoke: (_, _) {},
                   controller: controller,
                   focusNode: focusNode,
                   isSearchActive: false,

@@ -13,6 +13,14 @@ class CupertinoAppBarActions<T extends Object> extends StatelessWidget {
     this.iconBuilder,
     this.overflowIcon,
     this.primaryActionDecorator,
+    this.presentationForAction,
+    this.actionButtonBuilder,
+    this.overflowButtonBuilder,
+    this.onOverflowMenuOpened,
+    this.onOverflowMenuClosed,
+    this.layoutDelegate,
+    this.fadeDuration = Duration.zero,
+    this.resizeDuration = Duration.zero,
   });
 
   final ActionCollection<T> collection;
@@ -28,6 +36,14 @@ class CupertinoAppBarActions<T extends Object> extends StatelessWidget {
     Widget child,
   )?
   primaryActionDecorator;
+  final CupertinoActionPresentationCallback<T>? presentationForAction;
+  final CupertinoActionButtonBuilder<T>? actionButtonBuilder;
+  final CupertinoOverflowButtonBuilder? overflowButtonBuilder;
+  final VoidCallback? onOverflowMenuOpened;
+  final VoidCallback? onOverflowMenuClosed;
+  final ActionRegionLayoutDelegate? layoutDelegate;
+  final Duration fadeDuration;
+  final Duration resizeDuration;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +63,14 @@ class CupertinoAppBarActions<T extends Object> extends StatelessWidget {
           builder: (anchorContext) {
             final payload = action.payload;
             if (payload != null) primaryAnchors[payload] = anchorContext;
-            final child = defaultBuilder(anchorContext, action, onPressed);
+            final child =
+                actionButtonBuilder?.call(
+                  anchorContext,
+                  action,
+                  onPressed,
+                  defaultBuilder,
+                ) ??
+                defaultBuilder(anchorContext, action, onPressed);
             return primaryActionDecorator?.call(anchorContext, action, child) ??
                 child;
           },
@@ -59,16 +82,25 @@ class CupertinoAppBarActions<T extends Object> extends StatelessWidget {
         return Builder(
           builder: (anchorContext) {
             overflowAnchor = anchorContext;
-            return defaultBuilder(anchorContext, onPressed);
+            return overflowButtonBuilder?.call(
+                  anchorContext,
+                  onPressed,
+                  defaultBuilder,
+                ) ??
+                defaultBuilder(anchorContext, onPressed);
           },
         );
       },
       overflowIcon: overflowIcon ?? const Icon(CupertinoIcons.ellipsis),
       overflowTooltip: overflowTooltip,
+      onOverflowMenuOpened: onOverflowMenuOpened,
+      onOverflowMenuClosed: onOverflowMenuClosed,
+      presentationForAction: presentationForAction,
       presentationOverride: CupertinoActionPresentation.iconOnly,
       invokeAfterMenuClosed: true,
-      fadeDuration: Duration.zero,
-      resizeDuration: Duration.zero,
+      layoutDelegate: layoutDelegate,
+      fadeDuration: fadeDuration,
+      resizeDuration: resizeDuration,
     );
   }
 }

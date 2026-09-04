@@ -148,8 +148,11 @@ void main() {
           onInvoke: (_, payload) => invoked = payload,
           primaryCapacity: 96,
           maxPrimaryActions: 1,
-          materialIconBuilder: (context, action) =>
-              Icon(action.id == _editId ? Icons.edit : Icons.archive_outlined),
+          material: MaterialAppBarActionsConfig(
+            iconBuilder: (context, action) => Icon(
+              action.id == _editId ? Icons.edit : Icons.archive_outlined,
+            ),
+          ),
         ),
       ),
     );
@@ -178,7 +181,9 @@ void main() {
           collection: _collection(editEnabled: false),
           onInvoke: (_, _) => invocationCount += 1,
           primaryCapacity: 96,
-          materialIconBuilder: (context, action) => const Icon(Icons.edit),
+          material: MaterialAppBarActionsConfig(
+            iconBuilder: (context, action) => const Icon(Icons.edit),
+          ),
         ),
       ),
     );
@@ -206,7 +211,9 @@ void main() {
           onInvoke: (_, _) {},
           primaryCapacity: 96,
           maxPrimaryActions: 1,
-          materialIconBuilder: (context, action) => const Icon(Icons.edit),
+          material: MaterialAppBarActionsConfig(
+            iconBuilder: (context, action) => const Icon(Icons.edit),
+          ),
           primaryActionDecorator: decorate,
         ),
       ),
@@ -228,8 +235,9 @@ void main() {
           onInvoke: (_, _) {},
           primaryCapacity: 96,
           maxPrimaryActions: 1,
-          appleIconBuilder: (context, action) =>
-              const Icon(CupertinoIcons.pencil),
+          apple: CupertinoAppBarActionsConfig(
+            iconBuilder: (context, action) => const Icon(CupertinoIcons.pencil),
+          ),
           primaryActionDecorator: decorate,
         ),
       ),
@@ -256,10 +264,12 @@ void main() {
           onInvoke: (_, _) {},
           primaryCapacity: 96,
           maxPrimaryActions: 1,
-          appleIconBuilder: (context, action) => Icon(
-            action.id == _editId
-                ? CupertinoIcons.pencil
-                : CupertinoIcons.archivebox,
+          apple: CupertinoAppBarActionsConfig(
+            iconBuilder: (context, action) => Icon(
+              action.id == _editId
+                  ? CupertinoIcons.pencil
+                  : CupertinoIcons.archivebox,
+            ),
           ),
         ),
       ),
@@ -307,8 +317,11 @@ void main() {
           },
           primaryCapacity: 96,
           maxPrimaryActions: 1,
-          materialIconBuilder: (context, action) =>
-              Icon(action.id == _editId ? Icons.edit : Icons.archive_outlined),
+          material: MaterialAppBarActionsConfig(
+            iconBuilder: (context, action) => Icon(
+              action.id == _editId ? Icons.edit : Icons.archive_outlined,
+            ),
+          ),
         ),
       ),
     );
@@ -357,10 +370,12 @@ void main() {
           },
           primaryCapacity: 96,
           maxPrimaryActions: 1,
-          appleIconBuilder: (context, action) => Icon(
-            action.id == _editId
-                ? CupertinoIcons.pencil
-                : CupertinoIcons.archivebox,
+          apple: CupertinoAppBarActionsConfig(
+            iconBuilder: (context, action) => Icon(
+              action.id == _editId
+                  ? CupertinoIcons.pencil
+                  : CupertinoIcons.archivebox,
+            ),
           ),
         ),
       ),
@@ -403,7 +418,9 @@ void main() {
           collection: _collection(),
           onInvoke: (_, _) {},
           primaryCapacity: 96,
-          materialIconBuilder: (context, action) => const Icon(Icons.edit),
+          material: MaterialAppBarActionsConfig(
+            iconBuilder: (context, action) => const Icon(Icons.edit),
+          ),
         ),
       ),
     );
@@ -415,7 +432,9 @@ void main() {
           collection: _collection(includeArchive: false),
           onInvoke: (_, _) {},
           primaryCapacity: 96,
-          materialIconBuilder: (context, action) => const Icon(Icons.edit),
+          material: MaterialAppBarActionsConfig(
+            iconBuilder: (context, action) => const Icon(Icons.edit),
+          ),
         ),
       ),
     );

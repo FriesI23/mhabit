@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:adaptive_actions/core.dart';
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
@@ -21,12 +20,7 @@ import '../../../l10n/localizations.dart';
 import '../../../models/habit_color.dart';
 import '../../../theme/color.dart';
 import '../../../widgets/widgets.dart';
-
-const _saveActionCapacity = 144.0;
-
-enum _HabitEditAppBarAction { save }
-
-final _saveActionId = ActionId('habit-edit.save');
+import 'habit_edit_app_bar_actions.dart';
 
 class HabitEditAppBar extends StatelessWidget {
   final String name;
@@ -76,43 +70,16 @@ class HabitEditAppBar extends StatelessWidget {
             : PageBackReason.back,
         color: foregroundColor,
       ),
-      actions: [_buildActions(l10n)],
+      actions: [
+        HabitEditAppBarActions(
+          visible: showSaveButton,
+          onSave: onSaveButtonPressed,
+        ),
+      ],
       styles: EditableAppBarStyles(
         material: MaterialEditableAppBarStyle(
           scrolledUnderElevation: scrolledUnderElevation,
           shadowColor: theme.colorScheme.shadow,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActions(L10n? l10n) {
-    final saveLabel = l10n?.habitEdit_saveButton_text ?? 'Save';
-    final collection = ActionCollection<_HabitEditAppBarAction>(
-      roots: [
-        AdaptiveAction.action(
-          id: _saveActionId,
-          metadata: ActionMetadata(label: saveLabel, tooltip: saveLabel),
-          payload: _HabitEditAppBarAction.save,
-          isEnabled: showSaveButton && onSaveButtonPressed != null,
-          placementPolicy: ActionPlacementPolicy(
-            placement: ActionPlacement.pinned,
-          ),
-        ),
-      ],
-    );
-    return AdaptiveAppBarActions<_HabitEditAppBarAction>(
-      collection: collection,
-      onInvoke: (_, _) => onSaveButtonPressed?.call(),
-      primaryCapacity: _saveActionCapacity,
-      maxPrimaryActions: 1,
-      primaryActionDecorator: (_, _, child) => AnimatedOpacity(
-        key: const ValueKey('habit-edit.save-visibility'),
-        opacity: showSaveButton ? 1.0 : 0.0,
-        duration: const Duration(milliseconds: 200),
-        child: IgnorePointer(
-          ignoring: !showSaveButton,
-          child: ExcludeSemantics(excluding: !showSaveButton, child: child),
         ),
       ),
     );

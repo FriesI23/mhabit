@@ -1,5 +1,6 @@
 import 'dart:ui' show PointerDeviceKind, Tristate;
 
+import 'package:adaptive_actions/core.dart';
 import 'package:flutter/cupertino.dart'
     show
         CupertinoButton,
@@ -4038,6 +4039,8 @@ void main() {
                   slivers: [
                     AdaptiveSliverSearchBar.apple(
                       title: const Text('Habits'),
+                      collection: ActionCollection<String>(roots: const []),
+                      onInvoke: (_, _) {},
                       leading: const Icon(
                         Icons.article_outlined,
                         key: ValueKey('test-search-leading'),

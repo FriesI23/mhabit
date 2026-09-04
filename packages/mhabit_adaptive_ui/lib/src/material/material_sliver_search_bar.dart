@@ -1,10 +1,12 @@
-import 'package:flutter/material.dart';
+import 'dart:math' as math;
 
+import 'package:flutter/material.dart';
 import '../breakpoints/window_size_class.dart';
 import '../window_control/material_app_bar.dart';
 import 'material_expandable_search_bar.dart';
 
-const List<Widget> _kDefaultActions = <Widget>[];
+typedef MaterialSearchActionsBuilder =
+    Widget Function(BuildContext context, double primaryCapacity);
 
 /// Material-only visual configuration for [MaterialSliverSearchBar].
 class MaterialSliverSearchBarStyle {
@@ -25,6 +27,16 @@ class MaterialSliverSearchBarStyle {
 
 /// Material presentation for an inline, sliver-based search command bar.
 class MaterialSliverSearchBar extends StatelessWidget {
+  static const _mediumTitleTrailingWidthThreshold = 0.7;
+  static const _actionSlotExtent = 48.0;
+  static const _minimumActionCapacity = _actionSlotExtent;
+  static const _collapsedSearchReserve = 120.0;
+  static const _wideLeadingReserve = kToolbarHeight;
+  static const _compactLeadingReserve = 48.0;
+  static const _wideTitleReserve = 96.0;
+  static const _wideHorizontalReserve = 32.0;
+  static const _compactHorizontalReserve = 16.0;
+
   const MaterialSliverSearchBar({
     super.key,
     required this.title,
@@ -36,7 +48,8 @@ class MaterialSliverSearchBar extends StatelessWidget {
     required this.onSearchActivated,
     required this.onSearchDismissed,
     this.leading,
-    this.actions = _kDefaultActions,
+    required this.actionsBuilder,
+    required this.preferredActionCapacity,
     this.searchTrailing,
     this.hintText,
     this.onSubmitted,
@@ -47,7 +60,8 @@ class MaterialSliverSearchBar extends StatelessWidget {
 
   final Widget title;
   final Widget? leading;
-  final List<Widget> actions;
+  final MaterialSearchActionsBuilder actionsBuilder;
+  final double preferredActionCapacity;
   final Widget? searchTrailing;
   final TextEditingController controller;
   final FocusNode focusNode;
@@ -64,7 +78,20 @@ class MaterialSliverSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isWide = WindowSize.of(context).width >= WindowSizeClass.medium;
+    final widthClass = WindowSize.of(context).width;
+    final isWide = widthClass >= WindowSizeClass.medium;
+    final showWideTitle = _shouldShowWideTitle(context, widthClass);
+    final actionCapacity = _resolveActionCapacity(
+      context,
+      isWide: isWide,
+      showWideTitle: showWideTitle,
+    );
+    final actions = actionCapacity > 0
+        ? SizedBox(
+            width: actionCapacity,
+            child: actionsBuilder(context, actionCapacity),
+          )
+        : null;
     final searchBar = MaterialExpandableSearchBar(
       expanded: isWide || isSearchActive,
       collapsedTitle: isWide ? const SizedBox.shrink() : title,
@@ -82,8 +109,6 @@ class MaterialSliverSearchBar extends StatelessWidget {
       onTapOutside: onTapOutside,
     );
 
-    // TODO(adaptive-actions): Migrate the Material and Cupertino action
-    // regions after adaptive_actions is published as a stable package.
     return WindowControlSliverAppBar(
       key: const ValueKey('material-sliver-search-bar'),
       floating: true,
@@ -98,7 +123,7 @@ class MaterialSliverSearchBar extends StatelessWidget {
         child: SizedBox.shrink(),
       ),
       leading: isWide ? leading : null,
-      title: isWide ? title : searchBar,
+      title: isWide ? (showWideTitle ? title : null) : searchBar,
       actions: isWide
           ? [
               ConstrainedBox(
@@ -107,9 +132,61 @@ class MaterialSliverSearchBar extends StatelessWidget {
                 ),
                 child: searchBar,
               ),
-              ...actions,
+              ?actions,
             ]
-          : [?leading, ...actions],
+          : [?leading, ?actions],
+    );
+  }
+
+  bool _shouldShowWideTitle(BuildContext context, WindowSizeClass widthClass) {
+    if (widthClass >= WindowSizeClass.expanded) return true;
+    if (widthClass != WindowSizeClass.medium) return false;
+    final windowWidth = MediaQuery.sizeOf(context).width;
+    final preferredTrailingWidth =
+        style.maxSearchWidth + preferredActionCapacity;
+    return preferredTrailingWidth <
+        windowWidth * _mediumTitleTrailingWidthThreshold;
+  }
+
+  /// Logical horizontal budget (start -> end; mirrored automatically in RTL):
+  ///
+  /// wide:
+  /// | leading | title | flexible gap | search | action slots | outer reserve |
+  ///
+  /// compact:
+  /// | collapsed/active search | flexible gap | leading | actions | reserve |
+  ///
+  /// action capacity = floor((window width - fixed reserves) / slot) * slot
+  ///                           └─ rounded down to whole action slots
+  /// minimum capacity: one slot reserved for More
+  double _resolveActionCapacity(
+    BuildContext context, {
+    required bool isWide,
+    required bool showWideTitle,
+  }) {
+    if (preferredActionCapacity <= 0) return 0;
+    final windowWidth = MediaQuery.sizeOf(context).width;
+    final searchReserve = isWide || isSearchActive
+        ? style.maxSearchWidth
+        : _collapsedSearchReserve;
+    final leadingReserve = leading == null
+        ? 0.0
+        : (isWide ? _wideLeadingReserve : _compactLeadingReserve);
+    final titleReserve = showWideTitle ? _wideTitleReserve : 0.0;
+    final horizontalReserve = isWide
+        ? _wideHorizontalReserve
+        : _compactHorizontalReserve;
+    final available =
+        windowWidth -
+        searchReserve -
+        leadingReserve -
+        titleReserve -
+        horizontalReserve;
+    final slotted =
+        (available / _actionSlotExtent).floorToDouble() * _actionSlotExtent;
+    return math.min(
+      preferredActionCapacity,
+      math.max(_minimumActionCapacity, slotted),
     );
   }
 }

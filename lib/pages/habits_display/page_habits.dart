@@ -1023,17 +1023,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
     _vm.switchToEditMode();
   }
 
-  Future<void> _onHabitStatusModifyPressed() async {
-    if (!(mounted && _vm.mounted)) return;
-    final uuidList = _vm
-        .getSelectedHabitsData()
-        .nonNulls
-        .map((data) => data.uuid)
-        .toList();
-    if (uuidList.isEmpty) return;
-    await naviToHabitsStatusChangerPage(context: context, uuidList: uuidList);
-  }
-
   Widget _buildScrollablePlaceHolder(BuildContext context) {
     return SliverList(delegate: debugBuildSliverScrollDelegate(childCount: 0));
   }
@@ -1096,7 +1085,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
           onExport: _onAppbarExportAllActionPressed,
           onDelete: _onAppbarDeleteActionPressed,
           onGroupModify: _openHabitGroupModifyDialog,
-          onStatusModify: _onHabitStatusModifyPressed,
         ),
         onCalendarToggleExpandPressed: _onAppbarLeftButtonPressed,
       );
@@ -1217,14 +1205,16 @@ class HabitsTabPageState extends State<HabitsTabPage>
   }
 
   Widget buildSelectionBottomToolbar() => HabitCupertinoSelectBottomToolbar(
-    onExport: _onAppbarExportAllActionPressed,
-    onUnarchive: _onAppbarUnArchiveActionPressed,
-    onArchive: _onAppbarArchiveActionPressed,
-    onDelete: _onAppbarDeleteActionPressed,
-    onGroupModify: _openHabitGroupModifyDialog,
-    onStatusModify: _onHabitStatusModifyPressed,
-    onEdit: _onAppbarEditActionPressed,
-    onClone: _onAppbarCloneActionPressed,
+    callbacks: HabitDisplaySelectAppBarCallbacks(
+      onSelectAll: _onAppbarSelectAllActionPressed,
+      onExport: _onAppbarExportAllActionPressed,
+      onUnarchive: _onAppbarUnArchiveActionPressed,
+      onArchive: _onAppbarArchiveActionPressed,
+      onDelete: _onAppbarDeleteActionPressed,
+      onGroupModify: _openHabitGroupModifyDialog,
+      onEdit: _onAppbarEditActionPressed,
+      onClone: _onAppbarCloneActionPressed,
+    ),
   );
 
   void handlePageDismiss() {

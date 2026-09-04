@@ -13,6 +13,12 @@ class MaterialAppBarActions<T extends Object> extends StatelessWidget {
     this.iconBuilder,
     this.overflowIcon,
     this.primaryActionDecorator,
+    this.presentationForAction,
+    this.actionButtonBuilder,
+    this.overflowButtonBuilder,
+    this.layoutDelegate,
+    this.fadeDuration = Duration.zero,
+    this.resizeDuration = Duration.zero,
   });
 
   final ActionCollection<T> collection;
@@ -28,6 +34,12 @@ class MaterialAppBarActions<T extends Object> extends StatelessWidget {
     Widget child,
   )?
   primaryActionDecorator;
+  final MaterialActionPresentationCallback<T>? presentationForAction;
+  final MaterialActionButtonBuilder<T>? actionButtonBuilder;
+  final MaterialOverflowButtonBuilder? overflowButtonBuilder;
+  final ActionRegionLayoutDelegate? layoutDelegate;
+  final Duration fadeDuration;
+  final Duration resizeDuration;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +59,14 @@ class MaterialAppBarActions<T extends Object> extends StatelessWidget {
           builder: (anchorContext) {
             final payload = action.payload;
             if (payload != null) primaryAnchors[payload] = anchorContext;
-            final child = defaultBuilder(anchorContext, action, onPressed);
+            final child =
+                actionButtonBuilder?.call(
+                  anchorContext,
+                  action,
+                  onPressed,
+                  defaultBuilder,
+                ) ??
+                defaultBuilder(anchorContext, action, onPressed);
             return primaryActionDecorator?.call(anchorContext, action, child) ??
                 child;
           },
@@ -59,16 +78,23 @@ class MaterialAppBarActions<T extends Object> extends StatelessWidget {
         return Builder(
           builder: (anchorContext) {
             overflowAnchor = anchorContext;
-            return defaultBuilder(anchorContext, onPressed);
+            return overflowButtonBuilder?.call(
+                  anchorContext,
+                  onPressed,
+                  defaultBuilder,
+                ) ??
+                defaultBuilder(anchorContext, onPressed);
           },
         );
       },
       overflowIcon: overflowIcon ?? const Icon(Icons.more_vert),
       overflowTooltip: overflowTooltip,
+      presentationForAction: presentationForAction,
       presentationOverride: MaterialActionPresentation.iconOnly,
       style: const MaterialAdaptiveActionsStyle(iconSize: 24),
-      fadeDuration: Duration.zero,
-      resizeDuration: Duration.zero,
+      layoutDelegate: layoutDelegate,
+      fadeDuration: fadeDuration,
+      resizeDuration: resizeDuration,
     );
   }
 }

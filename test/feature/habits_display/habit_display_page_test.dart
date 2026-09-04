@@ -1155,11 +1155,14 @@ void main() {
     expect(find.byType(CupertinoPopupSurface), findsNothing);
     expect(vm.isInEditMode, isTrue);
     expect(vm.selectedHabitsCount, 0);
-    expect(find.byType(CupertinoSliverSelectAppBar), findsOneWidget);
+    expect(
+      find.byType(CupertinoSliverSelectAppBar<HabitDisplaySelectAction>),
+      findsOneWidget,
+    );
     expect(find.byKey(const ValueKey('cupertino-calendar-bar')), findsNothing);
     final selectHeader = tester.widget<SliverPersistentHeader>(
       find.descendant(
-        of: find.byType(CupertinoSliverSelectAppBar),
+        of: find.byType(CupertinoSliverSelectAppBar<HabitDisplaySelectAction>),
         matching: find.byType(SliverPersistentHeader),
       ),
     );
@@ -1169,14 +1172,19 @@ void main() {
       tester
           .widgetList<BackdropFilter>(
             find.descendant(
-              of: find.byType(CupertinoSliverSelectAppBar),
+              of: find.byType(
+                CupertinoSliverSelectAppBar<HabitDisplaySelectAction>,
+              ),
               matching: find.byType(BackdropFilter),
             ),
           )
           .where((filter) => filter.enabled),
       isEmpty,
     );
-    expect(find.byType(CupertinoSelectBottomToolbar), findsOneWidget);
+    expect(
+      find.byType(CupertinoSelectBottomToolbar<HabitDisplaySelectAction>),
+      findsOneWidget,
+    );
     expect(tester.getSize(find.byKey(const ValueKey('bottom-bar'))).height, 0);
     expect(find.byType(ScrollingFAB), findsNothing);
     final placeholder = tester.widget<FixedPagePlaceHolder>(
@@ -1184,7 +1192,11 @@ void main() {
     );
     expect(
       placeholder.minHeight,
-      tester.getSize(find.byType(CupertinoSelectBottomToolbar)).height,
+      tester
+          .getSize(
+            find.byType(CupertinoSelectBottomToolbar<HabitDisplaySelectAction>),
+          )
+          .height,
     );
     expect(placeholder.fixedButtonNaviHeight, isFalse);
 
@@ -1200,13 +1212,19 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 350));
     expect(tester.getSize(find.byKey(const ValueKey('bottom-bar'))).height, 0);
-    expect(find.byType(CupertinoSelectBottomToolbar), findsOneWidget);
+    expect(
+      find.byType(CupertinoSelectBottomToolbar<HabitDisplaySelectAction>),
+      findsOneWidget,
+    );
 
     await tester.tap(find.byKey(const ValueKey('cupertino-select-done')));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
     expect(vm.isInEditMode, isFalse);
-    expect(find.byType(CupertinoSelectBottomToolbar), findsNothing);
+    expect(
+      find.byType(CupertinoSelectBottomToolbar<HabitDisplaySelectAction>),
+      findsNothing,
+    );
     expect(
       find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
       findsOneWidget,
@@ -1268,7 +1286,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 350));
 
     expect(tester.takeException(), isNull);
-    expect(find.byType(CupertinoSelectBottomToolbar), findsOneWidget);
+    expect(
+      find.byType(CupertinoSelectBottomToolbar<HabitDisplaySelectAction>),
+      findsOneWidget,
+    );
   });
 
   testWidgets('batch group modify notifies only the final selection state', (
@@ -1430,9 +1451,7 @@ void main() {
     );
   });
 
-  testWidgets('Apple Status Modify routes the selected habit UUIDs', (
-    tester,
-  ) async {
+  testWidgets('Apple selection actions omit Batch Check-in', (tester) async {
     tester.view.physicalSize = const Size(390, 800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -1483,21 +1502,19 @@ void main() {
     vm.selectHabit(_buildHabitSummaryData(0).uuid, listen: false);
     vm.selectHabit(_buildHabitSummaryData(1).uuid);
     await tester.pump();
-    final toolbar = tester.widget<CupertinoSelectBottomToolbar>(
-      find.byType(CupertinoSelectBottomToolbar),
+    final toolbar = tester
+        .widget<CupertinoSelectBottomToolbar<HabitDisplaySelectAction>>(
+          find.byType(CupertinoSelectBottomToolbar<HabitDisplaySelectAction>),
+        );
+    expect(
+      toolbar.collection.roots.map((action) => action.id.value),
+      isNot(contains('habits.select.status-modify')),
     );
-    toolbar.actions
-        .firstWhere((action) => action.id == 'habit-status-modify')
-        .onPressed!();
-    await tester.pumpAndSettle();
-
-    expect(routedUuids, [
-      _buildHabitSummaryData(0).uuid,
-      _buildHabitSummaryData(1).uuid,
-    ]);
+    expect(routedUuids, isNull);
+    await tester.pump(const Duration(milliseconds: 350));
   });
 
-  testWidgets('Material Status Modify routes the selected habit UUIDs', (
+  testWidgets('Material Batch Check-in FAB routes selected habit UUIDs', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(390, 800);
