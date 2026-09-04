@@ -15,6 +15,7 @@ import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/pages/habits_display/navigation_chrome.dart';
 import 'package:mhabit/providers/app_ui/app_launch_entry.dart';
 import 'package:mhabit/routes/app_flow_page.dart';
+import 'package:mhabit/routes/app_material_page.dart';
 import 'package:mhabit/routes/app_navigation_branch.dart';
 import 'package:mhabit/routes/app_navigation_coordinator.dart';
 import 'package:mhabit/routes/app_router.dart';
@@ -1178,13 +1179,94 @@ void main() {
       isFalse,
     );
 
-    await Navigator.maybePop(tester.element(find.text('detail page')));
-    await tester.pumpAndSettle();
+    await _commitPredictiveBack(tester);
 
     expect(find.text('detail page'), findsNothing);
     expect(find.text('habits page'), findsOneWidget);
     expect(observers[0].routeNameStack, ['habits']);
     debugDefaultTargetPlatformOverride = null;
+  });
+
+  testWidgets('uses ancestor-aware page routes across navigation levels', (
+    tester,
+  ) async {
+    _setCompactSurface(tester);
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(observers);
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+
+    expect(
+      ModalRoute.of(tester.element(find.text('habits page'))),
+      isA<AppPageRoute<dynamic>>(),
+    );
+
+    router.push('/habits/detail');
+    await tester.pumpAndSettle();
+
+    expect(
+      ModalRoute.of(tester.element(find.text('detail page'))),
+      isA<AppPageRoute<dynamic>>(),
+    );
+
+    router.push('/group/manage');
+    await tester.pumpAndSettle();
+
+    expect(
+      ModalRoute.of(tester.element(find.text('group manage page'))),
+      isA<AppPageRoute<dynamic>>(),
+    );
+  });
+
+  testWidgets('menu can navigate to a covering app flow immediately', (
+    tester,
+  ) async {
+    _setCompactSurface(tester);
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    late final GoRouter router;
+    router = _buildRouter(
+      observers,
+      habitsPage: Scaffold(
+        body: Center(
+          child: MenuAnchor(
+            menuChildren: [
+              MenuItemButton(
+                onPressed: () => router.push('/group/manage'),
+                child: const Text('Manage'),
+              ),
+            ],
+            builder: (context, controller, child) => TextButton(
+              onPressed: controller.open,
+              child: const Text('Open menu'),
+            ),
+          ),
+        ),
+      ),
+    );
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+
+    await tester.tap(find.text('Open menu'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Manage'));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('group manage page'), findsOneWidget);
   });
 
   testWidgets('shows compact chrome after leaving a hidden detail branch', (

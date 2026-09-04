@@ -14,6 +14,8 @@
 
 import 'package:flutter/material.dart';
 
+import 'app_material_page.dart';
+
 /// A page whose route identity stays stable while its transition mode changes.
 ///
 /// Compact app flows can use the active Material page transition, including
@@ -41,7 +43,7 @@ final class AppFlowPage<T> extends Page<T> {
       _AppFlowPageRoute<T>(page: this);
 }
 
-final class _AppFlowPageRoute<T> extends PageRoute<T>
+final class _AppFlowPageRoute<T> extends AppPageRoute<T>
     with MaterialRouteTransitionMixin<T> {
   _AppFlowPageRoute({required AppFlowPage<T> page}) : super(settings: page);
 

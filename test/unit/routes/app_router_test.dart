@@ -19,6 +19,28 @@ import 'package:mhabit/routes/app_router.dart';
 
 void main() {
   group('AppRouterBuilder', () {
+    testWidgets('widget builders receive context below their page route', (
+      tester,
+    ) async {
+      late BuildContext routeContext;
+      final router =
+          (AppRouterBuilder()..addHabits(
+                builder: (context, state) {
+                  routeContext = context;
+                  return Text(state.name ?? 'missing route name');
+                },
+              ))
+              .build(home: AppRoute.habits);
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppRoute.habits.name), findsOneWidget);
+      expect(ModalRoute.of(routeContext)?.settings.name, AppRoute.habits.name);
+      expect(GoRouterState.of(routeContext).name, AppRoute.habits.name);
+    });
+
     test('build with no routes produces empty route list', () {
       final router = AppRouterBuilder().build();
       final routes = router.configuration.routes;
@@ -35,7 +57,7 @@ void main() {
       final route = routes.first as GoRoute;
       expect(route.path, '/habits');
       expect(route.name, AppRoute.habits.name);
-      expect(route.builder, isNotNull);
+      expect(route.pageBuilder, isNotNull);
     });
 
     test('addHabitDetail sets correct path and name', () {
@@ -48,7 +70,7 @@ void main() {
       final route = routes.first as GoRoute;
       expect(route.path, '/habits/:habitId');
       expect(route.name, AppRoute.habitDetail.name);
-      expect(route.builder, isNotNull);
+      expect(route.pageBuilder, isNotNull);
     });
 
     test('addHabitCreate sets correct path and name', () {
@@ -69,7 +91,7 @@ void main() {
       final route = shell.routes[0] as GoRoute;
       expect(route.path, '/habit/create');
       expect(route.name, AppRoute.habitCreate.name);
-      expect(route.builder, isNotNull);
+      expect(route.pageBuilder, isNotNull);
     });
 
     test('addHabitEdit sets correct path and name', () {
@@ -90,7 +112,7 @@ void main() {
       final route = shell.routes[0] as GoRoute;
       expect(route.path, '/habit/edit');
       expect(route.name, AppRoute.habitEdit.name);
-      expect(route.builder, isNotNull);
+      expect(route.pageBuilder, isNotNull);
     });
 
     test('addDebugger sets correct path and name', () {
@@ -101,7 +123,7 @@ void main() {
       final route = router.configuration.routes.first as GoRoute;
       expect(route.path, '/debugger');
       expect(route.name, AppRoute.debugger.name);
-      expect(route.builder, isNotNull);
+      expect(route.pageBuilder, isNotNull);
     });
 
     test('addGroupManage sets correct path and name', () {
@@ -112,7 +134,7 @@ void main() {
       final route = router.configuration.routes.first as GoRoute;
       expect(route.path, '/group/manage');
       expect(route.name, AppRoute.groupManage.name);
-      expect(route.builder, isNotNull);
+      expect(route.pageBuilder, isNotNull);
     });
 
     test('addHabitsStatus sets correct path and name', () {
@@ -123,7 +145,7 @@ void main() {
       final route = router.configuration.routes.first as GoRoute;
       expect(route.path, '/habits/status');
       expect(route.name, AppRoute.habitsStatus.name);
-      expect(route.builder, isNotNull);
+      expect(route.pageBuilder, isNotNull);
     });
 
     test('chains standalone routes in registration order', () {

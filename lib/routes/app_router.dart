@@ -18,6 +18,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../common/global.dart';
+import 'app_material_page.dart';
 
 enum AppRoute {
   habits('habits'),
@@ -111,84 +112,46 @@ bool isSettingsAuxiliaryRouteStack(List<String?> routeNames) {
 mixin _AppRouteAdder {
   List<RouteBase> get _routes;
 
-  void addHabits({required GoRouterWidgetBuilder builder}) {
+  void _addRoute(AppRoute route, GoRouterWidgetBuilder builder) {
     _routes.add(
       GoRoute(
-        path: _pathFor(AppRoute.habits),
-        name: AppRoute.habits.name,
-        builder: builder,
+        path: _pathFor(route),
+        name: route.name,
+        pageBuilder: _appPageBuilder(builder),
       ),
     );
+  }
+
+  void addHabits({required GoRouterWidgetBuilder builder}) {
+    _addRoute(AppRoute.habits, builder);
   }
 
   void addToday({required GoRouterWidgetBuilder builder}) {
-    _routes.add(
-      GoRoute(
-        path: _pathFor(AppRoute.today),
-        name: AppRoute.today.name,
-        builder: builder,
-      ),
-    );
+    _addRoute(AppRoute.today, builder);
   }
 
   void addHabitDetail({required GoRouterWidgetBuilder builder}) {
-    _routes.add(
-      GoRoute(
-        path: _pathFor(AppRoute.habitDetail),
-        name: AppRoute.habitDetail.name,
-        builder: builder,
-      ),
-    );
+    _addRoute(AppRoute.habitDetail, builder);
   }
 
   void addHabitCreate({required GoRouterWidgetBuilder builder}) {
-    _routes.add(
-      GoRoute(
-        path: _pathFor(AppRoute.habitCreate),
-        name: AppRoute.habitCreate.name,
-        builder: builder,
-      ),
-    );
+    _addRoute(AppRoute.habitCreate, builder);
   }
 
   void addHabitEdit({required GoRouterWidgetBuilder builder}) {
-    _routes.add(
-      GoRoute(
-        path: _pathFor(AppRoute.habitEdit),
-        name: AppRoute.habitEdit.name,
-        builder: builder,
-      ),
-    );
+    _addRoute(AppRoute.habitEdit, builder);
   }
 
   void addDebugger({required GoRouterWidgetBuilder builder}) {
-    _routes.add(
-      GoRoute(
-        path: _pathFor(AppRoute.debugger),
-        name: AppRoute.debugger.name,
-        builder: builder,
-      ),
-    );
+    _addRoute(AppRoute.debugger, builder);
   }
 
   void addGroupManage({required GoRouterWidgetBuilder builder}) {
-    _routes.add(
-      GoRoute(
-        path: _pathFor(AppRoute.groupManage),
-        name: AppRoute.groupManage.name,
-        builder: builder,
-      ),
-    );
+    _addRoute(AppRoute.groupManage, builder);
   }
 
   void addHabitsStatus({required GoRouterWidgetBuilder builder}) {
-    _routes.add(
-      GoRoute(
-        path: _pathFor(AppRoute.habitsStatus),
-        name: AppRoute.habitsStatus.name,
-        builder: builder,
-      ),
-    );
+    _addRoute(AppRoute.habitsStatus, builder);
   }
 }
 
@@ -222,17 +185,17 @@ class AppFlowRouterBuilder with _AppRouteAdder {
             GoRoute(
               path: 'about',
               name: AppRoute.settingsAbout.name,
-              builder: aboutBuilder,
+              pageBuilder: _appPageBuilder(aboutBuilder),
             ),
             GoRoute(
               path: 'sync',
               name: AppRoute.settingsSync.name,
-              builder: syncBuilder,
+              pageBuilder: _appPageBuilder(syncBuilder),
             ),
             GoRoute(
               path: 'notify',
               name: AppRoute.settingsNotify.name,
-              builder: notifyBuilder,
+              pageBuilder: _appPageBuilder(notifyBuilder),
             ),
           ],
         ),
@@ -243,11 +206,24 @@ class AppFlowRouterBuilder with _AppRouteAdder {
         GoRoute(
           path: _pathFor(AppRoute.experimental),
           name: AppRoute.experimental.name,
-          builder: experimentalBuilder,
+          pageBuilder: _appPageBuilder(experimentalBuilder),
         ),
       );
   }
 }
+
+/// Adapts a [GoRouterWidgetBuilder] into an app-owned Material page builder
+/// without changing the widget builder's context semantics.
+///
+/// The extra [Builder] matches go_router's own Material-page adapter: it
+/// defers the widget builder until the page route is building its subtree.
+/// Calling [builder] with the `pageBuilder` context here would place that call
+/// above the new [ModalRoute] and go_router's route-state registry.
+GoRouterPageBuilder _appPageBuilder(GoRouterWidgetBuilder builder) =>
+    (context, state) => AppMaterialPage<void>.fromGoRoute(
+      state: state,
+      child: Builder(builder: (context) => builder(context, state)),
+    );
 
 class AppRouterBuilder with _AppRouteAdder {
   @override
