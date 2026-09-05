@@ -37,6 +37,7 @@ import 'package:mhabit/models/habit_group.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
+import 'package:mhabit/pages/habits_display/_providers/habits_grouping.dart';
 import 'package:mhabit/pages/habits_display/_providers/habits_today.dart';
 import 'package:mhabit/pages/habits_display/helpers.dart';
 import 'package:mhabit/pages/habits_display/navigation_chrome.dart';
@@ -310,6 +311,7 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
   final recordOpConfig = HabitRecordOpConfigViewModel()..updateProfile(profile);
   final sort = HabitsSortViewModel()..updateProfile(profile);
   final filter = HabitsFilterViewModel()..updateProfile(profile);
+  final grouping = HabitsGroupingViewModel()..updateProfile(profile);
   final appEvent = AppEventBus();
   final groupManager = _FakeGroupManager();
   final vm = HabitSummaryViewModel()
@@ -322,6 +324,7 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
     navigationChrome.dispose();
     appEvent.dispose();
     filter.dispose();
+    grouping.dispose();
     sort.dispose();
     recordOpConfig.dispose();
     scrollBehavior.dispose();
@@ -417,6 +420,7 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
         ),
         ChangeNotifierProvider<HabitsSortViewModel>.value(value: sort),
         ChangeNotifierProvider<HabitsFilterViewModel>.value(value: filter),
+        ChangeNotifierProvider<HabitsGroupingViewModel>.value(value: grouping),
         ChangeNotifierProvider<AppEventBus>.value(value: appEvent),
         Provider<GroupManager>.value(value: groupManager),
         Provider<HabitsDisplayAccess>.value(value: access),

@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export '_widgets/actions/habit_display_options_actions.dart';
+export '_widgets/actions/habit_display_search_actions.dart';
+export '_widgets/actions/habit_display_select_actions.dart';
+export '_widgets/actions/habit_display_view_actions.dart';
 export '_widgets/habit_display_appbar.dart';
 export '_widgets/habit_display_contextual_chrome.dart';
 export '_widgets/habit_display_develop_list.dart';
@@ -20,8 +24,6 @@ export '_widgets/habit_display_group_modify_confirm_dialog.dart';
 export '_widgets/habit_display_group_modify_dialog.dart';
 export '_widgets/habit_display_group_type_picker.dart';
 export '_widgets/habit_display_list_tile.dart';
-export '_widgets/habit_display_main_menu.dart';
-export '_widgets/habit_display_sort_type_picker.dart';
 export '_widgets/habit_display_stats_menu.dart';
 export '_widgets/habit_today_card.dart';
 export '_widgets/habit_today_list_card.dart';

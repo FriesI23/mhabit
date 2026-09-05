@@ -33,6 +33,7 @@ final class MaterialAppBarActionsConfig<T extends Object>
     this.overflowIcon,
     this.presentationForAction,
     this.actionButtonBuilder,
+    this.menuBuilderForAction,
     this.overflowButtonBuilder,
     this.responsiveLayout,
   });
@@ -41,6 +42,7 @@ final class MaterialAppBarActionsConfig<T extends Object>
   final Widget? overflowIcon;
   final MaterialActionPresentationCallback<T>? presentationForAction;
   final MaterialActionButtonBuilder<T>? actionButtonBuilder;
+  final MaterialActionMenuBuilder<T>? menuBuilderForAction;
   final MaterialOverflowButtonBuilder? overflowButtonBuilder;
   final MaterialAppBarResponsiveLayout? responsiveLayout;
 }
@@ -73,6 +75,7 @@ final class CupertinoAppBarActionsConfig<T extends Object>
     this.overflowIcon,
     this.presentationForAction,
     this.actionButtonBuilder,
+    this.menuBuilderForAction,
     this.overflowButtonBuilder,
     this.onOverflowMenuOpened,
     this.onOverflowMenuClosed,
@@ -82,6 +85,7 @@ final class CupertinoAppBarActionsConfig<T extends Object>
   final Widget? overflowIcon;
   final CupertinoActionPresentationCallback<T>? presentationForAction;
   final CupertinoActionButtonBuilder<T>? actionButtonBuilder;
+  final CupertinoActionMenuBuilder<T>? menuBuilderForAction;
   final CupertinoOverflowButtonBuilder? overflowButtonBuilder;
   final VoidCallback? onOverflowMenuOpened;
   final VoidCallback? onOverflowMenuClosed;
@@ -194,6 +198,7 @@ class AdaptiveAppBarActions<T extends Object> extends StatelessWidget {
       primaryActionDecorator: primaryActionDecorator,
       presentationForAction: config.presentationForAction,
       actionButtonBuilder: config.actionButtonBuilder,
+      menuBuilderForAction: config.menuBuilderForAction,
       overflowButtonBuilder: config.overflowButtonBuilder,
       layoutDelegate: layoutDelegate,
       fadeDuration: fadeDuration,
@@ -228,6 +233,7 @@ class AdaptiveAppBarActions<T extends Object> extends StatelessWidget {
       primaryActionDecorator: primaryActionDecorator,
       presentationForAction: config.presentationForAction,
       actionButtonBuilder: config.actionButtonBuilder,
+      menuBuilderForAction: config.menuBuilderForAction,
       overflowButtonBuilder: config.overflowButtonBuilder,
       onOverflowMenuOpened: config.onOverflowMenuOpened,
       onOverflowMenuClosed: config.onOverflowMenuClosed,

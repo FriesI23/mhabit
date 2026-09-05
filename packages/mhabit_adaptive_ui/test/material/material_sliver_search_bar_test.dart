@@ -2,9 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
-Widget _host(MaterialSliverSearchBar searchBar) => MaterialApp(
-  home: Scaffold(body: CustomScrollView(slivers: [searchBar])),
-);
+Widget _host(MaterialSliverSearchBar searchBar, {double? contentWidth}) =>
+    MaterialApp(
+      home: Scaffold(
+        body: Align(
+          alignment: Alignment.topLeft,
+          child: SizedBox(
+            width: contentWidth,
+            child: CustomScrollView(slivers: [searchBar]),
+          ),
+        ),
+      ),
+    );
 
 void main() {
   late TextEditingController controller;
@@ -92,6 +101,10 @@ void main() {
       expect(appBar.actions, hasLength(2));
       expect(tester.getSize(find.byType(SearchBar)).width, 312);
       expect(tester.getSize(find.byType(SearchBar)).height, 48);
+      expect(
+        tester.getCenter(find.byType(SearchBar)).dx,
+        lessThan(tester.getCenter(find.byKey(const ValueKey('settings'))).dx),
+      );
     },
   );
 
@@ -117,6 +130,68 @@ void main() {
       expect(tester.getSize(find.byType(SearchBar)).width, 276);
     },
   );
+
+  testWidgets('action capacity follows the sliver width inside a side panel', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(605, 600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    double? resolvedCapacity;
+    final bar = MaterialSliverSearchBar(
+      title: const Text('Habits'),
+      leading: const Icon(Icons.info_outline),
+      actionsBuilder: (context, capacity) {
+        resolvedCapacity = capacity;
+        return const SizedBox.shrink();
+      },
+      preferredActionCapacity: 192,
+      controller: controller,
+      focusNode: focusNode,
+      isSearchActive: true,
+      keyword: '',
+      onChanged: (_) {},
+      onSearchActivated: () {},
+      onSearchDismissed: () {},
+    );
+
+    await tester.pumpWidget(_host(bar, contentWidth: 525));
+
+    expect(resolvedCapacity, 96);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('clips an outgoing action while the region contracts', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(605, 600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final bar = MaterialSliverSearchBar(
+      title: const Text('Habits'),
+      leading: const Icon(Icons.info_outline),
+      actionsBuilder: (context, capacity) => const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(width: 48, child: Icon(Icons.sort)),
+          SizedBox(width: 48, child: Icon(Icons.filter_list)),
+          SizedBox(width: 48, child: Icon(Icons.more_vert)),
+        ],
+      ),
+      preferredActionCapacity: 144,
+      controller: controller,
+      focusNode: focusNode,
+      isSearchActive: true,
+      keyword: '',
+      onChanged: (_) {},
+      onSearchActivated: () {},
+      onSearchDismissed: () {},
+    );
+
+    await tester.pumpWidget(_host(bar, contentWidth: 430));
+
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('expanded layout shows title beside search', (tester) async {
     tester.view.physicalSize = const Size(900, 600);

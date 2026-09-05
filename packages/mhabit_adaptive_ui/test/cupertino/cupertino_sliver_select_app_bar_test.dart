@@ -32,6 +32,50 @@ Widget _app(Widget child) => MaterialApp(
 );
 
 void main() {
+  testWidgets('forwards custom menu content into an overflow submenu', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final filters = AdaptiveAction<String>.menu(
+      id: ActionId('filters'),
+      metadata: const ActionMetadata(label: 'Filters'),
+      placementPolicy: ActionPlacementPolicy(
+        placement: ActionPlacement.overflowOnly,
+      ),
+    );
+
+    await tester.pumpWidget(
+      _app(
+        CupertinoSliverSelectAppBar<String>.view(
+          title: const Text('Habits'),
+          collection: ActionCollection(roots: [filters]),
+          onInvoke: (_, _) {},
+          actions: CupertinoAppBarActionsConfig(
+            menuBuilderForAction: (context, action) => action.id == filters.id
+                ? [
+                    CupertinoMenuItem(
+                      requestCloseOnActivate: false,
+                      onPressed: () {},
+                      child: const Text('Archived'),
+                    ),
+                  ]
+                : null,
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byIcon(CupertinoIcons.ellipsis));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Filters'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Archived'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('keeps Select All and Done fixed around typed actions', (
     tester,
   ) async {

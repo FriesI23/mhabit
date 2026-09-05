@@ -12,10 +12,7 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import '../../../extensions/adaptive_style_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../styles.dart';
-import 'habit_display_select_actions.dart';
-
-export 'habit_display_select_actions.dart'
-    show HabitDisplaySelectAction, HabitDisplaySelectAppBarCallbacks;
+import 'actions/habit_display_select_actions.dart';
 
 const _actionSlotExtent = 48.0;
 

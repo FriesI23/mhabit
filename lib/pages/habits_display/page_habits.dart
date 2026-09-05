@@ -35,10 +35,12 @@ import '../../models/habit_daily_record_form.dart';
 import '../../models/habit_date.dart';
 import '../../models/habit_display.dart';
 import '../../models/habit_form.dart';
+import '../../models/habit_group_display.dart';
 import '../../models/habit_status.dart';
 import "../../models/habit_summary.dart";
 import '../../providers/app_ui/app_compact_ui_switcher.dart';
 import '../../providers/app_ui/app_developer.dart';
+import '../../providers/app_ui/app_experimental_feature.dart';
 import '../../providers/app_ui/app_theme.dart';
 import '../../providers/app_ui/group_expand_timer_config.dart';
 import '../../providers/app_ui/habit_op_config.dart';
@@ -49,6 +51,7 @@ import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/habits_file_exporter.dart';
 import '../../routes/navigator_helpers.dart';
 import '../../storage/db/handlers/habit.dart';
+import '../../theme/color.dart';
 import '../../utils/xshare.dart';
 import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
@@ -359,41 +362,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
       ..showSnackBar(snackBar);
   }
 
-  void _openHabitSummaryMenuDialog() async {
-    if (!mounted) return;
-    final groupingVM = context.read<HabitsGroupingViewModel>();
-    final result = await showHabitDisplayMainMenuDialog(
-      context: context,
-      sortType: context.read<HabitsSortViewModel>().sortType,
-      sortDirection: context.read<HabitsSortViewModel>().sortDirection,
-      groupType: groupingVM.groupType,
-      groupDirection: groupingVM.groupDirection,
-      habitFilter: context.read<HabitsFilterViewModel>(),
-      grouping: groupingVM,
-      appTheme: context.read<AppThemeViewModel>(),
-    );
-
-    switch (result) {
-      case null:
-      case HabitDisplayMainMenuDialogOpr.none:
-        return;
-      case HabitDisplayMainMenuDialogOpr.showSortMenu:
-        await Future.delayed(const Duration(milliseconds: 300));
-        if (!mounted) return;
-        _openHabitSummarySortSelectorDialog();
-        break;
-      case HabitDisplayMainMenuDialogOpr.showGroupMenu:
-        await Future.delayed(const Duration(milliseconds: 300));
-        if (!mounted) return;
-        _openHabitSummaryGroupSelectorDialog();
-        break;
-      case HabitDisplayMainMenuDialogOpr.openSettings:
-        if (!mounted) return;
-        _openAppSettingsPage();
-        break;
-    }
-  }
-
   void _openHabitSummaryStatisticsDialog() {
     if (!mounted) return;
     showHabitDisplayStatsMenuDialog(
@@ -402,40 +370,49 @@ class HabitsTabPageState extends State<HabitsTabPage>
     );
   }
 
-  void _openHabitSummarySortSelectorDialog() async {
-    if (!mounted) return;
-    final result = await showHabitDisplaySortTypePickerDialog(
-      context: context,
-      sortType: context.read<HabitsSortViewModel>().sortType,
-      sortDirection: context.read<HabitsSortViewModel>().sortDirection,
-    );
+  void _setHabitSummarySortType(HabitDisplaySortType sortType) {
+    context.read<HabitsSortViewModel>().setNewSortMode(sortType: sortType);
+  }
 
-    if (!mounted || result == null) return;
-    context.read<HabitsSortViewModel>().setNewSortMode(
-      sortType: result.item1,
-      sortDirection: result.item2,
+  void _toggleHabitSummarySortDirection() {
+    final viewModel = context.read<HabitsSortViewModel>();
+    if (viewModel.sortType == HabitDisplaySortType.manual) return;
+    viewModel.setNewSortMode(
+      sortDirection: viewModel.sortDirection == HabitDisplaySortDirection.asc
+          ? HabitDisplaySortDirection.desc
+          : HabitDisplaySortDirection.asc,
     );
   }
 
-  void _openHabitSummaryGroupSelectorDialog() async {
-    if (!mounted) return;
-    final groupingVM = context.read<HabitsGroupingViewModel>();
-    final result = await showHabitDisplayGroupTypePickerDialog(
-      context: context,
-      groupType: groupingVM.groupType,
-      groupDirection: groupingVM.groupDirection,
-    );
-
-    if (!mounted || result == null) return;
-    final (groupType, groupDirection) = result;
+  void _setHabitSummaryGroupType(HabitDisplayGroupType? groupType) {
+    final viewModel = context.read<HabitsGroupingViewModel>();
     if (groupType == null) {
-      groupingVM.disableGrouping();
+      viewModel.disableGrouping();
     } else {
-      groupingVM.setGroupMode(
-        groupType: groupType,
-        groupDirection: groupDirection,
-      );
+      viewModel.setGroupMode(groupType: groupType);
     }
+  }
+
+  void _toggleHabitSummaryGroupDirection() {
+    final viewModel = context.read<HabitsGroupingViewModel>();
+    final groupType = viewModel.groupType;
+    if (groupType == null || groupType == HabitDisplayGroupType.manual) return;
+    viewModel.setGroupMode(
+      groupType: groupType,
+      groupDirection: viewModel.groupDirection == HabitDisplaySortDirection.asc
+          ? HabitDisplaySortDirection.desc
+          : HabitDisplaySortDirection.asc,
+    );
+  }
+
+  void _setHabitDisplayFilter(HabitsDisplayFilter filter) {
+    context.read<HabitsFilterViewModel>().setNewHabitsDisplayFilter(filter);
+  }
+
+  void _toggleHabitDisplayTheme() {
+    context.read<AppThemeViewModel>().onTapChangeThemeType(
+      MediaQuery.platformBrightnessOf(context),
+    );
   }
 
   void _openHabitRecordResonModifierDialog(
@@ -1060,7 +1037,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
     //#region: appbar
     Widget buildAppbar(BuildContext context) {
-      return HabitDisplayAppBar(
+      return _HabitDisplayAppBar(
         geometry: geometry,
         isCalendarExpanded: isCalendarExpanded,
         toolbarHeight: toolbarHeight,
@@ -1069,11 +1046,16 @@ class HabitsTabPageState extends State<HabitsTabPage>
         calendarTrackPadding: trackPadding,
         horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
         searchFilterMenuController: _searchFilterMenuController,
-        viewCallbacks: HabitDisplayViewAppBarCallbacks(
-          onInfo: _openHabitSummaryStatisticsDialog,
-          onSettings: _openHabitSummaryMenuDialog,
-          onOpenSettings: _openAppSettingsPage,
-          onSelect: _onHabitSelectButtonPressed,
+        onInfo: _openHabitSummaryStatisticsDialog,
+        onOpenSettings: _openAppSettingsPage,
+        onSelect: _onHabitSelectButtonPressed,
+        optionsCallbacks: HabitDisplayOptionsCallbacks(
+          onSortTypeSelected: _setHabitSummarySortType,
+          onSortDirectionToggled: _toggleHabitSummarySortDirection,
+          onGroupTypeSelected: _setHabitSummaryGroupType,
+          onGroupDirectionToggled: _toggleHabitSummaryGroupDirection,
+          onDisplayFilterChanged: _setHabitDisplayFilter,
+          onThemeToggled: _toggleHabitDisplayTheme,
         ),
         selectCallbacks: HabitDisplaySelectAppBarCallbacks(
           onDone: _onHabitEditAppbarLeadingButtonPressed,
@@ -1234,6 +1216,93 @@ class HabitsTabPageState extends State<HabitsTabPage>
     if (_vm.isCalendarExpanded) {
       _vm.collapseCalendar();
     }
+  }
+}
+
+class _HabitDisplayAppBar extends StatelessWidget {
+  const _HabitDisplayAppBar({
+    required this.geometry,
+    required this.isCalendarExpanded,
+    required this.toolbarHeight,
+    required this.calendarHeight,
+    required this.calendarItemPadding,
+    required this.calendarTrackPadding,
+    required this.horizonalScrollControllerGroup,
+    required this.searchFilterMenuController,
+    required this.optionsCallbacks,
+    required this.selectCallbacks,
+    this.onInfo,
+    this.onOpenSettings,
+    this.onSelect,
+    this.onCalendarToggleExpandPressed,
+  });
+
+  final HabitListTileGeometry geometry;
+  final bool isCalendarExpanded;
+  final double toolbarHeight;
+  final double calendarHeight;
+  final EdgeInsetsGeometry calendarItemPadding;
+  final EdgeInsets calendarTrackPadding;
+  final LinkedScrollControllerGroup horizonalScrollControllerGroup;
+  final MenuController searchFilterMenuController;
+  final HabitDisplayOptionsCallbacks optionsCallbacks;
+  final HabitDisplaySelectAppBarCallbacks selectCallbacks;
+  final VoidCallback? onInfo;
+  final VoidCallback? onOpenSettings;
+  final VoidCallback? onSelect;
+  final ValueChanged<bool>? onCalendarToggleExpandPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final (sortType, sortDirection) = context
+        .select<
+          HabitsSortViewModel,
+          (HabitDisplaySortType, HabitDisplaySortDirection)
+        >((vm) => (vm.sortType, vm.sortDirection));
+    final (groupType, groupDirection) = context
+        .select<
+          HabitsGroupingViewModel,
+          (HabitDisplayGroupType?, HabitDisplaySortDirection)
+        >((vm) => (vm.groupType, vm.groupDirection));
+    final groupingVisible = context
+        .select<AppExperimentalFeatureViewModel, bool>(
+          (vm) => vm.habitGrouping,
+        );
+    final displayFilter = context
+        .select<HabitsFilterViewModel, HabitsDisplayFilter>(
+          (vm) => vm.habitsDisplayFilter,
+        );
+    final themeType = context.select<AppThemeViewModel, AppThemeType>(
+      (vm) => vm.themeType,
+    );
+
+    return HabitDisplayAppBar(
+      geometry: geometry,
+      isCalendarExpanded: isCalendarExpanded,
+      toolbarHeight: toolbarHeight,
+      calendarHeight: calendarHeight,
+      calendarItemPadding: calendarItemPadding,
+      calendarTrackPadding: calendarTrackPadding,
+      horizonalScrollControllerGroup: horizonalScrollControllerGroup,
+      searchFilterMenuController: searchFilterMenuController,
+      config: HabitDisplayViewAppBarConfig(
+        onInfo: onInfo,
+        onOpenSettings: onOpenSettings,
+        onSelect: onSelect,
+        config: HabitDisplayConfig(
+          sortType: sortType,
+          sortDirection: sortDirection,
+          groupType: groupType,
+          groupDirection: groupDirection,
+          groupingVisible: groupingVisible,
+          displayFilter: displayFilter,
+          themeType: themeType,
+        ),
+        callbacks: optionsCallbacks,
+      ),
+      selectCallbacks: selectCallbacks,
+      onCalendarToggleExpandPressed: onCalendarToggleExpandPressed,
+    );
   }
 }
 

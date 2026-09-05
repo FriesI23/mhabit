@@ -394,6 +394,30 @@ class L10nAr extends L10n {
       'العادات الأبرز: تغييرات آخر 30 يوم';
 
   @override
+  String get habitDisplay_statisticsAction_label => 'Statistics';
+
+  @override
+  String get habitDisplay_displayFilterAction_label => 'Display Filter';
+
+  @override
+  String get habitDisplay_displayFilter_inProgress => 'تحت التنفيذ';
+
+  @override
+  String get habitDisplay_displayFilter_archived => 'مؤرشفة';
+
+  @override
+  String get habitDisplay_displayFilter_completed => 'مكتملة';
+
+  @override
+  String get common_appThemeMode_light => 'عرض خفيف';
+
+  @override
+  String get common_appThemeMode_dark => 'عرض داكن';
+
+  @override
+  String get common_appThemeMode_followSystem => 'مطابقة نظام الجهاز';
+
+  @override
   String get habitDisplay_mainMenu_lightTheme => 'عرض خفيف';
 
   @override
@@ -925,6 +949,9 @@ class L10nAr extends L10n {
 
   @override
   String get appSetting_appThemeColorTile_titleText => 'لون المظهر';
+
+  @override
+  String get appSetting_appThemeModeTile_titleText => 'Theme Mode';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText =>

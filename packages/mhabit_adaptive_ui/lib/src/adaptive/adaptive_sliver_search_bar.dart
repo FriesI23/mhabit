@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:adaptive_actions/core.dart';
 import 'package:flutter/material.dart';
 
@@ -47,6 +49,8 @@ final class CupertinoSliverSearchBarConfig<T extends Object>
 /// adaptive-widget boundary without spreading renderer-specific parameters
 /// across the common constructor.
 class AdaptiveSliverSearchBar<T extends Object> extends StatelessWidget {
+  static const _materialActionTransitionDuration = Duration(milliseconds: 300);
+
   const AdaptiveSliverSearchBar({
     super.key,
     required this.title,
@@ -171,7 +175,11 @@ class AdaptiveSliverSearchBar<T extends Object> extends StatelessWidget {
           if (!config.relocatedActionIds.contains(action.id)) action,
       ],
     );
-    final preferredCapacity = appBarCollection.roots.length * 48.0;
+    const maxPrimaryActions = 2;
+    final preferredCapacity = _preferredMaterialActionCapacity(
+      appBarCollection.roots,
+      maxPrimaryActions: maxPrimaryActions,
+    );
     return MaterialSliverSearchBar(
       title: title,
       leading: leading,
@@ -180,8 +188,10 @@ class AdaptiveSliverSearchBar<T extends Object> extends StatelessWidget {
             collection: appBarCollection,
             onInvoke: onInvoke,
             primaryCapacity: primaryCapacity,
-            maxPrimaryActions: appBarCollection.roots.length,
+            maxPrimaryActions: maxPrimaryActions,
             material: config.actions,
+            fadeDuration: _materialActionTransitionDuration,
+            resizeDuration: _materialActionTransitionDuration,
           ),
       preferredActionCapacity: preferredCapacity,
       searchTrailing: config.searchTrailing,
@@ -198,5 +208,27 @@ class AdaptiveSliverSearchBar<T extends Object> extends StatelessWidget {
       style: config.style,
       pinned: pinned,
     );
+  }
+
+  double _preferredMaterialActionCapacity(
+    Iterable<AdaptiveAction<T>> actions, {
+    required int maxPrimaryActions,
+  }) {
+    var primaryCount = 0;
+    var needsOverflow = false;
+    for (final action in actions) {
+      switch (action.placementPolicy.placement) {
+        case ActionPlacement.pinned || ActionPlacement.automatic:
+          primaryCount += 1;
+        case ActionPlacement.overflowOnly:
+          needsOverflow = true;
+        case ActionPlacement.hidden:
+          break;
+      }
+    }
+    final visiblePrimaryCount = math.min(primaryCount, maxPrimaryActions);
+    final hasResolvedOverflow =
+        needsOverflow || primaryCount > maxPrimaryActions;
+    return (visiblePrimaryCount + (hasResolvedOverflow ? 1 : 0)) * 48.0;
   }
 }

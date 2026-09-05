@@ -14,22 +14,20 @@ import '../../../extensions/adaptive_style_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../widgets/widgets.dart';
 import '../styles.dart';
-import 'habit_display_view_actions.dart';
+import 'actions/habit_display_view_actions.dart';
 
-export 'habit_display_view_actions.dart'
-    show HabitDisplayViewAction, HabitDisplayViewAppBarCallbacks;
 export 'sliver_search_top_app_bar.dart';
 
 class SliverViewTopAppBar extends StatelessWidget {
   const SliverViewTopAppBar({
     super.key,
     this.height = AppAdaptiveStyle.materialToolbarHeight,
-    this.callbacks = const HabitDisplayViewAppBarCallbacks(),
+    this.config = const HabitDisplayViewAppBarConfig(),
     this.showSelectAction,
   });
 
   final double? height;
-  final HabitDisplayViewAppBarCallbacks callbacks;
+  final HabitDisplayViewAppBarConfig config;
   final bool? showSelectAction;
 
   @override
@@ -42,7 +40,7 @@ class SliverViewTopAppBar extends StatelessWidget {
     ),
     actions: [
       HabitDisplayViewActions(
-        callbacks: callbacks,
+        config: config,
         showSelectAction: showSelectAction,
         builder: (context, data) =>
             AdaptiveAppBarActions<HabitDisplayViewAction>(
@@ -67,16 +65,16 @@ class SliverViewTopAppBar extends StatelessWidget {
 class AppleSliverViewTopAppBar extends StatelessWidget {
   const AppleSliverViewTopAppBar({
     super.key,
-    this.callbacks = const HabitDisplayViewAppBarCallbacks(),
+    this.config = const HabitDisplayViewAppBarConfig(),
     this.showSelectAction,
   });
 
-  final HabitDisplayViewAppBarCallbacks callbacks;
+  final HabitDisplayViewAppBarConfig config;
   final bool? showSelectAction;
 
   @override
   Widget build(BuildContext context) => HabitDisplayViewActions(
-    callbacks: callbacks,
+    config: config,
     showSelectAction: showSelectAction,
     builder: (context, data) =>
         CupertinoSliverSelectAppBar<HabitDisplayViewAction>.view(

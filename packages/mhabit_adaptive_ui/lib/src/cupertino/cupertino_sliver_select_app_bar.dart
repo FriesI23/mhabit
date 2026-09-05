@@ -85,6 +85,7 @@ class CupertinoSliverSelectAppBar<T extends Object> extends StatelessWidget {
               onInvoke: onInvoke,
               iconBuilder: actions?.iconBuilder,
               actionButtonBuilder: actions?.actionButtonBuilder,
+              menuBuilderForAction: actions?.menuBuilderForAction,
               presentationForAction: actions?.presentationForAction,
             )
           : _CupertinoSelectTopToolbar<T>(
@@ -98,6 +99,7 @@ class CupertinoSliverSelectAppBar<T extends Object> extends StatelessWidget {
               onInvoke: onInvoke,
               iconBuilder: actions?.iconBuilder,
               actionButtonBuilder: actions?.actionButtonBuilder,
+              menuBuilderForAction: actions?.menuBuilderForAction,
               presentationForAction: actions?.presentationForAction,
             ),
     );
@@ -146,6 +148,7 @@ class CupertinoSelectBottomToolbar<T extends Object> extends StatelessWidget {
                   onInvoke: onInvoke,
                   iconBuilder: actions?.iconBuilder,
                   actionButtonBuilder: actions?.actionButtonBuilder,
+                  menuBuilderForAction: actions?.menuBuilderForAction,
                   presentationForAction: actions?.presentationForAction,
                   layoutDelegate: const _TrailingOverflowLayoutDelegate(),
                 ),
@@ -170,6 +173,7 @@ class _CupertinoSelectTopToolbar<T extends Object> extends StatelessWidget {
     required this.onInvoke,
     required this.iconBuilder,
     required this.actionButtonBuilder,
+    required this.menuBuilderForAction,
     required this.presentationForAction,
   });
 
@@ -183,6 +187,7 @@ class _CupertinoSelectTopToolbar<T extends Object> extends StatelessWidget {
   final AdaptiveAppBarActionCallback<T> onInvoke;
   final CupertinoActionIconBuilder<T>? iconBuilder;
   final CupertinoActionButtonBuilder<T>? actionButtonBuilder;
+  final CupertinoActionMenuBuilder<T>? menuBuilderForAction;
   final CupertinoActionPresentationCallback<T>? presentationForAction;
 
   @override
@@ -218,6 +223,7 @@ class _CupertinoSelectTopToolbar<T extends Object> extends StatelessWidget {
                   onInvoke: onInvoke,
                   iconBuilder: iconBuilder,
                   actionButtonBuilder: actionButtonBuilder,
+                  menuBuilderForAction: menuBuilderForAction,
                   presentationForAction: presentationForAction,
                 ),
         ),
@@ -247,6 +253,7 @@ class _CupertinoSelectEntryToolbar<T extends Object> extends StatelessWidget {
     required this.onInvoke,
     required this.iconBuilder,
     required this.actionButtonBuilder,
+    required this.menuBuilderForAction,
     required this.presentationForAction,
   });
 
@@ -255,6 +262,7 @@ class _CupertinoSelectEntryToolbar<T extends Object> extends StatelessWidget {
   final AdaptiveAppBarActionCallback<T> onInvoke;
   final CupertinoActionIconBuilder<T>? iconBuilder;
   final CupertinoActionButtonBuilder<T>? actionButtonBuilder;
+  final CupertinoActionMenuBuilder<T>? menuBuilderForAction;
   final CupertinoActionPresentationCallback<T>? presentationForAction;
 
   @override
@@ -281,6 +289,7 @@ class _CupertinoSelectEntryToolbar<T extends Object> extends StatelessWidget {
                   onInvoke: onInvoke,
                   iconBuilder: iconBuilder,
                   actionButtonBuilder: actionButtonBuilder,
+                  menuBuilderForAction: menuBuilderForAction,
                   presentationForAction: presentationForAction,
                 ),
               ),
@@ -397,6 +406,7 @@ class _CupertinoSelectActions<T extends Object> extends StatelessWidget {
     required this.onInvoke,
     required this.iconBuilder,
     required this.actionButtonBuilder,
+    required this.menuBuilderForAction,
     required this.presentationForAction,
     this.layoutDelegate,
   });
@@ -405,6 +415,7 @@ class _CupertinoSelectActions<T extends Object> extends StatelessWidget {
   final AdaptiveAppBarActionCallback<T> onInvoke;
   final CupertinoActionIconBuilder<T>? iconBuilder;
   final CupertinoActionButtonBuilder<T>? actionButtonBuilder;
+  final CupertinoActionMenuBuilder<T>? menuBuilderForAction;
   final CupertinoActionPresentationCallback<T>? presentationForAction;
   final ActionRegionLayoutDelegate? layoutDelegate;
 
@@ -430,6 +441,7 @@ class _CupertinoSelectActions<T extends Object> extends StatelessWidget {
                   presentationForAction: presentationForAction,
                   iconBuilder: iconBuilder,
                   actionButtonBuilder: actionButtonBuilder,
+                  menuBuilderForAction: menuBuilderForAction,
                 ),
                 layoutDelegate: layoutDelegate,
               ),

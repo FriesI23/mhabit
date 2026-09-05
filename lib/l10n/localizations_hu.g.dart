@@ -398,6 +398,30 @@ class L10nHu extends L10n {
       'Legnépszerűbb szokások: az elmúlt 30 nap változásai';
 
   @override
+  String get habitDisplay_statisticsAction_label => 'Statistics';
+
+  @override
+  String get habitDisplay_displayFilterAction_label => 'Display Filter';
+
+  @override
+  String get habitDisplay_displayFilter_inProgress => 'Folyamatban lévő';
+
+  @override
+  String get habitDisplay_displayFilter_archived => 'Archivált';
+
+  @override
+  String get habitDisplay_displayFilter_completed => 'Teljesített';
+
+  @override
+  String get common_appThemeMode_light => 'Világos téma';
+
+  @override
+  String get common_appThemeMode_dark => 'Sötét téma';
+
+  @override
+  String get common_appThemeMode_followSystem => 'Rendszer követése';
+
+  @override
   String get habitDisplay_mainMenu_lightTheme => 'Világos téma';
 
   @override
@@ -935,6 +959,9 @@ class L10nHu extends L10n {
 
   @override
   String get appSetting_appThemeColorTile_titleText => 'Téma színe';
+
+  @override
+  String get appSetting_appThemeModeTile_titleText => 'Theme Mode';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText =>

@@ -77,19 +77,34 @@ class MaterialSliverSearchBar extends StatelessWidget {
   final bool pinned;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => SliverLayoutBuilder(
+    builder: (context, constraints) =>
+        _buildSliver(context, availableWidth: constraints.crossAxisExtent),
+  );
+
+  Widget _buildSliver(BuildContext context, {required double availableWidth}) {
     final widthClass = WindowSize.of(context).width;
     final isWide = widthClass >= WindowSizeClass.medium;
-    final showWideTitle = _shouldShowWideTitle(context, widthClass);
+    final showWideTitle = _shouldShowWideTitle(
+      widthClass,
+      availableWidth: availableWidth,
+    );
     final actionCapacity = _resolveActionCapacity(
-      context,
+      availableWidth: availableWidth,
       isWide: isWide,
       showWideTitle: showWideTitle,
     );
     final actions = actionCapacity > 0
         ? SizedBox(
             width: actionCapacity,
-            child: actionsBuilder(context, actionCapacity),
+            child: ClipRect(
+              child: OverflowBox(
+                alignment: AlignmentDirectional.centerEnd,
+                minWidth: 0,
+                maxWidth: double.infinity,
+                child: actionsBuilder(context, actionCapacity),
+              ),
+            ),
           )
         : null;
     final searchBar = MaterialExpandableSearchBar(
@@ -138,14 +153,16 @@ class MaterialSliverSearchBar extends StatelessWidget {
     );
   }
 
-  bool _shouldShowWideTitle(BuildContext context, WindowSizeClass widthClass) {
+  bool _shouldShowWideTitle(
+    WindowSizeClass widthClass, {
+    required double availableWidth,
+  }) {
     if (widthClass >= WindowSizeClass.expanded) return true;
     if (widthClass != WindowSizeClass.medium) return false;
-    final windowWidth = MediaQuery.sizeOf(context).width;
     final preferredTrailingWidth =
         style.maxSearchWidth + preferredActionCapacity;
     return preferredTrailingWidth <
-        windowWidth * _mediumTitleTrailingWidthThreshold;
+        availableWidth * _mediumTitleTrailingWidthThreshold;
   }
 
   /// Logical horizontal budget (start -> end; mirrored automatically in RTL):
@@ -159,13 +176,12 @@ class MaterialSliverSearchBar extends StatelessWidget {
   /// action capacity = floor((window width - fixed reserves) / slot) * slot
   ///                           └─ rounded down to whole action slots
   /// minimum capacity: one slot reserved for More
-  double _resolveActionCapacity(
-    BuildContext context, {
+  double _resolveActionCapacity({
+    required double availableWidth,
     required bool isWide,
     required bool showWideTitle,
   }) {
     if (preferredActionCapacity <= 0) return 0;
-    final windowWidth = MediaQuery.sizeOf(context).width;
     final searchReserve = isWide || isSearchActive
         ? style.maxSearchWidth
         : _collapsedSearchReserve;
@@ -177,7 +193,7 @@ class MaterialSliverSearchBar extends StatelessWidget {
         ? _wideHorizontalReserve
         : _compactHorizontalReserve;
     final available =
-        windowWidth -
+        availableWidth -
         searchReserve -
         leadingReserve -
         titleReserve -

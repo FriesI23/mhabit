@@ -15,6 +15,7 @@ class CupertinoAppBarActions<T extends Object> extends StatelessWidget {
     this.primaryActionDecorator,
     this.presentationForAction,
     this.actionButtonBuilder,
+    this.menuBuilderForAction,
     this.overflowButtonBuilder,
     this.onOverflowMenuOpened,
     this.onOverflowMenuClosed,
@@ -38,6 +39,7 @@ class CupertinoAppBarActions<T extends Object> extends StatelessWidget {
   primaryActionDecorator;
   final CupertinoActionPresentationCallback<T>? presentationForAction;
   final CupertinoActionButtonBuilder<T>? actionButtonBuilder;
+  final CupertinoActionMenuBuilder<T>? menuBuilderForAction;
   final CupertinoOverflowButtonBuilder? overflowButtonBuilder;
   final VoidCallback? onOverflowMenuOpened;
   final VoidCallback? onOverflowMenuClosed;
@@ -76,6 +78,7 @@ class CupertinoAppBarActions<T extends Object> extends StatelessWidget {
           },
         );
       },
+      menuBuilderForAction: menuBuilderForAction,
       overflowButtonBuilder: (context, onPressed, defaultBuilder) {
         /// Keeps the anchor context inside the concrete button subtree because
         /// the callback context can resolve to a RenderSliver in a pinned bar.

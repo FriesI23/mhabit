@@ -396,6 +396,30 @@ class L10nFa extends L10n {
       'محبوبیت :در ۳۰ روز گذشته';
 
   @override
+  String get habitDisplay_statisticsAction_label => 'Statistics';
+
+  @override
+  String get habitDisplay_displayFilterAction_label => 'Display Filter';
+
+  @override
+  String get habitDisplay_displayFilter_inProgress => 'در حال انجام';
+
+  @override
+  String get habitDisplay_displayFilter_archived => 'آرشیو شده';
+
+  @override
+  String get habitDisplay_displayFilter_completed => 'به اتمام رسیده';
+
+  @override
+  String get common_appThemeMode_light => 'تم روشن';
+
+  @override
+  String get common_appThemeMode_dark => 'تم تاریک';
+
+  @override
+  String get common_appThemeMode_followSystem => 'پیروی از تنظیمات سیستم';
+
+  @override
   String get habitDisplay_mainMenu_lightTheme => 'تم روشن';
 
   @override
@@ -930,6 +954,9 @@ class L10nFa extends L10n {
 
   @override
   String get appSetting_appThemeColorTile_titleText => 'Theme Color';
+
+  @override
+  String get appSetting_appThemeModeTile_titleText => 'Theme Mode';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText =>

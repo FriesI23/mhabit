@@ -36,6 +36,8 @@ Widget _host({
   bool isSearchActive = false,
   VoidCallback? onSearchActivated,
   VoidCallback? onSearchDismissed,
+  ActionCollection<String>? collection,
+  CupertinoActionMenuBuilder<String>? menuBuilderForAction,
 }) => MaterialApp(
   theme: ThemeData(platform: TargetPlatform.iOS),
   home: Directionality(
@@ -44,9 +46,10 @@ Widget _host({
       slivers: [
         CupertinoSliverSearchBar<String>(
           title: const Text('Habits'),
-          collection: _collection(),
+          collection: collection ?? _collection(),
           onInvoke: (_, value) => onInvoke(value),
           actions: CupertinoAppBarActionsConfig(
+            menuBuilderForAction: menuBuilderForAction,
             iconBuilder: (_, action) => switch (action.id.value) {
               'select' => const Icon(CupertinoIcons.checkmark_alt_circle),
               'filter' => const Icon(CupertinoIcons.line_horizontal_3_decrease),
@@ -67,6 +70,53 @@ Widget _host({
 );
 
 void main() {
+  testWidgets('forwards custom menu content into the Search overflow', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(240, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final controller = TextEditingController();
+    final focusNode = FocusNode();
+    addTearDown(controller.dispose);
+    addTearDown(focusNode.dispose);
+    final filters = AdaptiveAction<String>.menu(
+      id: ActionId('filter'),
+      metadata: const ActionMetadata(label: 'Filter'),
+      placementPolicy: ActionPlacementPolicy(
+        placement: ActionPlacement.overflowOnly,
+      ),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        controller: controller,
+        focusNode: focusNode,
+        onInvoke: (_) {},
+        collection: ActionCollection(roots: [filters]),
+        menuBuilderForAction: (context, action) => action.id == filters.id
+            ? [
+                CupertinoMenuItem(
+                  requestCloseOnActivate: false,
+                  onPressed: () {},
+                  child: const Text('Archived'),
+                ),
+              ]
+            : null,
+      ),
+    );
+
+    await tester.tap(
+      find.byKey(const ValueKey('cupertino-search-overflow-collapsed')),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Filter'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Archived'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('renders a typed action collection and invokes nested payloads', (
     tester,
   ) async {

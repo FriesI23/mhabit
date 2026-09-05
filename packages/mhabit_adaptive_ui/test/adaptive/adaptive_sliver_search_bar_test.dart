@@ -121,6 +121,12 @@ void main() {
     expect(renderer.leading, isNotNull);
     expect(renderer.preferredActionCapacity, 48);
     expect(renderer.searchTrailing, isNotNull);
+    final actions = tester.widget<AdaptiveAppBarActions<String>>(
+      find.byType(AdaptiveAppBarActions<String>),
+    );
+    expect(actions.fadeDuration, const Duration(milliseconds: 300));
+    expect(actions.resizeDuration, const Duration(milliseconds: 300));
+    expect(actions.maxPrimaryActions, 2);
   });
 
   testWidgets('Apple default dispatch builds the Cupertino renderer', (
@@ -238,5 +244,84 @@ void main() {
     expect(actions.primaryCapacity, 48);
     expect(find.byIcon(Icons.more_vert), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('fixed overflow actions reserve only one shared More slot', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(900, 600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final collection = ActionCollection<String>(
+      roots: [
+        AdaptiveAction<String>.action(
+          id: ActionId('primary'),
+          metadata: const ActionMetadata(label: 'Primary'),
+          payload: 'primary',
+        ),
+        for (var index = 0; index < 2; index++)
+          AdaptiveAction<String>.action(
+            id: ActionId('overflow-$index'),
+            metadata: ActionMetadata(label: 'Overflow $index'),
+            payload: 'overflow-$index',
+            placementPolicy: ActionPlacementPolicy(
+              placement: ActionPlacement.overflowOnly,
+            ),
+          ),
+        AdaptiveAction<String>.action(
+          id: ActionId('hidden'),
+          metadata: const ActionMetadata(label: 'Hidden'),
+          payload: 'hidden',
+          placementPolicy: ActionPlacementPolicy(
+            placement: ActionPlacement.hidden,
+          ),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      _host(
+        platform: TargetPlatform.windows,
+        searchBar: AdaptiveSliverSearchBar<String>.material(
+          title: const Text('Habits'),
+          collection: collection,
+          onInvoke: (_, _) {},
+          controller: controller,
+          focusNode: focusNode,
+          isSearchActive: true,
+          keyword: '',
+          onChanged: (_) {},
+          onSearchActivated: () {},
+          onSearchDismissed: () {},
+        ),
+      ),
+    );
+
+    final renderer = tester.widget<MaterialSliverSearchBar>(
+      find.byType(MaterialSliverSearchBar),
+    );
+    expect(renderer.preferredActionCapacity, 96);
+  });
+
+  testWidgets('Material action exposure stays capped at two at every width', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    for (final width in [500.0, 700.0, 900.0, 1300.0, 1700.0]) {
+      tester.view.physicalSize = Size(width, 800);
+      await tester.pumpWidget(
+        _host(
+          platform: TargetPlatform.windows,
+          searchBar: buildBar(forcedStyle: AdaptiveStyle.material),
+        ),
+      );
+
+      final actions = tester.widget<AdaptiveAppBarActions<String>>(
+        find.byType(AdaptiveAppBarActions<String>),
+      );
+      expect(actions.maxPrimaryActions, 2);
+    }
   });
 }

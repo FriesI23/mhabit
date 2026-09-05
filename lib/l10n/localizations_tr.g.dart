@@ -398,6 +398,30 @@ class L10nTr extends L10n {
       'En İyi Alışkanlıklar: Son 30 Gündeki Değişiklikler';
 
   @override
+  String get habitDisplay_statisticsAction_label => 'Statistics';
+
+  @override
+  String get habitDisplay_displayFilterAction_label => 'Display Filter';
+
+  @override
+  String get habitDisplay_displayFilter_inProgress => 'Sürüyor';
+
+  @override
+  String get habitDisplay_displayFilter_archived => 'Arşivlendi';
+
+  @override
+  String get habitDisplay_displayFilter_completed => 'Tamamlandı';
+
+  @override
+  String get common_appThemeMode_light => 'Açık Tema';
+
+  @override
+  String get common_appThemeMode_dark => 'Koyu Tema';
+
+  @override
+  String get common_appThemeMode_followSystem => 'Sistemi İzle';
+
+  @override
   String get habitDisplay_mainMenu_lightTheme => 'Açık Tema';
 
   @override
@@ -936,6 +960,9 @@ class L10nTr extends L10n {
 
   @override
   String get appSetting_appThemeColorTile_titleText => 'Tema Rengi';
+
+  @override
+  String get appSetting_appThemeModeTile_titleText => 'Theme Mode';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText => 'Tema Rengi Seç';

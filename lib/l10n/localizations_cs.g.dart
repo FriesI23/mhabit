@@ -398,6 +398,30 @@ class L10nCs extends L10n {
       'Nej návyky: změny za uplynulých 30 dnů';
 
   @override
+  String get habitDisplay_statisticsAction_label => 'Statistics';
+
+  @override
+  String get habitDisplay_displayFilterAction_label => 'Display Filter';
+
+  @override
+  String get habitDisplay_displayFilter_inProgress => 'Probíhající';
+
+  @override
+  String get habitDisplay_displayFilter_archived => 'Archivováno';
+
+  @override
+  String get habitDisplay_displayFilter_completed => 'Dokončené';
+
+  @override
+  String get common_appThemeMode_light => 'Světlý vzhled';
+
+  @override
+  String get common_appThemeMode_dark => 'Tmavý vzhled';
+
+  @override
+  String get common_appThemeMode_followSystem => 'Podle systému';
+
+  @override
   String get habitDisplay_mainMenu_lightTheme => 'Světlý vzhled';
 
   @override
@@ -934,6 +958,9 @@ class L10nCs extends L10n {
 
   @override
   String get appSetting_appThemeColorTile_titleText => 'Barva vzhledu';
+
+  @override
+  String get appSetting_appThemeModeTile_titleText => 'Theme Mode';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText =>

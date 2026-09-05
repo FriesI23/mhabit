@@ -388,6 +388,30 @@ class L10nJa extends L10n {
       'トップ習慣: 過去30日間の変化';
 
   @override
+  String get habitDisplay_statisticsAction_label => 'Statistics';
+
+  @override
+  String get habitDisplay_displayFilterAction_label => 'Display Filter';
+
+  @override
+  String get habitDisplay_displayFilter_inProgress => '進行中';
+
+  @override
+  String get habitDisplay_displayFilter_archived => 'アーカイブ済み';
+
+  @override
+  String get habitDisplay_displayFilter_completed => '完了';
+
+  @override
+  String get common_appThemeMode_light => 'ライトテーマ';
+
+  @override
+  String get common_appThemeMode_dark => 'ダークテーマ';
+
+  @override
+  String get common_appThemeMode_followSystem => 'システムに従う';
+
+  @override
   String get habitDisplay_mainMenu_lightTheme => 'ライトテーマ';
 
   @override
@@ -914,6 +938,9 @@ class L10nJa extends L10n {
 
   @override
   String get appSetting_appThemeColorTile_titleText => 'Theme Color';
+
+  @override
+  String get appSetting_appThemeModeTile_titleText => 'Theme Mode';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText =>

@@ -15,6 +15,7 @@ class MaterialAppBarActions<T extends Object> extends StatelessWidget {
     this.primaryActionDecorator,
     this.presentationForAction,
     this.actionButtonBuilder,
+    this.menuBuilderForAction,
     this.overflowButtonBuilder,
     this.layoutDelegate,
     this.fadeDuration = Duration.zero,
@@ -36,6 +37,7 @@ class MaterialAppBarActions<T extends Object> extends StatelessWidget {
   primaryActionDecorator;
   final MaterialActionPresentationCallback<T>? presentationForAction;
   final MaterialActionButtonBuilder<T>? actionButtonBuilder;
+  final MaterialActionMenuBuilder<T>? menuBuilderForAction;
   final MaterialOverflowButtonBuilder? overflowButtonBuilder;
   final ActionRegionLayoutDelegate? layoutDelegate;
   final Duration fadeDuration;
@@ -52,6 +54,7 @@ class MaterialAppBarActions<T extends Object> extends StatelessWidget {
       primaryCapacity: primaryCapacity,
       maxPrimaryActions: maxPrimaryActions,
       iconBuilder: iconBuilder,
+      menuBuilderForAction: menuBuilderForAction,
       actionButtonBuilder: (context, action, onPressed, defaultBuilder) {
         /// Keeps the anchor context inside the concrete button subtree because
         /// the callback context can resolve to a RenderSliver in a pinned bar.

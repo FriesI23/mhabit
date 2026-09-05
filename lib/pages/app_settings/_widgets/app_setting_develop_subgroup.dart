@@ -72,6 +72,7 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
           ListTile(
             title: const Text('UI style'),
             trailing: MenuAnchor(
+              animated: true,
               menuChildren: [
                 for (final option in adaptiveStyleOptions)
                   MenuItemButton(
@@ -101,6 +102,7 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
           ListTile(
             title: const Text('Text direction'),
             trailing: MenuAnchor(
+              animated: true,
               menuChildren: [
                 for (final option in textDirectionOptions)
                   MenuItemButton(

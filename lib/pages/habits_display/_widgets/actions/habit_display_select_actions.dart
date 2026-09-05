@@ -13,10 +13,10 @@ import 'package:flutter_material_design_icons/flutter_material_design_icons.dart
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
-import '../../../l10n/localizations.dart';
-import '../../../models/habit_stat.dart';
-import '../../../providers/app_ui/app_experimental_feature.dart';
-import '../_providers/habit_summary.dart';
+import '../../../../l10n/localizations.dart';
+import '../../../../models/habit_stat.dart';
+import '../../../../providers/app_ui/app_experimental_feature.dart';
+import '../../_providers/habit_summary.dart';
 
 enum HabitDisplaySelectAction {
   selectAll,
@@ -296,6 +296,12 @@ class HabitDisplaySelectActions extends StatelessWidget {
   ) => switch (action.payload) {
     HabitDisplaySelectAction.groupModify ||
     HabitDisplaySelectAction.clone => CupertinoActionPresentation.extended,
-    _ => CupertinoActionPresentation.iconOnly,
+    HabitDisplaySelectAction.selectAll ||
+    HabitDisplaySelectAction.edit ||
+    HabitDisplaySelectAction.unarchive ||
+    HabitDisplaySelectAction.archive ||
+    HabitDisplaySelectAction.export ||
+    HabitDisplaySelectAction.delete ||
+    null => CupertinoActionPresentation.iconOnly,
   };
 }

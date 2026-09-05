@@ -14,6 +14,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/app_settings/page.dart';
 import 'package:mhabit/providers/app_ui/app_compact_ui_switcher.dart';
 import 'package:mhabit/providers/app_ui/app_custom_date_format.dart';
@@ -133,7 +134,11 @@ void main() {
           ListenableProvider<AppSyncTriggerAccess>.value(value: syncAccess),
           ListenableProvider<AppSyncStatusSource>.value(value: syncAccess),
         ],
-        child: const MaterialApp(home: AppSettingPage()),
+        child: const MaterialApp(
+          localizationsDelegates: L10n.localizationsDelegates,
+          supportedLocales: L10n.supportedLocales,
+          home: AppSettingPage(),
+        ),
       ),
     );
     await tester.pump();

@@ -23,28 +23,31 @@ import '../../../l10n/localizations.dart';
 import '../../../models/habit_form.dart';
 import '../_providers/habit_summary.dart';
 import '../styles.dart';
-import 'habit_display_search_actions.dart';
+import 'actions/habit_display_options_actions.dart';
+import 'actions/habit_display_search_actions.dart';
 import 'search_filter.dart';
 
 class SliverSearchTopAppBar extends StatefulWidget {
   final AdaptiveStyle style;
   final MenuController? searchFilterMenuController;
   final VoidCallback? onInfoButtonPressed;
-  final VoidCallback? onMenuButtonPressed;
   final VoidCallback? onOpenSettingsPressed;
   final VoidCallback? onSelectButtonPressed;
   final bool? showSelectAction;
   final Widget? cupertinoBottom;
   final double cupertinoBottomExtent;
+  final HabitDisplayConfig config;
+  final HabitDisplayOptionsCallbacks callbacks;
 
   const SliverSearchTopAppBar.material({
     super.key,
     this.searchFilterMenuController,
     this.onInfoButtonPressed,
-    this.onMenuButtonPressed,
     this.onOpenSettingsPressed,
     this.onSelectButtonPressed,
     this.showSelectAction,
+    this.config = const HabitDisplayConfig(),
+    this.callbacks = const HabitDisplayOptionsCallbacks(),
   }) : style = AdaptiveStyle.material,
        cupertinoBottom = null,
        cupertinoBottomExtent = 0.0;
@@ -53,10 +56,11 @@ class SliverSearchTopAppBar extends StatefulWidget {
     super.key,
     this.searchFilterMenuController,
     this.onInfoButtonPressed,
-    this.onMenuButtonPressed,
     this.onOpenSettingsPressed,
     this.onSelectButtonPressed,
     this.showSelectAction,
+    this.config = const HabitDisplayConfig(),
+    this.callbacks = const HabitDisplayOptionsCallbacks(),
     this.cupertinoBottom,
     this.cupertinoBottomExtent = 0.0,
   }) : style = AdaptiveStyle.apple,
@@ -196,22 +200,30 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
     final compactApple =
         widget.style == AdaptiveStyle.apple &&
         WindowSize.of(context).width == WindowSizeClass.compact;
+    final compactWidth =
+        WindowSize.of(context).width == WindowSizeClass.compact;
     return HabitDisplaySearchActions(
-      options: _vm.searchOptions,
+      config: HabitDisplaySearchConfig(
+        options: _vm.searchOptions,
+        onInfoButtonPressed: widget.onInfoButtonPressed,
+        onOpenSettingsPressed: widget.onOpenSettingsPressed,
+        onSelectButtonPressed: widget.onSelectButtonPressed,
+        display: widget.config,
+        callbacks: widget.callbacks,
+        onOngoingFilterToggled: () =>
+            _onOngoingFilterChanged(!_vm.searchOptions.activated),
+        onCompletedFilterToggled: () =>
+            _onCompletedFilterChanged(!_vm.searchOptions.completed),
+        onTypeFilterToggled: (type) => _onTypeFilterChanged((
+          type,
+          !_vm.searchOptions.types.contains(type),
+        )),
+        onClearFilterPressed: _vm.onClearSearchFilter,
+      ),
       filterOverflowOnly:
           widget.style == AdaptiveStyle.material || compactApple,
-      onInfoButtonPressed: widget.onInfoButtonPressed,
-      onMenuButtonPressed: widget.onMenuButtonPressed,
-      onOpenSettingsPressed: widget.onOpenSettingsPressed,
-      onSelectButtonPressed: widget.onSelectButtonPressed,
       showSelectAction: widget.showSelectAction,
-      onOngoingFilterToggled: () =>
-          _onOngoingFilterChanged(!_vm.searchOptions.activated),
-      onCompletedFilterToggled: () =>
-          _onCompletedFilterChanged(!_vm.searchOptions.completed),
-      onTypeFilterToggled: (type) =>
-          _onTypeFilterChanged((type, !_vm.searchOptions.types.contains(type))),
-      onClearFilterPressed: _vm.onClearSearchFilter,
+      compactWidth: compactWidth,
       builder: (context, data) => switch (widget.style) {
         AdaptiveStyle.material => _buildMaterial(context, l10n, data),
         AdaptiveStyle.apple => _buildApple(context, l10n, data),
@@ -223,7 +235,7 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
     BuildContext context,
     L10n? l10n,
     HabitDisplaySearchActionsData data,
-  ) => AdaptiveSliverSearchBar<HabitDisplaySearchActionPayload>.material(
+  ) => AdaptiveSliverSearchBar<HabitDisplaySearchAction>.material(
     title: Text(l10n?.appName ?? appName),
     collection: data.collection,
     onInvoke: data.onInvoke,
@@ -271,7 +283,7 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
     BuildContext context,
     L10n? l10n,
     HabitDisplaySearchActionsData data,
-  ) => AdaptiveSliverSearchBar<HabitDisplaySearchActionPayload>.apple(
+  ) => AdaptiveSliverSearchBar<HabitDisplaySearchAction>.apple(
     title: Text(l10n?.appName ?? appName),
     collection: data.collection,
     onInvoke: data.onInvoke,

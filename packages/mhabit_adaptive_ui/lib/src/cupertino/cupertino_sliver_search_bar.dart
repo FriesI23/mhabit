@@ -223,6 +223,7 @@ class _CupertinoSliverSearchBarState<T extends Object>
                     onInvoke: widget.onInvoke,
                     iconBuilder: widget.actions?.iconBuilder,
                     actionButtonBuilder: widget.actions?.actionButtonBuilder,
+                    menuBuilderForAction: widget.actions?.menuBuilderForAction,
                     presentationForAction:
                         widget.actions?.presentationForAction,
                     manuallyExpanded: _expanded,
@@ -298,6 +299,7 @@ class _CupertinoSearchToolbar<T extends Object> extends StatelessWidget {
     required this.onInvoke,
     required this.iconBuilder,
     required this.actionButtonBuilder,
+    required this.menuBuilderForAction,
     required this.presentationForAction,
     required this.manuallyExpanded,
     required this.controller,
@@ -323,6 +325,7 @@ class _CupertinoSearchToolbar<T extends Object> extends StatelessWidget {
   final AdaptiveAppBarActionCallback<T> onInvoke;
   final CupertinoActionIconBuilder<T>? iconBuilder;
   final CupertinoActionButtonBuilder<T>? actionButtonBuilder;
+  final CupertinoActionMenuBuilder<T>? menuBuilderForAction;
   final CupertinoActionPresentationCallback<T>? presentationForAction;
   final bool manuallyExpanded;
   final TextEditingController controller;
@@ -440,6 +443,7 @@ class _CupertinoSearchToolbar<T extends Object> extends StatelessWidget {
                         onInvoke: onInvoke,
                         iconBuilder: iconBuilder,
                         actionButtonBuilder: actionButtonBuilder,
+                        menuBuilderForAction: menuBuilderForAction,
                         presentationForAction: presentationForAction,
                         searchExpanded: expanded,
                         onOverflowMenuOpened: onOverflowMenuOpened,
@@ -533,6 +537,7 @@ class _CupertinoCommandRegion<T extends Object> extends StatelessWidget {
     required this.onInvoke,
     required this.iconBuilder,
     required this.actionButtonBuilder,
+    required this.menuBuilderForAction,
     required this.presentationForAction,
     required this.searchExpanded,
     required this.onOverflowMenuOpened,
@@ -548,6 +553,7 @@ class _CupertinoCommandRegion<T extends Object> extends StatelessWidget {
   final AdaptiveAppBarActionCallback<T> onInvoke;
   final CupertinoActionIconBuilder<T>? iconBuilder;
   final CupertinoActionButtonBuilder<T>? actionButtonBuilder;
+  final CupertinoActionMenuBuilder<T>? menuBuilderForAction;
   final CupertinoActionPresentationCallback<T>? presentationForAction;
   final bool searchExpanded;
   final VoidCallback? onOverflowMenuOpened;
@@ -628,6 +634,7 @@ class _CupertinoCommandRegion<T extends Object> extends StatelessWidget {
                   onInvoke: onInvoke,
                   iconBuilder: iconBuilder,
                   actionButtonBuilder: actionButtonBuilder,
+                  menuBuilderForAction: menuBuilderForAction,
                   presentationForAction: presentationForAction,
                   primaryCapacity: adaptiveCapacity,
                   searchExpanded: searchExpanded,
@@ -649,6 +656,7 @@ class _CupertinoSearchActions<T extends Object> extends StatelessWidget {
     required this.onInvoke,
     required this.iconBuilder,
     required this.actionButtonBuilder,
+    required this.menuBuilderForAction,
     required this.presentationForAction,
     required this.primaryCapacity,
     required this.searchExpanded,
@@ -661,6 +669,7 @@ class _CupertinoSearchActions<T extends Object> extends StatelessWidget {
   final AdaptiveAppBarActionCallback<T> onInvoke;
   final CupertinoActionIconBuilder<T>? iconBuilder;
   final CupertinoActionButtonBuilder<T>? actionButtonBuilder;
+  final CupertinoActionMenuBuilder<T>? menuBuilderForAction;
   final CupertinoActionPresentationCallback<T>? presentationForAction;
   final double primaryCapacity;
   final bool searchExpanded;
@@ -700,6 +709,7 @@ class _CupertinoSearchActions<T extends Object> extends StatelessWidget {
               onOverflowMenuClosed: onOverflowMenuClosed,
               iconBuilder: iconBuilder,
               actionButtonBuilder: actionButtonBuilder,
+              menuBuilderForAction: menuBuilderForAction,
               overflowButtonBuilder: (context, onPressed, defaultBuilder) =>
                   defaultBuilder(
                     context,
