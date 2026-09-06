@@ -13,6 +13,10 @@ import '../window_control/window_control_layout.dart';
 import 'cupertino_navigation_sidebar_button.dart';
 import 'cupertino_navigation_sidebar_panel.dart';
 
+// Measured from UITabBarController.mode = .tabSidebar on iPadOS 26.5: the
+// floating Sidebar surface is inset 10pt from every window edge.
+const double _kSidebarSurfaceMargin = 10;
+
 /// Cupertino-owned side-navigation body.
 ///
 /// Medium and larger windows use one beside Sidebar presentation. The Sidebar
@@ -58,7 +62,6 @@ class CupertinoNavigationSidebar extends StatefulWidget {
 
 class _CupertinoNavigationSidebarState extends State<CupertinoNavigationSidebar>
     with SingleTickerProviderStateMixin {
-  static const double _surfaceMargin = 12;
   static const double _contentGap = 12;
   static const double _edgeGestureWidth = 20;
   static const double _appBarLeadingPadding = 16;
@@ -169,11 +172,10 @@ class _CupertinoNavigationSidebarState extends State<CupertinoNavigationSidebar>
     final mediaPadding = MediaQuery.paddingOf(context);
     final direction = Directionality.of(context);
     final leadingSafeMargin = math.max(
-      _surfaceMargin,
+      _kSidebarSurfaceMargin,
       direction == TextDirection.ltr ? mediaPadding.left : mediaPadding.right,
     );
-    final toolbarTopInset = math.max(0.0, _surfaceMargin - mediaPadding.top);
-    final buttonTop = math.max(_surfaceMargin, mediaPadding.top);
+    final buttonTop = math.max(_kSidebarSurfaceMargin, mediaPadding.top);
     final sideNavigationAvoidance =
         AdaptiveWindowControlLayoutScope.sideNavigationHorizontalAvoidanceOf(
           context,
@@ -195,6 +197,15 @@ class _CupertinoNavigationSidebarState extends State<CupertinoNavigationSidebar>
     final hiddenButtonStart = sideNavigationStart + _appBarLeadingPadding;
     return AnimatedBuilder(
       animation: _curvedAnimation,
+      // The 44pt toolbar remains platform-owned. Expose the floating surface
+      // margin as safe area so regular and sliver app bars start on the same
+      // vertical baseline without carrying Sidebar geometry in their APIs.
+      child: MediaQuery(
+        data: MediaQuery.of(
+          context,
+        ).copyWith(padding: mediaPadding.copyWith(top: buttonTop)),
+        child: widget.child,
+      ),
       builder: (context, child) {
         final progress = _curvedAnimation.value;
         final panelActive = _animation.value > 0;
@@ -218,9 +229,8 @@ class _CupertinoNavigationSidebarState extends State<CupertinoNavigationSidebar>
               (leadingSafeMargin + panelWidth + _contentGap) * progress,
           child: NavigationSidebarAppBarLeading(
             toolbarAvoidance: toolbarAvoidance,
-            toolbarTopInset: toolbarTopInset,
             progress: appBarProgress,
-            child: widget.child,
+            child: child!,
           ),
         );
         final stack = Stack(
@@ -392,7 +402,7 @@ class _CupertinoSidebarAnimatedPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final direction = Directionality.of(context);
     return SafeArea(
-      minimum: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+      minimum: const EdgeInsets.all(_kSidebarSurfaceMargin),
       child: Align(
         alignment: AlignmentDirectional.centerStart,
         child: FractionalTranslation(

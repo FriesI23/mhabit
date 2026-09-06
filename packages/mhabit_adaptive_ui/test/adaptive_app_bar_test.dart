@@ -2,11 +2,28 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_navigation_sidebar.dart';
 import 'package:mhabit_adaptive_ui/src/shell/navigation_sidebar_app_bar_leading.dart';
 
 Widget _host({required Widget appBar, TargetPlatform? platform}) => MaterialApp(
   theme: platform == null ? null : ThemeData(platform: platform),
   home: Scaffold(appBar: appBar as PreferredSizeWidget),
+);
+
+Widget _sidebarHost({required Widget child}) => MaterialApp(
+  theme: ThemeData(platform: TargetPlatform.iOS),
+  home: CupertinoNavigationSidebar(
+    form: NavigationShellForm.constrainedSide,
+    selectedIndex: 0,
+    destinations: const [],
+    onDestinationSelected: (_) {},
+    auxiliaryDestinations: const [],
+    selectedAuxiliaryIndex: null,
+    onAuxiliaryDestinationSelected: null,
+    sideNavigationExtent: const SideNavigationExtent(224),
+    dragHandleBuilder: null,
+    child: child,
+  ),
 );
 
 void main() {
@@ -91,7 +108,6 @@ void main() {
         theme: ThemeData(platform: TargetPlatform.iOS),
         home: const NavigationSidebarAppBarLeading(
           toolbarAvoidance: EdgeInsets.zero,
-          toolbarTopInset: 0,
           progress: 1,
           child: Scaffold(
             appBar: AdaptiveAppBar(
@@ -111,6 +127,62 @@ void main() {
     );
     expect(find.byIcon(CupertinoIcons.back), findsOneWidget);
   });
+
+  testWidgets(
+    'Apple Sidebar aligns regular and sliver 44pt toolbars below its safe area',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(800, 600);
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(
+        _sidebarHost(
+          child: const Scaffold(
+            appBar: AdaptiveAppBar.apple(title: Text('Settings')),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final regularBar = find.descendant(
+        of: find.byType(Scaffold),
+        matching: find.byType(CupertinoNavigationBar),
+      );
+      expect(
+        tester
+            .widget<AdaptiveAppBar>(find.byType(AdaptiveAppBar))
+            .preferredSize
+            .height,
+        kMinInteractiveDimensionCupertino,
+      );
+      expect(tester.getSize(regularBar).height, 54);
+      final regularTitleCenter = tester.getCenter(find.text('Settings')).dy;
+
+      await tester.pumpWidget(
+        _sidebarHost(
+          child: const Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                AdaptiveSliverAppBar.apple(
+                  height: kMinInteractiveDimensionCupertino,
+                  title: Text('Habits'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final sliverBar = find.descendant(
+        of: find.byType(CustomScrollView),
+        matching: find.byType(CupertinoNavigationBar),
+      );
+      expect(tester.getSize(sliverBar).height, 54);
+      expect(tester.getCenter(find.text('Habits')).dy, regularTitleCenter);
+      expect(regularTitleCenter, 32);
+    },
+  );
 
   test('Apple app bar fixes its preferred toolbar height to 44pt', () {
     const appBar = AdaptiveAppBar.apple(title: Text('Settings'));

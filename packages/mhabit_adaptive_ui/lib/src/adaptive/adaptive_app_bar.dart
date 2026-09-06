@@ -7,7 +7,6 @@ import '../window_control/cupertino_navigation_bar.dart';
 import '../window_control/material_app_bar.dart';
 
 const List<Widget> _kDefaultActions = <Widget>[];
-const double _kCupertinoToolbarHeight = 44.0;
 
 /// Adaptive regular app bar for non-sliver page scaffolds.
 class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -35,7 +34,7 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.leading,
     this.actions = _kDefaultActions,
     this.automaticallyImplyLeading = true,
-  }) : toolbarHeight = _kCupertinoToolbarHeight,
+  }) : toolbarHeight = kMinInteractiveDimensionCupertino,
        _adaptiveStyle = AdaptiveStyle.apple;
 
   final AdaptiveStyle? _adaptiveStyle;

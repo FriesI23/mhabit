@@ -161,10 +161,7 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidebarLeading = NavigationSidebarAppBarLeading.maybeOf(context);
-    final topPadding =
-        MediaQuery.paddingOf(context).top +
-        (sidebarLeading?.toolbarTopInset ?? 0);
+    final topPadding = MediaQuery.paddingOf(context).top;
     final extent = topPadding + toolbarHeight + bottomExtent;
     return SliverPersistentHeader(
       pinned: true,
@@ -319,14 +316,7 @@ class _CollapsibleCupertinoSliverAppBar extends StatelessWidget {
       windowControlAvoidance: windowControlAvoidance,
       windowControlEdgePadding: EdgeInsetsDirectional.zero,
     );
-    final toolbarTopInset =
-        NavigationSidebarAppBarLeading.maybeOf(context)?.toolbarTopInset ?? 0;
-    return toolbarTopInset == 0
-        ? navigationBar
-        : SliverPadding(
-            padding: EdgeInsets.only(top: toolbarTopInset),
-            sliver: navigationBar,
-          );
+    return navigationBar;
   }
 }
 

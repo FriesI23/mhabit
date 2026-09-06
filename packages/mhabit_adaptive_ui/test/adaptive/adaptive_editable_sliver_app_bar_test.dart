@@ -385,7 +385,6 @@ void main() {
             owner: WindowControlLayoutOwner.appBar,
             child: NavigationSidebarAppBarLeading(
               toolbarAvoidance: const EdgeInsets.only(left: 40),
-              toolbarTopInset: 0,
               progress: 1,
               child: child,
             ),

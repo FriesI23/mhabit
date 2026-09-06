@@ -1702,7 +1702,7 @@ void main() {
                 ),
               )
               .dx,
-          12,
+          10,
         );
 
         final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
@@ -1715,7 +1715,7 @@ void main() {
                   .dx -
               8,
         );
-        expect(tester.getTopLeft(toggle).dy, 12);
+        expect(tester.getTopLeft(toggle).dy, 10);
         await tester.tap(toggle);
         await tester.pumpAndSettle();
         expect(
@@ -1768,7 +1768,7 @@ void main() {
                 ),
               )
               .dx,
-          988,
+          990,
         );
       } finally {
         _resetWindowControlLayoutMock();
@@ -3973,7 +3973,7 @@ void main() {
         tester
             .getTopLeft(find.byKey(const ValueKey('cupertino-sidebar-surface')))
             .dy,
-        12,
+        10,
       );
       final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
       addTearDown(mouse.removePointer);
@@ -4069,8 +4069,8 @@ void main() {
           find.byType(SliverPersistentHeader),
         );
 
-        expect(header.delegate.minExtent, 56);
-        expect(header.delegate.maxExtent, 56);
+        expect(header.delegate.minExtent, 54);
+        expect(header.delegate.maxExtent, 54);
         final toggleElement = tester.element(toggle);
         expect(toggle, findsOneWidget);
         expect(toggle.hitTestable(), findsOneWidget);
@@ -4082,7 +4082,7 @@ void main() {
         expect(toggle.hitTestable(), findsOneWidget);
         expect(tester.element(toggle), same(toggleElement));
         expect(tester.getSize(anchor), const Size.square(44));
-        expect(tester.getTopLeft(anchor).dy, 12);
+        expect(tester.getTopLeft(anchor).dy, 10);
         expect(tester.getTopLeft(toggle), tester.getTopLeft(anchor));
         expect(
           tester
@@ -4250,7 +4250,7 @@ void main() {
     }
 
     testWidgets(
-      'apple beside span constrains the branch without changing media',
+      'apple beside span preserves horizontal media and supplies top safety',
       (tester) async {
         debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
         addTearDown(() => debugDefaultTargetPlatformOverride = null);
@@ -4285,6 +4285,9 @@ void main() {
         Size branchViewPadding() => tester.getSize(
           find.byKey(const ValueKey('branch-horizontal-view-padding')),
         );
+        Size branchVerticalPadding() => tester.getSize(
+          find.byKey(const ValueKey('branch-vertical-padding')),
+        );
         final branch = find.byKey(const ValueKey('branch-layout-probe'));
         final surface = find.byKey(const ValueKey('cupertino-sidebar-surface'));
         final surfaceWidget = tester.widget<CupertinoFloatingGlassSurface>(
@@ -4293,9 +4296,10 @@ void main() {
 
         expect(branchPadding().width, 64);
         expect(branchViewPadding().width, 80);
+        expect(branchVerticalPadding().height, 10);
         expect(tester.getTopLeft(branch).dx, 254);
-        expect(tester.getTopLeft(surface), const Offset(44, 12));
-        expect(tester.getSize(surface), const Size(198, 576));
+        expect(tester.getTopLeft(surface), const Offset(44, 10));
+        expect(tester.getSize(surface), const Size(198, 580));
         expect(
           surfaceWidget.borderRadius,
           const BorderRadius.all(Radius.circular(25)),
@@ -4308,12 +4312,13 @@ void main() {
         await tester.pumpAndSettle();
         expect(branchPadding().width, 64);
         expect(branchViewPadding().width, 80);
+        expect(branchVerticalPadding().height, 10);
         expect(tester.getTopLeft(branch).dx, 0);
         debugDefaultTargetPlatformOverride = null;
       },
     );
 
-    testWidgets('apple Sidebar preserves all branch media insets', (
+    testWidgets('apple Sidebar preserves branch media above its top minimum', (
       tester,
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;

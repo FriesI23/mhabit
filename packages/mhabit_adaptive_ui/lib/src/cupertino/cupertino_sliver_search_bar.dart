@@ -24,7 +24,7 @@ typedef _CupertinoSearchOverflowPressed =
 /// a large title.
 /// Business state and the text controller stay with the caller.
 class CupertinoSliverSearchBar<T extends Object> extends StatefulWidget {
-  static const double toolbarHeight = 44.0;
+  static const double toolbarHeight = kMinInteractiveDimensionCupertino;
 
   const CupertinoSliverSearchBar({
     super.key,
@@ -77,7 +77,7 @@ class CupertinoSliverSearchBar<T extends Object> extends StatefulWidget {
 
 class _CupertinoSliverSearchBarState<T extends Object>
     extends State<CupertinoSliverSearchBar<T>> {
-  static const double _toolbarItemExtent = 44.0;
+  static const double _toolbarItemExtent = kMinInteractiveDimensionCupertino;
 
   late bool _expanded;
   bool _overflowMenuOpen = false;
@@ -180,9 +180,7 @@ class _CupertinoSliverSearchBarState<T extends Object>
     final widthClass = Breakpoints.of(context).widthClass(screenWidth);
     final isCompact = !(widthClass >= WindowSizeClass.medium);
     final isLarge = widthClass >= WindowSizeClass.large;
-    final topPadding =
-        MediaQuery.paddingOf(context).top +
-        (sidebarLeading?.toolbarTopInset ?? 0);
+    final topPadding = MediaQuery.paddingOf(context).top;
     final extent =
         topPadding +
         CupertinoSliverSearchBar.toolbarHeight +

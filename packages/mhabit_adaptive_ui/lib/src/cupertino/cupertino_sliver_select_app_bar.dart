@@ -16,7 +16,7 @@ import 'cupertino_sliver_app_bar.dart';
 /// commands in the bottom toolbar; wider layouts place them through
 /// adaptive_actions without allowing them to overlap the title.
 class CupertinoSliverSelectAppBar<T extends Object> extends StatelessWidget {
-  static const double toolbarHeight = 44.0;
+  static const double toolbarHeight = kMinInteractiveDimensionCupertino;
 
   const CupertinoSliverSelectAppBar({
     super.key,
@@ -108,7 +108,7 @@ class CupertinoSliverSelectAppBar<T extends Object> extends StatelessWidget {
 
 /// Fixed compact selection toolbar, including the bottom safe-area inset.
 class CupertinoSelectBottomToolbar<T extends Object> extends StatelessWidget {
-  static const double contentHeight = 44.0;
+  static const double contentHeight = kMinInteractiveDimensionCupertino;
 
   const CupertinoSelectBottomToolbar({
     super.key,

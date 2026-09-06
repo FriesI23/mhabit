@@ -11,7 +11,7 @@ import 'cupertino_floating_surface.dart';
 /// Visibility, animation, width policy, focus transfer, and toggle ownership
 /// remain responsibilities of the Sidebar host.
 class CupertinoNavigationSidebarPanel extends StatelessWidget {
-  static const double _toolbarHeight = 44;
+  static const double _toolbarHeight = kMinInteractiveDimensionCupertino;
   static const double _destinationTopGap = 24;
   static const double _resizeHandleWidth = 16;
   static const double _resizeHandleCornerInset = 25;
