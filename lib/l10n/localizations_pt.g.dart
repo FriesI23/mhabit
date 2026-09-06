@@ -398,6 +398,30 @@ class L10nPt extends L10n {
       'Top Hábitos: Mudanças dos últimos 30 dias';
 
   @override
+  String get habitDisplay_statisticsAction_label => 'Statistics';
+
+  @override
+  String get habitDisplay_displayFilterAction_label => 'Display Filter';
+
+  @override
+  String get habitDisplay_displayFilter_inProgress => 'Em progresso';
+
+  @override
+  String get habitDisplay_displayFilter_archived => 'Arquivado';
+
+  @override
+  String get habitDisplay_displayFilter_completed => 'Completo';
+
+  @override
+  String get common_appThemeMode_light => 'Tema claro';
+
+  @override
+  String get common_appThemeMode_dark => 'Tema escuro';
+
+  @override
+  String get common_appThemeMode_followSystem => 'Seguir o sistema';
+
+  @override
   String get habitDisplay_mainMenu_lightTheme => 'Tema claro';
 
   @override
@@ -933,6 +957,9 @@ class L10nPt extends L10n {
 
   @override
   String get appSetting_appThemeColorTile_titleText => 'Theme Color';
+
+  @override
+  String get appSetting_appThemeModeTile_titleText => 'Theme Mode';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText =>

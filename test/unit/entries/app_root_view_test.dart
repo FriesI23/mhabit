@@ -26,14 +26,14 @@ const MethodChannel _windowControlChannel = MethodChannel(
 );
 
 Map<String, double> _insets({
-  double start = 0,
+  double left = 0,
   double top = 0,
-  double end = 0,
+  double right = 0,
   double bottom = 0,
 }) => <String, double>{
-  'start': start,
+  'left': left,
   'top': top,
-  'end': end,
+  'right': right,
   'bottom': bottom,
 };
 
@@ -43,12 +43,12 @@ Map<String, Object> _windowControlPayload({
   bool isPad = true,
   bool isFullScreen = false,
 }) => <String, Object>{
-  'schemaVersion': 4,
+  'schemaVersion': 5,
   'isAvailable': true,
   'isPad': isPad,
   'isFullScreen': isFullScreen,
   'baseMargins': _insets(),
-  'horizontalMargins': _insets(start: hasHorizontalAvoidance ? 40 : 0),
+  'horizontalMargins': _insets(left: hasHorizontalAvoidance ? 40 : 0),
   'verticalMargins': _insets(top: hasVerticalAvoidance ? 20 : 0),
   'baseSafeArea': _insets(bottom: 34),
   'horizontalSafeArea': _insets(bottom: 34),
@@ -269,10 +269,7 @@ void main() {
           final initialLayout = AdaptiveWindowControlLayoutScope.maybeOf(
             context,
           );
-          expect(
-            initialLayout?.verticalAvoidance,
-            isNot(EdgeInsetsDirectional.zero),
-          );
+          expect(initialLayout?.verticalAvoidance, isNot(EdgeInsets.zero));
           expect(initialLayout?.hasWindowControlAvoidance, isFalse);
           final baseBarBackground = CupertinoTheme.of(
             context,
@@ -285,10 +282,7 @@ void main() {
           context = tester.element(find.byKey(probeKey));
           final layout = AdaptiveWindowControlLayoutScope.maybeOf(context);
           expect(AdaptiveStyle.of(context), AdaptiveStyle.apple);
-          expect(
-            layout?.horizontalAvoidance,
-            isNot(EdgeInsetsDirectional.zero),
-          );
+          expect(layout?.horizontalAvoidance, isNot(EdgeInsets.zero));
           expect(tester.state(find.byKey(probeKey)), same(probeState));
           expect(Theme.of(context).scaffoldBackgroundColor, elevatedBackground);
           expect(Theme.of(context).colorScheme.surface, elevatedBackground);
@@ -426,22 +420,22 @@ void main() {
       }
     });
 
-    testWidgets('window-control layout reaches root GoRouter pages', (
+    testWidgets('root GoRouter keeps physical window controls fixed in RTL', (
       tester,
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(_windowControlChannel, (_) async {
             return <String, Object>{
-              'schemaVersion': 4,
+              'schemaVersion': 5,
               'isAvailable': true,
               'isPad': true,
               'isFullScreen': false,
               'baseMargins': _insets(),
-              'horizontalMargins': _insets(start: 40, end: 12),
+              'horizontalMargins': _insets(left: 40, right: 12),
               'verticalMargins': _insets(),
               'baseSafeArea': _insets(bottom: 34),
-              'horizontalSafeArea': _insets(start: 24, end: 18, bottom: 34),
+              'horizontalSafeArea': _insets(left: 24, right: 18, bottom: 34),
               'verticalSafeArea': _insets(bottom: 34),
               'effectiveCornerRadii': <String, double>{
                 'topLeft': 62,
@@ -468,6 +462,7 @@ void main() {
             builder: (_, _) => const Scaffold(
               appBar: WindowControlAppBar(
                 leading: SizedBox.expand(key: ValueKey('pushed-leading')),
+                actions: [SizedBox(width: 48, key: ValueKey('pushed-action'))],
               ),
             ),
           ),
@@ -475,15 +470,23 @@ void main() {
       );
       try {
         await tester.pumpWidget(
-          AppRootView.router(themeMode: ThemeMode.system, config: router),
+          AppRootView.router(
+            themeMode: ThemeMode.system,
+            textDirectionOverride: TextDirection.rtl,
+            config: router,
+          ),
         );
         await tester.pumpAndSettle();
         await tester.tap(find.text('open page'));
         await tester.pumpAndSettle();
 
         expect(
-          tester.getTopLeft(find.byKey(const ValueKey('pushed-leading'))).dx,
-          52,
+          tester.getTopRight(find.byKey(const ValueKey('pushed-leading'))).dx,
+          776,
+        );
+        expect(
+          tester.getTopLeft(find.byKey(const ValueKey('pushed-action'))).dx,
+          56,
         );
       } finally {
         router.dispose();

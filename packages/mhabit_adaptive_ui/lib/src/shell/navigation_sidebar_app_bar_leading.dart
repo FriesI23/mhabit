@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart' show kMinInteractiveDimensionCupertino;
 import 'package:flutter/widgets.dart';
 
 /// Renderer-owned Sidebar command exposed to page app bars.
@@ -9,18 +10,14 @@ class NavigationSidebarAppBarLeading extends InheritedWidget {
   const NavigationSidebarAppBarLeading({
     super.key,
     required this.toolbarAvoidance,
-    required this.toolbarTopInset,
     required this.progress,
     required super.child,
   });
 
-  static const double buttonExtent = 44;
+  static const double buttonExtent = kMinInteractiveDimensionCupertino;
 
-  /// Logical toolbar space occupied by platform window controls.
-  final EdgeInsetsDirectional toolbarAvoidance;
-
-  /// Extra top inset used to align a toolbar with floating side navigation.
-  final double toolbarTopInset;
+  /// Physical toolbar space occupied by platform window controls.
+  final EdgeInsets toolbarAvoidance;
 
   /// Visibility progress for the AppBar's reserved leading slot.
   final double progress;
@@ -35,6 +32,5 @@ class NavigationSidebarAppBarLeading extends InheritedWidget {
   @override
   bool updateShouldNotify(NavigationSidebarAppBarLeading oldWidget) =>
       toolbarAvoidance != oldWidget.toolbarAvoidance ||
-      toolbarTopInset != oldWidget.toolbarTopInset ||
       progress != oldWidget.progress;
 }

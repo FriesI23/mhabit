@@ -105,24 +105,24 @@ class AppErrorPage extends StatelessWidget {
       ),
       body: CustomScrollView(
         slivers: [
-          WindowControlSliverAppBar(
+          AdaptiveSliverAppBar(
             title: L10nBuilder(
               builder: (context, l10n) => Text(
                 l10n?.common_errorPage_title ?? "Unhandled Exception",
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             ),
-            leading: Visibility(
-              visible: showCloseBtn,
-              child: PageBackButton(
-                reason: PageBackReason.close,
-                onPressed: () =>
-                    Navigator.maybeOf(context)?.popOrExit() ??
-                    SystemNavigator.pop(),
-              ),
+            leading: showCloseBtn
+                ? AdaptiveBackButton(
+                    type: AdaptiveBackButtonType.close,
+                    onPressed: () =>
+                        Navigator.maybeOf(context)?.popOrExit() ??
+                        SystemNavigator.pop(),
+                  )
+                : null,
+            styles: const AppBarStyles(
+              material: AppBarMaterialStyle(centerTitle: true, pinned: true),
             ),
-            centerTitle: true,
-            pinned: true,
           ),
           SliverPinnedHeader(
             child: Material(

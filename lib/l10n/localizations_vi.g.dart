@@ -400,6 +400,30 @@ class L10nVi extends L10n {
       'Thói quen hàng đầu: Thay đổi trong 30 ngày qua';
 
   @override
+  String get habitDisplay_statisticsAction_label => 'Statistics';
+
+  @override
+  String get habitDisplay_displayFilterAction_label => 'Display Filter';
+
+  @override
+  String get habitDisplay_displayFilter_inProgress => 'Trong tiến trình';
+
+  @override
+  String get habitDisplay_displayFilter_archived => 'Đã lưu trữ';
+
+  @override
+  String get habitDisplay_displayFilter_completed => 'Đã hoàn thành';
+
+  @override
+  String get common_appThemeMode_light => 'Chủ đề sáng';
+
+  @override
+  String get common_appThemeMode_dark => 'Chủ đề tối';
+
+  @override
+  String get common_appThemeMode_followSystem => 'Theo hệ thống';
+
+  @override
   String get habitDisplay_mainMenu_lightTheme => 'Chủ đề sáng';
 
   @override
@@ -936,6 +960,9 @@ class L10nVi extends L10n {
 
   @override
   String get appSetting_appThemeColorTile_titleText => 'Màu chủ đề';
+
+  @override
+  String get appSetting_appThemeModeTile_titleText => 'Theme Mode';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText =>

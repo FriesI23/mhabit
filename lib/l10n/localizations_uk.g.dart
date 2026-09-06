@@ -399,6 +399,30 @@ class L10nUk extends L10n {
       'Головні звички: зміни за останні 30 днів';
 
   @override
+  String get habitDisplay_statisticsAction_label => 'Statistics';
+
+  @override
+  String get habitDisplay_displayFilterAction_label => 'Display Filter';
+
+  @override
+  String get habitDisplay_displayFilter_inProgress => 'В роботі';
+
+  @override
+  String get habitDisplay_displayFilter_archived => 'Архівовано';
+
+  @override
+  String get habitDisplay_displayFilter_completed => 'Виконано';
+
+  @override
+  String get common_appThemeMode_light => 'Світла тема';
+
+  @override
+  String get common_appThemeMode_dark => 'Темна тема';
+
+  @override
+  String get common_appThemeMode_followSystem => 'Слідкуйте за системою';
+
+  @override
   String get habitDisplay_mainMenu_lightTheme => 'Світла тема';
 
   @override
@@ -939,6 +963,9 @@ class L10nUk extends L10n {
 
   @override
   String get appSetting_appThemeColorTile_titleText => 'Колір теми';
+
+  @override
+  String get appSetting_appThemeModeTile_titleText => 'Theme Mode';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText =>

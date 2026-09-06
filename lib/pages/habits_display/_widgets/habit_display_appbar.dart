@@ -29,49 +29,11 @@ import '../../../widgets/widgets.dart';
 import '../../common/widgets.dart';
 import '../_providers/habit_summary.dart';
 import '../styles.dart';
+import 'actions/habit_display_select_actions.dart';
+import 'actions/habit_display_view_actions.dart';
 import 'sliver_calendar_bar.dart';
 import 'sliver_select_top_app_bar.dart';
 import 'sliver_top_app_bar.dart';
-
-typedef HabitDisplayContextCallback = void Function(BuildContext context);
-
-class HabitDisplayViewAppBarCallbacks {
-  const HabitDisplayViewAppBarCallbacks({
-    this.onInfo,
-    this.onSettings,
-    this.onSelect,
-  });
-
-  final VoidCallback? onInfo;
-  final VoidCallback? onSettings;
-  final VoidCallback? onSelect;
-}
-
-class HabitDisplaySelectAppBarCallbacks {
-  const HabitDisplaySelectAppBarCallbacks({
-    this.onDone,
-    this.onSelectAll,
-    this.onEdit,
-    this.onUnarchive,
-    this.onArchive,
-    this.onClone,
-    this.onExport,
-    this.onDelete,
-    this.onGroupModify,
-    this.onStatusModify,
-  });
-
-  final VoidCallback? onDone;
-  final VoidCallback? onSelectAll;
-  final VoidCallback? onEdit;
-  final VoidCallback? onUnarchive;
-  final VoidCallback? onArchive;
-  final VoidCallback? onClone;
-  final HabitDisplayContextCallback? onExport;
-  final VoidCallback? onDelete;
-  final VoidCallback? onGroupModify;
-  final VoidCallback? onStatusModify;
-}
 
 enum _HabitDisplayAppBarMode { view, search, select }
 
@@ -83,12 +45,13 @@ class HabitDisplayAppBar extends StatelessWidget {
     required this.calendarHeight,
     required this.calendarItemPadding,
     required this.calendarTrackPadding,
-    required this.viewCallbacks,
+    required this.config,
     required this.selectCallbacks,
     this.toolbarHeight = AppAdaptiveStyle.materialToolbarHeight,
     this.horizonalScrollControllerGroup,
     this.searchFilterMenuController,
     this.onCalendarToggleExpandPressed,
+    this.showSelectAction,
   });
 
   final HabitListTileGeometry geometry;
@@ -97,11 +60,12 @@ class HabitDisplayAppBar extends StatelessWidget {
   final double calendarHeight;
   final EdgeInsetsGeometry calendarItemPadding;
   final EdgeInsets calendarTrackPadding;
-  final HabitDisplayViewAppBarCallbacks viewCallbacks;
+  final HabitDisplayViewAppBarConfig config;
   final HabitDisplaySelectAppBarCallbacks selectCallbacks;
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
   final MenuController? searchFilterMenuController;
   final ValueChanged<bool>? onCalendarToggleExpandPressed;
+  final bool? showSelectAction;
 
   @override
   Widget build(BuildContext context) {
@@ -134,16 +98,18 @@ class HabitDisplayAppBar extends StatelessWidget {
         calendarHeight: calendarHeight,
         calendarContent: calendarContent,
         searchFilterMenuController: searchFilterMenuController,
-        viewCallbacks: viewCallbacks,
+        viewConfig: config,
         selectCallbacks: selectCallbacks,
+        showSelectAction: showSelectAction,
       ),
       AdaptiveStyle.apple => _AppleHabitDisplayAppBar(
         mode: mode,
         calendarHeight: calendarHeight,
         calendarContent: calendarContent,
         searchFilterMenuController: searchFilterMenuController,
-        viewCallbacks: viewCallbacks,
+        viewConfig: config,
         selectCallbacks: selectCallbacks,
+        showSelectAction: showSelectAction,
       ),
     };
   }
@@ -156,8 +122,9 @@ class _MaterialHabitDisplayAppBar extends StatelessWidget {
     required this.calendarHeight,
     required this.calendarContent,
     required this.searchFilterMenuController,
-    required this.viewCallbacks,
+    required this.viewConfig,
     required this.selectCallbacks,
+    required this.showSelectAction,
   });
 
   final _HabitDisplayAppBarMode mode;
@@ -165,34 +132,30 @@ class _MaterialHabitDisplayAppBar extends StatelessWidget {
   final double calendarHeight;
   final Widget calendarContent;
   final MenuController? searchFilterMenuController;
-  final HabitDisplayViewAppBarCallbacks viewCallbacks;
+  final HabitDisplayViewAppBarConfig viewConfig;
   final HabitDisplaySelectAppBarCallbacks selectCallbacks;
+  final bool? showSelectAction;
 
   @override
   Widget build(BuildContext context) {
     final appBar = switch (mode) {
       _HabitDisplayAppBarMode.view => SliverViewTopAppBar(
         height: toolbarHeight,
-        onInfoButtonPressed: viewCallbacks.onInfo,
-        onMenuButtonPressed: viewCallbacks.onSettings,
+        config: viewConfig,
+        showSelectAction: showSelectAction,
       ),
       _HabitDisplayAppBarMode.search => SliverSearchTopAppBar.material(
         searchFilterMenuController: searchFilterMenuController,
-        onInfoButtonPressed: viewCallbacks.onInfo,
-        onMenuButtonPressed: viewCallbacks.onSettings,
-        onSelectButtonPressed: viewCallbacks.onSelect,
+        onInfoButtonPressed: viewConfig.onInfo,
+        onOpenSettingsPressed: viewConfig.onOpenSettings,
+        onSelectButtonPressed: viewConfig.onSelect,
+        showSelectAction: showSelectAction,
+        config: viewConfig.config,
+        callbacks: viewConfig.callbacks,
       ),
       _HabitDisplayAppBarMode.select => MaterialSliverSelectAppBar(
         height: toolbarHeight,
-        onDone: selectCallbacks.onDone,
-        onSelectAll: selectCallbacks.onSelectAll,
-        onEdit: selectCallbacks.onEdit,
-        onUnarchive: selectCallbacks.onUnarchive,
-        onArchive: selectCallbacks.onArchive,
-        onClone: selectCallbacks.onClone,
-        onExport: selectCallbacks.onExport,
-        onDelete: selectCallbacks.onDelete,
-        onGroupModify: selectCallbacks.onGroupModify,
+        callbacks: selectCallbacks,
       ),
     };
     return MultiSliver(
@@ -215,45 +178,40 @@ class _AppleHabitDisplayAppBar extends StatelessWidget {
     required this.calendarHeight,
     required this.calendarContent,
     required this.searchFilterMenuController,
-    required this.viewCallbacks,
+    required this.viewConfig,
     required this.selectCallbacks,
+    required this.showSelectAction,
   });
 
   final _HabitDisplayAppBarMode mode;
   final double calendarHeight;
   final Widget calendarContent;
   final MenuController? searchFilterMenuController;
-  final HabitDisplayViewAppBarCallbacks viewCallbacks;
+  final HabitDisplayViewAppBarConfig viewConfig;
   final HabitDisplaySelectAppBarCallbacks selectCallbacks;
+  final bool? showSelectAction;
 
   @override
   Widget build(BuildContext context) {
     final combinesBars = mode != _HabitDisplayAppBarMode.view;
     final appBar = switch (mode) {
       _HabitDisplayAppBarMode.view => AppleSliverViewTopAppBar(
-        onSelect: viewCallbacks.onSelect,
-        onInfo: viewCallbacks.onInfo,
-        onSettings: viewCallbacks.onSettings,
+        config: viewConfig,
+        showSelectAction: showSelectAction,
       ),
       _HabitDisplayAppBarMode.search => SliverSearchTopAppBar.apple(
         searchFilterMenuController: searchFilterMenuController,
-        onInfoButtonPressed: viewCallbacks.onInfo,
-        onMenuButtonPressed: viewCallbacks.onSettings,
-        onSelectButtonPressed: viewCallbacks.onSelect,
+        onInfoButtonPressed: viewConfig.onInfo,
+        onOpenSettingsPressed: viewConfig.onOpenSettings,
+        onSelectButtonPressed: viewConfig.onSelect,
+        showSelectAction: showSelectAction,
+        config: viewConfig.config,
+        callbacks: viewConfig.callbacks,
         cupertinoBottom: calendarContent,
         cupertinoBottomExtent: calendarHeight,
       ),
       _HabitDisplayAppBarMode.select => AppleSliverSelectAppBar(
-        onDone: selectCallbacks.onDone,
-        onSelectAll: selectCallbacks.onSelectAll,
-        onEdit: selectCallbacks.onEdit,
-        onUnarchive: selectCallbacks.onUnarchive,
-        onArchive: selectCallbacks.onArchive,
-        onClone: selectCallbacks.onClone,
-        onExport: selectCallbacks.onExport,
-        onDelete: selectCallbacks.onDelete,
-        onGroupModify: selectCallbacks.onGroupModify,
-        onStatusModify: selectCallbacks.onStatusModify,
+        callbacks: selectCallbacks,
         bottom: calendarContent,
         bottomExtent: calendarHeight,
       ),
@@ -280,7 +238,7 @@ class _MaterialCalendarBar extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => WindowControlSliverAppBar(
+  Widget build(BuildContext context) => SliverAppBar(
     pinned: true,
     shadowColor: Theme.of(context).colorScheme.shadow,
     backgroundColor: isInEditMode

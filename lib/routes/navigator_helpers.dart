@@ -14,6 +14,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import '../common/types.dart';
 import '../models/habit_color.dart';
@@ -22,12 +23,18 @@ import '../models/habit_form.dart';
 import '../pages/habit_detail/page.dart' as habit_detail;
 import '../pages/habits_display/providers.dart' show HabitDetailAdapter;
 import '../storage/db/handlers/habit.dart';
+import 'app_navigation_coordinator.dart';
 import 'app_router.dart';
 import 'helpers/group_manage_helper.dart';
 import 'helpers/habit_create_helper.dart';
 import 'helpers/habit_detail_helper.dart';
 import 'helpers/habit_edit_helper.dart';
 import 'helpers/habits_status_changer_helper.dart';
+
+extension GoRouterNavigationState on GoRouter {
+  String? get currentRouteName =>
+      routerDelegate.currentConfiguration.lastOrNull?.route.name;
+}
 
 Future<HabitDBCell?> naviToHabitCreatePage({
   required BuildContext context,
@@ -59,8 +66,9 @@ Future<habit_detail.DetailPageReturn?> naviToHabitDetailPage({
   summaryAdapter: summaryAdapter,
 );
 
-Future<void> naviToAppSettingPage({required BuildContext context}) =>
-    context.pushNamed(AppRoute.settings.name);
+Future<void> naviToAppSettingPage({required BuildContext context}) => context
+    .read<AppNavigationCoordinator>()
+    .openAppFlowRoot(AppRoute.settings.name);
 
 Future<void> naviToAppAboutPage({required BuildContext context}) =>
     context.pushNamed(AppRoute.settingsAbout.name);

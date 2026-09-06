@@ -42,4 +42,15 @@ abstract final class AppNavigationDestinations {
           appleSelected: Icon(CupertinoIcons.today_fill),
         ),
       );
+
+  static AdaptiveNavigationDestination settings({required String label}) =>
+      AdaptiveNavigationDestination(
+        label: label,
+        icons: const NavigationDestinationIcons(
+          material: Icon(Icons.settings_outlined),
+          materialSelected: Icon(Icons.settings),
+          apple: Icon(CupertinoIcons.settings),
+          appleSelected: Icon(CupertinoIcons.settings_solid),
+        ),
+      );
 }

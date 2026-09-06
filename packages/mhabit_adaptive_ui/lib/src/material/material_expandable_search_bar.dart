@@ -50,26 +50,37 @@ class MaterialExpandableSearchBar extends StatefulWidget {
 }
 
 class _MaterialExpandableSearchBarState
-    extends State<MaterialExpandableSearchBar> {
+    extends State<MaterialExpandableSearchBar>
+    with SingleTickerProviderStateMixin {
   static const Duration _iconAnimationDuration = Duration(milliseconds: 300);
 
-  late bool _showSearchBar;
-  bool _animateWidth = false;
-  double? _lastExpandedWidth;
+  late final AnimationController _widthController;
 
   @override
   void initState() {
     super.initState();
-    _showSearchBar = widget.expanded;
+    _widthController = AnimationController(
+      vsync: this,
+      value: widget.expanded ? 1.0 : 0.0,
+    );
   }
 
   @override
   void didUpdateWidget(MaterialExpandableSearchBar oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.expanded != oldWidget.expanded) {
-      _animateWidth = true;
-      if (widget.expanded) _showSearchBar = true;
+      _widthController.animateTo(
+        widget.expanded ? 1.0 : 0.0,
+        duration: widget.duration,
+        curve: widget.curve,
+      );
     }
+  }
+
+  @override
+  void dispose() {
+    _widthController.dispose();
+    super.dispose();
   }
 
   double _expandedWidthFor(BoxConstraints constraints) {
@@ -90,17 +101,8 @@ class _MaterialExpandableSearchBarState
         return Colors.transparent;
       });
 
-  void _onAnimationEnd() {
-    if (!mounted) return;
-    if (_animateWidth || (!widget.expanded && _showSearchBar)) {
-      setState(() {
-        _animateWidth = false;
-        if (!widget.expanded) _showSearchBar = false;
-      });
-    }
-  }
-
-  Widget _buildCollapsedTitle() => Flexible(
+  Widget _buildCollapsedTitle() => Align(
+    alignment: AlignmentDirectional.centerStart,
     child: ExcludeSemantics(
       excluding: widget.expanded,
       child: SingleChildScrollView(
@@ -162,51 +164,61 @@ class _MaterialExpandableSearchBarState
     return LayoutBuilder(
       builder: (context, constraints) {
         final expandedWidth = _expandedWidthFor(constraints);
-        var animateWidth = _animateWidth;
-        if (_lastExpandedWidth != null && _lastExpandedWidth != expandedWidth) {
-          _animateWidth = false;
-          animateWidth = false;
-        }
-        _lastExpandedWidth = expandedWidth;
         final collapsedWidth = expandedWidth < widget.height
             ? expandedWidth
             : widget.height;
-        return Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: SizedBox(
-            width: expandedWidth,
-            height: widget.height,
-            child: Row(
-              children: [
-                AnimatedContainer(
-                  key: const ValueKey('expandable-search-region'),
-                  width: widget.expanded ? expandedWidth : collapsedWidth,
-                  height: widget.height,
-                  duration: animateWidth ? widget.duration : Duration.zero,
-                  curve: widget.curve,
-                  onEnd: _onAnimationEnd,
-                  child: ClipRect(
-                    child: _showSearchBar
-                        ? OverflowBox(
-                            alignment: AlignmentDirectional.centerStart,
-                            minWidth: expandedWidth,
-                            maxWidth: expandedWidth,
-                            child: _buildSearchBar(
-                              expandedWidth,
-                              isScrolledUnder: isScrolledUnder,
-                            ),
-                          )
-                        : IconButton(
-                            key: const ValueKey('activate-search'),
-                            onPressed: widget.onSearchActivated,
-                            icon: const Icon(Icons.search_outlined),
-                          ),
-                  ),
+        return AnimatedBuilder(
+          animation: _widthController,
+          builder: (context, _) {
+            final width =
+                collapsedWidth +
+                (expandedWidth - collapsedWidth) * _widthController.value;
+            final showSearchBar =
+                widget.expanded || _widthController.value > 0.0;
+            return Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: SizedBox(
+                width: expandedWidth,
+                height: widget.height,
+                child: Stack(
+                  clipBehavior: Clip.hardEdge,
+                  children: [
+                    Positioned.fill(
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.only(start: width),
+                        child: _buildCollapsedTitle(),
+                      ),
+                    ),
+                    Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: SizedBox(
+                        key: const ValueKey('expandable-search-region'),
+                        width: width,
+                        height: widget.height,
+                        child: ClipRect(
+                          child: showSearchBar
+                              ? OverflowBox(
+                                  alignment: AlignmentDirectional.centerStart,
+                                  minWidth: expandedWidth,
+                                  maxWidth: expandedWidth,
+                                  child: _buildSearchBar(
+                                    expandedWidth,
+                                    isScrolledUnder: isScrolledUnder,
+                                  ),
+                                )
+                              : IconButton(
+                                  key: const ValueKey('activate-search'),
+                                  onPressed: widget.onSearchActivated,
+                                  icon: const Icon(Icons.search_outlined),
+                                ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                _buildCollapsedTitle(),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );

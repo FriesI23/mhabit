@@ -1,6 +1,12 @@
 {
     "habitDisplay_searchFilter_habitType_groupTitle": "habitEdit_habitTypeDialog_title",
     "habitDisplay_searchFilter_completed": "habitDisplay_statsMenu_completedTileText",
+    "habitDisplay_displayFilter_inProgress": "habitDisplay_statsMenu_inProgresTileText",
+    "habitDisplay_displayFilter_archived": "habitDisplay_statsMenu_archivedTileText",
+    "habitDisplay_displayFilter_completed": "habitDisplay_statsMenu_completedTileText",
+    "common_appThemeMode_light": "habitDisplay_mainMenu_lightTheme",
+    "common_appThemeMode_dark": "habitDisplay_mainMenu_darkTheme",
+    "common_appThemeMode_followSystem": "habitDisplay_mainMenu_followSystemTheme",
     "habitToday_appBar_title": "calendarPicker_clip_today",
     "habitDisplay_tab_today_label": "habitToday_appBar_title",
     "habitDisplay_selectedHabits_title": "groupManage_selectionAppbar_title",

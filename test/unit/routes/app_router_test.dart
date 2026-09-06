@@ -19,6 +19,28 @@ import 'package:mhabit/routes/app_router.dart';
 
 void main() {
   group('AppRouterBuilder', () {
+    testWidgets('widget builders receive context below their page route', (
+      tester,
+    ) async {
+      late BuildContext routeContext;
+      final router =
+          (AppRouterBuilder()..addHabits(
+                builder: (context, state) {
+                  routeContext = context;
+                  return Text(state.name ?? 'missing route name');
+                },
+              ))
+              .build(home: AppRoute.habits);
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppRoute.habits.name), findsOneWidget);
+      expect(ModalRoute.of(routeContext)?.settings.name, AppRoute.habits.name);
+      expect(GoRouterState.of(routeContext).name, AppRoute.habits.name);
+    });
+
     test('build with no routes produces empty route list', () {
       final router = AppRouterBuilder().build();
       final routes = router.configuration.routes;
@@ -35,7 +57,7 @@ void main() {
       final route = routes.first as GoRoute;
       expect(route.path, '/habits');
       expect(route.name, AppRoute.habits.name);
-      expect(route.builder, isNotNull);
+      expect(route.pageBuilder, isNotNull);
     });
 
     test('addHabitDetail sets correct path and name', () {
@@ -48,7 +70,7 @@ void main() {
       final route = routes.first as GoRoute;
       expect(route.path, '/habits/:habitId');
       expect(route.name, AppRoute.habitDetail.name);
-      expect(route.builder, isNotNull);
+      expect(route.pageBuilder, isNotNull);
     });
 
     test('addHabitCreate sets correct path and name', () {
@@ -69,7 +91,7 @@ void main() {
       final route = shell.routes[0] as GoRoute;
       expect(route.path, '/habit/create');
       expect(route.name, AppRoute.habitCreate.name);
-      expect(route.builder, isNotNull);
+      expect(route.pageBuilder, isNotNull);
     });
 
     test('addHabitEdit sets correct path and name', () {
@@ -90,73 +112,28 @@ void main() {
       final route = shell.routes[0] as GoRoute;
       expect(route.path, '/habit/edit');
       expect(route.name, AppRoute.habitEdit.name);
-      expect(route.builder, isNotNull);
-    });
-
-    test('addSettings sets correct path and name', () {
-      final router =
-          (AppRouterBuilder()
-                ..addSettings(builder: (_, _) => const SizedBox.shrink()))
-              .build();
-      final route = router.configuration.routes.first as GoRoute;
-      expect(route.path, '/settings');
-      expect(route.name, AppRoute.settings.name);
-      expect(route.builder, isNotNull);
-    });
-
-    test('addSettingsAbout sets correct path and name', () {
-      final router =
-          (AppRouterBuilder()
-                ..addSettingsAbout(builder: (_, _) => const SizedBox.shrink()))
-              .build();
-      final route = router.configuration.routes.first as GoRoute;
-      expect(route.path, '/settings/about');
-      expect(route.name, AppRoute.settingsAbout.name);
-      expect(route.builder, isNotNull);
-    });
-
-    test('addSettingsSync sets correct path and name', () {
-      final router =
-          (AppRouterBuilder()
-                ..addSettingsSync(builder: (_, _) => const SizedBox.shrink()))
-              .build();
-      final route = router.configuration.routes.first as GoRoute;
-      expect(route.path, '/settings/sync');
-      expect(route.name, AppRoute.settingsSync.name);
-      expect(route.builder, isNotNull);
-    });
-
-    test('addSettingsNotify sets correct path and name', () {
-      final router =
-          (AppRouterBuilder()
-                ..addSettingsNotify(builder: (_, _) => const SizedBox.shrink()))
-              .build();
-      final route = router.configuration.routes.first as GoRoute;
-      expect(route.path, '/settings/notify');
-      expect(route.name, AppRoute.settingsNotify.name);
-      expect(route.builder, isNotNull);
-    });
-
-    test('addExperimental sets correct path and name', () {
-      final router =
-          (AppRouterBuilder()
-                ..addExperimental(builder: (_, _) => const SizedBox.shrink()))
-              .build();
-      final route = router.configuration.routes.first as GoRoute;
-      expect(route.path, '/experimental');
-      expect(route.name, AppRoute.experimental.name);
-      expect(route.builder, isNotNull);
+      expect(route.pageBuilder, isNotNull);
     });
 
     test('addDebugger sets correct path and name', () {
+      final appFlow = AppFlowRouterBuilder()
+        ..addDebugger(builder: (_, _) => const SizedBox.shrink());
       final router =
-          (AppRouterBuilder()
-                ..addDebugger(builder: (_, _) => const SizedBox.shrink()))
+          (AppRouterBuilder()..addShellRoute(
+                appFlow: appFlow,
+                branches: [
+                  BranchRouterBuilder()
+                    ..addHabits(builder: (_, _) => const SizedBox.shrink()),
+                ],
+                builder: (_, _, child) => child,
+                branchBuilder: (_, _, _) => const SizedBox.shrink(),
+              ))
               .build();
-      final route = router.configuration.routes.first as GoRoute;
+      final shell = router.configuration.routes.first as ShellRoute;
+      final route = shell.routes.first as GoRoute;
       expect(route.path, '/debugger');
       expect(route.name, AppRoute.debugger.name);
-      expect(route.builder, isNotNull);
+      expect(route.pageBuilder, isNotNull);
     });
 
     test('addGroupManage sets correct path and name', () {
@@ -167,7 +144,7 @@ void main() {
       final route = router.configuration.routes.first as GoRoute;
       expect(route.path, '/group/manage');
       expect(route.name, AppRoute.groupManage.name);
-      expect(route.builder, isNotNull);
+      expect(route.pageBuilder, isNotNull);
     });
 
     test('addHabitsStatus sets correct path and name', () {
@@ -178,35 +155,25 @@ void main() {
       final route = router.configuration.routes.first as GoRoute;
       expect(route.path, '/habits/status');
       expect(route.name, AppRoute.habitsStatus.name);
-      expect(route.builder, isNotNull);
+      expect(route.pageBuilder, isNotNull);
     });
 
-    test('chains all 11 routes in registration order', () {
+    test('chains standalone routes in registration order', () {
       final router =
           (AppRouterBuilder()
                 ..addHabits(builder: (_, _) => const SizedBox.shrink())
                 ..addToday(builder: (_, _) => const SizedBox.shrink())
                 ..addHabitDetail(builder: (_, _) => const SizedBox.shrink())
-                ..addSettings(builder: (_, _) => const SizedBox.shrink())
-                ..addSettingsAbout(builder: (_, _) => const SizedBox.shrink())
-                ..addSettingsSync(builder: (_, _) => const SizedBox.shrink())
-                ..addSettingsNotify(builder: (_, _) => const SizedBox.shrink())
-                ..addExperimental(builder: (_, _) => const SizedBox.shrink())
                 ..addDebugger(builder: (_, _) => const SizedBox.shrink())
                 ..addGroupManage(builder: (_, _) => const SizedBox.shrink())
                 ..addHabitsStatus(builder: (_, _) => const SizedBox.shrink()))
               .build();
       final routes = router.configuration.routes;
-      expect(routes, hasLength(11));
+      expect(routes, hasLength(6));
       final expectedPaths = [
         '/habits',
         '/today',
         '/habits/:habitId',
-        '/settings',
-        '/settings/about',
-        '/settings/sync',
-        '/settings/notify',
-        '/experimental',
         '/debugger',
         '/group/manage',
         '/habits/status',
@@ -240,6 +207,13 @@ void main() {
       expect(AppRoute.debugger.name, 'debugger');
       expect(AppRoute.groupManage.name, 'group/manage');
       expect(AppRoute.habitsStatus.name, 'habits/status');
+    });
+
+    test('AppRoute names are unique', () {
+      expect(
+        AppRoute.values.map((route) => route.name).toSet(),
+        hasLength(AppRoute.values.length),
+      );
     });
   });
 
@@ -300,10 +274,153 @@ void main() {
         appShellFlowVisibilityPolicy([AppRoute.habitsStatus.name]),
         isFalse,
       );
+      expect(
+        appShellFlowVisibilityPolicy([AppRoute.groupManage.name]),
+        isFalse,
+      );
+      expect(appShellFlowVisibilityPolicy([AppRoute.debugger.name]), isFalse);
+      expect(appShellFlowVisibilityPolicy([AppRoute.settings.name]), isFalse);
+      expect(
+        appShellFlowVisibilityPolicy([AppRoute.experimental.name]),
+        isFalse,
+      );
+    });
+  });
+
+  group('Settings app flow', () {
+    test('recognizes every Settings presentation route', () {
+      expect(isSettingsFlowRouteName(AppRoute.settings.name), isTrue);
+      expect(isSettingsFlowRouteName(AppRoute.settingsAbout.name), isTrue);
+      expect(isSettingsFlowRouteName(AppRoute.settingsSync.name), isTrue);
+      expect(isSettingsFlowRouteName(AppRoute.settingsNotify.name), isTrue);
+      expect(isSettingsFlowRouteName(AppRoute.experimental.name), isTrue);
+      expect(isSettingsFlowRouteName(AppRoute.groupManage.name), isFalse);
+      expect(isSettingsFlowRouteName(AppRoute.habits.name), isFalse);
+      expect(isSettingsFlowRouteName(null), isFalse);
+    });
+
+    test('derives Group Manage auxiliary selection from its source stack', () {
+      expect(
+        isSettingsAuxiliaryRouteStack([null, AppRoute.groupManage.name]),
+        isFalse,
+      );
+      expect(
+        isSettingsAuxiliaryRouteStack([
+          null,
+          AppRoute.settings.name,
+          AppRoute.groupManage.name,
+        ]),
+        isTrue,
+      );
+      expect(
+        isSettingsAuxiliaryRouteStack([AppRoute.groupManage.name]),
+        isFalse,
+      );
+      expect(
+        isSettingsAuxiliaryRouteStack([
+          null,
+          AppRoute.settings.name,
+          AppRoute.habitEdit.name,
+          AppRoute.groupManage.name,
+        ]),
+        isFalse,
+      );
+    });
+
+    test('derives Debugger auxiliary selection from its immediate source', () {
+      expect(
+        isSettingsAuxiliaryRouteStack([
+          null,
+          AppRoute.settings.name,
+          AppRoute.debugger.name,
+        ]),
+        isTrue,
+      );
+      expect(
+        isSettingsAuxiliaryRouteStack([
+          null,
+          AppRoute.settings.name,
+          AppRoute.settingsAbout.name,
+          AppRoute.debugger.name,
+        ]),
+        isTrue,
+      );
+      expect(
+        isSettingsAuxiliaryRouteStack([null, AppRoute.debugger.name]),
+        isFalse,
+      );
+      expect(
+        isSettingsAuxiliaryRouteStack([
+          null,
+          AppRoute.settings.name,
+          AppRoute.habitEdit.name,
+          AppRoute.debugger.name,
+        ]),
+        isFalse,
+      );
+    });
+
+    test('nests Settings pages and preserves Experimental path', () {
+      final appFlow = AppFlowRouterBuilder()
+        ..addSettingsFlow(
+          settingsBuilder: (_, state) => MaterialPage<void>(
+            key: state.pageKey,
+            child: const SizedBox.shrink(),
+          ),
+          aboutBuilder: (_, _) => const SizedBox.shrink(),
+          syncBuilder: (_, _) => const SizedBox.shrink(),
+          notifyBuilder: (_, _) => const SizedBox.shrink(),
+          experimentalBuilder: (_, _) => const SizedBox.shrink(),
+        );
+      final router =
+          (AppRouterBuilder()..addShellRoute(
+                appFlow: appFlow,
+                branches: [
+                  BranchRouterBuilder()
+                    ..addHabits(builder: (_, _) => const SizedBox.shrink()),
+                ],
+                builder: (_, _, child) => child,
+                branchBuilder: (_, _, _) => const SizedBox.shrink(),
+              ))
+              .build();
+      final shell = router.configuration.routes.first as ShellRoute;
+      final settings = shell.routes[0] as GoRoute;
+      final experimental = shell.routes[1] as GoRoute;
+
+      expect(settings.path, '/settings');
+      expect(settings.name, AppRoute.settings.name);
+      expect(settings.routes.map((route) => (route as GoRoute).path), [
+        'about',
+        'sync',
+        'notify',
+      ]);
+      expect(settings.routes.map((route) => (route as GoRoute).name), [
+        AppRoute.settingsAbout.name,
+        AppRoute.settingsSync.name,
+        AppRoute.settingsNotify.name,
+      ]);
+      expect(experimental.path, '/experimental');
+      expect(experimental.name, AppRoute.experimental.name);
     });
   });
 
   group('AppRouterBuilder shell routes', () {
+    Iterable<String> routeNames(Iterable<RouteBase> routes) sync* {
+      for (final route in routes) {
+        switch (route) {
+          case final GoRoute route:
+            if (route.name case final name?) yield name;
+            yield* routeNames(route.routes);
+          case final ShellRoute route:
+            yield* routeNames(route.routes);
+          case final StatefulShellRoute route:
+            for (final branch in route.branches) {
+              yield* routeNames(branch.routes);
+            }
+        }
+      }
+    }
+
     List<BranchRouterBuilder> buildBranchRoutes() => [
       BranchRouterBuilder()
         ..addHabits(builder: (_, _) => const SizedBox.shrink())
@@ -315,7 +432,9 @@ void main() {
     AppFlowRouterBuilder buildAppFlowRoutes() => AppFlowRouterBuilder()
       ..addHabitCreate(builder: (_, _) => const SizedBox.shrink())
       ..addHabitEdit(builder: (_, _) => const SizedBox.shrink())
-      ..addHabitsStatus(builder: (_, _) => const SizedBox.shrink());
+      ..addHabitsStatus(builder: (_, _) => const SizedBox.shrink())
+      ..addGroupManage(builder: (_, _) => const SizedBox.shrink())
+      ..addDebugger(builder: (_, _) => const SizedBox.shrink());
 
     test('addShellRoute nests tab branches under an app chrome shell', () {
       final router =
@@ -330,13 +449,23 @@ void main() {
       expect(routes, hasLength(1));
       final appChromeShell = routes.first as ShellRoute;
       expect(appChromeShell.builder, isNotNull);
-      expect(appChromeShell.routes, hasLength(4));
+      expect(appChromeShell.routes, hasLength(6));
 
       expect((appChromeShell.routes[0] as GoRoute).path, '/habit/create');
       expect((appChromeShell.routes[1] as GoRoute).path, '/habit/edit');
       expect((appChromeShell.routes[2] as GoRoute).path, '/habits/status');
+      expect((appChromeShell.routes[3] as GoRoute).path, '/group/manage');
+      expect(
+        (appChromeShell.routes[3] as GoRoute).name,
+        AppRoute.groupManage.name,
+      );
+      expect((appChromeShell.routes[4] as GoRoute).path, '/debugger');
+      expect(
+        (appChromeShell.routes[4] as GoRoute).name,
+        AppRoute.debugger.name,
+      );
 
-      final tabShell = appChromeShell.routes[3] as StatefulShellRoute;
+      final tabShell = appChromeShell.routes[5] as StatefulShellRoute;
       expect(tabShell.builder, isNotNull);
       expect(tabShell.branches, hasLength(2));
 
@@ -356,26 +485,52 @@ void main() {
       }
     });
 
-    test('shell route coexists with root-level routes', () {
+    test('Debugger is registered inside the app chrome shell', () {
       final router =
-          (AppRouterBuilder()
-                ..addShellRoute(
-                  appFlow: buildAppFlowRoutes(),
-                  branches: buildBranchRoutes(),
-                  builder: (_, _, child) => child,
-                  branchBuilder: (_, _, _) => const SizedBox.shrink(),
-                )
-                ..addGroupManage(builder: (_, _) => const SizedBox.shrink()))
+          (AppRouterBuilder()..addShellRoute(
+                appFlow: buildAppFlowRoutes(),
+                branches: buildBranchRoutes(),
+                builder: (_, _, child) => child,
+                branchBuilder: (_, _, _) => const SizedBox.shrink(),
+              ))
               .build();
       final routes = router.configuration.routes;
-      expect(routes, hasLength(2));
+      expect(routes, hasLength(1));
       expect(routes[0], isA<ShellRoute>());
       final appChromeShell = routes[0] as ShellRoute;
       expect((appChromeShell.routes[0] as GoRoute).path, '/habit/create');
       expect((appChromeShell.routes[1] as GoRoute).path, '/habit/edit');
       expect((appChromeShell.routes[2] as GoRoute).path, '/habits/status');
-      expect(appChromeShell.routes[3], isA<StatefulShellRoute>());
-      expect((routes[1] as GoRoute).path, '/group/manage');
+      expect((appChromeShell.routes[3] as GoRoute).path, '/group/manage');
+      expect((appChromeShell.routes[4] as GoRoute).path, '/debugger');
+      expect(appChromeShell.routes[5], isA<StatefulShellRoute>());
+    });
+
+    test('complete shell configuration registers every AppRoute', () {
+      final appFlow = buildAppFlowRoutes()
+        ..addSettingsFlow(
+          settingsBuilder: (_, state) => MaterialPage<void>(
+            key: state.pageKey,
+            child: const SizedBox.shrink(),
+          ),
+          aboutBuilder: (_, _) => const SizedBox.shrink(),
+          syncBuilder: (_, _) => const SizedBox.shrink(),
+          notifyBuilder: (_, _) => const SizedBox.shrink(),
+          experimentalBuilder: (_, _) => const SizedBox.shrink(),
+        );
+      final router =
+          (AppRouterBuilder()..addShellRoute(
+                appFlow: appFlow,
+                branches: buildBranchRoutes(),
+                builder: (_, _, child) => child,
+                branchBuilder: (_, _, _) => const SizedBox.shrink(),
+              ))
+              .build();
+
+      expect(
+        routeNames(router.configuration.routes).toSet(),
+        AppRoute.values.map((route) => route.name).toSet(),
+      );
     });
   });
 }

@@ -384,6 +384,30 @@ class L10nZh extends L10n {
   String get habitDisplay_statsMenu_popularitySubgroupText => '热门习惯: 近30天变化';
 
   @override
+  String get habitDisplay_statisticsAction_label => '统计';
+
+  @override
+  String get habitDisplay_displayFilterAction_label => '显示筛选';
+
+  @override
+  String get habitDisplay_displayFilter_inProgress => '进行中';
+
+  @override
+  String get habitDisplay_displayFilter_archived => '已归档';
+
+  @override
+  String get habitDisplay_displayFilter_completed => '已完成';
+
+  @override
+  String get common_appThemeMode_light => '明亮主题';
+
+  @override
+  String get common_appThemeMode_dark => '黑暗主题';
+
+  @override
+  String get common_appThemeMode_followSystem => '跟随系统';
+
+  @override
   String get habitDisplay_mainMenu_lightTheme => '明亮主题';
 
   @override
@@ -870,6 +894,9 @@ class L10nZh extends L10n {
 
   @override
   String get appSetting_appThemeColorTile_titleText => '主题颜色';
+
+  @override
+  String get appSetting_appThemeModeTile_titleText => '主题模式';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText => '选择主题颜色';
@@ -2426,6 +2453,30 @@ class L10nZhHant extends L10nZh {
   String get habitDisplay_statsMenu_popularitySubgroupText => '熱門習慣：近 30 天變化';
 
   @override
+  String get habitDisplay_statisticsAction_label => '統計';
+
+  @override
+  String get habitDisplay_displayFilterAction_label => '顯示篩選條件';
+
+  @override
+  String get habitDisplay_displayFilter_inProgress => '進行中';
+
+  @override
+  String get habitDisplay_displayFilter_archived => '已封存';
+
+  @override
+  String get habitDisplay_displayFilter_completed => '已完成';
+
+  @override
+  String get common_appThemeMode_light => '淺色主題';
+
+  @override
+  String get common_appThemeMode_dark => '深色主題';
+
+  @override
+  String get common_appThemeMode_followSystem => '依照系統設定';
+
+  @override
   String get habitDisplay_mainMenu_lightTheme => '淺色主題';
 
   @override
@@ -2917,6 +2968,9 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get appSetting_appThemeColorTile_titleText => '主題顏色';
+
+  @override
+  String get appSetting_appThemeModeTile_titleText => '主題模式';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText => '選擇主題顏色';

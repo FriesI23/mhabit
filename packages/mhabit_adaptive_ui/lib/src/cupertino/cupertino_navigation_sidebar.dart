@@ -5,12 +5,17 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' show MaterialLocalizations;
 
 import '../adaptive/adaptive_navigation_destination.dart';
+import '../shell/navigation_shell_form.dart';
 import '../shell/navigation_shell_frame.dart';
 import '../shell/navigation_sidebar_app_bar_leading.dart';
 import '../shell/side_navigation.dart';
 import '../window_control/window_control_layout.dart';
 import 'cupertino_navigation_sidebar_button.dart';
 import 'cupertino_navigation_sidebar_panel.dart';
+
+// Measured from UITabBarController.mode = .tabSidebar on iPadOS 26.5: the
+// floating Sidebar surface is inset 10pt from every window edge.
+const double _kSidebarSurfaceMargin = 10;
 
 /// Cupertino-owned side-navigation body.
 ///
@@ -23,6 +28,9 @@ class CupertinoNavigationSidebar extends StatefulWidget {
     required this.selectedIndex,
     required this.destinations,
     required this.onDestinationSelected,
+    required this.auxiliaryDestinations,
+    required this.selectedAuxiliaryIndex,
+    required this.onAuxiliaryDestinationSelected,
     required this.sideNavigationExtent,
     required this.dragHandleBuilder,
     this.expandNavigationLabel,
@@ -34,6 +42,9 @@ class CupertinoNavigationSidebar extends StatefulWidget {
   final int selectedIndex;
   final List<AdaptiveNavigationDestination> destinations;
   final ValueChanged<int> onDestinationSelected;
+  final List<AdaptiveNavigationDestination> auxiliaryDestinations;
+  final int? selectedAuxiliaryIndex;
+  final ValueChanged<int>? onAuxiliaryDestinationSelected;
   final SideNavigationExtent sideNavigationExtent;
   final SideNavigationDragHandleBuilder? dragHandleBuilder;
 
@@ -51,7 +62,6 @@ class CupertinoNavigationSidebar extends StatefulWidget {
 
 class _CupertinoNavigationSidebarState extends State<CupertinoNavigationSidebar>
     with SingleTickerProviderStateMixin {
-  static const double _surfaceMargin = 12;
   static const double _contentGap = 12;
   static const double _edgeGestureWidth = 20;
   static const double _appBarLeadingPadding = 16;
@@ -162,33 +172,55 @@ class _CupertinoNavigationSidebarState extends State<CupertinoNavigationSidebar>
     final mediaPadding = MediaQuery.paddingOf(context);
     final direction = Directionality.of(context);
     final leadingSafeMargin = math.max(
-      _surfaceMargin,
+      _kSidebarSurfaceMargin,
       direction == TextDirection.ltr ? mediaPadding.left : mediaPadding.right,
     );
-    final toolbarTopInset = math.max(0.0, _surfaceMargin - mediaPadding.top);
-    final buttonTop = math.max(_surfaceMargin, mediaPadding.top);
+    final buttonTop = math.max(_kSidebarSurfaceMargin, mediaPadding.top);
     final sideNavigationAvoidance =
         AdaptiveWindowControlLayoutScope.sideNavigationHorizontalAvoidanceOf(
           context,
         );
+    final appBarAvoidance = AdaptiveWindowControlLayoutScope.appBarAvoidanceOf(
+      context,
+    );
+    final sideNavigationStart = direction == TextDirection.ltr
+        ? sideNavigationAvoidance.left
+        : sideNavigationAvoidance.right;
+    final sideNavigationEnd = direction == TextDirection.ltr
+        ? sideNavigationAvoidance.right
+        : sideNavigationAvoidance.left;
     final visibleButtonStart =
         leadingSafeMargin +
         panelWidth -
-        math.max(sideNavigationAvoidance.end, _panelToggleTrailingPadding) -
+        math.max(sideNavigationEnd, _panelToggleTrailingPadding) -
         NavigationSidebarAppBarLeading.buttonExtent;
-    final hiddenButtonStart =
-        sideNavigationAvoidance.start + _appBarLeadingPadding;
+    final hiddenButtonStart = sideNavigationStart + _appBarLeadingPadding;
     return AnimatedBuilder(
       animation: _curvedAnimation,
+      // The 44pt toolbar remains platform-owned. Expose the floating surface
+      // margin as safe area so regular and sliver app bars start on the same
+      // vertical baseline without carrying Sidebar geometry in their APIs.
+      child: MediaQuery(
+        data: MediaQuery.of(
+          context,
+        ).copyWith(padding: mediaPadding.copyWith(top: buttonTop)),
+        child: widget.child,
+      ),
       builder: (context, child) {
         final progress = _curvedAnimation.value;
         final panelActive = _animation.value > 0;
         final appBarProgress = 1 - progress;
-        final toolbarAvoidance = EdgeInsetsDirectional.lerp(
-          EdgeInsetsDirectional.zero,
+        final returningSideAvoidance = EdgeInsets.lerp(
+          EdgeInsets.zero,
           sideNavigationAvoidance,
           appBarProgress,
         )!;
+        final toolbarAvoidance = EdgeInsets.fromLTRB(
+          appBarAvoidance.left + returningSideAvoidance.left,
+          0,
+          appBarAvoidance.right + returningSideAvoidance.right,
+          0,
+        );
         final buttonStart =
             hiddenButtonStart +
             (visibleButtonStart - hiddenButtonStart) * progress;
@@ -197,9 +229,8 @@ class _CupertinoNavigationSidebarState extends State<CupertinoNavigationSidebar>
               (leadingSafeMargin + panelWidth + _contentGap) * progress,
           child: NavigationSidebarAppBarLeading(
             toolbarAvoidance: toolbarAvoidance,
-            toolbarTopInset: toolbarTopInset,
             progress: appBarProgress,
-            child: widget.child,
+            child: child!,
           ),
         );
         final stack = Stack(
@@ -216,6 +247,10 @@ class _CupertinoNavigationSidebarState extends State<CupertinoNavigationSidebar>
                   selectedIndex: widget.selectedIndex,
                   destinations: widget.destinations,
                   onDestinationSelected: widget.onDestinationSelected,
+                  auxiliaryDestinations: widget.auxiliaryDestinations,
+                  selectedAuxiliaryIndex: widget.selectedAuxiliaryIndex,
+                  onAuxiliaryDestinationSelected:
+                      widget.onAuxiliaryDestinationSelected,
                   dragging: _resizeState.dragging,
                   dragHandleBuilder: widget.dragHandleBuilder,
                   onResizeStart: () => _handleResizeStart(windowWidth),
@@ -367,7 +402,7 @@ class _CupertinoSidebarAnimatedPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final direction = Directionality.of(context);
     return SafeArea(
-      minimum: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+      minimum: const EdgeInsets.all(_kSidebarSurfaceMargin),
       child: Align(
         alignment: AlignmentDirectional.centerStart,
         child: FractionalTranslation(

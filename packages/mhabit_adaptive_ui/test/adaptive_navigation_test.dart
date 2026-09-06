@@ -1,5 +1,6 @@
 import 'dart:ui' show PointerDeviceKind, Tristate;
 
+import 'package:adaptive_actions/core.dart';
 import 'package:flutter/cupertino.dart'
     show
         CupertinoButton,
@@ -443,14 +444,14 @@ const MethodChannel _windowControlChannel = MethodChannel(
 );
 
 Map<String, double> _windowInsets({
-  double start = 0,
+  double left = 0,
   double top = 0,
-  double end = 0,
+  double right = 0,
   double bottom = 0,
 }) => <String, double>{
-  'start': start,
+  'left': left,
   'top': top,
-  'end': end,
+  'right': right,
   'bottom': bottom,
 };
 
@@ -471,15 +472,15 @@ void _mockWindowControlLayout() {
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
       .setMockMethodCallHandler(_windowControlChannel, (call) async {
         return <String, Object>{
-          'schemaVersion': 4,
+          'schemaVersion': 5,
           'isAvailable': true,
           'isPad': true,
           'isFullScreen': false,
           'baseMargins': _windowInsets(),
-          'horizontalMargins': _windowInsets(start: 40, end: 12),
+          'horizontalMargins': _windowInsets(left: 40, right: 12),
           'verticalMargins': _windowInsets(top: 64),
           'baseSafeArea': _windowInsets(bottom: 34),
-          'horizontalSafeArea': _windowInsets(start: 24, end: 18, bottom: 34),
+          'horizontalSafeArea': _windowInsets(left: 24, right: 18, bottom: 34),
           'verticalSafeArea': _windowInsets(bottom: 34),
           'effectiveCornerRadii': _windowCornerRadii(
             topLeft: 62,
@@ -642,8 +643,12 @@ void main() {
             _ScopeLookupProbe(listen: false, onBuild: readBuilds.add),
           ],
         ),
-        builder: (context, value, child) =>
-            AdaptiveNavScope(barHeight: value, navHeight: value, child: child!),
+        builder: (context, value, child) => AdaptiveNavScope(
+          form: NavigationShellForm.compact,
+          barHeight: value,
+          navHeight: value,
+          child: child!,
+        ),
       ),
     );
 
@@ -1588,8 +1593,8 @@ void main() {
       final context = tester.element(find.text('habits page'));
       final layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
       expect(layout.hasWindowControlAvoidance, isFalse);
-      expect(layout.horizontalAvoidance, EdgeInsetsDirectional.zero);
-      expect(layout.verticalAvoidance, EdgeInsetsDirectional.zero);
+      expect(layout.horizontalAvoidance, EdgeInsets.zero);
+      expect(layout.verticalAvoidance, EdgeInsets.zero);
       expect(layout.horizontalSafeAreaAvoidance, isNull);
       expect(layout.verticalSafeAreaAvoidance, isNull);
       expect(layout.effectiveCornerRadii, isNull);
@@ -1605,8 +1610,8 @@ void main() {
       await tester.pumpWidget(
         AdaptiveWindowControlLayoutScope(
           hasWindowControlAvoidance: true,
-          horizontalAvoidance: EdgeInsetsDirectional.zero,
-          verticalAvoidance: EdgeInsetsDirectional.zero,
+          horizontalAvoidance: EdgeInsets.zero,
+          verticalAvoidance: EdgeInsets.zero,
           usesRectangularDisplay: true,
           owner: WindowControlLayoutOwner.appBar,
           child: MaterialApp.router(routerConfig: router),
@@ -1634,22 +1639,19 @@ void main() {
         expect(layout.hasWindowControlAvoidance, isTrue);
         expect(layout.owner, WindowControlLayoutOwner.appBar);
         expect(
-          layout.appBarHorizontalAvoidance,
-          const EdgeInsetsDirectional.only(start: 40, end: 12),
+          layout.appBarHorizontalAvoidanceFor(TextDirection.ltr),
+          const EdgeInsets.only(left: 40, right: 12),
         );
         expect(
-          layout.sideNavigationHorizontalAvoidance,
-          EdgeInsetsDirectional.zero,
+          layout.sideNavigationHorizontalAvoidanceFor(TextDirection.ltr),
+          EdgeInsets.zero,
         );
-        expect(
-          layout.sideNavigationVerticalAvoidance,
-          EdgeInsetsDirectional.zero,
-        );
+        expect(layout.sideNavigationVerticalAvoidance, EdgeInsets.zero);
         expect(
           layout.horizontalSafeAreaAvoidance,
-          const EdgeInsetsDirectional.fromSTEB(24, 0, 18, 0),
+          const EdgeInsets.fromLTRB(24, 0, 18, 0),
         );
-        expect(layout.verticalSafeAreaAvoidance, EdgeInsetsDirectional.zero);
+        expect(layout.verticalSafeAreaAvoidance, EdgeInsets.zero);
         expect(
           layout.effectiveCornerRadii,
           const BorderRadius.all(Radius.circular(62)),
@@ -1662,20 +1664,31 @@ void main() {
         layout = AdaptiveWindowControlLayoutScope.maybeOf(context)!;
         expect(layout.hasWindowControlAvoidance, isTrue);
         expect(layout.owner, WindowControlLayoutOwner.sideNavigation);
-        expect(layout.appBarHorizontalAvoidance, EdgeInsetsDirectional.zero);
         expect(
-          layout.sideNavigationHorizontalAvoidance,
-          const EdgeInsetsDirectional.only(start: 40, end: 12),
+          layout.appBarHorizontalAvoidanceFor(TextDirection.ltr),
+          const EdgeInsets.only(right: 12),
+        );
+        expect(
+          layout.sideNavigationHorizontalAvoidanceFor(TextDirection.ltr),
+          const EdgeInsets.only(left: 40),
+        );
+        expect(
+          layout.appBarHorizontalAvoidanceFor(TextDirection.rtl),
+          const EdgeInsets.only(left: 40),
+        );
+        expect(
+          layout.sideNavigationHorizontalAvoidanceFor(TextDirection.rtl),
+          const EdgeInsets.only(right: 12),
         );
         expect(
           layout.sideNavigationVerticalAvoidance,
-          const EdgeInsetsDirectional.only(top: 64),
+          const EdgeInsets.only(top: 64),
         );
         expect(
           layout.horizontalSafeAreaAvoidance,
-          const EdgeInsetsDirectional.fromSTEB(24, 0, 18, 0),
+          const EdgeInsets.fromLTRB(24, 0, 18, 0),
         );
-        expect(layout.verticalSafeAreaAvoidance, EdgeInsetsDirectional.zero);
+        expect(layout.verticalSafeAreaAvoidance, EdgeInsets.zero);
         expect(
           layout.effectiveCornerRadii,
           const BorderRadius.all(Radius.circular(62)),
@@ -1689,7 +1702,7 @@ void main() {
                 ),
               )
               .dx,
-          12,
+          10,
         );
 
         final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
@@ -1700,9 +1713,9 @@ void main() {
                     find.byKey(const ValueKey('cupertino-sidebar-surface')),
                   )
                   .dx -
-              12,
+              8,
         );
-        expect(tester.getTopLeft(toggle).dy, 12);
+        expect(tester.getTopLeft(toggle).dy, 10);
         await tester.tap(toggle);
         await tester.pumpAndSettle();
         expect(
@@ -1755,7 +1768,7 @@ void main() {
                 ),
               )
               .dx,
-          988,
+          990,
         );
       } finally {
         _resetWindowControlLayoutMock();
@@ -2603,6 +2616,10 @@ void main() {
         NavigationRail rail() =>
             tester.widget<NavigationRail>(find.byType(NavigationRail));
         expect(rail().extended, isFalse);
+        expect(
+          AdaptiveNavScope.of(tester.element(find.text('habits page'))).form,
+          NavigationShellForm.constrainedSide,
+        );
 
         await tester.tap(find.byIcon(Icons.menu));
         await tester.pumpAndSettle();
@@ -2653,6 +2670,10 @@ void main() {
       expect(
         find.byKey(const ValueKey('cupertino-sidebar-panel')),
         findsOneWidget,
+      );
+      expect(
+        AdaptiveNavScope.of(tester.element(find.text('habits page'))).form,
+        NavigationShellForm.expandedSide,
       );
       debugDefaultTargetPlatformOverride = null;
     });
@@ -3292,20 +3313,14 @@ void main() {
         );
         final collapsedCenter = tester.getCenter(toggle);
         expect(tester.getTopLeft(toggle).dy, 0);
-        expect(
-          safeSpan().padding,
-          const EdgeInsetsDirectional.only(start: 40, end: 12),
-        );
+        expect(safeSpan().padding, const EdgeInsets.only(left: 40));
 
         await tester.tap(toggle);
         await tester.pumpAndSettle();
 
         expect(tester.getCenter(toggle).dx, closeTo(collapsedCenter.dx, 0.01));
         expect(tester.getTopLeft(toggle).dy, 0);
-        expect(
-          safeSpan().padding,
-          const EdgeInsetsDirectional.only(start: 40, end: 12),
-        );
+        expect(safeSpan().padding, const EdgeInsets.only(left: 40));
       } finally {
         _resetWindowControlLayoutMock();
       }
@@ -3958,7 +3973,7 @@ void main() {
         tester
             .getTopLeft(find.byKey(const ValueKey('cupertino-sidebar-surface')))
             .dy,
-        12,
+        10,
       );
       final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
       addTearDown(mouse.removePointer);
@@ -4024,6 +4039,8 @@ void main() {
                   slivers: [
                     AdaptiveSliverSearchBar.apple(
                       title: const Text('Habits'),
+                      collection: ActionCollection<String>(roots: const []),
+                      onInvoke: (_, _) {},
                       leading: const Icon(
                         Icons.article_outlined,
                         key: ValueKey('test-search-leading'),
@@ -4052,8 +4069,8 @@ void main() {
           find.byType(SliverPersistentHeader),
         );
 
-        expect(header.delegate.minExtent, 56);
-        expect(header.delegate.maxExtent, 56);
+        expect(header.delegate.minExtent, 54);
+        expect(header.delegate.maxExtent, 54);
         final toggleElement = tester.element(toggle);
         expect(toggle, findsOneWidget);
         expect(toggle.hitTestable(), findsOneWidget);
@@ -4065,7 +4082,7 @@ void main() {
         expect(toggle.hitTestable(), findsOneWidget);
         expect(tester.element(toggle), same(toggleElement));
         expect(tester.getSize(anchor), const Size.square(44));
-        expect(tester.getTopLeft(anchor).dy, 12);
+        expect(tester.getTopLeft(anchor).dy, 10);
         expect(tester.getTopLeft(toggle), tester.getTopLeft(anchor));
         expect(
           tester
@@ -4233,7 +4250,7 @@ void main() {
     }
 
     testWidgets(
-      'apple beside span constrains the branch without changing media',
+      'apple beside span preserves horizontal media and supplies top safety',
       (tester) async {
         debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
         addTearDown(() => debugDefaultTargetPlatformOverride = null);
@@ -4268,6 +4285,9 @@ void main() {
         Size branchViewPadding() => tester.getSize(
           find.byKey(const ValueKey('branch-horizontal-view-padding')),
         );
+        Size branchVerticalPadding() => tester.getSize(
+          find.byKey(const ValueKey('branch-vertical-padding')),
+        );
         final branch = find.byKey(const ValueKey('branch-layout-probe'));
         final surface = find.byKey(const ValueKey('cupertino-sidebar-surface'));
         final surfaceWidget = tester.widget<CupertinoFloatingGlassSurface>(
@@ -4276,9 +4296,10 @@ void main() {
 
         expect(branchPadding().width, 64);
         expect(branchViewPadding().width, 80);
+        expect(branchVerticalPadding().height, 10);
         expect(tester.getTopLeft(branch).dx, 254);
-        expect(tester.getTopLeft(surface), const Offset(44, 12));
-        expect(tester.getSize(surface), const Size(198, 576));
+        expect(tester.getTopLeft(surface), const Offset(44, 10));
+        expect(tester.getSize(surface), const Size(198, 580));
         expect(
           surfaceWidget.borderRadius,
           const BorderRadius.all(Radius.circular(25)),
@@ -4291,12 +4312,13 @@ void main() {
         await tester.pumpAndSettle();
         expect(branchPadding().width, 64);
         expect(branchViewPadding().width, 80);
+        expect(branchVerticalPadding().height, 10);
         expect(tester.getTopLeft(branch).dx, 0);
         debugDefaultTargetPlatformOverride = null;
       },
     );
 
-    testWidgets('apple Sidebar preserves all branch media insets', (
+    testWidgets('apple Sidebar preserves branch media above its top minimum', (
       tester,
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
@@ -4653,6 +4675,7 @@ void main() {
       final mediumScope = AdaptiveNavScope.of(
         tester.element(find.text('habits page')),
       );
+      expect(mediumScope.form, NavigationShellForm.constrainedSide);
       expect(mediumScope.barHeight, 0);
       expect(mediumScope.visible.value, isTrue);
 
@@ -4664,6 +4687,7 @@ void main() {
       final compactScope = AdaptiveNavScope.of(
         tester.element(find.text('habits page')),
       );
+      expect(compactScope.form, NavigationShellForm.compact);
       expect(compactScope.barHeight, 80.0);
     });
 

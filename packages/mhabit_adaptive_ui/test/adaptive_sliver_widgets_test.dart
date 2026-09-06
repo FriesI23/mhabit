@@ -1,3 +1,4 @@
+import 'package:adaptive_actions/core.dart';
 import 'package:flutter/cupertino.dart'
     show CupertinoColors, CupertinoNavigationBar, CupertinoSliverNavigationBar;
 import 'package:flutter/material.dart';
@@ -268,8 +269,8 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: AdaptiveWindowControlLayoutScope(
-            horizontalAvoidance: EdgeInsetsDirectional.only(start: 40, end: 12),
-            verticalAvoidance: EdgeInsetsDirectional.zero,
+            horizontalAvoidance: EdgeInsets.only(left: 40, right: 12),
+            verticalAvoidance: EdgeInsets.zero,
             owner: WindowControlLayoutOwner.appBar,
             child: Scaffold(
               body: CustomScrollView(
@@ -301,8 +302,8 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: AdaptiveWindowControlLayoutScope(
-            horizontalAvoidance: EdgeInsetsDirectional.only(start: 40, end: 12),
-            verticalAvoidance: EdgeInsetsDirectional.zero,
+            horizontalAvoidance: EdgeInsets.only(left: 40, right: 12),
+            verticalAvoidance: EdgeInsets.zero,
             owner: WindowControlLayoutOwner.appBar,
             child: Scaffold(
               body: CustomScrollView(
@@ -478,8 +479,8 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: AdaptiveWindowControlLayoutScope(
-            horizontalAvoidance: EdgeInsetsDirectional.only(start: 10),
-            verticalAvoidance: EdgeInsetsDirectional.zero,
+            horizontalAvoidance: EdgeInsets.only(left: 10),
+            verticalAvoidance: EdgeInsets.zero,
             owner: WindowControlLayoutOwner.appBar,
             child: Scaffold(
               body: CustomScrollView(
@@ -506,8 +507,8 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: AdaptiveWindowControlLayoutScope(
-            horizontalAvoidance: EdgeInsetsDirectional.only(start: 10),
-            verticalAvoidance: EdgeInsetsDirectional.zero,
+            horizontalAvoidance: EdgeInsets.only(left: 10),
+            verticalAvoidance: EdgeInsets.zero,
             owner: WindowControlLayoutOwner.appBar,
             child: Scaffold(
               body: CustomScrollView(
@@ -610,6 +611,8 @@ void main() {
               slivers: [
                 AdaptiveSliverSearchBar(
                   title: const Text('title'),
+                  collection: ActionCollection<String>(roots: const []),
+                  onInvoke: (_, _) {},
                   controller: controller,
                   focusNode: focusNode,
                   isSearchActive: false,

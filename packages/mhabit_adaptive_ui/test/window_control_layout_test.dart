@@ -6,7 +6,7 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 void main() {
   Widget materialHost({
     required PreferredSizeWidget appBar,
-    EdgeInsetsDirectional avoidance = EdgeInsetsDirectional.zero,
+    EdgeInsets avoidance = EdgeInsets.zero,
     WindowControlLayoutOwner owner = WindowControlLayoutOwner.appBar,
     TextDirection textDirection = TextDirection.ltr,
   }) => MaterialApp(
@@ -14,7 +14,7 @@ void main() {
       textDirection: textDirection,
       child: AdaptiveWindowControlLayoutScope(
         horizontalAvoidance: avoidance,
-        verticalAvoidance: EdgeInsetsDirectional.zero,
+        verticalAvoidance: EdgeInsets.zero,
         owner: owner,
         child: Scaffold(appBar: appBar),
       ),
@@ -29,7 +29,7 @@ void main() {
     addTearDown(tester.view.reset);
     await tester.pumpWidget(
       materialHost(
-        avoidance: const EdgeInsetsDirectional.only(start: 40, end: 12),
+        avoidance: const EdgeInsets.only(left: 40, right: 12),
         appBar: const WindowControlAppBar(
           centerTitle: true,
           title: SizedBox(
@@ -99,12 +99,12 @@ void main() {
     addTearDown(tester.view.reset);
 
     Future<double> leadingLeft({
-      EdgeInsetsDirectional? explicitAvoidance,
+      EdgeInsets? explicitAvoidance,
       WindowControlLayoutOwner owner = WindowControlLayoutOwner.appBar,
     }) async {
       await tester.pumpWidget(
         materialHost(
-          avoidance: const EdgeInsetsDirectional.only(start: 40),
+          avoidance: const EdgeInsets.only(left: 40),
           owner: owner,
           appBar: WindowControlAppBar(
             windowControlAvoidance: explicitAvoidance,
@@ -115,14 +115,14 @@ void main() {
       return tester.getTopLeft(find.byKey(const ValueKey('leading'))).dx;
     }
 
-    expect(await leadingLeft(explicitAvoidance: EdgeInsetsDirectional.zero), 0);
+    expect(await leadingLeft(explicitAvoidance: EdgeInsets.zero), 0);
     expect(
       await leadingLeft(owner: WindowControlLayoutOwner.sideNavigation),
       0,
     );
   });
 
-  testWidgets('Material edge padding is configurable and directional', (
+  testWidgets('Material keeps physical avoidance fixed under Flutter RTL', (
     tester,
   ) async {
     tester.view.devicePixelRatio = 1;
@@ -131,7 +131,7 @@ void main() {
     await tester.pumpWidget(
       materialHost(
         textDirection: TextDirection.rtl,
-        avoidance: const EdgeInsetsDirectional.only(start: 20, end: 8),
+        avoidance: const EdgeInsets.only(left: 20, right: 8),
         appBar: const WindowControlAppBar(
           windowControlEdgePadding: EdgeInsetsDirectional.only(
             start: 4,
@@ -143,8 +143,8 @@ void main() {
       ),
     );
 
-    expect(tester.getTopRight(find.byKey(const ValueKey('leading'))).dx, 376);
-    expect(tester.getTopLeft(find.byKey(const ValueKey('action'))).dx, 14);
+    expect(tester.getTopRight(find.byKey(const ValueKey('leading'))).dx, 388);
+    expect(tester.getTopLeft(find.byKey(const ValueKey('action'))).dx, 26);
   });
 
   testWidgets(
@@ -215,8 +215,8 @@ void main() {
     await tester.pumpWidget(
       const CupertinoApp(
         home: AdaptiveWindowControlLayoutScope(
-          horizontalAvoidance: EdgeInsetsDirectional.only(start: 40, end: 12),
-          verticalAvoidance: EdgeInsetsDirectional.zero,
+          horizontalAvoidance: EdgeInsets.only(left: 40, right: 12),
+          verticalAvoidance: EdgeInsets.zero,
           owner: WindowControlLayoutOwner.appBar,
           child: CupertinoPageScaffold(
             navigationBar: WindowControlCupertinoNavigationBar(
@@ -240,14 +240,51 @@ void main() {
     expect(tester.getTopRight(find.byKey(const ValueKey('trailing'))).dx, 372);
   });
 
+  testWidgets('Cupertino keeps physical avoidance fixed under Flutter RTL', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(400, 800);
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      const CupertinoApp(
+        home: Directionality(
+          textDirection: TextDirection.rtl,
+          child: AdaptiveWindowControlLayoutScope(
+            horizontalAvoidance: EdgeInsets.only(left: 40),
+            verticalAvoidance: EdgeInsets.zero,
+            owner: WindowControlLayoutOwner.appBar,
+            child: CupertinoPageScaffold(
+              navigationBar: WindowControlCupertinoNavigationBar(
+                automaticallyImplyLeading: false,
+                leading: SizedBox(width: 44, key: ValueKey('rtl-leading')),
+                trailing: SizedBox(width: 44, key: ValueKey('rtl-trailing')),
+              ),
+              child: SizedBox.shrink(),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      tester.getTopRight(find.byKey(const ValueKey('rtl-leading'))).dx,
+      384,
+    );
+    expect(
+      tester.getTopLeft(find.byKey(const ValueKey('rtl-trailing'))).dx,
+      56,
+    );
+  });
+
   testWidgets('sliver large title uses internal toolbar avoidance', (
     tester,
   ) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: AdaptiveWindowControlLayoutScope(
-          horizontalAvoidance: EdgeInsetsDirectional.only(start: 20),
-          verticalAvoidance: EdgeInsetsDirectional.zero,
+          horizontalAvoidance: EdgeInsets.only(left: 20),
+          verticalAvoidance: EdgeInsets.zero,
           owner: WindowControlLayoutOwner.appBar,
           child: Scaffold(
             body: CustomScrollView(
@@ -273,9 +310,9 @@ void main() {
     tester,
   ) async {
     final layout = ValueNotifier((
-      avoidance: EdgeInsetsDirectional.zero,
-      horizontalAvoidance: const EdgeInsetsDirectional.only(start: 24, end: 18),
-      verticalAvoidance: EdgeInsetsDirectional.zero,
+      avoidance: EdgeInsets.zero,
+      horizontalAvoidance: const EdgeInsets.only(left: 24, right: 18),
+      verticalAvoidance: EdgeInsets.zero,
       cornerRadii: const BorderRadius.all(Radius.circular(62)),
     ));
     final geometryBuilds = <AdaptiveWindowSafeAreaGeometry?>[];
@@ -284,9 +321,9 @@ void main() {
     await tester.pumpWidget(
       ValueListenableBuilder<
         ({
-          EdgeInsetsDirectional avoidance,
-          EdgeInsetsDirectional horizontalAvoidance,
-          EdgeInsetsDirectional verticalAvoidance,
+          EdgeInsets avoidance,
+          EdgeInsets horizontalAvoidance,
+          EdgeInsets verticalAvoidance,
           BorderRadius cornerRadii,
         })
       >(
@@ -294,7 +331,7 @@ void main() {
         child: _SafeAreaGeometryProbe(onBuild: geometryBuilds.add),
         builder: (context, value, child) => AdaptiveWindowControlLayoutScope(
           horizontalAvoidance: value.avoidance,
-          verticalAvoidance: EdgeInsetsDirectional.zero,
+          verticalAvoidance: EdgeInsets.zero,
           horizontalSafeAreaAvoidance: value.horizontalAvoidance,
           verticalSafeAreaAvoidance: value.verticalAvoidance,
           effectiveCornerRadii: value.cornerRadii,
@@ -308,12 +345,12 @@ void main() {
           .having(
             (geometry) => geometry.horizontalAvoidance,
             'horizontalAvoidance',
-            const EdgeInsetsDirectional.only(start: 24, end: 18),
+            const EdgeInsets.only(left: 24, right: 18),
           )
           .having(
             (geometry) => geometry.verticalAvoidance,
             'verticalAvoidance',
-            EdgeInsetsDirectional.zero,
+            EdgeInsets.zero,
           )
           .having(
             (geometry) => geometry.effectiveCornerRadii,
@@ -323,7 +360,7 @@ void main() {
     ]);
 
     layout.value = (
-      avoidance: const EdgeInsetsDirectional.only(start: 40),
+      avoidance: const EdgeInsets.only(left: 40),
       horizontalAvoidance: layout.value.horizontalAvoidance,
       verticalAvoidance: layout.value.verticalAvoidance,
       cornerRadii: layout.value.cornerRadii,
@@ -334,7 +371,7 @@ void main() {
     layout.value = (
       avoidance: layout.value.avoidance,
       horizontalAvoidance: layout.value.horizontalAvoidance,
-      verticalAvoidance: const EdgeInsetsDirectional.only(bottom: 4),
+      verticalAvoidance: const EdgeInsets.only(bottom: 4),
       cornerRadii: layout.value.cornerRadii,
     );
     await tester.pump();

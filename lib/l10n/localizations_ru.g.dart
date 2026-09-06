@@ -400,6 +400,30 @@ class L10nRu extends L10n {
       'Топ привычек: изменения за последние 30 дней';
 
   @override
+  String get habitDisplay_statisticsAction_label => 'Statistics';
+
+  @override
+  String get habitDisplay_displayFilterAction_label => 'Display Filter';
+
+  @override
+  String get habitDisplay_displayFilter_inProgress => 'В прогрессе';
+
+  @override
+  String get habitDisplay_displayFilter_archived => 'Архивированные';
+
+  @override
+  String get habitDisplay_displayFilter_completed => 'Завершённые';
+
+  @override
+  String get common_appThemeMode_light => 'Светлая тема';
+
+  @override
+  String get common_appThemeMode_dark => 'Тёмная тема';
+
+  @override
+  String get common_appThemeMode_followSystem => 'Как в системе';
+
+  @override
   String get habitDisplay_mainMenu_lightTheme => 'Светлая тема';
 
   @override
@@ -937,6 +961,9 @@ class L10nRu extends L10n {
 
   @override
   String get appSetting_appThemeColorTile_titleText => 'Theme Color';
+
+  @override
+  String get appSetting_appThemeModeTile_titleText => 'Theme Mode';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText =>

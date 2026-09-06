@@ -394,6 +394,30 @@ class L10nHe extends L10n {
       'ההרגלים המובילים: שינויים ב־30 הימים האחרונים';
 
   @override
+  String get habitDisplay_statisticsAction_label => 'Statistics';
+
+  @override
+  String get habitDisplay_displayFilterAction_label => 'Display Filter';
+
+  @override
+  String get habitDisplay_displayFilter_inProgress => 'בתהליך';
+
+  @override
+  String get habitDisplay_displayFilter_archived => 'בארכיון';
+
+  @override
+  String get habitDisplay_displayFilter_completed => 'הושלם';
+
+  @override
+  String get common_appThemeMode_light => 'סגנון בהיר';
+
+  @override
+  String get common_appThemeMode_dark => 'סגנון כהה';
+
+  @override
+  String get common_appThemeMode_followSystem => 'לפי המערכת';
+
+  @override
   String get habitDisplay_mainMenu_lightTheme => 'סגנון בהיר';
 
   @override
@@ -927,6 +951,9 @@ class L10nHe extends L10n {
 
   @override
   String get appSetting_appThemeColorTile_titleText => 'צבע נושא';
+
+  @override
+  String get appSetting_appThemeModeTile_titleText => 'Theme Mode';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText => 'בחירת צבע נושא';

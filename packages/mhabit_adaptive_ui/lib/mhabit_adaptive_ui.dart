@@ -1,6 +1,7 @@
 /// Adaptive UI components for mhabit.
 library;
 
+export 'src/adaptive/adaptive_app_bar.dart';
 export 'src/adaptive/adaptive_app_bar_actions.dart';
 export 'src/adaptive/adaptive_back_button.dart';
 export 'src/adaptive/adaptive_bottom_sheet.dart';
@@ -29,6 +30,7 @@ export 'src/shell/adaptive_branch_route_observer.dart';
 export 'src/shell/adaptive_nav_scope.dart';
 export 'src/shell/adaptive_nav_visibility.dart';
 export 'src/shell/adaptive_navigation.dart';
+export 'src/shell/navigation_shell_form.dart';
 export 'src/window_control/cupertino_navigation_bar.dart';
 export 'src/window_control/material_app_bar.dart';
 export 'src/window_control/window_control_layout.dart';

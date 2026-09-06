@@ -13,9 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
-import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../logging/helper.dart';
 import '../../providers/app_ui/app_developer.dart';
@@ -109,33 +107,7 @@ final class _PageState extends State<_Page> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          WindowControlSliverAppBar(
-            leading: const PageBackButton(reason: PageBackReason.back),
-            title: L10nBuilder(
-              builder: (context, l10n) =>
-                  Text(l10n?.appSetting_syncOption_titleText ?? "Sync"),
-            ),
-            pinned: true,
-          ),
-          SliverPinnedHeader(
-            child: Selector<AppSyncSettingsAccess, bool>(
-              selector: (ctx, v) => v.enabled,
-              shouldRebuild: (previous, next) => previous != next,
-              builder: (context, value, child) => Material(
-                color: Theme.of(context).colorScheme.surface,
-                child: SwitchListTile.adaptive(
-                  title: L10nBuilder(
-                    builder: (context, l10n) =>
-                        Text(l10n?.common_enable_text ?? "Enable"),
-                  ),
-                  value: value,
-                  onChanged: (value) => context
-                      .read<AppSyncSettingsAccess>()
-                      .setSyncSwitch(value),
-                ),
-              ),
-            ),
-          ),
+          const AppSyncAppBar(),
           Selector<AppSyncSettingsAccess, bool>(
             selector: (ctx, v) => v.enabled,
             shouldRebuild: (previous, next) => previous != next,

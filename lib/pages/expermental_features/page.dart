@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
+import '../../extensions/adaptive_style_extensions.dart';
 import '../../extensions/context_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
@@ -127,8 +128,10 @@ final class _PageState extends State<_Page> {
     ];
 
     return Scaffold(
-      appBar: WindowControlAppBar(
-        leading: const PageBackButton(reason: PageBackReason.back),
+      appBar: AdaptiveAppBar(
+        toolbarHeight: AdaptiveStyle.of(context).appToolbarHeight,
+        leading: const AdaptiveBackButton(type: AdaptiveBackButtonType.back),
+        automaticallyImplyLeading: false,
         title: Text(
           l10n?.appSetting_experimentalFeatureTile_titleText ??
               "Experimental Features",

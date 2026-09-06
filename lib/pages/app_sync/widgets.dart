@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export '_widgets/app_sync_app_bar.dart';
 export '_widgets/app_sync_fail_logs_tile.dart';
 export '_widgets/app_sync_fetch_interval.dart' show AppSyncFetchIntervalTile;
 export '_widgets/app_sync_fetch_interval.dart';

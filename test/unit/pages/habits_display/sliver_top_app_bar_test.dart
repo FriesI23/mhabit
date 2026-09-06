@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:adaptive_actions/material.dart';
 import 'package:flutter/cupertino.dart'
     show
         CupertinoButton,
+        CupertinoButtonSize,
         CupertinoIcons,
         CupertinoMenuDivider,
         CupertinoMenuItem,
@@ -23,9 +25,11 @@ import 'package:flutter/cupertino.dart'
         CupertinoSearchTextField,
         CupertinoSliverNavigationBar;
 import 'package:flutter/material.dart';
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/extensions/adaptive_style_extensions.dart';
 import 'package:mhabit/l10n/localizations.dart';
+import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_stat.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
@@ -38,20 +42,30 @@ Widget _searchBarHost(
   HabitSummaryViewModel vm, {
   TargetPlatform platform = TargetPlatform.android,
   VoidCallback? onInfoButtonPressed,
-  VoidCallback? onMenuButtonPressed,
+  VoidCallback? onOpenSettingsPressed,
   VoidCallback? onSelectButtonPressed,
+  bool? showSelectAction,
+  bool compact = false,
   Locale? locale,
+  HabitDisplayConfig config = const HabitDisplayConfig(),
+  HabitDisplayOptionsCallbacks callbacks = const HabitDisplayOptionsCallbacks(),
 }) {
   final searchBar = switch (platform) {
     TargetPlatform.iOS || TargetPlatform.macOS => SliverSearchTopAppBar.apple(
       onInfoButtonPressed: onInfoButtonPressed,
-      onMenuButtonPressed: onMenuButtonPressed,
+      onOpenSettingsPressed: onOpenSettingsPressed,
       onSelectButtonPressed: onSelectButtonPressed,
+      showSelectAction: showSelectAction,
+      config: config,
+      callbacks: callbacks,
     ),
     _ => SliverSearchTopAppBar.material(
       onInfoButtonPressed: onInfoButtonPressed,
-      onMenuButtonPressed: onMenuButtonPressed,
+      onOpenSettingsPressed: onOpenSettingsPressed,
       onSelectButtonPressed: onSelectButtonPressed,
+      showSelectAction: showSelectAction,
+      config: config,
+      callbacks: callbacks,
     ),
   };
   return ChangeNotifierProvider.value(
@@ -62,15 +76,56 @@ Widget _searchBarHost(
       restorationScopeId: 'app',
       localizationsDelegates: L10n.localizationsDelegates,
       supportedLocales: L10n.supportedLocales,
-      home: Scaffold(body: CustomScrollView(slivers: [searchBar])),
+      home: AdaptiveNavScope(
+        form: compact
+            ? NavigationShellForm.compact
+            : NavigationShellForm.expandedSide,
+        barHeight: compact ? 80 : 0,
+        navHeight: compact ? 80 : 0,
+        child: Scaffold(body: CustomScrollView(slivers: [searchBar])),
+      ),
     ),
   );
 }
 
-Widget _viewBarHost() => const MaterialApp(
+Widget _viewBarHost({
+  TargetPlatform platform = TargetPlatform.android,
+  Locale? locale,
+  bool? showSelectAction,
+  VoidCallback? onInfo,
+  VoidCallback? onOpenSettings,
+  VoidCallback? onSelect,
+  bool compact = false,
+  HabitDisplayConfig config = const HabitDisplayConfig(),
+  HabitDisplayOptionsCallbacks callbacks = const HabitDisplayOptionsCallbacks(),
+}) => MaterialApp(
+  theme: ThemeData(platform: platform),
+  locale: locale,
   localizationsDelegates: L10n.localizationsDelegates,
   supportedLocales: L10n.supportedLocales,
-  home: Scaffold(body: CustomScrollView(slivers: [SliverViewTopAppBar()])),
+  home: AdaptiveNavScope(
+    form: compact
+        ? NavigationShellForm.compact
+        : NavigationShellForm.expandedSide,
+    barHeight: compact ? 80 : 0,
+    navHeight: compact ? 80 : 0,
+    child: Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverViewTopAppBar(
+            showSelectAction: showSelectAction,
+            config: HabitDisplayViewAppBarConfig(
+              onInfo: onInfo,
+              onOpenSettings: onOpenSettings,
+              onSelect: onSelect,
+              config: config,
+              callbacks: callbacks,
+            ),
+          ),
+        ],
+      ),
+    ),
+  ),
 );
 
 final class _TestHabitSummaryViewModel extends HabitSummaryViewModel {
@@ -90,28 +145,912 @@ final class _SelectionHabitSummaryViewModel extends HabitSummaryViewModel {
 }
 
 void main() {
-  testWidgets('selection app bar stays Material on iOS', (tester) async {
-    final vm = HabitSummaryViewModel();
-    addTearDown(vm.dispose);
+  Finder adaptiveActions() => find.byWidgetPredicate(
+    (widget) => widget is AdaptiveAppBarActions,
+    description: 'AdaptiveAppBarActions with any payload type',
+  );
+
+  Iterable<Object?> actionPayloads(WidgetTester tester) => tester
+      .widget<AdaptiveAppBarActions>(adaptiveActions())
+      .collection
+      .roots
+      .map((action) => action.payload);
+
+  const localizedActionLabels =
+      <(Locale, String, String, String, String, String)>[
+        (
+          Locale('en'),
+          'Display Filter',
+          'Statistics',
+          'In Progress',
+          'Archived',
+          'Completed',
+        ),
+        (Locale('zh'), '显示筛选', '统计', '进行中', '已归档', '已完成'),
+        (
+          Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
+          '顯示篩選條件',
+          '統計',
+          '進行中',
+          '已封存',
+          '已完成',
+        ),
+      ];
+
+  for (final entry in localizedActionLabels) {
+    testWidgets('display actions localize for ${entry.$1}', (tester) async {
+      await tester.pumpWidget(
+        _viewBarHost(
+          locale: entry.$1,
+          onInfo: () {},
+          callbacks: HabitDisplayOptionsCallbacks(
+            onDisplayFilterChanged: (_) {},
+          ),
+        ),
+      );
+
+      final roots = tester
+          .widget<AdaptiveAppBarActions>(adaptiveActions())
+          .collection
+          .roots;
+      expect(
+        roots
+            .firstWhere((item) => item.id == habitDisplayFilterActionId)
+            .metadata
+            .label,
+        entry.$2,
+      );
+      expect(
+        roots
+            .firstWhere((item) => item.id.value == 'habits.view.statistics')
+            .metadata
+            .label,
+        entry.$3,
+      );
+      final l10n = L10n.of(tester.element(adaptiveActions()))!;
+      expect(l10n.habitDisplay_displayFilter_inProgress, entry.$4);
+      expect(l10n.habitDisplay_displayFilter_archived, entry.$5);
+      expect(l10n.habitDisplay_displayFilter_completed, entry.$6);
+    });
+
+    testWidgets('search actions localize for ${entry.$1}', (tester) async {
+      final vm = HabitSummaryViewModel();
+      addTearDown(vm.dispose);
+      await tester.pumpWidget(
+        _searchBarHost(
+          vm,
+          locale: entry.$1,
+          onInfoButtonPressed: () {},
+          callbacks: HabitDisplayOptionsCallbacks(
+            onDisplayFilterChanged: (_) {},
+          ),
+        ),
+      );
+
+      final roots = tester
+          .widget<AdaptiveAppBarActions>(adaptiveActions())
+          .collection
+          .roots;
+      expect(
+        roots
+            .firstWhere((item) => item.id == habitDisplayFilterActionId)
+            .metadata
+            .label,
+        entry.$2,
+      );
+      expect(
+        roots
+            .firstWhere((item) => item.id.value == 'habits.search.statistics')
+            .metadata
+            .label,
+        entry.$3,
+      );
+    });
+  }
+
+  testWidgets('display options preserve responsive action contracts', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      _viewBarHost(
+        onInfo: () {},
+        config: const HabitDisplayConfig(groupingVisible: true),
+        callbacks: HabitDisplayOptionsCallbacks(
+          onSortTypeSelected: (_) {},
+          onSortDirectionToggled: () {},
+          onGroupTypeSelected: (_) {},
+          onGroupDirectionToggled: () {},
+          onDisplayFilterChanged: (_) {},
+          onThemeToggled: () {},
+        ),
+      ),
+    );
+    var actions = tester.widget<AdaptiveAppBarActions>(adaptiveActions());
+    var collection = actions.collection;
+    expect(actions.primaryCapacity, 144);
+    expect(
+      collection.roots
+          .firstWhere((a) => a.id == habitDisplaySortActionId)
+          .payload,
+      isNull,
+    );
+    expect(
+      collection.roots
+          .firstWhere((a) => a.id == habitDisplaySortActionId)
+          .children,
+      isNotEmpty,
+    );
+    for (final id in [
+      habitDisplaySortActionId,
+      habitDisplayGroupActionId,
+      habitDisplayFilterActionId,
+    ]) {
+      final action = collection.roots.firstWhere((item) => item.id == id);
+      expect(action.hasMenu, isTrue);
+      expect(action.payload, isNull);
+    }
+    expect(
+      collection.roots
+          .firstWhere((a) => a.id == habitDisplaySortActionId)
+          .placementPolicy
+          .placement,
+      ActionPlacement.automatic,
+    );
+    expect(
+      collection.roots
+          .firstWhere((a) => a.id == habitDisplayFilterActionId)
+          .placementPolicy
+          .placement,
+      ActionPlacement.automatic,
+    );
+    expect(
+      collection.roots
+          .firstWhere((a) => a.id == habitDisplayGroupActionId)
+          .placementPolicy
+          .placement,
+      ActionPlacement.overflowOnly,
+    );
+    expect(
+      collection.roots
+          .firstWhere((a) => a.id.value == 'habits.view.statistics')
+          .placementPolicy
+          .placement,
+      ActionPlacement.automatic,
+    );
+    expect(
+      collection.roots
+          .firstWhere((a) => a.id == habitDisplayThemeActionId)
+          .placementPolicy
+          .placement,
+      ActionPlacement.overflowOnly,
+    );
+
+    tester.view.physicalSize = const Size(700, 800);
+    await tester.pumpAndSettle();
+    actions = tester.widget<AdaptiveAppBarActions>(adaptiveActions());
+    expect(actions.maxPrimaryActions, 2);
+    expect(actions.primaryCapacity, 144);
+
+    tester.view.physicalSize = const Size(390, 800);
+    await tester.pumpAndSettle();
+    actions = tester.widget<AdaptiveAppBarActions>(adaptiveActions());
+    collection = actions.collection;
+    expect(actions.maxPrimaryActions, 2);
+    expect(actions.primaryCapacity, 144);
+    expect(
+      collection.roots
+          .firstWhere((a) => a.id == habitDisplaySortActionId)
+          .children,
+      isNotEmpty,
+    );
+    for (final id in [habitDisplaySortActionId, habitDisplayFilterActionId]) {
+      expect(
+        collection.roots
+            .firstWhere((a) => a.id == id)
+            .placementPolicy
+            .placement,
+        ActionPlacement.automatic,
+      );
+    }
+    expect(
+      collection.roots
+          .firstWhere((a) => a.id == habitDisplayGroupActionId)
+          .placementPolicy
+          .placement,
+      ActionPlacement.overflowOnly,
+    );
+  });
+
+  testWidgets('Apple pins Filter above Select and keeps Settings before it', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
 
     await tester.pumpWidget(
-      ChangeNotifierProvider.value(
-        value: vm,
-        child: MaterialApp(
-          theme: ThemeData(platform: TargetPlatform.iOS),
-          home: const CustomScrollView(slivers: [SliverEditTopAppBar()]),
+      _viewBarHost(
+        platform: TargetPlatform.iOS,
+        compact: true,
+        showSelectAction: true,
+        onSelect: () {},
+        onOpenSettings: () {},
+        callbacks: HabitDisplayOptionsCallbacks(onDisplayFilterChanged: (_) {}),
+      ),
+    );
+
+    final viewRoots = tester
+        .widget<AdaptiveAppBarActions>(adaptiveActions())
+        .collection
+        .roots;
+    expect(
+      viewRoots
+          .map((action) => action.id.value)
+          .toList()
+          .sublist(viewRoots.length - 2),
+      ['habits.view.open-settings', habitDisplayFilterActionId.value],
+    );
+    expect(
+      viewRoots
+          .singleWhere(
+            (action) => action.payload is HabitDisplayViewSelectAction,
+          )
+          .placementPolicy
+          .automaticPreference
+          ?.retentionPriority,
+      PrimaryRetentionPriority.normal,
+    );
+    expect(
+      viewRoots
+          .singleWhere((action) => action.id == habitDisplayFilterActionId)
+          .placementPolicy
+          .placement,
+      ActionPlacement.pinned,
+    );
+
+    final vm = HabitSummaryViewModel();
+    addTearDown(vm.dispose);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpWidget(
+      _searchBarHost(
+        vm,
+        platform: TargetPlatform.iOS,
+        compact: true,
+        showSelectAction: true,
+        onSelectButtonPressed: () {},
+        onOpenSettingsPressed: () {},
+      ),
+    );
+
+    final searchRoots = tester
+        .widget<AdaptiveAppBarActions>(adaptiveActions())
+        .collection
+        .roots;
+    expect(
+      searchRoots
+          .map((action) => action.id.value)
+          .toList()
+          .sublist(searchRoots.length - 2),
+      ['habits.search.open-settings', habitDisplaySearchFilterActionId.value],
+    );
+    expect(
+      searchRoots
+          .singleWhere(
+            (action) => action.payload is HabitDisplaySearchSelectAction,
+          )
+          .placementPolicy
+          .automaticPreference
+          ?.retentionPriority,
+      PrimaryRetentionPriority.normal,
+    );
+    expect(
+      searchRoots
+          .singleWhere(
+            (action) => action.id == habitDisplaySearchFilterActionId,
+          )
+          .placementPolicy
+          .placement,
+      ActionPlacement.pinned,
+    );
+  });
+
+  testWidgets('Material keeps Settings as the final action', (tester) async {
+    await tester.pumpWidget(
+      _viewBarHost(
+        platform: TargetPlatform.windows,
+        compact: true,
+        onOpenSettings: () {},
+        callbacks: HabitDisplayOptionsCallbacks(onDisplayFilterChanged: (_) {}),
+      ),
+    );
+    final viewRoots = tester
+        .widget<AdaptiveAppBarActions>(adaptiveActions())
+        .collection
+        .roots;
+    expect(viewRoots.last.id.value, 'habits.view.open-settings');
+
+    final vm = HabitSummaryViewModel();
+    addTearDown(vm.dispose);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpWidget(
+      _searchBarHost(
+        vm,
+        platform: TargetPlatform.windows,
+        compact: true,
+        onOpenSettingsPressed: () {},
+      ),
+    );
+    final searchRoots = tester
+        .widget<AdaptiveAppBarActions>(adaptiveActions())
+        .collection
+        .roots;
+    expect(searchRoots.last.id.value, 'habits.search.open-settings');
+  });
+
+  testWidgets('search display options are overflow-only and grouping gated', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final vm = HabitSummaryViewModel();
+    addTearDown(vm.dispose);
+    await tester.pumpWidget(
+      _searchBarHost(
+        vm,
+        config: const HabitDisplayConfig(groupingVisible: false),
+        callbacks: HabitDisplayOptionsCallbacks(
+          onSortTypeSelected: (_) {},
+          onGroupTypeSelected: (_) {},
+          onDisplayFilterChanged: (_) {},
+        ),
+      ),
+    );
+    final roots = tester
+        .widget<AdaptiveAppBarActions>(adaptiveActions())
+        .collection
+        .roots;
+    expect(roots.any((a) => a.id == habitDisplayGroupActionId), isFalse);
+    expect(
+      roots
+          .firstWhere((a) => a.id == habitDisplaySortActionId)
+          .placementPolicy
+          .placement,
+      ActionPlacement.overflowOnly,
+    );
+    expect(
+      roots
+          .firstWhere((a) => a.id == habitDisplayFilterActionId)
+          .placementPolicy
+          .placement,
+      ActionPlacement.overflowOnly,
+    );
+
+    await tester.pumpWidget(
+      _searchBarHost(
+        vm,
+        config: const HabitDisplayConfig(groupingVisible: true),
+        callbacks: HabitDisplayOptionsCallbacks(
+          onSortTypeSelected: (_) {},
+          onGroupTypeSelected: (_) {},
+          onDisplayFilterChanged: (_) {},
+          onThemeToggled: () {},
+        ),
+      ),
+    );
+    var collection = tester
+        .widget<AdaptiveAppBarActions>(adaptiveActions())
+        .collection;
+    expect(
+      collection.roots
+          .firstWhere((a) => a.id == habitDisplayGroupActionId)
+          .placementPolicy
+          .placement,
+      ActionPlacement.overflowOnly,
+    );
+
+    tester.view.physicalSize = const Size(700, 800);
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<MaterialSliverSearchBar>(find.byType(MaterialSliverSearchBar))
+          .preferredActionCapacity,
+      144,
+    );
+    expect(
+      tester.widget<AdaptiveAppBarActions>(adaptiveActions()).maxPrimaryActions,
+      2,
+    );
+
+    tester.view.physicalSize = const Size(900, 800);
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<MaterialSliverSearchBar>(find.byType(MaterialSliverSearchBar))
+          .preferredActionCapacity,
+      144,
+    );
+    expect(
+      tester.widget<AdaptiveAppBarActions>(adaptiveActions()).maxPrimaryActions,
+      2,
+    );
+    collection = tester
+        .widget<AdaptiveAppBarActions>(adaptiveActions())
+        .collection;
+    for (final id in [habitDisplaySortActionId, habitDisplayFilterActionId]) {
+      expect(
+        collection.roots
+            .firstWhere((a) => a.id == id)
+            .placementPolicy
+            .placement,
+        ActionPlacement.automatic,
+      );
+    }
+    expect(
+      collection.roots
+          .firstWhere((a) => a.id == habitDisplayGroupActionId)
+          .placementPolicy
+          .placement,
+      ActionPlacement.overflowOnly,
+    );
+    expect(
+      collection.roots
+          .firstWhere((a) => a.id == habitDisplayThemeActionId)
+          .placementPolicy
+          .placement,
+      ActionPlacement.overflowOnly,
+    );
+  });
+
+  testWidgets('display filter rejects disabling the final enabled item', (
+    tester,
+  ) async {
+    const onlyInProgress = HabitsDisplayFilter(
+      allowInProgressHabits: true,
+      allowArchivedHabits: false,
+      allowCompleteHabits: false,
+    );
+    await tester.pumpWidget(
+      _viewBarHost(
+        config: const HabitDisplayConfig(displayFilter: onlyInProgress),
+        callbacks: HabitDisplayOptionsCallbacks(onDisplayFilterChanged: (_) {}),
+      ),
+    );
+    final filterAction = tester
+        .widget<AdaptiveAppBarActions>(adaptiveActions())
+        .collection
+        .roots
+        .firstWhere((a) => a.id == habitDisplayFilterActionId);
+    expect(filterAction.children, isEmpty);
+    expect(
+      const ToggleHabitDisplayFilter(
+        HabitDisplayFilterTarget.inProgress,
+      ).applyTo(onlyInProgress),
+      isNull,
+    );
+
+    final allSelected = const ToggleHabitDisplayFilter(
+      HabitDisplayFilterTarget.archived,
+    ).applyTo(HabitsDisplayFilter.allTrue);
+    expect(allSelected, isNotNull);
+    expect(allSelected!.allowArchivedHabits, isFalse);
+    expect(allSelected.allowInProgressHabits, isTrue);
+    expect(allSelected.allowCompleteHabits, isTrue);
+  });
+
+  testWidgets('display filter uses status-list and checkmark visuals', (
+    tester,
+  ) async {
+    const config = HabitDisplayConfig(
+      groupingVisible: true,
+      displayFilter: HabitsDisplayFilter(
+        allowInProgressHabits: true,
+        allowArchivedHabits: false,
+        allowCompleteHabits: true,
+      ),
+    );
+    await tester.pumpWidget(
+      _viewBarHost(
+        config: config,
+        callbacks: HabitDisplayOptionsCallbacks(
+          onGroupTypeSelected: (_) {},
+          onDisplayFilterChanged: (_) {},
+        ),
+      ),
+    );
+    final appBarActions = tester
+        .widget<AdaptiveAppBarActions<HabitDisplayViewAction>>(
+          adaptiveActions(),
+        );
+    final context = tester.element(adaptiveActions());
+    final filterAction = appBarActions.collection.roots.firstWhere(
+      (action) => action.id == habitDisplayFilterActionId,
+    );
+    final groupAction = appBarActions.collection.roots.firstWhere(
+      (action) => action.id == habitDisplayGroupActionId,
+    );
+    expect(
+      (appBarActions.material!.iconBuilder!(context, filterAction) as Icon)
+          .icon,
+      Icons.checklist_rounded,
+    );
+    expect(
+      (appBarActions.apple!.iconBuilder!(context, filterAction) as Icon).icon,
+      CupertinoIcons.list_bullet,
+    );
+    expect(
+      (appBarActions.material!.iconBuilder!(context, groupAction) as Icon).icon,
+      Icons.folder_copy_outlined,
+    );
+    expect(
+      (appBarActions.apple!.iconBuilder!(context, groupAction) as Icon).icon,
+      CupertinoIcons.folder,
+    );
+  });
+
+  testWidgets('Material display filter uses a persistent checkbox submenu', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(900, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    HabitsDisplayFilter? changedFilter;
+
+    await tester.pumpWidget(
+      _viewBarHost(
+        platform: TargetPlatform.windows,
+        showSelectAction: true,
+        onSelect: () {},
+        onInfo: () {},
+        config: const HabitDisplayConfig(
+          displayFilter: HabitsDisplayFilter(
+            allowInProgressHabits: false,
+            allowArchivedHabits: false,
+            allowCompleteHabits: true,
+          ),
+        ),
+        callbacks: HabitDisplayOptionsCallbacks(
+          onDisplayFilterChanged: (value) => changedFilter = value,
         ),
       ),
     );
 
-    expect(find.byType(SliverAppBar), findsOneWidget);
-    expect(find.byType(CupertinoSliverNavigationBar), findsNothing);
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Display Filter'));
+    await tester.pumpAndSettle();
+
+    final checkboxes = tester.widgetList<CheckboxMenuButton>(
+      find.byType(CheckboxMenuButton),
+    );
+    expect(checkboxes, hasLength(3));
+    expect(checkboxes.every((item) => !item.closeOnActivate), isTrue);
+    expect(checkboxes.map((item) => item.value), [false, false, true]);
+    expect(checkboxes.last.onChanged, isNull);
+
+    await tester.tap(find.text('Archived'));
+    await tester.pump();
+
+    expect(
+      changedFilter,
+      const HabitsDisplayFilter(
+        allowInProgressHabits: false,
+        allowArchivedHabits: true,
+        allowCompleteHabits: true,
+      ),
+    );
+    expect(find.text('Archived'), findsOneWidget);
+    expect(find.byType(CheckboxMenuButton), findsNWidgets(3));
+  });
+
+  testWidgets('Cupertino display filter uses a persistent checkmark submenu', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(900, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    HabitsDisplayFilter? changedFilter;
+    var currentFilter = const HabitsDisplayFilter(
+      allowInProgressHabits: false,
+      allowArchivedHabits: false,
+      allowCompleteHabits: true,
+    );
+
+    await tester.pumpWidget(
+      StatefulBuilder(
+        builder: (context, setHostState) => MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          localizationsDelegates: L10n.localizationsDelegates,
+          supportedLocales: L10n.supportedLocales,
+          home: CustomScrollView(
+            slivers: [
+              AppleSliverViewTopAppBar(
+                showSelectAction: true,
+                config: HabitDisplayViewAppBarConfig(
+                  onSelect: () {},
+                  onInfo: () {},
+                  config: HabitDisplayConfig(displayFilter: currentFilter),
+                  callbacks: HabitDisplayOptionsCallbacks(
+                    onDisplayFilterChanged: (value) {
+                      changedFilter = value;
+                      setHostState(() => currentFilter = value);
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    final actions = tester.widget<AdaptiveAppBarActions>(adaptiveActions());
+    final filterAction = actions.collection.roots.firstWhere(
+      (action) => action.id == habitDisplayFilterActionId,
+    );
+    expect(filterAction.children, isEmpty);
+
+    final filterIcon = find.byIcon(CupertinoIcons.list_bullet);
+    if (filterIcon.evaluate().isNotEmpty) {
+      await tester.tap(filterIcon);
+    } else {
+      await tester.tap(find.byIcon(CupertinoIcons.ellipsis));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Display Filter'));
+    }
+    await tester.pumpAndSettle();
+
+    final items = tester.widgetList<CupertinoMenuItem>(
+      find.byType(CupertinoMenuItem),
+    );
+    expect(items, hasLength(3));
+    expect(items.every((item) => !item.requestCloseOnActivate), isTrue);
+    expect(items.last.onPressed, isNull);
+    expect(find.byIcon(CupertinoIcons.check_mark), findsOneWidget);
+
+    await tester.tap(find.text('Archived'));
+    await tester.pump();
+
+    expect(
+      changedFilter,
+      const HabitsDisplayFilter(
+        allowInProgressHabits: false,
+        allowArchivedHabits: true,
+        allowCompleteHabits: true,
+      ),
+    );
+    expect(find.text('Archived'), findsOneWidget);
+    expect(find.byType(CupertinoMenuItem), findsNWidgets(3));
+    expect(find.byIcon(CupertinoIcons.check_mark), findsNWidgets(2));
+
+    await tester.tap(find.text('Completed'));
+    await tester.pump();
+
+    final archivedItem = tester.widget<CupertinoMenuItem>(
+      find.widgetWithText(CupertinoMenuItem, 'Archived'),
+    );
+    expect(archivedItem.onPressed, isNull);
+    expect(find.byIcon(CupertinoIcons.check_mark), findsOneWidget);
+  });
+
+  testWidgets('Select entry defaults by platform and accepts an override', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _viewBarHost(platform: TargetPlatform.android, onSelect: () {}),
+    );
+    expect(
+      actionPayloads(tester),
+      isNot(contains(const HabitDisplayViewSelectAction())),
+    );
+
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpWidget(
+      _viewBarHost(platform: TargetPlatform.windows, onSelect: () {}),
+    );
+    expect(
+      actionPayloads(tester),
+      contains(const HabitDisplayViewSelectAction()),
+    );
+
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpWidget(
+      _viewBarHost(
+        platform: TargetPlatform.android,
+        showSelectAction: true,
+        onSelect: () {},
+      ),
+    );
+    expect(
+      actionPayloads(tester),
+      contains(const HabitDisplayViewSelectAction()),
+    );
+
+    final vm = HabitSummaryViewModel();
+    addTearDown(vm.dispose);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpWidget(_searchBarHost(vm, onSelectButtonPressed: () {}));
+    expect(
+      tester
+          .widget<AdaptiveAppBarActions>(adaptiveActions())
+          .collection
+          .roots
+          .map((action) => action.id.value),
+      isNot(contains('habits.search.select')),
+    );
+
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpWidget(
+      _searchBarHost(vm, showSelectAction: true, onSelectButtonPressed: () {}),
+    );
+    expect(
+      tester
+          .widget<AdaptiveAppBarActions>(adaptiveActions())
+          .collection
+          .roots
+          .map((action) => action.id.value),
+      contains('habits.search.select'),
+    );
+  });
+
+  testWidgets('compact view app bar exposes direct Settings entry', (
+    tester,
+  ) async {
+    var opened = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: L10n.localizationsDelegates,
+        supportedLocales: L10n.supportedLocales,
+        home: AdaptiveNavScope(
+          form: NavigationShellForm.compact,
+          barHeight: 80,
+          navHeight: 80,
+          child: Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                SliverViewTopAppBar(
+                  config: HabitDisplayViewAppBarConfig(
+                    onOpenSettings: () => opened = true,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final action = find.byKey(const ValueKey('open-settings-action'));
+    expect(action, findsOneWidget);
+    await tester.tap(action);
+    expect(opened, isTrue);
+    expect(adaptiveActions(), findsOneWidget);
+  });
+
+  testWidgets('compact search app bar exposes direct Settings entry', (
+    tester,
+  ) async {
+    final vm = HabitSummaryViewModel();
+    addTearDown(vm.dispose);
+    var opened = false;
+    await tester.pumpWidget(
+      _searchBarHost(
+        vm,
+        compact: true,
+        onOpenSettingsPressed: () => opened = true,
+      ),
+    );
+
+    final action = find.byKey(const ValueKey('open-settings-action'));
+    expect(action, findsOneWidget);
+    await tester.tap(action);
+    expect(opened, isTrue);
+    expect(adaptiveActions(), findsOneWidget);
+  });
+
+  testWidgets('view and search statistics actions use defined metadata', (
+    tester,
+  ) async {
+    final vm = HabitSummaryViewModel();
+    addTearDown(vm.dispose);
+    await tester.pumpWidget(
+      _searchBarHost(
+        vm,
+        locale: const Locale('zh'),
+        onInfoButtonPressed: () {},
+      ),
+    );
+    final searchActions = tester
+        .widget<AdaptiveAppBarActions>(adaptiveActions())
+        .collection
+        .roots;
+    final searchSummary = searchActions.singleWhere(
+      (action) => action.id.value == 'habits.search.statistics',
+    );
+    expect(searchSummary.metadata.label, '统计');
+    expect(searchSummary.metadata.tooltip, isNull);
+
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('zh'),
+        localizationsDelegates: L10n.localizationsDelegates,
+        supportedLocales: L10n.supportedLocales,
+        home: Scaffold(
+          body: CustomScrollView(
+            slivers: [
+              SliverViewTopAppBar(
+                config: HabitDisplayViewAppBarConfig(onInfo: () {}),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    final viewActions = tester
+        .widget<AdaptiveAppBarActions>(adaptiveActions())
+        .collection
+        .roots;
+    final viewSummary = viewActions.singleWhere(
+      (action) => action.id.value == 'habits.view.statistics',
+    );
+    expect(viewSummary.metadata.label, '统计');
+    expect(viewSummary.metadata.tooltip, isNull);
+  });
+
+  testWidgets('Material keeps Select and Statistics in the two primary slots', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(900, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final callbacks = HabitDisplayOptionsCallbacks(
+      onSortTypeSelected: (_) {},
+      onDisplayFilterChanged: (_) {},
+      onThemeToggled: () {},
+    );
+
+    await tester.pumpWidget(
+      _viewBarHost(
+        platform: TargetPlatform.windows,
+        showSelectAction: true,
+        onSelect: () {},
+        onInfo: () {},
+        callbacks: callbacks,
+      ),
+    );
+
+    expect(find.byIcon(Icons.select_all), findsOneWidget);
+    expect(find.byIcon(Icons.bar_chart_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.more_vert), findsOneWidget);
+
+    final vm = HabitSummaryViewModel();
+    addTearDown(vm.dispose);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpWidget(
+      _searchBarHost(
+        vm,
+        platform: TargetPlatform.windows,
+        showSelectAction: true,
+        onSelectButtonPressed: () {},
+        onInfoButtonPressed: () {},
+        callbacks: callbacks,
+      ),
+    );
+
+    expect(find.byIcon(Icons.select_all), findsOneWidget);
+    expect(find.byIcon(Icons.bar_chart_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.more_vert), findsOneWidget);
   });
 
   testWidgets('Material selection renderer builds the Material branch', (
     tester,
   ) async {
     void onEdit() {}
+    void onArchive() {}
     void onSelectAll() {}
     void onExport(BuildContext context) {}
 
@@ -135,9 +1074,12 @@ void main() {
           home: CustomScrollView(
             slivers: [
               MaterialSliverSelectAppBar(
-                onEdit: onEdit,
-                onSelectAll: onSelectAll,
-                onExport: onExport,
+                callbacks: HabitDisplaySelectAppBarCallbacks(
+                  onEdit: onEdit,
+                  onArchive: onArchive,
+                  onSelectAll: onSelectAll,
+                  onExport: onExport,
+                ),
               ),
             ],
           ),
@@ -147,12 +1089,157 @@ void main() {
 
     expect(find.byType(SliverAppBar), findsOneWidget);
     expect(find.byType(CupertinoSliverSelectAppBar), findsNothing);
-    final action = tester.widget<SliverEditTopAppBarAction>(
-      find.byType(SliverEditTopAppBarAction),
+    expect(adaptiveActions(), findsOneWidget);
+    final action = tester.widget<AdaptiveAppBarActions>(adaptiveActions());
+    expect(action.collection.roots.length, greaterThanOrEqualTo(3));
+    final renderer = tester.widget<MaterialAdaptiveActions>(
+      find.byType(MaterialAdaptiveActions<HabitDisplaySelectAction>),
     );
-    expect(action.onEdit, same(onEdit));
-    expect(action.onSelectAll, same(onSelectAll));
-    expect(action.onExportAll, same(onExport));
+    expect(renderer.primaryCapacity, action.collection.roots.length * 48.0);
+    expect(action.maxPrimaryActions, isNull);
+    expect(find.byIcon(MdiIcons.selectAll), findsOneWidget);
+    expect(find.byIcon(Icons.edit_rounded), findsOneWidget);
+    expect(find.byIcon(MdiIcons.export), findsOneWidget);
+    expect(find.byIcon(Icons.archive_outlined), findsOneWidget);
+  });
+
+  testWidgets(
+    'Material selection folds Select All and Export before common actions',
+    (tester) async {
+      tester.view.physicalSize = const Size(304, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final vm = _SelectionHabitSummaryViewModel(
+        HabitSummarySelectedStatistic(activated: 1),
+      );
+      final experimental = AppExperimentalFeatureViewModel();
+      addTearDown(vm.dispose);
+      addTearDown(experimental.dispose);
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<HabitSummaryViewModel>.value(value: vm),
+            ChangeNotifierProvider<AppExperimentalFeatureViewModel>.value(
+              value: experimental,
+            ),
+          ],
+          child: MaterialApp(
+            theme: ThemeData(platform: TargetPlatform.windows),
+            home: CustomScrollView(
+              slivers: [
+                MaterialSliverSelectAppBar(
+                  callbacks: HabitDisplaySelectAppBarCallbacks(
+                    onSelectAll: () {},
+                    onEdit: () {},
+                    onExport: (_) {},
+                    onArchive: () {},
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byIcon(Icons.edit_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.archive_outlined), findsOneWidget);
+      expect(find.byIcon(MdiIcons.selectAll), findsNothing);
+      expect(find.byIcon(MdiIcons.export), findsNothing);
+      expect(find.byIcon(Icons.more_vert), findsOneWidget);
+    },
+  );
+
+  testWidgets('narrow Material selection shrinks actions to one More slot', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(240, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final vm = _SelectionHabitSummaryViewModel(
+      HabitSummarySelectedStatistic(activated: 1, archived: 1),
+    );
+    final experimental = AppExperimentalFeatureViewModel();
+    addTearDown(vm.dispose);
+    addTearDown(experimental.dispose);
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<HabitSummaryViewModel>.value(value: vm),
+          ChangeNotifierProvider<AppExperimentalFeatureViewModel>.value(
+            value: experimental,
+          ),
+        ],
+        child: MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.windows),
+          home: CustomScrollView(
+            slivers: [
+              MaterialSliverSelectAppBar(
+                callbacks: HabitDisplaySelectAppBarCallbacks(
+                  onDone: () {},
+                  onSelectAll: () {},
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    final actions = tester.widget<MaterialAdaptiveActions>(
+      find.byType(MaterialAdaptiveActions<HabitDisplaySelectAction>),
+    );
+    expect(actions.primaryCapacity, 48);
+    expect(find.byIcon(Icons.more_vert), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('large Material selection promotes useful secondary actions', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1300, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final vm = _SelectionHabitSummaryViewModel(
+      HabitSummarySelectedStatistic(activated: 1),
+    );
+    final experimental = AppExperimentalFeatureViewModel();
+    addTearDown(vm.dispose);
+    addTearDown(experimental.dispose);
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<HabitSummaryViewModel>.value(value: vm),
+          ChangeNotifierProvider<AppExperimentalFeatureViewModel>.value(
+            value: experimental,
+          ),
+        ],
+        child: MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.windows),
+          home: CustomScrollView(
+            slivers: [
+              MaterialSliverSelectAppBar(
+                callbacks: HabitDisplaySelectAppBarCallbacks(
+                  onEdit: () {},
+                  onArchive: () {},
+                  onGroupModify: () {},
+                  onClone: () {},
+                  onExport: (_) {},
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(Icons.edit_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.archive_outlined), findsOneWidget);
+    expect(find.byIcon(MdiIcons.folderMove), findsOneWidget);
+    expect(find.byIcon(Icons.copy_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.more_vert), findsOneWidget);
   });
 
   testWidgets('Apple selection renderer fixes Select All and Done', (
@@ -184,9 +1271,11 @@ void main() {
           home: CustomScrollView(
             slivers: [
               AppleSliverSelectAppBar(
-                onDone: () {},
-                onSelectAll: () {},
-                onExport: (context) => exportContext = context,
+                callbacks: HabitDisplaySelectAppBarCallbacks(
+                  onDone: () {},
+                  onSelectAll: () {},
+                  onExport: (context) => exportContext = context,
+                ),
               ),
             ],
           ),
@@ -194,153 +1283,25 @@ void main() {
       ),
     );
 
-    expect(find.byType(CupertinoSliverSelectAppBar), findsOneWidget);
+    final selectBar = find.byWidgetPredicate(
+      (widget) => widget is CupertinoSliverSelectAppBar,
+    );
+    expect(selectBar, findsOneWidget);
     expect(find.text('Selected 2'), findsOneWidget);
     expect(find.text('Select All'), findsOneWidget);
     expect(find.byKey(const ValueKey('cupertino-select-done')), findsOneWidget);
-    final appBar = tester.widget<CupertinoSliverSelectAppBar>(
-      find.byType(CupertinoSliverSelectAppBar),
+    final host = tester.widget<AdaptiveAppBarActions<HabitDisplaySelectAction>>(
+      adaptiveActions(),
     );
-    appBar.actions
-        .firstWhere((action) => action.id == 'habit-export')
-        .onPressed!();
+    final exportAction = host.collection.roots.firstWhere(
+      (action) => action.id.value == 'habits.select.export',
+    );
+    host.onInvoke(
+      exportContext ?? tester.element(selectBar),
+      exportAction.payload!,
+    );
     expect(exportContext, isNotNull);
     expect(exportContext!.mounted, isTrue);
-  });
-
-  test('Apple selection descriptors keep order and state semantics', () {
-    final actions = buildAppleSelectActions(
-      l10n: null,
-      stat: HabitSummarySelectedStatistic(activated: 1, archived: 1),
-      grouping: true,
-      hasSelection: true,
-      onExport: () {},
-      onUnarchive: () {},
-      onArchive: () {},
-      onDelete: () {},
-      onGroupModify: () {},
-      onStatusModify: () {},
-      onEdit: () {},
-      onClone: () {},
-    );
-
-    expect(actions.map((action) => action.id), [
-      'habit-edit',
-      'habit-export',
-      'habit-unarchive',
-      'habit-archive',
-      'habit-delete',
-      'habit-group-modify',
-      'habit-status-modify',
-      'habit-clone',
-    ]);
-    expect(actions.every((action) => action.enabled), isTrue);
-    expect(
-      actions
-          .where((action) => action.overflowBelowLarge)
-          .map((action) => action.id),
-      ['habit-group-modify', 'habit-clone'],
-    );
-    final status = actions.firstWhere(
-      (action) => action.id == 'habit-status-modify',
-    );
-    expect(status.retentionPriority, 1000);
-    expect(status.presentation, CupertinoSelectActionPresentation.iconAndLabel);
-    expect(
-      actions
-          .where(
-            (action) =>
-                action.presentation ==
-                CupertinoSelectActionPresentation.iconOnly,
-          )
-          .map((action) => action.id),
-      [
-        'habit-edit',
-        'habit-export',
-        'habit-unarchive',
-        'habit-archive',
-        'habit-delete',
-      ],
-    );
-
-    final empty = buildAppleSelectActions(
-      l10n: null,
-      stat: HabitSummarySelectedStatistic(),
-      grouping: true,
-      hasSelection: false,
-    );
-    expect(
-      empty
-          .where((action) => action.visible)
-          .every((action) => !action.enabled),
-      isTrue,
-    );
-    expect(
-      empty.firstWhere((action) => action.id == 'habit-edit').visible,
-      isFalse,
-    );
-    expect(
-      empty.firstWhere((action) => action.id == 'habit-clone').visible,
-      isFalse,
-    );
-  });
-
-  test('Apple selection descriptors isolate active and archived commands', () {
-    void callback() {}
-
-    List<CupertinoSelectAction> build(HabitSummarySelectedStatistic stat) =>
-        buildAppleSelectActions(
-          l10n: null,
-          stat: stat,
-          grouping: true,
-          hasSelection: stat.selected > 0,
-          onExport: callback,
-          onUnarchive: callback,
-          onArchive: callback,
-          onDelete: callback,
-          onGroupModify: callback,
-          onStatusModify: callback,
-          onEdit: callback,
-          onClone: callback,
-        );
-
-    final activeOnly = build(HabitSummarySelectedStatistic(activated: 1));
-    expect(
-      activeOnly.firstWhere((action) => action.id == 'habit-archive').visible,
-      isTrue,
-    );
-    expect(
-      activeOnly.firstWhere((action) => action.id == 'habit-unarchive').visible,
-      isFalse,
-    );
-    expect(
-      activeOnly.firstWhere((action) => action.id == 'habit-edit').visible,
-      isTrue,
-    );
-    expect(
-      activeOnly.firstWhere((action) => action.id == 'habit-clone').visible,
-      isTrue,
-    );
-
-    final archivedOnly = build(HabitSummarySelectedStatistic(archived: 2));
-    expect(
-      archivedOnly.firstWhere((action) => action.id == 'habit-archive').visible,
-      isFalse,
-    );
-    expect(
-      archivedOnly
-          .firstWhere((action) => action.id == 'habit-unarchive')
-          .visible,
-      isTrue,
-    );
-    expect(
-      archivedOnly.firstWhere((action) => action.id == 'habit-edit').visible,
-      isFalse,
-    );
-    expect(
-      archivedOnly.firstWhere((action) => action.id == 'habit-clone').visible,
-      isFalse,
-    );
   });
 
   testWidgets('Apple Search Select enters edit mode without preselection', (
@@ -360,11 +1321,16 @@ void main() {
       ),
     );
 
-    expect(find.widgetWithText(CupertinoButton, 'Select'), findsOneWidget);
+    final select = find.widgetWithText(CupertinoButton, 'Select');
+    expect(select, findsOneWidget);
+    final button = tester.widget<CupertinoButton>(select);
+    expect(button.sizeStyle, CupertinoButtonSize.small);
+    expect(button.padding, isNull);
+    expect(button.minimumSize, isNull);
     final selectLabel = tester.widget<Text>(find.text('Select'));
     expect(selectLabel.maxLines, 1);
     expect(selectLabel.softWrap, isFalse);
-    await tester.tap(find.widgetWithText(CupertinoButton, 'Select'));
+    await tester.tap(select);
     await tester.pump();
     expect(vm.isInEditMode, isTrue);
     expect(vm.selectedHabitsCount, 0);
@@ -384,13 +1350,23 @@ void main() {
         localizationsDelegates: L10n.localizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         home: CustomScrollView(
-          slivers: [AppleSliverViewTopAppBar(onSelect: () => selected = true)],
+          slivers: [
+            AppleSliverViewTopAppBar(
+              config: HabitDisplayViewAppBarConfig(
+                onSelect: () => selected = true,
+              ),
+            ),
+          ],
         ),
       ),
     );
 
     final select = find.widgetWithText(CupertinoButton, 'Select');
     expect(select, findsOneWidget);
+    final button = tester.widget<CupertinoButton>(select);
+    expect(button.sizeStyle, CupertinoButtonSize.small);
+    expect(button.padding, isNull);
+    expect(button.minimumSize, isNull);
     await tester.tap(select);
     expect(selected, isTrue);
   });
@@ -426,7 +1402,11 @@ void main() {
         localizationsDelegates: L10n.localizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         home: CustomScrollView(
-          slivers: [AppleSliverViewTopAppBar(onSelect: () {})],
+          slivers: [
+            AppleSliverViewTopAppBar(
+              config: HabitDisplayViewAppBarConfig(onSelect: () {}),
+            ),
+          ],
         ),
       ),
     );
@@ -526,6 +1506,21 @@ void main() {
     expect(vm.searchOptions.keyword, isEmpty);
     expect(vm.searchOptions.activated, isTrue);
     expect(find.byType(SearchBar), findsOneWidget);
+
+    final expandedWidth = tester
+        .getSize(find.byKey(const ValueKey('expandable-search-region')))
+        .width;
+    vm.exitSearchMode();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 150));
+    final collapsingWidth = tester
+        .getSize(find.byKey(const ValueKey('expandable-search-region')))
+        .width;
+    expect(collapsingWidth, greaterThan(48));
+    expect(collapsingWidth, lessThan(expandedWidth));
+    await tester.pumpAndSettle();
+    expect(find.byType(SearchBar), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('breakpoint rebuild preserves controller, focus and filters', (
@@ -677,7 +1672,7 @@ void main() {
   testWidgets('Apple promotes filter actions into adaptive actions', (
     tester,
   ) async {
-    tester.view.physicalSize = const Size(180, 800);
+    tester.view.physicalSize = const Size(500, 800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     final vm = _TestHabitSummaryViewModel();
@@ -685,19 +1680,16 @@ void main() {
     await tester.pumpWidget(_searchBarHost(vm, platform: TargetPlatform.iOS));
 
     expect(find.byType(SearchFilterIcon), findsNothing);
+    expect(
+      find.byIcon(CupertinoIcons.line_horizontal_3_decrease_circle),
+      findsOneWidget,
+    );
     await tester.tap(
-      find.byKey(const ValueKey('cupertino-search-overflow-collapsed')),
+      find.byIcon(CupertinoIcons.line_horizontal_3_decrease_circle),
     );
     await tester.pumpAndSettle();
     expect(find.byType(SearchFilterBottomSheet), findsNothing);
     expect(find.byType(CupertinoPopupSurface), findsOneWidget);
-    expect(find.text('Select'), findsOneWidget);
-    expect(find.text('Show Filters'), findsOneWidget);
-    expect(find.text('By Status'), findsNothing);
-    expect(find.text('Habit Type'), findsNothing);
-
-    await tester.tap(find.text('Show Filters'));
-    await tester.pumpAndSettle();
     expect(find.text('By Status'), findsOneWidget);
     expect(find.text('Habit Type'), findsOneWidget);
     expect(find.text('Clear Filters'), findsNothing);
@@ -715,15 +1707,13 @@ void main() {
     await tester.pumpAndSettle();
     expect(vm.searchOptions.activated, isTrue);
 
-    await tester.tap(
-      find.byKey(const ValueKey('cupertino-search-overflow-collapsed')),
-    );
-    await tester.pumpAndSettle();
     expect(
       find.byIcon(CupertinoIcons.line_horizontal_3_decrease_circle_fill),
       findsOneWidget,
     );
-    await tester.tap(find.text('Show Filters'));
+    await tester.tap(
+      find.byIcon(CupertinoIcons.line_horizontal_3_decrease_circle_fill),
+    );
     await tester.pumpAndSettle();
     final selectedStatusItem = tester.widget<CupertinoMenuItem>(
       find.widgetWithText(CupertinoMenuItem, 'By Status'),
@@ -749,10 +1739,8 @@ void main() {
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
 
     await tester.tap(
-      find.byKey(const ValueKey('cupertino-search-overflow-collapsed')),
+      find.byIcon(CupertinoIcons.line_horizontal_3_decrease_circle_fill),
     );
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Show Filters'));
     await tester.pumpAndSettle();
     final restoredStatusItem = tester.widget<CupertinoMenuItem>(
       find.widgetWithText(CupertinoMenuItem, 'By Status'),
@@ -771,10 +1759,8 @@ void main() {
     expect(vm.searchOptions.isFilterEmpty, isTrue);
 
     await tester.tap(
-      find.byKey(const ValueKey('cupertino-search-overflow-collapsed')),
+      find.byIcon(CupertinoIcons.line_horizontal_3_decrease_circle),
     );
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Show Filters'));
     await tester.pumpAndSettle();
     expect(find.text('Clear Filters'), findsNothing);
     expect(find.byIcon(CupertinoIcons.clear_circled_solid), findsNothing);
@@ -863,7 +1849,7 @@ void main() {
     expect(find.byType(CupertinoMenuDivider), findsOneWidget);
   });
 
-  testWidgets('Apple preserves title while lower-priority filters fold', (
+  testWidgets('Apple preserves title while lower-priority actions fold', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(308, 800);
@@ -876,13 +1862,16 @@ void main() {
         vm,
         platform: TargetPlatform.iOS,
         onInfoButtonPressed: () {},
-        onMenuButtonPressed: () {},
       ),
     );
 
     expect(find.byType(SearchFilterIcon), findsNothing);
     expect(find.byIcon(CupertinoIcons.play_circle), findsNothing);
     expect(find.byIcon(CupertinoIcons.check_mark_circled), findsNothing);
+    expect(
+      find.byIcon(CupertinoIcons.line_horizontal_3_decrease_circle),
+      findsOneWidget,
+    );
     expect(
       find.byKey(const ValueKey('cupertino-search-overflow-collapsed')),
       findsOneWidget,
@@ -898,7 +1887,8 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.byType(CupertinoPopupSurface), findsOneWidget);
-    expect(find.text('Show Filters'), findsOneWidget);
+    expect(find.text('Show Filters'), findsNothing);
+    expect(find.text('Select'), findsOneWidget);
   });
 
   testWidgets('Apple breakpoint rebuild preserves search state', (

@@ -8,7 +8,7 @@ import 'cupertino_sliver_app_bar.dart';
 /// Apple configuration for a fixed navigation bar and editable title field.
 class AppleEditableAppBarStyle {
   const AppleEditableAppBarStyle({
-    this.toolbarHeight = 44.0,
+    this.toolbarHeight = kMinInteractiveDimensionCupertino,
     this.sectionPadding = const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 24),
     this.fieldPadding = const EdgeInsetsDirectional.symmetric(
       horizontal: 14,

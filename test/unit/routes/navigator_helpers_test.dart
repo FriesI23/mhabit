@@ -22,8 +22,11 @@ import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
+import 'package:mhabit/routes/app_navigation_coordinator.dart';
 import 'package:mhabit/routes/app_router.dart';
 import 'package:mhabit/routes/navigator_helpers.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+import 'package:provider/provider.dart';
 
 HabitForm _editForm({required String uuid}) => HabitForm(
   name: 'Test Habit',
@@ -42,6 +45,46 @@ HabitForm _editForm({required String uuid}) => HabitForm(
 );
 
 void main() {
+  group('GoRouterNavigationState', () {
+    test('returns null for an empty route configuration', () {
+      final router = GoRouter(
+        routes: [
+          GoRoute(path: '/', builder: (_, _) => const SizedBox.shrink()),
+        ],
+      );
+      addTearDown(router.dispose);
+      router.routerDelegate.currentConfiguration = RouteMatchList.empty;
+
+      expect(router.currentRouteName, isNull);
+    });
+
+    testWidgets('returns the current named leaf route', (tester) async {
+      final router = GoRouter(
+        routes: [
+          GoRoute(
+            path: '/',
+            name: AppRoute.habits.name,
+            builder: (_, _) => const Text('home'),
+          ),
+          GoRoute(
+            path: '/debugger',
+            name: AppRoute.debugger.name,
+            builder: (_, _) => const Text('debugger'),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(router.currentRouteName, AppRoute.habits.name);
+
+      router.pushNamed(AppRoute.debugger.name);
+      await tester.pumpAndSettle();
+
+      expect(router.currentRouteName, AppRoute.debugger.name);
+    });
+  });
+
   group('naviTo* (go_router wrappers)', () {
     testWidgets('naviToHabitEditPage assert fails when editMode != edit', (
       tester,
@@ -141,21 +184,48 @@ void main() {
       );
     });
 
-    testWidgets('naviToAppSettingPage delegates to pushNamed', (tester) async {
+    testWidgets('naviToAppSettingPage delegates to the app-flow coordinator', (
+      tester,
+    ) async {
+      final navigatorKey = GlobalKey<NavigatorState>();
       final router = GoRouter(
+        navigatorKey: navigatorKey,
         initialLocation: '/',
         routes: [
-          GoRoute(path: '/', builder: (_, _) => const SizedBox.shrink()),
+          GoRoute(path: '/', builder: (_, _) => const Text('home')),
           GoRoute(
             path: '/settings',
             name: AppRoute.settings.name,
-            builder: (_, _) => const SizedBox.shrink(),
+            builder: (_, _) => const Text('settings'),
           ),
         ],
       );
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      final context = tester.element(find.byType(SizedBox).first);
-      expect(() => naviToAppSettingPage(context: context), returnsNormally);
+      final coordinator = AppNavigationCoordinator(
+        branchObservers: const [],
+        appFlowObserver: AdaptiveBranchRouteObserver(),
+        appChromeNavigatorKey: navigatorKey,
+        initialIndex: 0,
+      );
+      addTearDown(coordinator.dispose);
+      addTearDown(router.dispose);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: router,
+          builder: (context, child) =>
+              ChangeNotifierProvider<AppNavigationCoordinator>.value(
+                value: coordinator,
+                child: child!,
+              ),
+        ),
+      );
+
+      final navigation = naviToAppSettingPage(
+        context: tester.element(find.text('home')),
+      );
+      await tester.pumpAndSettle();
+      await navigation;
+
+      expect(find.text('settings'), findsOneWidget);
     });
 
     testWidgets('naviToAppAboutPage delegates to pushNamed', (tester) async {

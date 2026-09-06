@@ -27,6 +27,7 @@ import '../../common/enums.dart';
 import '../../common/exceptions.dart';
 import '../../common/flavor.dart';
 import '../../common/utils.dart';
+import '../../extensions/adaptive_style_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../logging/logger_stack.dart';
@@ -547,6 +548,7 @@ class _PageState extends State<_Page> with XShare {
               : const Text("Display"),
         ),
       ),
+      const AppSettingThemeModeTile(),
       AppSettingThemeColorTile(onPressed: _openAppThemeColorChosenDialog),
       Selector<AppFirstDayViewModel, int>(
         selector: (context, vm) => vm.firstDay,
@@ -948,13 +950,23 @@ class _PageState extends State<_Page> with XShare {
 
     return ColorfulNavibar(
       child: Scaffold(
-        appBar: WindowControlAppBar(
+        appBar: AdaptiveAppBar(
+          toolbarHeight: AdaptiveStyle.of(context).appToolbarHeight,
           title: L10nBuilder(
             builder: (context, l10n) => l10n != null
                 ? Text(l10n.appSetting_appbar_titleText)
                 : const Text("Settings"),
           ),
-          leading: const PageBackButton(reason: PageBackReason.back),
+          leading:
+              (AdaptiveNavScope.maybeOf(context)?.form ??
+                      NavigationShellForm.compact) ==
+                  NavigationShellForm.compact
+              ? AdaptiveBackButton(
+                  type: AdaptiveBackButtonType.back,
+                  onPressed: () => Navigator.maybePop(context),
+                )
+              : null,
+          automaticallyImplyLeading: false,
         ),
         body: EnhancedSafeArea.edgeToEdgeSafe(
           child: ListView(

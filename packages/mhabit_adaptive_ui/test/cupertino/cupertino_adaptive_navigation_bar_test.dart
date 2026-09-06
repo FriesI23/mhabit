@@ -66,8 +66,8 @@ Widget _wrap({
   bool disableAnimations = false,
   EdgeInsets viewPadding = EdgeInsets.zero,
   BorderRadius? displayCornerRadii,
-  EdgeInsetsDirectional? horizontalSafeAreaAvoidance,
-  EdgeInsetsDirectional? verticalSafeAreaAvoidance,
+  EdgeInsets? horizontalSafeAreaAvoidance,
+  EdgeInsets? verticalSafeAreaAvoidance,
   BorderRadius? effectiveCornerRadii,
   bool usesRectangularDisplay = false,
   AppleNavigationBarStyle appleStyle = const AppleNavigationBarStyle(),
@@ -83,8 +83,8 @@ Widget _wrap({
         displayCornerRadii: displayCornerRadii,
       ),
       child: AdaptiveWindowControlLayoutScope(
-        horizontalAvoidance: EdgeInsetsDirectional.zero,
-        verticalAvoidance: EdgeInsetsDirectional.zero,
+        horizontalAvoidance: EdgeInsets.zero,
+        verticalAvoidance: EdgeInsets.zero,
         horizontalSafeAreaAvoidance: horizontalSafeAreaAvoidance,
         verticalSafeAreaAvoidance: verticalSafeAreaAvoidance,
         effectiveCornerRadii: effectiveCornerRadii,
@@ -604,11 +604,11 @@ void main() {
           onDestinationSelected: (_) {},
           onExpandRequested: () {},
           viewPadding: const EdgeInsets.only(bottom: 34),
-          horizontalSafeAreaAvoidance: const EdgeInsetsDirectional.only(
-            start: 24,
-            end: 18,
+          horizontalSafeAreaAvoidance: const EdgeInsets.only(
+            left: 24,
+            right: 18,
           ),
-          verticalSafeAreaAvoidance: EdgeInsetsDirectional.zero,
+          verticalSafeAreaAvoidance: EdgeInsets.zero,
           effectiveCornerRadii: const BorderRadius.all(Radius.circular(62)),
           usesRectangularDisplay: true,
         ),
@@ -630,13 +630,11 @@ void main() {
           onDestinationSelected: (_) {},
           onExpandRequested: () {},
           viewPadding: const EdgeInsets.only(bottom: 34),
-          horizontalSafeAreaAvoidance: const EdgeInsetsDirectional.only(
-            start: 24,
-            end: 18,
+          horizontalSafeAreaAvoidance: const EdgeInsets.only(
+            left: 24,
+            right: 18,
           ),
-          verticalSafeAreaAvoidance: const EdgeInsetsDirectional.only(
-            bottom: 34,
-          ),
+          verticalSafeAreaAvoidance: const EdgeInsets.only(bottom: 34),
           effectiveCornerRadii: const BorderRadius.all(Radius.circular(62)),
           appleStyle: const AppleNavigationBarStyle(floatingBottomMargin: 28),
         ),
@@ -658,11 +656,11 @@ void main() {
           onDestinationSelected: (_) {},
           onExpandRequested: () {},
           viewPadding: const EdgeInsets.only(left: 80, bottom: 20),
-          horizontalSafeAreaAvoidance: const EdgeInsetsDirectional.only(
-            start: 96,
-            end: 48,
+          horizontalSafeAreaAvoidance: const EdgeInsets.only(
+            left: 96,
+            right: 48,
           ),
-          verticalSafeAreaAvoidance: EdgeInsetsDirectional.zero,
+          verticalSafeAreaAvoidance: EdgeInsets.zero,
           effectiveCornerRadii: const BorderRadius.all(Radius.circular(26)),
         ),
       );

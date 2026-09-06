@@ -407,6 +407,30 @@ class L10nPl extends L10n {
       'Najpopularniejsze nawyki: zmiany w ostatnich 30 dniach';
 
   @override
+  String get habitDisplay_statisticsAction_label => 'Statistics';
+
+  @override
+  String get habitDisplay_displayFilterAction_label => 'Display Filter';
+
+  @override
+  String get habitDisplay_displayFilter_inProgress => 'W trakcie';
+
+  @override
+  String get habitDisplay_displayFilter_archived => 'Zarchiwizowane';
+
+  @override
+  String get habitDisplay_displayFilter_completed => 'Ukończone';
+
+  @override
+  String get common_appThemeMode_light => 'Jasny Motyw';
+
+  @override
+  String get common_appThemeMode_dark => 'Ciemny motyw';
+
+  @override
+  String get common_appThemeMode_followSystem => 'Systemowy motyw';
+
+  @override
   String get habitDisplay_mainMenu_lightTheme => 'Jasny Motyw';
 
   @override
@@ -942,6 +966,9 @@ class L10nPl extends L10n {
 
   @override
   String get appSetting_appThemeColorTile_titleText => 'Theme Color';
+
+  @override
+  String get appSetting_appThemeModeTile_titleText => 'Theme Mode';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText =>

@@ -12,31 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
-/// A top-level destination owned by the app navigation shell.
+import '../../routes/app_navigation_branch.dart';
+
+/// Builds the current auxiliary navigation presentations for the app shell.
+typedef AppNavigationAuxiliaryChromeBuilder =
+    List<AppNavigationAuxiliaryChrome> Function(BuildContext context);
+
+/// Declarative presentation and interaction for one auxiliary destination.
 ///
-/// [navigationIndex] is an explicit router contract. It must not depend on the
-/// declaration order used by Dart's built-in [Enum.index].
-enum AppNavigationBranch {
-  habits(navigationIndex: 0),
-  today(navigationIndex: 1);
+/// The shell consumes this contract without knowing the destination's route
+/// or business meaning. The app entry owns those details.
+@immutable
+final class AppNavigationAuxiliaryChrome {
+  /// Creates auxiliary navigation chrome.
+  const AppNavigationAuxiliaryChrome({
+    required this.destination,
+    required this.selected,
+    required this.onSelected,
+  });
 
-  const AppNavigationBranch({required this.navigationIndex});
+  /// Destination rendered by non-compact navigation forms.
+  final AdaptiveNavigationDestination destination;
 
-  /// Index used by go_router's stateful navigation shell.
-  final int navigationIndex;
+  /// Whether the auxiliary destination currently owns the content area.
+  final bool selected;
 
-  /// Returns the branch explicitly assigned to [navigationIndex].
-  static AppNavigationBranch fromNavigationIndex(int navigationIndex) =>
-      values.firstWhere(
-        (branch) => branch.navigationIndex == navigationIndex,
-        orElse: () => throw ArgumentError.value(
-          navigationIndex,
-          'navigationIndex',
-          'No app navigation branch uses this index',
-        ),
-      );
+  /// Invoked when the auxiliary destination is selected.
+  final VoidCallback onSelected;
 }
 
 /// App-level primary commands that navigation chrome can present.

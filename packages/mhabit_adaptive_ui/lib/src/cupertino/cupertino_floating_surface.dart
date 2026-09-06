@@ -36,14 +36,12 @@ final class CupertinoFloatingSurfaceGeometry {
     BuildContext context, {
     double? floatingBottomMargin,
   }) {
-    final directionality = Directionality.of(context);
     final viewPadding = MediaQuery.viewPaddingOf(context);
     final safeAreaGeometry =
         AdaptiveWindowControlLayoutScope.safeAreaGeometryOf(context);
     final usesRectangularDisplay =
         AdaptiveWindowControlLayoutScope.usesRectangularDisplayOf(context);
-    final verticalSafeAreaAvoidance = safeAreaGeometry?.verticalAvoidance
-        .resolve(directionality);
+    final verticalSafeAreaAvoidance = safeAreaGeometry?.verticalAvoidance;
     final floatingMargin = _floatingMarginFor(
       viewPadding: viewPadding,
       verticalSafeAreaAvoidance: verticalSafeAreaAvoidance,

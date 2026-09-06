@@ -22,7 +22,6 @@ import 'package:mhabit/models/habit_color_type.dart';
 import 'package:mhabit/pages/habit_detail/_widgets/habit_detail_appbar.dart';
 import 'package:mhabit/pages/habit_edit/_widgets/habit_edit_app_bar.dart';
 import 'package:mhabit/pages/habits_status_changer/_widgets/habit_status_changer_appbar.dart';
-import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 Widget _host(Widget appBar, {TargetPlatform? platform, Locale? locale}) =>
@@ -60,7 +59,7 @@ void main() {
     );
     final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
     expect(wrapper.pinned, isTrue);
-    expect(wrapper.leading, isA<PageBackButton>());
+    expect(wrapper.leading, isA<AdaptiveBackButton>());
     expect(find.byType(AdaptiveBackButton), findsOneWidget);
     expect(wrapper.actions, hasLength(1));
     expect(adaptive.height, AppAdaptiveStyle.materialToolbarHeight);
@@ -133,7 +132,7 @@ void main() {
     expect(wrapper.automaticallyImplyLeading, isFalse);
     expect(wrapper.scrolledUnderElevation, 3);
     expect(wrapper.flexibleSpace, isNotNull);
-    expect(wrapper.leading, isA<PageBackButton>());
+    expect(wrapper.leading, isA<AdaptiveBackButton>());
     expect(find.byType(AdaptiveEditableSliverAppBar), findsOneWidget);
     expect(find.byType(AdaptiveSliverAppBar), findsNothing);
     expect(find.byType(TextField), findsOneWidget);

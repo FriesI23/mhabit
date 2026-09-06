@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-
 import '../breakpoints/window_size_class.dart';
 import '../window_control/material_app_bar.dart';
 import 'material_expandable_search_bar.dart';
+import 'material_sliver_search_bar_layout.dart';
 
-const List<Widget> _kDefaultActions = <Widget>[];
+typedef MaterialSearchActionsBuilder =
+    Widget Function(BuildContext context, double primaryCapacity);
 
 /// Material-only visual configuration for [MaterialSliverSearchBar].
 class MaterialSliverSearchBarStyle {
@@ -36,7 +37,8 @@ class MaterialSliverSearchBar extends StatelessWidget {
     required this.onSearchActivated,
     required this.onSearchDismissed,
     this.leading,
-    this.actions = _kDefaultActions,
+    required this.actionsBuilder,
+    required this.preferredActionCapacity,
     this.searchTrailing,
     this.hintText,
     this.onSubmitted,
@@ -47,7 +49,8 @@ class MaterialSliverSearchBar extends StatelessWidget {
 
   final Widget title;
   final Widget? leading;
-  final List<Widget> actions;
+  final MaterialSearchActionsBuilder actionsBuilder;
+  final double preferredActionCapacity;
   final Widget? searchTrailing;
   final TextEditingController controller;
   final FocusNode focusNode;
@@ -63,8 +66,37 @@ class MaterialSliverSearchBar extends StatelessWidget {
   final bool pinned;
 
   @override
-  Widget build(BuildContext context) {
-    final isWide = WindowSize.of(context).width >= WindowSizeClass.medium;
+  Widget build(BuildContext context) => SliverLayoutBuilder(
+    builder: (context, constraints) =>
+        _buildSliver(context, availableWidth: constraints.crossAxisExtent),
+  );
+
+  Widget _buildSliver(BuildContext context, {required double availableWidth}) {
+    final widthClass = WindowSize.of(context).width;
+    final layout = MaterialSliverSearchBarLayoutCalculator(
+      widthClass: widthClass,
+      availableWidth: availableWidth,
+      isSearchActive: isSearchActive,
+      hasLeading: leading != null,
+      maxSearchWidth: style.maxSearchWidth,
+      preferredActionCapacity: preferredActionCapacity,
+    ).calculate();
+    final isWide = layout.isWide;
+    final showWideTitle = layout.showWideTitle;
+    final actionCapacity = layout.actionCapacity;
+    final actions = actionCapacity > 0
+        ? SizedBox(
+            width: actionCapacity,
+            child: ClipRect(
+              child: OverflowBox(
+                alignment: AlignmentDirectional.centerEnd,
+                minWidth: 0,
+                maxWidth: double.infinity,
+                child: actionsBuilder(context, actionCapacity),
+              ),
+            ),
+          )
+        : null;
     final searchBar = MaterialExpandableSearchBar(
       expanded: isWide || isSearchActive,
       collapsedTitle: isWide ? const SizedBox.shrink() : title,
@@ -82,8 +114,6 @@ class MaterialSliverSearchBar extends StatelessWidget {
       onTapOutside: onTapOutside,
     );
 
-    // TODO(adaptive-actions): Migrate the Material and Cupertino action
-    // regions after adaptive_actions is published as a stable package.
     return WindowControlSliverAppBar(
       key: const ValueKey('material-sliver-search-bar'),
       floating: true,
@@ -98,7 +128,7 @@ class MaterialSliverSearchBar extends StatelessWidget {
         child: SizedBox.shrink(),
       ),
       leading: isWide ? leading : null,
-      title: isWide ? title : searchBar,
+      title: isWide ? (showWideTitle ? title : null) : searchBar,
       actions: isWide
           ? [
               ConstrainedBox(
@@ -107,9 +137,9 @@ class MaterialSliverSearchBar extends StatelessWidget {
                 ),
                 child: searchBar,
               ),
-              ...actions,
+              ?actions,
             ]
-          : [?leading, ...actions],
+          : [?leading, ?actions],
     );
   }
 }

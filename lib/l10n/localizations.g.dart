@@ -742,6 +742,54 @@ abstract class L10n {
   /// **'Top Habits: Last 30 Days Changes'**
   String get habitDisplay_statsMenu_popularitySubgroupText;
 
+  /// No description provided for @habitDisplay_statisticsAction_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get habitDisplay_statisticsAction_label;
+
+  /// No description provided for @habitDisplay_displayFilterAction_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Display Filter'**
+  String get habitDisplay_displayFilterAction_label;
+
+  /// No description provided for @habitDisplay_displayFilter_inProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get habitDisplay_displayFilter_inProgress;
+
+  /// No description provided for @habitDisplay_displayFilter_archived.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get habitDisplay_displayFilter_archived;
+
+  /// No description provided for @habitDisplay_displayFilter_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get habitDisplay_displayFilter_completed;
+
+  /// No description provided for @common_appThemeMode_light.
+  ///
+  /// In en, this message translates to:
+  /// **'Light Theme'**
+  String get common_appThemeMode_light;
+
+  /// No description provided for @common_appThemeMode_dark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Theme'**
+  String get common_appThemeMode_dark;
+
+  /// No description provided for @common_appThemeMode_followSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow System'**
+  String get common_appThemeMode_followSystem;
+
   /// No description provided for @habitDisplay_mainMenu_lightTheme.
   ///
   /// In en, this message translates to:
@@ -1573,6 +1621,12 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Theme Color'**
   String get appSetting_appThemeColorTile_titleText;
+
+  /// No description provided for @appSetting_appThemeModeTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme Mode'**
+  String get appSetting_appThemeModeTile_titleText;
 
   /// No description provided for @appSetting_appThemeColorChosenDiloag_titleText.
   ///

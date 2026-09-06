@@ -23,11 +23,11 @@ final class WindowControlToolbarGeometry {
   });
 
   /// {@template mhabit.windowControlAvoidance}
-  /// Additional directional space reserved for platform window controls.
+  /// Additional physical space reserved for platform window controls.
   ///
   /// On wrapper widgets, a null value inherits
   /// [AdaptiveWindowControlLayoutScope.appBarAvoidanceOf], while an explicit
-  /// [EdgeInsetsDirectional.zero] disables avoidance.
+  /// [EdgeInsets.zero] disables avoidance.
   /// {@endtemplate}
   final EdgeInsetsDirectional avoidance;
 
@@ -41,14 +41,27 @@ final class WindowControlToolbarGeometry {
   /// Resolves [avoidance] from the explicit value or the adaptive scope.
   static WindowControlToolbarGeometry resolve(
     BuildContext context, {
-    EdgeInsetsDirectional? avoidance,
+    EdgeInsets? avoidance,
     required EdgeInsetsDirectional edgePadding,
-  }) => WindowControlToolbarGeometry(
-    avoidance:
+  }) {
+    final physicalAvoidance =
         avoidance ??
-        AdaptiveWindowControlLayoutScope.appBarAvoidanceOf(context),
-    edgePadding: edgePadding,
-  );
+        AdaptiveWindowControlLayoutScope.appBarAvoidanceOf(context);
+    final direction = Directionality.of(context);
+    return WindowControlToolbarGeometry(
+      avoidance: EdgeInsetsDirectional.fromSTEB(
+        direction == TextDirection.ltr
+            ? physicalAvoidance.left
+            : physicalAvoidance.right,
+        physicalAvoidance.top,
+        direction == TextDirection.ltr
+            ? physicalAvoidance.right
+            : physicalAvoidance.left,
+        physicalAvoidance.bottom,
+      ),
+      edgePadding: edgePadding,
+    );
+  }
 
   /// Effective Material inset for the leading control slot.
   double get materialStartInset =>
