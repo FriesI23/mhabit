@@ -2,6 +2,13 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.27.5+194-pre
+
+- Feature: add quick theme mode controls to app bars and wider navigation
+  layouts (#659)
+- Feature: complete the adaptive interface migration across navigation,
+  settings, page headers, search, selection, and habit actions
+
 ## 1.27.4+193-pre
 
 - Feature: add resizable side navigation for wider layouts (#653)

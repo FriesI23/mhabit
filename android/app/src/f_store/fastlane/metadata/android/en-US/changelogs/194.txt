@@ -1,0 +1,4 @@
+- Feature: add quick theme mode controls to app bars and wider navigation
+  layouts (#659)
+- Feature: complete the adaptive interface migration across navigation,
+  settings, page headers, search, selection, and habit actions
