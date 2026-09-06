@@ -87,5 +87,13 @@ void main() {
       tester.widget<AdaptiveBackButton>(find.byType(AdaptiveBackButton)).type,
       AdaptiveBackButtonType.back,
     );
+    expect(
+      tester
+          .widget<WindowControlCupertinoNavigationBar>(
+            find.byType(WindowControlCupertinoNavigationBar),
+          )
+          .automaticBackgroundVisibility,
+      isTrue,
+    );
   });
 }

@@ -55,14 +55,22 @@ String _pathFor(AppRoute route) => switch (route) {
   AppRoute.habitsStatus => '/habits/status',
 };
 
-String _relativePathFor(AppRoute parent, AppRoute child) {
-  final parentPath = _pathFor(parent);
-  final childPath = _pathFor(child);
-  final childPrefix = '$parentPath/';
-  if (!childPath.startsWith(childPrefix)) {
-    throw StateError('$childPath is not nested under $parentPath');
-  }
-  return childPath.substring(childPrefix.length);
+enum _SettingsChildRoute {
+  about,
+  sync,
+  notify;
+
+  AppRoute get route => switch (this) {
+    _SettingsChildRoute.about => AppRoute.settingsAbout,
+    _SettingsChildRoute.sync => AppRoute.settingsSync,
+    _SettingsChildRoute.notify => AppRoute.settingsNotify,
+  };
+
+  String get path => switch (this) {
+    _SettingsChildRoute.about => 'about',
+    _SettingsChildRoute.sync => 'sync',
+    _SettingsChildRoute.notify => 'notify',
+  };
 }
 
 /// Bar visibility policy for the app's branches: the bar is shown only on a
@@ -206,6 +214,15 @@ class AppFlowRouterBuilder with _AppRouteAdder {
   @override
   final List<RouteBase> _routes = [];
 
+  GoRoute _settingsChildRoute(
+    _SettingsChildRoute child,
+    GoRouterWidgetBuilder builder,
+  ) => GoRoute(
+    path: child.path,
+    name: child.route.name,
+    pageBuilder: _appPageBuilder(builder),
+  );
+
   /// Registers Settings and its page hierarchy as one auxiliary app flow.
   void addSettingsFlow({
     required GoRouterPageBuilder settingsBuilder,
@@ -221,24 +238,9 @@ class AppFlowRouterBuilder with _AppRouteAdder {
           name: AppRoute.settings.name,
           pageBuilder: settingsBuilder,
           routes: [
-            GoRoute(
-              path: _relativePathFor(AppRoute.settings, AppRoute.settingsAbout),
-              name: AppRoute.settingsAbout.name,
-              pageBuilder: _appPageBuilder(aboutBuilder),
-            ),
-            GoRoute(
-              path: _relativePathFor(AppRoute.settings, AppRoute.settingsSync),
-              name: AppRoute.settingsSync.name,
-              pageBuilder: _appPageBuilder(syncBuilder),
-            ),
-            GoRoute(
-              path: _relativePathFor(
-                AppRoute.settings,
-                AppRoute.settingsNotify,
-              ),
-              name: AppRoute.settingsNotify.name,
-              pageBuilder: _appPageBuilder(notifyBuilder),
-            ),
+            _settingsChildRoute(_SettingsChildRoute.about, aboutBuilder),
+            _settingsChildRoute(_SettingsChildRoute.sync, syncBuilder),
+            _settingsChildRoute(_SettingsChildRoute.notify, notifyBuilder),
           ],
         ),
       )

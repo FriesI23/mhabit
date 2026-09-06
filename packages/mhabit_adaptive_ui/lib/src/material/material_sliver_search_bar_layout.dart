@@ -6,7 +6,7 @@ import '../breakpoints/window_size_class.dart';
 
 /// Resolved horizontal layout for a Material sliver search bar.
 final class MaterialSliverSearchBarLayout {
-  const MaterialSliverSearchBarLayout({
+  const MaterialSliverSearchBarLayout._({
     required this.isWide,
     required this.showWideTitle,
     required this.actionCapacity,
@@ -58,7 +58,7 @@ final class MaterialSliverSearchBarLayoutCalculator {
   MaterialSliverSearchBarLayout calculate() {
     final isWide = widthClass >= WindowSizeClass.medium;
     final showWideTitle = _resolveShowWideTitle();
-    return MaterialSliverSearchBarLayout(
+    return MaterialSliverSearchBarLayout._(
       isWide: isWide,
       showWideTitle: showWideTitle,
       actionCapacity: _resolveActionCapacity(

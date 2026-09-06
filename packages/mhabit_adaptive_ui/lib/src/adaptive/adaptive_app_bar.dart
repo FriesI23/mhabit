@@ -16,6 +16,7 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.leading,
     this.actions = _kDefaultActions,
     this.automaticallyImplyLeading = true,
+    this.automaticBackgroundVisibility = true,
     required this.toolbarHeight,
   }) : _adaptiveStyle = null;
 
@@ -26,7 +27,8 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.actions = _kDefaultActions,
     this.automaticallyImplyLeading = true,
     this.toolbarHeight = kToolbarHeight,
-  }) : _adaptiveStyle = AdaptiveStyle.material;
+  }) : automaticBackgroundVisibility = true,
+       _adaptiveStyle = AdaptiveStyle.material;
 
   const AdaptiveAppBar.apple({
     super.key,
@@ -34,6 +36,7 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.leading,
     this.actions = _kDefaultActions,
     this.automaticallyImplyLeading = true,
+    this.automaticBackgroundVisibility = true,
   }) : toolbarHeight = kMinInteractiveDimensionCupertino,
        _adaptiveStyle = AdaptiveStyle.apple;
 
@@ -42,6 +45,10 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? leading;
   final List<Widget> actions;
   final bool automaticallyImplyLeading;
+
+  /// Whether the Apple background and blur appear automatically when content
+  /// scrolls behind the navigation bar.
+  final bool automaticBackgroundVisibility;
 
   /// Material toolbar height or the resolved adaptive toolbar height.
   ///
@@ -68,6 +75,7 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
           leading: leading,
           actions: actions,
           automaticallyImplyLeading: automaticallyImplyLeading,
+          automaticBackgroundVisibility: automaticBackgroundVisibility,
         ),
       };
 }
@@ -78,12 +86,14 @@ class _CupertinoAdaptiveAppBar extends StatelessWidget {
     required this.leading,
     required this.actions,
     required this.automaticallyImplyLeading,
+    required this.automaticBackgroundVisibility,
   });
 
   final Widget title;
   final Widget? leading;
   final List<Widget> actions;
   final bool automaticallyImplyLeading;
+  final bool automaticBackgroundVisibility;
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +122,7 @@ class _CupertinoAdaptiveAppBar extends StatelessWidget {
       middle: title,
       trailing: trailing,
       backgroundColor: CupertinoColors.transparent,
-      automaticBackgroundVisibility: false,
+      automaticBackgroundVisibility: automaticBackgroundVisibility,
       transitionBetweenRoutes: false,
       windowControlAvoidance: sidebarLeading?.toolbarAvoidance,
     );
