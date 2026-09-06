@@ -1033,6 +1033,8 @@ class HabitsTabPageState extends State<HabitsTabPage>
       collapsedViewportFraction: displayPageOccupyPrt / 100,
       expandedViewportFraction: kDefaultHabitCalendarBarExtendedPrt,
     );
+    final showThemeAction =
+        WindowSize.of(context).width == WindowSizeClass.compact;
     const trackPadding = kDefaultHabitListTileTrackPadding;
 
     //#region: appbar
@@ -1055,7 +1057,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
           onGroupTypeSelected: _setHabitSummaryGroupType,
           onGroupDirectionToggled: _toggleHabitSummaryGroupDirection,
           onDisplayFilterChanged: _setHabitDisplayFilter,
-          onThemeToggled: _toggleHabitDisplayTheme,
+          onThemeToggled: showThemeAction ? _toggleHabitDisplayTheme : null,
         ),
         selectCallbacks: HabitDisplaySelectAppBarCallbacks(
           onDone: _onHabitEditAppbarLeadingButtonPressed,
@@ -1254,7 +1256,6 @@ class _HabitDisplayAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isCompact = WindowSize.of(context).width == WindowSizeClass.compact;
     final (sortType, sortDirection) = context
         .select<
           HabitsSortViewModel,
@@ -1273,76 +1274,38 @@ class _HabitDisplayAppBar extends StatelessWidget {
         .select<HabitsFilterViewModel, HabitsDisplayFilter>(
           (vm) => vm.habitsDisplayFilter,
         );
-    if (!isCompact) {
-      return _buildAppBar(
-        sortType: sortType,
-        sortDirection: sortDirection,
-        groupType: groupType,
-        groupDirection: groupDirection,
-        groupingVisible: groupingVisible,
-        displayFilter: displayFilter,
-        themeType: AppThemeType.followSystem,
-        optionsCallbacks: HabitDisplayOptionsCallbacks(
-          onSortTypeSelected: optionsCallbacks.onSortTypeSelected,
-          onSortDirectionToggled: optionsCallbacks.onSortDirectionToggled,
-          onGroupTypeSelected: optionsCallbacks.onGroupTypeSelected,
-          onGroupDirectionToggled: optionsCallbacks.onGroupDirectionToggled,
-          onDisplayFilterChanged: optionsCallbacks.onDisplayFilterChanged,
-        ),
-      );
-    }
+    final themeType = context.select<AppThemeViewModel, AppThemeType>(
+      (vm) => vm.themeType,
+    );
 
-    return Selector<AppThemeViewModel, AppThemeType>(
-      selector: (_, vm) => vm.themeType,
-      builder: (_, themeType, _) => _buildAppBar(
-        sortType: sortType,
-        sortDirection: sortDirection,
-        groupType: groupType,
-        groupDirection: groupDirection,
-        groupingVisible: groupingVisible,
-        displayFilter: displayFilter,
-        themeType: themeType,
-        optionsCallbacks: optionsCallbacks,
+    return HabitDisplayAppBar(
+      geometry: geometry,
+      isCalendarExpanded: isCalendarExpanded,
+      toolbarHeight: toolbarHeight,
+      calendarHeight: calendarHeight,
+      calendarItemPadding: calendarItemPadding,
+      calendarTrackPadding: calendarTrackPadding,
+      horizonalScrollControllerGroup: horizonalScrollControllerGroup,
+      searchFilterMenuController: searchFilterMenuController,
+      config: HabitDisplayViewAppBarConfig(
+        onInfo: onInfo,
+        onOpenSettings: onOpenSettings,
+        onSelect: onSelect,
+        config: HabitDisplayConfig(
+          sortType: sortType,
+          sortDirection: sortDirection,
+          groupType: groupType,
+          groupDirection: groupDirection,
+          groupingVisible: groupingVisible,
+          displayFilter: displayFilter,
+          themeType: themeType,
+        ),
+        callbacks: optionsCallbacks,
       ),
+      selectCallbacks: selectCallbacks,
+      onCalendarToggleExpandPressed: onCalendarToggleExpandPressed,
     );
   }
-
-  Widget _buildAppBar({
-    required HabitDisplaySortType sortType,
-    required HabitDisplaySortDirection sortDirection,
-    required HabitDisplayGroupType? groupType,
-    required HabitDisplaySortDirection groupDirection,
-    required bool groupingVisible,
-    required HabitsDisplayFilter displayFilter,
-    required AppThemeType themeType,
-    required HabitDisplayOptionsCallbacks optionsCallbacks,
-  }) => HabitDisplayAppBar(
-    geometry: geometry,
-    isCalendarExpanded: isCalendarExpanded,
-    toolbarHeight: toolbarHeight,
-    calendarHeight: calendarHeight,
-    calendarItemPadding: calendarItemPadding,
-    calendarTrackPadding: calendarTrackPadding,
-    horizonalScrollControllerGroup: horizonalScrollControllerGroup,
-    searchFilterMenuController: searchFilterMenuController,
-    config: HabitDisplayViewAppBarConfig(
-      onInfo: onInfo,
-      onOpenSettings: onOpenSettings,
-      onSelect: onSelect,
-      config: HabitDisplayConfig(
-        sortType: sortType,
-        sortDirection: sortDirection,
-        groupType: groupType,
-        groupDirection: groupDirection,
-        groupingVisible: groupingVisible,
-        displayFilter: displayFilter,
-        themeType: themeType,
-      ),
-      callbacks: optionsCallbacks,
-    ),
-    selectCallbacks: selectCallbacks,
-    onCalendarToggleExpandPressed: onCalendarToggleExpandPressed,
-  );
 }
 
 class _HabitList extends StatefulWidget {
