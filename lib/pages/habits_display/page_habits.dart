@@ -1033,6 +1033,8 @@ class HabitsTabPageState extends State<HabitsTabPage>
       collapsedViewportFraction: displayPageOccupyPrt / 100,
       expandedViewportFraction: kDefaultHabitCalendarBarExtendedPrt,
     );
+    final showThemeAction =
+        WindowSize.of(context).width == WindowSizeClass.compact;
     const trackPadding = kDefaultHabitListTileTrackPadding;
 
     //#region: appbar
@@ -1055,7 +1057,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
           onGroupTypeSelected: _setHabitSummaryGroupType,
           onGroupDirectionToggled: _toggleHabitSummaryGroupDirection,
           onDisplayFilterChanged: _setHabitDisplayFilter,
-          onThemeToggled: _toggleHabitDisplayTheme,
+          onThemeToggled: showThemeAction ? _toggleHabitDisplayTheme : null,
         ),
         selectCallbacks: HabitDisplaySelectAppBarCallbacks(
           onDone: _onHabitEditAppbarLeadingButtonPressed,

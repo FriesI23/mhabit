@@ -21,11 +21,13 @@ class MaterialWideNavigationRailButton extends StatelessWidget {
     required this.onPressed,
   });
 
-  static const double _slotHeight = 64.0;
+  static const double _collapsedSlotHeight = 64.0;
   static const double _buttonHeight = 56.0;
   static const double _iconSize = 24.0;
   static const double _collapsedButtonWidth = 56.0;
   static const double _collapsedIndicatorHeight = 32.0;
+  static const double _collapsedIconLabelSpacing = 4.0;
+  static const double _collapsedBottomSpacing = 12.0;
   static const double _expandedHorizontalMargin = 20.0;
   static const double _expandedContentInset = 16.0;
   static const double _expandedIconLabelSpacing = 8.0;
@@ -60,14 +62,21 @@ class MaterialWideNavigationRailButton extends StatelessWidget {
           _buttonHeight,
           progress,
         )!;
+        final collapsedSlotHeight = _collapsedHeightFor(context);
+        final slotHeight = lerpDouble(
+          collapsedSlotHeight,
+          _buttonHeight,
+          progress,
+        )!;
         return SizedBox(
           key: slotKey,
           width: slotWidth,
-          height: _slotHeight,
+          height: slotHeight,
           child: Stack(
-            alignment: Alignment.center,
+            alignment: Alignment.topCenter,
             children: [
-              SizedBox(
+              Positioned(
+                top: 0,
                 width: buttonWidth,
                 height: buttonHeight,
                 child: _MaterialWideNavigationRailButtonSurface(
@@ -80,7 +89,7 @@ class MaterialWideNavigationRailButton extends StatelessWidget {
               ),
               PositionedDirectional(
                 start: (slotWidth - _collapsedButtonWidth) / 2,
-                top: 48,
+                top: _collapsedIndicatorHeight + _collapsedIconLabelSpacing,
                 width: _collapsedButtonWidth,
                 child: ExcludeSemantics(
                   child: Opacity(
@@ -99,6 +108,31 @@ class MaterialWideNavigationRailButton extends StatelessWidget {
         );
       },
     );
+  }
+
+  double _collapsedHeightFor(BuildContext context) {
+    final painter = TextPainter(
+      text: TextSpan(
+        text: destination.label,
+        style: _materialRailLabelStyle(
+          context,
+          selected: selected,
+          expanded: false,
+        ),
+      ),
+      maxLines: 2,
+      locale: Localizations.maybeLocaleOf(context),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+    )..layout(maxWidth: _collapsedButtonWidth);
+    final contentHeight =
+        _collapsedIndicatorHeight +
+        _collapsedIconLabelSpacing +
+        painter.height +
+        _collapsedBottomSpacing;
+    return contentHeight < _collapsedSlotHeight
+        ? _collapsedSlotHeight
+        : contentHeight;
   }
 }
 
@@ -283,28 +317,39 @@ class _MaterialWideNavigationRailLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final railTheme = NavigationRailTheme.of(context);
-    final baseStyle = expanded
-        ? theme.textTheme.labelLarge
-        : theme.textTheme.labelMedium;
-    final style = (baseStyle ?? const TextStyle())
-        .merge(
-          selected
-              ? railTheme.selectedLabelTextStyle
-              : railTheme.unselectedLabelTextStyle,
-        )
-        .copyWith(
-          color: selected
-              ? theme.colorScheme.secondary
-              : theme.colorScheme.onSurfaceVariant,
-        );
     return Text(
       destination.label,
-      maxLines: 1,
+      maxLines: 2,
       overflow: TextOverflow.ellipsis,
       textAlign: expanded ? null : TextAlign.center,
-      style: style,
+      style: _materialRailLabelStyle(
+        context,
+        selected: selected,
+        expanded: expanded,
+      ),
     );
   }
+}
+
+TextStyle _materialRailLabelStyle(
+  BuildContext context, {
+  required bool selected,
+  required bool expanded,
+}) {
+  final theme = Theme.of(context);
+  final railTheme = NavigationRailTheme.of(context);
+  final baseStyle = expanded
+      ? theme.textTheme.labelLarge
+      : theme.textTheme.labelMedium;
+  return (baseStyle ?? const TextStyle())
+      .merge(
+        selected
+            ? railTheme.selectedLabelTextStyle
+            : railTheme.unselectedLabelTextStyle,
+      )
+      .copyWith(
+        color: selected
+            ? theme.colorScheme.secondary
+            : theme.colorScheme.onSurfaceVariant,
+      );
 }

@@ -262,6 +262,7 @@ class _AppEntryState extends State<_AppEntry> {
   List<AppNavigationAuxiliaryChrome> _buildAuxiliaryChrome(
     BuildContext context,
   ) => [
+    AppNavigationAuxiliaryChrome.themeMode(context),
     AppNavigationAuxiliaryChrome(
       destination: AppNavigationDestinations.settings(
         label: L10n.of(context)?.appSetting_appbar_titleText ?? 'Settings',

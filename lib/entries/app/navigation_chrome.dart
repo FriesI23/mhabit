@@ -12,10 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+import 'package:provider/provider.dart';
 
+import '../../l10n/localizations.dart';
+import '../../providers/app_ui/app_theme.dart';
 import '../../routes/app_navigation_branch.dart';
+import '../../theme/color.dart';
 
 /// Builds the current auxiliary navigation presentations for the app shell.
 typedef AppNavigationAuxiliaryChromeBuilder =
@@ -24,7 +28,7 @@ typedef AppNavigationAuxiliaryChromeBuilder =
 /// Declarative presentation and interaction for one auxiliary destination.
 ///
 /// The shell consumes this contract without knowing the destination's route
-/// or business meaning. The app entry owns those details.
+/// or business meaning. App-layer constructors own those details.
 @immutable
 final class AppNavigationAuxiliaryChrome {
   /// Creates auxiliary navigation chrome.
@@ -33,6 +37,41 @@ final class AppNavigationAuxiliaryChrome {
     required this.selected,
     required this.onSelected,
   });
+
+  /// Builds the app-wide theme command shown by side-navigation forms.
+  static AppNavigationAuxiliaryChrome themeMode(BuildContext context) {
+    final l10n = L10n.of(context)!;
+    final themeType = context.select<AppThemeViewModel, AppThemeType>(
+      (viewModel) => viewModel.themeType,
+    );
+    final label = switch (themeType) {
+      AppThemeType.light => l10n.common_appThemeMode_light,
+      AppThemeType.dark => l10n.common_appThemeMode_dark,
+      AppThemeType.unknown ||
+      AppThemeType.followSystem => l10n.common_appThemeMode_followSystem,
+    };
+    final icon = Icon(switch (themeType) {
+      AppThemeType.light => Icons.light_mode_rounded,
+      AppThemeType.dark => Icons.dark_mode_rounded,
+      AppThemeType.unknown ||
+      AppThemeType.followSystem => Icons.hdr_auto_rounded,
+    });
+    return AppNavigationAuxiliaryChrome(
+      destination: AdaptiveNavigationDestination(
+        label: label,
+        icons: NavigationDestinationIcons(
+          material: icon,
+          materialSelected: icon,
+          apple: icon,
+          appleSelected: icon,
+        ),
+      ),
+      selected: false,
+      onSelected: () => context.read<AppThemeViewModel>().onTapChangeThemeType(
+        MediaQuery.platformBrightnessOf(context),
+      ),
+    );
+  }
 
   /// Destination rendered by non-compact navigation forms.
   final AdaptiveNavigationDestination destination;

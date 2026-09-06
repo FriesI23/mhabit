@@ -7,6 +7,7 @@ import '../shell/navigation_shell_form.dart';
 import '../shell/navigation_shell_frame.dart';
 import '../shell/side_navigation.dart';
 import '../window_control/window_control_layout.dart';
+import 'material_rail_destination_group_layout.dart';
 import 'material_wide_navigation_rail_button.dart';
 
 /// Material-specific NavigationRail geometry.
@@ -30,6 +31,7 @@ class MaterialAdaptiveNavigationRail extends StatelessWidget {
     required this.minWidth,
     required this.minExtendedWidth,
     this.leading,
+    this.trailing,
   });
 
   /// Zero-based index of the selected destination.
@@ -53,6 +55,9 @@ class MaterialAdaptiveNavigationRail extends StatelessWidget {
   /// Optional widget displayed above the destinations.
   final Widget? leading;
 
+  /// Optional widget pinned below the scrollable destination group.
+  final Widget? trailing;
+
   @override
   Widget build(BuildContext context) {
     return NavigationRail(
@@ -60,17 +65,24 @@ class MaterialAdaptiveNavigationRail extends StatelessWidget {
       extended: extended,
       minWidth: minWidth,
       minExtendedWidth: minExtendedWidth,
+      leadingAtTop: false,
+      trailingAtBottom: true,
+      scrollable: false,
+      mainAxisAlignment: MainAxisAlignment.start,
       // Host the custom content in leading so it shares NavigationRail's
       // surface and animation. It renders the destinations itself, so the
       // NavigationRail destinations below intentionally stay empty.
-      leading: _MaterialWideNavigationRailContent(
-        collapsedWidth: minWidth,
-        expandedWidth: minExtendedWidth,
-        leading: leading,
-        destinations: destinations,
-        selectedIndex: selectedIndex,
-        onDestinationSelected: onDestinationSelected,
+      leading: Expanded(
+        child: _MaterialWideNavigationRailContent(
+          collapsedWidth: minWidth,
+          expandedWidth: minExtendedWidth,
+          leading: leading,
+          destinations: destinations,
+          selectedIndex: selectedIndex,
+          onDestinationSelected: onDestinationSelected,
+        ),
       ),
+      trailing: trailing,
       destinations: const [],
     );
   }
@@ -86,8 +98,9 @@ class _MaterialWideNavigationRailContent extends StatelessWidget {
     this.leading,
   });
 
-  static const double _headerSpacing = 40.0;
-  static const double _destinationSpacing = 6.0;
+  static const double _collapsedDestinationSpacing = 4.0;
+  static const double _minimumLeadingDestinationSpacing = 8.0;
+  static const double _maximumLeadingDestinationSpacing = 40.0;
 
   final double collapsedWidth;
   final double expandedWidth;
@@ -99,18 +112,10 @@ class _MaterialWideNavigationRailContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final animation = NavigationRail.extendedAnimation(context);
-    return Column(
+    final destinationList = Column(
+      key: const ValueKey('material-rail-primary-destination-list'),
       mainAxisSize: MainAxisSize.min,
       children: [
-        AnimatedBuilder(
-          animation: animation,
-          builder: (context, child) => SizedBox(
-            width: lerpDouble(collapsedWidth, expandedWidth, animation.value)!,
-            child: child,
-          ),
-          child: leading,
-        ),
-        const SizedBox(height: _headerSpacing),
         for (final (index, destination) in destinations.indexed) ...[
           MaterialWideNavigationRailButton(
             slotKey: ValueKey('material-rail-destination-slot-$index'),
@@ -123,9 +128,52 @@ class _MaterialWideNavigationRailContent extends StatelessWidget {
             onPressed: () => onDestinationSelected(index),
           ),
           if (index != destinations.length - 1)
-            const SizedBox(height: _destinationSpacing),
+            AnimatedBuilder(
+              animation: animation,
+              builder: (context, _) => SizedBox(
+                height: lerpDouble(
+                  _collapsedDestinationSpacing,
+                  0,
+                  animation.value,
+                ),
+              ),
+            ),
         ],
       ],
+    );
+
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (context, child) => SizedBox(
+        width: lerpDouble(collapsedWidth, expandedWidth, animation.value)!,
+        child: child,
+      ),
+      child: CustomScrollView(
+        key: const ValueKey('material-rail-primary-scroll-view'),
+        slivers: [
+          if (leading != null)
+            SliverToBoxAdapter(
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: leading,
+              ),
+            ),
+          SliverFillRemaining(
+            hasScrollBody: false,
+            // Keep a future rail FAB in this scrollable region. When one is
+            // added, place this 40-to-8dp flexible gap after the FAB.
+            child: MaterialRailDestinationGroupLayout(
+              minimumGap: leading == null || destinations.isEmpty
+                  ? 0
+                  : _minimumLeadingDestinationSpacing,
+              maximumGap: leading == null || destinations.isEmpty
+                  ? 0
+                  : _maximumLeadingDestinationSpacing,
+              child: destinationList,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -325,7 +373,7 @@ class _MaterialNavigationRailPanel extends StatelessWidget {
   });
 
   static const double _minimumRailButtonExtent = 44.0;
-  static const double _auxiliaryDestinationSpacing = 6.0;
+  static const double _collapsedAuxiliaryDestinationSpacing = 4.0;
 
   final int selectedIndex;
   final List<AdaptiveNavigationDestination> destinations;
@@ -367,29 +415,8 @@ class _MaterialNavigationRailPanel extends StatelessWidget {
     final leadingTopAvoidance = useVerticalFallback
         ? verticalAvoidance.top
         : 0.0;
-    final isRtl = Directionality.of(context) == TextDirection.rtl;
-
-    final primaryDestinationRail = MaterialAdaptiveNavigationRail(
-      key: const ValueKey('rail-panel'),
-      selectedIndex: selectedAuxiliaryIndex == null ? selectedIndex : -1,
-      onDestinationSelected: onDestinationSelected,
-      extended: extended,
-      minWidth: collapsedWidth,
-      minExtendedWidth: expandedWidth,
-      leading: Padding(
-        padding: EdgeInsets.only(
-          left: leadingHorizontalAvoidance.left,
-          top: leadingTopAvoidance,
-          right: leadingHorizontalAvoidance.right,
-        ),
-        child: const Align(
-          child: SizedBox.square(dimension: kMinInteractiveDimension),
-        ),
-      ),
-      destinations: destinations,
-    );
-
     final auxiliaryDestinationList = Column(
+      key: const ValueKey('material-rail-auxiliary-destination-list'),
       mainAxisSize: MainAxisSize.min,
       children: [
         for (final (index, destination) in auxiliaryDestinations.indexed) ...[
@@ -406,58 +433,49 @@ class _MaterialNavigationRailPanel extends StatelessWidget {
             onPressed: () => onAuxiliaryDestinationSelected?.call(index),
           ),
           if (index != auxiliaryDestinations.length - 1)
-            const SizedBox(height: _auxiliaryDestinationSpacing),
+            SizedBox(
+              height: extended ? 0 : _collapsedAuxiliaryDestinationSpacing,
+            ),
         ],
       ],
     );
-    final auxiliaryDestinationLayer = auxiliaryDestinations.isEmpty
-        ? null
-        : Positioned.fill(
-            child: SafeArea(
-              left: !isRtl,
-              right: isRtl,
-              child: Align(
-                alignment: AlignmentDirectional.bottomStart,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: auxiliaryDestinationList,
-                ),
-              ),
-            ),
-          );
-
-    final navigationToggleLayer = Positioned.fill(
-      child: SafeArea(
-        left: !isRtl,
-        right: isRtl,
-        child: Align(
-          alignment: AlignmentDirectional.topStart,
-          child: SizedBox(
-            width: toggleAnchorWidth,
-            child: Padding(
-              key: const ValueKey('rail-leading-safe-span'),
-              padding: EdgeInsets.only(
-                left: leadingHorizontalAvoidance.left,
-                top: leadingTopAvoidance,
-                right: leadingHorizontalAvoidance.right,
-              ),
-              child: Align(
-                heightFactor: 1,
-                child: IconButton(
-                  key: const ValueKey('rail-toggle-button'),
-                  tooltip: extended
-                      ? collapseNavigationLabel
-                      : expandNavigationLabel,
-                  icon: Icon(extended ? Icons.menu_open : Icons.menu),
-                  onPressed: onToggle,
-                ),
-              ),
+    final primaryDestinationRail = MaterialAdaptiveNavigationRail(
+      key: const ValueKey('rail-panel'),
+      selectedIndex: selectedAuxiliaryIndex == null ? selectedIndex : -1,
+      onDestinationSelected: onDestinationSelected,
+      extended: extended,
+      minWidth: collapsedWidth,
+      minExtendedWidth: expandedWidth,
+      leading: SizedBox(
+        width: toggleAnchorWidth,
+        child: Padding(
+          key: const ValueKey('rail-leading-safe-span'),
+          padding: EdgeInsets.only(
+            left: leadingHorizontalAvoidance.left,
+            top: leadingTopAvoidance,
+            right: leadingHorizontalAvoidance.right,
+          ),
+          child: Align(
+            heightFactor: 1,
+            child: IconButton(
+              key: const ValueKey('rail-toggle-button'),
+              tooltip: extended
+                  ? collapseNavigationLabel
+                  : expandNavigationLabel,
+              icon: Icon(extended ? Icons.menu_open : Icons.menu),
+              onPressed: onToggle,
             ),
           ),
         ),
       ),
+      destinations: destinations,
+      trailing: auxiliaryDestinations.isEmpty
+          ? null
+          : Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: auxiliaryDestinationList,
+            ),
     );
-
     final navigationResizeHandle = PositionedDirectional(
       end: 0,
       top: 0,
@@ -471,14 +489,7 @@ class _MaterialNavigationRailPanel extends StatelessWidget {
       ),
     );
 
-    return Stack(
-      children: [
-        primaryDestinationRail,
-        ?auxiliaryDestinationLayer,
-        navigationToggleLayer,
-        navigationResizeHandle,
-      ],
-    );
+    return Stack(children: [primaryDestinationRail, navigationResizeHandle]);
   }
 }
 

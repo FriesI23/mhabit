@@ -153,8 +153,124 @@ void main() {
       ),
       findsOneWidget,
     );
+    final scrollView = find.descendant(
+      of: find.byKey(const ValueKey('rail-panel')),
+      matching: find.byKey(const ValueKey('material-rail-primary-scroll-view')),
+    );
+    final scrollable = tester.state<ScrollableState>(
+      find.descendant(of: scrollView, matching: find.byType(Scrollable)),
+    );
+    final primaryDestinationList = find.byKey(
+      const ValueKey('material-rail-primary-destination-list'),
+    );
+    final toggle = find.byKey(const ValueKey('rail-toggle-button'));
+    expect(scrollable.position.maxScrollExtent, 0);
+    final leadingGap =
+        tester.getTopLeft(primaryDestinationList).dy -
+        tester.getBottomLeft(toggle).dy;
+    expect(leadingGap, 40);
+    expect(
+      tester
+          .getBottomLeft(
+            find.byKey(const ValueKey('material-rail-destination-slot-1')),
+          )
+          .dy,
+      lessThan(
+        tester
+            .getTopLeft(
+              find.byKey(
+                const ValueKey('material-rail-auxiliary-destination-list'),
+              ),
+            )
+            .dy,
+      ),
+    );
     await tester.tap(button);
     expect(selectedIndex, 1);
+  });
+
+  testWidgets('Material rail shrinks its leading gap before scrolling', (
+    tester,
+  ) async {
+    _setSurface(tester, const Size(700, 408));
+    await tester.pumpWidget(
+      _host(
+        platform: TargetPlatform.android,
+        selectedAuxiliaryIndex: null,
+        onSelected: (_) {},
+      ),
+    );
+
+    final scrollView = find.byKey(
+      const ValueKey('material-rail-primary-scroll-view'),
+    );
+    final scrollable = tester.state<ScrollableState>(
+      find.descendant(of: scrollView, matching: find.byType(Scrollable)),
+    );
+    final primaryDestinationList = find.byKey(
+      const ValueKey('material-rail-primary-destination-list'),
+    );
+    final toggle = find.byKey(const ValueKey('rail-toggle-button'));
+    final leadingGap =
+        tester.getTopLeft(primaryDestinationList).dy -
+        tester.getBottomLeft(toggle).dy;
+
+    expect(scrollable.position.maxScrollExtent, 0);
+    expect(leadingGap, inExclusiveRange(8, 40));
+  });
+
+  testWidgets('Material short rail scrolls primary content above auxiliary', (
+    tester,
+  ) async {
+    _setSurface(tester, const Size(700, 320));
+    await tester.pumpWidget(
+      _host(
+        platform: TargetPlatform.android,
+        selectedAuxiliaryIndex: null,
+        onSelected: (_) {},
+      ),
+    );
+
+    final rail = find.byKey(const ValueKey('rail-panel'));
+    final scrollView = find.descendant(
+      of: rail,
+      matching: find.byKey(const ValueKey('material-rail-primary-scroll-view')),
+    );
+    final scrollable = tester.state<ScrollableState>(
+      find.descendant(of: scrollView, matching: find.byType(Scrollable)),
+    );
+    final auxiliaryList = find.byKey(
+      const ValueKey('material-rail-auxiliary-destination-list'),
+    );
+    final firstDestination = find.byKey(
+      const ValueKey('material-rail-destination-slot-0'),
+    );
+    final toggle = find.byKey(
+      const ValueKey('rail-toggle-button'),
+      skipOffstage: false,
+    );
+    final initialDestinationTop = tester.getTopLeft(firstDestination).dy;
+    final initialToggleTop = tester.getTopLeft(toggle).dy;
+    final initialAuxiliaryTop = tester.getTopLeft(auxiliaryList).dy;
+
+    expect(scrollable.position.maxScrollExtent, greaterThan(0));
+    expect(initialDestinationTop - tester.getBottomLeft(toggle).dy, 8);
+    expect(
+      tester.getBottomLeft(scrollView).dy,
+      lessThanOrEqualTo(initialAuxiliaryTop),
+    );
+
+    await tester.drag(scrollView, const Offset(0, -80));
+    await tester.pumpAndSettle();
+
+    expect(scrollable.position.pixels, greaterThan(0));
+    expect(
+      tester.getTopLeft(firstDestination).dy,
+      lessThan(initialDestinationTop),
+    );
+    expect(tester.getTopLeft(toggle).dy, lessThan(initialToggleTop));
+    expect(tester.getTopLeft(auxiliaryList).dy, initialAuxiliaryTop);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('Apple Sidebar renders and invokes auxiliary destination', (

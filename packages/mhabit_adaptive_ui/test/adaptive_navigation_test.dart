@@ -56,6 +56,30 @@ _TestRouter _buildRouter({
   );
 }
 
+List<AdaptiveNavigationDestination> _destinationsWithLabels(
+  String first,
+  String second,
+) => [
+  AdaptiveNavigationDestination(
+    label: first,
+    icons: const NavigationDestinationIcons(
+      material: Icon(Icons.home_outlined),
+      materialSelected: Icon(Icons.home),
+      apple: Icon(Icons.home_outlined),
+      appleSelected: Icon(Icons.home),
+    ),
+  ),
+  AdaptiveNavigationDestination(
+    label: second,
+    icons: const NavigationDestinationIcons(
+      material: Icon(Icons.calendar_today_outlined),
+      materialSelected: Icon(Icons.calendar_today),
+      apple: Icon(Icons.calendar_today_outlined),
+      appleSelected: Icon(Icons.calendar_today),
+    ),
+  ),
+];
+
 class _TestRouter extends RouterConfig<Object> {
   factory _TestRouter({
     required List<AdaptiveNavigationDestination> destinations,
@@ -3036,7 +3060,9 @@ void main() {
       tester,
     ) async {
       _setSurfaceSize(tester, const Size(700, 800));
-      final router = _buildRouter();
+      final router = _buildRouter(
+        destinations: _destinationsWithLabels('H', 'T'),
+      );
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
       await tester.pumpAndSettle();
 
@@ -3046,6 +3072,9 @@ void main() {
       );
       final destinationSlot = find.byKey(
         const ValueKey('material-rail-destination-slot-0'),
+      );
+      final todaySlot = find.byKey(
+        const ValueKey('material-rail-destination-slot-1'),
       );
       final indicator = find.descendant(
         of: destination,
@@ -3059,8 +3088,10 @@ void main() {
         of: destination,
         matching: find.byKey(const ValueKey('material-rail-expanded-label')),
       );
+      final toggle = find.byKey(const ValueKey('rail-toggle-button'));
 
       expect(tester.getSize(destination), const Size(56, 32));
+      expect(tester.getSize(destinationSlot).height, 64);
       expect(rail.minWidth, 96);
       expect(tester.getSize(indicator), const Size(56, 32));
       expect(tester.widget<Opacity>(collapsedLabel).opacity, 1);
@@ -3072,6 +3103,53 @@ void main() {
       expect(
         tester.getRect(destination).overlaps(tester.getRect(collapsedLabel)),
         isFalse,
+      );
+      expect(
+        tester.getTopLeft(collapsedLabel).dy -
+            tester.getBottomLeft(destination).dy,
+        4,
+      );
+      expect(
+        tester.getTopLeft(todaySlot).dy -
+            tester.getBottomLeft(destinationSlot).dy,
+        4,
+      );
+      expect(
+        tester.getTopLeft(destinationSlot).dy - tester.getBottomLeft(toggle).dy,
+        40,
+      );
+      final label = tester.widget<Text>(
+        find.descendant(of: collapsedLabel, matching: find.text('H')),
+      );
+      expect(label.maxLines, 2);
+      expect(label.overflow, TextOverflow.ellipsis);
+    });
+
+    testWidgets('material collapsed rail grows only wrapped destinations', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(700, 800));
+      final router = _buildRouter(
+        destinations: _destinationsWithLabels('H', 'A long destination label'),
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      expect(
+        tester
+            .getSize(
+              find.byKey(const ValueKey('material-rail-destination-slot-0')),
+            )
+            .height,
+        64,
+      );
+      expect(
+        tester
+            .getSize(
+              find.byKey(const ValueKey('material-rail-destination-slot-1')),
+            )
+            .height,
+        80,
       );
     });
 
@@ -3086,6 +3164,12 @@ void main() {
       final destination = find.byKey(
         const ValueKey('material-rail-destination-0'),
       );
+      final destinationSlot = find.byKey(
+        const ValueKey('material-rail-destination-slot-0'),
+      );
+      final todaySlot = find.byKey(
+        const ValueKey('material-rail-destination-slot-1'),
+      );
       final indicator = find.descendant(
         of: destination,
         matching: find.byKey(const ValueKey('material-rail-indicator')),
@@ -3097,6 +3181,7 @@ void main() {
       final indicatorRect = tester.getRect(indicator);
 
       expect(tester.getSize(destination), const Size(160, 56));
+      expect(tester.getSize(destinationSlot).height, 56);
       expect(tester.getSize(indicator), const Size(160, 56));
       expect(tester.widget<Opacity>(expandedLabel).opacity, 1);
       expect(
@@ -3110,13 +3195,20 @@ void main() {
         ),
         tester.getRect(destination),
       );
+      expect(
+        tester.getTopLeft(todaySlot).dy -
+            tester.getBottomLeft(destinationSlot).dy,
+        0,
+      );
     });
 
     testWidgets('material rail destinations follow the rail animation', (
       tester,
     ) async {
       _setSurfaceSize(tester, const Size(700, 800));
-      final router = _buildRouter();
+      final router = _buildRouter(
+        destinations: _destinationsWithLabels('H', 'T'),
+      );
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
       await tester.pumpAndSettle();
 
@@ -3152,7 +3244,10 @@ void main() {
       expect(tester.getSize(indicator).width, inExclusiveRange(56, 158));
       expect(tester.getSize(destination).height, inExclusiveRange(32, 56));
       expect(tester.getSize(indicator).height, inExclusiveRange(32, 56));
-      expect(tester.getCenter(destination).dy, collapsedCenterY);
+      expect(
+        tester.getCenter(destination).dy,
+        inExclusiveRange(collapsedCenterY, collapsedCenterY + 12),
+      );
       expect(tester.getCenter(todayDestination).dy, collapsedTodayCenterY);
       expect(
         tester.widget<Opacity>(collapsedLabel).opacity,
@@ -3166,7 +3261,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.getSize(destination).width, closeTo(158, 0.01));
       expect(tester.getSize(indicator).width, closeTo(158, 0.01));
-      expect(tester.getCenter(destination).dy, collapsedCenterY);
+      expect(tester.getCenter(destination).dy, collapsedCenterY + 12);
       expect(tester.getCenter(todayDestination).dy, collapsedTodayCenterY);
 
       await tester.tap(find.byKey(const ValueKey('rail-toggle-button')));
@@ -3177,7 +3272,10 @@ void main() {
       expect(tester.getSize(indicator).width, inExclusiveRange(56, 158));
       expect(tester.getSize(destination).height, inExclusiveRange(32, 56));
       expect(tester.getSize(indicator).height, inExclusiveRange(32, 56));
-      expect(tester.getCenter(destination).dy, collapsedCenterY);
+      expect(
+        tester.getCenter(destination).dy,
+        inExclusiveRange(collapsedCenterY, collapsedCenterY + 12),
+      );
       expect(tester.getCenter(todayDestination).dy, collapsedTodayCenterY);
       expect(
         tester.widget<Opacity>(collapsedLabel).opacity,
@@ -3274,7 +3372,7 @@ void main() {
           final toggle = find.byKey(const ValueKey('rail-toggle-button'));
           final expandedCenter = tester.getCenter(toggle);
           final expandedTop = tester.getTopLeft(toggle).dy;
-          expect(expandedTop, 0);
+          expect(expandedTop, 8);
 
           await tester.tap(toggle);
           await tester.pump();
@@ -3312,14 +3410,14 @@ void main() {
           find.byKey(const ValueKey('rail-leading-safe-span')),
         );
         final collapsedCenter = tester.getCenter(toggle);
-        expect(tester.getTopLeft(toggle).dy, 0);
+        expect(tester.getTopLeft(toggle).dy, 8);
         expect(safeSpan().padding, const EdgeInsets.only(left: 40));
 
         await tester.tap(toggle);
         await tester.pumpAndSettle();
 
         expect(tester.getCenter(toggle).dx, closeTo(collapsedCenter.dx, 0.01));
-        expect(tester.getTopLeft(toggle).dy, 0);
+        expect(tester.getTopLeft(toggle).dy, 8);
         expect(safeSpan().padding, const EdgeInsets.only(left: 40));
       } finally {
         _resetWindowControlLayoutMock();
@@ -4533,6 +4631,14 @@ void main() {
         find.byKey(const ValueKey('cupertino-sidebar-resize-handle')),
         findsOneWidget,
       );
+      final longLabel = tester.widget<Text>(
+        find.descendant(
+          of: find.byKey(const ValueKey('cupertino-sidebar-destination-0')),
+          matching: find.text('A very long habits destination label'),
+        ),
+      );
+      expect(longLabel.maxLines, 2);
+      expect(longLabel.overflow, TextOverflow.ellipsis);
       expect(tester.takeException(), isNull);
       debugDefaultTargetPlatformOverride = null;
     });

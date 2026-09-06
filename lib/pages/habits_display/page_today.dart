@@ -182,7 +182,7 @@ class _Appbar extends StatelessWidget {
         apple: AppBarAppleStyle(collapsible: useLargeTitle),
       ),
       title: Text(l10n?.habitToday_appBar_title ?? "Today"),
-      actions: const [AppThemeSwitchButton()],
+      actions: useLargeTitle ? const [AppThemeSwitchButton()] : const [],
     );
   }
 }

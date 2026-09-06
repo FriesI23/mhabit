@@ -10,18 +10,21 @@ import 'package:go_router/go_router.dart';
 import 'package:mhabit/entries/app/navigation_chrome.dart';
 import 'package:mhabit/entries/app/navigation_destination.dart';
 import 'package:mhabit/entries/app/shell.dart';
+import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/app_entry.dart';
 import 'package:mhabit/pages/app_debugger/page.dart'
     show onDebuggerNotificationTapped;
 import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/pages/habits_display/navigation_chrome.dart';
 import 'package:mhabit/providers/app_ui/app_launch_entry.dart';
+import 'package:mhabit/providers/app_ui/app_theme.dart';
 import 'package:mhabit/routes/app_flow_page.dart';
 import 'package:mhabit/routes/app_material_page.dart';
 import 'package:mhabit/routes/app_navigation_branch.dart';
 import 'package:mhabit/routes/app_navigation_coordinator.dart';
 import 'package:mhabit/routes/app_router.dart';
 import 'package:mhabit/routes/navigator_helpers.dart';
+import 'package:mhabit/theme/color.dart';
 import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +35,19 @@ class _RecordingLaunchEntryViewModel extends AppLaunchEntryViewModel {
   @override
   Future<void> setNewLaunchEntry(AppEntrys newLaunchEntry) async {
     entries.add(newLaunchEntry);
+  }
+}
+
+class _TestThemeViewModel extends AppThemeViewModel {
+  AppThemeType value = AppThemeType.followSystem;
+
+  @override
+  AppThemeType get themeType => value;
+
+  @override
+  Future<void> setNewthemeType(AppThemeType newThemeType) async {
+    value = newThemeType;
+    notifyListeners();
   }
 }
 
@@ -447,6 +463,111 @@ void main() {
     );
     expect(launchEntry.entries, [AppEntrys.habitToday, AppEntrys.habitToday]);
   });
+
+  for (final testCase in <({TargetPlatform platform, String actionKey})>[
+    (
+      platform: TargetPlatform.android,
+      actionKey: 'material-rail-auxiliary-destination-0',
+    ),
+    (
+      platform: TargetPlatform.iOS,
+      actionKey: 'cupertino-sidebar-auxiliary-destination-0',
+    ),
+  ]) {
+    testWidgets(
+      '${testCase.platform.name} theme action cycles without changing navigation',
+      (tester) async {
+        _setSurface(tester, const Size(700, 800));
+        final coordinator = _MutableNavigationCoordinator(initialIndex: 1);
+        final chromeController = AppNavigationChromeController();
+        final launchEntry = _RecordingLaunchEntryViewModel();
+        final theme = _TestThemeViewModel();
+        addTearDown(coordinator.dispose);
+        addTearDown(chromeController.dispose);
+        addTearDown(launchEntry.dispose);
+        addTearDown(theme.dispose);
+
+        await tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
+                value: launchEntry,
+              ),
+              ChangeNotifierProvider<AppThemeViewModel>.value(value: theme),
+            ],
+            child: MaterialApp(
+              theme: ThemeData(platform: testCase.platform),
+              localizationsDelegates: L10n.localizationsDelegates,
+              supportedLocales: L10n.supportedLocales,
+              home: AppNavigationShell(
+                coordinator: coordinator,
+                chromeController: chromeController,
+                auxiliaryChromeBuilder: (context) => [
+                  AppNavigationAuxiliaryChrome.themeMode(context),
+                  AppNavigationAuxiliaryChrome(
+                    destination: const AdaptiveNavigationDestination(
+                      label: 'Settings',
+                      icons: NavigationDestinationIcons(
+                        material: Icon(Icons.settings_outlined),
+                        materialSelected: Icon(Icons.settings),
+                        apple: Icon(CupertinoIcons.settings),
+                        appleSelected: Icon(CupertinoIcons.settings_solid),
+                      ),
+                    ),
+                    selected: true,
+                    onSelected: () {},
+                  ),
+                ],
+                child: const _StubPage('settings page'),
+              ),
+            ),
+          ),
+        );
+
+        final action = find.byKey(ValueKey(testCase.actionKey));
+        final settings = find.byKey(
+          ValueKey(
+            testCase.platform == TargetPlatform.iOS
+                ? 'cupertino-sidebar-auxiliary-destination-1'
+                : 'material-rail-auxiliary-destination-1',
+          ),
+        );
+        expect(action, findsOneWidget);
+        expect(settings, findsOneWidget);
+        expect(
+          tester.getTopLeft(action).dy,
+          lessThan(tester.getTopLeft(settings).dy),
+        );
+        expect(find.text('Follow System'), findsWidgets);
+        expect(
+          find.descendant(
+            of: action,
+            matching: find.byWidgetPredicate(
+              (widget) =>
+                  widget is Icon && widget.icon == Icons.hdr_auto_rounded,
+            ),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          tester
+              .widget<AdaptiveNavigationShell>(
+                find.byType(AdaptiveNavigationShell),
+              )
+              .selectedAuxiliaryIndex,
+          1,
+        );
+
+        await tester.tap(action);
+        await tester.pump();
+
+        expect(theme.value, AppThemeType.light);
+        expect(find.text('Light Theme'), findsWidgets);
+        expect(coordinator.selectedIndex, 1);
+        expect(launchEntry.entries, isEmpty);
+      },
+    );
+  }
 
   testWidgets('derives compact bar visibility from the active branch stack', (
     tester,

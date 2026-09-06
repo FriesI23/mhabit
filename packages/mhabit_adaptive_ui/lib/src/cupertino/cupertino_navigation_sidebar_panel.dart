@@ -195,7 +195,7 @@ class _CupertinoSidebarDestination extends StatelessWidget {
     final label = Expanded(
       child: Text(
         destination.label,
-        maxLines: 1,
+        maxLines: 2,
         overflow: TextOverflow.ellipsis,
       ),
     );
