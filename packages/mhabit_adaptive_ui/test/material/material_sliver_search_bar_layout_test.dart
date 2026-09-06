@@ -95,4 +95,27 @@ void main() {
 
     expect(layout.actionCapacity, 0);
   });
+
+  test('rejects invalid numeric inputs in debug mode', () {
+    expect(
+      () => _calculate(widthClass: WindowSizeClass.compact, availableWidth: -1),
+      throwsAssertionError,
+    );
+    expect(
+      () => _calculate(
+        widthClass: WindowSizeClass.compact,
+        availableWidth: 390,
+        maxSearchWidth: double.nan,
+      ),
+      throwsAssertionError,
+    );
+    expect(
+      () => _calculate(
+        widthClass: WindowSizeClass.compact,
+        availableWidth: 390,
+        preferredActionCapacity: double.infinity,
+      ),
+      throwsAssertionError,
+    );
+  });
 }

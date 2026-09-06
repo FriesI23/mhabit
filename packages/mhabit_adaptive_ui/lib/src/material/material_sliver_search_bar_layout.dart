@@ -46,7 +46,12 @@ final class MaterialSliverSearchBarLayoutCalculator {
     required this.hasLeading,
     required this.maxSearchWidth,
     required this.preferredActionCapacity,
-  });
+  }) : assert(availableWidth >= 0 && availableWidth < double.infinity),
+       assert(maxSearchWidth >= 0 && maxSearchWidth < double.infinity),
+       assert(
+         preferredActionCapacity >= 0 &&
+             preferredActionCapacity < double.infinity,
+       );
 
   final WindowSizeClass widthClass;
   final double availableWidth;
@@ -57,6 +62,18 @@ final class MaterialSliverSearchBarLayoutCalculator {
 
   MaterialSliverSearchBarLayout calculate() {
     final isWide = widthClass >= WindowSizeClass.medium;
+    if (!availableWidth.isFinite ||
+        availableWidth < 0 ||
+        !maxSearchWidth.isFinite ||
+        maxSearchWidth < 0 ||
+        !preferredActionCapacity.isFinite ||
+        preferredActionCapacity < 0) {
+      return MaterialSliverSearchBarLayout._(
+        isWide: isWide,
+        showWideTitle: false,
+        actionCapacity: 0,
+      );
+    }
     final showWideTitle = _resolveShowWideTitle();
     return MaterialSliverSearchBarLayout._(
       isWide: isWide,
