@@ -56,8 +56,8 @@ final class MaterialAppBarActionsConfig<T extends Object>
 final class MaterialAppBarResponsiveLayout {
   const MaterialAppBarResponsiveLayout({
     required this.reservedWidth,
-    this.minimumCapacity = 48.0,
-    this.slotExtent = 48.0,
+    this.minimumCapacity = kMinInteractiveDimension,
+    this.slotExtent = kMinInteractiveDimension,
   }) : assert(reservedWidth >= 0),
        assert(minimumCapacity >= 0),
        assert(slotExtent > 0);

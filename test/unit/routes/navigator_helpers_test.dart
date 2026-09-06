@@ -45,6 +45,46 @@ HabitForm _editForm({required String uuid}) => HabitForm(
 );
 
 void main() {
+  group('GoRouterNavigationState', () {
+    test('returns null for an empty route configuration', () {
+      final router = GoRouter(
+        routes: [
+          GoRoute(path: '/', builder: (_, _) => const SizedBox.shrink()),
+        ],
+      );
+      addTearDown(router.dispose);
+      router.routerDelegate.currentConfiguration = RouteMatchList.empty;
+
+      expect(router.currentRouteName, isNull);
+    });
+
+    testWidgets('returns the current named leaf route', (tester) async {
+      final router = GoRouter(
+        routes: [
+          GoRoute(
+            path: '/',
+            name: AppRoute.habits.name,
+            builder: (_, _) => const Text('home'),
+          ),
+          GoRoute(
+            path: '/debugger',
+            name: AppRoute.debugger.name,
+            builder: (_, _) => const Text('debugger'),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      expect(router.currentRouteName, AppRoute.habits.name);
+
+      router.pushNamed(AppRoute.debugger.name);
+      await tester.pumpAndSettle();
+
+      expect(router.currentRouteName, AppRoute.debugger.name);
+    });
+  });
+
   group('naviTo* (go_router wrappers)', () {
     testWidgets('naviToHabitEditPage assert fails when editMode != edit', (
       tester,

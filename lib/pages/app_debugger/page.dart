@@ -46,8 +46,7 @@ Future<void> onDebuggerNotificationTapped() async {
   final context = navigatorKey.currentContext;
   if (context == null) return;
   final router = GoRouter.of(context);
-  final currentRouteName =
-      router.routerDelegate.currentConfiguration.last.route.name;
+  final currentRouteName = router.currentRouteName;
   appLog.debugger.info(
     "onDebuggerNotificationTapped: navi",
     ex: [AppRoute.debugger.name, currentRouteName],

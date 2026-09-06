@@ -1,9 +1,8 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import '../breakpoints/window_size_class.dart';
 import '../window_control/material_app_bar.dart';
 import 'material_expandable_search_bar.dart';
+import 'material_sliver_search_bar_layout.dart';
 
 typedef MaterialSearchActionsBuilder =
     Widget Function(BuildContext context, double primaryCapacity);
@@ -27,16 +26,6 @@ class MaterialSliverSearchBarStyle {
 
 /// Material presentation for an inline, sliver-based search command bar.
 class MaterialSliverSearchBar extends StatelessWidget {
-  static const _mediumTitleTrailingWidthThreshold = 0.7;
-  static const _actionSlotExtent = 48.0;
-  static const _minimumActionCapacity = _actionSlotExtent;
-  static const _collapsedSearchReserve = 120.0;
-  static const _wideLeadingReserve = kToolbarHeight;
-  static const _compactLeadingReserve = 48.0;
-  static const _wideTitleReserve = 96.0;
-  static const _wideHorizontalReserve = 32.0;
-  static const _compactHorizontalReserve = 16.0;
-
   const MaterialSliverSearchBar({
     super.key,
     required this.title,
@@ -84,16 +73,17 @@ class MaterialSliverSearchBar extends StatelessWidget {
 
   Widget _buildSliver(BuildContext context, {required double availableWidth}) {
     final widthClass = WindowSize.of(context).width;
-    final isWide = widthClass >= WindowSizeClass.medium;
-    final showWideTitle = _shouldShowWideTitle(
-      widthClass,
+    final layout = MaterialSliverSearchBarLayoutCalculator(
+      widthClass: widthClass,
       availableWidth: availableWidth,
-    );
-    final actionCapacity = _resolveActionCapacity(
-      availableWidth: availableWidth,
-      isWide: isWide,
-      showWideTitle: showWideTitle,
-    );
+      isSearchActive: isSearchActive,
+      hasLeading: leading != null,
+      maxSearchWidth: style.maxSearchWidth,
+      preferredActionCapacity: preferredActionCapacity,
+    ).calculate();
+    final isWide = layout.isWide;
+    final showWideTitle = layout.showWideTitle;
+    final actionCapacity = layout.actionCapacity;
     final actions = actionCapacity > 0
         ? SizedBox(
             width: actionCapacity,
@@ -150,59 +140,6 @@ class MaterialSliverSearchBar extends StatelessWidget {
               ?actions,
             ]
           : [?leading, ?actions],
-    );
-  }
-
-  bool _shouldShowWideTitle(
-    WindowSizeClass widthClass, {
-    required double availableWidth,
-  }) {
-    if (widthClass >= WindowSizeClass.expanded) return true;
-    if (widthClass != WindowSizeClass.medium) return false;
-    final preferredTrailingWidth =
-        style.maxSearchWidth + preferredActionCapacity;
-    return preferredTrailingWidth <
-        availableWidth * _mediumTitleTrailingWidthThreshold;
-  }
-
-  /// Logical horizontal budget (start -> end; mirrored automatically in RTL):
-  ///
-  /// wide:
-  /// | leading | title | flexible gap | search | action slots | outer reserve |
-  ///
-  /// compact:
-  /// | collapsed/active search | flexible gap | leading | actions | reserve |
-  ///
-  /// action capacity = floor((window width - fixed reserves) / slot) * slot
-  ///                           └─ rounded down to whole action slots
-  /// minimum capacity: one slot reserved for More
-  double _resolveActionCapacity({
-    required double availableWidth,
-    required bool isWide,
-    required bool showWideTitle,
-  }) {
-    if (preferredActionCapacity <= 0) return 0;
-    final searchReserve = isWide || isSearchActive
-        ? style.maxSearchWidth
-        : _collapsedSearchReserve;
-    final leadingReserve = leading == null
-        ? 0.0
-        : (isWide ? _wideLeadingReserve : _compactLeadingReserve);
-    final titleReserve = showWideTitle ? _wideTitleReserve : 0.0;
-    final horizontalReserve = isWide
-        ? _wideHorizontalReserve
-        : _compactHorizontalReserve;
-    final available =
-        availableWidth -
-        searchReserve -
-        leadingReserve -
-        titleReserve -
-        horizontalReserve;
-    final slotted =
-        (available / _actionSlotExtent).floorToDouble() * _actionSlotExtent;
-    return math.min(
-      preferredActionCapacity,
-      math.max(_minimumActionCapacity, slotted),
     );
   }
 }

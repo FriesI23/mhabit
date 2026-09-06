@@ -31,6 +31,11 @@ import 'helpers/habit_detail_helper.dart';
 import 'helpers/habit_edit_helper.dart';
 import 'helpers/habits_status_changer_helper.dart';
 
+extension GoRouterNavigationState on GoRouter {
+  String? get currentRouteName =>
+      routerDelegate.currentConfiguration.lastOrNull?.route.name;
+}
+
 Future<HabitDBCell?> naviToHabitCreatePage({
   required BuildContext context,
   HabitForm? initForm,

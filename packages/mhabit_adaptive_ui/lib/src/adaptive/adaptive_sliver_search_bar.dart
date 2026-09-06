@@ -229,6 +229,7 @@ class AdaptiveSliverSearchBar<T extends Object> extends StatelessWidget {
     final visiblePrimaryCount = math.min(primaryCount, maxPrimaryActions);
     final hasResolvedOverflow =
         needsOverflow || primaryCount > maxPrimaryActions;
-    return (visiblePrimaryCount + (hasResolvedOverflow ? 1 : 0)) * 48.0;
+    return (visiblePrimaryCount + (hasResolvedOverflow ? 1 : 0)) *
+        kMinInteractiveDimension;
   }
 }

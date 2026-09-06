@@ -261,26 +261,21 @@ class _GroupManagePopScope extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector2<
-      GroupManageViewModel,
-      AppNavigationCoordinator,
-      (bool, bool)
-    >(
-      selector: (_, vm, coordinator) =>
-          (vm.canPop, coordinator.destinationSwitchInProgress),
-      child: child,
-      builder: (context, navigation, child) {
-        final (canPop, destinationSwitchInProgress) = navigation;
-        return PopScope<void>(
-          canPop: canPop || destinationSwitchInProgress,
-          onPopInvokedWithResult: (didPop, _) {
-            if (!didPop) {
-              context.read<GroupManageViewModel>().exitSelectionMode();
-            }
-          },
-          child: child!,
+    final canPop = context.select<GroupManageViewModel, bool>(
+      (vm) => vm.canPop,
+    );
+    final destinationSwitchInProgress = context
+        .select<AppNavigationCoordinator, bool>(
+          (coordinator) => coordinator.destinationSwitchInProgress,
         );
+    return PopScope<void>(
+      canPop: canPop || destinationSwitchInProgress,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          context.read<GroupManageViewModel>().exitSelectionMode();
+        }
       },
+      child: child,
     );
   }
 }
