@@ -681,7 +681,74 @@ void main() {
     );
     expect(header.delegate.minExtent, 44);
     expect(header.delegate.maxExtent, 44);
+    expect(find.byType(AppThemeSwitchButton), findsNothing);
   });
+
+  for (final testCase
+      in <({String description, Size size, bool themeExpected})>[
+        (
+          description: 'compact',
+          size: const Size(390, 800),
+          themeExpected: true,
+        ),
+        (
+          description: 'medium',
+          size: const Size(700, 800),
+          themeExpected: false,
+        ),
+      ]) {
+    testWidgets(
+      'Habits ${testCase.description} gates normal and Search theme actions',
+      (tester) async {
+        tester.view.physicalSize = testCase.size;
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        final profile = await _loadProfile();
+        final access = _LoadedHabitsDisplayAccess();
+        final sync = _FakeAppSyncWorkflowAccess();
+        addTearDown(() {
+          sync.dispose();
+          profile.dispose();
+        });
+
+        final vm = await _pumpHabitsTabPage(
+          tester,
+          profile: profile,
+          access: access,
+          sync: sync,
+          useBranchPage: true,
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 350));
+
+        final normalActions = tester
+            .widget<AdaptiveAppBarActions<HabitDisplaySearchAction>>(
+              find.byType(AdaptiveAppBarActions<HabitDisplaySearchAction>),
+            );
+        expect(
+          normalActions.collection.roots.map((action) => action.id),
+          testCase.themeExpected
+              ? contains(habitDisplayThemeActionId)
+              : isNot(contains(habitDisplayThemeActionId)),
+        );
+
+        vm.onSearchOngoingChanged(true);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 600));
+
+        final searchActions = tester
+            .widget<AdaptiveAppBarActions<HabitDisplaySearchAction>>(
+              find.byType(AdaptiveAppBarActions<HabitDisplaySearchAction>),
+            );
+        expect(
+          searchActions.collection.roots.map((action) => action.id),
+          testCase.themeExpected
+              ? contains(habitDisplayThemeActionId)
+              : isNot(contains(habitDisplayThemeActionId)),
+        );
+      },
+    );
+  }
 
   testWidgets('framework dismiss intent does not collide with page shortcuts', (
     tester,

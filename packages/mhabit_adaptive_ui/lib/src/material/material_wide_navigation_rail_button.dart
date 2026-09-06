@@ -21,7 +21,7 @@ class MaterialWideNavigationRailButton extends StatelessWidget {
     required this.onPressed,
   });
 
-  static const double _slotHeight = 64.0;
+  static const double _slotHeight = 80.0;
   static const double _buttonHeight = 56.0;
   static const double _iconSize = 24.0;
   static const double _collapsedButtonWidth = 56.0;
@@ -60,14 +60,16 @@ class MaterialWideNavigationRailButton extends StatelessWidget {
           _buttonHeight,
           progress,
         )!;
+        final buttonTop = lerpDouble(16, 4, progress)!;
         return SizedBox(
           key: slotKey,
           width: slotWidth,
           height: _slotHeight,
           child: Stack(
-            alignment: Alignment.center,
+            alignment: Alignment.topCenter,
             children: [
-              SizedBox(
+              Positioned(
+                top: buttonTop,
                 width: buttonWidth,
                 height: buttonHeight,
                 child: _MaterialWideNavigationRailButtonSurface(
@@ -301,7 +303,7 @@ class _MaterialWideNavigationRailLabel extends StatelessWidget {
         );
     return Text(
       destination.label,
-      maxLines: 1,
+      maxLines: 2,
       overflow: TextOverflow.ellipsis,
       textAlign: expanded ? null : TextAlign.center,
       style: style,

@@ -3073,6 +3073,11 @@ void main() {
         tester.getRect(destination).overlaps(tester.getRect(collapsedLabel)),
         isFalse,
       );
+      final label = tester.widget<Text>(
+        find.descendant(of: collapsedLabel, matching: find.text('Habits')),
+      );
+      expect(label.maxLines, 2);
+      expect(label.overflow, TextOverflow.ellipsis);
     });
 
     testWidgets('material rail frames the complete expanded destination', (
@@ -4533,6 +4538,14 @@ void main() {
         find.byKey(const ValueKey('cupertino-sidebar-resize-handle')),
         findsOneWidget,
       );
+      final longLabel = tester.widget<Text>(
+        find.descendant(
+          of: find.byKey(const ValueKey('cupertino-sidebar-destination-0')),
+          matching: find.text('A very long habits destination label'),
+        ),
+      );
+      expect(longLabel.maxLines, 2);
+      expect(longLabel.overflow, TextOverflow.ellipsis);
       expect(tester.takeException(), isNull);
       debugDefaultTargetPlatformOverride = null;
     });
