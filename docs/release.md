@@ -1,4 +1,4 @@
-# Release: v1.27.5+194-pre
+# Release: v1.27.6+195
 
 ## ✨ Features
 
@@ -22,4 +22,4 @@
 - Keep dialogs above app navigation and refresh selection state consistently
   after reordering or regrouping habits (#656)
 
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.3+192...pre-v1.27.5+194)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.3+192...v1.27.6+195)

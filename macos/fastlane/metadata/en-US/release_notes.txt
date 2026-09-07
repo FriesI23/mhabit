@@ -1,9 +1,9 @@
-- Feature: expand adaptive navigation, search, filters, and selection actions
-  (#646, #649)
-- Feature: keep navigation clear of window controls (#647)
-- Fix: improve navigation insets, imports, and Today refresh (#650)
-- Fix: stabilize compact navigation on scroll (#652)
-- Fix: preserve habit-list position after viewing details
-- Fix: refine floating-navigation spacing, dark surfaces, action alignment, and
-  scroll transitions
-- Add Dutch and update Czech translation (#651)
+- Feature: add resizable side navigation for wider layouts (#653)
+- Feature: improve app bars, habit actions, and batch status changes across
+  window sizes (#655)
+- Feature: add quick theme mode controls to app bars and wider navigation
+  layouts (#659)
+- Feature: complete the adaptive interface migration across navigation,
+  settings, page headers, search, selection, and habit actions
+- Fix: keep dialogs above app navigation and refresh selection state after
+  reordering or regrouping habits (#656)

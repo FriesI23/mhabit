@@ -1,7 +1,7 @@
 - Feature: add resizable side navigation for wider layouts (#653)
 - Feature: improve app bars, habit actions, and batch status changes across
   window sizes (#655)
-- Feature: add quick theme mode controls to app bars and wider navigation
+- Feature: add theme mode controls to app bars and navigation
   layouts (#659)
 - Feature: complete the adaptive interface migration across navigation,
   settings, page headers, search, selection, and habit actions
