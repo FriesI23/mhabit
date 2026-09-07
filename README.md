@@ -25,6 +25,12 @@
   <a href="https://discord.gg/medWsVYpb4"><img src="https://img.shields.io/badge/Discord-7289DA?style=flat-square&logo=discord&logoColor=white" alt="Discord community"></a>
 </p>
 
+<p align="center">
+  <a href="https://trendshift.io/repositories/15190"><img src="https://trendshift.io/api/badge/repositories/15190" alt="#4 Repository of the Day on GitHub Trending" width="250" height="55"></a>
+  &nbsp;
+  <a href="https://trendshift.io/repositories/15190"><img src="https://trendshift.io/api/badge/trendshift/repositories/15190/daily?language=Dart" alt="#1 Dart Repository of the Day on Trendshift" width="250" height="55"></a>
+</p>
+
 ---
 
 **Table Habit** is a **free and open-source** habit tracker that helps you build
