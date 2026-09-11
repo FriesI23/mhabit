@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/l10n/localizations.dart';
@@ -147,8 +149,34 @@ void main() {
     expect(find.text('Settings'), findsOneWidget);
     expect(find.byType(AdaptiveAppBar), findsOneWidget);
     expect(find.byType(WindowControlAppBar), findsOneWidget);
+    expect(find.byType(ListView), findsOneWidget);
     final appBar = tester.widget<AppBar>(find.byType(AppBar));
     expect(appBar.leading, isA<AdaptiveBackButton>());
     expect(appBar.title, isA<L10nBuilder>());
+
+    await tester.drag(find.byType(ListView), const Offset(0, -500));
+    await tester.pumpAndSettle();
+    final scrollable = tester.state<ScrollableState>(
+      find.descendant(
+        of: find.byType(ListView),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    final offsetBeforePush = scrollable.position.pixels;
+    expect(offsetBeforePush, greaterThan(0));
+
+    final settingsContext = tester.element(find.text('Settings'));
+    unawaited(
+      Navigator.of(settingsContext).push<void>(
+        MaterialPageRoute<void>(
+          builder: (_) => const Scaffold(body: Text('Subpage')),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    Navigator.of(tester.element(find.text('Subpage'))).pop();
+    await tester.pumpAndSettle();
+
+    expect(scrollable.position.pixels, offsetBeforePush);
   });
 }

@@ -16,7 +16,7 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.leading,
     this.actions = _kDefaultActions,
     this.automaticallyImplyLeading = true,
-    this.automaticBackgroundVisibility = true,
+    this.automaticBackgroundVisibility = false,
     required this.toolbarHeight,
   }) : _adaptiveStyle = null;
 
@@ -36,7 +36,7 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.leading,
     this.actions = _kDefaultActions,
     this.automaticallyImplyLeading = true,
-    this.automaticBackgroundVisibility = true,
+    this.automaticBackgroundVisibility = false,
   }) : toolbarHeight = kMinInteractiveDimensionCupertino,
        _adaptiveStyle = AdaptiveStyle.apple;
 
@@ -48,6 +48,11 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   /// Whether the Apple background and blur appear automatically when content
   /// scrolls behind the navigation bar.
+  ///
+  /// This defaults to false for a regular app bar because a Material
+  /// [Scaffold] reserves the app-bar slot instead of scrolling its body behind
+  /// it. Sliver app bars keep native automatic scroll-under behavior by
+  /// default because they share the page's scrollable.
   final bool automaticBackgroundVisibility;
 
   /// Material toolbar height or the resolved adaptive toolbar height.

@@ -1092,6 +1092,10 @@ void main() {
     expect(adaptiveActions(), findsOneWidget);
     final action = tester.widget<AdaptiveAppBarActions>(adaptiveActions());
     expect(action.collection.roots.length, greaterThanOrEqualTo(3));
+    expect(
+      action.collection.roots.map((action) => action.id.value),
+      isNot(contains('habits.select.status-modify')),
+    );
     final renderer = tester.widget<MaterialAdaptiveActions>(
       find.byType(MaterialAdaptiveActions<HabitDisplaySelectAction>),
     );

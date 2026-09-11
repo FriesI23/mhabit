@@ -71,7 +71,7 @@ void main() {
       find.byType(WindowControlCupertinoNavigationBar),
     );
     expect(find.byType(CupertinoNavigationBar), findsOneWidget);
-    expect(wrapper.automaticBackgroundVisibility, isTrue);
+    expect(wrapper.automaticBackgroundVisibility, isFalse);
     expect(wrapper.enableBackgroundFilterBlur, isTrue);
     expect(wrapper.transitionBetweenRoutes, isFalse);
     expect(wrapper.backgroundColor, CupertinoColors.transparent);
@@ -96,6 +96,25 @@ void main() {
     );
     expect(wrapper.automaticBackgroundVisibility, isFalse);
     expect(wrapper.enableBackgroundFilterBlur, isTrue);
+  });
+
+  testWidgets('can enable automatic Apple background visibility explicitly', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        platform: TargetPlatform.iOS,
+        appBar: const AdaptiveAppBar.apple(
+          title: Text('Debugger'),
+          automaticBackgroundVisibility: true,
+        ),
+      ),
+    );
+
+    final wrapper = tester.widget<WindowControlCupertinoNavigationBar>(
+      find.byType(WindowControlCupertinoNavigationBar),
+    );
+    expect(wrapper.automaticBackgroundVisibility, isTrue);
   });
 
   testWidgets('Apple app bar keeps its toolbar below the iPad safe area', (

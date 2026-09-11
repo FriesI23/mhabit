@@ -14,6 +14,7 @@
 
 import 'dart:async';
 
+import 'package:adaptive_actions/core.dart';
 import 'package:flutter/cupertino.dart'
     show
         CupertinoButton,
@@ -1569,7 +1570,9 @@ void main() {
     );
   });
 
-  testWidgets('Apple selection actions omit Batch Check-in', (tester) async {
+  testWidgets('Apple selection actions route Batch Check-in UUIDs', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(390, 800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -1624,12 +1627,28 @@ void main() {
         .widget<CupertinoSelectBottomToolbar<HabitDisplaySelectAction>>(
           find.byType(CupertinoSelectBottomToolbar<HabitDisplaySelectAction>),
         );
-    expect(
-      toolbar.collection.roots.map((action) => action.id.value),
-      isNot(contains('habits.select.status-modify')),
+    final statusAction = toolbar.collection.roots.singleWhere(
+      (action) => action.id.value == 'habits.select.status-modify',
     );
+    expect(
+      statusAction.placementPolicy.automaticPreference?.retentionPriority,
+      PrimaryRetentionPriority.high,
+    );
+    expect(statusAction.metadata.label, 'Batch Check-in');
     expect(routedUuids, isNull);
-    await tester.pump(const Duration(milliseconds: 350));
+    toolbar.onInvoke(
+      tester.element(
+        find.byType(CupertinoSelectBottomToolbar<HabitDisplaySelectAction>),
+      ),
+      statusAction.payload!,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Status route'), findsOneWidget);
+    expect(routedUuids, [
+      _buildHabitSummaryData(0).uuid,
+      _buildHabitSummaryData(1).uuid,
+    ]);
   });
 
   testWidgets('Material Batch Check-in FAB routes selected habit UUIDs', (

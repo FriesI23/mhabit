@@ -98,6 +98,8 @@ class _Page extends StatefulWidget {
 }
 
 class _PageState extends State<_Page> with XShare {
+  final ScrollController _scrollController = ScrollController();
+
   /// Whether the current platform supports opening the system language
   /// settings screen.
   ///
@@ -122,6 +124,7 @@ class _PageState extends State<_Page> with XShare {
   @override
   void dispose() {
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -970,6 +973,8 @@ class _PageState extends State<_Page> with XShare {
         ),
         body: EnhancedSafeArea.edgeToEdgeSafe(
           child: ListView(
+            key: const PageStorageKey<String>('app-settings-scroll-view'),
+            controller: _scrollController,
             children: [
               ...buildSyncSubGroup(context),
               ExperimentalFeatureGate.basic(

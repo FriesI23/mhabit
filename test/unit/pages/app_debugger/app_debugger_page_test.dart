@@ -93,7 +93,7 @@ void main() {
             find.byType(WindowControlCupertinoNavigationBar),
           )
           .automaticBackgroundVisibility,
-      isTrue,
+      isFalse,
     );
   });
 }
