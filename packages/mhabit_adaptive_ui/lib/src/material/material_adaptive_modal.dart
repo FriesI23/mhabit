@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../adaptive/adaptive_app_bar.dart';
 import '../adaptive/adaptive_modal_layout.dart';
+import '../adaptive/modal_sheet_drag_region.dart';
 import '../window_control/modal_app_bar_region.dart';
 
 extension _MaterialAdaptiveModalThemeData on ThemeData {
@@ -210,7 +211,7 @@ class MaterialAdaptiveModalRouteSurface extends StatefulWidget {
   final AdaptiveModalPresentation presentation;
   final bool enableDrag;
   final bool showDragHandle;
-  final VoidCallback onCloseRequested;
+  final Future<void> Function() onCloseRequested;
   final Widget Function(ScrollController? controller) contentBuilder;
 
   @override
@@ -220,8 +221,14 @@ class MaterialAdaptiveModalRouteSurface extends StatefulWidget {
 
 class _MaterialAdaptiveModalRouteSurfaceState
     extends State<MaterialAdaptiveModalRouteSurface> {
-  final DraggableScrollableController _sheetController =
-      DraggableScrollableController();
+  late final ModalSheetDragController _sheetController =
+      ModalSheetDragController(
+        maxExtent: () => AdaptiveModalConstraints.maximumSheetExtentOf(context),
+        minExtent: AdaptiveModalConstraints.minSheetExtent,
+        onCloseRequested: () => widget.onCloseRequested(),
+        shouldSettleAfterClose: () =>
+            mounted && (ModalRoute.of(context)?.isActive ?? false),
+      );
 
   @override
   void dispose() {
@@ -270,38 +277,70 @@ class _MaterialAdaptiveModalRouteSurfaceState
   }
 
   Widget _buildSheet(ScrollController? controller) {
+    const dragHandle = _MaterialModalDragHandle(
+      key: ValueKey('adaptive-material-sheet-drag-handle'),
+    );
+    final draggableHandle = controller == null
+        ? dragHandle
+        : ModalSheetDragRegion(controller: _sheetController, child: dragHandle);
+    final content = widget.contentBuilder(controller);
+    final sheet = Material(
+      color: Theme.of(context).adaptiveModalBackgroundColor,
+      clipBehavior: Clip.antiAlias,
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      child: !widget.showDragHandle
+          ? content
+          : Stack(
+              fit: StackFit.expand,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: _MaterialModalDragHandle.extent,
+                  ),
+                  child: content,
+                ),
+                Positioned(top: 0, left: 0, right: 0, child: draggableHandle),
+              ],
+            ),
+    );
+    return controller == null
+        ? sheet
+        : ModalSheetDragControllerScope(
+            controller: _sheetController,
+            child: sheet,
+          );
+  }
+}
+
+/// Matches the visual defaults used by Flutter's [BottomSheet].
+class _MaterialModalDragHandle extends StatelessWidget {
+  const _MaterialModalDragHandle({super.key});
+
+  static const double extent = 24;
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final dragHandleSize =
         theme.bottomSheetTheme.dragHandleSize ?? const Size(32, 4);
     final dragHandleColor =
         theme.bottomSheetTheme.dragHandleColor ??
         theme.colorScheme.onSurfaceVariant;
-    return Material(
-      color: Theme.of(context).adaptiveModalBackgroundColor,
-      clipBehavior: Clip.antiAlias,
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-      child: Column(
-        children: [
-          if (widget.showDragHandle)
-            SizedBox(
-              height: 24,
-              child: Center(
-                child: SizedBox(
-                  width: dragHandleSize.width,
-                  height: dragHandleSize.height,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: dragHandleColor,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(dragHandleSize.height / 2),
-                      ),
-                    ),
-                  ),
-                ),
+    return SizedBox(
+      height: extent,
+      child: Center(
+        child: SizedBox(
+          width: dragHandleSize.width,
+          height: dragHandleSize.height,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: dragHandleColor,
+              borderRadius: BorderRadius.all(
+                Radius.circular(dragHandleSize.height / 2),
               ),
             ),
-          Expanded(child: widget.contentBuilder(controller)),
-        ],
+          ),
+        ),
       ),
     );
   }
@@ -339,7 +378,7 @@ class MaterialAdaptiveModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final backgroundColor = Theme.of(context).adaptiveModalBackgroundColor;
-    final header = AppBarTheme(
+    final appBar = AppBarTheme(
       data: AppBarTheme.of(context).copyWith(
         backgroundColor: backgroundColor,
         surfaceTintColor: Colors.transparent,
@@ -362,6 +401,14 @@ class MaterialAdaptiveModal extends StatelessWidget {
         ),
       ),
     );
+    final sheetDragController = ModalSheetDragControllerScope.maybeControllerOf(
+      context,
+    );
+    final header =
+        presentation == AdaptiveModalPresentation.sheet &&
+            sheetDragController != null
+        ? ModalSheetDragRegion(controller: sheetDragController, child: appBar)
+        : appBar;
     final impliedClose = automaticallyImplyCloseButton
         ? TextButton(
             key: const ValueKey('adaptive-modal-implied-close'),
@@ -398,19 +445,43 @@ class MaterialAdaptiveModal extends StatelessWidget {
             ),
           );
 
-    return Material(
-      color: backgroundColor,
-      child: AdaptiveModalLayout(
-        header: header,
-        footer: footer,
-        pinnedBody: pinnedBody,
-        body: body,
-        bottomActions: bottomActions,
-        scrollController: scrollController,
-        padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
-        presentation: presentation,
-        constraints: constraints,
-      ),
+    final overlaysHeader =
+        presentation == AdaptiveModalPresentation.sheet &&
+        sheetDragController != null;
+    const appBarHeight = kToolbarHeight;
+    final paddedPinnedBody = !overlaysHeader || pinnedBody == null
+        ? pinnedBody
+        : Padding(
+            padding: const EdgeInsets.only(top: appBarHeight),
+            child: pinnedBody,
+          );
+    final paddedBody = !overlaysHeader || pinnedBody != null
+        ? body
+        : Padding(
+            padding: const EdgeInsets.only(top: appBarHeight),
+            child: body,
+          );
+    final layout = AdaptiveModalLayout(
+      header: overlaysHeader ? null : header,
+      footer: footer,
+      pinnedBody: paddedPinnedBody,
+      body: paddedBody,
+      bottomActions: bottomActions,
+      scrollController: scrollController,
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
+      presentation: presentation,
+      constraints: constraints,
     );
+    final content = !overlaysHeader
+        ? layout
+        : Stack(
+            fit: StackFit.passthrough,
+            children: [
+              layout,
+              Positioned(top: 0, left: 0, right: 0, child: header),
+            ],
+          );
+
+    return Material(color: backgroundColor, child: content);
   }
 }

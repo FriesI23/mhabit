@@ -55,6 +55,14 @@ class _Page extends StatefulWidget {
 /// adaptive heuristics.
 enum GroupEditForceMode { defaultMode, forceSheet, forceDialog }
 
+extension on GroupEditForceMode {
+  AdaptiveModalPresentation? get presentationOverride => switch (this) {
+    GroupEditForceMode.defaultMode => null,
+    GroupEditForceMode.forceSheet => AdaptiveModalPresentation.sheet,
+    GroupEditForceMode.forceDialog => AdaptiveModalPresentation.dialog,
+  };
+}
+
 class _PageState extends State<_Page> {
   ScaffoldMessengerState? _snackbarMessenger;
   GroupEditForceMode _debugForceEditMode = GroupEditForceMode.defaultMode;
@@ -94,8 +102,7 @@ class _PageState extends State<_Page> {
     final vm = context.read<GroupManageViewModel>();
     final result = await showGroupEditDialog(
       context: context,
-      forceSheet: _debugForceEditMode == GroupEditForceMode.forceSheet,
-      forceDialog: _debugForceEditMode == GroupEditForceMode.forceDialog,
+      presentationOverride: _debugForceEditMode.presentationOverride,
     );
     if (result == null || !mounted) return;
     await vm.createGroup(
@@ -114,8 +121,7 @@ class _PageState extends State<_Page> {
     final result = await showGroupEditDialog(
       context: context,
       existingGroup: data,
-      forceSheet: _debugForceEditMode == GroupEditForceMode.forceSheet,
-      forceDialog: _debugForceEditMode == GroupEditForceMode.forceDialog,
+      presentationOverride: _debugForceEditMode.presentationOverride,
     );
     if (result == null || !mounted) return;
     await vm.updateGroup(

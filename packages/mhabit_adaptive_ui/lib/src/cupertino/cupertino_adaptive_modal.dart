@@ -6,6 +6,7 @@ import 'package:flutter/material.dart' show MaterialLocalizations;
 
 import '../adaptive/adaptive_app_bar.dart';
 import '../adaptive/adaptive_modal_layout.dart';
+import '../adaptive/modal_sheet_drag_region.dart';
 import '../window_control/modal_app_bar_region.dart';
 
 const _sheetHeightFactor = 0.92;
@@ -279,8 +280,14 @@ class CupertinoAdaptiveModalRouteSurface extends StatefulWidget {
 
 class _CupertinoAdaptiveModalRouteSurfaceState
     extends State<CupertinoAdaptiveModalRouteSurface> {
-  final DraggableScrollableController _sheetController =
-      DraggableScrollableController();
+  late final ModalSheetDragController _sheetController =
+      ModalSheetDragController(
+        maxExtent: () => _sheetHeightFactor,
+        minExtent: AdaptiveModalConstraints.minSheetExtent,
+        onCloseRequested: () => widget.onCloseRequested(),
+        shouldSettleAfterClose: () =>
+            mounted && (ModalRoute.of(context)?.isActive ?? false),
+      );
 
   @override
   void dispose() {
@@ -359,20 +366,48 @@ class _CupertinoAdaptiveModalRouteSurfaceState
     );
   }
 
-  Widget _buildSheet(ScrollController? controller) => SizedBox(
-    width: double.infinity,
-    child: ClipRSuperellipse(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-      child: _CupertinoSheetBackground(
-        child: Column(
-          children: [
-            if (widget.showDragHandle) const _CupertinoDragHandle(),
-            Expanded(child: widget.contentBuilder(controller)),
-          ],
+  Widget _buildSheet(ScrollController? controller) {
+    const dragHandle = _CupertinoModalDragHandle(
+      key: ValueKey('adaptive-cupertino-sheet-drag-handle'),
+    );
+    final draggableHandle = controller == null
+        ? dragHandle
+        : ModalSheetDragRegion(controller: _sheetController, child: dragHandle);
+    final content = widget.contentBuilder(controller);
+    final sheet = SizedBox(
+      width: double.infinity,
+      child: ClipRSuperellipse(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+        child: _CupertinoSheetBackground(
+          child: !widget.showDragHandle
+              ? content
+              : Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: _CupertinoModalDragHandle.extent,
+                      ),
+                      child: content,
+                    ),
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      child: draggableHandle,
+                    ),
+                  ],
+                ),
         ),
       ),
-    ),
-  );
+    );
+    return controller == null
+        ? sheet
+        : ModalSheetDragControllerScope(
+            controller: _sheetController,
+            child: sheet,
+          );
+  }
 }
 
 class _CupertinoSheetBackground extends StatelessWidget {
@@ -520,7 +555,7 @@ class _CupertinoDialogScrollDismissRegionState
                       widget.onDragUpdate(details.primaryDelta ?? 0),
                   onVerticalDragEnd: (_) => _handleDragEnd(),
                   onVerticalDragCancel: _handleDragEnd,
-                  child: const _CupertinoDragHandle(),
+                  child: const _CupertinoModalDragHandle(),
                 ),
               ),
             ),
@@ -531,12 +566,14 @@ class _CupertinoDialogScrollDismissRegionState
 }
 
 /// Matches the visual defaults used by Flutter's [CupertinoSheetRoute].
-class _CupertinoDragHandle extends StatelessWidget {
-  const _CupertinoDragHandle();
+class _CupertinoModalDragHandle extends StatelessWidget {
+  const _CupertinoModalDragHandle({super.key});
+
+  static const double extent = 24;
 
   @override
   Widget build(BuildContext context) => const SizedBox(
-    height: 24,
+    height: extent,
     child: Center(
       child: DecoratedBox(
         decoration: ShapeDecoration(
@@ -679,7 +716,7 @@ class CupertinoAdaptiveModal extends StatelessWidget {
             ),
           )
         : null;
-    final header = ModalWindowControlAppBarRegion(
+    final appBar = ModalWindowControlAppBarRegion(
       child: MediaQuery.removePadding(
         context: context,
         removeTop: true,
@@ -698,6 +735,14 @@ class CupertinoAdaptiveModal extends StatelessWidget {
         ),
       ),
     );
+    final sheetDragController = ModalSheetDragControllerScope.maybeControllerOf(
+      context,
+    );
+    final header =
+        presentation == AdaptiveModalPresentation.sheet &&
+            sheetDragController != null
+        ? ModalSheetDragRegion(controller: sheetDragController, child: appBar)
+        : appBar;
     final footer = actions.isEmpty
         ? null
         : _CupertinoModalActionArea(actions: actions);

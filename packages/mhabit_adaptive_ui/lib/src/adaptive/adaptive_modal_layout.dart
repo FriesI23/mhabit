@@ -51,7 +51,6 @@ class AdaptiveModalLayout extends StatelessWidget {
     final bottom = bottomActions.isEmpty
         ? null
         : _AdaptiveModalBottomActions(actions: bottomActions, padding: padding);
-
     return _AdaptiveModalFrame(
       presentation: presentation,
       constraints: constraints,

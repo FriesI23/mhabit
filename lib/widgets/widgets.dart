@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export '_widgets/adaptive_content_sheet.dart';
+export '_widgets/adaptive_modal_material_bridge.dart';
 export '_widgets/animated_linear_progress.dart';
 export '_widgets/animated_reorderable_list.dart';
 export '_widgets/app_ui_layout_builder.dart';

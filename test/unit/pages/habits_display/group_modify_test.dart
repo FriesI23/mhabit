@@ -18,9 +18,16 @@ import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
+import 'package:mhabit/models/habit_group.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/helpers.dart';
 import 'package:mhabit/pages/habits_display/widgets.dart';
+import 'package:mhabit/providers/app_ui/app_caches.dart';
+import 'package:mhabit/providers/app_ui/custom_color_history.dart';
+import 'package:mhabit/providers/workflow/app_event.dart';
+import 'package:mhabit/providers/workflow/group_manager.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+import 'package:provider/provider.dart';
 
 /// Creates a minimal [HabitSummaryData] for testing.
 HabitSummaryData _habit({
@@ -62,7 +69,107 @@ final class _DialogCountingObserver extends NavigatorObserver {
   }
 }
 
+final class _EmptyGroupManager extends GroupManager {
+  @override
+  Future<GroupCollection?> tryLoadGroupCollection() async =>
+      GroupCollection.fromDBQueryResult([]);
+}
+
 void main() {
+  for (final style in AdaptiveStyle.values) {
+    testWidgets(
+      'group selector forces Material modal actions from ${style.name}',
+      (tester) async {
+        GroupModifySelectorResult? result;
+        var completed = false;
+        await tester.pumpWidget(
+          AdaptiveStyleScope(
+            override: style,
+            child: MultiProvider(
+              providers: [
+                Provider<GroupManager>(create: (_) => _EmptyGroupManager()),
+                Provider<AppCachesViewModel>(
+                  create: (_) => AppCachesViewModel(),
+                ),
+                ChangeNotifierProvider<CustomColorHistoryViewModel>(
+                  create: (_) => CustomColorHistoryViewModel(),
+                ),
+                ChangeNotifierProvider<AppEventBus>(
+                  create: (_) => AppEventBus(),
+                ),
+              ],
+              child: MaterialApp(
+                home: Builder(
+                  builder: (context) => ElevatedButton(
+                    onPressed: () async {
+                      result = await showHabitGroupModifySelector(
+                        context: context,
+                        selectedHabitsData: const [],
+                      );
+                      completed = true;
+                    },
+                    child: const Text('Open'),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        await tester.tap(find.text('Open'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Modify Group'), findsOneWidget);
+        expect(find.text('Create Group'), findsOneWidget);
+        expect(
+          tester
+              .widget<AdaptiveModal>(find.byType(AdaptiveModal))
+              .leadingAction,
+          isNull,
+        );
+        expect(find.text('Cancel'), findsOneWidget);
+        expect(find.widgetWithText(FilledButton, 'Confirm'), findsOneWidget);
+        expect(
+          find.byKey(const ValueKey('adaptive-modal-implied-close')),
+          findsNothing,
+        );
+        expect(tester.takeException(), isNull);
+
+        await tester.tap(find.text('Create Group'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Modify Group'), findsNothing);
+        expect(find.widgetWithText(TextButton, 'Save'), findsOneWidget);
+        expect(
+          find.widgetWithText(FilledButton, 'Save & Apply'),
+          findsOneWidget,
+        );
+        expect(find.text('Cancel'), findsNothing);
+        expect(find.byType(AdaptiveBackButton), findsOneWidget);
+        expect(
+          tester
+              .widget<AdaptiveBackButton>(find.byType(AdaptiveBackButton))
+              .type,
+          AdaptiveBackButtonType.back,
+        );
+        expect(tester.takeException(), isNull);
+
+        await tester.tap(find.byType(AdaptiveBackButton));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Modify Group'), findsOneWidget);
+        expect(find.widgetWithText(FilledButton, 'Confirm'), findsOneWidget);
+        expect(find.byType(AdaptiveBackButton), findsNothing);
+
+        await tester.tap(find.text('Cancel'));
+        await tester.pumpAndSettle();
+
+        expect(completed, isTrue);
+        expect(result, same(kGroupModifySelectorCancelled));
+      },
+    );
+  }
+
   group('HabitGroupModifyHandler', () {
     group('_buildAffectedHabits', () {
       test('creates affectedHabits from selectedData', () {
@@ -214,23 +321,6 @@ void main() {
 
         expect(handler.allAlreadyInTarget, isFalse);
       });
-    });
-  });
-
-  group('GroupModifySelectorCancelled', () {
-    test('isGroupModifySelectorCancelled returns true for sentinel', () {
-      expect(
-        isGroupModifySelectorCancelled(kGroupModifySelectorCancelled),
-        isTrue,
-      );
-    });
-
-    test('isGroupModifySelectorCancelled returns false for null', () {
-      expect(isGroupModifySelectorCancelled(null), isFalse);
-    });
-
-    test('isGroupModifySelectorCancelled returns false for uuid', () {
-      expect(isGroupModifySelectorCancelled('some-uuid'), isFalse);
     });
   });
 

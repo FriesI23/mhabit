@@ -22,24 +22,38 @@ export 'adaptive_modal_layout.dart'
 /// both the presentation and Flutter route type fixed for tests and developer
 /// tools.
 ///
+/// A [styleOverride] forces the route and content renderer to a specific style.
+/// It is intended as a migration escape hatch and for tests; regular callers
+/// should inherit the style from [AdaptiveStyleScope].
+///
 /// A null [barrierDismissible] makes dialog presentations dismissible, matching
 /// Flutter's regular dialog behavior. A fixed Cupertino sheet uses Flutter's
 /// non-dismissible [CupertinoSheetRoute] barrier; an automatically responsive
 /// route retains its configured barrier while resizing between presentations.
-/// [enableDrag] controls gesture dismissal independently.
+/// [enableDrag] controls gesture dismissal independently. A null
+/// [showDragHandle] uses the adaptive default: shown for Material and hidden
+/// for Apple. An explicit value overrides that default.
 Future<T?> showAdaptiveSheet<T>({
   required BuildContext context,
   required WidgetBuilder builder,
+  AdaptiveStyle? styleOverride,
   AdaptiveModalPresentation? presentationOverride,
   bool useRootNavigator = true,
   bool? barrierDismissible,
   bool enableDrag = true,
-  bool showDragHandle = false,
+  bool? showDragHandle,
   RouteSettings? routeSettings,
 }) {
-  final style = AdaptiveStyle.of(context);
+  final style = styleOverride ?? AdaptiveStyle.of(context);
+  final effectiveShowDragHandle =
+      showDragHandle ?? style == AdaptiveStyle.material;
+  final breakpoints =
+      BreakpointsScope.maybeOf(context)?.breakpoints ??
+      switch (style) {
+        AdaptiveStyle.apple => const AppleBreakpoints(),
+        AdaptiveStyle.material => const MaterialBreakpoints(),
+      };
   if (presentationOverride == null) {
-    final breakpoints = Breakpoints.of(context);
     final effectiveBarrierDismissible = barrierDismissible ?? true;
     final barrierLabel = MaterialLocalizations.of(
       context,
@@ -55,7 +69,7 @@ Future<T?> showAdaptiveSheet<T>({
           breakpoints: breakpoints,
           builder: builder,
           enableDrag: enableDrag,
-          showDragHandle: showDragHandle,
+          showDragHandle: effectiveShowDragHandle,
           barrierDismissible: effectiveBarrierDismissible,
           barrierLabel: barrierLabel,
         ),
@@ -72,7 +86,7 @@ Future<T?> showAdaptiveSheet<T>({
           breakpoints: breakpoints,
           builder: builder,
           enableDrag: enableDrag,
-          showDragHandle: showDragHandle,
+          showDragHandle: effectiveShowDragHandle,
           barrierDismissible: effectiveBarrierDismissible,
           barrierLabel: barrierLabel,
         ),
@@ -111,11 +125,11 @@ Future<T?> showAdaptiveSheet<T>({
         barrierLabel: barrierLabel,
         builder: (_) => _ResponsiveAdaptiveModalRoute(
           style: AdaptiveStyle.apple,
-          breakpoints: Breakpoints.of(context),
+          breakpoints: breakpoints,
           presentationOverride: AdaptiveModalPresentation.dialog,
           builder: builder,
           enableDrag: enableDrag,
-          showDragHandle: showDragHandle,
+          showDragHandle: effectiveShowDragHandle,
           barrierDismissible: barrierDismissible ?? true,
           barrierLabel: barrierLabel,
         ),
@@ -126,7 +140,7 @@ Future<T?> showAdaptiveSheet<T>({
         useRootNavigator: useRootNavigator,
         barrierDismissible: barrierDismissible ?? true,
         enableDrag: enableDrag,
-        showDragHandle: showDragHandle,
+        showDragHandle: effectiveShowDragHandle,
         routeSettings: routeSettings,
         builder: (controller) =>
             buildRouteContent(scrollController: controller),
@@ -136,7 +150,7 @@ Future<T?> showAdaptiveSheet<T>({
         context: context,
         useRootNavigator: useRootNavigator,
         enableDrag: enableDrag,
-        showDragHandle: showDragHandle,
+        showDragHandle: effectiveShowDragHandle,
         routeSettings: routeSettings,
         builder: (controller) =>
             buildRouteContent(scrollController: controller),

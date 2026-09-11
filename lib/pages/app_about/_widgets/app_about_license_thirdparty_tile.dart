@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:markdown_widget/markdown_widget.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
@@ -36,20 +37,21 @@ class _AppAboutThirdPartyLicenseTileState
     final licenseText = await rootBundle.loadString('LICENSE_THIRDPARTY.md');
     if (!mounted) return;
     final l10n = L10n.of(context);
-    await showAdaptiveContentSheet(
+    await showAdaptiveSheet<void>(
       context: context,
-      title: l10n != null
-          ? Text(l10n.appAbout_licenseThirdPartyTile_titleText)
-          : const Text("Third Party License"),
-      contentBuilder: (_) => ThematicMarkdownBlock(
-        data: licenseText,
-        configBuilder: (config) => config.copy(
-          configs: [
-            LinkConfig(onTap: (href) => launchExternalUrl(Uri.parse(href))),
-          ],
+      builder: (_) => AdaptiveModal(
+        title: l10n != null
+            ? Text(l10n.appAbout_licenseThirdPartyTile_titleText)
+            : const Text("Third Party License"),
+        body: ThematicMarkdownBlock(
+          data: licenseText,
+          configBuilder: (config) => config.copy(
+            configs: [
+              LinkConfig(onTap: (href) => launchExternalUrl(Uri.parse(href))),
+            ],
+          ),
         ),
       ),
-      sheetShowCloseButton: false,
     );
   }
 

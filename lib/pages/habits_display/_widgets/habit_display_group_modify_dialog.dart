@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
@@ -31,7 +32,6 @@ import '../../../providers/workflow/app_event.dart';
 import '../../../providers/workflow/group_manager.dart';
 import '../../../theme/color.dart' show CustomColors;
 import '../../../widgets/provider.dart';
-import '../../../widgets/widgets.dart';
 import '../_providers/habit_group_modify.dart';
 import '../helpers.dart';
 import 'habit_display_group_modify_confirm_dialog.dart';
@@ -63,127 +63,10 @@ final class GroupModifySelectorSelected extends GroupModifySelectorResult {
 const kGroupModifySelectorCancelled = GroupModifySelectorCancelled();
 const kGroupModifySelectorRemoveGroup = GroupModifySelectorRemoveGroup();
 
-bool isGroupModifySelectorCancelled(Object? result) =>
-    result is GroupModifySelectorCancelled;
-
-/// Handles confirm-button press in the group-modify selector sheet.
-///
-/// One-step (no selected habits): pops immediately with the chosen value.
-/// Two-step: calculates actual group changes; if none, pops directly
-/// (idempotent — backend ignores no-op mutations).  When there are
-/// changes and skip-confirm is off, opens the confirmation dialog and
-/// only pops when the user confirms.
-Future<void> _handleConfirm(
-  BuildContext context,
-  HabitGroupModifyViewModel vm,
-) async {
-  if (!vm.isTwoStep) {
-    Navigator.of(context).pop<GroupModifySelectorResult?>(
-      vm.selectedGroupId != null
-          ? GroupModifySelectorSelected(vm.selectedGroupId!)
-          : kGroupModifySelectorRemoveGroup,
-    );
-    return;
-  }
-
-  if (vm.sourceGroups.isNotEmpty && !vm.skipConfirm) {
-    final confirmed = await showHabitGroupModifyConfirmDialog(
-      context: context,
-      affectedHabits: vm.affectedHabits,
-      targetGroupId: vm.selectedGroupId,
-      targetGroupName: vm.targetGroupName,
-      sourceGroups: vm.sourceGroups,
-      skipFutureEnabled: vm.skipConfirm,
-      onSkipFutureChanged: vm.toggleSkipConfirm,
-    );
-
-    if (!(context.mounted && confirmed)) return;
-  }
-
-  Navigator.of(context).pop<GroupModifySelectorResult?>(
-    GroupModifySelectorSelected(
-      vm.selectedGroupId,
-      affectedHabits: vm.affectedHabits,
-      targetGroupName: vm.targetGroupName,
-    ),
-  );
-}
-
-/// Handles "Save" in create mode: validates the form, creates the group
-/// via the VM, switches back to select mode, and auto-selects the new group.
-Future<void> _handleSaveOnly(
-  BuildContext context,
-  HabitGroupModifyViewModel vm,
-) async {
-  final formState = vm.createFormKey?.currentState;
-  if (formState == null) return;
-  final result = formState.buildResult();
-  if (result == null) return;
-  await vm.createGroup(
-    name: result.name,
-    desc: result.desc,
-    icon: result.icon,
-    color: result.color,
-  );
-  if (context.mounted) {
-    vm.switchToSelectMode();
-  }
-}
-
-/// Handles "Save & Apply" in create mode: validates the form, shows a
-/// confirm dialog, creates the group, and pops with the result.
-Future<void> _handleSaveAndApply(
-  BuildContext context,
-  HabitGroupModifyViewModel vm,
-) async {
-  final formState = vm.createFormKey?.currentState;
-  if (formState == null) return;
-  final result = formState.buildResult();
-  if (result == null) return;
-
-  // Build a handler that treats the not-yet-created group as the target
-  // so the confirm dialog shows the correct affected habits and source groups.
-  final handler = HabitGroupModifyHandler.forNewGroup(
-    selectedData: vm.selectedData,
-    getGroupName: vm.getGroupName,
-  );
-
-  if (!vm.skipConfirm) {
-    final confirmed = await showHabitGroupModifyConfirmDialog(
-      context: context,
-      affectedHabits: handler.affectedHabits,
-      targetGroupId: handler.targetGroupId,
-      targetGroupName: result.name,
-      sourceGroups: handler.sourceGroups,
-      skipFutureEnabled: vm.skipConfirm,
-      onSkipFutureChanged: vm.toggleSkipConfirm,
-    );
-    if (!(context.mounted && confirmed)) return;
-  }
-
-  final group = await vm.createGroup(
-    name: result.name,
-    desc: result.desc,
-    icon: result.icon,
-    color: result.color,
-  );
-  if (!context.mounted) return;
-
-  Navigator.of(context).pop<GroupModifySelectorResult?>(
-    GroupModifySelectorSelected(
-      group.uuid,
-      affectedHabits: handler.affectedHabits,
-      targetGroupName: group.name,
-    ),
-  );
-}
-
 /// Shows an adaptive content sheet (or dialog on wide screens) for selecting
 /// a target group for habit batch group modification.
 ///
-/// Supports two modes:
-/// - **select**: pick an existing group or remove the group.
-/// - **create**: fill in a new group form, then save or save-and-apply.
+/// Uses modal-local page navigation between group selection and creation.
 ///
 /// VM lifecycle is managed entirely in the widget tree via
 /// [_GroupModifySelectorScope]: [ChangeNotifierProvider] creates the VM,
@@ -191,105 +74,177 @@ Future<void> _handleSaveAndApply(
 Future<GroupModifySelectorResult?> showHabitGroupModifySelector({
   required BuildContext context,
   required List<HabitSummaryData> selectedHabitsData,
-}) {
-  final l10n = L10n.of(context);
-
-  return showAdaptiveContentSheet<GroupModifySelectorResult?>(
-    context: context,
-    showCloseButton: false,
-    title: Consumer<HabitGroupModifyViewModel>(
-      builder: (context, vm, _) {
-        if (vm.isCreateMode) {
-          return Row(
-            children: [
-              Expanded(
-                child: Text(
-                  l10n?.groupManage_createDialog_title ?? 'Create Group',
-                ),
-              ),
-              IconButton(
-                onPressed: () => vm.switchToSelectMode(),
-                icon: const Icon(Icons.close),
-                style: IconButton.styleFrom(
-                  backgroundColor: Theme.of(
-                    context,
-                  ).colorScheme.secondaryContainer,
-                  foregroundColor: Theme.of(
-                    context,
-                  ).colorScheme.onSecondaryContainer,
-                ),
-                tooltip: MaterialLocalizations.of(context).closeButtonLabel,
-              ),
-            ],
-          );
-        }
-        return Text(
-          l10n?.habitDisplay_groupModifyDialog_title ?? 'Modify Group',
-        );
-      },
+}) => showAdaptiveSheet<GroupModifySelectorResult?>(
+  context: context,
+  // TODO(mhabit): Remove the forced Material style after the group selector
+  // and its controls have Cupertino renderers.
+  styleOverride: AdaptiveStyle.material,
+  builder: (_) => _GroupModifySelectorScope(
+    selectedData: selectedHabitsData,
+    bodyBuilder: (_) => AdaptiveModalNavigator<GroupModifySelectorResult?>(
+      builder: (_) => const _GroupInitLoader(child: _GroupModifySelectPage()),
     ),
-    builder: (context, buildBody) => _GroupModifySelectorScope(
-      selectedData: selectedHabitsData,
-      bodyBuilder: (ctx) => Consumer<HabitGroupModifyViewModel>(
-        builder: (context, vm, _) =>
-            PopScopeConsumer<HabitGroupModifyViewModel>(
-              onCannotPop: (_, vm, _) => vm.switchToSelectMode(),
-              child: buildBody(ctx),
-            ),
+  ),
+);
+
+class _GroupModifySelectPage extends StatelessWidget {
+  const _GroupModifySelectPage();
+
+  Future<void> _handleConfirm(
+    BuildContext context,
+    HabitGroupModifyViewModel vm,
+  ) async {
+    if (!vm.isTwoStep) {
+      AdaptiveModalNavigator.pop<GroupModifySelectorResult?>(
+        context,
+        vm.selectedGroupId != null
+            ? GroupModifySelectorSelected(vm.selectedGroupId!)
+            : kGroupModifySelectorRemoveGroup,
+      );
+      return;
+    }
+
+    if (vm.sourceGroups.isNotEmpty && !vm.skipConfirm) {
+      final confirmed = await showHabitGroupModifyConfirmDialog(
+        context: context,
+        affectedHabits: vm.affectedHabits,
+        targetGroupId: vm.selectedGroupId,
+        targetGroupName: vm.targetGroupName,
+        sourceGroups: vm.sourceGroups,
+        skipFutureEnabled: vm.skipConfirm,
+        onSkipFutureChanged: vm.toggleSkipConfirm,
+      );
+      if (!(context.mounted && confirmed)) return;
+    }
+
+    AdaptiveModalNavigator.pop<GroupModifySelectorResult?>(
+      context,
+      GroupModifySelectorSelected(
+        vm.selectedGroupId,
+        affectedHabits: vm.affectedHabits,
+        targetGroupName: vm.targetGroupName,
       ),
-    ),
-    contentBuilder: (_) => const _GroupModifySelectorContent(),
-    actionsBuilder: (context, isDialog) {
-      final sheetL10n = L10n.of(context);
-      final vm = context.read<HabitGroupModifyViewModel>();
+    );
+  }
 
-      if (vm.isCreateMode) {
-        if (isDialog) {
-          return [
-            TextButton(
-              onPressed: () => _handleSaveOnly(context, vm),
-              child: Text(sheetL10n?.habitEdit_saveButton_text ?? 'Save'),
-            ),
-            FilledButton(
-              onPressed: () => _handleSaveAndApply(context, vm),
-              child: Text(
-                sheetL10n?.habitDisplay_groupModifyDialog_saveAndApply ??
-                    'Save & Apply',
-              ),
-            ),
-          ];
-        }
-        return [
-          TextButton(
-            onPressed: () => _handleSaveOnly(context, vm),
-            child: Text(sheetL10n?.habitEdit_saveButton_text ?? 'Save'),
-          ),
-          FilledButton(
-            onPressed: () => _handleSaveAndApply(context, vm),
-            child: Text(
-              sheetL10n?.habitDisplay_groupModifyDialog_saveAndApply ??
-                  'Save & Apply',
-            ),
-          ),
-        ];
-      }
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    final vm = context.watch<HabitGroupModifyViewModel>();
 
-      return [
+    return AdaptiveModal(
+      title: Text(l10n?.habitDisplay_groupModifyDialog_title ?? 'Modify Group'),
+      actions: [
         TextButton(
-          onPressed: () => Navigator.of(
-            context,
-          ).pop<GroupModifySelectorResult?>(kGroupModifySelectorCancelled),
-          child: Text(sheetL10n?.confirmDialog_cancel_text ?? 'Cancel'),
+          onPressed: () =>
+              AdaptiveModalNavigator.pop<GroupModifySelectorResult?>(
+                context,
+                kGroupModifySelectorCancelled,
+              ),
+          child: Text(l10n?.confirmDialog_cancel_text ?? 'Cancel'),
         ),
         FilledButton(
           onPressed: () => _handleConfirm(context, vm),
+          child: Text(l10n?.confirmDialog_confirm_text('confirm') ?? 'Confirm'),
+        ),
+      ],
+      automaticallyImplyCloseButton: false,
+      body: const _GroupModifySelectContent(),
+    );
+  }
+}
+
+class _GroupModifyCreatePage extends StatefulWidget {
+  const _GroupModifyCreatePage();
+
+  @override
+  State<_GroupModifyCreatePage> createState() => _GroupModifyCreatePageState();
+}
+
+class _GroupModifyCreatePageState extends State<_GroupModifyCreatePage> {
+  final _formKey = GlobalKey<GroupEditFormState>();
+
+  Future<void> _handleSaveOnly(HabitGroupModifyViewModel vm) async {
+    final result = _formKey.currentState?.buildResult();
+    if (result == null) return;
+    await vm.createGroup(
+      name: result.name,
+      desc: result.desc,
+      icon: result.icon,
+      color: result.color,
+    );
+    if (mounted) Navigator.of(context).pop();
+  }
+
+  Future<void> _handleSaveAndApply(HabitGroupModifyViewModel vm) async {
+    final result = _formKey.currentState?.buildResult();
+    if (result == null) return;
+
+    final handler = HabitGroupModifyHandler.forNewGroup(
+      selectedData: vm.selectedData,
+      getGroupName: vm.getGroupName,
+    );
+    if (!vm.skipConfirm) {
+      final confirmed = await showHabitGroupModifyConfirmDialog(
+        context: context,
+        affectedHabits: handler.affectedHabits,
+        targetGroupId: handler.targetGroupId,
+        targetGroupName: result.name,
+        sourceGroups: handler.sourceGroups,
+        skipFutureEnabled: vm.skipConfirm,
+        onSkipFutureChanged: vm.toggleSkipConfirm,
+      );
+      if (!(mounted && confirmed)) return;
+    }
+
+    final group = await vm.createGroup(
+      name: result.name,
+      desc: result.desc,
+      icon: result.icon,
+      color: result.color,
+    );
+    if (!mounted) return;
+    AdaptiveModalNavigator.pop<GroupModifySelectorResult?>(
+      context,
+      GroupModifySelectorSelected(
+        group.uuid,
+        affectedHabits: handler.affectedHabits,
+        targetGroupName: group.name,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    final vm = context.watch<HabitGroupModifyViewModel>();
+    final colorHistory = context.read<CustomColorHistoryViewModel>().history;
+
+    return AdaptiveModal(
+      title: Text(l10n?.groupManage_createDialog_title ?? 'Create Group'),
+      actions: [
+        TextButton(
+          onPressed: () => _handleSaveOnly(vm),
+          child: Text(l10n?.habitEdit_saveButton_text ?? 'Save'),
+        ),
+        FilledButton(
+          onPressed: () => _handleSaveAndApply(vm),
           child: Text(
-            sheetL10n?.confirmDialog_confirm_text('confirm') ?? 'Confirm',
+            l10n?.habitDisplay_groupModifyDialog_saveAndApply ?? 'Save & Apply',
           ),
         ),
-      ];
-    },
-  );
+      ],
+      automaticallyImplyLeading: true,
+      automaticallyImplyCloseButton: false,
+      body: GroupEditForm(
+        key: _formKey,
+        customColorHistory: colorHistory,
+        onRecordCustomColor: (color) {
+          context.read<CustomColorHistoryViewModel>().recordUsage(color);
+        },
+      ),
+    );
+  }
 }
 
 /// Manages [HabitGroupModifyViewModel] lifecycle with standard Provider
@@ -325,7 +280,7 @@ class _GroupModifySelectorScope extends StatelessWidget {
           update: (_, bus, vm) => vm..updateAppEvent(bus),
         ),
       ],
-      child: _GroupInitLoader(child: Builder(builder: bodyBuilder)),
+      child: Builder(builder: bodyBuilder),
     );
   }
 }
@@ -374,43 +329,12 @@ class _GroupInitLoaderState extends State<_GroupInitLoader> {
   }
 }
 
-class _GroupModifySelectorContent extends StatefulWidget {
-  const _GroupModifySelectorContent();
-
-  @override
-  State<_GroupModifySelectorContent> createState() =>
-      _GroupModifySelectorContentState();
-}
-
-class _GroupModifySelectorContentState
-    extends State<_GroupModifySelectorContent> {
-  final _formKey = GlobalKey<GroupEditFormState>();
+class _GroupModifySelectContent extends StatelessWidget {
+  const _GroupModifySelectContent();
 
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<HabitGroupModifyViewModel>();
-
-    // Register the form key on the VM so actionsBuilder can trigger save.
-    vm.createFormKey = _formKey;
-
-    if (vm.isCreateMode) return _buildCreateMode(context, vm);
-
-    return _buildSelectMode(context, vm);
-  }
-
-  Widget _buildCreateMode(BuildContext context, HabitGroupModifyViewModel vm) {
-    final colorHistory = context.read<CustomColorHistoryViewModel>().history;
-
-    return GroupEditForm(
-      key: _formKey,
-      customColorHistory: colorHistory,
-      onRecordCustomColor: (color) {
-        context.read<CustomColorHistoryViewModel>().recordUsage(color);
-      },
-    );
-  }
-
-  Widget _buildSelectMode(BuildContext context, HabitGroupModifyViewModel vm) {
     final l10n = L10n.of(context);
     return RadioGroup<GroupUUID?>(
       groupValue: vm.selectedGroupId,
@@ -433,23 +357,25 @@ class _GroupModifySelectorContentState
             ...vm.groups.map((group) => _buildGroupTile(context, group)),
           const Divider(),
           _buildRemoveGroupTile(context),
-          _buildCreateGroupButton(context, vm),
+          _buildCreateGroupButton(context),
         ],
       ),
     );
   }
 
-  Widget _buildCreateGroupButton(
-    BuildContext context,
-    HabitGroupModifyViewModel vm,
-  ) {
+  Widget _buildCreateGroupButton(BuildContext context) {
     final l10n = L10n.of(context);
     return ListTile(
       leading: const Icon(Icons.add, size: 20),
       title: Text(
         l10n?.habitDisplay_groupModifyDialog_createGroup ?? 'Create Group',
       ),
-      onTap: () => vm.switchToCreateMode(),
+      onTap: () => Navigator.of(context).push(
+        adaptiveModalPageRoute<void>(
+          context: context,
+          builder: (_) => const _GroupModifyCreatePage(),
+        ),
+      ),
     );
   }
 

@@ -43,7 +43,7 @@ Widget _buildNestedNavigatorApp({
   WidgetBuilder? modalBuilder,
   bool? barrierDismissible,
   bool enableDrag = true,
-  bool showDragHandle = false,
+  bool? showDragHandle,
 }) => MaterialApp(
   navigatorObservers: [rootObserver],
   home: AdaptiveStyleScope(
@@ -74,6 +74,21 @@ Widget _buildNestedNavigatorApp({
 Future<void> _openModal(WidgetTester tester) async {
   await tester.tap(find.text('Open'));
   await tester.pumpAndSettle();
+}
+
+ScrollController _modalBodyScrollController(WidgetTester tester) => tester
+    .widget<SingleChildScrollView>(
+      find.byKey(const ValueKey('adaptive-modal-scroll-body')),
+    )
+    .controller!;
+
+Future<double> _scrollModalBodyAwayFromTop(WidgetTester tester) async {
+  final body = find.byKey(const ValueKey('adaptive-modal-scroll-body'));
+  await tester.drag(body, const Offset(0, -300));
+  await tester.pumpAndSettle();
+  final offset = _modalBodyScrollController(tester).offset;
+  expect(offset, greaterThan(0));
+  return offset;
 }
 
 void main() {
@@ -153,6 +168,38 @@ void main() {
       await _openModal(tester);
 
       expect(observer.modalRoutes.single, isA<DialogRoute<void>>());
+    });
+
+    testWidgets('style override wins over AdaptiveStyleScope', (tester) async {
+      final observer = _RecordingObserver();
+      await tester.pumpWidget(
+        MaterialApp(
+          navigatorObservers: [observer],
+          home: AdaptiveStyleScope(
+            override: AdaptiveStyle.apple,
+            child: Builder(
+              builder: (context) => ElevatedButton(
+                onPressed: () => showAdaptiveSheet<void>(
+                  context: context,
+                  styleOverride: AdaptiveStyle.material,
+                  presentationOverride: AdaptiveModalPresentation.dialog,
+                  routeSettings: const RouteSettings(name: _modalRouteName),
+                  builder: (context) =>
+                      AdaptiveModal(body: Text(AdaptiveStyle.of(context).name)),
+                ),
+                child: const Text('Open'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await _openModal(tester);
+
+      expect(observer.modalRoutes.single, isA<DialogRoute<void>>());
+      expect(find.byType(Dialog), findsOneWidget);
+      expect(find.text('material'), findsOneWidget);
+      expect(find.byType(CupertinoPopupSurface), findsNothing);
     });
 
     testWidgets('automatic presentation respects BreakpointsScope', (
@@ -303,10 +350,18 @@ void main() {
           AdaptiveStyle.material => AdaptiveModalConstraints.maxHeight,
         };
         expect(
+          tester.getSize(find.byType(DraggableScrollableSheet)).height,
+          expectedHeight,
+        );
+        final expectedContentHeight = switch (style) {
+          AdaptiveStyle.apple => expectedHeight,
+          AdaptiveStyle.material => expectedHeight - 24,
+        };
+        expect(
           tester
               .getSize(find.byKey(const ValueKey('adaptive-modal-constraints')))
               .height,
-          expectedHeight,
+          expectedContentHeight,
         );
       });
 
@@ -368,6 +423,53 @@ void main() {
 
         expect(find.text('Body'), findsNothing);
       });
+    }
+
+    for (final style in AdaptiveStyle.values) {
+      testWidgets(
+        '${style.name} automatic sheet scrolls its body before collapsing',
+        (tester) async {
+          tester.view.physicalSize = const Size(400, 800);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.resetPhysicalSize);
+
+          await tester.pumpWidget(
+            MaterialApp(
+              home: AdaptiveStyleScope(
+                override: style,
+                child: Builder(
+                  builder: (context) => ElevatedButton(
+                    onPressed: () => showAdaptiveSheet<void>(
+                      context: context,
+                      builder: (_) => const AdaptiveModal(
+                        body: SizedBox(height: 1200, child: Text('Body')),
+                      ),
+                    ),
+                    child: const Text('Open'),
+                  ),
+                ),
+              ),
+            ),
+          );
+          await _openModal(tester);
+
+          final sheet = find.byType(DraggableScrollableSheet);
+          final body = find.byKey(const ValueKey('adaptive-modal-scroll-body'));
+          final initialTop = tester.getTopLeft(sheet).dy;
+          final scrolledOffset = await _scrollModalBodyAwayFromTop(tester);
+
+          final bodyDrag = await tester.startGesture(tester.getCenter(body));
+          await bodyDrag.moveBy(const Offset(0, 100));
+          await tester.pump(const Duration(seconds: 1));
+          await bodyDrag.up();
+          await tester.pumpAndSettle();
+
+          final remainingOffset = _modalBodyScrollController(tester).offset;
+          expect(remainingOffset, greaterThan(0));
+          expect(remainingOffset, lessThan(scrolledOffset));
+          expect(tester.getTopLeft(sheet).dy, moreOrLessEquals(initialTop));
+        },
+      );
     }
 
     testWidgets('barrier dismissal slides an automatic sheet down', (
@@ -445,11 +547,13 @@ void main() {
               final sheetRoute = route as ModalBottomSheetRoute<void>;
               expect(sheetRoute.isDismissible, isFalse);
               expect(sheetRoute.enableDrag, isFalse);
+              expect(sheetRoute.showDragHandle, isTrue);
             case (AdaptiveStyle.apple, AdaptiveModalPresentation.sheet):
               expect(route, isA<CupertinoSheetRoute<void>>());
               final sheetRoute = route as CupertinoSheetRoute<void>;
               expect(sheetRoute.barrierDismissible, isFalse);
               expect(sheetRoute.enableDrag, isFalse);
+              expect(sheetRoute.showDragHandle, isFalse);
               expect(sheetRoute.topGap, 0.08);
           }
         });
@@ -476,6 +580,205 @@ void main() {
           },
         );
       }
+    }
+
+    for (final testCase in <(AdaptiveStyle, bool?, bool)>[
+      (AdaptiveStyle.material, null, true),
+      (AdaptiveStyle.material, false, false),
+      (AdaptiveStyle.apple, null, false),
+      (AdaptiveStyle.apple, true, true),
+    ]) {
+      testWidgets(
+        '${testCase.$1.name} uses ${testCase.$2 ?? 'default'} drag handle',
+        (tester) async {
+          tester.view.physicalSize = const Size(400, 800);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.resetPhysicalSize);
+
+          await tester.pumpWidget(
+            MaterialApp(
+              home: AdaptiveStyleScope(
+                override: testCase.$1,
+                child: Builder(
+                  builder: (context) => ElevatedButton(
+                    onPressed: () => showAdaptiveSheet<void>(
+                      context: context,
+                      showDragHandle: testCase.$2,
+                      builder: (_) => const AdaptiveModal(body: Text('Body')),
+                    ),
+                    child: const Text('Open'),
+                  ),
+                ),
+              ),
+            ),
+          );
+
+          await _openModal(tester);
+
+          final handle = switch (testCase.$1) {
+            AdaptiveStyle.material => find.byKey(
+              const ValueKey('adaptive-material-sheet-drag-handle'),
+            ),
+            AdaptiveStyle.apple => find.byKey(
+              const ValueKey('adaptive-cupertino-sheet-drag-handle'),
+            ),
+          };
+          expect(handle, testCase.$3 ? findsOneWidget : findsNothing);
+        },
+      );
+    }
+
+    for (final style in AdaptiveStyle.values) {
+      testWidgets('${style.name} automatic sheet drags from its app bar', (
+        tester,
+      ) async {
+        tester.view.physicalSize = const Size(400, 800);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: AdaptiveStyleScope(
+              override: style,
+              child: Builder(
+                builder: (context) => ElevatedButton(
+                  onPressed: () => showAdaptiveSheet<void>(
+                    context: context,
+                    builder: (_) => const AdaptiveModal(
+                      title: Text('Title'),
+                      body: SizedBox(height: 1200, child: Text('Body')),
+                    ),
+                  ),
+                  child: const Text('Open'),
+                ),
+              ),
+            ),
+          ),
+        );
+        await _openModal(tester);
+
+        final sheet = find.byType(DraggableScrollableSheet);
+        final initialTop = tester.getTopLeft(sheet).dy;
+        final initialBodyOffset = await _scrollModalBodyAwayFromTop(tester);
+        final drag = await tester.startGesture(
+          tester.getCenter(
+            find.byKey(const ValueKey('adaptive-modal-app-bar')),
+          ),
+        );
+        await drag.moveBy(const Offset(0, 20));
+        await tester.pump();
+        await drag.moveBy(const Offset(0, 100));
+        await tester.pump(const Duration(seconds: 1));
+
+        expect(tester.getTopLeft(sheet).dy, greaterThan(initialTop));
+        expect(
+          _modalBodyScrollController(tester).offset,
+          moreOrLessEquals(initialBodyOffset),
+        );
+        await drag.up();
+        await tester.pumpAndSettle();
+
+        expect(find.text('Body'), findsOneWidget);
+        final dismissBodyOffset = _modalBodyScrollController(tester).offset;
+        final dismissDrag = await tester.startGesture(
+          tester.getCenter(
+            find.byKey(const ValueKey('adaptive-modal-app-bar')),
+          ),
+        );
+        await dismissDrag.moveBy(const Offset(0, 600));
+        await tester.pump();
+        expect(tester.getTopLeft(sheet).dy, greaterThan(initialTop + 300));
+        expect(find.text('Body'), findsOneWidget);
+        final sheetRect = tester.getRect(sheet);
+        final appBarRect = tester.getRect(
+          find.byKey(const ValueKey('adaptive-modal-app-bar')),
+        );
+        expect(appBarRect.top, greaterThanOrEqualTo(sheetRect.top));
+        expect(appBarRect.top, lessThan(sheetRect.bottom));
+        expect(
+          _modalBodyScrollController(tester).offset,
+          moreOrLessEquals(dismissBodyOffset),
+        );
+        await dismissDrag.up();
+        await tester.pumpAndSettle();
+        expect(find.text('Body'), findsNothing);
+      });
+    }
+
+    for (final testCase in <(AdaptiveStyle, bool?, String)>[
+      (AdaptiveStyle.material, null, 'adaptive-material-sheet-drag-handle'),
+      (AdaptiveStyle.apple, true, 'adaptive-cupertino-sheet-drag-handle'),
+    ]) {
+      testWidgets('${testCase.$1.name} automatic sheet drags from its handle', (
+        tester,
+      ) async {
+        tester.view.physicalSize = const Size(400, 800);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: AdaptiveStyleScope(
+              override: testCase.$1,
+              child: Builder(
+                builder: (context) => ElevatedButton(
+                  onPressed: () => showAdaptiveSheet<void>(
+                    context: context,
+                    showDragHandle: testCase.$2,
+                    builder: (_) => const AdaptiveModal(
+                      body: SizedBox(height: 1200, child: Text('Body')),
+                    ),
+                  ),
+                  child: const Text('Open'),
+                ),
+              ),
+            ),
+          ),
+        );
+        await _openModal(tester);
+
+        final sheet = find.byType(DraggableScrollableSheet);
+        final initialTop = tester.getTopLeft(sheet).dy;
+        final initialBodyOffset = await _scrollModalBodyAwayFromTop(tester);
+        final drag = await tester.startGesture(
+          tester.getCenter(find.byKey(ValueKey(testCase.$3))),
+        );
+        await drag.moveBy(const Offset(0, 20));
+        await tester.pump();
+        await drag.moveBy(const Offset(0, 100));
+        await tester.pump(const Duration(seconds: 1));
+
+        expect(tester.getTopLeft(sheet).dy, greaterThan(initialTop));
+        expect(
+          _modalBodyScrollController(tester).offset,
+          moreOrLessEquals(initialBodyOffset),
+        );
+        await drag.up();
+        await tester.pumpAndSettle();
+
+        expect(find.text('Body'), findsOneWidget);
+        final collapseDrag = await tester.startGesture(
+          tester.getCenter(find.byKey(ValueKey(testCase.$3))),
+        );
+        await collapseDrag.moveBy(const Offset(0, 20));
+        await tester.pump();
+        await collapseDrag.moveBy(const Offset(0, 700));
+        await tester.pump();
+        expect(tester.takeException(), isNull);
+        await collapseDrag.moveBy(const Offset(0, -720));
+        await tester.pump();
+        await collapseDrag.up();
+        await tester.pumpAndSettle();
+
+        expect(find.text('Body'), findsOneWidget);
+        await tester.fling(
+          find.byKey(ValueKey(testCase.$3)),
+          const Offset(0, 100),
+          1000,
+        );
+        await tester.pumpAndSettle();
+        expect(find.text('Body'), findsNothing);
+      });
     }
 
     testWidgets('builder receives the pushed route context', (tester) async {

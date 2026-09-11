@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:markdown_widget/markdown_widget.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../widgets/widgets.dart';
@@ -58,16 +59,18 @@ class _AppAboutPrivacyTile extends State<AppAboutPrivacyTile> {
     final text = await rootBundle.loadString(widget.privacyPath);
     if (!mounted) return;
     final l10n = L10n.of(context);
-    await showAdaptiveContentSheet(
+    await showAdaptiveSheet<void>(
       context: context,
-      title: l10n != null
-          ? Text(l10n.appAbout_privacyTile_titleText)
-          : const Text("Privacy"),
-      contentBuilder: (_) => ThematicMarkdownBlock(
-        data: text,
-        configBuilder: (config) => config.copy(configs: [_buildTableConfig()]),
+      builder: (_) => AdaptiveModal(
+        title: l10n != null
+            ? Text(l10n.appAbout_privacyTile_titleText)
+            : const Text("Privacy"),
+        body: ThematicMarkdownBlock(
+          data: text,
+          configBuilder: (config) =>
+              config.copy(configs: [_buildTableConfig()]),
+        ),
       ),
-      sheetShowCloseButton: false,
     );
   }
 
