@@ -4,7 +4,6 @@ library;
 export 'src/adaptive/adaptive_app_bar.dart';
 export 'src/adaptive/adaptive_app_bar_actions.dart';
 export 'src/adaptive/adaptive_back_button.dart';
-export 'src/adaptive/adaptive_bottom_sheet.dart';
 export 'src/adaptive/adaptive_editable_sliver_app_bar.dart';
 export 'src/adaptive/adaptive_icon_button.dart';
 export 'src/adaptive/adaptive_list_tile.dart';

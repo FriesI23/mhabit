@@ -1379,35 +1379,4 @@ void main() {
       }
     }
   });
-
-  group('fixed presentation entries', () {
-    testWidgets('AdaptiveBottomSheet stays a sheet on a large window', (
-      tester,
-    ) async {
-      tester.view.physicalSize = const Size(800, 800);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-
-      final observer = _RecordingObserver();
-      await tester.pumpWidget(
-        MaterialApp(
-          navigatorObservers: [observer],
-          home: Builder(
-            builder: (context) => ElevatedButton(
-              onPressed: () => showAdaptiveBottomSheet<void>(
-                context: context,
-                routeSettings: const RouteSettings(name: _modalRouteName),
-                builder: (_) => const Text('sheet'),
-              ),
-              child: const Text('Open'),
-            ),
-          ),
-        ),
-      );
-
-      await _openModal(tester);
-
-      expect(observer.modalRoutes.single, isA<ModalBottomSheetRoute<void>>());
-    });
-  });
 }
