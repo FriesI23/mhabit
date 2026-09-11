@@ -8,13 +8,15 @@ import '../window_control/toolbar_geometry.dart';
 /// Material visual baseline added only on sides with window-control avoidance.
 class AppBarMaterialStyle {
   const AppBarMaterialStyle({
-    this.centerTitle = true,
+    this.centerTitle = false,
     this.floating = true,
     this.snap = true,
     this.pinned = true,
     this.forceElevated = false,
     this.scrolledUnderElevation,
     this.shadowColor = Colors.transparent,
+    this.backgroundColor,
+    this.surfaceTintColor,
     this.bottom,
     this.windowControlEdgePadding = materialWindowControlEdgePadding,
   });
@@ -26,6 +28,8 @@ class AppBarMaterialStyle {
   final bool forceElevated;
   final double? scrolledUnderElevation;
   final Color? shadowColor;
+  final Color? backgroundColor;
+  final Color? surfaceTintColor;
   final PreferredSizeWidget? bottom;
 
   /// {@macro mhabit.windowControlEdgePadding}
@@ -39,6 +43,8 @@ class AppBarMaterialStyle {
     bool? forceElevated,
     double? scrolledUnderElevation,
     Color? shadowColor,
+    Color? backgroundColor,
+    Color? surfaceTintColor,
     PreferredSizeWidget? bottom,
     EdgeInsetsDirectional? windowControlEdgePadding,
   }) => AppBarMaterialStyle(
@@ -50,6 +56,8 @@ class AppBarMaterialStyle {
     scrolledUnderElevation:
         scrolledUnderElevation ?? this.scrolledUnderElevation,
     shadowColor: shadowColor ?? this.shadowColor,
+    backgroundColor: backgroundColor ?? this.backgroundColor,
+    surfaceTintColor: surfaceTintColor ?? this.surfaceTintColor,
     bottom: bottom ?? this.bottom,
     windowControlEdgePadding:
         windowControlEdgePadding ?? this.windowControlEdgePadding,
@@ -65,6 +73,8 @@ class AppBarMaterialStyle {
       other.forceElevated == forceElevated &&
       other.scrolledUnderElevation == scrolledUnderElevation &&
       other.shadowColor == shadowColor &&
+      other.backgroundColor == backgroundColor &&
+      other.surfaceTintColor == surfaceTintColor &&
       other.bottom == bottom &&
       other.windowControlEdgePadding == windowControlEdgePadding;
 
@@ -77,6 +87,8 @@ class AppBarMaterialStyle {
     forceElevated,
     scrolledUnderElevation,
     shadowColor,
+    backgroundColor,
+    surfaceTintColor,
     bottom,
     windowControlEdgePadding,
   );

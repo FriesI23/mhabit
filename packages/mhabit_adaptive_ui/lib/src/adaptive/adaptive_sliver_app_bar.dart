@@ -41,6 +41,10 @@ class AppBarStyles {
 /// Must be placed in a viewport `slivers:` list (e.g. `CustomScrollView`).
 /// The default constructor resolves the style from the current platform;
 /// [AdaptiveSliverAppBar.material] forces the Material style and
+/// [AdaptiveSliverAppBar.materialMedium] and
+/// [AdaptiveSliverAppBar.materialLarge] proxy Flutter's matching M3
+/// constructors. The default adaptive constructor intentionally keeps the
+/// small Material variant because Apple has no equivalent size selection.
 /// [AdaptiveSliverAppBar.apple] forces the apple style
 /// (`CupertinoSliverNavigationBar`).
 ///
@@ -61,7 +65,8 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.bottom,
     this.styles,
   }) : assert(bottom == null || height != null),
-       _adaptiveStyle = null;
+       _adaptiveStyle = null,
+       _materialVariant = _MaterialAppBarVariant.small;
 
   const AdaptiveSliverAppBar.material({
     super.key,
@@ -72,7 +77,44 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.height,
     this.bottom,
     this.styles,
-  }) : _adaptiveStyle = AdaptiveStyle.material;
+  }) : _adaptiveStyle = AdaptiveStyle.material,
+       _materialVariant = _MaterialAppBarVariant.small;
+
+  const AdaptiveSliverAppBar.materialSmall({
+    super.key,
+    required this.title,
+    this.actions = _kDefaultActions,
+    this.leading,
+    this.onLeadingPressed,
+    this.height,
+    this.bottom,
+    this.styles,
+  }) : _adaptiveStyle = AdaptiveStyle.material,
+       _materialVariant = _MaterialAppBarVariant.small;
+
+  const AdaptiveSliverAppBar.materialMedium({
+    super.key,
+    required this.title,
+    this.actions = _kDefaultActions,
+    this.leading,
+    this.onLeadingPressed,
+    this.height,
+    this.bottom,
+    this.styles,
+  }) : _adaptiveStyle = AdaptiveStyle.material,
+       _materialVariant = _MaterialAppBarVariant.medium;
+
+  const AdaptiveSliverAppBar.materialLarge({
+    super.key,
+    required this.title,
+    this.actions = _kDefaultActions,
+    this.leading,
+    this.onLeadingPressed,
+    this.height,
+    this.bottom,
+    this.styles,
+  }) : _adaptiveStyle = AdaptiveStyle.material,
+       _materialVariant = _MaterialAppBarVariant.large;
 
   const AdaptiveSliverAppBar.apple({
     super.key,
@@ -84,9 +126,11 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.bottom,
     this.styles,
   }) : assert(bottom == null || height != null),
-       _adaptiveStyle = AdaptiveStyle.apple;
+       _adaptiveStyle = AdaptiveStyle.apple,
+       _materialVariant = _MaterialAppBarVariant.small;
 
   final AdaptiveStyle? _adaptiveStyle;
+  final _MaterialAppBarVariant _materialVariant;
   final Widget title;
   final List<Widget> actions;
   final Widget? leading;
@@ -105,15 +149,35 @@ class AdaptiveSliverAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final effectiveStyle = _adaptiveStyle ?? AdaptiveStyle.of(context);
     return switch (effectiveStyle) {
-      AdaptiveStyle.material => MaterialSliverAppBar(
-        title: title,
-        actions: actions,
-        leading: leading,
-        onLeadingPressed: onLeadingPressed,
-        height: height,
-        bottom: bottom,
-        style: _effectiveMaterialStyle,
-      ),
+      AdaptiveStyle.material => switch (_materialVariant) {
+        _MaterialAppBarVariant.small => MaterialSliverAppBar(
+          title: title,
+          actions: actions,
+          leading: leading,
+          onLeadingPressed: onLeadingPressed,
+          height: height,
+          bottom: bottom,
+          style: _effectiveMaterialStyle,
+        ),
+        _MaterialAppBarVariant.medium => MaterialSliverAppBar.medium(
+          title: title,
+          actions: actions,
+          leading: leading,
+          onLeadingPressed: onLeadingPressed,
+          height: height,
+          bottom: bottom,
+          style: _effectiveMaterialStyle,
+        ),
+        _MaterialAppBarVariant.large => MaterialSliverAppBar.large(
+          title: title,
+          actions: actions,
+          leading: leading,
+          onLeadingPressed: onLeadingPressed,
+          height: height,
+          bottom: bottom,
+          style: _effectiveMaterialStyle,
+        ),
+      },
       AdaptiveStyle.apple => _buildApple(_effectiveAppleStyle),
     };
   }
@@ -129,3 +193,5 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     style: effectiveStyle,
   );
 }
+
+enum _MaterialAppBarVariant { small, medium, large }

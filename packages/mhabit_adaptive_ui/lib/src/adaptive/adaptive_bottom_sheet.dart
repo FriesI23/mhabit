@@ -1,44 +1,40 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../adaptive_modal.dart';
 import '../adaptive_style.dart';
 
-/// One-shot bottom-sheet invocation dispatched to the platform-appropriate
-/// style.
-///
-/// Parameters are bound at construction; invoke the instance to show the
-/// sheet: `AdaptiveBottomSheet(context: context, builder: ...)()`.
-final class AdaptiveBottomSheet<T> implements AdaptiveModal<T> {
-  const AdaptiveBottomSheet({
-    required this.context,
-    required this.builder,
-    this.isScrollControlled = false,
-  }) : style = null;
-
-  const AdaptiveBottomSheet.material({
-    required this.context,
-    required this.builder,
-    this.isScrollControlled = false,
-  }) : style = AdaptiveStyle.material;
-
-  final AdaptiveStyle? style;
-
-  @override
-  final BuildContext context;
-
-  final WidgetBuilder builder;
-  final bool isScrollControlled;
-
-  @override
-  Future<T?> call() {
-    final effective = style ?? adaptiveStyle;
-    return switch (effective) {
-      // TODO(adaptive-ui::apple): card-style sheet with gesture dismissal.
-      AdaptiveStyle.apple || AdaptiveStyle.material => showModalBottomSheet<T>(
-        context: context,
-        builder: builder,
-        isScrollControlled: isScrollControlled,
+/// Shows a fixed sheet using the active adaptive style's route renderer.
+@Deprecated(
+  'Use showAdaptiveSheet instead. This API will be removed in Phase 3-7f.',
+)
+Future<T?> showAdaptiveBottomSheet<T>({
+  required BuildContext context,
+  required WidgetBuilder builder,
+  bool isScrollControlled = false,
+  bool useRootNavigator = true,
+  bool barrierDismissible = true,
+  bool enableDrag = true,
+  bool showDragHandle = false,
+  RouteSettings? routeSettings,
+}) => switch (AdaptiveStyle.of(context)) {
+  AdaptiveStyle.material => showModalBottomSheet<T>(
+    context: context,
+    useRootNavigator: useRootNavigator,
+    isDismissible: barrierDismissible,
+    enableDrag: enableDrag,
+    isScrollControlled: isScrollControlled,
+    useSafeArea: true,
+    showDragHandle: showDragHandle,
+    routeSettings: routeSettings,
+    builder: builder,
+  ),
+  AdaptiveStyle.apple =>
+    Navigator.of(context, rootNavigator: useRootNavigator).push<T>(
+      CupertinoSheetRoute<T>(
+        settings: routeSettings,
+        enableDrag: enableDrag,
+        showDragHandle: showDragHandle,
+        scrollableBuilder: (context, _) => builder(context),
       ),
-    };
-  }
-}
+    ),
+};

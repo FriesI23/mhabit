@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/widgets/widgets.dart';
+import 'package:provider/provider.dart';
 
 final class _RouteCountingObserver extends NavigatorObserver {
   int popupPushes = 0;
@@ -104,6 +105,67 @@ void main() {
 
       expect(rootObserver.popupPushes, 0);
       expect(branchObserver.popupPushes, 1);
+    });
+
+    testWidgets('$mode preserves the typed route result', (tester) async {
+      String? result;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () async {
+                result = await showAdaptiveContentSheet<String>(
+                  context: context,
+                  contentBuilder: (routeContext) => ElevatedButton(
+                    onPressed: () => Navigator.of(routeContext).pop('saved'),
+                    child: const Text('Return result'),
+                  ),
+                  showCloseButton: false,
+                  forceDialog: forceDialog,
+                  forceSheet: !forceDialog,
+                );
+              },
+              child: const Text('Open'),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Return result'));
+      await tester.pumpAndSettle();
+
+      expect(result, 'saved');
+    });
+
+    testWidgets('$mode builder scopes the modal body', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => showAdaptiveContentSheet<void>(
+                context: context,
+                builder: (context, buildBody) => Provider<String>.value(
+                  value: 'route-scoped value',
+                  child: Builder(builder: buildBody),
+                ),
+                contentBuilder: (context) => Text(context.read<String>()),
+                showCloseButton: false,
+                forceDialog: forceDialog,
+                forceSheet: !forceDialog,
+              ),
+              child: const Text('Open'),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('route-scoped value'), findsOneWidget);
     });
   }
 }

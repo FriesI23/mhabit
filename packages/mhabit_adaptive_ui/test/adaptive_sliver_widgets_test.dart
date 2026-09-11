@@ -67,6 +67,27 @@ void main() {
       expect(find.byType(SliverAppBar), findsOneWidget);
     });
 
+    testWidgets('material constructors proxy the matching Flutter app bars', (
+      tester,
+    ) async {
+      final cases = <(Widget appBar, int titleCount)>[
+        (const AdaptiveSliverAppBar.materialSmall(title: Text('title')), 1),
+        (const AdaptiveSliverAppBar.materialMedium(title: Text('title')), 2),
+        (const AdaptiveSliverAppBar.materialLarge(title: Text('title')), 2),
+      ];
+
+      for (final (appBar, titleCount) in cases) {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(body: CustomScrollView(slivers: [appBar])),
+          ),
+        );
+
+        expect(find.byType(SliverAppBar), findsOneWidget);
+        expect(find.text('title'), findsNWidgets(titleCount));
+      }
+    });
+
     testWidgets('apple medium landscape keeps a centered middle title', (
       tester,
     ) async {
@@ -379,7 +400,7 @@ void main() {
       expect(appBar.pinned, isFalse);
       expect(appBar.floating, isTrue);
       expect(appBar.snap, isTrue);
-      expect(appBar.centerTitle, isTrue);
+      expect(appBar.centerTitle, isFalse);
     });
 
     testWidgets('shared bottom is hosted by the Material bar', (tester) async {
@@ -548,9 +569,14 @@ void main() {
   group('AppBar style configs', () {
     test('AppBarMaterialStyle.copyWith overrides only the given fields', () {
       const original = AppBarMaterialStyle();
-      final updated = original.copyWith(floating: false, pinned: false);
+      final updated = original.copyWith(
+        floating: false,
+        pinned: false,
+        backgroundColor: Colors.red,
+      );
       expect(updated.floating, isFalse);
       expect(updated.pinned, isFalse);
+      expect(updated.backgroundColor, Colors.red);
       expect(updated.snap, original.snap);
       expect(updated.centerTitle, original.centerTitle);
       expect(updated.forceElevated, original.forceElevated);
@@ -563,7 +589,10 @@ void main() {
     test('AppBarMaterialStyle equality follows the fields', () {
       const a = AppBarMaterialStyle(floating: false);
       const b = AppBarMaterialStyle(floating: false);
-      const c = AppBarMaterialStyle();
+      const c = AppBarMaterialStyle(
+        floating: false,
+        backgroundColor: Colors.red,
+      );
       expect(a, b);
       expect(a.hashCode, b.hashCode);
       expect(a == c, isFalse);

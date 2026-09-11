@@ -49,6 +49,7 @@ void main() {
     expect(find.byType(AppBar), findsOneWidget);
     expect(find.text('Settings'), findsOneWidget);
     expect(tester.getSize(find.byType(AppBar)).height, 64);
+    expect(tester.widget<AppBar>(find.byType(AppBar)).centerTitle, isFalse);
   });
 
   testWidgets('dispatches regular app bar to fixed Apple chrome', (

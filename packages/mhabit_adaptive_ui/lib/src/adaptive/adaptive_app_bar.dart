@@ -68,6 +68,7 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
           leading: leading,
           actions: actions,
           automaticallyImplyLeading: automaticallyImplyLeading,
+          centerTitle: false,
           toolbarHeight: toolbarHeight,
         ),
         AdaptiveStyle.apple => _CupertinoAdaptiveAppBar(

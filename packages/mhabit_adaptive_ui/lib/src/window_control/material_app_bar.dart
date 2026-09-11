@@ -166,12 +166,12 @@ class WindowControlAppBar extends StatelessWidget
   }
 }
 
-enum _WindowControlSliverAppBarVariant { small, large }
+enum _WindowControlSliverAppBarVariant { small, medium, large }
 
 /// A [SliverAppBar] counterpart to [WindowControlAppBar].
 ///
-/// The default constructor preserves the small app-bar behavior and [large]
-/// delegates expanded-title layout to [SliverAppBar.large].
+/// The default constructor preserves the small app-bar behavior. [medium] and
+/// [large] delegate expanded-title layout to Flutter's matching M3 app bars.
 class WindowControlSliverAppBar extends StatelessWidget {
   const WindowControlSliverAppBar({
     super.key,
@@ -211,6 +211,45 @@ class WindowControlSliverAppBar extends StatelessWidget {
     this.windowControlAvoidance,
     this.windowControlEdgePadding = materialWindowControlEdgePadding,
   }) : _variant = _WindowControlSliverAppBarVariant.small;
+
+  const WindowControlSliverAppBar.medium({
+    super.key,
+    this.leading,
+    this.automaticallyImplyLeading = true,
+    this.title,
+    this.actions,
+    this.automaticallyImplyActions = true,
+    this.flexibleSpace,
+    this.bottom,
+    this.elevation,
+    this.scrolledUnderElevation,
+    this.shadowColor,
+    this.surfaceTintColor,
+    this.forceElevated = false,
+    this.backgroundColor,
+    this.foregroundColor,
+    this.iconTheme,
+    this.actionsIconTheme,
+    this.primary = true,
+    this.centerTitle,
+    this.titleSpacing,
+    this.collapsedHeight,
+    this.expandedHeight,
+    this.floating = false,
+    this.pinned = true,
+    this.snap = false,
+    this.stretch = false,
+    this.stretchTriggerOffset = 100,
+    this.onStretchTrigger,
+    this.shape,
+    this.toolbarHeight,
+    this.leadingWidth,
+    this.systemOverlayStyle,
+    this.forceMaterialTransparency = false,
+    this.actionsPadding,
+    this.windowControlAvoidance,
+    this.windowControlEdgePadding = materialWindowControlEdgePadding,
+  }) : _variant = _WindowControlSliverAppBarVariant.medium;
 
   const WindowControlSliverAppBar.large({
     super.key,
@@ -405,9 +444,46 @@ class WindowControlSliverAppBar extends StatelessWidget {
         forceMaterialTransparency: forceMaterialTransparency,
         actionsPadding: actionsPadding,
       ),
+      _WindowControlSliverAppBarVariant.medium => _buildMedium(slots),
       _WindowControlSliverAppBarVariant.large => _buildLarge(slots),
     };
   }
+
+  Widget _buildMedium(_MaterialToolbarSlots slots) => SliverAppBar.medium(
+    leading: slots.leading,
+    automaticallyImplyLeading: slots.automaticallyImplyLeading,
+    title: title,
+    actions: slots.actions,
+    automaticallyImplyActions: slots.automaticallyImplyActions,
+    flexibleSpace: flexibleSpace,
+    bottom: bottom,
+    elevation: elevation,
+    scrolledUnderElevation: scrolledUnderElevation,
+    shadowColor: shadowColor,
+    surfaceTintColor: surfaceTintColor,
+    forceElevated: forceElevated,
+    backgroundColor: backgroundColor,
+    foregroundColor: foregroundColor,
+    iconTheme: iconTheme,
+    actionsIconTheme: actionsIconTheme,
+    primary: primary,
+    centerTitle: centerTitle,
+    titleSpacing: titleSpacing,
+    collapsedHeight: collapsedHeight,
+    expandedHeight: expandedHeight,
+    floating: floating,
+    pinned: pinned,
+    snap: snap,
+    stretch: stretch,
+    stretchTriggerOffset: stretchTriggerOffset,
+    onStretchTrigger: onStretchTrigger,
+    shape: shape,
+    toolbarHeight: toolbarHeight ?? kToolbarHeight,
+    leadingWidth: slots.leadingWidth,
+    systemOverlayStyle: systemOverlayStyle,
+    forceMaterialTransparency: forceMaterialTransparency,
+    actionsPadding: actionsPadding,
+  );
 
   Widget _buildLarge(_MaterialToolbarSlots slots) {
     final toolbarHeight = this.toolbarHeight;
