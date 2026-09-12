@@ -128,37 +128,46 @@ final class _PageState extends State<_Page> {
     ];
 
     return Scaffold(
-      appBar: AdaptiveAppBar(
-        toolbarHeight: AdaptiveStyle.of(context).appToolbarHeight,
-        leading: const AdaptiveBackButton(type: AdaptiveBackButtonType.back),
-        automaticallyImplyLeading: false,
-        title: Text(
-          l10n?.appSetting_experimentalFeatureTile_titleText ??
-              "Experimental Features",
-        ),
-      ),
-      body: ListView(
-        children: [
-          ExpandedSection(
-            expand: showWarningBanner,
-            child: MaterialBanner(
-              forceActionsBelow: true,
-              leading: const Icon(Icons.warning_amber_outlined),
-              content: Text(
-                l10n?.experimentalFeatures_warnginBanner_title ??
-                    "Experimental features are enabled.",
-              ),
-              actions: [
-                TextButton(
+      body: CustomScrollView(
+        slivers: [
+          AdaptiveSliverAppBar(
+            height: AdaptiveStyle.of(context).appToolbarHeight,
+            leading: const AdaptiveBackButton(
+              type: AdaptiveBackButtonType.back,
+            ),
+            title: Text(
+              l10n?.appSetting_experimentalFeatureTile_titleText ??
+                  "Experimental Features",
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: ExpandedSection(
+              expand: showWarningBanner,
+              child: EdgeToEdgeMaterialBanner(
+                forceActionsBelow: true,
+                leading: const Icon(Icons.warning_amber_outlined),
+                content: Text(
+                  l10n?.experimentalFeatures_warnginBanner_title ??
+                      "Experimental features are enabled.",
+                ),
+                actionArea: TextButton(
                   onPressed: () => setState(() => showWarningBanner = false),
                   child: Text(l10n?.snackbar_dismissText ?? "DISMISS"),
                 ),
+              ),
+            ),
+          ),
+          EnhancedSafeArea.withDefault(
+            top: false,
+            withSliver: true,
+            child: SliverList.list(
+              children: [
+                if (vm != null) ...buildHabitSearchWidgets(context),
+                if (vm != null) ...buildHabitGroupingWidgets(context),
+                if (vm != null) ...buildNaturalSortWidgets(context),
               ],
             ),
           ),
-          if (vm != null) ...buildHabitSearchWidgets(context),
-          if (vm != null) ...buildHabitGroupingWidgets(context),
-          if (vm != null) ...buildNaturalSortWidgets(context),
         ],
       ),
     );

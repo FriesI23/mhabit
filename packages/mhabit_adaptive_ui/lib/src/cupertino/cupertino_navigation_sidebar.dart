@@ -195,17 +195,17 @@ class _CupertinoNavigationSidebarState extends State<CupertinoNavigationSidebar>
         math.max(sideNavigationEnd, _panelToggleTrailingPadding) -
         NavigationSidebarAppBarLeading.buttonExtent;
     final hiddenButtonStart = sideNavigationStart + _appBarLeadingPadding;
+    final branchMediaQuery = MediaQuery.of(
+      context,
+    ).copyWith(padding: mediaPadding.copyWith(top: buttonTop));
+    final branchMediaQueryWithoutLeadingPadding = branchMediaQuery
+        .removePadding(
+          removeLeft: direction == TextDirection.ltr,
+          removeRight: direction == TextDirection.rtl,
+        );
     return AnimatedBuilder(
       animation: _curvedAnimation,
-      // The 44pt toolbar remains platform-owned. Expose the floating surface
-      // margin as safe area so regular and sliver app bars start on the same
-      // vertical baseline without carrying Sidebar geometry in their APIs.
-      child: MediaQuery(
-        data: MediaQuery.of(
-          context,
-        ).copyWith(padding: mediaPadding.copyWith(top: buttonTop)),
-        child: widget.child,
-      ),
+      child: widget.child,
       builder: (context, child) {
         final progress = _curvedAnimation.value;
         final panelActive = _animation.value > 0;
@@ -224,13 +224,30 @@ class _CupertinoNavigationSidebarState extends State<CupertinoNavigationSidebar>
         final buttonStart =
             hiddenButtonStart +
             (visibleButtonStart - hiddenButtonStart) * progress;
+        // The branch offset already owns the leading safe margin while the
+        // Sidebar is visible. Consume that inset at the same rate as the
+        // offset so page-level SafeAreas do not reserve it a second time and
+        // do not jump when the Sidebar animates. The trailing inset remains
+        // page-owned. The top surface margin remains exposed for app bars.
+        final effectiveBranchMediaQuery = branchMediaQuery.copyWith(
+          padding: EdgeInsets.lerp(
+            branchMediaQuery.padding,
+            branchMediaQueryWithoutLeadingPadding.padding,
+            progress,
+          ),
+          viewPadding: EdgeInsets.lerp(
+            branchMediaQuery.viewPadding,
+            branchMediaQueryWithoutLeadingPadding.viewPadding,
+            progress,
+          ),
+        );
         final branch = _CupertinoSidebarBranch(
           occupiedSpan:
               (leadingSafeMargin + panelWidth + _contentGap) * progress,
           child: NavigationSidebarAppBarLeading(
             toolbarAvoidance: toolbarAvoidance,
             progress: appBarProgress,
-            child: child!,
+            child: MediaQuery(data: effectiveBranchMediaQuery, child: child!),
           ),
         );
         final stack = Stack(

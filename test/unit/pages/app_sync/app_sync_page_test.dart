@@ -84,6 +84,11 @@ void main() {
     expect(adaptive.bottom, isNull);
     expect(appBar.bottom, isNull);
     expect(find.byType(SliverPinnedHeader), findsOneWidget);
+    final safeArea = tester.widget<SliverSafeArea>(find.byType(SliverSafeArea));
+    expect(safeArea.left, isTrue);
+    expect(safeArea.top, isFalse);
+    expect(safeArea.right, isTrue);
+    expect(safeArea.bottom, isTrue);
     expect(
       find.ancestor(
         of: find.byType(SwitchListTile),
@@ -91,6 +96,16 @@ void main() {
       ),
       findsOneWidget,
     );
+    final enableSafeArea = tester.widget<SafeArea>(
+      find.ancestor(
+        of: find.byType(SwitchListTile),
+        matching: find.byType(SafeArea),
+      ),
+    );
+    expect(enableSafeArea.left, isTrue);
+    expect(enableSafeArea.top, isFalse);
+    expect(enableSafeArea.right, isTrue);
+    expect(enableSafeArea.bottom, isFalse);
     expect(
       tester.widget<AdaptiveBackButton>(find.byType(AdaptiveBackButton)).type,
       AdaptiveBackButtonType.back,

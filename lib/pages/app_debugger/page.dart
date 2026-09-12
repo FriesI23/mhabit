@@ -175,15 +175,6 @@ class _PageState extends State<_Page> with XShare {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AdaptiveAppBar(
-        toolbarHeight: AdaptiveStyle.of(context).appToolbarHeight,
-        title: L10nBuilder(
-          builder: (context, l10n) =>
-              Text(l10n?.appSetting_debugger_titleText ?? 'Debugger'),
-        ),
-        leading: const AdaptiveBackButton(type: AdaptiveBackButtonType.back),
-        automaticallyImplyLeading: false,
-      ),
       floatingActionButton: Builder(
         builder: (context) {
           return FloatingActionButton(
@@ -192,45 +183,63 @@ class _PageState extends State<_Page> with XShare {
           );
         },
       ),
-      body: ListView(
-        children: [
-          Selector<AppDebuggerViewModel, bool>(
-            selector: (context, vm) => vm.isCollectLogs,
-            shouldRebuild: (previous, next) => previous != next,
-            builder: (context, isCollectLogs, child) {
-              return ChangeLogsSwitcherTile(
-                value: isCollectLogs,
-                onChanged: _onCollectLogsSwitcherChanged,
-              );
-            },
-          ),
-          Selector<AppDebuggerViewModel, LogLevel>(
-            selector: (context, vm) => vm.loggingLevel,
-            shouldRebuild: (previous, next) => previous != next,
-            builder: (context, logLevel, child) {
-              return LogLevelChangerTile(
-                crtLevel: logLevel,
-                onSelected: _onLogLevelChanged,
-              );
-            },
-          ),
-          const _Sperator(),
-          const SizedBox(height: 8),
-          Padding(
-            padding: kListTileContentPadding,
-            child: DebuggerLogCard(
-              onDownloadPressed: _onDownloadLogButtonPressed,
-              onClearPressed: _onClearLogButtongPressed,
+      body: CustomScrollView(
+        slivers: [
+          AdaptiveSliverAppBar(
+            height: AdaptiveStyle.of(context).appToolbarHeight,
+            title: L10nBuilder(
+              builder: (context, l10n) =>
+                  Text(l10n?.appSetting_debugger_titleText ?? 'Debugger'),
+            ),
+            leading: const AdaptiveBackButton(
+              type: AdaptiveBackButtonType.back,
             ),
           ),
-          Padding(
-            padding: kListTileContentPadding,
-            child: DebuggerInfoCard(
-              onOpenPressed: _onOpenDebugButtonPressed,
-              onSavePressed: _onSaveDebugButtonPressed,
+          EnhancedSafeArea.withDefault(
+            top: false,
+            withSliver: true,
+            child: SliverList.list(
+              children: [
+                Selector<AppDebuggerViewModel, bool>(
+                  selector: (context, vm) => vm.isCollectLogs,
+                  shouldRebuild: (previous, next) => previous != next,
+                  builder: (context, isCollectLogs, child) {
+                    return ChangeLogsSwitcherTile(
+                      value: isCollectLogs,
+                      onChanged: _onCollectLogsSwitcherChanged,
+                    );
+                  },
+                ),
+                Selector<AppDebuggerViewModel, LogLevel>(
+                  selector: (context, vm) => vm.loggingLevel,
+                  shouldRebuild: (previous, next) => previous != next,
+                  builder: (context, logLevel, child) {
+                    return LogLevelChangerTile(
+                      crtLevel: logLevel,
+                      onSelected: _onLogLevelChanged,
+                    );
+                  },
+                ),
+                const _Sperator(),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: kListTileContentPadding,
+                  child: DebuggerLogCard(
+                    onDownloadPressed: _onDownloadLogButtonPressed,
+                    onClearPressed: _onClearLogButtongPressed,
+                  ),
+                ),
+                Padding(
+                  padding: kListTileContentPadding,
+                  child: DebuggerInfoCard(
+                    onOpenPressed: _onOpenDebugButtonPressed,
+                    onSavePressed: _onSaveDebugButtonPressed,
+                  ),
+                ),
+                const FixedPagePlaceHolder(minHeight: 82.0),
+              ],
             ),
           ),
-          const FixedPagePlaceHolder(minHeight: 82.0),
         ],
       ),
     );

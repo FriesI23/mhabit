@@ -24,6 +24,7 @@ import 'package:mhabit/providers/app_ui/app_experimental_feature.dart';
 import 'package:mhabit/providers/workflow/app_notify_config.dart';
 import 'package:mhabit/reminders/notification_channel.dart';
 import 'package:mhabit/storage/profile_provider.dart';
+import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
@@ -138,19 +139,22 @@ void main() {
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
 
-      expect(find.byType(AdaptiveAppBar), findsOneWidget);
-      expect(find.byType(WindowControlAppBar), findsOneWidget);
+      expect(find.byType(AdaptiveSliverAppBar), findsOneWidget);
+      expect(find.byType(AdaptiveAppBar), findsNothing);
+      expect(find.byType(WindowControlSliverAppBar), findsOneWidget);
+      expect(find.byType(WindowControlAppBar), findsNothing);
       expect(find.text(testCase.title), findsOneWidget);
       expect(
         tester.widget<AdaptiveBackButton>(find.byType(AdaptiveBackButton)).type,
         AdaptiveBackButtonType.back,
       );
-      expect(
-        tester
-            .widget<AdaptiveAppBar>(find.byType(AdaptiveAppBar))
-            .automaticallyImplyLeading,
-        isFalse,
+      final safeArea = tester.widget<SliverSafeArea>(
+        find.byType(SliverSafeArea),
       );
+      expect(safeArea.left, isTrue);
+      expect(safeArea.top, isFalse);
+      expect(safeArea.right, isTrue);
+      expect(safeArea.bottom, isTrue);
 
       await tester.tap(find.byType(AdaptiveBackButton));
       await tester.pumpAndSettle();
@@ -166,8 +170,13 @@ void main() {
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
 
-      expect(find.byType(AdaptiveAppBar), findsOneWidget);
+      expect(find.byType(AdaptiveSliverAppBar), findsOneWidget);
+      expect(find.byType(AdaptiveAppBar), findsNothing);
       expect(find.byType(CupertinoNavigationBar), findsOneWidget);
+      final navigationBar = tester.widget<CupertinoNavigationBar>(
+        find.byType(CupertinoNavigationBar),
+      );
+      expect(navigationBar.automaticBackgroundVisibility, isTrue);
       expect(find.byIcon(CupertinoIcons.back), findsOneWidget);
       expect(find.text(testCase.title), findsOneWidget);
     });
@@ -185,6 +194,10 @@ void main() {
       ),
     );
 
+    expect(
+      tester.widget<SliverList>(find.byType(SliverList)).delegate,
+      isA<SliverChildBuilderDelegate>(),
+    );
     expect(access.isChannelEnabled(NotificationChannelId.appSyncing), isTrue);
     await tester.tap(find.byType(SwitchListTile).first);
     await tester.pump();
@@ -209,5 +222,23 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(MaterialBanner), findsOneWidget);
+    expect(find.byType(EdgeToEdgeMaterialBanner), findsOneWidget);
+    expect(
+      find.ancestor(
+        of: find.byType(MaterialBanner),
+        matching: find.byType(SliverSafeArea),
+      ),
+      findsNothing,
+    );
+    final banner = tester.widget<MaterialBanner>(find.byType(MaterialBanner));
+    final leadingSafeArea = banner.leading! as EnhancedSafeArea;
+    final contentSafeArea = banner.content as EnhancedSafeArea;
+    final actionsSafeArea = banner.actions.single as EnhancedSafeArea;
+    expect(leadingSafeArea.left, isTrue);
+    expect(leadingSafeArea.right, isFalse);
+    expect(contentSafeArea.left, isFalse);
+    expect(contentSafeArea.right, isTrue);
+    expect(actionsSafeArea.left, isTrue);
+    expect(actionsSafeArea.right, isTrue);
   });
 }

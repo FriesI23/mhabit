@@ -12,6 +12,7 @@ class MaterialSliverAppBar extends StatelessWidget {
     required this.style,
     this.leading,
     this.onLeadingPressed,
+    this.automaticallyImplyLeading = true,
     this.height,
     this.bottom,
   }) : _variant = _MaterialSliverAppBarVariant.small;
@@ -23,6 +24,7 @@ class MaterialSliverAppBar extends StatelessWidget {
     required this.style,
     this.leading,
     this.onLeadingPressed,
+    this.automaticallyImplyLeading = true,
     this.height,
     this.bottom,
   }) : _variant = _MaterialSliverAppBarVariant.medium;
@@ -34,6 +36,7 @@ class MaterialSliverAppBar extends StatelessWidget {
     required this.style,
     this.leading,
     this.onLeadingPressed,
+    this.automaticallyImplyLeading = true,
     this.height,
     this.bottom,
   }) : _variant = _MaterialSliverAppBarVariant.large;
@@ -42,6 +45,7 @@ class MaterialSliverAppBar extends StatelessWidget {
   final List<Widget> actions;
   final Widget? leading;
   final VoidCallback? onLeadingPressed;
+  final bool automaticallyImplyLeading;
   final double? height;
   final PreferredSizeWidget? bottom;
   final AppBarMaterialStyle style;
@@ -58,7 +62,9 @@ class MaterialSliverAppBar extends StatelessWidget {
                 icon: const Icon(Icons.arrow_back),
               ));
     final automaticallyImplyLeading =
-        leading == null && onLeadingPressed == null;
+        this.automaticallyImplyLeading &&
+        leading == null &&
+        onLeadingPressed == null;
     final actions = this.actions.isEmpty ? null : this.actions;
     final effectiveBottom = style.bottom ?? bottom;
 

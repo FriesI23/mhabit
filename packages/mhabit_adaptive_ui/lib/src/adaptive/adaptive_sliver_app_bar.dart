@@ -61,6 +61,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.actions = _kDefaultActions,
     this.leading,
     this.onLeadingPressed,
+    this.automaticallyImplyLeading = true,
     this.height,
     this.bottom,
     this.styles,
@@ -74,6 +75,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.actions = _kDefaultActions,
     this.leading,
     this.onLeadingPressed,
+    this.automaticallyImplyLeading = true,
     this.height,
     this.bottom,
     this.styles,
@@ -86,6 +88,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.actions = _kDefaultActions,
     this.leading,
     this.onLeadingPressed,
+    this.automaticallyImplyLeading = true,
     this.height,
     this.bottom,
     this.styles,
@@ -98,6 +101,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.actions = _kDefaultActions,
     this.leading,
     this.onLeadingPressed,
+    this.automaticallyImplyLeading = true,
     this.height,
     this.bottom,
     this.styles,
@@ -110,6 +114,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.actions = _kDefaultActions,
     this.leading,
     this.onLeadingPressed,
+    this.automaticallyImplyLeading = true,
     this.height,
     this.bottom,
     this.styles,
@@ -122,6 +127,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.actions = _kDefaultActions,
     this.leading,
     this.onLeadingPressed,
+    this.automaticallyImplyLeading = true,
     this.height,
     this.bottom,
     this.styles,
@@ -135,6 +141,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
   final List<Widget> actions;
   final Widget? leading;
   final VoidCallback? onLeadingPressed;
+  final bool automaticallyImplyLeading;
   final double? height;
   final PreferredSizeWidget? bottom;
   final AppBarStyles? styles;
@@ -155,6 +162,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
           actions: actions,
           leading: leading,
           onLeadingPressed: onLeadingPressed,
+          automaticallyImplyLeading: automaticallyImplyLeading,
           height: height,
           bottom: bottom,
           style: _effectiveMaterialStyle,
@@ -164,6 +172,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
           actions: actions,
           leading: leading,
           onLeadingPressed: onLeadingPressed,
+          automaticallyImplyLeading: automaticallyImplyLeading,
           height: height,
           bottom: bottom,
           style: _effectiveMaterialStyle,
@@ -173,6 +182,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
           actions: actions,
           leading: leading,
           onLeadingPressed: onLeadingPressed,
+          automaticallyImplyLeading: automaticallyImplyLeading,
           height: height,
           bottom: bottom,
           style: _effectiveMaterialStyle,
@@ -187,6 +197,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     actions: actions,
     leading: leading,
     onLeadingPressed: onLeadingPressed,
+    automaticallyImplyLeading: automaticallyImplyLeading,
     height: effectiveStyle.collapsible ? null : height,
     bottom: bottom,
     bottomExtent: bottom?.preferredSize.height ?? 0.0,

@@ -29,6 +29,7 @@ export '_widgets/data_container.dart';
 export '_widgets/date_change.dart';
 export '_widgets/date_changer.dart';
 export '_widgets/date_picker.dart';
+export '_widgets/edge_to_edge_material_banner.dart';
 export '_widgets/enhanced_safe_area.dart';
 export '_widgets/expanded_section.dart';
 export '_widgets/experimental_feature_gate.dart';

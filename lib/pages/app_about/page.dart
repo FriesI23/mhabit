@@ -106,32 +106,41 @@ class _PageState extends State<_Page> {
     }
 
     return Scaffold(
-      appBar: AdaptiveAppBar(
-        toolbarHeight: AdaptiveStyle.of(context).appToolbarHeight,
-        leading: const AdaptiveBackButton(type: AdaptiveBackButtonType.back),
-        automaticallyImplyLeading: false,
-        title: L10nBuilder(
-          builder: (context, l10n) => l10n != null
-              ? Text(l10n.appAbout_appbarTile_titleText)
-              : const Text("About"),
-        ),
-      ),
-      body: ListView(
-        children: [
-          AppAboutVersionTile(
-            isMonoLogo: true,
-            logoPath: Assets.logo.iconMomo.path,
-            changeLogPath: Assets.changelog,
+      body: CustomScrollView(
+        slivers: [
+          AdaptiveSliverAppBar(
+            height: AdaptiveStyle.of(context).appToolbarHeight,
+            leading: const AdaptiveBackButton(
+              type: AdaptiveBackButtonType.back,
+            ),
+            title: L10nBuilder(
+              builder: (context, l10n) => l10n != null
+                  ? Text(l10n.appAbout_appbarTile_titleText)
+                  : const Text("About"),
+            ),
           ),
-          const AppAboutSourceCodeTile(),
-          const AppAboutIssueTrackerTile(),
-          const AppAboutContactEmailTile(),
-          const AppAboutLicenseTile(),
-          const AppAboutThirdPartyLicenseTile(),
-          const AppAboutPrivacyTile(privacyPath: Assets.privacy),
-          if (!AppInfo().shouldHideDonate())
-            AppAboutDonateTile(onPressed: _onDonateTilePressed),
-          buildAppAboutContributorTile(context),
+          EnhancedSafeArea.withDefault(
+            top: false,
+            withSliver: true,
+            child: SliverList.list(
+              children: [
+                AppAboutVersionTile(
+                  isMonoLogo: true,
+                  logoPath: Assets.logo.iconMomo.path,
+                  changeLogPath: Assets.changelog,
+                ),
+                const AppAboutSourceCodeTile(),
+                const AppAboutIssueTrackerTile(),
+                const AppAboutContactEmailTile(),
+                const AppAboutLicenseTile(),
+                const AppAboutThirdPartyLicenseTile(),
+                const AppAboutPrivacyTile(privacyPath: Assets.privacy),
+                if (!AppInfo().shouldHideDonate())
+                  AppAboutDonateTile(onPressed: _onDonateTilePressed),
+                buildAppAboutContributorTile(context),
+              ],
+            ),
+          ),
         ],
       ),
     );

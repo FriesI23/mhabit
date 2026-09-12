@@ -47,26 +47,27 @@ void main() {
   ) async {
     await _pumpPage(tester, platform: TargetPlatform.android);
 
-    expect(find.byType(AdaptiveAppBar), findsOneWidget);
-    expect(find.byType(WindowControlAppBar), findsOneWidget);
+    expect(find.byType(AdaptiveSliverAppBar), findsOneWidget);
+    expect(find.byType(WindowControlSliverAppBar), findsOneWidget);
     expect(find.text('Debug Info'), findsOneWidget);
     expect(find.text('Logging Information'), findsOneWidget);
     expect(find.byType(FloatingActionButton), findsOneWidget);
     expect(find.byType(AdaptiveAppBarActions), findsNothing);
     expect(
-      tester.widget<AdaptiveAppBar>(find.byType(AdaptiveAppBar)).toolbarHeight,
+      tester
+          .widget<AdaptiveSliverAppBar>(find.byType(AdaptiveSliverAppBar))
+          .height,
       64.0,
     );
     expect(
       tester.widget<AdaptiveBackButton>(find.byType(AdaptiveBackButton)).type,
       AdaptiveBackButtonType.back,
     );
-    expect(
-      tester
-          .widget<AdaptiveAppBar>(find.byType(AdaptiveAppBar))
-          .automaticallyImplyLeading,
-      isFalse,
-    );
+    final safeArea = tester.widget<SliverSafeArea>(find.byType(SliverSafeArea));
+    expect(safeArea.left, isTrue);
+    expect(safeArea.top, isFalse);
+    expect(safeArea.right, isTrue);
+    expect(safeArea.bottom, isTrue);
   });
 
   testWidgets('uses the Apple adaptive app bar and keeps the share FAB', (
@@ -74,13 +75,15 @@ void main() {
   ) async {
     await _pumpPage(tester, platform: TargetPlatform.iOS);
 
-    expect(find.byType(AdaptiveAppBar), findsOneWidget);
+    expect(find.byType(AdaptiveSliverAppBar), findsOneWidget);
     expect(find.byType(CupertinoNavigationBar), findsOneWidget);
     expect(find.text('Debug Info'), findsOneWidget);
     expect(find.byType(FloatingActionButton), findsOneWidget);
     expect(find.byType(AdaptiveAppBarActions), findsNothing);
     expect(
-      tester.widget<AdaptiveAppBar>(find.byType(AdaptiveAppBar)).toolbarHeight,
+      tester
+          .widget<AdaptiveSliverAppBar>(find.byType(AdaptiveSliverAppBar))
+          .height,
       44.0,
     );
     expect(
@@ -93,7 +96,7 @@ void main() {
             find.byType(WindowControlCupertinoNavigationBar),
           )
           .automaticBackgroundVisibility,
-      isFalse,
+      isTrue,
     );
   });
 }

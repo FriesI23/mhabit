@@ -67,6 +67,57 @@ void main() {
       expect(find.byType(SliverAppBar), findsOneWidget);
     });
 
+    testWidgets('can disable implied leading on both renderers', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                AdaptiveSliverAppBar.material(
+                  title: Text('title'),
+                  automaticallyImplyLeading: false,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      expect(
+        tester
+            .widget<SliverAppBar>(find.byType(SliverAppBar))
+            .automaticallyImplyLeading,
+        isFalse,
+      );
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                AdaptiveSliverAppBar.apple(
+                  title: Text('title'),
+                  automaticallyImplyLeading: false,
+                  styles: AppBarStyles(
+                    apple: AppBarAppleStyle(collapsible: true),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      expect(
+        tester
+            .widget<CupertinoSliverNavigationBar>(
+              find.byType(CupertinoSliverNavigationBar),
+            )
+            .automaticallyImplyLeading,
+        isFalse,
+      );
+    });
+
     testWidgets('material constructors proxy the matching Flutter app bars', (
       tester,
     ) async {
