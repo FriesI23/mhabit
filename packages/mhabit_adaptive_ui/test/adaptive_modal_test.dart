@@ -106,6 +106,92 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  for (final transformOnly in [false, true]) {
+    testWidgets(
+      'geometry tracks ${transformOnly ? 'paint' : 'layout'} movement of an unchanged region',
+      (tester) async {
+        final offset = ValueNotifier(Offset.zero);
+        addTearDown(offset.dispose);
+        EdgeInsets? avoidance;
+        final region = ModalWindowControlAppBarRegion(
+          child: Builder(
+            builder: (context) {
+              avoidance = AdaptiveWindowControlLayoutScope.appBarAvoidanceOf(
+                context,
+              );
+              return const SizedBox(height: 44);
+            },
+          ),
+        );
+        await tester.pumpWidget(
+          MaterialApp(
+            home: AdaptiveWindowControlLayoutScope(
+              horizontalAvoidance: const EdgeInsets.only(left: 100),
+              verticalAvoidance: const EdgeInsets.only(top: 80),
+              owner: WindowControlLayoutOwner.appBar,
+              child: ValueListenableBuilder<Offset>(
+                valueListenable: offset,
+                child: region,
+                builder: (context, value, child) => Stack(
+                  children: [
+                    Positioned(
+                      top: transformOnly ? 0 : value.dy,
+                      left: transformOnly ? 0 : value.dx,
+                      width: 300,
+                      child: Transform.translate(
+                        offset: transformOnly ? value : Offset.zero,
+                        child: child,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(avoidance!.left, 100);
+
+        offset.value = const Offset(40, 0);
+        await tester.pumpAndSettle();
+        expect(
+          tester.widget(find.byType(ModalWindowControlAppBarRegion)),
+          same(region),
+        );
+        expect(avoidance!.left, 60);
+
+        offset.value = const Offset(40, 100);
+        await tester.pumpAndSettle();
+        expect(avoidance, EdgeInsets.zero);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
+  testWidgets('motion while idle schedules measurement and tolerates unmount', (
+    tester,
+  ) async {
+    final motion = ChangeNotifier();
+    addTearDown(motion.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ModalWindowControlMotion(
+          notifier: motion,
+          child: const ModalWindowControlAppBarRegion(
+            child: SizedBox(height: 44),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.binding.hasScheduledFrame, isFalse);
+    motion.notifyListeners();
+    expect(tester.binding.hasScheduledFrame, isTrue);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
+
   group('AdaptiveModal ownership', () {
     for (final style in AdaptiveStyle.values) {
       testWidgets('${style.name} content does not create a route surface', (

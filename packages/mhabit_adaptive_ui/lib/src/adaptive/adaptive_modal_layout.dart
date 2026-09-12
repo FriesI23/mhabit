@@ -32,11 +32,15 @@ class AdaptiveModalLayout extends StatelessWidget {
   final double? defaultMaxHeight;
   final Widget? footer;
 
+  // Local content height after modal constraints, keyboard insets, and safe
+  // areas. This fallback is independent of the window presentation breakpoint.
+  static const double _compactContentHeight = 320;
+
   static bool _usesCompactHeightLayout(
     BuildContext context,
     BoxConstraints constraints,
   ) =>
-      constraints.maxHeight < 320 ||
+      constraints.maxHeight < _compactContentHeight ||
       MediaQuery.textScalerOf(context).scale(1) > 2;
 
   @override

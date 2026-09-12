@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -217,17 +218,20 @@ class _ResponsiveAdaptiveModalRoute extends StatefulWidget {
 class _ResponsiveAdaptiveModalRouteState
     extends State<_ResponsiveAdaptiveModalRoute> {
   final GlobalKey _contentKey = GlobalKey();
-  final _closeController = _AdaptiveModalCloseController();
+  late final _closeController = _AdaptiveModalCloseController(
+    routeClose: _closeRoute,
+  );
   late final Widget _content = KeyedSubtree(
     key: _contentKey,
     child: Builder(builder: widget.builder),
   );
 
+  Future<void> _closeRoute() async {
+    if (mounted) Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    _closeController.routeClose = () async {
-      Navigator.pop(context);
-    };
     final presentation =
         widget.presentationOverride ??
         _resolvePresentation(widget.breakpoints, MediaQuery.sizeOf(context));
@@ -388,7 +392,10 @@ class AdaptiveModal extends StatefulWidget {
   final List<Widget> bottomActions;
   final bool automaticallyImplyLeading;
   final bool automaticallyImplyCloseButton;
-  final VoidCallback? onCloseRequested;
+
+  /// Handles closing, including any asynchronous confirmation. Drag dismissal
+  /// waits for completion before deciding whether the modal should rebound.
+  final FutureOr<void> Function()? onCloseRequested;
   final BoxConstraints? constraints;
 
   @override
@@ -399,6 +406,7 @@ class _AdaptiveModalState extends State<AdaptiveModal> {
   late final ScrollController _fallbackScrollController = ScrollController();
   _AdaptiveModalCloseController? _closeController;
   ModalRoute<dynamic>? _pageRoute;
+  ModalRoute<dynamic>? _hostRoute;
   Animation<double>? _pageAnimation;
   Animation<double>? _secondaryPageAnimation;
 
@@ -408,18 +416,32 @@ class _AdaptiveModalState extends State<AdaptiveModal> {
     final pageRoute = ModalRoute.of(context);
     final pageAnimation = pageRoute?.animation;
     final secondaryPageAnimation = pageRoute?.secondaryAnimation;
-    if (pageAnimation == _pageAnimation &&
-        secondaryPageAnimation == _secondaryPageAnimation) {
-      _pageRoute = pageRoute;
-      return;
-    }
-    _pageAnimation?.removeStatusListener(_handlePageAnimationStatus);
-    _secondaryPageAnimation?.removeStatusListener(_handlePageAnimationStatus);
     _pageRoute = pageRoute;
-    _pageAnimation = pageAnimation;
-    _secondaryPageAnimation = secondaryPageAnimation;
-    _pageAnimation?.addStatusListener(_handlePageAnimationStatus);
-    _secondaryPageAnimation?.addStatusListener(_handlePageAnimationStatus);
+    if (pageAnimation != _pageAnimation ||
+        secondaryPageAnimation != _secondaryPageAnimation) {
+      _pageAnimation?.removeStatusListener(_handlePageAnimationStatus);
+      _secondaryPageAnimation?.removeStatusListener(_handlePageAnimationStatus);
+      _pageAnimation = pageAnimation;
+      _secondaryPageAnimation = secondaryPageAnimation;
+      _pageAnimation?.addStatusListener(_handlePageAnimationStatus);
+      _secondaryPageAnimation?.addStatusListener(_handlePageAnimationStatus);
+    }
+    final routeScope = _InheritedAdaptiveModalRoute.maybeOf(context);
+    _hostRoute = routeScope?.hostRoute;
+    final closeController = routeScope?.closeController;
+    if (closeController != _closeController) {
+      _closeController?.unregister(this);
+      _closeController = closeController;
+    }
+    _syncCloseRegistration();
+  }
+
+  void _syncCloseRegistration() {
+    if (_ownsRouteScrollController(_hostRoute)) {
+      _closeController?.register(this, _requestClose);
+    } else {
+      _closeController?.unregister(this);
+    }
   }
 
   @override
@@ -432,7 +454,9 @@ class _AdaptiveModalState extends State<AdaptiveModal> {
   }
 
   void _handlePageAnimationStatus(AnimationStatus status) {
-    if (mounted) setState(() {});
+    if (!mounted) return;
+    _syncCloseRegistration();
+    setState(() {});
   }
 
   bool _ownsRouteScrollController(ModalRoute<dynamic>? hostRoute) {
@@ -446,7 +470,7 @@ class _AdaptiveModalState extends State<AdaptiveModal> {
   Future<void> _requestClose() async {
     final callback = widget.onCloseRequested;
     if (callback != null) {
-      callback();
+      await callback();
       return;
     }
     final modalNavigator = context
@@ -469,19 +493,9 @@ class _AdaptiveModalState extends State<AdaptiveModal> {
     final presentation =
         routeScope?.presentation ?? AdaptiveModalPresentation.dialog;
     final inheritedScrollController = routeScope?.scrollController;
-    final closeController = routeScope?.closeController;
     final ownsRouteScrollController = _ownsRouteScrollController(
       routeScope?.hostRoute,
     );
-    if (closeController != _closeController) {
-      _closeController?.unregister(this);
-      _closeController = closeController;
-    }
-    if (ownsRouteScrollController) {
-      closeController?.register(this, _requestClose);
-    } else {
-      closeController?.unregister(this);
-    }
     // A Navigator transition keeps both pages mounted. Only its current page
     // may attach to the sheet's draggable controller after both sides of the
     // page transition have settled. Both transitioning pages keep independent
@@ -589,9 +603,11 @@ class _InheritedAdaptiveModalRoute extends InheritedWidget {
 }
 
 class _AdaptiveModalCloseController {
+  _AdaptiveModalCloseController({required this.routeClose});
+
+  final Future<void> Function() routeClose;
   Object? _owner;
   Future<void> Function()? _closeHandler;
-  Future<void> Function() routeClose = _noop;
 
   void register(Object owner, Future<void> Function() closeHandler) {
     _owner = owner;
@@ -605,6 +621,4 @@ class _AdaptiveModalCloseController {
   }
 
   Future<void> requestClose() => (_closeHandler ?? routeClose)();
-
-  static Future<void> _noop() async {}
 }

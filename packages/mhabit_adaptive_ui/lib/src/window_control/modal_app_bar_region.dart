@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import 'window_control_layout.dart';
 
@@ -40,7 +41,7 @@ class _ModalWindowControlAppBarRegionState
   Animation<double>? _routeAnimation;
   Animation<double>? _secondaryRouteAnimation;
   Listenable? _motion;
-  Rect? _globalBounds;
+  final ValueNotifier<Rect?> _globalBounds = ValueNotifier(null);
   bool _measurementScheduled = false;
 
   static EdgeInsets _intersectingHorizontalAvoidance({
@@ -99,6 +100,9 @@ class _ModalWindowControlAppBarRegionState
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    // Dependency changes may move an unchanged child (for example, a keyboard
+    // inset or a window resize). Read geometry only after layout has completed.
+    _scheduleMeasurement();
     final nextMotion = ModalWindowControlMotion.maybeOf(context);
     if (nextMotion != _motion) {
       _motion?.removeListener(_scheduleMeasurement);
@@ -131,6 +135,7 @@ class _ModalWindowControlAppBarRegionState
     _routeAnimation?.removeStatusListener(_handleRouteAnimationStatus);
     _secondaryRouteAnimation?.removeListener(_scheduleMeasurement);
     _secondaryRouteAnimation?.removeStatusListener(_handleRouteAnimationStatus);
+    _globalBounds.dispose();
     super.dispose();
   }
 
@@ -143,7 +148,7 @@ class _ModalWindowControlAppBarRegionState
   }
 
   void _scheduleMeasurement() {
-    if (_measurementScheduled) return;
+    if (!mounted || _measurementScheduled) return;
     _measurementScheduled = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _measurementScheduled = false;
@@ -158,45 +163,95 @@ class _ModalWindowControlAppBarRegionState
         renderObject.getTransformTo(null),
         localBounds,
       );
-      if (bounds == _globalBounds) return;
-      setState(() => _globalBounds = bounds);
+      // Publish measured state, never raw motion from a build/layout callback.
+      // ValueNotifier suppresses equal bounds without rebuilding the region.
+      _globalBounds.value = bounds;
     });
+    // addPostFrameCallback does not request a frame when the scheduler is idle.
+    WidgetsBinding.instance.ensureVisualUpdate();
   }
 
   @override
   Widget build(BuildContext context) {
-    _scheduleMeasurement();
     final parent = AdaptiveWindowControlLayoutScope.maybeOf(context);
-    if (parent == null) {
-      return SizedBox(
-        key: _regionKey,
-        width: double.infinity,
-        child: widget.child,
-      );
-    }
-    final horizontal = parent.appBarHorizontalAvoidanceFor(
-      Directionality.of(context),
-    );
-    final effectiveHorizontal = _intersectingHorizontalAvoidance(
-      bounds: _globalBounds,
-      windowSize: MediaQuery.sizeOf(context),
-      horizontal: horizontal,
-      vertical: parent.verticalAvoidance,
-    );
-    return SizedBox(
+    final direction = parent == null
+        ? TextDirection.ltr
+        : Directionality.of(context);
+    final windowSize = parent == null ? Size.zero : MediaQuery.sizeOf(context);
+    return _ModalGeometryObserver(
       key: _regionKey,
-      width: double.infinity,
-      child: AdaptiveWindowControlLayoutScope(
-        hasWindowControlAvoidance: parent.hasWindowControlAvoidance,
-        horizontalAvoidance: effectiveHorizontal,
-        verticalAvoidance: parent.verticalAvoidance,
-        horizontalSafeAreaAvoidance: parent.horizontalSafeAreaAvoidance,
-        verticalSafeAreaAvoidance: parent.verticalSafeAreaAvoidance,
-        effectiveCornerRadii: parent.effectiveCornerRadii,
-        usesRectangularDisplay: parent.usesRectangularDisplay,
-        owner: WindowControlLayoutOwner.appBar,
-        child: widget.child,
+      onGeometryInvalidated: _scheduleMeasurement,
+      child: SizedBox(
+        width: double.infinity,
+        child: ValueListenableBuilder<Rect?>(
+          valueListenable: _globalBounds,
+          child: widget.child,
+          builder: (context, bounds, child) {
+            if (parent == null) return child!;
+            final effectiveHorizontal = _intersectingHorizontalAvoidance(
+              bounds: bounds,
+              windowSize: windowSize,
+              horizontal: parent.appBarHorizontalAvoidanceFor(direction),
+              vertical: parent.verticalAvoidance,
+            );
+            return AdaptiveWindowControlLayoutScope(
+              hasWindowControlAvoidance: parent.hasWindowControlAvoidance,
+              horizontalAvoidance: effectiveHorizontal,
+              verticalAvoidance: parent.verticalAvoidance,
+              horizontalSafeAreaAvoidance: parent.horizontalSafeAreaAvoidance,
+              verticalSafeAreaAvoidance: parent.verticalSafeAreaAvoidance,
+              effectiveCornerRadii: parent.effectiveCornerRadii,
+              usesRectangularDisplay: parent.usesRectangularDisplay,
+              owner: WindowControlLayoutOwner.appBar,
+              child: child!,
+            );
+          },
+        ),
       ),
     );
+  }
+}
+
+/// Invalidates geometry on initial layout and subsequent layout/paint, including
+/// parent positioning that leaves this widget and its local size unchanged.
+/// Route and sheet listeners are still needed for transforms above a retained
+/// repaint boundary, where this render object need not lay out or paint again.
+class _ModalGeometryObserver extends SingleChildRenderObjectWidget {
+  const _ModalGeometryObserver({
+    super.key,
+    required this.onGeometryInvalidated,
+    required super.child,
+  });
+
+  final VoidCallback onGeometryInvalidated;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenderModalGeometryObserver(onGeometryInvalidated);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    covariant _RenderModalGeometryObserver renderObject,
+  ) {
+    renderObject.onGeometryInvalidated = onGeometryInvalidated;
+  }
+}
+
+class _RenderModalGeometryObserver extends RenderProxyBox {
+  _RenderModalGeometryObserver(this.onGeometryInvalidated);
+
+  VoidCallback onGeometryInvalidated;
+
+  @override
+  void performLayout() {
+    super.performLayout();
+    onGeometryInvalidated();
+  }
+
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    super.paint(context, offset);
+    onGeometryInvalidated();
   }
 }

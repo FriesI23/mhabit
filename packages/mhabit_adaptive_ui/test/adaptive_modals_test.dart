@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+import 'package:mhabit_adaptive_ui/src/adaptive/modal_sheet_drag_region.dart';
 
 const _modalRouteName = '/adaptive-modal';
 
@@ -1173,6 +1176,84 @@ void main() {
       expect(find.text('Body'), findsNothing);
     });
 
+    for (final style in AdaptiveStyle.values) {
+      for (final outcome in ['reject', 'accept', 'unmount']) {
+        testWidgets(
+          '${style.name} sheet waits for asynchronous close: $outcome',
+          (tester) async {
+            tester.view.physicalSize = const Size(400, 800);
+            tester.view.devicePixelRatio = 1;
+            addTearDown(tester.view.resetPhysicalSize);
+            final confirmation = Completer<void>();
+            final navigatorKey = GlobalKey<NavigatorState>();
+            var closeRequests = 0;
+            await tester.pumpWidget(
+              MaterialApp(
+                navigatorKey: navigatorKey,
+                home: AdaptiveStyleScope(
+                  override: style,
+                  child: Builder(
+                    builder: (context) => ElevatedButton(
+                      onPressed: () => showAdaptiveSheet<void>(
+                        context: context,
+                        builder: (_) => AdaptiveModal(
+                          onCloseRequested: () async {
+                            closeRequests++;
+                            await confirmation.future;
+                            if (outcome == 'accept') {
+                              navigatorKey.currentState!.pop();
+                            }
+                          },
+                          body: const Text('Pending modal'),
+                        ),
+                      ),
+                      child: const Text('Open'),
+                    ),
+                  ),
+                ),
+              ),
+            );
+            await _openModal(tester);
+            final sheet = tester.widget<DraggableScrollableSheet>(
+              find.byType(DraggableScrollableSheet),
+            );
+            final controller = sheet.controller! as ModalSheetDragController;
+            controller.start(DragStartDetails());
+            controller.update(
+              DragUpdateDetails(
+                globalPosition: const Offset(0, 100),
+                delta: const Offset(0, 100),
+                primaryDelta: 100,
+              ),
+            );
+            final draggedSize = controller.size;
+            controller.end(
+              DragEndDetails(
+                velocity: const Velocity(pixelsPerSecond: Offset(0, 800)),
+                primaryVelocity: 800,
+              ),
+            );
+            await tester.pumpAndSettle();
+            expect(closeRequests, 1);
+            expect(controller.size, moreOrLessEquals(draggedSize));
+
+            if (outcome == 'unmount') {
+              await tester.pumpWidget(const SizedBox.shrink());
+            }
+            confirmation.complete();
+            await tester.pumpAndSettle();
+            if (outcome == 'reject') {
+              expect(controller.size, moreOrLessEquals(sheet.maxChildSize));
+              expect(find.text('Pending modal'), findsOneWidget);
+            } else {
+              expect(find.text('Pending modal'), findsNothing);
+            }
+            expect(tester.takeException(), isNull);
+          },
+        );
+      }
+    }
+
     testWidgets('apple dialog rebounds when drag close is rejected', (
       tester,
     ) async {
@@ -1180,6 +1261,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       var closeRequests = 0;
+      final confirmation = Completer<void>();
       var bodyTaps = 0;
       final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -1193,7 +1275,10 @@ void main() {
                 onPressed: () => showAdaptiveSheet<void>(
                   context: context,
                   builder: (_) => AdaptiveModal(
-                    onCloseRequested: () => closeRequests += 1,
+                    onCloseRequested: () async {
+                      closeRequests++;
+                      await confirmation.future;
+                    },
                     body: SizedBox(
                       height: 1200,
                       child: Align(
@@ -1230,6 +1315,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(closeRequests, 1);
+      expect(tester.getTopLeft(popup).dy, greaterThan(initialTop));
+      confirmation.complete();
+      await tester.pumpAndSettle();
       expect(find.text('Continue'), findsOneWidget);
       expect(tester.getTopLeft(popup).dy, moreOrLessEquals(initialTop));
       await tester.tap(find.text('Continue'));
@@ -1278,6 +1366,75 @@ void main() {
   });
 
   group('AdaptiveModalNavigator', () {
+    for (final style in AdaptiveStyle.values) {
+      testWidgets(
+        '${style.name} close handler follows the current nested page',
+        (tester) async {
+          tester.view.physicalSize = const Size(800, 800);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.resetPhysicalSize);
+          var firstRequests = 0;
+          var secondRequests = 0;
+          late NavigatorState innerNavigator;
+          await tester.pumpWidget(
+            MaterialApp(
+              home: AdaptiveStyleScope(
+                override: style,
+                child: Builder(
+                  builder: (context) => ElevatedButton(
+                    onPressed: () => showAdaptiveSheet<void>(
+                      context: context,
+                      builder: (_) => AdaptiveModalNavigator<void>(
+                        builder: (pageContext) {
+                          innerNavigator = Navigator.of(pageContext);
+                          return AdaptiveModal(
+                            onCloseRequested: () {
+                              firstRequests++;
+                            },
+                            body: ElevatedButton(
+                              onPressed: () => innerNavigator.push<void>(
+                                adaptiveModalPageRoute<void>(
+                                  context: pageContext,
+                                  builder: (_) => AdaptiveModal(
+                                    onCloseRequested: () {
+                                      secondRequests++;
+                                    },
+                                    body: const Text('Second page'),
+                                  ),
+                                ),
+                              ),
+                              child: const Text('Next page'),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    child: const Text('Open'),
+                  ),
+                ),
+              ),
+            ),
+          );
+          await _openModal(tester);
+          await tester.tap(find.text('Next page'));
+          await tester.pumpAndSettle();
+          await tester.tapAt(const Offset(5, 5));
+          await tester.pumpAndSettle();
+          expect(firstRequests, 0);
+          expect(secondRequests, 1);
+
+          innerNavigator.pop();
+          await tester.pumpAndSettle();
+          await tester.tapAt(const Offset(5, 5));
+          await tester.pumpAndSettle();
+          expect(firstRequests, 1);
+          expect(secondRequests, 1);
+          expect(find.text('Next page'), findsOneWidget);
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+
     for (final style in AdaptiveStyle.values) {
       testWidgets('${style.name} keeps pushed pages inside the modal', (
         tester,

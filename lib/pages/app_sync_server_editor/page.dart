@@ -158,7 +158,7 @@ class _PageState extends State<_Page> {
     Navigator.maybeOf(context)?.pop<AppSyncServerEditorResult>(result);
   }
 
-  void _onCancelButtonPressed() => cancelConfirmProcess();
+  Future<void> _onCancelButtonPressed() => cancelConfirmProcess();
 
   void _onDeleteButtonPressed() async {
     final confirmed = await showConfirmDialog(
