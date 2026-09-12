@@ -167,13 +167,17 @@ class _GroupModifyCreatePageState extends State<_GroupModifyCreatePage> {
   Future<void> _handleSaveOnly(HabitGroupModifyViewModel vm) async {
     final result = _formKey.currentState?.buildResult();
     if (result == null) return;
+    final route = ModalRoute.of(context);
     await vm.createGroup(
       name: result.name,
       desc: result.desc,
       icon: result.icon,
       color: result.color,
     );
-    if (mounted) Navigator.of(context).pop();
+    // A popped page remains mounted until its exit transition finishes.
+    // Do not pop the selector if the user already left this page while saving.
+    if (!mounted || route?.isCurrent != true) return;
+    Navigator.of(context).pop();
   }
 
   Future<void> _handleSaveAndApply(HabitGroupModifyViewModel vm) async {

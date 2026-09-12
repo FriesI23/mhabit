@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/habit_color.dart';
@@ -75,7 +77,103 @@ final class _EmptyGroupManager extends GroupManager {
       GroupCollection.fromDBQueryResult([]);
 }
 
+final class _DelayedGroupManager extends GroupManager {
+  final creation = Completer<HabitGroupData>();
+  int createCalls = 0;
+
+  @override
+  Future<GroupCollection?> tryLoadGroupCollection() async =>
+      GroupCollection.fromDBQueryResult([]);
+
+  @override
+  Future<HabitGroupData> createGroup({
+    required String name,
+    String? desc,
+    GroupIcon? icon,
+    HabitColor? color,
+  }) {
+    createCalls++;
+    return creation.future;
+  }
+}
+
 void main() {
+  for (final size in [const Size(400, 800), const Size(800, 800)]) {
+    for (final returnWhileSaving in [false, true]) {
+      testWidgets('delayed group save at $size preserves selector '
+          'when returning during save: $returnWhileSaving', (tester) async {
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = size;
+        addTearDown(tester.view.reset);
+        final manager = _DelayedGroupManager();
+        var completed = false;
+        await tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              Provider<GroupManager>.value(value: manager),
+              Provider<AppCachesViewModel>(create: (_) => AppCachesViewModel()),
+              ChangeNotifierProvider<CustomColorHistoryViewModel>(
+                create: (_) => CustomColorHistoryViewModel(),
+              ),
+              ChangeNotifierProvider<AppEventBus>(create: (_) => AppEventBus()),
+            ],
+            child: MaterialApp(
+              home: Builder(
+                builder: (context) => ElevatedButton(
+                  onPressed: () async {
+                    await showHabitGroupModifySelector(
+                      context: context,
+                      selectedHabitsData: const [],
+                    );
+                    completed = true;
+                  },
+                  child: const Text('Open'),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.tap(find.text('Open'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Create Group'));
+        await tester.pumpAndSettle();
+        await tester.enterText(find.byType(TextFormField).first, 'New group');
+        final createContext = tester.element(find.byType(TextFormField).first);
+        final createRoute = ModalRoute.of(createContext)!;
+        await tester.tap(find.widgetWithText(TextButton, 'Save'));
+        await tester.pump();
+        expect(manager.createCalls, 1);
+
+        if (returnWhileSaving) {
+          await tester.tap(find.byType(AdaptiveBackButton));
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 50));
+          // The page is still mounted during its outgoing transition, but
+          // the selector is already the navigator's current route.
+          expect(createContext.mounted, isTrue);
+          expect(createRoute.isCurrent, isFalse);
+        }
+        manager.creation.complete(
+          const HabitGroupData(
+            uuid: 'created-group',
+            name: 'New group',
+            desc: '',
+            sortPosition: 0,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(completed, isFalse);
+        expect(find.text('Modify Group'), findsOneWidget);
+        expect(find.widgetWithText(FilledButton, 'Confirm'), findsOneWidget);
+        await tester.tap(find.text('Cancel'));
+        await tester.pumpAndSettle();
+        expect(completed, isTrue);
+      });
+    }
+  }
+
   for (final style in AdaptiveStyle.values) {
     testWidgets(
       'group selector forces Material modal actions from ${style.name}',
