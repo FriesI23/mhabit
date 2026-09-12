@@ -2,6 +2,12 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.27.7+196-pre
+
+- Feature: improve dialogs and page layouts across window sizes (#661)
+- Fix: restore batch check-in actions and preserve Settings scroll position (#661)
+- Fix: prevent delayed group saves from closing the wrong page (#661)
+
 ## 1.27.6+195
 
 - Feature: add resizable side navigation for wider layouts (#653)

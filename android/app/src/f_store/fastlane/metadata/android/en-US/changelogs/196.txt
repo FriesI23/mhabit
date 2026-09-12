@@ -1,0 +1,3 @@
+- Feature: improve dialogs and page layouts across window sizes (#661)
+- Fix: restore batch check-in actions and preserve Settings scroll position (#661)
+- Fix: prevent delayed group saves from closing the wrong page (#661)

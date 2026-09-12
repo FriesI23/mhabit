@@ -1,25 +1,20 @@
-# Release: v1.27.6+195
+# Release: pre-v1.27.7+196
 
 ## ✨ Features
 
-- Complete the adaptive interface migration across navigation, settings, page
-  headers, search, selection, and habit actions
-  - Preserve branch state and improve back navigation across nested pages
-  - Keep actions and menus responsive across window sizes and input modes
-- Add quick theme mode controls to app bars and wider navigation layouts (#659)
-- Add resizable side navigation for wider layouts (#653)
-  - Keep navigation aligned with window controls, safe areas, and layout
-    direction changes
-  - Improve text rendering and theme behavior across desktop layouts
-- Improve app bars, habit actions, and batch status changes across window sizes
-  (#655)
-  - Keep localized action labels readable and move extra actions into overflow
-    menus when space is limited
-  - Refine page backgrounds and scroll-under transitions
+- Improve dialogs and page layouts across window sizes (#661)
+  - Adapt sheets and dialogs when resizing while preserving the open form
+    and navigation state
+  - Migrate group management, sync editing, changelog, donation, and about
+    dialogs to shared adaptive presentation
+  - Keep nested navigation and close confirmation within the active dialog
+  - Align scrolling page headers, safe areas, and window-control avoidance
 
 ## 🐛 Fixes
 
-- Keep dialogs above app navigation and refresh selection state consistently
-  after reordering or regrouping habits (#656)
+- Restore batch check-in actions for selected habits in Apple layouts (#661)
+- Preserve Settings scroll position when rebuilding the page (#661)
+- Prevent a delayed group save from closing the group selector after the
+  user has already returned from the creation form (#661)
 
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.3+192...v1.27.6+195)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.6+195...pre-v1.27.7+196)
