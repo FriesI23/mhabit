@@ -17,7 +17,6 @@ import 'package:flutter_material_design_icons/flutter_material_design_icons.dart
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
-import '../../extensions/window_size_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../models/app_sync_server.dart';
 import '../../models/app_sync_server_form.dart';
@@ -50,52 +49,37 @@ class AppSyncServerEditorResult {
 Future<AppSyncServerEditorResult?> naviToAppSyncServerEditorDialog({
   required BuildContext context,
   AppSyncServer? serverConfig,
-  bool? naviWithFullscreenDialog,
+  AdaptiveModalPresentation? presentationOverride,
 }) async {
   final appSync = context.read<AppSyncSettingsAccess>();
-  return showDialog<AppSyncServerEditorResult>(
+  return showAdaptiveSheet<AppSyncServerEditorResult>(
     context: context,
+    // TODO(mhabit): Remove the forced Material style with Group Edit/Modify
+    // after the adaptive UI package provides the required form controls.
+    styleOverride: AdaptiveStyle.material,
+    presentationOverride: presentationOverride,
     barrierDismissible: false,
+    enableDrag: false,
+    showDragHandle: false,
     builder: (context) => ListenableProvider<AppSyncSettingsAccess>.value(
       value: appSync,
-      child: AppSyncServerEditorPage(
-        serverConfig: serverConfig,
-        showInFullscreenDialog: naviWithFullscreenDialog,
-      ),
+      child: AppSyncServerEditorPage(serverConfig: serverConfig),
     ),
   );
 }
 
 class AppSyncServerEditorPage extends StatelessWidget {
   final AppSyncServer? serverConfig;
-  final bool? showInFullscreenDialog;
 
-  const AppSyncServerEditorPage({
-    super.key,
-    this.serverConfig,
-    this.showInFullscreenDialog,
-  });
+  const AppSyncServerEditorPage({super.key, this.serverConfig});
 
   @override
-  Widget build(BuildContext context) {
-    return PageProviders(
-      initServerConfig: serverConfig,
-      child: WindowSizeClassLayoutBuilder(
-        builder: (context, windowSize, child) => _Page(
-          serverConfig: serverConfig,
-          showInFullscreenDialog:
-              showInFullscreenDialog ?? !windowSize.isTabletFormFactor,
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) =>
+      PageProviders(initServerConfig: serverConfig, child: const _Page());
 }
 
 class _Page extends StatefulWidget {
-  final AppSyncServer? serverConfig;
-  final bool showInFullscreenDialog;
-
-  const _Page({this.serverConfig, required this.showInFullscreenDialog});
+  const _Page();
 
   @override
   State<StatefulWidget> createState() => _PageState();
@@ -174,7 +158,7 @@ class _PageState extends State<_Page> {
     Navigator.maybeOf(context)?.pop<AppSyncServerEditorResult>(result);
   }
 
-  void _onCancelButtonPressed() => cancelConfirmProcess();
+  Future<void> _onCancelButtonPressed() => cancelConfirmProcess();
 
   void _onDeleteButtonPressed() async {
     final confirmed = await showConfirmDialog(
@@ -215,168 +199,86 @@ class _PageState extends State<_Page> {
   Widget build(BuildContext context) =>
       PopScopeConsumer<AppSyncServerFormViewModel>(
         onCannotPop: (ctx, vm, result) => cancelConfirmProcess(result),
-        child: AnimatedSwitcher(
-          transitionBuilder: (child, animation) =>
-              FadeTransition(opacity: animation, child: child),
-          duration: const Duration(milliseconds: 300),
-          child: widget.showInFullscreenDialog
-              ? _PageFullScreenDialog(
-                  key: const ValueKey("fullscreen"),
-                  serverConfig: widget.serverConfig,
-                  onSaveButtonPressed: _onSaveButtonPressed,
-                  onCancelButtonPressed: _onCancelButtonPressed,
-                  onDeleteButtonPressed: _onDeleteButtonPressed,
-                  showAdvanceConfig: showAdvanceConfig,
-                  onAdvConfigExpansionChanged: _onAdvanceConfigExpansionChanged,
-                )
-              : _PageDialog(
-                  key: const ValueKey("dialog"),
-                  serverConfig: widget.serverConfig,
-                  onSaveButtonPressed: _onSaveButtonPressed,
-                  onCancelButtonPressed: _onCancelButtonPressed,
-                  onDeleteButtonPressed: _onDeleteButtonPressed,
-                  showAdvanceConfig: showAdvanceConfig,
-                  onAdvConfigExpansionChanged: _onAdvanceConfigExpansionChanged,
-                ),
+        child: AdaptiveModal(
+          title: Selector<AppSyncServerFormViewModel, bool>(
+            selector: (context, vm) => vm.serverConfig != null,
+            builder: (context, isEditing, child) {
+              final l10n = L10n.of(context);
+              return Text(
+                l10n != null
+                    ? (isEditing
+                          ? l10n.appSync_serverEditor_titleText_modify
+                          : l10n.appSync_serverEditor_titleText_add)
+                    : 'Sync Server',
+              );
+            },
+          ),
+          actions: [
+            AppSyncServerDeleteButton(onPressed: _onDeleteButtonPressed),
+            TextButton(
+              onPressed: _onCancelButtonPressed,
+              child: L10nBuilder(
+                builder: (context, l10n) =>
+                    Text(l10n?.confirmDialog_cancel_text ?? 'Cancel'),
+              ),
+            ),
+            AppSyncServerSaveButton(onPressed: _onSaveButtonPressed),
+          ],
+          automaticallyImplyCloseButton: false,
+          onCloseRequested: _onCancelButtonPressed,
+          constraints: const BoxConstraints(maxWidth: 1240),
+          body: _PageBody(
+            showAdvanceConfig: showAdvanceConfig,
+            onAdvConfigExpansionChanged: _onAdvanceConfigExpansionChanged,
+          ),
         ),
       );
 }
 
-class _PageFullScreenDialog extends StatelessWidget {
-  final AppSyncServer? serverConfig;
+class _PageBody extends StatelessWidget {
   final bool showAdvanceConfig;
-  final VoidCallback? onSaveButtonPressed;
-  final VoidCallback? onCancelButtonPressed;
-  final VoidCallback? onDeleteButtonPressed;
   final ValueChanged<bool>? onAdvConfigExpansionChanged;
 
-  const _PageFullScreenDialog({
-    super.key,
-    required this.serverConfig,
+  const _PageBody({
     required this.showAdvanceConfig,
-    required this.onSaveButtonPressed,
-    required this.onCancelButtonPressed,
-    required this.onDeleteButtonPressed,
     this.onAdvConfigExpansionChanged,
   });
 
-  @override
-  Widget build(BuildContext context) => Dialog.fullscreen(
-    child: ColorfulNavibar(
-      child: Scaffold(
-        appBar: WindowControlAppBar(
-          leading: AdaptiveBackButton(
-            type: AdaptiveBackButtonType.close,
-            onPressed: onCancelButtonPressed,
-          ),
-          actions: [AppSyncServerSaveButton(onPressed: onSaveButtonPressed)],
-        ),
-        body: ListView(
+  Widget _buildUserTiles(bool isLarge) => isLarge
+      ? const Row(
+          key: ValueKey('large'),
+          mainAxisSize: MainAxisSize.min,
           children: [
-            const AppSyncServerTypeMenu(),
-            const _PathTile(),
-            const _UsernameTile(),
-            const _PasswordTile(),
-            _PageAdvancedSection(
-              isLarge: false,
-              expanded: showAdvanceConfig,
-              onExpansionChanged: onAdvConfigExpansionChanged,
-            ),
-            AppSyncServerDeleteButton.fullscreen(
-              onPressed: onDeleteButtonPressed,
-            ),
-            if (context.read<AppDeveloperViewModel>().isInDevelopMode)
-              const _DebugTile(),
+            Expanded(child: _UsernameTile()),
+            Expanded(child: _PasswordTile()),
           ],
-        ),
-      ),
-    ),
-  );
-}
-
-class _PageDialog extends StatelessWidget {
-  static const dialogMaxWidth = 1240.0;
-
-  final AppSyncServer? serverConfig;
-  final bool showAdvanceConfig;
-  final VoidCallback? onSaveButtonPressed;
-  final VoidCallback? onCancelButtonPressed;
-  final VoidCallback? onDeleteButtonPressed;
-  final ValueChanged<bool>? onAdvConfigExpansionChanged;
-
-  const _PageDialog({
-    super.key,
-    required this.serverConfig,
-    required this.showAdvanceConfig,
-    required this.onSaveButtonPressed,
-    required this.onCancelButtonPressed,
-    required this.onDeleteButtonPressed,
-    this.onAdvConfigExpansionChanged,
-  });
-
-  Widget _buildUserTiles(BuildContext context) => Builder(
-    builder: (context) =>
-        WindowSize.of(context).width >= WindowSizeClass.expanded
-        ? const Row(
-            key: ValueKey("large"),
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Expanded(child: _UsernameTile()),
-              Expanded(child: _PasswordTile()),
-            ],
-          )
-        : const Column(
-            key: ValueKey("small"),
-            mainAxisSize: MainAxisSize.min,
-            children: [_UsernameTile(), _PasswordTile()],
-          ),
-  );
+        )
+      : const Column(
+          key: ValueKey('small'),
+          mainAxisSize: MainAxisSize.min,
+          children: [_UsernameTile(), _PasswordTile()],
+        );
 
   @override
-  Widget build(BuildContext context) => ConstrainedBox(
-    constraints: const BoxConstraints.expand(width: dialogMaxWidth),
-    child: AlertDialog(
-      scrollable: true,
-      title: Selector<AppSyncServerFormViewModel, bool>(
-        selector: (context, vm) => vm.serverConfig != null,
-        builder: (context, value, child) {
-          final l10n = L10n.of(context);
-          return Text(
-            l10n != null
-                ? (value
-                      ? l10n.appSync_serverEditor_titleText_modify
-                      : l10n.appSync_serverEditor_titleText_add)
-                : "Sync Server",
-          );
-        },
-      ),
-      content: Column(
+  Widget build(BuildContext context) => WindowSizeClassLayoutBuilder(
+    builder: (context, windowSize, child) {
+      final isLarge = windowSize.width >= WindowSizeClass.expanded;
+      return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const AppSyncServerTypeMenu(width: -1),
+          const AppSyncServerTypeMenu(),
           const _PathTile(),
-          _buildUserTiles(context),
+          _buildUserTiles(isLarge),
           _PageAdvancedSection(
-            isLarge: true,
+            isLarge: isLarge,
             expanded: showAdvanceConfig,
             onExpansionChanged: onAdvConfigExpansionChanged,
           ),
           if (context.read<AppDeveloperViewModel>().isInDevelopMode)
             const _DebugTile(),
         ],
-      ),
-      actions: [
-        AppSyncServerDeleteButton.normal(onPressed: onDeleteButtonPressed),
-        TextButton(
-          onPressed: onCancelButtonPressed,
-          child: L10nBuilder(
-            builder: (context, l10n) =>
-                Text(l10n?.confirmDialog_cancel_text ?? "cancel"),
-          ),
-        ),
-        AppSyncServerSaveButton(onPressed: onSaveButtonPressed),
-      ],
-    ),
+      );
+    },
   );
 }
 

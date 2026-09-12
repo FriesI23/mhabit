@@ -242,6 +242,26 @@ void main() {
 
       expect(find.text('VIEW'), findsOneWidget);
       expect(find.text('CLOSE'), findsOneWidget);
+      expect(find.byType(EdgeToEdgeMaterialBanner), findsOneWidget);
+      final banner = tester.widget<MaterialBanner>(find.byType(MaterialBanner));
+      final leadingSafeArea = banner.leading! as EnhancedSafeArea;
+      final contentSafeArea = banner.content as EnhancedSafeArea;
+      final actionsSafeArea = banner.actions.single as EnhancedSafeArea;
+      for (final safeArea in [
+        leadingSafeArea,
+        contentSafeArea,
+        actionsSafeArea,
+      ]) {
+        expect(safeArea.top, isFalse);
+        expect(safeArea.bottom, isFalse);
+      }
+      expect(leadingSafeArea.left, isTrue);
+      expect(leadingSafeArea.right, isFalse);
+      expect(contentSafeArea.left, isFalse);
+      expect(contentSafeArea.right, isTrue);
+      expect(actionsSafeArea.left, isTrue);
+      expect(actionsSafeArea.right, isTrue);
+      expect(actionsSafeArea.child, isA<OverflowBar>());
     });
 
     testWidgets('tapping CLOSE dismisses banner', (tester) async {

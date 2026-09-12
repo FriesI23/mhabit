@@ -46,45 +46,54 @@ class _AppNotifyConfigView extends State<AppNotifyConfigView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AdaptiveAppBar(
-        toolbarHeight: AdaptiveStyle.of(context).appToolbarHeight,
-        leading: const AdaptiveBackButton(type: AdaptiveBackButtonType.back),
-        automaticallyImplyLeading: false,
-        title: L10nBuilder(
-          builder: (context, l10n) =>
-              Text(l10n?.appSetting_notify_titleTile ?? "Notifications"),
-        ),
-      ),
-      body: ListView.builder(
-        itemCount: _availableIds.length,
-        itemBuilder: (context, index) {
-          final channelId = _availableIds[index];
-          return Selector<AppNotifyConfigAccess, bool>(
-            selector: (context, vm) =>
-                vm.notifyConfig.isChannelEnabled(channelId),
-            shouldRebuild: (previous, next) => previous != next,
-            builder: (context, value, child) {
-              final channelName = channelId.getL10nChannelName(
-                L10n.of(context),
-              );
-              final channelDesc = channelId.getL10nChannelDesc(
-                L10n.of(context),
-              );
-              return SwitchListTile.adaptive(
-                title: Text(channelName),
-                subtitle: channelDesc != null ? Text(channelDesc) : null,
-                value: value,
-                onChanged: (value) {
-                  final config = context.read<AppNotifyConfigAccess>();
-                  if (!config.mounted) return;
-                  config.updateConfig(
-                    config.notifyConfig.copyWith({channelId: value}),
-                  );
-                },
-              );
-            },
-          );
-        },
+      body: CustomScrollView(
+        slivers: [
+          AdaptiveSliverAppBar(
+            height: AdaptiveStyle.of(context).appToolbarHeight,
+            leading: const AdaptiveBackButton(
+              type: AdaptiveBackButtonType.back,
+            ),
+            title: L10nBuilder(
+              builder: (context, l10n) =>
+                  Text(l10n?.appSetting_notify_titleTile ?? "Notifications"),
+            ),
+          ),
+          EnhancedSafeArea.withDefault(
+            top: false,
+            withSliver: true,
+            child: SliverList.builder(
+              itemCount: _availableIds.length,
+              itemBuilder: (context, index) {
+                final channelId = _availableIds[index];
+                return Selector<AppNotifyConfigAccess, bool>(
+                  selector: (context, vm) =>
+                      vm.notifyConfig.isChannelEnabled(channelId),
+                  shouldRebuild: (previous, next) => previous != next,
+                  builder: (context, value, child) {
+                    final channelName = channelId.getL10nChannelName(
+                      L10n.of(context),
+                    );
+                    final channelDesc = channelId.getL10nChannelDesc(
+                      L10n.of(context),
+                    );
+                    return SwitchListTile.adaptive(
+                      title: Text(channelName),
+                      subtitle: channelDesc != null ? Text(channelDesc) : null,
+                      value: value,
+                      onChanged: (value) {
+                        final config = context.read<AppNotifyConfigAccess>();
+                        if (!config.mounted) return;
+                        config.updateConfig(
+                          config.notifyConfig.copyWith({channelId: value}),
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -108,29 +108,37 @@ final class _PageState extends State<_Page> {
       body: CustomScrollView(
         slivers: [
           const AppSyncAppBar(),
-          Selector<AppSyncSettingsAccess, bool>(
-            selector: (ctx, v) => v.enabled,
-            shouldRebuild: (previous, next) => previous != next,
-            builder: (context, value, child) => SliverToBoxAdapter(
-              child: _AppSyncConfigSubgroup(
-                enabled: value,
-                onConfigPressed: _onServerConfigPressed,
-                onFetchIntervalPressed: _onServerFetchIntervalPressed,
-              ),
+          EnhancedSafeArea.withDefault(
+            top: false,
+            withSliver: true,
+            child: SliverMainAxisGroup(
+              slivers: [
+                Selector<AppSyncSettingsAccess, bool>(
+                  selector: (ctx, v) => v.enabled,
+                  shouldRebuild: (previous, next) => previous != next,
+                  builder: (context, value, child) => SliverToBoxAdapter(
+                    child: _AppSyncConfigSubgroup(
+                      enabled: value,
+                      onConfigPressed: _onServerConfigPressed,
+                      onFetchIntervalPressed: _onServerFetchIntervalPressed,
+                    ),
+                  ),
+                ),
+                SliverList.list(
+                  children: [
+                    const Divider(),
+                    FutureBuilder(
+                      future: AppPathProvider().getSyncFailLogDir(),
+                      builder: (context, snapshot) =>
+                          AppSyncFailLogsTile(path: snapshot.data?.path),
+                    ),
+                  ],
+                ),
+                if (context.read<AppDeveloperViewModel>().isInDevelopMode)
+                  SliverList.list(children: const [Divider(), _DebugTile()]),
+              ],
             ),
           ),
-          SliverList.list(
-            children: [
-              const Divider(),
-              FutureBuilder(
-                future: AppPathProvider().getSyncFailLogDir(),
-                builder: (context, snapshot) =>
-                    AppSyncFailLogsTile(path: snapshot.data?.path),
-              ),
-            ],
-          ),
-          if (context.read<AppDeveloperViewModel>().isInDevelopMode)
-            SliverList.list(children: [const Divider(), const _DebugTile()]),
         ],
       ),
     );

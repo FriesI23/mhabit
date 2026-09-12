@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../l10n/localizations.dart';
 import '../../widgets/widgets.dart';
@@ -20,61 +22,147 @@ import 'changelog_parser.dart';
 
 /// Shows an adaptive changelog view.
 ///
-/// Delegates to [showAdaptiveContentSheet] for the adaptive presentation
-/// (bottom sheet on phones, dialog on tablets/desktop).
+/// Delegates to [showAdaptiveSheet] for the adaptive presentation
+/// (sheet on compact windows, dialog when both axes are medium or larger).
 Future<void> showChangelogDialog({
   required BuildContext context,
   required String currentVersionSection,
   required String fullChangelog,
   required String version,
-}) {
-  final showFullNotifier = ValueNotifier<bool>(false);
-  List<ChangelogSection>? fullSections;
-
-  return showAdaptiveContentSheet(
-    context: context,
-    title: _ChangelogTitle(version: version),
-    sheetActionsAlign: Alignment.centerRight,
-    contentBuilder: (_) => ValueListenableBuilder<bool>(
-      valueListenable: showFullNotifier,
-      builder: (_, showFull, _) => showFull
-          ? _buildFullList(
-              fullSections ??= parseChangelogSections(fullChangelog),
-            )
-          : _buildCurrentVersion(currentVersionSection),
+}) => showAdaptiveSheet<void>(
+  context: context,
+  builder: (_) => AdaptiveModalNavigator<void>(
+    builder: (_) => _ChangelogFlow(
+      currentVersionSection: currentVersionSection,
+      fullChangelog: fullChangelog,
+      version: version,
     ),
-    actions: [
-      ValueListenableBuilder<bool>(
-        valueListenable: showFullNotifier,
-        builder: (context, showFull, _) {
-          if (showFull) return const SizedBox.shrink();
-          final l10n = L10n.of(context);
-          return FilledButton(
-            onPressed: () => showFullNotifier.value = true,
-            child: Text(l10n?.changelog_view_full ?? 'View Full Changelog'),
-          );
-        },
+  ),
+);
+
+class _ChangelogFlow extends StatefulWidget {
+  const _ChangelogFlow({
+    required this.currentVersionSection,
+    required this.fullChangelog,
+    required this.version,
+  });
+
+  final String currentVersionSection;
+  final String fullChangelog;
+  final String version;
+
+  @override
+  State<_ChangelogFlow> createState() => _ChangelogFlowState();
+}
+
+class _ChangelogFlowState extends State<_ChangelogFlow> {
+  List<ChangelogSection>? _fullSections;
+
+  void _openFullChangelog() {
+    Navigator.of(context).push(
+      adaptiveModalPageRoute<void>(
+        context: context,
+        builder: (_) => _ChangelogPage(
+          style: AdaptiveStyle.of(context),
+          version: widget.version,
+          body: _FullChangelogList(
+            sections: _fullSections ??= parseChangelogSections(
+              widget.fullChangelog,
+            ),
+          ),
+        ),
       ),
-    ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => _ChangelogPage(
+    style: AdaptiveStyle.of(context),
+    version: widget.version,
+    body: _ChangelogCurrentVersion(data: widget.currentVersionSection),
+    onViewFull: _openFullChangelog,
   );
 }
 
-Widget _buildCurrentVersion(String data) {
-  return ThematicMarkdownBlock(data: data, selectable: false);
+class _ChangelogPage extends StatelessWidget {
+  const _ChangelogPage({
+    required this.style,
+    required this.version,
+    required this.body,
+    this.onViewFull,
+  });
+
+  final AdaptiveStyle style;
+  final String version;
+  final Widget body;
+  final VoidCallback? onViewFull;
+
+  @override
+  Widget build(BuildContext context) {
+    final viewFullLabel =
+        L10n.of(context)?.changelog_view_full ?? 'View Full Changelog';
+    final viewFullAction = switch ((style, onViewFull)) {
+      (_, null) => null,
+      (AdaptiveStyle.material, final onPressed?) => FilledButton(
+        onPressed: onPressed,
+        child: Text(viewFullLabel),
+      ),
+      (AdaptiveStyle.apple, final onPressed?) => CupertinoButton(
+        key: const ValueKey('changelog-apple-view-full'),
+        onPressed: onPressed,
+        child: Text(viewFullLabel),
+      ),
+    };
+    return AdaptiveModal(
+      title: _ChangelogTitle(
+        version: version,
+        centered: switch (style) {
+          AdaptiveStyle.material => false,
+          AdaptiveStyle.apple => true,
+        },
+      ),
+      automaticallyImplyLeading: true,
+      body: body,
+      actions: [?viewFullAction],
+    );
+  }
 }
 
-Widget _buildFullList(List<ChangelogSection> sections) {
-  return Column(
-    mainAxisSize: MainAxisSize.min,
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: sections.map((s) => _ChangelogSectionTile(section: s)).toList(),
+class _ChangelogCurrentVersion extends StatelessWidget {
+  const _ChangelogCurrentVersion({required this.data});
+
+  final String data;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    width: double.infinity,
+    child: ThematicMarkdownBlock(data: data, selectable: false),
+  );
+}
+
+class _FullChangelogList extends StatelessWidget {
+  const _FullChangelogList({required this.sections});
+
+  final List<ChangelogSection> sections;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    width: double.infinity,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: sections
+          .map((section) => _ChangelogSectionTile(section: section))
+          .toList(),
+    ),
   );
 }
 
 class _ChangelogTitle extends StatelessWidget {
   final String version;
+  final bool centered;
 
-  const _ChangelogTitle({required this.version});
+  const _ChangelogTitle({required this.version, required this.centered});
 
   @override
   Widget build(BuildContext context) {
@@ -82,11 +170,14 @@ class _ChangelogTitle extends StatelessWidget {
     final theme = Theme.of(context);
     final color = theme.colorScheme.onSurfaceVariant;
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: centered
+          ? CrossAxisAlignment.center
+          : CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(l10n?.changelog_dialog_title ?? 'Changelog'),
         Row(
+          key: const ValueKey('changelog-version'),
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.info_outline, size: 16, color: color),
@@ -128,7 +219,10 @@ class _ChangelogSectionTile extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          ThematicMarkdownBlock(data: section.body, selectable: false),
+          SizedBox(
+            width: double.infinity,
+            child: ThematicMarkdownBlock(data: section.body, selectable: false),
+          ),
         ],
       ),
     );

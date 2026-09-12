@@ -14,6 +14,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../widgets/widgets.dart';
@@ -31,14 +32,14 @@ class _AppAboutLicenseTileState extends State<AppAboutLicenseTile> {
     final licenseText = await rootBundle.loadString('LICENSE');
     if (!mounted) return;
     final l10n = L10n.of(context);
-    await showAdaptiveContentSheet(
+    await showAdaptiveSheet<void>(
       context: context,
-      title: l10n != null
-          ? Text(l10n.appAbout_licenseTile_titleText)
-          : const Text("License"),
-      contentBuilder: (_) =>
-          ThematicMarkdownBlock(data: "```text\n$licenseText\n```"),
-      sheetShowCloseButton: false,
+      builder: (_) => AdaptiveModal(
+        title: l10n != null
+            ? Text(l10n.appAbout_licenseTile_titleText)
+            : const Text("License"),
+        body: ThematicMarkdownBlock(data: "```text\n$licenseText\n```"),
+      ),
     );
   }
 

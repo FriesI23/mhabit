@@ -77,14 +77,17 @@ class _AppSyncEnableBar extends StatelessWidget implements PreferredSizeWidget {
     shouldRebuild: (previous, next) => previous != next,
     builder: (context, value, child) => SizedBox(
       height: preferredSize.height,
-      child: SwitchListTile.adaptive(
-        title: L10nBuilder(
-          builder: (context, l10n) =>
-              Text(l10n?.common_enable_text ?? 'Enable'),
+      child: EnhancedSafeArea.symmetric(
+        horizontal: true,
+        child: SwitchListTile.adaptive(
+          title: L10nBuilder(
+            builder: (context, l10n) =>
+                Text(l10n?.common_enable_text ?? 'Enable'),
+          ),
+          value: value,
+          onChanged: (value) =>
+              context.read<AppSyncSettingsAccess>().setSyncSwitch(value),
         ),
-        value: value,
-        onChanged: (value) =>
-            context.read<AppSyncSettingsAccess>().setSyncSwitch(value),
       ),
     ),
   );

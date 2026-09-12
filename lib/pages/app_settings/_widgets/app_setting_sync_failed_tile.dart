@@ -144,6 +144,9 @@ class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
       builder: (context, value, child) => ExpandedSection(
         expand: value != null && !value.isSuccessed && !value.isCancelled,
         child: ExpansionTile(
+          key: const PageStorageKey<String>(
+            'app-settings-sync-failed-expansion',
+          ),
           controller: controller,
           initiallyExpanded: isExpanded,
           onExpansionChanged: (value) {},
@@ -271,6 +274,10 @@ class _WebDavFailedDetailTile extends StatelessWidget {
                       ),
                     );
             return ExpansionTile(
+              key: PageStorageKey<String>(
+                'app-settings-sync-failed-${e.key.status.name}-'
+                '${e.key.reason?.name ?? 'none'}',
+              ),
               dense: true,
               showTrailingIcon: errorIter != null,
               enabled: errorIter != null,

@@ -55,6 +55,14 @@ class _Page extends StatefulWidget {
 /// adaptive heuristics.
 enum GroupEditForceMode { defaultMode, forceSheet, forceDialog }
 
+extension on GroupEditForceMode {
+  AdaptiveModalPresentation? get presentationOverride => switch (this) {
+    GroupEditForceMode.defaultMode => null,
+    GroupEditForceMode.forceSheet => AdaptiveModalPresentation.sheet,
+    GroupEditForceMode.forceDialog => AdaptiveModalPresentation.dialog,
+  };
+}
+
 class _PageState extends State<_Page> {
   ScaffoldMessengerState? _snackbarMessenger;
   GroupEditForceMode _debugForceEditMode = GroupEditForceMode.defaultMode;
@@ -94,8 +102,7 @@ class _PageState extends State<_Page> {
     final vm = context.read<GroupManageViewModel>();
     final result = await showGroupEditDialog(
       context: context,
-      forceSheet: _debugForceEditMode == GroupEditForceMode.forceSheet,
-      forceDialog: _debugForceEditMode == GroupEditForceMode.forceDialog,
+      presentationOverride: _debugForceEditMode.presentationOverride,
     );
     if (result == null || !mounted) return;
     await vm.createGroup(
@@ -114,8 +121,7 @@ class _PageState extends State<_Page> {
     final result = await showGroupEditDialog(
       context: context,
       existingGroup: data,
-      forceSheet: _debugForceEditMode == GroupEditForceMode.forceSheet,
-      forceDialog: _debugForceEditMode == GroupEditForceMode.forceDialog,
+      presentationOverride: _debugForceEditMode.presentationOverride,
     );
     if (result == null || !mounted) return;
     await vm.updateGroup(
@@ -211,14 +217,12 @@ class _PageState extends State<_Page> {
               if (snapshot.hasError) {
                 return Center(child: Text('${snapshot.error}'));
               }
-              return EnhancedSafeArea.edgeToEdgeSafe(
-                child: _GroupManageBody(
-                  onEdit: _openEditDialog,
-                  onDelete: _onSingleDelete,
-                  onSortOpen: _openSortSelector,
-                  onBatchDelete: _onBatchDelete,
-                  debugMenuBuilder: _buildDevelopMenu,
-                ),
+              return _GroupManageBody(
+                onEdit: _openEditDialog,
+                onDelete: _onSingleDelete,
+                onSortOpen: _openSortSelector,
+                onBatchDelete: _onBatchDelete,
+                debugMenuBuilder: _buildDevelopMenu,
               );
             },
           ),
@@ -315,19 +319,30 @@ class _GroupManageBody extends StatelessWidget {
             onBatchDelete: onBatchDelete,
           ),
           if (groupsEmpty)
-            const SliverFillRemaining(
-              hasScrollBody: false,
-              child: _GroupManageEmptyState(),
+            const EnhancedSafeArea.withDefault(
+              top: false,
+              withSliver: true,
+              child: SliverFillRemaining(
+                hasScrollBody: false,
+                child: _GroupManageEmptyState(),
+              ),
             )
-          else ...[
-            _GroupManageContent(
-              widthClass: windowSize.width,
-              onEdit: onEdit,
-              onDelete: onDelete,
+          else
+            EnhancedSafeArea.withDefault(
+              top: false,
+              withSliver: true,
+              child: SliverMainAxisGroup(
+                slivers: [
+                  _GroupManageContent(
+                    widthClass: windowSize.width,
+                    onEdit: onEdit,
+                    onDelete: onDelete,
+                  ),
+                  if (kDebugMode)
+                    SliverToBoxAdapter(child: debugMenuBuilder(context)),
+                ],
+              ),
             ),
-            if (kDebugMode)
-              SliverToBoxAdapter(child: debugMenuBuilder(context)),
-          ],
         ],
       ),
     );
@@ -427,31 +442,29 @@ class _GroupManageDevelopMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return EnhancedSafeArea.edgeToEdgeSafe(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 72),
-        child: ListTile(
-          title: const Text('Edit dialog'),
-          trailing: DropdownButton<GroupEditForceMode>(
-            value: mode,
-            onChanged: (value) {
-              if (value != null) onChanged(value);
-            },
-            items: const [
-              DropdownMenuItem(
-                value: GroupEditForceMode.defaultMode,
-                child: Text('Default'),
-              ),
-              DropdownMenuItem(
-                value: GroupEditForceMode.forceSheet,
-                child: Text('Sheet'),
-              ),
-              DropdownMenuItem(
-                value: GroupEditForceMode.forceDialog,
-                child: Text('Dialog'),
-              ),
-            ],
-          ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 72),
+      child: ListTile(
+        title: const Text('Edit dialog'),
+        trailing: DropdownButton<GroupEditForceMode>(
+          value: mode,
+          onChanged: (value) {
+            if (value != null) onChanged(value);
+          },
+          items: const [
+            DropdownMenuItem(
+              value: GroupEditForceMode.defaultMode,
+              child: Text('Default'),
+            ),
+            DropdownMenuItem(
+              value: GroupEditForceMode.forceSheet,
+              child: Text('Sheet'),
+            ),
+            DropdownMenuItem(
+              value: GroupEditForceMode.forceDialog,
+              child: Text('Dialog'),
+            ),
+          ],
         ),
       ),
     );

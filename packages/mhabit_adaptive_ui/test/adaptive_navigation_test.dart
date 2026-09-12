@@ -4347,18 +4347,85 @@ void main() {
       });
     }
 
-    testWidgets(
-      'apple beside span preserves horizontal media and supplies top safety',
-      (tester) async {
-        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-        addTearDown(() => debugDefaultTargetPlatformOverride = null);
-        tester.view.padding = const FakeViewPadding(left: 44, right: 20);
-        tester.view.viewPadding = const FakeViewPadding(left: 50, right: 30);
-        _setSurfaceSize(tester, const Size(700, 600));
+    testWidgets('apple beside span consumes leading media while visible', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      tester.view.padding = const FakeViewPadding(left: 44, right: 20);
+      tester.view.viewPadding = const FakeViewPadding(left: 50, right: 30);
+      _setSurfaceSize(tester, const Size(700, 600));
 
-        await tester.pumpWidget(
-          MaterialApp(
-            home: AdaptiveNavigationShell(
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AdaptiveNavigationShell(
+            selectedIndex: 0,
+            destinations: const [
+              AdaptiveNavigationDestination(
+                label: 'Habits',
+                icons: NavigationDestinationIcons(
+                  material: Icon(Icons.home_outlined),
+                  materialSelected: Icon(Icons.home),
+                  apple: Icon(CupertinoIcons.home),
+                  appleSelected: Icon(CupertinoIcons.house_fill),
+                ),
+              ),
+            ],
+            onDestinationSelected: (_) {},
+            child: const _BranchInsetsProbe(),
+          ),
+        ),
+      );
+
+      Size branchPadding() => tester.getSize(
+        find.byKey(const ValueKey('branch-horizontal-padding')),
+      );
+      Size branchViewPadding() => tester.getSize(
+        find.byKey(const ValueKey('branch-horizontal-view-padding')),
+      );
+      Size branchVerticalPadding() =>
+          tester.getSize(find.byKey(const ValueKey('branch-vertical-padding')));
+      final branch = find.byKey(const ValueKey('branch-layout-probe'));
+      final surface = find.byKey(const ValueKey('cupertino-sidebar-surface'));
+      final surfaceWidget = tester.widget<CupertinoFloatingGlassSurface>(
+        surface,
+      );
+
+      expect(branchPadding().width, 20);
+      expect(branchViewPadding().width, 36);
+      expect(branchVerticalPadding().height, 10);
+      expect(tester.getTopLeft(branch).dx, 254);
+      expect(tester.getTopLeft(surface), const Offset(44, 10));
+      expect(tester.getSize(surface), const Size(198, 580));
+      expect(
+        surfaceWidget.borderRadius,
+        const BorderRadius.all(Radius.circular(25)),
+      );
+      expect(surfaceWidget.blurSigma, 10);
+
+      await tester.tap(find.byKey(const ValueKey('cupertino-sidebar-toggle')));
+      await tester.pumpAndSettle();
+      expect(branchPadding().width, 64);
+      expect(branchViewPadding().width, 80);
+      expect(branchVerticalPadding().height, 10);
+      expect(tester.getTopLeft(branch).dx, 0);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('apple beside span consumes the RTL leading media', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      tester.view.padding = const FakeViewPadding(left: 44, right: 20);
+      tester.view.viewPadding = const FakeViewPadding(left: 50, right: 30);
+      _setSurfaceSize(tester, const Size(700, 600));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Directionality(
+            textDirection: TextDirection.rtl,
+            child: AdaptiveNavigationShell(
               selectedIndex: 0,
               destinations: const [
                 AdaptiveNavigationDestination(
@@ -4375,46 +4442,25 @@ void main() {
               child: const _BranchInsetsProbe(),
             ),
           ),
-        );
+        ),
+      );
 
-        Size branchPadding() => tester.getSize(
-          find.byKey(const ValueKey('branch-horizontal-padding')),
-        );
-        Size branchViewPadding() => tester.getSize(
-          find.byKey(const ValueKey('branch-horizontal-view-padding')),
-        );
-        Size branchVerticalPadding() => tester.getSize(
-          find.byKey(const ValueKey('branch-vertical-padding')),
-        );
-        final branch = find.byKey(const ValueKey('branch-layout-probe'));
-        final surface = find.byKey(const ValueKey('cupertino-sidebar-surface'));
-        final surfaceWidget = tester.widget<CupertinoFloatingGlassSurface>(
-          surface,
-        );
+      Size branchPadding() => tester.getSize(
+        find.byKey(const ValueKey('branch-horizontal-padding')),
+      );
+      Size branchViewPadding() => tester.getSize(
+        find.byKey(const ValueKey('branch-horizontal-view-padding')),
+      );
 
-        expect(branchPadding().width, 64);
-        expect(branchViewPadding().width, 80);
-        expect(branchVerticalPadding().height, 10);
-        expect(tester.getTopLeft(branch).dx, 254);
-        expect(tester.getTopLeft(surface), const Offset(44, 10));
-        expect(tester.getSize(surface), const Size(198, 580));
-        expect(
-          surfaceWidget.borderRadius,
-          const BorderRadius.all(Radius.circular(25)),
-        );
-        expect(surfaceWidget.blurSigma, 10);
+      expect(branchPadding().width, 44);
+      expect(branchViewPadding().width, 60);
 
-        await tester.tap(
-          find.byKey(const ValueKey('cupertino-sidebar-toggle')),
-        );
-        await tester.pumpAndSettle();
-        expect(branchPadding().width, 64);
-        expect(branchViewPadding().width, 80);
-        expect(branchVerticalPadding().height, 10);
-        expect(tester.getTopLeft(branch).dx, 0);
-        debugDefaultTargetPlatformOverride = null;
-      },
-    );
+      await tester.tap(find.byKey(const ValueKey('cupertino-sidebar-toggle')));
+      await tester.pumpAndSettle();
+      expect(branchPadding().width, 64);
+      expect(branchViewPadding().width, 80);
+      debugDefaultTargetPlatformOverride = null;
+    });
 
     testWidgets('apple Sidebar preserves branch media above its top minimum', (
       tester,
@@ -4466,7 +4512,7 @@ void main() {
         tester
             .getSize(find.byKey(const ValueKey('branch-horizontal-padding')))
             .width,
-        44,
+        33,
       );
       expect(
         tester
@@ -4480,7 +4526,7 @@ void main() {
               find.byKey(const ValueKey('branch-horizontal-view-padding')),
             )
             .width,
-        52,
+        41,
       );
       expect(
         tester

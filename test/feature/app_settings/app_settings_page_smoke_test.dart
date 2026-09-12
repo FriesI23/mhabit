@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/l10n/localizations.dart';
+import 'package:mhabit/pages/app_settings/_widgets/app_setting_sync_failed_tile.dart';
 import 'package:mhabit/pages/app_settings/page.dart';
 import 'package:mhabit/providers/app_ui/app_compact_ui_switcher.dart';
 import 'package:mhabit/providers/app_ui/app_custom_date_format.dart';
@@ -62,6 +65,54 @@ Future<ProfileViewModel> _loadProfile() async {
 }
 
 void main() {
+  testWidgets('sync failure expansion does not read the scroll offset', (
+    tester,
+  ) async {
+    final bucket = PageStorageBucket();
+    final syncAccess = _FakeAppSyncAccess();
+    late BuildContext scrollStorageContext;
+    addTearDown(syncAccess.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: PageStorage(
+          bucket: bucket,
+          child: KeyedSubtree(
+            key: const PageStorageKey<String>('app-settings-scroll-view'),
+            child: Builder(
+              builder: (context) {
+                scrollStorageContext = context;
+                return const SizedBox();
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+    bucket.writeState(scrollStorageContext, 240.0);
+
+    await tester.pumpWidget(
+      ListenableProvider<AppSyncStatusSource>.value(
+        value: syncAccess,
+        child: MaterialApp(
+          localizationsDelegates: L10n.localizationsDelegates,
+          supportedLocales: L10n.supportedLocales,
+          home: PageStorage(
+            bucket: bucket,
+            child: const KeyedSubtree(
+              key: PageStorageKey<String>('app-settings-scroll-view'),
+              child: Scaffold(body: AppSettingSyncFailedTile()),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(find.byType(ExpansionTile), findsOneWidget);
+  });
+
   testWidgets('AppSettingPage opens without provider runtime errors', (
     tester,
   ) async {
@@ -145,10 +196,46 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.text('Settings'), findsOneWidget);
-    expect(find.byType(AdaptiveAppBar), findsOneWidget);
-    expect(find.byType(WindowControlAppBar), findsOneWidget);
-    final appBar = tester.widget<AppBar>(find.byType(AppBar));
+    expect(find.byType(AdaptiveSliverAppBar), findsOneWidget);
+    expect(find.byType(WindowControlSliverAppBar), findsOneWidget);
+    expect(find.byType(CustomScrollView), findsOneWidget);
+    final adaptiveAppBar = tester.widget<AdaptiveSliverAppBar>(
+      find.byType(AdaptiveSliverAppBar),
+    );
+    final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
+    expect(adaptiveAppBar.automaticallyImplyLeading, isFalse);
+    expect(appBar.automaticallyImplyLeading, isFalse);
     expect(appBar.leading, isA<AdaptiveBackButton>());
     expect(appBar.title, isA<L10nBuilder>());
+    final safeArea = tester.widget<SliverSafeArea>(find.byType(SliverSafeArea));
+    expect(safeArea.left, isTrue);
+    expect(safeArea.top, isFalse);
+    expect(safeArea.right, isTrue);
+    expect(safeArea.bottom, isTrue);
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -500));
+    await tester.pumpAndSettle();
+    final scrollable = tester.state<ScrollableState>(
+      find.descendant(
+        of: find.byType(CustomScrollView),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    final offsetBeforePush = scrollable.position.pixels;
+    expect(offsetBeforePush, greaterThan(0));
+
+    final settingsContext = tester.element(find.text('Settings'));
+    unawaited(
+      Navigator.of(settingsContext).push<void>(
+        MaterialPageRoute<void>(
+          builder: (_) => const Scaffold(body: Text('Subpage')),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    Navigator.of(tester.element(find.text('Subpage'))).pop();
+    await tester.pumpAndSettle();
+
+    expect(scrollable.position.pixels, offsetBeforePush);
   });
 }

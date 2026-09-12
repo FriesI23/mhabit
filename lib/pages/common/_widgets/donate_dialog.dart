@@ -38,21 +38,25 @@ Future<DonateDialogResult?> showDonateDialog(
   String wechatPayQRCodePath = 'assets/images/donate-wechatpay.png',
 }) async {
   final l10n = L10n.of(context);
-  return showAdaptiveContentSheet<DonateDialogResult>(
+  return showAdaptiveSheet<DonateDialogResult>(
     context: context,
-    showCloseButton: false,
-    title: l10n != null ? Text(l10n.appAbout_donateTile_titleText) : null,
-    dialogWidth: 800,
-    contentBuilder: (_) => DonateContent(
-      donateBuyMeACoffeeToken: donateBuyMeACoffeeToken,
-      donatePaypalToken: donatePaypalToken,
-      btcAddress: btcAddress,
-      ethAddress: ethAddress,
-      bnbAddress: bnbAddress,
-      avaxAddress: avaxAddress,
-      ftmAddress: ftmAddress,
-      alipayQRCodePath: alipayQRCodePath,
-      wechatPayQRCodePath: wechatPayQRCodePath,
+    builder: (_) => AdaptiveModal(
+      title: l10n != null ? Text(l10n.appAbout_donateTile_titleText) : null,
+      automaticallyImplyCloseButton: false,
+      constraints: const BoxConstraints(maxWidth: 800),
+      body: AdaptiveModalMaterialBridge(
+        child: DonateContent(
+          donateBuyMeACoffeeToken: donateBuyMeACoffeeToken,
+          donatePaypalToken: donatePaypalToken,
+          btcAddress: btcAddress,
+          ethAddress: ethAddress,
+          bnbAddress: bnbAddress,
+          avaxAddress: avaxAddress,
+          ftmAddress: ftmAddress,
+          alipayQRCodePath: alipayQRCodePath,
+          wechatPayQRCodePath: wechatPayQRCodePath,
+        ),
+      ),
     ),
   );
 }

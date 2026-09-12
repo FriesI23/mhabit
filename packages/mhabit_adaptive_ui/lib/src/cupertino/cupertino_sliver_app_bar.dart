@@ -17,6 +17,7 @@ class CupertinoSliverAppBar extends StatelessWidget {
     this.actions = _kDefaultActions,
     this.leading,
     this.onLeadingPressed,
+    this.automaticallyImplyLeading = true,
     this.height,
     this.bottom,
     this.bottomExtent = 0.0,
@@ -30,6 +31,7 @@ class CupertinoSliverAppBar extends StatelessWidget {
   final List<Widget> actions;
   final Widget? leading;
   final VoidCallback? onLeadingPressed;
+  final bool automaticallyImplyLeading;
   final double? height;
   final Widget? bottom;
   final double bottomExtent;
@@ -78,6 +80,7 @@ class CupertinoSliverAppBar extends StatelessWidget {
       title: title,
       leading: effectiveLeading,
       trailing: effectiveTrailing,
+      automaticallyImplyLeading: automaticallyImplyLeading,
       enableBackgroundFilterBlur: style.enableBackgroundFilterBlur,
       border: style.border,
       backgroundColor: style.backgroundColor,
@@ -268,6 +271,7 @@ class _CollapsibleCupertinoSliverAppBar extends StatelessWidget {
     required this.title,
     required this.leading,
     required this.trailing,
+    required this.automaticallyImplyLeading,
     required this.enableBackgroundFilterBlur,
     required this.border,
     required this.backgroundColor,
@@ -281,6 +285,7 @@ class _CollapsibleCupertinoSliverAppBar extends StatelessWidget {
   final Widget title;
   final Widget? leading;
   final Widget? trailing;
+  final bool automaticallyImplyLeading;
   final bool enableBackgroundFilterBlur;
   final Border? border;
   final Color? backgroundColor;
@@ -302,6 +307,7 @@ class _CollapsibleCupertinoSliverAppBar extends StatelessWidget {
       middle: useLargeTitle ? null : title,
       largeTitle: useLargeTitle ? title : null,
       leading: leading,
+      automaticallyImplyLeading: automaticallyImplyLeading,
       trailing: trailing,
       enableBackgroundFilterBlur: enableBackgroundFilterBlur,
       border: border,

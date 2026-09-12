@@ -189,6 +189,18 @@ void main() {
 
     expect(find.byType(AdaptiveSliverAppBar), findsOneWidget);
     expect(find.byType(WindowControlSliverAppBar), findsOneWidget);
+    final safeArea = tester.widget<SliverSafeArea>(find.byType(SliverSafeArea));
+    expect(safeArea.left, isTrue);
+    expect(safeArea.top, isFalse);
+    expect(safeArea.right, isTrue);
+    expect(safeArea.bottom, isTrue);
+    expect(
+      find.ancestor(
+        of: find.byType(AdaptiveSliverAppBar),
+        matching: find.byType(SliverSafeArea),
+      ),
+      findsNothing,
+    );
     expect(_adaptiveActions, findsOneWidget);
     expect(find.byType(FloatingActionButton), findsOneWidget);
     final normalBar = tester.widget<WindowControlSliverAppBar>(

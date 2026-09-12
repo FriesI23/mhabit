@@ -98,6 +98,8 @@ class _Page extends StatefulWidget {
 }
 
 class _PageState extends State<_Page> with XShare {
+  final ScrollController _scrollController = ScrollController();
+
   /// Whether the current platform supports opening the system language
   /// settings screen.
   ///
@@ -122,6 +124,7 @@ class _PageState extends State<_Page> with XShare {
   @override
   void dispose() {
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -950,43 +953,51 @@ class _PageState extends State<_Page> with XShare {
 
     return ColorfulNavibar(
       child: Scaffold(
-        appBar: AdaptiveAppBar(
-          toolbarHeight: AdaptiveStyle.of(context).appToolbarHeight,
-          title: L10nBuilder(
-            builder: (context, l10n) => l10n != null
-                ? Text(l10n.appSetting_appbar_titleText)
-                : const Text("Settings"),
-          ),
-          leading:
-              (AdaptiveNavScope.maybeOf(context)?.form ??
-                      NavigationShellForm.compact) ==
-                  NavigationShellForm.compact
-              ? AdaptiveBackButton(
-                  type: AdaptiveBackButtonType.back,
-                  onPressed: () => Navigator.maybePop(context),
-                )
-              : null,
-          automaticallyImplyLeading: false,
-        ),
-        body: EnhancedSafeArea.edgeToEdgeSafe(
-          child: ListView(
-            children: [
-              ...buildSyncSubGroup(context),
-              ExperimentalFeatureGate.basic(
-                selector: (context, vm) => vm.habitGrouping,
-                enabledBuilder: (context) =>
-                    Column(children: [...buildGroupsSubGroup(context)]),
+        body: CustomScrollView(
+          key: const PageStorageKey<String>('app-settings-scroll-view'),
+          controller: _scrollController,
+          slivers: [
+            AdaptiveSliverAppBar(
+              height: AdaptiveStyle.of(context).appToolbarHeight,
+              automaticallyImplyLeading: false,
+              title: L10nBuilder(
+                builder: (context, l10n) => l10n != null
+                    ? Text(l10n.appSetting_appbar_titleText)
+                    : const Text("Settings"),
               ),
-              ...buildDisplaySubGroup(context),
-              ...buildLanguageSubGroup(context),
-              ...buildOperationSubGroup(context),
-              ...buildReminderSubGroup(context),
-              ...buildBackupAndRestoreSubGroup(context),
-              ...buildOthersSubGroup(context),
-              buildDevelopSubGroup(context),
-              buildChinaIPC(context),
-            ],
-          ),
+              leading:
+                  (AdaptiveNavScope.maybeOf(context)?.form ??
+                          NavigationShellForm.compact) ==
+                      NavigationShellForm.compact
+                  ? AdaptiveBackButton(
+                      type: AdaptiveBackButtonType.back,
+                      onPressed: () => Navigator.maybePop(context),
+                    )
+                  : null,
+            ),
+            EnhancedSafeArea.withDefault(
+              top: false,
+              withSliver: true,
+              child: SliverList.list(
+                children: [
+                  ...buildSyncSubGroup(context),
+                  ExperimentalFeatureGate.basic(
+                    selector: (context, vm) => vm.habitGrouping,
+                    enabledBuilder: (context) =>
+                        Column(children: [...buildGroupsSubGroup(context)]),
+                  ),
+                  ...buildDisplaySubGroup(context),
+                  ...buildLanguageSubGroup(context),
+                  ...buildOperationSubGroup(context),
+                  ...buildReminderSubGroup(context),
+                  ...buildBackupAndRestoreSubGroup(context),
+                  ...buildOthersSubGroup(context),
+                  buildDevelopSubGroup(context),
+                  buildChinaIPC(context),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -13,13 +13,13 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_group.dart';
 import '../../../pages/common/_widgets/group_edit_form.dart';
 import '../../../providers/app_ui/custom_color_history.dart';
-import '../../../widgets/widgets.dart';
 
 /// Shows an adaptive content sheet (or dialog on wide screens) for
 /// creating/editing a Group.
@@ -30,54 +30,48 @@ import '../../../widgets/widgets.dart';
 Future<GroupEditFormResult?> showGroupEditDialog({
   required BuildContext context,
   HabitGroupData? existingGroup,
-  bool forceSheet = false,
-  bool forceDialog = false,
+  AdaptiveModalPresentation? presentationOverride,
 }) async {
-  assert(
-    !(forceSheet && forceDialog),
-    'forceSheet and forceDialog cannot both be true',
-  );
   final isCreate = existingGroup == null;
   final l10n = L10n.of(context);
   final formKey = GlobalKey<GroupEditFormState>();
-  return showAdaptiveContentSheet<GroupEditFormResult>(
+  return showAdaptiveSheet<GroupEditFormResult>(
     context: context,
-    showCloseButton: false,
-    forceSheet: forceSheet,
-    forceDialog: forceDialog,
-    title: Text(
-      isCreate
-          ? (l10n?.groupManage_createDialog_title ?? 'Create Group')
-          : (l10n?.groupManage_editDialog_title ?? 'Edit Group'),
-    ),
-    actionsBuilder: (context, isDialog) => isDialog
-        ? [
-            TextButton(
-              onPressed: () =>
-                  Navigator.of(context).pop<GroupEditFormResult?>(null),
-              child: Text(l10n?.groupManage_deleteDialog_cancel ?? 'Cancel'),
-            ),
-            FilledButton(
-              onPressed: () => formKey.currentState?.save(),
-              child: Text(l10n?.habitEdit_saveButton_text ?? 'Save'),
-            ),
-          ]
-        : [
-            TextButton(
-              onPressed: () => formKey.currentState?.save(),
-              child: Text(l10n?.habitEdit_saveButton_text ?? 'Save'),
-            ),
-          ],
-    contentBuilder: (context) {
-      final history = context.read<CustomColorHistoryViewModel>().history;
-      return GroupEditForm(
-        key: formKey,
-        existingGroup: existingGroup,
-        customColorHistory: history,
-        onRecordCustomColor: (color) {
-          context.read<CustomColorHistoryViewModel>().recordUsage(color);
+    // TODO(mhabit): Remove the forced Material style after GroupEditForm and
+    // its controls have Cupertino renderers.
+    styleOverride: AdaptiveStyle.material,
+    presentationOverride: presentationOverride,
+    builder: (context) => AdaptiveModal(
+      title: Text(
+        isCreate
+            ? (l10n?.groupManage_createDialog_title ?? 'Create Group')
+            : (l10n?.groupManage_editDialog_title ?? 'Edit Group'),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () =>
+              Navigator.of(context).pop<GroupEditFormResult?>(null),
+          child: Text(l10n?.groupManage_deleteDialog_cancel ?? 'Cancel'),
+        ),
+        FilledButton(
+          onPressed: () => formKey.currentState?.save(),
+          child: Text(l10n?.habitEdit_saveButton_text ?? 'Save'),
+        ),
+      ],
+      automaticallyImplyCloseButton: false,
+      body: Builder(
+        builder: (context) {
+          final history = context.read<CustomColorHistoryViewModel>().history;
+          return GroupEditForm(
+            key: formKey,
+            existingGroup: existingGroup,
+            customColorHistory: history,
+            onRecordCustomColor: (color) {
+              context.read<CustomColorHistoryViewModel>().recordUsage(color);
+            },
+          );
         },
-      );
-    },
+      ),
+    ),
   );
 }

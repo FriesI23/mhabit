@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export '_widgets/adaptive_content_sheet.dart';
+export '_widgets/adaptive_modal_material_bridge.dart';
 export '_widgets/animated_linear_progress.dart';
 export '_widgets/animated_reorderable_list.dart';
 export '_widgets/app_ui_layout_builder.dart';
@@ -29,6 +29,7 @@ export '_widgets/data_container.dart';
 export '_widgets/date_change.dart';
 export '_widgets/date_changer.dart';
 export '_widgets/date_picker.dart';
+export '_widgets/edge_to_edge_material_banner.dart';
 export '_widgets/enhanced_safe_area.dart';
 export '_widgets/expanded_section.dart';
 export '_widgets/experimental_feature_gate.dart';

@@ -20,6 +20,7 @@ import '../../extensions/asset_bundle_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../pages/app_changelog/changelog_dialog.dart';
 import '../../pages/app_changelog/changelog_parser.dart';
+import 'edge_to_edge_material_banner.dart';
 
 /// App-level manager for the changelog banner.
 ///
@@ -282,40 +283,44 @@ class _ChangelogBannerState extends State<_ChangelogBanner>
           resizeDuration: null,
           dismissThresholds: const {DismissDirection.horizontal: 0.4},
           onDismissed: (_) => widget.controller.dismiss(),
-          child: MaterialBanner(
+          child: EdgeToEdgeMaterialBanner(
             elevation: 0,
             surfaceTintColor: Colors.transparent,
             leading: const Icon(Icons.celebration_outlined),
+            forceActionsBelow: true,
             content: Text(
               L10n.of(
                 context,
               )!.changelog_banner_title(widget.controller.version),
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-            actions: [
-              FilledButton(
-                style: FilledButton.styleFrom(
-                  visualDensity: VisualDensity.compact,
+            actionArea: OverflowBar(
+              spacing: 8,
+              children: [
+                FilledButton(
+                  style: FilledButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  onPressed: () {
+                    widget.controller.dismiss();
+                    showChangelogDialog(
+                      context: context,
+                      currentVersionSection: widget.controller.changelogContent,
+                      fullChangelog: widget.controller.fullChangelog,
+                      version: widget.controller.version,
+                    );
+                  },
+                  child: Text(L10n.of(context)!.changelog_banner_view),
                 ),
-                onPressed: () {
-                  widget.controller.dismiss();
-                  showChangelogDialog(
-                    context: context,
-                    currentVersionSection: widget.controller.changelogContent,
-                    fullChangelog: widget.controller.fullChangelog,
-                    version: widget.controller.version,
-                  );
-                },
-                child: Text(L10n.of(context)!.changelog_banner_view),
-              ),
-              TextButton(
-                style: TextButton.styleFrom(
-                  visualDensity: VisualDensity.compact,
+                TextButton(
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  onPressed: widget.controller.dismiss,
+                  child: Text(L10n.of(context)!.changelog_banner_action),
                 ),
-                onPressed: widget.controller.dismiss,
-                child: Text(L10n.of(context)!.changelog_banner_action),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

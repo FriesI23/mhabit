@@ -22,7 +22,6 @@ import '../../../logging/helper.dart';
 import '../../../models/app_event.dart';
 import '../../../models/habit_group.dart';
 import '../../../models/habit_summary.dart';
-import '../../../pages/common/widgets.dart';
 import '../../../providers/app_ui/app_caches.dart';
 import '../../../providers/support/commons.dart';
 import '../../../providers/support/page_load_runtime.dart';
@@ -56,11 +55,7 @@ extension on AppEventSubscriptions {
 /// when groups are created / updated / deleted elsewhere while the dialog
 /// is open (same pattern as [GroupManageViewModel]).
 class HabitGroupModifyViewModel extends ChangeNotifier
-    implements
-        ProviderMounted,
-        AppEventLoaded,
-        PopScopeHandler,
-        AppEventSubscriber {
+    implements ProviderMounted, AppEventLoaded, AppEventSubscriber {
   final List<HabitSummaryData> _selectedData;
 
   GroupManager? _groupManager;
@@ -99,23 +94,9 @@ class HabitGroupModifyViewModel extends ChangeNotifier
 
   //#region state
 
-  FormMode _mode = FormMode.select;
-
   List<HabitGroupData> _groups = [];
   GroupUUID? _selectedGroupId;
   bool _skipConfirm = false;
-
-  /// Form key for the create-mode form, set by the UI so that
-  /// [actionsBuilder] can trigger validation.
-  // ignore: use_setters_to_change_properties
-  GlobalKey<GroupEditFormState>? createFormKey;
-
-  FormMode get mode => _mode;
-  bool get isCreateMode => _mode == FormMode.create;
-  bool get isSelectMode => _mode == FormMode.select;
-
-  @override
-  bool get canPop => isSelectMode;
 
   List<HabitGroupData> get groups => _groups;
   GroupUUID? get selectedGroupId => _selectedGroupId;
@@ -204,18 +185,6 @@ class HabitGroupModifyViewModel extends ChangeNotifier
     if (_skipConfirm == v) return;
     _skipConfirm = v;
     _appCaches?.updateAppFlagSkipGroupChangeConfirm(v);
-    notifyListeners();
-  }
-
-  void switchToCreateMode() {
-    if (_mode == FormMode.create) return;
-    _mode = FormMode.create;
-    notifyListeners();
-  }
-
-  void switchToSelectMode() {
-    if (_mode == FormMode.select) return;
-    _mode = FormMode.select;
     notifyListeners();
   }
 
@@ -359,6 +328,3 @@ class HabitGroupModifyViewModel extends ChangeNotifier
 }
 
 //#endregion
-
-/// Internal mode for the group-modify selector; not part of the public API.
-enum FormMode { select, create }

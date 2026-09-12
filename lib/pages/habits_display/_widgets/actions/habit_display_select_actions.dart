@@ -27,6 +27,7 @@ enum HabitDisplaySelectAction {
   export,
   delete,
   groupModify,
+  statusModify,
 }
 
 final _selectAllId = ActionId('habits.select.select-all');
@@ -37,6 +38,7 @@ final _cloneId = ActionId('habits.select.clone');
 final _exportId = ActionId('habits.select.export');
 final _deleteId = ActionId('habits.select.delete');
 final _groupModifyId = ActionId('habits.select.group-modify');
+final _statusModifyId = ActionId('habits.select.status-modify');
 
 final class HabitDisplaySelectAppBarCallbacks {
   const HabitDisplaySelectAppBarCallbacks({
@@ -49,6 +51,7 @@ final class HabitDisplaySelectAppBarCallbacks {
     this.onExport,
     this.onDelete,
     this.onGroupModify,
+    this.onStatusModify,
   });
 
   final VoidCallback? onDone;
@@ -60,6 +63,7 @@ final class HabitDisplaySelectAppBarCallbacks {
   final void Function(BuildContext context)? onExport;
   final VoidCallback? onDelete;
   final VoidCallback? onGroupModify;
+  final VoidCallback? onStatusModify;
 }
 
 final class HabitDisplaySelectActionsData {
@@ -104,6 +108,7 @@ class HabitDisplaySelectActions extends StatelessWidget {
       (vm) => vm.habitGrouping,
     );
     final isLarge = WindowSize.of(context).width >= WindowSizeClass.large;
+    final isApple = AdaptiveStyle.of(context) == AdaptiveStyle.apple;
     final hasSelection = stat.selected > 0;
     final overflowOnly = ActionPlacementPolicy(
       placement: ActionPlacement.overflowOnly,
@@ -203,6 +208,18 @@ class HabitDisplaySelectActions extends StatelessWidget {
           isEnabled: hasSelection && callbacks.onGroupModify != null,
           placementPolicy: isLarge ? null : overflowOnly,
         ),
+      if (isApple)
+        AdaptiveAction.action(
+          id: _statusModifyId,
+          metadata: ActionMetadata(
+            label: l10n?.batchCheckin_appbar_title ?? 'Batch Check-in',
+            tooltip: l10n?.batchCheckin_appbar_title ?? 'Batch Check-in',
+            iconKey: _statusModifyId.value,
+          ),
+          payload: HabitDisplaySelectAction.statusModify,
+          isEnabled: hasSelection && callbacks.onStatusModify != null,
+          placementPolicy: highRetention,
+        ),
       if (stat.selected == 1)
         AdaptiveAction.action(
           id: _cloneId,
@@ -257,6 +274,8 @@ class HabitDisplaySelectActions extends StatelessWidget {
         callbacks.onDelete?.call();
       case HabitDisplaySelectAction.groupModify:
         callbacks.onGroupModify?.call();
+      case HabitDisplaySelectAction.statusModify:
+        callbacks.onStatusModify?.call();
     }
   }
 
@@ -272,6 +291,7 @@ class HabitDisplaySelectActions extends StatelessWidget {
     HabitDisplaySelectAction.export => MdiIcons.export,
     HabitDisplaySelectAction.delete => MdiIcons.delete,
     HabitDisplaySelectAction.groupModify => MdiIcons.folderMove,
+    HabitDisplaySelectAction.statusModify => Icons.calendar_view_day_rounded,
     null => Icons.more_horiz,
   });
 
@@ -287,6 +307,7 @@ class HabitDisplaySelectActions extends StatelessWidget {
     HabitDisplaySelectAction.export => CupertinoIcons.share,
     HabitDisplaySelectAction.delete => CupertinoIcons.delete,
     HabitDisplaySelectAction.groupModify => CupertinoIcons.folder,
+    HabitDisplaySelectAction.statusModify => CupertinoIcons.square_list,
     null => CupertinoIcons.ellipsis,
   });
 
@@ -295,6 +316,7 @@ class HabitDisplaySelectActions extends StatelessWidget {
     AdaptiveAction<HabitDisplaySelectAction> action,
   ) => switch (action.payload) {
     HabitDisplaySelectAction.groupModify ||
+    HabitDisplaySelectAction.statusModify ||
     HabitDisplaySelectAction.clone => CupertinoActionPresentation.extended,
     HabitDisplaySelectAction.selectAll ||
     HabitDisplaySelectAction.edit ||
