@@ -3479,6 +3479,12 @@ abstract class L10n {
   /// **'Edit Group'**
   String get groupManage_editDialog_title;
 
+  /// Tooltip for the create group action
+  ///
+  /// In en, this message translates to:
+  /// **'Create group'**
+  String get groupManage_createButton_tooltip;
+
   /// Title for the group creation dialog
   ///
   /// In en, this message translates to:

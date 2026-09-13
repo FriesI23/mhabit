@@ -2049,6 +2049,9 @@ class L10nZh extends L10n {
   String get groupManage_editDialog_title => '编辑分组';
 
   @override
+  String get groupManage_createButton_tooltip => '新建分组';
+
+  @override
   String get groupManage_createDialog_title => '创建分组';
 
   @override

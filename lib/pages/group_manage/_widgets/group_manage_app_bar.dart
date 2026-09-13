@@ -22,11 +22,13 @@ const _kCommonElevation = 2.0;
 class GroupManageSliverAppBar extends StatelessWidget {
   const GroupManageSliverAppBar({
     super.key,
+    required this.onCreate,
     required this.onEdit,
     required this.onSortOpen,
     required this.onBatchDelete,
   });
 
+  final VoidCallback onCreate;
   final ValueChanged<String> onEdit;
   final VoidCallback onSortOpen;
   final VoidCallback onBatchDelete;
@@ -53,52 +55,111 @@ class GroupManageSliverAppBar extends StatelessWidget {
           ),
         );
     final l10n = L10n.of(context);
-    final toolbarHeight = AdaptiveStyle.of(context).appToolbarHeight;
-
-    if (selectionMode) {
-      return AdaptiveSliverAppBar(
-        height: toolbarHeight,
-        styles: AppBarStyles(
-          material: AppBarMaterialStyle(
-            floating: false,
-            snap: false,
-            pinned: true,
-            forceElevated: true,
-            scrolledUnderElevation: _kCommonElevation,
-            shadowColor: Theme.of(context).colorScheme.shadow,
-          ),
-        ),
-        leading: AdaptiveBackButton(
-          type: AdaptiveBackButtonType.close,
-          onPressed: () =>
-              context.read<GroupManageViewModel>().exitSelectionMode(),
-        ),
-        title: Text(
-          l10n?.groupManage_selectionAppbar_title(selectedCount) ??
-              '$selectedCount selected',
-        ),
-        actions: [
-          GroupManageSelectionAppBarActions(
-            selectedCount: selectedCount,
-            effectiveSortType: effectiveSortType,
-            onEdit: onEdit,
-            onBatchDelete: onBatchDelete,
-          ),
-        ],
-      );
-    }
-    return AdaptiveSliverAppBar(
-      height: toolbarHeight,
-      title: Text(l10n?.groupManage_appbar_title ?? 'Manage Groups'),
-      leading: const AdaptiveBackButton(type: AdaptiveBackButtonType.back),
-      actions: [
+    final title = Text(
+      selectionMode
+          ? (l10n?.groupManage_selectionAppbar_title(selectedCount) ??
+                '$selectedCount selected')
+          : (l10n?.groupManage_appbar_title ?? 'Manage Groups'),
+    );
+    final actions = <Widget>[
+      if (selectionMode)
+        GroupManageSelectionAppBarActions(
+          selectedCount: selectedCount,
+          effectiveSortType: effectiveSortType,
+          onEdit: onEdit,
+          onBatchDelete: onBatchDelete,
+        )
+      else
         GroupManageNormalAppBarActions(
+          onCreate: onCreate,
           hasGroups: hasGroups,
           effectiveSortType: effectiveSortType,
           effectiveSortDirection: effectiveSortDirection,
           onSortOpen: onSortOpen,
         ),
-      ],
-    );
+    ];
+    final VoidCallback? onClose = selectionMode
+        ? context.read<GroupManageViewModel>().exitSelectionMode
+        : null;
+    return switch (AdaptiveStyle.of(context)) {
+      AdaptiveStyle.material => _MaterialGroupManageAppBar(
+        title: title,
+        actions: actions,
+        selectionMode: selectionMode,
+        onClose: onClose,
+      ),
+      AdaptiveStyle.apple => _AppleGroupManageAppBar(
+        title: title,
+        actions: actions,
+        selectionMode: selectionMode,
+        onClose: onClose,
+      ),
+    };
   }
+}
+
+class _MaterialGroupManageAppBar extends StatelessWidget {
+  const _MaterialGroupManageAppBar({
+    required this.title,
+    required this.actions,
+    required this.selectionMode,
+    required this.onClose,
+  });
+
+  final Widget title;
+  final List<Widget> actions;
+  final bool selectionMode;
+  final VoidCallback? onClose;
+
+  @override
+  Widget build(BuildContext context) => AdaptiveSliverAppBar.material(
+    height: AppAdaptiveStyle.materialToolbarHeight,
+    styles: selectionMode
+        ? AppBarStyles(
+            material: AppBarMaterialStyle(
+              floating: false,
+              snap: false,
+              pinned: true,
+              forceElevated: true,
+              scrolledUnderElevation: _kCommonElevation,
+              shadowColor: Theme.of(context).colorScheme.shadow,
+            ),
+          )
+        : null,
+    leading: AdaptiveBackButton.material(
+      type: selectionMode
+          ? AdaptiveBackButtonType.close
+          : AdaptiveBackButtonType.back,
+      onPressed: onClose,
+    ),
+    title: title,
+    actions: actions,
+  );
+}
+
+class _AppleGroupManageAppBar extends StatelessWidget {
+  const _AppleGroupManageAppBar({
+    required this.title,
+    required this.actions,
+    required this.selectionMode,
+    required this.onClose,
+  });
+
+  final Widget title;
+  final List<Widget> actions;
+  final bool selectionMode;
+  final VoidCallback? onClose;
+
+  @override
+  Widget build(BuildContext context) => AdaptiveSliverAppBar.apple(
+    height: AppAdaptiveStyle.appleToolbarHeight,
+    leading: AdaptiveBackButton.apple(
+      type: selectionMode
+          ? AdaptiveBackButtonType.close
+          : AdaptiveBackButtonType.back,
+      onPressed: onClose,
+    ),
+    title: title,
+    actions: actions,
+  );
 }

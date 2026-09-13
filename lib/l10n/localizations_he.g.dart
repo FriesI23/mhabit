@@ -2169,6 +2169,9 @@ class L10nHe extends L10n {
   String get groupManage_editDialog_title => 'עריכת קבוצה';
 
   @override
+  String get groupManage_createButton_tooltip => 'Create group';
+
+  @override
   String get groupManage_createDialog_title => 'יצירת קבוצה';
 
   @override

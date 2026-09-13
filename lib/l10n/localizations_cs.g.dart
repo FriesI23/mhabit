@@ -2202,6 +2202,9 @@ class L10nCs extends L10n {
   String get groupManage_editDialog_title => 'Upravit skupinu';
 
   @override
+  String get groupManage_createButton_tooltip => 'Create group';
+
+  @override
   String get groupManage_createDialog_title => 'Vytvořit skupinu';
 
   @override

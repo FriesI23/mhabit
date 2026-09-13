@@ -1854,6 +1854,10 @@
     "@groupManage_editDialog_title": {
         "description": "Title for the group edit dialog"
     },
+    "groupManage_createButton_tooltip": "Create group",
+    "@groupManage_createButton_tooltip": {
+        "description": "Tooltip for the create group action"
+    },
     "groupManage_createDialog_title": "Create Group",
     "@groupManage_createDialog_title": {
         "description": "Title for the group creation dialog"

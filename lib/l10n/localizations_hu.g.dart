@@ -2204,6 +2204,9 @@ class L10nHu extends L10n {
   String get groupManage_editDialog_title => 'Edit Group';
 
   @override
+  String get groupManage_createButton_tooltip => 'Create group';
+
+  @override
   String get groupManage_createDialog_title => 'Create Group';
 
   @override
