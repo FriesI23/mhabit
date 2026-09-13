@@ -12,9 +12,15 @@ import 'package:mhabit/entries/app/navigation_destination.dart';
 import 'package:mhabit/entries/app/shell.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/app_entry.dart';
+import 'package:mhabit/pages/app_debugger/_widgets/debugger_app_bar.dart';
 import 'package:mhabit/pages/app_debugger/page.dart'
     show onDebuggerNotificationTapped;
 import 'package:mhabit/pages/common/widgets.dart';
+import 'package:mhabit/pages/group_manage/_providers/group_manage.dart';
+import 'package:mhabit/pages/group_manage/_widgets/group_manage_app_bar.dart';
+import 'package:mhabit/pages/habit_detail/_providers/habit_detail.dart';
+import 'package:mhabit/pages/habit_detail/_widgets/habit_detail_appbar.dart';
+import 'package:mhabit/pages/habit_detail/_widgets/habit_detail_appbar_actions.dart';
 import 'package:mhabit/pages/habits_display/navigation_chrome.dart';
 import 'package:mhabit/providers/app_ui/app_launch_entry.dart';
 import 'package:mhabit/providers/app_ui/app_theme.dart';
@@ -203,16 +209,80 @@ class _NavigatingPrimaryActionStubPageState
       const Scaffold(body: Center(child: Text('habits action page')));
 }
 
+// Composes production page chrome with the production router/shell. Page body
+// and persistence behavior are covered by the respective page tests.
+enum _RegressionPage { detail, groups, debugger }
+
+class _PrimaryActionRegressionPage extends StatelessWidget {
+  const _PrimaryActionRegressionPage(this.page, this.onInvoked);
+
+  final _RegressionPage page;
+  final ValueChanged<_RegressionPage> onInvoked;
+
+  Future<void> _openTask(BuildContext context) async {
+    onInvoked(page);
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: const TextField(key: ValueKey('primary-action-task-input')),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close task'),
+          ),
+        ],
+      ),
+    );
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Task returned')));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget appBar = switch (page) {
+      _RegressionPage.detail => HabitDetailAppBar(
+        title: const Text('Detail regression'),
+        actionBuilder: (_) => HabitDetailAppBarActions(
+          habitColor: null,
+          onInvoke: (context, _) => _openTask(context),
+        ),
+      ),
+      _RegressionPage.groups => GroupManageSliverAppBar(
+        onCreate: () => _openTask(context),
+        onEdit: (_) {},
+        onSortOpen: () {},
+        onBatchDelete: () {},
+      ),
+      _RegressionPage.debugger => DebuggerAppBar(onShare: _openTask),
+    };
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          appBar,
+          SliverToBoxAdapter(
+            child: SizedBox(height: 1600, child: Text('body-${page.name}')),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 GoRouter _buildRouter(
   List<AdaptiveBranchRouteObserver> observers, {
   Widget habitsPage = const _StubPage('habits page'),
   AppRoute home = AppRoute.habits,
+  Widget detailPage = const _StubPage('detail page'),
+  Widget? groupManagePage,
+  Widget debuggerPage = const _StubPage('debugger page'),
 }) {
   final branchObservers = [...observers];
   final branches = [
     BranchRouterBuilder()
       ..addHabits(builder: (_, _) => habitsPage)
-      ..addHabitDetail(builder: (_, _) => const _StubPage('detail page')),
+      ..addHabitDetail(builder: (_, _) => detailPage),
     BranchRouterBuilder()
       ..addToday(builder: (_, _) => const _StubPage('today page')),
   ];
@@ -258,11 +328,13 @@ GoRouter _buildRouter(
     )
     ..addHabitsStatus(builder: (_, _) => const _StubPage('status page'))
     ..addGroupManage(
-      builder: (_, state) => _GroupManageFlowStub(
-        selectionMode: state.uri.queryParameters['selecting'] == 'true',
-      ),
+      builder: (_, state) =>
+          groupManagePage ??
+          _GroupManageFlowStub(
+            selectionMode: state.uri.queryParameters['selecting'] == 'true',
+          ),
     )
-    ..addDebugger(builder: (_, _) => const _StubPage('debugger page'));
+    ..addDebugger(builder: (_, _) => debuggerPage);
   final appFlowObserver = AdaptiveBranchRouteObserver();
   final appChromeNavigatorKey = GlobalKey<NavigatorState>();
   coordinator = AppNavigationCoordinator(
@@ -340,12 +412,17 @@ Future<void> _pumpApp(
   required GoRouter router,
   required AppLaunchEntryViewModel launchEntry,
   TargetPlatform platform = TargetPlatform.android,
+  bool localized = false,
 }) {
   return tester.pumpWidget(
     ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
       value: launchEntry,
       child: MaterialApp.router(
         routerConfig: router,
+        localizationsDelegates: localized ? L10n.localizationsDelegates : null,
+        supportedLocales: localized
+            ? L10n.supportedLocales
+            : const [Locale("en", "US")],
         theme: ThemeData(
           platform: platform,
           pageTransitionsTheme: const PageTransitionsTheme(
@@ -381,6 +458,156 @@ Future<void> _commitPredictiveBack(WidgetTester tester) async {
 }
 
 void main() {
+  for (final platform in [TargetPlatform.iOS, TargetPlatform.macOS]) {
+    for (final width in [400.0, 900.0]) {
+      testWidgets(
+        'page actions remain route-owned across shell transitions $platform $width',
+        (tester) async {
+          _setSurface(tester, Size(width, 800));
+          final invoked = <_RegressionPage>[];
+          final detail = HabitDetailViewModel();
+          final groups = GroupManageViewModel();
+          final launchEntry = _RecordingLaunchEntryViewModel();
+          addTearDown(detail.dispose);
+          addTearDown(groups.dispose);
+          addTearDown(launchEntry.dispose);
+          final router = _buildRouter(
+            [AdaptiveBranchRouteObserver(), AdaptiveBranchRouteObserver()],
+            habitsPage: const _NavigatingPrimaryActionStubPage(),
+            detailPage: ChangeNotifierProvider.value(
+              value: detail,
+              child: _PrimaryActionRegressionPage(
+                _RegressionPage.detail,
+                invoked.add,
+              ),
+            ),
+            groupManagePage: ChangeNotifierProvider.value(
+              value: groups,
+              child: _PrimaryActionRegressionPage(
+                _RegressionPage.groups,
+                invoked.add,
+              ),
+            ),
+            debuggerPage: _PrimaryActionRegressionPage(
+              _RegressionPage.debugger,
+              invoked.add,
+            ),
+          );
+          addTearDown(router.dispose);
+          await _pumpApp(
+            tester,
+            router: router,
+            launchEntry: launchEntry,
+            platform: platform,
+            localized: true,
+          );
+          await tester.pumpAndSettle();
+          final shellAction = find
+              .byKey(const ValueKey('cupertino-primary-action-surface'))
+              .hitTestable();
+          expect(shellAction, findsOneWidget);
+          final coordinator = tester
+              .widget<AppNavigationShell>(find.byType(AppNavigationShell))
+              .coordinator;
+          for (final (page, path, icon) in [
+            (
+              _RegressionPage.detail,
+              '/habits/detail',
+              CupertinoIcons.calendar_badge_plus,
+            ),
+            (_RegressionPage.groups, '/group/manage', CupertinoIcons.add),
+            (_RegressionPage.debugger, '/debugger', CupertinoIcons.share),
+          ]) {
+            final pageAction = find
+                .descendant(
+                  of: find.byType(_PrimaryActionRegressionPage),
+                  matching: find.byIcon(icon),
+                )
+                .hitTestable();
+            unawaited(router.push<void>(path));
+            await tester.pumpAndSettle();
+            expect(shellAction, findsNothing);
+            expect(pageAction, findsOneWidget);
+            expect(
+              find.byType(FloatingActionButton).hitTestable(),
+              findsNothing,
+            );
+            for (final size in [
+              const Size(400, 800),
+              const Size(900, 800),
+              const Size(800, 400),
+            ]) {
+              tester.view.physicalSize = size;
+              await tester.pumpAndSettle();
+              expect(shellAction, findsNothing);
+              expect(pageAction, findsOneWidget);
+              expect(tester.takeException(), isNull);
+            }
+            await tester.tap(pageAction);
+            await tester.pumpAndSettle();
+            expect(invoked.last, page);
+            await tester.tap(
+              find.byKey(const ValueKey('primary-action-task-input')),
+            );
+            await tester.enterText(
+              find.byKey(const ValueKey('primary-action-task-input')),
+              'record',
+            );
+            tester.view.viewInsets = const FakeViewPadding(bottom: 180);
+            await tester.pumpAndSettle();
+            expect(pageAction, findsNothing);
+            expect(shellAction, findsNothing);
+            tester.view.resetViewInsets();
+            await tester.tap(find.text('Close task'));
+            await tester.pumpAndSettle();
+            expect(find.text('Task returned'), findsOneWidget);
+            expect(pageAction, findsOneWidget);
+            ScaffoldMessenger.of(
+              tester.element(pageAction),
+            ).hideCurrentSnackBar();
+            await tester.pumpAndSettle();
+            await tester.drag(
+              find.byType(CustomScrollView).last,
+              const Offset(0, -300),
+            );
+            await tester.pumpAndSettle();
+            expect(pageAction, findsOneWidget);
+            unawaited(coordinator.selectBranch(1));
+            await tester.pumpAndSettle();
+            expect(shellAction, findsNothing);
+            expect(pageAction, findsNothing);
+            unawaited(coordinator.selectBranch(0));
+            await tester.pumpAndSettle();
+            if (page == _RegressionPage.detail) {
+              expect(pageAction, findsOneWidget);
+              expect(shellAction, findsNothing);
+              router.pop();
+            } else {
+              expect(shellAction, findsOneWidget);
+              unawaited(router.push<void>(path));
+              await tester.pumpAndSettle();
+              expect(shellAction, findsNothing);
+              expect(pageAction, findsOneWidget);
+              router.pop();
+            }
+            await tester.pumpAndSettle();
+            expect(shellAction, findsOneWidget);
+            expect(pageAction, findsNothing);
+            expect(tester.takeException(), isNull);
+          }
+          expect(invoked, _RegressionPage.values);
+          await tester.tap(shellAction);
+          await tester.pumpAndSettle();
+          expect(find.text('create page'), findsOneWidget);
+          expect(shellAction, findsNothing);
+          router.pop();
+          await tester.pumpAndSettle();
+          expect(shellAction, findsOneWidget);
+        },
+      );
+    }
+  }
+
   test(
     'coordinator ignores navigation and repeated disposal after dispose',
     () async {
