@@ -26,6 +26,7 @@ import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_detail.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
+import 'package:mhabit/models/habit_reminder.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/habit_detail/_providers/habit_detail.dart';
 import 'package:mhabit/pages/habit_detail/page.dart';
@@ -217,6 +218,89 @@ Future<void> _pumpHabitDetailPage(
 }
 
 void main() {
+  for (final field in ['description', 'frequency']) {
+    testWidgets('retained detail updates $field after edit reload', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 3000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final profile = await _loadProfile();
+      final initialData = _buildHabitDetailData();
+      final updatedData = HabitDetailData(
+        data: _buildHabitSummaryData(),
+        modifyT: DateTime.utc(2026, 2, 2),
+        dailyGoalUnit: 'times',
+      );
+      updatedData.data
+        ..desc = 'Updated description'
+        ..color = const HabitColor.builtIn(HabitColorType.cc2)
+        ..startDate = initialData.data.startDate.subtractDays(7)
+        ..reminder = HabitReminder.dailyMidnight
+        ..frequency = const HabitFrequency.weekly(freq: 3);
+      final access = _DeferredReloadHabitDetailAccess(initialData: initialData);
+      final rebuildToken = ValueNotifier(0);
+      addTearDown(() {
+        rebuildToken.dispose();
+        profile.dispose();
+      });
+      await _pumpHabitDetailPage(
+        tester,
+        profile: profile,
+        access: access,
+        rebuildToken: rebuildToken,
+        habitUUID: initialData.data.uuid,
+      );
+      await tester.pumpAndSettle();
+      final markdown = find.byType(ColorfulMarkdownBlock);
+      expect(markdown, findsOneWidget);
+      final retainedElement = tester.element(markdown);
+      expect(find.text(initialData.data.frequency.toString()), findsOneWidget);
+      expect(find.byIcon(Icons.notifications_outlined), findsNothing);
+      final vm = tester
+          .element(find.text('Sample Habit').first)
+          .read<HabitDetailViewModel>();
+      vm.onEditCompleted();
+      await tester.pump();
+      expect(tester.element(markdown), same(retainedElement));
+      access.reloadCompleter.complete(updatedData);
+      await tester.pumpAndSettle();
+      if (field == 'description') {
+        expect(
+          tester.widget<ColorfulMarkdownBlock>(markdown).data,
+          updatedData.data.desc,
+        );
+        expect(
+          tester.widget<ColorfulMarkdownBlock>(markdown).color,
+          updatedData.data.color,
+        );
+      } else {
+        expect(
+          find.text(updatedData.data.frequency.toString()),
+          findsOneWidget,
+        );
+        expect(find.text(initialData.data.frequency.toString()), findsNothing);
+        expect(find.byIcon(Icons.notifications_outlined), findsOneWidget);
+        final config = tester
+            .element(markdown)
+            .read<AppCustomDateYmdHmsConfigViewModel>()
+            .config;
+        expect(
+          find.text(
+            config.getYMDFormatter(null).format(updatedData.data.startDate),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.text(config.getFormatter(null).format(updatedData.modifyT)),
+          findsOneWidget,
+        );
+      }
+      expect(tester.element(markdown), same(retainedElement));
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets(
     'HabitDetailPage keeps a settled load stable across parent rebuilds',
     (tester) async {

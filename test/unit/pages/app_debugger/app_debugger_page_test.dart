@@ -15,7 +15,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:archive/archive.dart';
 import 'package:flutter/cupertino.dart'
     show CupertinoButton, CupertinoIcons, CupertinoNavigationBar;
 import 'package:flutter/foundation.dart';
@@ -28,7 +27,6 @@ import 'package:mhabit/pages/app_debugger/page.dart';
 import 'package:mhabit/providers/app_ui/app_debugger.dart';
 import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 Future<void> _pumpPage(
@@ -37,6 +35,7 @@ Future<void> _pumpPage(
   Size size = const Size(500, 800),
   TextDirection direction = TextDirection.ltr,
   bool pushPage = false,
+  AsyncValueGetter<String>? debugBundleBuilder,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = size;
@@ -44,6 +43,9 @@ Future<void> _pumpPage(
   addTearDown(tester.view.resetDevicePixelRatio);
   final viewModel = AppDebuggerViewModel();
   addTearDown(viewModel.dispose);
+  final page = debugBundleBuilder == null
+      ? const AppDebuggerPage()
+      : AppDebuggerPage.testOnly(debugBundleBuilder: debugBundleBuilder);
   await tester.pumpWidget(
     ChangeNotifierProvider<AppDebuggerViewModel>.value(
       value: viewModel,
@@ -53,9 +55,7 @@ Future<void> _pumpPage(
         supportedLocales: L10n.supportedLocales,
         builder: (context, child) =>
             Directionality(textDirection: direction, child: child!),
-        home: pushPage
-            ? const Scaffold(body: Text("Origin"))
-            : const AppDebuggerPage(),
+        home: pushPage ? const Scaffold(body: Text("Origin")) : page,
       ),
     ),
   );
@@ -64,7 +64,7 @@ Future<void> _pumpPage(
     unawaited(
       Navigator.of(
         tester.element(find.text('Origin')),
-      ).push<void>(MaterialPageRoute(builder: (_) => const AppDebuggerPage())),
+      ).push<void>(MaterialPageRoute(builder: (_) => page)),
     );
     await tester.pumpAndSettle();
   }
@@ -175,120 +175,64 @@ void main() {
   }
 
   for (final disposeBeforeReady in [false, true]) {
-    testWidgets('share generates original zip; disposed=$disposeBeforeReady', (
+    testWidgets('shares generated bundle; disposed=$disposeBeforeReady', (
       tester,
     ) async {
       final directory = Directory.systemTemp.createTempSync(
         'debugger-share-test-',
       );
       addTearDown(() => directory.deleteSync(recursive: true));
-      final signals = (await tester.runAsync(
-        () async =>
-            (Completer<void>(), Completer<void>(), Completer<MethodCall>()),
-      ))!;
-      final (deviceRequested, deviceReady, shared) = signals;
+      final bundle = File('${directory.path}/$debuggerZipFile')
+        ..writeAsBytesSync([1, 2, 3]);
+      final bundleReady = Completer<String>();
+      var buildCount = 0;
+      final shareCalls = <MethodCall>[];
       final messenger = tester.binding.defaultBinaryMessenger;
-      const pathChannel = MethodChannel('plugins.flutter.io/path_provider');
-      const deviceChannel = MethodChannel(
-        'dev.fluttercommunity.plus/device_info',
-      );
       const shareChannel = MethodChannel('dev.fluttercommunity.plus/share');
-      messenger.setMockMethodCallHandler(
-        pathChannel,
-        (_) async => directory.path,
-      );
-      messenger.setMockMethodCallHandler(deviceChannel, (_) async {
-        deviceRequested.complete();
-        await deviceReady.future;
-        return <String, Object>{
-          'computerName': 'Test',
-          'hostName': 'Test',
-          'arch': 'arm64',
-          'model': 'Test',
-          'modelName': 'Test',
-          'kernelVersion': 'Test',
-          'osRelease': 'Test',
-          'majorVersion': 1,
-          'minorVersion': 0,
-          'patchVersion': 0,
-          'activeCPUs': 1,
-          'memorySize': 1024,
-          'cpuFrequency': 1,
-        };
-      });
       messenger.setMockMethodCallHandler(shareChannel, (call) async {
-        shared.complete(call);
+        shareCalls.add(call);
         return 'success';
       });
-      addTearDown(() {
-        messenger.setMockMethodCallHandler(pathChannel, null);
-        messenger.setMockMethodCallHandler(deviceChannel, null);
-        messenger.setMockMethodCallHandler(shareChannel, null);
-      });
-      PackageInfo.setMockInitialValues(
-        appName: 'mhabit',
-        packageName: 'mhabit',
-        version: '1',
-        buildNumber: '1',
-        buildSignature: '',
-      );
-      // Keep the platform boundary in XShare on its mobile sharing path.
+      addTearDown(() => messenger.setMockMethodCallHandler(shareChannel, null));
+      final originalTargetPlatform = debugDefaultTargetPlatformOverride;
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-
-      File(
-        '${directory.path}/$debuggerLogFileName',
-      ).writeAsStringSync('test debug log');
-      await _pumpPage(tester, platform: TargetPlatform.iOS, pushPage: true);
-      await tester.runAsync(() async {
-        tester
-            .widget<CupertinoButton>(
-              find
-                  .ancestor(
-                    of: find.byIcon(CupertinoIcons.share),
-                    matching: find.byType(CupertinoButton),
-                  )
-                  .first,
-            )
-            .onPressed!();
-        await deviceRequested.future.timeout(const Duration(seconds: 5));
-      });
-      if (disposeBeforeReady) {
-        await tester.tap(find.byType(AdaptiveBackButton));
+      try {
+        await _pumpPage(
+          tester,
+          platform: TargetPlatform.iOS,
+          pushPage: true,
+          debugBundleBuilder: () {
+            buildCount++;
+            return bundleReady.future;
+          },
+        );
+        await tester.tap(find.byIcon(CupertinoIcons.share));
+        await tester.pump();
+        expect(buildCount, 1);
+        expect(shareCalls, isEmpty);
+        if (disposeBeforeReady) {
+          await tester.tap(find.byType(AdaptiveBackButton));
+          await tester.pumpAndSettle();
+          expect(find.byType(AppDebuggerPage), findsNothing);
+        }
+        bundleReady.complete(bundle.path);
         await tester.pumpAndSettle();
-      }
-      await tester.runAsync(() async {
-        deviceReady.complete();
-        final zip = File('${directory.path}/$debuggerZipFile');
-        if (!disposeBeforeReady) {
-          final call = await shared.future.timeout(const Duration(seconds: 5));
-          final arguments = call.arguments as Map;
-          expect(arguments['paths'], [zip.path]);
+        if (disposeBeforeReady) {
+          expect(shareCalls, isEmpty);
+        } else {
+          expect(shareCalls, hasLength(1));
+          final arguments = shareCalls.single.arguments as Map;
+          expect(arguments['paths'], [bundle.path]);
           final context = tester.element(find.byType(AppDebuggerPage));
           expect(
             arguments['subject'],
             L10n.of(context)!.debug_downladDebugZip_subject(debuggerZipFile),
           );
-        } else {
-          // Wait for zip completion before checking the post-await mounted guard.
-          for (
-            var attempt = 0;
-            attempt < 100 && (!zip.existsSync() || zip.lengthSync() == 0);
-            attempt++
-          ) {
-            await Future<void>.delayed(const Duration(milliseconds: 10));
-          }
-          await Future<void>.delayed(const Duration(milliseconds: 50));
-          expect(shared.isCompleted, isFalse);
         }
-        final archive = ZipDecoder().decodeBytes(zip.readAsBytesSync());
-        expect(
-          archive.files.map((file) => file.name),
-          containsAll([debuggerLogFileName, debuggerInfoFileName]),
-        );
-      });
-      await tester.pumpAndSettle();
-      debugDefaultTargetPlatformOverride = null;
-      expect(tester.takeException(), isNull);
+        expect(tester.takeException(), isNull);
+      } finally {
+        debugDefaultTargetPlatformOverride = originalTargetPlatform;
+      }
     });
   }
 }

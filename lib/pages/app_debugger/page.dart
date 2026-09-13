@@ -63,16 +63,27 @@ Future<void> onDebuggerNotificationTapped() async {
 class AppDebuggerPage extends StatelessWidget {
   static const routerName = "/app_debugger";
 
-  const AppDebuggerPage({super.key});
+  const AppDebuggerPage({super.key})
+    : _debugBundleBuilder = generateZippedDebugInfo;
+
+  @visibleForTesting
+  const AppDebuggerPage.testOnly({
+    super.key,
+    required this._debugBundleBuilder,
+  });
+
+  final AsyncValueGetter<String> _debugBundleBuilder;
 
   @override
   Widget build(BuildContext context) {
-    return const _Page();
+    return _Page(debugBundleBuilder: _debugBundleBuilder);
   }
 }
 
 class _Page extends StatefulWidget {
-  const _Page();
+  const _Page({required this.debugBundleBuilder});
+
+  final AsyncValueGetter<String> debugBundleBuilder;
 
   @override
   State<StatefulWidget> createState() => _PageState();
@@ -145,7 +156,7 @@ class _PageState extends State<_Page> with XShare {
   }
 
   void _onShareDebugZip(BuildContext context) async {
-    final zipFilePath = await generateZippedDebugInfo();
+    final zipFilePath = await widget.debugBundleBuilder();
     if (!context.mounted) return;
     final subject = L10n.of(
       context,
