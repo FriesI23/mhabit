@@ -1,12 +1,40 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
-Widget _host(Widget button, {TargetPlatform? platform}) => MaterialApp(
+Widget _host(
+  Widget button, {
+  TargetPlatform? platform,
+  Iterable<LocalizationsDelegate<dynamic>>? localizationsDelegates,
+}) => MaterialApp(
   theme: platform == null ? null : ThemeData(platform: platform),
+  localizationsDelegates: localizationsDelegates,
   home: Scaffold(appBar: AppBar(leading: button)),
 );
+
+class _TestCupertinoLocalizations extends DefaultCupertinoLocalizations {
+  const _TestCupertinoLocalizations();
+
+  @override
+  String get backButtonLabel => 'Cupertino back';
+}
+
+class _TestCupertinoLocalizationsDelegate
+    extends LocalizationsDelegate<CupertinoLocalizations> {
+  const _TestCupertinoLocalizationsDelegate();
+
+  @override
+  bool isSupported(Locale locale) => true;
+
+  @override
+  Future<CupertinoLocalizations> load(Locale locale) =>
+      SynchronousFuture(const _TestCupertinoLocalizations());
+
+  @override
+  bool shouldReload(_TestCupertinoLocalizationsDelegate old) => false;
+}
 
 void main() {
   testWidgets('default constructor dispatches from adaptive style', (
@@ -70,6 +98,22 @@ void main() {
     expect(
       tester.getSize(find.byType(CupertinoButton)).height,
       greaterThanOrEqualTo(44),
+    );
+  });
+
+  testWidgets('Apple back tooltip uses Cupertino localizations', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        const AdaptiveBackButton.apple(),
+        localizationsDelegates: const [_TestCupertinoLocalizationsDelegate()],
+      ),
+    );
+
+    expect(
+      tester.widget<Tooltip>(find.byType(Tooltip)).message,
+      'Cupertino back',
     );
   });
 }

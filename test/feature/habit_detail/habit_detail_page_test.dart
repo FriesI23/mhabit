@@ -15,17 +15,21 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/extensions/adaptive_style_extensions.dart';
+import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_detail.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/models/habit_summary.dart';
+import 'package:mhabit/pages/habit_detail/_providers/habit_detail.dart';
 import 'package:mhabit/pages/habit_detail/page.dart';
+import 'package:mhabit/pages/habit_detail/widgets.dart' show HabitHeatmap;
 import 'package:mhabit/providers/app_ui/app_custom_date_format.dart';
 import 'package:mhabit/providers/app_ui/app_developer.dart';
 import 'package:mhabit/providers/app_ui/app_first_day.dart';
@@ -70,16 +74,33 @@ final class _PendingHabitDetailAccess extends StubHabitDetailAccess {
       _completer.future;
 }
 
+final class _DeferredReloadHabitDetailAccess extends StubHabitDetailAccess {
+  _DeferredReloadHabitDetailAccess({required this.initialData});
+
+  final HabitDetailData initialData;
+  final Completer<HabitDetailData?> reloadCompleter = Completer();
+  int loadDetailDataCallCount = 0;
+
+  @override
+  Future<HabitDetailData?> loadHabitDetailData(HabitUUID uuid) {
+    loadDetailDataCallCount += 1;
+    return loadDetailDataCallCount == 1
+        ? Future.value(initialData)
+        : reloadCompleter.future;
+  }
+}
+
 HabitSummaryData _buildHabitSummaryData({
   String uuid = '11111111-1111-4111-8111-111111111111',
   HabitStatus status = HabitStatus.activated,
+  String name = 'Sample Habit',
 }) {
   final startDate = HabitDate.now().subtractDays(1);
   return HabitSummaryData(
     id: 1,
     uuid: uuid,
     type: HabitType.normal,
-    name: 'Sample Habit',
+    name: name,
     desc: 'Detail regression fixture',
     color: const HabitColor.builtIn(HabitColorType.cc1),
     dailyGoal: 1,
@@ -94,8 +115,9 @@ HabitSummaryData _buildHabitSummaryData({
 
 HabitDetailData _buildHabitDetailData({
   HabitStatus status = HabitStatus.activated,
+  String name = 'Sample Habit',
 }) {
-  final data = _buildHabitSummaryData(status: status);
+  final data = _buildHabitSummaryData(status: status, name: name);
   return HabitDetailData(
     data: data,
     modifyT: DateTime.utc(2026, 1, 1),
@@ -118,6 +140,7 @@ Future<void> _pumpHabitDetailPage(
   required HabitUUID habitUUID,
   bool wrapWithAdaptiveShell = false,
   TargetPlatform? platform,
+  bool withAppLocalizations = false,
 }) async {
   final customDate = AppCustomDateYmdHmsConfigViewModel()
     ..updateProfile(profile);
@@ -146,6 +169,12 @@ Future<void> _pumpHabitDetailPage(
       ],
       child: MaterialApp(
         theme: ThemeData(platform: platform, extensions: [lightCustomColors]),
+        localizationsDelegates: withAppLocalizations
+            ? L10n.localizationsDelegates
+            : null,
+        supportedLocales: withAppLocalizations
+            ? L10n.supportedLocales
+            : const [Locale('en', 'US')],
         home: ValueListenableBuilder<int>(
           valueListenable: rebuildToken,
           builder: (context, _, child) {
@@ -226,6 +255,47 @@ void main() {
       expect(find.byType(PageLoadingIndicator), findsNothing);
     },
   );
+
+  testWidgets('HabitDetailPage keeps existing content during reload', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final initialData = _buildHabitDetailData();
+    final access = _DeferredReloadHabitDetailAccess(initialData: initialData);
+    final rebuildToken = ValueNotifier(0);
+
+    addTearDown(() {
+      rebuildToken.dispose();
+      profile.dispose();
+    });
+
+    await _pumpHabitDetailPage(
+      tester,
+      profile: profile,
+      access: access,
+      rebuildToken: rebuildToken,
+      habitUUID: initialData.data.uuid,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pump(const Duration(milliseconds: 350));
+
+    final detailContext = tester.element(find.text('Sample Habit').first);
+    detailContext.read<HabitDetailViewModel>().requestReload();
+    await tester.pump();
+
+    expect(access.loadDetailDataCallCount, 2);
+    expect(find.byType(PageLoadingIndicator), findsNothing);
+    expect(find.text('Sample Habit'), findsOneWidget);
+
+    access.reloadCompleter.complete(
+      _buildHabitDetailData(name: 'Updated Habit'),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(PageLoadingIndicator), findsNothing);
+    expect(find.text('Updated Habit'), findsOneWidget);
+  });
 
   testWidgets(
     'HabitDetailPage retries with a fresh load future after an error',
@@ -339,6 +409,8 @@ void main() {
     final edit = find.byIcon(Icons.edit_rounded);
     final archive = find.byIcon(Icons.archive_outlined);
     final more = find.byIcon(Icons.more_vert);
+    expect(find.byIcon(CupertinoIcons.calendar_badge_plus), findsNothing);
+    expect(find.byType(FloatingActionButton), findsOneWidget);
     expect(edit, findsOneWidget);
     expect(archive, findsOneWidget);
     expect(tester.widget<Icon>(edit).color, lightCustomColors.cc1);
@@ -436,6 +508,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 350));
 
     final edit = find.byIcon(CupertinoIcons.pencil);
+    final recordCalendar = find.byIcon(CupertinoIcons.calendar_badge_plus);
     final archive = find.byIcon(CupertinoIcons.archivebox);
     final more = find.byIcon(CupertinoIcons.ellipsis);
     expect(find.byType(CupertinoNavigationBar), findsOneWidget);
@@ -444,12 +517,36 @@ void main() {
     );
     expect(header.delegate.minExtent, AppAdaptiveStyle.appleToolbarHeight);
     expect(header.delegate.maxExtent, AppAdaptiveStyle.appleToolbarHeight);
+    expect(recordCalendar, findsOneWidget);
     expect(edit, findsOneWidget);
-    expect(archive, findsOneWidget);
+    expect(archive, findsNothing);
     expect(more, findsOneWidget);
     expect(tester.widget<Icon>(edit).color, lightCustomColors.cc1);
-    expect(tester.widget<Icon>(archive).color, lightCustomColors.cc1);
     expect(tester.widget<Icon>(more).color, lightCustomColors.cc1);
+    expect(find.byType(FloatingActionButton), findsNothing);
+    expect(find.text('Check in'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is Semantics &&
+            widget.properties.label == 'Check in' &&
+            widget.properties.tooltip == 'Open check-in calendar',
+      ),
+      findsOneWidget,
+    );
+    expect(
+      tester
+          .getSize(
+            find
+                .ancestor(
+                  of: recordCalendar,
+                  matching: find.byType(CupertinoButton),
+                )
+                .first,
+          )
+          .height,
+      greaterThanOrEqualTo(44),
+    );
     expect(
       tester
           .getSize(
@@ -471,9 +568,195 @@ void main() {
       greaterThanOrEqualTo(44),
     );
 
-    await tester.tap(archive);
+    final pointer = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await pointer.addPointer(location: Offset.zero);
+    await pointer.moveTo(tester.getCenter(recordCalendar));
+    await tester.pumpAndSettle();
+    expect(find.text('Open check-in calendar'), findsOneWidget);
+    await pointer.removePointer();
+    await tester.pumpAndSettle();
+
+    await tester.tap(recordCalendar);
+    await tester.pumpAndSettle();
+    expect(find.byType(AlertDialog), findsOneWidget);
+    await tester.tapAt(Offset.zero);
+    await tester.pumpAndSettle();
+
+    await tester.tap(more);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Archive'));
     await tester.pumpAndSettle();
     expect(find.text('Archive Habit?'), findsOneWidget);
+  });
+
+  testWidgets('HabitDetailPage Apple compact pins record and edit actions', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(400, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final profile = await _loadProfile();
+    final detailData = _buildHabitDetailData();
+    final access = _FakeHabitDetailAccess(seedData: detailData);
+    final rebuildToken = ValueNotifier(0);
+
+    addTearDown(() {
+      rebuildToken.dispose();
+      profile.dispose();
+    });
+
+    await _pumpHabitDetailPage(
+      tester,
+      profile: profile,
+      access: access,
+      rebuildToken: rebuildToken,
+      habitUUID: detailData.data.uuid,
+      wrapWithAdaptiveShell: true,
+      platform: TargetPlatform.iOS,
+      withAppLocalizations: true,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pump(const Duration(milliseconds: 350));
+
+    expect(find.byIcon(CupertinoIcons.calendar_badge_plus), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.pencil), findsOneWidget);
+    expect(find.text('Check in'), findsNothing);
+    final appBar = tester.widget<CupertinoSliverNavigationBar>(
+      find.byType(CupertinoSliverNavigationBar),
+    );
+    expect(appBar.largeTitle, isNotNull);
+    expect(appBar.middle, isNull);
+    expect(find.byIcon(CupertinoIcons.archivebox), findsNothing);
+    expect(find.byIcon(CupertinoIcons.ellipsis), findsOneWidget);
+    expect(find.byType(FloatingActionButton), findsNothing);
+  });
+
+  testWidgets('HabitDetailPage Material compact uses a medium title', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(400, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final profile = await _loadProfile();
+    final detailData = _buildHabitDetailData();
+    final access = _FakeHabitDetailAccess(seedData: detailData);
+    final rebuildToken = ValueNotifier(0);
+
+    addTearDown(() {
+      rebuildToken.dispose();
+      profile.dispose();
+    });
+
+    await _pumpHabitDetailPage(
+      tester,
+      profile: profile,
+      access: access,
+      rebuildToken: rebuildToken,
+      habitUUID: detailData.data.uuid,
+      platform: TargetPlatform.android,
+      withAppLocalizations: true,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pump(const Duration(milliseconds: 350));
+
+    expect(find.byType(SliverAppBar), findsOneWidget);
+    expect(find.text('Sample Habit'), findsNWidgets(2));
+  });
+
+  testWidgets('HabitDetailPage overview heatmap opens the check-in dialog', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(500, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final profile = await _loadProfile();
+    final detailData = _buildHabitDetailData();
+    final access = _FakeHabitDetailAccess(seedData: detailData);
+    final rebuildToken = ValueNotifier(0);
+
+    addTearDown(() {
+      rebuildToken.dispose();
+      profile.dispose();
+    });
+
+    await _pumpHabitDetailPage(
+      tester,
+      profile: profile,
+      access: access,
+      rebuildToken: rebuildToken,
+      habitUUID: detailData.data.uuid,
+      withAppLocalizations: true,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pump(const Duration(milliseconds: 350));
+
+    final heatmap = find.descendant(
+      of: find.byType(HabitHeatmap),
+      matching: find.byWidgetPredicate(
+        (widget) =>
+            widget is GestureDetector &&
+            widget.behavior == HitTestBehavior.opaque &&
+            widget.onTap != null,
+      ),
+    );
+    expect(heatmap, findsOneWidget);
+    await tester.ensureVisible(heatmap);
+    await tester.pumpAndSettle();
+
+    final dailyGoal = find.text('Goal');
+    expect(dailyGoal, findsOneWidget);
+    await tester.ensureVisible(dailyGoal);
+    await tester.pumpAndSettle();
+    await tester.tap(dailyGoal);
+    await tester.pumpAndSettle();
+    expect(find.byType(AlertDialog), findsNothing);
+
+    await tester.ensureVisible(heatmap);
+    await tester.pumpAndSettle();
+    await tester.tap(heatmap);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AlertDialog), findsOneWidget);
+  });
+
+  testWidgets('HabitDetailPage charts tolerate rapid resize key re-entry', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1000, 2000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final profile = await _loadProfile();
+    final detailData = _buildHabitDetailData();
+    final access = _FakeHabitDetailAccess(seedData: detailData);
+    final rebuildToken = ValueNotifier(0);
+
+    addTearDown(() {
+      rebuildToken.dispose();
+      profile.dispose();
+    });
+
+    await _pumpHabitDetailPage(
+      tester,
+      profile: profile,
+      access: access,
+      rebuildToken: rebuildToken,
+      habitUUID: detailData.data.uuid,
+      platform: TargetPlatform.iOS,
+      withAppLocalizations: true,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pump(const Duration(milliseconds: 350));
+
+    for (final width in [500.0, 1000.0, 500.0, 1000.0]) {
+      tester.view.physicalSize = Size(width, 2000);
+      await tester.pump(const Duration(milliseconds: 20));
+    }
+
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('HabitDetailPage Apple actions collapse by retention priority', (
@@ -506,8 +789,8 @@ void main() {
 
     expect(find.byIcon(CupertinoIcons.pencil), findsOneWidget);
     expect(find.byIcon(CupertinoIcons.archivebox), findsOneWidget);
-    expect(find.byIcon(CupertinoIcons.square_on_square), findsOneWidget);
-    expect(find.byIcon(CupertinoIcons.share_up), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.square_on_square), findsNothing);
+    expect(find.byIcon(CupertinoIcons.share_up), findsNothing);
     expect(find.byIcon(CupertinoIcons.delete), findsNothing);
     expect(find.byIcon(CupertinoIcons.ellipsis), findsOneWidget);
 
@@ -515,7 +798,7 @@ void main() {
     await tester.pump();
 
     expect(find.byIcon(CupertinoIcons.pencil), findsOneWidget);
-    expect(find.byIcon(CupertinoIcons.archivebox), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.archivebox), findsNothing);
     expect(find.byIcon(CupertinoIcons.square_on_square), findsNothing);
     expect(find.byIcon(CupertinoIcons.share_up), findsNothing);
     expect(find.byIcon(CupertinoIcons.ellipsis), findsOneWidget);

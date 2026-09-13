@@ -449,6 +449,14 @@
         "description": "Button label for skipping today's habit with dialog"
     },
     "habitDetail_editButton_tooltip": "编辑",
+    "habitDetail_recordCalendar_label": "打卡",
+    "@habitDetail_recordCalendar_label": {
+        "description": "Button label for opening the habit check-in calendar"
+    },
+    "habitDetail_recordCalendar_tooltip": "打开打卡日历",
+    "@habitDetail_recordCalendar_tooltip": {
+        "description": "Tooltip for opening the habit record calendar"
+    },
     "habitDetail_editPopMenu_unarchive": "取消归档",
     "habitDetail_editPopMenu_archive": "归档",
     "habitDetail_editPopMenu_export": "导出",

@@ -190,6 +190,8 @@ class _PageState extends State<_Page>
     HabitDetailAppBarAction action,
   ) {
     switch (action) {
+      case HabitDetailAppBarAction.recordCalendar:
+        _openEditDialog();
       case HabitDetailAppBarAction.edit:
         _onAppbarEditActionPressed();
       case HabitDetailAppBarAction.unarchive:
@@ -383,10 +385,13 @@ class _PageState extends State<_Page>
   @visibleForTesting
   Future<void> loadData() async {
     if (!mounted) return;
-    final minBarShowTimeFuture = Future.delayed(kHabitDetailFutureLoadDuration);
-    if (!_vm.hasLoad) {
-      await Future.wait([_vm.loadData(widget.habitUUID), minBarShowTimeFuture]);
-    }
+    if (_vm.hasLoad) return;
+    final loadDataFuture = _vm.loadData(widget.habitUUID);
+    if (_vm.habitDetailData != null) return loadDataFuture;
+    await Future.wait([
+      loadDataFuture,
+      Future.delayed(kHabitDetailFutureLoadDuration),
+    ]);
   }
 
   Future<void> _resolveLoadDataFuture({bool forceReload = false}) =>
@@ -544,18 +549,19 @@ class _PageState extends State<_Page>
             colorMap: buildHeatmapColorMap(context),
             valueColorMap: buildHeatmapValueColorMap(context),
             selectedMap: viewmodel.heatmapDateToColorMap,
+            onHeatmapTap: _openEditDialog,
             colorTipLeftHelperText:
                 l10n?.habitDetail_heatmap_leftHelpText(
                   viewmodel.habitType?.dbCode ?? 0,
                 ) ??
-                "",
+                '',
             colorTipRightHelperText:
                 l10n?.habitDetail_heatmap_rightHelpText(
                   viewmodel.habitType?.dbCode ?? 0,
                 ) ??
-                "",
+                '',
             heatmapWeekLabelValueBuilder: (context, protoDate, defaultFormat) {
-              final ThemeData themeData = Theme.of(context);
+              final themeData = Theme.of(context);
               return FittedBox(
                 child: Text(
                   DateFormat(defaultFormat, localeString).format(protoDate),
@@ -564,8 +570,8 @@ class _PageState extends State<_Page>
               );
             },
             heatmapMonthLabelItemBuilder: (context, date, defaultFormat) {
-              final ThemeData themeData = Theme.of(context);
-              final TextTheme textTheme = themeData.textTheme;
+              final themeData = Theme.of(context);
+              final textTheme = themeData.textTheme;
               return Text(
                 DateFormat(defaultFormat, localeString).format(date),
                 style: textTheme.labelSmall?.copyWith(
@@ -626,7 +632,8 @@ class _PageState extends State<_Page>
                   position: animation,
                   child: child,
                 )
-              : AnimatedSwitcher.defaultTransitionBuilder,
+              : (child, animation) =>
+                    FadeTransition(opacity: animation, child: child),
           child: chart,
         );
       }
@@ -710,7 +717,8 @@ class _PageState extends State<_Page>
                   position: animation,
                   child: child,
                 )
-              : AnimatedSwitcher.defaultTransitionBuilder,
+              : (child, animation) =>
+                    FadeTransition(opacity: animation, child: child),
           child: chart,
         );
       }
@@ -905,6 +913,7 @@ class _PageState extends State<_Page>
             future: _resolveLoadDataFuture(forceReload: state.$2),
             builder: (context, snapshot) {
               final viewmodel = context.read<HabitDetailViewModel>();
+              final hasDetailData = viewmodel.habitDetailData != null;
               // appLog.load.debug("$widget.buildBody",
               //     ex: ["Loading detail data", snapshot.connectionState]);
 
@@ -915,7 +924,7 @@ class _PageState extends State<_Page>
 
               final Widget switcherWidget;
 
-              if (snapshot.inProgress) {
+              if (snapshot.inProgress && !hasDetailData) {
                 switcherWidget = SliverFillRemaining(
                   key: ValueKey<ConnectionState>(snapshot.connectionState),
                   hasScrollBody: false,
@@ -926,7 +935,7 @@ class _PageState extends State<_Page>
                     color: viewmodel.habitColor,
                   ),
                 );
-              } else if (snapshot.hasError) {
+              } else if (snapshot.hasError && !hasDetailData) {
                 switcherWidget = SliverFillRemaining(
                   hasScrollBody: false,
                   child: L10nBuilder(
@@ -1011,8 +1020,9 @@ class _PageState extends State<_Page>
     }
 
     // The shell's translucent bar overlays the page bottom, so reserve its
-    // height and lift the FAB while it is visible (hidden while this page
-    // sits above the branch root).
+    // height for the page content. Material also lifts its FAB while the bar
+    // is visible; Apple exposes the same business action in the AppBar.
+    final adaptiveStyle = AdaptiveStyle.of(context);
     final scope = AdaptiveNavScope.maybeOf(context);
     final navHeight = scope?.navHeight ?? 0.0;
     final barHeight = scope?.barHeight ?? 0.0;
@@ -1039,7 +1049,9 @@ class _PageState extends State<_Page>
             if (kDebugMode) _buildScrollablePlaceHolder(context),
           ],
         ),
-        floatingActionButton: scope == null
+        floatingActionButton: adaptiveStyle == AdaptiveStyle.apple
+            ? null
+            : scope == null
             ? buildFAB(context)
             : ValueListenableBuilder<bool>(
                 valueListenable: scope.visible,

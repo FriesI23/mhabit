@@ -1160,6 +1160,18 @@ abstract class L10n {
   /// **'Edit'**
   String get habitDetail_editButton_tooltip;
 
+  /// Button label for opening the habit check-in calendar
+  ///
+  /// In en, this message translates to:
+  /// **'Check in'**
+  String get habitDetail_recordCalendar_label;
+
+  /// Tooltip for opening the habit record calendar
+  ///
+  /// In en, this message translates to:
+  /// **'Open check-in calendar'**
+  String get habitDetail_recordCalendar_tooltip;
+
   /// No description provided for @habitDetail_editPopMenu_unarchive.
   ///
   /// In en, this message translates to:

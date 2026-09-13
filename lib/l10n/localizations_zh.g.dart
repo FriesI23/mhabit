@@ -613,6 +613,12 @@ class L10nZh extends L10n {
   String get habitDetail_editButton_tooltip => '编辑';
 
   @override
+  String get habitDetail_recordCalendar_label => '打卡';
+
+  @override
+  String get habitDetail_recordCalendar_tooltip => '打开打卡日历';
+
+  @override
   String get habitDetail_editPopMenu_unarchive => '取消归档';
 
   @override
@@ -2680,6 +2686,12 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get habitDetail_editButton_tooltip => '編輯';
+
+  @override
+  String get habitDetail_recordCalendar_label => '打卡';
+
+  @override
+  String get habitDetail_recordCalendar_tooltip => '打開打卡日曆';
 
   @override
   String get habitDetail_editPopMenu_unarchive => '解除封存';

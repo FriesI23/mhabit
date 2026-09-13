@@ -137,6 +137,38 @@ void main() {
     expect(find.byType(CupertinoAdaptiveActions<String>), findsOneWidget);
   });
 
+  testWidgets('apple actions use the shared Material tooltip presentation', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        platform: TargetPlatform.macOS,
+        actions: AdaptiveAppBarActions<String>.apple(
+          collection: _collection(),
+          onInvoke: (_, _) {},
+          primaryCapacity: 96,
+          maxPrimaryActions: 1,
+          apple: CupertinoAppBarActionsConfig(
+            iconBuilder: (context, action) => const Icon(CupertinoIcons.pencil),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(Tooltip), findsWidgets);
+    expect(find.byType(AdaptiveCupertinoTooltip), findsNothing);
+    expect(
+      tester.widgetList<Tooltip>(find.byType(Tooltip)),
+      everyElement(
+        isA<Tooltip>().having(
+          (tooltip) => tooltip.excludeFromSemantics,
+          'excludeFromSemantics',
+          isTrue,
+        ),
+      ),
+    );
+  });
+
   testWidgets('material keeps one primary action and invokes its payload', (
     tester,
   ) async {

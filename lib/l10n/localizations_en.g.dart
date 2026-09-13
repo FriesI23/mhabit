@@ -661,6 +661,12 @@ class L10nEn extends L10n {
   String get habitDetail_editButton_tooltip => 'Edit';
 
   @override
+  String get habitDetail_recordCalendar_label => 'Check in';
+
+  @override
+  String get habitDetail_recordCalendar_tooltip => 'Open check-in calendar';
+
+  @override
   String get habitDetail_editPopMenu_unarchive => 'Unarchive';
 
   @override

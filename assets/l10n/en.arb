@@ -584,6 +584,14 @@
     },
     "habitDetail_editButton_tooltip": "Edit",
     "@habitDetail_editButton_tooltip": {},
+    "habitDetail_recordCalendar_label": "Check in",
+    "@habitDetail_recordCalendar_label": {
+        "description": "Button label for opening the habit check-in calendar"
+    },
+    "habitDetail_recordCalendar_tooltip": "Open check-in calendar",
+    "@habitDetail_recordCalendar_tooltip": {
+        "description": "Tooltip for opening the habit record calendar"
+    },
     "habitDetail_editPopMenu_unarchive": "Unarchive",
     "@habitDetail_editPopMenu_unarchive": {},
     "habitDetail_editPopMenu_archive": "Archive",
