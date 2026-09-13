@@ -2028,6 +2028,9 @@ class L10nRu extends L10n {
       'Скачивается отладочная информация';
 
   @override
+  String get debug_shareDebugZip_tooltip => 'Share debug bundle';
+
+  @override
   String debug_downladDebugZip_subject(String fileName) {
     return 'Скачивается $fileName';
   }

@@ -1996,6 +1996,9 @@ class L10nHe extends L10n {
   String get debug_downladDebugInfo_subject => 'מידע ניפוי השגיאות מתקבל';
 
   @override
+  String get debug_shareDebugZip_tooltip => 'Share debug bundle';
+
+  @override
   String debug_downladDebugZip_subject(String fileName) {
     return 'מתבצעת הורדת $fileName';
   }

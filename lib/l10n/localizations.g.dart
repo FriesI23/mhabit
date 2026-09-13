@@ -3191,6 +3191,12 @@ abstract class L10n {
   /// **'Downloading debugging information'**
   String get debug_downladDebugInfo_subject;
 
+  /// Tooltip for sharing the zipped debug information and logs
+  ///
+  /// In en, this message translates to:
+  /// **'Share debug bundle'**
+  String get debug_shareDebugZip_tooltip;
+
   /// No description provided for @debug_downladDebugZip_subject.
   ///
   /// In en, this message translates to:

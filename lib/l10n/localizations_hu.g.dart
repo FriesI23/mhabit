@@ -2031,6 +2031,9 @@ class L10nHu extends L10n {
   String get debug_downladDebugInfo_subject => 'Debug információk letöltése';
 
   @override
+  String get debug_shareDebugZip_tooltip => 'Share debug bundle';
+
+  @override
   String debug_downladDebugZip_subject(String fileName) {
     return '$fileName letöltése';
   }

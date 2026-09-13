@@ -2040,6 +2040,9 @@ class L10nPl extends L10n {
       'Pobieranie informacji debugowania';
 
   @override
+  String get debug_shareDebugZip_tooltip => 'Share debug bundle';
+
+  @override
   String debug_downladDebugZip_subject(String fileName) {
     return 'Pobieranie  $fileName';
   }

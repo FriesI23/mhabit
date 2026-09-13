@@ -1989,6 +1989,9 @@ class L10nAr extends L10n {
   String get debug_downladDebugInfo_subject => 'جاري تنزيل معلومات التصحيح';
 
   @override
+  String get debug_shareDebugZip_tooltip => 'Share debug bundle';
+
+  @override
   String debug_downladDebugZip_subject(String fileName) {
     return 'جاري تنزيل $fileName';
   }

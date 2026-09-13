@@ -1963,6 +1963,9 @@ class L10nJa extends L10n {
   String get debug_downladDebugInfo_subject => 'デバッグ情報をダウンロード中';
 
   @override
+  String get debug_shareDebugZip_tooltip => 'Share debug bundle';
+
+  @override
   String debug_downladDebugZip_subject(String fileName) {
     return '$fileName をダウンロード中';
   }

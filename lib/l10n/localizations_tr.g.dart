@@ -2025,6 +2025,9 @@ class L10nTr extends L10n {
       'Hata ayıklama bilgisi indiriliyor';
 
   @override
+  String get debug_shareDebugZip_tooltip => 'Share debug bundle';
+
+  @override
   String debug_downladDebugZip_subject(String fileName) {
     return '$fileName indiriliyor';
   }

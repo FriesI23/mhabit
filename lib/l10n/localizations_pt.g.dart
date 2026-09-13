@@ -2017,6 +2017,9 @@ class L10nPt extends L10n {
       'A descarregar informações de depuração';
 
   @override
+  String get debug_shareDebugZip_tooltip => 'Share debug bundle';
+
+  @override
   String debug_downladDebugZip_subject(String fileName) {
     return 'A descarregar $fileName';
   }

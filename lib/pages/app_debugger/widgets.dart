@@ -13,6 +13,7 @@
 // limitations under the License.
 
 export '_widgets/change_logs_switcher_tile.dart';
+export '_widgets/debugger_app_bar.dart';
 export '_widgets/debugger_info_card.dart';
 export '_widgets/debugger_log_card.dart';
 export 'styles.dart';

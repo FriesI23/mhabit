@@ -2030,6 +2030,9 @@ class L10nEs extends L10n {
       'Descargar la información de depuración';
 
   @override
+  String get debug_shareDebugZip_tooltip => 'Share debug bundle';
+
+  @override
   String debug_downladDebugZip_subject(String fileName) {
     return 'Descargando $fileName';
   }

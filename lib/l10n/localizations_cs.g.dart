@@ -2027,6 +2027,9 @@ class L10nCs extends L10n {
   String get debug_downladDebugInfo_subject => 'Stahování ladicích informací';
 
   @override
+  String get debug_shareDebugZip_tooltip => 'Share debug bundle';
+
+  @override
   String debug_downladDebugZip_subject(String fileName) {
     return 'Stahování $fileName';
   }

@@ -2019,6 +2019,9 @@ class L10nDe extends L10n {
       'Downloading debugging information';
 
   @override
+  String get debug_shareDebugZip_tooltip => 'Share debug bundle';
+
+  @override
   String debug_downladDebugZip_subject(String fileName) {
     return 'Downloading $fileName';
   }

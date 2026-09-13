@@ -1881,6 +1881,9 @@ class L10nZh extends L10n {
   String get debug_downladDebugInfo_subject => '下载调试信息';
 
   @override
+  String get debug_shareDebugZip_tooltip => '分享调试日志包';
+
+  @override
   String debug_downladDebugZip_subject(String fileName) {
     return '下载 $fileName';
   }
