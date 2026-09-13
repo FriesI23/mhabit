@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
+import 'package:flutter/cupertino.dart'
+    show CupertinoIcons, CupertinoLocalizations;
 import 'package:flutter/material.dart'
-    show BackButton, CloseButton, Color, MaterialLocalizations, Tooltip;
+    show BackButton, CloseButton, Color, MaterialLocalizations;
 import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter/widgets.dart'
     show
@@ -8,6 +9,7 @@ import 'package:flutter/widgets.dart'
         Center,
         Icon,
         Navigator,
+        RawTooltip,
         StatelessWidget,
         VoidCallback,
         Widget;
@@ -50,7 +52,7 @@ class AdaptiveBackButton extends StatelessWidget {
   final VoidCallback? onPressed;
 
   Future<void> _popRoute(BuildContext context) async {
-    final dismissedTooltip = Tooltip.dismissAllToolTips();
+    final dismissedTooltip = RawTooltip.dismissAllToolTips();
     await Future<void>.delayed(
       dismissedTooltip
           ? const Duration(milliseconds: 150) * timeDilation
@@ -80,13 +82,16 @@ class AdaptiveBackButton extends StatelessWidget {
   }
 
   Widget _buildApple(BuildContext context, VoidCallback onPressed) {
-    final localizations = MaterialLocalizations.of(context);
     return Center(
       child: AdaptiveIconButton.apple(
         onPressed: onPressed,
         tooltip: switch (type) {
-          AdaptiveBackButtonType.back => localizations.backButtonTooltip,
-          AdaptiveBackButtonType.close => localizations.closeButtonTooltip,
+          AdaptiveBackButtonType.back => CupertinoLocalizations.of(
+            context,
+          ).backButtonLabel,
+          AdaptiveBackButtonType.close => MaterialLocalizations.of(
+            context,
+          ).closeButtonTooltip,
         },
         icon: Icon(switch (type) {
           AdaptiveBackButtonType.back => CupertinoIcons.back,

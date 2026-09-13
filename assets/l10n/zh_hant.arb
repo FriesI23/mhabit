@@ -424,6 +424,14 @@
         "description": "Button label for skipping today's habit with dialog"
     },
     "habitDetail_editButton_tooltip": "編輯",
+    "habitDetail_recordCalendar_label": "打卡",
+    "@habitDetail_recordCalendar_label": {
+        "description": "Button label for opening the habit check-in calendar"
+    },
+    "habitDetail_recordCalendar_tooltip": "打開打卡日曆",
+    "@habitDetail_recordCalendar_tooltip": {
+        "description": "Tooltip for opening the habit record calendar"
+    },
     "habitDetail_editPopMenu_unarchive": "解除封存",
     "habitDetail_editPopMenu_archive": "封存",
     "habitDetail_editPopMenu_export": "匯出",
@@ -999,6 +1007,10 @@
     "debug_downladDebugLogs_subject": "下載除錯日誌",
     "dbeug_clearDebugLogs_complete_snackbar": "已清除除錯日誌。",
     "debug_downladDebugInfo_subject": "下載除錯資訊",
+    "debug_shareDebugZip_tooltip": "分享除錯資訊包",
+    "@debug_shareDebugZip_tooltip": {
+        "description": "Tooltip for sharing the zipped debug information and logs"
+    },
     "debug_downladDebugZip_subject": "下載 {fileName}",
     "@debug_downladDebugZip_subject": {
         "placeholders": {
@@ -1127,6 +1139,10 @@
     "groupManage_editDialog_title": "編輯分組",
     "@groupManage_editDialog_title": {
         "description": "Title for the group edit dialog"
+    },
+    "groupManage_createButton_tooltip": "建立分組",
+    "@groupManage_createButton_tooltip": {
+        "description": "Tooltip for the create group action"
     },
     "groupManage_createDialog_title": "建立分組",
     "@groupManage_createDialog_title": {

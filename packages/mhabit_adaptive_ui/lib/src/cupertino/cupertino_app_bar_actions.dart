@@ -17,6 +17,7 @@ class CupertinoAppBarActions<T extends Object> extends StatelessWidget {
     this.actionButtonBuilder,
     this.menuBuilderForAction,
     this.overflowButtonBuilder,
+    this.tooltipBuilder,
     this.onOverflowMenuOpened,
     this.onOverflowMenuClosed,
     this.layoutDelegate,
@@ -41,6 +42,13 @@ class CupertinoAppBarActions<T extends Object> extends StatelessWidget {
   final CupertinoActionButtonBuilder<T>? actionButtonBuilder;
   final CupertinoActionMenuBuilder<T>? menuBuilderForAction;
   final CupertinoOverflowButtonBuilder? overflowButtonBuilder;
+
+  /// Builds the visual tooltip wrapper for the action renderer.
+  ///
+  /// When null, the renderer uses [AdaptiveCupertinoTooltip]. The renderer
+  /// retains ownership of tooltip text, visibility, and action accessibility
+  /// semantics.
+  final AdaptiveCupertinoTooltipBuilder? tooltipBuilder;
   final VoidCallback? onOverflowMenuOpened;
   final VoidCallback? onOverflowMenuClosed;
   final ActionRegionLayoutDelegate? layoutDelegate;
@@ -96,6 +104,7 @@ class CupertinoAppBarActions<T extends Object> extends StatelessWidget {
       },
       overflowIcon: overflowIcon ?? const Icon(CupertinoIcons.ellipsis),
       overflowTooltip: overflowTooltip,
+      tooltipBuilder: tooltipBuilder,
       onOverflowMenuOpened: onOverflowMenuOpened,
       onOverflowMenuClosed: onOverflowMenuClosed,
       presentationForAction: presentationForAction,

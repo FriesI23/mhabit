@@ -1160,6 +1160,18 @@ abstract class L10n {
   /// **'Edit'**
   String get habitDetail_editButton_tooltip;
 
+  /// Button label for opening the habit check-in calendar
+  ///
+  /// In en, this message translates to:
+  /// **'Check in'**
+  String get habitDetail_recordCalendar_label;
+
+  /// Tooltip for opening the habit record calendar
+  ///
+  /// In en, this message translates to:
+  /// **'Open check-in calendar'**
+  String get habitDetail_recordCalendar_tooltip;
+
   /// No description provided for @habitDetail_editPopMenu_unarchive.
   ///
   /// In en, this message translates to:
@@ -3179,6 +3191,12 @@ abstract class L10n {
   /// **'Downloading debugging information'**
   String get debug_downladDebugInfo_subject;
 
+  /// Tooltip for sharing the zipped debug information and logs
+  ///
+  /// In en, this message translates to:
+  /// **'Share debug bundle'**
+  String get debug_shareDebugZip_tooltip;
+
   /// No description provided for @debug_downladDebugZip_subject.
   ///
   /// In en, this message translates to:
@@ -3466,6 +3484,12 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Edit Group'**
   String get groupManage_editDialog_title;
+
+  /// Tooltip for the create group action
+  ///
+  /// In en, this message translates to:
+  /// **'Create group'**
+  String get groupManage_createButton_tooltip;
 
   /// Title for the group creation dialog
   ///

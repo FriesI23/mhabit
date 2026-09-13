@@ -613,6 +613,12 @@ class L10nZh extends L10n {
   String get habitDetail_editButton_tooltip => '编辑';
 
   @override
+  String get habitDetail_recordCalendar_label => '打卡';
+
+  @override
+  String get habitDetail_recordCalendar_tooltip => '打开打卡日历';
+
+  @override
   String get habitDetail_editPopMenu_unarchive => '取消归档';
 
   @override
@@ -1875,6 +1881,9 @@ class L10nZh extends L10n {
   String get debug_downladDebugInfo_subject => '下载调试信息';
 
   @override
+  String get debug_shareDebugZip_tooltip => '分享调试信息包';
+
+  @override
   String debug_downladDebugZip_subject(String fileName) {
     return '下载 $fileName';
   }
@@ -2041,6 +2050,9 @@ class L10nZh extends L10n {
 
   @override
   String get groupManage_editDialog_title => '编辑分组';
+
+  @override
+  String get groupManage_createButton_tooltip => '创建分组';
 
   @override
   String get groupManage_createDialog_title => '创建分组';
@@ -2680,6 +2692,12 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get habitDetail_editButton_tooltip => '編輯';
+
+  @override
+  String get habitDetail_recordCalendar_label => '打卡';
+
+  @override
+  String get habitDetail_recordCalendar_tooltip => '打開打卡日曆';
 
   @override
   String get habitDetail_editPopMenu_unarchive => '解除封存';
@@ -3655,6 +3673,9 @@ class L10nZhHant extends L10nZh {
   String get debug_downladDebugInfo_subject => '下載除錯資訊';
 
   @override
+  String get debug_shareDebugZip_tooltip => '分享除錯資訊包';
+
+  @override
   String debug_downladDebugZip_subject(String fileName) {
     return '下載 $fileName';
   }
@@ -3783,6 +3804,9 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get groupManage_editDialog_title => '編輯分組';
+
+  @override
+  String get groupManage_createButton_tooltip => '建立分組';
 
   @override
   String get groupManage_createDialog_title => '建立分組';

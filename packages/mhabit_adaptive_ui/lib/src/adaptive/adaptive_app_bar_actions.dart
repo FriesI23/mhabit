@@ -161,6 +161,14 @@ class AdaptiveAppBarActions<T extends Object> extends StatelessWidget {
   final Duration fadeDuration;
   final Duration resizeDuration;
 
+  // The renderer already labels each action for accessibility. Exclude the
+  // visual tooltip from semantics to avoid announcing the label twice.
+  Widget _buildAppBarActionTooltip(
+    BuildContext _,
+    String message,
+    Widget child,
+  ) => Tooltip(message: message, excludeFromSemantics: true, child: child);
+
   @override
   Widget build(BuildContext context) {
     final effectiveStyle = style ?? AdaptiveStyle.of(context);
@@ -200,6 +208,7 @@ class AdaptiveAppBarActions<T extends Object> extends StatelessWidget {
       actionButtonBuilder: config.actionButtonBuilder,
       menuBuilderForAction: config.menuBuilderForAction,
       overflowButtonBuilder: config.overflowButtonBuilder,
+      tooltipBuilder: _buildAppBarActionTooltip,
       layoutDelegate: layoutDelegate,
       fadeDuration: fadeDuration,
       resizeDuration: resizeDuration,
@@ -235,6 +244,7 @@ class AdaptiveAppBarActions<T extends Object> extends StatelessWidget {
       actionButtonBuilder: config.actionButtonBuilder,
       menuBuilderForAction: config.menuBuilderForAction,
       overflowButtonBuilder: config.overflowButtonBuilder,
+      tooltipBuilder: _buildAppBarActionTooltip,
       onOverflowMenuOpened: config.onOverflowMenuOpened,
       onOverflowMenuClosed: config.onOverflowMenuClosed,
       layoutDelegate: layoutDelegate,

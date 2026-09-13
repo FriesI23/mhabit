@@ -36,6 +36,7 @@ class HabitHeatmap extends StatelessWidget {
   final Map<num, Color>? colorMap;
   final Map<num, Color>? valueColorMap;
   final Map<DateTime, num>? selectedMap;
+  final VoidCallback? onHeatmapTap;
   final String colorTipLeftHelperText;
   final String colorTipRightHelperText;
   final Widget? Function(
@@ -76,6 +77,7 @@ class HabitHeatmap extends StatelessWidget {
     this.colorMap,
     this.valueColorMap,
     this.selectedMap,
+    this.onHeatmapTap,
     this.colorTipLeftHelperText = '',
     this.colorTipRightHelperText = '',
     this.heatmapWeekLabelValueBuilder,
@@ -88,43 +90,47 @@ class HabitHeatmap extends StatelessWidget {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
 
-    final heatmap = HeatmapCalendar<num>(
-      firstDay: firstday,
-      startDate: startDate,
-      endedDate: endedDate,
-      withUTC: true,
-      colorMap: colorMap,
-      valueColorMap: valueColorMap,
-      selectedMap: selectedMap,
-      cellSize: const Size.square(14.0),
-      colorTipSpaceBetweenHeatmap: 4.0,
-      style: const HeatmapCalendarStyle.defaults(
-        colorTipPosOffset: 16,
-        monthLabelTextSizeMultiple: 4,
-      ),
-      layoutParameters: const HeatmapLayoutParameters.defaults(
-        weekLabelPosition: CalendarWeekLabelPosition.right,
-        monthLabelPosition: CalendarMonthLabelPosition.bottom,
-        colorTipPosition: CalendarColorTipPosition.top,
-      ),
-      switchParameters: const HeatmapSwitchParameters.defaults(
-        autoClipped: CalendarAutoChippedBasis.right,
-      ),
-      colorTipLeftHelper: Text(
-        colorTipLeftHelperText,
-        style: textTheme.labelSmall?.copyWith(
-          color: themeData.colorScheme.outline,
+    final heatmap = GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onHeatmapTap,
+      child: HeatmapCalendar<num>(
+        firstDay: firstday,
+        startDate: startDate,
+        endedDate: endedDate,
+        withUTC: true,
+        colorMap: colorMap,
+        valueColorMap: valueColorMap,
+        selectedMap: selectedMap,
+        cellSize: const Size.square(14.0),
+        colorTipSpaceBetweenHeatmap: 4.0,
+        style: const HeatmapCalendarStyle.defaults(
+          colorTipPosOffset: 16,
+          monthLabelTextSizeMultiple: 4,
         ),
-      ),
-      colorTipRightHelper: Text(
-        colorTipRightHelperText,
-        style: textTheme.labelSmall?.copyWith(
-          color: themeData.colorScheme.outline,
+        layoutParameters: const HeatmapLayoutParameters.defaults(
+          weekLabelPosition: CalendarWeekLabelPosition.right,
+          monthLabelPosition: CalendarMonthLabelPosition.bottom,
+          colorTipPosition: CalendarColorTipPosition.top,
         ),
+        switchParameters: const HeatmapSwitchParameters.defaults(
+          autoClipped: CalendarAutoChippedBasis.right,
+        ),
+        colorTipLeftHelper: Text(
+          colorTipLeftHelperText,
+          style: textTheme.labelSmall?.copyWith(
+            color: themeData.colorScheme.outline,
+          ),
+        ),
+        colorTipRightHelper: Text(
+          colorTipRightHelperText,
+          style: textTheme.labelSmall?.copyWith(
+            color: themeData.colorScheme.outline,
+          ),
+        ),
+        weekLabelValueBuilder: heatmapWeekLabelValueBuilder,
+        monthLabelItemBuilder: heatmapMonthLabelItemBuilder,
+        cellBuilder: heatmapCellBuilder,
       ),
-      weekLabelValueBuilder: heatmapWeekLabelValueBuilder,
-      monthLabelItemBuilder: heatmapMonthLabelItemBuilder,
-      cellBuilder: heatmapCellBuilder,
     );
 
     Widget buildWithVertical(BuildContext context) {

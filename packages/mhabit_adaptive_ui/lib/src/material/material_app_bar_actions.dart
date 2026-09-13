@@ -17,6 +17,7 @@ class MaterialAppBarActions<T extends Object> extends StatelessWidget {
     this.actionButtonBuilder,
     this.menuBuilderForAction,
     this.overflowButtonBuilder,
+    this.tooltipBuilder,
     this.layoutDelegate,
     this.fadeDuration = Duration.zero,
     this.resizeDuration = Duration.zero,
@@ -39,6 +40,12 @@ class MaterialAppBarActions<T extends Object> extends StatelessWidget {
   final MaterialActionButtonBuilder<T>? actionButtonBuilder;
   final MaterialActionMenuBuilder<T>? menuBuilderForAction;
   final MaterialOverflowButtonBuilder? overflowButtonBuilder;
+
+  /// Builds the visual tooltip wrapper for the action renderer.
+  ///
+  /// When null, the renderer uses Material's [Tooltip]. The renderer retains
+  /// ownership of tooltip text, visibility, and action accessibility semantics.
+  final MaterialTooltipBuilder? tooltipBuilder;
   final ActionRegionLayoutDelegate? layoutDelegate;
   final Duration fadeDuration;
   final Duration resizeDuration;
@@ -92,6 +99,7 @@ class MaterialAppBarActions<T extends Object> extends StatelessWidget {
       },
       overflowIcon: overflowIcon ?? const Icon(Icons.more_vert),
       overflowTooltip: overflowTooltip,
+      tooltipBuilder: tooltipBuilder,
       presentationForAction: presentationForAction,
       presentationOverride: MaterialActionPresentation.iconOnly,
       style: const MaterialAdaptiveActionsStyle(iconSize: 24),

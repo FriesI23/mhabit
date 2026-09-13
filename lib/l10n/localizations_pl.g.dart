@@ -672,6 +672,12 @@ class L10nPl extends L10n {
   String get habitDetail_editButton_tooltip => 'Edytuj';
 
   @override
+  String get habitDetail_recordCalendar_label => 'Check in';
+
+  @override
+  String get habitDetail_recordCalendar_tooltip => 'Open check-in calendar';
+
+  @override
   String get habitDetail_editPopMenu_unarchive => 'Przywróć';
 
   @override
@@ -2034,6 +2040,9 @@ class L10nPl extends L10n {
       'Pobieranie informacji debugowania';
 
   @override
+  String get debug_shareDebugZip_tooltip => 'Share debug bundle';
+
+  @override
   String debug_downladDebugZip_subject(String fileName) {
     return 'Pobieranie  $fileName';
   }
@@ -2207,6 +2216,9 @@ class L10nPl extends L10n {
 
   @override
   String get groupManage_editDialog_title => 'Edit Group';
+
+  @override
+  String get groupManage_createButton_tooltip => 'Create group';
 
   @override
   String get groupManage_createDialog_title => 'Create Group';

@@ -652,6 +652,12 @@ class L10nJa extends L10n {
   String get habitDetail_editButton_tooltip => '編集';
 
   @override
+  String get habitDetail_recordCalendar_label => 'Check in';
+
+  @override
+  String get habitDetail_recordCalendar_tooltip => 'Open check-in calendar';
+
+  @override
   String get habitDetail_editPopMenu_unarchive => 'アーカイブ解除';
 
   @override
@@ -1957,6 +1963,9 @@ class L10nJa extends L10n {
   String get debug_downladDebugInfo_subject => 'デバッグ情報をダウンロード中';
 
   @override
+  String get debug_shareDebugZip_tooltip => 'Share debug bundle';
+
+  @override
   String debug_downladDebugZip_subject(String fileName) {
     return '$fileName をダウンロード中';
   }
@@ -2125,6 +2134,9 @@ class L10nJa extends L10n {
 
   @override
   String get groupManage_editDialog_title => 'Edit Group';
+
+  @override
+  String get groupManage_createButton_tooltip => 'Create group';
 
   @override
   String get groupManage_createDialog_title => 'Create Group';

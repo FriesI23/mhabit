@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
+import '../../../models/habit_color.dart';
 import '../../../widgets/widgets.dart';
 import '../_providers/habit_detail.dart';
 import '../styles.dart';
@@ -28,7 +29,10 @@ class HabitDetailDescTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    final viewmodel = context.read<HabitDetailViewModel>();
+    final (desc, color) = context
+        .select<HabitDetailViewModel, (String, HabitColor?)>(
+          (vm) => (vm.habitDesc, vm.habitColor),
+        );
     final TextScaler textScaler = MediaQuery.textScalerOf(
       context,
     ).clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3);
@@ -47,8 +51,8 @@ class HabitDetailDescTile extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: ColorfulMarkdownBlock(
-              data: viewmodel.habitDesc,
-              color: viewmodel.habitColor,
+              data: desc,
+              color: color,
               textScaler: textScaler,
             ),
           ),

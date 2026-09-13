@@ -35,6 +35,9 @@ import '../../models/habit_date.dart';
 import '../../models/habit_detail_chart.dart';
 import '../../models/habit_display.dart';
 import '../../models/habit_form.dart';
+import '../../models/habit_freq.dart';
+import '../../models/habit_group.dart';
+import '../../models/habit_reminder.dart';
 import '../../models/habit_status.dart';
 import '../../providers/app_ui/app_custom_date_format.dart';
 import '../../providers/app_ui/app_developer.dart';
@@ -190,6 +193,8 @@ class _PageState extends State<_Page>
     HabitDetailAppBarAction action,
   ) {
     switch (action) {
+      case HabitDetailAppBarAction.recordCalendar:
+        _openEditDialog();
       case HabitDetailAppBarAction.edit:
         _onAppbarEditActionPressed();
       case HabitDetailAppBarAction.unarchive:
@@ -383,10 +388,13 @@ class _PageState extends State<_Page>
   @visibleForTesting
   Future<void> loadData() async {
     if (!mounted) return;
-    final minBarShowTimeFuture = Future.delayed(kHabitDetailFutureLoadDuration);
-    if (!_vm.hasLoad) {
-      await Future.wait([_vm.loadData(widget.habitUUID), minBarShowTimeFuture]);
-    }
+    if (_vm.hasLoad) return;
+    final loadDataFuture = _vm.loadData(widget.habitUUID);
+    if (_vm.habitDetailData != null) return loadDataFuture;
+    await Future.wait([
+      loadDataFuture,
+      Future.delayed(kHabitDetailFutureLoadDuration),
+    ]);
   }
 
   Future<void> _resolveLoadDataFuture({bool forceReload = false}) =>
@@ -544,18 +552,19 @@ class _PageState extends State<_Page>
             colorMap: buildHeatmapColorMap(context),
             valueColorMap: buildHeatmapValueColorMap(context),
             selectedMap: viewmodel.heatmapDateToColorMap,
+            onHeatmapTap: _openEditDialog,
             colorTipLeftHelperText:
                 l10n?.habitDetail_heatmap_leftHelpText(
                   viewmodel.habitType?.dbCode ?? 0,
                 ) ??
-                "",
+                '',
             colorTipRightHelperText:
                 l10n?.habitDetail_heatmap_rightHelpText(
                   viewmodel.habitType?.dbCode ?? 0,
                 ) ??
-                "",
+                '',
             heatmapWeekLabelValueBuilder: (context, protoDate, defaultFormat) {
-              final ThemeData themeData = Theme.of(context);
+              final themeData = Theme.of(context);
               return FittedBox(
                 child: Text(
                   DateFormat(defaultFormat, localeString).format(protoDate),
@@ -564,8 +573,8 @@ class _PageState extends State<_Page>
               );
             },
             heatmapMonthLabelItemBuilder: (context, date, defaultFormat) {
-              final ThemeData themeData = Theme.of(context);
-              final TextTheme textTheme = themeData.textTheme;
+              final themeData = Theme.of(context);
+              final textTheme = themeData.textTheme;
               return Text(
                 DateFormat(defaultFormat, localeString).format(date),
                 style: textTheme.labelSmall?.copyWith(
@@ -626,7 +635,8 @@ class _PageState extends State<_Page>
                   position: animation,
                   child: child,
                 )
-              : AnimatedSwitcher.defaultTransitionBuilder,
+              : (child, animation) =>
+                    FadeTransition(opacity: animation, child: child),
           child: chart,
         );
       }
@@ -710,7 +720,8 @@ class _PageState extends State<_Page>
                   position: animation,
                   child: child,
                 )
-              : AnimatedSwitcher.defaultTransitionBuilder,
+              : (child, animation) =>
+                    FadeTransition(opacity: animation, child: child),
           child: chart,
         );
       }
@@ -905,6 +916,7 @@ class _PageState extends State<_Page>
             future: _resolveLoadDataFuture(forceReload: state.$2),
             builder: (context, snapshot) {
               final viewmodel = context.read<HabitDetailViewModel>();
+              final hasDetailData = viewmodel.habitDetailData != null;
               // appLog.load.debug("$widget.buildBody",
               //     ex: ["Loading detail data", snapshot.connectionState]);
 
@@ -915,7 +927,7 @@ class _PageState extends State<_Page>
 
               final Widget switcherWidget;
 
-              if (snapshot.inProgress) {
+              if (snapshot.inProgress && !hasDetailData) {
                 switcherWidget = SliverFillRemaining(
                   key: ValueKey<ConnectionState>(snapshot.connectionState),
                   hasScrollBody: false,
@@ -926,7 +938,7 @@ class _PageState extends State<_Page>
                     color: viewmodel.habitColor,
                   ),
                 );
-              } else if (snapshot.hasError) {
+              } else if (snapshot.isDone && snapshot.hasError) {
                 switcherWidget = SliverFillRemaining(
                   hasScrollBody: false,
                   child: L10nBuilder(
@@ -1011,8 +1023,9 @@ class _PageState extends State<_Page>
     }
 
     // The shell's translucent bar overlays the page bottom, so reserve its
-    // height and lift the FAB while it is visible (hidden while this page
-    // sits above the branch root).
+    // height for the page content. Material also lifts its FAB while the bar
+    // is visible; Apple exposes the same business action in the AppBar.
+    final adaptiveStyle = AdaptiveStyle.of(context);
     final scope = AdaptiveNavScope.maybeOf(context);
     final navHeight = scope?.navHeight ?? 0.0;
     final barHeight = scope?.barHeight ?? 0.0;
@@ -1039,7 +1052,9 @@ class _PageState extends State<_Page>
             if (kDebugMode) _buildScrollablePlaceHolder(context),
           ],
         ),
-        floatingActionButton: scope == null
+        floatingActionButton: adaptiveStyle == AdaptiveStyle.apple
+            ? null
+            : scope == null
             ? buildFAB(context)
             : ValueListenableBuilder<bool>(
                 valueListenable: scope.visible,
@@ -1056,68 +1071,109 @@ class _PageState extends State<_Page>
   }
 }
 
+final class _HabitOtherInfoData {
+  _HabitOtherInfoData.from(HabitDetailViewModel vm)
+    : groupId = vm.habitGroupId,
+      group = vm.groupDisplayInfo,
+      type = vm.habitType,
+      reminder = vm.habitDetailData?.data.reminder,
+      frequency = vm.habitDetailData?.data.frequency,
+      startDate = vm.habitStartDate,
+      createTime = vm.habitDetailData?.createT,
+      modifyTime = vm.habitDetailData?.modifyT;
+
+  final String? groupId;
+  final HabitGroupData? group;
+  final HabitType? type;
+  final HabitReminder? reminder;
+  final HabitFrequency? frequency;
+  final HabitDate startDate;
+  final DateTime? createTime;
+  final DateTime? modifyTime;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _HabitOtherInfoData &&
+          groupId == other.groupId &&
+          group == other.group &&
+          type == other.type &&
+          reminder == other.reminder &&
+          frequency == other.frequency &&
+          startDate == other.startDate &&
+          createTime == other.createTime &&
+          modifyTime == other.modifyTime;
+
+  @override
+  int get hashCode => Object.hash(
+    groupId,
+    group,
+    type,
+    reminder,
+    frequency,
+    startDate,
+    createTime,
+    modifyTime,
+  );
+}
+
 class _OtherInfo extends StatelessWidget {
   const _OtherInfo();
 
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    final viewmodel = context.read<HabitDetailViewModel>();
-    final groupId = viewmodel.habitGroupId;
+    final info = context.select<HabitDetailViewModel, _HabitOtherInfoData>(
+      _HabitOtherInfoData.from,
+    );
 
     return HabitDetailTileList(
       title: HabitDetailChartTitle(
         title: l10n?.habitDetail_otherSubgroup_title ?? "Others",
       ),
       contentChildren: [
-        if (groupId != null)
+        if (info.groupId != null)
           ExperimentalFeatureGate.basic(
             selector: (context, vm) => vm.habitGrouping,
             enabledBuilder: (context) => HabitOtherInfoTile(
               title: Text(l10n?.habitDetail_groupTile_title ?? 'Group'),
               subTitle: Text(
-                viewmodel.groupDisplayInfo?.name ??
+                info.group?.name ??
                     l10n?.habitGroup_uncategorized ??
                     '<nogroup>',
               ),
-              leading: Icon(
-                viewmodel.groupDisplayInfo?.icon?.iconData ?? defaultGroupIcon,
-              ),
+              leading: Icon(info.group?.icon?.iconData ?? defaultGroupIcon),
             ),
           ),
-        if (viewmodel.habitType != null)
+        if (info.type != null)
           HabitOtherInfoTile(
             title: l10n != null
                 ? Text(l10n.habitDetail_habitType_title)
                 : const Text("Habit Type"),
-            subTitle: Text(viewmodel.habitType!.getTypeName(l10n)),
-            leading: Icon(viewmodel.habitType!.icon),
+            subTitle: Text(info.type!.getTypeName(l10n)),
+            leading: Icon(info.type!.icon),
           ),
         // reminder
-        if (viewmodel.habitDetailData?.data.reminder != null)
+        if (info.reminder != null)
           HabitOtherInfoTile(
             title: l10n != null
                 ? Text(l10n.habitDetail_reminderTile_title)
                 : const Text("Reminder"),
             subTitle: Text(
-              viewmodel.habitDetailData?.data.reminder
-                      ?.getReminderTypeHelperText(l10n) ??
-                  '',
+              info.reminder?.getReminderTypeHelperText(l10n) ?? '',
             ),
             leading: const Icon(Icons.notifications_outlined),
           ),
         // frequency
-        if (viewmodel.habitDetailData != null)
+        if (info.frequency != null)
           HabitOtherInfoTile(
             title: l10n != null
                 ? Text(l10n.habitDetail_freqTile_title)
                 : const Text("Frequency"),
             subTitle: Text(
               l10n != null
-                  ? viewmodel.habitDetailData!.data.frequency.toLocalString(
-                      l10n,
-                    )
-                  : viewmodel.habitDetailData!.data.frequency.toString(),
+                  ? info.frequency!.toLocalString(l10n)
+                  : info.frequency!.toString(),
             ),
             leading: const Icon(Icons.repeat_outlined),
           ),
@@ -1129,15 +1185,13 @@ class _OtherInfo extends StatelessWidget {
                 ? Text(l10n.habitDetail_startDateTile_title)
                 : const Text("Start Date"),
             subTitle: Text(
-              config
-                  .getYMDFormatter(l10n?.localeName)
-                  .format(viewmodel.habitStartDate),
+              config.getYMDFormatter(l10n?.localeName).format(info.startDate),
             ),
             leading: const Icon(Icons.schedule_outlined),
           ),
         ),
         // create date
-        if (viewmodel.habitDetailData != null)
+        if (info.createTime != null)
           Selector<AppCustomDateYmdHmsConfigViewModel, CustomDateYmdHmsConfig>(
             selector: (context, vm) => vm.config,
             builder: (context, config, child) => HabitOtherInfoTile(
@@ -1145,15 +1199,13 @@ class _OtherInfo extends StatelessWidget {
                   ? Text(l10n.habitDetail_createDateTile_title)
                   : const Text("Created"),
               subTitle: Text(
-                config
-                    .getFormatter(l10n?.localeName)
-                    .format(viewmodel.habitDetailData!.createT),
+                config.getFormatter(l10n?.localeName).format(info.createTime!),
               ),
               leading: const Icon(HabitCalIcons.calendarcreate),
             ),
           ),
         // modified date
-        if (viewmodel.habitDetailData != null)
+        if (info.modifyTime != null)
           Selector<AppCustomDateYmdHmsConfigViewModel, CustomDateYmdHmsConfig>(
             selector: (context, vm) => vm.config,
             builder: (context, config, child) => HabitOtherInfoTile(
@@ -1161,9 +1213,7 @@ class _OtherInfo extends StatelessWidget {
                   ? Text(l10n.habitDetail_modifyDateTile_title)
                   : const Text("Modified"),
               subTitle: Text(
-                config
-                    .getFormatter(l10n?.localeName)
-                    .format(viewmodel.habitDetailData!.modifyT),
+                config.getFormatter(l10n?.localeName).format(info.modifyTime!),
               ),
               leading: const Icon(HabitCalIcons.calendarmodify),
               padding: const EdgeInsets.only(bottom: 6.0),

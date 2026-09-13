@@ -664,6 +664,12 @@ class L10nCs extends L10n {
   String get habitDetail_editButton_tooltip => 'Upravit';
 
   @override
+  String get habitDetail_recordCalendar_label => 'Check in';
+
+  @override
+  String get habitDetail_recordCalendar_tooltip => 'Open check-in calendar';
+
+  @override
   String get habitDetail_editPopMenu_unarchive => 'Zrušit archivaci';
 
   @override
@@ -2021,6 +2027,9 @@ class L10nCs extends L10n {
   String get debug_downladDebugInfo_subject => 'Stahování ladicích informací';
 
   @override
+  String get debug_shareDebugZip_tooltip => 'Share debug bundle';
+
+  @override
   String debug_downladDebugZip_subject(String fileName) {
     return 'Stahování $fileName';
   }
@@ -2194,6 +2203,9 @@ class L10nCs extends L10n {
 
   @override
   String get groupManage_editDialog_title => 'Upravit skupinu';
+
+  @override
+  String get groupManage_createButton_tooltip => 'Create group';
 
   @override
   String get groupManage_createDialog_title => 'Vytvořit skupinu';

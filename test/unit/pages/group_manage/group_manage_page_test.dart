@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:adaptive_actions/core.dart';
 import 'package:flutter/cupertino.dart' show CupertinoButton, CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/common/types.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/group.dart';
 import 'package:mhabit/models/habit_display.dart';
@@ -27,6 +29,7 @@ import 'package:mhabit/pages/group_manage/page.dart';
 import 'package:mhabit/providers/app_ui/app_developer.dart';
 import 'package:mhabit/providers/app_ui/app_experimental_feature.dart';
 import 'package:mhabit/providers/app_ui/app_language.dart';
+import 'package:mhabit/providers/app_ui/custom_color_history.dart';
 import 'package:mhabit/providers/support/global.dart';
 import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/group_manager.dart';
@@ -79,11 +82,29 @@ final class _FakeGroupManager extends GroupManager {
   final List<GroupDBCell> groups;
 
   @override
+  Future<HabitGroupData> createGroup({
+    required String name,
+    String? desc,
+    GroupIcon? icon,
+    GroupColor? color,
+  }) async {
+    final cell = GroupDBCell(
+      uuid: 'created-group',
+      sortPosition: groups.length + 1,
+      name: name,
+      desc: desc,
+      status: 1,
+    );
+    groups.add(cell);
+    return HabitGroupData.fromDBQueryCell(cell);
+  }
+
+  @override
   Future<GroupCollection?> tryLoadGroupCollection() async =>
       GroupCollection.fromDBQueryResult(groups);
 }
 
-Future<_Fixture> _createFixture() async {
+Future<_Fixture> _createFixture({bool empty = false}) async {
   SharedPreferences.setMockInitialValues({});
   final profile = ProfileViewModel([DisplayGroupModeProfileHandler.new]);
   await profile.init();
@@ -106,6 +127,7 @@ Future<_Fixture> _createFixture() async {
       sortPosition: 2,
     ),
   ];
+  if (empty) groups.clear();
   final groupManager = _FakeGroupManager(groups);
   return _Fixture(
     profile: profile,
@@ -129,6 +151,7 @@ Future<GroupManageViewModel> _pumpPage(
   required _Fixture fixture,
   TargetPlatform platform = TargetPlatform.android,
   Size size = const Size(500, 800),
+  TextDirection textDirection = TextDirection.ltr,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = size;
@@ -150,9 +173,12 @@ Future<GroupManageViewModel> _pumpPage(
           value: fixture.navigationCoordinator,
         ),
         Provider<GroupManager>.value(value: fixture.groupManager),
+        ChangeNotifierProvider(create: (_) => CustomColorHistoryViewModel()),
       ],
       child: MaterialApp(
         theme: ThemeData(platform: platform),
+        builder: (context, child) =>
+            Directionality(textDirection: textDirection, child: child!),
         localizationsDelegates: L10n.localizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         home: const GroupManagePage(),
@@ -178,6 +204,176 @@ List<dynamic> _actionRoots(WidgetTester tester) =>
     List<dynamic>.from(_actionsWidget(tester).collection.roots as Iterable);
 
 void main() {
+  for (final platform in [TargetPlatform.iOS, TargetPlatform.macOS]) {
+    for (final width in [390.0, 900.0]) {
+      testWidgets(
+        'Apple normal actions and selection lifecycle $platform $width',
+        (tester) async {
+          final fixture = await _createFixture();
+          addTearDown(fixture.dispose);
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+          final semantics = tester.ensureSemantics();
+
+          final vm = await _pumpPage(
+            tester,
+            fixture: fixture,
+            platform: platform,
+            size: Size(width, 800),
+          );
+          await tester.pumpAndSettle();
+          expect(find.byType(FloatingActionButton), findsNothing);
+          expect(_actionRoots(tester).map((a) => a.metadata.label), [
+            'Create group',
+            'Reorder groups',
+            'Sort Groups',
+          ]);
+          expect(
+            _actionRoots(tester).last.placementPolicy.placement,
+            ActionPlacement.overflowOnly,
+          );
+          expect(find.byTooltip('Create group'), findsOneWidget);
+          expect(find.bySemanticsLabel('Create group'), findsOneWidget);
+          semantics.dispose();
+          final create = find
+              .ancestor(
+                of: find.byIcon(CupertinoIcons.add),
+                matching: find.byType(CupertinoButton),
+              )
+              .first;
+          expect(tester.getSize(create).width, greaterThanOrEqualTo(44));
+          expect(tester.getSize(create).height, greaterThanOrEqualTo(44));
+          expect(
+            tester.getCenter(create).dx,
+            lessThan(
+              tester
+                  .getCenter(find.byIcon(CupertinoIcons.arrow_up_arrow_down))
+                  .dx,
+            ),
+          );
+
+          await vm.setSortOptions(
+            HabitDisplayGroupType.name,
+            HabitDisplaySortDirection.desc,
+          );
+          await tester.pumpAndSettle();
+          await tester.tap(find.byIcon(CupertinoIcons.arrow_up_arrow_down));
+          await tester.pumpAndSettle();
+          expect(vm.selectionMode, isTrue);
+          expect(vm.effectiveSortType, HabitDisplayGroupType.manual);
+          expect(find.byIcon(CupertinoIcons.add), findsNothing);
+          expect(find.byType(FloatingActionButton), findsNothing);
+          await tester.binding.handlePopRoute();
+          await tester.pumpAndSettle();
+          expect(vm.selectionMode, isFalse);
+          expect(find.byIcon(CupertinoIcons.add), findsOneWidget);
+          vm.enterSelectionMode(fixture.groupUUIDs.first);
+          await tester.pumpAndSettle();
+          await tester.tap(find.byType(AdaptiveBackButton));
+          await tester.pumpAndSettle();
+          expect(vm.selectionMode, isFalse);
+          expect(find.byIcon(CupertinoIcons.add), findsOneWidget);
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+  }
+
+  for (final platform in [
+    TargetPlatform.android,
+    TargetPlatform.iOS,
+    TargetPlatform.macOS,
+  ]) {
+    testWidgets('empty page create cancel and save $platform', (tester) async {
+      final fixture = await _createFixture(empty: true);
+      addTearDown(fixture.dispose);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final vm = await _pumpPage(
+        tester,
+        fixture: fixture,
+        platform: platform,
+        size: platform == TargetPlatform.macOS
+            ? const Size(900, 800)
+            : const Size(390, 800),
+      );
+      await tester.pumpAndSettle();
+      final apple = platform != TargetPlatform.android;
+      expect(_actionRoots(tester).map((a) => a.metadata.label), [
+        if (apple) 'Create group',
+        'Sort Groups',
+      ]);
+      Finder createButton() => apple
+          ? find.byIcon(CupertinoIcons.add)
+          : find.byType(FloatingActionButton);
+      await tester.tap(createButton());
+      await tester.pumpAndSettle();
+      expect(find.text('Create Group'), findsOneWidget);
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+      expect(vm.groups, isEmpty);
+      await tester.tap(createButton());
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byType(TextFormField).first,
+        'Created from primary action',
+      );
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+      expect(vm.groups.single.name, 'Created from primary action');
+      expect(find.text('Created from primary action'), findsOneWidget);
+      expect(
+        find.byType(FloatingActionButton),
+        apple ? findsNothing : findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('Apple RTL resize retains primary actions and sort overflow', (
+    tester,
+  ) async {
+    final fixture = await _createFixture();
+    addTearDown(fixture.dispose);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await _pumpPage(
+      tester,
+      fixture: fixture,
+      platform: TargetPlatform.iOS,
+      textDirection: TextDirection.rtl,
+    );
+    for (final size in [
+      const Size(390, 800),
+      const Size(900, 800),
+      const Size(800, 390),
+    ]) {
+      tester.view.physicalSize = size;
+      await tester.pumpAndSettle();
+      expect(find.byIcon(CupertinoIcons.add), findsOneWidget);
+      expect(find.byIcon(CupertinoIcons.arrow_up_arrow_down), findsOneWidget);
+      expect(
+        tester.getCenter(find.byIcon(CupertinoIcons.add)).dx,
+        greaterThan(
+          tester.getCenter(find.byIcon(CupertinoIcons.arrow_up_arrow_down)).dx,
+        ),
+      );
+      expect(find.byType(FloatingActionButton), findsNothing);
+      expect(tester.takeException(), isNull);
+    }
+    await tester.tap(find.byIcon(CupertinoIcons.ellipsis));
+    await tester.pumpAndSettle();
+    expect(find.text('Sort Groups'), findsOneWidget);
+    await tester.tap(find.text('Sort Groups'));
+    await tester.pumpAndSettle();
+    expect(find.text('Sort Groups'), findsOneWidget);
+    expect(find.byType(Dialog), findsOneWidget);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.byIcon(CupertinoIcons.add), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('normal mode uses adaptive chrome and enters reorder mode', (
     tester,
   ) async {

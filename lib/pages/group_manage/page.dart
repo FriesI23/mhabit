@@ -218,6 +218,7 @@ class _PageState extends State<_Page> {
                 return Center(child: Text('${snapshot.error}'));
               }
               return _GroupManageBody(
+                onCreate: _openCreateDialog,
                 onEdit: _openEditDialog,
                 onDelete: _onSingleDelete,
                 onSortOpen: _openSortSelector,
@@ -227,7 +228,10 @@ class _PageState extends State<_Page> {
             },
           ),
         ),
-        floatingActionButton: _buildFab(context),
+        floatingActionButton: switch (AdaptiveStyle.of(context)) {
+          AdaptiveStyle.material => _buildFab(context),
+          AdaptiveStyle.apple => null,
+        },
       ),
     );
     return _GroupManagePopScope(child: child);
@@ -286,6 +290,7 @@ class _GroupManagePopScope extends StatelessWidget {
 
 class _GroupManageBody extends StatelessWidget {
   const _GroupManageBody({
+    required this.onCreate,
     required this.onEdit,
     required this.onDelete,
     required this.onSortOpen,
@@ -295,6 +300,7 @@ class _GroupManageBody extends StatelessWidget {
 
   final ValueChanged<String> onEdit;
   final ValueChanged<String> onDelete;
+  final VoidCallback onCreate;
   final VoidCallback onSortOpen;
   final VoidCallback onBatchDelete;
   final WidgetBuilder debugMenuBuilder;
@@ -314,6 +320,7 @@ class _GroupManageBody extends StatelessWidget {
       builder: (context, windowSize, child) => CustomScrollView(
         slivers: [
           GroupManageSliverAppBar(
+            onCreate: onCreate,
             onEdit: onEdit,
             onSortOpen: onSortOpen,
             onBatchDelete: onBatchDelete,
@@ -443,7 +450,12 @@ class _GroupManageDevelopMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 72),
+      padding: EdgeInsets.fromLTRB(16, 8, 16, switch (AdaptiveStyle.of(
+        context,
+      )) {
+        AdaptiveStyle.material => 72,
+        AdaptiveStyle.apple => 16,
+      }),
       child: ListTile(
         title: const Text('Edit dialog'),
         trailing: DropdownButton<GroupEditForceMode>(

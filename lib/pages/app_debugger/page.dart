@@ -26,7 +26,6 @@ import 'package:share_plus/share_plus.dart';
 import '../../common/app_info.dart';
 import '../../common/consts.dart';
 import '../../common/global.dart' show navigatorKey;
-import '../../extensions/adaptive_style_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../logging/level.dart';
@@ -64,16 +63,27 @@ Future<void> onDebuggerNotificationTapped() async {
 class AppDebuggerPage extends StatelessWidget {
   static const routerName = "/app_debugger";
 
-  const AppDebuggerPage({super.key});
+  const AppDebuggerPage({super.key})
+    : _debugBundleBuilder = generateZippedDebugInfo;
+
+  @visibleForTesting
+  const AppDebuggerPage.testOnly({
+    super.key,
+    required this._debugBundleBuilder,
+  });
+
+  final AsyncValueGetter<String> _debugBundleBuilder;
 
   @override
   Widget build(BuildContext context) {
-    return const _Page();
+    return _Page(debugBundleBuilder: _debugBundleBuilder);
   }
 }
 
 class _Page extends StatefulWidget {
-  const _Page();
+  const _Page({required this.debugBundleBuilder});
+
+  final AsyncValueGetter<String> debugBundleBuilder;
 
   @override
   State<StatefulWidget> createState() => _PageState();
@@ -145,8 +155,8 @@ class _PageState extends State<_Page> with XShare {
     saveSingleFile(filePath, subject: subject);
   }
 
-  void _onFABPressed(BuildContext context) async {
-    final zipFilePath = await generateZippedDebugInfo();
+  void _onShareDebugZip(BuildContext context) async {
+    final zipFilePath = await widget.debugBundleBuilder();
     if (!context.mounted) return;
     final subject = L10n.of(
       context,
@@ -175,26 +185,20 @@ class _PageState extends State<_Page> with XShare {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: Builder(
-        builder: (context) {
-          return FloatingActionButton(
-            child: const Icon(Icons.share),
-            onPressed: () => _onFABPressed(context),
-          );
-        },
-      ),
+      floatingActionButton: switch (AdaptiveStyle.of(context)) {
+        AdaptiveStyle.apple => null,
+        AdaptiveStyle.material => Builder(
+          builder: (context) {
+            return FloatingActionButton(
+              child: const Icon(Icons.share),
+              onPressed: () => _onShareDebugZip(context),
+            );
+          },
+        ),
+      },
       body: CustomScrollView(
         slivers: [
-          AdaptiveSliverAppBar(
-            height: AdaptiveStyle.of(context).appToolbarHeight,
-            title: L10nBuilder(
-              builder: (context, l10n) =>
-                  Text(l10n?.appSetting_debugger_titleText ?? 'Debugger'),
-            ),
-            leading: const AdaptiveBackButton(
-              type: AdaptiveBackButtonType.back,
-            ),
-          ),
+          DebuggerAppBar(onShare: _onShareDebugZip),
           EnhancedSafeArea.withDefault(
             top: false,
             withSliver: true,
@@ -236,7 +240,12 @@ class _PageState extends State<_Page> with XShare {
                     onSavePressed: _onSaveDebugButtonPressed,
                   ),
                 ),
-                const FixedPagePlaceHolder(minHeight: 82.0),
+                switch (AdaptiveStyle.of(context)) {
+                  AdaptiveStyle.material => const FixedPagePlaceHolder(
+                    minHeight: 82.0,
+                  ),
+                  AdaptiveStyle.apple => const SizedBox(height: 16),
+                },
               ],
             ),
           ),

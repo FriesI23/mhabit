@@ -194,6 +194,12 @@ existing architecture and tooling contracts.
 - This repo already uses `DynamicColorBuilder`, Material 3, and top-level app
   shell composition. Extend those patterns rather than bypassing them.
 
+App-bar action width budgets use `AppBarActionBudget` from
+`lib/widgets/app_bar_action_budget.dart`. Choose slots, candidate counts, or
+explicit capacity in the page renderer, then pass its computed `primaryCapacity` and `maxPrimaryActions` fields
+to the action host. Keep the default slot width in that config; page-specific
+label allowances and overflow decisions remain explicit at the call site.
+
 ## Theme And Localization
 
 - Theme setup is owned by app entry and theme-related view models.
