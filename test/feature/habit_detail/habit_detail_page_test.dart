@@ -80,14 +80,17 @@ final class _DeferredReloadHabitDetailAccess extends StubHabitDetailAccess {
 
   final HabitDetailData initialData;
   final Completer<HabitDetailData?> reloadCompleter = Completer();
+  final Completer<HabitDetailData?> retryCompleter = Completer();
   int loadDetailDataCallCount = 0;
 
   @override
   Future<HabitDetailData?> loadHabitDetailData(HabitUUID uuid) {
     loadDetailDataCallCount += 1;
-    return loadDetailDataCallCount == 1
-        ? Future.value(initialData)
-        : reloadCompleter.future;
+    return switch (loadDetailDataCallCount) {
+      1 => Future.value(initialData),
+      2 => reloadCompleter.future,
+      _ => retryCompleter.future,
+    };
   }
 }
 
@@ -379,6 +382,52 @@ void main() {
 
     expect(find.byType(PageLoadingIndicator), findsNothing);
     expect(find.text('Updated Habit'), findsOneWidget);
+  });
+
+  testWidgets('HabitDetailPage exposes reload failure and retries fresh data', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final initialData = _buildHabitDetailData();
+    final access = _DeferredReloadHabitDetailAccess(initialData: initialData);
+    final rebuildToken = ValueNotifier(0);
+    addTearDown(() {
+      rebuildToken.dispose();
+      profile.dispose();
+    });
+    await _pumpHabitDetailPage(
+      tester,
+      profile: profile,
+      access: access,
+      rebuildToken: rebuildToken,
+      habitUUID: initialData.data.uuid,
+    );
+    await tester.pumpAndSettle();
+    final vm = tester
+        .element(find.text('Sample Habit').first)
+        .read<HabitDetailViewModel>();
+    vm.onEditCompleted();
+    await tester.pump();
+    expect(access.loadDetailDataCallCount, 2);
+    expect(find.byType(HabitHeatmap), findsOneWidget);
+    access.reloadCompleter.completeError(StateError('reload failed'));
+    await tester.pumpAndSettle();
+    expect(find.text('Try Again'), findsOneWidget);
+    expect(find.byType(HabitHeatmap), findsNothing);
+
+    await tester.tap(find.text('Try Again'));
+    await tester.pumpAndSettle();
+    expect(access.loadDetailDataCallCount, 3);
+    expect(find.text('Try Again'), findsNothing);
+    expect(find.byType(HabitHeatmap), findsOneWidget);
+    access.retryCompleter.complete(
+      _buildHabitDetailData(name: 'Updated Habit'),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Updated Habit'), findsOneWidget);
+    expect(find.byType(HabitHeatmap), findsOneWidget);
+    expect(find.text('Try Again'), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets(

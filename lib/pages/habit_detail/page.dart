@@ -938,7 +938,7 @@ class _PageState extends State<_Page>
                     color: viewmodel.habitColor,
                   ),
                 );
-              } else if (snapshot.hasError && !hasDetailData) {
+              } else if (snapshot.isDone && snapshot.hasError) {
                 switcherWidget = SliverFillRemaining(
                   hasScrollBody: false,
                   child: L10nBuilder(
