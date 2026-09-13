@@ -25,9 +25,9 @@ import '../../../extensions/custom_color_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_color.dart';
 import '../../../theme/color.dart';
+import '../../../widgets/app_bar_action_budget.dart';
 import '../_providers/habit_detail.dart';
 
-const _appBarActionSlotExtent = 48.0;
 const _appleExtendedActionAllowance = 64.0;
 
 enum HabitDetailAppBarAction {
@@ -199,11 +199,14 @@ class _MaterialHabitDetailAppBarActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maxPrimaryActions = _baseMaxPrimaryActions(context);
+    final budget = AppBarActionBudget.slots(
+      maxPrimaryActions: _baseMaxPrimaryActions(context),
+      reserveOverflow: true,
+    );
     return AdaptiveAppBarActions<HabitDetailAppBarAction>.material(
       collection: collection,
-      primaryCapacity: (maxPrimaryActions + 1) * _appBarActionSlotExtent,
-      maxPrimaryActions: maxPrimaryActions,
+      primaryCapacity: budget.primaryCapacity,
+      maxPrimaryActions: budget.maxPrimaryActions,
       onInvoke: onInvoke,
       material: MaterialAppBarActionsConfig(
         iconBuilder: (context, action) => Icon(switch (action.payload) {
@@ -237,14 +240,18 @@ class _AppleHabitDetailAppBarActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = WindowSize.of(context).width;
-    final maxPrimaryActions = _baseMaxPrimaryActions(context) + 1;
     final showsExtendedRecordAction = width >= WindowSizeClass.medium;
+    final budget = AppBarActionBudget.slots(
+      maxPrimaryActions: _baseMaxPrimaryActions(context) + 1,
+      reserveOverflow: true,
+      additionalCapacity: showsExtendedRecordAction
+          ? _appleExtendedActionAllowance
+          : 0,
+    );
     return AdaptiveAppBarActions<HabitDetailAppBarAction>.apple(
       collection: collection,
-      primaryCapacity:
-          (maxPrimaryActions + 1) * _appBarActionSlotExtent +
-          (showsExtendedRecordAction ? _appleExtendedActionAllowance : 0),
-      maxPrimaryActions: maxPrimaryActions,
+      primaryCapacity: budget.primaryCapacity,
+      maxPrimaryActions: budget.maxPrimaryActions,
       onInvoke: onInvoke,
       apple: CupertinoAppBarActionsConfig(
         iconBuilder: (context, action) => Icon(switch (action.payload) {

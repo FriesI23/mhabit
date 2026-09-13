@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../../l10n/localizations.dart';
+import '../../../../widgets/app_bar_action_budget.dart';
 import 'habit_display_options_actions.dart';
 
 sealed class HabitDisplayViewAction {
@@ -252,20 +253,19 @@ class HabitDisplayViewActions extends StatelessWidget {
       (action) =>
           action.placementPolicy.placement == ActionPlacement.overflowOnly,
     );
-    final visiblePrimaryCount = primaryCount > maxPrimaryActions
-        ? maxPrimaryActions
-        : primaryCount;
-    final hasResolvedOverflow =
-        needsOverflow || primaryCount > maxPrimaryActions;
+    final budget = AppBarActionBudget.candidates(
+      primaryCount: primaryCount,
+      maxPrimaryActions: maxPrimaryActions,
+      hasOverflow: needsOverflow,
+    );
     return builder(
       context,
       HabitDisplayViewActionsData(
         collection: collection,
         onInvoke: (context, action) =>
             _onActionInvoked(action, displayOptionActions),
-        primaryCapacity:
-            (visiblePrimaryCount + (hasResolvedOverflow ? 1 : 0)) * 48.0,
-        maxPrimaryActions: maxPrimaryActions,
+        primaryCapacity: budget.primaryCapacity,
+        maxPrimaryActions: budget.maxPrimaryActions!,
         material: MaterialAppBarActionsConfig(
           iconBuilder: (context, action) =>
               _materialIcon(action, displayOptionActions),

@@ -11,10 +11,9 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../extensions/adaptive_style_extensions.dart';
 import '../../../l10n/localizations.dart';
+import '../../../widgets/app_bar_action_budget.dart';
 import '../styles.dart';
 import 'actions/habit_display_select_actions.dart';
-
-const _actionSlotExtent = 48.0;
 
 class MaterialSliverSelectAppBar extends StatelessWidget {
   const MaterialSliverSelectAppBar({
@@ -30,33 +29,40 @@ class MaterialSliverSelectAppBar extends StatelessWidget {
   Widget build(BuildContext context) => HabitDisplaySelectActions(
     callbacks: callbacks,
     includeSelectAll: true,
-    builder: (context, data) => AdaptiveSliverAppBar.material(
-      height: height,
-      title: Text(data.selectedCount.toString()),
-      leading: AdaptiveBackButton.material(
-        type: AdaptiveBackButtonType.close,
-        onPressed: callbacks.onDone,
-      ),
-      actions: [
-        AdaptiveAppBarActions<HabitDisplaySelectAction>.material(
-          collection: data.collection,
-          onInvoke: data.onInvoke,
-          primaryCapacity: data.collection.roots.length * _actionSlotExtent,
-          material: data.material,
+    builder: (context, data) {
+      final budget = AppBarActionBudget.candidates(
+        primaryCount: data.collection.roots.length,
+        hasOverflow: false,
+      );
+      return AdaptiveSliverAppBar.material(
+        height: height,
+        title: Text(data.selectedCount.toString()),
+        leading: AdaptiveBackButton.material(
+          type: AdaptiveBackButtonType.close,
+          onPressed: callbacks.onDone,
         ),
-      ],
-      styles: AppBarStyles(
-        material: AppBarMaterialStyle(
-          floating: false,
-          snap: false,
-          pinned: true,
-          forceElevated: true,
-          centerTitle: false,
-          scrolledUnderElevation: kCommonEvalation,
-          shadowColor: Theme.of(context).colorScheme.shadow,
+        actions: [
+          AdaptiveAppBarActions<HabitDisplaySelectAction>.material(
+            collection: data.collection,
+            onInvoke: data.onInvoke,
+            primaryCapacity: budget.primaryCapacity,
+            maxPrimaryActions: budget.maxPrimaryActions,
+            material: data.material,
+          ),
+        ],
+        styles: AppBarStyles(
+          material: AppBarMaterialStyle(
+            floating: false,
+            snap: false,
+            pinned: true,
+            forceElevated: true,
+            centerTitle: false,
+            scrolledUnderElevation: kCommonEvalation,
+            shadowColor: Theme.of(context).colorScheme.shadow,
+          ),
         ),
-      ),
-    ),
+      );
+    },
   );
 }
 

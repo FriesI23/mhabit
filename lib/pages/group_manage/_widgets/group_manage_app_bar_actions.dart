@@ -16,10 +16,9 @@ import 'package:provider/provider.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_display.dart';
 import '../../../models/habit_group_display.dart';
+import '../../../widgets/app_bar_action_budget.dart';
 import '../../common/widgets.dart';
 import '../_providers/group_manage.dart';
-
-const _appBarActionSlotExtent = 48.0;
 
 enum _GroupManageAppBarAction {
   create,
@@ -173,22 +172,27 @@ class _MaterialGroupManageNormalAppBarActions extends StatelessWidget {
   final Widget sortIcon;
 
   @override
-  Widget build(BuildContext context) =>
-      AdaptiveAppBarActions<_GroupManageAppBarAction>.material(
-        collection: _buildMaterialNormalActions(L10n.of(context), hasGroups),
-        primaryCapacity: 3 * _appBarActionSlotExtent,
-        maxPrimaryActions: 2,
-        onInvoke: onInvoke,
-        material: MaterialAppBarActionsConfig(
-          iconBuilder: (_, action) => switch (action.payload) {
-            _GroupManageAppBarAction.enterReorder => const Icon(
-              MdiIcons.sortVariant,
-            ),
-            _GroupManageAppBarAction.sort => sortIcon,
-            _ => const SizedBox.shrink(),
-          },
-        ),
-      );
+  Widget build(BuildContext context) {
+    final budget = AppBarActionBudget.slots(
+      maxPrimaryActions: 2,
+      reserveOverflow: true,
+    );
+    return AdaptiveAppBarActions<_GroupManageAppBarAction>.material(
+      collection: _buildMaterialNormalActions(L10n.of(context), hasGroups),
+      primaryCapacity: budget.primaryCapacity,
+      maxPrimaryActions: budget.maxPrimaryActions,
+      onInvoke: onInvoke,
+      material: MaterialAppBarActionsConfig(
+        iconBuilder: (_, action) => switch (action.payload) {
+          _GroupManageAppBarAction.enterReorder => const Icon(
+            MdiIcons.sortVariant,
+          ),
+          _GroupManageAppBarAction.sort => sortIcon,
+          _ => const SizedBox.shrink(),
+        },
+      ),
+    );
+  }
 }
 
 class _AppleGroupManageNormalAppBarActions extends StatelessWidget {
@@ -203,23 +207,28 @@ class _AppleGroupManageNormalAppBarActions extends StatelessWidget {
   final Widget sortIcon;
 
   @override
-  Widget build(BuildContext context) =>
-      AdaptiveAppBarActions<_GroupManageAppBarAction>.apple(
-        collection: _buildAppleNormalActions(L10n.of(context), hasGroups),
-        primaryCapacity: 3 * _appBarActionSlotExtent,
-        maxPrimaryActions: 2,
-        onInvoke: onInvoke,
-        apple: CupertinoAppBarActionsConfig(
-          iconBuilder: (_, action) => switch (action.payload) {
-            _GroupManageAppBarAction.create => const Icon(CupertinoIcons.add),
-            _GroupManageAppBarAction.enterReorder => const Icon(
-              CupertinoIcons.arrow_up_arrow_down,
-            ),
-            _GroupManageAppBarAction.sort => sortIcon,
-            _ => const SizedBox.shrink(),
-          },
-        ),
-      );
+  Widget build(BuildContext context) {
+    final budget = AppBarActionBudget.slots(
+      maxPrimaryActions: 2,
+      reserveOverflow: true,
+    );
+    return AdaptiveAppBarActions<_GroupManageAppBarAction>.apple(
+      collection: _buildAppleNormalActions(L10n.of(context), hasGroups),
+      primaryCapacity: budget.primaryCapacity,
+      maxPrimaryActions: budget.maxPrimaryActions,
+      onInvoke: onInvoke,
+      apple: CupertinoAppBarActionsConfig(
+        iconBuilder: (_, action) => switch (action.payload) {
+          _GroupManageAppBarAction.create => const Icon(CupertinoIcons.add),
+          _GroupManageAppBarAction.enterReorder => const Icon(
+            CupertinoIcons.arrow_up_arrow_down,
+          ),
+          _GroupManageAppBarAction.sort => sortIcon,
+          _ => const SizedBox.shrink(),
+        },
+      ),
+    );
+  }
 }
 
 class _MaterialGroupManageSelectionAppBarActions extends StatelessWidget {
@@ -236,26 +245,31 @@ class _MaterialGroupManageSelectionAppBarActions extends StatelessWidget {
   final int maxPrimaryActions;
 
   @override
-  Widget build(BuildContext context) =>
-      AdaptiveAppBarActions<_GroupManageAppBarAction>.material(
-        collection: _buildSelectionActions(
-          L10n.of(context),
-          selectedCount,
-          effectiveSortType,
-        ),
-        primaryCapacity: (maxPrimaryActions + 1) * _appBarActionSlotExtent,
-        maxPrimaryActions: maxPrimaryActions,
-        onInvoke: onInvoke,
-        material: MaterialAppBarActionsConfig(
-          iconBuilder: (_, action) => Icon(switch (action.payload) {
-            _GroupManageAppBarAction.edit => Icons.edit_outlined,
-            _GroupManageAppBarAction.selectAll => Icons.select_all,
-            _GroupManageAppBarAction.reorder => Icons.drag_indicator,
-            _GroupManageAppBarAction.delete => Icons.delete_outline,
-            _ => Icons.more_horiz,
-          }),
-        ),
-      );
+  Widget build(BuildContext context) {
+    final budget = AppBarActionBudget.slots(
+      maxPrimaryActions: maxPrimaryActions,
+      reserveOverflow: true,
+    );
+    return AdaptiveAppBarActions<_GroupManageAppBarAction>.material(
+      collection: _buildSelectionActions(
+        L10n.of(context),
+        selectedCount,
+        effectiveSortType,
+      ),
+      primaryCapacity: budget.primaryCapacity,
+      maxPrimaryActions: budget.maxPrimaryActions,
+      onInvoke: onInvoke,
+      material: MaterialAppBarActionsConfig(
+        iconBuilder: (_, action) => Icon(switch (action.payload) {
+          _GroupManageAppBarAction.edit => Icons.edit_outlined,
+          _GroupManageAppBarAction.selectAll => Icons.select_all,
+          _GroupManageAppBarAction.reorder => Icons.drag_indicator,
+          _GroupManageAppBarAction.delete => Icons.delete_outline,
+          _ => Icons.more_horiz,
+        }),
+      ),
+    );
+  }
 }
 
 class _AppleGroupManageSelectionAppBarActions extends StatelessWidget {
@@ -272,28 +286,33 @@ class _AppleGroupManageSelectionAppBarActions extends StatelessWidget {
   final int maxPrimaryActions;
 
   @override
-  Widget build(BuildContext context) =>
-      AdaptiveAppBarActions<_GroupManageAppBarAction>.apple(
-        collection: _buildSelectionActions(
-          L10n.of(context),
-          selectedCount,
-          effectiveSortType,
-        ),
-        primaryCapacity: (maxPrimaryActions + 1) * _appBarActionSlotExtent,
-        maxPrimaryActions: maxPrimaryActions,
-        onInvoke: onInvoke,
-        apple: CupertinoAppBarActionsConfig(
-          iconBuilder: (_, action) => Icon(switch (action.payload) {
-            _GroupManageAppBarAction.edit => CupertinoIcons.pencil,
-            _GroupManageAppBarAction.selectAll =>
-              CupertinoIcons.checkmark_alt_circle,
-            _GroupManageAppBarAction.reorder =>
-              CupertinoIcons.arrow_up_arrow_down,
-            _GroupManageAppBarAction.delete => CupertinoIcons.delete,
-            _ => CupertinoIcons.ellipsis,
-          }),
-        ),
-      );
+  Widget build(BuildContext context) {
+    final budget = AppBarActionBudget.slots(
+      maxPrimaryActions: maxPrimaryActions,
+      reserveOverflow: true,
+    );
+    return AdaptiveAppBarActions<_GroupManageAppBarAction>.apple(
+      collection: _buildSelectionActions(
+        L10n.of(context),
+        selectedCount,
+        effectiveSortType,
+      ),
+      primaryCapacity: budget.primaryCapacity,
+      maxPrimaryActions: budget.maxPrimaryActions,
+      onInvoke: onInvoke,
+      apple: CupertinoAppBarActionsConfig(
+        iconBuilder: (_, action) => Icon(switch (action.payload) {
+          _GroupManageAppBarAction.edit => CupertinoIcons.pencil,
+          _GroupManageAppBarAction.selectAll =>
+            CupertinoIcons.checkmark_alt_circle,
+          _GroupManageAppBarAction.reorder =>
+            CupertinoIcons.arrow_up_arrow_down,
+          _GroupManageAppBarAction.delete => CupertinoIcons.delete,
+          _ => CupertinoIcons.ellipsis,
+        }),
+      ),
+    );
+  }
 }
 
 ActionCollection<_GroupManageAppBarAction> _buildMaterialNormalActions(

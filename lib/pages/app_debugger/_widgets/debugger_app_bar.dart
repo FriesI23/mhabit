@@ -13,8 +13,7 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../extensions/adaptive_style_extensions.dart';
 import '../../../l10n/localizations.dart';
-
-const _appBarActionSlotExtent = 48.0;
+import '../../../widgets/app_bar_action_budget.dart';
 
 enum _DebuggerAction { share }
 
@@ -69,25 +68,33 @@ class _AppleDebuggerAppBar extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => AdaptiveSliverAppBar.apple(
-    height: AppAdaptiveStyle.appleToolbarHeight,
-    title: title,
-    leading: const AdaptiveBackButton.apple(type: AdaptiveBackButtonType.back),
-    actions: [
-      AdaptiveAppBarActions<_DebuggerAction>.apple(
-        collection: _buildAppleActions(L10n.of(context)),
-        primaryCapacity: _appBarActionSlotExtent,
-        maxPrimaryActions: 1,
-        onInvoke: _onInvoke,
-        apple: CupertinoAppBarActionsConfig(
-          iconBuilder: (_, action) => Icon(switch (action.payload) {
-            _DebuggerAction.share => CupertinoIcons.share,
-            null => CupertinoIcons.ellipsis,
-          }),
-        ),
+  Widget build(BuildContext context) {
+    final budget = AppBarActionBudget.slots(
+      maxPrimaryActions: 1,
+      reserveOverflow: false,
+    );
+    return AdaptiveSliverAppBar.apple(
+      height: AppAdaptiveStyle.appleToolbarHeight,
+      title: title,
+      leading: const AdaptiveBackButton.apple(
+        type: AdaptiveBackButtonType.back,
       ),
-    ],
-  );
+      actions: [
+        AdaptiveAppBarActions<_DebuggerAction>.apple(
+          collection: _buildAppleActions(L10n.of(context)),
+          primaryCapacity: budget.primaryCapacity,
+          maxPrimaryActions: budget.maxPrimaryActions,
+          onInvoke: _onInvoke,
+          apple: CupertinoAppBarActionsConfig(
+            iconBuilder: (_, action) => Icon(switch (action.payload) {
+              _DebuggerAction.share => CupertinoIcons.share,
+              null => CupertinoIcons.ellipsis,
+            }),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 ActionCollection<_DebuggerAction> _buildAppleActions(L10n? l10n) =>

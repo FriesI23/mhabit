@@ -11,8 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../l10n/localizations.dart';
-
-const _saveActionCapacity = 144.0;
+import '../../../widgets/app_bar_action_budget.dart';
 
 enum _HabitEditAppBarAction { save }
 
@@ -26,6 +25,10 @@ class HabitEditAppBarActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const budget = AppBarActionBudget.capacity(
+      primaryCapacity: 144,
+      maxPrimaryActions: 1,
+    );
     final saveLabel = L10n.of(context)?.habitEdit_saveButton_text ?? 'Save';
     final collection = ActionCollection<_HabitEditAppBarAction>(
       roots: [
@@ -43,8 +46,8 @@ class HabitEditAppBarActions extends StatelessWidget {
     return AdaptiveAppBarActions<_HabitEditAppBarAction>(
       collection: collection,
       onInvoke: (_, _) => onSave?.call(),
-      primaryCapacity: _saveActionCapacity,
-      maxPrimaryActions: 1,
+      primaryCapacity: budget.primaryCapacity,
+      maxPrimaryActions: budget.maxPrimaryActions,
       primaryActionDecorator: (_, _, child) => AnimatedOpacity(
         key: const ValueKey('habit-edit.save-visibility'),
         opacity: visible ? 1.0 : 0.0,
