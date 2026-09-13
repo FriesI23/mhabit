@@ -3862,7 +3862,6 @@
     "common_appThemeColor_primary",
     "common_appThemeColor_dynamic",
     "common_enable_text",
-    "debug_shareDebugZip_tooltip",
     "confirmDialog_confirm_text",
     "confirmDialog_cancel_text",
     "channelName_habitReminder",
@@ -3872,7 +3871,6 @@
     "channelDesc_appSyncing",
     "channelName_appSyncFailed",
     "channelDesc_appSyncFailed",
-    "groupManage_deleteDialog_cancel",
-    "groupManage_createButton_tooltip"
+    "groupManage_deleteDialog_cancel"
   ]
 }

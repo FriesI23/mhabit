@@ -161,6 +161,8 @@ class AdaptiveAppBarActions<T extends Object> extends StatelessWidget {
   final Duration fadeDuration;
   final Duration resizeDuration;
 
+  // The renderer already labels each action for accessibility. Exclude the
+  // visual tooltip from semantics to avoid announcing the label twice.
   Widget _buildAppBarActionTooltip(
     BuildContext _,
     String message,

@@ -28,6 +28,8 @@ import '../../../theme/color.dart';
 import '../../../widgets/app_bar_action_budget.dart';
 import '../_providers/habit_detail.dart';
 
+// Extra logical pixels for the check-in label beside its icon on wider Apple
+// layouts, added once on top of the action slot budget.
 const _appleExtendedActionAllowance = 64.0;
 
 enum HabitDetailAppBarAction {

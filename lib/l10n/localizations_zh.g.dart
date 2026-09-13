@@ -1881,7 +1881,7 @@ class L10nZh extends L10n {
   String get debug_downladDebugInfo_subject => '下载调试信息';
 
   @override
-  String get debug_shareDebugZip_tooltip => '分享调试日志包';
+  String get debug_shareDebugZip_tooltip => '分享调试信息包';
 
   @override
   String debug_downladDebugZip_subject(String fileName) {
@@ -2052,7 +2052,7 @@ class L10nZh extends L10n {
   String get groupManage_editDialog_title => '编辑分组';
 
   @override
-  String get groupManage_createButton_tooltip => '新建分组';
+  String get groupManage_createButton_tooltip => '创建分组';
 
   @override
   String get groupManage_createDialog_title => '创建分组';
@@ -3673,6 +3673,9 @@ class L10nZhHant extends L10nZh {
   String get debug_downladDebugInfo_subject => '下載除錯資訊';
 
   @override
+  String get debug_shareDebugZip_tooltip => '分享除錯資訊包';
+
+  @override
   String debug_downladDebugZip_subject(String fileName) {
     return '下載 $fileName';
   }
@@ -3801,6 +3804,9 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get groupManage_editDialog_title => '編輯分組';
+
+  @override
+  String get groupManage_createButton_tooltip => '建立分組';
 
   @override
   String get groupManage_createDialog_title => '建立分組';

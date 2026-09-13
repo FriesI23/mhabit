@@ -1007,6 +1007,10 @@
     "debug_downladDebugLogs_subject": "下載除錯日誌",
     "dbeug_clearDebugLogs_complete_snackbar": "已清除除錯日誌。",
     "debug_downladDebugInfo_subject": "下載除錯資訊",
+    "debug_shareDebugZip_tooltip": "分享除錯資訊包",
+    "@debug_shareDebugZip_tooltip": {
+        "description": "Tooltip for sharing the zipped debug information and logs"
+    },
     "debug_downladDebugZip_subject": "下載 {fileName}",
     "@debug_downladDebugZip_subject": {
         "placeholders": {
@@ -1135,6 +1139,10 @@
     "groupManage_editDialog_title": "編輯分組",
     "@groupManage_editDialog_title": {
         "description": "Title for the group edit dialog"
+    },
+    "groupManage_createButton_tooltip": "建立分組",
+    "@groupManage_createButton_tooltip": {
+        "description": "Tooltip for the create group action"
     },
     "groupManage_createDialog_title": "建立分組",
     "@groupManage_createDialog_title": {
