@@ -27,6 +27,7 @@ import 'package:mhabit/models/habit_detail.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/models/habit_reminder.dart';
+import 'package:mhabit/models/habit_repo_actions.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/habit_detail/_providers/habit_detail.dart';
 import 'package:mhabit/pages/habit_detail/page.dart';
@@ -50,6 +51,21 @@ final class _FakeHabitDetailAccess extends StubHabitDetailAccess {
   final HabitDetailData seedData;
   int failLoadDetailDataCount;
   int loadDetailDataCallCount = 0;
+  int statusChangeCalls = 0;
+  final List<HabitStatus> requestedStatuses = [];
+  Completer<Iterable<ChangeHabitStatusResult>>? statusChangeCompleter;
+
+  @override
+  Future<Iterable<ChangeHabitStatusResult>> changeHabitStatus({
+    required ChangeHabitStatusAction action,
+    FutureOr Function(ChangeHabitStatusResult result)? extraResolver,
+  }) async {
+    statusChangeCalls++;
+    requestedStatuses.add(action.status);
+    return statusChangeCompleter == null
+        ? []
+        : await statusChangeCompleter!.future;
+  }
 
   _FakeHabitDetailAccess({
     required this.seedData,
@@ -221,6 +237,181 @@ Future<void> _pumpHabitDetailPage(
 }
 
 void main() {
+  for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+    for (final op in ['Unarchive', 'Delete']) {
+      for (final outcome in ['cancel', 'confirm', 'covered']) {
+        testWidgets(
+          '$platform detail $op $outcome uses adaptive confirmation',
+          (tester) async {
+            final profile = await _loadProfile();
+            final detail = _buildHabitDetailData(status: HabitStatus.archived);
+            final access = _FakeHabitDetailAccess(seedData: detail);
+            final rebuild = ValueNotifier(0);
+            addTearDown(() {
+              rebuild.dispose();
+              profile.dispose();
+            });
+            await _pumpHabitDetailPage(
+              tester,
+              profile: profile,
+              access: access,
+              rebuildToken: rebuild,
+              habitUUID: detail.data.uuid,
+              platform: platform,
+            );
+            await tester.pumpAndSettle();
+            final navigator = Navigator.of(
+              tester.element(find.byType(HabitDetailPage)),
+            );
+            DetailPageReturn? pageResult;
+            navigator
+                .push<DetailPageReturn>(
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        HabitDetailPage(habitUUID: detail.data.uuid),
+                  ),
+                )
+                .then((result) => pageResult = result);
+            await tester.pumpAndSettle();
+            if (op == 'Unarchive' && platform == TargetPlatform.android) {
+              await tester.tap(find.byIcon(Icons.unarchive_rounded));
+            } else {
+              await tester.tap(
+                find.byIcon(
+                  platform == TargetPlatform.iOS
+                      ? CupertinoIcons.ellipsis
+                      : Icons.more_vert,
+                ),
+              );
+              await tester.pumpAndSettle();
+              await tester.tap(find.text(op));
+            }
+            await tester.pumpAndSettle();
+            expect(find.byType(AdaptiveConfirmDialog), findsOneWidget);
+            expect(
+              find.byType(
+                platform == TargetPlatform.iOS
+                    ? CupertinoAlertDialog
+                    : AlertDialog,
+              ),
+              findsOneWidget,
+            );
+            final action = tester
+                .widget<AdaptiveDialog>(find.byType(AdaptiveDialog))
+                .actions
+                .last;
+            expect(action.isDestructiveAction, op == 'Delete');
+            expect(action.isDefaultAction, op != 'Delete');
+            if (outcome == 'cancel') {
+              await tester.tap(find.text('cancel'));
+            } else {
+              access.statusChangeCompleter = Completer();
+              action.onPressed!();
+              action.onPressed!();
+              await tester.pumpAndSettle();
+              expect(access.requestedStatuses, [
+                op == 'Delete' ? HabitStatus.deleted : HabitStatus.activated,
+              ]);
+              if (outcome == 'covered') {
+                navigator.push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const Scaffold(body: Text('Other page')),
+                  ),
+                );
+                await tester.pumpAndSettle();
+              }
+              access.statusChangeCompleter!.complete([]);
+            }
+            await tester.pumpAndSettle();
+            expect(access.statusChangeCalls, outcome == 'cancel' ? 0 : 1);
+            if (op == 'Delete' && outcome == 'confirm') {
+              expect(pageResult?.op, DetailPageReturnOpr.deleted);
+              expect(pageResult?.habitName, detail.data.name);
+            } else {
+              expect(pageResult, isNull);
+            }
+            if (outcome == 'covered') {
+              expect(find.text('Other page'), findsOneWidget);
+            }
+            expect(tester.takeException(), isNull);
+          },
+        );
+      }
+    }
+  }
+
+  for (final dismiss in ['cancel', 'barrier', 'confirm', 'removed']) {
+    testWidgets(
+      'archive confirmation $dismiss respects lifecycle and single confirmation submission',
+      (tester) async {
+        final profile = await _loadProfile();
+        final detail = _buildHabitDetailData();
+        final access = _FakeHabitDetailAccess(seedData: detail);
+        final rebuild = ValueNotifier(0);
+        addTearDown(() {
+          rebuild.dispose();
+          profile.dispose();
+        });
+        await _pumpHabitDetailPage(
+          tester,
+          profile: profile,
+          access: access,
+          rebuildToken: rebuild,
+          habitUUID: detail.data.uuid,
+        );
+        await tester.pumpAndSettle();
+        final button = tester.widget<IconButton>(
+          find.ancestor(
+            of: find.byIcon(Icons.archive_outlined),
+            matching: find.byType(IconButton),
+          ),
+        );
+        final open = button.onPressed!;
+        open();
+        await tester.pumpAndSettle();
+        expect(find.byType(AdaptiveConfirmDialog), findsOneWidget);
+        final dialogContext = tester.element(
+          find.byType(AdaptiveConfirmDialog),
+        );
+        final navigator = Navigator.of(dialogContext);
+        final submit = tester
+            .widget<AdaptiveDialog>(find.byType(AdaptiveDialog))
+            .actions
+            .last
+            .onPressed!;
+        switch (dismiss) {
+          case 'cancel':
+            await tester.tap(find.text('cancel'));
+          case 'barrier':
+            await tester.tapAt(const Offset(5, 5));
+          case 'confirm':
+            access.statusChangeCompleter = Completer();
+            submit();
+            submit();
+            await tester.pumpAndSettle();
+            expect(access.statusChangeCalls, 1);
+            open();
+            await tester.pumpAndSettle();
+            expect(find.byType(AdaptiveConfirmDialog), findsOneWidget);
+            await tester.tap(find.text('cancel'));
+            await tester.pumpAndSettle();
+            expect(access.statusChangeCalls, 1);
+            access.statusChangeCompleter!.complete([]);
+          case 'removed':
+            final pageRoute = ModalRoute.of(
+              tester.element(find.byType(HabitDetailPage)),
+            )!;
+            navigator.removeRoute(pageRoute);
+            await tester.pumpAndSettle();
+            submit();
+        }
+        await tester.pumpAndSettle();
+        expect(access.statusChangeCalls, dismiss == 'confirm' ? 1 : 0);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
   for (final field in ['description', 'frequency']) {
     testWidgets('retained detail updates $field after edit reload', (
       tester,
@@ -579,6 +770,7 @@ void main() {
     await tester.tap(find.byIcon(Icons.archive_outlined));
     await tester.pumpAndSettle();
     expect(find.text('Archive Habit?'), findsOneWidget);
+    expect(find.byType(AdaptiveConfirmDialog), findsOneWidget);
   });
 
   testWidgets('HabitDetailPage substitutes unarchive without other changes', (
@@ -613,6 +805,16 @@ void main() {
     expect(find.text('Clone'), findsOneWidget);
     expect(find.text('Export'), findsOneWidget);
     expect(find.text('Delete'), findsOneWidget);
+    await tester.tap(find.text('Delete'));
+    await tester.pumpAndSettle();
+    expect(find.byType(AdaptiveConfirmDialog), findsOneWidget);
+    expect(find.byType(ConfirmDialog), findsNothing);
+    await tester.tapAt(Offset.zero);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.unarchive_rounded));
+    await tester.pumpAndSettle();
+    expect(find.byType(AdaptiveConfirmDialog), findsOneWidget);
+    expect(find.byType(ConfirmDialog), findsNothing);
   });
 
   testWidgets('HabitDetailPage Apple actions keep 44pt targets and callbacks', (
@@ -720,6 +922,7 @@ void main() {
     await tester.tap(find.text('Archive'));
     await tester.pumpAndSettle();
     expect(find.text('Archive Habit?'), findsOneWidget);
+    expect(find.byType(AdaptiveConfirmDialog), findsOneWidget);
   });
 
   testWidgets('HabitDetailPage Apple compact pins record and edit actions', (
