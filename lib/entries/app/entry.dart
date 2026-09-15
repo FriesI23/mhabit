@@ -415,13 +415,12 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
     );
   }
 
-  // TODO(mhabit-adaptive-dialog): Phase 3-8d6: migrate both AppSync confirmation views and this
-  // route after icon review; preserve async triggering and null-to-false handling.
   Future<bool> _onWebDavAppSyncUserConfirmNeedCheck(
     WebDavConfigTaskChecklist checklist,
   ) {
-    return showDialog<bool>(
+    return showAdaptiveModalDialog<bool>(
       context: context,
+      barrierDismissible: true,
       builder: (context) => checklist.isEmptyDir
           ? const AppSyncWebDavNewServerConfirmDialog()
           : const AppSyncWebDavOldServerConfirmDialog(),

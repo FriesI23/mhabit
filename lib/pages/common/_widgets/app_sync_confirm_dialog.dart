@@ -16,16 +16,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 
 import '../../../l10n/localizations.dart';
+import '../../../widgets/widgets.dart';
 
-// TODO(mhabit-adaptive-dialog): Phase 3-8d6: adapt this and the old-server
-// warning below after icon review; preserve labels and dangerous-action semantics.
 class AppSyncWebDavNewServerConfirmDialog extends StatelessWidget {
   const AppSyncWebDavNewServerConfirmDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return AlertDialog(
+    return AdaptiveConfirmDialog(
       icon: const Icon(MdiIcons.folderMultiplePlusOutline),
       title: Text(
         l10n?.appSync_webdav_newServerConfirmDialog_titleText ?? "New Location",
@@ -33,19 +32,9 @@ class AppSyncWebDavNewServerConfirmDialog extends StatelessWidget {
       content: l10n != null
           ? Text(l10n.appSync_webdav_newServerConfirmDialog_subtitleText)
           : null,
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.maybePop(context, false),
-          child: Text(l10n?.confirmDialog_cancel_text ?? "cancel"),
-        ),
-        FilledButton.tonal(
-          onPressed: () => Navigator.pop(context, true),
-          child: Text(
-            l10n?.appSync_webdav_newServerConfirmDialog_confirmText ??
-                "continue",
-          ),
-        ),
-      ],
+      cancelLabel: l10n?.confirmDialog_cancel_text ?? 'cancel',
+      confirmLabel:
+          l10n?.appSync_webdav_newServerConfirmDialog_confirmText ?? 'continue',
     );
   }
 }
@@ -55,9 +44,8 @@ class AppSyncWebDavOldServerConfirmDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = L10n.of(context);
-    return AlertDialog(
+    return AdaptiveConfirmDialog(
       icon: const Icon(MdiIcons.folderAlertOutline),
       title: Text(
         l10n?.appSync_webdav_oldServerConfirmDialog_titleText ?? "Confirm Sync",
@@ -65,23 +53,10 @@ class AppSyncWebDavOldServerConfirmDialog extends StatelessWidget {
       content: l10n != null
           ? Text(l10n.appSync_webdav_oldServerConfirmDialog_subtitleText)
           : null,
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.maybePop(context, false),
-          child: Text(l10n?.confirmDialog_cancel_text ?? "cancel"),
-        ),
-        FilledButton(
-          style: FilledButton.styleFrom(
-            backgroundColor: theme.colorScheme.error,
-            foregroundColor: theme.colorScheme.errorContainer,
-          ),
-          onPressed: () => Navigator.pop(context, true),
-          child: Text(
-            l10n?.appSync_webdav_oldServerConfirmDialog_confirmText ??
-                "continue",
-          ),
-        ),
-      ],
+      cancelLabel: l10n?.confirmDialog_cancel_text ?? 'cancel',
+      confirmLabel:
+          l10n?.appSync_webdav_oldServerConfirmDialog_confirmText ?? 'continue',
+      isDestructiveAction: true,
     );
   }
 }

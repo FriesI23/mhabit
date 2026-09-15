@@ -105,17 +105,20 @@ class AdaptiveDialog extends StatelessWidget {
 class MaterialAdaptiveDialog extends StatelessWidget {
   const MaterialAdaptiveDialog({
     super.key,
+    this.icon,
     this.title,
     this.content,
     this.actions = const [],
   });
 
+  final Widget? icon;
   final Widget? title;
   final Widget? content;
   final List<AdaptiveDialogAction> actions;
 
   @override
   Widget build(BuildContext context) => AlertDialog(
+    icon: icon,
     title: title,
     content: content,
     scrollable: true,

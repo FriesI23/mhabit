@@ -25,6 +25,7 @@ import '../../l10n/localizations.dart';
 /// Capture the value here; apply business changes after awaiting the dialog.
 Future<bool?> showAdaptiveConfirmDialog({
   required BuildContext context,
+  Widget? icon,
   Widget? title,
   Widget? content,
   String? confirmLabel,
@@ -42,6 +43,7 @@ Future<bool?> showAdaptiveConfirmDialog({
     useRootNavigator: useRootNavigator,
     routeSettings: routeSettings,
     builder: (_) => AdaptiveConfirmDialog(
+      icon: icon,
       title: title,
       content: content,
       confirmLabel: confirmLabel ?? l10n?.confirmDialog_confirm_text('confirm'),
@@ -56,6 +58,7 @@ Future<bool?> showAdaptiveConfirmDialog({
 class AdaptiveConfirmDialog extends StatefulWidget {
   const AdaptiveConfirmDialog({
     super.key,
+    this.icon,
     this.title,
     this.content,
     this.confirmLabel,
@@ -64,6 +67,8 @@ class AdaptiveConfirmDialog extends StatefulWidget {
     this.onSkipConfirmed,
   });
 
+  /// Optional Material alert icon; omitted by the Cupertino renderer.
+  final Widget? icon;
   final Widget? title;
   final Widget? content;
   final String? confirmLabel;
@@ -101,6 +106,7 @@ class _AdaptiveConfirmDialogState extends State<AdaptiveConfirmDialog> {
         widget.cancelLabel ?? l10n?.confirmDialog_cancel_text ?? 'Cancel';
     return switch (AdaptiveStyle.of(context)) {
       AdaptiveStyle.material => _MaterialConfirmDialog(
+        icon: widget.icon,
         title: widget.title,
         content: widget.content,
         confirmLabel: confirmLabel,
@@ -132,6 +138,7 @@ class _AdaptiveConfirmDialogState extends State<AdaptiveConfirmDialog> {
 
 class _MaterialConfirmDialog extends StatelessWidget {
   const _MaterialConfirmDialog({
+    this.icon,
     this.title,
     this.content,
     required this.confirmLabel,
@@ -143,6 +150,7 @@ class _MaterialConfirmDialog extends StatelessWidget {
     required this.onCancel,
   });
 
+  final Widget? icon;
   final Widget? title;
   final Widget? content;
   final String confirmLabel;
@@ -155,6 +163,7 @@ class _MaterialConfirmDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialAdaptiveDialog(
+    icon: icon,
     title: title,
     content: onSkipChanged == null
         ? content

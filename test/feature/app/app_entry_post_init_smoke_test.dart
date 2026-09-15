@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as flutter_local_notifications
     show NotificationDetails;
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/app_info.dart';
 import 'package:mhabit/common/types.dart';
@@ -14,6 +15,7 @@ import 'package:mhabit/models/app_reminder_config.dart';
 import 'package:mhabit/models/app_sync_options.dart';
 import 'package:mhabit/models/app_sync_server.dart';
 import 'package:mhabit/models/app_sync_server_form.dart';
+import 'package:mhabit/models/app_sync_tasks.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_form.dart';
@@ -27,11 +29,15 @@ import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/reminders/notification_channel.dart';
 import 'package:mhabit/reminders/notification_details.dart';
 import 'package:mhabit/reminders/notification_service.dart';
+import 'package:mhabit/storage/profile/handlers.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:mhabit/widgets/widgets.dart' show DateChangeNotifier;
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../support/adaptive_dialog.dart';
 
 Future<void> _initAppInfo() async {
   PackageInfo.setMockInitialValues(
@@ -153,6 +159,14 @@ final class _FakeNotificationService implements NotificationService {
 
 final class _FakeAppSyncAccess extends ChangeNotifier
     implements AppSyncSettingsAccess, AppSyncWorkflowAccess {
+  final confirmations = StreamController<AppSyncNeedConfirmEvent>.broadcast();
+
+  @override
+  void dispose() {
+    confirmations.close();
+    super.dispose();
+  }
+
   int onL10nUpdateCallCount = 0;
   L10n? lastL10n;
 
@@ -175,8 +189,7 @@ final class _FakeAppSyncAccess extends ChangeNotifier
   Future? get syncProcessing => null;
 
   @override
-  Stream<AppSyncNeedConfirmEvent> get confirmEvents =>
-      const Stream<AppSyncNeedConfirmEvent>.empty();
+  Stream<AppSyncNeedConfirmEvent> get confirmEvents => confirmations.stream;
 
   @override
   Stream<String> get startSyncEvents => const Stream<String>.empty();
@@ -279,6 +292,131 @@ HabitSummaryData _buildStartupHabitSummaryData({
 
 void main() {
   setUpAll(_initAppInfo);
+
+  for (final platform in [
+    TargetPlatform.android,
+    TargetPlatform.iOS,
+    TargetPlatform.macOS,
+  ]) {
+    for (final emptyDir in [true, false]) {
+      for (final choice in ['confirm', 'cancel', 'barrier', 'back']) {
+        testWidgets('$platform sync confirmation empty=$emptyDir $choice', (
+          tester,
+        ) async {
+          final appSync = _FakeAppSyncAccess();
+          SharedPreferences.setMockInitialValues({
+            'lastChangelogVersion': AppInfo().changelogVersion,
+          });
+          final profile = ProfileViewModel([
+            AppLastChangelogVersionProfileHandler.new,
+          ]);
+          await profile.init();
+          addTearDown(appSync.dispose);
+          addTearDown(profile.dispose);
+          await tester.pumpWidget(
+            MultiProvider(
+              providers: [
+                ChangeNotifierProvider<ProfileViewModel>.value(value: profile),
+                ListenableProvider<AppSyncSettingsAccess>.value(value: appSync),
+                ListenableProvider<AppSyncWorkflowAccess>.value(value: appSync),
+              ],
+              child: MaterialApp(
+                theme: ThemeData(platform: platform),
+                localizationsDelegates: L10n.localizationsDelegates,
+                supportedLocales: L10n.supportedLocales,
+                home: const AppPostInit(child: Scaffold(body: Text('App'))),
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+          final event = AppSyncNeedConfirmEvent(
+            WebDavConfigTaskChecklist.dirChecker(
+              needCreateHabitsDir: emptyDir,
+              needCreateWarningFile: emptyDir,
+            ),
+          );
+          var completions = 0;
+          event.future.then((_) => completions++);
+          // Use the production event subscription and dialog route.
+          appSync.confirmations.add(event);
+          await tester.pumpAndSettle();
+          expect(adaptiveDialogFinder, findsOneWidget);
+          final l10n = L10n.of(tester.element(adaptiveDialogFinder))!;
+          expect(
+            find.text(
+              emptyDir
+                  ? l10n.appSync_webdav_newServerConfirmDialog_titleText
+                  : l10n.appSync_webdav_oldServerConfirmDialog_titleText,
+            ),
+            findsOneWidget,
+          );
+          expect(
+            find.text(
+              emptyDir
+                  ? l10n.appSync_webdav_newServerConfirmDialog_subtitleText
+                  : l10n.appSync_webdav_oldServerConfirmDialog_subtitleText,
+            ),
+            findsOneWidget,
+          );
+          final icon = find.byIcon(
+            emptyDir
+                ? MdiIcons.folderMultiplePlusOutline
+                : MdiIcons.folderAlertOutline,
+          );
+          expect(
+            icon,
+            platform == TargetPlatform.android ? findsOneWidget : findsNothing,
+          );
+          expect(
+            find.byType(MaterialAdaptiveDialog),
+            platform == TargetPlatform.android ? findsOneWidget : findsNothing,
+          );
+          expect(
+            find.byType(CupertinoAdaptiveDialog),
+            platform == TargetPlatform.android ? findsNothing : findsOneWidget,
+          );
+          final actions = adaptiveDialogActions(tester);
+          expect(actions, hasLength(2));
+          expect(actions.first.label, l10n.confirmDialog_cancel_text);
+          expect(
+            actions.last.label,
+            emptyDir
+                ? l10n.appSync_webdav_newServerConfirmDialog_confirmText
+                : l10n.appSync_webdav_oldServerConfirmDialog_confirmText,
+          );
+          expect(actions.last.isDestructiveAction, !emptyDir);
+          expect(actions.last.isDefaultAction, emptyDir);
+          expect(completions, 0);
+          final stale = actions.last.onPressed!;
+          switch (choice) {
+            case 'confirm':
+              stale();
+              stale();
+            case 'cancel':
+              actions.first.onPressed!();
+            case 'barrier':
+              await tester.tapAt(const Offset(5, 5));
+              stale();
+            case 'back':
+              await tester.binding.handlePopRoute();
+              stale();
+          }
+          await tester.pumpAndSettle();
+          expect(await event.future, choice == 'confirm');
+          expect(completions, 1);
+          expect(find.text('App'), findsOneWidget);
+          // Reopening uses a fresh route and can still cancel normally.
+          final next = AppSyncNeedConfirmEvent(event.checklist);
+          appSync.confirmations.add(next);
+          await tester.pumpAndSettle();
+          adaptiveDialogActions(tester).first.onPressed!();
+          await tester.pumpAndSettle();
+          expect(await next.future, isFalse);
+          expect(tester.takeException(), isNull);
+        });
+      }
+    }
+  }
 
   testWidgets(
     'AppPostInit runs startup triggers once, refreshes habit reminders on restart and desktop date changes, and keeps AppSync l10n wired',
