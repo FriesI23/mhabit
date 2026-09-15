@@ -17,6 +17,7 @@ import 'dart:io';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
@@ -72,7 +73,7 @@ class AppSettingThemeColorTile extends StatelessWidget {
       (vm) => vm.themeColor,
     );
     final l10n = L10n.of(context);
-    return ListTile(
+    return AdaptiveListTile(
       title: Text(
         l10n?.appSetting_appThemeColorTile_titleText ?? "Theme Color",
       ),

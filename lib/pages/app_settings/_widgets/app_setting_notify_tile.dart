@@ -15,7 +15,9 @@
 import 'dart:io';
 
 import 'package:app_settings/app_settings.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../routes/navigator_helpers.dart';
@@ -36,10 +38,13 @@ class _AndroidAppSettingNotifyTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return ListTile(
+    return AdaptiveListTile(
       title: Text(l10n?.appSetting_notify_titleTile ?? "Notifications"),
       subtitle: l10n != null
           ? Text(l10n.appSetting_notify_subtitleTile_android)
+          : null,
+      trailing: AdaptiveStyle.of(context) == AdaptiveStyle.apple
+          ? const Icon(CupertinoIcons.arrow_up_right_square)
           : null,
       onTap: () {
         AppSettings.openAppSettings(type: AppSettingsType.notification);
@@ -54,9 +59,12 @@ class _AppSettingNotifyTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return ListTile(
+    return AdaptiveListTile(
       title: Text(l10n?.appSetting_notify_titleTile ?? "Notifications"),
       subtitle: l10n != null ? Text(l10n.appSetting_notify_subtitleTile) : null,
+      trailing: AdaptiveStyle.of(context) == AdaptiveStyle.apple
+          ? const Icon(CupertinoIcons.chevron_forward)
+          : null,
       onTap: () => naviToNotifyConfigPage(context: context),
     );
   }

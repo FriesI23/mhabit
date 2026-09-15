@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart' show CupertinoSwitch;
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../models/app_reminder_config.dart';
@@ -38,21 +40,31 @@ class _AppSettingReminderTileState extends State<AppSettingReminderTile> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = L10n.of(context);
-    return ListTile(
-      title: l10n != null
-          ? Text(l10n.appSetting_dailyReminder_titleText)
-          : const Text("Daily reminder"),
+    final style = AdaptiveStyle.of(context);
+    final title = l10n?.appSetting_dailyReminder_titleText ?? 'Daily reminder';
+    return AdaptiveListTile(
+      title: Text(title),
       subtitle: widget.config.timeOfDay != null
           ? Text(
               widget.config.timeOfDay!.format(context),
-              style: widget.config.enabled
+              style: widget.config.enabled || style == AdaptiveStyle.apple
                   ? null
                   : TextStyle(color: theme.colorScheme.outlineVariant),
             )
           : null,
-      trailing: Switch(
-        value: widget.config.enabled,
-        onChanged: widget.onSwitchButtonChanged,
+      trailing: Semantics(
+        container: true,
+        label: title,
+        child: switch (style) {
+          AdaptiveStyle.material => Switch(
+            value: widget.config.enabled,
+            onChanged: widget.onSwitchButtonChanged,
+          ),
+          AdaptiveStyle.apple => CupertinoSwitch(
+            value: widget.config.enabled,
+            onChanged: widget.onSwitchButtonChanged,
+          ),
+        },
       ),
       onTap: () async {
         // TODO(mhabit-adaptive-dialog): Adapt the SDK time picker separately;

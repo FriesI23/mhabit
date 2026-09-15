@@ -6,6 +6,10 @@ import '../adaptive/list_section_row_scope.dart';
 import '../adaptive_style.dart';
 import 'cupertino_ink_well.dart';
 
+const double _kGroupedContentHeight = 40;
+const double _kGroupedMinHeight = 54;
+const double _kGroupedMinHeightWithSubtitle = 60;
+
 /// Standard Cupertino row with keyboard activation and wrapping text slots.
 /// Color overrides take precedence over AdaptiveListThemeData and ColorScheme.
 class CupertinoAdaptiveListTile extends StatelessWidget {
@@ -77,11 +81,24 @@ class CupertinoAdaptiveListTile extends StatelessWidget {
     );
     final section = ListSectionRowScope.maybeOf(context);
     final grouped = section?.style == AdaptiveStyle.apple;
+    final effectiveTrailing = grouped && trailing != null
+        ? ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxHeight: _kGroupedContentHeight,
+            ),
+            child: trailing,
+          )
+        : trailing;
     final tile = CupertinoListTile(
       onTap: onTap,
       backgroundColorActivated: activatedColor,
       padding: grouped
-          ? const EdgeInsetsDirectional.fromSTEB(16, 15, 16, 15)
+          ? EdgeInsetsDirectional.fromSTEB(
+              16,
+              subtitle == null ? 7 : 10,
+              16,
+              subtitle == null ? 7 : 10,
+            )
           : null,
       leadingSize: grouped && leading == null ? 23 : 28,
       leadingToTitle: grouped ? 12 : 16,
@@ -99,18 +116,28 @@ class CupertinoAdaptiveListTile extends StatelessWidget {
               data: IconThemeData(color: iconColor),
               child: leading!,
             ),
-      trailing: grouped && trailing != null
+      trailing: grouped && effectiveTrailing != null
           ? IconTheme.merge(
               data: IconThemeData(size: 20, color: iconColor),
-              child: trailing!,
+              child: effectiveTrailing,
             )
-          : trailing,
+          : effectiveTrailing,
     );
+    final content = grouped
+        ? ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: subtitle == null
+                  ? _kGroupedMinHeight
+                  : _kGroupedMinHeightWithSubtitle,
+            ),
+            child: tile,
+          )
+        : tile;
     return CupertinoInkWell(
       onActivate: onTap,
       focusColor: focusColor,
       shape: grouped ? section!.shape : const RoundedRectangleBorder(),
-      child: tile,
+      child: content,
     );
   }
 }

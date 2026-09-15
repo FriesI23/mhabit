@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../providers/app_ui/group_expand_timer_config.dart';
@@ -26,6 +27,40 @@ class AppSettingExpandTimerDelayTile extends StatelessWidget {
 
   const AppSettingExpandTimerDelayTile({
     super.key,
+    this.title,
+    this.subtitle,
+    required this.speed,
+    this.useSideBySideLayout = false,
+    this.onSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) => switch (AdaptiveStyle.of(context)) {
+    AdaptiveStyle.material => _MaterialAppSettingExpandTimerDelayTile(
+      title: title,
+      subtitle: subtitle,
+      speed: speed,
+      useSideBySideLayout: useSideBySideLayout,
+      onSelected: onSelected,
+    ),
+    AdaptiveStyle.apple => _AppleAppSettingExpandTimerDelayTile(
+      title: title,
+      subtitle: subtitle,
+      speed: speed,
+      onSelected: onSelected,
+      useSideBySideLayout: useSideBySideLayout,
+    ),
+  };
+}
+
+class _MaterialAppSettingExpandTimerDelayTile extends StatelessWidget {
+  final Widget? title;
+  final Widget? subtitle;
+  final GroupExpandTimerSpeed speed;
+  final bool useSideBySideLayout;
+  final void Function(GroupExpandTimerSpeed speed)? onSelected;
+
+  const _MaterialAppSettingExpandTimerDelayTile({
     this.title,
     this.subtitle,
     required this.speed,
@@ -67,8 +102,8 @@ class AppSettingExpandTimerDelayTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (useSideBySideLayout) {
-      return ListTile(
-        title: title,
+      return AdaptiveListTile.material(
+        title: title ?? const SizedBox.shrink(),
         subtitle: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -81,8 +116,8 @@ class AppSettingExpandTimerDelayTile extends StatelessWidget {
         ),
       );
     }
-    return ListTile(
-      title: title,
+    return AdaptiveListTile.material(
+      title: title ?? const SizedBox.shrink(),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -98,6 +133,49 @@ class AppSettingExpandTimerDelayTile extends StatelessWidget {
           _buildSegmentedButton(context),
         ],
       ),
+    );
+  }
+}
+
+class _AppleAppSettingExpandTimerDelayTile extends StatelessWidget {
+  final bool useSideBySideLayout;
+  final Widget? title;
+  final Widget? subtitle;
+  final GroupExpandTimerSpeed speed;
+  final void Function(GroupExpandTimerSpeed speed)? onSelected;
+
+  const _AppleAppSettingExpandTimerDelayTile({
+    required this.useSideBySideLayout,
+    this.title,
+    this.subtitle,
+    required this.speed,
+    this.onSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    return AdaptiveChoiceListTile<GroupExpandTimerSpeed>.apple(
+      title: title ?? const SizedBox.shrink(),
+      subtitle: subtitle,
+      config: AdaptiveChoiceListTileConfig(
+        segmented: useSideBySideLayout
+            ? AdaptiveChoiceLayout.responsive
+            : AdaptiveChoiceLayout.stacked,
+      ),
+      value: speed,
+      onChanged: onSelected,
+      labels: {
+        for (final option in kGroupExpandTimerSpeedOptions)
+          option: switch (option) {
+            GroupExpandTimerSpeed.fast =>
+              l10n?.appSetting_expandTimerDelay_fast ?? 'Fast',
+            GroupExpandTimerSpeed.slow =>
+              l10n?.appSetting_expandTimerDelay_slow ?? 'Slow',
+            GroupExpandTimerSpeed.defaultSpeed =>
+              l10n?.appSetting_expandTimerDelay_default ?? 'Default',
+          },
+      },
     );
   }
 }

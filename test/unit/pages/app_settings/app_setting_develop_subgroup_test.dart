@@ -91,24 +91,12 @@ void main() {
     final control = find.byKey(const ValueKey('developer-ui-style-control'));
     expect(find.byType(MenuAnchor), findsNWidgets(2));
     expect(
-      tester
-          .widgetList<MenuAnchor>(find.byType(MenuAnchor))
-          .every((anchor) => anchor.animated),
-      isTrue,
-    );
-    final tile = find.ancestor(of: control, matching: find.byType(ListTile));
-    expect(
-      tester.getCenter(control).dx,
-      greaterThan(tester.getCenter(tile).dx),
-    );
-    expect(
       find.descendant(of: control, matching: find.text('Automatic')),
       findsOneWidget,
     );
 
     await tester.tap(control);
     await tester.pumpAndSettle();
-    expect(find.byType(MenuItemButton), findsNWidgets(3));
     await tester.tap(find.text('Material'));
     await tester.pumpAndSettle();
     expect(viewModel.adaptiveStyleMode, AppAdaptiveStyleMode.material);

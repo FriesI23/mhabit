@@ -12,11 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:convert';
+
 import 'package:collection/collection.dart';
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../logging/helper.dart';
@@ -27,9 +31,7 @@ import '../../../utils/xshare.dart';
 import '../../../widgets/widgets.dart';
 
 class AppSettingSyncFailedTile extends StatefulWidget {
-  final ExpansibleController? controller;
-
-  const AppSettingSyncFailedTile({super.key, this.controller});
+  const AppSettingSyncFailedTile({super.key});
 
   @override
   State<AppSettingSyncFailedTile> createState() => _AppSettingSyncFailedTile();
@@ -37,38 +39,10 @@ class AppSettingSyncFailedTile extends StatefulWidget {
 
 class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
     with AutomaticKeepAliveClientMixin, XShare {
-  late ExpansibleController controller;
-  late bool lastExpanded;
-  late bool isExpanded;
-
   Future? _onPressedFuture;
 
-  void setExpand(bool value) {
-    if (value != isExpanded) {
-      lastExpanded = isExpanded;
-      isExpanded = value;
-    }
-  }
-
   @override
-  void initState() {
-    controller = widget.controller ?? ExpansibleController();
-    lastExpanded = isExpanded =
-        context.read<AppSyncStatusSource>().syncStatus?.result?.withError ==
-        true;
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    lastExpanded =
-        context.read<AppSyncStatusSource>().syncStatus?.result?.withError ==
-        true;
-    super.didChangeDependencies();
-  }
-
-  @override
-  bool get wantKeepAlive => lastExpanded == isExpanded;
+  bool get wantKeepAlive => true;
 
   void _onExportButtonPressed() {
     if (_onPressedFuture != null) return;
@@ -103,6 +77,78 @@ class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    return Selector<AppSyncStatusSource, (String?, AppSyncTaskResult?)>(
+      selector: (context, vm) =>
+          (vm.syncStatus?.sessionId, vm.syncStatus?.result),
+      builder: (context, value, child) {
+        final result = value.$2;
+        if (result == null || result.isSuccessed || result.isCancelled) {
+          return const SizedBox.shrink();
+        }
+        return _SyncFailureDetails(
+          key: ValueKey(value),
+          result: result,
+          onExport: _onExportButtonPressed,
+        );
+      },
+    );
+  }
+}
+
+class _SyncFailureDetails extends StatefulWidget {
+  const _SyncFailureDetails({
+    super.key,
+    required this.result,
+    required this.onExport,
+  });
+
+  final AppSyncTaskResult result;
+  final VoidCallback onExport;
+
+  @override
+  State<_SyncFailureDetails> createState() => _SyncFailureDetailsState();
+}
+
+class _SyncFailureDetailsState extends State<_SyncFailureDetails> {
+  final ExpansibleController controller = ExpansibleController();
+  // Expansion state belongs to this failure, including nested categories.
+  final PageStorageBucket _storageBucket = PageStorageBucket();
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  Widget? _buildErrorSummary(BuildContext context, AppSyncTaskResult result) {
+    var error = result.error.error;
+    if (error == null && result is WebDavAppSyncTaskMultiResult) {
+      for (final entry in result.habitResults.values.followedBy(
+        result.groupResults.values,
+      )) {
+        if (!entry.isSuccessed &&
+            !entry.isCancelled &&
+            entry.error.error != null) {
+          error = entry.error.error;
+          break;
+        }
+      }
+    }
+    if (error == null) return null;
+    final firstLine =
+        const LineSplitter().convert(error.toString()).firstOrNull ?? '';
+    return L10nBuilder(
+      builder: (context, l10n) => Text(
+        l10n?.appSync_failedTile_errorText(firstLine) ?? 'Error: $firstLine',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final value = widget.result;
 
     List<Widget> buildWebDavErrorInfos(
       BuildContext context,
@@ -133,37 +179,41 @@ class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
       ),
     ];
 
-    return Selector<AppSyncStatusSource, AppSyncTaskResult?>(
-      selector: (context, vm) => vm.syncStatus?.result,
-      shouldRebuild: (previous, next) {
-        if (previous == next) return false;
-        next?.withError == true ? controller.expand() : controller.collapse();
-        setExpand(controller.isExpanded);
-        return true;
-      },
-      builder: (context, value, child) => ExpandedSection(
-        expand: value != null && !value.isSuccessed && !value.isCancelled,
-        child: ExpansionTile(
+    return PageStorage(
+      bucket: _storageBucket,
+      child: ListenableBuilder(
+        listenable: controller,
+        builder: (context, child) => AdaptiveExpansionTile(
           key: const PageStorageKey<String>(
             'app-settings-sync-failed-expansion',
           ),
           controller: controller,
-          initiallyExpanded: isExpanded,
-          onExpansionChanged: (value) {},
-          expandedAlignment: Alignment.centerLeft,
+          subtitle: controller.isExpanded
+              ? null
+              : _buildErrorSummary(context, value),
           title: L10nBuilder(
             builder: (context, l10n) => Text(
               l10n?.appSync_failedTile_titleText ?? "Check failure logs",
             ),
           ),
-          trailing: IconButton(
-            onPressed: _onExportButtonPressed,
-            icon: const Icon(MdiIcons.fileExportOutline),
+          trailing: L10nBuilder(
+            builder: (context, l10n) => AdaptiveIconButton(
+              key: const ValueKey('sync-export-log'),
+              tooltip: l10n?.appSetting_export_titleText ?? 'Export',
+              onPressed: widget.onExport,
+              icon: switch (AdaptiveStyle.of(context)) {
+                AdaptiveStyle.material => const Icon(
+                  MdiIcons.fileExportOutline,
+                ),
+                AdaptiveStyle.apple => const Icon(
+                  CupertinoIcons.square_arrow_up,
+                ),
+              },
+            ),
           ),
           children: switch (value) {
             WebDavAppSyncTaskResult() => buildWebDavErrorInfos(context, value),
             AppSyncTaskResult() => buildBasicErrorInfos(context, value),
-            _ => const [SizedBox()],
           },
         ),
       ),
@@ -205,9 +255,7 @@ class _WebDavFailedDetailTile extends StatelessWidget {
       ),
     );
 
-    return ListTile(
-      dense: true,
-      isThreeLine: result.error.error != null,
+    return AdaptiveListTile(
       title: buildTitle(context),
       subtitle: result.error.error != null
           ? _buildErrSubtitle(context, result.error.error, result.error.trace)
@@ -240,49 +288,43 @@ class _WebDavFailedDetailTile extends StatelessWidget {
           }),
           List<({Object? error, StackTrace? trace})>
         >{};
-    for (var entry in result.habitResults.entries) {
+    final results = result.habitResults.values.followedBy(
+      result.groupResults.values,
+    );
+    for (final entry in results) {
       final key = (
-        status: entry.value.status,
-        reason: entry.value.reason,
-        withError: entry.value.withError,
+        status: entry.status,
+        reason: entry.reason,
+        withError: entry.withError,
       );
       counter[key] = (counter[key] ?? 0) + 1;
       if (key.withError) {
         errors
-            .putIfAbsent((
-              status: entry.value.status,
-              reason: entry.value.reason,
-            ), () => [])
-            .add(entry.value.error);
+            .putIfAbsent((status: entry.status, reason: entry.reason), () => [])
+            .add(entry.error);
       }
     }
 
-    final filteredHabits = result.habitResults.entries
-        .where((e) => !e.value.isSuccessed)
-        .toList();
-    if (filteredHabits.isEmpty) return const SizedBox();
+    if (results.every((entry) => entry.isSuccessed)) return const SizedBox();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: counter.entries
           .map((e) {
-            final errorIter =
-                errors[(status: e.key.status, reason: e.key.reason)]
-                    ?.mapIndexed(
-                      (i, e) => Padding(
-                        padding: kListTileContentPadding,
-                        child: Text("[$i] ${e.error}"),
-                      ),
-                    );
-            return ExpansionTile(
+            final errorIter = e.key.withError
+                ? errors[(status: e.key.status, reason: e.key.reason)]
+                      ?.mapIndexed(
+                        (i, e) => Padding(
+                          padding: kListTileContentPadding,
+                          child: Text("[$i] ${e.error}"),
+                        ),
+                      )
+                : null;
+            return AdaptiveExpansionTile(
               key: PageStorageKey<String>(
                 'app-settings-sync-failed-${e.key.status.name}-'
-                '${e.key.reason?.name ?? 'none'}',
+                '${e.key.reason?.name ?? 'none'}-${e.key.withError}',
               ),
-              dense: true,
-              showTrailingIcon: errorIter != null,
               enabled: errorIter != null,
-              expandedCrossAxisAlignment: CrossAxisAlignment.start,
-              expandedAlignment: Alignment.centerLeft,
               title: L10nBuilder(
                 builder: (context, l10n) => Text(
                   l10n?.appSync_failedTile_webdavMulti_counterText(

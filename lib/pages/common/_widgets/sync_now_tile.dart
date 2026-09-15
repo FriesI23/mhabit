@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:intl/intl.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../models/app_sync_tasks.dart';
 import '../../../providers/workflow/app_sync.dart';
-import '../../../widgets/styles.dart';
 import 'sync_loading_indicator.dart';
 
 class AppSyncNowTile extends StatefulWidget {
@@ -121,50 +122,109 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
       },
     );
 
-    Widget buildTrailing(BuildContext context) =>
-        Selector<AppSyncStatusSource, AppSyncTaskStatus?>(
-          selector: (context, vm) => vm.syncStatus?.status,
-          shouldRebuild: (previous, next) => previous != next,
-          builder: (context, value, child) => AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: switch (value) {
-              AppSyncTaskStatus.running ||
-              AppSyncTaskStatus.cancelling => IconButton(
-                key: const ValueKey(1),
-                onPressed: value == AppSyncTaskStatus.running
-                    ? _onCancelButtonPressed
-                    : null,
-                icon: const Icon(MdiIcons.close),
-              ),
-              _ => IconButton(
-                key: const ValueKey(2),
-                onPressed: enabled ? _onStartButtonPressed : null,
-                icon: const Icon(MdiIcons.sync),
-              ),
-            },
-          ),
-        );
-
-    Widget buildIndicator(BuildContext context) =>
-        Selector<AppSyncStatusSource, bool>(
-          selector: (context, vm) => vm.syncStatus?.isProcessing ?? false,
-          shouldRebuild: (previous, next) => previous != next,
-          builder: (context, value, child) => AnimatedOpacity(
-            opacity: value ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 200),
-            child: const AppSyncLoadingIndicator(),
-          ),
-        );
-
-    return ListTile(
-      enabled: enabled,
-      contentPadding: kListTileContentPadding,
-      title: buildTitle(context),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [buildSubtitle(context), buildIndicator(context)],
-      ),
-      trailing: buildTrailing(context),
+    final status = context.select<AppSyncStatusSource, AppSyncTaskStatus?>(
+      (vm) => vm.syncStatus?.status,
     );
+    final processing =
+        status == AppSyncTaskStatus.running ||
+        status == AppSyncTaskStatus.cancelling;
+    final VoidCallback? onAction = switch (status) {
+      AppSyncTaskStatus.cancelling => null,
+      AppSyncTaskStatus.running => _onCancelButtonPressed,
+      _ => enabled ? _onStartButtonPressed : null,
+    };
+    final tooltip = processing
+        ? MaterialLocalizations.of(context).cancelButtonLabel
+        : L10n.of(context)?.appSync_nowTile_titleText ?? 'Sync Now';
+    return switch (AdaptiveStyle.of(context)) {
+      AdaptiveStyle.material => _MaterialSyncNowTile(
+        title: buildTitle(context),
+        subtitle: buildSubtitle(context),
+        processing: processing,
+        onAction: onAction,
+        tooltip: tooltip,
+      ),
+      AdaptiveStyle.apple => _AppleSyncNowTile(
+        title: buildTitle(context),
+        subtitle: buildSubtitle(context),
+        processing: processing,
+        onAction: onAction,
+        tooltip: tooltip,
+      ),
+    };
   }
+}
+
+class _MaterialSyncNowTile extends StatelessWidget {
+  const _MaterialSyncNowTile({
+    required this.title,
+    required this.subtitle,
+    required this.processing,
+    required this.onAction,
+    required this.tooltip,
+  });
+  final Widget title;
+  final Widget subtitle;
+  final bool processing;
+  final VoidCallback? onAction;
+  final String tooltip;
+
+  @override
+  Widget build(BuildContext context) => AdaptiveListTile.material(
+    title: title,
+    subtitle: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        subtitle,
+        if (processing)
+          const AppSyncLoadingIndicator()
+        else
+          const SizedBox(height: 4),
+      ],
+    ),
+    trailing: AdaptiveIconButton.material(
+      key: const ValueKey('sync-action'),
+      tooltip: tooltip,
+      onPressed: onAction,
+      icon: Icon(processing ? MdiIcons.close : MdiIcons.sync),
+    ),
+  );
+}
+
+class _AppleSyncNowTile extends StatelessWidget {
+  const _AppleSyncNowTile({
+    required this.title,
+    required this.subtitle,
+    required this.processing,
+    required this.onAction,
+    required this.tooltip,
+  });
+  final Widget title;
+  final Widget subtitle;
+  final bool processing;
+  final VoidCallback? onAction;
+  final String tooltip;
+
+  @override
+  Widget build(BuildContext context) => AdaptiveListTile.apple(
+    title: title,
+    subtitle: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        subtitle,
+        if (processing)
+          const AppSyncLoadingIndicator()
+        else
+          const SizedBox(height: 4),
+      ],
+    ),
+    trailing: AdaptiveIconButton.apple(
+      key: const ValueKey('sync-action'),
+      tooltip: tooltip,
+      onPressed: onAction,
+      icon: Icon(
+        processing ? CupertinoIcons.xmark : CupertinoIcons.arrow_2_circlepath,
+      ),
+    ),
+  );
 }

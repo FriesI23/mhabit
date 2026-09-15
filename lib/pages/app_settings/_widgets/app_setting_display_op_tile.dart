@@ -14,6 +14,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../common/enums.dart';
 import '../../../l10n/localizations.dart';
@@ -28,6 +29,40 @@ class AppSettingDisplayRecordOperationTile extends StatelessWidget {
 
   const AppSettingDisplayRecordOperationTile({
     super.key,
+    this.title,
+    this.subtitle,
+    required this.inputAction,
+    this.useSideBySideLayout = false,
+    this.onSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) => switch (AdaptiveStyle.of(context)) {
+    AdaptiveStyle.material => _MaterialAppSettingDisplayRecordOperationTile(
+      title: title,
+      subtitle: subtitle,
+      inputAction: inputAction,
+      useSideBySideLayout: useSideBySideLayout,
+      onSelected: onSelected,
+    ),
+    AdaptiveStyle.apple => _AppleAppSettingDisplayRecordOperationTile(
+      title: title,
+      subtitle: subtitle,
+      inputAction: inputAction,
+      onSelected: onSelected,
+      useSideBySideLayout: useSideBySideLayout,
+    ),
+  };
+}
+
+class _MaterialAppSettingDisplayRecordOperationTile extends StatelessWidget {
+  final Widget? title;
+  final Widget? subtitle;
+  final UserAction inputAction;
+  final bool useSideBySideLayout;
+  final void Function(UserAction selectedAction)? onSelected;
+
+  const _MaterialAppSettingDisplayRecordOperationTile({
     this.title,
     this.subtitle,
     required this.inputAction,
@@ -123,12 +158,57 @@ class AppSettingDisplayRecordOperationTile extends StatelessWidget {
     );
 
     return L10nBuilder(
-      builder: (context, l10n) => ListTile(
-        title: title,
+      builder: (context, l10n) => AdaptiveListTile.material(
+        title: title ?? const SizedBox.shrink(),
         subtitle: useSideBySideLayout
             ? buildBigViewSubtitle(context, l10n)
             : buildNormalSubtitle(context, l10n),
       ),
+    );
+  }
+}
+
+class _AppleAppSettingDisplayRecordOperationTile extends StatelessWidget {
+  final bool useSideBySideLayout;
+  final Widget? title;
+  final Widget? subtitle;
+  final UserAction inputAction;
+  final void Function(UserAction selectedAction)? onSelected;
+
+  const _AppleAppSettingDisplayRecordOperationTile({
+    required this.useSideBySideLayout,
+    this.title,
+    this.subtitle,
+    required this.inputAction,
+    this.onSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    return AdaptiveChoiceListTile<UserAction>.apple(
+      title: title ?? const SizedBox.shrink(),
+      subtitle: subtitle,
+      config: AdaptiveChoiceListTileConfig(
+        segmented: useSideBySideLayout
+            ? AdaptiveChoiceLayout.responsive
+            : AdaptiveChoiceLayout.stacked,
+      ),
+      value: inputAction == UserAction.nothing ? null : inputAction,
+      onChanged: onSelected,
+      labels: {
+        for (final option in [
+          UserAction.tap,
+          UserAction.doubleTap,
+          UserAction.longTap,
+        ])
+          option: switch (option) {
+            UserAction.tap => l10n?.userAction_tap ?? 'Tap',
+            UserAction.doubleTap => l10n?.userAction_doubleTap ?? 'Double tap',
+            UserAction.longTap => l10n?.userAction_longTap ?? 'Long press',
+            UserAction.nothing => '',
+          },
+      },
     );
   }
 }

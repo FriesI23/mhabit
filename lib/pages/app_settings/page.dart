@@ -49,6 +49,7 @@ import '../../providers/app_ui/habits_record_scroll_behavior.dart';
 import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_reminder.dart';
 import '../../providers/workflow/app_settings.dart';
+import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/group_manager.dart';
 import '../../providers/workflow/habits_file_exporter.dart';
 import '../../providers/workflow/habits_file_importer.dart';
@@ -530,67 +531,74 @@ class _PageState extends State<_Page> with XShare {
 
   @override
   Widget build(BuildContext context) {
-    Iterable<Widget> buildDisplaySubGroup(BuildContext context) => [
-      GroupTitleListTile(
-        title: L10nBuilder(
-          builder: (context, l10n) => l10n != null
-              ? Text(l10n.appSetting_displaySubgroupText)
-              : const Text("Display"),
-        ),
+    Widget buildDisplaySubGroup(BuildContext context) => AdaptiveListSection(
+      key: const ValueKey('settings-display'),
+      header: L10nBuilder(
+        builder: (context, l10n) => l10n != null
+            ? Text(l10n.appSetting_displaySubgroupText)
+            : const Text("Display"),
       ),
-      const AppSettingThemeModeTile(),
-      AppSettingThemeColorTile(onPressed: _openAppThemeColorChosenDialog),
-      Selector<AppFirstDayViewModel, int>(
-        selector: (context, vm) => vm.firstDay,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, firstDay, child) => AppSettingFirstDayTile(
-          firstDay: firstDay,
-          onPressed: () => _openAppFirtDaySelectDialog(context),
+      children: [
+        WindowSizeClassLayoutBuilder(
+          builder: (context, windowSize, child) => AppSettingThemeModeTile(
+            useSideBySideLayout: windowSize.width >= WindowSizeClass.medium,
+          ),
         ),
-      ),
-      Selector<AppCustomDateYmdHmsConfigViewModel, CustomDateYmdHmsConfig>(
-        selector: (context, vm) => vm.config,
-        shouldRebuild: (previous, next) => true,
-        builder: (context, config, child) =>
-            AppSettingDateDisplayFormatListTile(
-              config: config,
-              onPressed: () => _openCustomDateTimeFormatPickerDialog(context),
+        AppSettingThemeColorTile(onPressed: _openAppThemeColorChosenDialog),
+        Selector<AppFirstDayViewModel, int>(
+          selector: (context, vm) => vm.firstDay,
+          shouldRebuild: (previous, next) => previous != next,
+          builder: (context, firstDay, child) => AppSettingFirstDayTile(
+            firstDay: firstDay,
+            onPressed: () => _openAppFirtDaySelectDialog(context),
+          ),
+        ),
+        Selector<AppCustomDateYmdHmsConfigViewModel, CustomDateYmdHmsConfig>(
+          selector: (context, vm) => vm.config,
+          shouldRebuild: (previous, next) => true,
+          builder: (context, config, child) =>
+              AppSettingDateDisplayFormatListTile(
+                config: config,
+                onPressed: () => _openCustomDateTimeFormatPickerDialog(context),
+              ),
+        ),
+        Selector<AppThemeViewModel, int>(
+          selector: (context, vm) => vm.displayPageOccupyPrt,
+          shouldRebuild: (previous, next) => previous != next,
+          builder: (context, occupyPrt, child) => AppSettingCalbarOccupyTile(
+            currentPercentage: occupyPrt,
+            lessPercentage: normalizeAppCalendarBarOccupyPrt(
+              appCalendarBarDefualtOccupyPrt - 20,
             ),
-      ),
-      Selector<AppThemeViewModel, int>(
-        selector: (context, vm) => vm.displayPageOccupyPrt,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, occupyPrt, child) => AppSettingCalbarOccupyTile(
-          currentPercentage: occupyPrt,
-          lessPercentage: normalizeAppCalendarBarOccupyPrt(
-            appCalendarBarDefualtOccupyPrt - 20,
-          ),
-          morePercentage: normalizeAppCalendarBarOccupyPrt(
-            appCalendarBarDefualtOccupyPrt + 20,
-          ),
-          normalPercentage: appCalendarBarDefualtOccupyPrt,
-          onSelectionChanged: (value) {
-            context.read<AppThemeViewModel>().setNewDisplayPageOccupyPrt(value);
-          },
-        ),
-      ),
-      Selector<AppCompactUISwitcherViewModel, bool>(
-        selector: (context, vm) => vm.flag,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, flag, child) => L10nBuilder(
-          builder: (context, l10n) => SwitchListTile(
-            title: l10n != null
-                ? Text(l10n.appSetting_compactUISwitcher_titleText)
-                : const Text("Drag calendar by page"),
-            subtitle: l10n != null
-                ? Text(l10n.appSetting_compactUISwitcher_subtitleText)
-                : null,
-            onChanged: _onCompactTileChanged,
-            value: flag,
+            morePercentage: normalizeAppCalendarBarOccupyPrt(
+              appCalendarBarDefualtOccupyPrt + 20,
+            ),
+            normalPercentage: appCalendarBarDefualtOccupyPrt,
+            onSelectionChanged: (value) {
+              context.read<AppThemeViewModel>().setNewDisplayPageOccupyPrt(
+                value,
+              );
+            },
           ),
         ),
-      ),
-    ];
+        Selector<AppCompactUISwitcherViewModel, bool>(
+          selector: (context, vm) => vm.flag,
+          shouldRebuild: (previous, next) => previous != next,
+          builder: (context, flag, child) => L10nBuilder(
+            builder: (context, l10n) => AdaptiveSwitchListTile(
+              title: Text(
+                l10n?.appSetting_compactUISwitcher_titleText ?? 'Compact mode',
+              ),
+              subtitle: l10n == null
+                  ? null
+                  : Text(l10n.appSetting_compactUISwitcher_subtitleText),
+              value: flag,
+              onChanged: _onCompactTileChanged,
+            ),
+          ),
+        ),
+      ],
+    );
 
     Widget buildLanguageSubGroup(BuildContext context) => AdaptiveListSection(
       header: L10nBuilder(
@@ -625,81 +633,89 @@ class _PageState extends State<_Page> with XShare {
       ],
     );
 
-    Iterable<Widget> buildOperationSubGroup(BuildContext context) => [
-      GroupTitleListTile(
-        title: L10nBuilder(
+    Widget buildOperationSubGroup(
+      BuildContext context,
+    ) => ExperimentalFeatureGate(
+      selector: (context, vm) => vm.habitGrouping,
+      builder: (context, habitGrouping) => AdaptiveListSection(
+        key: const ValueKey('settings-operation'),
+        header: L10nBuilder(
           builder: (context, l10n) => l10n != null
               ? Text(l10n.appSetting_operationSubgroupText)
               : const Text("Operation"),
         ),
-      ),
-      Selector<HabitsRecordScrollBehaviorViewModel, HabitsRecordScrollBehavior>(
-        selector: (context, vm) => vm.scrollBehavior,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, scrollBehavior, child) => L10nBuilder(
-          builder: (context, l10n) => SwitchListTile(
-            title: l10n != null
-                ? Text(l10n.appSetting_dragCalendarByPageTile_titleText)
-                : const Text("Drag calendar by page"),
-            subtitle: l10n != null
-                ? Text(l10n.appSetting_dragCalendarByPageTile_subtitleText)
-                : null,
-            onChanged: _onDrageCalendarByPageTileChanged,
-            value: scrollBehavior == HabitsRecordScrollBehavior.page,
+        children: [
+          Selector<
+            HabitsRecordScrollBehaviorViewModel,
+            HabitsRecordScrollBehavior
+          >(
+            selector: (context, vm) => vm.scrollBehavior,
+            shouldRebuild: (previous, next) => previous != next,
+            builder: (context, scrollBehavior, child) => L10nBuilder(
+              builder: (context, l10n) => AdaptiveSwitchListTile(
+                key: const ValueKey('settings-calendar-by-page'),
+                title: l10n != null
+                    ? Text(l10n.appSetting_dragCalendarByPageTile_titleText)
+                    : const Text("Drag calendar by page"),
+                subtitle: l10n != null
+                    ? Text(l10n.appSetting_dragCalendarByPageTile_subtitleText)
+                    : null,
+                onChanged: _onDrageCalendarByPageTileChanged,
+                value: scrollBehavior == HabitsRecordScrollBehavior.page,
+              ),
+            ),
           ),
-        ),
-      ),
-      Selector<HabitRecordOpConfigViewModel, UserAction>(
-        selector: (context, vm) => vm.changeRecordStatus,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, value, child) => L10nBuilder(
-          builder: (context, l10n) => WindowSizeClassLayoutBuilder(
-            builder: (context, windowSize, child) =>
-                AppSettingDisplayRecordOperationTile(
-                  useSideBySideLayout:
-                      windowSize.width >= WindowSizeClass.medium,
-                  inputAction: value,
-                  title: l10n != null
-                      ? Text(l10n.appSetting_changeRecordStatusOpTile_titleText)
-                      : null,
-                  subtitle: l10n != null
-                      ? Text(
-                          l10n.appSetting_changeRecordStatusOpTile_subtitleText,
-                        )
-                      : null,
-                  onSelected: _onChangeRecordStatusSelected,
-                ),
+          Selector<HabitRecordOpConfigViewModel, UserAction>(
+            selector: (context, vm) => vm.changeRecordStatus,
+            shouldRebuild: (previous, next) => previous != next,
+            builder: (context, value, child) => L10nBuilder(
+              builder: (context, l10n) => WindowSizeClassLayoutBuilder(
+                builder: (context, windowSize, child) =>
+                    AppSettingDisplayRecordOperationTile(
+                      useSideBySideLayout:
+                          windowSize.width >= WindowSizeClass.medium,
+                      inputAction: value,
+                      title: l10n != null
+                          ? Text(
+                              l10n.appSetting_changeRecordStatusOpTile_titleText,
+                            )
+                          : null,
+                      subtitle: l10n != null
+                          ? Text(
+                              l10n.appSetting_changeRecordStatusOpTile_subtitleText,
+                            )
+                          : null,
+                      onSelected: _onChangeRecordStatusSelected,
+                    ),
+              ),
+            ),
           ),
-        ),
-      ),
-      Selector<HabitRecordOpConfigViewModel, UserAction>(
-        selector: (context, vm) => vm.openRecordStatusDialog,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, value, child) => L10nBuilder(
-          builder: (context, l10n) => WindowSizeClassLayoutBuilder(
-            builder: (context, windowSize, child) =>
-                AppSettingDisplayRecordOperationTile(
-                  useSideBySideLayout:
-                      windowSize.width >= WindowSizeClass.medium,
-                  inputAction: value,
-                  title: l10n != null
-                      ? Text(
-                          l10n.appSetting_openRecordStatusDialogOpTile_titleText,
-                        )
-                      : null,
-                  subtitle: l10n != null
-                      ? Text(
-                          l10n.appSetting_openRecordStatusDialogOpTile_subtitleText,
-                        )
-                      : null,
-                  onSelected: _onOpenRecordStatusDialogSelected,
-                ),
+          Selector<HabitRecordOpConfigViewModel, UserAction>(
+            selector: (context, vm) => vm.openRecordStatusDialog,
+            shouldRebuild: (previous, next) => previous != next,
+            builder: (context, value, child) => L10nBuilder(
+              builder: (context, l10n) => WindowSizeClassLayoutBuilder(
+                builder: (context, windowSize, child) =>
+                    AppSettingDisplayRecordOperationTile(
+                      useSideBySideLayout:
+                          windowSize.width >= WindowSizeClass.medium,
+                      inputAction: value,
+                      title: l10n != null
+                          ? Text(
+                              l10n.appSetting_openRecordStatusDialogOpTile_titleText,
+                            )
+                          : null,
+                      subtitle: l10n != null
+                          ? Text(
+                              l10n.appSetting_openRecordStatusDialogOpTile_subtitleText,
+                            )
+                          : null,
+                      onSelected: _onOpenRecordStatusDialogSelected,
+                    ),
+              ),
+            ),
           ),
-        ),
-      ),
-      ExperimentalFeatureGate.basic(
-        selector: (context, vm) => vm.habitGrouping,
-        enabledBuilder: (context) =>
+          if (habitGrouping)
             Selector<GroupExpandTimerConfigViewModel, GroupExpandTimerSpeed>(
               selector: (context, vm) => vm.speed,
               shouldRebuild: (previous, next) => previous != next,
@@ -725,189 +741,192 @@ class _PageState extends State<_Page> with XShare {
                 ),
               ),
             ),
+        ],
       ),
-    ];
+    );
 
-    Iterable<Widget> buildReminderSubGroup(BuildContext context) => [
-      GroupTitleListTile(
-        title: L10nBuilder(
-          builder: (context, l10n) => l10n != null
-              ? Text(l10n.appSetting_reminderSubgroupText)
-              : const Text("Reminder"),
-        ),
+    Widget buildReminderSubGroup(BuildContext context) => AdaptiveListSection(
+      key: const ValueKey('settings-reminder'),
+      header: L10nBuilder(
+        builder: (context, l10n) => l10n != null
+            ? Text(l10n.appSetting_reminderSubgroupText)
+            : const Text("Reminder"),
       ),
-      Selector<AppReminderViewModel, AppReminderConfig>(
-        selector: (context, vm) => vm.reminder,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, reminder, child) => L10nBuilder(
-          builder: (context, l10n) => AppSettingReminderTile(
-            config: reminder,
-            onSwitchButtonChanged: (value) => value
-                ? context.read<AppReminderViewModel>().switchOn(l10n: l10n)
-                : context.read<AppReminderViewModel>().switchOff(l10n: l10n),
-            onTimePicked: (value) => context
-                .read<AppReminderViewModel>()
-                .switchToDaily(timeOfDay: value, l10n: l10n),
+      children: [
+        Selector<AppReminderViewModel, AppReminderConfig>(
+          selector: (context, vm) => vm.reminder,
+          shouldRebuild: (previous, next) => previous != next,
+          builder: (context, reminder, child) => L10nBuilder(
+            builder: (context, l10n) => AppSettingReminderTile(
+              config: reminder,
+              onSwitchButtonChanged: (value) => value
+                  ? context.read<AppReminderViewModel>().switchOn(l10n: l10n)
+                  : context.read<AppReminderViewModel>().switchOff(l10n: l10n),
+              onTimePicked: (value) => context
+                  .read<AppReminderViewModel>()
+                  .switchToDaily(timeOfDay: value, l10n: l10n),
+            ),
           ),
         ),
-      ),
-      const AppSettingNotifyTile(),
-    ];
+        const AppSettingNotifyTile(),
+      ],
+    );
 
-    Iterable<Widget> buildBackupAndRestoreSubGroup(BuildContext context) => [
-      GroupTitleListTile(
-        title: L10nBuilder(
-          builder: (context, l10n) => l10n != null
-              ? Text(l10n.appSetting_backupAndRestoreSubgroupText)
-              : const Text("Backup & restore"),
-        ),
-      ),
-      L10nBuilder(
-        builder: (context, l10n) => ListTile(
-          title: l10n != null
-              ? Text(l10n.appSetting_export_titleText)
-              : const Text("Export"),
-          subtitle: l10n != null
-              ? Text(l10n.appSetting_export_subtitleText)
-              : const Text(
-                  "Exported habits as JSON format, "
-                  "This file can be import back",
+    Widget buildBackupAndRestoreSubGroup(BuildContext context) =>
+        AdaptiveListSection(
+          key: const ValueKey('settings-backup-restore'),
+          header: L10nBuilder(
+            builder: (context, l10n) => l10n != null
+                ? Text(l10n.appSetting_backupAndRestoreSubgroupText)
+                : const Text("Backup & restore"),
+          ),
+          children: [
+            L10nBuilder(
+              builder: (context, l10n) => AdaptiveListTile(
+                title: l10n != null
+                    ? Text(l10n.appSetting_export_titleText)
+                    : const Text("Export"),
+                subtitle: l10n != null
+                    ? Text(l10n.appSetting_export_subtitleText)
+                    : const Text(
+                        "Exported habits as JSON format, "
+                        "This file can be import back",
+                      ),
+                onTap: () => _onExportAllTilePressed(context),
+              ),
+            ),
+            L10nBuilder(
+              builder: (context, l10n) => AdaptiveListTile(
+                title: l10n != null
+                    ? Text(l10n.appSetting_import_titleText)
+                    : const Text("Import"),
+                subtitle: l10n != null
+                    ? Text(l10n.appSetting_import_subtitleText)
+                    : const Text("Import habits from json file"),
+                onTap: _onImportAllTilePressed,
+              ),
+            ),
+            L10nBuilder(
+              builder: (context, l10n) => AdaptiveListTile(
+                title: Text(
+                  l10n?.appSetting_thirdPartyImport_titleText ??
+                      'Import from third-party',
                 ),
-          onTap: () => _onExportAllTilePressed(context),
-        ),
-      ),
-      L10nBuilder(
-        builder: (context, l10n) => ListTile(
-          title: l10n != null
-              ? Text(l10n.appSetting_import_titleText)
-              : const Text("Import"),
-          subtitle: l10n != null
-              ? Text(l10n.appSetting_import_subtitleText)
-              : const Text("Import habits from json file"),
-          onTap: _onImportAllTilePressed,
-        ),
-      ),
-      L10nBuilder(
-        builder: (context, l10n) => ListTile(
-          title: Text(
-            l10n?.appSetting_thirdPartyImport_titleText ??
-                'Import from third-party',
-          ),
-          subtitle: Text(
-            l10n?.appSetting_thirdPartyImport_subtitleText ??
-                'Import habits from other habit tracker apps',
-          ),
-          onTap: _onThirdPartyImportTilePressed,
-        ),
-      ),
-      L10nBuilder(
-        builder: (context, l10n) => ListTile(
-          title: l10n != null
-              ? Text(l10n.appSetting_resetConfig_titleText)
-              : const Text("Reset configs"),
-          subtitle: l10n != null
-              ? Text(l10n.appSetting_resetConfig_subtitleText)
-              : const Text("Reset all configs to default"),
-          onTap: _onResetConfigsTilePressed,
-        ),
-      ),
-    ];
+                subtitle: Text(
+                  l10n?.appSetting_thirdPartyImport_subtitleText ??
+                      'Import habits from other habit tracker apps',
+                ),
+                onTap: _onThirdPartyImportTilePressed,
+              ),
+            ),
+            L10nBuilder(
+              builder: (context, l10n) => AdaptiveListTile(
+                title: l10n != null
+                    ? Text(l10n.appSetting_resetConfig_titleText)
+                    : const Text("Reset configs"),
+                subtitle: l10n != null
+                    ? Text(l10n.appSetting_resetConfig_subtitleText)
+                    : const Text("Reset all configs to default"),
+                onTap: _onResetConfigsTilePressed,
+              ),
+            ),
+          ],
+        );
 
-    Iterable<Widget> buildOthersSubGroup(BuildContext context) => [
-      GroupTitleListTile(
-        title: L10nBuilder(
-          builder: (context, l10n) => l10n != null
-              ? Text(l10n.appSetting_otherSubgroupText)
-              : const Text("Others"),
-        ),
+    Widget buildOthersSubGroup(BuildContext context) => AdaptiveListSection(
+      key: const ValueKey('settings-others'),
+      header: L10nBuilder(
+        builder: (context, l10n) => l10n != null
+            ? Text(l10n.appSetting_otherSubgroupText)
+            : const Text("Others"),
       ),
-      ListTile(
-        title: L10nBuilder(
-          builder: (context, l10n) => Text(
-            l10n?.appSetting_experimentalFeatureTile_titleText ??
-                "Experimental Features",
+      children: [
+        AdaptiveListTile(
+          title: L10nBuilder(
+            builder: (context, l10n) => Text(
+              l10n?.appSetting_experimentalFeatureTile_titleText ??
+                  "Experimental Features",
+            ),
+          ),
+          trailing: switch (AdaptiveStyle.of(context)) {
+            AdaptiveStyle.material => null,
+            AdaptiveStyle.apple => const Icon(CupertinoIcons.chevron_forward),
+          },
+          onTap: () => naviToExperimentalFeaturesPage(context: context),
+        ),
+        Selector<AppDeveloperViewModel, bool>(
+          selector: (context, vm) => vm.isInDevelopMode,
+          shouldRebuild: (previous, next) => previous != next,
+          builder: (context, value, child) => AdaptiveSwitchListTile(
+            title: L10nBuilder(
+              builder: (context, l10n) => l10n != null
+                  ? Text(l10n.appSetting_developMode_titleText)
+                  : const Text("Develop mode"),
+            ),
+            onChanged: _onDevelopModeSwitchTilePressed,
+            value: value,
           ),
         ),
-        onTap: () => naviToExperimentalFeaturesPage(context: context),
-      ),
-      Selector<AppDeveloperViewModel, bool>(
-        selector: (context, vm) => vm.isInDevelopMode,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, value, child) => SwitchListTile(
+        AdaptiveListTile(
           title: L10nBuilder(
             builder: (context, l10n) => l10n != null
-                ? Text(l10n.appSetting_developMode_titleText)
-                : const Text("Develop mode"),
+                ? Text(l10n.appSetting_clearCache_titleText)
+                : const Text("Clear Cache"),
           ),
-          onChanged: _onDevelopModeSwitchTilePressed,
-          value: value,
+          onTap: () => _openClearAppCacheDialog(context),
         ),
-      ),
-      ListTile(
-        title: L10nBuilder(
-          builder: (context, l10n) => l10n != null
-              ? Text(l10n.appSetting_clearCache_titleText)
-              : const Text("Clear Cache"),
+        AdaptiveListTile(
+          title: L10nBuilder(
+            builder: (context, l10n) => l10n != null
+                ? Text(l10n.appSetting_debugger_titleText)
+                : const Text("Debugger"),
+          ),
+          trailing: switch (AdaptiveStyle.of(context)) {
+            AdaptiveStyle.material => null,
+            AdaptiveStyle.apple => const Icon(CupertinoIcons.chevron_forward),
+          },
+          onTap: () => naviToAppDebuggerPage(context: context),
         ),
-        onTap: () => _openClearAppCacheDialog(context),
-      ),
-      ListTile(
-        title: L10nBuilder(
-          builder: (context, l10n) => l10n != null
-              ? Text(l10n.appSetting_debugger_titleText)
-              : const Text("Debugger"),
+        AdaptiveListTile(
+          title: L10nBuilder(
+            builder: (context, l10n) => l10n != null
+                ? Text(l10n.appSetting_about_titleText)
+                : const Text("About"),
+          ),
+          trailing: switch (AdaptiveStyle.of(context)) {
+            AdaptiveStyle.material => null,
+            AdaptiveStyle.apple => const Icon(CupertinoIcons.chevron_forward),
+          },
+          onTap: () => naviToAppAboutPage(context: context),
         ),
-        onTap: () => naviToAppDebuggerPage(context: context),
-      ),
-      ListTile(
-        title: L10nBuilder(
-          builder: (context, l10n) => l10n != null
-              ? Text(l10n.appSetting_about_titleText)
-              : const Text("About"),
-        ),
-        onTap: () => naviToAppAboutPage(context: context),
-      ),
-    ];
+      ],
+    );
 
-    Iterable<Widget> buildGroupsSubGroup(BuildContext context) => <Widget>[
-      GroupTitleListTile(
-        title: L10nBuilder(
-          builder: (context, l10n) => l10n != null
-              ? Text(l10n.groupManage_sectionTitle_text)
-              : const Text("Groups"),
-        ),
+    Widget buildGroupsSubGroup(BuildContext context) => AdaptiveListSection(
+      key: const ValueKey('settings-groups'),
+      header: L10nBuilder(
+        builder: (context, l10n) => l10n != null
+            ? Text(l10n.groupManage_sectionTitle_text)
+            : const Text("Groups"),
       ),
-      L10nBuilder(
-        builder: (context, l10n) => ListTile(
-          title: l10n != null
-              ? Text(l10n.groupManage_appbar_title)
-              : const Text("Manage Groups"),
-          subtitle: l10n != null
-              ? Text(l10n.appSetting_manageGroups_subtitleText)
-              : const Text("Create, edit, and delete habit groups"),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: () => naviToGroupManagePage(context: context),
+      children: [
+        L10nBuilder(
+          builder: (context, l10n) => AdaptiveListTile(
+            title: l10n != null
+                ? Text(l10n.groupManage_appbar_title)
+                : const Text("Manage Groups"),
+            subtitle: l10n != null
+                ? Text(l10n.appSetting_manageGroups_subtitleText)
+                : const Text("Create, edit, and delete habit groups"),
+            trailing: switch (AdaptiveStyle.of(context)) {
+              AdaptiveStyle.material => const Icon(Icons.chevron_right),
+              AdaptiveStyle.apple => const Icon(CupertinoIcons.chevron_forward),
+            },
+            onTap: () => naviToGroupManagePage(context: context),
+          ),
         ),
-      ),
-    ];
-
-    Iterable<Widget> buildSyncSubGroup(BuildContext context) => <Widget>[
-      GroupTitleListTile(
-        title: L10nBuilder(
-          builder: (context, l10n) =>
-              Text(l10n?.appSetting_synSubgroupText ?? "Sync"),
-        ),
-      ),
-      const AppSyncNowTile(),
-      const AppSettingSyncFailedTile(),
-      ListTile(
-        title: L10nBuilder(
-          builder: (context, l10n) =>
-              Text(l10n?.appSetting_syncOption_titleText ?? "Sync Option"),
-        ),
-        onTap: () => naviToAppSyncPage(context: context),
-      ),
-    ];
+      ],
+    );
 
     Widget buildDevelopSubGroup(BuildContext context) =>
         Selector<
@@ -974,18 +993,17 @@ class _PageState extends State<_Page> with XShare {
               withSliver: true,
               child: SliverList.list(
                 children: [
-                  ...buildSyncSubGroup(context),
+                  const _AppSettingSyncSubGroup(),
                   ExperimentalFeatureGate.basic(
                     selector: (context, vm) => vm.habitGrouping,
-                    enabledBuilder: (context) =>
-                        Column(children: [...buildGroupsSubGroup(context)]),
+                    enabledBuilder: buildGroupsSubGroup,
                   ),
-                  ...buildDisplaySubGroup(context),
+                  buildDisplaySubGroup(context),
                   buildLanguageSubGroup(context),
-                  ...buildOperationSubGroup(context),
-                  ...buildReminderSubGroup(context),
-                  ...buildBackupAndRestoreSubGroup(context),
-                  ...buildOthersSubGroup(context),
+                  buildOperationSubGroup(context),
+                  buildReminderSubGroup(context),
+                  buildBackupAndRestoreSubGroup(context),
+                  buildOthersSubGroup(context),
                   buildDevelopSubGroup(context),
                   buildChinaIPC(context),
                 ],
@@ -996,4 +1014,42 @@ class _PageState extends State<_Page> with XShare {
       ),
     );
   }
+}
+
+class _AppSettingSyncSubGroup extends StatelessWidget {
+  const _AppSettingSyncSubGroup();
+
+  @override
+  Widget build(BuildContext context) => Selector<AppSyncStatusSource, bool>(
+    selector: (context, vm) {
+      final result = vm.syncStatus?.result;
+      return result != null && !result.isSuccessed && !result.isCancelled;
+    },
+    builder: (context, hasFailure, child) => AdaptiveListSection(
+      key: const ValueKey('settings-sync'),
+      header: L10nBuilder(
+        builder: (context, l10n) =>
+            Text(l10n?.appSetting_synSubgroupText ?? 'Sync'),
+      ),
+      children: [
+        const AppSyncNowTile(key: ValueKey('settings-sync-now')),
+        if (hasFailure)
+          const AppSettingSyncFailedTile(
+            key: ValueKey('settings-sync-failure'),
+          ),
+        AdaptiveListTile(
+          key: const ValueKey('settings-sync-option'),
+          title: L10nBuilder(
+            builder: (context, l10n) =>
+                Text(l10n?.appSetting_syncOption_titleText ?? 'Sync Option'),
+          ),
+          trailing: switch (AdaptiveStyle.of(context)) {
+            AdaptiveStyle.material => null,
+            AdaptiveStyle.apple => const Icon(CupertinoIcons.chevron_forward),
+          },
+          onTap: () => naviToAppSyncPage(context: context),
+        ),
+      ],
+    ),
+  );
 }

@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../common/consts.dart';
 import '../../../common/utils.dart';
@@ -45,7 +47,7 @@ class AppSettingFirstDayTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return ListTile(
+    return AdaptiveListTile(
       title: l10n != null
           ? Text(l10n.appSetting_firstDayOfWeek_titleText)
           : const Text("First day of week"),
@@ -54,6 +56,10 @@ class AppSettingFirstDayTile extends StatelessWidget {
           l10n?.localeName,
         ).format(getProtoDateWithFirstDay(firstDay)),
       ),
+      trailing: switch (AdaptiveStyle.of(context)) {
+        AdaptiveStyle.material => null,
+        AdaptiveStyle.apple => const Icon(CupertinoIcons.chevron_forward),
+      },
       onTap: onPressed,
     );
   }
