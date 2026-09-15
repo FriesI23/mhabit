@@ -226,6 +226,8 @@ class GroupEditFormState extends State<GroupEditForm> {
     );
   }
 
+  // TODO(mhabit-adaptive-dialog): Adapt GroupCustomColorPickerDialog and its route together;
+  // preserve the local color draft and HabitColor/null result.
   Future<void> _openCustomColorPicker() async {
     final seedColor = switch (_selectedColor) {
       CustomHabitColor(argb: final v) => Color(v),

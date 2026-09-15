@@ -19,6 +19,8 @@ import '../../../l10n/localizations.dart';
 import '../../../models/app_sync_options.dart';
 import '../../../providers/workflow/app_sync.dart';
 
+// TODO(mhabit-adaptive-dialog): Adapt the sync-interval selector; preserve
+// AppSyncFetchInterval/null results and caller-owned settings updates.
 Future<AppSyncFetchInterval?> showAppSyncFetchIntervalSwitchDialog({
   required BuildContext context,
   AppSyncFetchInterval? select,

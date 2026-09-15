@@ -17,6 +17,8 @@ import 'package:flutter_material_design_icons/flutter_material_design_icons.dart
 
 import '../../../l10n/localizations.dart';
 
+// TODO(mhabit-adaptive-dialog): Phase 3-8d6: adapt this and the old-server
+// warning below after icon review; preserve labels and dangerous-action semantics.
 class AppSyncWebDavNewServerConfirmDialog extends StatelessWidget {
   const AppSyncWebDavNewServerConfirmDialog({super.key});
 

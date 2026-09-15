@@ -33,6 +33,8 @@ import 'habit_input_helper.dart';
 
 const _kDefaultHabitRecordChipListHeight = 56.0;
 
+// TODO(mhabit-adaptive-dialog): Adapt the numeric picker and step controls; preserve the
+// HabitDailyGoal draft and null cancellation.
 Future<HabitDailyGoal?> showHabitRecordCustomNumberPickerDialog({
   required BuildContext context,
   required HabitDailyRecordForm recordForm,

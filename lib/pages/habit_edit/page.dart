@@ -195,6 +195,8 @@ class _PageState extends State<_Page> {
         .read<HabitFormViewModel>()
         .requestReminderPermission();
     if (!context.mounted || !hasPermission) return;
+    // TODO(mhabit-adaptive-dialog): Adapt the SDK time picker separately;
+    // preserve TimeOfDay/null handling and reminder form updates.
     final result = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),

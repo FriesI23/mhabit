@@ -21,6 +21,8 @@ import '../../../models/app_event.dart';
 import '../../../providers/workflow/app_event.dart';
 import '../../../providers/workflow/habits_file_importer.dart';
 
+// TODO(mhabit-adaptive-dialog): Migrate as an import workflow, retaining importer ownership,
+// preview/progress/results and execution-time dismissal restrictions.
 Future<void> showAppSettingImportHabitsConfirmDialog({
   required BuildContext context,
   required Iterable<Object?> habitsData,

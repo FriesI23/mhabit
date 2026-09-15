@@ -35,6 +35,8 @@ import '../helpers.dart';
 ///
 /// [skipFutureEnabled] controls the initial state of the "don't show again"
 /// checkbox. [onSkipFutureChanged] is called when the checkbox is toggled.
+// TODO(mhabit-adaptive-dialog): Adapt the group-change summary and skip option together; preserve
+// confirm-only preference persistence and the existing bool result.
 Future<bool> showHabitGroupModifyConfirmDialog({
   required BuildContext context,
   required List<HabitGroupModifyItem> affectedHabits,

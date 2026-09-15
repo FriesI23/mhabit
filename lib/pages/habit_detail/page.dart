@@ -249,6 +249,8 @@ class _PageState extends State<_Page>
     );
   }
 
+  // TODO(mhabit-adaptive-dialog): Phase 3-8g: migrate only this archive confirmation to an anchored
+  // popup after 3-8e/f validation; support both direct and More entry anchors.
   void _openHabitArchiveConfirmDialog() async {
     final l10n = L10n.of(context);
     final result = await _openHabitOpConfirmDialog(

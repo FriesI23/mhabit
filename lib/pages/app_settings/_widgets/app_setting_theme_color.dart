@@ -28,6 +28,8 @@ import '../../../providers/app_ui/app_developer.dart';
 import '../../../providers/app_ui/app_theme.dart';
 import '../../../theme/color.dart';
 
+// TODO(mhabit-adaptive-dialog): Adapt theme-color selection controls and route together;
+// preserve AppThemeColor/null results.
 Future<AppThemeColor?> showAppThemeColorChangerDialog({
   required BuildContext context,
   AppThemeColor? selectedColor,

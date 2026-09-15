@@ -37,7 +37,7 @@ Future<GroupEditFormResult?> showGroupEditDialog({
   final formKey = GlobalKey<GroupEditFormState>();
   return showAdaptiveSheet<GroupEditFormResult>(
     context: context,
-    // TODO(mhabit): Remove the forced Material style after GroupEditForm and
+    // TODO(mhabit-adaptive-dialog): Remove the forced Material style after GroupEditForm and
     // its controls have Cupertino renderers.
     styleOverride: AdaptiveStyle.material,
     presentationOverride: presentationOverride,

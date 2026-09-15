@@ -25,6 +25,8 @@ import '../../../models/habit_stat.dart';
 import '../../../theme/icon.dart';
 import '../_providers/habit_summary.dart';
 
+// TODO(mhabit-adaptive-dialog): Migrate as a statistics subview/AdaptiveModal, not a confirm;
+// retain the borrowed HabitSummaryViewModel and chart layout.
 Future<void> showHabitDisplayStatsMenuDialog({
   required BuildContext context,
   required HabitSummaryViewModel summary,

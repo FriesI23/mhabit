@@ -16,6 +16,8 @@ import 'package:flutter/material.dart';
 
 import '../../l10n/localizations.dart';
 
+// TODO(mhabit-adaptive-dialog): Phase 3-8h: remove this legacy helper only after all remaining
+// option-bearing consumers migrate; do not broaden scope just to delete it.
 Future<bool?> showConfirmDialog({
   required BuildContext context,
   Widget? title,
@@ -86,6 +88,8 @@ Future<bool?> showConfirmDialog({
 
 enum NormalizeConfirmDialogType { confirm, save, exit, delete }
 
+// TODO(mhabit-adaptive-dialog): Phase 3-8h: audit remaining consumers before removing this
+// legacy normalized-confirm entry together with the old confirmation widgets.
 Future<bool?> showNormalizedConfirmDialog({
   required BuildContext context,
   Widget? title,

@@ -23,6 +23,8 @@ import '../../../providers/app_ui/custom_color_history.dart';
 import '../../../theme/color.dart';
 import '../../../widgets/widgets.dart';
 
+// TODO(mhabit-adaptive-dialog): Adapt the color selector and history controls together; preserve
+// the borrowed history VM and HabitColor/null result.
 Future<HabitColor?> showHabitColorPickerDialog({
   required BuildContext context,
   required HabitColor color,
@@ -111,6 +113,8 @@ class _HabitColorPickerDialogState extends State<HabitColorPickerDialog> {
   // assertion.  Showing the editor in its own nested dialog avoids
   // re-hosting the picker's internal render tree in a context upstream
   // never tests.
+  // TODO(mhabit-adaptive-dialog): Adapt this nested color editor while retaining third-party layout
+  // constraints and confirm-only submission of the color draft.
   Future<void> _openCustomColorPicker(BuildContext context) async {
     // Only committed to `_selectAndClose` below if the user confirms.  The
     // tint toggle lives inside HabitColorWheelEditor (not in the outer

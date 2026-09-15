@@ -19,6 +19,8 @@ import '../../../common/consts.dart';
 import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
 
+// TODO(mhabit-adaptive-dialog): Adapt the first-day selector; preserve weekday values and
+// int/null results rather than using a bool confirmation.
 Future<int?> showAppSettingFirstDaySelectDialog({
   required BuildContext context,
   int? firstDay,

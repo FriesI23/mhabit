@@ -19,6 +19,8 @@ import '../../../models/habit_color.dart';
 import '../../../models/habit_reminder.dart';
 import '../../../widgets/widgets.dart';
 
+// TODO(mhabit-adaptive-dialog): Adapt reminder-rule controls as a picker; preserve the reminder
+// draft and HabitReminder/null result.
 Future<HabitReminder?> showHabitReminderTypePickerDialog({
   required BuildContext context,
   required HabitReminder reminder,

@@ -76,7 +76,7 @@ Future<GroupModifySelectorResult?> showHabitGroupModifySelector({
   required List<HabitSummaryData> selectedHabitsData,
 }) => showAdaptiveSheet<GroupModifySelectorResult?>(
   context: context,
-  // TODO(mhabit): Remove the forced Material style after the group selector
+  // TODO(mhabit-adaptive-dialog): Remove the forced Material style after the group selector
   // and its controls have Cupertino renderers.
   styleOverride: AdaptiveStyle.material,
   builder: (_) => _GroupModifySelectorScope(

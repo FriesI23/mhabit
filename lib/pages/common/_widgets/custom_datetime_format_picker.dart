@@ -19,6 +19,8 @@ import '../../../models/custom_date_format.dart';
 import '../../../utils/app_clock.dart';
 import '../../../widgets/widgets.dart';
 
+// TODO(mhabit-adaptive-dialog): Adapt the format-editing controls before choosing a fixed picker
+// or AdaptiveModal; preserve the CustomDateYmdHmsConfig draft/result.
 Future<CustomDateYmdHmsConfig?> showCustomDateTimeFormatPickerDialog({
   required BuildContext context,
   CustomDateYmdHmsConfig? config,

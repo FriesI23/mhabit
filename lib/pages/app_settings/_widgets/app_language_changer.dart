@@ -18,6 +18,8 @@ import 'package:flutter/material.dart';
 import '../../../common/consts.dart';
 import '../../../l10n/localizations.dart';
 
+// TODO(mhabit-adaptive-dialog): Adapt this language selector, preserving its selection and
+// AppLanguageChangerDialogResult/null result.
 Future<AppLanguageChangerDialogResult?> showAppLanguageChangerDialog({
   required BuildContext context,
   required Locale? selectedLocale,

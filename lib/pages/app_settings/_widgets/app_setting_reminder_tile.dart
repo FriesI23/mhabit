@@ -55,6 +55,8 @@ class _AppSettingReminderTileState extends State<AppSettingReminderTile> {
         onChanged: widget.onSwitchButtonChanged,
       ),
       onTap: () async {
+        // TODO(mhabit-adaptive-dialog): Adapt the SDK time picker separately;
+        // preserve TimeOfDay/null handling and the settings-owned update.
         final result = await showTimePicker(
           context: context,
           initialTime:

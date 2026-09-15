@@ -67,6 +67,8 @@ class LogLevelChangerTile extends StatelessWidget {
           ? Text(l10n.debug_logLevelTile_title)
           : const Text("Logging level"),
       subtitle: Text(_getLogName(context)),
+      // TODO(mhabit-adaptive-dialog): Adapt this log-level selector; preserve its
+      // callback-before-close behavior rather than introducing a typed confirm result.
       onTap: () => showDialog(
         context: context,
         builder: (context) => SimpleDialog(

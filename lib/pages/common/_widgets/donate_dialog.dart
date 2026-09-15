@@ -44,6 +44,8 @@ Future<DonateDialogResult?> showDonateDialog(
       title: l10n != null ? Text(l10n.appAbout_donateTile_titleText) : null,
       automaticallyImplyCloseButton: false,
       constraints: const BoxConstraints(maxWidth: 800),
+      // TODO(mhabit-adaptive-dialog): Remove this compatibility bridge only after
+      // DonateContent controls support Apple; keep the already migrated modal route.
       body: AdaptiveModalMaterialBridge(
         child: DonateContent(
           donateBuyMeACoffeeToken: donateBuyMeACoffeeToken,

@@ -27,6 +27,8 @@ import '../../../models/habit_freq.dart';
 const double _kDefaultHabitFreqTextFieldHeight = 30;
 const double _kDefualtHabitFreqTextFieldWidth = 48;
 
+// TODO(mhabit-adaptive-dialog): Adapt frequency form controls before choosing the modal surface;
+// preserve frequency type/value drafts and HabitFrequency/null results.
 Future<HabitFrequency?> showHabitFrequencyPickerDialog({
   required BuildContext context,
   required HabitFrequency frequency,

@@ -114,6 +114,8 @@ class _VersionHintText extends StatelessWidget {
 /// Show a dialog that lets the user pick a third-party import source.
 ///
 /// Returns the selected [ThirdPartyProvider], or `null` if the user cancelled.
+// TODO(mhabit-adaptive-dialog): Adapt import-source selection with its version explanations;
+// preserve ThirdPartyProvider/null results.
 Future<ThirdPartyProvider?> showThirdPartyImportProviderDialog(
   BuildContext context,
 ) async {
