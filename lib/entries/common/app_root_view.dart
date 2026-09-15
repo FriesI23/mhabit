@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart'
+    show CupertinoUserInterfaceLevel, CupertinoUserInterfaceLevelData;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
@@ -23,6 +26,19 @@ import '../../l10n/localizations.dart';
 import '../../widgets/widgets.dart';
 
 typedef AppRootThemeBuilder = ThemeData Function(BuildContext context);
+
+/// Shared window-level decision for Material themes and Cupertino system colors.
+CupertinoUserInterfaceLevelData appWindowInterfaceLevel(BuildContext context) =>
+    switch (defaultTargetPlatform) {
+      TargetPlatform.iOS =>
+        AdaptiveWindowControlLayoutScope.maybeOf(
+                  context,
+                )?.hasWindowControlAvoidance ==
+                true
+            ? CupertinoUserInterfaceLevelData.elevated
+            : CupertinoUserInterfaceLevelData.base,
+      _ => CupertinoUserInterfaceLevelData.base,
+    };
 
 class AppRootView extends StatelessWidget {
   final ThemeMode themeMode;
@@ -112,12 +128,15 @@ class _AppRootMaterialApp extends StatelessWidget {
   bool get _useRouter => routerConfig != null;
 
   Widget _builder(BuildContext context, Widget? child) {
-    final content = MediaQuery(
-      data: MediaQuery.of(context).copyWith(
-        disableAnimations:
-            disableAnimations || MediaQuery.disableAnimationsOf(context),
+    final content = CupertinoUserInterfaceLevel(
+      data: appWindowInterfaceLevel(context),
+      child: MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+          disableAnimations:
+              disableAnimations || MediaQuery.disableAnimationsOf(context),
+        ),
+        child: UnfocusOnTap(child: child),
       ),
-      child: UnfocusOnTap(child: child),
     );
     final textDirection = textDirectionOverride;
     return textDirection == null

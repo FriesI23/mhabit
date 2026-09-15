@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
+import '../../../extensions/app_theme_color_extensions.dart';
 import '../../../extensions/custom_color_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/app_theme_color.dart';
@@ -124,10 +125,7 @@ class AppSettingThemeColorChoosenDialog extends StatelessWidget {
             "Choose Theme Color",
       ),
       children: [
-        _SystemChosenOption(
-          isSelected: selectedColor is SystemAppThemeColor,
-          debug: debug,
-        ),
+        _SystemChosenOption(isSelected: selectedColor.isSystem, debug: debug),
         _PrimaryChosenOption(
           isSelected: selectedColor is PrimaryAppThemeColor,
           debug: debug,

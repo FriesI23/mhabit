@@ -13,12 +13,19 @@
 // limitations under the License.
 
 import 'package:flutter/cupertino.dart'
-    show CupertinoDynamicColor, CupertinoTextThemeData, CupertinoThemeData;
+    show
+        CupertinoColors,
+        CupertinoDynamicColor,
+        CupertinoTextThemeData,
+        CupertinoThemeData;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart'
+    show AdaptiveListThemeData;
 
 import '../common/app_info.dart';
 import '../common/consts.dart';
+import '../extensions/app_theme_color_extensions.dart';
 import '../extensions/custom_color_extensions.dart';
 import '../models/app_theme_color.dart';
 import '../widgets/_widgets/predictive_back_page_transitions_builder.dart';
@@ -41,6 +48,15 @@ const _iOSDarkSystemBackgroundColor = Colors.black;
 const _iOSDarkElevatedSystemBackgroundColor = Color(0xFF1C1C1E);
 
 const _macOSDarkSystemBackgroundColor = Color(0xFF1E1E1E);
+
+// App-owned neutral grouping surface above the macOS window background.
+// macOS stays at the base interface level; it does not use iPad window logic.
+const _macOSSystemListSurface = CupertinoDynamicColor.withBrightnessAndContrast(
+  color: Color(0xFFF2F2F7),
+  darkColor: Color(0xFF2C2C2E),
+  highContrastColor: Color(0xFFEBEBF0),
+  darkHighContrastColor: Color(0xFF363638),
+);
 
 const _linuxFontFamilyFallbacks = [
   'Ubuntu',
@@ -84,6 +100,7 @@ class AppThemeBuilder {
       ),
     ),
     customColor: lightCustomColors,
+    systemColors: themeColor.isSystem,
   );
 
   /// Builds the dark theme from [themeColor] and the dynamic scheme.
@@ -106,6 +123,7 @@ class AppThemeBuilder {
         mainColor: mainColor,
       ),
       customColor: darkCustomColors,
+      systemColors: themeColor.isSystem,
     );
   }
 
@@ -135,6 +153,7 @@ class AppThemeBuilder {
         },
       ),
       customColor: darkCustomColors,
+      systemColors: themeColor.isSystem,
     );
   }
 
@@ -150,6 +169,7 @@ class AppThemeBuilder {
     required Brightness brightness,
     required ColorScheme? colorScheme,
     required CustomColors customColor,
+    required bool systemColors,
   }) {
     final pageTransitionsTheme = PageTransitionsTheme(
       builders: {
@@ -171,7 +191,24 @@ class AppThemeBuilder {
         behavior: SnackBarBehavior.floating,
       ),
       menuTheme: _mobileMenuTheme,
-      extensions: [customColor],
+      extensions: [
+        customColor,
+        if (systemColors)
+          AdaptiveListThemeData(
+            surfaceColor: switch (defaultTargetPlatform) {
+              TargetPlatform.macOS => _macOSSystemListSurface,
+              _ => CupertinoColors.secondarySystemBackground,
+            },
+            foregroundColor: CupertinoColors.label,
+            secondaryColor: CupertinoColors.secondaryLabel,
+            iconColor: CupertinoColors.systemGrey2,
+            separatorColor: CupertinoColors.separator,
+            activatedColor: CupertinoColors.systemGrey4,
+            focusColor: CupertinoColors.systemGrey,
+          )
+        else
+          const AdaptiveListThemeData(),
+      ],
     );
     final cupertinoTextTheme = _getCupertinoTextTheme(
       primaryColor: baseTheme.colorScheme.primary,

@@ -7,6 +7,8 @@ export 'src/adaptive/adaptive_back_button.dart';
 export 'src/adaptive/adaptive_dialog.dart';
 export 'src/adaptive/adaptive_editable_sliver_app_bar.dart';
 export 'src/adaptive/adaptive_icon_button.dart';
+export 'src/adaptive/adaptive_list_section.dart';
+export 'src/adaptive/adaptive_list_theme.dart';
 export 'src/adaptive/adaptive_list_tile.dart';
 export 'src/adaptive/adaptive_navigation_bar.dart';
 export 'src/adaptive/adaptive_navigation_destination.dart';
@@ -21,6 +23,7 @@ export 'src/breakpoints/window_size_class.dart';
 export 'src/cupertino/cupertino_adaptive_modal.dart'
     show CupertinoAdaptiveModalPageRoute;
 export 'src/cupertino/cupertino_floating_surface.dart';
+export 'src/cupertino/cupertino_ink_well.dart';
 export 'src/cupertino/cupertino_navigation_primary_action.dart'
     show CupertinoNavigationPrimaryAction;
 export 'src/cupertino/cupertino_sliver_search_bar.dart';

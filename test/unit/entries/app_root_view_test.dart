@@ -12,13 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart' show CupertinoTheme, CupertinoThemeData;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mhabit/entries/common/app_root_view.dart';
+import 'package:mhabit/models/app_theme_color.dart';
+import 'package:mhabit/theme/app_theme_builder.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 const MethodChannel _windowControlChannel = MethodChannel(
@@ -206,18 +208,35 @@ void main() {
                 isFullScreen: isFullScreen,
               ),
             );
-        final colorScheme = ColorScheme.fromSeed(
-          seedColor: const Color(0xFF446688),
-          brightness: Brightness.dark,
-        );
-        final baseBackground = colorScheme.surface;
-        final elevatedBackground = colorScheme.surfaceContainerLow;
+        const themeBuilder = AppThemeBuilder();
+        const themeColor = SystemAppThemeColor();
+        const mainColor = Colors.purple;
+        final baseBackground = themeBuilder
+            .buildDark(themeColor: themeColor, themeMainColor: mainColor)
+            .colorScheme
+            .surface;
+        final elevatedBackground = themeBuilder
+            .buildElevatedDark(
+              themeColor: themeColor,
+              themeMainColor: mainColor,
+            )
+            .colorScheme
+            .surface;
         const probeKey = ValueKey('apple-window-background-probe');
         final router = GoRouter(
           routes: [
             GoRoute(
               path: '/',
-              builder: (_, _) => const _StatefulProbe(key: probeKey),
+              builder: (_, _) => const Column(
+                children: [
+                  _StatefulProbe(key: probeKey),
+                  AdaptiveListSection(
+                    children: [
+                      AdaptiveListTile(title: Text('Window language')),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         );
@@ -227,33 +246,17 @@ void main() {
           await tester.pumpWidget(
             AppRootView.router(
               themeMode: ThemeMode.dark,
-              darkThemeBuilder: (context) {
-                final useElevatedTheme =
-                    defaultTargetPlatform == TargetPlatform.iOS &&
-                    AdaptiveWindowControlLayoutScope.maybeOf(
-                          context,
-                        )?.hasWindowControlAvoidance ==
-                        true;
-                if (!useElevatedTheme) {
-                  return ThemeData(
-                    colorScheme: colorScheme,
-                    scaffoldBackgroundColor: baseBackground,
-                    cupertinoOverrideTheme: CupertinoThemeData(
-                      scaffoldBackgroundColor: baseBackground,
+              darkThemeBuilder: (context) =>
+                  appWindowInterfaceLevel(context) ==
+                      CupertinoUserInterfaceLevelData.elevated
+                  ? themeBuilder.buildElevatedDark(
+                      themeColor: themeColor,
+                      themeMainColor: mainColor,
+                    )
+                  : themeBuilder.buildDark(
+                      themeColor: themeColor,
+                      themeMainColor: mainColor,
                     ),
-                  );
-                }
-                final elevatedScheme = colorScheme.copyWith(
-                  surface: elevatedBackground,
-                );
-                return ThemeData(
-                  colorScheme: elevatedScheme,
-                  scaffoldBackgroundColor: baseBackground,
-                  cupertinoOverrideTheme: CupertinoThemeData(
-                    scaffoldBackgroundColor: elevatedBackground,
-                  ),
-                ).copyWith(scaffoldBackgroundColor: elevatedBackground);
-              },
               config: router,
             ),
           );
@@ -262,6 +265,29 @@ void main() {
           var context = tester.element(find.byKey(probeKey));
           final probeState = tester.state(find.byKey(probeKey));
           expect(Theme.of(context).scaffoldBackgroundColor, baseBackground);
+          expect(
+            CupertinoUserInterfaceLevel.of(context),
+            CupertinoUserInterfaceLevelData.base,
+          );
+          expect(
+            CupertinoDynamicColor.resolve(
+              CupertinoColors.secondarySystemBackground,
+              context,
+            ).toARGB32(),
+            0xFF1C1C1E,
+          );
+          expect(
+            tester
+                .widgetList<ColoredBox>(
+                  find.descendant(
+                    of: find.byType(AdaptiveListSection),
+                    matching: find.byType(ColoredBox),
+                  ),
+                )
+                .map((box) => box.color.toARGB32()),
+            contains(0xFF1C1C1E),
+          );
+
           expect(
             CupertinoTheme.of(context).scaffoldBackgroundColor,
             baseBackground,
@@ -285,6 +311,29 @@ void main() {
           expect(layout?.horizontalAvoidance, isNot(EdgeInsets.zero));
           expect(tester.state(find.byKey(probeKey)), same(probeState));
           expect(Theme.of(context).scaffoldBackgroundColor, elevatedBackground);
+          expect(
+            CupertinoUserInterfaceLevel.of(context),
+            CupertinoUserInterfaceLevelData.elevated,
+          );
+          expect(
+            CupertinoDynamicColor.resolve(
+              CupertinoColors.secondarySystemBackground,
+              context,
+            ).toARGB32(),
+            0xFF2C2C2E,
+          );
+          expect(
+            tester
+                .widgetList<ColoredBox>(
+                  find.descendant(
+                    of: find.byType(AdaptiveListSection),
+                    matching: find.byType(ColoredBox),
+                  ),
+                )
+                .map((box) => box.color.toARGB32()),
+            contains(0xFF2C2C2E),
+          );
+
           expect(Theme.of(context).colorScheme.surface, elevatedBackground);
           expect(
             tester
@@ -315,6 +364,28 @@ void main() {
             isFalse,
           );
           expect(Theme.of(context).scaffoldBackgroundColor, baseBackground);
+          expect(
+            CupertinoUserInterfaceLevel.of(context),
+            CupertinoUserInterfaceLevelData.base,
+          );
+          expect(
+            CupertinoDynamicColor.resolve(
+              CupertinoColors.secondarySystemBackground,
+              context,
+            ).toARGB32(),
+            0xFF1C1C1E,
+          );
+          expect(
+            tester
+                .widgetList<ColoredBox>(
+                  find.descendant(
+                    of: find.byType(AdaptiveListSection),
+                    matching: find.byType(ColoredBox),
+                  ),
+                )
+                .map((box) => box.color.toARGB32()),
+            contains(0xFF1C1C1E),
+          );
 
           isPad = true;
           isFullScreen = true;
@@ -330,6 +401,28 @@ void main() {
             isFalse,
           );
           expect(Theme.of(context).scaffoldBackgroundColor, baseBackground);
+          expect(
+            CupertinoUserInterfaceLevel.of(context),
+            CupertinoUserInterfaceLevelData.base,
+          );
+          expect(
+            CupertinoDynamicColor.resolve(
+              CupertinoColors.secondarySystemBackground,
+              context,
+            ).toARGB32(),
+            0xFF1C1C1E,
+          );
+          expect(
+            tester
+                .widgetList<ColoredBox>(
+                  find.descendant(
+                    of: find.byType(AdaptiveListSection),
+                    matching: find.byType(ColoredBox),
+                  ),
+                )
+                .map((box) => box.color.toARGB32()),
+            contains(0xFF1C1C1E),
+          );
 
           isFullScreen = false;
           tester.binding.handleMetricsChanged();
@@ -344,6 +437,28 @@ void main() {
             isTrue,
           );
           expect(Theme.of(context).scaffoldBackgroundColor, elevatedBackground);
+          expect(
+            CupertinoUserInterfaceLevel.of(context),
+            CupertinoUserInterfaceLevelData.elevated,
+          );
+          expect(
+            CupertinoDynamicColor.resolve(
+              CupertinoColors.secondarySystemBackground,
+              context,
+            ).toARGB32(),
+            0xFF2C2C2E,
+          );
+          expect(
+            tester
+                .widgetList<ColoredBox>(
+                  find.descendant(
+                    of: find.byType(AdaptiveListSection),
+                    matching: find.byType(ColoredBox),
+                  ),
+                )
+                .map((box) => box.color.toARGB32()),
+            contains(0xFF2C2C2E),
+          );
 
           hasHorizontalAvoidance = false;
           tester.binding.handleMetricsChanged();
@@ -352,6 +467,29 @@ void main() {
           context = tester.element(find.byKey(probeKey));
           expect(tester.state(find.byKey(probeKey)), same(probeState));
           expect(Theme.of(context).scaffoldBackgroundColor, baseBackground);
+          expect(
+            CupertinoUserInterfaceLevel.of(context),
+            CupertinoUserInterfaceLevelData.base,
+          );
+          expect(
+            CupertinoDynamicColor.resolve(
+              CupertinoColors.secondarySystemBackground,
+              context,
+            ).toARGB32(),
+            0xFF1C1C1E,
+          );
+          expect(
+            tester
+                .widgetList<ColoredBox>(
+                  find.descendant(
+                    of: find.byType(AdaptiveListSection),
+                    matching: find.byType(ColoredBox),
+                  ),
+                )
+                .map((box) => box.color.toARGB32()),
+            contains(0xFF1C1C1E),
+          );
+
           expect(
             CupertinoTheme.of(context).scaffoldBackgroundColor,
             baseBackground,

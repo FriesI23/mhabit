@@ -79,7 +79,7 @@ void main() {
               ),
             ),
           );
-          await tester.tap(find.byType(ListTile));
+          await tester.tap(find.byType(AdaptiveListTile));
           await tester.pumpAndSettle();
           expect(find.byType(AdaptiveConfirmDialog), findsOneWidget);
           if (choice != 'confirm') {
@@ -112,7 +112,7 @@ void main() {
           expect(caches.skip, choice == 'skip');
           expect(caches.updates, choice == 'skip' ? 1 : 0);
           expect(opened, choice == 'skip' || choice == 'confirm' ? 1 : 0);
-          await tester.tap(find.byType(ListTile));
+          await tester.tap(find.byType(AdaptiveListTile));
           await tester.pumpAndSettle();
           expect(
             find.byType(AdaptiveConfirmDialog),

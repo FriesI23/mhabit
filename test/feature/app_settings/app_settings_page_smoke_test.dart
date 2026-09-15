@@ -14,9 +14,11 @@
 
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart' show CupertinoListTile;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/l10n/localizations.dart';
+import 'package:mhabit/pages/app_settings/_widgets/app_language_changer.dart';
 import 'package:mhabit/pages/app_settings/_widgets/app_setting_sync_failed_tile.dart';
 import 'package:mhabit/pages/app_settings/page.dart';
 import 'package:mhabit/providers/app_ui/app_compact_ui_switcher.dart';
@@ -33,6 +35,7 @@ import 'package:mhabit/providers/support/global.dart';
 import 'package:mhabit/providers/workflow/app_reminder.dart';
 import 'package:mhabit/providers/workflow/app_sync.dart';
 import 'package:mhabit/storage/db_helper_provider.dart';
+import 'package:mhabit/storage/profile/handlers/app_language.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
@@ -59,7 +62,7 @@ final class _FakeAppSyncAccess extends ChangeNotifier
 
 Future<ProfileViewModel> _loadProfile() async {
   SharedPreferences.setMockInitialValues({});
-  final profile = ProfileViewModel(const []);
+  final profile = ProfileViewModel([AppLanguageProfileHanlder.new]);
   await profile.init();
   return profile;
 }
@@ -113,129 +116,201 @@ void main() {
     expect(find.byType(ExpansionTile), findsOneWidget);
   });
 
-  testWidgets('AppSettingPage opens without provider runtime errors', (
-    tester,
-  ) async {
-    final profile = await _loadProfile();
-    final dbHelper = DBHelperViewModel();
-    final syncAccess = _FakeAppSyncAccess();
+  for (final platform in [
+    TargetPlatform.android,
+    TargetPlatform.iOS,
+    TargetPlatform.macOS,
+  ]) {
+    testWidgets('AppSettingPage language and scroll flow on $platform', (
+      tester,
+    ) async {
+      final profile = await _loadProfile();
+      final dbHelper = DBHelperViewModel();
+      final syncAccess = _FakeAppSyncAccess();
 
-    final customDate = AppCustomDateYmdHmsConfigViewModel()
-      ..updateProfile(profile);
-    final firstDay = AppFirstDayViewModel()..updateProfile(profile);
-    final compactUi = AppCompactUISwitcherViewModel()..updateProfile(profile);
-    final developer = AppDeveloperViewModel(global: Global());
-    final reminderOwner = AppReminderOwner()..updateProfile(profile);
-    final reminder = AppReminderViewModel()..attachAccess(reminderOwner);
-    final theme = AppThemeViewModel()..updateProfile(profile);
-    final language = AppLanguageViewModel()..updateProfile(profile);
-    final scrollBehavior = HabitsRecordScrollBehaviorViewModel()
-      ..updateProfile(profile);
-    final recordOpConfig = HabitRecordOpConfigViewModel()
-      ..updateProfile(profile);
-    final experimentalFeature = AppExperimentalFeatureViewModel()
-      ..updateProfile(profile);
+      final customDate = AppCustomDateYmdHmsConfigViewModel()
+        ..updateProfile(profile);
+      final firstDay = AppFirstDayViewModel()..updateProfile(profile);
+      final compactUi = AppCompactUISwitcherViewModel()..updateProfile(profile);
+      final developer = AppDeveloperViewModel(global: Global());
+      final reminderOwner = AppReminderOwner()..updateProfile(profile);
+      final reminder = AppReminderViewModel()..attachAccess(reminderOwner);
+      final theme = AppThemeViewModel()..updateProfile(profile);
+      final language = AppLanguageViewModel()..updateProfile(profile);
+      final scrollBehavior = HabitsRecordScrollBehaviorViewModel()
+        ..updateProfile(profile);
+      final recordOpConfig = HabitRecordOpConfigViewModel()
+        ..updateProfile(profile);
+      final experimentalFeature = AppExperimentalFeatureViewModel()
+        ..updateProfile(profile);
 
-    addTearDown(() {
-      experimentalFeature.dispose();
-      recordOpConfig.dispose();
-      scrollBehavior.dispose();
-      language.dispose();
-      theme.dispose();
-      reminder.dispose();
-      reminderOwner.dispose();
-      developer.dispose();
-      compactUi.dispose();
-      firstDay.dispose();
-      customDate.dispose();
-      syncAccess.dispose();
-      dbHelper.dispose();
-      profile.dispose();
+      addTearDown(() {
+        experimentalFeature.dispose();
+        recordOpConfig.dispose();
+        scrollBehavior.dispose();
+        language.dispose();
+        theme.dispose();
+        reminder.dispose();
+        reminderOwner.dispose();
+        developer.dispose();
+        compactUi.dispose();
+        firstDay.dispose();
+        customDate.dispose();
+        syncAccess.dispose();
+        dbHelper.dispose();
+        profile.dispose();
+      });
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<ProfileViewModel>.value(value: profile),
+            ChangeNotifierProvider<DBHelperViewModel>.value(value: dbHelper),
+            ChangeNotifierProvider<AppCustomDateYmdHmsConfigViewModel>.value(
+              value: customDate,
+            ),
+            ChangeNotifierProvider<AppFirstDayViewModel>.value(value: firstDay),
+            ChangeNotifierProvider<AppCompactUISwitcherViewModel>.value(
+              value: compactUi,
+            ),
+            ChangeNotifierProvider<AppDeveloperViewModel>.value(
+              value: developer,
+            ),
+            ChangeNotifierProvider<AppReminderViewModel>.value(value: reminder),
+            ChangeNotifierProvider<AppThemeViewModel>.value(value: theme),
+            ChangeNotifierProvider<AppLanguageViewModel>.value(value: language),
+            ChangeNotifierProvider<HabitsRecordScrollBehaviorViewModel>.value(
+              value: scrollBehavior,
+            ),
+            ChangeNotifierProvider<HabitRecordOpConfigViewModel>.value(
+              value: recordOpConfig,
+            ),
+            ChangeNotifierProvider<AppExperimentalFeatureViewModel>.value(
+              value: experimentalFeature,
+            ),
+            ChangeNotifierProvider<GroupExpandTimerConfigViewModel>(
+              create: (_) =>
+                  GroupExpandTimerConfigViewModel()..updateProfile(profile),
+            ),
+            ListenableProvider<AppSyncTriggerAccess>.value(value: syncAccess),
+            ListenableProvider<AppSyncStatusSource>.value(value: syncAccess),
+          ],
+          child: MaterialApp(
+            theme: ThemeData(platform: platform),
+            localizationsDelegates: L10n.localizationsDelegates,
+            supportedLocales: L10n.supportedLocales,
+            home: const AppSettingPage(),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Settings'), findsOneWidget);
+      expect(find.byType(AdaptiveSliverAppBar), findsOneWidget);
+      if (platform == TargetPlatform.android) {
+        expect(find.byType(WindowControlSliverAppBar), findsOneWidget);
+      }
+      expect(find.byType(CustomScrollView), findsOneWidget);
+      final adaptiveAppBar = tester.widget<AdaptiveSliverAppBar>(
+        find.byType(AdaptiveSliverAppBar),
+      );
+      expect(adaptiveAppBar.automaticallyImplyLeading, isFalse);
+      if (platform == TargetPlatform.android) {
+        final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
+        expect(appBar.automaticallyImplyLeading, isFalse);
+        expect(appBar.leading, isA<AdaptiveBackButton>());
+        expect(appBar.title, isA<L10nBuilder>());
+      }
+      final safeArea = tester.widget<SliverSafeArea>(
+        find.byType(SliverSafeArea),
+      );
+      expect(safeArea.left, isTrue);
+      expect(safeArea.top, isFalse);
+      expect(safeArea.right, isTrue);
+      expect(safeArea.bottom, isTrue);
+
+      final languageTile = find.byKey(const ValueKey('settings-language'));
+      await tester.scrollUntilVisible(
+        languageTile,
+        200,
+        scrollable: find.descendant(
+          of: find.byType(CustomScrollView),
+          matching: find.byType(Scrollable),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.descendant(
+          of: languageTile,
+          matching: find.byType(
+            platform == TargetPlatform.android ? ListTile : CupertinoListTile,
+          ),
+        ),
+        findsOneWidget,
+      );
+      if (platform != TargetPlatform.android) {
+        expect(find.byType(AdaptiveListSection), findsOneWidget);
+      }
+      // The original Material selector still owns selection and cancellation.
+      await tester.tap(languageTile);
+      await tester.pumpAndSettle();
+      expect(find.byType(AppLanguageChangerDialog), findsOneWidget);
+      Navigator.of(tester.element(find.byType(AppLanguageChangerDialog))).pop();
+      await tester.pumpAndSettle();
+      expect(language.languange, isNull);
+      await tester.tap(languageTile);
+      await tester.pumpAndSettle();
+      final english = find.descendant(
+        of: find.byType(AppLanguageChangerDialog),
+        matching: find.text('English'),
+      );
+      await tester.ensureVisible(english);
+      await tester.tap(english);
+      await tester.pumpAndSettle();
+      expect(language.languange, const Locale('en'));
+      expect(
+        find.descendant(of: languageTile, matching: find.text('English')),
+        findsOneWidget,
+      );
+      await tester.tap(languageTile);
+      await tester.pumpAndSettle();
+      final system = find
+          .descendant(
+            of: find.byType(AppLanguageChangerDialog),
+            matching: find.byType(SimpleDialogOption),
+          )
+          .first;
+      await tester.ensureVisible(system);
+      await tester.tap(system);
+      await tester.pumpAndSettle();
+      expect(language.languange, isNull);
+      expect(tester.takeException(), isNull);
+
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -500));
+      await tester.pumpAndSettle();
+      final scrollable = tester.state<ScrollableState>(
+        find.descendant(
+          of: find.byType(CustomScrollView),
+          matching: find.byType(Scrollable),
+        ),
+      );
+      final offsetBeforePush = scrollable.position.pixels;
+      expect(offsetBeforePush, greaterThan(0));
+
+      final settingsContext = tester.element(find.text('Settings'));
+      unawaited(
+        Navigator.of(settingsContext).push<void>(
+          MaterialPageRoute<void>(
+            builder: (_) => const Scaffold(body: Text('Subpage')),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      Navigator.of(tester.element(find.text('Subpage'))).pop();
+      await tester.pumpAndSettle();
+
+      expect(scrollable.position.pixels, offsetBeforePush);
     });
-
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider<ProfileViewModel>.value(value: profile),
-          ChangeNotifierProvider<DBHelperViewModel>.value(value: dbHelper),
-          ChangeNotifierProvider<AppCustomDateYmdHmsConfigViewModel>.value(
-            value: customDate,
-          ),
-          ChangeNotifierProvider<AppFirstDayViewModel>.value(value: firstDay),
-          ChangeNotifierProvider<AppCompactUISwitcherViewModel>.value(
-            value: compactUi,
-          ),
-          ChangeNotifierProvider<AppDeveloperViewModel>.value(value: developer),
-          ChangeNotifierProvider<AppReminderViewModel>.value(value: reminder),
-          ChangeNotifierProvider<AppThemeViewModel>.value(value: theme),
-          ChangeNotifierProvider<AppLanguageViewModel>.value(value: language),
-          ChangeNotifierProvider<HabitsRecordScrollBehaviorViewModel>.value(
-            value: scrollBehavior,
-          ),
-          ChangeNotifierProvider<HabitRecordOpConfigViewModel>.value(
-            value: recordOpConfig,
-          ),
-          ChangeNotifierProvider<AppExperimentalFeatureViewModel>.value(
-            value: experimentalFeature,
-          ),
-          ChangeNotifierProvider<GroupExpandTimerConfigViewModel>(
-            create: (_) =>
-                GroupExpandTimerConfigViewModel()..updateProfile(profile),
-          ),
-          ListenableProvider<AppSyncTriggerAccess>.value(value: syncAccess),
-          ListenableProvider<AppSyncStatusSource>.value(value: syncAccess),
-        ],
-        child: const MaterialApp(
-          localizationsDelegates: L10n.localizationsDelegates,
-          supportedLocales: L10n.supportedLocales,
-          home: AppSettingPage(),
-        ),
-      ),
-    );
-    await tester.pump();
-
-    expect(tester.takeException(), isNull);
-    expect(find.text('Settings'), findsOneWidget);
-    expect(find.byType(AdaptiveSliverAppBar), findsOneWidget);
-    expect(find.byType(WindowControlSliverAppBar), findsOneWidget);
-    expect(find.byType(CustomScrollView), findsOneWidget);
-    final adaptiveAppBar = tester.widget<AdaptiveSliverAppBar>(
-      find.byType(AdaptiveSliverAppBar),
-    );
-    final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
-    expect(adaptiveAppBar.automaticallyImplyLeading, isFalse);
-    expect(appBar.automaticallyImplyLeading, isFalse);
-    expect(appBar.leading, isA<AdaptiveBackButton>());
-    expect(appBar.title, isA<L10nBuilder>());
-    final safeArea = tester.widget<SliverSafeArea>(find.byType(SliverSafeArea));
-    expect(safeArea.left, isTrue);
-    expect(safeArea.top, isFalse);
-    expect(safeArea.right, isTrue);
-    expect(safeArea.bottom, isTrue);
-
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, -500));
-    await tester.pumpAndSettle();
-    final scrollable = tester.state<ScrollableState>(
-      find.descendant(
-        of: find.byType(CustomScrollView),
-        matching: find.byType(Scrollable),
-      ),
-    );
-    final offsetBeforePush = scrollable.position.pixels;
-    expect(offsetBeforePush, greaterThan(0));
-
-    final settingsContext = tester.element(find.text('Settings'));
-    unawaited(
-      Navigator.of(settingsContext).push<void>(
-        MaterialPageRoute<void>(
-          builder: (_) => const Scaffold(body: Text('Subpage')),
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    Navigator.of(tester.element(find.text('Subpage'))).pop();
-    await tester.pumpAndSettle();
-
-    expect(scrollable.position.pixels, offsetBeforePush);
-  });
+  }
 }

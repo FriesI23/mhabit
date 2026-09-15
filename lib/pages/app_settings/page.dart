@@ -16,6 +16,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
@@ -591,31 +592,38 @@ class _PageState extends State<_Page> with XShare {
       ),
     ];
 
-    Iterable<Widget> buildLanguageSubGroup(BuildContext context) => [
-      GroupTitleListTile(
-        title: L10nBuilder(
-          builder: (context, l10n) => l10n != null
-              ? Text(l10n.appSetting_languageSubgroupText)
-              : const Text("Language"),
-        ),
+    Widget buildLanguageSubGroup(BuildContext context) => AdaptiveListSection(
+      header: L10nBuilder(
+        builder: (context, l10n) => l10n != null
+            ? Text(l10n.appSetting_languageSubgroupText)
+            : const Text("Language"),
       ),
-      Selector<AppLanguageViewModel, Locale?>(
-        selector: (context, vm) => vm.languange,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, value, child) => L10nBuilder(
-          builder: (context, l10n) => ListTile(
-            title: l10n != null
-                ? Text(l10n.appSetting_changeLanguageTile_titleText)
-                : const Text("Language"),
-            subtitle: Text(
-              context.read<AppLanguageViewModel>().getAppLanguageText(l10n),
+      children: [
+        Selector<AppLanguageViewModel, Locale?>(
+          selector: (context, vm) => vm.languange,
+          shouldRebuild: (previous, next) => previous != next,
+          builder: (context, value, child) => L10nBuilder(
+            builder: (context, l10n) => AdaptiveListTile(
+              key: const ValueKey('settings-language'),
+              title: l10n != null
+                  ? Text(l10n.appSetting_changeLanguageTile_titleText)
+                  : const Text("Language"),
+              subtitle: Text(
+                context.read<AppLanguageViewModel>().getAppLanguageText(l10n),
+              ),
+              trailing: switch (AdaptiveStyle.of(context)) {
+                AdaptiveStyle.material => null,
+                AdaptiveStyle.apple => const Icon(
+                  CupertinoIcons.chevron_forward,
+                ),
+              },
+              onTap: () => _onAppLanguageTilePressed(context),
             ),
-            onTap: () => _onAppLanguageTilePressed(context),
           ),
         ),
-      ),
-      if (_supportsOpenSystemLang) const AppSettingOpenSystemLanguageTile(),
-    ];
+        if (_supportsOpenSystemLang) const AppSettingOpenSystemLanguageTile(),
+      ],
+    );
 
     Iterable<Widget> buildOperationSubGroup(BuildContext context) => [
       GroupTitleListTile(
@@ -973,7 +981,7 @@ class _PageState extends State<_Page> with XShare {
                         Column(children: [...buildGroupsSubGroup(context)]),
                   ),
                   ...buildDisplaySubGroup(context),
-                  ...buildLanguageSubGroup(context),
+                  buildLanguageSubGroup(context),
                   ...buildOperationSubGroup(context),
                   ...buildReminderSubGroup(context),
                   ...buildBackupAndRestoreSubGroup(context),

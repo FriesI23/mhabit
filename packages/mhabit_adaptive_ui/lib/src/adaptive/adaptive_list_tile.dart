@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../adaptive_style.dart';
+import '../cupertino/cupertino_adaptive_list_tile.dart';
+import 'list_section_row_scope.dart';
 
 /// Adaptive list item.
 ///
 /// The default constructor resolves the style from the current platform;
-/// `.material` forces the Material style. The Apple style currently falls back
-/// to the Material implementation.
+/// `.material` and `.apple` force a renderer. Apple uses a standard Cupertino
+/// list tile with wrapping text and keyboard activation. Separators belong to
+/// the surrounding list section; trailing content is supplied by the caller.
 class AdaptiveListTile extends StatelessWidget {
   const AdaptiveListTile({
     super.key,
@@ -26,6 +29,15 @@ class AdaptiveListTile extends StatelessWidget {
     this.onTap,
   }) : style = AdaptiveStyle.material;
 
+  const AdaptiveListTile.apple({
+    super.key,
+    required this.title,
+    this.subtitle,
+    this.leading,
+    this.trailing,
+    this.onTap,
+  }) : style = AdaptiveStyle.apple;
+
   final AdaptiveStyle? style;
   final Widget title;
   final Widget? subtitle;
@@ -37,13 +49,23 @@ class AdaptiveListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final effective = style ?? AdaptiveStyle.of(context);
     return switch (effective) {
-      // TODO(adaptive-ui::apple): apple style (Cupertino separator style, 44pt).
-      AdaptiveStyle.apple || AdaptiveStyle.material => _buildMaterial(),
+      AdaptiveStyle.apple => CupertinoAdaptiveListTile(
+        title: title,
+        subtitle: subtitle,
+        leading: leading,
+        trailing: trailing,
+        onTap: onTap,
+      ),
+      AdaptiveStyle.material => _buildMaterial(context),
     };
   }
 
-  Widget _buildMaterial() {
+  Widget _buildMaterial(BuildContext context) {
+    final section = ListSectionRowScope.maybeOf(context);
     return ListTile(
+      statesController: section?.style == AdaptiveStyle.material
+          ? section?.statesController
+          : null,
       title: title,
       subtitle: subtitle,
       leading: leading,

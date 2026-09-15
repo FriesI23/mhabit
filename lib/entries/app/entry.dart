@@ -15,6 +15,7 @@
 import 'dart:async';
 
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/cupertino.dart' show CupertinoUserInterfaceLevelData;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -347,24 +348,20 @@ class _AppEntryState extends State<_AppEntry> {
                       themeMainColor: themeMainColor,
                       dynamicScheme: lightDynamic,
                     ),
-                darkThemeBuilder: (context) => switch ((
-                  defaultTargetPlatform,
-                  AdaptiveWindowControlLayoutScope.maybeOf(
-                    context,
-                  )?.hasWindowControlAvoidance,
-                )) {
-                  (TargetPlatform.iOS, true) =>
-                    const AppThemeBuilder().buildElevatedDark(
-                      themeColor: themeColor,
-                      themeMainColor: themeMainColor,
-                      dynamicScheme: darkDynamic,
-                    ),
-                  _ => const AppThemeBuilder().buildDark(
-                    themeColor: themeColor,
-                    themeMainColor: themeMainColor,
-                    dynamicScheme: darkDynamic,
-                  ),
-                },
+                darkThemeBuilder: (context) =>
+                    switch (appWindowInterfaceLevel(context)) {
+                      CupertinoUserInterfaceLevelData.elevated =>
+                        const AppThemeBuilder().buildElevatedDark(
+                          themeColor: themeColor,
+                          themeMainColor: themeMainColor,
+                          dynamicScheme: darkDynamic,
+                        ),
+                      _ => const AppThemeBuilder().buildDark(
+                        themeColor: themeColor,
+                        themeMainColor: themeMainColor,
+                        dynamicScheme: darkDynamic,
+                      ),
+                    },
                 config: _router,
               ),
             ),
