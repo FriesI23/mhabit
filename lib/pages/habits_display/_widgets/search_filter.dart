@@ -311,6 +311,8 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                 final filtered =
                     this.filtered || !widget.initOptions.isFilterEmpty;
 
+                // TODO(mhabit-adaptive-dialog): Phase 3-8h: decouple this label from
+                // NormalizeConfirmDialogType before removing the legacy confirm dialog.
                 final saveButton = ListTile(
                   minVerticalPadding: 0.0,
                   title: FilledButton(

@@ -18,6 +18,9 @@ import '../../l10n/localizations.dart';
 
 // TODO(mhabit-adaptive-dialog): Phase 3-8h: remove this legacy helper only after all remaining
 // option-bearing consumers migrate; do not broaden scope just to delete it.
+@Deprecated(
+  'Use showAdaptiveConfirmDialog. Migrate skip options with their caller before removal (Phase 3-8h).',
+)
 Future<bool?> showConfirmDialog({
   required BuildContext context,
   Widget? title,
@@ -86,10 +89,18 @@ Future<bool?> showConfirmDialog({
   );
 }
 
+// TODO(mhabit-adaptive-dialog): Phase 3-8h: decouple the three remaining save/delete
+// label consumers before removing this legacy enum.
+@Deprecated(
+  'Use the localization action key directly; this legacy dialog enum will be removed in Phase 3-8h.',
+)
 enum NormalizeConfirmDialogType { confirm, save, exit, delete }
 
 // TODO(mhabit-adaptive-dialog): Phase 3-8h: audit remaining consumers before removing this
 // legacy normalized-confirm entry together with the old confirmation widgets.
+@Deprecated(
+  'Use showAdaptiveConfirmDialog with localized labels. Scheduled for removal in Phase 3-8h.',
+)
 Future<bool?> showNormalizedConfirmDialog({
   required BuildContext context,
   Widget? title,
@@ -114,6 +125,11 @@ Future<bool?> showNormalizedConfirmDialog({
   );
 }
 
+// TODO(mhabit-adaptive-dialog): Phase 3-8h: remove after group-change confirmation
+// migrates, together with the barrel export and legacy-type test assertions.
+@Deprecated(
+  'Use AdaptiveConfirmDialog. Migrate custom content and options before removal (Phase 3-8h).',
+)
 class ConfirmDialog extends StatelessWidget {
   final Widget? title;
   final Widget? subtitle;

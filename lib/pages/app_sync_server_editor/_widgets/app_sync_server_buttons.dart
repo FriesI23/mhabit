@@ -24,6 +24,8 @@ class AppSyncServerSaveButton extends StatelessWidget {
 
   const AppSyncServerSaveButton({super.key, this.onPressed});
 
+  // TODO(mhabit-adaptive-dialog): Phase 3-8h: decouple this label from
+  // NormalizeConfirmDialogType before removing the legacy confirm dialog.
   @override
   Widget build(BuildContext context) =>
       Selector<AppSyncServerFormViewModel, bool>(
