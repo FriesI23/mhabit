@@ -163,19 +163,22 @@ class _PageState extends State<_Page> {
     if (_skipDeleteConfirm) return true;
 
     final l10n = L10n.of(context);
-    final result = await showConfirmDialog(
+    var skip = false;
+    final result = await showAdaptiveConfirmDialog(
       context: context,
       title: Text(l10n?.groupManage_deleteDialog_title ?? 'Delete Group'),
-      subtitle: Text(
+      content: Text(
         l10n?.groupManage_deleteDialog_content(count) ??
             'Habits in this group will become uncategorized.',
       ),
-      cancelText: Text(l10n?.groupManage_deleteDialog_cancel ?? 'Cancel'),
-      confirmText: Text(l10n?.groupManage_deleteDialog_confirm ?? 'Delete'),
-      skipOnConfirm: true,
-      skipInitiallyEnabled: _skipDeleteConfirm,
-      onSkipChanged: (v) => _skipDeleteConfirm = v,
+      cancelLabel: l10n?.groupManage_deleteDialog_cancel ?? 'Cancel',
+      confirmLabel: l10n?.groupManage_deleteDialog_confirm ?? 'Delete',
+      isDestructiveAction: true,
+      onSkipConfirmed: (value) => skip = value,
     );
+    if (result == true && skip) {
+      _skipDeleteConfirm = true;
+    }
     return result ?? false;
   }
 

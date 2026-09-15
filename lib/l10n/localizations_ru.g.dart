@@ -2281,4 +2281,9 @@ class L10nRu extends L10n {
 
   @override
   String get habitDisplay_groupType_manual => 'Свой порядок';
+
+  @override
+  String confirmDialog_confirmAndSkip_text(String action) {
+    return '$action, and don\'t ask again';
+  }
 }

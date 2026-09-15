@@ -13,7 +13,8 @@
 // limitations under the License.
 
 import 'package:adaptive_actions/core.dart';
-import 'package:flutter/cupertino.dart' show CupertinoButton, CupertinoIcons;
+import 'package:flutter/cupertino.dart'
+    show CupertinoButton, CupertinoCheckbox, CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -36,9 +37,12 @@ import 'package:mhabit/providers/workflow/group_manager.dart';
 import 'package:mhabit/routes/app_navigation_coordinator.dart';
 import 'package:mhabit/storage/profile/handlers.dart';
 import 'package:mhabit/storage/profile_provider.dart';
+import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../support/adaptive_dialog.dart';
 
 Finder get _adaptiveActions => find.byWidgetPredicate(
   (widget) => widget is AdaptiveAppBarActions,
@@ -80,6 +84,13 @@ final class _FakeGroupManager extends GroupManager {
   _FakeGroupManager(this.groups);
 
   final List<GroupDBCell> groups;
+  final List<List<String>> deletions = [];
+
+  @override
+  Future<void> deleteGroups(List<String> uuids) async {
+    deletions.add(List.of(uuids));
+    groups.removeWhere((group) => uuids.contains(group.uuid));
+  }
 
   @override
   Future<HabitGroupData> createGroup({
@@ -204,6 +215,84 @@ List<dynamic> _actionRoots(WidgetTester tester) =>
     List<dynamic>.from(_actionsWidget(tester).collection.roots as Iterable);
 
 void main() {
+  for (final platform in [
+    TargetPlatform.iOS,
+    TargetPlatform.macOS,
+    TargetPlatform.android,
+  ]) {
+    for (final skip in [false, true]) {
+      testWidgets(
+        '$platform delete confirmation remembers only explicit skip $skip',
+        (tester) async {
+          final fixture = await _createFixture();
+          addTearDown(fixture.dispose);
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+          final vm = await _pumpPage(
+            tester,
+            fixture: fixture,
+            platform: platform,
+          );
+          final manager = fixture.groupManager as _FakeGroupManager;
+          Future<void> requestDelete(String uuid) async {
+            vm.enterSelectionMode(uuid);
+            await tester.pumpAndSettle();
+            final action = _actionRoots(
+              tester,
+            ).singleWhere((a) => a.metadata.label == 'Delete');
+            _actionsWidget(
+              tester,
+            ).onInvoke(tester.element(_adaptiveActions), action.payload);
+            await tester.pumpAndSettle();
+          }
+
+          await requestDelete(fixture.groupUUIDs.first);
+          final checkbox = find.byType(
+            platform == TargetPlatform.macOS
+                ? CupertinoCheckbox
+                : CheckboxListTile,
+          );
+          if (platform != TargetPlatform.iOS) {
+            await tester.tap(checkbox);
+            await tester.pump();
+          }
+          await tester.tap(find.text('Cancel'));
+          await tester.pumpAndSettle();
+          expect(manager.deletions, isEmpty);
+          await requestDelete(fixture.groupUUIDs.first);
+          expect(find.byType(AdaptiveConfirmDialog), findsOneWidget);
+          if (skip && platform != TargetPlatform.iOS) {
+            await tester.tap(checkbox);
+            await tester.pump();
+          }
+          final label = platform == TargetPlatform.iOS && skip
+              ? L10n.of(
+                  tester.element(adaptiveDialogFinder),
+                )!.confirmDialog_confirmAndSkip_text('Delete')
+              : 'Delete';
+          final actions = adaptiveDialogActions(tester);
+          final submit = actions.firstWhere((a) => a.label == label).onPressed!;
+          submit();
+          submit();
+          await tester.pumpAndSettle();
+          expect(manager.deletions, [
+            [fixture.groupUUIDs.first],
+          ]);
+          await requestDelete(fixture.groupUUIDs.last);
+          expect(
+            find.byType(AdaptiveConfirmDialog),
+            skip ? findsNothing : findsOneWidget,
+          );
+          expect(manager.deletions.length, skip ? 2 : 1);
+          if (!skip) {
+            await tester.tap(find.text('Cancel'));
+            await tester.pumpAndSettle();
+          }
+        },
+      );
+    }
+  }
+
   for (final platform in [TargetPlatform.iOS, TargetPlatform.macOS]) {
     for (final width in [390.0, 900.0]) {
       testWidgets(

@@ -17,6 +17,7 @@ import 'dart:async';
 import 'package:adaptive_actions/core.dart';
 import 'package:flutter/cupertino.dart'
     show
+        CupertinoAlertDialog,
         CupertinoButton,
         CupertinoMenuItem,
         CupertinoNavigationBar,
@@ -35,6 +36,7 @@ import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/models/habit_group.dart';
+import 'package:mhabit/models/habit_repo_actions.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
@@ -72,6 +74,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliver_tools/sliver_tools.dart' show SliverAnimatedSwitcher;
 
+import '../../support/adaptive_dialog.dart';
 import '../../support/stub/app_sync.dart';
 import '../../support/stub/habits_display_access.dart';
 
@@ -163,6 +166,39 @@ final class _LoadedHabitsDisplayAccess extends StubHabitsDisplayAccess {
       collection.addHabit(_buildHabitSummaryData(i), forceAdd: true);
     }
     return collection;
+  }
+}
+
+final class _BatchHabitsDisplayAccess extends StubHabitsDisplayAccess {
+  _BatchHabitsDisplayAccess(this.initialStatus);
+
+  final HabitStatus initialStatus;
+  final List<(HabitStatus, List<HabitUUID>)> changes = [];
+
+  @override
+  Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
+    HabitSummaryDataCollection? initedCollection,
+    List<String>? habitsColmns,
+    List<HabitUUID>? habitUUIDs,
+  }) async {
+    final collection = initedCollection ?? HabitSummaryDataCollection();
+    for (final index in [0, 1, 2]) {
+      final habit = _buildHabitSummaryData(index)..status = initialStatus;
+      collection.addHabit(habit, forceAdd: true);
+    }
+    return collection;
+  }
+
+  @override
+  Future<Iterable<ChangeHabitStatusResult>> changeHabitStatus({
+    required ChangeHabitStatusAction action,
+    FutureOr Function(ChangeHabitStatusResult result)? extraResolver,
+  }) async {
+    changes.add((
+      action.status,
+      action.data.map((habit) => habit.uuid).toList(),
+    ));
+    return action.resolve();
   }
 }
 
@@ -457,6 +493,163 @@ Future<void> _fastDirectDrag(
 }
 
 void main() {
+  for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+    for (final operation in [
+      HabitDisplaySelectAction.archive,
+      HabitDisplaySelectAction.unarchive,
+      HabitDisplaySelectAction.delete,
+    ]) {
+      for (final outcome in [
+        'cancel',
+        'barrier',
+        'confirm-one',
+        'confirm-two',
+      ]) {
+        testWidgets(
+          '$platform batch $operation $outcome preserves selection and counts',
+          (tester) async {
+            // The loaded list keeps measurement timers active; pump its
+            // transitions explicitly instead of waiting for global idleness.
+            Future<void> pumpTransitions() async {
+              await tester.pump();
+              await tester.pump(const Duration(milliseconds: 350));
+              await tester.pump(const Duration(milliseconds: 350));
+            }
+
+            final initialStatus =
+                operation == HabitDisplaySelectAction.unarchive
+                ? HabitStatus.archived
+                : HabitStatus.activated;
+            final targetStatus = switch (operation) {
+              HabitDisplaySelectAction.archive => HabitStatus.archived,
+              HabitDisplaySelectAction.unarchive => HabitStatus.activated,
+              _ => HabitStatus.deleted,
+            };
+            final profile = await _loadProfile();
+            final sync = _FakeAppSyncWorkflowAccess();
+            final access = _BatchHabitsDisplayAccess(initialStatus);
+            addTearDown(() {
+              sync.dispose();
+              profile.dispose();
+            });
+            final vm = await _pumpHabitsTabPage(
+              tester,
+              profile: profile,
+              access: access,
+              sync: sync,
+              platform: platform,
+              useBranchPage: true,
+            );
+            await tester.pump();
+            await tester.pump(const Duration(milliseconds: 350));
+            expect(vm.getHabit(_buildHabitSummaryData(0).uuid), isNotNull);
+            final selectedCount = outcome == 'confirm-one' ? 1 : 2;
+            final selected = [
+              for (final index in [0, 1].take(selectedCount))
+                _buildHabitSummaryData(index).uuid,
+            ];
+            vm.switchToEditMode();
+            for (final uuid in selected) {
+              vm.selectHabit(uuid);
+            }
+            await pumpTransitions();
+            final actions = tester.widget<HabitDisplaySelectActions>(
+              find.byType(HabitDisplaySelectActions),
+            );
+            final callback = switch (operation) {
+              HabitDisplaySelectAction.archive => actions.callbacks.onArchive,
+              HabitDisplaySelectAction.unarchive =>
+                actions.callbacks.onUnarchive,
+              _ => actions.callbacks.onDelete,
+            };
+            callback!();
+            await pumpTransitions();
+            expect(find.byType(AdaptiveConfirmDialog), findsOneWidget);
+            expect(
+              find.byType(
+                platform == TargetPlatform.iOS
+                    ? CupertinoAlertDialog
+                    : AlertDialog,
+              ),
+              findsOneWidget,
+            );
+            final l10n = L10n.of(
+              tester.element(find.byType(AdaptiveConfirmDialog)),
+            )!;
+            final title = switch (operation) {
+              HabitDisplaySelectAction.archive =>
+                l10n.habitDisplay_archiveHabitsConfirmDialog_title,
+              HabitDisplaySelectAction.unarchive =>
+                l10n.habitDisplay_unarchiveHabitsConfirmDialog_title,
+              _ => l10n.habitDisplay_deleteHabitsConfirmDialog_title,
+            };
+            expect(find.text(title), findsOneWidget);
+            final confirm = adaptiveDialogActions(tester).last;
+            expect(
+              confirm.isDestructiveAction,
+              operation == HabitDisplaySelectAction.delete,
+            );
+            expect(vm.selectedHabitsCount, selectedCount);
+            if (outcome == 'cancel') {
+              await tester.tap(find.text('cancel'));
+            } else if (outcome == 'barrier') {
+              await tester.tapAt(const Offset(5, 5));
+            } else {
+              confirm.onPressed!();
+              confirm.onPressed!();
+            }
+            await pumpTransitions();
+            if (outcome == 'cancel' || outcome == 'barrier') {
+              expect(access.changes, isEmpty);
+              expect(vm.isInEditMode, isTrue);
+              expect(
+                vm.getSelectedHabitsData().nonNulls.map((habit) => habit.uuid),
+                unorderedEquals(selected),
+              );
+              expect(find.byType(SnackBar), findsNothing);
+            } else {
+              expect(access.changes, hasLength(1));
+              expect(access.changes.single.$1, targetStatus);
+              expect(access.changes.single.$2, unorderedEquals(selected));
+              expect(vm.isInEditMode, isFalse);
+              expect(vm.selectedHabitsCount, 0);
+              for (final uuid in selected) {
+                expect(vm.getHabit(uuid)?.status, targetStatus);
+              }
+              expect(
+                vm.getHabit(_buildHabitSummaryData(2).uuid)?.status,
+                initialStatus,
+              );
+              final message = switch (operation) {
+                HabitDisplaySelectAction.archive =>
+                  l10n.habitDisplay_archiveHabitsSuccSnackbarText(
+                    selectedCount,
+                  ),
+                HabitDisplaySelectAction.unarchive =>
+                  l10n.habitDisplay_unarchiveHabitsSuccSnackbarText(
+                    selectedCount,
+                  ),
+                _ => l10n.habitDisplay_deleteHabitsSuccSnackbarText(
+                  selectedCount,
+                ),
+              };
+              expect(find.text(message), findsOneWidget);
+              await tester.tap(find.text(l10n.snackbar_undoText));
+              await pumpTransitions();
+              expect(access.changes, hasLength(2));
+              expect(access.changes.last.$1, initialStatus);
+              expect(access.changes.last.$2, unorderedEquals(selected));
+              for (final uuid in selected) {
+                expect(vm.getHabit(uuid)?.status, initialStatus);
+              }
+            }
+            expect(tester.takeException(), isNull);
+          },
+        );
+      }
+    }
+  }
+
   testWidgets('created habit updates the page-owned summary provider', (
     tester,
   ) async {

@@ -2211,4 +2211,9 @@ class L10nJa extends L10n {
 
   @override
   String get habitDisplay_groupType_manual => '自分の順序';
+
+  @override
+  String confirmDialog_confirmAndSkip_text(String action) {
+    return '$action, and don\'t ask again';
+  }
 }

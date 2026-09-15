@@ -26,6 +26,8 @@ import 'package:mhabit/providers/workflow/app_sync.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
+import '../../../support/adaptive_dialog.dart';
+
 final class _FakeAppSyncSettingsAccess extends ChangeNotifier
     implements AppSyncSettingsAccess {
   @override
@@ -152,6 +154,79 @@ void main() {
         expect(completed, isTrue);
         expect(result, isNull);
       });
+    }
+  }
+
+  for (final style in AdaptiveStyle.values) {
+    for (final presentation in AdaptiveModalPresentation.values) {
+      for (final operation in ['Save', 'Cancel', 'Delete']) {
+        for (final choice in ['confirm', 'cancel', 'barrier']) {
+          testWidgets('$style $presentation $operation nested $choice', (
+            tester,
+          ) async {
+            tester.view.devicePixelRatio = 1;
+            tester.view.physicalSize = const Size(800, 800);
+            addTearDown(tester.view.resetDevicePixelRatio);
+            addTearDown(tester.view.resetPhysicalSize);
+            await tester.pumpWidget(_host(style: style));
+            var completed = false;
+            AppSyncServerEditorResult? result;
+            naviToAppSyncServerEditorDialog(
+              context: tester.element(find.text('Launcher')),
+              serverConfig: AppSyncServer.newServer(AppSyncServerType.webdav),
+              presentationOverride: presentation,
+            ).then((value) {
+              completed = true;
+              result = value;
+            });
+            await tester.pump();
+            await tester.pump(const Duration(milliseconds: 500));
+            final vm = tester
+                .element(find.byType(AdaptiveModal))
+                .read<AppSyncServerFormViewModel>();
+            vm.webdav!.path = '/changed';
+            await tester.pump();
+            await tester.tap(find.text(operation));
+            await tester.pump();
+            await tester.pump(const Duration(milliseconds: 500));
+            final dialogFinder = adaptiveDialogFinder;
+            expect(dialogFinder, findsOneWidget);
+            // Nested confirmations inherit the editor's forced Material style.
+            expect(
+              AdaptiveStyle.of(tester.element(dialogFinder)),
+              AdaptiveStyle.material,
+            );
+            expect(find.byType(MaterialAdaptiveDialog), findsOneWidget);
+            final actions = adaptiveDialogActions(tester);
+            expect(actions.last.isDestructiveAction, operation == 'Delete');
+            if (choice == 'barrier') {
+              await tester.tapAt(const Offset(5, 5));
+            } else {
+              final action = choice == 'confirm' ? actions.last : actions.first;
+              action.onPressed!();
+              action.onPressed!();
+            }
+            await tester.pump();
+            await tester.pump(const Duration(milliseconds: 500));
+            expect(completed, choice == 'confirm');
+            if (choice != 'confirm') {
+              expect(find.byType(AdaptiveModal), findsOneWidget);
+              expect(vm.webdav!.path, '/changed');
+              expect(vm.edited, isTrue);
+            } else {
+              expect(find.byType(AdaptiveModal), findsNothing);
+              expect(result?.op, switch (operation) {
+                'Save' => AppSyncServerEditorResultOp.update,
+                'Delete' => AppSyncServerEditorResultOp.delete,
+                _ => null,
+              });
+              if (operation == 'Save') {
+                expect((result!.form as WebDavSyncServerForm).path, '/changed');
+              }
+            }
+          });
+        }
+      }
     }
   }
 

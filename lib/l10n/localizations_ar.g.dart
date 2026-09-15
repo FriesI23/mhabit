@@ -2239,4 +2239,9 @@ class L10nAr extends L10n {
 
   @override
   String get habitDisplay_groupType_manual => 'ترتيبي';
+
+  @override
+  String confirmDialog_confirmAndSkip_text(String action) {
+    return '$action, and don\'t ask again';
+  }
 }

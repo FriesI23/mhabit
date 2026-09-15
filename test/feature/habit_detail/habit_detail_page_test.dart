@@ -45,6 +45,7 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../support/adaptive_dialog.dart';
 import '../../support/stub/habits_display_access.dart';
 
 final class _FakeHabitDetailAccess extends StubHabitDetailAccess {
@@ -296,10 +297,7 @@ void main() {
               ),
               findsOneWidget,
             );
-            final action = tester
-                .widget<AdaptiveDialog>(find.byType(AdaptiveDialog))
-                .actions
-                .last;
+            final action = adaptiveDialogActions(tester).last;
             expect(action.isDestructiveAction, op == 'Delete');
             expect(action.isDefaultAction, op != 'Delete');
             if (outcome == 'cancel') {
@@ -374,11 +372,7 @@ void main() {
           find.byType(AdaptiveConfirmDialog),
         );
         final navigator = Navigator.of(dialogContext);
-        final submit = tester
-            .widget<AdaptiveDialog>(find.byType(AdaptiveDialog))
-            .actions
-            .last
-            .onPressed!;
+        final submit = adaptiveDialogActions(tester).last.onPressed!;
         switch (dismiss) {
           case 'cancel':
             await tester.tap(find.text('cancel'));

@@ -1963,5 +1963,15 @@
     "habitDisplay_groupType_manual": "Manual",
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
+    },
+    "confirmDialog_confirmAndSkip_text": "{action}, and don't ask again",
+    "@confirmDialog_confirmAndSkip_text": {
+        "description": "Button that performs the named action now and skips this confirmation in future.",
+        "placeholders": {
+            "action": {
+                "type": "String",
+                "example": "Save"
+            }
+        }
     }
 }

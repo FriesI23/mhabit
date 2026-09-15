@@ -16,6 +16,9 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/localizations.dart';
 
+// TODO(mhabit-adaptive-dialog): Migrate the route and option widgets to explicit
+// Material/Cupertino renderers. Preserve selection drafts, exportAll/counts,
+// the returned option set and null dismissal; this is not a bool confirmation.
 Future<Set<ExporterConfirmResultType>?> showExporterConfirmDialog({
   required BuildContext context,
   int exportHabitsNumber = 0,

@@ -409,32 +409,18 @@ class _PageState extends State<_Page> with XShare {
   }
 
   void _onResetConfigsTilePressed() async {
-    final result = await showConfirmDialog(
+    final l10n = L10n.of(context);
+    final result = await showAdaptiveConfirmDialog(
       context: context,
-      titleBuilder: (context) {
-        final l10n = L10n.of(context);
-        return l10n != null
-            ? Text(l10n.appSetting_resetConfigDialog_titleText)
-            : const Text("Reset configs?");
-      },
-      subtitleBuilder: (context) {
-        final l10n = L10n.of(context);
-        return l10n != null
-            ? Text(l10n.appSetting_resetConfigDialog_subtitleText)
-            : const SizedBox();
-      },
-      cancelTextBuilder: (context) {
-        final l10n = L10n.of(context);
-        return l10n != null
-            ? Text(l10n.appSetting_resetConfigDialog_cancelText)
-            : const Text("cancel");
-      },
-      confirmTextBuilder: (context) {
-        final l10n = L10n.of(context);
-        return l10n != null
-            ? Text(l10n.appSetting_resetConfigDialog_confirmText)
-            : const Text("confirm");
-      },
+      title: Text(
+        l10n?.appSetting_resetConfigDialog_titleText ?? 'Reset configs?',
+      ),
+      content: l10n != null
+          ? Text(l10n.appSetting_resetConfigDialog_subtitleText)
+          : const SizedBox(),
+      cancelLabel: l10n?.appSetting_resetConfigDialog_cancelText ?? 'cancel',
+      confirmLabel: l10n?.appSetting_resetConfigDialog_confirmText ?? 'confirm',
+      isDestructiveAction: true,
     );
 
     if (!mounted || result == null || !result) return;

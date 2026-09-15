@@ -14,6 +14,10 @@
 
 import 'package:flutter/material.dart';
 
+// TODO(mhabit-adaptive-dialog): Migrate the route and backup option to explicit
+// Material/Cupertino renderers with a destructive confirm action. Preserve the
+// default backup selection and cancel/confirm/confirmWithExport/null results;
+// the backup choice controls this operation, not whether to skip future prompts.
 Future<AppSettingConfirmClearDBOp?> showAppSettingConfirmClearDBDiloag({
   required BuildContext context,
 }) async {

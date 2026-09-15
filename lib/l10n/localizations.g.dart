@@ -3628,6 +3628,12 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Manual'**
   String get habitDisplay_groupType_manual;
+
+  /// Button that performs the named action now and skips this confirmation in future.
+  ///
+  /// In en, this message translates to:
+  /// **'{action}, and don\'t ask again'**
+  String confirmDialog_confirmAndSkip_text(String action);
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

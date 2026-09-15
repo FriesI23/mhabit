@@ -2126,6 +2126,11 @@ class L10nZh extends L10n {
 
   @override
   String get habitDisplay_groupType_manual => '自定义';
+
+  @override
+  String confirmDialog_confirmAndSkip_text(String action) {
+    return '$action，下次不再提示';
+  }
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -3880,4 +3885,9 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get habitDisplay_groupType_manual => '自訂順序';
+
+  @override
+  String confirmDialog_confirmAndSkip_text(String action) {
+    return '$action，下次不再提示';
+  }
 }

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../widgets/widgets.dart';
@@ -20,8 +21,9 @@ import '../../../widgets/widgets.dart';
 Future<bool?> showAppSettingClearCacheDialog({
   required BuildContext context,
 }) async {
-  return showDialog<bool>(
+  return showAdaptiveModalDialog<bool>(
     context: context,
+    barrierDismissible: true,
     builder: (context) => const AppSettingClearCacheDialog(),
   );
 }
@@ -32,17 +34,13 @@ class AppSettingClearCacheDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return ConfirmDialog(
+    return AdaptiveConfirmDialog(
       title: Text(l10n?.appSetting_clearCacheDialog_titleText ?? "Clear cache"),
-      subtitle: l10n != null
+      content: l10n != null
           ? Text(l10n.appSetting_clearCacheDialog_subtitleText)
           : null,
-      cancelText: Text(
-        l10n?.appSetting_clearCacheDialog_cancelText ?? "Cancel",
-      ),
-      confirmText: Text(
-        l10n?.appSetting_clearCacheDialog_confirmText ?? "Confirm",
-      ),
+      cancelLabel: l10n?.appSetting_clearCacheDialog_cancelText ?? "Cancel",
+      confirmLabel: l10n?.appSetting_clearCacheDialog_confirmText ?? "Confirm",
     );
   }
 }

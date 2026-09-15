@@ -103,7 +103,7 @@ class _PageState extends State<_Page> {
     assert(vm.canSave, "Can't save current config, got $form");
     if (vm.edited && vm.serverConfig != null) {
       confirmed =
-          await showNormalizedConfirmDialog(
+          await showAdaptiveConfirmDialog(
             context: context,
             title: L10nBuilder(
               builder: (context, l10n) => Text(
@@ -111,7 +111,7 @@ class _PageState extends State<_Page> {
                     "Confirm Save Changes",
               ),
             ),
-            subtitle: L10nBuilder(
+            content: L10nBuilder(
               builder: (context, l10n) => Text(
                 l10n?.appSync_serverEditor_saveDialog_subtitleText ?? "",
               ),
@@ -135,16 +135,16 @@ class _PageState extends State<_Page> {
     final vm = context.read<AppSyncServerFormViewModel>();
     if (shouldShowCancelConfirmDialog(vm)) {
       confirmed =
-          await showNormalizedConfirmDialog(
+          await showAdaptiveConfirmDialog(
             context: context,
-            type: NormalizeConfirmDialogType.exit,
+            confirmLabel: L10n.of(context)?.confirmDialog_confirm_text('exit'),
             title: L10nBuilder(
               builder: (context, l10n) => Text(
                 l10n?.appSync_serverEditor_exitDialog_titleText ??
                     "Unsaved Changes",
               ),
             ),
-            subtitle: L10nBuilder(
+            content: L10nBuilder(
               builder: (context, l10n) => Text(
                 l10n?.appSync_serverEditor_exitDialog_subtitleText ?? "",
               ),
@@ -161,30 +161,16 @@ class _PageState extends State<_Page> {
   Future<void> _onCancelButtonPressed() => cancelConfirmProcess();
 
   void _onDeleteButtonPressed() async {
-    final confirmed = await showConfirmDialog(
+    final l10n = L10n.of(context);
+    final confirmed = await showAdaptiveConfirmDialog(
       context: context,
-      title: L10nBuilder(
-        builder: (context, l10n) => Text(
-          l10n?.appSync_serverEditor_deleteDialog_titleText ?? "Confirm Delete",
-        ),
+      title: Text(
+        l10n?.appSync_serverEditor_deleteDialog_titleText ?? 'Confirm Delete',
       ),
-      subtitle: L10nBuilder(
-        builder: (context, l10n) =>
-            Text(l10n?.appSync_serverEditor_deleteDialog_subtitleText ?? ""),
-      ),
-      cancelText: L10nBuilder(
-        builder: (context, l10n) =>
-            Text(l10n?.confirmDialog_cancel_text ?? "Cancel"),
-      ),
-      confirmTextBuilder: (context) => L10nBuilder(
-        builder: (context, l10n) => Text(
-          l10n?.confirmDialog_confirm_text(
-                NormalizeConfirmDialogType.delete.name,
-              ) ??
-              "Delete",
-          style: TextStyle(color: Theme.of(context).colorScheme.error),
-        ),
-      ),
+      content: Text(l10n?.appSync_serverEditor_deleteDialog_subtitleText ?? ''),
+      cancelLabel: l10n?.confirmDialog_cancel_text ?? 'Cancel',
+      confirmLabel: l10n?.confirmDialog_confirm_text('delete') ?? 'Delete',
+      isDestructiveAction: true,
     );
     if (!mounted || confirmed != true) return;
     Navigator.of(
