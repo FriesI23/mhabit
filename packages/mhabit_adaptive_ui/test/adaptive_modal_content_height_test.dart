@@ -18,6 +18,79 @@ void main() {
     );
   });
 
+  for (final style in AdaptiveStyle.values) {
+    for (final maxHeight in [720.0, 360.0]) {
+      testWidgets(
+        '${style.name} constrained modal fits content up to $maxHeight',
+        (tester) async {
+          tester.view.devicePixelRatio = 1;
+          tester.view.physicalSize = const Size(1000, 1000);
+          addTearDown(tester.view.reset);
+          final contentHeight = ValueNotifier<double>(100);
+          addTearDown(contentHeight.dispose);
+          await tester.pumpWidget(
+            MaterialApp(
+              home: Builder(
+                builder: (context) => TextButton(
+                  onPressed: () => showAdaptiveSheet<void>(
+                    context: context,
+                    styleOverride: style,
+                    builder: (_) => ValueListenableBuilder<double>(
+                      valueListenable: contentHeight,
+                      builder: (_, height, _) => maxHeight == 720
+                          ? AdaptiveModal.constrained(
+                              title: const Text('Selection'),
+                              body: SizedBox(
+                                height: height,
+                                child: const Text('Options'),
+                              ),
+                            )
+                          : AdaptiveModal.constrained(
+                              constraints: BoxConstraints(maxHeight: maxHeight),
+                              title: const Text('Selection'),
+                              body: SizedBox(
+                                height: height,
+                                child: const Text('Options'),
+                              ),
+                            ),
+                    ),
+                  ),
+                  child: const Text('Open'),
+                ),
+              ),
+            ),
+          );
+          await tester.tap(find.text('Open'));
+          await tester.pumpAndSettle();
+          final modal = find.byType(AdaptiveModal);
+          final shortHeight = tester.getSize(modal).height;
+          expect(shortHeight, greaterThan(100));
+          expect(shortHeight, lessThan(maxHeight));
+          contentHeight.value = 1200;
+          await tester.pumpAndSettle();
+          expect(tester.getSize(modal).height, closeTo(maxHeight, 1));
+          final scrollable = find
+              .descendant(of: modal, matching: find.byType(Scrollable))
+              .first;
+          expect(
+            tester.state<ScrollableState>(scrollable).position.maxScrollExtent,
+            greaterThan(0),
+          );
+          contentHeight.value = 100;
+          await tester.pumpAndSettle();
+          expect(tester.getSize(modal).height, closeTo(shortHeight, 1));
+          tester.view.physicalSize = const Size(390, 800);
+          await tester.pumpAndSettle();
+          expect(find.text('Options'), findsOneWidget);
+          tester.view.physicalSize = const Size(1000, 1000);
+          await tester.pumpAndSettle();
+          expect(tester.getSize(modal).height, closeTo(shortHeight, 1));
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+  }
+
   for (final enableDrag in [false, true]) {
     testWidgets(
       'Apple dialog clears keyboard in a resizable window, drag $enableDrag',

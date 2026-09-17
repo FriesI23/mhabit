@@ -4,6 +4,7 @@ library;
 export 'src/adaptive/adaptive_app_bar.dart';
 export 'src/adaptive/adaptive_app_bar_actions.dart';
 export 'src/adaptive/adaptive_back_button.dart';
+export 'src/adaptive/adaptive_checkmark.dart';
 export 'src/adaptive/adaptive_choice_list_tile.dart';
 export 'src/adaptive/adaptive_dialog.dart';
 export 'src/adaptive/adaptive_editable_sliver_app_bar.dart';

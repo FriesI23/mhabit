@@ -5,7 +5,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' show MaterialLocalizations;
 
+import '../adaptive/adaptive_icon_button.dart';
 import '../adaptive/adaptive_modal_layout.dart';
+import '../adaptive/adaptive_sheet.dart';
 import '../adaptive/modal_sheet_drag_region.dart';
 import '../window_control/cupertino_navigation_bar.dart';
 import '../window_control/modal_app_bar_region.dart';
@@ -744,6 +746,7 @@ class CupertinoAdaptiveModal extends StatelessWidget {
     required this.title,
     required this.leadingAction,
     this.appBarActions = const [],
+    this.confirmAction,
     required this.actions,
     required this.pinnedBody,
     required this.body,
@@ -759,6 +762,7 @@ class CupertinoAdaptiveModal extends StatelessWidget {
   final Widget? title;
   final Widget? leadingAction;
   final List<Widget> appBarActions;
+  final AdaptiveModalConfirmAction? confirmAction;
   final List<Widget> actions;
   final Widget? pinnedBody;
   final Widget body;
@@ -773,7 +777,7 @@ class CupertinoAdaptiveModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = CupertinoTheme.of(context);
-    final impliedClose = automaticallyImplyCloseButton
+    final impliedClose = automaticallyImplyCloseButton && leadingAction == null
         ? Semantics(
             label: MaterialLocalizations.of(context).closeButtonLabel,
             button: true,
@@ -786,6 +790,21 @@ class CupertinoAdaptiveModal extends StatelessWidget {
             ),
           )
         : null;
+    final closeLeading =
+        leadingAction == null &&
+        (confirmAction != null || appBarActions.isNotEmpty);
+    final leading = leadingAction ?? (closeLeading ? impliedClose : null);
+    final trailing = <Widget>[
+      ...appBarActions,
+      if (confirmAction case final action?)
+        AdaptiveIconButton.apple(
+          key: const ValueKey('adaptive-modal-confirm'),
+          icon: const Icon(CupertinoIcons.check_mark),
+          tooltip: action.label,
+          onPressed: action.onPressed,
+        ),
+      if (!closeLeading) ?impliedClose,
+    ];
     final appBar = ModalWindowControlAppBarRegion(
       child: MediaQuery.removePadding(
         context: context,
@@ -794,12 +813,9 @@ class CupertinoAdaptiveModal extends StatelessWidget {
           listenable: scrollController,
           builder: (context, _) => WindowControlCupertinoNavigationBar(
             key: const ValueKey('adaptive-modal-app-bar'),
-            leading: leadingAction == null
+            leading: leading == null
                 ? null
-                : Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [leadingAction!],
-                  ),
+                : Row(mainAxisSize: MainAxisSize.min, children: [leading]),
             automaticallyImplyLeading: false,
             middle: title == null
                 ? const SizedBox.shrink()
@@ -807,12 +823,9 @@ class CupertinoAdaptiveModal extends StatelessWidget {
                     key: const ValueKey('adaptive-modal-title'),
                     child: title!,
                   ),
-            trailing: appBarActions.isEmpty && impliedClose == null
+            trailing: trailing.isEmpty
                 ? null
-                : Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [...appBarActions, ?impliedClose],
-                  ),
+                : Row(mainAxisSize: MainAxisSize.min, children: trailing),
             backgroundColor: CupertinoColors.transparent,
             transitionBetweenRoutes: false,
             automaticBackgroundVisibility: true,

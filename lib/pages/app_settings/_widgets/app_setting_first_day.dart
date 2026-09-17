@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
@@ -21,13 +20,11 @@ import '../../../common/consts.dart';
 import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
 
-// TODO(mhabit-adaptive-dialog): Adapt the first-day selector; preserve weekday values and
-// int/null results rather than using a bool confirmation.
 Future<int?> showAppSettingFirstDaySelectDialog({
   required BuildContext context,
   int? firstDay,
 }) async {
-  return showDialog<int>(
+  return showAdaptiveSheet<int>(
     context: context,
     builder: (context) =>
         AppSettingFirstDaySelectDialog(initFirstday: firstDay),
@@ -70,41 +67,55 @@ class AppSettingFirstDaySelectDialog extends StatelessWidget {
 
   const AppSettingFirstDaySelectDialog({super.key, this.initFirstday});
 
-  Widget _buildSimpleDialogOption(
-    BuildContext context,
-    int firstday, {
-    L10n? l10n,
-  }) {
-    var text = DateFormat.EEEE(
-      l10n?.localeName,
-    ).format(getProtoDateWithFirstDay(firstday));
-    if (firstday == defaultFirstDay) {
-      text +=
-          (l10n?.appSetting_firstDayOfWeekDialog_defaultText ?? " (Default)");
-    }
-    return SimpleDialogOption(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(text),
-          if (initFirstday == firstday) const Icon(Icons.check),
-        ],
-      ),
-      onPressed: () => Navigator.of(context).pop(firstday),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return SimpleDialog(
-      title: l10n != null
-          ? Text(l10n.appSetting_firstDayOfWeekDialog_titleText)
-          : const Text("Show first day of week"),
-      children: List<Widget>.generate(
-        DateTime.daysPerWeek,
-        (index) => _buildSimpleDialogOption(context, index + 1, l10n: l10n),
+    final formatter = DateFormat.EEEE(l10n?.localeName);
+    return AdaptiveModal.constrained(
+      title: Text(
+        l10n?.appSetting_firstDayOfWeekDialog_titleText ??
+            'Show first day of week',
+      ),
+      body: AdaptiveListSection(
+        appleTransparent: true,
+        padding: EdgeInsets.zero,
+        children: [
+          for (var day = DateTime.monday; day <= DateTime.sunday; day++)
+            Semantics(
+              key: ValueKey('first-day-option-$day'),
+              selected: initFirstday == day,
+              child: _FirstDayOption(
+                label:
+                    formatter.format(getProtoDateWithFirstDay(day)) +
+                    (day == defaultFirstDay
+                        ? l10n?.appSetting_firstDayOfWeekDialog_defaultText ??
+                              ' (Default)'
+                        : ''),
+                selected: initFirstday == day,
+                onTap: () => Navigator.of(context).pop(day),
+              ),
+            ),
+        ],
       ),
     );
   }
+}
+
+class _FirstDayOption extends StatelessWidget {
+  const _FirstDayOption({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => AdaptiveListTile(
+    title: Text(label),
+    trailing: selected ? const AdaptiveCheckmark() : null,
+    onTap: onTap,
+  );
 }

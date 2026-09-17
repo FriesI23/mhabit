@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../adaptive/adaptive_app_bar.dart';
 import '../adaptive/adaptive_modal_layout.dart';
+import '../adaptive/adaptive_sheet.dart';
 import '../adaptive/modal_sheet_drag_region.dart';
 import '../window_control/modal_app_bar_region.dart';
 
@@ -353,6 +354,7 @@ class MaterialAdaptiveModal extends StatelessWidget {
     required this.title,
     required this.leadingAction,
     this.appBarActions = const [],
+    this.confirmAction,
     required this.actions,
     required this.pinnedBody,
     required this.body,
@@ -368,6 +370,7 @@ class MaterialAdaptiveModal extends StatelessWidget {
   final Widget? title;
   final Widget? leadingAction;
   final List<Widget> appBarActions;
+  final AdaptiveModalConfirmAction? confirmAction;
   final List<Widget> actions;
   final Widget? pinnedBody;
   final Widget body;
@@ -403,7 +406,15 @@ class MaterialAdaptiveModal extends StatelessWidget {
                         onPressed: onCloseRequested,
                       )
                     : null),
-            actions: appBarActions,
+            actions: [
+              ...appBarActions,
+              if (confirmAction case final action?)
+                TextButton(
+                  key: const ValueKey('adaptive-modal-confirm'),
+                  onPressed: action.onPressed,
+                  child: Text(action.label),
+                ),
+            ],
             title: title == null
                 ? const SizedBox.shrink()
                 : KeyedSubtree(

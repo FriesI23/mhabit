@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
@@ -71,69 +70,13 @@ class _GroupEditDialogState extends State<_GroupEditDialog> {
         context.read<CustomColorHistoryViewModel>().recordUsage(color);
       },
     );
-    return switch (AdaptiveStyle.of(context)) {
-      AdaptiveStyle.material => _MaterialGroupEditDialog(
-        title: title,
-        body: body,
-        onSave: _save,
+    return AdaptiveModal(
+      title: title,
+      body: body,
+      confirmAction: AdaptiveModalConfirmAction(
+        label: l10n?.habitEdit_saveButton_text ?? 'Save',
+        onPressed: _save,
       ),
-      AdaptiveStyle.apple => _AppleGroupEditDialog(
-        title: title,
-        body: body,
-        onSave: _save,
-      ),
-    };
+    );
   }
-}
-
-class _MaterialGroupEditDialog extends StatelessWidget {
-  const _MaterialGroupEditDialog({
-    required this.title,
-    required this.body,
-    required this.onSave,
-  });
-
-  final Widget title;
-  final Widget body;
-  final VoidCallback onSave;
-
-  @override
-  Widget build(BuildContext context) => AdaptiveModal(
-    title: title,
-    appBarActions: [
-      TextButton(
-        onPressed: onSave,
-        child: Text(L10n.of(context)?.habitEdit_saveButton_text ?? 'Save'),
-      ),
-    ],
-    body: body,
-  );
-}
-
-class _AppleGroupEditDialog extends StatelessWidget {
-  const _AppleGroupEditDialog({
-    required this.title,
-    required this.body,
-    required this.onSave,
-  });
-
-  final Widget title;
-  final Widget body;
-  final VoidCallback onSave;
-
-  @override
-  Widget build(BuildContext context) => AdaptiveModal(
-    title: title,
-    actions: [
-      CupertinoButton(
-        key: const ValueKey('group-edit-save-action'),
-        onPressed: onSave,
-        child: Text(
-          L10n.of(context)?.habitEdit_saveButton_text ?? 'Save',
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-      ),
-    ],
-    body: body,
-  );
 }

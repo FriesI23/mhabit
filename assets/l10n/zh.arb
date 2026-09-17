@@ -650,6 +650,15 @@
     "appSetting_changeLanguage_followSystem_noLocale_text": "跟随系统",
     "appSetting_changeLanguageTile_titleText": "多语言",
     "appSetting_changeLanguageDialog_titleText": "选择语言",
+    "appSetting_changeLanguageDialog_currentLanguage_text": "当前语言：{localeName}",
+    "@appSetting_changeLanguageDialog_currentLanguage_text": {
+        "placeholders": {
+            "localeName": {
+                "type": "String",
+                "example": "English"
+            }
+        }
+    },
     "appSetting_languageSubgroupText": "语言",
     "appSetting_openSystemLanguageTile_titleText": "系统语言设置",
     "appSetting_openSystemLanguageTile_dialogTitle": "打开系统语言设置",

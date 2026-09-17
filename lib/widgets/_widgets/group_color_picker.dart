@@ -401,25 +401,10 @@ class _GroupCustomColorPickerDialogState
           ],
         ],
       ),
-      appBarActions: AdaptiveStyle.of(context) == AdaptiveStyle.material
-          ? [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(_draft),
-                child: Text(l10n?.habitEdit_saveButton_text ?? 'Save'),
-              ),
-            ]
-          : const [],
-      actions: AdaptiveStyle.of(context) == AdaptiveStyle.apple
-          ? [
-              CupertinoButton(
-                onPressed: () => Navigator.of(context).pop(_draft),
-                child: Text(
-                  l10n?.habitEdit_saveButton_text ?? 'Save',
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-              ),
-            ]
-          : const [],
+      confirmAction: AdaptiveModalConfirmAction(
+        label: l10n?.habitEdit_saveButton_text ?? 'Save',
+        onPressed: () => Navigator.of(context).pop(_draft),
+      ),
     );
   }
 }

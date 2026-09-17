@@ -947,6 +947,13 @@ class L10nZh extends L10n {
   String get appSetting_changeLanguageDialog_titleText => '选择语言';
 
   @override
+  String appSetting_changeLanguageDialog_currentLanguage_text(
+    String localeName,
+  ) {
+    return '当前语言：$localeName';
+  }
+
+  @override
   String get appSetting_languageSubgroupText => '语言';
 
   @override
@@ -3036,6 +3043,13 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get appSetting_changeLanguageDialog_titleText => '選擇語言';
+
+  @override
+  String appSetting_changeLanguageDialog_currentLanguage_text(
+    String localeName,
+  ) {
+    return '目前語言：$localeName';
+  }
 
   @override
   String get appSetting_languageSubgroupText => '語言';

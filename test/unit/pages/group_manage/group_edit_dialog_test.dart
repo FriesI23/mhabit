@@ -76,7 +76,9 @@ void main() {
             .widget<HabitColorWheelEditor>(find.byType(HabitColorWheelEditor))
             .onChanged(selected);
         await tester.pump();
-        await tester.tap(find.text('Save').hitTestable());
+        await tester.tap(
+          find.byKey(const ValueKey('adaptive-modal-confirm')).hitTestable(),
+        );
         await tester.pumpAndSettle();
         expect(history.history, [selected]);
         expect(find.text('Draft group'), findsOneWidget);
@@ -132,7 +134,10 @@ void main() {
 
           expect(find.byType(AdaptiveModal), findsOneWidget);
           expect(find.text('Create Group'), findsOneWidget);
-          expect(find.text('Save'), findsOneWidget);
+          expect(
+            find.byKey(const ValueKey('adaptive-modal-confirm')),
+            findsOneWidget,
+          );
           expect(
             find.descendant(
               of: find.byType(GroupIconPicker),
@@ -229,21 +234,24 @@ void main() {
               );
               expect(find.widgetWithText(FilledButton, 'Save'), findsNothing);
               expect(
-                find.widgetWithText(CupertinoButton, 'Save'),
-                findsOneWidget,
-              );
-              expect(
-                find.byKey(const ValueKey('adaptive-modal-actions')),
-                findsOneWidget,
-              );
-              expect(
                 find.descendant(
-                  of: find.byKey(const ValueKey('adaptive-modal-actions')),
-                  matching: find.byKey(
-                    const ValueKey('group-edit-save-action'),
-                  ),
+                  of: find.byKey(const ValueKey('adaptive-modal-confirm')),
+                  matching: find.byIcon(CupertinoIcons.check_mark),
                 ),
                 findsOneWidget,
+              );
+              expect(find.text('Save'), findsNothing);
+              expect(
+                find.byKey(const ValueKey('adaptive-modal-actions')),
+                findsNothing,
+              );
+              final close = find.byKey(
+                const ValueKey('adaptive-modal-implied-close'),
+              );
+              final save = find.byKey(const ValueKey('adaptive-modal-confirm'));
+              expect(
+                tester.getCenter(close).dx,
+                lessThan(tester.getCenter(save).dx),
               );
               expect(
                 find.descendant(
@@ -266,7 +274,9 @@ void main() {
               .width;
           expect(modalWidth, size.width == 390 ? 390 : 560);
 
-          await tester.tap(find.text('Save'));
+          await tester.tap(
+            find.byKey(const ValueKey('adaptive-modal-confirm')),
+          );
           await tester.pumpAndSettle();
           expect(find.text('Name is required'), findsOneWidget);
           expect(find.byType(AdaptiveModal), findsOneWidget);
@@ -337,18 +347,39 @@ void main() {
           expect(ModalRoute.of(pickerContext), isNot(same(modalRoute)));
           expect(localNavigator.canPop(), isTrue);
           expect(
-            find.widgetWithText(
-              style == AdaptiveStyle.apple ? CupertinoButton : TextButton,
-              'Save',
-            ),
+            find.byKey(const ValueKey('adaptive-modal-confirm')).hitTestable(),
             findsOneWidget,
+          );
+          expect(
+            find
+                .byKey(const ValueKey('adaptive-modal-implied-close'))
+                .hitTestable(),
+            findsNothing,
+          );
+          expect(
+            tester.getCenter(find.byType(AdaptiveBackButton).hitTestable()).dx,
+            lessThan(
+              tester
+                  .getCenter(
+                    find
+                        .byKey(const ValueKey('adaptive-modal-confirm'))
+                        .hitTestable(),
+                  )
+                  .dx,
+            ),
+          );
+          expect(
+            find.byKey(const ValueKey('adaptive-modal-actions')).hitTestable(),
+            findsNothing,
           );
           await tester.tap(find.byType(AdaptiveBackButton).hitTestable());
           await tester.pumpAndSettle();
           expect(find.byType(AdaptiveModal), findsOneWidget);
           expect(find.text('My group'), findsOneWidget);
           expect(localNavigator.canPop(), isFalse);
-          await tester.tap(find.text('Save'));
+          await tester.tap(
+            find.byKey(const ValueKey('adaptive-modal-confirm')),
+          );
           await tester.pumpAndSettle();
           expect(find.byType(GroupEditForm), findsNothing);
           expect(find.text('Open'), findsOneWidget);
@@ -358,22 +389,18 @@ void main() {
           await tester.ensureVisible(colorButtons.last);
           await tester.tap(colorButtons.last);
           await tester.pumpAndSettle();
-          if (style == AdaptiveStyle.material) {
-            expect(
-              find
-                  .byKey(const ValueKey('adaptive-modal-implied-close'))
-                  .hitTestable(),
-              findsNothing,
-            );
-            expect(
-              find
-                  .byKey(const ValueKey('adaptive-modal-actions'))
-                  .hitTestable(),
-              findsNothing,
-            );
-            await tester.tap(find.byType(AdaptiveBackButton).hitTestable());
-            await tester.pumpAndSettle();
-          }
+          expect(
+            find
+                .byKey(const ValueKey('adaptive-modal-implied-close'))
+                .hitTestable(),
+            findsNothing,
+          );
+          expect(
+            find.byKey(const ValueKey('adaptive-modal-actions')).hitTestable(),
+            findsNothing,
+          );
+          await tester.tap(find.byType(AdaptiveBackButton).hitTestable());
+          await tester.pumpAndSettle();
           await tester.tap(
             find
                 .byKey(const ValueKey('adaptive-modal-implied-close'))

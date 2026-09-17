@@ -862,6 +862,15 @@
     "@appSetting_changeLanguageTile_titleText": {},
     "appSetting_changeLanguageDialog_titleText": "Select Language",
     "@appSetting_changeLanguageDialog_titleText": {},
+    "appSetting_changeLanguageDialog_currentLanguage_text": "Current language: {localeName}",
+    "@appSetting_changeLanguageDialog_currentLanguage_text": {
+        "placeholders": {
+            "localeName": {
+                "type": "String",
+                "example": "English"
+            }
+        }
+    },
     "appSetting_languageSubgroupText": "Language",
     "@appSetting_languageSubgroupText": {},
     "appSetting_openSystemLanguageTile_titleText": "System Language Settings",

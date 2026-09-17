@@ -30,13 +30,11 @@ import '../../../providers/app_ui/app_developer.dart';
 import '../../../providers/app_ui/app_theme.dart';
 import '../../../theme/color.dart';
 
-// TODO(mhabit-adaptive-dialog): Adapt theme-color selection controls and route together;
-// preserve AppThemeColor/null results.
 Future<AppThemeColor?> showAppThemeColorChangerDialog({
   required BuildContext context,
   AppThemeColor? selectedColor,
 }) async {
-  return showDialog<AppThemeColor>(
+  return showAdaptiveSheet<AppThemeColor>(
     context: context,
     builder: (context) =>
         AppSettingThemeColorChoosenDialog(selectedColor: selectedColor),
@@ -120,35 +118,39 @@ class AppSettingThemeColorChoosenDialog extends StatelessWidget {
       (vm) => vm.isInDevelopMode,
     );
     final l10n = L10n.of(context);
-    return SimpleDialog(
+    return AdaptiveModal.constrained(
       title: Text(
         l10n?.appSetting_appThemeColorChosenDiloag_titleText ??
             "Choose Theme Color",
       ),
-      children: [
-        _SystemChosenOption(isSelected: selectedColor.isSystem, debug: debug),
-        _PrimaryChosenOption(
-          isSelected: selectedColor is PrimaryAppThemeColor,
-          debug: debug,
-        ),
-        if (!Platform.isIOS)
-          _DynamicChosenOption(
-            isSelected: selectedColor is DynamicAppThemeColor,
+      body: AdaptiveListSection(
+        appleTransparent: true,
+        padding: EdgeInsets.zero,
+        children: [
+          _SystemChosenOption(isSelected: selectedColor.isSystem, debug: debug),
+          _PrimaryChosenOption(
+            isSelected: selectedColor is PrimaryAppThemeColor,
             debug: debug,
           ),
-        ...HabitColorType.values.map((e) {
-          bool isSelected(AppThemeColor? themeColor) {
-            if (themeColor is! InternalAppThemeColor) return false;
-            return themeColor.colorType == e;
-          }
+          if (!Platform.isIOS)
+            _DynamicChosenOption(
+              isSelected: selectedColor is DynamicAppThemeColor,
+              debug: debug,
+            ),
+          ...HabitColorType.values.map((e) {
+            bool isSelected(AppThemeColor? themeColor) {
+              if (themeColor is! InternalAppThemeColor) return false;
+              return themeColor.colorType == e;
+            }
 
-          return _InternalChosenOption(
-            colorType: e,
-            isSelected: isSelected(selectedColor),
-            debug: debug,
-          );
-        }),
-      ],
+            return _InternalChosenOption(
+              colorType: e,
+              isSelected: isSelected(selectedColor),
+              debug: debug,
+            );
+          }),
+        ],
+      ),
     );
   }
 }
@@ -162,12 +164,17 @@ class _SystemChosenOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return ListTile(
-      title: Text(l10n?.common_appThemeColor_system ?? "System"),
-      subtitle: debug ? Text("${Theme.of(context).colorScheme.primary}") : null,
-      leading: const AppSettingThemeColorContainer(child: SizedBox.expand()),
-      trailing: isSelected ? const Icon(Icons.check) : null,
-      onTap: () => Navigator.of(context).pop(const SystemAppThemeColor()),
+    return Semantics(
+      selected: isSelected,
+      child: AdaptiveListTile(
+        title: Text(l10n?.common_appThemeColor_system ?? "System"),
+        subtitle: debug
+            ? Text("${Theme.of(context).colorScheme.primary}")
+            : null,
+        leading: const AppSettingThemeColorContainer(child: SizedBox.expand()),
+        trailing: isSelected ? const AdaptiveCheckmark() : null,
+        onTap: () => Navigator.of(context).pop(const SystemAppThemeColor()),
+      ),
     );
   }
 }
@@ -181,14 +188,17 @@ class _PrimaryChosenOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return ListTile(
-      title: Text(l10n?.common_appThemeColor_primary ?? "Primary"),
-      subtitle: debug ? Text("$appDefaultThemeMainColor") : null,
-      leading: const AppSettingThemeColorContainer(
-        child: ColoredBox(color: appDefaultThemeMainColor),
+    return Semantics(
+      selected: isSelected,
+      child: AdaptiveListTile(
+        title: Text(l10n?.common_appThemeColor_primary ?? "Primary"),
+        subtitle: debug ? Text("$appDefaultThemeMainColor") : null,
+        leading: const AppSettingThemeColorContainer(
+          child: ColoredBox(color: appDefaultThemeMainColor),
+        ),
+        trailing: isSelected ? const AdaptiveCheckmark() : null,
+        onTap: () => Navigator.of(context).pop(const PrimaryAppThemeColor()),
       ),
-      trailing: isSelected ? const Icon(Icons.check) : null,
-      onTap: () => Navigator.of(context).pop(const PrimaryAppThemeColor()),
     );
   }
 }
@@ -232,12 +242,15 @@ class _DynamicChosenOption extends StatelessWidget {
         sb.write(l10n?.appSetting_appThemeColorChosenDialog_subTitleText_linux);
       default:
     }
-    return ListTile(
-      title: Text(l10n?.common_appThemeColor_dynamic ?? "Dynamic"),
-      subtitle: Text(sb.toString()),
-      leading: AppSettingThemeColorContainer(child: child),
-      trailing: isSelected ? const Icon(Icons.check) : null,
-      onTap: () => Navigator.of(context).pop(const DynamicAppThemeColor()),
+    return Semantics(
+      selected: isSelected,
+      child: AdaptiveListTile(
+        title: Text(l10n?.common_appThemeColor_dynamic ?? "Dynamic"),
+        subtitle: Text(sb.toString()),
+        leading: AppSettingThemeColorContainer(child: child),
+        trailing: isSelected ? const AdaptiveCheckmark() : null,
+        onTap: () => Navigator.of(context).pop(const DynamicAppThemeColor()),
+      ),
     );
   }
 }
@@ -259,16 +272,19 @@ class _InternalChosenOption extends StatelessWidget {
     final color = Theme.of(
       context,
     ).extension<CustomColors>()?.getBuiltInColor(colorType);
-    return ListTile(
-      title: Text(HabitColorType.getColorName(colorType, l10n)),
-      subtitle: debug ? Text("$color") : null,
-      leading: AppSettingThemeColorContainer(
-        child: ColoredBox(color: color ?? Colors.transparent),
+    return Semantics(
+      selected: isSelected,
+      child: AdaptiveListTile(
+        title: Text(HabitColorType.getColorName(colorType, l10n)),
+        subtitle: debug ? Text("$color") : null,
+        leading: AppSettingThemeColorContainer(
+          child: ColoredBox(color: color ?? Colors.transparent),
+        ),
+        trailing: isSelected ? const AdaptiveCheckmark() : null,
+        onTap: () => Navigator.of(
+          context,
+        ).pop(InternalAppThemeColor(colorType: colorType)),
       ),
-      trailing: isSelected ? const Icon(Icons.check) : null,
-      onTap: () => Navigator.of(
-        context,
-      ).pop(InternalAppThemeColor(colorType: colorType)),
     );
   }
 }

@@ -960,34 +960,29 @@ void main() {
       );
     });
 
-    testWidgets(
-      'Cupertino reserves leading for navigation and closes trailing',
-      (tester) async {
-        await tester.pumpWidget(
-          _buildTestApp(
-            style: AdaptiveStyle.apple,
-            presentation: AdaptiveModalPresentation.dialog,
-            modalBuilder: (_) => const AdaptiveModal(
-              title: Text('Title'),
-              leadingAction: Text('Back'),
-              body: Text('Body'),
-            ),
+    testWidgets('Cupertino navigation leading replaces automatic close', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _buildTestApp(
+          style: AdaptiveStyle.apple,
+          presentation: AdaptiveModalPresentation.dialog,
+          modalBuilder: (_) => const AdaptiveModal(
+            title: Text('Title'),
+            leadingAction: Text('Back'),
+            body: Text('Body'),
           ),
-        );
-        await _open(tester);
+        ),
+      );
+      await _open(tester);
 
-        final titleX = tester.getCenter(find.text('Title')).dx;
-        expect(tester.getCenter(find.text('Back')).dx, lessThan(titleX));
-        expect(
-          tester
-              .getCenter(
-                find.byKey(const ValueKey('adaptive-modal-implied-close')),
-              )
-              .dx,
-          greaterThan(titleX),
-        );
-      },
-    );
+      final titleX = tester.getCenter(find.text('Title')).dx;
+      expect(tester.getCenter(find.text('Back')).dx, lessThan(titleX));
+      expect(
+        find.byKey(const ValueKey('adaptive-modal-implied-close')),
+        findsNothing,
+      );
+    });
 
     testWidgets('Cupertino implied leading uses the shared back button', (
       tester,

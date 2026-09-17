@@ -161,7 +161,13 @@ void main() {
           expect(firstDay, DateTime.monday);
           await tester.tap(find.byType(AppSettingFirstDayTile));
           await tester.pumpAndSettle();
-          await tester.tap(find.byType(SimpleDialogOption).at(1));
+          final tuesday = find.byKey(const ValueKey('first-day-option-2'));
+          await Scrollable.ensureVisible(
+            tester.element(tuesday),
+            alignment: 0.5,
+          );
+          await tester.pumpAndSettle();
+          await tester.tap(tuesday);
           await tester.pumpAndSettle();
           expect(firstDay, DateTime.tuesday);
           expect(tester.takeException(), isNull);

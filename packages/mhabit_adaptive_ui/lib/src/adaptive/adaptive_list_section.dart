@@ -22,6 +22,7 @@ class AdaptiveListSection extends StatelessWidget {
     required this.children,
     this.hasLeading = false,
     this.padding,
+    this.appleTransparent = false,
   }) : style = null;
 
   const AdaptiveListSection.material({
@@ -30,6 +31,7 @@ class AdaptiveListSection extends StatelessWidget {
     required this.children,
     this.hasLeading = false,
     this.padding,
+    this.appleTransparent = false,
   }) : style = AdaptiveStyle.material;
 
   const AdaptiveListSection.apple({
@@ -38,6 +40,7 @@ class AdaptiveListSection extends StatelessWidget {
     required this.children,
     this.hasLeading = false,
     this.padding,
+    this.appleTransparent = false,
   }) : style = AdaptiveStyle.apple;
 
   final AdaptiveStyle? style;
@@ -45,6 +48,7 @@ class AdaptiveListSection extends StatelessWidget {
   final List<Widget> children;
   final bool hasLeading;
   final EdgeInsetsGeometry? padding;
+  final bool appleTransparent;
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +59,7 @@ class AdaptiveListSection extends StatelessWidget {
       child: switch (effective) {
         AdaptiveStyle.apple => CupertinoAdaptiveListSection(
           header: header,
+          surfaceColor: appleTransparent ? CupertinoColors.transparent : null,
           hasLeading: hasLeading,
           padding: padding,
           children: children,

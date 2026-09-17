@@ -1006,6 +1006,13 @@ class L10nHe extends L10n {
   String get appSetting_changeLanguageDialog_titleText => 'נא לבחור שפה';
 
   @override
+  String appSetting_changeLanguageDialog_currentLanguage_text(
+    String localeName,
+  ) {
+    return 'Current language: $localeName';
+  }
+
+  @override
   String get appSetting_languageSubgroupText => 'שפה';
 
   @override

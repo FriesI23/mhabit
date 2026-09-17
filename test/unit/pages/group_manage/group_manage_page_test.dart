@@ -711,13 +711,7 @@ void main() {
             : find.byType(TextFormField).first,
         'Created from primary action',
       );
-      if (apple) {
-        await tester.ensureVisible(
-          find.byKey(const ValueKey('group-edit-save-action')),
-        );
-        await tester.pumpAndSettle();
-      }
-      await tester.tap(find.text('Save'));
+      await tester.tap(find.byKey(const ValueKey('adaptive-modal-confirm')));
       await tester.pumpAndSettle();
       expect(vm.groups.single.name, 'Created from primary action');
       expect(find.text('Created from primary action'), findsOneWidget);

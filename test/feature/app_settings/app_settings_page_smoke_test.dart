@@ -478,7 +478,7 @@ void main() {
           findsOneWidget,
         );
       }
-      // The original Material selector still owns selection and cancellation.
+      // The adaptive selector preserves selection and cancellation.
       await tester.tap(languageTile);
       await tester.pumpAndSettle();
       expect(find.byType(AppLanguageChangerDialog), findsOneWidget);
@@ -489,9 +489,9 @@ void main() {
       await tester.pumpAndSettle();
       final english = find.descendant(
         of: find.byType(AppLanguageChangerDialog),
-        matching: find.text('English'),
+        matching: find.byKey(const ValueKey('language-option-en')),
       );
-      await tester.ensureVisible(english);
+      await Scrollable.ensureVisible(tester.element(english), alignment: 0.5);
       await tester.tap(english);
       await tester.pumpAndSettle();
       expect(language.languange, const Locale('en'));
@@ -504,10 +504,10 @@ void main() {
       final system = find
           .descendant(
             of: find.byType(AppLanguageChangerDialog),
-            matching: find.byType(SimpleDialogOption),
+            matching: find.byKey(const ValueKey('language-option-system')),
           )
           .first;
-      await tester.ensureVisible(system);
+      await Scrollable.ensureVisible(tester.element(system), alignment: 0.5);
       await tester.tap(system);
       await tester.pumpAndSettle();
       expect(language.languange, isNull);

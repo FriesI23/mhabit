@@ -1712,6 +1712,14 @@ abstract class L10n {
   /// **'Select Language'**
   String get appSetting_changeLanguageDialog_titleText;
 
+  /// No description provided for @appSetting_changeLanguageDialog_currentLanguage_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Current language: {localeName}'**
+  String appSetting_changeLanguageDialog_currentLanguage_text(
+    String localeName,
+  );
+
   /// No description provided for @appSetting_languageSubgroupText.
   ///
   /// In en, this message translates to:

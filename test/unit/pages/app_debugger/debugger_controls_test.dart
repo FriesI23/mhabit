@@ -159,7 +159,7 @@ void main() {
                         LogLevelChangerTile(
                           crtLevel: level,
                           onSelected: (value) => setState(() {
-                            expect(find.byType(SimpleDialog), findsOneWidget);
+                            expect(find.byType(AdaptiveModal), findsOneWidget);
                             level = value;
                             levelCalls++;
                           }),
@@ -200,11 +200,27 @@ void main() {
       expect(switchCalls, 2);
       await tester.tap(find.text(l10n.debug_logLevelTile_title));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(l10n.debug_logLevel_error));
+      final errorOption = find.byKey(const ValueKey('log-level-option-error'));
+      await Scrollable.ensureVisible(
+        tester.element(errorOption),
+        alignment: 0.5,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(errorOption);
       await tester.pumpAndSettle();
       expect(level, LogLevel.error);
       expect(levelCalls, 1);
-      expect(find.byType(SimpleDialog), findsNothing);
+      expect(find.byType(AdaptiveModal), findsNothing);
+      await tester.tap(find.text(l10n.debug_logLevelTile_title));
+      await tester.pumpAndSettle();
+      expect(tester.widget<Semantics>(errorOption).properties.selected, isTrue);
+      await tester.tap(
+        find.byKey(const ValueKey('adaptive-modal-implied-close')),
+      );
+      await tester.pumpAndSettle();
+      expect(level, LogLevel.error);
+      expect(levelCalls, 1);
+
       for (final label in [
         l10n.debug_debuggerLogCard_saveButton_text,
         l10n.debug_debuggerLogCard_clearButton_text,

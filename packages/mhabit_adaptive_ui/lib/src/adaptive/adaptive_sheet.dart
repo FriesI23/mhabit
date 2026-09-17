@@ -506,6 +506,21 @@ class _ModalSizeObserver extends NavigatorObserver {
   }
 }
 
+/// A modal confirmation command. The caller owns validation and dismissal.
+///
+/// Material renders [label] as text; Apple uses a checkmark with [label] as its
+/// accessible name and tooltip. A null callback disables the command.
+@immutable
+class AdaptiveModalConfirmAction {
+  const AdaptiveModalConfirmAction({
+    required this.label,
+    required this.onPressed,
+  });
+
+  final String label;
+  final VoidCallback? onPressed;
+}
+
 /// Platform-adaptive modal content with fixed semantic regions.
 ///
 /// This is the content counterpart to [showAdaptiveSheet], similar to how an
@@ -519,6 +534,7 @@ class AdaptiveModal extends StatefulWidget {
     this.title,
     this.leadingAction,
     this.appBarActions = const [],
+    this.confirmAction,
     this.actions = const [],
     this.pinnedBody,
     this.bottomActions = const [],
@@ -528,11 +544,37 @@ class AdaptiveModal extends StatefulWidget {
     this.constraints,
   });
 
+  /// Fits dialog height to content, up to 720 or the available window space.
+  ///
+  /// Explicit [constraints] replace the default bounds. Sheet height remains
+  /// owned by the platform route. A surrounding [AdaptiveModalNavigator] must
+  /// also use [AdaptiveModalSize.constrained] to allow its viewport to shrink.
+  const AdaptiveModal.constrained({
+    super.key,
+    required this.body,
+    this.title,
+    this.leadingAction,
+    this.appBarActions = const [],
+    this.confirmAction,
+    this.actions = const [],
+    this.pinnedBody,
+    this.bottomActions = const [],
+    this.automaticallyImplyLeading = false,
+    this.automaticallyImplyCloseButton = true,
+    this.onCloseRequested,
+    BoxConstraints this.constraints = const BoxConstraints(
+      maxHeight: AdaptiveModalConstraints.maxHeight,
+    ),
+  });
+
   final Widget? title;
   final Widget? leadingAction;
 
   /// Trailing app-bar actions, separate from the bottom [actions] region.
   final List<Widget> appBarActions;
+
+  /// Trailing confirmation: Material text, Apple checkmark.
+  final AdaptiveModalConfirmAction? confirmAction;
   final List<Widget> actions;
   final Widget? pinnedBody;
   final Widget body;
@@ -680,6 +722,7 @@ class _AdaptiveModalState extends State<AdaptiveModal> {
         title: widget.title,
         leadingAction: leadingAction,
         appBarActions: widget.appBarActions,
+        confirmAction: widget.confirmAction,
         actions: widget.actions,
         pinnedBody: widget.pinnedBody,
         body: widget.body,
@@ -695,6 +738,7 @@ class _AdaptiveModalState extends State<AdaptiveModal> {
         title: widget.title,
         leadingAction: leadingAction,
         appBarActions: widget.appBarActions,
+        confirmAction: widget.confirmAction,
         actions: widget.actions,
         pinnedBody: widget.pinnedBody,
         body: widget.body,

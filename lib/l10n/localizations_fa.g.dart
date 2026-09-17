@@ -1010,6 +1010,13 @@ class L10nFa extends L10n {
   String get appSetting_changeLanguageDialog_titleText => 'گزیدن زبان';
 
   @override
+  String appSetting_changeLanguageDialog_currentLanguage_text(
+    String localeName,
+  ) {
+    return 'Current language: $localeName';
+  }
+
+  @override
   String get appSetting_languageSubgroupText => 'Language';
 
   @override

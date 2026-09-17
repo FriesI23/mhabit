@@ -158,10 +158,8 @@ void main() {
         find.byKey(const ValueKey('adaptive-modal-app-bar')),
       );
       final backX = tester.getCenter(_findCupertinoBackChevron()).dx;
-      final closeX = tester.getCenter(find.byIcon(CupertinoIcons.xmark)).dx;
       expect(backX, lessThan(toolbar.center.dx));
-      expect(closeX, greaterThan(toolbar.center.dx));
-      expect(closeX, greaterThan(backX));
+      expect(find.byIcon(CupertinoIcons.xmark), findsNothing);
 
       await tester.tap(_findCupertinoBackChevron());
       await tester.pump();
@@ -203,6 +201,11 @@ void main() {
       expect(find.text('Changelog'), findsOneWidget);
       expect(find.text('View Full Changelog'), findsOneWidget);
       expect(_findCupertinoBackChevron(), findsNothing);
+      await tester.tap(
+        find.byKey(const ValueKey('adaptive-modal-implied-close')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('View Full Changelog'), findsNothing);
     });
 
     testWidgets('Apple adaptive sheet clips covered inner route content', (
