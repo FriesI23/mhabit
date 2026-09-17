@@ -1,4 +1,4 @@
-// Copyright 2025 Fries_I23
+// Copyright 2026 Fries_I23
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,12 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/extensions/target_platform_extensions.dart';
 
-const kAppAboutListTileLeadingHeight = 28.0;
-
-const kAppAboutListTileLeadingWidth = kAppAboutListTileLeadingHeight;
-
-const kAppAboutListTileLeadingSize = Size.square(
-  kAppAboutListTileLeadingHeight,
-);
+void main() {
+  test('mobile operating systems are Android and iOS', () {
+    for (final platform in TargetPlatform.values) {
+      expect(
+        platform.isMobileOperatingSystem,
+        platform == TargetPlatform.android || platform == TargetPlatform.iOS,
+        reason: '$platform has an unexpected mobile classification',
+      );
+    }
+  });
+}

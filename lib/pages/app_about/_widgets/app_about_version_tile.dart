@@ -14,6 +14,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../common/app_info.dart';
 import '../../../extensions/asset_bundle_extensions.dart';
@@ -73,19 +74,34 @@ class _AppAboutVersionTileState extends State<AppAboutVersionTile> {
             BlendMode.srcIn,
           )
         : null;
-    return ListTile(
-      leading: SvgTemplateImage(
-        size: kAppAboutListTileLeadingSize,
-        label: 'app-about-verion-tile-logo',
-        svgTemplatePath: widget.logoPath,
-        colorFilter: colorFilter,
-      ),
-      title: Text(l10n?.appName ?? AppInfo().appName),
-      subtitle: Text(
-        l10n?.appAbout_versionTile_titleText(AppInfo().appVersion) ??
-            "Version: ${AppInfo().appVersion}",
-      ),
-      onLongPress: onLongPressed,
+    final leading = SvgTemplateImage(
+      size: kAppAboutListTileLeadingSize,
+      label: 'app-about-verion-tile-logo',
+      svgTemplatePath: widget.logoPath,
+      colorFilter: colorFilter,
     );
+    final title = Text(l10n?.appName ?? AppInfo().appName);
+    final subtitle = Text(
+      l10n?.appAbout_versionTile_titleText(AppInfo().appVersion) ??
+          "Version: ${AppInfo().appVersion}",
+    );
+    // This informational row deliberately keeps its long-press-only action.
+    return switch (AdaptiveStyle.of(context)) {
+      AdaptiveStyle.material => ListTile(
+        leading: leading,
+        title: title,
+        subtitle: subtitle,
+        onLongPress: onLongPressed,
+      ),
+      AdaptiveStyle.apple => GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onLongPress: onLongPressed,
+        child: AdaptiveListTile.apple(
+          leading: leading,
+          title: title,
+          subtitle: subtitle,
+        ),
+      ),
+    };
   }
 }

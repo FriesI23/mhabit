@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -22,7 +24,6 @@ import '../../../l10n/localizations.dart';
 import '../../../logging/helper.dart';
 import '../../../logging/logger_stack.dart';
 import '../../../providers/support/about_info.dart';
-import '../styles.dart';
 
 class AppAboutContactEmailTile extends StatefulWidget {
   final String? url;
@@ -59,16 +60,15 @@ class _AppAboutContactEmailTileState extends State<AppAboutContactEmailTile> {
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
     return Consumer<AboutInfo>(
-      builder: (context, value, child) => ListTile(
-        leading: const SizedBox(
-          height: kAppAboutListTileLeadingHeight,
-          width: kAppAboutListTileLeadingWidth,
-          child: Icon(MdiIcons.emailOutline),
-        ),
+      builder: (context, value, child) => AdaptiveListTile(
+        leading: const Icon(MdiIcons.emailOutline),
         title: l10n != null
             ? Text(l10n.appAbout_contactEmailTile_titleText)
             : const Text("Contact Email"),
         subtitle: Text(value.contactEmail),
+        trailing: AdaptiveStyle.of(context) == AdaptiveStyle.apple
+            ? const Icon(CupertinoIcons.arrow_up_right_square)
+            : null,
         onTap: value.contactEmail.isNotEmpty ? onPressed : null,
       ),
     );

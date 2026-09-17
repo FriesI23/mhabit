@@ -204,41 +204,37 @@ class _PageState extends State<_Page> with XShare {
             withSliver: true,
             child: SliverList.list(
               children: [
-                Selector<AppDebuggerViewModel, bool>(
-                  selector: (context, vm) => vm.isCollectLogs,
-                  shouldRebuild: (previous, next) => previous != next,
-                  builder: (context, isCollectLogs, child) {
-                    return ChangeLogsSwitcherTile(
-                      value: isCollectLogs,
-                      onChanged: _onCollectLogsSwitcherChanged,
-                    );
-                  },
+                AdaptiveListSection(
+                  children: [
+                    Selector<AppDebuggerViewModel, bool>(
+                      selector: (context, vm) => vm.isCollectLogs,
+                      shouldRebuild: (previous, next) => previous != next,
+                      builder: (context, isCollectLogs, child) {
+                        return ChangeLogsSwitcherTile(
+                          value: isCollectLogs,
+                          onChanged: _onCollectLogsSwitcherChanged,
+                        );
+                      },
+                    ),
+                    Selector<AppDebuggerViewModel, LogLevel>(
+                      selector: (context, vm) => vm.loggingLevel,
+                      shouldRebuild: (previous, next) => previous != next,
+                      builder: (context, logLevel, child) {
+                        return LogLevelChangerTile(
+                          crtLevel: logLevel,
+                          onSelected: _onLogLevelChanged,
+                        );
+                      },
+                    ),
+                  ],
                 ),
-                Selector<AppDebuggerViewModel, LogLevel>(
-                  selector: (context, vm) => vm.loggingLevel,
-                  shouldRebuild: (previous, next) => previous != next,
-                  builder: (context, logLevel, child) {
-                    return LogLevelChangerTile(
-                      crtLevel: logLevel,
-                      onSelected: _onLogLevelChanged,
-                    );
-                  },
+                DebuggerLogCard(
+                  onDownloadPressed: _onDownloadLogButtonPressed,
+                  onClearPressed: _onClearLogButtongPressed,
                 ),
-                const _Sperator(),
-                const SizedBox(height: 8),
-                Padding(
-                  padding: kListTileContentPadding,
-                  child: DebuggerLogCard(
-                    onDownloadPressed: _onDownloadLogButtonPressed,
-                    onClearPressed: _onClearLogButtongPressed,
-                  ),
-                ),
-                Padding(
-                  padding: kListTileContentPadding,
-                  child: DebuggerInfoCard(
-                    onOpenPressed: _onOpenDebugButtonPressed,
-                    onSavePressed: _onSaveDebugButtonPressed,
-                  ),
+                DebuggerInfoCard(
+                  onOpenPressed: _onOpenDebugButtonPressed,
+                  onSavePressed: _onSaveDebugButtonPressed,
                 ),
                 switch (AdaptiveStyle.of(context)) {
                   AdaptiveStyle.material => const FixedPagePlaceHolder(
@@ -251,21 +247,6 @@ class _PageState extends State<_Page> with XShare {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _Sperator extends StatelessWidget {
-  const _Sperator();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Row(
-      children: [
-        Spacer(),
-        Flexible(flex: 10, child: Divider()),
-        Spacer(),
-      ],
     );
   }
 }

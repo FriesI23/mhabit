@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:simple_icons/simple_icons.dart';
 
 import '../../extensions/color_extensions.dart';
@@ -49,38 +51,93 @@ class CryptoDonateButton extends StatelessWidget {
     }
   }
 
-  ButtonStyle? getButtonStyle() {
-    ButtonStyle buildStyle(WidgetStatePropertyAll<Color> color) => ButtonStyle(
-      backgroundColor: color,
-      iconColor: const WidgetStatePropertyAll(Colors.white),
-      overlayColor: WidgetStateProperty.resolveWith<Color?>(
-        (states) => states.contains(WidgetState.pressed)
-            ? color.value.darken(0.1)
-            : null,
-      ),
-    );
+  ButtonStyle getButtonStyle() => ButtonStyle(
+    backgroundColor: WidgetStatePropertyAll(brandColor),
+    iconColor: WidgetStatePropertyAll(brandForegroundColor),
+    overlayColor: WidgetStateProperty.resolveWith<Color?>(
+      (states) =>
+          states.contains(WidgetState.pressed) ? brandColor.darken(0.1) : null,
+    ),
+  );
 
-    switch (cryptoType) {
-      case CryptoDonateButtonType.btc:
-        return buildStyle(const WidgetStatePropertyAll(colorBTC));
-      case CryptoDonateButtonType.eth:
-        return buildStyle(const WidgetStatePropertyAll(colorETH));
-      case CryptoDonateButtonType.bnb:
-        return buildStyle(const WidgetStatePropertyAll(colorBNB));
-      case CryptoDonateButtonType.avax:
-        return buildStyle(const WidgetStatePropertyAll(colorAVAX));
-      case CryptoDonateButtonType.ftm:
-        return buildStyle(const WidgetStatePropertyAll(colorFTM));
-    }
-  }
+  // Dark icons keep the brighter brand backgrounds legible.
+  Color get brandForegroundColor => switch (cryptoType) {
+    CryptoDonateButtonType.avax => Colors.white,
+    CryptoDonateButtonType.btc ||
+    CryptoDonateButtonType.eth ||
+    CryptoDonateButtonType.bnb ||
+    CryptoDonateButtonType.ftm => Colors.black,
+  };
+
+  Color get brandColor => switch (cryptoType) {
+    CryptoDonateButtonType.btc => colorBTC,
+    CryptoDonateButtonType.eth => colorETH,
+    CryptoDonateButtonType.bnb => colorBNB,
+    CryptoDonateButtonType.avax => colorAVAX,
+    CryptoDonateButtonType.ftm => colorFTM,
+  };
 
   @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onPressed != null ? () => onPressed!() : null,
-      onLongPress: onLongPressed != null ? () => onLongPressed!() : null,
+  Widget build(BuildContext context) => switch (AdaptiveStyle.of(context)) {
+    AdaptiveStyle.material => _MaterialCryptoDonateButton(
+      onPressed: onPressed,
+      onLongPressed: onLongPressed,
       style: address.isNotEmpty ? getButtonStyle() : null,
-      child: Icon(buttonIcon),
-    );
-  }
+      icon: buttonIcon,
+    ),
+    AdaptiveStyle.apple => _AppleCryptoDonateButton(
+      onPressed: onPressed,
+      onLongPressed: onLongPressed,
+      backgroundColor: brandColor,
+      foregroundColor: brandForegroundColor,
+      icon: buttonIcon,
+    ),
+  };
+}
+
+class _MaterialCryptoDonateButton extends StatelessWidget {
+  const _MaterialCryptoDonateButton({
+    required this.onPressed,
+    required this.onLongPressed,
+    required this.style,
+    required this.icon,
+  });
+  final VoidCallback? onPressed;
+  final VoidCallback? onLongPressed;
+  final ButtonStyle? style;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) => ElevatedButton(
+    onPressed: onPressed,
+    onLongPress: onLongPressed,
+    style: style,
+    child: Icon(icon),
+  );
+}
+
+class _AppleCryptoDonateButton extends StatelessWidget {
+  const _AppleCryptoDonateButton({
+    required this.onPressed,
+    required this.onLongPressed,
+    required this.backgroundColor,
+    required this.foregroundColor,
+    required this.icon,
+  });
+  final VoidCallback? onPressed;
+  final VoidCallback? onLongPressed;
+  final Color backgroundColor;
+  final Color foregroundColor;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) => CupertinoButton(
+    onPressed: onPressed,
+    onLongPress: onLongPressed,
+    color: backgroundColor,
+    foregroundColor: onPressed != null || onLongPressed != null
+        ? foregroundColor
+        : CupertinoColors.secondaryLabel.resolveFrom(context),
+    child: Icon(icon),
+  );
 }

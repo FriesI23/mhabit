@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
@@ -44,7 +46,7 @@ class AppSyncFetchIntervalSwitchDialog extends StatelessWidget {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(interval.getShowText(l10n)),
+        Flexible(child: Text(interval.getShowText(l10n))),
         if (select == interval) const Icon(Icons.check),
       ],
     ),
@@ -76,9 +78,12 @@ class AppSyncFetchIntervalTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return ListTile(
+    return AdaptiveListTile(
       title: Text(l10n?.appSync_syncIntervalTile_title ?? "Fetch Interval"),
       subtitle: buildSubtitle(l10n),
+      trailing: AdaptiveStyle.of(context) == AdaptiveStyle.apple
+          ? const Icon(CupertinoIcons.chevron_forward)
+          : null,
       onTap: onPressed,
     );
   }

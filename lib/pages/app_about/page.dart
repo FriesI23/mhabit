@@ -91,14 +91,7 @@ class _PageState extends State<_Page> {
             return const SizedBox();
           }
           if (snapshot.hasData) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 50),
-                const Divider(),
-                ContributorTile(contributors: snapshot.data!),
-              ],
-            );
+            return ContributorTile(contributors: snapshot.data!);
           }
           return const SizedBox();
         },
@@ -124,19 +117,39 @@ class _PageState extends State<_Page> {
             withSliver: true,
             child: SliverList.list(
               children: [
-                AppAboutVersionTile(
-                  isMonoLogo: true,
-                  logoPath: Assets.logo.iconMomo.path,
-                  changeLogPath: Assets.changelog,
+                AdaptiveListSection(
+                  hasLeading: true,
+                  children: [
+                    AppAboutVersionTile(
+                      isMonoLogo: true,
+                      logoPath: Assets.logo.iconMomo.path,
+                      changeLogPath: Assets.changelog,
+                    ),
+                  ],
                 ),
-                const AppAboutSourceCodeTile(),
-                const AppAboutIssueTrackerTile(),
-                const AppAboutContactEmailTile(),
-                const AppAboutLicenseTile(),
-                const AppAboutThirdPartyLicenseTile(),
-                const AppAboutPrivacyTile(privacyPath: Assets.privacy),
+                const AdaptiveListSection(
+                  hasLeading: true,
+                  children: [
+                    AppAboutSourceCodeTile(),
+                    AppAboutIssueTrackerTile(),
+                    AppAboutContactEmailTile(),
+                  ],
+                ),
+                const AdaptiveListSection(
+                  hasLeading: true,
+                  children: [
+                    AppAboutLicenseTile(),
+                    AppAboutThirdPartyLicenseTile(),
+                    AppAboutPrivacyTile(privacyPath: Assets.privacy),
+                  ],
+                ),
                 if (!AppInfo().shouldHideDonate())
-                  AppAboutDonateTile(onPressed: _onDonateTilePressed),
+                  AdaptiveListSection(
+                    hasLeading: true,
+                    children: [
+                      AppAboutDonateTile(onPressed: _onDonateTilePressed),
+                    ],
+                  ),
                 buildAppAboutContributorTile(context),
               ],
             ),

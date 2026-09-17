@@ -75,7 +75,7 @@ final class _PageState extends State<_Page> {
     List<Widget> buildHabitSearchWidgets(BuildContext context) => [
       Selector<AppExperimentalFeatureViewModel, bool>(
         selector: (context, vm) => vm.habitSearch,
-        builder: (context, value, child) => SwitchListTile(
+        builder: (context, value, child) => AdaptiveSwitchListTile(
           title: Text(
             l10n?.experimentalFeatures_habitSearchTile_titleText ??
                 "Habit Search",
@@ -92,7 +92,7 @@ final class _PageState extends State<_Page> {
     List<Widget> buildHabitGroupingWidgets(BuildContext context) => [
       Selector<AppExperimentalFeatureViewModel, bool>(
         selector: (context, vm) => vm.habitGrouping,
-        builder: (context, value, child) => SwitchListTile(
+        builder: (context, value, child) => AdaptiveSwitchListTile(
           title: const Text("Habit Grouping"),
           subtitle: const Text(
             "Enable habit grouping and categorization features",
@@ -100,7 +100,7 @@ final class _PageState extends State<_Page> {
           value: value,
           onChanged: (value) async {
             await vm?.setHabitGrouping(value);
-            if (vm?.habitGrouping == true) {
+            if (mounted && vm?.habitGrouping == true) {
               setState(() => showWarningBanner = true);
             }
           },
@@ -111,7 +111,7 @@ final class _PageState extends State<_Page> {
     List<Widget> buildNaturalSortWidgets(BuildContext context) => [
       Selector<AppExperimentalFeatureViewModel, bool>(
         selector: (context, vm) => vm.naturalSort,
-        builder: (context, value, child) => SwitchListTile(
+        builder: (context, value, child) => AdaptiveSwitchListTile(
           title: const Text("Natural Sort"),
           subtitle: const Text(
             "Sort names by native locale collation (e.g. pinyin for Chinese)",
@@ -119,7 +119,7 @@ final class _PageState extends State<_Page> {
           value: value,
           onChanged: (value) async {
             await vm?.setNaturalSort(value);
-            if (vm?.naturalSort == true) {
+            if (mounted && vm?.naturalSort == true) {
               setState(() => showWarningBanner = true);
             }
           },
@@ -160,12 +160,14 @@ final class _PageState extends State<_Page> {
           EnhancedSafeArea.withDefault(
             top: false,
             withSliver: true,
-            child: SliverList.list(
-              children: [
-                if (vm != null) ...buildHabitSearchWidgets(context),
-                if (vm != null) ...buildHabitGroupingWidgets(context),
-                if (vm != null) ...buildNaturalSortWidgets(context),
-              ],
+            child: SliverToBoxAdapter(
+              child: AdaptiveListSection(
+                children: [
+                  if (vm != null) ...buildHabitSearchWidgets(context),
+                  if (vm != null) ...buildHabitGroupingWidgets(context),
+                  if (vm != null) ...buildNaturalSortWidgets(context),
+                ],
+              ),
             ),
           ),
         ],

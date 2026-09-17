@@ -12,12 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/assets/assets.dart';
 import 'package:mhabit/common/app_info.dart';
+import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/app_notify_config.dart';
 import 'package:mhabit/pages/app_about/page.dart';
+import 'package:mhabit/pages/app_about/widgets.dart';
 import 'package:mhabit/pages/app_notify_config/page.dart';
 import 'package:mhabit/pages/expermental_features/page.dart';
 import 'package:mhabit/providers/app_ui/app_experimental_feature.dart';
@@ -34,6 +40,7 @@ final class _FakeAppNotifyConfigAccess extends ChangeNotifier
     implements AppNotifyConfigAccess {
   AppNotifyConfig _notifyConfig = const AppNotifyConfig();
   bool _mounted = true;
+  int updateCount = 0;
 
   @override
   bool get mounted => _mounted;
@@ -53,6 +60,7 @@ final class _FakeAppNotifyConfigAccess extends ChangeNotifier
 
   @override
   void updateConfig(AppNotifyConfig newConfig, {bool listen = true}) {
+    updateCount++;
     _notifyConfig = newConfig;
     if (listen) notifyListeners();
   }
@@ -67,13 +75,30 @@ final class _FakeAppNotifyConfigAccess extends ChangeNotifier
 final class _FakeExperimentalFeatureViewModel
     extends AppExperimentalFeatureViewModel {
   bool _habitGrouping = false;
+  bool _naturalSort = false;
+  int groupingWrites = 0;
+  int naturalSortWrites = 0;
+  Completer<void>? pendingWrite;
 
   @override
   bool get habitGrouping => _habitGrouping;
 
   @override
   Future<void> setHabitGrouping(bool value, {bool listen = true}) async {
+    groupingWrites++;
+    await pendingWrite?.future;
     _habitGrouping = value;
+    if (listen) notifyListeners();
+  }
+
+  @override
+  bool get naturalSort => _naturalSort;
+
+  @override
+  Future<void> setNaturalSort(bool value, {bool listen = true}) async {
+    naturalSortWrites++;
+    await pendingWrite?.future;
+    _naturalSort = value;
     if (listen) notifyListeners();
   }
 }
@@ -182,28 +207,111 @@ void main() {
     });
   }
 
-  testWidgets('Notify keeps channel updates owned by its provider', (
-    tester,
-  ) async {
-    final access = _FakeAppNotifyConfigAccess();
-    addTearDown(access.dispose);
-    await tester.pumpWidget(
-      ChangeNotifierProvider<AppNotifyConfigAccess>.value(
-        value: access,
-        child: const MaterialApp(home: AppNotifyConfigPage()),
-      ),
-    );
+  for (final platform in [
+    TargetPlatform.android,
+    TargetPlatform.iOS,
+    TargetPlatform.macOS,
+  ]) {
+    for (final direction in TextDirection.values) {
+      testWidgets('Notify grouped channels $platform $direction', (
+        tester,
+      ) async {
+        tester.view.physicalSize = const Size(320, 1200);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        final access = _FakeAppNotifyConfigAccess();
+        addTearDown(access.dispose);
+        await tester.pumpWidget(
+          ChangeNotifierProvider<AppNotifyConfigAccess>.value(
+            value: access,
+            child: MaterialApp(
+              theme: ThemeData(platform: platform),
+              localizationsDelegates: L10n.localizationsDelegates,
+              supportedLocales: L10n.supportedLocales,
+              locale: const Locale('de'),
+              builder: (context, child) => Directionality(
+                textDirection: direction,
+                child: MediaQuery(
+                  data: MediaQuery.of(
+                    context,
+                  ).copyWith(textScaler: const TextScaler.linear(2)),
+                  child: child!,
+                ),
+              ),
+              home: const AppNotifyConfigPage(),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-    expect(
-      tester.widget<SliverList>(find.byType(SliverList)).delegate,
-      isA<SliverChildBuilderDelegate>(),
-    );
-    expect(access.isChannelEnabled(NotificationChannelId.appSyncing), isTrue);
-    await tester.tap(find.byType(SwitchListTile).first);
-    await tester.pump();
+        expect(find.byType(AdaptiveListSection), findsOneWidget);
+        final rows = find.byType(AdaptiveSwitchListTile);
+        expect(rows, findsNWidgets(2));
+        final switchType = platform == TargetPlatform.android
+            ? Switch
+            : CupertinoSwitch;
+        expect(find.byType(switchType), findsNWidgets(2));
+        expect(tester.takeException(), isNull);
 
-    expect(access.isChannelEnabled(NotificationChannelId.appSyncing), isFalse);
-  });
+        // The label and switch are the same action, each writing once.
+        final firstRow = tester.widget<AdaptiveSwitchListTile>(rows.first);
+        await tester.tap(find.byWidget(firstRow.title));
+        await tester.pumpAndSettle();
+        expect(access.updateCount, 1);
+        expect(
+          access.isChannelEnabled(NotificationChannelId.appSyncing),
+          isFalse,
+        );
+        expect(
+          access.isChannelEnabled(NotificationChannelId.appSyncFailed),
+          isTrue,
+        );
+        expect(
+          tester.widget<AdaptiveSwitchListTile>(rows.first).value,
+          isFalse,
+        );
+
+        final firstSwitch = find.descendant(
+          of: rows.first,
+          matching: find.byType(switchType),
+        );
+        await tester.tap(firstSwitch);
+        await tester.pumpAndSettle();
+        expect(access.updateCount, 2);
+        expect(
+          access.isChannelEnabled(NotificationChannelId.appSyncing),
+          isTrue,
+        );
+
+        final secondSwitch = find.descendant(
+          of: rows.last,
+          matching: find.byType(switchType),
+        );
+        await tester.ensureVisible(secondSwitch);
+        await tester.tap(secondSwitch);
+        await tester.pumpAndSettle();
+        expect(access.updateCount, 3);
+        expect(
+          access.isChannelEnabled(NotificationChannelId.appSyncing),
+          isTrue,
+        );
+        expect(
+          access.isChannelEnabled(NotificationChannelId.appSyncFailed),
+          isFalse,
+        );
+
+        // A provider update must also reach the rendered control.
+        access.updateConfig(
+          access.notifyConfig.copyWith({
+            NotificationChannelId.appSyncFailed: true,
+          }),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.widget<AdaptiveSwitchListTile>(rows.last).value, isTrue);
+        expect(tester.takeException(), isNull);
+      });
+    }
+  }
 
   testWidgets('Experimental keeps feature state and warning behavior', (
     tester,
@@ -218,7 +326,9 @@ void main() {
     );
 
     expect(find.byType(MaterialBanner), findsNothing);
-    await tester.tap(find.widgetWithText(SwitchListTile, 'Habit Grouping'));
+    await tester.tap(
+      find.widgetWithText(AdaptiveSwitchListTile, 'Habit Grouping'),
+    );
     await tester.pumpAndSettle();
 
     expect(find.byType(MaterialBanner), findsOneWidget);
@@ -241,4 +351,174 @@ void main() {
     expect(actionsSafeArea.left, isTrue);
     expect(actionsSafeArea.right, isTrue);
   });
+  for (final platform in [
+    TargetPlatform.android,
+    TargetPlatform.iOS,
+    TargetPlatform.macOS,
+  ]) {
+    for (final direction in TextDirection.values) {
+      testWidgets('Experimental grouped actions $platform $direction', (
+        tester,
+      ) async {
+        tester.view.physicalSize = const Size(320, 1600);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        final vm = _FakeExperimentalFeatureViewModel();
+        addTearDown(vm.dispose);
+        await tester.pumpWidget(
+          ChangeNotifierProvider<AppExperimentalFeatureViewModel>.value(
+            value: vm,
+            child: MaterialApp(
+              theme: ThemeData(platform: platform),
+              builder: (context, child) => Directionality(
+                textDirection: direction,
+                child: MediaQuery(
+                  data: MediaQuery.of(
+                    context,
+                  ).copyWith(textScaler: const TextScaler.linear(2)),
+                  child: child!,
+                ),
+              ),
+              home: const ExpermentalFeaturesPage(),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byType(AdaptiveListSection), findsOneWidget);
+        final rows = find.byType(AdaptiveSwitchListTile);
+        expect(rows, findsNWidgets(3));
+        final switchType = platform == TargetPlatform.android
+            ? Switch
+            : CupertinoSwitch;
+        expect(find.byType(switchType), findsNWidgets(3));
+        expect(
+          tester.widget<AdaptiveSwitchListTile>(rows.first).onChanged,
+          isNull,
+        );
+        await tester.tap(find.text('Habit Search'));
+        await tester.pumpAndSettle();
+        expect(vm.groupingWrites + vm.naturalSortWrites, 0);
+        expect(find.byType(MaterialBanner), findsNothing);
+        await tester.tap(find.text('Habit Grouping'));
+        await tester.pumpAndSettle();
+        expect(vm.groupingWrites, 1);
+        expect(vm.habitGrouping, isTrue);
+        expect(vm.naturalSort, isFalse);
+        expect(find.byType(MaterialBanner), findsOneWidget);
+        await tester.ensureVisible(find.text('DISMISS'));
+        await tester.tap(find.text('DISMISS'));
+        await tester.pumpAndSettle();
+        expect(find.byType(MaterialBanner), findsNothing);
+        final naturalSwitch = find.descendant(
+          of: rows.last,
+          matching: find.byType(switchType),
+        );
+        await tester.ensureVisible(naturalSwitch);
+        await tester.tap(naturalSwitch);
+        await tester.pumpAndSettle();
+        expect(vm.naturalSortWrites, 1);
+        expect(vm.naturalSort, isTrue);
+        expect(vm.groupingWrites, 1);
+        expect(find.byType(MaterialBanner), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+
+      testWidgets('About grouped layout $platform $direction', (tester) async {
+        tester.view.physicalSize = const Size(320, 900);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(platform: platform),
+            localizationsDelegates: L10n.localizationsDelegates,
+            supportedLocales: L10n.supportedLocales,
+            locale: const Locale('de'),
+            builder: (context, child) => Directionality(
+              textDirection: direction,
+              child: MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(textScaler: const TextScaler.linear(2)),
+                child: child!,
+              ),
+            ),
+            home: const AppAboutPage(),
+          ),
+        );
+        await tester.pumpAndSettle();
+        for (final type in [
+          AppAboutVersionTile,
+          AppAboutSourceCodeTile,
+          AppAboutIssueTrackerTile,
+          AppAboutContactEmailTile,
+          AppAboutLicenseTile,
+          AppAboutThirdPartyLicenseTile,
+          AppAboutPrivacyTile,
+          if (!AppInfo().shouldHideDonate()) AppAboutDonateTile,
+        ]) {
+          await tester.scrollUntilVisible(find.byType(type), 150);
+          await tester.pumpAndSettle();
+          expect(
+            find.ancestor(
+              of: find.byType(type),
+              matching: find.byType(AdaptiveListSection),
+            ),
+            findsOneWidget,
+          );
+          expect(tester.takeException(), isNull);
+        }
+      });
+    }
+    testWidgets('About retains changelog and license actions $platform', (
+      tester,
+    ) async {
+      // Do not reuse asset futures created in a previous test's FakeAsync zone.
+      rootBundle.evict(Assets.changelog);
+      rootBundle.evict('LICENSE');
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(platform: platform),
+          home: const AppAboutPage(),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(AppAboutVersionTile));
+      await tester.pumpAndSettle();
+      expect(find.byType(AdaptiveModal), findsNothing);
+      await tester.longPress(find.byType(AppAboutVersionTile));
+      await tester.pumpAndSettle();
+      expect(find.byType(AdaptiveModal), findsOneWidget);
+      Navigator.of(
+        tester.element(find.byType(AdaptiveModal)),
+        rootNavigator: true,
+      ).pop();
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(find.byType(AppAboutLicenseTile), 150);
+      await tester.tap(find.byType(AppAboutLicenseTile));
+      await tester.pumpAndSettle();
+      expect(find.byType(AdaptiveModal), findsOneWidget);
+      expect(find.text('License').hitTestable(), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  }
+  for (final title in ['Habit Grouping', 'Natural Sort']) {
+    testWidgets('Experimental pending $title update survives leaving page', (
+      tester,
+    ) async {
+      final vm = _FakeExperimentalFeatureViewModel()
+        ..pendingWrite = Completer<void>();
+      addTearDown(vm.dispose);
+      await tester.pumpWidget(
+        ChangeNotifierProvider<AppExperimentalFeatureViewModel>.value(
+          value: vm,
+          child: const MaterialApp(home: ExpermentalFeaturesPage()),
+        ),
+      );
+      await tester.tap(find.text(title));
+      await tester.pumpWidget(const SizedBox.shrink());
+      vm.pendingWrite!.complete();
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    });
+  }
 }

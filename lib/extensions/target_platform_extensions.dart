@@ -1,4 +1,4 @@
-// Copyright 2025 Fries_I23
+// Copyright 2026 Fries_I23
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,12 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
-const kAppAboutListTileLeadingHeight = 28.0;
-
-const kAppAboutListTileLeadingWidth = kAppAboutListTileLeadingHeight;
-
-const kAppAboutListTileLeadingSize = Size.square(
-  kAppAboutListTileLeadingHeight,
-);
+extension TargetPlatformSemantics on TargetPlatform {
+  /// Whether this platform uses a mobile operating system.
+  ///
+  /// This classifies the operating system only. It does not describe the
+  /// current window size, form factor, or available pointer devices.
+  bool get isMobileOperatingSystem => switch (this) {
+    TargetPlatform.android || TargetPlatform.iOS => true,
+    _ => false,
+  };
+}

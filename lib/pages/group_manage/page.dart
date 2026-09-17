@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
@@ -453,34 +453,28 @@ class _GroupManageDevelopMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(16, 8, 16, switch (AdaptiveStyle.of(
-        context,
-      )) {
-        AdaptiveStyle.material => 72,
-        AdaptiveStyle.apple => 16,
-      }),
-      child: ListTile(
-        title: const Text('Edit dialog'),
-        trailing: DropdownButton<GroupEditForceMode>(
-          value: mode,
-          onChanged: (value) {
-            if (value != null) onChanged(value);
-          },
-          items: const [
-            DropdownMenuItem(
-              value: GroupEditForceMode.defaultMode,
-              child: Text('Default'),
+      padding: EdgeInsets.only(
+        bottom: switch (AdaptiveStyle.of(context)) {
+          AdaptiveStyle.material => 72,
+          AdaptiveStyle.apple => 16,
+        },
+      ),
+      child: AdaptiveListSection(
+        children: [
+          AdaptiveChoiceListTile<GroupEditForceMode>(
+            title: const Text('Edit dialog'),
+            value: mode,
+            labels: const {
+              GroupEditForceMode.defaultMode: 'Default',
+              GroupEditForceMode.forceSheet: 'Sheet',
+              GroupEditForceMode.forceDialog: 'Dialog',
+            },
+            config: const AdaptiveChoiceListTileConfig.choice(
+              choice: AdaptiveChoiceLayout.responsive,
             ),
-            DropdownMenuItem(
-              value: GroupEditForceMode.forceSheet,
-              child: Text('Sheet'),
-            ),
-            DropdownMenuItem(
-              value: GroupEditForceMode.forceDialog,
-              child: Text('Dialog'),
-            ),
-          ],
-        ),
+            onChanged: onChanged,
+          ),
+        ],
       ),
     );
   }

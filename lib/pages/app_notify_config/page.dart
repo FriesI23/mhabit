@@ -61,36 +61,40 @@ class _AppNotifyConfigView extends State<AppNotifyConfigView> {
           EnhancedSafeArea.withDefault(
             top: false,
             withSliver: true,
-            child: SliverList.builder(
-              itemCount: _availableIds.length,
-              itemBuilder: (context, index) {
-                final channelId = _availableIds[index];
-                return Selector<AppNotifyConfigAccess, bool>(
-                  selector: (context, vm) =>
-                      vm.notifyConfig.isChannelEnabled(channelId),
-                  shouldRebuild: (previous, next) => previous != next,
-                  builder: (context, value, child) {
-                    final channelName = channelId.getL10nChannelName(
-                      L10n.of(context),
-                    );
-                    final channelDesc = channelId.getL10nChannelDesc(
-                      L10n.of(context),
-                    );
-                    return SwitchListTile.adaptive(
-                      title: Text(channelName),
-                      subtitle: channelDesc != null ? Text(channelDesc) : null,
-                      value: value,
-                      onChanged: (value) {
-                        final config = context.read<AppNotifyConfigAccess>();
-                        if (!config.mounted) return;
-                        config.updateConfig(
-                          config.notifyConfig.copyWith({channelId: value}),
+            child: SliverToBoxAdapter(
+              child: AdaptiveListSection(
+                children: [
+                  for (final channelId in _availableIds)
+                    Selector<AppNotifyConfigAccess, bool>(
+                      selector: (context, vm) =>
+                          vm.notifyConfig.isChannelEnabled(channelId),
+                      shouldRebuild: (previous, next) => previous != next,
+                      builder: (context, value, child) {
+                        final channelName = channelId.getL10nChannelName(
+                          L10n.of(context),
+                        );
+                        final channelDesc = channelId.getL10nChannelDesc(
+                          L10n.of(context),
+                        );
+                        return AdaptiveSwitchListTile(
+                          title: Text(channelName),
+                          subtitle: channelDesc != null
+                              ? Text(channelDesc)
+                              : null,
+                          value: value,
+                          onChanged: (value) {
+                            final config = context
+                                .read<AppNotifyConfigAccess>();
+                            if (!config.mounted) return;
+                            config.updateConfig(
+                              config.notifyConfig.copyWith({channelId: value}),
+                            );
+                          },
                         );
                       },
-                    );
-                  },
-                );
-              },
+                    ),
+                ],
+              ),
             ),
           ),
         ],

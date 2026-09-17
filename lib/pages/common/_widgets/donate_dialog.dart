@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
@@ -44,20 +45,16 @@ Future<DonateDialogResult?> showDonateDialog(
       title: l10n != null ? Text(l10n.appAbout_donateTile_titleText) : null,
       automaticallyImplyCloseButton: false,
       constraints: const BoxConstraints(maxWidth: 800),
-      // TODO(mhabit-adaptive-dialog): Remove this compatibility bridge only after
-      // DonateContent controls support Apple; keep the already migrated modal route.
-      body: AdaptiveModalMaterialBridge(
-        child: DonateContent(
-          donateBuyMeACoffeeToken: donateBuyMeACoffeeToken,
-          donatePaypalToken: donatePaypalToken,
-          btcAddress: btcAddress,
-          ethAddress: ethAddress,
-          bnbAddress: bnbAddress,
-          avaxAddress: avaxAddress,
-          ftmAddress: ftmAddress,
-          alipayQRCodePath: alipayQRCodePath,
-          wechatPayQRCodePath: wechatPayQRCodePath,
-        ),
+      body: DonateContent(
+        donateBuyMeACoffeeToken: donateBuyMeACoffeeToken,
+        donatePaypalToken: donatePaypalToken,
+        btcAddress: btcAddress,
+        ethAddress: ethAddress,
+        bnbAddress: bnbAddress,
+        avaxAddress: avaxAddress,
+        ftmAddress: ftmAddress,
+        alipayQRCodePath: alipayQRCodePath,
+        wechatPayQRCodePath: wechatPayQRCodePath,
       ),
     ),
   );
@@ -172,15 +169,9 @@ class _DonateContentState extends State<DonateContent> {
     Widget buildBuyMeACoffeeList() => Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (l10n != null)
-          ListTile(
-            title: Text(l10n.donateWay_buyMeACoffee),
-            contentPadding: EdgeInsets.zero,
-            visualDensity: VisualDensity.compact,
-          ),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 320),
-          child: ElevatedButton.icon(
+          child: _DonateBrandButton(
             onPressed: widget.donateBuyMeACoffeeToken.isEmpty
                 ? null
                 : () => _openDonation(
@@ -188,11 +179,9 @@ class _DonateContentState extends State<DonateContent> {
                     'https://www.buymeacoffee.com/'
                     '${widget.donateBuyMeACoffeeToken}',
                   ),
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(200, 42),
-              backgroundColor: const Color(0xffffdd00),
-              foregroundColor: Colors.black,
-            ),
+            minimumSize: const Size(200, 42),
+            backgroundColor: const Color(0xffffdd00),
+            foregroundColor: Colors.black,
             icon: const Icon(SimpleIcons.buymeacoffee),
             label: const Text(
               'Buy me a Coffee',
@@ -206,13 +195,7 @@ class _DonateContentState extends State<DonateContent> {
     Widget buildPaypalList() => Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (l10n != null)
-          ListTile(
-            title: Text(l10n.donateWay_paypal),
-            contentPadding: EdgeInsets.zero,
-            visualDensity: VisualDensity.compact,
-          ),
-        ElevatedButton.icon(
+        _DonateBrandButton(
           onPressed: widget.donatePaypalToken.isEmpty
               ? null
               : () => _openDonation(
@@ -220,7 +203,7 @@ class _DonateContentState extends State<DonateContent> {
                   'https://www.paypal.com/donate?hosted_button_id='
                   '${widget.donatePaypalToken}',
                 ),
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.blue[600]),
+          backgroundColor: Colors.blue[600]!,
           icon: const Icon(SimpleIcons.paypal),
           label: const Text('Donate with Paypal'),
         ),
@@ -230,14 +213,9 @@ class _DonateContentState extends State<DonateContent> {
     Widget buildCryptoButtonList() => Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (l10n != null)
-          ListTile(
-            title: Text(l10n.donateWay_cryptoCurrency),
-            contentPadding: EdgeInsets.zero,
-            visualDensity: VisualDensity.compact,
-          ),
         Wrap(
           spacing: 8.0,
+          runSpacing: 8.0,
           children: List<Widget>.generate(
             CryptoDonateButtonType.values.length,
             (index) {
@@ -283,48 +261,32 @@ class _DonateContentState extends State<DonateContent> {
           Widget wechatQR() => qrImage(widget.wechatPayQRCodePath);
 
           if (wide) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (l10n != null)
-                  ListTile(
-                    title: Text(l10n.donateWay_firstQRGroup),
-                    contentPadding: EdgeInsets.zero,
-                    visualDensity: VisualDensity.compact,
-                  ),
-                Wrap(
-                  spacing: 8.0,
-                  runSpacing: 6.0,
-                  children: [
-                    if (hasAlipay) alipayQR(),
-                    if (hasWechat) wechatQR(),
-                  ],
-                ),
-              ],
+            return _DonateSection(
+              title: l10n?.donateWay_firstQRGroup,
+              child: Wrap(
+                spacing: 8.0,
+                runSpacing: 6.0,
+                children: [
+                  if (hasAlipay) alipayQR(),
+                  if (hasWechat) wechatQR(),
+                ],
+              ),
             );
           }
 
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (hasAlipay) ...[
-                if (l10n != null)
-                  ListTile(
-                    title: Text(l10n.donateWay_alipay),
-                    contentPadding: EdgeInsets.zero,
-                    visualDensity: VisualDensity.compact,
-                  ),
-                alipayQR(),
-              ],
-              if (hasWechat) ...[
-                if (l10n != null)
-                  ListTile(
-                    title: Text(l10n.donateWay_wechatPay),
-                    contentPadding: EdgeInsets.zero,
-                    visualDensity: VisualDensity.compact,
-                  ),
-                wechatQR(),
-              ],
+              if (hasAlipay)
+                _DonateSection(
+                  title: l10n?.donateWay_alipay,
+                  child: alipayQR(),
+                ),
+              if (hasWechat)
+                _DonateSection(
+                  title: l10n?.donateWay_wechatPay,
+                  child: wechatQR(),
+                ),
             ],
           );
         },
@@ -335,15 +297,134 @@ class _DonateContentState extends State<DonateContent> {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (donateWays.contains(DonateWay.cryptoCurrencyAll))
-          buildCryptoButtonList(),
+          _DonateSection(
+            title: l10n?.donateWay_cryptoCurrency,
+            child: buildCryptoButtonList(),
+          ),
         if (donateWays.contains(DonateWay.buyMeACoffee))
-          buildBuyMeACoffeeList(),
+          _DonateSection(
+            title: l10n?.donateWay_buyMeACoffee,
+            child: buildBuyMeACoffeeList(),
+          ),
         if (donateWays.contains(DonateWay.paypal) &&
             widget.donatePaypalToken.isNotEmpty)
-          buildPaypalList(),
-        buildQRSection(),
+          _DonateSection(
+            title: l10n?.donateWay_paypal,
+            child: buildPaypalList(),
+          ),
+        if (donateWays.contains(DonateWay.alipay) ||
+            donateWays.contains(DonateWay.wechatPay))
+          buildQRSection(),
         const SizedBox(height: 8),
       ],
     );
   }
+}
+
+/// Groups the existing branded content without turning controls into rows.
+class _DonateSection extends StatelessWidget {
+  const _DonateSection({required this.title, required this.child});
+  final String? title;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => AdaptiveListSection(
+    header: title == null ? null : Text(title!),
+    children: [Padding(padding: const EdgeInsets.all(16), child: child)],
+  );
+}
+
+class _DonateBrandButton extends StatelessWidget {
+  const _DonateBrandButton({
+    required this.onPressed,
+    required this.backgroundColor,
+    required this.icon,
+    required this.label,
+    this.foregroundColor,
+    this.minimumSize,
+  });
+  final VoidCallback? onPressed;
+  final Color backgroundColor;
+  final Color? foregroundColor;
+  final Size? minimumSize;
+  final Widget icon;
+  final Widget label;
+
+  @override
+  Widget build(BuildContext context) => switch (AdaptiveStyle.of(context)) {
+    AdaptiveStyle.material => _MaterialDonateBrandButton(
+      onPressed: onPressed,
+      backgroundColor: backgroundColor,
+      foregroundColor: foregroundColor,
+      minimumSize: minimumSize,
+      icon: icon,
+      label: label,
+    ),
+    AdaptiveStyle.apple => _AppleDonateBrandButton(
+      onPressed: onPressed,
+      backgroundColor: backgroundColor,
+      foregroundColor: foregroundColor,
+      icon: icon,
+      label: label,
+    ),
+  };
+}
+
+class _MaterialDonateBrandButton extends StatelessWidget {
+  const _MaterialDonateBrandButton({
+    required this.onPressed,
+    required this.backgroundColor,
+    required this.foregroundColor,
+    required this.icon,
+    required this.label,
+    this.minimumSize,
+  });
+  final VoidCallback? onPressed;
+  final Color backgroundColor;
+  final Color? foregroundColor;
+  final Widget icon;
+  final Widget label;
+  final Size? minimumSize;
+
+  @override
+  Widget build(BuildContext context) => ElevatedButton.icon(
+    onPressed: onPressed,
+    style: ElevatedButton.styleFrom(
+      minimumSize: minimumSize,
+      backgroundColor: backgroundColor,
+      foregroundColor: foregroundColor,
+    ),
+    icon: icon,
+    label: label,
+  );
+}
+
+class _AppleDonateBrandButton extends StatelessWidget {
+  const _AppleDonateBrandButton({
+    required this.onPressed,
+    required this.backgroundColor,
+    required this.foregroundColor,
+    required this.icon,
+    required this.label,
+  });
+  final VoidCallback? onPressed;
+  final Color backgroundColor;
+  final Color? foregroundColor;
+  final Widget icon;
+  final Widget label;
+
+  @override
+  Widget build(BuildContext context) => CupertinoButton(
+    onPressed: onPressed,
+    color: backgroundColor,
+    foregroundColor: foregroundColor ?? CupertinoColors.white,
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        icon,
+        const SizedBox(width: 8),
+        Flexible(child: label),
+      ],
+    ),
+  );
 }

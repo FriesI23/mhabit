@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../logging/level.dart';
@@ -50,7 +51,7 @@ class LogLevelChangerTile extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(_getLogName(context, level: level)),
+            Flexible(child: Text(_getLogName(context, level: level))),
             if (crtLevel == level) const Icon(Icons.check),
           ],
         ),
@@ -62,7 +63,7 @@ class LogLevelChangerTile extends StatelessWidget {
     }
 
     final l10n = L10n.of(context);
-    return ListTile(
+    return AdaptiveListTile(
       title: l10n != null
           ? Text(l10n.debug_logLevelTile_title)
           : const Text("Logging level"),
