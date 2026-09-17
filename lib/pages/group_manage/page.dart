@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +20,6 @@ import '../../l10n/localizations.dart';
 import '../../models/habit_display.dart';
 import '../../models/habit_group.dart';
 import '../../models/habit_group_display.dart';
-import '../../providers/app_ui/app_developer.dart';
 import '../../routes/app_navigation_coordinator.dart';
 import '../../widgets/widgets.dart';
 import '../habits_display/_widgets/habit_display_group_type_picker.dart';
@@ -50,22 +48,8 @@ class _Page extends StatefulWidget {
   State<_Page> createState() => _PageState();
 }
 
-/// Debug-only: forces the group edit/create dialog to open as a bottom sheet
-/// or a dialog, regardless of screen size. [defaultMode] follows the normal
-/// adaptive heuristics.
-enum GroupEditForceMode { defaultMode, forceSheet, forceDialog }
-
-extension on GroupEditForceMode {
-  AdaptiveModalPresentation? get presentationOverride => switch (this) {
-    GroupEditForceMode.defaultMode => null,
-    GroupEditForceMode.forceSheet => AdaptiveModalPresentation.sheet,
-    GroupEditForceMode.forceDialog => AdaptiveModalPresentation.dialog,
-  };
-}
-
 class _PageState extends State<_Page> {
   ScaffoldMessengerState? _snackbarMessenger;
-  GroupEditForceMode _debugForceEditMode = GroupEditForceMode.defaultMode;
   bool _skipDeleteConfirm = false;
 
   @visibleForTesting
@@ -100,10 +84,7 @@ class _PageState extends State<_Page> {
 
   Future<void> _openCreateDialog() async {
     final vm = context.read<GroupManageViewModel>();
-    final result = await showGroupEditDialog(
-      context: context,
-      presentationOverride: _debugForceEditMode.presentationOverride,
-    );
+    final result = await showGroupEditDialog(context: context);
     if (result == null || !mounted) return;
     await vm.createGroup(
       name: result.name,
@@ -121,7 +102,6 @@ class _PageState extends State<_Page> {
     final result = await showGroupEditDialog(
       context: context,
       existingGroup: data,
-      presentationOverride: _debugForceEditMode.presentationOverride,
     );
     if (result == null || !mounted) return;
     await vm.updateGroup(
@@ -226,7 +206,6 @@ class _PageState extends State<_Page> {
                 onDelete: _onSingleDelete,
                 onSortOpen: _openSortSelector,
                 onBatchDelete: _onBatchDelete,
-                debugMenuBuilder: _buildDevelopMenu,
               );
             },
           ),
@@ -248,19 +227,6 @@ class _PageState extends State<_Page> {
     return FloatingActionButton(
       onPressed: _openCreateDialog,
       child: const Icon(Icons.add),
-    );
-  }
-
-  Widget _buildDevelopMenu(BuildContext context) {
-    return Selector<AppDeveloperViewModel, bool>(
-      selector: (context, vm) => vm.showDebugMenuOnDisplayView,
-      builder: (context, showMenu, child) {
-        if (!showMenu) return const SizedBox.shrink();
-        return _GroupManageDevelopMenu(
-          mode: _debugForceEditMode,
-          onChanged: (mode) => setState(() => _debugForceEditMode = mode),
-        );
-      },
     );
   }
 }
@@ -298,7 +264,6 @@ class _GroupManageBody extends StatelessWidget {
     required this.onDelete,
     required this.onSortOpen,
     required this.onBatchDelete,
-    required this.debugMenuBuilder,
   });
 
   final ValueChanged<String> onEdit;
@@ -306,7 +271,6 @@ class _GroupManageBody extends StatelessWidget {
   final VoidCallback onCreate;
   final VoidCallback onSortOpen;
   final VoidCallback onBatchDelete;
-  final WidgetBuilder debugMenuBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -348,8 +312,6 @@ class _GroupManageBody extends StatelessWidget {
                     onEdit: onEdit,
                     onDelete: onDelete,
                   ),
-                  if (kDebugMode)
-                    SliverToBoxAdapter(child: debugMenuBuilder(context)),
                 ],
               ),
             ),
@@ -441,41 +403,5 @@ class _GroupManageContent extends StatelessWidget {
             onEdit: onEdit,
             onDelete: onDelete,
           );
-  }
-}
-
-class _GroupManageDevelopMenu extends StatelessWidget {
-  final GroupEditForceMode mode;
-  final ValueChanged<GroupEditForceMode> onChanged;
-
-  const _GroupManageDevelopMenu({required this.mode, required this.onChanged});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: switch (AdaptiveStyle.of(context)) {
-          AdaptiveStyle.material => 72,
-          AdaptiveStyle.apple => 16,
-        },
-      ),
-      child: AdaptiveListSection(
-        children: [
-          AdaptiveChoiceListTile<GroupEditForceMode>(
-            title: const Text('Edit dialog'),
-            value: mode,
-            labels: const {
-              GroupEditForceMode.defaultMode: 'Default',
-              GroupEditForceMode.forceSheet: 'Sheet',
-              GroupEditForceMode.forceDialog: 'Dialog',
-            },
-            config: const AdaptiveChoiceListTileConfig.choice(
-              choice: AdaptiveChoiceLayout.responsive,
-            ),
-            onChanged: onChanged,
-          ),
-        ],
-      ),
-    );
   }
 }

@@ -1,12 +1,13 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' show MaterialLocalizations;
 
-import '../adaptive/adaptive_app_bar.dart';
 import '../adaptive/adaptive_modal_layout.dart';
 import '../adaptive/modal_sheet_drag_region.dart';
+import '../window_control/cupertino_navigation_bar.dart';
 import '../window_control/modal_app_bar_region.dart';
 
 const _sheetHeightFactor = 0.92;
@@ -299,15 +300,16 @@ class _CupertinoAdaptiveModalRouteSurfaceState
   Widget build(BuildContext context) {
     const maxExtent = _sheetHeightFactor;
     final surface = switch ((widget.presentation, widget.enableDrag)) {
-      (AdaptiveModalPresentation.dialog, false) => Center(
-        child: CupertinoPopupSurface(child: widget.contentBuilder(null)),
-      ),
+      (AdaptiveModalPresentation.dialog, false) =>
+        _CupertinoDialogKeyboardLayout(
+          child: CupertinoPopupSurface(child: widget.contentBuilder(null)),
+        ),
       (AdaptiveModalPresentation.dialog, true) => Builder(
         builder: (context) {
           final route = ModalRoute.of(context);
           assert(route is CupertinoAdaptiveModalRoute<dynamic>);
           final cupertinoRoute = route! as CupertinoAdaptiveModalRoute<dynamic>;
-          return Center(
+          return _CupertinoDialogKeyboardLayout(
             child: _CupertinoDialogScrollDismissRegion(
               showDragHandle: widget.showDragHandle,
               onDragStart: cupertinoRoute.startDrag,
@@ -441,6 +443,74 @@ class _CupertinoSheetBackground extends StatelessWidget {
       ],
     ),
   );
+}
+
+/// Keeps the dialog centered until it intersects the keyboard, then moves the
+/// whole surface just enough to clear it. All dimensions are window-local, so
+/// this also works in iPad windowed mode without device-size assumptions.
+class _CupertinoDialogKeyboardLayout extends StatelessWidget {
+  const _CupertinoDialogKeyboardLayout({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => TweenAnimationBuilder<double>(
+    tween: Tween(end: MediaQuery.viewInsetsOf(context).bottom),
+    duration: const Duration(milliseconds: 200),
+    curve: Curves.easeOut,
+    child: child,
+    builder: (context, keyboardInset, child) => CustomSingleChildLayout(
+      delegate: _CupertinoDialogKeyboardLayoutDelegate(
+        keyboardInset: keyboardInset,
+        windowHeight: MediaQuery.sizeOf(context).height,
+        topPadding: MediaQuery.paddingOf(context).top,
+      ),
+      child: child,
+    ),
+  );
+}
+
+class _CupertinoDialogKeyboardLayoutDelegate extends SingleChildLayoutDelegate {
+  const _CupertinoDialogKeyboardLayoutDelegate({
+    required this.keyboardInset,
+    required this.windowHeight,
+    required this.topPadding,
+  });
+
+  final double keyboardInset;
+  final double windowHeight;
+  final double topPadding;
+
+  double _availableBottom(double height) =>
+      math.min(height, math.max(0, windowHeight - keyboardInset));
+
+  @override
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) =>
+      BoxConstraints(
+        maxWidth: constraints.maxWidth,
+        maxHeight: math.max(
+          0,
+          _availableBottom(constraints.maxHeight) - topPadding,
+        ),
+      );
+
+  @override
+  Offset getPositionForChild(Size size, Size childSize) => Offset(
+    (size.width - childSize.width) / 2,
+    math.max(
+      topPadding,
+      math.min(
+        (size.height - childSize.height) / 2,
+        _availableBottom(size.height) - childSize.height,
+      ),
+    ),
+  );
+
+  @override
+  bool shouldRelayout(_CupertinoDialogKeyboardLayoutDelegate oldDelegate) =>
+      keyboardInset != oldDelegate.keyboardInset ||
+      windowHeight != oldDelegate.windowHeight ||
+      topPadding != oldDelegate.topPadding;
 }
 
 class _CupertinoDialogScrollDismissRegion extends StatefulWidget {
@@ -673,6 +743,7 @@ class CupertinoAdaptiveModal extends StatelessWidget {
     super.key,
     required this.title,
     required this.leadingAction,
+    this.appBarActions = const [],
     required this.actions,
     required this.pinnedBody,
     required this.body,
@@ -682,10 +753,12 @@ class CupertinoAdaptiveModal extends StatelessWidget {
     required this.constraints,
     required this.presentation,
     required this.scrollController,
+    this.onContentHeightChanged,
   });
 
   final Widget? title;
   final Widget? leadingAction;
+  final List<Widget> appBarActions;
   final List<Widget> actions;
   final Widget? pinnedBody;
   final Widget body;
@@ -695,14 +768,11 @@ class CupertinoAdaptiveModal extends StatelessWidget {
   final BoxConstraints? constraints;
   final AdaptiveModalPresentation presentation;
   final ScrollController scrollController;
+  final ValueChanged<double>? onContentHeightChanged;
 
   @override
   Widget build(BuildContext context) {
     final theme = CupertinoTheme.of(context);
-    final modalBackgroundColor = CupertinoDynamicColor.resolve(
-      CupertinoColors.systemBackground,
-      context,
-    );
     final impliedClose = automaticallyImplyCloseButton
         ? Semantics(
             label: MaterialLocalizations.of(context).closeButtonLabel,
@@ -720,18 +790,36 @@ class CupertinoAdaptiveModal extends StatelessWidget {
       child: MediaQuery.removePadding(
         context: context,
         removeTop: true,
-        child: AdaptiveAppBar.apple(
-          key: const ValueKey('adaptive-modal-app-bar'),
-          leading: leadingAction,
-          automaticallyImplyLeading: false,
-          title: title == null
-              ? const SizedBox.shrink()
-              : KeyedSubtree(
-                  key: const ValueKey('adaptive-modal-title'),
-                  child: title!,
-                ),
-          actions: [?impliedClose],
-          automaticBackgroundVisibility: false,
+        child: ListenableBuilder(
+          listenable: scrollController,
+          builder: (context, _) => WindowControlCupertinoNavigationBar(
+            key: const ValueKey('adaptive-modal-app-bar'),
+            leading: leadingAction == null
+                ? null
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [leadingAction!],
+                  ),
+            automaticallyImplyLeading: false,
+            middle: title == null
+                ? const SizedBox.shrink()
+                : KeyedSubtree(
+                    key: const ValueKey('adaptive-modal-title'),
+                    child: title!,
+                  ),
+            trailing: appBarActions.isEmpty && impliedClose == null
+                ? null
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [...appBarActions, ?impliedClose],
+                  ),
+            backgroundColor: CupertinoColors.transparent,
+            transitionBetweenRoutes: false,
+            automaticBackgroundVisibility: true,
+            enableBackgroundFilterBlur:
+                scrollController.hasClients &&
+                scrollController.position.extentBefore > 0,
+          ),
         ),
       ),
     );
@@ -765,7 +853,9 @@ class CupertinoAdaptiveModal extends StatelessWidget {
       child: DefaultTextStyle(
         style: theme.textTheme.textStyle,
         child: CupertinoPageScaffoldBackgroundColor(
-          color: modalBackgroundColor,
+          // The shared popup surface owns the tint. Keep the navigation bar's
+          // unscrolled background transparent instead of painting an opaque strip.
+          color: CupertinoColors.transparent,
           child: ScrollNotificationObserver(
             child: Stack(
               fit: StackFit.passthrough,
@@ -775,6 +865,7 @@ class CupertinoAdaptiveModal extends StatelessWidget {
                   body: paddedBody,
                   bottomActions: bottomActions,
                   scrollController: scrollController,
+                  onContentHeightChanged: onContentHeightChanged,
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
                   presentation: presentation,
                   constraints: constraints,

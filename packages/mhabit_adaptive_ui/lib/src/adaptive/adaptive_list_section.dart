@@ -13,12 +13,15 @@ import '../material/material_list_section.dart';
 /// Children keep their own callbacks. Adaptive rows consume the section's
 /// geometry; arbitrary children must provide their own platform controls.
 /// [hasLeading] aligns Apple separators with rows that have leading content.
+/// [padding] overrides the platform's default exterior section padding when
+/// the section is already hosted inside another padded surface.
 class AdaptiveListSection extends StatelessWidget {
   const AdaptiveListSection({
     super.key,
     this.header,
     required this.children,
     this.hasLeading = false,
+    this.padding,
   }) : style = null;
 
   const AdaptiveListSection.material({
@@ -26,6 +29,7 @@ class AdaptiveListSection extends StatelessWidget {
     this.header,
     required this.children,
     this.hasLeading = false,
+    this.padding,
   }) : style = AdaptiveStyle.material;
 
   const AdaptiveListSection.apple({
@@ -33,12 +37,14 @@ class AdaptiveListSection extends StatelessWidget {
     this.header,
     required this.children,
     this.hasLeading = false,
+    this.padding,
   }) : style = AdaptiveStyle.apple;
 
   final AdaptiveStyle? style;
   final Widget? header;
   final List<Widget> children;
   final bool hasLeading;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -50,10 +56,12 @@ class AdaptiveListSection extends StatelessWidget {
         AdaptiveStyle.apple => CupertinoAdaptiveListSection(
           header: header,
           hasLeading: hasLeading,
+          padding: padding,
           children: children,
         ),
         AdaptiveStyle.material => MaterialAdaptiveListSection(
           header: header,
+          padding: padding,
           children: children,
         ),
       },

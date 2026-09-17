@@ -90,6 +90,59 @@ AdaptiveModal _fullModal({VoidCallback? onCloseRequested}) => AdaptiveModal(
 );
 
 void main() {
+  for (final style in AdaptiveStyle.values) {
+    for (final presentation in AdaptiveModalPresentation.values) {
+      testWidgets(
+        '$style $presentation scrolls actions with a compact keyboard viewport',
+        (tester) async {
+          tester.view.physicalSize = const Size(1000, 800);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+          addTearDown(tester.view.resetViewInsets);
+          await tester.pumpWidget(
+            _buildTestApp(
+              style: style,
+              presentation: presentation,
+              modalBuilder: (_) => AdaptiveModal(
+                title: const Text('Title'),
+                body: const SizedBox(height: 1200, child: Text('Body')),
+                actions: [
+                  TextButton(onPressed: () {}, child: const Text('Save')),
+                ],
+              ),
+            ),
+          );
+          await _open(tester);
+          final action = find.text('Save');
+          final originalY = tester.getTopLeft(action).dy;
+          _scrollControllerOf(tester)!.jumpTo(100);
+          await tester.pump();
+          expect(tester.getTopLeft(action).dy, originalY);
+          tester.view.viewInsets = const FakeViewPadding(bottom: 500);
+          await tester.pumpAndSettle();
+          final titleY = tester.getTopLeft(find.text('Title')).dy;
+          final actionY = tester.getTopLeft(action).dy;
+          final controller = _scrollControllerOf(tester)!;
+          controller.jumpTo(controller.offset + 100);
+          await tester.pump();
+          expect(tester.getTopLeft(action).dy, closeTo(actionY - 100, 0.1));
+          expect(tester.getTopLeft(find.text('Title')).dy, titleY);
+          controller.jumpTo(controller.position.maxScrollExtent);
+          await tester.pump();
+          expect(action.hitTestable(), findsOneWidget);
+          tester.view.resetViewInsets();
+          await tester.pumpAndSettle();
+          final restoredY = tester.getTopLeft(action).dy;
+          controller.jumpTo(0);
+          await tester.pump();
+          expect(tester.getTopLeft(action).dy, restoredY);
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+  }
+
   testWidgets('modal motion notification during build is deferred safely', (
     tester,
   ) async {
@@ -723,13 +776,13 @@ void main() {
         isTrue,
       );
       expect(find.byType(CupertinoPopupSurface), findsOneWidget);
-      expect(find.byType(AdaptiveAppBar), findsOneWidget);
+      expect(find.byType(WindowControlCupertinoNavigationBar), findsOneWidget);
       final navigationBar = tester.widget<CupertinoNavigationBar>(
         find.byType(CupertinoNavigationBar),
       );
-      expect(navigationBar.enableBackgroundFilterBlur, isTrue);
+      expect(navigationBar.enableBackgroundFilterBlur, isFalse);
       expect(navigationBar.transitionBetweenRoutes, isFalse);
-      expect(navigationBar.automaticBackgroundVisibility, isFalse);
+      expect(navigationBar.automaticBackgroundVisibility, isTrue);
       expect(navigationBar.backgroundColor!.a, 0);
       expect(navigationBar.border, isNull);
       final modalAppBarBackground = navigationBar.backgroundColor;
@@ -738,7 +791,7 @@ void main() {
         of: find.byType(CupertinoNavigationBar),
         matching: find.byType(BackdropFilter),
       );
-      expect(tester.widget<BackdropFilter>(appBarBlur).enabled, isTrue);
+      expect(tester.widget<BackdropFilter>(appBarBlur).enabled, isFalse);
       _scrollControllerOf(tester)!.jumpTo(100);
       await tester.pumpAndSettle();
       expect(tester.widget<BackdropFilter>(appBarBlur).enabled, isTrue);
@@ -749,6 +802,54 @@ void main() {
         modalAppBarBackground,
       );
     });
+
+    for (final presentation in AdaptiveModalPresentation.values) {
+      testWidgets(
+        'Cupertino ${presentation.name} app bar blurs only after scrolling',
+        (tester) async {
+          await tester.pumpWidget(
+            _buildTestApp(
+              style: AdaptiveStyle.apple,
+              presentation: presentation,
+              modalBuilder: (_) => const AdaptiveModal(
+                title: Text('Title'),
+                body: SizedBox(height: 1600, child: Text('Body')),
+              ),
+            ),
+          );
+          await _open(tester);
+          final blur = find.descendant(
+            of: find.byType(CupertinoNavigationBar),
+            matching: find.byType(BackdropFilter),
+          );
+          expect(tester.widget<BackdropFilter>(blur).enabled, isFalse);
+          expect(
+            (tester.widget<BackdropFilter>(blur).child! as DecoratedBox)
+                .decoration,
+            isA<BoxDecoration>().having(
+              (decoration) => decoration.color?.a,
+              'background alpha',
+              0,
+            ),
+          );
+          _scrollControllerOf(tester)!.jumpTo(100);
+          await tester.pumpAndSettle();
+          expect(tester.widget<BackdropFilter>(blur).enabled, isTrue);
+          _scrollControllerOf(tester)!.jumpTo(0);
+          await tester.pumpAndSettle();
+          expect(tester.widget<BackdropFilter>(blur).enabled, isFalse);
+          expect(
+            (tester.widget<BackdropFilter>(blur).child! as DecoratedBox)
+                .decoration,
+            isA<BoxDecoration>().having(
+              (decoration) => decoration.color?.a,
+              'background alpha',
+              0,
+            ),
+          );
+        },
+      );
+    }
 
     for (final presentation in AdaptiveModalPresentation.values) {
       testWidgets(
@@ -776,8 +877,22 @@ void main() {
           final navigationBar = tester.widget<CupertinoNavigationBar>(
             find.byType(CupertinoNavigationBar),
           );
-          expect(navigationBar.automaticBackgroundVisibility, isFalse);
-          expect(navigationBar.enableBackgroundFilterBlur, isTrue);
+          expect(navigationBar.automaticBackgroundVisibility, isTrue);
+          expect(navigationBar.enableBackgroundFilterBlur, isFalse);
+          final blur = tester.widget<BackdropFilter>(
+            find.descendant(
+              of: find.byType(CupertinoNavigationBar),
+              matching: find.byType(BackdropFilter),
+            ),
+          );
+          expect(
+            (blur.child! as DecoratedBox).decoration,
+            isA<BoxDecoration>().having(
+              (decoration) => decoration.color?.a,
+              'background alpha',
+              0,
+            ),
+          );
           expect(
             appBarBackground.toARGB32(),
             CupertinoColors.transparent.toARGB32(),
@@ -816,7 +931,7 @@ void main() {
                   )
                   .color
                   .toARGB32(),
-              CupertinoColors.systemBackground.darkElevatedColor.toARGB32(),
+              CupertinoColors.transparent.toARGB32(),
             );
           }
         },

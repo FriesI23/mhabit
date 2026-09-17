@@ -10,6 +10,47 @@ import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_list_section.dart';
 import 'package:mhabit_adaptive_ui/src/material/material_list_section.dart';
 
 void main() {
+  testWidgets('adaptive section forwards custom exterior padding', (
+    tester,
+  ) async {
+    const padding = EdgeInsetsDirectional.only(top: 12, bottom: 4);
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: [
+              AdaptiveListSection.apple(
+                padding: padding,
+                children: [Text('Apple row')],
+              ),
+              AdaptiveListSection.material(
+                padding: padding,
+                children: [Text('Material row')],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      tester
+          .widget<CupertinoAdaptiveListSection>(
+            find.byType(CupertinoAdaptiveListSection),
+          )
+          .padding,
+      padding,
+    );
+    expect(
+      tester
+          .widget<MaterialAdaptiveListSection>(
+            find.byType(MaterialAdaptiveListSection),
+          )
+          .padding,
+      padding,
+    );
+  });
+
   testWidgets(
     'Material ink keeps first middle last and single segment corners',
     (tester) async {

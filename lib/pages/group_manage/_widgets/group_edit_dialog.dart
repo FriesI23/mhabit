@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
@@ -30,48 +31,109 @@ import '../../../providers/app_ui/custom_color_history.dart';
 Future<GroupEditFormResult?> showGroupEditDialog({
   required BuildContext context,
   HabitGroupData? existingGroup,
-  AdaptiveModalPresentation? presentationOverride,
-}) async {
-  final isCreate = existingGroup == null;
-  final l10n = L10n.of(context);
-  final formKey = GlobalKey<GroupEditFormState>();
-  return showAdaptiveSheet<GroupEditFormResult>(
-    context: context,
-    // TODO(mhabit-adaptive-dialog): Remove the forced Material style after GroupEditForm and
-    // its controls have Cupertino renderers.
-    styleOverride: AdaptiveStyle.material,
-    presentationOverride: presentationOverride,
-    builder: (context) => AdaptiveModal(
-      title: Text(
-        isCreate
-            ? (l10n?.groupManage_createDialog_title ?? 'Create Group')
-            : (l10n?.groupManage_editDialog_title ?? 'Edit Group'),
+}) => showAdaptiveSheet<GroupEditFormResult>(
+  context: context,
+  builder: (_) => AdaptiveModalNavigator<GroupEditFormResult>(
+    size: const AdaptiveModalSize.constrained(),
+    builder: (_) => _GroupEditDialog(existingGroup: existingGroup),
+  ),
+);
+
+class _GroupEditDialog extends StatefulWidget {
+  const _GroupEditDialog({this.existingGroup});
+
+  final HabitGroupData? existingGroup;
+
+  @override
+  State<_GroupEditDialog> createState() => _GroupEditDialogState();
+}
+
+class _GroupEditDialogState extends State<_GroupEditDialog> {
+  final _formKey = GlobalKey<GroupEditFormState>();
+
+  void _save() => _formKey.currentState?.save();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    final history = context.watch<CustomColorHistoryViewModel>().history;
+    final title = Text(
+      widget.existingGroup == null
+          ? (l10n?.groupManage_createDialog_title ?? 'Create Group')
+          : (l10n?.groupManage_editDialog_title ?? 'Edit Group'),
+    );
+    final body = GroupEditForm(
+      key: _formKey,
+      existingGroup: widget.existingGroup,
+      onSave: (result) => AdaptiveModalNavigator.pop(context, result),
+      customColorHistory: history,
+      onRecordCustomColor: (color) {
+        context.read<CustomColorHistoryViewModel>().recordUsage(color);
+      },
+    );
+    return switch (AdaptiveStyle.of(context)) {
+      AdaptiveStyle.material => _MaterialGroupEditDialog(
+        title: title,
+        body: body,
+        onSave: _save,
       ),
-      actions: [
-        TextButton(
-          onPressed: () =>
-              Navigator.of(context).pop<GroupEditFormResult?>(null),
-          child: Text(l10n?.groupManage_deleteDialog_cancel ?? 'Cancel'),
-        ),
-        FilledButton(
-          onPressed: () => formKey.currentState?.save(),
-          child: Text(l10n?.habitEdit_saveButton_text ?? 'Save'),
-        ),
-      ],
-      automaticallyImplyCloseButton: false,
-      body: Builder(
-        builder: (context) {
-          final history = context.read<CustomColorHistoryViewModel>().history;
-          return GroupEditForm(
-            key: formKey,
-            existingGroup: existingGroup,
-            customColorHistory: history,
-            onRecordCustomColor: (color) {
-              context.read<CustomColorHistoryViewModel>().recordUsage(color);
-            },
-          );
-        },
+      AdaptiveStyle.apple => _AppleGroupEditDialog(
+        title: title,
+        body: body,
+        onSave: _save,
       ),
-    ),
+    };
+  }
+}
+
+class _MaterialGroupEditDialog extends StatelessWidget {
+  const _MaterialGroupEditDialog({
+    required this.title,
+    required this.body,
+    required this.onSave,
+  });
+
+  final Widget title;
+  final Widget body;
+  final VoidCallback onSave;
+
+  @override
+  Widget build(BuildContext context) => AdaptiveModal(
+    title: title,
+    appBarActions: [
+      TextButton(
+        onPressed: onSave,
+        child: Text(L10n.of(context)?.habitEdit_saveButton_text ?? 'Save'),
+      ),
+    ],
+    body: body,
+  );
+}
+
+class _AppleGroupEditDialog extends StatelessWidget {
+  const _AppleGroupEditDialog({
+    required this.title,
+    required this.body,
+    required this.onSave,
+  });
+
+  final Widget title;
+  final Widget body;
+  final VoidCallback onSave;
+
+  @override
+  Widget build(BuildContext context) => AdaptiveModal(
+    title: title,
+    actions: [
+      CupertinoButton(
+        key: const ValueKey('group-edit-save-action'),
+        onPressed: onSave,
+        child: Text(
+          L10n.of(context)?.habitEdit_saveButton_text ?? 'Save',
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+      ),
+    ],
+    body: body,
   );
 }

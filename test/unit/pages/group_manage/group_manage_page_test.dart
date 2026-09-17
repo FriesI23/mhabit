@@ -408,7 +408,11 @@ void main() {
         await tester.tap(find.text('Edit').hitTestable().last);
         await tester.pumpAndSettle();
         expect(find.byType(AdaptiveModal), findsOneWidget);
-        await tester.tap(find.text('Cancel').hitTestable().last);
+        await tester.tap(
+          find
+              .byKey(const ValueKey('adaptive-modal-implied-close'))
+              .hitTestable(),
+        );
         await tester.pumpAndSettle();
         await tester.tap(find.text('First'), buttons: kSecondaryMouseButton);
         await tester.pumpAndSettle();
@@ -692,15 +696,27 @@ void main() {
       await tester.tap(createButton());
       await tester.pumpAndSettle();
       expect(find.text('Create Group'), findsOneWidget);
-      await tester.tap(find.text('Cancel'));
+      await tester.tap(
+        find
+            .byKey(const ValueKey('adaptive-modal-implied-close'))
+            .hitTestable(),
+      );
       await tester.pumpAndSettle();
       expect(vm.groups, isEmpty);
       await tester.tap(createButton());
       await tester.pumpAndSettle();
       await tester.enterText(
-        find.byType(TextFormField).first,
+        apple
+            ? find.byKey(const ValueKey('group-edit-name-field'))
+            : find.byType(TextFormField).first,
         'Created from primary action',
       );
+      if (apple) {
+        await tester.ensureVisible(
+          find.byKey(const ValueKey('group-edit-save-action')),
+        );
+        await tester.pumpAndSettle();
+      }
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
       expect(vm.groups.single.name, 'Created from primary action');

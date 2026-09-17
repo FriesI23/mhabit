@@ -1,12 +1,13 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 /// The route presentation used to display adaptive modal content.
 enum AdaptiveModalPresentation { sheet, dialog }
 
 /// Regular modal layout with fixed semantic regions around one scroll view.
-class AdaptiveModalLayout extends StatelessWidget {
+class AdaptiveModalLayout extends StatefulWidget {
   const AdaptiveModalLayout({
     super.key,
     required this.scrollController,
@@ -19,6 +20,7 @@ class AdaptiveModalLayout extends StatelessWidget {
     required this.constraints,
     this.defaultMaxHeight,
     this.footer,
+    this.onContentHeightChanged,
   });
 
   final ScrollController scrollController;
@@ -31,6 +33,58 @@ class AdaptiveModalLayout extends StatelessWidget {
   final BoxConstraints? constraints;
   final double? defaultMaxHeight;
   final Widget? footer;
+  final ValueChanged<double>? onContentHeightChanged;
+
+  @override
+  State<AdaptiveModalLayout> createState() => _AdaptiveModalLayoutState();
+}
+
+class _AdaptiveModalLayoutState extends State<AdaptiveModalLayout> {
+  final _heights = <String, double>{};
+  // Compact layouts move these regions into the scroll view. Keep their state
+  // when automatic sizing crosses that threshold or the keyboard opens.
+  final _regionKeys = <String, GlobalKey>{};
+  bool _reportScheduled = false;
+
+  @override
+  void didUpdateWidget(AdaptiveModalLayout oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // A sheet can become a dialog without changing any region's dimensions.
+    if ((oldWidget.onContentHeightChanged == null &&
+            widget.onContentHeightChanged != null) ||
+        oldWidget.constraints != widget.constraints) {
+      _scheduleHeightReport();
+    }
+  }
+
+  void _scheduleHeightReport() {
+    if (widget.onContentHeightChanged == null || _reportScheduled) return;
+    _reportScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _reportScheduled = false;
+      if (!mounted || widget.presentation != AdaptiveModalPresentation.dialog) {
+        return;
+      }
+      final height = _heights.values.fold(0.0, (sum, value) => sum + value);
+      final requested = widget.constraints;
+      widget.onContentHeightChanged?.call(
+        height.clamp(
+          requested?.minHeight ?? 0,
+          requested?.maxHeight ?? double.infinity,
+        ),
+      );
+    });
+  }
+
+  Widget _measure(String region, Widget? child) => _ModalRegionSize(
+    key: _regionKeys.putIfAbsent(region, GlobalKey.new),
+    onHeight: (height) {
+      if (_heights[region] == height) return;
+      _heights[region] = height;
+      _scheduleHeightReport();
+    },
+    child: child ?? const SizedBox.shrink(),
+  );
 
   // Local content height after modal constraints, keyboard insets, and safe
   // areas. This fallback is independent of the window presentation breakpoint.
@@ -45,57 +99,115 @@ class AdaptiveModalLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pinned = pinnedBody == null
-        ? null
-        : Padding(
-            key: const ValueKey('adaptive-modal-pinned-body'),
-            padding: padding,
-            child: pinnedBody,
-          );
-    final bottom = bottomActions.isEmpty
-        ? null
-        : _AdaptiveModalBottomActions(actions: bottomActions, padding: padding);
+    final header = _measure('header', widget.header);
+    final pinned = _measure(
+      'pinned',
+      widget.pinnedBody == null
+          ? null
+          : Padding(
+              key: const ValueKey('adaptive-modal-pinned-body'),
+              padding: widget.padding,
+              child: widget.pinnedBody,
+            ),
+    );
+    final body = _measure(
+      'body',
+      Padding(padding: widget.padding, child: widget.body),
+    );
+    final bottom = _measure(
+      'bottom',
+      widget.bottomActions.isEmpty
+          ? null
+          : _AdaptiveModalBottomActions(
+              actions: widget.bottomActions,
+              padding: widget.padding,
+            ),
+    );
+    final footer = _measure('footer', widget.footer);
     return _AdaptiveModalFrame(
-      presentation: presentation,
-      constraints: constraints,
-      defaultMaxHeight: defaultMaxHeight,
+      presentation: widget.presentation,
+      constraints: widget.constraints,
+      defaultMaxHeight: widget.defaultMaxHeight,
       child: LayoutBuilder(
         builder: (context, constraints) {
           final compactHeight = _usesCompactHeightLayout(context, constraints);
-          final constrainedFooter = footer == null
-              ? null
-              : ConstrainedBox(
-                  constraints: BoxConstraints(maxHeight: constraints.maxHeight),
-                  child: SingleChildScrollView(child: footer),
-                );
+          // Material Dialog removes the consumed inset from MediaQuery. Check
+          // the view for keyboard visibility and local constraints for space.
+          final scrollFooter =
+              compactHeight && View.of(context).viewInsets.bottom > 0;
           return Column(
-            mainAxisSize: MainAxisSize.max,
+            mainAxisSize:
+                widget.presentation == AdaptiveModalPresentation.dialog
+                ? MainAxisSize.min
+                : MainAxisSize.max,
             children: [
-              if (!compactHeight) ...[?header, ?pinned],
-              Expanded(
+              header,
+              if (!compactHeight) pinned,
+              Flexible(
+                key: const ValueKey('adaptive-modal-scroll-region'),
+                fit: constraints.hasTightHeight ? FlexFit.tight : FlexFit.loose,
                 child: SingleChildScrollView(
                   key: const ValueKey('adaptive-modal-scroll-body'),
-                  controller: scrollController,
-                  padding: compactHeight ? EdgeInsets.zero : padding,
+                  controller: widget.scrollController,
                   child: compactHeight
                       ? Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            ?header,
-                            ?pinned,
-                            Padding(padding: padding, child: body),
-                            ?bottom,
+                            pinned,
+                            body,
+                            bottom,
+                            if (scrollFooter) footer,
                           ],
                         )
                       : body,
                 ),
               ),
-              if (!compactHeight) ?bottom,
-              ?constrainedFooter,
+              if (!compactHeight) bottom,
+              if (!scrollFooter)
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: constraints.maxHeight),
+                  child: SingleChildScrollView(child: footer),
+                ),
             ],
           );
         },
       ),
     );
+  }
+}
+
+class _ModalRegionSize extends SingleChildRenderObjectWidget {
+  const _ModalRegionSize({
+    super.key,
+    required this.onHeight,
+    required super.child,
+  });
+
+  final ValueChanged<double> onHeight;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenderModalRegionSize(onHeight);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    covariant _RenderModalRegionSize renderObject,
+  ) {
+    renderObject.onHeight = onHeight;
+    renderObject.markNeedsLayout();
+  }
+}
+
+class _RenderModalRegionSize extends RenderProxyBox {
+  _RenderModalRegionSize(this.onHeight);
+
+  ValueChanged<double> onHeight;
+
+  @override
+  void performLayout() {
+    super.performLayout();
+    onHeight(size.height);
   }
 }
 
@@ -122,13 +234,18 @@ class _AdaptiveModalFrame extends StatelessWidget {
       defaultMaxHeight: defaultMaxHeight,
     ),
     child: SizedBox(
-      height: double.infinity,
+      height: presentation == AdaptiveModalPresentation.sheet
+          ? double.infinity
+          : null,
       width: double.infinity,
       child: AnimatedPadding(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOut,
         padding: EdgeInsets.only(
-          bottom: MediaQuery.viewInsetsOf(context).bottom,
+          // Dialog route surfaces own keyboard avoidance.
+          bottom: presentation == AdaptiveModalPresentation.sheet
+              ? MediaQuery.viewInsetsOf(context).bottom
+              : 0,
         ),
         child: switch (presentation) {
           AdaptiveModalPresentation.sheet => SafeArea(top: false, child: child),

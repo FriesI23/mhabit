@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
@@ -222,17 +223,58 @@ class _GroupModifyCreatePageState extends State<_GroupModifyCreatePage> {
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
     final vm = context.watch<HabitGroupModifyViewModel>();
-    final colorHistory = context.read<CustomColorHistoryViewModel>().history;
+    final colorHistory = context.watch<CustomColorHistoryViewModel>().history;
+    final form = GroupEditForm(
+      key: _formKey,
+      customColorHistory: colorHistory,
+      onRecordCustomColor: (color) {
+        context.read<CustomColorHistoryViewModel>().recordUsage(color);
+      },
+    );
 
+    final title = Text(l10n?.groupManage_createDialog_title ?? 'Create Group');
+    return switch (AdaptiveStyle.of(context)) {
+      AdaptiveStyle.material => _MaterialGroupModifyCreatePage(
+        title: title,
+        form: form,
+        onSave: () => _handleSaveOnly(vm),
+        onSaveAndApply: () => _handleSaveAndApply(vm),
+      ),
+      AdaptiveStyle.apple => _AppleGroupModifyCreatePage(
+        title: title,
+        form: form,
+        onSave: () => _handleSaveOnly(vm),
+        onSaveAndApply: () => _handleSaveAndApply(vm),
+      ),
+    };
+  }
+}
+
+class _MaterialGroupModifyCreatePage extends StatelessWidget {
+  const _MaterialGroupModifyCreatePage({
+    required this.title,
+    required this.form,
+    required this.onSave,
+    required this.onSaveAndApply,
+  });
+
+  final Widget title;
+  final Widget form;
+  final VoidCallback onSave;
+  final VoidCallback onSaveAndApply;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
     return AdaptiveModal(
-      title: Text(l10n?.groupManage_createDialog_title ?? 'Create Group'),
+      title: title,
       actions: [
         TextButton(
-          onPressed: () => _handleSaveOnly(vm),
+          onPressed: onSave,
           child: Text(l10n?.habitEdit_saveButton_text ?? 'Save'),
         ),
         FilledButton(
-          onPressed: () => _handleSaveAndApply(vm),
+          onPressed: onSaveAndApply,
           child: Text(
             l10n?.habitDisplay_groupModifyDialog_saveAndApply ?? 'Save & Apply',
           ),
@@ -240,12 +282,49 @@ class _GroupModifyCreatePageState extends State<_GroupModifyCreatePage> {
       ],
       automaticallyImplyLeading: true,
       automaticallyImplyCloseButton: false,
-      body: GroupEditForm(
-        key: _formKey,
-        customColorHistory: colorHistory,
-        onRecordCustomColor: (color) {
-          context.read<CustomColorHistoryViewModel>().recordUsage(color);
-        },
+      body: form,
+    );
+  }
+}
+
+class _AppleGroupModifyCreatePage extends StatelessWidget {
+  const _AppleGroupModifyCreatePage({
+    required this.title,
+    required this.form,
+    required this.onSave,
+    required this.onSaveAndApply,
+  });
+
+  final Widget title;
+  final Widget form;
+  final VoidCallback onSave;
+  final VoidCallback onSaveAndApply;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    return AdaptiveModal(
+      title: title,
+      automaticallyImplyLeading: true,
+      automaticallyImplyCloseButton: false,
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          form,
+          const SizedBox(height: 24),
+          CupertinoButton.filled(
+            onPressed: onSaveAndApply,
+            child: Text(
+              l10n?.habitDisplay_groupModifyDialog_saveAndApply ??
+                  'Save & Apply',
+            ),
+          ),
+          CupertinoButton(
+            onPressed: onSave,
+            child: Text(l10n?.habitEdit_saveButton_text ?? 'Save'),
+          ),
+        ],
       ),
     );
   }

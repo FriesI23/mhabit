@@ -81,6 +81,13 @@ void main() {
   for (final style in AdaptiveStyle.values) {
     for (final width in [320.0, 1000.0]) {
       testWidgets('Donate original layout $style width $width', (tester) async {
+        final previousHitTestPolicy =
+            WidgetController.hitTestWarningShouldBeFatal;
+        WidgetController.hitTestWarningShouldBeFatal = true;
+        addTearDown(
+          () => WidgetController.hitTestWarningShouldBeFatal =
+              previousHitTestPolicy,
+        );
         tester.view.devicePixelRatio = 1;
         tester.view.physicalSize = Size(width, 1000);
         addTearDown(tester.view.reset);
@@ -113,8 +120,21 @@ void main() {
           ),
         );
         expect(disabled.onPressed, isNull);
-        await tester.drag(find.byType(Scrollable).last, const Offset(0, -2500));
+        final bodyScroll = find.descendant(
+          of: find.byType(AdaptiveModal),
+          matching: find.byKey(const ValueKey('adaptive-modal-scroll-body')),
+        );
+        expect(bodyScroll.hitTestable(), findsOneWidget);
+        final controller = tester
+            .widget<SingleChildScrollView>(bodyScroll)
+            .controller!;
+        final canScroll = controller.position.maxScrollExtent > 0;
+        final initialOffset = controller.offset;
+        await tester.drag(bodyScroll, const Offset(0, -2500));
         await tester.pumpAndSettle();
+        if (canScroll) {
+          expect(controller.offset, greaterThan(initialOffset));
+        }
         expect(tester.takeException(), isNull);
       });
     }

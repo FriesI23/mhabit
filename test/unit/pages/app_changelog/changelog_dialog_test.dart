@@ -482,7 +482,19 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('View Full Changelog'), findsNothing);
 
-      await tester.tap(find.text('Close'));
+      expect(
+        find
+            .byKey(const ValueKey('adaptive-modal-implied-close'))
+            .hitTestable(),
+        findsNothing,
+      );
+      await tester.tap(find.byType(AdaptiveBackButton).hitTestable());
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find
+            .byKey(const ValueKey('adaptive-modal-implied-close'))
+            .hitTestable(),
+      );
       await tester.pumpAndSettle();
 
       await _openDialog(tester);
@@ -504,8 +516,14 @@ void main() {
 
       expect(find.text('Changelog'), findsOneWidget);
       expect(find.text('v$_version'), findsOneWidget);
-      expect(find.text('Close'), findsOneWidget);
-      expect(find.byIcon(Icons.close), findsNothing);
+      expect(find.text('Close'), findsNothing);
+      expect(
+        find
+            .byKey(const ValueKey('adaptive-modal-implied-close'))
+            .hitTestable(),
+        findsOneWidget,
+      );
+      expect(find.byIcon(Icons.close), findsOneWidget);
       expect(find.byType(AdaptiveAppBar), findsOneWidget);
       expect(find.byType(SliverAppBar), findsNothing);
 
@@ -516,7 +534,12 @@ void main() {
         actionArea.contains(tester.getCenter(find.text('View Full Changelog'))),
         isTrue,
       );
-      expect(tester.getCenter(find.text('Close')).dx, greaterThan(200));
+      final close = find.byKey(const ValueKey('adaptive-modal-implied-close'));
+      final appBar = tester.getRect(
+        find.byKey(const ValueKey('adaptive-modal-app-bar')),
+      );
+      expect(appBar.contains(tester.getCenter(close)), isTrue);
+      expect(tester.getCenter(close).dx, lessThan(appBar.center.dx));
       final actionBar = tester.getRect(
         find.descendant(
           of: find.byKey(const ValueKey('adaptive-modal-actions')),
@@ -576,8 +599,14 @@ void main() {
       await tester.pumpWidget(_buildTestApp());
       await _openDialog(tester);
 
-      expect(find.text('Close'), findsOneWidget);
-      expect(find.byIcon(Icons.close), findsNothing);
+      expect(find.text('Close'), findsNothing);
+      expect(
+        find
+            .byKey(const ValueKey('adaptive-modal-implied-close'))
+            .hitTestable(),
+        findsOneWidget,
+      );
+      expect(find.byIcon(Icons.close), findsOneWidget);
       final dialog = tester.widget<Dialog>(find.byType(Dialog));
       expect(dialog.clipBehavior, Clip.antiAlias);
       expect(
@@ -673,7 +702,11 @@ void main() {
       await tester.pumpWidget(_buildTestApp());
       await _openDialog(tester);
 
-      await tester.tap(find.text('Close'));
+      await tester.tap(
+        find
+            .byKey(const ValueKey('adaptive-modal-implied-close'))
+            .hitTestable(),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('Changelog'), findsNothing);

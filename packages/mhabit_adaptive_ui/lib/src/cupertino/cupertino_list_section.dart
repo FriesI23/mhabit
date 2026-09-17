@@ -16,6 +16,7 @@ class CupertinoAdaptiveListSection extends StatelessWidget {
     this.secondaryColor,
     this.separatorColor,
     this.hasLeading = false,
+    this.padding,
   });
 
   final Widget? header;
@@ -24,6 +25,7 @@ class CupertinoAdaptiveListSection extends StatelessWidget {
   final Color? secondaryColor;
   final Color? separatorColor;
   final bool hasLeading;
+  final EdgeInsetsGeometry? padding;
 
   // App geometry chosen against the iOS 26.5 UIKit reference; these are not
   // claimed to be public, fixed Apple design tokens.
@@ -58,7 +60,7 @@ class CupertinoAdaptiveListSection extends StatelessWidget {
       context,
     );
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
+      padding: padding ?? const EdgeInsets.fromLTRB(20, 24, 20, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

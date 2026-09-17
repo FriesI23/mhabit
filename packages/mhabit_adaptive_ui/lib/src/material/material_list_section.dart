@@ -11,11 +11,13 @@ class MaterialAdaptiveListSection extends StatelessWidget {
     this.header,
     required this.children,
     this.surfaceColor,
+    this.padding,
   });
 
   final Widget? header;
   final List<Widget> children;
   final Color? surfaceColor;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,7 @@ class MaterialAdaptiveListSection extends StatelessWidget {
     final global = theme.extension<AdaptiveListThemeData>();
     final defaults = _MaterialListSectionDefaults(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+      padding: padding ?? const EdgeInsets.fromLTRB(16, 24, 16, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

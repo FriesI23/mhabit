@@ -352,6 +352,7 @@ class MaterialAdaptiveModal extends StatelessWidget {
     super.key,
     required this.title,
     required this.leadingAction,
+    this.appBarActions = const [],
     required this.actions,
     required this.pinnedBody,
     required this.body,
@@ -361,10 +362,12 @@ class MaterialAdaptiveModal extends StatelessWidget {
     required this.constraints,
     required this.presentation,
     required this.scrollController,
+    this.onContentHeightChanged,
   });
 
   final Widget? title;
   final Widget? leadingAction;
+  final List<Widget> appBarActions;
   final List<Widget> actions;
   final Widget? pinnedBody;
   final Widget body;
@@ -374,6 +377,7 @@ class MaterialAdaptiveModal extends StatelessWidget {
   final BoxConstraints? constraints;
   final AdaptiveModalPresentation presentation;
   final ScrollController scrollController;
+  final ValueChanged<double>? onContentHeightChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -381,6 +385,8 @@ class MaterialAdaptiveModal extends StatelessWidget {
     final appBar = AppBarTheme(
       data: AppBarTheme.of(context).copyWith(
         backgroundColor: backgroundColor,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
       ),
       child: ModalWindowControlAppBarRegion(
@@ -389,7 +395,15 @@ class MaterialAdaptiveModal extends StatelessWidget {
           removeTop: true,
           child: AdaptiveAppBar.material(
             key: const ValueKey('adaptive-modal-app-bar'),
-            leading: leadingAction,
+            leading:
+                leadingAction ??
+                (automaticallyImplyCloseButton
+                    ? CloseButton(
+                        key: const ValueKey('adaptive-modal-implied-close'),
+                        onPressed: onCloseRequested,
+                      )
+                    : null),
+            actions: appBarActions,
             title: title == null
                 ? const SizedBox.shrink()
                 : KeyedSubtree(
@@ -409,14 +423,7 @@ class MaterialAdaptiveModal extends StatelessWidget {
             sheetDragController != null
         ? ModalSheetDragRegion(controller: sheetDragController, child: appBar)
         : appBar;
-    final impliedClose = automaticallyImplyCloseButton
-        ? TextButton(
-            key: const ValueKey('adaptive-modal-implied-close'),
-            onPressed: onCloseRequested,
-            child: Text(MaterialLocalizations.of(context).closeButtonLabel),
-          )
-        : null;
-    final hasFooter = actions.isNotEmpty || impliedClose != null;
+    final hasFooter = actions.isNotEmpty;
     final actionPadding = switch (presentation) {
       AdaptiveModalPresentation.sheet => const EdgeInsets.fromLTRB(
         20,
@@ -441,7 +448,7 @@ class MaterialAdaptiveModal extends StatelessWidget {
               overflowAlignment: OverflowBarAlignment.end,
               spacing: 8,
               overflowSpacing: 8,
-              children: [...actions, ?impliedClose],
+              children: actions,
             ),
           );
 
@@ -449,18 +456,18 @@ class MaterialAdaptiveModal extends StatelessWidget {
         presentation == AdaptiveModalPresentation.sheet &&
         sheetDragController != null;
     const appBarHeight = kToolbarHeight;
-    final paddedPinnedBody = !overlaysHeader || pinnedBody == null
-        ? pinnedBody
+    final paddedPinnedBody = pinnedBody == null
+        ? null
         : Padding(
-            padding: const EdgeInsets.only(top: appBarHeight),
+            padding: EdgeInsets.only(top: overlaysHeader ? appBarHeight : 0),
             child: pinnedBody,
           );
-    final paddedBody = !overlaysHeader || pinnedBody != null
-        ? body
-        : Padding(
-            padding: const EdgeInsets.only(top: appBarHeight),
-            child: body,
-          );
+    final paddedBody = Padding(
+      padding: EdgeInsets.only(
+        top: overlaysHeader && pinnedBody == null ? appBarHeight : 0,
+      ),
+      child: body,
+    );
     final layout = AdaptiveModalLayout(
       header: overlaysHeader ? null : header,
       footer: footer,
@@ -468,19 +475,19 @@ class MaterialAdaptiveModal extends StatelessWidget {
       body: paddedBody,
       bottomActions: bottomActions,
       scrollController: scrollController,
+      onContentHeightChanged: onContentHeightChanged,
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
       presentation: presentation,
       constraints: constraints,
     );
-    final content = !overlaysHeader
-        ? layout
-        : Stack(
-            fit: StackFit.passthrough,
-            children: [
-              layout,
-              Positioned(top: 0, left: 0, right: 0, child: header),
-            ],
-          );
+    final content = Stack(
+      fit: StackFit.passthrough,
+      children: [
+        layout,
+        if (overlaysHeader)
+          Positioned(top: 0, left: 0, right: 0, child: header),
+      ],
+    );
 
     return Material(color: backgroundColor, child: content);
   }
