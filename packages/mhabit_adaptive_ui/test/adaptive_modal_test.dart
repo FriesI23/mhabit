@@ -1094,7 +1094,11 @@ void main() {
           style: AdaptiveStyle.material,
           presentation: AdaptiveModalPresentation.dialog,
           modalBuilder: (_) => const AdaptiveModal(
-            constraints: BoxConstraints(maxWidth: 300, maxHeight: 250),
+            size: AdaptiveModalSize.constrained(
+              minWidth: 300,
+              maxWidth: 300,
+              maxHeight: 250,
+            ),
             body: Text('Body'),
           ),
         ),

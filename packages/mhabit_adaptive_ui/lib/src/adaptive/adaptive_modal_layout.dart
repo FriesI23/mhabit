@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import 'adaptive_sheet.dart' show AdaptiveModalSize;
+
 /// The route presentation used to display adaptive modal content.
 enum AdaptiveModalPresentation { sheet, dialog }
 
@@ -17,10 +19,10 @@ class AdaptiveModalLayout extends StatefulWidget {
     required this.bottomActions,
     required this.padding,
     required this.presentation,
-    required this.constraints,
+    required this.size,
     this.defaultMaxHeight,
     this.footer,
-    this.onContentHeightChanged,
+    this.onContentSizeChanged,
   });
 
   final ScrollController scrollController;
@@ -30,58 +32,69 @@ class AdaptiveModalLayout extends StatefulWidget {
   final List<Widget> bottomActions;
   final EdgeInsetsGeometry padding;
   final AdaptiveModalPresentation presentation;
-  final BoxConstraints? constraints;
+  final AdaptiveModalSize size;
   final double? defaultMaxHeight;
   final Widget? footer;
-  final ValueChanged<double>? onContentHeightChanged;
+  final ValueChanged<Size>? onContentSizeChanged;
 
   @override
   State<AdaptiveModalLayout> createState() => _AdaptiveModalLayoutState();
 }
 
 class _AdaptiveModalLayoutState extends State<AdaptiveModalLayout> {
-  final _heights = <String, double>{};
-  // Compact layouts move these regions into the scroll view. Keep their state
-  // when automatic sizing crosses that threshold or the keyboard opens.
+  BoxConstraints get _requested => widget.size.constraints;
+  final _regions = <String, Size>{};
+  // Stable identities preserve state when regions move into the scroll view.
   final _regionKeys = <String, GlobalKey>{};
   bool _reportScheduled = false;
+  Size? _contentSize;
 
   @override
   void didUpdateWidget(AdaptiveModalLayout oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // A sheet can become a dialog without changing any region's dimensions.
-    if ((oldWidget.onContentHeightChanged == null &&
-            widget.onContentHeightChanged != null) ||
-        oldWidget.constraints != widget.constraints) {
-      _scheduleHeightReport();
+    if ((oldWidget.onContentSizeChanged == null &&
+            widget.onContentSizeChanged != null) ||
+        oldWidget.presentation != widget.presentation ||
+        oldWidget.size.constraints != _requested) {
+      _scheduleSizeReport();
     }
   }
 
-  void _scheduleHeightReport() {
-    if (widget.onContentHeightChanged == null || _reportScheduled) return;
+  void _scheduleSizeReport() {
+    if (_reportScheduled) return;
     _reportScheduled = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _reportScheduled = false;
-      if (!mounted || widget.presentation != AdaptiveModalPresentation.dialog) {
+      if (!mounted ||
+          widget.presentation != AdaptiveModalPresentation.dialog ||
+          !_regions.containsKey('body')) {
         return;
       }
-      final height = _heights.values.fold(0.0, (sum, value) => sum + value);
-      final requested = widget.constraints;
-      widget.onContentHeightChanged?.call(
-        height.clamp(
-          requested?.minHeight ?? 0,
-          requested?.maxHeight ?? double.infinity,
-        ),
+      final contentSize = Size(
+        _regions['body']!.width,
+        _regions.values.fold(0.0, (sum, size) => sum + size.height),
       );
+      if (!contentSize.isFinite) return;
+      final previous = _contentSize;
+      _contentSize = contentSize;
+      if (previous == null ||
+          _requested.constrain(previous) != _requested.constrain(contentSize)) {
+        setState(() {});
+      }
+      widget.onContentSizeChanged?.call(_requested.constrain(contentSize));
     });
   }
 
   Widget _measure(String region, Widget? child) => _ModalRegionSize(
     key: _regionKeys.putIfAbsent(region, GlobalKey.new),
-    onHeight: (height) {
-      if (_heights[region] == height) return;
-      _heights[region] = height;
-      _scheduleHeightReport();
+    intrinsicWidth:
+        region == 'body' &&
+        !_requested.hasTightWidth &&
+        widget.presentation == AdaptiveModalPresentation.dialog,
+    onSize: (size) {
+      if (_regions[region] == size) return;
+      _regions[region] = size;
+      _scheduleSizeReport();
     },
     child: child ?? const SizedBox.shrink(),
   );
@@ -126,7 +139,11 @@ class _AdaptiveModalLayoutState extends State<AdaptiveModalLayout> {
     final footer = _measure('footer', widget.footer);
     return _AdaptiveModalFrame(
       presentation: widget.presentation,
-      constraints: widget.constraints,
+      constraints: widget.presentation == AdaptiveModalPresentation.sheet
+          ? const BoxConstraints()
+          : _contentSize == null
+          ? _requested
+          : BoxConstraints.tight(_requested.constrain(_contentSize!)),
       defaultMaxHeight: widget.defaultMaxHeight,
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -179,35 +196,44 @@ class _AdaptiveModalLayoutState extends State<AdaptiveModalLayout> {
 class _ModalRegionSize extends SingleChildRenderObjectWidget {
   const _ModalRegionSize({
     super.key,
-    required this.onHeight,
+    required this.onSize,
+    required this.intrinsicWidth,
     required super.child,
   });
-
-  final ValueChanged<double> onHeight;
+  final ValueChanged<Size> onSize;
+  final bool intrinsicWidth;
 
   @override
   RenderObject createRenderObject(BuildContext context) =>
-      _RenderModalRegionSize(onHeight);
+      _RenderModalRegionSize(onSize, intrinsicWidth);
 
   @override
   void updateRenderObject(
     BuildContext context,
     covariant _RenderModalRegionSize renderObject,
   ) {
-    renderObject.onHeight = onHeight;
+    renderObject.onSize = onSize;
+    renderObject.intrinsicWidth = intrinsicWidth;
     renderObject.markNeedsLayout();
   }
 }
 
 class _RenderModalRegionSize extends RenderProxyBox {
-  _RenderModalRegionSize(this.onHeight);
-
-  ValueChanged<double> onHeight;
+  _RenderModalRegionSize(this.onSize, this.intrinsicWidth);
+  ValueChanged<Size> onSize;
+  bool intrinsicWidth;
 
   @override
   void performLayout() {
     super.performLayout();
-    onHeight(size.height);
+    onSize(
+      Size(
+        intrinsicWidth
+            ? child!.getMaxIntrinsicWidth(double.infinity)
+            : size.width,
+        size.height,
+      ),
+    );
   }
 }
 
@@ -220,7 +246,7 @@ class _AdaptiveModalFrame extends StatelessWidget {
   });
 
   final AdaptiveModalPresentation presentation;
-  final BoxConstraints? constraints;
+  final BoxConstraints constraints;
   final double? defaultMaxHeight;
   final Widget child;
 
@@ -302,44 +328,24 @@ abstract final class AdaptiveModalConstraints {
   static BoxConstraints resolve(
     BuildContext context, {
     required AdaptiveModalPresentation presentation,
-    required BoxConstraints? requested,
+    required BoxConstraints requested,
   }) => _resolve(context, presentation: presentation, requested: requested);
 
   static BoxConstraints _resolve(
     BuildContext context, {
     required AdaptiveModalPresentation presentation,
-    required BoxConstraints? requested,
+    required BoxConstraints requested,
     double? defaultMaxHeight,
   }) {
-    final size = MediaQuery.sizeOf(context);
-    final defaultMaxWidth = math.min(560.0, size.width * 0.9);
-    final resolvedDefaultMaxHeight =
-        defaultMaxHeight ?? maximumHeightOf(context);
-    return switch ((presentation, requested)) {
-      (AdaptiveModalPresentation.sheet, null) => BoxConstraints.tightFor(
-        height: resolvedDefaultMaxHeight,
+    final available = BoxConstraints(
+      maxWidth: MediaQuery.sizeOf(context).width * 0.9,
+      maxHeight: defaultMaxHeight ?? maximumHeightOf(context),
+    );
+    return switch (presentation) {
+      AdaptiveModalPresentation.dialog => requested.enforce(available),
+      AdaptiveModalPresentation.sheet => BoxConstraints.tightFor(
+        height: available.maxHeight,
       ),
-      (AdaptiveModalPresentation.sheet, final requested?) => requested.copyWith(
-        minHeight: math.min(requested.minHeight, resolvedDefaultMaxHeight),
-        maxHeight: requested.hasBoundedHeight
-            ? math.min(requested.maxHeight, resolvedDefaultMaxHeight)
-            : resolvedDefaultMaxHeight,
-      ),
-      (AdaptiveModalPresentation.dialog, null) => BoxConstraints.tightFor(
-        width: defaultMaxWidth,
-        height: resolvedDefaultMaxHeight,
-      ),
-      (AdaptiveModalPresentation.dialog, final requested?) =>
-        requested.copyWith(
-          minWidth: math.min(requested.minWidth, defaultMaxWidth),
-          maxWidth: requested.hasBoundedWidth
-              ? math.min(requested.maxWidth, size.width * 0.9)
-              : defaultMaxWidth,
-          minHeight: math.min(requested.minHeight, resolvedDefaultMaxHeight),
-          maxHeight: requested.hasBoundedHeight
-              ? math.min(requested.maxHeight, resolvedDefaultMaxHeight)
-              : resolvedDefaultMaxHeight,
-        ),
     };
   }
 }

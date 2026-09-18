@@ -212,7 +212,10 @@ class _PageState extends State<_Page> {
           ],
           automaticallyImplyCloseButton: false,
           onCloseRequested: _onCancelButtonPressed,
-          constraints: const BoxConstraints(maxWidth: 1240),
+          size: const AdaptiveModalSize.constrained(
+            minWidth: 1240,
+            maxWidth: 1240,
+          ),
           body: _PageBody(
             showAdvanceConfig: showAdvanceConfig,
             onAdvConfigExpansionChanged: _onAdvanceConfigExpansionChanged,

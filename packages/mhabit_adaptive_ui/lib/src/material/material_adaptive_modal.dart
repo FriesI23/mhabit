@@ -351,6 +351,7 @@ class _MaterialModalDragHandle extends StatelessWidget {
 class MaterialAdaptiveModal extends StatelessWidget {
   const MaterialAdaptiveModal({
     super.key,
+    this.showAppBar = true,
     required this.title,
     required this.leadingAction,
     this.appBarActions = const [],
@@ -361,12 +362,13 @@ class MaterialAdaptiveModal extends StatelessWidget {
     required this.bottomActions,
     required this.automaticallyImplyCloseButton,
     required this.onCloseRequested,
-    required this.constraints,
+    required this.size,
     required this.presentation,
     required this.scrollController,
-    this.onContentHeightChanged,
+    this.onContentSizeChanged,
   });
 
+  final bool showAppBar;
   final Widget? title;
   final Widget? leadingAction;
   final List<Widget> appBarActions;
@@ -377,60 +379,65 @@ class MaterialAdaptiveModal extends StatelessWidget {
   final List<Widget> bottomActions;
   final bool automaticallyImplyCloseButton;
   final VoidCallback onCloseRequested;
-  final BoxConstraints? constraints;
+  final AdaptiveModalSize size;
   final AdaptiveModalPresentation presentation;
   final ScrollController scrollController;
-  final ValueChanged<double>? onContentHeightChanged;
+  final ValueChanged<Size>? onContentSizeChanged;
 
   @override
   Widget build(BuildContext context) {
     final backgroundColor = Theme.of(context).adaptiveModalBackgroundColor;
-    final appBar = AppBarTheme(
-      data: AppBarTheme.of(context).copyWith(
-        backgroundColor: backgroundColor,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        surfaceTintColor: Colors.transparent,
-      ),
-      child: ModalWindowControlAppBarRegion(
-        child: MediaQuery.removePadding(
-          context: context,
-          removeTop: true,
-          child: AdaptiveAppBar.material(
-            key: const ValueKey('adaptive-modal-app-bar'),
-            leading:
-                leadingAction ??
-                (automaticallyImplyCloseButton
-                    ? CloseButton(
-                        key: const ValueKey('adaptive-modal-implied-close'),
-                        onPressed: onCloseRequested,
-                      )
-                    : null),
-            actions: [
-              ...appBarActions,
-              if (confirmAction case final action?)
-                TextButton(
-                  key: const ValueKey('adaptive-modal-confirm'),
-                  onPressed: action.onPressed,
-                  child: Text(action.label),
+    final appBar = !showAppBar
+        ? null
+        : AppBarTheme(
+            data: AppBarTheme.of(context).copyWith(
+              backgroundColor: backgroundColor,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              surfaceTintColor: Colors.transparent,
+            ),
+            child: ModalWindowControlAppBarRegion(
+              child: MediaQuery.removePadding(
+                context: context,
+                removeTop: true,
+                child: AdaptiveAppBar.material(
+                  key: const ValueKey('adaptive-modal-app-bar'),
+                  leading:
+                      leadingAction ??
+                      (automaticallyImplyCloseButton
+                          ? CloseButton(
+                              key: const ValueKey(
+                                'adaptive-modal-implied-close',
+                              ),
+                              onPressed: onCloseRequested,
+                            )
+                          : null),
+                  actions: [
+                    ...appBarActions,
+                    if (confirmAction case final action?)
+                      TextButton(
+                        key: const ValueKey('adaptive-modal-confirm'),
+                        onPressed: action.onPressed,
+                        child: Text(action.label),
+                      ),
+                  ],
+                  title: title == null
+                      ? const SizedBox.shrink()
+                      : KeyedSubtree(
+                          key: const ValueKey('adaptive-modal-title'),
+                          child: title!,
+                        ),
+                  automaticallyImplyLeading: false,
                 ),
-            ],
-            title: title == null
-                ? const SizedBox.shrink()
-                : KeyedSubtree(
-                    key: const ValueKey('adaptive-modal-title'),
-                    child: title!,
-                  ),
-            automaticallyImplyLeading: false,
-          ),
-        ),
-      ),
-    );
+              ),
+            ),
+          );
     final sheetDragController = ModalSheetDragControllerScope.maybeControllerOf(
       context,
     );
     final header =
-        presentation == AdaptiveModalPresentation.sheet &&
+        appBar != null &&
+            presentation == AdaptiveModalPresentation.sheet &&
             sheetDragController != null
         ? ModalSheetDragRegion(controller: sheetDragController, child: appBar)
         : appBar;
@@ -464,6 +471,7 @@ class MaterialAdaptiveModal extends StatelessWidget {
           );
 
     final overlaysHeader =
+        showAppBar &&
         presentation == AdaptiveModalPresentation.sheet &&
         sheetDragController != null;
     const appBarHeight = kToolbarHeight;
@@ -486,16 +494,16 @@ class MaterialAdaptiveModal extends StatelessWidget {
       body: paddedBody,
       bottomActions: bottomActions,
       scrollController: scrollController,
-      onContentHeightChanged: onContentHeightChanged,
+      onContentSizeChanged: onContentSizeChanged,
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
       presentation: presentation,
-      constraints: constraints,
+      size: size,
     );
     final content = Stack(
       fit: StackFit.passthrough,
       children: [
         layout,
-        if (overlaysHeader)
+        if (overlaysHeader && header != null)
           Positioned(top: 0, left: 0, right: 0, child: header),
       ],
     );

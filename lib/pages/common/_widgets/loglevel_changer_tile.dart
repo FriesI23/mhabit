@@ -54,7 +54,8 @@ class LogLevelChangerTile extends StatelessWidget {
       subtitle: Text(_getLogName(context)),
       onTap: () => showAdaptiveSheet<void>(
         context: context,
-        builder: (context) => AdaptiveModal.constrained(
+        builder: (context) => AdaptiveModal(
+          size: const AdaptiveModalSize.constrained(),
           title: l10n != null
               ? Text(l10n.debug_logLevelDialog_title)
               : const Text("Change logging level"),

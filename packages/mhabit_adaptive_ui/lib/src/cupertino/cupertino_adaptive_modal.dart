@@ -743,6 +743,7 @@ class _CupertinoDialogScrollPosition extends ScrollPositionWithSingleContext {
 class CupertinoAdaptiveModal extends StatelessWidget {
   const CupertinoAdaptiveModal({
     super.key,
+    this.showAppBar = true,
     required this.title,
     required this.leadingAction,
     this.appBarActions = const [],
@@ -753,12 +754,13 @@ class CupertinoAdaptiveModal extends StatelessWidget {
     required this.bottomActions,
     required this.automaticallyImplyCloseButton,
     required this.onCloseRequested,
-    required this.constraints,
+    required this.size,
     required this.presentation,
     required this.scrollController,
-    this.onContentHeightChanged,
+    this.onContentSizeChanged,
   });
 
+  final bool showAppBar;
   final Widget? title;
   final Widget? leadingAction;
   final List<Widget> appBarActions;
@@ -769,10 +771,10 @@ class CupertinoAdaptiveModal extends StatelessWidget {
   final List<Widget> bottomActions;
   final bool automaticallyImplyCloseButton;
   final VoidCallback onCloseRequested;
-  final BoxConstraints? constraints;
+  final AdaptiveModalSize size;
   final AdaptiveModalPresentation presentation;
   final ScrollController scrollController;
-  final ValueChanged<double>? onContentHeightChanged;
+  final ValueChanged<Size>? onContentSizeChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -805,42 +807,48 @@ class CupertinoAdaptiveModal extends StatelessWidget {
         ),
       if (!closeLeading) ?impliedClose,
     ];
-    final appBar = ModalWindowControlAppBarRegion(
-      child: MediaQuery.removePadding(
-        context: context,
-        removeTop: true,
-        child: ListenableBuilder(
-          listenable: scrollController,
-          builder: (context, _) => WindowControlCupertinoNavigationBar(
-            key: const ValueKey('adaptive-modal-app-bar'),
-            leading: leading == null
-                ? null
-                : Row(mainAxisSize: MainAxisSize.min, children: [leading]),
-            automaticallyImplyLeading: false,
-            middle: title == null
-                ? const SizedBox.shrink()
-                : KeyedSubtree(
-                    key: const ValueKey('adaptive-modal-title'),
-                    child: title!,
-                  ),
-            trailing: trailing.isEmpty
-                ? null
-                : Row(mainAxisSize: MainAxisSize.min, children: trailing),
-            backgroundColor: CupertinoColors.transparent,
-            transitionBetweenRoutes: false,
-            automaticBackgroundVisibility: true,
-            enableBackgroundFilterBlur:
-                scrollController.hasClients &&
-                scrollController.position.extentBefore > 0,
-          ),
-        ),
-      ),
-    );
+    final appBar = !showAppBar
+        ? null
+        : ModalWindowControlAppBarRegion(
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              child: ListenableBuilder(
+                listenable: scrollController,
+                builder: (context, _) => WindowControlCupertinoNavigationBar(
+                  key: const ValueKey('adaptive-modal-app-bar'),
+                  leading: leading == null
+                      ? null
+                      : Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [leading],
+                        ),
+                  automaticallyImplyLeading: false,
+                  middle: title == null
+                      ? const SizedBox.shrink()
+                      : KeyedSubtree(
+                          key: const ValueKey('adaptive-modal-title'),
+                          child: title!,
+                        ),
+                  trailing: trailing.isEmpty
+                      ? null
+                      : Row(mainAxisSize: MainAxisSize.min, children: trailing),
+                  backgroundColor: CupertinoColors.transparent,
+                  transitionBetweenRoutes: false,
+                  automaticBackgroundVisibility: true,
+                  enableBackgroundFilterBlur:
+                      scrollController.hasClients &&
+                      scrollController.position.extentBefore > 0,
+                ),
+              ),
+            ),
+          );
     final sheetDragController = ModalSheetDragControllerScope.maybeControllerOf(
       context,
     );
     final header =
-        presentation == AdaptiveModalPresentation.sheet &&
+        appBar != null &&
+            presentation == AdaptiveModalPresentation.sheet &&
             sheetDragController != null
         ? ModalSheetDragRegion(controller: sheetDragController, child: appBar)
         : appBar;
@@ -848,16 +856,16 @@ class CupertinoAdaptiveModal extends StatelessWidget {
         ? null
         : _CupertinoModalActionArea(actions: actions);
 
-    const appBarHeight = kMinInteractiveDimensionCupertino;
+    final appBarHeight = showAppBar ? kMinInteractiveDimensionCupertino : 0.0;
     final paddedPinnedBody = pinnedBody == null
         ? null
         : Padding(
-            padding: const EdgeInsets.only(top: appBarHeight),
+            padding: EdgeInsets.only(top: appBarHeight),
             child: pinnedBody,
           );
     final paddedBody = pinnedBody == null
         ? Padding(
-            padding: const EdgeInsets.only(top: appBarHeight),
+            padding: EdgeInsets.only(top: appBarHeight),
             child: body,
           )
         : body;
@@ -878,17 +886,18 @@ class CupertinoAdaptiveModal extends StatelessWidget {
                   body: paddedBody,
                   bottomActions: bottomActions,
                   scrollController: scrollController,
-                  onContentHeightChanged: onContentHeightChanged,
+                  onContentSizeChanged: onContentSizeChanged,
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
                   presentation: presentation,
-                  constraints: constraints,
+                  size: size,
                   defaultMaxHeight:
                       presentation == AdaptiveModalPresentation.sheet
                       ? MediaQuery.sizeOf(context).height * _sheetHeightFactor
                       : null,
                   footer: footer,
                 ),
-                Positioned(top: 0, left: 0, right: 0, child: header),
+                if (header != null)
+                  Positioned(top: 0, left: 0, right: 0, child: header),
               ],
             ),
           ),

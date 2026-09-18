@@ -29,7 +29,8 @@ void main() {
                       textDirection: direction,
                       child: ValueListenableBuilder<int>(
                         valueListenable: state,
-                        builder: (_, mode, _) => AdaptiveModal.constrained(
+                        builder: (_, mode, _) => AdaptiveModal(
+                          size: const AdaptiveModalSize.constrained(),
                           title: const Text('Title'),
                           body: const Text('Body'),
                           leadingAction: mode == 3 ? const Text('Back') : null,

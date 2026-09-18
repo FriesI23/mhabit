@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 void main() {
-  test('size policies keep the existing defaults', () {
+  test('size policies use fixed or content bounds for both axes', () {
     final defaultNavigator = AdaptiveModalNavigator<void>(
       builder: (_) => const SizedBox(),
     );
@@ -11,10 +11,34 @@ void main() {
     const fixed = AdaptiveModalSize.fixed();
     const constrained = AdaptiveModalSize.constrained();
     expect((fixed as AdaptiveModalFixedSize).width, 560);
-    expect(fixed.height, 560);
+    expect(fixed.height, 720);
     expect(
       (constrained as AdaptiveModalConstrainedSize).constraints,
       const BoxConstraints(minWidth: 560, maxWidth: 560, maxHeight: 720),
+    );
+  });
+
+  test('overriding one size bound preserves the other defaults', () {
+    expect(
+      const AdaptiveModalSize.constrained(maxHeight: 360).constraints,
+      const BoxConstraints(minWidth: 560, maxWidth: 560, maxHeight: 360),
+    );
+    expect(
+      const AdaptiveModalSize.constrained(minWidth: 0).constraints,
+      const BoxConstraints(maxWidth: 560, maxHeight: 720),
+    );
+    expect(
+      const AdaptiveModalSize.constrained(maxWidth: 800).constraints,
+      const BoxConstraints(minWidth: 560, maxWidth: 800, maxHeight: 720),
+    );
+    expect(
+      const AdaptiveModalSize.constrained(minHeight: 100).constraints,
+      const BoxConstraints(
+        minWidth: 560,
+        maxWidth: 560,
+        minHeight: 100,
+        maxHeight: 720,
+      ),
     );
   });
 
@@ -38,15 +62,18 @@ void main() {
                     builder: (_) => ValueListenableBuilder<double>(
                       valueListenable: contentHeight,
                       builder: (_, height, _) => maxHeight == 720
-                          ? AdaptiveModal.constrained(
+                          ? AdaptiveModal(
+                              size: const AdaptiveModalSize.constrained(),
                               title: const Text('Selection'),
                               body: SizedBox(
                                 height: height,
                                 child: const Text('Options'),
                               ),
                             )
-                          : AdaptiveModal.constrained(
-                              constraints: BoxConstraints(maxHeight: maxHeight),
+                          : AdaptiveModal(
+                              size: AdaptiveModalSize.constrained(
+                                maxHeight: maxHeight,
+                              ),
                               title: const Text('Selection'),
                               body: SizedBox(
                                 height: height,
@@ -108,6 +135,7 @@ void main() {
                   presentationOverride: AdaptiveModalPresentation.dialog,
                   enableDrag: enableDrag,
                   builder: (_) => AdaptiveModalNavigator<void>(
+                    size: const AdaptiveModalSize.fixed(height: 560),
                     builder: (_) => const AdaptiveModal(
                       body: SizedBox(
                         height: 1000,
@@ -268,17 +296,16 @@ void main() {
                   presentationOverride: AdaptiveModalPresentation.dialog,
                   builder: (_) => AdaptiveModalNavigator<void>(
                     size: const AdaptiveModalSize.constrained(
-                      constraints: BoxConstraints(
-                        minWidth: 300,
-                        maxWidth: 400,
-                        minHeight: 320,
-                        maxHeight: 440,
-                      ),
+                      minWidth: 300,
+                      maxWidth: 400,
+                      minHeight: 320,
+                      maxHeight: 440,
                     ),
                     builder: (_) => ValueListenableBuilder<double>(
                       valueListenable: bodyHeight,
-                      builder: (_, height, _) =>
-                          AdaptiveModal(body: SizedBox(height: height)),
+                      builder: (_, height, _) => AdaptiveModal(
+                        body: SizedBox(width: height, height: height),
+                      ),
                     ),
                   ),
                 ),
@@ -291,13 +318,13 @@ void main() {
         await tester.pumpAndSettle();
         Size size() =>
             tester.getSize(find.byType(AdaptiveModalNavigator<void>));
-        expect(size(), const Size(400, 320));
+        expect(size(), const Size(300, 320));
         bodyHeight.value = 1000;
         await tester.pumpAndSettle();
         expect(size(), const Size(400, 440));
         bodyHeight.value = 10;
         await tester.pumpAndSettle();
-        expect(size(), const Size(400, 320));
+        expect(size(), const Size(300, 320));
         tester.view.physicalSize = const Size(280, 280);
         await tester.pumpAndSettle();
         expect(size().width, lessThanOrEqualTo(252));
@@ -307,7 +334,7 @@ void main() {
     );
 
     for (final sizePolicy in [
-      const AdaptiveModalSize.fixed(),
+      const AdaptiveModalSize.fixed(height: 560),
       const AdaptiveModalSize.constrained(),
     ]) {
       testWidgets(

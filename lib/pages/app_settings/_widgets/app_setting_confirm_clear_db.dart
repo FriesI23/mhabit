@@ -12,17 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
-// TODO(mhabit-adaptive-dialog): Migrate the route and backup option to explicit
-// Material/Cupertino renderers with a destructive confirm action. Preserve the
-// default backup selection and cancel/confirm/confirmWithExport/null results;
-// the backup choice controls this operation, not whether to skip future prompts.
 Future<AppSettingConfirmClearDBOp?> showAppSettingConfirmClearDBDiloag({
   required BuildContext context,
 }) async {
-  return showDialog<AppSettingConfirmClearDBOp>(
+  return showAdaptiveModalDialog<AppSettingConfirmClearDBOp>(
     context: context,
+    barrierDismissible: true,
     builder: (context) => const AppSettingConfirmClearDBDiloag(),
   );
 }
@@ -42,30 +41,50 @@ class _AppSettingConfirmClearDBDiloag
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+    return AdaptiveDialog(
       title: const Text("Confirm"),
-      content: CheckboxListTile(
-        contentPadding: EdgeInsets.zero,
-        title: const Text("backup first"),
-        value: checked,
-        onChanged: (value) => setState(() {
-          checked = !checked;
-        }),
-      ),
+      content: switch (AdaptiveStyle.of(context)) {
+        AdaptiveStyle.material => CheckboxListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text("backup first"),
+          value: checked,
+          onChanged: (value) => setState(() => checked = value ?? checked),
+        ),
+        AdaptiveStyle.apple => MergeSemantics(
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => setState(() => checked = !checked),
+            child: Row(
+              children: [
+                CupertinoCheckbox(
+                  value: checked,
+                  onChanged: (value) =>
+                      setState(() => checked = value ?? checked),
+                ),
+                const SizedBox(width: 6),
+                const Expanded(
+                  child: Text("backup first", textAlign: TextAlign.start),
+                ),
+              ],
+            ),
+          ),
+        ),
+      },
       actions: [
-        TextButton(
+        AdaptiveDialogAction(
+          label: "cancel",
           onPressed: () => Navigator.maybeOf(
             context,
           )?.maybePop(AppSettingConfirmClearDBOp.cancel),
-          child: const Text("cancel"),
         ),
-        TextButton(
+        AdaptiveDialogAction(
+          label: "confirm",
+          isDestructiveAction: true,
           onPressed: () => Navigator.maybeOf(context)?.maybePop(
             checked
                 ? AppSettingConfirmClearDBOp.confirmWithExport
                 : AppSettingConfirmClearDBOp.confirm,
           ),
-          child: const Text("confirm"),
         ),
       ],
     );

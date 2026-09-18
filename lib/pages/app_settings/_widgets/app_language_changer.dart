@@ -64,7 +64,8 @@ class AppLanguageChangerDialog extends StatelessWidget {
         ? systemLabel
         : lookupL10n(selectedLocale!).localeScriptName;
 
-    return AdaptiveModal.constrained(
+    return AdaptiveModal(
+      size: const AdaptiveModalSize.constrained(),
       title: l10n != null
           ? Text(l10n.appSetting_changeLanguageDialog_titleText)
           : null,

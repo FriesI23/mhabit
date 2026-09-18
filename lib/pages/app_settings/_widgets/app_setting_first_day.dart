@@ -71,7 +71,8 @@ class AppSettingFirstDaySelectDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
     final formatter = DateFormat.EEEE(l10n?.localeName);
-    return AdaptiveModal.constrained(
+    return AdaptiveModal(
+      size: const AdaptiveModalSize.constrained(),
       title: Text(
         l10n?.appSetting_firstDayOfWeekDialog_titleText ??
             'Show first day of week',

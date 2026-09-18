@@ -118,7 +118,8 @@ class AppSettingThemeColorChoosenDialog extends StatelessWidget {
       (vm) => vm.isInDevelopMode,
     );
     final l10n = L10n.of(context);
-    return AdaptiveModal.constrained(
+    return AdaptiveModal(
+      size: const AdaptiveModalSize.constrained(),
       title: Text(
         l10n?.appSetting_appThemeColorChosenDiloag_titleText ??
             "Choose Theme Color",

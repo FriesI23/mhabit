@@ -44,7 +44,7 @@ Future<DonateDialogResult?> showDonateDialog(
     builder: (_) => AdaptiveModal(
       title: l10n != null ? Text(l10n.appAbout_donateTile_titleText) : null,
       automaticallyImplyCloseButton: false,
-      constraints: const BoxConstraints(maxWidth: 800),
+      size: const AdaptiveModalSize.constrained(minWidth: 800, maxWidth: 800),
       body: DonateContent(
         donateBuyMeACoffeeToken: donateBuyMeACoffeeToken,
         donatePaypalToken: donatePaypalToken,
