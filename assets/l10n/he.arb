@@ -324,6 +324,9 @@
     "habitDisplay_groupModifyDialog_alreadyInGroup": "ההרגלים שנבחרו כבר משויכים לקבוצה זו",
     "habitDisplay_groupModifyDialog_createGroup": "יצירת קבוצה",
     "habitDisplay_groupModifyDialog_saveAndApply": "שמירה והחלה",
+    "@habitDisplay_groupModifyDialog_saveAndApply": {
+        "description": "Deprecated. Use habitEdit_saveButton_text instead."
+    },
     "habitDisplay_groupModifyConfirm_titleNew": "העברה לקבוצה",
     "habitDisplay_groupModifyConfirm_titleMixed": "אישור שינוי קבוצה",
     "habitDisplay_groupModifyConfirm_bodyNewGroup": "ההרגלים של „{groupName}” יועברו לקבוצה זו",

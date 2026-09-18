@@ -916,7 +916,7 @@ abstract class L10n {
   /// **'Create Group'**
   String get habitDisplay_groupModifyDialog_createGroup;
 
-  /// No description provided for @habitDisplay_groupModifyDialog_saveAndApply.
+  /// Deprecated. Use habitEdit_saveButton_text instead.
   ///
   /// In en, this message translates to:
   /// **'Save & Apply'**

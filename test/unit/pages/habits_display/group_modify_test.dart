@@ -348,7 +348,7 @@ void main() {
         final createRoute = ModalRoute.of(createContext)!;
         await tester.tap(find.byKey(const ValueKey('adaptive-modal-confirm')));
         await tester.pumpAndSettle();
-        await tester.tap(find.byKey(const ValueKey('adaptive-modal-confirm')));
+        await tester.tap(find.byKey(const ValueKey('group-modify-confirm')));
         await tester.pumpAndSettle();
         expect(manager.createCalls, 1);
 
@@ -552,7 +552,13 @@ void main() {
           find.byKey(const ValueKey('group-modify-create-save')),
           findsNothing,
         );
-        expect(find.text('Save'), findsNothing);
+        expect(
+          tester
+              .widget<AdaptiveModal>(find.bySubtype<AdaptiveModal>())
+              .confirmAction
+              ?.label,
+          'Save',
+        );
         expect(
           find.byKey(const ValueKey('adaptive-modal-confirm')),
           findsOneWidget,
@@ -872,6 +878,14 @@ void main() {
           expect(find.byType(AdaptiveBackButton), findsOneWidget);
           expect(
             find.byKey(const ValueKey('adaptive-modal-confirm')),
+            findsNothing,
+          );
+          expect(
+            find.byKey(const ValueKey('group-modify-confirm')),
+            findsOneWidget,
+          );
+          expect(
+            find.byKey(const ValueKey('adaptive-modal-actions')),
             findsOneWidget,
           );
           expect(
@@ -885,9 +899,7 @@ void main() {
           await tester.pump();
           expect(persistedValues, isEmpty);
 
-          await tester.tap(
-            find.byKey(const ValueKey('adaptive-modal-confirm')),
-          );
+          await tester.tap(find.byKey(const ValueKey('group-modify-confirm')));
           await tester.pumpAndSettle();
           expect(result, isTrue);
           expect(persistedValues, [true]);
@@ -1015,8 +1027,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // Confirm is always enabled; caller filters at execution time.
-      final confirmButton = tester.widget<TextButton>(
-        find.widgetWithText(TextButton, 'Confirm'),
+      final confirmButton = tester.widget<FilledButton>(
+        find.widgetWithText(FilledButton, 'Confirm'),
       );
       expect(confirmButton.onPressed, isNotNull);
     });
@@ -1088,7 +1100,16 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Read'), findsNothing);
       expect(find.text('Write'), findsOneWidget);
-      await tester.scrollUntilVisible(find.text('Draw'), 80);
+      await tester.scrollUntilVisible(
+        find.text('Draw'),
+        80,
+        scrollable: find
+            .descendant(
+              of: find.bySubtype<AdaptiveModal>(),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
       expect(find.text('No Group (1)'), findsOneWidget);
       expect(find.text('Draw'), findsOneWidget);
     });
@@ -1170,7 +1191,7 @@ void main() {
     await tester.tap(find.text('Remove Group'));
     await tester.pumpAndSettle();
     expect(find.text('Modify Group'), findsNothing);
-    await tester.tap(find.byKey(const ValueKey('adaptive-modal-confirm')));
+    await tester.tap(find.byKey(const ValueKey('group-modify-confirm')));
     await tester.pumpAndSettle();
     expect((result! as GroupModifySelectorSelected).groupId, isNull);
   });

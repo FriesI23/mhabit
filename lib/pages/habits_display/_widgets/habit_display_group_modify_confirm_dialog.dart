@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
@@ -134,12 +135,23 @@ class _HabitGroupModifyConfirmPageState
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
+    final confirmLabel =
+        l10n?.confirmDialog_confirm_text('confirm') ?? 'Confirm';
+    final confirmAction = switch (AdaptiveStyle.of(context)) {
+      AdaptiveStyle.material => FilledButton(
+        key: const ValueKey('group-modify-confirm'),
+        onPressed: _confirm,
+        child: Text(confirmLabel),
+      ),
+      AdaptiveStyle.apple => CupertinoButton(
+        key: const ValueKey('group-modify-confirm'),
+        onPressed: _confirm,
+        child: Text(confirmLabel),
+      ),
+    };
     return AdaptiveModal.slivers(
       title: Text(widget.title),
-      confirmAction: AdaptiveModalConfirmAction(
-        label: l10n?.confirmDialog_confirm_text('confirm') ?? 'Confirm',
-        onPressed: _confirm,
-      ),
+      actions: [confirmAction],
       automaticallyImplyLeading: true,
       automaticallyImplyCloseButton: false,
       slivers: [

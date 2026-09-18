@@ -299,6 +299,9 @@
     "habitDisplay_groupModifyDialog_alreadyInGroup": "Вибрані звички вже є в цій групі",
     "habitDisplay_groupModifyDialog_createGroup": "Створити групу",
     "habitDisplay_groupModifyDialog_saveAndApply": "Зберегти та застосувати",
+    "@habitDisplay_groupModifyDialog_saveAndApply": {
+        "description": "Deprecated. Use habitEdit_saveButton_text instead."
+    },
     "habitDisplay_groupModifyConfirm_titleNew": "Перемістити до групи",
     "habitDisplay_groupModifyConfirm_titleMixed": "Підтвердити зміну групи",
     "habitDisplay_groupModifyConfirm_bodyNewGroup": "Звички {groupName} будуть переміщені до цієї групи",

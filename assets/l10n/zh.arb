@@ -329,6 +329,9 @@
     "habitDisplay_groupModifyDialog_alreadyInGroup": "所选习惯已在该分组中",
     "habitDisplay_groupModifyDialog_createGroup": "创建分组",
     "habitDisplay_groupModifyDialog_saveAndApply": "保存并应用",
+    "@habitDisplay_groupModifyDialog_saveAndApply": {
+        "description": "Deprecated. Use habitEdit_saveButton_text instead."
+    },
     "habitDisplay_groupModifyConfirm_titleNew": "确认移动至分组",
     "habitDisplay_groupModifyConfirm_titleMixed": "确认修改分组",
     "habitDisplay_groupModifyConfirm_bodyNewGroup": "以下习惯将移动至「{groupName}」",

@@ -434,7 +434,9 @@
     "habitDisplay_groupModifyDialog_createGroup": "Create Group",
     "@habitDisplay_groupModifyDialog_createGroup": {},
     "habitDisplay_groupModifyDialog_saveAndApply": "Save & Apply",
-    "@habitDisplay_groupModifyDialog_saveAndApply": {},
+    "@habitDisplay_groupModifyDialog_saveAndApply": {
+        "description": "Deprecated. Use habitEdit_saveButton_text instead."
+    },
     "habitDisplay_groupModifyConfirm_titleNew": "Move to Group",
     "@habitDisplay_groupModifyConfirm_titleNew": {},
     "habitDisplay_groupModifyConfirm_titleMixed": "Confirm Group Change",

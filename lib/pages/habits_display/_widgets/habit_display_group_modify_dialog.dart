@@ -214,8 +214,7 @@ class _GroupModifyCreatePageState extends State<_GroupModifyCreatePage> {
     return AdaptiveModal(
       title: Text(l10n?.groupManage_createDialog_title ?? 'Create Group'),
       confirmAction: AdaptiveModalConfirmAction(
-        label:
-            l10n?.habitDisplay_groupModifyDialog_saveAndApply ?? 'Save & Apply',
+        label: l10n?.habitEdit_saveButton_text ?? 'Save',
         onPressed: () => _handleSaveAndApply(vm),
       ),
       automaticallyImplyLeading: true,
