@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
@@ -28,7 +27,7 @@ class AppAboutDonateTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
 
-    return AdaptiveListTile(
+    return AdaptiveListTile.navigation(
       leading: const Icon(CommonIcons.laDonate),
       title: l10n != null
           ? Text(l10n.appAbout_donateTile_titleText)
@@ -36,9 +35,6 @@ class AppAboutDonateTile extends StatelessWidget {
       subtitle: l10n != null
           ? Text(l10n.appAbout_donateTile_subTitleText)
           : const Text("null"),
-      trailing: AdaptiveStyle.of(context) == AdaptiveStyle.apple
-          ? const Icon(CupertinoIcons.chevron_forward)
-          : null,
       onTap: onPressed,
     );
   }

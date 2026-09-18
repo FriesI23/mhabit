@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
@@ -36,7 +35,7 @@ class AppSettingDateDisplayFormatListTile extends StatelessWidget {
         final patternText = config.useSystemFormat
             ? l10n?.appSetting_dateDisplayFormat_titleTemplate_followSystemText
             : config.getFormatter(l10n?.localeName).pattern;
-        return AdaptiveListTile(
+        return AdaptiveListTile.navigation(
           title: Text(
             l10n?.appSetting_dateDisplayFormat_titleText(patternText ?? '') ??
                 "Date display format ($patternText)",
@@ -44,10 +43,6 @@ class AppSettingDateDisplayFormatListTile extends StatelessWidget {
           subtitle: l10n != null
               ? Text(l10n.appSetting_dateDisplayFormat_subTitleText)
               : null,
-          trailing: switch (AdaptiveStyle.of(context)) {
-            AdaptiveStyle.material => null,
-            AdaptiveStyle.apple => const Icon(CupertinoIcons.chevron_forward),
-          },
           onTap: onPressed,
         );
       },

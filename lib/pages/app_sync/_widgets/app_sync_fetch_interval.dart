@@ -73,12 +73,9 @@ class AppSyncFetchIntervalTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return AdaptiveListTile(
+    return AdaptiveListTile.navigation(
       title: Text(l10n?.appSync_syncIntervalTile_title ?? "Fetch Interval"),
       subtitle: buildSubtitle(l10n),
-      trailing: AdaptiveStyle.of(context) == AdaptiveStyle.apple
-          ? const Icon(CupertinoIcons.chevron_forward)
-          : null,
       onTap: onPressed,
     );
   }

@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
@@ -51,7 +50,7 @@ class _AppAboutLicenseTileState extends State<AppAboutLicenseTile> {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return AdaptiveListTile(
+    return AdaptiveListTile.navigation(
       leading: const Icon(Icons.balance_outlined),
       title: l10n != null
           ? Text(l10n.appAbout_licenseTile_titleText)
@@ -59,9 +58,6 @@ class _AppAboutLicenseTileState extends State<AppAboutLicenseTile> {
       subtitle: l10n != null
           ? Text(l10n.appAbout_licenseTile_subtitleText)
           : const Text("Unknown"),
-      trailing: AdaptiveStyle.of(context) == AdaptiveStyle.apple
-          ? const Icon(CupertinoIcons.chevron_forward)
-          : null,
       onTap: onPressed,
     );
   }

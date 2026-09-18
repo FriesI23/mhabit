@@ -604,7 +604,7 @@ class _PageState extends State<_Page> with XShare {
           selector: (context, vm) => vm.languange,
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) => L10nBuilder(
-            builder: (context, l10n) => AdaptiveListTile(
+            builder: (context, l10n) => AdaptiveListTile.navigation(
               key: const ValueKey('settings-language'),
               title: l10n != null
                   ? Text(l10n.appSetting_changeLanguageTile_titleText)
@@ -612,12 +612,6 @@ class _PageState extends State<_Page> with XShare {
               subtitle: Text(
                 context.read<AppLanguageViewModel>().getAppLanguageText(l10n),
               ),
-              trailing: switch (AdaptiveStyle.of(context)) {
-                AdaptiveStyle.material => null,
-                AdaptiveStyle.apple => const Icon(
-                  CupertinoIcons.chevron_forward,
-                ),
-              },
               onTap: () => _onAppLanguageTilePressed(context),
             ),
           ),
@@ -834,17 +828,13 @@ class _PageState extends State<_Page> with XShare {
             : const Text("Others"),
       ),
       children: [
-        AdaptiveListTile(
+        AdaptiveListTile.navigation(
           title: L10nBuilder(
             builder: (context, l10n) => Text(
               l10n?.appSetting_experimentalFeatureTile_titleText ??
                   "Experimental Features",
             ),
           ),
-          trailing: switch (AdaptiveStyle.of(context)) {
-            AdaptiveStyle.material => null,
-            AdaptiveStyle.apple => const Icon(CupertinoIcons.chevron_forward),
-          },
           onTap: () => naviToExperimentalFeaturesPage(context: context),
         ),
         Selector<AppDeveloperViewModel, bool>(
@@ -860,7 +850,7 @@ class _PageState extends State<_Page> with XShare {
             value: value,
           ),
         ),
-        AdaptiveListTile(
+        AdaptiveListTile.navigation(
           title: L10nBuilder(
             builder: (context, l10n) => l10n != null
                 ? Text(l10n.appSetting_clearCache_titleText)
@@ -874,22 +864,14 @@ class _PageState extends State<_Page> with XShare {
                 ? Text(l10n.appSetting_debugger_titleText)
                 : const Text("Debugger"),
           ),
-          trailing: switch (AdaptiveStyle.of(context)) {
-            AdaptiveStyle.material => null,
-            AdaptiveStyle.apple => const Icon(CupertinoIcons.chevron_forward),
-          },
           onTap: () => naviToAppDebuggerPage(context: context),
         ),
-        AdaptiveListTile(
+        AdaptiveListTile.navigation(
           title: L10nBuilder(
             builder: (context, l10n) => l10n != null
                 ? Text(l10n.appSetting_about_titleText)
                 : const Text("About"),
           ),
-          trailing: switch (AdaptiveStyle.of(context)) {
-            AdaptiveStyle.material => null,
-            AdaptiveStyle.apple => const Icon(CupertinoIcons.chevron_forward),
-          },
           onTap: () => naviToAppAboutPage(context: context),
         ),
       ],
@@ -1030,16 +1012,12 @@ class _AppSettingSyncSubGroup extends StatelessWidget {
           const AppSettingSyncFailedTile(
             key: ValueKey('settings-sync-failure'),
           ),
-        AdaptiveListTile(
+        AdaptiveListTile.navigation(
           key: const ValueKey('settings-sync-option'),
           title: L10nBuilder(
             builder: (context, l10n) =>
                 Text(l10n?.appSetting_syncOption_titleText ?? 'Sync Option'),
           ),
-          trailing: switch (AdaptiveStyle.of(context)) {
-            AdaptiveStyle.material => null,
-            AdaptiveStyle.apple => const Icon(CupertinoIcons.chevron_forward),
-          },
           onTap: () => naviToAppSyncPage(context: context),
         ),
       ],

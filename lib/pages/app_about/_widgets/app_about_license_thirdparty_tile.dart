@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
@@ -63,16 +62,13 @@ class _AppAboutThirdPartyLicenseTileState
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return AdaptiveListTile(
+    return AdaptiveListTile.navigation(
       leading: const Icon(MdiIcons.license),
       title: l10n != null
           ? Text(l10n.appAbout_licenseThirdPartyTile_titleText)
           : const Text("Third Party License"),
       subtitle: l10n != null
           ? Text(l10n.appAbout_licenseThirdPartyTile_subtitleText)
-          : null,
-      trailing: AdaptiveStyle.of(context) == AdaptiveStyle.apple
-          ? const Icon(CupertinoIcons.chevron_forward)
           : null,
       onTap: onPressed,
     );

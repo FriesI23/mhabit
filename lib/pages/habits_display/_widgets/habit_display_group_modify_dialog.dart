@@ -381,7 +381,7 @@ class _GroupModifySelectContent extends StatelessWidget {
 
   Widget _buildCreateGroupButton(BuildContext context) {
     final l10n = L10n.of(context);
-    return AdaptiveListTile(
+    return AdaptiveListTile.navigation(
       leading: Icon(switch (AdaptiveStyle.of(context)) {
         AdaptiveStyle.material => Icons.add,
         AdaptiveStyle.apple => CupertinoIcons.add,
@@ -389,9 +389,6 @@ class _GroupModifySelectContent extends StatelessWidget {
       title: Text(
         l10n?.habitDisplay_groupModifyDialog_createGroup ?? 'Create Group',
       ),
-      trailing: AdaptiveStyle.of(context) == AdaptiveStyle.apple
-          ? const CupertinoListTileChevron()
-          : null,
       onTap: () => Navigator.of(context).push(
         adaptiveModalPageRoute<void>(
           context: context,

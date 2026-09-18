@@ -86,6 +86,25 @@ void main() {
       expect(find.byIcon(icon), findsOneWidget);
     });
   }
+  for (final platform in <TargetPlatform>[
+    TargetPlatform.android,
+    TargetPlatform.iOS,
+  ]) {
+    testWidgets('navigation resolves the $platform disclosure indicator', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        host(
+          const AdaptiveListTile.navigation(title: Text('Navigation')),
+          platform: platform,
+        ),
+      );
+      expect(
+        find.byIcon(CupertinoIcons.chevron_forward),
+        platform == TargetPlatform.iOS ? findsOneWidget : findsNothing,
+      );
+    });
+  }
   testWidgets('keyboard and semantics activate once with visible focus', (
     tester,
   ) async {

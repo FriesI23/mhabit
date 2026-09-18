@@ -44,7 +44,7 @@ class AppSettingFirstDayTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return AdaptiveListTile(
+    return AdaptiveListTile.navigation(
       title: l10n != null
           ? Text(l10n.appSetting_firstDayOfWeek_titleText)
           : const Text("First day of week"),
@@ -53,10 +53,6 @@ class AppSettingFirstDayTile extends StatelessWidget {
           l10n?.localeName,
         ).format(getProtoDateWithFirstDay(firstDay)),
       ),
-      trailing: switch (AdaptiveStyle.of(context)) {
-        AdaptiveStyle.material => null,
-        AdaptiveStyle.apple => const Icon(CupertinoIcons.chevron_forward),
-      },
       onTap: onPressed,
     );
   }

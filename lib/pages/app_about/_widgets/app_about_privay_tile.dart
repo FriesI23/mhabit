@@ -11,7 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -77,7 +76,7 @@ class _AppAboutPrivacyTile extends State<AppAboutPrivacyTile> {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return AdaptiveListTile(
+    return AdaptiveListTile.navigation(
       leading: const Icon(MdiIcons.shieldLockOutline),
       title: l10n != null
           ? Text(l10n.appAbout_privacyTile_titleText)
@@ -85,9 +84,6 @@ class _AppAboutPrivacyTile extends State<AppAboutPrivacyTile> {
       subtitle: l10n != null
           ? Text(l10n.appAbout_privacyTile_subTitleText)
           : const Text("Unknown"),
-      trailing: AdaptiveStyle.of(context) == AdaptiveStyle.apple
-          ? const Icon(CupertinoIcons.chevron_forward)
-          : null,
       onTap: _onPressed,
     );
   }
