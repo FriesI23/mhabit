@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
@@ -52,15 +51,12 @@ class _AppAboutSourceCodeTileState extends State<AppAboutSourceCodeTile> {
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
     return Consumer<AboutInfo>(
-      builder: (context, value, child) => AdaptiveListTile(
+      builder: (context, value, child) => AdaptiveListTile.external(
         leading: const Icon(MdiIcons.sourceBranch),
         title: l10n != null
             ? Text(l10n.appAbout_sourceCodeTile_titleText)
             : const Text("Source code"),
         subtitle: Text(value.sourceCodeUrl),
-        trailing: AdaptiveStyle.of(context) == AdaptiveStyle.apple
-            ? const Icon(CupertinoIcons.arrow_up_right_square)
-            : null,
         onTap: value.sourceCodeUrl.isNotEmpty ? onPressed : null,
       ),
     );

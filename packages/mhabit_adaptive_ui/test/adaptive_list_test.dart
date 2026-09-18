@@ -70,6 +70,22 @@ void main() {
     expect(find.byType(CupertinoListTile), findsOneWidget);
     expect(find.byType(ListTile), findsOneWidget);
   });
+  for (final (platform, icon) in <(TargetPlatform, IconData)>[
+    (TargetPlatform.android, Icons.open_in_new),
+    (TargetPlatform.iOS, CupertinoIcons.arrow_up_right_square),
+  ]) {
+    testWidgets('external uses the $platform navigation indicator', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        host(
+          const AdaptiveListTile.external(title: Text('External')),
+          platform: platform,
+        ),
+      );
+      expect(find.byIcon(icon), findsOneWidget);
+    });
+  }
   testWidgets('keyboard and semantics activate once with visible focus', (
     tester,
   ) async {

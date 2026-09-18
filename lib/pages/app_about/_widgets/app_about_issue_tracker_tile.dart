@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
@@ -53,15 +52,12 @@ class _AppAboutIssueTrackerTileState extends State<AppAboutIssueTrackerTile> {
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
     return Consumer<AboutInfo>(
-      builder: (context, value, child) => AdaptiveListTile(
+      builder: (context, value, child) => AdaptiveListTile.external(
         leading: const Icon(MdiIcons.bugOutline),
         title: l10n != null
             ? Text(l10n.appAbout_issueTrackerTile_titleText)
             : const Text("Issue tracker"),
         subtitle: Text(value.issueTrackerUrl),
-        trailing: AdaptiveStyle.of(context) == AdaptiveStyle.apple
-            ? const Icon(CupertinoIcons.arrow_up_right_square)
-            : null,
         onTap: value.issueTrackerUrl.isNotEmpty ? onPressed : null,
       ),
     );

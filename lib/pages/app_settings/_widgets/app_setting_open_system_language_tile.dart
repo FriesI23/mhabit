@@ -15,7 +15,6 @@
 import 'dart:io';
 
 import 'package:app_settings/app_settings.dart';
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
@@ -30,15 +29,11 @@ class AppSettingOpenSystemLanguageTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return AdaptiveListTile(
+    return AdaptiveListTile.external(
       title: Text(
         l10n?.appSetting_openSystemLanguageTile_titleText ??
             "System Language Settings",
       ),
-      trailing: Icon(switch (AdaptiveStyle.of(context)) {
-        AdaptiveStyle.material => Icons.open_in_new,
-        AdaptiveStyle.apple => CupertinoIcons.arrow_up_right_square,
-      }),
       onTap: () => _onTap(context),
     );
   }
