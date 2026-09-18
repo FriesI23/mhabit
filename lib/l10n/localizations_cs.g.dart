@@ -1911,6 +1911,12 @@ class L10nCs extends L10n {
       'Používat celý název';
 
   @override
+  String get appDateFormat_leadingZero_text => 'Use leading zeros';
+
+  @override
+  String get appDateFormat_preview_text => 'Preview';
+
+  @override
   String get common_customDateTimeFormatPicker_applyFreqChart_text =>
       'Použít na graf četnosti';
 

@@ -3007,6 +3007,18 @@ abstract class L10n {
   /// **'Use full name'**
   String get common_customDateTimeFormatPicker_monthName_text;
 
+  /// No description provided for @appDateFormat_leadingZero_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Use leading zeros'**
+  String get appDateFormat_leadingZero_text;
+
+  /// No description provided for @appDateFormat_preview_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get appDateFormat_preview_text;
+
   /// No description provided for @common_customDateTimeFormatPicker_applyFreqChart_text.
   ///
   /// In en, this message translates to:

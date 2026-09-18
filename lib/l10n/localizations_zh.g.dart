@@ -1775,6 +1775,12 @@ class L10nZh extends L10n {
   String get common_customDateTimeFormatPicker_monthName_text => '使用完整名称';
 
   @override
+  String get appDateFormat_leadingZero_text => '使用前导零';
+
+  @override
+  String get appDateFormat_preview_text => '预览';
+
+  @override
   String get common_customDateTimeFormatPicker_applyFreqChart_text => '对频率图表生效';
 
   @override
@@ -3579,6 +3585,12 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get common_customDateTimeFormatPicker_monthName_text => '使用完整名稱';
+
+  @override
+  String get appDateFormat_leadingZero_text => '使用前導零';
+
+  @override
+  String get appDateFormat_preview_text => '預覽';
 
   @override
   String get common_customDateTimeFormatPicker_applyFreqChart_text => '套用於頻率圖表';

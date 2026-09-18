@@ -1855,6 +1855,12 @@ class L10nJa extends L10n {
   String get common_customDateTimeFormatPicker_monthName_text => '月名を使用';
 
   @override
+  String get appDateFormat_leadingZero_text => 'Use leading zeros';
+
+  @override
+  String get appDateFormat_preview_text => 'Preview';
+
+  @override
   String get common_customDateTimeFormatPicker_applyFreqChart_text =>
       '頻度チャートに適用';
 

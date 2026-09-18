@@ -1889,6 +1889,12 @@ class L10nFa extends L10n {
       'استفاده از نام کامل';
 
   @override
+  String get appDateFormat_leadingZero_text => 'Use leading zeros';
+
+  @override
+  String get appDateFormat_preview_text => 'Preview';
+
+  @override
   String get common_customDateTimeFormatPicker_applyFreqChart_text =>
       'اعمال برای نمودار فراوانی';
 

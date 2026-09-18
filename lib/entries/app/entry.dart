@@ -34,6 +34,7 @@ import '../../models/app_sync_tasks.dart';
 import '../../models/app_theme_color.dart';
 import '../../models/habit_date.dart';
 import '../../pages/app_about/page.dart' show AppAboutPage;
+import '../../pages/app_date_format/page.dart' show AppDateFormatPage;
 import '../../pages/app_debugger/page.dart' show AppDebuggerPage;
 import '../../pages/app_notify_config/page.dart' show AppNotifyConfigPage;
 import '../../pages/app_settings/page.dart' show AppSettingPage;
@@ -199,6 +200,7 @@ class _AppEntryState extends State<_AppEntry> {
       ..addSettingsFlow(
         settingsBuilder: _buildSettingsPage,
         aboutBuilder: (_, _) => const AppAboutPage(),
+        dateFormatBuilder: (_, _) => const AppDateFormatPage(),
         syncBuilder: (_, _) => const AppSyncPage(),
         notifyBuilder: (_, _) => const AppNotifyConfigPage(),
         experimentalBuilder: (_, _) => const ExpermentalFeaturesPage(),

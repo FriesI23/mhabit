@@ -1901,6 +1901,12 @@ class L10nPt extends L10n {
       'Usar nome completo';
 
   @override
+  String get appDateFormat_leadingZero_text => 'Use leading zeros';
+
+  @override
+  String get appDateFormat_preview_text => 'Preview';
+
+  @override
   String get common_customDateTimeFormatPicker_applyFreqChart_text =>
       'Aplicar para o gráfico de frequência';
 

@@ -130,16 +130,9 @@ class _PageState extends State<_Page> with XShare {
     super.dispose();
   }
 
-  void _openCustomDateTimeFormatPickerDialog(BuildContext context) async {
+  void _openDateFormatPage(BuildContext context) async {
     if (!context.mounted) return;
-    final config = context.read<AppCustomDateYmdHmsConfigViewModel>();
-    final result = await showCustomDateTimeFormatPickerDialog(
-      context: context,
-      config: config.config,
-    );
-
-    if (!context.mounted || result == null) return;
-    context.read<AppCustomDateYmdHmsConfigViewModel>().setNewConfig(result);
+    await naviToAppSettingDateFormatPage(context: context);
   }
 
   void _openAppThemeColorChosenDialog() async {
@@ -559,7 +552,7 @@ class _PageState extends State<_Page> with XShare {
           builder: (context, config, child) =>
               AppSettingDateDisplayFormatListTile(
                 config: config,
-                onPressed: () => _openCustomDateTimeFormatPickerDialog(context),
+                onPressed: () => _openDateFormatPage(context),
               ),
         ),
         Selector<AppThemeViewModel, int>(

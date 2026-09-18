@@ -201,6 +201,7 @@ void main() {
       expect(AppRoute.habitEdit.name, 'habit/edit');
       expect(AppRoute.settings.name, 'settings');
       expect(AppRoute.settingsAbout.name, 'settings/about');
+      expect(AppRoute.settingsDateFormat.name, 'settings/date-format');
       expect(AppRoute.settingsSync.name, 'settings/sync');
       expect(AppRoute.settingsNotify.name, 'settings/notify');
       expect(AppRoute.experimental.name, 'experimental');
@@ -291,6 +292,7 @@ void main() {
     test('recognizes every Settings presentation route', () {
       expect(isSettingsFlowRouteName(AppRoute.settings.name), isTrue);
       expect(isSettingsFlowRouteName(AppRoute.settingsAbout.name), isTrue);
+      expect(isSettingsFlowRouteName(AppRoute.settingsDateFormat.name), isTrue);
       expect(isSettingsFlowRouteName(AppRoute.settingsSync.name), isTrue);
       expect(isSettingsFlowRouteName(AppRoute.settingsNotify.name), isTrue);
       expect(isSettingsFlowRouteName(AppRoute.experimental.name), isTrue);
@@ -368,6 +370,7 @@ void main() {
             child: const SizedBox.shrink(),
           ),
           aboutBuilder: (_, _) => const SizedBox.shrink(),
+          dateFormatBuilder: (_, _) => const SizedBox.shrink(),
           syncBuilder: (_, _) => const SizedBox.shrink(),
           notifyBuilder: (_, _) => const SizedBox.shrink(),
           experimentalBuilder: (_, _) => const SizedBox.shrink(),
@@ -391,11 +394,13 @@ void main() {
       expect(settings.name, AppRoute.settings.name);
       expect(settings.routes.map((route) => (route as GoRoute).path), [
         'about',
+        'date-format',
         'sync',
         'notify',
       ]);
       expect(settings.routes.map((route) => (route as GoRoute).name), [
         AppRoute.settingsAbout.name,
+        AppRoute.settingsDateFormat.name,
         AppRoute.settingsSync.name,
         AppRoute.settingsNotify.name,
       ]);
@@ -514,6 +519,7 @@ void main() {
             child: const SizedBox.shrink(),
           ),
           aboutBuilder: (_, _) => const SizedBox.shrink(),
+          dateFormatBuilder: (_, _) => const SizedBox.shrink(),
           syncBuilder: (_, _) => const SizedBox.shrink(),
           notifyBuilder: (_, _) => const SizedBox.shrink(),
           experimentalBuilder: (_, _) => const SizedBox.shrink(),

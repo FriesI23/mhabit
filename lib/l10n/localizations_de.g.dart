@@ -1903,6 +1903,12 @@ class L10nDe extends L10n {
       'Nutze vollen Namen';
 
   @override
+  String get appDateFormat_leadingZero_text => 'Use leading zeros';
+
+  @override
+  String get appDateFormat_preview_text => 'Preview';
+
+  @override
   String get common_customDateTimeFormatPicker_applyFreqChart_text =>
       'Auf Häufigkeitsdiagramm anwenden';
 

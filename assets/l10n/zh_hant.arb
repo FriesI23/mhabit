@@ -953,6 +953,8 @@
     },
     "common_customDateTimeFormatPicker_12Hour_text": "使用 12 小時制",
     "common_customDateTimeFormatPicker_monthName_text": "使用完整名稱",
+    "appDateFormat_leadingZero_text": "使用前導零",
+    "appDateFormat_preview_text": "預覽",
     "common_customDateTimeFormatPicker_applyFreqChart_text": "套用於頻率圖表",
     "common_customDateTimeFormatPicker_applyHeapmap_text": "套用於行事曆",
     "common_customDateTimeFormatPicker_cancelButton_text": "取消",

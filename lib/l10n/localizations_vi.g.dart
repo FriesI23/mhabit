@@ -1915,6 +1915,12 @@ class L10nVi extends L10n {
       'Sử dụng tên đầy đủ';
 
   @override
+  String get appDateFormat_leadingZero_text => 'Use leading zeros';
+
+  @override
+  String get appDateFormat_preview_text => 'Preview';
+
+  @override
   String get common_customDateTimeFormatPicker_applyFreqChart_text =>
       'Áp dụng cho biểu đồ tần suất';
 

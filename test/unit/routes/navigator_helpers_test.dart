@@ -262,6 +262,28 @@ void main() {
       expect(() => naviToAppSyncPage(context: context), returnsNormally);
     });
 
+    testWidgets('naviToAppSettingDateFormatPage delegates to pushNamed', (
+      tester,
+    ) async {
+      final router = GoRouter(
+        initialLocation: '/',
+        routes: [
+          GoRoute(path: '/', builder: (_, _) => const SizedBox.shrink()),
+          GoRoute(
+            path: '/settings/date-format',
+            name: AppRoute.settingsDateFormat.name,
+            builder: (_, _) => const SizedBox.shrink(),
+          ),
+        ],
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      final context = tester.element(find.byType(SizedBox).first);
+      expect(
+        () => naviToAppSettingDateFormatPage(context: context),
+        returnsNormally,
+      );
+    });
+
     testWidgets('naviToNotifyConfigPage delegates to pushNamed', (
       tester,
     ) async {

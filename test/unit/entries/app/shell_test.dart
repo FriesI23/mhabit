@@ -311,6 +311,7 @@ GoRouter _buildRouter(
         );
       },
       aboutBuilder: (_, _) => const _StubPage('about page'),
+      dateFormatBuilder: (_, _) => const _StubPage('date format page'),
       syncBuilder: (_, _) => const _StubPage('sync page'),
       notifyBuilder: (_, _) => const _StubPage('notify page'),
       experimentalBuilder: (_, _) => const _StubPage('experimental page'),

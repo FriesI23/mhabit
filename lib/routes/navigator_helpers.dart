@@ -73,6 +73,9 @@ Future<void> naviToAppSettingPage({required BuildContext context}) => context
 Future<void> naviToAppAboutPage({required BuildContext context}) =>
     context.pushNamed(AppRoute.settingsAbout.name);
 
+Future<void> naviToAppSettingDateFormatPage({required BuildContext context}) =>
+    context.pushNamed<void>(AppRoute.settingsDateFormat.name);
+
 Future<void> naviToGroupManagePage({
   required BuildContext context,
   String? selectedGroupId,
