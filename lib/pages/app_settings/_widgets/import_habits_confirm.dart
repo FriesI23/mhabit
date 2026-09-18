@@ -171,44 +171,49 @@ class _AppSettingImportHabitsConfirmDialogState
         l10n?.appSetting_importDialog_complete_closeLabel ?? 'Close';
     final confirmLabel =
         l10n?.appSetting_importDialog_confirm_confirmText ?? 'Import';
-    final materialActions = switch ((_confirmed, _completed)) {
-      (_, true) => <Widget>[
-        TextButton.icon(
-          key: const ValueKey('import-complete-button'),
-          onPressed: _close,
-          icon: const Icon(Icons.close),
-          label: Text(closeLabel),
-        ),
-      ],
-      (false, false) => <Widget>[
-        TextButton(
-          key: const ValueKey('import-cancel-button'),
-          onPressed: _close,
-          child: Text(cancelLabel),
-        ),
-        TextButton(
-          key: const ValueKey('import-confirm-button'),
-          onPressed: _canImport ? _onConfirmButtonPressed : null,
-          child: Text(confirmLabel),
-        ),
-      ],
-      (true, false) => const <Widget>[],
+    final actions = switch (style) {
+      AdaptiveStyle.material => switch ((_confirmed, _completed)) {
+        (_, true) => <Widget>[
+          TextButton.icon(
+            key: const ValueKey('import-complete-button'),
+            onPressed: _close,
+            icon: const Icon(Icons.close),
+            label: Text(closeLabel),
+          ),
+        ],
+        (false, false) => <Widget>[
+          TextButton(
+            key: const ValueKey('import-cancel-button'),
+            onPressed: _close,
+            child: Text(cancelLabel),
+          ),
+          TextButton(
+            key: const ValueKey('import-confirm-button'),
+            onPressed: _canImport ? _onConfirmButtonPressed : null,
+            child: Text(confirmLabel),
+          ),
+        ],
+        (true, false) => const <Widget>[],
+      },
+      AdaptiveStyle.apple =>
+        _confirmed && !_completed
+            ? const <Widget>[]
+            : <Widget>[
+                CupertinoButton(
+                  key: ValueKey(
+                    _completed
+                        ? 'import-complete-button'
+                        : 'import-confirm-button',
+                  ),
+                  onPressed: _completed
+                      ? _close
+                      : _canImport
+                      ? _onConfirmButtonPressed
+                      : null,
+                  child: Text(_completed ? closeLabel : confirmLabel),
+                ),
+              ],
     };
-    final appleActions = _confirmed && !_completed
-        ? const <Widget>[]
-        : <Widget>[
-            CupertinoButton(
-              key: ValueKey(
-                _completed ? 'import-complete-button' : 'import-confirm-button',
-              ),
-              onPressed: _completed
-                  ? _close
-                  : _canImport
-                  ? _onConfirmButtonPressed
-                  : null,
-              child: Text(_completed ? closeLabel : confirmLabel),
-            ),
-          ];
 
     return PopScope<void>(
       canPop: !_confirmed || _completed,
@@ -220,9 +225,7 @@ class _AppSettingImportHabitsConfirmDialogState
           currentCount: _currentCount,
           totalCount: _totalCount,
         ),
-        actions: style == AdaptiveStyle.material
-            ? materialActions
-            : appleActions,
+        actions: actions,
         automaticallyImplyCloseButton:
             style == AdaptiveStyle.apple && !_confirmed,
         onCloseRequested: _close,

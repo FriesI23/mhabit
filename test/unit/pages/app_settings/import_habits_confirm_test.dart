@@ -475,6 +475,28 @@ void main() {
     expect(find.bySubtype<AdaptiveModal>(), findsNothing);
   });
 
+  testWidgets('counts each enabled import item once in progress', (
+    tester,
+  ) async {
+    final importer = _TestImportRunner(deferHabits: true);
+    await _pumpHost(tester, platform: TargetPlatform.iOS, importer: importer);
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('import-confirm-button')));
+    await tester.pumpAndSettle();
+
+    final progress = tester.widget<LinearProgressIndicator>(
+      find.byKey(const ValueKey('import-progress')),
+    );
+    expect(progress.value, 0.5);
+
+    importer.completeHabits(success: 1);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('import-complete-button')));
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('supports importing groups without habits', (tester) async {
     final importer = _TestImportRunner();
     await _pumpHost(
