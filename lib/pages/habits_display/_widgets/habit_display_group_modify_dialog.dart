@@ -77,12 +77,10 @@ Future<GroupModifySelectorResult?> showHabitGroupModifySelector({
   required List<HabitSummaryData> selectedHabitsData,
 }) => showAdaptiveSheet<GroupModifySelectorResult?>(
   context: context,
-  // TODO(mhabit-adaptive-dialog): Remove the forced Material style after the group selector
-  // and its controls have Cupertino renderers.
-  styleOverride: AdaptiveStyle.material,
   builder: (_) => _GroupModifySelectorScope(
     selectedData: selectedHabitsData,
     bodyBuilder: (_) => AdaptiveModalNavigator<GroupModifySelectorResult?>(
+      size: const AdaptiveModalSize.constrained(maxHeight: 720),
       builder: (_) => const _GroupInitLoader(child: _GroupModifySelectPage()),
     ),
   ),
@@ -106,7 +104,7 @@ class _GroupModifySelectPage extends StatelessWidget {
     }
 
     if (vm.sourceGroups.isNotEmpty && !vm.skipConfirm) {
-      final confirmed = await showHabitGroupModifyConfirmDialog(
+      final confirmed = await pushHabitGroupModifyConfirmPage(
         context: context,
         affectedHabits: vm.affectedHabits,
         targetGroupId: vm.selectedGroupId,
@@ -135,22 +133,17 @@ class _GroupModifySelectPage extends StatelessWidget {
 
     return AdaptiveModal(
       title: Text(l10n?.habitDisplay_groupModifyDialog_title ?? 'Modify Group'),
-      actions: [
-        TextButton(
-          onPressed: () =>
-              AdaptiveModalNavigator.pop<GroupModifySelectorResult?>(
-                context,
-                kGroupModifySelectorCancelled,
-              ),
-          child: Text(l10n?.confirmDialog_cancel_text ?? 'Cancel'),
-        ),
-        FilledButton(
-          onPressed: () => _handleConfirm(context, vm),
-          child: Text(l10n?.confirmDialog_confirm_text('confirm') ?? 'Confirm'),
-        ),
-      ],
-      automaticallyImplyCloseButton: false,
-      body: const _GroupModifySelectContent(),
+      onCloseRequested: () =>
+          AdaptiveModalNavigator.pop<GroupModifySelectorResult?>(
+            context,
+            kGroupModifySelectorCancelled,
+          ),
+      body: _GroupModifySelectContent(
+        onSelected: (groupId) {
+          vm.selectGroup(groupId);
+          _handleConfirm(context, vm);
+        },
+      ),
     );
   }
 }
@@ -165,22 +158,6 @@ class _GroupModifyCreatePage extends StatefulWidget {
 class _GroupModifyCreatePageState extends State<_GroupModifyCreatePage> {
   final _formKey = GlobalKey<GroupEditFormState>();
 
-  Future<void> _handleSaveOnly(HabitGroupModifyViewModel vm) async {
-    final result = _formKey.currentState?.buildResult();
-    if (result == null) return;
-    final route = ModalRoute.of(context);
-    await vm.createGroup(
-      name: result.name,
-      desc: result.desc,
-      icon: result.icon,
-      color: result.color,
-    );
-    // A popped page remains mounted until its exit transition finishes.
-    // Do not pop the selector if the user already left this page while saving.
-    if (!mounted || route?.isCurrent != true) return;
-    Navigator.of(context).pop();
-  }
-
   Future<void> _handleSaveAndApply(HabitGroupModifyViewModel vm) async {
     final result = _formKey.currentState?.buildResult();
     if (result == null) return;
@@ -188,9 +165,10 @@ class _GroupModifyCreatePageState extends State<_GroupModifyCreatePage> {
     final handler = HabitGroupModifyHandler.forNewGroup(
       selectedData: vm.selectedData,
       getGroupName: vm.getGroupName,
+      getGroup: vm.getGroup,
     );
     if (!vm.skipConfirm) {
-      final confirmed = await showHabitGroupModifyConfirmDialog(
+      final confirmed = await pushHabitGroupModifyConfirmPage(
         context: context,
         affectedHabits: handler.affectedHabits,
         targetGroupId: handler.targetGroupId,
@@ -202,13 +180,14 @@ class _GroupModifyCreatePageState extends State<_GroupModifyCreatePage> {
       if (!(mounted && confirmed)) return;
     }
 
+    final route = ModalRoute.of(context);
     final group = await vm.createGroup(
       name: result.name,
       desc: result.desc,
       icon: result.icon,
       color: result.color,
     );
-    if (!mounted) return;
+    if (!mounted || route?.isCurrent != true) return;
     AdaptiveModalNavigator.pop<GroupModifySelectorResult?>(
       context,
       GroupModifySelectorSelected(
@@ -232,100 +211,16 @@ class _GroupModifyCreatePageState extends State<_GroupModifyCreatePage> {
       },
     );
 
-    final title = Text(l10n?.groupManage_createDialog_title ?? 'Create Group');
-    return switch (AdaptiveStyle.of(context)) {
-      AdaptiveStyle.material => _MaterialGroupModifyCreatePage(
-        title: title,
-        form: form,
-        onSave: () => _handleSaveOnly(vm),
-        onSaveAndApply: () => _handleSaveAndApply(vm),
-      ),
-      AdaptiveStyle.apple => _AppleGroupModifyCreatePage(
-        title: title,
-        form: form,
-        onSave: () => _handleSaveOnly(vm),
-        onSaveAndApply: () => _handleSaveAndApply(vm),
-      ),
-    };
-  }
-}
-
-class _MaterialGroupModifyCreatePage extends StatelessWidget {
-  const _MaterialGroupModifyCreatePage({
-    required this.title,
-    required this.form,
-    required this.onSave,
-    required this.onSaveAndApply,
-  });
-
-  final Widget title;
-  final Widget form;
-  final VoidCallback onSave;
-  final VoidCallback onSaveAndApply;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = L10n.of(context);
     return AdaptiveModal(
-      title: title,
-      actions: [
-        TextButton(
-          onPressed: onSave,
-          child: Text(l10n?.habitEdit_saveButton_text ?? 'Save'),
-        ),
-        FilledButton(
-          onPressed: onSaveAndApply,
-          child: Text(
+      title: Text(l10n?.groupManage_createDialog_title ?? 'Create Group'),
+      confirmAction: AdaptiveModalConfirmAction(
+        label:
             l10n?.habitDisplay_groupModifyDialog_saveAndApply ?? 'Save & Apply',
-          ),
-        ),
-      ],
+        onPressed: () => _handleSaveAndApply(vm),
+      ),
       automaticallyImplyLeading: true,
       automaticallyImplyCloseButton: false,
       body: form,
-    );
-  }
-}
-
-class _AppleGroupModifyCreatePage extends StatelessWidget {
-  const _AppleGroupModifyCreatePage({
-    required this.title,
-    required this.form,
-    required this.onSave,
-    required this.onSaveAndApply,
-  });
-
-  final Widget title;
-  final Widget form;
-  final VoidCallback onSave;
-  final VoidCallback onSaveAndApply;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = L10n.of(context);
-    return AdaptiveModal(
-      title: title,
-      automaticallyImplyLeading: true,
-      automaticallyImplyCloseButton: false,
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          form,
-          const SizedBox(height: 24),
-          CupertinoButton.filled(
-            onPressed: onSaveAndApply,
-            child: Text(
-              l10n?.habitDisplay_groupModifyDialog_saveAndApply ??
-                  'Save & Apply',
-            ),
-          ),
-          CupertinoButton(
-            onPressed: onSave,
-            child: Text(l10n?.habitEdit_saveButton_text ?? 'Save'),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -334,9 +229,9 @@ class _AppleGroupModifyCreatePage extends StatelessWidget {
 /// wiring (mirrors [group_manage]'s [PageProviders]).
 ///
 /// [ChangeNotifierProvider] creates the VM, [ViewModelProxyProvider] wires
-/// [GroupManager] / [AppCachesViewModel] / [AppEventBus], and [bodyBuilder]
-/// is called from inside the Provider tree via [Builder] so both
-/// [contentBuilder] and [actionsBuilder] receive a context with VM access.
+/// [GroupManager] / [AppCachesViewModel] / [AppEventBus], and [bodyBuilder] is
+/// called from inside the Provider tree via [Builder] so it receives a context
+/// with VM access.
 class _GroupModifySelectorScope extends StatelessWidget {
   final List<HabitSummaryData> selectedData;
   final WidgetBuilder bodyBuilder;
@@ -390,6 +285,21 @@ class _GroupInitLoaderState extends State<_GroupInitLoader> {
     }
   }
 
+  Widget _buildStatusPage(Widget child) {
+    final l10n = L10n.of(context);
+    return AdaptiveModal(
+      title: Text(l10n?.habitDisplay_groupModifyDialog_title ?? 'Modify Group'),
+      onCloseRequested: () =>
+          AdaptiveModalNavigator.pop<GroupModifySelectorResult?>(
+            context,
+            kGroupModifySelectorCancelled,
+          ),
+      body: Center(
+        child: Padding(padding: const EdgeInsets.all(24), child: child),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Selector<HabitGroupModifyViewModel, (bool, bool)>(
@@ -399,10 +309,13 @@ class _GroupInitLoaderState extends State<_GroupInitLoader> {
         future: loadData(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Center(child: Text('${snapshot.error}'));
+            return _buildStatusPage(Text('${snapshot.error}'));
           }
           if (!snapshot.isDone) {
-            return const Center(child: CircularProgressIndicator());
+            return _buildStatusPage(switch (AdaptiveStyle.of(context)) {
+              AdaptiveStyle.material => const CircularProgressIndicator(),
+              AdaptiveStyle.apple => const CupertinoActivityIndicator(),
+            });
           }
           return child!;
         },
@@ -413,46 +326,72 @@ class _GroupInitLoaderState extends State<_GroupInitLoader> {
 }
 
 class _GroupModifySelectContent extends StatelessWidget {
-  const _GroupModifySelectContent();
+  final ValueChanged<GroupUUID?> onSelected;
+
+  const _GroupModifySelectContent({required this.onSelected});
 
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<HabitGroupModifyViewModel>();
     final l10n = L10n.of(context);
-    return RadioGroup<GroupUUID?>(
-      groupValue: vm.selectedGroupId,
-      onChanged: vm.selectGroup,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (vm.groups.isEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Text(
-                l10n?.habitDisplay_groupModifyDialog_emptyGroups ??
-                    'No groups available',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
-            )
-          else
-            ...vm.groups.map((group) => _buildGroupTile(context, group)),
-          const Divider(),
-          _buildRemoveGroupTile(context),
-          _buildCreateGroupButton(context),
-        ],
-      ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (vm.groups.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Text(
+              l10n?.habitDisplay_groupModifyDialog_emptyGroups ??
+                  'No groups available',
+              textAlign: TextAlign.center,
+              style: switch (AdaptiveStyle.of(context)) {
+                AdaptiveStyle.material =>
+                  Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                AdaptiveStyle.apple =>
+                  CupertinoTheme.of(context).textTheme.textStyle.copyWith(
+                    color: CupertinoColors.secondaryLabel.resolveFrom(context),
+                  ),
+              },
+            ),
+          )
+        else
+          AdaptiveListSection(
+            hasLeading: true,
+            padding: EdgeInsets.zero,
+            children: [
+              for (final group in vm.groups)
+                _buildGroupTile(context, vm, group),
+            ],
+          ),
+        const SizedBox(height: 16),
+        AdaptiveListSection(
+          hasLeading: true,
+          padding: EdgeInsets.zero,
+          children: [
+            _buildRemoveGroupTile(context, vm),
+            _buildCreateGroupButton(context),
+          ],
+        ),
+      ],
     );
   }
 
   Widget _buildCreateGroupButton(BuildContext context) {
     final l10n = L10n.of(context);
-    return ListTile(
-      leading: const Icon(Icons.add, size: 20),
+    return AdaptiveListTile(
+      leading: Icon(switch (AdaptiveStyle.of(context)) {
+        AdaptiveStyle.material => Icons.add,
+        AdaptiveStyle.apple => CupertinoIcons.add,
+      }, size: 20),
       title: Text(
         l10n?.habitDisplay_groupModifyDialog_createGroup ?? 'Create Group',
       ),
+      trailing: AdaptiveStyle.of(context) == AdaptiveStyle.apple
+          ? const CupertinoListTileChevron()
+          : null,
       onTap: () => Navigator.of(context).push(
         adaptiveModalPageRoute<void>(
           context: context,
@@ -462,39 +401,45 @@ class _GroupModifySelectContent extends StatelessWidget {
     );
   }
 
-  Widget _buildGroupTile(BuildContext context, HabitGroupData group) {
-    return RadioListTile<GroupUUID?>(
-      value: group.uuid,
-      title: Row(
-        children: [
-          Icon(
-            group.icon?.iconData ?? defaultGroupIcon,
-            size: 20,
-            color: _resolveColor(context, group.color),
-          ),
-          const SizedBox(width: 12),
-          Expanded(child: Text(group.name, overflow: TextOverflow.ellipsis)),
-        ],
+  Widget _buildGroupTile(
+    BuildContext context,
+    HabitGroupModifyViewModel vm,
+    HabitGroupData group,
+  ) {
+    final selected = vm.currentGroupId == group.uuid;
+    return Semantics(
+      key: ValueKey('group-modify-option-${group.uuid}'),
+      selected: selected,
+      child: AdaptiveListTile(
+        leading: Icon(
+          group.icon?.iconData ?? defaultGroupIcon,
+          size: 20,
+          color: _resolveColor(context, group.color),
+        ),
+        title: Text(group.name, overflow: TextOverflow.ellipsis),
+        trailing: selected ? const AdaptiveCheckmark() : null,
+        onTap: () => onSelected(group.uuid),
       ),
     );
   }
 
-  Widget _buildRemoveGroupTile(BuildContext context) {
+  Widget _buildRemoveGroupTile(
+    BuildContext context,
+    HabitGroupModifyViewModel vm,
+  ) {
     final l10n = L10n.of(context);
-    return RadioListTile<GroupUUID?>(
-      value: null,
-      title: Row(
-        children: [
-          const Icon(Icons.clear_rounded, size: 20),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              l10n?.habitDisplay_groupModifyDialog_removeGroup ??
-                  'Remove Group',
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
+    return Semantics(
+      key: const ValueKey('group-modify-option-remove'),
+      child: AdaptiveListTile(
+        leading: Icon(switch (AdaptiveStyle.of(context)) {
+          AdaptiveStyle.material => Icons.clear_rounded,
+          AdaptiveStyle.apple => CupertinoIcons.clear,
+        }, size: 20),
+        title: Text(
+          l10n?.habitDisplay_groupModifyDialog_removeGroup ?? 'Remove Group',
+          overflow: TextOverflow.ellipsis,
+        ),
+        onTap: () => onSelected(null),
       ),
     );
   }

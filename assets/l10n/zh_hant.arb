@@ -316,7 +316,7 @@
         }
     },
     "habitDisplay_groupModifyConfirm_bodyRemoveGroup": "移除以下習慣的分組",
-    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count} 個習慣將由「{fromGroup}」修改至「{toGroup}」",
+    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count} 個習慣將由「{fromGroup}」{remainingGroupCount, plural, =0{} other{等共 {totalGroupCount} 個群組}}修改至「{toGroup}」",
     "@habitDisplay_groupModifyConfirm_bodyChangeStat": {
         "placeholders": {
             "count": {
@@ -325,11 +325,19 @@
             },
             "fromGroup": {
                 "type": "String",
-                "description": "Old group name"
+                "description": "At most the first three source group names"
             },
             "toGroup": {
                 "type": "String",
                 "description": "New group name"
+            },
+            "remainingGroupCount": {
+                "type": "int",
+                "description": "Number of omitted source group names; zero means the list is complete"
+            },
+            "totalGroupCount": {
+                "type": "int",
+                "description": "Total number of source groups, including displayed and omitted groups"
             }
         }
     },
@@ -1266,5 +1274,6 @@
                 "example": "Save"
             }
         }
-    }
+    },
+    "habitDisplay_groupModifyConfirm_previewTitle": "預覽"
 }

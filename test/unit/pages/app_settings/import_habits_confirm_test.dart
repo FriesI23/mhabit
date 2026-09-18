@@ -12,7 +12,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/l10n/localizations.dart';
+import 'package:mhabit/models/habit_color.dart';
+import 'package:mhabit/models/habit_color_type.dart';
+import 'package:mhabit/models/habit_group.dart';
 import 'package:mhabit/pages/app_settings/_widgets/import_habits_confirm.dart';
+import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/group_manager.dart';
 import 'package:mhabit/providers/workflow/habits_file_importer.dart';
@@ -23,6 +27,85 @@ import 'package:mhabit_adaptive_ui/src/material/material_adaptive_modal.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+    testWidgets(
+      'import previews optional colors/icons and ignores malformed decorations on $platform',
+      (tester) async {
+        await _pumpHost(
+          tester,
+          platform: platform,
+          importer: _TestImportRunner(),
+          groups: [
+            {
+              'uuid': 'a',
+              'name': 'Styled',
+              'icon': Icons.work_outline.codePoint,
+              'color': 3,
+            },
+            {
+              'uuid': 'b',
+              'name': 'Custom',
+              'custom_color': 0xff4488cc,
+              'custom_color_tinted': 0,
+            },
+            {
+              'uuid': 'c',
+              'name': 'Invalid',
+              'icon': -1,
+              'color': 'bad',
+              'custom_color': -1,
+            },
+            {'uuid': 'd', 'name': 'Absent'},
+          ],
+          habits: [
+            {'name': 'Builtin', 'group_id': 'a', 'color': 2},
+            {
+              'name': 'Custom habit',
+              'group_id': 'b',
+              'color': 4,
+              'custom_color': 0xffaa6633,
+            },
+            {
+              'name': 'Invalid habit',
+              'group_id': 'c',
+              'color': 999,
+              'custom_color': 'bad',
+            },
+            {'name': 'Plain habit', 'group_id': 'd'},
+          ],
+        );
+        await tester.tap(find.text('Open'));
+        await tester.pumpAndSettle();
+        final tree = tester.widget<SliverHabitGroupTree>(
+          find.byType(SliverHabitGroupTree),
+        );
+        expect(tree.groups[0].icon, GroupIcon.work);
+        expect(
+          tree.groups[0].color,
+          const HabitColor.builtIn(HabitColorType.cc3),
+        );
+        expect(
+          tree.groups[0].children.single.color,
+          const HabitColor.builtIn(HabitColorType.cc2),
+        );
+        expect(
+          tree.groups[1].color,
+          const HabitColor.custom(0xff4488cc, tinted: false),
+        );
+        expect(
+          tree.groups[1].children.single.color,
+          const HabitColor.custom(0xffaa6633),
+        );
+        for (final group in tree.groups.skip(2)) {
+          expect(group.color, isNull);
+          expect(group.icon, isNull);
+          expect(group.children.single.color, isNull);
+        }
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
   for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
     testWidgets('adapts import surface after resize on $platform', (
       tester,
@@ -421,6 +504,9 @@ Future<void> _pumpHost(
   List<Object?> habits = const [
     <String, Object?>{'name': 'Habit A', 'group_id': 'group-a'},
   ],
+  List<Object?> groups = const [
+    <String, Object?>{'name': 'Group A', 'uuid': 'group-a'},
+  ],
   double textScale = 1,
 }) => tester.pumpWidget(
   ChangeNotifierProvider<AppEventBus>(
@@ -444,10 +530,8 @@ Future<void> _pumpHost(
               habitCount: habits.length,
               importer: importer,
               providerName: 'Loop Habit Tracker',
-              groupsData: const [
-                <String, Object?>{'name': 'Group A', 'uuid': 'group-a'},
-              ],
-              groupCount: 1,
+              groupsData: groups,
+              groupCount: groups.length,
             ),
             child: const Text('Open'),
           ),

@@ -949,11 +949,13 @@ abstract class L10n {
   /// No description provided for @habitDisplay_groupModifyConfirm_bodyChangeStat.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1 {{count} habit will change from \"{fromGroup}\" to \"{toGroup}\"} other {{count} habits will change from \"{fromGroup}\" to \"{toGroup}\"}}'**
+  /// **'{count, plural, =1 {{count} habit will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group} other{ and {remainingGroupCount} more groups}} to \"{toGroup}\"} other {{count} habits will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group} other{ and {remainingGroupCount} more groups}} to \"{toGroup}\"}}'**
   String habitDisplay_groupModifyConfirm_bodyChangeStat(
     int count,
     String fromGroup,
     String toGroup,
+    int remainingGroupCount,
+    int totalGroupCount,
   );
 
   /// No description provided for @habitDisplay_groupModifyConfirm_bodyAddStat.
@@ -3654,6 +3656,12 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'{action}, and don\'t ask again'**
   String confirmDialog_confirmAndSkip_text(String action);
+
+  /// No description provided for @habitDisplay_groupModifyConfirm_previewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get habitDisplay_groupModifyConfirm_previewTitle;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

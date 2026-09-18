@@ -99,7 +99,8 @@
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
-    "confirmDialog_confirmAndSkip_text"
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "cs": [
@@ -114,7 +115,8 @@
     "appDateFormat_preview_text",
     "debug_shareDebugZip_tooltip",
     "groupManage_createButton_tooltip",
-    "confirmDialog_confirmAndSkip_text"
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "de": [
@@ -337,7 +339,8 @@
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
-    "confirmDialog_confirmAndSkip_text"
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "es": [
@@ -486,7 +489,8 @@
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
-    "confirmDialog_confirmAndSkip_text"
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "eu": [
@@ -1066,7 +1070,8 @@
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
     "habitDisplay_groupType_manual",
-    "confirmDialog_confirmAndSkip_text"
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "fa": [
@@ -1309,7 +1314,8 @@
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
-    "confirmDialog_confirmAndSkip_text"
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "fr": [
@@ -1495,7 +1501,8 @@
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
-    "confirmDialog_confirmAndSkip_text"
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "he": [
@@ -1510,7 +1517,8 @@
     "appDateFormat_preview_text",
     "debug_shareDebugZip_tooltip",
     "groupManage_createButton_tooltip",
-    "confirmDialog_confirmAndSkip_text"
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "hu": [
@@ -1613,7 +1621,8 @@
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
-    "confirmDialog_confirmAndSkip_text"
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "it": [
@@ -1823,7 +1832,8 @@
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
-    "confirmDialog_confirmAndSkip_text"
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "ja": [
@@ -1942,7 +1952,8 @@
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
-    "confirmDialog_confirmAndSkip_text"
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "nb": [
@@ -2520,7 +2531,8 @@
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
     "habitDisplay_groupType_manual",
-    "confirmDialog_confirmAndSkip_text"
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "nl": [
@@ -3105,7 +3117,8 @@
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
     "habitDisplay_groupType_manual",
-    "confirmDialog_confirmAndSkip_text"
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "pl": [
@@ -3228,7 +3241,8 @@
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
-    "confirmDialog_confirmAndSkip_text"
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "pt": [
@@ -3484,7 +3498,8 @@
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
-    "confirmDialog_confirmAndSkip_text"
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "ru": [
@@ -3606,7 +3621,8 @@
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
-    "confirmDialog_confirmAndSkip_text"
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "tr": [
@@ -3708,7 +3724,8 @@
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
-    "confirmDialog_confirmAndSkip_text"
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "uk": [
@@ -3760,7 +3777,8 @@
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
-    "confirmDialog_confirmAndSkip_text"
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "vi": [
@@ -3863,7 +3881,8 @@
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
-    "confirmDialog_confirmAndSkip_text"
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "zh_Hant": [

@@ -513,16 +513,46 @@ class L10nUk extends L10n {
     int count,
     String fromGroup,
     String toGroup,
+    int remainingGroupCount,
+    int totalGroupCount,
   ) {
     String _temp0 = intl.Intl.pluralLogic(
+      remainingGroupCount,
+      locale: localeName,
+      other: ' та ще $remainingGroupCount груп',
+      one: ' та ще $remainingGroupCount групи',
+      zero: '',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      remainingGroupCount,
+      locale: localeName,
+      other: ' та ще $remainingGroupCount груп',
+      one: ' та ще $remainingGroupCount групи',
+      zero: '',
+    );
+    String _temp2 = intl.Intl.pluralLogic(
+      remainingGroupCount,
+      locale: localeName,
+      other: ' та ще $remainingGroupCount груп',
+      one: ' та ще $remainingGroupCount групи',
+      zero: '',
+    );
+    String _temp3 = intl.Intl.pluralLogic(
+      remainingGroupCount,
+      locale: localeName,
+      other: ' та ще $remainingGroupCount груп',
+      one: ' та ще $remainingGroupCount групи',
+      zero: '',
+    );
+    String _temp4 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count звичок зміняться з \"$fromGroup\" на \"$toGroup\"',
-      many: '$count звичок зміняться з \"$fromGroup\" на \"$toGroup\"',
-      few: '$count звички зміняться з \"$fromGroup\" на \"$toGroup\"',
-      one: '$count звичка зміниться з \"$fromGroup\" на \"$toGroup\"',
+      other: '$count звичок зміняться з \"$fromGroup\"$_temp0 на \"$toGroup\"',
+      many: '$count звичок зміняться з \"$fromGroup\"$_temp1 на \"$toGroup\"',
+      few: '$count звички зміняться з \"$fromGroup\"$_temp2 на \"$toGroup\"',
+      one: '$count звичка зміниться з \"$fromGroup\"$_temp3 на \"$toGroup\"',
     );
-    return '$_temp0';
+    return '$_temp4';
   }
 
   @override
@@ -2304,4 +2334,7 @@ class L10nUk extends L10n {
   String confirmDialog_confirmAndSkip_text(String action) {
     return '$action, and don\'t ask again';
   }
+
+  @override
+  String get habitDisplay_groupModifyConfirm_previewTitle => 'Preview';
 }

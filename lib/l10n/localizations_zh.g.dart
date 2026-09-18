@@ -492,8 +492,16 @@ class L10nZh extends L10n {
     int count,
     String fromGroup,
     String toGroup,
+    int remainingGroupCount,
+    int totalGroupCount,
   ) {
-    return '$count 个习惯将由「$fromGroup」修改至「$toGroup」';
+    String _temp0 = intl.Intl.pluralLogic(
+      remainingGroupCount,
+      locale: localeName,
+      other: '等共 $totalGroupCount 个分组',
+      zero: '',
+    );
+    return '$count 个习惯将由「$fromGroup」$_temp0修改至「$toGroup」';
   }
 
   @override
@@ -2144,6 +2152,9 @@ class L10nZh extends L10n {
   String confirmDialog_confirmAndSkip_text(String action) {
     return '$action，下次不再提示';
   }
+
+  @override
+  String get habitDisplay_groupModifyConfirm_previewTitle => '预览';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -2591,8 +2602,16 @@ class L10nZhHant extends L10nZh {
     int count,
     String fromGroup,
     String toGroup,
+    int remainingGroupCount,
+    int totalGroupCount,
   ) {
-    return '$count 個習慣將由「$fromGroup」修改至「$toGroup」';
+    String _temp0 = intl.Intl.pluralLogic(
+      remainingGroupCount,
+      locale: localeName,
+      other: '等共 $totalGroupCount 個群組',
+      zero: '',
+    );
+    return '$count 個習慣將由「$fromGroup」$_temp0修改至「$toGroup」';
   }
 
   @override
@@ -3916,4 +3935,7 @@ class L10nZhHant extends L10nZh {
   String confirmDialog_confirmAndSkip_text(String action) {
     return '$action，下次不再提示';
   }
+
+  @override
+  String get habitDisplay_groupModifyConfirm_previewTitle => '預覽';
 }

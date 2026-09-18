@@ -450,7 +450,7 @@
     },
     "habitDisplay_groupModifyConfirm_bodyRemoveGroup": "Habits will have their group removed",
     "@habitDisplay_groupModifyConfirm_bodyRemoveGroup": {},
-    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {{count} habit will change from \"{fromGroup}\" to \"{toGroup}\"} other {{count} habits will change from \"{fromGroup}\" to \"{toGroup}\"}}",
+    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {{count} habit will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group} other{ and {remainingGroupCount} more groups}} to \"{toGroup}\"} other {{count} habits will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group} other{ and {remainingGroupCount} more groups}} to \"{toGroup}\"}}",
     "@habitDisplay_groupModifyConfirm_bodyChangeStat": {
         "placeholders": {
             "count": {
@@ -459,11 +459,19 @@
             },
             "fromGroup": {
                 "type": "String",
-                "description": "Old group name"
+                "description": "At most the first three source group names"
             },
             "toGroup": {
                 "type": "String",
                 "description": "New group name"
+            },
+            "remainingGroupCount": {
+                "type": "int",
+                "description": "Number of omitted source group names; zero means the list is complete"
+            },
+            "totalGroupCount": {
+                "type": "int",
+                "description": "Total number of source groups, including displayed and omitted groups"
             }
         }
     },
@@ -1986,5 +1994,7 @@
                 "example": "Save"
             }
         }
-    }
+    },
+    "habitDisplay_groupModifyConfirm_previewTitle": "Preview",
+    "@habitDisplay_groupModifyConfirm_previewTitle": {}
 }

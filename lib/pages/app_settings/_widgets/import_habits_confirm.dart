@@ -12,21 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:math' as math;
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/types.dart';
+import '../../../extensions/group_icon_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/app_event.dart';
 import '../../../models/group_export.dart';
+import '../../../models/habit_color.dart';
+import '../../../models/habit_color_type.dart';
 import '../../../models/habit_export.dart';
 import '../../../providers/workflow/app_event.dart';
 import '../../../providers/workflow/habits_file_importer.dart';
+import '../../common/widgets.dart';
 
 Future<void> showAppSettingImportHabitsConfirmDialog({
   required BuildContext context,
@@ -265,7 +266,7 @@ class _ImportOptionTile extends StatelessWidget {
   );
 }
 
-class _ImportPreview extends StatefulWidget {
+class _ImportPreview extends StatelessWidget {
   const _ImportPreview({
     required this.habits,
     required this.groups,
@@ -282,76 +283,34 @@ class _ImportPreview extends StatefulWidget {
   final bool importHabits;
   final bool importGroups;
 
-  @override
-  State<_ImportPreview> createState() => _ImportPreviewState();
-}
+  String? _text(Object? data, String key) {
+    if (data is! Map) return null;
+    final value = data[key];
+    return value is String ? value : null;
+  }
 
-class _ImportTreeEntry {
-  const _ImportTreeEntry({
-    required this.id,
-    this.name,
-    this.group,
-    this.habit,
-    this.members = const [],
-  });
-  final String id;
-  final String? name;
-  final int? group;
-  final int? habit;
-  final List<int> members;
-}
+  int? _integer(Object? data, String key) {
+    if (data is! Map) return null;
+    final value = data[key];
+    return value is int ? value : null;
+  }
 
-class _ImportPreviewState extends State<_ImportPreview> {
-  final _controller = TreeSliverController();
-  late final TreeSliverNode<_ImportTreeEntry> _root = _buildTree();
-
-  String? _text(Object? data, String key) =>
-      data is Map && data[key] is String ? data[key] as String : null;
-
-  TreeSliverNode<_ImportTreeEntry> _buildTree() {
-    final groupIndexes = <String, int>{};
-    for (final (index, group) in widget.groups.indexed) {
-      final uuid = _text(group, GroupExportDataKey.uuid);
-      if (uuid != null && uuid.isNotEmpty) groupIndexes[uuid] = index;
-    }
-    final members = List.generate(widget.groups.length + 1, (_) => <int>[]);
-    for (final (index, habit) in widget.habits.indexed) {
-      members[groupIndexes[_text(habit, HabitExportDataKey.groupId)] ??
-              widget.groups.length]
-          .add(index);
-    }
-    return TreeSliverNode(
-      const _ImportTreeEntry(id: 'import-preview'),
-      children: [
-        for (final (group, indexes) in members.indexed)
-          if (group < widget.groups.length || indexes.isNotEmpty)
-            TreeSliverNode(
-              _ImportTreeEntry(
-                id: 'import-group-$group',
-                group: group,
-                members: indexes,
-                name: group < widget.groups.length
-                    ? (_text(widget.groups[group], GroupExportDataKey.name) ??
-                          '#${group + 1}')
-                    : null,
-              ),
-              children: [
-                for (final index in indexes)
-                  TreeSliverNode(
-                    _ImportTreeEntry(
-                      id: 'import-habit-$index',
-                      habit: index,
-                      name:
-                          _text(
-                            widget.habits[index],
-                            HabitExportDataKey.name,
-                          ) ??
-                          '#${index + 1}',
-                    ),
-                  ),
-              ],
-            ),
-      ],
+  // Group and habit backups share these three color keys. Parse only preview
+  // fields: malformed import rows must still be shown and handled by importer.
+  HabitColor? _color(Object? data) {
+    final custom = _integer(data, HabitExportDataKey.customColor);
+    final validCustom = custom != null && custom >= 0 && custom <= 0xffffffff
+        ? custom
+        : null;
+    final rawType = _integer(data, HabitExportDataKey.color);
+    final type = rawType == null
+        ? null
+        : HabitColorType.getFromDBCode(rawType, withDefault: null);
+    if (validCustom == null && type == null) return null;
+    return HabitColor.fromRaw(
+      colorType: type ?? HabitColorType.cc1,
+      customColor: validCustom,
+      customColorTinted: _integer(data, HabitExportDataKey.customColorTinted),
     );
   }
 
@@ -370,152 +329,78 @@ class _ImportPreviewState extends State<_ImportPreview> {
         : ImportItemStatus.succeeded;
   }
 
-  bool get _anyExpanded =>
-      _root.isExpanded || _root.children.any((node) => node.isExpanded);
-
-  void _toggleAll() {
-    if (_anyExpanded) {
-      _controller.collapseAll();
-    } else {
-      _controller.expandAll();
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    final groupIndexes = <String, int>{};
+    for (final (index, group) in groups.indexed) {
+      final uuid = _text(group, GroupExportDataKey.uuid);
+      if (uuid != null && uuid.isNotEmpty) groupIndexes[uuid] = index;
     }
-    setState(() {});
-  }
+    final members = List.generate(groups.length + 1, (_) => <int>[]);
+    for (final (index, habit) in habits.indexed) {
+      members[groupIndexes[_text(habit, HabitExportDataKey.groupId)] ??
+              groups.length]
+          .add(index);
+    }
+    Widget? statusIcon(String id, Iterable<ImportItemStatus> statuses) {
+      final status = _aggregate(statuses);
+      return status == null ? null : _ImportStatusIcon(status: status, id: id);
+    }
 
-  @override
-  Widget build(BuildContext context) => TreeSliver<_ImportTreeEntry>(
-    key: const ValueKey('import-tree'),
-    tree: [_root],
-    controller: _controller,
-    indentation: TreeSliverIndentationType.none,
-    onNodeToggle: (_) => setState(() {}),
-    treeRowExtentBuilder: (_, _) =>
-        _ImportTreeRow.extent(MediaQuery.textScalerOf(context)),
-    treeNodeBuilder: (context, node, _) {
-      final entry = node.content! as _ImportTreeEntry;
-      final root = identical(node, _root);
-      final l10n = L10n.of(context);
-      final title = root
-          ? (l10n?.appSetting_import_titleText ?? 'Import')
-          : entry.habit != null
-          ? entry.name!
-          : '${entry.name ?? (l10n?.habitEdit_groupPicker_noGroup ?? 'No Group')} (${entry.members.length})';
-      final status = root
-          ? _aggregate([
-              if (widget.importGroups) ...widget.groupStatuses,
-              if (widget.importHabits) ...widget.habitStatuses,
-            ])
-          : entry.habit != null
-          ? (widget.importHabits ? widget.habitStatuses[entry.habit!] : null)
-          : _aggregate([
-              if (widget.importGroups && entry.group! < widget.groups.length)
-                widget.groupStatuses[entry.group!],
-              if (widget.importHabits)
-                for (final index in entry.members) widget.habitStatuses[index],
-            ]);
-      return _ImportTreeRow(
-        id: entry.id,
-        title: title,
-        depth: node.depth ?? 0,
-        status: status,
-        statusId: root ? 'import-total' : entry.id,
-        expanded: node.children.isEmpty ? null : node.isExpanded,
-        onTap: node.children.isEmpty
-            ? null
-            : () => _controller.toggleNode(node),
-        toggle: root
-            ? _ImportExpansionToggle(
-                expanded: _anyExpanded,
-                onPressed: _toggleAll,
-              )
-            : null,
-      );
-    },
-  );
-}
-
-class _ImportTreeRow extends StatelessWidget {
-  static const _fontSize = 17.0;
-  static const _lineHeight = 1.3;
-  static const _maxLines = 2;
-  static const _minExtent = 56.0;
-  static const _verticalPadding = 12.0;
-  static const _indentPerLevel = 12.0;
-  static const _trailingSpacing = 8.0;
-  static const _chevronSize = 16.0;
-  static const _titleStyle = TextStyle(
-    fontSize: _fontSize,
-    height: _lineHeight,
-  );
-
-  static double extent(TextScaler textScaler) {
-    final scaledLineHeight = textScaler.scale(_fontSize) * _lineHeight;
-    final titleHeight = scaledLineHeight * _maxLines;
-    return math.max(_minExtent, titleHeight + _verticalPadding * 2);
-  }
-
-  const _ImportTreeRow({
-    required this.id,
-    required this.title,
-    required this.depth,
-    required this.status,
-    required this.statusId,
-    required this.expanded,
-    required this.onTap,
-    this.toggle,
-  });
-  final String id;
-  final String title;
-  final int depth;
-  final ImportItemStatus? status;
-  final String statusId;
-  final bool? expanded;
-  final VoidCallback? onTap;
-  final Widget? toggle;
-
-  @override
-  Widget build(BuildContext context) => Semantics(
-    expanded: expanded,
-    child: Padding(
-      key: ValueKey(id),
-      padding: EdgeInsetsDirectional.only(start: depth * _indentPerLevel),
-      // Non-flex children receive natural vertical constraints. In particular,
-      // CupertinoListTile's title column must not fill the tree row's extent.
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AdaptiveListTile(
-            title: Text(
-              title,
-              maxLines: _maxLines,
-              overflow: TextOverflow.ellipsis,
-              style: _titleStyle,
-            ),
-            onTap: onTap,
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
+    return SliverHabitGroupTree(
+      treeKey: const ValueKey('import-tree'),
+      expansionToggleKey: const ValueKey('import-toggle-expansion'),
+      root: HabitGroupTreeEntry(
+        id: 'import-preview',
+        title: Text(l10n?.appSetting_import_titleText ?? 'Import'),
+        trailing: statusIcon('import-total', [
+          if (importGroups) ...groupStatuses,
+          if (importHabits) ...habitStatuses,
+        ]),
+      ),
+      groups: [
+        for (final (group, indexes) in members.indexed)
+          if (group < groups.length || indexes.isNotEmpty)
+            HabitGroupTreeEntry(
+              id: 'import-group-$group',
+              isUngrouped: group >= groups.length,
+              color: group < groups.length ? _color(groups[group]) : null,
+              icon: group < groups.length
+                  ? _integer(
+                      groups[group],
+                      GroupExportDataKey.icon,
+                    )?.toGroupIcon
+                  : null,
+              title: Text(
+                '${group < groups.length ? (_text(groups[group], GroupExportDataKey.name) ?? '#${group + 1}') : (l10n?.habitEdit_groupPicker_noGroup ?? 'No Group')} (${indexes.length})',
+              ),
+              trailing: statusIcon('import-group-$group', [
+                if (importGroups && group < groups.length) groupStatuses[group],
+                if (importHabits)
+                  for (final index in indexes) habitStatuses[index],
+              ]),
               children: [
-                if (expanded case final expanded?) ...[
-                  const SizedBox(width: _trailingSpacing),
-                  Icon(
-                    expanded
-                        ? CupertinoIcons.chevron_down
-                        : CupertinoIcons.chevron_forward,
-                    size: _chevronSize,
+                for (final index in indexes)
+                  HabitGroupTreeEntry(
+                    id: 'import-habit-$index',
+                    color: _color(habits[index]),
+                    title: Text(
+                      _text(habits[index], HabitExportDataKey.name) ??
+                          '#${index + 1}',
+                    ),
+                    trailing: importHabits
+                        ? _ImportStatusIcon(
+                            status: habitStatuses[index],
+                            id: 'import-habit-$index',
+                          )
+                        : null,
                   ),
-                ],
-                ?toggle,
-                if (status case final status?) ...[
-                  const SizedBox(width: _trailingSpacing),
-                  _ImportStatusIcon(status: status, id: statusId),
-                ],
               ],
             ),
-          ),
-        ],
-      ),
-    ),
-  );
+      ],
+    );
+  }
 }
 
 class _ImportTitle extends StatelessWidget {
@@ -773,38 +658,5 @@ class _ImportStatusIcon extends StatelessWidget {
         apple ? CupertinoIcons.exclamationmark_circle : Icons.error_outline,
     };
     return Icon(icon, key: ValueKey('$id-${status.name}'), size: 20);
-  }
-}
-
-class _ImportExpansionToggle extends StatelessWidget {
-  const _ImportExpansionToggle({
-    required this.expanded,
-    required this.onPressed,
-  });
-  final bool expanded;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = L10n.of(context);
-    final icon = Icon(expanded ? Icons.unfold_less : Icons.unfold_more);
-    return Semantics(
-      toggled: expanded,
-      label: expanded
-          ? (l10n?.groupHeader_menu_collapseAll ?? 'Collapse all')
-          : (l10n?.groupHeader_menu_expandAll ?? 'Expand all'),
-      child: AdaptiveStyle.of(context) == AdaptiveStyle.apple
-          ? CupertinoButton(
-              key: const ValueKey('import-toggle-expansion'),
-              padding: const EdgeInsets.all(8),
-              onPressed: onPressed,
-              child: icon,
-            )
-          : IconButton(
-              key: const ValueKey('import-toggle-expansion'),
-              onPressed: onPressed,
-              icon: icon,
-            ),
-    );
   }
 }

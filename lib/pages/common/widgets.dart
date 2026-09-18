@@ -30,6 +30,7 @@ export '_widgets/not_found_image.dart';
 export '_widgets/notification_activated.dart';
 export '_widgets/notification_pending_requests.dart';
 export '_widgets/pop_scope_consumer.dart';
+export '_widgets/sliver_habit_group_tree.dart';
 export '_widgets/sync_loading_indicator.dart';
 export '_widgets/sync_now_tile.dart';
 export '_widgets/today_done_image.dart';

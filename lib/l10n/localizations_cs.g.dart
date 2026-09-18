@@ -512,14 +512,30 @@ class L10nCs extends L10n {
     int count,
     String fromGroup,
     String toGroup,
+    int remainingGroupCount,
+    int totalGroupCount,
   ) {
     String _temp0 = intl.Intl.pluralLogic(
+      remainingGroupCount,
+      locale: localeName,
+      other: ' a dalších $remainingGroupCount skupin',
+      one: ' a jedné další skupiny',
+      zero: '',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      remainingGroupCount,
+      locale: localeName,
+      other: ' a dalších $remainingGroupCount skupin',
+      one: ' a jedné další skupiny',
+      zero: '',
+    );
+    String _temp2 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count návyků se změní z „$fromGroup“ na „$toGroup“',
-      one: '$count návyk se změní z „$fromGroup“ na „$toGroup“',
+      other: '$count návyků se změní z „$fromGroup“$_temp0 na „$toGroup“',
+      one: '$count návyk se změní z „$fromGroup“$_temp1 na „$toGroup“',
     );
-    return '$_temp0';
+    return '$_temp2';
   }
 
   @override
@@ -2298,4 +2314,7 @@ class L10nCs extends L10n {
   String confirmDialog_confirmAndSkip_text(String action) {
     return '$action, and don\'t ask again';
   }
+
+  @override
+  String get habitDisplay_groupModifyConfirm_previewTitle => 'Preview';
 }
