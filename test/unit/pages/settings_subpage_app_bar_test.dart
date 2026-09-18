@@ -475,6 +475,14 @@ void main() {
       // Do not reuse asset futures created in a previous test's FakeAsync zone.
       rootBundle.evict(Assets.changelog);
       rootBundle.evict('LICENSE');
+      rootBundle.evict('LICENSE_THIRDPARTY.md');
+      // Large assets are decoded in an isolate outside the test's fake clock.
+      await tester.runAsync(
+        () => rootBundle.loadString('LICENSE_THIRDPARTY.md'),
+      );
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(1200, 1000);
+      addTearDown(tester.view.reset);
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(platform: platform),
@@ -484,21 +492,46 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byType(AppAboutVersionTile));
       await tester.pumpAndSettle();
-      expect(find.byType(AdaptiveModal), findsNothing);
+      expect(find.bySubtype<AdaptiveModal>(), findsNothing);
       await tester.longPress(find.byType(AppAboutVersionTile));
       await tester.pumpAndSettle();
-      expect(find.byType(AdaptiveModal), findsOneWidget);
+      expect(find.bySubtype<AdaptiveModal>(), findsOneWidget);
       Navigator.of(
-        tester.element(find.byType(AdaptiveModal)),
+        tester.element(find.bySubtype<AdaptiveModal>()),
         rootNavigator: true,
       ).pop();
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(find.byType(AppAboutLicenseTile), 150);
       await tester.tap(find.byType(AppAboutLicenseTile));
       await tester.pumpAndSettle();
-      expect(find.byType(AdaptiveModal), findsOneWidget);
+      expect(find.bySubtype<AdaptiveModal>(), findsOneWidget);
       expect(find.text('License').hitTestable(), findsOneWidget);
-      expect(tester.takeException(), isNull);
+      for (final tile in [AppAboutLicenseTile, AppAboutThirdPartyLicenseTile]) {
+        if (tile == AppAboutThirdPartyLicenseTile) {
+          Navigator.of(
+            tester.element(find.bySubtype<AdaptiveModal>()),
+            rootNavigator: true,
+          ).pop();
+          await tester.pumpAndSettle();
+          await tester.scrollUntilVisible(find.byType(tile), 150);
+          await tester.runAsync(() async {
+            await tester.tap(find.byType(tile));
+            await Future<void>.delayed(Duration.zero);
+          });
+          await tester.pumpAndSettle();
+        }
+        expect(
+          find.bySubtype<AdaptiveModal>(),
+          findsOneWidget,
+          reason: '$tile',
+        );
+        final size = tester.getSize(find.bySubtype<AdaptiveModal>());
+        expect(size.width, greaterThan(560));
+        expect(size.width, lessThanOrEqualTo(720));
+        expect(size.height, greaterThan(560));
+        expect(size.height, lessThanOrEqualTo(720));
+        expect(tester.takeException(), isNull);
+      }
     });
   }
   for (final title in ['Habit Grouping', 'Natural Sort']) {

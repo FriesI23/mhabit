@@ -21,19 +21,72 @@ import '../support/commons.dart';
 import 'group_manager.dart';
 import 'habits_manager.dart';
 
+enum ImportItemStatus { pending, running, succeeded, failed }
+
+/// Observable progress for one import batch; execution belongs to the runner.
+/// The consumer owns disposal; disposing detaches observation, not storage work.
+class ImportMonitor extends ChangeNotifier implements ProviderMounted {
+  ImportMonitor(int total)
+    : _statuses = List.filled(total, ImportItemStatus.pending);
+
+  final List<ImportItemStatus> _statuses;
+  bool _started = false;
+  bool _completed = false;
+  bool _mounted = true;
+  int _succeeded = 0;
+  int _failed = 0;
+
+  List<ImportItemStatus> get statuses => List.unmodifiable(_statuses);
+  int get total => _statuses.length;
+  int get succeeded => _succeeded;
+  int get failed => _failed;
+  int get processed => succeeded + failed;
+  bool get isRunning => _started && !_completed;
+  bool get isCompleted => _completed;
+
+  void _publish() {
+    if (mounted) notifyListeners();
+  }
+
+  void _start() {
+    if (_started || !mounted) {
+      throw StateError('Import monitor is not available');
+    }
+    _started = true;
+    _publish();
+  }
+
+  void _update(int index, ImportItemStatus status) {
+    _statuses[index] = status;
+    if (status == ImportItemStatus.succeeded) _succeeded++;
+    if (status == ImportItemStatus.failed) _failed++;
+    _publish();
+  }
+
+  void _complete() {
+    _completed = true;
+    _publish();
+  }
+
+  @override
+  void dispose() {
+    if (!mounted) return;
+    _mounted = false;
+    super.dispose();
+  }
+
+  @override
+  bool get mounted => _mounted;
+}
+
 class HabitFileImportRunner extends ChangeNotifier implements ProviderMounted {
-  // inside status
   bool _mounted = true;
   late HabitImportAccess _access;
   GroupImportAccess? _groupAccess;
 
-  void attachAccess(HabitImportAccess newAccess) {
-    _access = newAccess;
-  }
-
-  void attachGroupAccess(GroupImportAccess newAccess) {
-    _groupAccess = newAccess;
-  }
+  void attachAccess(HabitImportAccess newAccess) => _access = newAccess;
+  void attachGroupAccess(GroupImportAccess newAccess) =>
+      _groupAccess = newAccess;
 
   @override
   void dispose() {
@@ -42,61 +95,83 @@ class HabitFileImportRunner extends ChangeNotifier implements ProviderMounted {
     _mounted = false;
   }
 
-  Future<int>? importHabitsData(
+  /// Starts entries concurrently and retains input order when collecting results.
+  Future<List<T?>> _run<T>(
+    Iterable<Object?> jsonData,
+    ImportMonitor monitor,
+    Future<T> Function(Object? entry) action,
+  ) async {
+    final entries = List<Object?>.of(jsonData);
+    if (entries.length != monitor.total) {
+      throw ArgumentError('Import data and monitor totals must match');
+    }
+    monitor._start();
+    final results = await Future.wait([
+      for (final (index, entry) in entries.indexed)
+        _runItem(index, entry, monitor, action),
+    ]);
+    monitor._complete();
+    return results;
+  }
+
+  Future<T?> _runItem<T>(
+    int index,
+    Object? entry,
+    ImportMonitor monitor,
+    Future<T> Function(Object? entry) action,
+  ) async {
+    monitor._update(index, ImportItemStatus.running);
+    try {
+      final result = await action(entry);
+      monitor._update(index, ImportItemStatus.succeeded);
+      return result;
+    } catch (_) {
+      monitor._update(index, ImportItemStatus.failed);
+      return null;
+    }
+  }
+
+  Future<int> importHabitsData(
     Iterable<Object?> jsonData, {
-    void Function(int count, int failed, int total)? whenloadHabit,
-    void Function(int count, int failed, int total)? whenloadAllHabits,
+    required ImportMonitor monitor,
     bool listen = true,
     Map<String, GroupUUID>? groupUuidMapping,
-  }) {
-    void onAllFutureComplated(int count, int failed, int total) {
-      whenloadAllHabits?.call(count, failed, total);
-      if (listen) notifyListeners();
-    }
-
-    final futures = _access.importHabitsData(
-      jsonData,
-      groupUuidMapping: groupUuidMapping,
-    );
-    if (futures.isEmpty) return null;
-
-    final completer = Completer<int>();
-    var completeCount = 0, failedCount = 0;
-    final allCount = futures.length;
-    for (var future in futures) {
-      future
-          .then((_) {
-            completeCount += 1;
-          })
-          .catchError((e, s) {
-            failedCount += 1;
-          })
-          .whenComplete(() {
-            whenloadHabit?.call(completeCount, failedCount, allCount);
-            final totalCount = completeCount + failedCount;
-            if (totalCount >= allCount) {
-              completer.complete(totalCount);
-              onAllFutureComplated(completeCount, failedCount, allCount);
-            }
-          });
-    }
-    return completer.future;
+  }) async {
+    await _run<void>(jsonData, monitor, (entry) async {
+      final futures = _access.importHabitsData([
+        entry,
+      ], groupUuidMapping: groupUuidMapping);
+      if (futures.isEmpty) throw StateError('No habit import task');
+      await Future.wait(futures);
+    });
+    if (listen && mounted) notifyListeners();
+    return monitor.processed;
   }
 
-  int importHabitsDataDryRun(Iterable<Object?> jsonData) {
-    return _access.getImportHabitsCount(jsonData);
-  }
+  int importHabitsDataDryRun(Iterable<Object?> jsonData) =>
+      _access.getImportHabitsCount(jsonData);
 
-  int importGroupsDataDryRun(Iterable<Object?> jsonData) {
-    return _groupAccess?.getImportGroupsCount(jsonData) ?? 0;
-  }
+  int importGroupsDataDryRun(Iterable<Object?> jsonData) =>
+      _groupAccess?.getImportGroupsCount(jsonData) ?? 0;
 
   Future<Map<String, GroupUUID>> importGroupsData(
     Iterable<Object?> jsonData, {
+    required ImportMonitor monitor,
     bool listen = true,
   }) async {
-    final mapping = await _groupAccess?.importGroupsData(jsonData) ?? {};
-    if (listen) notifyListeners();
+    final results = await _run<Map<String, GroupUUID>>(jsonData, monitor, (
+      entry,
+    ) async {
+      final result = await _groupAccess?.importGroupsData([entry]) ?? {};
+      if (result.isEmpty) throw StateError('Group was not imported');
+      return result;
+    });
+    // Merge in input order, preserving duplicate-UUID behavior under concurrency.
+    final mapping = <String, GroupUUID>{};
+    for (final result in results) {
+      if (result != null) mapping.addAll(result);
+    }
+    if (listen && mounted) notifyListeners();
     return mapping;
   }
 

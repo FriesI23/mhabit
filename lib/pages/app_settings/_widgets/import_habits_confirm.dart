@@ -12,17 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:math' as math;
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/types.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/app_event.dart';
+import '../../../models/group_export.dart';
+import '../../../models/habit_export.dart';
 import '../../../providers/workflow/app_event.dart';
 import '../../../providers/workflow/habits_file_importer.dart';
 
-// TODO(mhabit-adaptive-dialog): Migrate as an import workflow, retaining importer ownership,
-// preview/progress/results and execution-time dismissal restrictions.
 Future<void> showAppSettingImportHabitsConfirmDialog({
   required BuildContext context,
   required Iterable<Object?> habitsData,
@@ -31,30 +36,24 @@ Future<void> showAppSettingImportHabitsConfirmDialog({
   String? providerName,
   Iterable<Object?>? groupsData,
   int groupCount = 0,
-}) async {
-  return showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (context) => MultiProvider(
-      providers: [ChangeNotifierProvider.value(value: importer)],
-      child: AppSettingImportHabitsConfirmDialog(
-        data: habitsData,
-        habitCount: habitCount,
-        providerName: providerName,
-        groupsData: groupsData,
-        groupCount: groupCount,
-      ),
+}) => showAdaptiveSheet<void>(
+  context: context,
+  barrierDismissible: false,
+  enableDrag: false,
+  showDragHandle: false,
+  builder: (_) => ChangeNotifierProvider<HabitFileImportRunner>.value(
+    value: importer,
+    child: AppSettingImportHabitsConfirmDialog(
+      data: habitsData,
+      habitCount: habitCount,
+      providerName: providerName,
+      groupsData: groupsData,
+      groupCount: groupCount,
     ),
-  );
-}
+  ),
+);
 
 class AppSettingImportHabitsConfirmDialog extends StatefulWidget {
-  final Iterable<Object?> data;
-  final int habitCount;
-  final String? providerName;
-  final Iterable<Object?>? groupsData;
-  final int groupCount;
-
   const AppSettingImportHabitsConfirmDialog({
     super.key,
     required this.data,
@@ -64,227 +63,748 @@ class AppSettingImportHabitsConfirmDialog extends StatefulWidget {
     this.groupCount = 0,
   });
 
+  final Iterable<Object?> data;
+  final int habitCount;
+  final String? providerName;
+  final Iterable<Object?>? groupsData;
+  final int groupCount;
+
   @override
-  State<StatefulWidget> createState() => _AppSettingImportHabitsConfirmDialog();
+  State<AppSettingImportHabitsConfirmDialog> createState() =>
+      _AppSettingImportHabitsConfirmDialogState();
 }
 
-class _AppSettingImportHabitsConfirmDialog
+class _AppSettingImportHabitsConfirmDialogState
     extends State<AppSettingImportHabitsConfirmDialog> {
+  late final _habitMonitor = ImportMonitor(_habits.length);
+  late final _groupMonitor = ImportMonitor(_groups.length);
+  late final List<Object?> _habits = List.unmodifiable(widget.data);
+  late final List<Object?> _groups = List.unmodifiable(
+    widget.groupsData ?? const [],
+  );
+
   bool _confirmed = false;
   bool _completed = false;
   bool _importHabits = true;
   bool _importGroups = true;
-  int _habitComplete = 0, _habitFailed = 0, _habitTotal = 0;
-  int _groupComplete = 0, _groupFailed = 0, _groupTotal = 0;
 
-  int get _currentCount =>
-      _habitComplete + _habitFailed + _groupComplete + _groupFailed;
+  bool get _hasGroups => _groups.isNotEmpty;
+  bool get _canImport =>
+      (_importHabits && _habits.isNotEmpty) || (_importGroups && _hasGroups);
+  int get _habitTotal => _importHabits ? _habitMonitor.total : 0;
+  int get _groupTotal => _importGroups ? _groupMonitor.total : 0;
+  int get _currentCount => _habitMonitor.processed + _groupMonitor.processed;
   int get _totalCount => _habitTotal + _groupTotal;
 
-  void _whenHabitLoad(int count, int failed, int total) {
-    if (!mounted) return;
-    setState(() {
-      _habitComplete = count;
-      _habitFailed = failed;
-      _habitTotal = total;
-    });
+  @override
+  void initState() {
+    super.initState();
+    _habitMonitor.addListener(_onProgress);
+    _groupMonitor.addListener(_onProgress);
   }
 
-  void _whenAllHabitsLoad(int count, int failed, int total) {
+  void _onProgress() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _habitMonitor.dispose();
+    _groupMonitor.dispose();
+    super.dispose();
+  }
+
+  void _completeImport() {
     if (!mounted) return;
-    _habitComplete = count;
-    _habitFailed = failed;
-    _habitTotal = total;
     context.read<AppEventBus>().push(
       const ReloadDataEvent(
-        msg: "appt_settings.import._whenAllHabitsLoad",
+        msg: 'appt_settings.import._completeImport',
         clearSnackBar: true,
         trace: {
           AppEventPageSource.appSetting: {AppEventFunctionSource.habitImport},
         },
       ),
     );
-    setState(() {
-      _completed = true;
-    });
+    setState(() => _completed = true);
   }
 
   void _onConfirmButtonPressed() async {
-    if (!mounted || _confirmed) return;
+    if (!mounted || _confirmed || !_canImport) return;
     final dataImporter = context.read<HabitFileImportRunner>();
     if (!dataImporter.mounted) return;
 
-    final importGroups = _importGroups && widget.groupsData != null;
+    final importGroups = _importGroups && _hasGroups;
     final importHabits = _importHabits;
 
-    setState(() {
-      _confirmed = true;
-      if (importGroups) _groupTotal = widget.groupCount;
-      if (importHabits) _habitTotal = widget.habitCount;
-    });
-
-    // Step 1: Import groups first to build the UUID mapping.
+    setState(() => _confirmed = true);
     Map<String, GroupUUID>? groupMapping;
     if (importGroups) {
-      try {
-        groupMapping = await dataImporter.importGroupsData(widget.groupsData!);
-        _groupComplete = widget.groupCount;
-      } catch (_) {
-        _groupFailed = widget.groupCount;
-      }
-      if (mounted) setState(() {});
-    }
-
-    // Step 2: Import habits with the group UUID mapping.
-    final task = dataImporter.importHabitsData(
-      importHabits ? widget.data : [],
-      whenloadHabit: _whenHabitLoad,
-      whenloadAllHabits: _whenAllHabitsLoad,
-      groupUuidMapping: groupMapping,
-    );
-    if (task == null) {
+      groupMapping = await dataImporter.importGroupsData(
+        _groups,
+        monitor: _groupMonitor,
+      );
       if (!mounted) return;
-      Navigator.of(context).maybePop();
-      return;
     }
+    if (importHabits) {
+      await dataImporter.importHabitsData(
+        _habits,
+        monitor: _habitMonitor,
+        groupUuidMapping: groupMapping,
+      );
+    }
+    _completeImport();
   }
 
-  Widget _buildConfirmContent(BuildContext context, L10n? l10n) {
-    final hasGroups =
-        widget.groupsData != null && widget.groupsData!.isNotEmpty;
-
-    final subtitle =
-        l10n?.appSetting_importDialog_confirmSubtitle ??
-        'Note: Import doesn\'t delete existing habits.';
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (widget.providerName != null) ...[
-          Text(
-            l10n?.appSetting_importConfirmDialog_sourceLabel(
-                  widget.providerName!,
-                ) ??
-                'Source: ${widget.providerName}',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          const SizedBox(height: 4),
-        ],
-        const SizedBox(height: 8),
-        CheckboxListTile(
-          title: l10n != null
-              ? Text(
-                  l10n.appSetting_importDialog_tile_includeHabits(
-                    widget.habitCount,
-                  ),
-                )
-              : Text('Include ${widget.habitCount} habits'),
-          value: _importHabits,
-          onChanged: _confirmed
-              ? null
-              : (v) => setState(() => _importHabits = v!),
-          dense: true,
-        ),
-        if (hasGroups)
-          CheckboxListTile(
-            title: l10n != null
-                ? Text(
-                    l10n.appSetting_importDialog_tile_includeGroups(
-                      widget.groupCount,
-                    ),
-                  )
-                : Text('Include ${widget.groupCount} groups'),
-            value: _importGroups,
-            onChanged: _confirmed
-                ? null
-                : (v) => setState(() => _importGroups = v!),
-            dense: true,
-          ),
-        const SizedBox(height: 4),
-        Text(subtitle),
-      ],
-    );
+  void _close() {
+    if (_confirmed && !_completed) return;
+    Navigator.maybeOf(context)?.maybePop();
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
+    final style = AdaptiveStyle.of(context);
+    final cancelLabel =
+        l10n?.appSetting_importDialog_confirm_cancelText ?? 'Cancel';
+    final closeLabel =
+        l10n?.appSetting_importDialog_complete_closeLabel ?? 'Close';
+    final confirmLabel =
+        l10n?.appSetting_importDialog_confirm_confirmText ?? 'Import';
+    final materialActions = switch ((_confirmed, _completed)) {
+      (_, true) => <Widget>[
+        TextButton.icon(
+          key: const ValueKey('import-complete-button'),
+          onPressed: _close,
+          icon: const Icon(Icons.close),
+          label: Text(closeLabel),
+        ),
+      ],
+      (false, false) => <Widget>[
+        TextButton(
+          key: const ValueKey('import-cancel-button'),
+          onPressed: _close,
+          child: Text(cancelLabel),
+        ),
+        TextButton(
+          key: const ValueKey('import-confirm-button'),
+          onPressed: _canImport ? _onConfirmButtonPressed : null,
+          child: Text(confirmLabel),
+        ),
+      ],
+      (true, false) => const <Widget>[],
+    };
+    final appleActions = _confirmed && !_completed
+        ? const <Widget>[]
+        : <Widget>[
+            CupertinoButton(
+              key: ValueKey(
+                _completed ? 'import-complete-button' : 'import-confirm-button',
+              ),
+              onPressed: _completed
+                  ? _close
+                  : _canImport
+                  ? _onConfirmButtonPressed
+                  : null,
+              child: Text(_completed ? closeLabel : confirmLabel),
+            ),
+          ];
 
-    Widget buildTitle(BuildContext context) {
-      if (_completed) {
-        final parts = <String>[];
-        if (_habitTotal > 0) {
-          parts.add(
-            l10n?.appSetting_importDialog_completeTitle(_habitComplete) ??
-                'Completed import $_habitComplete habits',
-          );
-        }
-        if (_groupTotal > 0) {
-          parts.add(
-            l10n?.appSetting_importDialog_completeTitleGroups(_groupComplete) ??
-                'Completed import $_groupComplete groups',
-          );
-        }
-        return Text(parts.join('\n'));
-      } else if (_confirmed) {
-        return Text(
-          l10n?.appSetting_importDialog_importingTitle(
-                _currentCount,
-                _totalCount,
-              ) ??
-              "Importing $_currentCount/$_totalCount",
-        );
-      } else {
-        return Text(
-          l10n?.appSetting_importDialog_confirmTitle(widget.habitCount) ??
-              "Confirm import ${widget.habitCount} habits?",
-        );
-      }
+    return PopScope<void>(
+      canPop: !_confirmed || _completed,
+      child: AdaptiveModal.slivers(
+        title: _ImportTitle(
+          completed: _completed,
+          confirmed: _confirmed,
+          habitCount: widget.habitCount,
+          currentCount: _currentCount,
+          totalCount: _totalCount,
+        ),
+        actions: style == AdaptiveStyle.material
+            ? materialActions
+            : appleActions,
+        automaticallyImplyCloseButton:
+            style == AdaptiveStyle.apple && !_confirmed,
+        onCloseRequested: _close,
+        size: const AdaptiveModalSize.constrained(maxHeight: 720),
+        slivers: [
+          _ImportContent(
+            providerName: widget.providerName,
+            habits: _habits,
+            groups: _groups,
+            habitMonitor: _habitMonitor,
+            groupMonitor: _groupMonitor,
+            importHabits: _importHabits,
+            importGroups: _importGroups,
+            confirmed: _confirmed,
+            completed: _completed,
+            onHabitsChanged: (value) => setState(() => _importHabits = value),
+            onGroupsChanged: (value) => setState(() => _importGroups = value),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ImportOptionTile extends StatelessWidget {
+  const _ImportOptionTile({
+    required this.title,
+    required this.selected,
+    required this.onChanged,
+  });
+
+  final String title;
+  final bool selected;
+  final ValueChanged<bool>? onChanged;
+
+  @override
+  Widget build(BuildContext context) => AdaptiveSwitchListTile(
+    title: Text(title),
+    value: selected,
+    onChanged: onChanged,
+  );
+}
+
+class _ImportPreview extends StatefulWidget {
+  const _ImportPreview({
+    required this.habits,
+    required this.groups,
+    required this.habitStatuses,
+    required this.groupStatuses,
+    required this.importHabits,
+    required this.importGroups,
+  });
+
+  final List<Object?> habits;
+  final List<Object?> groups;
+  final List<ImportItemStatus> habitStatuses;
+  final List<ImportItemStatus> groupStatuses;
+  final bool importHabits;
+  final bool importGroups;
+
+  @override
+  State<_ImportPreview> createState() => _ImportPreviewState();
+}
+
+class _ImportTreeEntry {
+  const _ImportTreeEntry({
+    required this.id,
+    this.name,
+    this.group,
+    this.habit,
+    this.members = const [],
+  });
+  final String id;
+  final String? name;
+  final int? group;
+  final int? habit;
+  final List<int> members;
+}
+
+class _ImportPreviewState extends State<_ImportPreview> {
+  final _controller = TreeSliverController();
+  late final TreeSliverNode<_ImportTreeEntry> _root = _buildTree();
+
+  String? _text(Object? data, String key) =>
+      data is Map && data[key] is String ? data[key] as String : null;
+
+  TreeSliverNode<_ImportTreeEntry> _buildTree() {
+    final groupIndexes = <String, int>{};
+    for (final (index, group) in widget.groups.indexed) {
+      final uuid = _text(group, GroupExportDataKey.uuid);
+      if (uuid != null && uuid.isNotEmpty) groupIndexes[uuid] = index;
     }
+    final members = List.generate(widget.groups.length + 1, (_) => <int>[]);
+    for (final (index, habit) in widget.habits.indexed) {
+      members[groupIndexes[_text(habit, HabitExportDataKey.groupId)] ??
+              widget.groups.length]
+          .add(index);
+    }
+    return TreeSliverNode(
+      const _ImportTreeEntry(id: 'import-preview'),
+      children: [
+        for (final (group, indexes) in members.indexed)
+          if (group < widget.groups.length || indexes.isNotEmpty)
+            TreeSliverNode(
+              _ImportTreeEntry(
+                id: 'import-group-$group',
+                group: group,
+                members: indexes,
+                name: group < widget.groups.length
+                    ? (_text(widget.groups[group], GroupExportDataKey.name) ??
+                          '#${group + 1}')
+                    : null,
+              ),
+              children: [
+                for (final index in indexes)
+                  TreeSliverNode(
+                    _ImportTreeEntry(
+                      id: 'import-habit-$index',
+                      habit: index,
+                      name:
+                          _text(
+                            widget.habits[index],
+                            HabitExportDataKey.name,
+                          ) ??
+                          '#${index + 1}',
+                    ),
+                  ),
+              ],
+            ),
+      ],
+    );
+  }
 
-    return AlertDialog(
-      title: buildTitle(context),
-      content: AnimatedCrossFade(
-        duration: const Duration(milliseconds: 300),
-        firstChild: _buildConfirmContent(context, l10n),
-        secondChild: Padding(
-          padding: const EdgeInsetsDirectional.symmetric(vertical: 20),
-          child: LinearProgressIndicator(
-            value: _totalCount > 0 ? _currentCount / _totalCount : null,
+  ImportItemStatus? _aggregate(Iterable<ImportItemStatus> statuses) {
+    if (statuses.isEmpty) return null;
+    if (statuses.every((s) => s == ImportItemStatus.pending)) {
+      return ImportItemStatus.pending;
+    }
+    if (statuses.any(
+      (s) => s == ImportItemStatus.pending || s == ImportItemStatus.running,
+    )) {
+      return ImportItemStatus.running;
+    }
+    return statuses.contains(ImportItemStatus.failed)
+        ? ImportItemStatus.failed
+        : ImportItemStatus.succeeded;
+  }
+
+  bool get _anyExpanded =>
+      _root.isExpanded || _root.children.any((node) => node.isExpanded);
+
+  void _toggleAll() {
+    if (_anyExpanded) {
+      _controller.collapseAll();
+    } else {
+      _controller.expandAll();
+    }
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) => TreeSliver<_ImportTreeEntry>(
+    key: const ValueKey('import-tree'),
+    tree: [_root],
+    controller: _controller,
+    indentation: TreeSliverIndentationType.none,
+    onNodeToggle: (_) => setState(() {}),
+    treeRowExtentBuilder: (_, _) =>
+        _ImportTreeRow.extent(MediaQuery.textScalerOf(context)),
+    treeNodeBuilder: (context, node, _) {
+      final entry = node.content! as _ImportTreeEntry;
+      final root = identical(node, _root);
+      final l10n = L10n.of(context);
+      final title = root
+          ? (l10n?.appSetting_import_titleText ?? 'Import')
+          : entry.habit != null
+          ? entry.name!
+          : '${entry.name ?? (l10n?.habitEdit_groupPicker_noGroup ?? 'No Group')} (${entry.members.length})';
+      final status = root
+          ? _aggregate([
+              if (widget.importGroups) ...widget.groupStatuses,
+              if (widget.importHabits) ...widget.habitStatuses,
+            ])
+          : entry.habit != null
+          ? (widget.importHabits ? widget.habitStatuses[entry.habit!] : null)
+          : _aggregate([
+              if (widget.importGroups && entry.group! < widget.groups.length)
+                widget.groupStatuses[entry.group!],
+              if (widget.importHabits)
+                for (final index in entry.members) widget.habitStatuses[index],
+            ]);
+      return _ImportTreeRow(
+        id: entry.id,
+        title: title,
+        depth: node.depth ?? 0,
+        status: status,
+        statusId: root ? 'import-total' : entry.id,
+        expanded: node.children.isEmpty ? null : node.isExpanded,
+        onTap: node.children.isEmpty
+            ? null
+            : () => _controller.toggleNode(node),
+        toggle: root
+            ? _ImportExpansionToggle(
+                expanded: _anyExpanded,
+                onPressed: _toggleAll,
+              )
+            : null,
+      );
+    },
+  );
+}
+
+class _ImportTreeRow extends StatelessWidget {
+  static const _fontSize = 17.0;
+  static const _lineHeight = 1.3;
+  static const _maxLines = 2;
+  static const _minExtent = 56.0;
+  static const _verticalPadding = 12.0;
+  static const _indentPerLevel = 12.0;
+  static const _trailingSpacing = 8.0;
+  static const _chevronSize = 16.0;
+  static const _titleStyle = TextStyle(
+    fontSize: _fontSize,
+    height: _lineHeight,
+  );
+
+  static double extent(TextScaler textScaler) {
+    final scaledLineHeight = textScaler.scale(_fontSize) * _lineHeight;
+    final titleHeight = scaledLineHeight * _maxLines;
+    return math.max(_minExtent, titleHeight + _verticalPadding * 2);
+  }
+
+  const _ImportTreeRow({
+    required this.id,
+    required this.title,
+    required this.depth,
+    required this.status,
+    required this.statusId,
+    required this.expanded,
+    required this.onTap,
+    this.toggle,
+  });
+  final String id;
+  final String title;
+  final int depth;
+  final ImportItemStatus? status;
+  final String statusId;
+  final bool? expanded;
+  final VoidCallback? onTap;
+  final Widget? toggle;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    expanded: expanded,
+    child: Padding(
+      key: ValueKey(id),
+      padding: EdgeInsetsDirectional.only(start: depth * _indentPerLevel),
+      // Non-flex children receive natural vertical constraints. In particular,
+      // CupertinoListTile's title column must not fill the tree row's extent.
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AdaptiveListTile(
+            title: Text(
+              title,
+              maxLines: _maxLines,
+              overflow: TextOverflow.ellipsis,
+              style: _titleStyle,
+            ),
+            onTap: onTap,
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (expanded case final expanded?) ...[
+                  const SizedBox(width: _trailingSpacing),
+                  Icon(
+                    expanded
+                        ? CupertinoIcons.chevron_down
+                        : CupertinoIcons.chevron_forward,
+                    size: _chevronSize,
+                  ),
+                ],
+                ?toggle,
+                if (status case final status?) ...[
+                  const SizedBox(width: _trailingSpacing),
+                  _ImportStatusIcon(status: status, id: statusId),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+class _ImportTitle extends StatelessWidget {
+  const _ImportTitle({
+    required this.completed,
+    required this.confirmed,
+    required this.habitCount,
+    required this.currentCount,
+    required this.totalCount,
+  });
+
+  final bool completed;
+  final bool confirmed;
+  final int habitCount;
+  final int currentCount;
+  final int totalCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+
+    if (completed) {
+      return Text(l10n?.appSetting_import_titleText ?? 'Import');
+    }
+    if (confirmed) {
+      return Text(
+        l10n?.appSetting_importDialog_importingTitle(
+              currentCount,
+              totalCount,
+            ) ??
+            'Importing $currentCount/$totalCount',
+      );
+    }
+    return Text(
+      l10n?.appSetting_importDialog_confirmTitle(habitCount) ??
+          'Confirm import $habitCount habits?',
+    );
+  }
+}
+
+class _ImportCompletion extends StatelessWidget {
+  const _ImportCompletion({
+    required this.habitTotal,
+    required this.habitComplete,
+    required this.groupTotal,
+    required this.groupComplete,
+  });
+
+  final int habitTotal;
+  final int habitComplete;
+  final int groupTotal;
+  final int groupComplete;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+
+    final parts = <String>[];
+    if (habitTotal > 0) {
+      parts.add(
+        l10n?.appSetting_importDialog_completeTitle(habitComplete) ??
+            'Completed import $habitComplete habits',
+      );
+    }
+    if (groupTotal > 0) {
+      parts.add(
+        l10n?.appSetting_importDialog_completeTitleGroups(groupComplete) ??
+            'Completed import $groupComplete groups',
+      );
+    }
+    return Text(
+      parts.join('\n'),
+      key: const ValueKey('import-completion-summary'),
+    );
+  }
+}
+
+class _ImportProgress extends StatelessWidget {
+  const _ImportProgress({required this.currentCount, required this.totalCount});
+
+  final int currentCount;
+  final int totalCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = totalCount > 0 ? currentCount / totalCount : null;
+    final indicator = LinearProgressIndicator(
+      key: const ValueKey('import-progress'),
+      value: progress,
+      minHeight: AdaptiveStyle.of(context) == AdaptiveStyle.apple ? 4 : null,
+      borderRadius: AdaptiveStyle.of(context) == AdaptiveStyle.apple
+          ? const BorderRadius.all(Radius.circular(2))
+          : null,
+      color: AdaptiveStyle.of(context) == AdaptiveStyle.apple
+          ? CupertinoTheme.of(context).primaryColor
+          : null,
+      backgroundColor: AdaptiveStyle.of(context) == AdaptiveStyle.apple
+          ? CupertinoColors.quaternarySystemFill.resolveFrom(context)
+          : null,
+    );
+    return Padding(
+      key: const ValueKey('import-progress-content'),
+      padding: const EdgeInsetsDirectional.symmetric(vertical: 20),
+      child: indicator,
+    );
+  }
+}
+
+class _ImportContent extends StatelessWidget {
+  const _ImportContent({
+    required this.providerName,
+    required this.habits,
+    required this.groups,
+    required this.habitMonitor,
+    required this.groupMonitor,
+    required this.importHabits,
+    required this.importGroups,
+    required this.confirmed,
+    required this.completed,
+    required this.onHabitsChanged,
+    required this.onGroupsChanged,
+  });
+
+  final String? providerName;
+  final List<Object?> habits;
+  final List<Object?> groups;
+  final ImportMonitor habitMonitor;
+  final ImportMonitor groupMonitor;
+  final bool importHabits;
+  final bool importGroups;
+  final bool confirmed;
+  final bool completed;
+  final ValueChanged<bool> onHabitsChanged;
+  final ValueChanged<bool> onGroupsChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+
+    final subtitle =
+        l10n?.appSetting_importDialog_confirmSubtitle ??
+        'Note: Import doesn\'t delete existing habits.';
+    return SliverMainAxisGroup(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Column(
+            key: const ValueKey('import-confirm-content'),
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (providerName case final providerName?) ...[
+                Text(
+                  l10n?.appSetting_importConfirmDialog_sourceLabel(
+                        providerName,
+                      ) ??
+                      'Source: $providerName',
+                  style: switch (AdaptiveStyle.of(context)) {
+                    AdaptiveStyle.material => Theme.of(
+                      context,
+                    ).textTheme.bodySmall,
+                    AdaptiveStyle.apple =>
+                      CupertinoTheme.of(context).textTheme.textStyle.copyWith(
+                        color: CupertinoColors.secondaryLabel.resolveFrom(
+                          context,
+                        ),
+                      ),
+                  },
+                ),
+                const SizedBox(height: 8),
+              ],
+              AdaptiveListSection(
+                appleTransparent: true,
+                padding: EdgeInsets.zero,
+                children: [
+                  _ImportOptionTile(
+                    title: l10n != null
+                        ? l10n.appSetting_importDialog_tile_includeHabits(
+                            habitMonitor.total,
+                          )
+                        : 'Include ${habitMonitor.total} habits',
+                    selected: importHabits,
+                    onChanged: confirmed ? null : onHabitsChanged,
+                  ),
+                  if (groupMonitor.total > 0)
+                    _ImportOptionTile(
+                      title: l10n != null
+                          ? l10n.appSetting_importDialog_tile_includeGroups(
+                              groupMonitor.total,
+                            )
+                          : 'Include ${groupMonitor.total} groups',
+                      selected: importGroups,
+                      onChanged: confirmed ? null : onGroupsChanged,
+                    ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              if (confirmed)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (completed) ...[
+                      const Divider(key: ValueKey('import-completion-divider')),
+                      _ImportCompletion(
+                        habitTotal: importHabits ? habitMonitor.total : 0,
+                        habitComplete: habitMonitor.succeeded,
+                        groupTotal: importGroups ? groupMonitor.total : 0,
+                        groupComplete: groupMonitor.succeeded,
+                      ),
+                    ] else
+                      _ImportProgress(
+                        currentCount:
+                            habitMonitor.processed + groupMonitor.processed,
+                        totalCount:
+                            (importHabits ? habitMonitor.total : 0) +
+                            (importGroups ? groupMonitor.total : 0),
+                      ),
+                  ],
+                )
+              else
+                Text(subtitle),
+              const SizedBox(height: 8),
+            ],
           ),
         ),
-        crossFadeState: !_confirmed
-            ? CrossFadeState.showFirst
-            : CrossFadeState.showSecond,
-      ),
-      actionsAlignment: _completed ? MainAxisAlignment.center : null,
-      actions: [
-        if (_completed)
-          TextButton.icon(
-            onPressed: () => Navigator.maybeOf(context)?.maybePop(),
-            icon: const Icon(Icons.close),
-            label: l10n != null
-                ? Text(l10n.appSetting_importDialog_complete_closeLabel)
-                : const Text('close'),
-          ),
-        if (!_completed)
-          TextButton(
-            onPressed: !_confirmed
-                ? () => Navigator.of(context).maybePop()
-                : null,
-            child: l10n != null
-                ? Text(l10n.appSetting_importDialog_confirm_cancelText)
-                : const Text('cancel'),
-          ),
-        if (!_completed)
-          TextButton(
-            onPressed: !_confirmed ? _onConfirmButtonPressed : null,
-            child: l10n != null
-                ? Text(l10n.appSetting_importDialog_confirm_confirmText)
-                : const Text('confirm'),
-          ),
+        _ImportPreview(
+          habits: habits,
+          groups: groups,
+          habitStatuses: habitMonitor.statuses,
+          groupStatuses: groupMonitor.statuses,
+          importHabits: importHabits,
+          importGroups: importGroups,
+        ),
       ],
+    );
+  }
+}
+
+class _ImportStatusIcon extends StatelessWidget {
+  const _ImportStatusIcon({required this.status, required this.id});
+
+  final ImportItemStatus status;
+  final String id;
+
+  @override
+  Widget build(BuildContext context) {
+    final apple = AdaptiveStyle.of(context) == AdaptiveStyle.apple;
+    final icon = switch (status) {
+      ImportItemStatus.pending =>
+        apple ? CupertinoIcons.circle : Icons.radio_button_unchecked,
+      ImportItemStatus.running =>
+        apple ? CupertinoIcons.arrow_2_circlepath : Icons.sync,
+      ImportItemStatus.succeeded =>
+        apple ? CupertinoIcons.check_mark_circled : Icons.check_circle_outline,
+      ImportItemStatus.failed =>
+        apple ? CupertinoIcons.exclamationmark_circle : Icons.error_outline,
+    };
+    return Icon(icon, key: ValueKey('$id-${status.name}'), size: 20);
+  }
+}
+
+class _ImportExpansionToggle extends StatelessWidget {
+  const _ImportExpansionToggle({
+    required this.expanded,
+    required this.onPressed,
+  });
+  final bool expanded;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    final icon = Icon(expanded ? Icons.unfold_less : Icons.unfold_more);
+    return Semantics(
+      toggled: expanded,
+      label: expanded
+          ? (l10n?.groupHeader_menu_collapseAll ?? 'Collapse all')
+          : (l10n?.groupHeader_menu_expandAll ?? 'Expand all'),
+      child: AdaptiveStyle.of(context) == AdaptiveStyle.apple
+          ? CupertinoButton(
+              key: const ValueKey('import-toggle-expansion'),
+              padding: const EdgeInsets.all(8),
+              onPressed: onPressed,
+              child: icon,
+            )
+          : IconButton(
+              key: const ValueKey('import-toggle-expansion'),
+              onPressed: onPressed,
+              icon: icon,
+            ),
     );
   }
 }

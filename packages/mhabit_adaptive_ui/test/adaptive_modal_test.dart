@@ -335,6 +335,7 @@ void main() {
           horizontalAvoidance: const EdgeInsets.only(left: 100),
           verticalAvoidance: const EdgeInsets.only(top: 80),
           modalBuilder: (_) => AdaptiveModal(
+            size: const AdaptiveModalSize.fixed(height: 720),
             title: Builder(
               builder: (context) {
                 observedAvoidance =
@@ -1117,7 +1118,7 @@ void main() {
       (AdaptiveStyle.apple, AdaptiveModalPresentation.dialog),
     ]) {
       testWidgets(
-        '${testCase.$1.name} ${testCase.$2.name} uses the shared height cap',
+        '${testCase.$1.name} ${testCase.$2.name} uses the default fixed height',
         (tester) async {
           tester.view.physicalSize = const Size(1000, 1200);
           tester.view.devicePixelRatio = 1;
@@ -1140,7 +1141,7 @@ void main() {
                   find.byKey(const ValueKey('adaptive-modal-constraints')),
                 )
                 .height,
-            AdaptiveModalConstraints.maxHeight,
+            560,
           );
         },
       );

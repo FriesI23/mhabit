@@ -109,7 +109,7 @@ void main() {
             find.byKey(const ValueKey('adaptive-modal-implied-close')),
             findsNothing,
           );
-          expect(find.byType(AdaptiveModal), findsOneWidget);
+          expect(find.bySubtype<AdaptiveModal>(), findsOneWidget);
           expect(tester.takeException(), isNull);
           final version = getThirdPartyImporterVersion(
             ThirdPartyProvider.loopHabitTracker,
@@ -121,7 +121,7 @@ void main() {
           await tester.pumpAndSettle();
           expect(calls.single.arguments['url'], version.releaseUrl.toString());
           expect(completions, 0);
-          expect(find.byType(AdaptiveModal), findsOneWidget);
+          expect(find.bySubtype<AdaptiveModal>(), findsOneWidget);
           for (final size in [
             const Size(1000, 900),
             const Size(900, 500),

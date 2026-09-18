@@ -99,17 +99,6 @@ class _AdaptiveModalLayoutState extends State<AdaptiveModalLayout> {
     child: child ?? const SizedBox.shrink(),
   );
 
-  // Local content height after modal constraints, keyboard insets, and safe
-  // areas. This fallback is independent of the window presentation breakpoint.
-  static const double _compactContentHeight = 320;
-
-  static bool _usesCompactHeightLayout(
-    BuildContext context,
-    BoxConstraints constraints,
-  ) =>
-      constraints.maxHeight < _compactContentHeight ||
-      MediaQuery.textScalerOf(context).scale(1) > 2;
-
   @override
   Widget build(BuildContext context) {
     final header = _measure('header', widget.header);
@@ -147,7 +136,11 @@ class _AdaptiveModalLayoutState extends State<AdaptiveModalLayout> {
       defaultMaxHeight: widget.defaultMaxHeight,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final compactHeight = _usesCompactHeightLayout(context, constraints);
+          final compactHeight =
+              AdaptiveModalConstraints.usesCompactHeightLayout(
+                context,
+                constraints,
+              );
           // Material Dialog removes the consumed inset from MediaQuery. Check
           // the view for keyboard visibility and local constraints for space.
           final scrollFooter =
@@ -307,6 +300,17 @@ class _AdaptiveModalBottomActions extends StatelessWidget {
 
 /// Shared sizing policy for regular and sliver modal layouts and route shells.
 abstract final class AdaptiveModalConstraints {
+  // Local content height after modal constraints, keyboard insets, and safe
+  // areas. This fallback is independent of the window presentation breakpoint.
+  static const double _compactContentHeight = 320;
+
+  static bool usesCompactHeightLayout(
+    BuildContext context,
+    BoxConstraints constraints,
+  ) =>
+      constraints.maxHeight < _compactContentHeight ||
+      MediaQuery.textScalerOf(context).scale(1) > 2;
+
   static const double maxHeight = 720;
   static const double availableHeightFactor = 0.9;
   static const double minSheetExtent = 0;
@@ -347,5 +351,195 @@ abstract final class AdaptiveModalConstraints {
         height: available.maxHeight,
       ),
     };
+  }
+}
+
+/// Shares the modal's sole scroll controller without wrapping a viewport in
+/// an intrinsic-size probe or another scroll view.
+class AdaptiveSliverModalLayout extends StatefulWidget {
+  const AdaptiveSliverModalLayout({
+    super.key,
+    required this.scrollController,
+    required this.header,
+    required this.pinnedBody,
+    required this.slivers,
+    required this.bottomActions,
+    required this.padding,
+    required this.presentation,
+    required this.size,
+    required this.defaultMaxHeight,
+    required this.footer,
+    this.onContentSizeChanged,
+  });
+
+  final ScrollController scrollController;
+  final Widget? header;
+  final Widget? pinnedBody;
+  final List<Widget> slivers;
+  final List<Widget> bottomActions;
+  final EdgeInsetsGeometry padding;
+  final AdaptiveModalPresentation presentation;
+  final AdaptiveModalSize size;
+  final double? defaultMaxHeight;
+  final Widget? footer;
+
+  final ValueChanged<Size>? onContentSizeChanged;
+
+  @override
+  State<AdaptiveSliverModalLayout> createState() =>
+      _AdaptiveSliverModalLayoutState();
+}
+
+class _AdaptiveSliverModalLayoutState extends State<AdaptiveSliverModalLayout> {
+  Size? _layoutSize;
+  Size? _reportedSize;
+  bool _reportScheduled = false;
+
+  void _recordSize(Size size) {
+    _layoutSize = size;
+    _scheduleReport();
+  }
+
+  void _scheduleReport() {
+    if (_reportScheduled ||
+        widget.onContentSizeChanged == null ||
+        widget.presentation != AdaptiveModalPresentation.dialog) {
+      return;
+    }
+    _reportScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _reportScheduled = false;
+      if (!mounted ||
+          _layoutSize == null ||
+          widget.onContentSizeChanged == null) {
+        return;
+      }
+      final controller = widget.scrollController;
+      final overflow =
+          controller.hasClients && controller.position.hasContentDimensions
+          ? controller.position.maxScrollExtent
+          : 0.0;
+      // Include clipped content so a modal-local Navigator can grow again after
+      // previously shrinking. Viewport intrinsic measurement is never requested.
+      final size = widget.size.constraints.constrain(
+        Size(_layoutSize!.width, _layoutSize!.height + overflow),
+      );
+      if (!size.isFinite || size == _reportedSize) return;
+      _reportedSize = size;
+      widget.onContentSizeChanged!(size);
+    });
+  }
+
+  bool _onMetrics(ScrollMetricsNotification notification) {
+    if (notification.depth == 0) _scheduleReport();
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) => _AdaptiveModalFrame(
+    presentation: widget.presentation,
+    constraints: widget.size.constraints,
+    defaultMaxHeight: widget.defaultMaxHeight,
+    child: Align(
+      alignment: Alignment.topCenter,
+      heightFactor: 1,
+      child: LayoutBuilder(
+        builder: (context, constraints) =>
+            NotificationListener<ScrollMetricsNotification>(
+              onNotification: _onMetrics,
+              child: _ModalRegionSize(
+                onSize: _recordSize,
+                intrinsicWidth: false,
+                child: _AdaptiveSliverModalRegions(
+                  constraints: constraints,
+                  shrinkWrap:
+                      widget.presentation == AdaptiveModalPresentation.dialog &&
+                      !widget.size.constraints.hasTightHeight,
+                  header: widget.header,
+                  pinnedBody: widget.pinnedBody,
+                  slivers: widget.slivers,
+                  bottomActions: widget.bottomActions,
+                  padding: widget.padding,
+                  footer: widget.footer,
+                  scrollController: widget.scrollController,
+                ),
+              ),
+            ),
+      ),
+    ),
+  );
+}
+
+class _AdaptiveSliverModalRegions extends StatelessWidget {
+  const _AdaptiveSliverModalRegions({
+    required this.constraints,
+    required this.shrinkWrap,
+    required this.header,
+    required this.pinnedBody,
+    required this.slivers,
+    required this.bottomActions,
+    required this.padding,
+    required this.footer,
+    required this.scrollController,
+  });
+  final BoxConstraints constraints;
+  final bool shrinkWrap;
+  final Widget? header;
+  final Widget? pinnedBody;
+  final List<Widget> slivers;
+  final List<Widget> bottomActions;
+  final EdgeInsetsGeometry padding;
+  final Widget? footer;
+  final ScrollController scrollController;
+
+  @override
+  Widget build(BuildContext context) {
+    final compact = AdaptiveModalConstraints.usesCompactHeightLayout(
+      context,
+      constraints,
+    );
+    final scrollFooter = compact && View.of(context).viewInsets.bottom > 0;
+    final pinned = pinnedBody == null
+        ? null
+        : Padding(
+            key: const ValueKey('adaptive-modal-pinned-body'),
+            padding: padding,
+            child: pinnedBody,
+          );
+    final bottom = bottomActions.isEmpty
+        ? null
+        : _AdaptiveModalBottomActions(actions: bottomActions, padding: padding);
+    return Column(
+      mainAxisSize: shrinkWrap ? MainAxisSize.min : MainAxisSize.max,
+      children: [
+        ?header,
+        if (!compact && pinned != null) pinned,
+        Flexible(
+          fit: shrinkWrap ? FlexFit.loose : FlexFit.tight,
+          key: const ValueKey('adaptive-modal-scroll-region'),
+          child: CustomScrollView(
+            key: const ValueKey('adaptive-modal-scroll-body'),
+            shrinkWrap: shrinkWrap,
+            controller: scrollController,
+            slivers: [
+              if (compact && pinned != null) SliverToBoxAdapter(child: pinned),
+              SliverPadding(
+                padding: padding,
+                sliver: SliverMainAxisGroup(slivers: slivers),
+              ),
+              if (compact && bottom != null) SliverToBoxAdapter(child: bottom),
+              if (scrollFooter && footer != null)
+                SliverToBoxAdapter(child: footer),
+            ],
+          ),
+        ),
+        if (!compact && bottom != null) bottom,
+        if (!scrollFooter && footer != null)
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: constraints.maxHeight),
+            child: SingleChildScrollView(child: footer),
+          ),
+      ],
+    );
   }
 }

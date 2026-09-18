@@ -159,7 +159,10 @@ void main() {
                         LogLevelChangerTile(
                           crtLevel: level,
                           onSelected: (value) => setState(() {
-                            expect(find.byType(AdaptiveModal), findsOneWidget);
+                            expect(
+                              find.bySubtype<AdaptiveModal>(),
+                              findsOneWidget,
+                            );
                             level = value;
                             levelCalls++;
                           }),
@@ -210,7 +213,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(level, LogLevel.error);
       expect(levelCalls, 1);
-      expect(find.byType(AdaptiveModal), findsNothing);
+      expect(find.bySubtype<AdaptiveModal>(), findsNothing);
       await tester.tap(find.text(l10n.debug_logLevelTile_title));
       await tester.pumpAndSettle();
       expect(tester.widget<Semantics>(errorOption).properties.selected, isTrue);

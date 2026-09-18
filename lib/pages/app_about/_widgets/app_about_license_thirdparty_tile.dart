@@ -40,6 +40,11 @@ class _AppAboutThirdPartyLicenseTileState
     await showAdaptiveSheet<void>(
       context: context,
       builder: (_) => AdaptiveModal(
+        size: const AdaptiveModalSize.constrained(
+          minWidth: 0,
+          maxWidth: 720,
+          maxHeight: 720,
+        ),
         title: l10n != null
             ? Text(l10n.appAbout_licenseThirdPartyTile_titleText)
             : const Text("Third Party License"),

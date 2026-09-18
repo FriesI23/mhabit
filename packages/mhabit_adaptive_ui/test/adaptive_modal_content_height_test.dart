@@ -11,10 +11,10 @@ void main() {
     const fixed = AdaptiveModalSize.fixed();
     const constrained = AdaptiveModalSize.constrained();
     expect((fixed as AdaptiveModalFixedSize).width, 560);
-    expect(fixed.height, 720);
+    expect(fixed.height, 560);
     expect(
       (constrained as AdaptiveModalConstrainedSize).constraints,
-      const BoxConstraints(minWidth: 560, maxWidth: 560, maxHeight: 720),
+      const BoxConstraints(minWidth: 560, maxWidth: 560, maxHeight: 560),
     );
   });
 
@@ -25,11 +25,11 @@ void main() {
     );
     expect(
       const AdaptiveModalSize.constrained(minWidth: 0).constraints,
-      const BoxConstraints(maxWidth: 560, maxHeight: 720),
+      const BoxConstraints(maxWidth: 560, maxHeight: 560),
     );
     expect(
       const AdaptiveModalSize.constrained(maxWidth: 800).constraints,
-      const BoxConstraints(minWidth: 560, maxWidth: 800, maxHeight: 720),
+      const BoxConstraints(minWidth: 560, maxWidth: 800, maxHeight: 560),
     );
     expect(
       const AdaptiveModalSize.constrained(minHeight: 100).constraints,
@@ -37,13 +37,13 @@ void main() {
         minWidth: 560,
         maxWidth: 560,
         minHeight: 100,
-        maxHeight: 720,
+        maxHeight: 560,
       ),
     );
   });
 
   for (final style in AdaptiveStyle.values) {
-    for (final maxHeight in [720.0, 360.0]) {
+    for (final maxHeight in [560.0, 720.0, 360.0]) {
       testWidgets(
         '${style.name} constrained modal fits content up to $maxHeight',
         (tester) async {
@@ -61,7 +61,7 @@ void main() {
                     styleOverride: style,
                     builder: (_) => ValueListenableBuilder<double>(
                       valueListenable: contentHeight,
-                      builder: (_, height, _) => maxHeight == 720
+                      builder: (_, height, _) => maxHeight == 560
                           ? AdaptiveModal(
                               size: const AdaptiveModalSize.constrained(),
                               title: const Text('Selection'),
@@ -89,7 +89,7 @@ void main() {
           );
           await tester.tap(find.text('Open'));
           await tester.pumpAndSettle();
-          final modal = find.byType(AdaptiveModal);
+          final modal = find.bySubtype<AdaptiveModal>();
           final shortHeight = tester.getSize(modal).height;
           expect(shortHeight, greaterThan(100));
           expect(shortHeight, lessThan(maxHeight));
@@ -479,14 +479,14 @@ void main() {
           expect(height(), fixedHeight ?? closeTo(initial + 130, 1));
           bodyHeight.value = 1400;
           await tester.pumpAndSettle();
-          expect(height(), fixedHeight ?? 720);
+          expect(height(), fixedHeight ?? 560);
           final scroll = tester.widget<SingleChildScrollView>(
             find.byKey(const ValueKey('adaptive-modal-scroll-body')),
           );
           expect(scroll.controller!.position.maxScrollExtent, greaterThan(0));
           bodyHeight.value = 1600;
           await tester.pumpAndSettle();
-          expect(height(), fixedHeight ?? 720);
+          expect(height(), fixedHeight ?? 560);
           bodyHeight.value = 100;
           await tester.pumpAndSettle();
           expect(height(), closeTo(initial, 1));

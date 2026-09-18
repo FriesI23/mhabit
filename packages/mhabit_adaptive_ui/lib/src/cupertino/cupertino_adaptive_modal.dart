@@ -6,7 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' show MaterialLocalizations;
 
 import '../adaptive/adaptive_icon_button.dart';
-import '../adaptive/adaptive_modal_layout.dart';
+import '../adaptive/adaptive_modal_content.dart';
 import '../adaptive/adaptive_sheet.dart';
 import '../adaptive/modal_sheet_drag_region.dart';
 import '../window_control/cupertino_navigation_bar.dart';
@@ -750,7 +750,7 @@ class CupertinoAdaptiveModal extends StatelessWidget {
     this.confirmAction,
     required this.actions,
     required this.pinnedBody,
-    required this.body,
+    required this.content,
     required this.bottomActions,
     required this.automaticallyImplyCloseButton,
     required this.onCloseRequested,
@@ -767,7 +767,7 @@ class CupertinoAdaptiveModal extends StatelessWidget {
   final AdaptiveModalConfirmAction? confirmAction;
   final List<Widget> actions;
   final Widget? pinnedBody;
-  final Widget body;
+  final Widget content;
   final List<Widget> bottomActions;
   final bool automaticallyImplyCloseButton;
   final VoidCallback onCloseRequested;
@@ -863,13 +863,7 @@ class CupertinoAdaptiveModal extends StatelessWidget {
             padding: EdgeInsets.only(top: appBarHeight),
             child: pinnedBody,
           );
-    final paddedBody = pinnedBody == null
-        ? Padding(
-            padding: EdgeInsets.only(top: appBarHeight),
-            child: body,
-          )
-        : body;
-    final content = CupertinoTheme(
+    final surface = CupertinoTheme(
       data: theme,
       child: DefaultTextStyle(
         style: theme.textTheme.textStyle,
@@ -881,9 +875,9 @@ class CupertinoAdaptiveModal extends StatelessWidget {
             child: Stack(
               fit: StackFit.passthrough,
               children: [
-                AdaptiveModalLayout(
+                AdaptiveModalLayoutScope(
                   pinnedBody: paddedPinnedBody,
-                  body: paddedBody,
+                  contentTopInset: pinnedBody == null ? appBarHeight : 0,
                   bottomActions: bottomActions,
                   scrollController: scrollController,
                   onContentSizeChanged: onContentSizeChanged,
@@ -895,6 +889,7 @@ class CupertinoAdaptiveModal extends StatelessWidget {
                       ? MediaQuery.sizeOf(context).height * _sheetHeightFactor
                       : null,
                   footer: footer,
+                  child: content,
                 ),
                 if (header != null)
                   Positioned(top: 0, left: 0, right: 0, child: header),
@@ -912,9 +907,9 @@ class CupertinoAdaptiveModal extends StatelessWidget {
           useLinearTransition: () => route.popGestureInProgress,
           textDirection: Directionality.of(context),
         ),
-        child: content,
+        child: surface,
       ),
-      _ => content,
+      _ => surface,
     };
   }
 }

@@ -221,7 +221,7 @@ void main() {
         expect(find.text('Create Group'), findsOneWidget);
         expect(
           tester
-              .widget<AdaptiveModal>(find.byType(AdaptiveModal))
+              .widget<AdaptiveModal>(find.bySubtype<AdaptiveModal>())
               .leadingAction,
           isNull,
         );

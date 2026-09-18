@@ -407,7 +407,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(find.text('Edit').hitTestable().last);
         await tester.pumpAndSettle();
-        expect(find.byType(AdaptiveModal), findsOneWidget);
+        expect(find.bySubtype<AdaptiveModal>(), findsOneWidget);
         await tester.tap(
           find
               .byKey(const ValueKey('adaptive-modal-implied-close'))

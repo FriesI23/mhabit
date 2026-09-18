@@ -94,7 +94,7 @@ void main() {
         await tester.pumpWidget(_host(style));
         await tester.tap(find.text('Open'));
         await tester.pumpAndSettle();
-        expect(find.byType(AdaptiveModal), findsOneWidget);
+        expect(find.bySubtype<AdaptiveModal>(), findsOneWidget);
         expect(find.byType(AdaptiveModalMaterialBridge), findsNothing);
         expect(
           find.byType(AdaptiveListSection),
@@ -121,7 +121,7 @@ void main() {
         );
         expect(disabled.onPressed, isNull);
         final bodyScroll = find.descendant(
-          of: find.byType(AdaptiveModal),
+          of: find.bySubtype<AdaptiveModal>(),
           matching: find.byKey(const ValueKey('adaptive-modal-scroll-body')),
         );
         expect(bodyScroll.hitTestable(), findsOneWidget);

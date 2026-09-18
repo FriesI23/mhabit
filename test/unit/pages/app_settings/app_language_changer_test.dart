@@ -64,7 +64,7 @@ void main() {
 
         await open();
         expect(find.byType(SimpleDialog), findsNothing);
-        expect(find.byType(AdaptiveModal), findsOneWidget);
+        expect(find.bySubtype<AdaptiveModal>(), findsOneWidget);
         expect(
           find.byType(AdaptiveListTile),
           findsNWidgets(appSupportedLocales.length + 1),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../adaptive/adaptive_app_bar.dart';
-import '../adaptive/adaptive_modal_layout.dart';
+import '../adaptive/adaptive_modal_content.dart';
 import '../adaptive/adaptive_sheet.dart';
 import '../adaptive/modal_sheet_drag_region.dart';
 import '../window_control/modal_app_bar_region.dart';
@@ -358,7 +358,7 @@ class MaterialAdaptiveModal extends StatelessWidget {
     this.confirmAction,
     required this.actions,
     required this.pinnedBody,
-    required this.body,
+    required this.content,
     required this.bottomActions,
     required this.automaticallyImplyCloseButton,
     required this.onCloseRequested,
@@ -375,7 +375,7 @@ class MaterialAdaptiveModal extends StatelessWidget {
   final AdaptiveModalConfirmAction? confirmAction;
   final List<Widget> actions;
   final Widget? pinnedBody;
-  final Widget body;
+  final Widget content;
   final List<Widget> bottomActions;
   final bool automaticallyImplyCloseButton;
   final VoidCallback onCloseRequested;
@@ -481,25 +481,20 @@ class MaterialAdaptiveModal extends StatelessWidget {
             padding: EdgeInsets.only(top: overlaysHeader ? appBarHeight : 0),
             child: pinnedBody,
           );
-    final paddedBody = Padding(
-      padding: EdgeInsets.only(
-        top: overlaysHeader && pinnedBody == null ? appBarHeight : 0,
-      ),
-      child: body,
-    );
-    final layout = AdaptiveModalLayout(
+    final layout = AdaptiveModalLayoutScope(
       header: overlaysHeader ? null : header,
       footer: footer,
       pinnedBody: paddedPinnedBody,
-      body: paddedBody,
+      contentTopInset: overlaysHeader && pinnedBody == null ? appBarHeight : 0,
       bottomActions: bottomActions,
       scrollController: scrollController,
       onContentSizeChanged: onContentSizeChanged,
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
       presentation: presentation,
       size: size,
+      child: content,
     );
-    final content = Stack(
+    final surface = Stack(
       fit: StackFit.passthrough,
       children: [
         layout,
@@ -508,6 +503,6 @@ class MaterialAdaptiveModal extends StatelessWidget {
       ],
     );
 
-    return Material(color: backgroundColor, child: content);
+    return Material(color: backgroundColor, child: surface);
   }
 }

@@ -132,7 +132,7 @@ void main() {
           await tester.tap(find.text('Open'));
           await tester.pumpAndSettle();
 
-          expect(find.byType(AdaptiveModal), findsOneWidget);
+          expect(find.bySubtype<AdaptiveModal>(), findsOneWidget);
           expect(find.text('Create Group'), findsOneWidget);
           expect(
             find.byKey(const ValueKey('adaptive-modal-confirm')),
@@ -279,7 +279,7 @@ void main() {
           );
           await tester.pumpAndSettle();
           expect(find.text('Name is required'), findsOneWidget);
-          expect(find.byType(AdaptiveModal), findsOneWidget);
+          expect(find.bySubtype<AdaptiveModal>(), findsOneWidget);
 
           final close = find.byKey(
             const ValueKey('adaptive-modal-implied-close'),
@@ -374,7 +374,7 @@ void main() {
           );
           await tester.tap(find.byType(AdaptiveBackButton).hitTestable());
           await tester.pumpAndSettle();
-          expect(find.byType(AdaptiveModal), findsOneWidget);
+          expect(find.bySubtype<AdaptiveModal>(), findsOneWidget);
           expect(find.text('My group'), findsOneWidget);
           expect(localNavigator.canPop(), isFalse);
           await tester.tap(

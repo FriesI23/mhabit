@@ -35,6 +35,11 @@ class _AppAboutLicenseTileState extends State<AppAboutLicenseTile> {
     await showAdaptiveSheet<void>(
       context: context,
       builder: (_) => AdaptiveModal(
+        size: const AdaptiveModalSize.constrained(
+          minWidth: 0,
+          maxWidth: 720,
+          maxHeight: 720,
+        ),
         title: l10n != null
             ? Text(l10n.appAbout_licenseTile_titleText)
             : const Text("License"),

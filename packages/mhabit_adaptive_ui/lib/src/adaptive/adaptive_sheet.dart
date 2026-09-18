@@ -8,6 +8,7 @@ import '../breakpoints/window_size_class.dart';
 import '../cupertino/cupertino_adaptive_modal.dart';
 import '../material/material_adaptive_modal.dart';
 import 'adaptive_back_button.dart';
+import 'adaptive_modal_content.dart';
 import 'adaptive_modal_layout.dart';
 
 export 'adaptive_modal_layout.dart'
@@ -289,7 +290,7 @@ sealed class AdaptiveModalSize {
   const factory AdaptiveModalSize.fixed({double width, double height}) =
       AdaptiveModalFixedSize;
 
-  /// Content-driven size with a default fixed width of 560 and height 0–720.
+  /// Content-driven size with a default fixed width of 560 and height 0–560.
   /// Each bound can be overridden independently. Tight bounds fix an axis;
   /// loose bounds fit content. Loose width requires intrinsic body layout.
   const factory AdaptiveModalSize.constrained({
@@ -304,7 +305,7 @@ sealed class AdaptiveModalSize {
 }
 
 final class AdaptiveModalFixedSize extends AdaptiveModalSize {
-  const AdaptiveModalFixedSize({this.width = 560, this.height = 720})
+  const AdaptiveModalFixedSize({this.width = 560, this.height = 560})
     : assert(width > 0 && width < double.infinity),
       assert(height > 0 && height < double.infinity),
       super._();
@@ -322,7 +323,7 @@ final class AdaptiveModalConstrainedSize extends AdaptiveModalSize {
     this.minWidth = 560,
     this.maxWidth = 560,
     this.minHeight = 0,
-    this.maxHeight = 720,
+    this.maxHeight = 560,
   }) : assert(minWidth >= 0 && minWidth < double.infinity),
        assert(minHeight >= 0 && minHeight < double.infinity),
        assert(maxWidth >= minWidth),
@@ -351,7 +352,7 @@ final class AdaptiveModalConstrainedSize extends AdaptiveModalSize {
 /// when an explicit action must close the whole modal or return a typed result.
 ///
 /// A nested Navigator's overlay must have a finite viewport. Sheet
-/// presentations fill their surface. Dialogs default to a fixed 560 by 720 size
+/// presentations fill their surface. Dialogs default to a fixed 560 by 560 size
 /// within the shared modal bounds. Use [AdaptiveModalSize.constrained] to follow
 /// the current AdaptiveModal content height within explicit bounds. Loose width
 /// bounds follow its intrinsic body width as well.
@@ -548,10 +549,52 @@ class AdaptiveModalConfirmAction {
 /// [AlertDialog] supplies dialog regions while the show helper owns its route.
 /// Callers own the business meaning and callbacks of every action supplied
 /// here.
-class AdaptiveModal extends StatefulWidget {
-  const AdaptiveModal({
+abstract class AdaptiveModal extends StatelessWidget {
+  const factory AdaptiveModal({
+    Key? key,
+    Widget? title,
+    Widget? leadingAction,
+    List<Widget> appBarActions,
+    AdaptiveModalConfirmAction? confirmAction,
+    List<Widget> actions,
+    Widget? pinnedBody,
+    List<Widget> bottomActions,
+    bool automaticallyImplyLeading,
+    bool automaticallyImplyCloseButton,
+    FutureOr<void> Function()? onCloseRequested,
+    AdaptiveModalSize? size,
+    required Widget body,
+  }) = _AdaptiveBoxModal;
+
+  /// Uses one bounded sliver viewport with the route's scroll ownership.
+  const factory AdaptiveModal.slivers({
+    Key? key,
+    Widget? title,
+    Widget? leadingAction,
+    List<Widget> appBarActions,
+    AdaptiveModalConfirmAction? confirmAction,
+    List<Widget> actions,
+    Widget? pinnedBody,
+    List<Widget> bottomActions,
+    bool automaticallyImplyLeading,
+    bool automaticallyImplyCloseButton,
+    FutureOr<void> Function()? onCloseRequested,
+    AdaptiveModalSize? size,
+    required List<Widget> slivers,
+  }) = _AdaptiveSliverModal;
+
+  /// A content-sized box modal without a toolbar or reserved toolbar space.
+  const factory AdaptiveModal.simple({
+    Key? key,
+    required Widget body,
+    AdaptiveModalSize? size,
+    List<Widget> actions,
+    List<Widget> bottomActions,
+    FutureOr<void> Function()? onCloseRequested,
+  }) = _AdaptiveSimpleModal;
+
+  const AdaptiveModal._({
     super.key,
-    required this.body,
     this.title,
     this.leadingAction,
     this.appBarActions = const [],
@@ -563,58 +606,146 @@ class AdaptiveModal extends StatefulWidget {
     this.automaticallyImplyCloseButton = true,
     this.onCloseRequested,
     this.size,
-  }) : _showAppBar = true;
+    this.showAppBar = true,
+  });
 
-  /// A single-page modal without a toolbar or reserved toolbar space.
-  ///
-  /// Defaults to content-driven height. Dismissal is owned by the route
-  /// (barrier/back/drag) or by the body's and footer's explicit actions.
-  const AdaptiveModal.simple({
-    super.key,
-    required this.body,
-    this.size = const AdaptiveModalSize.constrained(),
-    this.actions = const [],
-    this.bottomActions = const [],
-    this.onCloseRequested,
-  }) : title = null,
-       leadingAction = null,
-       appBarActions = const [],
-       confirmAction = null,
-       pinnedBody = null,
-       automaticallyImplyLeading = false,
-       automaticallyImplyCloseButton = false,
-       _showAppBar = false;
-
-  final bool _showAppBar;
-
+  final bool showAppBar;
   final Widget? title;
   final Widget? leadingAction;
-
-  /// Trailing app-bar actions, separate from the bottom [actions] region.
   final List<Widget> appBarActions;
-
-  /// Trailing confirmation: Material text, Apple checkmark.
   final AdaptiveModalConfirmAction? confirmAction;
   final List<Widget> actions;
   final Widget? pinnedBody;
-  final Widget body;
   final List<Widget> bottomActions;
   final bool automaticallyImplyLeading;
   final bool automaticallyImplyCloseButton;
-
-  /// Handles closing, including any asynchronous confirmation. Drag dismissal
-  /// waits for completion before deciding whether the modal should rebound.
   final FutureOr<void> Function()? onCloseRequested;
-
-  /// One sizing policy for both axes. Inherits the surrounding modal
-  /// Navigator's policy when omitted, otherwise defaults to a fixed size.
   final AdaptiveModalSize? size;
-
-  @override
-  State<AdaptiveModal> createState() => _AdaptiveModalState();
 }
 
-class _AdaptiveModalState extends State<AdaptiveModal> {
+class _AdaptiveBoxModal extends AdaptiveModal {
+  const _AdaptiveBoxModal({
+    super.key,
+    super.title,
+    super.leadingAction,
+    super.appBarActions,
+    super.confirmAction,
+    super.actions,
+    super.pinnedBody,
+    super.bottomActions,
+    super.automaticallyImplyLeading,
+    super.automaticallyImplyCloseButton,
+    super.onCloseRequested,
+    super.size,
+    super.showAppBar,
+    required this.body,
+  }) : super._();
+
+  final Widget body;
+
+  @override
+  Widget build(BuildContext context) => _AdaptiveModal(
+    showAppBar: showAppBar,
+    title: title,
+    leadingAction: leadingAction,
+    appBarActions: appBarActions,
+    confirmAction: confirmAction,
+    actions: actions,
+    pinnedBody: pinnedBody,
+    bottomActions: bottomActions,
+    automaticallyImplyLeading: automaticallyImplyLeading,
+    automaticallyImplyCloseButton: automaticallyImplyCloseButton,
+    onCloseRequested: onCloseRequested,
+    size: size,
+    content: AdaptiveModalBoxContent(body: body),
+  );
+}
+
+class _AdaptiveSimpleModal extends _AdaptiveBoxModal {
+  const _AdaptiveSimpleModal({
+    super.key,
+    required super.body,
+    super.size = const AdaptiveModalSize.constrained(),
+    super.actions,
+    super.bottomActions,
+    super.onCloseRequested,
+  }) : super(showAppBar: false, automaticallyImplyCloseButton: false);
+}
+
+class _AdaptiveSliverModal extends AdaptiveModal {
+  const _AdaptiveSliverModal({
+    super.key,
+    super.title,
+    super.leadingAction,
+    super.appBarActions,
+    super.confirmAction,
+    super.actions,
+    super.pinnedBody,
+    super.bottomActions,
+    super.automaticallyImplyLeading,
+    super.automaticallyImplyCloseButton,
+    super.onCloseRequested,
+    super.size,
+    required this.slivers,
+  }) : super._();
+
+  final List<Widget> slivers;
+
+  @override
+  Widget build(BuildContext context) => _AdaptiveModal(
+    showAppBar: showAppBar,
+    title: title,
+    leadingAction: leadingAction,
+    appBarActions: appBarActions,
+    confirmAction: confirmAction,
+    actions: actions,
+    pinnedBody: pinnedBody,
+    bottomActions: bottomActions,
+    automaticallyImplyLeading: automaticallyImplyLeading,
+    automaticallyImplyCloseButton: automaticallyImplyCloseButton,
+    onCloseRequested: onCloseRequested,
+    size: size,
+    content: AdaptiveModalSliverContent(slivers: slivers),
+  );
+}
+
+/// Owns route integration shared by the independent content widgets.
+class _AdaptiveModal extends StatefulWidget {
+  const _AdaptiveModal({
+    required this.showAppBar,
+    required this.title,
+    required this.leadingAction,
+    required this.appBarActions,
+    required this.confirmAction,
+    required this.actions,
+    required this.pinnedBody,
+    required this.bottomActions,
+    required this.automaticallyImplyLeading,
+    required this.automaticallyImplyCloseButton,
+    required this.onCloseRequested,
+    required this.size,
+    required this.content,
+  });
+
+  final bool showAppBar;
+  final Widget? title;
+  final Widget? leadingAction;
+  final List<Widget> appBarActions;
+  final AdaptiveModalConfirmAction? confirmAction;
+  final List<Widget> actions;
+  final Widget? pinnedBody;
+  final List<Widget> bottomActions;
+  final bool automaticallyImplyLeading;
+  final bool automaticallyImplyCloseButton;
+  final FutureOr<void> Function()? onCloseRequested;
+  final AdaptiveModalSize? size;
+  final Widget content;
+
+  @override
+  State<_AdaptiveModal> createState() => _AdaptiveModalState();
+}
+
+class _AdaptiveModalState extends State<_AdaptiveModal> {
   late final ScrollController _fallbackScrollController = ScrollController();
   _AdaptiveModalCloseController? _closeController;
   ModalRoute<dynamic>? _pageRoute;
@@ -744,14 +875,14 @@ class _AdaptiveModalState extends State<AdaptiveModal> {
 
     return switch (AdaptiveStyle.of(context)) {
       AdaptiveStyle.material => MaterialAdaptiveModal(
-        showAppBar: widget._showAppBar,
+        showAppBar: widget.showAppBar,
         title: widget.title,
         leadingAction: leadingAction,
         appBarActions: widget.appBarActions,
         confirmAction: widget.confirmAction,
         actions: widget.actions,
         pinnedBody: widget.pinnedBody,
-        body: widget.body,
+        content: widget.content,
         bottomActions: widget.bottomActions,
         automaticallyImplyCloseButton: widget.automaticallyImplyCloseButton,
         onCloseRequested: _requestClose,
@@ -761,14 +892,14 @@ class _AdaptiveModalState extends State<AdaptiveModal> {
         onContentSizeChanged: onContentSizeChanged,
       ),
       AdaptiveStyle.apple => CupertinoAdaptiveModal(
-        showAppBar: widget._showAppBar,
+        showAppBar: widget.showAppBar,
         title: widget.title,
         leadingAction: leadingAction,
         appBarActions: widget.appBarActions,
         confirmAction: widget.confirmAction,
         actions: widget.actions,
         pinnedBody: widget.pinnedBody,
-        body: widget.body,
+        content: widget.content,
         bottomActions: widget.bottomActions,
         automaticallyImplyCloseButton: widget.automaticallyImplyCloseButton,
         onCloseRequested: _requestClose,

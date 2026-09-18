@@ -70,7 +70,7 @@ void main() {
             findsNWidgets(AppSyncFetchInterval.values.length),
           );
           expect(
-            tester.getSize(find.byType(AdaptiveModal)).height,
+            tester.getSize(find.bySubtype<AdaptiveModal>()).height,
             lessThan(720),
           );
           final dialog = find.byType(AppSyncFetchIntervalSwitchDialog);

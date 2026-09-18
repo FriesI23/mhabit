@@ -33,7 +33,7 @@ Future<GroupEditFormResult?> showGroupEditDialog({
 }) => showAdaptiveSheet<GroupEditFormResult>(
   context: context,
   builder: (_) => AdaptiveModalNavigator<GroupEditFormResult>(
-    size: const AdaptiveModalSize.constrained(),
+    size: const AdaptiveModalSize.constrained(maxHeight: 720),
     builder: (_) => _GroupEditDialog(existingGroup: existingGroup),
   ),
 );

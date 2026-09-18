@@ -124,7 +124,7 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 500));
 
-        final modal = find.byType(AdaptiveModal);
+        final modal = find.bySubtype<AdaptiveModal>();
         expect(modal, findsOneWidget);
         expect(AdaptiveStyle.of(tester.element(modal)), AdaptiveStyle.material);
         expect(find.text('New Sync Server'), findsOneWidget);
@@ -182,7 +182,7 @@ void main() {
             await tester.pump();
             await tester.pump(const Duration(milliseconds: 500));
             final vm = tester
-                .element(find.byType(AdaptiveModal))
+                .element(find.bySubtype<AdaptiveModal>())
                 .read<AppSyncServerFormViewModel>();
             vm.webdav!.path = '/changed';
             await tester.pump();
@@ -210,11 +210,11 @@ void main() {
             await tester.pump(const Duration(milliseconds: 500));
             expect(completed, choice == 'confirm');
             if (choice != 'confirm') {
-              expect(find.byType(AdaptiveModal), findsOneWidget);
+              expect(find.bySubtype<AdaptiveModal>(), findsOneWidget);
               expect(vm.webdav!.path, '/changed');
               expect(vm.edited, isTrue);
             } else {
-              expect(find.byType(AdaptiveModal), findsNothing);
+              expect(find.bySubtype<AdaptiveModal>(), findsNothing);
               expect(result?.op, switch (operation) {
                 'Save' => AppSyncServerEditorResultOp.update,
                 'Delete' => AppSyncServerEditorResultOp.delete,
@@ -249,7 +249,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
-    final modalContext = tester.element(find.byType(AdaptiveModal));
+    final modalContext = tester.element(find.bySubtype<AdaptiveModal>());
     modalContext.read<AppSyncServerFormViewModel>().webdav!.path = '/changed';
     await tester.pump();
     await tester.binding.handlePopRoute();
@@ -284,7 +284,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
-    final modalContext = tester.element(find.byType(AdaptiveModal));
+    final modalContext = tester.element(find.bySubtype<AdaptiveModal>());
     modalContext.read<AppSyncServerFormViewModel>().webdav!.path = '/changed';
     await tester.pump();
 
@@ -322,7 +322,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
-    final modalContext = tester.element(find.byType(AdaptiveModal));
+    final modalContext = tester.element(find.bySubtype<AdaptiveModal>());
     modalContext.read<AppSyncServerFormViewModel>().webdav!.path = '/sync';
     await tester.pump();
     await tester.tap(find.text('Save'));
