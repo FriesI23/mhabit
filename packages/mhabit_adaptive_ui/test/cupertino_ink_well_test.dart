@@ -55,4 +55,45 @@ void main() {
     await tester.pump();
     expect(taps, 3);
   });
+
+  testWidgets('owns supplemental long press feedback without a tap action', (
+    tester,
+  ) async {
+    var longPresses = 0;
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: CupertinoPageScaffold(
+          child: CupertinoInkWell(
+            onLongPress: () => longPresses++,
+            pressedColor: CupertinoColors.systemRed,
+            child: const SizedBox(
+              width: 200,
+              height: 60,
+              child: Center(child: Text('Action')),
+            ),
+          ),
+        ),
+      ),
+    );
+    final pressedBackground = find.descendant(
+      of: find.byType(CupertinoInkWell),
+      matching: find.byWidgetPredicate(
+        (widget) =>
+            widget is ColoredBox && widget.color == CupertinoColors.systemRed,
+      ),
+    );
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.text('Action')),
+    );
+    await tester.pump();
+    expect(pressedBackground, findsOneWidget);
+    expect(longPresses, 0);
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(pressedBackground, findsOneWidget);
+    expect(longPresses, 1);
+    await gesture.up();
+    await tester.pump();
+    expect(pressedBackground, findsNothing);
+    expect(longPresses, 1);
+  });
 }

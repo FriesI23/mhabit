@@ -86,22 +86,11 @@ class _AppAboutVersionTileState extends State<AppAboutVersionTile> {
           "Version: ${AppInfo().appVersion}",
     );
     // This informational row deliberately keeps its long-press-only action.
-    return switch (AdaptiveStyle.of(context)) {
-      AdaptiveStyle.material => ListTile(
-        leading: leading,
-        title: title,
-        subtitle: subtitle,
-        onLongPress: onLongPressed,
-      ),
-      AdaptiveStyle.apple => GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onLongPress: onLongPressed,
-        child: AdaptiveListTile.apple(
-          leading: leading,
-          title: title,
-          subtitle: subtitle,
-        ),
-      ),
-    };
+    return AdaptiveListTile(
+      leading: leading,
+      title: title,
+      subtitle: subtitle,
+      onLongPress: onLongPressed,
+    );
   }
 }

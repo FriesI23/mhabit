@@ -25,6 +25,7 @@ class CupertinoAdaptiveListTile extends StatelessWidget {
     this.leading,
     this.trailing,
     this.onTap,
+    this.onLongPress,
   });
 
   final Widget title;
@@ -37,6 +38,7 @@ class CupertinoAdaptiveListTile extends StatelessWidget {
   final Widget? leading;
   final Widget? trailing;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -135,6 +137,8 @@ class CupertinoAdaptiveListTile extends StatelessWidget {
         : tile;
     return CupertinoInkWell(
       onActivate: onTap,
+      onLongPress: onLongPress,
+      pressedColor: activatedColor,
       focusColor: focusColor,
       shape: grouped ? section!.shape : const RoundedRectangleBorder(),
       child: content,

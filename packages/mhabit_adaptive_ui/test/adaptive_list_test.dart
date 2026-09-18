@@ -151,6 +151,71 @@ void main() {
     await tester.pump();
     expect(taps, 3);
   });
+  for (final platform in <TargetPlatform>[
+    TargetPlatform.android,
+    TargetPlatform.iOS,
+  ]) {
+    testWidgets('tap and long press stay independent on $platform', (
+      tester,
+    ) async {
+      var taps = 0;
+      var longPresses = 0;
+      await tester.pumpWidget(
+        host(
+          AdaptiveListTile(
+            title: const Text('Action'),
+            onTap: () => taps++,
+            onLongPress: () => longPresses++,
+          ),
+          platform: platform,
+        ),
+      );
+      await tester.tap(find.text('Action'));
+      await tester.pump();
+      expect(taps, 1);
+      expect(longPresses, 0);
+      await tester.longPress(find.text('Action'));
+      await tester.pump();
+      expect(taps, 1);
+      expect(longPresses, 1);
+    });
+  }
+  testWidgets('Apple long press uses the activated background while held', (
+    tester,
+  ) async {
+    const activatedColor = Color(0xff123456);
+    var longPresses = 0;
+    await tester.pumpWidget(
+      host(
+        AdaptiveListTheme(
+          data: const AdaptiveListThemeData(activatedColor: activatedColor),
+          child: AdaptiveListTile(
+            title: const Text('Action'),
+            onLongPress: () => longPresses++,
+          ),
+        ),
+      ),
+    );
+    final activatedBackground = find.descendant(
+      of: find.byType(AdaptiveListTile),
+      matching: find.byWidgetPredicate(
+        (widget) => widget is ColoredBox && widget.color == activatedColor,
+      ),
+    );
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.text('Action')),
+    );
+    await tester.pump();
+    expect(activatedBackground, findsOneWidget);
+    expect(longPresses, 0);
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(activatedBackground, findsOneWidget);
+    expect(longPresses, 1);
+    await gesture.up();
+    await tester.pump();
+    expect(activatedBackground, findsNothing);
+    expect(longPresses, 1);
+  });
   testWidgets('information rows and trailing controls have independent input', (
     tester,
   ) async {

@@ -25,6 +25,7 @@ class AdaptiveListTile extends StatelessWidget {
     this.leading,
     this.trailing,
     this.onTap,
+    this.onLongPress,
   }) : style = null,
        _kind = _AdaptiveListTileKind.standard;
 
@@ -34,6 +35,7 @@ class AdaptiveListTile extends StatelessWidget {
     this.subtitle,
     this.leading,
     this.onTap,
+    this.onLongPress,
   }) : style = null,
        trailing = null,
        _kind = _AdaptiveListTileKind.external;
@@ -44,6 +46,7 @@ class AdaptiveListTile extends StatelessWidget {
     this.subtitle,
     this.leading,
     this.onTap,
+    this.onLongPress,
   }) : style = null,
        trailing = null,
        _kind = _AdaptiveListTileKind.navigation;
@@ -55,6 +58,7 @@ class AdaptiveListTile extends StatelessWidget {
     this.leading,
     this.trailing,
     this.onTap,
+    this.onLongPress,
   }) : style = AdaptiveStyle.material,
        _kind = _AdaptiveListTileKind.standard;
 
@@ -65,6 +69,7 @@ class AdaptiveListTile extends StatelessWidget {
     this.leading,
     this.trailing,
     this.onTap,
+    this.onLongPress,
   }) : style = AdaptiveStyle.apple,
        _kind = _AdaptiveListTileKind.standard;
 
@@ -74,6 +79,7 @@ class AdaptiveListTile extends StatelessWidget {
   final Widget? leading;
   final Widget? trailing;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
   final _AdaptiveListTileKind _kind;
 
   @override
@@ -99,6 +105,7 @@ class AdaptiveListTile extends StatelessWidget {
         leading: leading,
         trailing: effectiveTrailing,
         onTap: onTap,
+        onLongPress: onLongPress,
       ),
       AdaptiveStyle.material => _buildMaterial(context, effectiveTrailing),
     };
@@ -115,6 +122,7 @@ class AdaptiveListTile extends StatelessWidget {
       leading: leading,
       trailing: effectiveTrailing,
       onTap: onTap,
+      onLongPress: onLongPress,
     );
   }
 }
