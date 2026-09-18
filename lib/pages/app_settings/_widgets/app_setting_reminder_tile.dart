@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart' show CupertinoSwitch;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
@@ -67,17 +67,68 @@ class _AppSettingReminderTileState extends State<AppSettingReminderTile> {
         },
       ),
       onTap: () async {
-        // TODO(mhabit-adaptive-dialog): Adapt the SDK time picker separately;
-        // preserve TimeOfDay/null handling and the settings-owned update.
-        final result = await showTimePicker(
-          context: context,
-          initialTime:
-              widget.config.timeOfDay ??
-              AppReminderConfig.dailyNight.timeOfDay!,
-        );
+        final initialTime =
+            widget.config.timeOfDay ?? AppReminderConfig.dailyNight.timeOfDay!;
+        final result = await switch (style) {
+          AdaptiveStyle.material => showTimePicker(
+            context: context,
+            initialTime: initialTime,
+          ),
+          AdaptiveStyle.apple => showCupertinoModalPopup<TimeOfDay>(
+            context: context,
+            semanticsDismissible: true,
+            builder: (context) =>
+                _AppleReminderTimePicker(initialTime: initialTime),
+          ),
+        };
         if (!mounted || result == null) return;
         widget.onTimePicked?.call(result);
       },
     );
   }
+}
+
+class _AppleReminderTimePicker extends StatefulWidget {
+  const _AppleReminderTimePicker({required this.initialTime});
+
+  final TimeOfDay initialTime;
+
+  @override
+  State<_AppleReminderTimePicker> createState() =>
+      _AppleReminderTimePickerState();
+}
+
+class _AppleReminderTimePickerState extends State<_AppleReminderTimePicker> {
+  TimeOfDay? _selectedTime;
+
+  @override
+  Widget build(BuildContext context) => PopScope<TimeOfDay>(
+    canPop: false,
+    onPopInvokedWithResult: (didPop, result) {
+      if (didPop || ModalRoute.of(context)?.isCurrent != true) return;
+      Navigator.of(context).pop(result ?? _selectedTime);
+    },
+    child: ColoredBox(
+      color: CupertinoColors.systemBackground.resolveFrom(context),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 216,
+          child: CupertinoDatePicker(
+            mode: CupertinoDatePickerMode.time,
+            initialDateTime: DateTime(
+              2000,
+              1,
+              1,
+              widget.initialTime.hour,
+              widget.initialTime.minute,
+            ),
+            use24hFormat: MediaQuery.alwaysUse24HourFormatOf(context),
+            onDateTimeChanged: (value) =>
+                _selectedTime = TimeOfDay.fromDateTime(value),
+          ),
+        ),
+      ),
+    ),
+  );
 }

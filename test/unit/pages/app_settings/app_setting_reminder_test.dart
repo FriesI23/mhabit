@@ -57,7 +57,10 @@ void main() {
                           switches++;
                           config = config.copyWith(enabled: value);
                         }),
-                        onTimePicked: picked.add,
+                        onTimePicked: (value) => setState(() {
+                          picked.add(value);
+                          config = config.copyWith(timeOfDay: value);
+                        }),
                       ),
                       const AppSettingNotifyTile(),
                     ],
@@ -90,32 +93,70 @@ void main() {
           await tester.pumpAndSettle();
           await tester.tap(find.text('Daily reminder').first);
           await tester.pumpAndSettle();
-          expect(
-            tester
-                .widget<TimePickerDialog>(find.byType(TimePickerDialog))
-                .initialTime,
-            config.timeOfDay,
+          final isApple = platform != TargetPlatform.android;
+          final picker = find.byType(
+            isApple ? CupertinoDatePicker : TimePickerDialog,
           );
-          final dialogContext = tester.element(find.byType(TimePickerDialog));
-          await tester.tap(
-            find.text(
-              MaterialLocalizations.of(dialogContext).cancelButtonLabel,
-            ),
-          );
+          if (isApple) {
+            final widget = tester.widget<CupertinoDatePicker>(picker);
+            expect(
+              TimeOfDay.fromDateTime(widget.initialDateTime),
+              config.timeOfDay,
+            );
+            expect(widget.mode, CupertinoDatePickerMode.time);
+            widget.onDateTimeChanged(DateTime(2000, 1, 1, 9, 35));
+            widget.onDateTimeChanged(DateTime(2000, 1, 1, 10, 45));
+            expect(picked, isEmpty);
+            expect(find.byIcon(CupertinoIcons.check_mark), findsNothing);
+            expect(
+              ModalRoute.of(tester.element(picker)),
+              isA<CupertinoModalPopupRoute<TimeOfDay>>(),
+            );
+          } else {
+            expect(
+              tester.widget<TimePickerDialog>(picker).initialTime,
+              config.timeOfDay,
+            );
+          }
+          await tester.tapAt(const Offset(10, 10));
           await tester.pumpAndSettle();
-          expect(picked, isEmpty);
+          expect(
+            picked,
+            isApple ? [const TimeOfDay(hour: 10, minute: 45)] : isEmpty,
+          );
+          expect(picker, findsNothing);
+          picked.clear();
           expect(switches, 2);
           await tester.tap(find.text('Daily reminder').first);
           await tester.pumpAndSettle();
-          await tester.tap(
-            find.text(
-              MaterialLocalizations.of(
-                tester.element(find.byType(TimePickerDialog)),
-              ).okButtonLabel,
-            ),
-          );
+          if (isApple) {
+            final widget = tester.widget<CupertinoDatePicker>(picker);
+            expect(
+              TimeOfDay.fromDateTime(widget.initialDateTime),
+              config.timeOfDay,
+            );
+            // Dismissing without scrolling must not write the value again.
+            await tester.tapAt(const Offset(10, 10));
+          } else {
+            await tester.tap(
+              find.text(
+                MaterialLocalizations.of(tester.element(picker)).okButtonLabel,
+              ),
+            );
+          }
           await tester.pumpAndSettle();
-          expect(picked, [config.timeOfDay]);
+          expect(picked, isApple ? isEmpty : [config.timeOfDay]);
+          if (isApple) {
+            await tester.tap(find.text('Daily reminder').first);
+            await tester.pumpAndSettle();
+            tester
+                .widget<CupertinoDatePicker>(picker)
+                .onDateTimeChanged(DateTime(2000, 1, 1, 8, 15));
+            const returnedTime = TimeOfDay(hour: 7, minute: 20);
+            Navigator.of(tester.element(picker)).pop(returnedTime);
+            await tester.pumpAndSettle();
+            expect(picked, [returnedTime]);
+          }
           expect(switches, 2);
           expect(tester.takeException(), isNull);
         } finally {

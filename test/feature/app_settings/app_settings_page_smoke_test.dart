@@ -15,7 +15,11 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart'
-    show CupertinoIcons, CupertinoListTile, CupertinoSwitch;
+    show
+        CupertinoDatePicker,
+        CupertinoIcons,
+        CupertinoListTile,
+        CupertinoSwitch;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -575,8 +579,13 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.byType(TimePickerDialog), findsOneWidget);
-      Navigator.of(tester.element(find.byType(TimePickerDialog))).pop();
+      final timePicker = find.byType(
+        platform == TargetPlatform.android
+            ? TimePickerDialog
+            : CupertinoDatePicker,
+      );
+      expect(timePicker, findsOneWidget);
+      Navigator.of(tester.element(timePicker)).pop();
       await tester.pumpAndSettle();
       expect(reminder.reminder, beforeReminder);
 
