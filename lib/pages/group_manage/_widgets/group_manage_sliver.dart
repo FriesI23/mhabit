@@ -176,21 +176,24 @@ class _GroupManageGridState extends State<GroupManageGrid> {
       scrollDirection: _GroupManageDragHandler.scrollDirection,
       items: _handler.items,
       isSameItem: _GroupManageDragHandler.isSameItem,
-      itemBuilder: (context, index) => GroupManageGridItem(
-        index: index,
-        key: ValueKey(_handler.items[index].uuid),
-        group: _handler.items[index],
-        isSelected: widget.selectedUUIDs.contains(_handler.items[index].uuid),
-        selectionMode: widget.selectionMode,
-        showDragHandle: showHandle,
-        onTap: () => widget.onTap(_handler.items[index].uuid),
-        onLongPress: _handler.resolveLongPressCallback(
-          index,
-          widget.selectionMode,
-        ),
-        onEdit: () => widget.onEdit(_handler.items[index].uuid),
-        onDelete: () => widget.onDelete(_handler.items[index].uuid),
-      ),
+      itemBuilder: (context, index) {
+        final group = _handler.items[index];
+        return GroupManageGridItem(
+          key: ValueKey(group.uuid),
+          index: index,
+          group: group,
+          isSelected: widget.selectedUUIDs.contains(group.uuid),
+          selectionMode: widget.selectionMode,
+          showDragHandle: showHandle,
+          onTap: () => widget.onTap(group.uuid),
+          onLongPress: _handler.resolveLongPressCallback(
+            index,
+            widget.selectionMode,
+          ),
+          onEdit: () => widget.onEdit(group.uuid),
+          onDelete: () => widget.onDelete(group.uuid),
+        );
+      },
       sliverGridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 300,
         mainAxisExtent:
@@ -270,21 +273,24 @@ class _GroupManageListState extends State<GroupManageList> {
       scrollDirection: _GroupManageDragHandler.scrollDirection,
       items: _handler.items,
       isSameItem: _GroupManageDragHandler.isSameItem,
-      itemBuilder: (context, index) => GroupManageListItem(
-        index: index,
-        key: ValueKey(_handler.items[index].uuid),
-        group: _handler.items[index],
-        isSelected: widget.selectedUUIDs.contains(_handler.items[index].uuid),
-        selectionMode: widget.selectionMode,
-        showDragHandle: showHandle,
-        onTap: () => widget.onTap(_handler.items[index].uuid),
-        onLongPress: _handler.resolveLongPressCallback(
-          index,
-          widget.selectionMode,
-        ),
-        onEdit: () => widget.onEdit(_handler.items[index].uuid),
-        onDelete: () => widget.onDelete(_handler.items[index].uuid),
-      ),
+      itemBuilder: (context, index) {
+        final group = _handler.items[index];
+        return GroupManageListItem(
+          key: ValueKey(group.uuid),
+          index: index,
+          group: group,
+          isSelected: widget.selectedUUIDs.contains(group.uuid),
+          selectionMode: widget.selectionMode,
+          showDragHandle: showHandle,
+          onTap: () => widget.onTap(group.uuid),
+          onLongPress: _handler.resolveLongPressCallback(
+            index,
+            widget.selectionMode,
+          ),
+          onEdit: () => widget.onEdit(group.uuid),
+          onDelete: () => widget.onDelete(group.uuid),
+        );
+      },
       proxyDecorator: _GroupManageDragHandler.proxyDecorator,
       onReorderStart: (index) =>
           _handler.onReorderStart(index, widget.selectionMode),

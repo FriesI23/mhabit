@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
@@ -83,6 +85,12 @@ class _AppSettingImportHabitsConfirmDialogState
   late final List<Object?> _groups = List.unmodifiable(
     widget.groupsData ?? const [],
   );
+  late final _progress = _ImportProgressViewModel(
+    habits: _habits,
+    groups: _groups,
+    habitMonitor: _habitMonitor,
+    groupMonitor: _groupMonitor,
+  );
 
   bool _confirmed = false;
   bool _completed = false;
@@ -94,22 +102,11 @@ class _AppSettingImportHabitsConfirmDialogState
       (_importHabits && _habits.isNotEmpty) || (_importGroups && _hasGroups);
   int get _habitTotal => _importHabits ? _habitMonitor.total : 0;
   int get _groupTotal => _importGroups ? _groupMonitor.total : 0;
-  int get _currentCount => _habitMonitor.processed + _groupMonitor.processed;
   int get _totalCount => _habitTotal + _groupTotal;
 
   @override
-  void initState() {
-    super.initState();
-    _habitMonitor.addListener(_onProgress);
-    _groupMonitor.addListener(_onProgress);
-  }
-
-  void _onProgress() {
-    if (mounted) setState(() {});
-  }
-
-  @override
   void dispose() {
+    _progress.dispose();
     _habitMonitor.dispose();
     _groupMonitor.dispose();
     super.dispose();
@@ -215,36 +212,38 @@ class _AppSettingImportHabitsConfirmDialogState
               ],
     };
 
-    return PopScope<void>(
-      canPop: !_confirmed || _completed,
-      child: AdaptiveModal.slivers(
-        title: _ImportTitle(
-          completed: _completed,
-          confirmed: _confirmed,
-          habitCount: widget.habitCount,
-          currentCount: _currentCount,
-          totalCount: _totalCount,
-        ),
-        actions: actions,
-        automaticallyImplyCloseButton:
-            style == AdaptiveStyle.apple && !_confirmed,
-        onCloseRequested: _close,
-        size: const AdaptiveModalSize.constrained(maxHeight: 720),
-        slivers: [
-          _ImportContent(
-            providerName: widget.providerName,
-            habits: _habits,
-            groups: _groups,
-            habitMonitor: _habitMonitor,
-            groupMonitor: _groupMonitor,
-            importHabits: _importHabits,
-            importGroups: _importGroups,
-            confirmed: _confirmed,
+    return ChangeNotifierProvider<_ImportProgressViewModel>.value(
+      value: _progress,
+      child: PopScope<void>(
+        canPop: !_confirmed || _completed,
+        child: AdaptiveModal.slivers(
+          title: _ImportTitle(
             completed: _completed,
-            onHabitsChanged: (value) => setState(() => _importHabits = value),
-            onGroupsChanged: (value) => setState(() => _importGroups = value),
+            confirmed: _confirmed,
+            habitCount: widget.habitCount,
+            totalCount: _totalCount,
           ),
-        ],
+          actions: actions,
+          automaticallyImplyCloseButton:
+              style == AdaptiveStyle.apple && !_confirmed,
+          onCloseRequested: _close,
+          size: const AdaptiveModalSize.constrained(maxHeight: 720),
+          slivers: [
+            _ImportContent(
+              providerName: widget.providerName,
+              habits: _habits,
+              groups: _groups,
+              habitMonitor: _habitMonitor,
+              groupMonitor: _groupMonitor,
+              importHabits: _importHabits,
+              importGroups: _importGroups,
+              confirmed: _confirmed,
+              completed: _completed,
+              onHabitsChanged: (value) => setState(() => _importHabits = value),
+              onGroupsChanged: (value) => setState(() => _importGroups = value),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -273,16 +272,12 @@ class _ImportPreview extends StatelessWidget {
   const _ImportPreview({
     required this.habits,
     required this.groups,
-    required this.habitStatuses,
-    required this.groupStatuses,
     required this.importHabits,
     required this.importGroups,
   });
 
   final List<Object?> habits;
   final List<Object?> groups;
-  final List<ImportItemStatus> habitStatuses;
-  final List<ImportItemStatus> groupStatuses;
   final bool importHabits;
   final bool importGroups;
 
@@ -317,39 +312,14 @@ class _ImportPreview extends StatelessWidget {
     );
   }
 
-  ImportItemStatus? _aggregate(Iterable<ImportItemStatus> statuses) {
-    if (statuses.isEmpty) return null;
-    if (statuses.every((s) => s == ImportItemStatus.pending)) {
-      return ImportItemStatus.pending;
-    }
-    if (statuses.any(
-      (s) => s == ImportItemStatus.pending || s == ImportItemStatus.running,
-    )) {
-      return ImportItemStatus.running;
-    }
-    return statuses.contains(ImportItemStatus.failed)
-        ? ImportItemStatus.failed
-        : ImportItemStatus.succeeded;
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    final groupIndexes = <String, int>{};
-    for (final (index, group) in groups.indexed) {
-      final uuid = _text(group, GroupExportDataKey.uuid);
-      if (uuid != null && uuid.isNotEmpty) groupIndexes[uuid] = index;
-    }
-    final members = List.generate(groups.length + 1, (_) => <int>[]);
-    for (final (index, habit) in habits.indexed) {
-      members[groupIndexes[_text(habit, HabitExportDataKey.groupId)] ??
-              groups.length]
-          .add(index);
-    }
-    Widget? statusIcon(String id, Iterable<ImportItemStatus> statuses) {
-      final status = _aggregate(statuses);
-      return status == null ? null : _ImportStatusIcon(status: status, id: id);
-    }
+    final habits = this.habits;
+    final groups = this.groups;
+    final importHabits = this.importHabits;
+    final importGroups = this.importGroups;
+    final members = context.read<_ImportProgressViewModel>().members;
 
     return SliverHabitGroupTree(
       treeKey: const ValueKey('import-tree'),
@@ -357,10 +327,15 @@ class _ImportPreview extends StatelessWidget {
       root: HabitGroupTreeEntry(
         id: 'import-preview',
         title: Text(l10n?.appSetting_import_titleText ?? 'Import'),
-        trailing: statusIcon('import-total', [
-          if (importGroups) ...groupStatuses,
-          if (importHabits) ...habitStatuses,
-        ]),
+        trailing:
+            (importGroups && groups.isNotEmpty) ||
+                (importHabits && habits.isNotEmpty)
+            ? _ImportProgressIcon(
+                id: 'import-total',
+                importHabits: importHabits,
+                importGroups: importGroups,
+              )
+            : null,
       ),
       groups: [
         for (final (group, indexes) in members.indexed)
@@ -378,11 +353,16 @@ class _ImportPreview extends StatelessWidget {
               title: Text(
                 '${group < groups.length ? (_text(groups[group], GroupExportDataKey.name) ?? '#${group + 1}') : (l10n?.habitEdit_groupPicker_noGroup ?? 'No Group')} (${indexes.length})',
               ),
-              trailing: statusIcon('import-group-$group', [
-                if (importGroups && group < groups.length) groupStatuses[group],
-                if (importHabits)
-                  for (final index in indexes) habitStatuses[index],
-              ]),
+              trailing:
+                  (importGroups && group < groups.length) ||
+                      (importHabits && indexes.isNotEmpty)
+                  ? _ImportProgressIcon(
+                      id: 'import-group-$group',
+                      groupIndex: group,
+                      importHabits: importHabits,
+                      importGroups: importGroups,
+                    )
+                  : null,
               children: [
                 for (final index in indexes)
                   HabitGroupTreeEntry(
@@ -393,9 +373,9 @@ class _ImportPreview extends StatelessWidget {
                           '#${index + 1}',
                     ),
                     trailing: importHabits
-                        ? _ImportStatusIcon(
-                            status: habitStatuses[index],
+                        ? _ImportProgressIcon(
                             id: 'import-habit-$index',
+                            habitIndex: index,
                           )
                         : null,
                   ),
@@ -411,14 +391,12 @@ class _ImportTitle extends StatelessWidget {
     required this.completed,
     required this.confirmed,
     required this.habitCount,
-    required this.currentCount,
     required this.totalCount,
   });
 
   final bool completed;
   final bool confirmed;
   final int habitCount;
-  final int currentCount;
   final int totalCount;
 
   @override
@@ -429,12 +407,17 @@ class _ImportTitle extends StatelessWidget {
       return Text(l10n?.appSetting_import_titleText ?? 'Import');
     }
     if (confirmed) {
-      return Text(
-        l10n?.appSetting_importDialog_importingTitle(
-              currentCount,
-              totalCount,
-            ) ??
-            'Importing $currentCount/$totalCount',
+      return Selector<_ImportProgressViewModel, int>(
+        selector: (_, model) => model.processed,
+        builder: (context, currentCount, _) {
+          return Text(
+            l10n?.appSetting_importDialog_importingTitle(
+                  currentCount,
+                  totalCount,
+                ) ??
+                'Importing $currentCount/$totalCount',
+          );
+        },
       );
     }
     return Text(
@@ -482,13 +465,20 @@ class _ImportCompletion extends StatelessWidget {
 }
 
 class _ImportProgress extends StatelessWidget {
-  const _ImportProgress({required this.currentCount, required this.totalCount});
+  const _ImportProgress({required this.totalCount});
 
-  final int currentCount;
   final int totalCount;
 
   @override
   Widget build(BuildContext context) {
+    return Selector<_ImportProgressViewModel, int>(
+      selector: (_, model) => model.processed,
+      builder: (context, currentCount, _) =>
+          _buildProgress(context, currentCount),
+    );
+  }
+
+  Widget _buildProgress(BuildContext context, int currentCount) {
     final progress = totalCount > 0 ? currentCount / totalCount : null;
     final indicator = LinearProgressIndicator(
       key: const ValueKey('import-progress'),
@@ -614,8 +604,6 @@ class _ImportContent extends StatelessWidget {
                       ),
                     ] else
                       _ImportProgress(
-                        currentCount:
-                            habitMonitor.processed + groupMonitor.processed,
                         totalCount:
                             (importHabits ? habitMonitor.total : 0) +
                             (importGroups ? groupMonitor.total : 0),
@@ -631,8 +619,6 @@ class _ImportContent extends StatelessWidget {
         _ImportPreview(
           habits: habits,
           groups: groups,
-          habitStatuses: habitMonitor.statuses,
-          groupStatuses: groupMonitor.statuses,
           importHabits: importHabits,
           importGroups: importGroups,
         ),
@@ -641,11 +627,54 @@ class _ImportContent extends StatelessWidget {
   }
 }
 
+class _ImportProgressIcon extends StatelessWidget {
+  const _ImportProgressIcon({
+    required this.id,
+    this.groupIndex,
+    this.habitIndex,
+    this.importHabits = true,
+    this.importGroups = true,
+  }) : assert(groupIndex == null || habitIndex == null);
+
+  final String id;
+  final int? groupIndex;
+  final int? habitIndex;
+  final bool importHabits;
+  final bool importGroups;
+
+  @override
+  Widget build(BuildContext context) =>
+      Selector<_ImportProgressViewModel, _ImportViewStatus?>(
+        selector: (_, model) {
+          if (habitIndex case final index?) return model.habitStatus(index);
+          if (groupIndex case final index?) {
+            return model.groupStatus(
+              index,
+              importHabits: importHabits,
+              importGroups: importGroups,
+            );
+          }
+          return model.rootStatus(
+            importHabits: importHabits,
+            importGroups: importGroups,
+          );
+        },
+        builder: (context, result, _) => result == null
+            ? const SizedBox.shrink()
+            : _ImportStatusIcon(status: result.$1, failure: result.$2, id: id),
+      );
+}
+
 class _ImportStatusIcon extends StatelessWidget {
-  const _ImportStatusIcon({required this.status, required this.id});
+  const _ImportStatusIcon({
+    required this.status,
+    required this.id,
+    this.failure,
+  });
 
   final ImportItemStatus status;
   final String id;
+  final AsyncError? failure;
 
   @override
   Widget build(BuildContext context) {
@@ -660,6 +689,219 @@ class _ImportStatusIcon extends StatelessWidget {
       ImportItemStatus.failed =>
         apple ? CupertinoIcons.exclamationmark_circle : Icons.error_outline,
     };
-    return Icon(icon, key: ValueKey('$id-${status.name}'), size: 20);
+    final child = Icon(icon, key: ValueKey('$id-${status.name}'), size: 20);
+    final error = failure;
+    return error == null
+        ? child
+        : Tooltip(message: error.error.toString(), child: child);
+  }
+}
+
+typedef _ImportViewStatus = (ImportItemStatus, AsyncError?);
+
+/// Dialog-owned progress projections for the preview's root and group rows.
+/// The importer still owns execution; this model only observes its monitors.
+class _ImportProgressViewModel extends ChangeNotifier {
+  _ImportProgressViewModel({
+    required List<Object?> habits,
+    required List<Object?> groups,
+    required this.habitMonitor,
+    required this.groupMonitor,
+  }) : _allHabits = _ImportStatusCounts(habits.length),
+       _allGroups = _ImportStatusCounts(groups.length),
+       _habitGroups = List.generate(
+         groups.length + 1,
+         (_) => _ImportStatusCounts(0),
+       ),
+       _groupFailureOrder = List.filled(groups.length, null) {
+    _initializeMembers(habits, groups);
+    _subscribeToMonitors();
+  }
+
+  final ImportMonitor habitMonitor;
+  final ImportMonitor groupMonitor;
+  final _ImportStatusCounts _allHabits;
+  final _ImportStatusCounts _allGroups;
+  final List<_ImportStatusCounts> _habitGroups;
+  final List<int> _habitGroupOf = [];
+  final List<int?> _groupFailureOrder;
+  late final List<List<int>> members;
+  var _failureOrder = 0;
+
+  int get processed => habitMonitor.processed + groupMonitor.processed;
+
+  static String? _groupId(Object? data, String key) {
+    if (data is! Map) return null;
+    final value = data[key];
+    return value is String ? value : null;
+  }
+
+  void _initializeMembers(List<Object?> habits, List<Object?> groups) {
+    final indexes = <String, int>{};
+    for (final (index, group) in groups.indexed) {
+      final uuid = _groupId(group, GroupExportDataKey.uuid);
+      if (uuid != null && uuid.isNotEmpty) indexes[uuid] = index;
+    }
+    final members = List.generate(groups.length + 1, (_) => <int>[]);
+    for (final (index, habit) in habits.indexed) {
+      final group =
+          indexes[_groupId(habit, HabitExportDataKey.groupId)] ?? groups.length;
+      members[group].add(index);
+      _habitGroups[group].addPending();
+      _habitGroupOf.add(group);
+    }
+    this.members = [for (final indexes in members) List.unmodifiable(indexes)];
+  }
+
+  void _subscribeToMonitors() {
+    for (var index = 0; index < _habitGroupOf.length; index++) {
+      habitMonitor.addItemListener(index, _onHabitChanged);
+    }
+    for (var index = 0; index < groupMonitor.total; index++) {
+      groupMonitor.addItemListener(index, _onGroupChanged);
+    }
+  }
+
+  void _onHabitChanged(
+    int index,
+    ImportItemStatus previous,
+    ImportItemStatus next,
+  ) {
+    final failure = habitMonitor.failureAt(index);
+    final order = failure == null ? null : ++_failureOrder;
+    _allHabits.update(previous, next, failure, order);
+    _habitGroups[_habitGroupOf[index]].update(previous, next, failure, order);
+    notifyListeners();
+  }
+
+  void _onGroupChanged(
+    int index,
+    ImportItemStatus previous,
+    ImportItemStatus next,
+  ) {
+    final failure = groupMonitor.failureAt(index);
+    final order = failure == null ? null : ++_failureOrder;
+    _groupFailureOrder[index] = order;
+    _allGroups.update(previous, next, failure, order);
+    notifyListeners();
+  }
+
+  _ImportViewStatus habitStatus(int index) =>
+      (habitMonitor.statusAt(index), habitMonitor.failureAt(index));
+
+  _ImportViewStatus? rootStatus({
+    required bool importHabits,
+    required bool importGroups,
+  }) => _combine(
+    importHabits ? _allHabits : null,
+    importGroups ? _allGroups : null,
+  );
+
+  _ImportViewStatus? groupStatus(
+    int index, {
+    required bool importHabits,
+    required bool importGroups,
+  }) {
+    final group = importGroups && index < groupMonitor.total
+        ? _ImportStatusCounts.single(
+            groupMonitor.statusAt(index),
+            groupMonitor.failureAt(index),
+            _groupFailureOrder[index],
+          )
+        : null;
+    return _combine(importHabits ? _habitGroups[index] : null, group);
+  }
+
+  _ImportViewStatus? _combine(
+    _ImportStatusCounts? habits,
+    _ImportStatusCounts? groups,
+  ) {
+    final total = (habits?.total ?? 0) + (groups?.total ?? 0);
+    if (total == 0) return null;
+    final pending = (habits?.pending ?? 0) + (groups?.pending ?? 0);
+    final running = (habits?.running ?? 0) + (groups?.running ?? 0);
+    final failed = (habits?.failed ?? 0) + (groups?.failed ?? 0);
+    final status = pending == total
+        ? ImportItemStatus.pending
+        : pending + running > 0
+        ? ImportItemStatus.running
+        : failed > 0
+        ? ImportItemStatus.failed
+        : ImportItemStatus.succeeded;
+    final habitOrder = habits?.firstFailureOrder;
+    final groupOrder = groups?.firstFailureOrder;
+    final failure =
+        habitOrder != null && (groupOrder == null || habitOrder <= groupOrder)
+        ? habits?.firstFailure
+        : groups?.firstFailure;
+    return (status, failure);
+  }
+
+  @override
+  void dispose() {
+    for (var index = 0; index < _habitGroupOf.length; index++) {
+      habitMonitor.removeItemListener(index, _onHabitChanged);
+    }
+    for (var index = 0; index < groupMonitor.total; index++) {
+      groupMonitor.removeItemListener(index, _onGroupChanged);
+    }
+    super.dispose();
+  }
+}
+
+class _ImportStatusCounts {
+  _ImportStatusCounts(this.pending) : total = pending;
+
+  _ImportStatusCounts.single(
+    ImportItemStatus status,
+    this.firstFailure,
+    this.firstFailureOrder,
+  ) : total = 1,
+      pending = status == ImportItemStatus.pending ? 1 : 0,
+      running = status == ImportItemStatus.running ? 1 : 0,
+      failed = status == ImportItemStatus.failed ? 1 : 0;
+
+  int total;
+  int pending;
+  int running = 0;
+  int failed = 0;
+  AsyncError? firstFailure;
+  int? firstFailureOrder;
+
+  void addPending() {
+    total++;
+    pending++;
+  }
+
+  void update(
+    ImportItemStatus previous,
+    ImportItemStatus next,
+    AsyncError? failure,
+    int? order,
+  ) {
+    switch (previous) {
+      case ImportItemStatus.pending:
+        pending--;
+      case ImportItemStatus.running:
+        running--;
+      case ImportItemStatus.succeeded:
+        break;
+      case ImportItemStatus.failed:
+        failed--;
+    }
+    switch (next) {
+      case ImportItemStatus.pending:
+        pending++;
+      case ImportItemStatus.running:
+        running++;
+      case ImportItemStatus.succeeded:
+        break;
+      case ImportItemStatus.failed:
+        failed++;
+        if (firstFailure == null) {
+          firstFailure = failure;
+          firstFailureOrder = order;
+        }
+    }
   }
 }

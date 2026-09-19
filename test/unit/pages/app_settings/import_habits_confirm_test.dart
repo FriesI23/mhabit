@@ -308,6 +308,7 @@ void main() {
         find.byKey(const ValueKey('import-habit-0-failed')).hitTestable(),
         findsOneWidget,
       );
+      expect(find.byTooltip('Bad state: failed'), findsWidgets);
       expect(
         find.byKey(const ValueKey('import-group-0-failed')).hitTestable(),
         findsOneWidget,
@@ -478,23 +479,76 @@ void main() {
   testWidgets('counts each enabled import item once in progress', (
     tester,
   ) async {
-    final importer = _TestImportRunner(deferHabits: true);
-    await _pumpHost(tester, platform: TargetPlatform.iOS, importer: importer);
+    final importer = _TestImportRunner(deferEachHabit: true);
+    await _pumpHost(
+      tester,
+      platform: TargetPlatform.iOS,
+      importer: importer,
+      habits: const [
+        {'name': 'Habit A', 'group_id': 'group-a'},
+        {'name': 'Habit B', 'group_id': 'group-a'},
+      ],
+    );
     await tester.tap(find.text('Open'));
     await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(const ValueKey('import-confirm-button')));
     await tester.pumpAndSettle();
-
-    final progress = tester.widget<LinearProgressIndicator>(
-      find.byKey(const ValueKey('import-progress')),
+    expect(find.text('Imported 1/3'), findsOneWidget);
+    expect(
+      tester
+          .widget<LinearProgressIndicator>(
+            find.byKey(const ValueKey('import-progress')),
+          )
+          .value,
+      closeTo(1 / 3, 0.001),
     );
-    expect(progress.value, 0.5);
 
-    importer.completeHabits(success: 1);
+    importer.completeHabitAt(0);
+    await tester.pumpAndSettle();
+    expect(find.text('Imported 2/3'), findsOneWidget);
+    expect(
+      tester
+          .widget<LinearProgressIndicator>(
+            find.byKey(const ValueKey('import-progress')),
+          )
+          .value,
+      closeTo(2 / 3, 0.001),
+    );
+    importer.completeHabitAt(1);
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('import-complete-button')));
     await tester.pumpAndSettle();
+  });
+
+  testWidgets('aggregates a failed item while another item is running', (
+    tester,
+  ) async {
+    final importer = _TestImportRunner(deferEachHabit: true);
+    await _pumpHost(
+      tester,
+      platform: TargetPlatform.android,
+      importer: importer,
+      habits: const [
+        {'name': 'Habit A', 'group_id': 'group-a'},
+        {'name': 'Habit B', 'group_id': 'group-a'},
+      ],
+    );
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('import-confirm-button')));
+    await tester.pumpAndSettle();
+
+    importer.completeHabitAt(0, error: const FormatException('invalid'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('import-total-running')), findsOneWidget);
+    expect(find.byTooltip('FormatException: invalid'), findsWidgets);
+    expect(find.text('Imported 2/3'), findsOneWidget);
+
+    importer.completeHabitAt(1);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('import-total-failed')), findsOneWidget);
+    expect(find.byTooltip('FormatException: invalid'), findsWidgets);
   });
 
   testWidgets('supports importing groups without habits', (tester) async {
@@ -575,16 +629,18 @@ AdaptiveModalPresentation _presentation(
           .presentation;
 
 class _TestImportRunner extends HabitFileImportRunner {
-  _TestImportRunner({this.deferHabits = false}) {
+  _TestImportRunner({this.deferHabits = false, this.deferEachHabit = false}) {
     attachAccess(_TestHabitAccess(this));
     attachGroupAccess(_TestGroupAccess());
   }
 
   final bool deferHabits;
+  final bool deferEachHabit;
   int groupImportCalls = 0;
   int habitImportCalls = 0;
   List<Object?> lastHabitsData = [];
   Completer<int>? _habitCompleter;
+  List<Completer<void>> _habitCompleters = [];
 
   @override
   Future<Map<String, GroupUUID>> importGroupsData(
@@ -606,6 +662,11 @@ class _TestImportRunner extends HabitFileImportRunner {
     habitImportCalls++;
     lastHabitsData = jsonData.toList();
     if (deferHabits) _habitCompleter = Completer<int>();
+    if (deferEachHabit) {
+      _habitCompleters = [
+        for (var i = 0; i < lastHabitsData.length; i++) Completer<void>(),
+      ];
+    }
     return super.importHabitsData(
       lastHabitsData,
       monitor: monitor,
@@ -616,6 +677,15 @@ class _TestImportRunner extends HabitFileImportRunner {
 
   void completeHabits({required int success, int failed = 0}) {
     _habitCompleter?.complete(success);
+  }
+
+  void completeHabitAt(int index, {Object? error}) {
+    final completer = _habitCompleters[index];
+    if (error == null) {
+      completer.complete();
+    } else {
+      completer.completeError(error, StackTrace.current);
+    }
   }
 }
 
@@ -634,6 +704,12 @@ class _TestHabitAccess implements HabitImportAccess {
   }) => [for (final entry in jsonData) _import(entry)];
 
   Future<void> _import(Object? entry) async {
+    if (runner.deferEachHabit) {
+      await runner
+          ._habitCompleters[runner.lastHabitsData.indexOf(entry)]
+          .future;
+      return;
+    }
     final success =
         await (runner._habitCompleter?.future ??
             Future.value(runner.lastHabitsData.length));

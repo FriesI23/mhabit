@@ -38,9 +38,14 @@ void main() {
         ImportItemStatus.failed,
       ]);
       expect(monitor.processed, 2);
+      expect(monitor.failureAt(1), isA<AsyncError>());
+      expect(monitor.failureAt(1)?.error, isA<StateError>());
+      expect(monitor.failureAt(1)?.stackTrace, isA<StackTrace>());
+      expect(monitor.failureAt(2)?.error, isA<FormatException>());
       access.pending[0]!.complete();
       expect(await task, 3);
       expect(monitor.succeeded, 1);
+      expect(monitor.failureAt(0), isNull);
       expect(monitor.failed, 2);
       expect(monitor.isCompleted, isTrue);
       expect(monitor.isRunning, isFalse);
@@ -56,6 +61,35 @@ void main() {
       );
     },
   );
+
+  test('starts at most four storage tasks at a time', () async {
+    final access = _HabitAccess();
+    final runner = HabitFileImportRunner()..attachAccess(access);
+    final monitor = ImportMonitor(8);
+    addTearDown(runner.dispose);
+    addTearDown(monitor.dispose);
+
+    final task = runner.importHabitsData(
+      List<Object?>.generate(8, (index) => index),
+      monitor: monitor,
+    );
+    expect(access.pending.keys, [0, 1, 2, 3]);
+    expect(monitor.statuses.skip(4), everyElement(ImportItemStatus.pending));
+
+    access.pending[0]!.complete();
+    await Future<void>.delayed(Duration.zero);
+    expect(access.pending.keys, [0, 1, 2, 3, 4]);
+    for (var index = 1; index <= 4; index++) {
+      access.pending[index]!.complete();
+    }
+    await Future<void>.delayed(Duration.zero);
+    expect(access.pending.keys, [0, 1, 2, 3, 4, 5, 6, 7]);
+    for (var index = 5; index < 8; index++) {
+      access.pending[index]!.complete();
+    }
+    expect(await task, 8);
+    expect(monitor.succeeded, 8);
+  });
 
   test(
     'groups start concurrently and merge duplicate UUIDs in input order',
