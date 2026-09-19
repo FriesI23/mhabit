@@ -16,6 +16,7 @@ import 'dart:io';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
@@ -28,12 +29,11 @@ class AppSettingOpenSystemLanguageTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return ListTile(
+    return AdaptiveListTile.external(
       title: Text(
         l10n?.appSetting_openSystemLanguageTile_titleText ??
             "System Language Settings",
       ),
-      trailing: const Icon(Icons.open_in_new),
       onTap: () => _onTap(context),
     );
   }
@@ -42,15 +42,15 @@ class AppSettingOpenSystemLanguageTile extends StatelessWidget {
     if (Platform.isMacOS) {
       final caches = context.read<AppCachesViewModel>();
       if (!caches.appFlagSkipOpenSystemLanguageConfirm) {
-        final skipLabel = L10n.of(context)?.common_dontShowAgain;
         final l10n = L10n.of(context);
-        final result = await showConfirmDialog(
+        var skip = false;
+        final result = await showAdaptiveConfirmDialog(
           context: context,
           title: Text(
             l10n?.appSetting_openSystemLanguageTile_dialogTitle ??
                 "Open System Language Settings",
           ),
-          subtitle: SingleChildScrollView(
+          content: SingleChildScrollView(
             child: ThematicMarkdownBlock(
               data:
                   l10n?.appSetting_openSystemLanguageTile_macosDialogContent ??
@@ -61,21 +61,15 @@ class AppSettingOpenSystemLanguageTile extends StatelessWidget {
               selectable: false,
             ),
           ),
-          confirmTextBuilder: (context) {
-            final l10n = L10n.of(context);
-            return Text(l10n?.confirmDialog_confirm_text('open') ?? 'Open');
-          },
-          cancelTextBuilder: (context) {
-            final l10n = L10n.of(context);
-            return Text(l10n?.confirmDialog_cancel_text ?? 'Cancel');
-          },
-          skipOnConfirm: true,
-          skipInitiallyEnabled: false,
-          skipLabel: skipLabel,
+          confirmLabel: l10n?.confirmDialog_confirm_text('open') ?? 'Open',
+          cancelLabel: l10n?.confirmDialog_cancel_text ?? 'Cancel',
+          onSkipConfirmed: (value) => skip = value,
         );
 
-        if (result != true) return;
-        if (context.mounted) {
+        if (result != true) {
+          return;
+        }
+        if (context.mounted && skip) {
           await caches.updateAppFlagSkipOpenSystemLanguageConfirm(true);
         }
       }

@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../assets/assets.gen.dart';
 import '../../../common/utils.dart';
@@ -56,7 +58,14 @@ Widget _buildProviderVersionTile(
   final parts = template.split(kMarker);
 
   final versionLabel = 'v${importerVersion.version}';
-  final baseStyle = Theme.of(context).textTheme.bodySmall;
+  final baseStyle = switch (AdaptiveStyle.of(context)) {
+    AdaptiveStyle.material => Theme.of(context).textTheme.bodySmall,
+    AdaptiveStyle.apple =>
+      CupertinoTheme.of(context).textTheme.textStyle.copyWith(
+        fontSize: 15,
+        color: CupertinoColors.secondaryLabel.resolveFrom(context),
+      ),
+  };
   final linkStyle = baseStyle?.copyWith(
     decoration: TextDecoration.underline,
     color: Theme.of(context).colorScheme.primary,
@@ -99,10 +108,18 @@ class _VersionHintText extends StatelessWidget {
           WidgetSpan(
             alignment: PlaceholderAlignment.baseline,
             baseline: TextBaseline.alphabetic,
-            child: InkWell(
-              onTap: () => launchExternalUrl(versionUrl),
-              child: Text(versionLabel, style: linkStyle),
-            ),
+            child: switch (AdaptiveStyle.of(context)) {
+              AdaptiveStyle.material => InkWell(
+                onTap: () => launchExternalUrl(versionUrl),
+                child: Text(versionLabel, style: linkStyle),
+              ),
+              AdaptiveStyle.apple => CupertinoButton(
+                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
+                onPressed: () => launchExternalUrl(versionUrl),
+                child: Text(versionLabel, style: linkStyle),
+              ),
+            },
           ),
           if (trailingText != null) TextSpan(text: trailingText),
         ],
@@ -117,8 +134,9 @@ class _VersionHintText extends StatelessWidget {
 Future<ThirdPartyProvider?> showThirdPartyImportProviderDialog(
   BuildContext context,
 ) async {
-  return showDialog<ThirdPartyProvider>(
+  return showAdaptiveSheet<ThirdPartyProvider>(
     context: context,
+    presentationOverride: AdaptiveModalPresentation.dialog,
     builder: (context) => const _ThirdPartyImportProviderDialog(),
   );
 }
@@ -128,23 +146,25 @@ class _ThirdPartyImportProviderDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      contentPadding: const EdgeInsets.fromLTRB(24.0, 12.0, 24.0, 12.0),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: ThirdPartyProvider.values.map((provider) {
-            return L10nBuilder(
-              builder: (context, l10n) => ListTile(
-                contentPadding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                leading: _providerIcon(provider),
-                title: Text(_providerDisplayName(provider, l10n)),
-                subtitle: _buildProviderVersionTile(provider, l10n, context),
-                onTap: () => Navigator.of(context).pop(provider),
-              ),
-            );
-          }).toList(),
-        ),
+    return AdaptiveModal.simple(
+      size: const AdaptiveModalSize.constrained(
+        minWidth: 0,
+        maxWidth: double.infinity,
+      ),
+      body: AdaptiveListSection(
+        appleTransparent: true,
+        padding: EdgeInsets.zero,
+        hasLeading: true,
+        children: ThirdPartyProvider.values.map((provider) {
+          return L10nBuilder(
+            builder: (context, l10n) => AdaptiveListTile(
+              leading: _providerIcon(provider),
+              title: Text(_providerDisplayName(provider, l10n)),
+              subtitle: _buildProviderVersionTile(provider, l10n, context),
+              onTap: () => Navigator.of(context).pop(provider),
+            ),
+          );
+        }).toList(),
       ),
     );
   }

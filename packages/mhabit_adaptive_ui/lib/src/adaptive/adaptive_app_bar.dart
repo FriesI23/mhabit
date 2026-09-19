@@ -68,15 +68,14 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) =>
       switch (_adaptiveStyle ?? AdaptiveStyle.of(context)) {
-        AdaptiveStyle.material => WindowControlAppBar(
+        AdaptiveStyle.material => MaterialAdaptiveAppBar(
           title: title,
           leading: leading,
           actions: actions,
           automaticallyImplyLeading: automaticallyImplyLeading,
-          centerTitle: false,
           toolbarHeight: toolbarHeight,
         ),
-        AdaptiveStyle.apple => _CupertinoAdaptiveAppBar(
+        AdaptiveStyle.apple => CupertinoAdaptiveAppBar(
           title: title,
           leading: leading,
           actions: actions,
@@ -86,8 +85,37 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
       };
 }
 
-class _CupertinoAdaptiveAppBar extends StatelessWidget {
-  const _CupertinoAdaptiveAppBar({
+/// Material renderer for the regular adaptive app bar.
+class MaterialAdaptiveAppBar extends StatelessWidget {
+  const MaterialAdaptiveAppBar({
+    super.key,
+    required this.title,
+    required this.leading,
+    required this.actions,
+    required this.automaticallyImplyLeading,
+    required this.toolbarHeight,
+  });
+
+  final Widget title;
+  final Widget? leading;
+  final List<Widget> actions;
+  final bool automaticallyImplyLeading;
+  final double toolbarHeight;
+
+  @override
+  Widget build(BuildContext context) => WindowControlAppBar(
+    title: title,
+    leading: leading,
+    actions: actions,
+    automaticallyImplyLeading: automaticallyImplyLeading,
+    centerTitle: false,
+    toolbarHeight: toolbarHeight,
+  );
+}
+
+class CupertinoAdaptiveAppBar extends StatelessWidget {
+  const CupertinoAdaptiveAppBar({
+    super.key,
     required this.title,
     required this.leading,
     required this.actions,

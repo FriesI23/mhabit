@@ -45,6 +45,7 @@ final class _FakeHabitImportAccess implements HabitImportAccess {
   _FakeHabitImportAccess({this.importResult = const [], this.dryRunCount = 0});
 
   List<Future<void>> importResult;
+  int _nextImport = 0;
   int dryRunCount;
   List<Object?>? lastJsonData;
   bool? lastWithRecords;
@@ -65,7 +66,7 @@ final class _FakeHabitImportAccess implements HabitImportAccess {
     lastJsonData = jsonData.toList(growable: false);
     lastWithRecords = withRecords;
     lastGroupUuidMapping = groupUuidMapping;
-    return importResult;
+    return [importResult[_nextImport++]];
   }
 }
 
@@ -110,26 +111,25 @@ void main() {
         );
         final provider = HabitFileImportRunner()..attachAccess(access);
         final progress = <String>[];
-        final allProgress = <String>[];
-
-        final result = await provider.importHabitsData(
-          const [
-            {'name': 'A'},
-            {'name': 'B'},
-          ],
-          whenloadHabit: (count, failed, total) {
-            progress.add('$count/$failed/$total');
-          },
-          whenloadAllHabits: (count, failed, total) {
-            allProgress.add('$count/$failed/$total');
-          },
-        );
-
+        const data = [
+          {'name': 'A'},
+          {'name': 'B'},
+        ];
+        final monitor = ImportMonitor(data.length);
+        addTearDown(monitor.dispose);
+        monitor.addListener(() {
+          progress.add(
+            '${monitor.succeeded}/${monitor.failed}/${monitor.total}',
+          );
+        });
+        final result = await provider.importHabitsData(data, monitor: monitor);
         expect(result, 2);
-        expect(access.lastJsonData, hasLength(2));
+        expect(access.lastJsonData, [
+          {'name': 'B'},
+        ]);
         expect(access.lastWithRecords, isTrue);
         expect(progress, containsAll(['1/0/2', '1/1/2']));
-        expect(allProgress, ['1/1/2']);
+        expect(monitor.isCompleted, isTrue);
 
         provider.dispose();
       },

@@ -324,6 +324,9 @@
     "habitDisplay_groupModifyDialog_alreadyInGroup": "ההרגלים שנבחרו כבר משויכים לקבוצה זו",
     "habitDisplay_groupModifyDialog_createGroup": "יצירת קבוצה",
     "habitDisplay_groupModifyDialog_saveAndApply": "שמירה והחלה",
+    "@habitDisplay_groupModifyDialog_saveAndApply": {
+        "description": "Deprecated. Use habitEdit_saveButton_text instead."
+    },
     "habitDisplay_groupModifyConfirm_titleNew": "העברה לקבוצה",
     "habitDisplay_groupModifyConfirm_titleMixed": "אישור שינוי קבוצה",
     "habitDisplay_groupModifyConfirm_bodyNewGroup": "ההרגלים של „{groupName}” יועברו לקבוצה זו",
@@ -336,7 +339,7 @@
         }
     },
     "habitDisplay_groupModifyConfirm_bodyRemoveGroup": "תימחק הקבוצה שאליה משויכים ההרגלים",
-    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {ההרגל יועבר מהקבוצה  „{fromGroup}” לקבוצה „{toGroup}”} other {{count} הרגלים יועברו מהקבוצה „{fromGroup}” לקבוצה „{toGroup}”}}",
+    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {ההרגל יועבר מהקבוצה  „{fromGroup}”{remainingGroupCount, plural, =0{} =1{ ועוד קבוצה אחת} other{ ועוד {remainingGroupCount} קבוצות}} לקבוצה „{toGroup}”} other {{count} הרגלים יועברו מהקבוצה „{fromGroup}”{remainingGroupCount, plural, =0{} =1{ ועוד קבוצה אחת} other{ ועוד {remainingGroupCount} קבוצות}} לקבוצה „{toGroup}”}}",
     "@habitDisplay_groupModifyConfirm_bodyChangeStat": {
         "placeholders": {
             "count": {
@@ -345,11 +348,19 @@
             },
             "fromGroup": {
                 "type": "String",
-                "description": "Old group name"
+                "description": "At most the first three source group names"
             },
             "toGroup": {
                 "type": "String",
                 "description": "New group name"
+            },
+            "remainingGroupCount": {
+                "type": "int",
+                "description": "Number of omitted source group names; zero means the list is complete"
+            },
+            "totalGroupCount": {
+                "type": "int",
+                "description": "Total number of source groups, including displayed and omitted groups"
             }
         }
     },
@@ -1273,7 +1284,7 @@
         "placeholders": {
             "type": {
                 "type": "String",
-                "description": "<NormalizeConfirmDialogType>.name",
+                "description": "AppActionVerb.name",
                 "example": "confirm"
             }
         }

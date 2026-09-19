@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
@@ -9,6 +8,7 @@ import '../breakpoints/window_size_class.dart';
 import '../cupertino/cupertino_adaptive_modal.dart';
 import '../material/material_adaptive_modal.dart';
 import 'adaptive_back_button.dart';
+import 'adaptive_modal_content.dart';
 import 'adaptive_modal_layout.dart';
 
 export 'adaptive_modal_layout.dart'
@@ -279,6 +279,71 @@ class _ResponsiveAdaptiveModalRouteState
   }
 }
 
+/// Dialog sizing within the available window and shared modal bounds.
+///
+/// Sheets retain their platform route's sizing policy. Dialogs fit their
+/// content size within the configured bounds on both axes.
+sealed class AdaptiveModalSize {
+  const AdaptiveModalSize._();
+
+  /// A preferred fixed size, reduced when the available space is smaller.
+  const factory AdaptiveModalSize.fixed({double width, double height}) =
+      AdaptiveModalFixedSize;
+
+  /// Content-driven size with a default fixed width of 560 and height 0–560.
+  /// Each bound can be overridden independently. Tight bounds fix an axis;
+  /// loose bounds fit content. Loose width requires intrinsic body layout.
+  const factory AdaptiveModalSize.constrained({
+    double minWidth,
+    double maxWidth,
+    double minHeight,
+    double maxHeight,
+  }) = AdaptiveModalConstrainedSize;
+
+  /// Requested bounds before adapting to the available window space.
+  BoxConstraints get constraints;
+}
+
+final class AdaptiveModalFixedSize extends AdaptiveModalSize {
+  const AdaptiveModalFixedSize({this.width = 560, this.height = 560})
+    : assert(width > 0 && width < double.infinity),
+      assert(height > 0 && height < double.infinity),
+      super._();
+
+  final double width;
+  final double height;
+
+  @override
+  BoxConstraints get constraints =>
+      BoxConstraints.tightFor(width: width, height: height);
+}
+
+final class AdaptiveModalConstrainedSize extends AdaptiveModalSize {
+  const AdaptiveModalConstrainedSize({
+    this.minWidth = 560,
+    this.maxWidth = 560,
+    this.minHeight = 0,
+    this.maxHeight = 560,
+  }) : assert(minWidth >= 0 && minWidth < double.infinity),
+       assert(minHeight >= 0 && minHeight < double.infinity),
+       assert(maxWidth >= minWidth),
+       assert(maxHeight >= minHeight),
+       super._();
+
+  final double minWidth;
+  final double maxWidth;
+  final double minHeight;
+  final double maxHeight;
+
+  @override
+  BoxConstraints get constraints => BoxConstraints(
+    minWidth: minWidth,
+    maxWidth: maxWidth,
+    minHeight: minHeight,
+    maxHeight: maxHeight,
+  );
+}
+
 /// Hosts a stable navigation stack inside an adaptive modal route.
 ///
 /// The [builder] receives a context below the nested [Navigator], so ordinary
@@ -287,18 +352,23 @@ class _ResponsiveAdaptiveModalRouteState
 /// when an explicit action must close the whole modal or return a typed result.
 ///
 /// A nested Navigator's overlay must have a finite viewport. Sheet
-/// presentations fill their surface; dialog presentations use [dialogSize]
-/// constrained to the shared modal bounds.
+/// presentations fill their surface. Dialogs default to a fixed 560 by 560 size
+/// within the shared modal bounds. Use [AdaptiveModalSize.constrained] to follow
+/// the current AdaptiveModal content height within explicit bounds. Loose width
+/// bounds follow its intrinsic body width as well.
 class AdaptiveModalNavigator<T> extends StatefulWidget {
   const AdaptiveModalNavigator({
     super.key,
     required this.builder,
-    this.dialogSize = const Size(560, 560),
+    this.size = const AdaptiveModalSize.fixed(),
     this.routeSettings,
   });
 
   final WidgetBuilder builder;
-  final Size dialogSize;
+
+  /// Dialog sizing policy. Non-AdaptiveModal pages use the maximum size.
+  /// Sheet sizing continues to belong to the platform route.
+  final AdaptiveModalSize size;
   final RouteSettings? routeSettings;
 
   /// Closes the surrounding modal rather than the nearest nested page.
@@ -316,6 +386,31 @@ class AdaptiveModalNavigator<T> extends StatefulWidget {
 
 class _AdaptiveModalNavigatorState<T> extends State<AdaptiveModalNavigator<T>> {
   final _navigatorKey = GlobalKey<NavigatorState>();
+  late final _sizeObserver = _ModalSizeObserver(_updateSize);
+  final _sizeRevision = ValueNotifier<int>(0);
+  Size? _contentSize;
+  BoxConstraints? _dialogBounds;
+
+  void _updateSize(Size? size) {
+    if (!mounted || _contentSize == size) return;
+    final previous = _contentSize;
+    _contentSize = size;
+    final bounds = _dialogBounds;
+    // Only notify the outer size layer when the effective viewport changes.
+    // Keep measurements while fixed or in a sheet for subsequent resizes.
+    if (bounds == null ||
+        bounds.constrain(previous ?? bounds.biggest) ==
+            bounds.constrain(size ?? bounds.biggest)) {
+      return;
+    }
+    _sizeRevision.value++;
+  }
+
+  @override
+  void dispose() {
+    _sizeRevision.dispose();
+    super.dispose();
+  }
 
   void _closeModal(Object? result) =>
       Navigator.of(context).pop<T>(result as T?);
@@ -328,11 +423,14 @@ class _AdaptiveModalNavigatorState<T> extends State<AdaptiveModalNavigator<T>> {
     final windowSize = MediaQuery.sizeOf(context);
     final navigator = _InheritedAdaptiveModalNavigator(
       closeModal: _closeModal,
+      onContentSizeChanged: _sizeObserver.recordSize,
+      size: widget.size,
       child: NavigatorPopHandler<Object?>(
         onPopWithResult: (result) =>
             _navigatorKey.currentState?.maybePop<Object?>(result),
         child: Navigator(
           key: _navigatorKey,
+          observers: [_sizeObserver],
           onGenerateInitialRoutes: (_, _) => [
             adaptiveModalPageRoute<T>(
               context: context,
@@ -349,18 +447,100 @@ class _AdaptiveModalNavigatorState<T> extends State<AdaptiveModalNavigator<T>> {
         ),
       ),
     );
-    return switch (presentation) {
-      AdaptiveModalPresentation.sheet => SizedBox.expand(child: navigator),
-      AdaptiveModalPresentation.dialog => SizedBox(
-        width: math.min(widget.dialogSize.width, windowSize.width * 0.9),
-        height: math.min(
-          widget.dialogSize.height,
-          AdaptiveModalConstraints.maximumHeightOf(context),
-        ),
-        child: navigator,
+    final requested = widget.size.constraints;
+    assert(requested.debugAssertIsValid());
+    final bounds = requested.enforce(
+      BoxConstraints(
+        maxWidth: windowSize.width * 0.9,
+        maxHeight: AdaptiveModalConstraints.maximumHeightOf(context),
       ),
-    };
+    );
+    _dialogBounds = presentation == AdaptiveModalPresentation.dialog
+        ? bounds
+        : null;
+    return AnimatedSize(
+      duration: presentation == AdaptiveModalPresentation.dialog
+          ? const Duration(milliseconds: 200)
+          : Duration.zero,
+      curve: Curves.easeOutCubic,
+      child: ListenableBuilder(
+        listenable: _sizeRevision,
+        child: navigator,
+        builder: (context, child) => SizedBox.fromSize(
+          size: presentation == AdaptiveModalPresentation.sheet
+              ? Size.infinite
+              : bounds.constrain(_contentSize ?? bounds.biggest),
+          child: child,
+        ),
+      ),
+    );
   }
+}
+
+class _ModalSizeObserver extends NavigatorObserver {
+  _ModalSizeObserver(this.onSize);
+
+  final ValueChanged<Size?> onSize;
+  final _sizes = <Route<dynamic>, Size>{};
+  Route<dynamic>? _current;
+  bool _scheduled = false;
+
+  void recordSize(ModalRoute<dynamic>? route, Size size) {
+    if (route == null ||
+        !route.isActive ||
+        !size.isFinite ||
+        _sizes[route] == size) {
+      return;
+    }
+    _sizes[route] = size;
+    if (route == _current) _schedule();
+  }
+
+  void _schedule() {
+    if (_scheduled) return;
+    _scheduled = true;
+    WidgetsBinding.instance.ensureVisualUpdate();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scheduled = false;
+      onSize(_sizes[_current]);
+    });
+  }
+
+  @override
+  void didChangeTop(Route<dynamic> topRoute, Route<dynamic>? previousTopRoute) {
+    _current = topRoute;
+    _schedule();
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    _sizes.remove(route);
+  }
+
+  @override
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    _sizes.remove(route);
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    _sizes.remove(oldRoute);
+  }
+}
+
+/// A modal confirmation command. The caller owns validation and dismissal.
+///
+/// Material renders [label] as text; Apple uses a checkmark with [label] as its
+/// accessible name and tooltip. A null callback disables the command.
+@immutable
+class AdaptiveModalConfirmAction {
+  const AdaptiveModalConfirmAction({
+    required this.label,
+    required this.onPressed,
+  });
+
+  final String label;
+  final VoidCallback? onPressed;
 }
 
 /// Platform-adaptive modal content with fixed semantic regions.
@@ -369,46 +549,211 @@ class _AdaptiveModalNavigatorState<T> extends State<AdaptiveModalNavigator<T>> {
 /// [AlertDialog] supplies dialog regions while the show helper owns its route.
 /// Callers own the business meaning and callbacks of every action supplied
 /// here.
-class AdaptiveModal extends StatefulWidget {
-  const AdaptiveModal({
+abstract class AdaptiveModal extends StatelessWidget {
+  const factory AdaptiveModal({
+    Key? key,
+    Widget? title,
+    Widget? leadingAction,
+    List<Widget> appBarActions,
+    AdaptiveModalConfirmAction? confirmAction,
+    List<Widget> actions,
+    Widget? pinnedBody,
+    List<Widget> bottomActions,
+    bool automaticallyImplyLeading,
+    bool automaticallyImplyCloseButton,
+    FutureOr<void> Function()? onCloseRequested,
+    AdaptiveModalSize? size,
+    required Widget body,
+  }) = _AdaptiveBoxModal;
+
+  /// Uses one bounded sliver viewport with the route's scroll ownership.
+  const factory AdaptiveModal.slivers({
+    Key? key,
+    Widget? title,
+    Widget? leadingAction,
+    List<Widget> appBarActions,
+    AdaptiveModalConfirmAction? confirmAction,
+    List<Widget> actions,
+    Widget? pinnedBody,
+    List<Widget> bottomActions,
+    bool automaticallyImplyLeading,
+    bool automaticallyImplyCloseButton,
+    FutureOr<void> Function()? onCloseRequested,
+    AdaptiveModalSize? size,
+    required List<Widget> slivers,
+  }) = _AdaptiveSliverModal;
+
+  /// A content-sized box modal without a toolbar or reserved toolbar space.
+  const factory AdaptiveModal.simple({
+    Key? key,
+    required Widget body,
+    AdaptiveModalSize? size,
+    List<Widget> actions,
+    List<Widget> bottomActions,
+    FutureOr<void> Function()? onCloseRequested,
+  }) = _AdaptiveSimpleModal;
+
+  const AdaptiveModal._({
     super.key,
-    required this.body,
     this.title,
     this.leadingAction,
+    this.appBarActions = const [],
+    this.confirmAction,
     this.actions = const [],
     this.pinnedBody,
     this.bottomActions = const [],
     this.automaticallyImplyLeading = false,
     this.automaticallyImplyCloseButton = true,
     this.onCloseRequested,
-    this.constraints,
+    this.size,
+    this.showAppBar = true,
   });
 
+  final bool showAppBar;
   final Widget? title;
   final Widget? leadingAction;
+  final List<Widget> appBarActions;
+  final AdaptiveModalConfirmAction? confirmAction;
   final List<Widget> actions;
   final Widget? pinnedBody;
-  final Widget body;
   final List<Widget> bottomActions;
   final bool automaticallyImplyLeading;
   final bool automaticallyImplyCloseButton;
-
-  /// Handles closing, including any asynchronous confirmation. Drag dismissal
-  /// waits for completion before deciding whether the modal should rebound.
   final FutureOr<void> Function()? onCloseRequested;
-  final BoxConstraints? constraints;
-
-  @override
-  State<AdaptiveModal> createState() => _AdaptiveModalState();
+  final AdaptiveModalSize? size;
 }
 
-class _AdaptiveModalState extends State<AdaptiveModal> {
+class _AdaptiveBoxModal extends AdaptiveModal {
+  const _AdaptiveBoxModal({
+    super.key,
+    super.title,
+    super.leadingAction,
+    super.appBarActions,
+    super.confirmAction,
+    super.actions,
+    super.pinnedBody,
+    super.bottomActions,
+    super.automaticallyImplyLeading,
+    super.automaticallyImplyCloseButton,
+    super.onCloseRequested,
+    super.size,
+    super.showAppBar,
+    required this.body,
+  }) : super._();
+
+  final Widget body;
+
+  @override
+  Widget build(BuildContext context) => _AdaptiveModal(
+    showAppBar: showAppBar,
+    title: title,
+    leadingAction: leadingAction,
+    appBarActions: appBarActions,
+    confirmAction: confirmAction,
+    actions: actions,
+    pinnedBody: pinnedBody,
+    bottomActions: bottomActions,
+    automaticallyImplyLeading: automaticallyImplyLeading,
+    automaticallyImplyCloseButton: automaticallyImplyCloseButton,
+    onCloseRequested: onCloseRequested,
+    size: size,
+    content: AdaptiveModalBoxContent(body: body),
+  );
+}
+
+class _AdaptiveSimpleModal extends _AdaptiveBoxModal {
+  const _AdaptiveSimpleModal({
+    super.key,
+    required super.body,
+    super.size = const AdaptiveModalSize.constrained(),
+    super.actions,
+    super.bottomActions,
+    super.onCloseRequested,
+  }) : super(showAppBar: false, automaticallyImplyCloseButton: false);
+}
+
+class _AdaptiveSliverModal extends AdaptiveModal {
+  const _AdaptiveSliverModal({
+    super.key,
+    super.title,
+    super.leadingAction,
+    super.appBarActions,
+    super.confirmAction,
+    super.actions,
+    super.pinnedBody,
+    super.bottomActions,
+    super.automaticallyImplyLeading,
+    super.automaticallyImplyCloseButton,
+    super.onCloseRequested,
+    super.size,
+    required this.slivers,
+  }) : super._();
+
+  final List<Widget> slivers;
+
+  @override
+  Widget build(BuildContext context) => _AdaptiveModal(
+    showAppBar: showAppBar,
+    title: title,
+    leadingAction: leadingAction,
+    appBarActions: appBarActions,
+    confirmAction: confirmAction,
+    actions: actions,
+    pinnedBody: pinnedBody,
+    bottomActions: bottomActions,
+    automaticallyImplyLeading: automaticallyImplyLeading,
+    automaticallyImplyCloseButton: automaticallyImplyCloseButton,
+    onCloseRequested: onCloseRequested,
+    size: size,
+    content: AdaptiveModalSliverContent(slivers: slivers),
+  );
+}
+
+/// Owns route integration shared by the independent content widgets.
+class _AdaptiveModal extends StatefulWidget {
+  const _AdaptiveModal({
+    required this.showAppBar,
+    required this.title,
+    required this.leadingAction,
+    required this.appBarActions,
+    required this.confirmAction,
+    required this.actions,
+    required this.pinnedBody,
+    required this.bottomActions,
+    required this.automaticallyImplyLeading,
+    required this.automaticallyImplyCloseButton,
+    required this.onCloseRequested,
+    required this.size,
+    required this.content,
+  });
+
+  final bool showAppBar;
+  final Widget? title;
+  final Widget? leadingAction;
+  final List<Widget> appBarActions;
+  final AdaptiveModalConfirmAction? confirmAction;
+  final List<Widget> actions;
+  final Widget? pinnedBody;
+  final List<Widget> bottomActions;
+  final bool automaticallyImplyLeading;
+  final bool automaticallyImplyCloseButton;
+  final FutureOr<void> Function()? onCloseRequested;
+  final AdaptiveModalSize? size;
+  final Widget content;
+
+  @override
+  State<_AdaptiveModal> createState() => _AdaptiveModalState();
+}
+
+class _AdaptiveModalState extends State<_AdaptiveModal> {
   late final ScrollController _fallbackScrollController = ScrollController();
   _AdaptiveModalCloseController? _closeController;
   ModalRoute<dynamic>? _pageRoute;
   ModalRoute<dynamic>? _hostRoute;
   Animation<double>? _pageAnimation;
   Animation<double>? _secondaryPageAnimation;
+  bool _hasRouteScrollOwnership = false;
+  ScrollController? _inheritedScrollController;
 
   @override
   void didChangeDependencies() {
@@ -428,6 +773,8 @@ class _AdaptiveModalState extends State<AdaptiveModal> {
     }
     final routeScope = _InheritedAdaptiveModalRoute.maybeOf(context);
     _hostRoute = routeScope?.hostRoute;
+    _inheritedScrollController = routeScope?.scrollController;
+    _hasRouteScrollOwnership = _ownsRouteScrollController(_hostRoute);
     final closeController = routeScope?.closeController;
     if (closeController != _closeController) {
       _closeController?.unregister(this);
@@ -455,8 +802,11 @@ class _AdaptiveModalState extends State<AdaptiveModal> {
 
   void _handlePageAnimationStatus(AnimationStatus status) {
     if (!mounted) return;
+    final ownsController = _ownsRouteScrollController(_hostRoute);
+    if (ownsController == _hasRouteScrollOwnership) return;
+    _hasRouteScrollOwnership = ownsController;
     _syncCloseRegistration();
-    setState(() {});
+    if (_inheritedScrollController != null) setState(() {});
   }
 
   bool _ownsRouteScrollController(ModalRoute<dynamic>? hostRoute) {
@@ -507,36 +857,56 @@ class _AdaptiveModalState extends State<AdaptiveModal> {
         : _fallbackScrollController;
     final leadingAction =
         widget.leadingAction ??
-        (widget.automaticallyImplyLeading && (_pageRoute?.canPop ?? false)
+        (widget.automaticallyImplyLeading &&
+                !identical(_pageRoute, routeScope?.hostRoute) &&
+                (_pageRoute?.canPop ?? false)
             ? const AdaptiveBackButton()
             : null);
 
+    final modalNavigator = context
+        .dependOnInheritedWidgetOfExactType<_InheritedAdaptiveModalNavigator>();
+    final size =
+        widget.size ?? modalNavigator?.size ?? const AdaptiveModalSize.fixed();
+    final ValueChanged<Size>? onContentSizeChanged =
+        presentation == AdaptiveModalPresentation.dialog &&
+            modalNavigator != null
+        ? (size) => modalNavigator.onContentSizeChanged(_pageRoute, size)
+        : null;
+
     return switch (AdaptiveStyle.of(context)) {
       AdaptiveStyle.material => MaterialAdaptiveModal(
+        showAppBar: widget.showAppBar,
         title: widget.title,
         leadingAction: leadingAction,
+        appBarActions: widget.appBarActions,
+        confirmAction: widget.confirmAction,
         actions: widget.actions,
         pinnedBody: widget.pinnedBody,
-        body: widget.body,
+        content: widget.content,
         bottomActions: widget.bottomActions,
         automaticallyImplyCloseButton: widget.automaticallyImplyCloseButton,
         onCloseRequested: _requestClose,
-        constraints: widget.constraints,
+        size: size,
         presentation: presentation,
         scrollController: scrollController,
+        onContentSizeChanged: onContentSizeChanged,
       ),
       AdaptiveStyle.apple => CupertinoAdaptiveModal(
+        showAppBar: widget.showAppBar,
         title: widget.title,
         leadingAction: leadingAction,
+        appBarActions: widget.appBarActions,
+        confirmAction: widget.confirmAction,
         actions: widget.actions,
         pinnedBody: widget.pinnedBody,
-        body: widget.body,
+        content: widget.content,
         bottomActions: widget.bottomActions,
         automaticallyImplyCloseButton: widget.automaticallyImplyCloseButton,
         onCloseRequested: _requestClose,
-        constraints: widget.constraints,
+        size: size,
         presentation: presentation,
         scrollController: scrollController,
+        onContentSizeChanged: onContentSizeChanged,
       ),
     };
   }
@@ -568,13 +938,19 @@ class _AdaptiveModalRouteScope extends StatelessWidget {
 class _InheritedAdaptiveModalNavigator extends InheritedWidget {
   const _InheritedAdaptiveModalNavigator({
     required this.closeModal,
+    required this.onContentSizeChanged,
+    required this.size,
     required super.child,
   });
 
+  final AdaptiveModalSize size;
   final ValueChanged<Object?> closeModal;
+  final void Function(ModalRoute<dynamic>? route, Size size)
+  onContentSizeChanged;
 
   @override
-  bool updateShouldNotify(_InheritedAdaptiveModalNavigator oldWidget) => false;
+  bool updateShouldNotify(_InheritedAdaptiveModalNavigator oldWidget) =>
+      size != oldWidget.size;
 }
 
 class _InheritedAdaptiveModalRoute extends InheritedWidget {

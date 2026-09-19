@@ -33,6 +33,8 @@ import '../../common/widgets.dart';
 import '../_providers/habit_detail.dart';
 import 'habit_heatmap.dart';
 
+// TODO(mhabit-adaptive-dialog): Migrate as a record-editing subview/AdaptiveModal; retain the
+// borrowed detail VM and nested input-dialog behavior.
 Future<void> showHabitEditReplacementRecordCalendarDialog({
   required BuildContext context,
   HabitColor? habitColor,

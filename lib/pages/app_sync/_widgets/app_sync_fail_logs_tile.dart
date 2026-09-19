@@ -16,8 +16,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:async/async.dart';
+import 'package:flutter/cupertino.dart' show CupertinoColors;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../l10n/localizations.dart';
@@ -112,20 +114,31 @@ class _AppSyncFailLogsTile extends State<AppSyncFailLogsTile> with XShare {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
+    final disabledColor = switch (AdaptiveStyle.of(context)) {
+      AdaptiveStyle.material => Theme.of(context).disabledColor,
+      AdaptiveStyle.apple => CupertinoColors.inactiveGray.resolveFrom(context),
+    };
+    final textStyle = enabled ? null : TextStyle(color: disabledColor);
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
-      child: ListTile(
-        title: Text(
-          l10n?.appSync_exportAllLogsTile_titleText ??
-              "Export Failed Sync Logs",
-        ),
-        subtitle: l10n != null
-            ? Text(
-                l10n.appSync_exportAllLogsTile_subtitleText(isEmpty.toString()),
-              )
-            : null,
-        onTap: _onTilePressed,
+      child: Semantics(
         enabled: enabled,
+        child: AdaptiveListTile(
+          title: Text(
+            l10n?.appSync_exportAllLogsTile_titleText ??
+                "Export Failed Sync Logs",
+            style: textStyle,
+          ),
+          subtitle: l10n != null
+              ? Text(
+                  l10n.appSync_exportAllLogsTile_subtitleText(
+                    isEmpty.toString(),
+                  ),
+                  style: textStyle,
+                )
+              : null,
+          onTap: enabled ? _onTilePressed : null,
+        ),
       ),
     );
   }

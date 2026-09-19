@@ -23,6 +23,8 @@ import '../../../models/habit_form.dart';
 import '../../../widgets/widgets.dart';
 import '../_providers/habit_summary.dart';
 
+// TODO(mhabit-adaptive-dialog): Track search-filter editing as a separate migration; preserve
+// filter drafts/results rather than replacing it with the Phase 3-8 popup pilot.
 Future<HabitDisplaySearchOptions?> showSearchFilterBottomSheet({
   required BuildContext context,
   HabitDisplaySearchOptions? options,
@@ -60,6 +62,8 @@ class SearchFilterIcon extends StatelessWidget {
   }
 }
 
+// TODO(mhabit-adaptive-dialog): Adapt this filter-editing menu with the
+// filter sheet above in its own slice, not the archive popup pilot.
 class SearchFilterPopupMenuButton extends StatelessWidget {
   final MenuController? controller;
   final ValueChanged<bool?>? ongoingChanged;
@@ -312,10 +316,7 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                   title: FilledButton(
                     onPressed: canSave ? _doSave : null,
                     child: Text(
-                      l10n?.confirmDialog_confirm_text(
-                            NormalizeConfirmDialogType.save.name,
-                          ) ??
-                          "Save",
+                      AppActionVerb.label(context, AppActionVerb.save),
                     ),
                   ),
                 );

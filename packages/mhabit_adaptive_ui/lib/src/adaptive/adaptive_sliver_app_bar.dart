@@ -1,3 +1,4 @@
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/material.dart';
 
 import '../adaptive_style.dart';
@@ -6,25 +7,22 @@ import '../cupertino/cupertino_sliver_app_bar.dart';
 import '../material/app_bar_material_style.dart';
 import '../material/material_sliver_app_bar.dart';
 
-export '../cupertino/app_bar_apple_style.dart' show AppBarAppleStyle;
-export '../material/app_bar_material_style.dart' show AppBarMaterialStyle;
+export '../cupertino/app_bar_apple_style.dart'
+    show $AppBarAppleStyleCopyWith, AppBarAppleStyle;
+export '../material/app_bar_material_style.dart'
+    show $AppBarMaterialStyleCopyWith, AppBarMaterialStyle;
+
+part 'adaptive_sliver_app_bar.g.dart';
 
 const List<Widget> _kDefaultActions = <Widget>[];
 
 /// Per-style config overrides for [AdaptiveSliverAppBar].
+@CopyWith(skipFields: true)
 class AppBarStyles {
   const AppBarStyles({this.material, this.apple});
 
   final AppBarMaterialStyle? material;
   final AppBarAppleStyle? apple;
-
-  AppBarStyles copyWith({
-    AppBarMaterialStyle? material,
-    AppBarAppleStyle? apple,
-  }) => AppBarStyles(
-    material: material ?? this.material,
-    apple: apple ?? this.apple,
-  );
 
   @override
   bool operator ==(Object other) =>

@@ -23,6 +23,8 @@ import '../../../models/habit_color.dart';
 import '../../../models/habit_date.dart';
 import '../../../widgets/widgets.dart';
 
+// TODO(mhabit-adaptive-dialog): Adapt this text-input dialog and its controls, preserving the
+// controller draft and String/null result; do not reduce it to a bool confirm.
 Future<String?> showHabitRecordReasonModifierDialog({
   required BuildContext context,
   String initReason = '',

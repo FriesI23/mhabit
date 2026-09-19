@@ -30,6 +30,8 @@ class HabitTargetDaysPickerResult {
   });
 }
 
+// TODO(mhabit-adaptive-dialog): Adapt the target-days picker, preserving days/input-type drafts
+// and HabitTargetDaysPickerResult/null results.
 Future<HabitTargetDaysPickerResult?> showHabitTargetDaysPickerDialog({
   required BuildContext context,
   required int targetDays,

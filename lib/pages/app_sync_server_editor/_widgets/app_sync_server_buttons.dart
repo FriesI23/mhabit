@@ -16,7 +16,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
-import '../../../widgets/widgets.dart';
 import '../_providers/app_sync_server_form.dart';
 
 class AppSyncServerSaveButton extends StatelessWidget {
@@ -32,10 +31,7 @@ class AppSyncServerSaveButton extends StatelessWidget {
         builder: (context, value, child) => TextButton(
           onPressed: value ? onPressed : null,
           child: Text(
-            L10n.of(context)?.confirmDialog_confirm_text(
-                  NormalizeConfirmDialogType.save.name,
-                ) ??
-                "save",
+            AppActionVerb.label(context, AppActionVerb.save, fallback: 'save'),
           ),
         ),
       );

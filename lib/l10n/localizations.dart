@@ -12,9 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'localizations.dart';
+import 'package:flutter/widgets.dart';
+
+import 'localizations.g.dart';
 
 export 'localizations.g.dart' show L10n, lookupL10n;
+
+/// Action verbs supported by the shared confirmation label translation.
+enum AppActionVerb {
+  confirm,
+  save,
+  exit,
+  delete;
+
+  static String label(
+    BuildContext context,
+    AppActionVerb action, {
+    String? fallback,
+  }) =>
+      L10n.of(context)?.confirmDialog_confirm_text(action.name) ??
+      fallback ??
+      switch (action) {
+        AppActionVerb.confirm => 'Confirm',
+        AppActionVerb.save => 'Save',
+        AppActionVerb.exit => 'Exit',
+        AppActionVerb.delete => 'Delete',
+      };
+}
 
 extension L10nExtra on L10n {
   String getHabitEditReminderWeekDayText(int dayOfWeek) {

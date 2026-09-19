@@ -14,6 +14,7 @@
 
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../l10n/localizations.dart';
 import '../../models/habit_color.dart';
@@ -64,43 +65,49 @@ class _HabitColorWheelEditorState extends State<HabitColorWheelEditor> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        ColorPicker(
-          color: _wheelColor,
-          onColorChanged: (value) {
-            _wheelColor = value;
-            _notify();
-          },
-          pickersEnabled: const {
-            ColorPickerType.both: false,
-            ColorPickerType.primary: false,
-            ColorPickerType.accent: false,
-            ColorPickerType.bw: false,
-            ColorPickerType.custom: false,
-            ColorPickerType.customSecondary: false,
-            ColorPickerType.wheel: true,
-          },
-          enableOpacity: false,
-          showColorCode: true,
-          colorCodeHasColor: true,
-          wheelDiameter: 200,
-        ),
-        SwitchListTile(
-          contentPadding: EdgeInsets.zero,
-          title: Text(
-            l10n?.habitEdit_colorPicker_tintToggleLabel ?? 'Tint to theme',
+        // The package uses a Material TextField for HEX input on both styles.
+        Material(
+          type: MaterialType.transparency,
+          child: ColorPicker(
+            color: _wheelColor,
+            onColorChanged: (value) {
+              _wheelColor = value;
+              _notify();
+            },
+            pickersEnabled: const {
+              ColorPickerType.both: false,
+              ColorPickerType.primary: false,
+              ColorPickerType.accent: false,
+              ColorPickerType.bw: false,
+              ColorPickerType.custom: false,
+              ColorPickerType.customSecondary: false,
+              ColorPickerType.wheel: true,
+            },
+            enableOpacity: false,
+            showColorCode: true,
+            colorCodeHasColor: true,
+            wheelDiameter: 200,
           ),
-          subtitle: l10n == null
-              ? null
-              : Text(
-                  _tinted
-                      ? l10n.habitEdit_colorPicker_tintToggleOnHint
-                      : l10n.habitEdit_colorPicker_tintToggleOffHint,
-                ),
-          value: _tinted,
-          onChanged: (value) {
-            setState(() => _tinted = value);
-            _notify();
-          },
+        ),
+        ListTileTheme.merge(
+          contentPadding: EdgeInsets.zero,
+          child: AdaptiveSwitchListTile(
+            title: Text(
+              l10n?.habitEdit_colorPicker_tintToggleLabel ?? 'Tint to theme',
+            ),
+            subtitle: l10n == null
+                ? null
+                : Text(
+                    _tinted
+                        ? l10n.habitEdit_colorPicker_tintToggleOnHint
+                        : l10n.habitEdit_colorPicker_tintToggleOffHint,
+                  ),
+            value: _tinted,
+            onChanged: (value) {
+              setState(() => _tinted = value);
+              _notify();
+            },
+          ),
         ),
       ],
     );

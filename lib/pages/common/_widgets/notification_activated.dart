@@ -22,6 +22,8 @@ import 'package:provider/provider.dart';
 
 import '../../../providers/app_ui/app_debugger.dart';
 
+// TODO(mhabit-adaptive-dialog): Migrate as a notification-debugging list/AdaptiveModal;
+// preserve async loading and debugger logging, not a bool confirmation.
 Future<void> showNotificationActivatedDialog({
   required BuildContext context,
 }) async {

@@ -20,6 +20,7 @@ import 'package:sliver_tools/sliver_tools.dart';
 import '../../common/types.dart';
 import '../../common/utils.dart';
 import '../../extensions/navigator_extensions.dart';
+import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/custom_date_format.dart';
 import '../../models/habit_date.dart';
@@ -120,31 +121,24 @@ class _PageState extends State<_Page> {
   void _onConfirmButtonpressed() async {
     if (!(mounted && _vm.mounted)) return;
     if (_vm.selectDateRecords.isNotEmpty) {
+      final l10n = L10n.of(context);
       final result =
-          (await showConfirmDialog(
+          (await showAdaptiveConfirmDialog(
             context: context,
-            titleBuilder: (context) => L10nBuilder(
-              builder: (context, l10n) => l10n != null
-                  ? Text(l10n.batchCheckin_save_confirmDialog_title)
-                  : const Text("Overwrite Existing Records"),
+            title: Text(
+              l10n?.batchCheckin_save_confirmDialog_title ??
+                  'Overwrite Existing Records',
             ),
-            subtitleBuilder: (context) => L10nBuilder(
-              builder: (context, l10n) => l10n != null
-                  ? Text(l10n.batchCheckin_save_confirmDialog_body)
-                  : const SizedBox(),
-            ),
-            confirmTextBuilder: (context) => L10nBuilder(
-              builder: (context, l10n) => l10n != null
-                  ? Text(
-                      l10n.batchCheckin_save_confirmDialog_confirmButton_text,
-                    )
-                  : const Text("save"),
-            ),
-            cancelText: L10nBuilder(
-              builder: (context, l10n) => l10n != null
-                  ? Text(l10n.batchCheckin_save_confirmDialog_cancelButton_text)
-                  : const Text("cancel"),
-            ),
+            content: l10n != null
+                ? Text(l10n.batchCheckin_save_confirmDialog_body)
+                : const SizedBox(),
+            confirmLabel:
+                l10n?.batchCheckin_save_confirmDialog_confirmButton_text ??
+                'save',
+            cancelLabel:
+                l10n?.batchCheckin_save_confirmDialog_cancelButton_text ??
+                'cancel',
+            isDestructiveAction: true,
           )) ??
           false;
       if (!(mounted && _vm.mounted && result)) return;
@@ -175,33 +169,24 @@ class _PageState extends State<_Page> {
     T? result,
   }) async {
     if (!(mounted && _vm.mounted)) return;
+    final pageRoute = ModalRoute.of(context);
+    final l10n = L10n.of(context);
     final savedResult = _vm.canSave
-        ? (await showConfirmDialog(
+        ? (await showAdaptiveConfirmDialog(
                 context: context,
-                titleBuilder: (context) => L10nBuilder(
-                  builder: (context, l10n) => l10n != null
-                      ? Text(l10n.batchCheckin_close_confirmDialog_title)
-                      : const Text("Unsaved Check-in Status"),
+                title: Text(
+                  l10n?.batchCheckin_close_confirmDialog_title ??
+                      'Unsaved Check-in Status',
                 ),
-                subtitleBuilder: (context) => L10nBuilder(
-                  builder: (context, l10n) => l10n != null
-                      ? Text(l10n.batchCheckin_close_confirmDialog_body)
-                      : const SizedBox(),
-                ),
-                confirmTextBuilder: (context) => L10nBuilder(
-                  builder: (context, l10n) => l10n != null
-                      ? Text(
-                          l10n.batchCheckin_close_confirmDialog_confirmButton_text,
-                        )
-                      : const Text("exit"),
-                ),
-                cancelText: L10nBuilder(
-                  builder: (context, l10n) => l10n != null
-                      ? Text(
-                          l10n.batchCheckin_close_confirmDialog_cancelButton_text,
-                        )
-                      : const Text("cancel"),
-                ),
+                content: l10n != null
+                    ? Text(l10n.batchCheckin_close_confirmDialog_body)
+                    : const SizedBox(),
+                confirmLabel:
+                    l10n?.batchCheckin_close_confirmDialog_confirmButton_text ??
+                    'exit',
+                cancelLabel:
+                    l10n?.batchCheckin_close_confirmDialog_cancelButton_text ??
+                    'cancel',
               ) ??
               defaultConfirmResult)
         : true;
@@ -209,7 +194,9 @@ class _PageState extends State<_Page> {
 
     if (savedResult) {
       dismissAllToolTips().then(
-        (_) => mounted ? Navigator.of(context).popOrExit(result) : false,
+        (_) => mounted && pageRoute?.isCurrent == true
+            ? Navigator.of(context).popOrExit(result)
+            : false,
       );
     }
   }
@@ -334,9 +321,12 @@ class _PageState extends State<_Page> {
         ),
         habitTitle: SliverPinnedHeader(child: buildHabitTitle(context)),
         habitsContent: const _HabitList(key: ValueKey(1)),
-        debugContent: context.read<AppDeveloperViewModel>().isInDevelopMode
-            ? SafedSliverList(children: [div, _buildDebugInfo(context)])
-            : null,
+        debugContent: Selector<AppDeveloperViewModel, bool>(
+          selector: (context, vm) => vm.isInDevelopMode,
+          builder: (context, isInDevelopMode, child) => isInDevelopMode
+              ? SafedSliverList(children: [div, _buildDebugInfo(context)])
+              : const SliverToBoxAdapter(),
+        ),
         mainController: _mainScrollController,
       ),
     );

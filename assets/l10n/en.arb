@@ -434,7 +434,9 @@
     "habitDisplay_groupModifyDialog_createGroup": "Create Group",
     "@habitDisplay_groupModifyDialog_createGroup": {},
     "habitDisplay_groupModifyDialog_saveAndApply": "Save & Apply",
-    "@habitDisplay_groupModifyDialog_saveAndApply": {},
+    "@habitDisplay_groupModifyDialog_saveAndApply": {
+        "description": "Deprecated. Use habitEdit_saveButton_text instead."
+    },
     "habitDisplay_groupModifyConfirm_titleNew": "Move to Group",
     "@habitDisplay_groupModifyConfirm_titleNew": {},
     "habitDisplay_groupModifyConfirm_titleMixed": "Confirm Group Change",
@@ -450,7 +452,7 @@
     },
     "habitDisplay_groupModifyConfirm_bodyRemoveGroup": "Habits will have their group removed",
     "@habitDisplay_groupModifyConfirm_bodyRemoveGroup": {},
-    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {{count} habit will change from \"{fromGroup}\" to \"{toGroup}\"} other {{count} habits will change from \"{fromGroup}\" to \"{toGroup}\"}}",
+    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {{count} habit will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group} other{ and {remainingGroupCount} more groups}} to \"{toGroup}\"} other {{count} habits will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group} other{ and {remainingGroupCount} more groups}} to \"{toGroup}\"}}",
     "@habitDisplay_groupModifyConfirm_bodyChangeStat": {
         "placeholders": {
             "count": {
@@ -459,11 +461,19 @@
             },
             "fromGroup": {
                 "type": "String",
-                "description": "Old group name"
+                "description": "At most the first three source group names"
             },
             "toGroup": {
                 "type": "String",
                 "description": "New group name"
+            },
+            "remainingGroupCount": {
+                "type": "int",
+                "description": "Number of omitted source group names; zero means the list is complete"
+            },
+            "totalGroupCount": {
+                "type": "int",
+                "description": "Total number of source groups, including displayed and omitted groups"
             }
         }
     },
@@ -862,6 +872,15 @@
     "@appSetting_changeLanguageTile_titleText": {},
     "appSetting_changeLanguageDialog_titleText": "Select Language",
     "@appSetting_changeLanguageDialog_titleText": {},
+    "appSetting_changeLanguageDialog_currentLanguage_text": "Current language: {localeName}",
+    "@appSetting_changeLanguageDialog_currentLanguage_text": {
+        "placeholders": {
+            "localeName": {
+                "type": "String",
+                "example": "English"
+            }
+        }
+    },
     "appSetting_languageSubgroupText": "Language",
     "@appSetting_languageSubgroupText": {},
     "appSetting_openSystemLanguageTile_titleText": "System Language Settings",
@@ -1586,6 +1605,10 @@
     "@common_customDateTimeFormatPicker_12Hour_text": {},
     "common_customDateTimeFormatPicker_monthName_text": "Use full name",
     "@common_customDateTimeFormatPicker_monthName_text": {},
+    "appDateFormat_leadingZero_text": "Use leading zeros",
+    "@appDateFormat_leadingZero_text": {},
+    "appDateFormat_preview_text": "Preview",
+    "@appDateFormat_preview_text": {},
     "common_customDateTimeFormatPicker_applyFreqChart_text": "Apply for Freq Chart",
     "@common_customDateTimeFormatPicker_applyFreqChart_text": {},
     "common_customDateTimeFormatPicker_applyHeapmap_text": "Apply for Calendar",
@@ -1716,7 +1739,7 @@
         "placeholders": {
             "type": {
                 "type": "String",
-                "description": "<NormalizeConfirmDialogType>.name",
+                "description": "AppActionVerb.name",
                 "example": "confirm"
             }
         }
@@ -1963,5 +1986,17 @@
     "habitDisplay_groupType_manual": "Manual",
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
-    }
+    },
+    "confirmDialog_confirmAndSkip_text": "{action}, and don't ask again",
+    "@confirmDialog_confirmAndSkip_text": {
+        "description": "Button that performs the named action now and skips this confirmation in future.",
+        "placeholders": {
+            "action": {
+                "type": "String",
+                "example": "Save"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_previewTitle": "Preview",
+    "@habitDisplay_groupModifyConfirm_previewTitle": {}
 }

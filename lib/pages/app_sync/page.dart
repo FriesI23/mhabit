@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../logging/helper.dart';
@@ -124,18 +125,28 @@ final class _PageState extends State<_Page> {
                     ),
                   ),
                 ),
-                SliverList.list(
-                  children: [
-                    const Divider(),
-                    FutureBuilder(
-                      future: AppPathProvider().getSyncFailLogDir(),
-                      builder: (context, snapshot) =>
-                          AppSyncFailLogsTile(path: snapshot.data?.path),
-                    ),
-                  ],
+                SliverToBoxAdapter(
+                  child: AdaptiveListSection(
+                    children: [
+                      FutureBuilder(
+                        future: AppPathProvider().getSyncFailLogDir(),
+                        builder: (context, snapshot) =>
+                            AppSyncFailLogsTile(path: snapshot.data?.path),
+                      ),
+                    ],
+                  ),
                 ),
-                if (context.read<AppDeveloperViewModel>().isInDevelopMode)
-                  SliverList.list(children: const [Divider(), _DebugTile()]),
+                Selector<AppDeveloperViewModel, bool>(
+                  selector: (context, vm) => vm.isInDevelopMode,
+                  builder: (context, isInDevelopMode, child) => isInDevelopMode
+                      ? const SliverToBoxAdapter(
+                          child: AdaptiveListSection(
+                            hasLeading: true,
+                            children: [_DebugTile()],
+                          ),
+                        )
+                      : const SliverToBoxAdapter(),
+                ),
               ],
             ),
           ),
@@ -160,9 +171,8 @@ class _AppSyncConfigSubgroup extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExpandedSection(
       expand: enabled,
-      child: Column(
+      child: AdaptiveListSection(
         children: [
-          const Divider(),
           AppSyncSummaryTile(onPressed: onConfigPressed),
           AppSyncFetchIntervalTile(onPressed: onFetchIntervalPressed),
         ],
@@ -177,9 +187,8 @@ class _DebugTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appSync = context.watch<AppSyncSettingsAccess>();
-    return ListTile(
+    return AdaptiveListTile(
       leading: Icon(Icons.error, color: Theme.of(context).colorScheme.error),
-      isThreeLine: true,
       title: const Text('DEBUG'),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

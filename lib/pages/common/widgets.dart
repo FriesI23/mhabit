@@ -15,7 +15,6 @@
 export '_widgets/app_sync_confirm_dialog.dart';
 export '_widgets/app_theme_switch_button.dart';
 export '_widgets/contributor_tile.dart';
-export '_widgets/custom_datetime_format_picker.dart';
 export '_widgets/custom_scroll_controllers.dart';
 export '_widgets/donate_dialog.dart';
 export '_widgets/exporter_confirm_dialog.dart';
@@ -31,6 +30,7 @@ export '_widgets/not_found_image.dart';
 export '_widgets/notification_activated.dart';
 export '_widgets/notification_pending_requests.dart';
 export '_widgets/pop_scope_consumer.dart';
+export '_widgets/sliver_habit_group_tree.dart';
 export '_widgets/sync_loading_indicator.dart';
 export '_widgets/sync_now_tile.dart';
 export '_widgets/today_done_image.dart';

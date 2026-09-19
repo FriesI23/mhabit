@@ -21,7 +21,6 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
 import '../../../widgets/widgets.dart';
-import '../styles.dart';
 
 class AppAboutThirdPartyLicenseTile extends StatefulWidget {
   const AppAboutThirdPartyLicenseTile({super.key});
@@ -40,6 +39,11 @@ class _AppAboutThirdPartyLicenseTileState
     await showAdaptiveSheet<void>(
       context: context,
       builder: (_) => AdaptiveModal(
+        size: const AdaptiveModalSize.constrained(
+          minWidth: 0,
+          maxWidth: 720,
+          maxHeight: 720,
+        ),
         title: l10n != null
             ? Text(l10n.appAbout_licenseThirdPartyTile_titleText)
             : const Text("Third Party License"),
@@ -58,17 +62,13 @@ class _AppAboutThirdPartyLicenseTileState
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return ListTile(
-      leading: const SizedBox(
-        height: kAppAboutListTileLeadingHeight,
-        width: kAppAboutListTileLeadingWidth,
-        child: Icon(MdiIcons.license),
-      ),
+    return AdaptiveListTile.navigation(
+      leading: const Icon(MdiIcons.license),
       title: l10n != null
           ? Text(l10n.appAbout_licenseThirdPartyTile_titleText)
           : const Text("Third Party License"),
       subtitle: l10n != null
-          ? Text(l10n.appAbout_licenseThirdPartyTile_subtitleText, maxLines: 1)
+          ? Text(l10n.appAbout_licenseThirdPartyTile_subtitleText)
           : null,
       onTap: onPressed,
     );

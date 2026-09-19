@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../../extensions/colorscheme_extensions.dart';
 import '../../../l10n/localizations.dart';
-import '../styles.dart';
+import 'debugger_card.dart';
 
 class DebuggerLogCard extends StatelessWidget {
   final void Function(BuildContext context)? onDownloadPressed;
@@ -31,65 +31,24 @@ class DebuggerLogCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return Card(
-      elevation: 0,
-      color: Theme.of(context).colorScheme.primaryContainerOpacity32,
-      child: Padding(
-        padding: kDebuggerCardPadding,
-        child: Column(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.article_outlined),
-              title: l10n != null
-                  ? Text(l10n.debug_debuggerLogCard_title)
-                  : null,
-              subtitle: l10n != null
-                  ? Text(l10n.debug_debuggerLogCard_subtitle)
-                  : null,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Builder(
-                  builder: (context) {
-                    return TextButton(
-                      onPressed: onDownloadPressed != null
-                          ? () => onDownloadPressed!(context)
-                          : null,
-                      child: Text(
-                        l10n?.debug_debuggerLogCard_saveButton_text ??
-                            'Downlaod',
-                        style: TextStyle(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onPrimaryContainer,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(width: 8),
-                Builder(
-                  builder: (context) {
-                    return TextButton(
-                      onPressed: onClearPressed != null
-                          ? () => onClearPressed!(context)
-                          : null,
-                      child: Text(
-                        l10n?.debug_debuggerLogCard_clearButton_text ?? 'Clear',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(width: 8),
-              ],
-            ),
-          ],
+    return DebuggerCard(
+      title: l10n?.debug_debuggerLogCard_title ?? 'Logging Information',
+      description: l10n?.debug_debuggerLogCard_subtitle,
+      materialIcon: Icons.article_outlined,
+      appleIcon: CupertinoIcons.doc_text,
+      actions: [
+        DebuggerCardActionData(
+          label: l10n?.debug_debuggerLogCard_saveButton_text ?? 'Download',
+          icon: CupertinoIcons.square_arrow_down,
+          onPressed: onDownloadPressed,
         ),
-      ),
+        DebuggerCardActionData(
+          label: l10n?.debug_debuggerLogCard_clearButton_text ?? 'Clear',
+          icon: CupertinoIcons.trash,
+          destructive: true,
+          onPressed: onClearPressed,
+        ),
+      ],
     );
   }
 }

@@ -195,6 +195,8 @@ class _PageState extends State<_Page> {
         .read<HabitFormViewModel>()
         .requestReminderPermission();
     if (!context.mounted || !hasPermission) return;
+    // TODO(mhabit-adaptive-dialog): Adapt the SDK time picker separately;
+    // preserve TimeOfDay/null handling and reminder form updates.
     final result = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
@@ -209,32 +211,13 @@ class _PageState extends State<_Page> {
 
   void _onReminderTimeTileCancelButtonPressed() async {
     if (!mounted) return;
-    final result = await showConfirmDialog(
+    final l10n = L10n.of(context);
+    final result = await showAdaptiveConfirmDialog(
       context: context,
-      titleBuilder: (context) {
-        final l10n = L10n.of(context);
-        return l10n != null
-            ? Text(l10n.habitEdit_reminder_cancelDialogTitle)
-            : const Text('Confirm');
-      },
-      subtitleBuilder: (context) {
-        final l10n = L10n.of(context);
-        return l10n != null
-            ? Text(l10n.habitEdit_reminder_cancelDialogSubtitle)
-            : const Text('');
-      },
-      confirmTextBuilder: (context) {
-        final l10n = L10n.of(context);
-        return l10n != null
-            ? Text(l10n.habitEdit_reminder_cancelDialogConfirm)
-            : const Text('confirm');
-      },
-      cancelTextBuilder: (context) {
-        final l10n = L10n.of(context);
-        return l10n != null
-            ? Text(l10n.habitEdit_reminder_cancelDialogCancel)
-            : const Text('cancel');
-      },
+      title: Text(l10n?.habitEdit_reminder_cancelDialogTitle ?? 'Confirm'),
+      content: Text(l10n?.habitEdit_reminder_cancelDialogSubtitle ?? ''),
+      confirmLabel: l10n?.habitEdit_reminder_cancelDialogConfirm ?? 'confirm',
+      cancelLabel: l10n?.habitEdit_reminder_cancelDialogCancel ?? 'cancel',
     );
     if (!mounted || result != true) return;
     context.read<HabitFormViewModel>().reminder = null;
@@ -447,10 +430,14 @@ class _PageState extends State<_Page> {
                   kHabitDivider,
                   buildCreateAndModifyTimeField(context),
                 ],
-                if (context.read<AppDeveloperViewModel>().isInDevelopMode) ...[
-                  kHabitDivider,
-                  _buildDebugInfo(context),
-                ],
+                Selector<AppDeveloperViewModel, bool>(
+                  selector: (context, vm) => vm.isInDevelopMode,
+                  builder: (context, isInDevelopMode, child) => isInDevelopMode
+                      ? Column(
+                          children: [kHabitDivider, _buildDebugInfo(context)],
+                        )
+                      : const SizedBox.shrink(),
+                ),
                 const FixedPagePlaceHolder(),
               ],
             ),

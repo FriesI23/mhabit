@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../models/custom_date_format.dart';
 import '../../../widgets/widgets.dart';
@@ -34,7 +35,7 @@ class AppSettingDateDisplayFormatListTile extends StatelessWidget {
         final patternText = config.useSystemFormat
             ? l10n?.appSetting_dateDisplayFormat_titleTemplate_followSystemText
             : config.getFormatter(l10n?.localeName).pattern;
-        return ListTile(
+        return AdaptiveListTile.navigation(
           title: Text(
             l10n?.appSetting_dateDisplayFormat_titleText(patternText ?? '') ??
                 "Date display format ($patternText)",

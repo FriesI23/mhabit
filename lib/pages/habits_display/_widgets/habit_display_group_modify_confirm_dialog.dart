@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../common/types.dart';
-import '../../../extensions/custom_color_extensions.dart';
 import '../../../l10n/localizations.dart';
-import '../../../theme/color.dart' show CustomColors;
-import '../../../widgets/widgets.dart';
+import '../../common/widgets.dart';
 import '../helpers.dart';
 
-/// Shows a confirmation dialog before executing batch group modification.
+/// Pushes a confirmation page before executing batch group modification.
 ///
-/// The dialog dynamically adapts its content based on the types of changes:
+/// The page dynamically adapts its content based on the types of changes:
 /// - Pure new group assignment (all habits were uncategorized).
 /// - Mixed changes (some habits change group, some are new, some removed).
 /// - Pure removal (all habits are being uncategorized).
@@ -34,13 +34,13 @@ import '../helpers.dart';
 /// changes are submitted, so the confirm button is always enabled.
 ///
 /// [skipFutureEnabled] controls the initial state of the "don't show again"
-/// checkbox. [onSkipFutureChanged] is called when the checkbox is toggled.
-Future<bool> showHabitGroupModifyConfirmDialog({
+/// checkbox. [onSkipFutureChanged] is called only after confirmation.
+Future<bool> pushHabitGroupModifyConfirmPage({
   required BuildContext context,
   required List<HabitGroupModifyItem> affectedHabits,
   required GroupUUID? targetGroupId,
   required String? targetGroupName,
-  required Map<String?, List<HabitGroupModifyItem>> sourceGroups,
+  required Map<GroupUUID, List<HabitGroupModifyItem>> sourceGroups,
   required bool skipFutureEnabled,
   required ValueChanged<bool> onSkipFutureChanged,
 }) async {
@@ -67,50 +67,128 @@ Future<bool> showHabitGroupModifyConfirmDialog({
       ? (l10n?.habitDisplay_groupModifyConfirm_titleMixed ?? 'Confirm Change')
       : (l10n?.habitDisplay_groupModifyConfirm_titleNew ?? 'Move to Group');
 
-  // Track skip value locally; only persist on confirm.
-  var skipValue = skipFutureEnabled;
-
-  final result = await showConfirmDialog(
-    context: context,
-    title: Text(title),
-    subtitleBuilder: (context) => HabitGroupModifyConfirmContent(
-      affectedHabits: affectedHabits,
-      addCount: addCount,
-      changeCount: changeCount,
-      removeCount: removeCount,
-      sourceGroups: sourceGroups,
-      targetGroupId: targetGroupId,
-      targetGroupName: targetGroupName,
-      isMixed: isMixed,
+  final skipFuture = await Navigator.of(context).push<bool>(
+    adaptiveModalPageRoute<bool>(
+      context: context,
+      builder: (_) => _HabitGroupModifyConfirmPage(
+        title: title,
+        affectedHabits: affectedHabits,
+        addCount: addCount,
+        changeCount: changeCount,
+        removeCount: removeCount,
+        sourceGroups: sourceGroups,
+        targetGroupId: targetGroupId,
+        targetGroupName: targetGroupName,
+        isMixed: isMixed,
+        skipFutureEnabled: skipFutureEnabled,
+      ),
     ),
-    confirmTextBuilder: (context) {
-      final l10n = L10n.of(context);
-      return Text(l10n?.confirmDialog_confirm_text('confirm') ?? 'Confirm');
-    },
-    cancelTextBuilder: (context) {
-      final l10n = L10n.of(context);
-      return Text(l10n?.confirmDialog_cancel_text ?? 'Cancel');
-    },
-    skipOnConfirm: true,
-    skipInitiallyEnabled: skipFutureEnabled,
-    onSkipChanged: (v) {
-      skipValue = v;
-    },
   );
 
-  if (result == true) {
-    onSkipFutureChanged(skipValue);
-  }
+  if (skipFuture != null) onSkipFutureChanged(skipFuture);
 
-  return result ?? false;
+  return skipFuture != null;
 }
 
+class _HabitGroupModifyConfirmPage extends StatefulWidget {
+  const _HabitGroupModifyConfirmPage({
+    required this.title,
+    required this.affectedHabits,
+    required this.addCount,
+    required this.changeCount,
+    required this.removeCount,
+    required this.sourceGroups,
+    required this.targetGroupId,
+    required this.targetGroupName,
+    required this.isMixed,
+    required this.skipFutureEnabled,
+  });
+
+  final String title;
+  final List<HabitGroupModifyItem> affectedHabits;
+  final int addCount;
+  final int changeCount;
+  final int removeCount;
+  final Map<GroupUUID, List<HabitGroupModifyItem>> sourceGroups;
+  final GroupUUID? targetGroupId;
+  final String? targetGroupName;
+  final bool isMixed;
+  final bool skipFutureEnabled;
+
+  @override
+  State<_HabitGroupModifyConfirmPage> createState() =>
+      _HabitGroupModifyConfirmPageState();
+}
+
+class _HabitGroupModifyConfirmPageState
+    extends State<_HabitGroupModifyConfirmPage> {
+  late bool _skipFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _skipFuture = widget.skipFutureEnabled;
+  }
+
+  void _confirm() => Navigator.of(context).pop(_skipFuture);
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    final confirmLabel = AppActionVerb.label(context, AppActionVerb.confirm);
+    final confirmAction = switch (AdaptiveStyle.of(context)) {
+      AdaptiveStyle.material => FilledButton(
+        key: const ValueKey('group-modify-confirm'),
+        onPressed: _confirm,
+        child: Text(confirmLabel),
+      ),
+      AdaptiveStyle.apple => CupertinoButton(
+        key: const ValueKey('group-modify-confirm'),
+        onPressed: _confirm,
+        child: Text(confirmLabel),
+      ),
+    };
+    return AdaptiveModal.slivers(
+      title: Text(widget.title),
+      actions: [confirmAction],
+      automaticallyImplyLeading: true,
+      automaticallyImplyCloseButton: false,
+      slivers: [
+        HabitGroupModifyConfirmContent(
+          affectedHabits: widget.affectedHabits,
+          addCount: widget.addCount,
+          changeCount: widget.changeCount,
+          removeCount: widget.removeCount,
+          sourceGroups: widget.sourceGroups,
+          targetGroupId: widget.targetGroupId,
+          targetGroupName: widget.targetGroupName,
+          isMixed: widget.isMixed,
+        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 16)),
+        SliverToBoxAdapter(
+          child: AdaptiveListSection(
+            padding: EdgeInsets.zero,
+            children: [
+              AdaptiveSwitchListTile(
+                title: Text(l10n?.common_dontShowAgain ?? "Don't show again"),
+                value: _skipFuture,
+                onChanged: (value) => setState(() => _skipFuture = value),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Sliver content sharing the modal scroll viewport with its preview tree.
 class HabitGroupModifyConfirmContent extends StatelessWidget {
   final List<HabitGroupModifyItem> affectedHabits;
   final int addCount;
   final int changeCount;
   final int removeCount;
-  final Map<String?, List<HabitGroupModifyItem>> sourceGroups;
+  final Map<GroupUUID, List<HabitGroupModifyItem>> sourceGroups;
   final GroupUUID? targetGroupId;
   final String? targetGroupName;
   final bool isMixed;
@@ -129,26 +207,32 @@ class HabitGroupModifyConfirmContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
+    final sourceNames = sourceGroups.values
+        .map((habits) => habits.first.oldGroupName)
+        .nonNulls
+        .toList();
+    final visibleNames = sourceNames.take(3).join(', ');
     final noChanges = addCount == 0 && changeCount == 0 && removeCount == 0;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+    return SliverMainAxisGroup(
+      slivers: [
         if (noChanges)
-          _buildNoChangesMessage(context)
+          SliverToBoxAdapter(child: _buildNoChangesMessage(context))
         else ...[
-          _StatSection(
-            addCount: addCount,
-            changeCount: changeCount,
-            removeCount: removeCount,
-            targetGroupId: targetGroupId,
-            targetGroupName: targetGroupName,
-            sourceNames: sourceGroups.keys.nonNulls.join(', '),
+          SliverToBoxAdapter(
+            child: _StatSection(
+              addCount: addCount,
+              changeCount: changeCount,
+              removeCount: removeCount,
+              targetGroupId: targetGroupId,
+              targetGroupName: targetGroupName,
+              sourceNames: visibleNames,
+              remainingGroupCount: sourceNames.skip(3).length,
+              totalGroupCount: sourceNames.length,
+            ),
           ),
-          const SizedBox(height: 8),
-          _buildSourceGroupLists(context, brightness),
+          const SliverToBoxAdapter(child: SizedBox(height: 8)),
+          _buildGroupPreview(context),
         ],
       ],
     );
@@ -162,73 +246,43 @@ class HabitGroupModifyConfirmContent extends StatelessWidget {
     );
   }
 
-  Widget _buildSourceGroupLists(BuildContext context, Brightness brightness) {
-    final entries = sourceGroups.entries.toList();
-    if (entries.isEmpty) {
-      return _buildHabitChipList(context, affectedHabits, brightness);
+  Widget _buildGroupPreview(BuildContext context) {
+    final l10n = L10n.of(context);
+    final groups = <GroupUUID?, List<HabitGroupModifyItem>>{};
+    for (final habit in affectedHabits) {
+      groups.putIfAbsent(habit.oldGroupId, () => []).add(habit);
     }
-
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxHeight: 160),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final entry in entries) ...[
-              if (entry.key != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 4, bottom: 2),
-                  child: Text(
-                    entry.key!,
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ),
-              _buildHabitChipList(
-                context,
-                entry.value,
-                brightness,
-                indent: entry.key != null,
-              ),
-            ],
-          ],
+    return SliverHabitGroupTree(
+      treeKey: const ValueKey('group-modify-preview-tree'),
+      expansionToggleKey: const ValueKey('group-modify-preview-toggle'),
+      root: HabitGroupTreeEntry(
+        id: 'group-modify-preview',
+        title: Text(
+          l10n?.habitDisplay_groupModifyConfirm_previewTitle ?? 'Preview',
         ),
       ),
-    );
-  }
-
-  Widget _buildHabitChipList(
-    BuildContext context,
-    List<HabitGroupModifyItem> habits,
-    Brightness brightness, {
-    bool indent = false,
-  }) {
-    final names = habits.map((h) => h.name).toList();
-    final colors = <Color?>[];
-    for (final h in habits) {
-      if (h.color != null) {
-        final customColors = Theme.of(context).extension<CustomColors>();
-        colors.add(customColors?.getColor(h.color!, brightness: brightness));
-      } else {
-        colors.add(null);
-      }
-    }
-
-    return Padding(
-      padding: EdgeInsets.only(left: indent ? 12 : 0),
-      child: Wrap(
-        spacing: 4,
-        runSpacing: 2,
-        children: [
-          for (final (i, name) in names.indexed)
-            Text(
-              name,
-              style: colors[i] != null ? TextStyle(color: colors[i]) : null,
+      groups: [
+        for (final (index, entry) in groups.entries.indexed)
+          HabitGroupTreeEntry(
+            id: entry.key == null
+                ? 'group-modify-preview-ungrouped'
+                : 'group-modify-preview-group-${entry.key}',
+            title: Text(
+              '${entry.value.first.oldGroupName ?? (entry.key == null ? (l10n?.habitEdit_groupPicker_noGroup ?? 'No Group') : '#${index + 1}')} (${entry.value.length})',
             ),
-        ],
-      ),
+            color: entry.value.first.oldGroupColor,
+            icon: entry.value.first.oldGroupIcon,
+            isUngrouped: entry.key == null,
+            children: [
+              for (final habit in entry.value)
+                HabitGroupTreeEntry(
+                  id: 'group-modify-preview-habit-${habit.uuid}',
+                  title: Text(habit.name),
+                  color: habit.color,
+                ),
+            ],
+          ),
+      ],
     );
   }
 }
@@ -241,6 +295,8 @@ class _StatSection extends StatelessWidget {
     this.targetGroupId,
     this.targetGroupName,
     required this.sourceNames,
+    required this.remainingGroupCount,
+    required this.totalGroupCount,
   });
 
   final int addCount;
@@ -249,6 +305,8 @@ class _StatSection extends StatelessWidget {
   final GroupUUID? targetGroupId;
   final String? targetGroupName;
   final String sourceNames;
+  final int remainingGroupCount;
+  final int totalGroupCount;
 
   bool get _hasChangesToGroup => changeCount > 0 && targetGroupId != null;
   bool get _hasAdditionsToGroup => addCount > 0 && targetGroupId != null;
@@ -275,6 +333,8 @@ class _StatSection extends StatelessWidget {
                   changeCount,
                   sourceNames,
                   targetGroupName ?? '',
+                  remainingGroupCount,
+                  totalGroupCount,
                 ) ??
                 '',
           ),

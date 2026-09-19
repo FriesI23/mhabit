@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' show MaterialLocalizations;
 
-import '../adaptive/adaptive_app_bar.dart';
-import '../adaptive/adaptive_modal_layout.dart';
+import '../adaptive/adaptive_icon_button.dart';
+import '../adaptive/adaptive_modal_content.dart';
+import '../adaptive/adaptive_sheet.dart';
 import '../adaptive/modal_sheet_drag_region.dart';
+import '../window_control/cupertino_navigation_bar.dart';
 import '../window_control/modal_app_bar_region.dart';
 
 const _sheetHeightFactor = 0.92;
@@ -299,15 +302,16 @@ class _CupertinoAdaptiveModalRouteSurfaceState
   Widget build(BuildContext context) {
     const maxExtent = _sheetHeightFactor;
     final surface = switch ((widget.presentation, widget.enableDrag)) {
-      (AdaptiveModalPresentation.dialog, false) => Center(
-        child: CupertinoPopupSurface(child: widget.contentBuilder(null)),
-      ),
+      (AdaptiveModalPresentation.dialog, false) =>
+        _CupertinoDialogKeyboardLayout(
+          child: CupertinoPopupSurface(child: widget.contentBuilder(null)),
+        ),
       (AdaptiveModalPresentation.dialog, true) => Builder(
         builder: (context) {
           final route = ModalRoute.of(context);
           assert(route is CupertinoAdaptiveModalRoute<dynamic>);
           final cupertinoRoute = route! as CupertinoAdaptiveModalRoute<dynamic>;
-          return Center(
+          return _CupertinoDialogKeyboardLayout(
             child: _CupertinoDialogScrollDismissRegion(
               showDragHandle: widget.showDragHandle,
               onDragStart: cupertinoRoute.startDrag,
@@ -441,6 +445,74 @@ class _CupertinoSheetBackground extends StatelessWidget {
       ],
     ),
   );
+}
+
+/// Keeps the dialog centered until it intersects the keyboard, then moves the
+/// whole surface just enough to clear it. All dimensions are window-local, so
+/// this also works in iPad windowed mode without device-size assumptions.
+class _CupertinoDialogKeyboardLayout extends StatelessWidget {
+  const _CupertinoDialogKeyboardLayout({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => TweenAnimationBuilder<double>(
+    tween: Tween(end: MediaQuery.viewInsetsOf(context).bottom),
+    duration: const Duration(milliseconds: 200),
+    curve: Curves.easeOut,
+    child: child,
+    builder: (context, keyboardInset, child) => CustomSingleChildLayout(
+      delegate: _CupertinoDialogKeyboardLayoutDelegate(
+        keyboardInset: keyboardInset,
+        windowHeight: MediaQuery.sizeOf(context).height,
+        topPadding: MediaQuery.paddingOf(context).top,
+      ),
+      child: child,
+    ),
+  );
+}
+
+class _CupertinoDialogKeyboardLayoutDelegate extends SingleChildLayoutDelegate {
+  const _CupertinoDialogKeyboardLayoutDelegate({
+    required this.keyboardInset,
+    required this.windowHeight,
+    required this.topPadding,
+  });
+
+  final double keyboardInset;
+  final double windowHeight;
+  final double topPadding;
+
+  double _availableBottom(double height) =>
+      math.min(height, math.max(0, windowHeight - keyboardInset));
+
+  @override
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) =>
+      BoxConstraints(
+        maxWidth: constraints.maxWidth,
+        maxHeight: math.max(
+          0,
+          _availableBottom(constraints.maxHeight) - topPadding,
+        ),
+      );
+
+  @override
+  Offset getPositionForChild(Size size, Size childSize) => Offset(
+    (size.width - childSize.width) / 2,
+    math.max(
+      topPadding,
+      math.min(
+        (size.height - childSize.height) / 2,
+        _availableBottom(size.height) - childSize.height,
+      ),
+    ),
+  );
+
+  @override
+  bool shouldRelayout(_CupertinoDialogKeyboardLayoutDelegate oldDelegate) =>
+      keyboardInset != oldDelegate.keyboardInset ||
+      windowHeight != oldDelegate.windowHeight ||
+      topPadding != oldDelegate.topPadding;
 }
 
 class _CupertinoDialogScrollDismissRegion extends StatefulWidget {
@@ -671,39 +743,43 @@ class _CupertinoDialogScrollPosition extends ScrollPositionWithSingleContext {
 class CupertinoAdaptiveModal extends StatelessWidget {
   const CupertinoAdaptiveModal({
     super.key,
+    this.showAppBar = true,
     required this.title,
     required this.leadingAction,
+    this.appBarActions = const [],
+    this.confirmAction,
     required this.actions,
     required this.pinnedBody,
-    required this.body,
+    required this.content,
     required this.bottomActions,
     required this.automaticallyImplyCloseButton,
     required this.onCloseRequested,
-    required this.constraints,
+    required this.size,
     required this.presentation,
     required this.scrollController,
+    this.onContentSizeChanged,
   });
 
+  final bool showAppBar;
   final Widget? title;
   final Widget? leadingAction;
+  final List<Widget> appBarActions;
+  final AdaptiveModalConfirmAction? confirmAction;
   final List<Widget> actions;
   final Widget? pinnedBody;
-  final Widget body;
+  final Widget content;
   final List<Widget> bottomActions;
   final bool automaticallyImplyCloseButton;
   final VoidCallback onCloseRequested;
-  final BoxConstraints? constraints;
+  final AdaptiveModalSize size;
   final AdaptiveModalPresentation presentation;
   final ScrollController scrollController;
+  final ValueChanged<Size>? onContentSizeChanged;
 
   @override
   Widget build(BuildContext context) {
     final theme = CupertinoTheme.of(context);
-    final modalBackgroundColor = CupertinoDynamicColor.resolve(
-      CupertinoColors.systemBackground,
-      context,
-    );
-    final impliedClose = automaticallyImplyCloseButton
+    final impliedClose = automaticallyImplyCloseButton && leadingAction == null
         ? Semantics(
             label: MaterialLocalizations.of(context).closeButtonLabel,
             button: true,
@@ -716,30 +792,63 @@ class CupertinoAdaptiveModal extends StatelessWidget {
             ),
           )
         : null;
-    final appBar = ModalWindowControlAppBarRegion(
-      child: MediaQuery.removePadding(
-        context: context,
-        removeTop: true,
-        child: AdaptiveAppBar.apple(
-          key: const ValueKey('adaptive-modal-app-bar'),
-          leading: leadingAction,
-          automaticallyImplyLeading: false,
-          title: title == null
-              ? const SizedBox.shrink()
-              : KeyedSubtree(
-                  key: const ValueKey('adaptive-modal-title'),
-                  child: title!,
-                ),
-          actions: [?impliedClose],
-          automaticBackgroundVisibility: false,
+    final closeLeading =
+        leadingAction == null &&
+        (confirmAction != null || appBarActions.isNotEmpty);
+    final leading = leadingAction ?? (closeLeading ? impliedClose : null);
+    final trailing = <Widget>[
+      ...appBarActions,
+      if (confirmAction case final action?)
+        AdaptiveIconButton.apple(
+          key: const ValueKey('adaptive-modal-confirm'),
+          icon: const Icon(CupertinoIcons.check_mark),
+          tooltip: action.label,
+          onPressed: action.onPressed,
         ),
-      ),
-    );
+      if (!closeLeading) ?impliedClose,
+    ];
+    final appBar = !showAppBar
+        ? null
+        : ModalWindowControlAppBarRegion(
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              child: ListenableBuilder(
+                listenable: scrollController,
+                builder: (context, _) => WindowControlCupertinoNavigationBar(
+                  key: const ValueKey('adaptive-modal-app-bar'),
+                  leading: leading == null
+                      ? null
+                      : Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [leading],
+                        ),
+                  automaticallyImplyLeading: false,
+                  middle: title == null
+                      ? const SizedBox.shrink()
+                      : KeyedSubtree(
+                          key: const ValueKey('adaptive-modal-title'),
+                          child: title!,
+                        ),
+                  trailing: trailing.isEmpty
+                      ? null
+                      : Row(mainAxisSize: MainAxisSize.min, children: trailing),
+                  backgroundColor: CupertinoColors.transparent,
+                  transitionBetweenRoutes: false,
+                  automaticBackgroundVisibility: true,
+                  enableBackgroundFilterBlur:
+                      scrollController.hasClients &&
+                      scrollController.position.extentBefore > 0,
+                ),
+              ),
+            ),
+          );
     final sheetDragController = ModalSheetDragControllerScope.maybeControllerOf(
       context,
     );
     final header =
-        presentation == AdaptiveModalPresentation.sheet &&
+        appBar != null &&
+            presentation == AdaptiveModalPresentation.sheet &&
             sheetDragController != null
         ? ModalSheetDragRegion(controller: sheetDragController, child: appBar)
         : appBar;
@@ -747,44 +856,43 @@ class CupertinoAdaptiveModal extends StatelessWidget {
         ? null
         : _CupertinoModalActionArea(actions: actions);
 
-    const appBarHeight = kMinInteractiveDimensionCupertino;
+    final appBarHeight = showAppBar ? kMinInteractiveDimensionCupertino : 0.0;
     final paddedPinnedBody = pinnedBody == null
         ? null
         : Padding(
-            padding: const EdgeInsets.only(top: appBarHeight),
+            padding: EdgeInsets.only(top: appBarHeight),
             child: pinnedBody,
           );
-    final paddedBody = pinnedBody == null
-        ? Padding(
-            padding: const EdgeInsets.only(top: appBarHeight),
-            child: body,
-          )
-        : body;
-    final content = CupertinoTheme(
+    final surface = CupertinoTheme(
       data: theme,
       child: DefaultTextStyle(
         style: theme.textTheme.textStyle,
         child: CupertinoPageScaffoldBackgroundColor(
-          color: modalBackgroundColor,
+          // The shared popup surface owns the tint. Keep the navigation bar's
+          // unscrolled background transparent instead of painting an opaque strip.
+          color: CupertinoColors.transparent,
           child: ScrollNotificationObserver(
             child: Stack(
               fit: StackFit.passthrough,
               children: [
-                AdaptiveModalLayout(
+                AdaptiveModalLayoutScope(
                   pinnedBody: paddedPinnedBody,
-                  body: paddedBody,
+                  contentTopInset: pinnedBody == null ? appBarHeight : 0,
                   bottomActions: bottomActions,
                   scrollController: scrollController,
+                  onContentSizeChanged: onContentSizeChanged,
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
                   presentation: presentation,
-                  constraints: constraints,
+                  size: size,
                   defaultMaxHeight:
                       presentation == AdaptiveModalPresentation.sheet
                       ? MediaQuery.sizeOf(context).height * _sheetHeightFactor
                       : null,
                   footer: footer,
+                  child: content,
                 ),
-                Positioned(top: 0, left: 0, right: 0, child: header),
+                if (header != null)
+                  Positioned(top: 0, left: 0, right: 0, child: header),
               ],
             ),
           ),
@@ -799,9 +907,9 @@ class CupertinoAdaptiveModal extends StatelessWidget {
           useLinearTransition: () => route.popGestureInProgress,
           textDirection: Directionality.of(context),
         ),
-        child: content,
+        child: surface,
       ),
-      _ => content,
+      _ => surface,
     };
   }
 }

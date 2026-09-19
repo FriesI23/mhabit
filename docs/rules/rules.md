@@ -200,6 +200,15 @@ explicit capacity in the page renderer, then pass its computed `primaryCapacity`
 to the action host. Keep the default slot width in that config; page-specific
 label allowances and overflow decisions remain explicit at the call site.
 
+When only a few properties or decorations differ between platforms, compose the
+existing adaptive widget and use an exhaustive `switch` for those properties; do
+not duplicate whole Material/Apple widgets for the same structure and callback.
+When platform widget structures differ, dispatch with an exhaustive `switch`
+to separate Material/Apple child widgets. Keep shared semantic values and business
+callbacks in the owner; platform children own layout and interaction. Put reusable
+single-action control rows in `mhabit_adaptive_ui` when a confirmed consumer needs
+them; keep rows with independent actions separate from single-action controls.
+
 ## Theme And Localization
 
 - Theme setup is owned by app entry and theme-related view models.

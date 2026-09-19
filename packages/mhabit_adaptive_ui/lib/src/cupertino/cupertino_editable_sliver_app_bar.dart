@@ -1,3 +1,4 @@
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
@@ -5,7 +6,10 @@ import '../window_control/toolbar_geometry.dart';
 import 'app_bar_apple_style.dart';
 import 'cupertino_sliver_app_bar.dart';
 
+part 'cupertino_editable_sliver_app_bar.g.dart';
+
 /// Apple configuration for a fixed navigation bar and editable title field.
+@CopyWith(skipFields: true)
 class AppleEditableAppBarStyle {
   const AppleEditableAppBarStyle({
     this.toolbarHeight = kMinInteractiveDimensionCupertino,
@@ -46,43 +50,6 @@ class AppleEditableAppBarStyle {
   final Color navigationBarBackgroundColor;
   final EdgeInsetsDirectional? navigationBarPadding;
   final EdgeInsetsDirectional windowControlEdgePadding;
-
-  AppleEditableAppBarStyle copyWith({
-    double? toolbarHeight,
-    EdgeInsetsDirectional? sectionPadding,
-    EdgeInsetsDirectional? fieldPadding,
-    double? fieldBorderRadius,
-    Color? sectionBackgroundColor,
-    Color? fieldBackgroundColor,
-    Color? separatorColor,
-    OverlayVisibilityMode? clearButtonMode,
-    Duration? titleTransitionDuration,
-    bool? enableBackgroundFilterBlur,
-    Border? navigationBarBorder,
-    Color? navigationBarBackgroundColor,
-    EdgeInsetsDirectional? navigationBarPadding,
-    EdgeInsetsDirectional? windowControlEdgePadding,
-  }) => AppleEditableAppBarStyle(
-    toolbarHeight: toolbarHeight ?? this.toolbarHeight,
-    sectionPadding: sectionPadding ?? this.sectionPadding,
-    fieldPadding: fieldPadding ?? this.fieldPadding,
-    fieldBorderRadius: fieldBorderRadius ?? this.fieldBorderRadius,
-    sectionBackgroundColor:
-        sectionBackgroundColor ?? this.sectionBackgroundColor,
-    fieldBackgroundColor: fieldBackgroundColor ?? this.fieldBackgroundColor,
-    separatorColor: separatorColor ?? this.separatorColor,
-    clearButtonMode: clearButtonMode ?? this.clearButtonMode,
-    titleTransitionDuration:
-        titleTransitionDuration ?? this.titleTransitionDuration,
-    enableBackgroundFilterBlur:
-        enableBackgroundFilterBlur ?? this.enableBackgroundFilterBlur,
-    navigationBarBorder: navigationBarBorder ?? this.navigationBarBorder,
-    navigationBarBackgroundColor:
-        navigationBarBackgroundColor ?? this.navigationBarBackgroundColor,
-    navigationBarPadding: navigationBarPadding ?? this.navigationBarPadding,
-    windowControlEdgePadding:
-        windowControlEdgePadding ?? this.windowControlEdgePadding,
-  );
 
   @override
   bool operator ==(Object other) =>

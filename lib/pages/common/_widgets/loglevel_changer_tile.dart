@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../logging/level.dart';
@@ -45,41 +46,40 @@ class LogLevelChangerTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget buildLogLevelOption(BuildContext context, LogLevel level) {
-      return SimpleDialogOption(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(_getLogName(context, level: level)),
-            if (crtLevel == level) const Icon(Icons.check),
-          ],
-        ),
-        onPressed: () {
-          onSelected?.call(level);
-          Navigator.of(context).maybePop();
-        },
-      );
-    }
-
     final l10n = L10n.of(context);
-    return ListTile(
+    return AdaptiveListTile(
       title: l10n != null
           ? Text(l10n.debug_logLevelTile_title)
           : const Text("Logging level"),
       subtitle: Text(_getLogName(context)),
-      onTap: () => showDialog(
+      onTap: () => showAdaptiveSheet<void>(
         context: context,
-        builder: (context) => SimpleDialog(
+        builder: (context) => AdaptiveModal(
+          size: const AdaptiveModalSize.constrained(),
           title: l10n != null
               ? Text(l10n.debug_logLevelDialog_title)
               : const Text("Change logging level"),
-          children: [
-            buildLogLevelOption(context, LogLevel.debug),
-            buildLogLevelOption(context, LogLevel.info),
-            buildLogLevelOption(context, LogLevel.warn),
-            buildLogLevelOption(context, LogLevel.error),
-            buildLogLevelOption(context, LogLevel.fatal),
-          ],
+          body: AdaptiveListSection(
+            appleTransparent: true,
+            padding: EdgeInsets.zero,
+            children: [
+              for (final level in LogLevel.values)
+                Semantics(
+                  key: ValueKey('log-level-option-${level.name}'),
+                  selected: crtLevel == level,
+                  child: AdaptiveListTile(
+                    title: Text(_getLogName(context, level: level)),
+                    trailing: crtLevel == level
+                        ? const AdaptiveCheckmark()
+                        : null,
+                    onTap: () {
+                      onSelected?.call(level);
+                      Navigator.of(context).maybePop();
+                    },
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

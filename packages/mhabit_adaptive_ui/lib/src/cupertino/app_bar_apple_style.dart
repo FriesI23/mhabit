@@ -1,8 +1,12 @@
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../window_control/toolbar_geometry.dart';
 
+part 'app_bar_apple_style.g.dart';
+
 /// Style config for the Apple branch of an adaptive AppBar.
+@CopyWith(skipFields: true)
 class AppBarAppleStyle {
   const AppBarAppleStyle({
     this.collapsible = false,
@@ -25,29 +29,6 @@ class AppBarAppleStyle {
 
   /// {@macro mhabit.windowControlEdgePadding}
   final EdgeInsetsDirectional windowControlEdgePadding;
-
-  AppBarAppleStyle copyWith({
-    bool? collapsible,
-    bool? enableBackgroundFilterBlur,
-    Border? border,
-    Color? backgroundColor,
-    bool? automaticBackgroundVisibility,
-    EdgeInsetsDirectional? padding,
-    bool? stretch,
-    EdgeInsetsDirectional? windowControlEdgePadding,
-  }) => AppBarAppleStyle(
-    collapsible: collapsible ?? this.collapsible,
-    enableBackgroundFilterBlur:
-        enableBackgroundFilterBlur ?? this.enableBackgroundFilterBlur,
-    border: border ?? this.border,
-    backgroundColor: backgroundColor ?? this.backgroundColor,
-    automaticBackgroundVisibility:
-        automaticBackgroundVisibility ?? this.automaticBackgroundVisibility,
-    padding: padding ?? this.padding,
-    stretch: stretch ?? this.stretch,
-    windowControlEdgePadding:
-        windowControlEdgePadding ?? this.windowControlEdgePadding,
-  );
 
   @override
   bool operator ==(Object other) =>

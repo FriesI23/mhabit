@@ -14,6 +14,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -22,7 +23,6 @@ import '../../../l10n/localizations.dart';
 import '../../../logging/helper.dart';
 import '../../../logging/logger_stack.dart';
 import '../../../providers/support/about_info.dart';
-import '../styles.dart';
 
 class AppAboutIssueTrackerTile extends StatefulWidget {
   final String? url;
@@ -52,12 +52,8 @@ class _AppAboutIssueTrackerTileState extends State<AppAboutIssueTrackerTile> {
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
     return Consumer<AboutInfo>(
-      builder: (context, value, child) => ListTile(
-        leading: const SizedBox(
-          height: kAppAboutListTileLeadingHeight,
-          width: kAppAboutListTileLeadingWidth,
-          child: Icon(MdiIcons.bugOutline),
-        ),
+      builder: (context, value, child) => AdaptiveListTile.external(
+        leading: const Icon(MdiIcons.bugOutline),
         title: l10n != null
             ? Text(l10n.appAbout_issueTrackerTile_titleText)
             : const Text("Issue tracker"),

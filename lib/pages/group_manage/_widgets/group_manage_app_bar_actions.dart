@@ -321,7 +321,7 @@ ActionCollection<_GroupManageAppBarAction> _buildMaterialNormalActions(
 ) => ActionCollection(
   roots: [
     if (hasGroups) _buildEnterReorderAction(l10n),
-    _buildSortAction(l10n, ActionPlacement.pinned),
+    _buildSortAction(l10n),
   ],
 );
 
@@ -337,10 +337,9 @@ ActionCollection<_GroupManageAppBarAction> _buildAppleNormalActions(
         tooltip: l10n?.groupManage_createButton_tooltip ?? 'Create group',
       ),
       payload: _GroupManageAppBarAction.create,
-      placementPolicy: ActionPlacementPolicy(placement: ActionPlacement.pinned),
     ),
     if (hasGroups) _buildEnterReorderAction(l10n),
-    _buildSortAction(l10n, ActionPlacement.overflowOnly),
+    _buildSortAction(l10n),
   ],
 );
 
@@ -355,18 +354,15 @@ AdaptiveAction<_GroupManageAppBarAction> _buildEnterReorderAction(L10n? l10n) =>
       placementPolicy: ActionPlacementPolicy(placement: ActionPlacement.pinned),
     );
 
-AdaptiveAction<_GroupManageAppBarAction> _buildSortAction(
-  L10n? l10n,
-  ActionPlacement placement,
-) => AdaptiveAction.action(
-  id: _sortActionId,
-  metadata: ActionMetadata(
-    label: l10n?.groupManage_sortTile_text ?? 'Sort Groups',
-    tooltip: l10n?.groupManage_sortTile_text ?? 'Sort Groups',
-  ),
-  payload: _GroupManageAppBarAction.sort,
-  placementPolicy: ActionPlacementPolicy(placement: placement),
-);
+AdaptiveAction<_GroupManageAppBarAction> _buildSortAction(L10n? l10n) =>
+    AdaptiveAction.action(
+      id: _sortActionId,
+      metadata: ActionMetadata(
+        label: l10n?.groupManage_sortTile_text ?? 'Sort Groups',
+        tooltip: l10n?.groupManage_sortTile_text ?? 'Sort Groups',
+      ),
+      payload: _GroupManageAppBarAction.sort,
+    );
 
 ActionCollection<_GroupManageAppBarAction> _buildSelectionActions(
   L10n? l10n,

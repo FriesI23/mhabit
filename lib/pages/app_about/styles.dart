@@ -14,7 +14,7 @@
 
 import 'package:flutter/material.dart';
 
-const kAppAboutListTileLeadingHeight = 56.0;
+const kAppAboutListTileLeadingHeight = 28.0;
 
 const kAppAboutListTileLeadingWidth = kAppAboutListTileLeadingHeight;
 

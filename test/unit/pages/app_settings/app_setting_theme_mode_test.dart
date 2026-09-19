@@ -3,6 +3,7 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/l10n/localizations.dart';
@@ -54,9 +55,9 @@ void main() {
       );
 
       expect(find.text(entry.$2), findsOneWidget);
-      expect(find.text(entry.$3), findsOneWidget);
       await tester.tap(find.byKey(const ValueKey('theme-mode-control')));
       await tester.pumpAndSettle();
+      expect(find.text(entry.$3), findsWidgets);
       expect(find.text(entry.$4), findsOneWidget);
       expect(find.text(entry.$5), findsOneWidget);
     });
@@ -77,8 +78,8 @@ void main() {
     );
 
     expect(find.text('Follow System'), findsOneWidget);
-    final anchor = tester.widget<MenuAnchor>(find.byType(MenuAnchor));
-    expect(anchor.animated, isTrue);
+    expect(find.byType(MenuAnchor), findsOneWidget);
+    expect(find.byType(SegmentedButton<AppThemeType>), findsNothing);
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('theme-mode-control')),
@@ -93,5 +94,36 @@ void main() {
 
     expect(viewModel.value, AppThemeType.dark);
     expect(find.text('Dark Theme'), findsOneWidget);
+  });
+
+  testWidgets('Theme Mode tile keeps the Apple segmented control', (
+    tester,
+  ) async {
+    final viewModel = _TestThemeViewModel();
+    addTearDown(viewModel.dispose);
+    await tester.pumpWidget(
+      ChangeNotifierProvider<AppThemeViewModel>.value(
+        value: viewModel,
+        child: MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          localizationsDelegates: L10n.localizationsDelegates,
+          supportedLocales: L10n.supportedLocales,
+          home: const Scaffold(
+            body: AppSettingThemeModeTile(useSideBySideLayout: true),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      find.byType(CupertinoSlidingSegmentedControl<AppThemeType>),
+      findsOneWidget,
+    );
+    expect(find.byType(CupertinoMenuAnchor), findsNothing);
+    expect(find.byType(MenuAnchor), findsNothing);
+    await tester.tap(find.text('Dark Theme'));
+    await tester.pumpAndSettle();
+
+    expect(viewModel.value, AppThemeType.dark);
   });
 }

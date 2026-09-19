@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
@@ -36,8 +38,14 @@ class AppSyncSummaryTile extends StatelessWidget {
 
   IconData? getTrailing(BuildContext context, AppSyncServer? serverConfig) =>
       switch (serverConfig?.type) {
-        != null => Icons.edit,
-        _ => Icons.add,
+        != null =>
+          AdaptiveStyle.of(context) == AdaptiveStyle.apple
+              ? CupertinoIcons.pencil
+              : Icons.edit,
+        _ =>
+          AdaptiveStyle.of(context) == AdaptiveStyle.apple
+              ? CupertinoIcons.add
+              : Icons.add,
       };
 
   @override
@@ -48,7 +56,7 @@ class AppSyncSummaryTile extends StatelessWidget {
     final l10n = L10n.of(context);
     final trailingData = getTrailing(context, serverConfig);
     final subtileLeading = getSubTitleLeading(context, serverConfig);
-    return ListTile(
+    return AdaptiveListTile(
       trailing: trailingData != null ? Icon(trailingData) : null,
       title: Text(l10n?.appSync_summaryTile_title ?? "Sync Server"),
       subtitle: serverConfig != null
@@ -59,12 +67,14 @@ class AppSyncSummaryTile extends StatelessWidget {
                   children: [
                     Icon(subtileLeading),
                     const SizedBox(width: 4),
-                    Text(
-                      l10n?.appSync_syncServerType_text(
+                    Flexible(
+                      child: Text(
+                        l10n?.appSync_syncServerType_text(
+                              serverConfig.type.name,
+                              '',
+                            ) ??
                             serverConfig.type.name,
-                            '',
-                          ) ??
-                          serverConfig.type.name,
+                      ),
                     ),
                   ],
                 ),

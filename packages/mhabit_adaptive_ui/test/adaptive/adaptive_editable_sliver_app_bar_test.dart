@@ -425,4 +425,28 @@ void main() {
     );
     expect(styles.apple, const AppleEditableAppBarStyle(toolbarHeight: 52));
   });
+
+  test('generated editable styles can clear nullable overrides', () {
+    const material = MaterialEditableAppBarStyle(
+      backgroundColor: Colors.red,
+      scrolledUnderElevation: 2,
+    );
+    const apple = AppleEditableAppBarStyle(
+      sectionBackgroundColor: Colors.red,
+      toolbarHeight: 52,
+    );
+    final clearedMaterial = material.copyWith(backgroundColor: null);
+    final clearedApple = apple.copyWith(sectionBackgroundColor: null);
+    final clearedStyles = const EditableAppBarStyles(
+      material: material,
+      apple: apple,
+    ).copyWith(material: null);
+
+    expect(clearedMaterial.backgroundColor, isNull);
+    expect(clearedMaterial.scrolledUnderElevation, 2);
+    expect(clearedApple.sectionBackgroundColor, isNull);
+    expect(clearedApple.toolbarHeight, 52);
+    expect(clearedStyles.material, isNull);
+    expect(clearedStyles.apple, same(apple));
+  });
 }

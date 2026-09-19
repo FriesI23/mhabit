@@ -492,8 +492,16 @@ class L10nZh extends L10n {
     int count,
     String fromGroup,
     String toGroup,
+    int remainingGroupCount,
+    int totalGroupCount,
   ) {
-    return '$count 个习惯将由「$fromGroup」修改至「$toGroup」';
+    String _temp0 = intl.Intl.pluralLogic(
+      remainingGroupCount,
+      locale: localeName,
+      other: '等共 $totalGroupCount 个分组',
+      zero: '',
+    );
+    return '$count 个习惯将由「$fromGroup」$_temp0修改至「$toGroup」';
   }
 
   @override
@@ -945,6 +953,13 @@ class L10nZh extends L10n {
 
   @override
   String get appSetting_changeLanguageDialog_titleText => '选择语言';
+
+  @override
+  String appSetting_changeLanguageDialog_currentLanguage_text(
+    String localeName,
+  ) {
+    return '当前语言：$localeName';
+  }
 
   @override
   String get appSetting_languageSubgroupText => '语言';
@@ -1768,6 +1783,12 @@ class L10nZh extends L10n {
   String get common_customDateTimeFormatPicker_monthName_text => '使用完整名称';
 
   @override
+  String get appDateFormat_leadingZero_text => '使用前导零';
+
+  @override
+  String get appDateFormat_preview_text => '预览';
+
+  @override
   String get common_customDateTimeFormatPicker_applyFreqChart_text => '对频率图表生效';
 
   @override
@@ -2126,6 +2147,14 @@ class L10nZh extends L10n {
 
   @override
   String get habitDisplay_groupType_manual => '自定义';
+
+  @override
+  String confirmDialog_confirmAndSkip_text(String action) {
+    return '$action，下次不再提示';
+  }
+
+  @override
+  String get habitDisplay_groupModifyConfirm_previewTitle => '预览';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -2573,8 +2602,16 @@ class L10nZhHant extends L10nZh {
     int count,
     String fromGroup,
     String toGroup,
+    int remainingGroupCount,
+    int totalGroupCount,
   ) {
-    return '$count 個習慣將由「$fromGroup」修改至「$toGroup」';
+    String _temp0 = intl.Intl.pluralLogic(
+      remainingGroupCount,
+      locale: localeName,
+      other: '等共 $totalGroupCount 個群組',
+      zero: '',
+    );
+    return '$count 個習慣將由「$fromGroup」$_temp0修改至「$toGroup」';
   }
 
   @override
@@ -3031,6 +3068,13 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get appSetting_changeLanguageDialog_titleText => '選擇語言';
+
+  @override
+  String appSetting_changeLanguageDialog_currentLanguage_text(
+    String localeName,
+  ) {
+    return '目前語言：$localeName';
+  }
 
   @override
   String get appSetting_languageSubgroupText => '語言';
@@ -3562,6 +3606,12 @@ class L10nZhHant extends L10nZh {
   String get common_customDateTimeFormatPicker_monthName_text => '使用完整名稱';
 
   @override
+  String get appDateFormat_leadingZero_text => '使用前導零';
+
+  @override
+  String get appDateFormat_preview_text => '預覽';
+
+  @override
   String get common_customDateTimeFormatPicker_applyFreqChart_text => '套用於頻率圖表';
 
   @override
@@ -3880,4 +3930,12 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get habitDisplay_groupType_manual => '自訂順序';
+
+  @override
+  String confirmDialog_confirmAndSkip_text(String action) {
+    return '$action，下次不再提示';
+  }
+
+  @override
+  String get habitDisplay_groupModifyConfirm_previewTitle => '預覽';
 }

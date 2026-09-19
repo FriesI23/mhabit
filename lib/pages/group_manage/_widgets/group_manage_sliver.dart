@@ -12,22 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
-import '../../../common/consts.dart' show defaultGroupIcon;
-import '../../../extensions/custom_color_extensions.dart';
-import '../../../extensions/group_icon_extensions.dart';
-import '../../../l10n/localizations.dart';
+import '../../../extensions/target_platform_extensions.dart';
 import '../../../models/habit_group.dart';
 import '../../../models/habit_group_display.dart';
-import '../../../theme/color.dart' show CustomColors;
 import '../../../widgets/widgets.dart';
 import '../_providers/group_manage.dart';
+import 'group_manage_items.dart';
 
 /// Owns local item list and drag callbacks shared by [GroupManageGrid] and
-/// [GroupManageList].  States create one instance and delegate to it.
+/// [GroupManageList]. States create one instance and delegate to it.
 class _GroupManageDragHandler {
   static const scrollDirection = Axis.vertical;
 
@@ -40,14 +37,29 @@ class _GroupManageDragHandler {
     Animation<double> animation,
   ) {
     return Builder(
-      builder: (context) => Material(
-        elevation: 8,
-        shadowColor: Colors.black38,
-        borderRadius: const BorderRadius.all(Radius.circular(12.0)),
-        surfaceTintColor: Colors.transparent,
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        child: child,
-      ),
+      builder: (context) => switch (AdaptiveStyle.of(context)) {
+        AdaptiveStyle.apple => DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x33000000),
+                blurRadius: 16,
+                offset: Offset(0, 6),
+              ),
+            ],
+          ),
+          child: child,
+        ),
+        AdaptiveStyle.material => Material(
+          elevation: 8,
+          shadowColor: Colors.black38,
+          borderRadius: const BorderRadius.all(Radius.circular(12.0)),
+          surfaceTintColor: Colors.transparent,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          child: child,
+        ),
+      },
     );
   }
 
@@ -77,7 +89,7 @@ class _GroupManageDragHandler {
 
   void onReorderStart(int index, bool selectionMode, {bool? isManual}) {
     // Enter selection mode simultaneously when the drag starts (via either
-    // drag-handle click or long-press).  Use [listen: false] to avoid a
+    // drag-handle click or long-press). Use [listen: false] to avoid a
     // [notifyListeners] during the drag setup, which would interfere with
     // the drag animation.
     if (!selectionMode && (isManual ?? isManualSort) && index < items.length) {
@@ -156,30 +168,41 @@ class _GroupManageGridState extends State<GroupManageGrid> {
 
   @override
   Widget build(BuildContext context) {
-    final showHandle = _handler.isManualSort && !_isMobilePlatform;
+    final showHandle =
+        _handler.isManualSort &&
+        !DeviceContext.of(context).platform.isMobileOperatingSystem;
 
     return SliverReorderableAnimatedList<HabitGroupData>.grid(
       scrollDirection: _GroupManageDragHandler.scrollDirection,
       items: _handler.items,
       isSameItem: _GroupManageDragHandler.isSameItem,
-      itemBuilder: (context, index) => _GroupGridCard(
-        index: index,
-        key: ValueKey(_handler.items[index].uuid),
-        group: _handler.items[index],
-        selectedUUIDs: widget.selectedUUIDs,
-        selectionMode: widget.selectionMode,
-        showDragHandle: showHandle,
-        onTap: widget.onTap,
-        onLongPress: _handler.resolveLongPressCallback(
-          index,
-          widget.selectionMode,
-        ),
-        onEdit: widget.onEdit,
-        onDelete: widget.onDelete,
-      ),
-      sliverGridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+      itemBuilder: (context, index) {
+        final group = _handler.items[index];
+        return GroupManageGridItem(
+          key: ValueKey(group.uuid),
+          index: index,
+          group: group,
+          isSelected: widget.selectedUUIDs.contains(group.uuid),
+          selectionMode: widget.selectionMode,
+          showDragHandle: showHandle,
+          onTap: () => widget.onTap(group.uuid),
+          onLongPress: _handler.resolveLongPressCallback(
+            index,
+            widget.selectionMode,
+          ),
+          onEdit: () => widget.onEdit(group.uuid),
+          onDelete: () => widget.onDelete(group.uuid),
+        );
+      },
+      sliverGridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 300,
-        mainAxisExtent: 100,
+        mainAxisExtent:
+            100 +
+            (MediaQuery.textScalerOf(context).scale(16) - 16).clamp(
+                  0,
+                  double.infinity,
+                ) *
+                2,
         crossAxisSpacing: 8,
         mainAxisSpacing: 8,
       ),
@@ -242,27 +265,32 @@ class _GroupManageListState extends State<GroupManageList> {
 
   @override
   Widget build(BuildContext context) {
-    final showHandle = _handler.isManualSort && !_isMobilePlatform;
+    final showHandle =
+        _handler.isManualSort &&
+        !DeviceContext.of(context).platform.isMobileOperatingSystem;
 
     return SliverReorderableAnimatedList<HabitGroupData>(
       scrollDirection: _GroupManageDragHandler.scrollDirection,
       items: _handler.items,
       isSameItem: _GroupManageDragHandler.isSameItem,
-      itemBuilder: (context, index) => _GroupManageTile(
-        index: index,
-        key: ValueKey(_handler.items[index].uuid),
-        group: _handler.items[index],
-        isSelected: widget.selectedUUIDs.contains(_handler.items[index].uuid),
-        selectionMode: widget.selectionMode,
-        showDragHandle: showHandle,
-        onTap: () => widget.onTap(_handler.items[index].uuid),
-        onLongPress: _handler.resolveLongPressCallback(
-          index,
-          widget.selectionMode,
-        ),
-        onEdit: () => widget.onEdit(_handler.items[index].uuid),
-        onDelete: () => widget.onDelete(_handler.items[index].uuid),
-      ),
+      itemBuilder: (context, index) {
+        final group = _handler.items[index];
+        return GroupManageListItem(
+          key: ValueKey(group.uuid),
+          index: index,
+          group: group,
+          isSelected: widget.selectedUUIDs.contains(group.uuid),
+          selectionMode: widget.selectionMode,
+          showDragHandle: showHandle,
+          onTap: () => widget.onTap(group.uuid),
+          onLongPress: _handler.resolveLongPressCallback(
+            index,
+            widget.selectionMode,
+          ),
+          onEdit: () => widget.onEdit(group.uuid),
+          onDelete: () => widget.onDelete(group.uuid),
+        );
+      },
       proxyDecorator: _GroupManageDragHandler.proxyDecorator,
       onReorderStart: (index) =>
           _handler.onReorderStart(index, widget.selectionMode),
@@ -270,367 +298,6 @@ class _GroupManageListState extends State<GroupManageList> {
         _handler.onReorder(oldIndex, newIndex);
       }),
       nonDraggableItems: _handler.resolveNonDraggable(),
-    );
-  }
-}
-
-class _GroupGridCard extends StatelessWidget {
-  final int index;
-  final HabitGroupData group;
-  final Set<String> selectedUUIDs;
-  final bool selectionMode;
-  final bool showDragHandle;
-  final void Function(String uuid) onTap;
-  final VoidCallback? onLongPress;
-  final void Function(String uuid) onEdit;
-  final void Function(String uuid) onDelete;
-
-  const _GroupGridCard({
-    super.key,
-    required this.index,
-    required this.group,
-    required this.selectedUUIDs,
-    required this.selectionMode,
-    this.showDragHandle = false,
-    required this.onTap,
-    this.onLongPress,
-    required this.onEdit,
-    required this.onDelete,
-  });
-
-  static const _shape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(Radius.circular(12.0)),
-  );
-
-  Color? _resolveTileColor(BuildContext context, HabitGroupData data) {
-    final color = data.color;
-    if (color == null) return null;
-    final customColors = Theme.of(context).extension<CustomColors>();
-    if (customColors == null) return null;
-    return customColors.getColor(
-      color,
-      brightness: Theme.of(context).brightness,
-    );
-  }
-
-  Widget _buildHeader(BuildContext context, bool isSelected) => Row(
-    children: [
-      _SelectionIndicator(
-        selectionMode: selectionMode,
-        isSelected: isSelected,
-        groupIcon: group.icon?.iconData ?? defaultGroupIcon,
-        iconColor: _resolveTileColor(context, group),
-      ),
-      const SizedBox(width: 8),
-      Expanded(
-        child: Text(
-          group.name,
-          style: Theme.of(context).textTheme.titleSmall,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ),
-      _TrailingAction(
-        index: index,
-        showDragHandle: showDragHandle,
-        selectionMode: selectionMode,
-        onEdit: () => onEdit(group.uuid),
-        onDelete: () => onDelete(group.uuid),
-      ),
-    ],
-  );
-
-  Widget? _buildDescription(BuildContext context, ColorScheme colorScheme) =>
-      group.desc.isEmpty
-      ? null
-      : Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Text(
-            group.desc,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        );
-
-  void _showContextMenu(BuildContext context, TapDownDetails details) {
-    showMenu<_GroupAction>(
-      context: context,
-      position: RelativeRect.fromLTRB(
-        details.globalPosition.dx,
-        details.globalPosition.dy,
-        details.globalPosition.dx,
-        details.globalPosition.dy,
-      ),
-      items: _popupMenuItems(
-        context,
-        onEdit: () => onEdit(group.uuid),
-        onDelete: () => onDelete(group.uuid),
-      ),
-    ).then((value) {
-      if (value != null) {
-        _handleMenuSelected(
-          value,
-          onEdit: () => onEdit(group.uuid),
-          onDelete: () => onDelete(group.uuid),
-        );
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isSelected = selectedUUIDs.contains(group.uuid);
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return GestureDetector(
-      onSecondaryTapDown: (d) => _showContextMenu(context, d),
-      child: Card(
-        shape: _shape,
-        clipBehavior: Clip.antiAlias,
-        color: isSelected
-            ? colorScheme.primaryContainer
-            : colorScheme.surfaceContainerHighest,
-        child: InkWell(
-          borderRadius: _shape.borderRadius.resolve(null),
-          onTap: () => onTap(group.uuid),
-          onLongPress: onLongPress,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(context, isSelected),
-                ?_buildDescription(context, colorScheme),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-enum _GroupAction { edit, delete }
-
-List<PopupMenuEntry<_GroupAction>> _popupMenuItems(
-  BuildContext context, {
-  VoidCallback? onEdit,
-  VoidCallback? onDelete,
-}) => [
-  PopupMenuItem(
-    value: _GroupAction.edit,
-    child: ListTile(
-      leading: const Icon(Icons.edit_outlined),
-      title: Text(L10n.of(context)?.groupManage_menu_edit ?? 'Edit'),
-      dense: true,
-      contentPadding: EdgeInsets.zero,
-    ),
-  ),
-  PopupMenuItem(
-    value: _GroupAction.delete,
-    child: ListTile(
-      leading: const Icon(Icons.delete_outline),
-      title: Text(L10n.of(context)?.groupManage_menu_delete ?? 'Delete'),
-      dense: true,
-      contentPadding: EdgeInsets.zero,
-    ),
-  ),
-];
-
-void _handleMenuSelected(
-  _GroupAction value, {
-  VoidCallback? onEdit,
-  VoidCallback? onDelete,
-}) {
-  switch (value) {
-    case _GroupAction.edit:
-      onEdit?.call();
-    case _GroupAction.delete:
-      onDelete?.call();
-  }
-}
-
-/// Unified trailing action area — always 24×24.
-///
-/// Shows a drag handle when [showDragHandle] is true, nothing in selection
-/// mode, or a PopupMenu otherwise.
-class _TrailingAction extends StatelessWidget {
-  final int index;
-  final bool showDragHandle;
-  final bool selectionMode;
-  final VoidCallback? onEdit;
-  final VoidCallback? onDelete;
-
-  const _TrailingAction({
-    required this.index,
-    required this.showDragHandle,
-    required this.selectionMode,
-    this.onEdit,
-    this.onDelete,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (showDragHandle) return DragHandleButton(index: index);
-    if (selectionMode) return const SizedBox.square(dimension: 40.0);
-    return PopupMenuButton<_GroupAction>(
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(12)),
-      ),
-      onSelected: (v) =>
-          _handleMenuSelected(v, onEdit: onEdit, onDelete: onDelete),
-      itemBuilder: _buildMenuItems,
-    );
-  }
-
-  List<PopupMenuEntry<_GroupAction>> _buildMenuItems(BuildContext context) =>
-      _popupMenuItems(context, onEdit: onEdit, onDelete: onDelete);
-}
-
-/// Selection indicator that always occupies a fixed 24×24 area.
-///
-/// When [selectionMode] is false, shows the group icon.
-/// When [selectionMode] is true and [isSelected] is false, shows the group icon.
-/// When selected, shows a filled circle with a check mark.
-/// Uses [AnimatedSwitcher] for smooth transitions.
-class _SelectionIndicator extends StatelessWidget {
-  final bool selectionMode;
-  final bool isSelected;
-  final IconData groupIcon;
-  final Color? iconColor;
-
-  const _SelectionIndicator({
-    required this.selectionMode,
-    required this.isSelected,
-    required this.groupIcon,
-    this.iconColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final showCircle = selectionMode && isSelected;
-    return SizedBox(
-      width: 24,
-      height: 24,
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 200),
-        child: showCircle
-            ? Container(
-                key: const ValueKey('selected'),
-                decoration: BoxDecoration(
-                  color: colorScheme.primary,
-                  shape: BoxShape.circle,
-                ),
-                alignment: Alignment.center,
-                child: const Icon(Icons.check, size: 16, color: Colors.white),
-              )
-            : Icon(
-                key: const ValueKey('icon'),
-                groupIcon,
-                color: iconColor,
-                size: 24,
-              ),
-      ),
-    );
-  }
-}
-
-/// Whether the current platform is iOS or Android (mobile).
-bool get _isMobilePlatform =>
-    defaultTargetPlatform == TargetPlatform.iOS ||
-    defaultTargetPlatform == TargetPlatform.android;
-
-class _GroupManageTile extends StatelessWidget {
-  final int index;
-  final HabitGroupData group;
-  final bool isSelected;
-  final bool selectionMode;
-  final bool showDragHandle;
-  final VoidCallback? onTap;
-  final VoidCallback? onLongPress;
-  final VoidCallback? onEdit;
-  final VoidCallback? onDelete;
-
-  const _GroupManageTile({
-    super.key,
-    required this.index,
-    required this.group,
-    this.isSelected = false,
-    this.selectionMode = false,
-    this.showDragHandle = false,
-    this.onTap,
-    this.onLongPress,
-    this.onEdit,
-    this.onDelete,
-  });
-
-  Color? _resolveTileColor(BuildContext context) {
-    final color = group.color;
-    if (color == null) return null;
-    final customColors = Theme.of(context).extension<CustomColors>();
-    if (customColors == null) return null;
-    return customColors.getColor(
-      color,
-      brightness: Theme.of(context).brightness,
-    );
-  }
-
-  Widget _buildLeading(BuildContext context) => _SelectionIndicator(
-    selectionMode: selectionMode,
-    isSelected: isSelected,
-    groupIcon: group.icon?.iconData ?? defaultGroupIcon,
-    iconColor: _resolveTileColor(context),
-  );
-
-  Widget? _buildSubtitle() => group.desc.isNotEmpty
-      ? Text(group.desc, maxLines: 1, overflow: TextOverflow.ellipsis)
-      : null;
-
-  Widget _buildTrailing(BuildContext context) => _TrailingAction(
-    index: index,
-    showDragHandle: showDragHandle,
-    selectionMode: selectionMode,
-    onEdit: onEdit,
-    onDelete: onDelete,
-  );
-
-  void _showContextMenu(BuildContext context, TapDownDetails details) {
-    showMenu<_GroupAction>(
-      context: context,
-      position: RelativeRect.fromLTRB(
-        details.globalPosition.dx,
-        details.globalPosition.dy,
-        details.globalPosition.dx,
-        details.globalPosition.dy,
-      ),
-      items: _popupMenuItems(context, onEdit: onEdit, onDelete: onDelete),
-    ).then((value) {
-      if (value != null) {
-        _handleMenuSelected(value, onEdit: onEdit, onDelete: onDelete);
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return GestureDetector(
-      onSecondaryTapDown: (d) => _showContextMenu(context, d),
-      onLongPress: onLongPress,
-      child: ListTile(
-        selected: selectionMode && isSelected,
-        selectedTileColor: colorScheme.primaryContainer.withAlpha(77),
-        selectedColor: colorScheme.onPrimaryContainer,
-        leading: _buildLeading(context),
-        title: Text(group.name),
-        subtitle: _buildSubtitle(),
-        trailing: _buildTrailing(context),
-        onTap: onTap,
-      ),
     );
   }
 }

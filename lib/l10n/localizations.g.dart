@@ -916,7 +916,7 @@ abstract class L10n {
   /// **'Create Group'**
   String get habitDisplay_groupModifyDialog_createGroup;
 
-  /// No description provided for @habitDisplay_groupModifyDialog_saveAndApply.
+  /// Deprecated. Use habitEdit_saveButton_text instead.
   ///
   /// In en, this message translates to:
   /// **'Save & Apply'**
@@ -949,11 +949,13 @@ abstract class L10n {
   /// No description provided for @habitDisplay_groupModifyConfirm_bodyChangeStat.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1 {{count} habit will change from \"{fromGroup}\" to \"{toGroup}\"} other {{count} habits will change from \"{fromGroup}\" to \"{toGroup}\"}}'**
+  /// **'{count, plural, =1 {{count} habit will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group} other{ and {remainingGroupCount} more groups}} to \"{toGroup}\"} other {{count} habits will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group} other{ and {remainingGroupCount} more groups}} to \"{toGroup}\"}}'**
   String habitDisplay_groupModifyConfirm_bodyChangeStat(
     int count,
     String fromGroup,
     String toGroup,
+    int remainingGroupCount,
+    int totalGroupCount,
   );
 
   /// No description provided for @habitDisplay_groupModifyConfirm_bodyAddStat.
@@ -1711,6 +1713,14 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Select Language'**
   String get appSetting_changeLanguageDialog_titleText;
+
+  /// No description provided for @appSetting_changeLanguageDialog_currentLanguage_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Current language: {localeName}'**
+  String appSetting_changeLanguageDialog_currentLanguage_text(
+    String localeName,
+  );
 
   /// No description provided for @appSetting_languageSubgroupText.
   ///
@@ -2999,6 +3009,18 @@ abstract class L10n {
   /// **'Use full name'**
   String get common_customDateTimeFormatPicker_monthName_text;
 
+  /// No description provided for @appDateFormat_leadingZero_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Use leading zeros'**
+  String get appDateFormat_leadingZero_text;
+
+  /// No description provided for @appDateFormat_preview_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get appDateFormat_preview_text;
+
   /// No description provided for @common_customDateTimeFormatPicker_applyFreqChart_text.
   ///
   /// In en, this message translates to:
@@ -3628,6 +3650,18 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Manual'**
   String get habitDisplay_groupType_manual;
+
+  /// Button that performs the named action now and skips this confirmation in future.
+  ///
+  /// In en, this message translates to:
+  /// **'{action}, and don\'t ask again'**
+  String confirmDialog_confirmAndSkip_text(String action);
+
+  /// No description provided for @habitDisplay_groupModifyConfirm_previewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get habitDisplay_groupModifyConfirm_previewTitle;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

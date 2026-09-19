@@ -1,12 +1,22 @@
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 
 import '../adaptive_style.dart';
+import '../cupertino/cupertino_adaptive_list_tile.dart';
+import 'list_section_row_scope.dart';
+
+enum _AdaptiveListTileKind { standard, external, navigation }
 
 /// Adaptive list item.
 ///
 /// The default constructor resolves the style from the current platform;
-/// `.material` forces the Material style. The Apple style currently falls back
-/// to the Material implementation.
+/// `.material` and `.apple` force a renderer. Apple uses a standard Cupertino
+/// list tile with wrapping text and keyboard activation. Separators belong to
+/// the surrounding list section; trailing content is supplied by the caller.
+/// `.external` represents a destination outside the app and supplies the
+/// platform-appropriate external-navigation indicator.
+/// `.navigation` represents navigation to another destination inside the app
+/// and supplies the platform-appropriate disclosure indicator.
 class AdaptiveListTile extends StatelessWidget {
   const AdaptiveListTile({
     super.key,
@@ -15,7 +25,31 @@ class AdaptiveListTile extends StatelessWidget {
     this.leading,
     this.trailing,
     this.onTap,
-  }) : style = null;
+    this.onLongPress,
+  }) : style = null,
+       _kind = _AdaptiveListTileKind.standard;
+
+  const AdaptiveListTile.external({
+    super.key,
+    required this.title,
+    this.subtitle,
+    this.leading,
+    this.onTap,
+    this.onLongPress,
+  }) : style = null,
+       trailing = null,
+       _kind = _AdaptiveListTileKind.external;
+
+  const AdaptiveListTile.navigation({
+    super.key,
+    required this.title,
+    this.subtitle,
+    this.leading,
+    this.onTap,
+    this.onLongPress,
+  }) : style = null,
+       trailing = null,
+       _kind = _AdaptiveListTileKind.navigation;
 
   const AdaptiveListTile.material({
     super.key,
@@ -24,7 +58,20 @@ class AdaptiveListTile extends StatelessWidget {
     this.leading,
     this.trailing,
     this.onTap,
-  }) : style = AdaptiveStyle.material;
+    this.onLongPress,
+  }) : style = AdaptiveStyle.material,
+       _kind = _AdaptiveListTileKind.standard;
+
+  const AdaptiveListTile.apple({
+    super.key,
+    required this.title,
+    this.subtitle,
+    this.leading,
+    this.trailing,
+    this.onTap,
+    this.onLongPress,
+  }) : style = AdaptiveStyle.apple,
+       _kind = _AdaptiveListTileKind.standard;
 
   final AdaptiveStyle? style;
   final Widget title;
@@ -32,23 +79,52 @@ class AdaptiveListTile extends StatelessWidget {
   final Widget? leading;
   final Widget? trailing;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+  final _AdaptiveListTileKind _kind;
+
+  Widget? _trailingFor(AdaptiveStyle style) => switch ((_kind, style)) {
+    (_AdaptiveListTileKind.external, AdaptiveStyle.material) => const Icon(
+      Icons.open_in_new,
+    ),
+    (_AdaptiveListTileKind.external, AdaptiveStyle.apple) => const Icon(
+      CupertinoIcons.arrow_up_right_square,
+    ),
+    (_AdaptiveListTileKind.navigation, AdaptiveStyle.material) => null,
+    (_AdaptiveListTileKind.navigation, AdaptiveStyle.apple) => const Icon(
+      CupertinoIcons.chevron_forward,
+    ),
+    (_AdaptiveListTileKind.standard, _) => trailing,
+  };
 
   @override
   Widget build(BuildContext context) {
     final effective = style ?? AdaptiveStyle.of(context);
+    final effectiveTrailing = _trailingFor(effective);
     return switch (effective) {
-      // TODO(adaptive-ui::apple): apple style (Cupertino separator style, 44pt).
-      AdaptiveStyle.apple || AdaptiveStyle.material => _buildMaterial(),
+      AdaptiveStyle.apple => CupertinoAdaptiveListTile(
+        title: title,
+        subtitle: subtitle,
+        leading: leading,
+        trailing: effectiveTrailing,
+        onTap: onTap,
+        onLongPress: onLongPress,
+      ),
+      AdaptiveStyle.material => _buildMaterial(context, effectiveTrailing),
     };
   }
 
-  Widget _buildMaterial() {
+  Widget _buildMaterial(BuildContext context, Widget? effectiveTrailing) {
+    final section = ListSectionRowScope.maybeOf(context);
     return ListTile(
+      statesController: section?.style == AdaptiveStyle.material
+          ? section?.statesController
+          : null,
       title: title,
       subtitle: subtitle,
       leading: leading,
-      trailing: trailing,
+      trailing: effectiveTrailing,
       onTap: onTap,
+      onLongPress: onLongPress,
     );
   }
 }

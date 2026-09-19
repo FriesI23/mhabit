@@ -17,9 +17,11 @@ import 'dart:io';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
+import '../../../extensions/app_theme_color_extensions.dart';
 import '../../../extensions/custom_color_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/app_theme_color.dart';
@@ -32,7 +34,7 @@ Future<AppThemeColor?> showAppThemeColorChangerDialog({
   required BuildContext context,
   AppThemeColor? selectedColor,
 }) async {
-  return showDialog<AppThemeColor>(
+  return showAdaptiveSheet<AppThemeColor>(
     context: context,
     builder: (context) =>
         AppSettingThemeColorChoosenDialog(selectedColor: selectedColor),
@@ -69,7 +71,7 @@ class AppSettingThemeColorTile extends StatelessWidget {
       (vm) => vm.themeColor,
     );
     final l10n = L10n.of(context);
-    return ListTile(
+    return AdaptiveListTile(
       title: Text(
         l10n?.appSetting_appThemeColorTile_titleText ?? "Theme Color",
       ),
@@ -116,38 +118,40 @@ class AppSettingThemeColorChoosenDialog extends StatelessWidget {
       (vm) => vm.isInDevelopMode,
     );
     final l10n = L10n.of(context);
-    return SimpleDialog(
+    return AdaptiveModal(
+      size: const AdaptiveModalSize.constrained(),
       title: Text(
         l10n?.appSetting_appThemeColorChosenDiloag_titleText ??
             "Choose Theme Color",
       ),
-      children: [
-        _SystemChosenOption(
-          isSelected: selectedColor is SystemAppThemeColor,
-          debug: debug,
-        ),
-        _PrimaryChosenOption(
-          isSelected: selectedColor is PrimaryAppThemeColor,
-          debug: debug,
-        ),
-        if (!Platform.isIOS)
-          _DynamicChosenOption(
-            isSelected: selectedColor is DynamicAppThemeColor,
+      body: AdaptiveListSection(
+        appleTransparent: true,
+        padding: EdgeInsets.zero,
+        children: [
+          _SystemChosenOption(isSelected: selectedColor.isSystem, debug: debug),
+          _PrimaryChosenOption(
+            isSelected: selectedColor is PrimaryAppThemeColor,
             debug: debug,
           ),
-        ...HabitColorType.values.map((e) {
-          bool isSelected(AppThemeColor? themeColor) {
-            if (themeColor is! InternalAppThemeColor) return false;
-            return themeColor.colorType == e;
-          }
+          if (!Platform.isIOS)
+            _DynamicChosenOption(
+              isSelected: selectedColor is DynamicAppThemeColor,
+              debug: debug,
+            ),
+          ...HabitColorType.values.map((e) {
+            bool isSelected(AppThemeColor? themeColor) {
+              if (themeColor is! InternalAppThemeColor) return false;
+              return themeColor.colorType == e;
+            }
 
-          return _InternalChosenOption(
-            colorType: e,
-            isSelected: isSelected(selectedColor),
-            debug: debug,
-          );
-        }),
-      ],
+            return _InternalChosenOption(
+              colorType: e,
+              isSelected: isSelected(selectedColor),
+              debug: debug,
+            );
+          }),
+        ],
+      ),
     );
   }
 }
@@ -161,12 +165,17 @@ class _SystemChosenOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return ListTile(
-      title: Text(l10n?.common_appThemeColor_system ?? "System"),
-      subtitle: debug ? Text("${Theme.of(context).colorScheme.primary}") : null,
-      leading: const AppSettingThemeColorContainer(child: SizedBox.expand()),
-      trailing: isSelected ? const Icon(Icons.check) : null,
-      onTap: () => Navigator.of(context).pop(const SystemAppThemeColor()),
+    return Semantics(
+      selected: isSelected,
+      child: AdaptiveListTile(
+        title: Text(l10n?.common_appThemeColor_system ?? "System"),
+        subtitle: debug
+            ? Text("${Theme.of(context).colorScheme.primary}")
+            : null,
+        leading: const AppSettingThemeColorContainer(child: SizedBox.expand()),
+        trailing: isSelected ? const AdaptiveCheckmark() : null,
+        onTap: () => Navigator.of(context).pop(const SystemAppThemeColor()),
+      ),
     );
   }
 }
@@ -180,14 +189,17 @@ class _PrimaryChosenOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return ListTile(
-      title: Text(l10n?.common_appThemeColor_primary ?? "Primary"),
-      subtitle: debug ? Text("$appDefaultThemeMainColor") : null,
-      leading: const AppSettingThemeColorContainer(
-        child: ColoredBox(color: appDefaultThemeMainColor),
+    return Semantics(
+      selected: isSelected,
+      child: AdaptiveListTile(
+        title: Text(l10n?.common_appThemeColor_primary ?? "Primary"),
+        subtitle: debug ? Text("$appDefaultThemeMainColor") : null,
+        leading: const AppSettingThemeColorContainer(
+          child: ColoredBox(color: appDefaultThemeMainColor),
+        ),
+        trailing: isSelected ? const AdaptiveCheckmark() : null,
+        onTap: () => Navigator.of(context).pop(const PrimaryAppThemeColor()),
       ),
-      trailing: isSelected ? const Icon(Icons.check) : null,
-      onTap: () => Navigator.of(context).pop(const PrimaryAppThemeColor()),
     );
   }
 }
@@ -231,12 +243,15 @@ class _DynamicChosenOption extends StatelessWidget {
         sb.write(l10n?.appSetting_appThemeColorChosenDialog_subTitleText_linux);
       default:
     }
-    return ListTile(
-      title: Text(l10n?.common_appThemeColor_dynamic ?? "Dynamic"),
-      subtitle: Text(sb.toString()),
-      leading: AppSettingThemeColorContainer(child: child),
-      trailing: isSelected ? const Icon(Icons.check) : null,
-      onTap: () => Navigator.of(context).pop(const DynamicAppThemeColor()),
+    return Semantics(
+      selected: isSelected,
+      child: AdaptiveListTile(
+        title: Text(l10n?.common_appThemeColor_dynamic ?? "Dynamic"),
+        subtitle: Text(sb.toString()),
+        leading: AppSettingThemeColorContainer(child: child),
+        trailing: isSelected ? const AdaptiveCheckmark() : null,
+        onTap: () => Navigator.of(context).pop(const DynamicAppThemeColor()),
+      ),
     );
   }
 }
@@ -258,16 +273,19 @@ class _InternalChosenOption extends StatelessWidget {
     final color = Theme.of(
       context,
     ).extension<CustomColors>()?.getBuiltInColor(colorType);
-    return ListTile(
-      title: Text(HabitColorType.getColorName(colorType, l10n)),
-      subtitle: debug ? Text("$color") : null,
-      leading: AppSettingThemeColorContainer(
-        child: ColoredBox(color: color ?? Colors.transparent),
+    return Semantics(
+      selected: isSelected,
+      child: AdaptiveListTile(
+        title: Text(HabitColorType.getColorName(colorType, l10n)),
+        subtitle: debug ? Text("$color") : null,
+        leading: AppSettingThemeColorContainer(
+          child: ColoredBox(color: color ?? Colors.transparent),
+        ),
+        trailing: isSelected ? const AdaptiveCheckmark() : null,
+        onTap: () => Navigator.of(
+          context,
+        ).pop(InternalAppThemeColor(colorType: colorType)),
       ),
-      trailing: isSelected ? const Icon(Icons.check) : null,
-      onTap: () => Navigator.of(
-        context,
-      ).pop(InternalAppThemeColor(colorType: colorType)),
     );
   }
 }

@@ -14,6 +14,7 @@
 
 import '../../../common/types.dart';
 import '../../../models/habit_color.dart';
+import '../../../models/habit_group.dart';
 import '../../../models/habit_summary.dart';
 
 /// Information about a habit affected by a batch group modification.
@@ -22,12 +23,18 @@ class HabitGroupModifyItem {
   final String name;
   final HabitColor? color;
   final GroupUUID? oldGroupId;
+  final String? oldGroupName;
+  final HabitColor? oldGroupColor;
+  final GroupIcon? oldGroupIcon;
 
   const HabitGroupModifyItem({
     required this.uuid,
     required this.name,
     this.color,
     this.oldGroupId,
+    this.oldGroupName,
+    this.oldGroupColor,
+    this.oldGroupIcon,
   });
 }
 
@@ -41,10 +48,12 @@ class HabitGroupModifyHandler {
   final String? Function(GroupUUID?) getGroupName;
   final GroupUUID? targetGroupId;
   final bool _isNewGroup;
+  final HabitGroupData? Function(GroupUUID?)? getGroup;
 
   HabitGroupModifyHandler({
     required this.selectedData,
     required this.getGroupName,
+    this.getGroup,
     required this.targetGroupId,
   }) : _isNewGroup = false;
 
@@ -52,6 +61,7 @@ class HabitGroupModifyHandler {
   HabitGroupModifyHandler.forNewGroup({
     required this.selectedData,
     required this.getGroupName,
+    this.getGroup,
   }) : targetGroupId = null,
        _isNewGroup = true;
 
@@ -64,27 +74,30 @@ class HabitGroupModifyHandler {
 
   late final List<HabitGroupModifyItem> affectedHabits = _buildAffectedHabits();
 
-  late final Map<String?, List<HabitGroupModifyItem>> sourceGroups =
+  /// Habits leaving each existing group, keyed by ID rather than display name.
+  late final Map<GroupUUID, List<HabitGroupModifyItem>> sourceGroups =
       _buildSourceGroups();
 
   List<HabitGroupModifyItem> _buildAffectedHabits() {
-    return [
-      for (final data in selectedData)
-        HabitGroupModifyItem(
-          uuid: data.uuid,
-          name: data.name,
-          color: data.color,
-          oldGroupId: data.groupId,
-        ),
-    ];
+    return selectedData.map((data) {
+      final group = getGroup?.call(data.groupId);
+      return HabitGroupModifyItem(
+        uuid: data.uuid,
+        name: data.name,
+        color: data.color,
+        oldGroupId: data.groupId,
+        oldGroupName: group?.name ?? getGroupName(data.groupId),
+        oldGroupColor: group?.color,
+        oldGroupIcon: group?.icon,
+      );
+    }).toList();
   }
 
-  Map<String?, List<HabitGroupModifyItem>> _buildSourceGroups() {
-    final result = <String?, List<HabitGroupModifyItem>>{};
+  Map<GroupUUID, List<HabitGroupModifyItem>> _buildSourceGroups() {
+    final result = <GroupUUID, List<HabitGroupModifyItem>>{};
     for (final info in affectedHabits) {
       if (info.oldGroupId != null && info.oldGroupId != targetGroupId) {
-        final name = getGroupName(info.oldGroupId);
-        result.putIfAbsent(name, () => []).add(info);
+        result.putIfAbsent(info.oldGroupId!, () => []).add(info);
       }
     }
     return result;

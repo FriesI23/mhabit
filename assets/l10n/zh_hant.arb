@@ -304,6 +304,9 @@
     "habitDisplay_groupModifyDialog_alreadyInGroup": "所選習慣已在該分組中",
     "habitDisplay_groupModifyDialog_createGroup": "建立分組",
     "habitDisplay_groupModifyDialog_saveAndApply": "儲存並套用",
+    "@habitDisplay_groupModifyDialog_saveAndApply": {
+        "description": "Deprecated. Use habitEdit_saveButton_text instead."
+    },
     "habitDisplay_groupModifyConfirm_titleNew": "確認移動至分組",
     "habitDisplay_groupModifyConfirm_titleMixed": "確認修改分組",
     "habitDisplay_groupModifyConfirm_bodyNewGroup": "以下習慣將移動至「{groupName}」",
@@ -316,7 +319,7 @@
         }
     },
     "habitDisplay_groupModifyConfirm_bodyRemoveGroup": "移除以下習慣的分組",
-    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count} 個習慣將由「{fromGroup}」修改至「{toGroup}」",
+    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count} 個習慣將由「{fromGroup}」{remainingGroupCount, plural, =0{} other{等共 {totalGroupCount} 個群組}}修改至「{toGroup}」",
     "@habitDisplay_groupModifyConfirm_bodyChangeStat": {
         "placeholders": {
             "count": {
@@ -325,11 +328,19 @@
             },
             "fromGroup": {
                 "type": "String",
-                "description": "Old group name"
+                "description": "At most the first three source group names"
             },
             "toGroup": {
                 "type": "String",
                 "description": "New group name"
+            },
+            "remainingGroupCount": {
+                "type": "int",
+                "description": "Number of omitted source group names; zero means the list is complete"
+            },
+            "totalGroupCount": {
+                "type": "int",
+                "description": "Total number of source groups, including displayed and omitted groups"
             }
         }
     },
@@ -625,6 +636,15 @@
     "appSetting_changeLanguage_followSystem_noLocale_text": "依照系統設定",
     "appSetting_changeLanguageTile_titleText": "語言",
     "appSetting_changeLanguageDialog_titleText": "選擇語言",
+    "appSetting_changeLanguageDialog_currentLanguage_text": "目前語言：{localeName}",
+    "@appSetting_changeLanguageDialog_currentLanguage_text": {
+        "placeholders": {
+            "localeName": {
+                "type": "String",
+                "example": "English"
+            }
+        }
+    },
     "appSetting_languageSubgroupText": "語言",
     "appSetting_openSystemLanguageTile_titleText": "系統語言設定",
     "appSetting_openSystemLanguageTile_dialogTitle": "開啟系統語言設定",
@@ -944,6 +964,8 @@
     },
     "common_customDateTimeFormatPicker_12Hour_text": "使用 12 小時制",
     "common_customDateTimeFormatPicker_monthName_text": "使用完整名稱",
+    "appDateFormat_leadingZero_text": "使用前導零",
+    "appDateFormat_preview_text": "預覽",
     "common_customDateTimeFormatPicker_applyFreqChart_text": "套用於頻率圖表",
     "common_customDateTimeFormatPicker_applyHeapmap_text": "套用於行事曆",
     "common_customDateTimeFormatPicker_cancelButton_text": "取消",
@@ -1245,5 +1267,16 @@
     "habitDisplay_groupType_manual": "自訂順序",
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
-    }
+    },
+    "confirmDialog_confirmAndSkip_text": "{action}，下次不再提示",
+    "@confirmDialog_confirmAndSkip_text": {
+        "description": "Button that performs the named action now and skips this confirmation in future.",
+        "placeholders": {
+            "action": {
+                "type": "String",
+                "example": "Save"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_previewTitle": "預覽"
 }

@@ -30,48 +30,53 @@ import '../../../providers/app_ui/custom_color_history.dart';
 Future<GroupEditFormResult?> showGroupEditDialog({
   required BuildContext context,
   HabitGroupData? existingGroup,
-  AdaptiveModalPresentation? presentationOverride,
-}) async {
-  final isCreate = existingGroup == null;
-  final l10n = L10n.of(context);
-  final formKey = GlobalKey<GroupEditFormState>();
-  return showAdaptiveSheet<GroupEditFormResult>(
-    context: context,
-    // TODO(mhabit): Remove the forced Material style after GroupEditForm and
-    // its controls have Cupertino renderers.
-    styleOverride: AdaptiveStyle.material,
-    presentationOverride: presentationOverride,
-    builder: (context) => AdaptiveModal(
-      title: Text(
-        isCreate
-            ? (l10n?.groupManage_createDialog_title ?? 'Create Group')
-            : (l10n?.groupManage_editDialog_title ?? 'Edit Group'),
+}) => showAdaptiveSheet<GroupEditFormResult>(
+  context: context,
+  builder: (_) => AdaptiveModalNavigator<GroupEditFormResult>(
+    size: const AdaptiveModalSize.constrained(maxHeight: 720),
+    builder: (_) => _GroupEditDialog(existingGroup: existingGroup),
+  ),
+);
+
+class _GroupEditDialog extends StatefulWidget {
+  const _GroupEditDialog({this.existingGroup});
+
+  final HabitGroupData? existingGroup;
+
+  @override
+  State<_GroupEditDialog> createState() => _GroupEditDialogState();
+}
+
+class _GroupEditDialogState extends State<_GroupEditDialog> {
+  final _formKey = GlobalKey<GroupEditFormState>();
+
+  void _save() => _formKey.currentState?.save();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    final history = context.watch<CustomColorHistoryViewModel>().history;
+    final title = Text(
+      widget.existingGroup == null
+          ? (l10n?.groupManage_createDialog_title ?? 'Create Group')
+          : (l10n?.groupManage_editDialog_title ?? 'Edit Group'),
+    );
+    final body = GroupEditForm(
+      key: _formKey,
+      existingGroup: widget.existingGroup,
+      onSave: (result) => AdaptiveModalNavigator.pop(context, result),
+      customColorHistory: history,
+      onRecordCustomColor: (color) {
+        context.read<CustomColorHistoryViewModel>().recordUsage(color);
+      },
+    );
+    return AdaptiveModal(
+      title: title,
+      body: body,
+      confirmAction: AdaptiveModalConfirmAction(
+        label: l10n?.habitEdit_saveButton_text ?? 'Save',
+        onPressed: _save,
       ),
-      actions: [
-        TextButton(
-          onPressed: () =>
-              Navigator.of(context).pop<GroupEditFormResult?>(null),
-          child: Text(l10n?.groupManage_deleteDialog_cancel ?? 'Cancel'),
-        ),
-        FilledButton(
-          onPressed: () => formKey.currentState?.save(),
-          child: Text(l10n?.habitEdit_saveButton_text ?? 'Save'),
-        ),
-      ],
-      automaticallyImplyCloseButton: false,
-      body: Builder(
-        builder: (context) {
-          final history = context.read<CustomColorHistoryViewModel>().history;
-          return GroupEditForm(
-            key: formKey,
-            existingGroup: existingGroup,
-            customColorHistory: history,
-            onRecordCustomColor: (color) {
-              context.read<CustomColorHistoryViewModel>().recordUsage(color);
-            },
-          );
-        },
-      ),
-    ),
-  );
+    );
+  }
 }

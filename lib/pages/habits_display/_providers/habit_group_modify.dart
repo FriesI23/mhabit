@@ -102,6 +102,15 @@ class HabitGroupModifyViewModel extends ChangeNotifier
   GroupUUID? get selectedGroupId => _selectedGroupId;
   bool get skipConfirm => _skipConfirm;
 
+  /// A shared existing group, or null for ungrouped/mixed selections.
+  GroupUUID? get currentGroupId {
+    if (_selectedData.isEmpty) return null;
+    final groupId = _selectedData.first.groupId;
+    return _selectedData.every((habit) => habit.groupId == groupId)
+        ? groupId
+        : null;
+  }
+
   /// Whether the flow should use the two-step confirm dialog (selected
   /// habits are provided and group-name lookup is available).
   bool get isTwoStep => _selectedData.isNotEmpty;
@@ -218,10 +227,7 @@ class HabitGroupModifyViewModel extends ChangeNotifier
 
   /// Loads the active group list from [GroupManager].
   ///
-  /// Sets [selectedGroupId] to the first group on first load when no
-  /// selection has been made yet.  On subsequent reloads (e.g. triggered
-  /// by [AppEventBus]), clears a stale selection if the previously selected
-  /// group no longer exists.
+  /// Clears a stale target selection if its group no longer exists.
   ///
   /// Uses [PageLoadRuntime] to manage concurrent load requests (same pattern
   /// as [GroupManageViewModel.loadGroups]).
@@ -269,9 +275,7 @@ class HabitGroupModifyViewModel extends ChangeNotifier
         _groups = collection?.toList() ?? [];
         if (_selectedGroupId != null &&
             !_groups.any((g) => g.uuid == _selectedGroupId)) {
-          _selectedGroupId = _groups.isNotEmpty ? _groups.first.uuid : null;
-        } else if (_selectedGroupId == null && _groups.isNotEmpty) {
-          _selectedGroupId = _groups.first.uuid;
+          _selectedGroupId = null;
         }
 
         loading.complete();
@@ -290,10 +294,12 @@ class HabitGroupModifyViewModel extends ChangeNotifier
 
   //#endregion
 
-  String? getGroupName(GroupUUID? uuid) {
+  String? getGroupName(GroupUUID? uuid) => getGroup(uuid)?.name;
+
+  HabitGroupData? getGroup(GroupUUID? uuid) {
     if (uuid == null) return null;
     for (final g in _groups) {
-      if (g.uuid == uuid) return g.name;
+      if (g.uuid == uuid) return g;
     }
     return null;
   }
@@ -311,6 +317,7 @@ class HabitGroupModifyViewModel extends ChangeNotifier
       _cachedHandler = HabitGroupModifyHandler(
         selectedData: _selectedData,
         getGroupName: getGroupName,
+        getGroup: getGroup,
         targetGroupId: _selectedGroupId,
       );
       _cachedHandlerGroupId = _selectedGroupId;
@@ -323,7 +330,7 @@ class HabitGroupModifyViewModel extends ChangeNotifier
   bool get allAlreadyInTarget => _handler().allAlreadyInTarget;
 
   /// Source groups for the confirm-dialog display.
-  Map<String?, List<HabitGroupModifyItem>> get sourceGroups =>
+  Map<GroupUUID, List<HabitGroupModifyItem>> get sourceGroups =>
       _handler().sourceGroups;
 }
 

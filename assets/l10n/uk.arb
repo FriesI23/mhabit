@@ -299,6 +299,9 @@
     "habitDisplay_groupModifyDialog_alreadyInGroup": "Вибрані звички вже є в цій групі",
     "habitDisplay_groupModifyDialog_createGroup": "Створити групу",
     "habitDisplay_groupModifyDialog_saveAndApply": "Зберегти та застосувати",
+    "@habitDisplay_groupModifyDialog_saveAndApply": {
+        "description": "Deprecated. Use habitEdit_saveButton_text instead."
+    },
     "habitDisplay_groupModifyConfirm_titleNew": "Перемістити до групи",
     "habitDisplay_groupModifyConfirm_titleMixed": "Підтвердити зміну групи",
     "habitDisplay_groupModifyConfirm_bodyNewGroup": "Звички {groupName} будуть переміщені до цієї групи",
@@ -311,7 +314,7 @@
         }
     },
     "habitDisplay_groupModifyConfirm_bodyRemoveGroup": "Звички будуть видалені з групи",
-    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {{count} звичка зміниться з \"{fromGroup}\" на \"{toGroup}\"} few {{count} звички зміняться з \"{fromGroup}\" на \"{toGroup}\"} many {{count} звичок зміняться з \"{fromGroup}\" на \"{toGroup}\"} other {{count} звичок зміняться з \"{fromGroup}\" на \"{toGroup}\"}}",
+    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {{count} звичка зміниться з \"{fromGroup}\"{remainingGroupCount, plural, =0{} one{ та ще {remainingGroupCount} групи} other{ та ще {remainingGroupCount} груп}} на \"{toGroup}\"} few {{count} звички зміняться з \"{fromGroup}\"{remainingGroupCount, plural, =0{} one{ та ще {remainingGroupCount} групи} other{ та ще {remainingGroupCount} груп}} на \"{toGroup}\"} many {{count} звичок зміняться з \"{fromGroup}\"{remainingGroupCount, plural, =0{} one{ та ще {remainingGroupCount} групи} other{ та ще {remainingGroupCount} груп}} на \"{toGroup}\"} other {{count} звичок зміняться з \"{fromGroup}\"{remainingGroupCount, plural, =0{} one{ та ще {remainingGroupCount} групи} other{ та ще {remainingGroupCount} груп}} на \"{toGroup}\"}}",
     "@habitDisplay_groupModifyConfirm_bodyChangeStat": {
         "placeholders": {
             "count": {
@@ -320,11 +323,19 @@
             },
             "fromGroup": {
                 "type": "String",
-                "description": "Old group name"
+                "description": "At most the first three source group names"
             },
             "toGroup": {
                 "type": "String",
                 "description": "New group name"
+            },
+            "remainingGroupCount": {
+                "type": "int",
+                "description": "Number of omitted source group names; zero means the list is complete"
+            },
+            "totalGroupCount": {
+                "type": "int",
+                "description": "Total number of source groups, including displayed and omitted groups"
             }
         }
     },
@@ -1208,7 +1219,7 @@
         "placeholders": {
             "type": {
                 "type": "String",
-                "description": "<NormalizeConfirmDialogType>.name",
+                "description": "AppActionVerb.name",
                 "example": "confirm"
             }
         }

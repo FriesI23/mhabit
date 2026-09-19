@@ -66,6 +66,8 @@ class _HiddenTypeGroupTypePickerFilter extends GroupTypePickerFilter {
   bool showType(HabitDisplayGroupType type) => !_hiddenTypes.contains(type);
 }
 
+// TODO(mhabit-adaptive-dialog): Adapt the group-mode selector; preserve DisplayGroupModeOption
+// results and existing consumers, not a bool confirmation.
 Future<DisplayGroupModeOption?> showHabitDisplayGroupTypePickerDialog({
   required BuildContext context,
   HabitDisplayGroupType? groupType,

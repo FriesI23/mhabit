@@ -43,6 +43,7 @@
     "appSetting_expandTimerDelay_fast",
     "appSetting_expandTimerDelay_slow",
     "appSetting_appThemeModeTile_titleText",
+    "appSetting_changeLanguageDialog_currentLanguage_text",
     "appSetting_languageSubgroupText",
     "appSetting_openSystemLanguageTile_titleText",
     "appSetting_openSystemLanguageTile_dialogTitle",
@@ -62,6 +63,8 @@
     "appSetting_thirdPartyImport_error_unknown",
     "appSetting_importDialog_completeTitleGroups",
     "common_habitColorType_custom",
+    "appDateFormat_leadingZero_text",
+    "appDateFormat_preview_text",
     "common_dontShowAgain",
     "exportConfirmDialog_option_includeGroups",
     "exportConfirmDialog_tile_includeRecords",
@@ -95,7 +98,9 @@
     "groupHeader_menu_manage",
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
-    "appSetting_manageGroups_subtitleText"
+    "appSetting_manageGroups_subtitleText",
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "cs": [
@@ -105,8 +110,13 @@
     "habitDetail_recordCalendar_label",
     "habitDetail_recordCalendar_tooltip",
     "appSetting_appThemeModeTile_titleText",
+    "appSetting_changeLanguageDialog_currentLanguage_text",
+    "appDateFormat_leadingZero_text",
+    "appDateFormat_preview_text",
     "debug_shareDebugZip_tooltip",
-    "groupManage_createButton_tooltip"
+    "groupManage_createButton_tooltip",
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "de": [
@@ -160,6 +170,7 @@
     "appSetting_appThemeColorChosenDialog_subTitleText_windows",
     "appSetting_changeLanguage_followSystem_text",
     "appSetting_changeLanguage_followSystem_noLocale_text",
+    "appSetting_changeLanguageDialog_currentLanguage_text",
     "appSetting_languageSubgroupText",
     "appSetting_openSystemLanguageTile_titleText",
     "appSetting_openSystemLanguageTile_dialogTitle",
@@ -257,6 +268,8 @@
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
     "common_appThemeColor_dynamic",
+    "appDateFormat_leadingZero_text",
+    "appDateFormat_preview_text",
     "common_errorPage_title",
     "common_errorPage_copied",
     "common_enable_text",
@@ -325,7 +338,9 @@
     "groupHeader_menu_manage",
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
-    "appSetting_manageGroups_subtitleText"
+    "appSetting_manageGroups_subtitleText",
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "es": [
@@ -385,6 +400,7 @@
     "appSetting_appThemeColorChosenDialog_subTitleText_linux",
     "appSetting_appThemeColorChosenDialog_subTitleText_macos",
     "appSetting_appThemeColorChosenDialog_subTitleText_windows",
+    "appSetting_changeLanguageDialog_currentLanguage_text",
     "appSetting_languageSubgroupText",
     "appSetting_openSystemLanguageTile_titleText",
     "appSetting_openSystemLanguageTile_dialogTitle",
@@ -424,6 +440,8 @@
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
     "common_appThemeColor_dynamic",
+    "appDateFormat_leadingZero_text",
+    "appDateFormat_preview_text",
     "common_errorPage_title",
     "common_errorPage_copied",
     "common_enable_text",
@@ -470,7 +488,9 @@
     "groupHeader_menu_manage",
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
-    "appSetting_manageGroups_subtitleText"
+    "appSetting_manageGroups_subtitleText",
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "eu": [
@@ -734,6 +754,7 @@
     "appSetting_changeLanguage_followSystem_noLocale_text",
     "appSetting_changeLanguageTile_titleText",
     "appSetting_changeLanguageDialog_titleText",
+    "appSetting_changeLanguageDialog_currentLanguage_text",
     "appSetting_languageSubgroupText",
     "appSetting_openSystemLanguageTile_titleText",
     "appSetting_openSystemLanguageTile_dialogTitle",
@@ -947,6 +968,8 @@
     "common_customDateTimeFormatPicker_sep_formatter",
     "common_customDateTimeFormatPicker_12Hour_text",
     "common_customDateTimeFormatPicker_monthName_text",
+    "appDateFormat_leadingZero_text",
+    "appDateFormat_preview_text",
     "common_customDateTimeFormatPicker_applyFreqChart_text",
     "common_customDateTimeFormatPicker_applyHeapmap_text",
     "common_customDateTimeFormatPicker_cancelButton_text",
@@ -1046,7 +1069,9 @@
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
-    "habitDisplay_groupType_manual"
+    "habitDisplay_groupType_manual",
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "fa": [
@@ -1117,6 +1142,7 @@
     "appSetting_appThemeColorChosenDialog_subTitleText_macos",
     "appSetting_appThemeColorChosenDialog_subTitleText_windows",
     "appSetting_changeLanguage_followSystem_text",
+    "appSetting_changeLanguageDialog_currentLanguage_text",
     "appSetting_languageSubgroupText",
     "appSetting_openSystemLanguageTile_titleText",
     "appSetting_openSystemLanguageTile_dialogTitle",
@@ -1218,6 +1244,8 @@
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
     "common_appThemeColor_dynamic",
+    "appDateFormat_leadingZero_text",
+    "appDateFormat_preview_text",
     "common_errorPage_title",
     "common_errorPage_copied",
     "common_enable_text",
@@ -1285,7 +1313,9 @@
     "groupHeader_menu_manage",
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
-    "appSetting_manageGroups_subtitleText"
+    "appSetting_manageGroups_subtitleText",
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "fr": [
@@ -1329,6 +1359,7 @@
     "appSetting_appThemeModeTile_titleText",
     "appSetting_appThemeColorChosenDialog_subTitleText_linux",
     "appSetting_appThemeColorChosenDialog_subTitleText_windows",
+    "appSetting_changeLanguageDialog_currentLanguage_text",
     "appSetting_languageSubgroupText",
     "appSetting_openSystemLanguageTile_titleText",
     "appSetting_openSystemLanguageTile_dialogTitle",
@@ -1397,6 +1428,8 @@
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
     "common_appThemeColor_dynamic",
+    "appDateFormat_leadingZero_text",
+    "appDateFormat_preview_text",
     "common_errorPage_title",
     "common_errorPage_copied",
     "common_enable_text",
@@ -1467,7 +1500,9 @@
     "groupHeader_menu_manage",
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
-    "appSetting_manageGroups_subtitleText"
+    "appSetting_manageGroups_subtitleText",
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "he": [
@@ -1477,8 +1512,13 @@
     "habitDetail_recordCalendar_label",
     "habitDetail_recordCalendar_tooltip",
     "appSetting_appThemeModeTile_titleText",
+    "appSetting_changeLanguageDialog_currentLanguage_text",
+    "appDateFormat_leadingZero_text",
+    "appDateFormat_preview_text",
     "debug_shareDebugZip_tooltip",
-    "groupManage_createButton_tooltip"
+    "groupManage_createButton_tooltip",
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "hu": [
@@ -1525,6 +1565,7 @@
     "appSetting_expandTimerDelay_fast",
     "appSetting_expandTimerDelay_slow",
     "appSetting_appThemeModeTile_titleText",
+    "appSetting_changeLanguageDialog_currentLanguage_text",
     "appSetting_languageSubgroupText",
     "appSetting_openSystemLanguageTile_titleText",
     "appSetting_openSystemLanguageTile_dialogTitle",
@@ -1544,6 +1585,8 @@
     "appSetting_thirdPartyImport_error_unknown",
     "appSetting_importDialog_completeTitleGroups",
     "common_habitColorType_custom",
+    "appDateFormat_leadingZero_text",
+    "appDateFormat_preview_text",
     "common_dontShowAgain",
     "exportConfirmDialog_option_includeGroups",
     "exportConfirmDialog_tile_includeRecords",
@@ -1577,7 +1620,9 @@
     "groupHeader_menu_manage",
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
-    "appSetting_manageGroups_subtitleText"
+    "appSetting_manageGroups_subtitleText",
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "it": [
@@ -1641,6 +1686,7 @@
     "appSetting_appThemeColorChosenDialog_subTitleText_linux",
     "appSetting_appThemeColorChosenDialog_subTitleText_macos",
     "appSetting_appThemeColorChosenDialog_subTitleText_windows",
+    "appSetting_changeLanguageDialog_currentLanguage_text",
     "appSetting_languageSubgroupText",
     "appSetting_openSystemLanguageTile_titleText",
     "appSetting_openSystemLanguageTile_dialogTitle",
@@ -1740,6 +1786,8 @@
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
     "common_appThemeColor_dynamic",
+    "appDateFormat_leadingZero_text",
+    "appDateFormat_preview_text",
     "common_errorPage_title",
     "common_errorPage_copied",
     "common_enable_text",
@@ -1783,7 +1831,9 @@
     "groupHeader_menu_manage",
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
-    "appSetting_manageGroups_subtitleText"
+    "appSetting_manageGroups_subtitleText",
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "ja": [
@@ -1843,6 +1893,7 @@
     "appSetting_appThemeColorChosenDialog_subTitleText_linux",
     "appSetting_appThemeColorChosenDialog_subTitleText_macos",
     "appSetting_appThemeColorChosenDialog_subTitleText_windows",
+    "appSetting_changeLanguageDialog_currentLanguage_text",
     "appSetting_languageSubgroupText",
     "appSetting_openSystemLanguageTile_titleText",
     "appSetting_openSystemLanguageTile_dialogTitle",
@@ -1865,6 +1916,8 @@
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
     "common_appThemeColor_dynamic",
+    "appDateFormat_leadingZero_text",
+    "appDateFormat_preview_text",
     "common_dontShowAgain",
     "exportConfirmDialog_option_includeGroups",
     "exportConfirmDialog_tile_includeRecords",
@@ -1898,7 +1951,9 @@
     "groupHeader_menu_manage",
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
-    "appSetting_manageGroups_subtitleText"
+    "appSetting_manageGroups_subtitleText",
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "nb": [
@@ -2160,6 +2215,7 @@
     "appSetting_changeLanguage_followSystem_noLocale_text",
     "appSetting_changeLanguageTile_titleText",
     "appSetting_changeLanguageDialog_titleText",
+    "appSetting_changeLanguageDialog_currentLanguage_text",
     "appSetting_languageSubgroupText",
     "appSetting_openSystemLanguageTile_titleText",
     "appSetting_openSystemLanguageTile_dialogTitle",
@@ -2373,6 +2429,8 @@
     "common_customDateTimeFormatPicker_sep_formatter",
     "common_customDateTimeFormatPicker_12Hour_text",
     "common_customDateTimeFormatPicker_monthName_text",
+    "appDateFormat_leadingZero_text",
+    "appDateFormat_preview_text",
     "common_customDateTimeFormatPicker_applyFreqChart_text",
     "common_customDateTimeFormatPicker_applyHeapmap_text",
     "common_customDateTimeFormatPicker_cancelButton_text",
@@ -2472,7 +2530,9 @@
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
-    "habitDisplay_groupType_manual"
+    "habitDisplay_groupType_manual",
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "nl": [
@@ -2736,6 +2796,7 @@
     "appSetting_changeLanguage_followSystem_noLocale_text",
     "appSetting_changeLanguageTile_titleText",
     "appSetting_changeLanguageDialog_titleText",
+    "appSetting_changeLanguageDialog_currentLanguage_text",
     "appSetting_languageSubgroupText",
     "appSetting_openSystemLanguageTile_titleText",
     "appSetting_openSystemLanguageTile_dialogTitle",
@@ -2949,6 +3010,8 @@
     "common_customDateTimeFormatPicker_sep_formatter",
     "common_customDateTimeFormatPicker_12Hour_text",
     "common_customDateTimeFormatPicker_monthName_text",
+    "appDateFormat_leadingZero_text",
+    "appDateFormat_preview_text",
     "common_customDateTimeFormatPicker_applyFreqChart_text",
     "common_customDateTimeFormatPicker_applyHeapmap_text",
     "common_customDateTimeFormatPicker_cancelButton_text",
@@ -3053,7 +3116,9 @@
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
     "appSetting_manageGroups_subtitleText",
-    "habitDisplay_groupType_manual"
+    "habitDisplay_groupType_manual",
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "pl": [
@@ -3117,6 +3182,7 @@
     "appSetting_appThemeColorChosenDialog_subTitleText_linux",
     "appSetting_appThemeColorChosenDialog_subTitleText_macos",
     "appSetting_appThemeColorChosenDialog_subTitleText_windows",
+    "appSetting_changeLanguageDialog_currentLanguage_text",
     "appSetting_languageSubgroupText",
     "appSetting_openSystemLanguageTile_titleText",
     "appSetting_openSystemLanguageTile_dialogTitle",
@@ -3139,6 +3205,8 @@
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
     "common_appThemeColor_dynamic",
+    "appDateFormat_leadingZero_text",
+    "appDateFormat_preview_text",
     "common_dontShowAgain",
     "exportConfirmDialog_option_includeGroups",
     "exportConfirmDialog_tile_includeRecords",
@@ -3172,7 +3240,9 @@
     "groupHeader_menu_manage",
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
-    "appSetting_manageGroups_subtitleText"
+    "appSetting_manageGroups_subtitleText",
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "pt": [
@@ -3251,6 +3321,7 @@
     "appSetting_appThemeColorChosenDialog_subTitleText_linux",
     "appSetting_appThemeColorChosenDialog_subTitleText_macos",
     "appSetting_appThemeColorChosenDialog_subTitleText_windows",
+    "appSetting_changeLanguageDialog_currentLanguage_text",
     "appSetting_languageSubgroupText",
     "appSetting_openSystemLanguageTile_titleText",
     "appSetting_openSystemLanguageTile_dialogTitle",
@@ -3370,6 +3441,8 @@
     "common_appThemeColor_primary",
     "common_appThemeColor_dynamic",
     "common_customDateTimeFormatPicker_sep_formatter",
+    "appDateFormat_leadingZero_text",
+    "appDateFormat_preview_text",
     "common_errorPage_copied",
     "common_enable_text",
     "common_dontShowAgain",
@@ -3424,7 +3497,9 @@
     "groupHeader_menu_manage",
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
-    "appSetting_manageGroups_subtitleText"
+    "appSetting_manageGroups_subtitleText",
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "ru": [
@@ -3488,6 +3563,7 @@
     "appSetting_appThemeColorChosenDialog_subTitleText_linux",
     "appSetting_appThemeColorChosenDialog_subTitleText_macos",
     "appSetting_appThemeColorChosenDialog_subTitleText_windows",
+    "appSetting_changeLanguageDialog_currentLanguage_text",
     "appSetting_languageSubgroupText",
     "appSetting_openSystemLanguageTile_titleText",
     "appSetting_openSystemLanguageTile_dialogTitle",
@@ -3509,6 +3585,8 @@
     "experimentalFeatures_habitSearchTile_titleText",
     "experimentalFeatures_habitSearchTile_subtitleText",
     "common_habitColorType_custom",
+    "appDateFormat_leadingZero_text",
+    "appDateFormat_preview_text",
     "common_dontShowAgain",
     "exportConfirmDialog_option_includeGroups",
     "exportConfirmDialog_tile_includeRecords",
@@ -3542,7 +3620,9 @@
     "groupHeader_menu_manage",
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
-    "appSetting_manageGroups_subtitleText"
+    "appSetting_manageGroups_subtitleText",
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "tr": [
@@ -3588,6 +3668,7 @@
     "appSetting_expandTimerDelay_fast",
     "appSetting_expandTimerDelay_slow",
     "appSetting_appThemeModeTile_titleText",
+    "appSetting_changeLanguageDialog_currentLanguage_text",
     "appSetting_languageSubgroupText",
     "appSetting_openSystemLanguageTile_titleText",
     "appSetting_openSystemLanguageTile_dialogTitle",
@@ -3607,6 +3688,8 @@
     "appSetting_thirdPartyImport_error_unknown",
     "appSetting_importDialog_completeTitleGroups",
     "common_habitColorType_custom",
+    "appDateFormat_leadingZero_text",
+    "appDateFormat_preview_text",
     "common_dontShowAgain",
     "exportConfirmDialog_option_includeGroups",
     "exportConfirmDialog_tile_includeRecords",
@@ -3640,7 +3723,9 @@
     "groupHeader_menu_manage",
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
-    "appSetting_manageGroups_subtitleText"
+    "appSetting_manageGroups_subtitleText",
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "uk": [
@@ -3661,11 +3746,14 @@
     "habitDetail_recordCalendar_label",
     "habitDetail_recordCalendar_tooltip",
     "appSetting_appThemeModeTile_titleText",
+    "appSetting_changeLanguageDialog_currentLanguage_text",
     "appSetting_languageSubgroupText",
     "appSetting_openSystemLanguageTile_titleText",
     "appSetting_openSystemLanguageTile_dialogTitle",
     "appSetting_openSystemLanguageTile_macosDialogContent",
     "common_habitColorType_custom",
+    "appDateFormat_leadingZero_text",
+    "appDateFormat_preview_text",
     "debug_shareDebugZip_tooltip",
     "groupManage_appbar_title",
     "groupManage_selectionAppbar_title",
@@ -3688,7 +3776,9 @@
     "groupHeader_menu_manage",
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
-    "appSetting_manageGroups_subtitleText"
+    "appSetting_manageGroups_subtitleText",
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "vi": [
@@ -3735,6 +3825,7 @@
     "appSetting_expandTimerDelay_fast",
     "appSetting_expandTimerDelay_slow",
     "appSetting_appThemeModeTile_titleText",
+    "appSetting_changeLanguageDialog_currentLanguage_text",
     "appSetting_languageSubgroupText",
     "appSetting_openSystemLanguageTile_titleText",
     "appSetting_openSystemLanguageTile_dialogTitle",
@@ -3754,6 +3845,8 @@
     "appSetting_thirdPartyImport_error_unknown",
     "appSetting_importDialog_completeTitleGroups",
     "common_habitColorType_custom",
+    "appDateFormat_leadingZero_text",
+    "appDateFormat_preview_text",
     "common_dontShowAgain",
     "exportConfirmDialog_option_includeGroups",
     "exportConfirmDialog_tile_includeRecords",
@@ -3787,7 +3880,9 @@
     "groupHeader_menu_manage",
     "groupHeader_menu_collapseAll",
     "groupHeader_menu_expandAll",
-    "appSetting_manageGroups_subtitleText"
+    "appSetting_manageGroups_subtitleText",
+    "confirmDialog_confirmAndSkip_text",
+    "habitDisplay_groupModifyConfirm_previewTitle"
   ],
 
   "zh_Hant": [

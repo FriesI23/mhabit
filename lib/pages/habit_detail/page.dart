@@ -234,75 +234,63 @@ class _PageState extends State<_Page>
 
   Future<bool?> _openHabitOpConfirmDialog(
     BuildContext context,
-    Widget title,
-  ) async {
-    return showConfirmDialog(
+    L10n? l10n,
+    Widget title, {
+    bool isDestructiveAction = false,
+  }) {
+    final effectiveL10n = l10n ?? L10n.of(context);
+    return showAdaptiveConfirmDialog(
       context: context,
       title: title,
-      cancelTextBuilder: (context) {
-        final l10n = L10n.of(context);
-        return l10n != null
-            ? Text(l10n.habitDetail_confirmDialog_cancel)
-            : const Text('cancel');
-      },
-      confirmTextBuilder: (context) {
-        final l10n = L10n.of(context);
-        return l10n != null
-            ? Text(l10n.habitDetail_confirmDialog_confirm)
-            : const Text('confirm');
-      },
+      cancelLabel: effectiveL10n?.habitDetail_confirmDialog_cancel ?? 'cancel',
+      confirmLabel:
+          effectiveL10n?.habitDetail_confirmDialog_confirm ?? 'confirm',
+      isDestructiveAction: isDestructiveAction,
     );
   }
 
-  void _onHabitStatusChangeConfirmed() {
-    if (!mounted) return;
-  }
-
+  // TODO(mhabit-adaptive-dialog): Phase 3-8g: migrate only this archive confirmation to an anchored
+  // popup after 3-8e/f validation; support both direct and More entry anchors.
   void _openHabitArchiveConfirmDialog() async {
+    final l10n = L10n.of(context);
     final result = await _openHabitOpConfirmDialog(
       context,
-      L10nBuilder(
-        builder: (context, l10n) => l10n != null
-            ? Text(l10n.habitDetail_archiveConfirmDialog_titleText)
-            : const Text("Archive Habit?"),
+      l10n,
+      Text(
+        l10n?.habitDetail_archiveConfirmDialog_titleText ?? 'Archive Habit?',
       ),
     );
-    if (result == null || result == false || !mounted) return;
+    if (result != true || !mounted) return;
     await _vm.onConfirmToArchiveHabit(summary: _summary);
-    if (!mounted) return;
-
-    _onHabitStatusChangeConfirmed();
   }
 
   void _openHabitUnarchiveConfirmDialog() async {
+    final l10n = L10n.of(context);
     final result = await _openHabitOpConfirmDialog(
       context,
-      L10nBuilder(
-        builder: (context, l10n) => l10n != null
-            ? Text(l10n.habitDetail_unarchiveConfirmDialog_titleText)
-            : const Text("Unarchive Habit?"),
+      l10n,
+      Text(
+        l10n?.habitDetail_unarchiveConfirmDialog_titleText ??
+            'Unarchive Habit?',
       ),
     );
-    if (result == null || result == false || !mounted) return;
+    if (result != true || !mounted) return;
     await _vm.onConfirmToUnarchiveHabit(summary: _summary);
-    if (!mounted) return;
-
-    _onHabitStatusChangeConfirmed();
   }
 
   void _openHabitDeleteConfirmDialog() async {
+    final l10n = L10n.of(context);
+    final pageRoute = ModalRoute.of(context);
     final result = await _openHabitOpConfirmDialog(
       context,
-      L10nBuilder(
-        builder: (context, l10n) => l10n != null
-            ? Text(l10n.habitDetail_deleteConfirmDialog_titleText)
-            : const Text("Delete Habit?"),
-      ),
+      l10n,
+      Text(l10n?.habitDetail_deleteConfirmDialog_titleText ?? 'Delete Habit?'),
+      isDestructiveAction: true,
     );
-    if (result == null || result == false || !mounted) return;
+    if (result != true || !mounted) return;
 
     final changedRecord = await _vm.onConfirmToDeleteHabit(summary: _summary);
-    if (!(mounted && _vm.mounted)) return;
+    if (!mounted || !_vm.mounted || pageRoute?.isCurrent != true) return;
     Navigator.pop(
       context,
       DetailPageReturn(
@@ -311,8 +299,6 @@ class _PageState extends State<_Page>
         recordList: changedRecord != null ? [changedRecord] : null,
       ),
     );
-
-    _onHabitStatusChangeConfirmed();
   }
 
   void _exportHabitAndShared(BuildContext shareAnchorContext) async {
@@ -1001,12 +987,18 @@ class _PageState extends State<_Page>
                     ],
                     kHabitDivider,
                     buildOtherInfo(context),
-                    if (context
-                        .read<AppDeveloperViewModel>()
-                        .isInDevelopMode) ...[
-                      kHabitDivider,
-                      _buildDebugInfo(context),
-                    ],
+                    Selector<AppDeveloperViewModel, bool>(
+                      selector: (context, vm) => vm.isInDevelopMode,
+                      builder: (context, isInDevelopMode, child) =>
+                          isInDevelopMode
+                          ? Column(
+                              children: [
+                                kHabitDivider,
+                                _buildDebugInfo(context),
+                              ],
+                            )
+                          : const SizedBox.shrink(),
+                    ),
                     const FixedPagePlaceHolder(),
                   ]),
                 );

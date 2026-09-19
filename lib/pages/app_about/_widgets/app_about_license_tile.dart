@@ -18,7 +18,6 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../widgets/widgets.dart';
-import '../styles.dart';
 
 class AppAboutLicenseTile extends StatefulWidget {
   const AppAboutLicenseTile({super.key});
@@ -35,6 +34,11 @@ class _AppAboutLicenseTileState extends State<AppAboutLicenseTile> {
     await showAdaptiveSheet<void>(
       context: context,
       builder: (_) => AdaptiveModal(
+        size: const AdaptiveModalSize.constrained(
+          minWidth: 0,
+          maxWidth: 720,
+          maxHeight: 720,
+        ),
         title: l10n != null
             ? Text(l10n.appAbout_licenseTile_titleText)
             : const Text("License"),
@@ -46,12 +50,8 @@ class _AppAboutLicenseTileState extends State<AppAboutLicenseTile> {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return ListTile(
-      leading: const SizedBox(
-        height: kAppAboutListTileLeadingHeight,
-        width: kAppAboutListTileLeadingWidth,
-        child: Icon(Icons.balance_outlined),
-      ),
+    return AdaptiveListTile.navigation(
+      leading: const Icon(Icons.balance_outlined),
       title: l10n != null
           ? Text(l10n.appAbout_licenseTile_titleText)
           : const Text("License"),

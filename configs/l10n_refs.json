@@ -29,5 +29,6 @@
     "groupManage_selectAll": "habitDisplay_editPopMenu_selectAll",
     "groupManage_menu_edit": "habitDisplay_editButton_tooltip",
     "groupManage_menu_delete": "habitDisplay_editPopMenu_delete",
-    "habitDisplay_groupType_manual": "habitDisplay_sortType_manual"
+    "habitDisplay_groupType_manual": "habitDisplay_sortType_manual",
+    "habitDisplay_groupModifyConfirm_previewTitle": "appDateFormat_preview_text"
 }

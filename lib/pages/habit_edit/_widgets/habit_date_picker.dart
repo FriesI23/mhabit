@@ -24,6 +24,8 @@ import '../../../theme/color.dart';
 import '../../../utils/app_clock.dart';
 import '../../../widgets/widgets.dart';
 
+// TODO(mhabit-adaptive-dialog): Adapt the dedicated date/datetime picker controls; preserve date
+// bounds, first-day configuration, local state and DateTime/null results.
 Future<DateTime?> showHabitDatePickerDialog({
   required BuildContext context,
   required DateTime date,

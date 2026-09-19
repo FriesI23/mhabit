@@ -1020,7 +1020,7 @@
         "placeholders": {
             "type": {
                 "type": "String",
-                "description": "<NormalizeConfirmDialogType>.name",
+                "description": "AppActionVerb.name",
                 "example": "confirm"
             }
         }

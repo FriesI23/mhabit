@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export '_widgets/adaptive_confirm_dialog.dart';
 export '_widgets/adaptive_modal_material_bridge.dart';
 export '_widgets/animated_linear_progress.dart';
 export '_widgets/animated_reorderable_list.dart';
@@ -22,7 +23,6 @@ export '_widgets/chip_list.dart';
 export '_widgets/color_display_chip.dart';
 export '_widgets/color_swatch_button.dart';
 export '_widgets/colorful_navibar.dart';
-export '_widgets/confirm_dialog.dart';
 export '_widgets/crypto_donate_button.dart';
 export '_widgets/data_arrow_container.dart';
 export '_widgets/data_container.dart';

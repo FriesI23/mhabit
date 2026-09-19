@@ -24,6 +24,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/app_debugger/page.dart';
+import 'package:mhabit/pages/app_debugger/widgets.dart';
 import 'package:mhabit/providers/app_ui/app_debugger.dart';
 import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
@@ -35,6 +36,7 @@ Future<void> _pumpPage(
   Size size = const Size(500, 800),
   TextDirection direction = TextDirection.ltr,
   bool pushPage = false,
+  double textScale = 1,
   AsyncValueGetter<String>? debugBundleBuilder,
 }) async {
   tester.view.devicePixelRatio = 1;
@@ -53,8 +55,15 @@ Future<void> _pumpPage(
         theme: ThemeData(platform: platform),
         localizationsDelegates: L10n.localizationsDelegates,
         supportedLocales: L10n.supportedLocales,
-        builder: (context, child) =>
-            Directionality(textDirection: direction, child: child!),
+        builder: (context, child) => Directionality(
+          textDirection: direction,
+          child: MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: TextScaler.linear(textScale)),
+            child: child!,
+          ),
+        ),
         home: pushPage ? const Scaffold(body: Text("Origin")) : page,
       ),
     ),
@@ -71,6 +80,29 @@ Future<void> _pumpPage(
 }
 
 void main() {
+  for (final platform in [
+    TargetPlatform.android,
+    TargetPlatform.iOS,
+    TargetPlatform.macOS,
+  ]) {
+    testWidgets('Debugger groups narrow large text RTL $platform', (
+      tester,
+    ) async {
+      await _pumpPage(
+        tester,
+        platform: platform,
+        size: const Size(320, 1200),
+        textScale: 2,
+        direction: TextDirection.rtl,
+      );
+      expect(find.byType(AdaptiveListSection), findsWidgets);
+      expect(find.byType(ChangeLogsSwitcherTile), findsOneWidget);
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -1200));
+      await tester.pumpAndSettle();
+      expect(find.text('Debug Info'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  }
   testWidgets('uses the Material adaptive app bar and keeps page content', (
     tester,
   ) async {

@@ -20,7 +20,6 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../widgets/widgets.dart';
-import '../styles.dart';
 
 class AppAboutPrivacyTile extends StatefulWidget {
   final String privacyPath;
@@ -77,12 +76,8 @@ class _AppAboutPrivacyTile extends State<AppAboutPrivacyTile> {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return ListTile(
-      leading: const SizedBox(
-        height: kAppAboutListTileLeadingHeight,
-        width: kAppAboutListTileLeadingWidth,
-        child: Icon(MdiIcons.shieldLockOutline),
-      ),
+    return AdaptiveListTile.navigation(
+      leading: const Icon(MdiIcons.shieldLockOutline),
       title: l10n != null
           ? Text(l10n.appAbout_privacyTile_titleText)
           : const Text("Privacy"),

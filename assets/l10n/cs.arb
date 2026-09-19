@@ -324,6 +324,9 @@
     "habitDisplay_groupModifyDialog_alreadyInGroup": "Označené návyky už se nacházejí v této skupině",
     "habitDisplay_groupModifyDialog_createGroup": "Vytvořit skupinu",
     "habitDisplay_groupModifyDialog_saveAndApply": "Uložit a použít",
+    "@habitDisplay_groupModifyDialog_saveAndApply": {
+        "description": "Deprecated. Use habitEdit_saveButton_text instead."
+    },
     "habitDisplay_groupModifyConfirm_titleNew": "Přesunout do skupiny",
     "habitDisplay_groupModifyConfirm_titleMixed": "Potvrďte změnu skupiny",
     "habitDisplay_groupModifyConfirm_bodyNewGroup": "návyky z {groupName} budou přesunuty do této skupiny",
@@ -336,7 +339,7 @@
         }
     },
     "habitDisplay_groupModifyConfirm_bodyRemoveGroup": "Návykům bude odebrána jejich skupina",
-    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {{count} návyk se změní z „{fromGroup}“ na „{toGroup}“} other {{count} návyků se změní z „{fromGroup}“ na „{toGroup}“}}",
+    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {{count} návyk se změní z „{fromGroup}“{remainingGroupCount, plural, =0{} =1{ a jedné další skupiny} other{ a dalších {remainingGroupCount} skupin}} na „{toGroup}“} other {{count} návyků se změní z „{fromGroup}“{remainingGroupCount, plural, =0{} =1{ a jedné další skupiny} other{ a dalších {remainingGroupCount} skupin}} na „{toGroup}“}}",
     "@habitDisplay_groupModifyConfirm_bodyChangeStat": {
         "placeholders": {
             "count": {
@@ -345,11 +348,19 @@
             },
             "fromGroup": {
                 "type": "String",
-                "description": "Old group name"
+                "description": "At most the first three source group names"
             },
             "toGroup": {
                 "type": "String",
                 "description": "New group name"
+            },
+            "remainingGroupCount": {
+                "type": "int",
+                "description": "Number of omitted source group names; zero means the list is complete"
+            },
+            "totalGroupCount": {
+                "type": "int",
+                "description": "Total number of source groups, including displayed and omitted groups"
             }
         }
     },
@@ -1273,7 +1284,7 @@
         "placeholders": {
             "type": {
                 "type": "String",
-                "description": "<NormalizeConfirmDialogType>.name",
+                "description": "AppActionVerb.name",
                 "example": "confirm"
             }
         }

@@ -17,6 +17,8 @@ import 'package:flutter/material.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_form.dart';
 
+// TODO(mhabit-adaptive-dialog): Adapt this simple type selector; preserve HabitType/null results
+// and leave form updates with the caller.
 Future<HabitType?> showHabitTypSelectDialog({
   required BuildContext context,
   required HabitType habitType,

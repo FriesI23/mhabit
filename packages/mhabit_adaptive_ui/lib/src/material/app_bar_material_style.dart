@@ -1,11 +1,15 @@
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/material.dart';
 
 import '../window_control/toolbar_geometry.dart';
+
+part 'app_bar_material_style.g.dart';
 
 /// Style config for the Material branch of an adaptive AppBar.
 ///
 /// App-bar fields map to [SliverAppBar]. [windowControlEdgePadding] is the
 /// Material visual baseline added only on sides with window-control avoidance.
+@CopyWith(skipFields: true)
 class AppBarMaterialStyle {
   const AppBarMaterialStyle({
     this.centerTitle = false,
@@ -34,34 +38,6 @@ class AppBarMaterialStyle {
 
   /// {@macro mhabit.windowControlEdgePadding}
   final EdgeInsetsDirectional windowControlEdgePadding;
-
-  AppBarMaterialStyle copyWith({
-    bool? centerTitle,
-    bool? floating,
-    bool? snap,
-    bool? pinned,
-    bool? forceElevated,
-    double? scrolledUnderElevation,
-    Color? shadowColor,
-    Color? backgroundColor,
-    Color? surfaceTintColor,
-    PreferredSizeWidget? bottom,
-    EdgeInsetsDirectional? windowControlEdgePadding,
-  }) => AppBarMaterialStyle(
-    centerTitle: centerTitle ?? this.centerTitle,
-    floating: floating ?? this.floating,
-    snap: snap ?? this.snap,
-    pinned: pinned ?? this.pinned,
-    forceElevated: forceElevated ?? this.forceElevated,
-    scrolledUnderElevation:
-        scrolledUnderElevation ?? this.scrolledUnderElevation,
-    shadowColor: shadowColor ?? this.shadowColor,
-    backgroundColor: backgroundColor ?? this.backgroundColor,
-    surfaceTintColor: surfaceTintColor ?? this.surfaceTintColor,
-    bottom: bottom ?? this.bottom,
-    windowControlEdgePadding:
-        windowControlEdgePadding ?? this.windowControlEdgePadding,
-  );
 
   @override
   bool operator ==(Object other) =>

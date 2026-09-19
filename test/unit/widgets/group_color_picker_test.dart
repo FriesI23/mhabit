@@ -17,6 +17,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_color_type.dart';
 import 'package:mhabit/widgets/widgets.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(
@@ -127,13 +128,13 @@ void main() {
         ),
       );
 
-      // Should have at least the OK and Cancel buttons.
-      expect(find.text('OK'), findsOneWidget);
+      // Should have at least the OK and Close buttons.
+      expect(find.text('Save'), findsOneWidget);
       // History swatches.
       expect(find.byType(ColorSwatchButton), findsNWidgets(2));
     });
 
-    testWidgets('OK button pops with current draft color', (tester) async {
+    testWidgets('Save button pops with current draft color', (tester) async {
       await tester.pumpWidget(
         _wrap(
           const GroupCustomColorPickerDialog(
@@ -144,7 +145,7 @@ void main() {
         ),
       );
 
-      await tester.tap(find.text('OK'));
+      await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
 
       // The draft color should be popped — a color with seed red + tinted.
@@ -152,21 +153,39 @@ void main() {
       expect(result, findsNothing); // Dialog dismissed
     });
 
-    testWidgets('Cancel button pops with null', (tester) async {
+    testWidgets('Close button pops with null', (tester) async {
+      HabitColor? result = const CustomHabitColor(0xFF123456);
+      var completed = false;
       await tester.pumpWidget(
         _wrap(
-          const GroupCustomColorPickerDialog(
-            seedColor: Colors.green,
-            seedTinted: false,
-            history: [],
+          Builder(
+            builder: (context) => TextButton(
+              onPressed: () async {
+                result = await showAdaptiveSheet<HabitColor>(
+                  context: context,
+                  builder: (_) => const GroupCustomColorPickerDialog(
+                    seedColor: Colors.green,
+                    seedTinted: false,
+                    history: [],
+                  ),
+                );
+                completed = true;
+              },
+              child: const Text('Open'),
+            ),
           ),
         ),
       );
-
-      await tester.tap(find.text('Cancel'));
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('adaptive-modal-implied-close')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(GroupCustomColorPickerDialog), findsNothing);
+      expect(completed, isTrue);
+      expect(result, isNull);
     });
 
     testWidgets('tapping a history swatch pops with that color', (
@@ -185,7 +204,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Dialog is rendered.
-      expect(find.text('OK'), findsOneWidget);
+      expect(find.text('Save'), findsOneWidget);
     });
   });
 }

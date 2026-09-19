@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
@@ -28,7 +30,6 @@ import '../../../theme/color.dart' show CustomColors;
 import '../../../theme/icon.dart';
 import '../../../widgets/rules.dart';
 import '../../../widgets/widgets.dart';
-import '../../habit_detail/_widgets/habit_other_info_tile.dart';
 
 /// Form-only result returned by [GroupEditForm].
 ///
@@ -148,83 +149,72 @@ class GroupEditFormState extends State<GroupEditForm> {
     );
   }
 
+  String? _validateName(String? value) {
+    final l10n = L10n.of(context);
+    final trimmed = value?.trim() ?? '';
+    if (trimmed.isEmpty) {
+      return l10n?.groupManage_nameRequired ?? 'Name is required';
+    }
+    if (trimmed.length > groupNameRule.softLimit) {
+      return l10n?.groupManage_nameTooLong(groupNameRule.softLimit) ??
+          'Name must be ≤ ${groupNameRule.softLimit} characters';
+    }
+    return null;
+  }
+
+  String? _validateDescription(String? value) {
+    final l10n = L10n.of(context);
+    final trimmed = value?.trim() ?? '';
+    if (trimmed.length > groupDescRule.softLimit) {
+      return l10n?.groupManage_descTooLong(groupDescRule.softLimit) ??
+          'Description should be ≤ ${groupDescRule.softLimit} characters';
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final l10n = L10n.of(context);
     return Form(
       key: _formKey,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextFormField(
-            controller: _nameCtrl,
-            maxLength: groupNameRule.hardLimit,
-            maxLengthEnforcement:
-                MaxLengthEnforcement.truncateAfterCompositionEnds,
-            decoration: InputDecoration(
-              labelText: l10n?.groupManage_name_label ?? 'Name',
-            ),
-            validator: (v) {
-              final trimmed = v?.trim() ?? '';
-              if (trimmed.isEmpty) {
-                return l10n?.groupManage_nameRequired ?? 'Name is required';
-              }
-              if (trimmed.length > groupNameRule.softLimit) {
-                return l10n?.groupManage_nameTooLong(groupNameRule.softLimit) ??
-                    'Name must be ≤ ${groupNameRule.softLimit} characters';
-              }
-              return null;
-            },
-            autofocus: true,
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _descCtrl,
-            maxLength: groupDescRule.softLimit,
-            maxLengthEnforcement: MaxLengthEnforcement.none,
-            inputFormatters: [groupDescRule.hardLimitFormatter],
-            buildCounter: groupDescRule.buildSoftLimitCounter,
-            decoration: InputDecoration(
-              labelText: l10n?.groupManage_desc_label ?? 'Description',
-            ),
-            validator: (v) {
-              final trimmed = v?.trim() ?? '';
-              if (trimmed.length > groupDescRule.softLimit) {
-                return l10n?.groupManage_descTooLong(groupDescRule.softLimit) ??
-                    'Description should be ≤ ${groupDescRule.softLimit} characters';
-              }
-              return null;
-            },
-            minLines: 1,
-            maxLines: 2,
-          ),
-          const SizedBox(height: 16),
-          GroupIconPicker(
-            selectedIcon: _selectedIcon,
-            resolvedColor: _selectedColor != null
-                ? Theme.of(context).extension<CustomColors>()?.getColor(
-                    _selectedColor!,
-                    brightness: Theme.of(context).brightness,
-                  )
-                : null,
-            onSelected: (icon) => setState(() => _selectedIcon = icon),
-          ),
-          const SizedBox(height: 16),
-          GroupColorPicker(
-            selectedColor: _selectedColor,
-            lastCustomColor: _lastCustomColor,
-            onColorSelected: (color) => setState(() => _selectedColor = color),
-            onCustomColorTap: _openCustomColorPicker,
-          ),
-          if (widget.existingGroup != null) ...[
-            const SizedBox(height: 12),
-            const HabitDivider(),
-            _ReadOnlyGroupInfo(group: widget.existingGroup!),
-          ],
-        ],
-      ),
+      child: switch (AdaptiveStyle.of(context)) {
+        AdaptiveStyle.material => _MaterialGroupEditForm(
+          nameController: _nameCtrl,
+          descriptionController: _descCtrl,
+          nameValidator: _validateName,
+          descriptionValidator: _validateDescription,
+          selectedIcon: _selectedIcon,
+          resolvedColor: _resolvedSelectedColor(context),
+          selectedColor: _selectedColor,
+          lastCustomColor: _lastCustomColor,
+          existingGroup: widget.existingGroup,
+          onIconSelected: (icon) => setState(() => _selectedIcon = icon),
+          onColorSelected: (color) => setState(() => _selectedColor = color),
+          onCustomColorTap: _openCustomColorPicker,
+        ),
+        AdaptiveStyle.apple => _AppleGroupEditForm(
+          nameController: _nameCtrl,
+          descriptionController: _descCtrl,
+          nameValidator: _validateName,
+          descriptionValidator: _validateDescription,
+          selectedIcon: _selectedIcon,
+          resolvedColor: _resolvedSelectedColor(context),
+          selectedColor: _selectedColor,
+          lastCustomColor: _lastCustomColor,
+          existingGroup: widget.existingGroup,
+          onIconSelected: (icon) => setState(() => _selectedIcon = icon),
+          onColorSelected: (color) => setState(() => _selectedColor = color),
+          onCustomColorTap: _openCustomColorPicker,
+        ),
+      },
     );
   }
+
+  Color? _resolvedSelectedColor(BuildContext context) => _selectedColor != null
+      ? Theme.of(context).extension<CustomColors>()?.getColor(
+          _selectedColor!,
+          brightness: Theme.of(context).brightness,
+        )
+      : null;
 
   Future<void> _openCustomColorPicker() async {
     final seedColor = switch (_selectedColor) {
@@ -236,12 +226,14 @@ class GroupEditFormState extends State<GroupEditForm> {
       _ => true,
     };
 
-    final selected = await showDialog<HabitColor>(
-      context: context,
-      builder: (_) => GroupCustomColorPickerDialog(
-        seedColor: seedColor,
-        seedTinted: seedTinted,
-        history: widget.customColorHistory,
+    final selected = await Navigator.of(context).push<HabitColor>(
+      adaptiveModalPageRoute<HabitColor>(
+        context: context,
+        builder: (_) => GroupCustomColorPickerDialog(
+          seedColor: seedColor,
+          seedTinted: seedTinted,
+          history: widget.customColorHistory,
+        ),
       ),
     );
 
@@ -254,6 +246,242 @@ class GroupEditFormState extends State<GroupEditForm> {
         if (selected is CustomHabitColor) _lastCustomColor = selected;
       });
     }
+  }
+}
+
+class _MaterialGroupEditForm extends StatelessWidget {
+  const _MaterialGroupEditForm({
+    required this.nameController,
+    required this.descriptionController,
+    required this.nameValidator,
+    required this.descriptionValidator,
+    required this.selectedIcon,
+    required this.resolvedColor,
+    required this.selectedColor,
+    required this.lastCustomColor,
+    required this.existingGroup,
+    required this.onIconSelected,
+    required this.onColorSelected,
+    required this.onCustomColorTap,
+  });
+
+  final TextEditingController nameController;
+  final TextEditingController descriptionController;
+  final FormFieldValidator<String> nameValidator;
+  final FormFieldValidator<String> descriptionValidator;
+  final GroupIcon? selectedIcon;
+  final Color? resolvedColor;
+  final HabitColor? selectedColor;
+  final HabitColor? lastCustomColor;
+  final HabitGroupData? existingGroup;
+  final ValueChanged<GroupIcon?> onIconSelected;
+  final ValueChanged<HabitColor?> onColorSelected;
+  final VoidCallback onCustomColorTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TextFormField(
+          controller: nameController,
+          maxLength: groupNameRule.hardLimit,
+          maxLengthEnforcement:
+              MaxLengthEnforcement.truncateAfterCompositionEnds,
+          decoration: InputDecoration(
+            labelText: l10n?.groupManage_name_label ?? 'Name',
+          ),
+          validator: nameValidator,
+          autofocus: true,
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: descriptionController,
+          maxLength: groupDescRule.softLimit,
+          maxLengthEnforcement: MaxLengthEnforcement.none,
+          inputFormatters: [groupDescRule.hardLimitFormatter],
+          buildCounter: groupDescRule.buildSoftLimitCounter,
+          decoration: InputDecoration(
+            labelText: l10n?.groupManage_desc_label ?? 'Description',
+          ),
+          validator: descriptionValidator,
+          minLines: 1,
+          maxLines: 2,
+        ),
+        GroupIconPicker(
+          selectedIcon: selectedIcon,
+          resolvedColor: resolvedColor,
+          onSelected: onIconSelected,
+        ),
+        GroupColorPicker(
+          selectedColor: selectedColor,
+          lastCustomColor: lastCustomColor,
+          onColorSelected: onColorSelected,
+          onCustomColorTap: onCustomColorTap,
+        ),
+        if (existingGroup != null) ...[
+          const SizedBox(height: 12),
+          const HabitDivider(),
+          _ReadOnlyGroupInfo(group: existingGroup!),
+        ],
+      ],
+    );
+  }
+}
+
+class _AppleGroupEditForm extends StatelessWidget {
+  const _AppleGroupEditForm({
+    required this.nameController,
+    required this.descriptionController,
+    required this.nameValidator,
+    required this.descriptionValidator,
+    required this.selectedIcon,
+    required this.resolvedColor,
+    required this.selectedColor,
+    required this.lastCustomColor,
+    required this.existingGroup,
+    required this.onIconSelected,
+    required this.onColorSelected,
+    required this.onCustomColorTap,
+  });
+
+  final TextEditingController nameController;
+  final TextEditingController descriptionController;
+  final FormFieldValidator<String> nameValidator;
+  final FormFieldValidator<String> descriptionValidator;
+  final GroupIcon? selectedIcon;
+  final Color? resolvedColor;
+  final HabitColor? selectedColor;
+  final HabitColor? lastCustomColor;
+  final HabitGroupData? existingGroup;
+  final ValueChanged<GroupIcon?> onIconSelected;
+  final ValueChanged<HabitColor?> onColorSelected;
+  final VoidCallback onCustomColorTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _AppleTextFormField(
+          key: const ValueKey('group-edit-name-field'),
+          label: l10n?.groupManage_name_label ?? 'Name',
+          controller: nameController,
+          inputFormatters: [groupNameRule.hardLimitFormatter],
+          maxLength: groupNameRule.hardLimit,
+          validator: nameValidator,
+          autofocus: true,
+          emphasized: true,
+        ),
+        const SizedBox(height: 16),
+        _AppleTextFormField(
+          key: const ValueKey('group-edit-description-field'),
+          label: l10n?.groupManage_desc_label ?? 'Description',
+          controller: descriptionController,
+          inputFormatters: [groupDescRule.hardLimitFormatter],
+          validator: descriptionValidator,
+          minLines: 1,
+          maxLines: 2,
+        ),
+        GroupIconPicker(
+          selectedIcon: selectedIcon,
+          resolvedColor: resolvedColor,
+          onSelected: onIconSelected,
+        ),
+        GroupColorPicker(
+          selectedColor: selectedColor,
+          lastCustomColor: lastCustomColor,
+          onColorSelected: onColorSelected,
+          onCustomColorTap: onCustomColorTap,
+        ),
+        if (existingGroup != null) ...[
+          const SizedBox(height: 16),
+          _ReadOnlyGroupInfo(group: existingGroup!),
+        ],
+      ],
+    );
+  }
+}
+
+class _AppleTextFormField extends StatelessWidget {
+  const _AppleTextFormField({
+    super.key,
+    required this.label,
+    required this.controller,
+    required this.inputFormatters,
+    required this.validator,
+    this.maxLength,
+    this.minLines,
+    this.maxLines = 1,
+    this.autofocus = false,
+    this.emphasized = false,
+  });
+
+  final String label;
+  final TextEditingController controller;
+  final List<TextInputFormatter> inputFormatters;
+  final FormFieldValidator<String> validator;
+  final int? maxLength;
+  final int? minLines;
+  final int? maxLines;
+  final bool autofocus;
+  final bool emphasized;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = CupertinoTheme.of(context);
+    final textStyle = theme.textTheme.textStyle;
+    final separatorColor = CupertinoDynamicColor.resolve(
+      CupertinoColors.separator,
+      context,
+    ).withValues(alpha: 0.35);
+    return FormField<String>(
+      initialValue: controller.text,
+      validator: validator,
+      builder: (field) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          CupertinoTextField(
+            controller: controller,
+            placeholder: label,
+            inputFormatters: inputFormatters,
+            maxLength: maxLength,
+            minLines: minLines,
+            maxLines: maxLines,
+            autofocus: autofocus,
+            clearButtonMode: OverlayVisibilityMode.editing,
+            padding: const EdgeInsetsDirectional.symmetric(
+              horizontal: 14,
+              vertical: 12,
+            ),
+            style: emphasized
+                ? textStyle.copyWith(fontSize: 20, fontWeight: FontWeight.w600)
+                : textStyle,
+            decoration: BoxDecoration(
+              color: CupertinoDynamicColor.resolve(
+                CupertinoColors.tertiarySystemFill,
+                context,
+              ),
+              border: Border.all(color: separatorColor, width: 0.5),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            onChanged: field.didChange,
+          ),
+          if (field.errorText case final error?) ...[
+            const SizedBox(height: 6),
+            Text(
+              error,
+              style: theme.textTheme.textStyle.copyWith(
+                fontSize: 13,
+                color: CupertinoColors.destructiveRed.resolveFrom(context),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
   }
 }
 
@@ -280,24 +508,29 @@ class _ReadOnlyGroupInfo extends StatelessWidget {
       selector: (_, vm) => vm.config,
       builder: (context, config, _) {
         final fmt = config.getFormatter(localeName);
-        return Column(
-          mainAxisSize: MainAxisSize.min,
+        final rows = [
+          if (createT != null)
+            (
+              l10n?.groupManage_createDateTile_title ?? 'Created',
+              fmt.format(createT),
+              HabitCalIcons.calendarcreate,
+            ),
+          if (modifyT != null)
+            (
+              l10n?.groupManage_modifyDateTile_title ?? 'Modified',
+              fmt.format(modifyT),
+              HabitCalIcons.calendarmodify,
+            ),
+        ];
+        return AdaptiveListSection(
+          hasLeading: true,
+          padding: const EdgeInsetsDirectional.only(top: 24, bottom: 8),
           children: [
-            if (createT != null)
-              HabitOtherInfoTile(
-                title: Text(
-                  l10n?.groupManage_createDateTile_title ?? 'Created',
-                ),
-                subTitle: Text(fmt.format(createT)),
-                leading: const Icon(HabitCalIcons.calendarcreate),
-              ),
-            if (modifyT != null)
-              HabitOtherInfoTile(
-                title: Text(
-                  l10n?.groupManage_modifyDateTile_title ?? 'Modified',
-                ),
-                subTitle: Text(fmt.format(modifyT)),
-                leading: const Icon(HabitCalIcons.calendarmodify),
+            for (final row in rows)
+              AdaptiveListTile(
+                leading: Icon(row.$3),
+                title: Text(row.$1),
+                subtitle: Text(row.$2),
               ),
           ],
         );

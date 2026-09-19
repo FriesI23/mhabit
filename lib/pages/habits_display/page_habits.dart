@@ -209,26 +209,17 @@ class HabitsTabPageState extends State<HabitsTabPage>
   void _openHabitArchiveConfirmDialog(BuildContext context) async {
     HabitSummaryViewModel viewmodel;
 
-    final result = await showConfirmDialog(
+    final l10n = L10n.of(context);
+    final result = await showAdaptiveConfirmDialog(
       context: context,
-      titleBuilder: (context) {
-        final l10n = L10n.of(context);
-        return l10n != null
-            ? Text(l10n.habitDisplay_archiveHabitsConfirmDialog_title)
-            : const Text('Archive Selected Habits?');
-      },
-      confirmTextBuilder: (context) {
-        final l10n = L10n.of(context);
-        return l10n != null
-            ? Text(l10n.habitDisplay_archiveHabitsConfirmDialog_confirm)
-            : const Text('confirm');
-      },
-      cancelTextBuilder: (context) {
-        final l10n = L10n.of(context);
-        return l10n != null
-            ? Text(l10n.habitDisplay_archiveHabitsConfirmDialog_cancel)
-            : const Text('cancel');
-      },
+      title: Text(
+        l10n?.habitDisplay_archiveHabitsConfirmDialog_title ??
+            'Archive Selected Habits?',
+      ),
+      confirmLabel:
+          l10n?.habitDisplay_archiveHabitsConfirmDialog_confirm ?? 'confirm',
+      cancelLabel:
+          l10n?.habitDisplay_archiveHabitsConfirmDialog_cancel ?? 'cancel',
     );
     if (result == null || result == false) return;
 
@@ -261,26 +252,17 @@ class HabitsTabPageState extends State<HabitsTabPage>
   void _openHabitUnArchiveConfirmDialog(BuildContext context) async {
     HabitSummaryViewModel viewmodel;
 
-    final result = await showConfirmDialog(
+    final l10n = L10n.of(context);
+    final result = await showAdaptiveConfirmDialog(
       context: context,
-      titleBuilder: (context) {
-        final l10n = L10n.of(context);
-        return l10n != null
-            ? Text(l10n.habitDisplay_unarchiveHabitsConfirmDialog_title)
-            : const Text('Unarchive Selected Habits?');
-      },
-      confirmTextBuilder: (context) {
-        final l10n = L10n.of(context);
-        return l10n != null
-            ? Text(l10n.habitDisplay_unarchiveHabitsConfirmDialog_confirm)
-            : const Text('confirm');
-      },
-      cancelTextBuilder: (context) {
-        final l10n = L10n.of(context);
-        return l10n != null
-            ? Text(l10n.habitDisplay_unarchiveHabitsConfirmDialog_cancel)
-            : const Text('cancel');
-      },
+      title: Text(
+        l10n?.habitDisplay_unarchiveHabitsConfirmDialog_title ??
+            'Unarchive Selected Habits?',
+      ),
+      confirmLabel:
+          l10n?.habitDisplay_unarchiveHabitsConfirmDialog_confirm ?? 'confirm',
+      cancelLabel:
+          l10n?.habitDisplay_unarchiveHabitsConfirmDialog_cancel ?? 'cancel',
     );
     if (result == null || result == false) return;
 
@@ -315,26 +297,18 @@ class HabitsTabPageState extends State<HabitsTabPage>
   void _openHabitDeleteConfirmDialog(BuildContext context) async {
     HabitSummaryViewModel viewmodel;
 
-    final result = await showConfirmDialog(
+    final l10n = L10n.of(context);
+    final result = await showAdaptiveConfirmDialog(
       context: context,
-      titleBuilder: (context) {
-        final l10n = L10n.of(context);
-        return l10n != null
-            ? Text(l10n.habitDisplay_deleteHabitsConfirmDialog_title)
-            : const Text("Delete Selected Habits?");
-      },
-      confirmTextBuilder: (context) {
-        final l10n = L10n.of(context);
-        return l10n != null
-            ? Text(l10n.habitDisplay_deleteHabitsConfirmDialog_confirm)
-            : const Text('confirm');
-      },
-      cancelTextBuilder: (context) {
-        final l10n = L10n.of(context);
-        return l10n != null
-            ? Text(l10n.habitDisplay_deleteHabitsConfirmDialog_cancel)
-            : const Text('cancel');
-      },
+      title: Text(
+        l10n?.habitDisplay_deleteHabitsConfirmDialog_title ??
+            'Delete Selected Habits?',
+      ),
+      confirmLabel:
+          l10n?.habitDisplay_deleteHabitsConfirmDialog_confirm ?? 'confirm',
+      cancelLabel:
+          l10n?.habitDisplay_deleteHabitsConfirmDialog_cancel ?? 'cancel',
+      isDestructiveAction: true,
     );
     if (result == null || result == false) return;
 

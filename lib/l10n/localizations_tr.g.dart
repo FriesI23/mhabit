@@ -513,14 +513,32 @@ class L10nTr extends L10n {
     int count,
     String fromGroup,
     String toGroup,
+    int remainingGroupCount,
+    int totalGroupCount,
   ) {
     String _temp0 = intl.Intl.pluralLogic(
+      remainingGroupCount,
+      locale: localeName,
+      other: ' and $remainingGroupCount more groups',
+      one: ' and 1 more group',
+      zero: '',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      remainingGroupCount,
+      locale: localeName,
+      other: ' and $remainingGroupCount more groups',
+      one: ' and 1 more group',
+      zero: '',
+    );
+    String _temp2 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count habits will change from \"$fromGroup\" to \"$toGroup\"',
-      one: '$count habit will change from \"$fromGroup\" to \"$toGroup\"',
+      other:
+          '$count habits will change from \"$fromGroup\"$_temp0 to \"$toGroup\"',
+      one:
+          '$count habit will change from \"$fromGroup\"$_temp1 to \"$toGroup\"',
     );
-    return '$_temp0';
+    return '$_temp2';
   }
 
   @override
@@ -1013,6 +1031,13 @@ class L10nTr extends L10n {
 
   @override
   String get appSetting_changeLanguageDialog_titleText => 'Dil Seç';
+
+  @override
+  String appSetting_changeLanguageDialog_currentLanguage_text(
+    String localeName,
+  ) {
+    return 'Current language: $localeName';
+  }
 
   @override
   String get appSetting_languageSubgroupText => 'Language';
@@ -1903,6 +1928,12 @@ class L10nTr extends L10n {
       'Tam adı kullan';
 
   @override
+  String get appDateFormat_leadingZero_text => 'Use leading zeros';
+
+  @override
+  String get appDateFormat_preview_text => 'Preview';
+
+  @override
   String get common_customDateTimeFormatPicker_applyFreqChart_text =>
       'Sıklık Grafiğine Uygula';
 
@@ -2278,4 +2309,12 @@ class L10nTr extends L10n {
 
   @override
   String get habitDisplay_groupType_manual => 'Benim sıralamam';
+
+  @override
+  String confirmDialog_confirmAndSkip_text(String action) {
+    return '$action, and don\'t ask again';
+  }
+
+  @override
+  String get habitDisplay_groupModifyConfirm_previewTitle => 'Preview';
 }

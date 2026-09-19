@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../adaptive/adaptive_app_bar.dart';
-import '../adaptive/adaptive_modal_layout.dart';
+import '../adaptive/adaptive_modal_content.dart';
+import '../adaptive/adaptive_sheet.dart';
 import '../adaptive/modal_sheet_drag_region.dart';
 import '../window_control/modal_app_bar_region.dart';
 
@@ -350,73 +351,97 @@ class _MaterialModalDragHandle extends StatelessWidget {
 class MaterialAdaptiveModal extends StatelessWidget {
   const MaterialAdaptiveModal({
     super.key,
+    this.showAppBar = true,
     required this.title,
     required this.leadingAction,
+    this.appBarActions = const [],
+    this.confirmAction,
     required this.actions,
     required this.pinnedBody,
-    required this.body,
+    required this.content,
     required this.bottomActions,
     required this.automaticallyImplyCloseButton,
     required this.onCloseRequested,
-    required this.constraints,
+    required this.size,
     required this.presentation,
     required this.scrollController,
+    this.onContentSizeChanged,
   });
 
+  final bool showAppBar;
   final Widget? title;
   final Widget? leadingAction;
+  final List<Widget> appBarActions;
+  final AdaptiveModalConfirmAction? confirmAction;
   final List<Widget> actions;
   final Widget? pinnedBody;
-  final Widget body;
+  final Widget content;
   final List<Widget> bottomActions;
   final bool automaticallyImplyCloseButton;
   final VoidCallback onCloseRequested;
-  final BoxConstraints? constraints;
+  final AdaptiveModalSize size;
   final AdaptiveModalPresentation presentation;
   final ScrollController scrollController;
+  final ValueChanged<Size>? onContentSizeChanged;
 
   @override
   Widget build(BuildContext context) {
     final backgroundColor = Theme.of(context).adaptiveModalBackgroundColor;
-    final appBar = AppBarTheme(
-      data: AppBarTheme.of(context).copyWith(
-        backgroundColor: backgroundColor,
-        surfaceTintColor: Colors.transparent,
-      ),
-      child: ModalWindowControlAppBarRegion(
-        child: MediaQuery.removePadding(
-          context: context,
-          removeTop: true,
-          child: AdaptiveAppBar.material(
-            key: const ValueKey('adaptive-modal-app-bar'),
-            leading: leadingAction,
-            title: title == null
-                ? const SizedBox.shrink()
-                : KeyedSubtree(
-                    key: const ValueKey('adaptive-modal-title'),
-                    child: title!,
-                  ),
-            automaticallyImplyLeading: false,
-          ),
-        ),
-      ),
-    );
+    final appBar = !showAppBar
+        ? null
+        : AppBarTheme(
+            data: AppBarTheme.of(context).copyWith(
+              backgroundColor: backgroundColor,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              surfaceTintColor: Colors.transparent,
+            ),
+            child: ModalWindowControlAppBarRegion(
+              child: MediaQuery.removePadding(
+                context: context,
+                removeTop: true,
+                child: AdaptiveAppBar.material(
+                  key: const ValueKey('adaptive-modal-app-bar'),
+                  leading:
+                      leadingAction ??
+                      (automaticallyImplyCloseButton
+                          ? CloseButton(
+                              key: const ValueKey(
+                                'adaptive-modal-implied-close',
+                              ),
+                              onPressed: onCloseRequested,
+                            )
+                          : null),
+                  actions: [
+                    ...appBarActions,
+                    if (confirmAction case final action?)
+                      TextButton(
+                        key: const ValueKey('adaptive-modal-confirm'),
+                        onPressed: action.onPressed,
+                        child: Text(action.label),
+                      ),
+                  ],
+                  title: title == null
+                      ? const SizedBox.shrink()
+                      : KeyedSubtree(
+                          key: const ValueKey('adaptive-modal-title'),
+                          child: title!,
+                        ),
+                  automaticallyImplyLeading: false,
+                ),
+              ),
+            ),
+          );
     final sheetDragController = ModalSheetDragControllerScope.maybeControllerOf(
       context,
     );
     final header =
-        presentation == AdaptiveModalPresentation.sheet &&
+        appBar != null &&
+            presentation == AdaptiveModalPresentation.sheet &&
             sheetDragController != null
         ? ModalSheetDragRegion(controller: sheetDragController, child: appBar)
         : appBar;
-    final impliedClose = automaticallyImplyCloseButton
-        ? TextButton(
-            key: const ValueKey('adaptive-modal-implied-close'),
-            onPressed: onCloseRequested,
-            child: Text(MaterialLocalizations.of(context).closeButtonLabel),
-          )
-        : null;
-    final hasFooter = actions.isNotEmpty || impliedClose != null;
+    final hasFooter = actions.isNotEmpty;
     final actionPadding = switch (presentation) {
       AdaptiveModalPresentation.sheet => const EdgeInsets.fromLTRB(
         20,
@@ -441,47 +466,43 @@ class MaterialAdaptiveModal extends StatelessWidget {
               overflowAlignment: OverflowBarAlignment.end,
               spacing: 8,
               overflowSpacing: 8,
-              children: [...actions, ?impliedClose],
+              children: actions,
             ),
           );
 
     final overlaysHeader =
+        showAppBar &&
         presentation == AdaptiveModalPresentation.sheet &&
         sheetDragController != null;
     const appBarHeight = kToolbarHeight;
-    final paddedPinnedBody = !overlaysHeader || pinnedBody == null
-        ? pinnedBody
+    final paddedPinnedBody = pinnedBody == null
+        ? null
         : Padding(
-            padding: const EdgeInsets.only(top: appBarHeight),
+            padding: EdgeInsets.only(top: overlaysHeader ? appBarHeight : 0),
             child: pinnedBody,
           );
-    final paddedBody = !overlaysHeader || pinnedBody != null
-        ? body
-        : Padding(
-            padding: const EdgeInsets.only(top: appBarHeight),
-            child: body,
-          );
-    final layout = AdaptiveModalLayout(
+    final layout = AdaptiveModalLayoutScope(
       header: overlaysHeader ? null : header,
       footer: footer,
       pinnedBody: paddedPinnedBody,
-      body: paddedBody,
+      contentTopInset: overlaysHeader && pinnedBody == null ? appBarHeight : 0,
       bottomActions: bottomActions,
       scrollController: scrollController,
+      onContentSizeChanged: onContentSizeChanged,
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
       presentation: presentation,
-      constraints: constraints,
+      size: size,
+      child: content,
     );
-    final content = !overlaysHeader
-        ? layout
-        : Stack(
-            fit: StackFit.passthrough,
-            children: [
-              layout,
-              Positioned(top: 0, left: 0, right: 0, child: header),
-            ],
-          );
+    final surface = Stack(
+      fit: StackFit.passthrough,
+      children: [
+        layout,
+        if (overlaysHeader && header != null)
+          Positioned(top: 0, left: 0, right: 0, child: header),
+      ],
+    );
 
-    return Material(color: backgroundColor, child: content);
+    return Material(color: backgroundColor, child: surface);
   }
 }

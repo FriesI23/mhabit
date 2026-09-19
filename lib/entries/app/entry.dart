@@ -15,6 +15,7 @@
 import 'dart:async';
 
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/cupertino.dart' show CupertinoUserInterfaceLevelData;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -33,6 +34,7 @@ import '../../models/app_sync_tasks.dart';
 import '../../models/app_theme_color.dart';
 import '../../models/habit_date.dart';
 import '../../pages/app_about/page.dart' show AppAboutPage;
+import '../../pages/app_date_format/page.dart' show AppDateFormatPage;
 import '../../pages/app_debugger/page.dart' show AppDebuggerPage;
 import '../../pages/app_notify_config/page.dart' show AppNotifyConfigPage;
 import '../../pages/app_settings/page.dart' show AppSettingPage;
@@ -198,6 +200,7 @@ class _AppEntryState extends State<_AppEntry> {
       ..addSettingsFlow(
         settingsBuilder: _buildSettingsPage,
         aboutBuilder: (_, _) => const AppAboutPage(),
+        dateFormatBuilder: (_, _) => const AppDateFormatPage(),
         syncBuilder: (_, _) => const AppSyncPage(),
         notifyBuilder: (_, _) => const AppNotifyConfigPage(),
         experimentalBuilder: (_, _) => const ExpermentalFeaturesPage(),
@@ -347,24 +350,20 @@ class _AppEntryState extends State<_AppEntry> {
                       themeMainColor: themeMainColor,
                       dynamicScheme: lightDynamic,
                     ),
-                darkThemeBuilder: (context) => switch ((
-                  defaultTargetPlatform,
-                  AdaptiveWindowControlLayoutScope.maybeOf(
-                    context,
-                  )?.hasWindowControlAvoidance,
-                )) {
-                  (TargetPlatform.iOS, true) =>
-                    const AppThemeBuilder().buildElevatedDark(
-                      themeColor: themeColor,
-                      themeMainColor: themeMainColor,
-                      dynamicScheme: darkDynamic,
-                    ),
-                  _ => const AppThemeBuilder().buildDark(
-                    themeColor: themeColor,
-                    themeMainColor: themeMainColor,
-                    dynamicScheme: darkDynamic,
-                  ),
-                },
+                darkThemeBuilder: (context) =>
+                    switch (appWindowInterfaceLevel(context)) {
+                      CupertinoUserInterfaceLevelData.elevated =>
+                        const AppThemeBuilder().buildElevatedDark(
+                          themeColor: themeColor,
+                          themeMainColor: themeMainColor,
+                          dynamicScheme: darkDynamic,
+                        ),
+                      _ => const AppThemeBuilder().buildDark(
+                        themeColor: themeColor,
+                        themeMainColor: themeMainColor,
+                        dynamicScheme: darkDynamic,
+                      ),
+                    },
                 config: _router,
               ),
             ),
@@ -418,8 +417,9 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
   Future<bool> _onWebDavAppSyncUserConfirmNeedCheck(
     WebDavConfigTaskChecklist checklist,
   ) {
-    return showDialog<bool>(
+    return showAdaptiveModalDialog<bool>(
       context: context,
+      barrierDismissible: true,
       builder: (context) => checklist.isEmptyDir
           ? const AppSyncWebDavNewServerConfirmDialog()
           : const AppSyncWebDavOldServerConfirmDialog(),

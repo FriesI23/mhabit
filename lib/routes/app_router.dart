@@ -28,6 +28,7 @@ enum AppRoute {
   habitEdit('habit/edit'),
   settings('settings'),
   settingsAbout('settings/about'),
+  settingsDateFormat('settings/date-format'),
   settingsSync('settings/sync'),
   settingsNotify('settings/notify'),
   experimental('experimental'),
@@ -47,6 +48,7 @@ String _pathFor(AppRoute route) => switch (route) {
   AppRoute.habitEdit => '/habit/edit',
   AppRoute.settings => '/settings',
   AppRoute.settingsAbout => '/settings/about',
+  AppRoute.settingsDateFormat => '/settings/date-format',
   AppRoute.settingsSync => '/settings/sync',
   AppRoute.settingsNotify => '/settings/notify',
   AppRoute.experimental => '/experimental',
@@ -57,17 +59,20 @@ String _pathFor(AppRoute route) => switch (route) {
 
 enum _SettingsChildRoute {
   about,
+  dateFormat,
   sync,
   notify;
 
   AppRoute get route => switch (this) {
     _SettingsChildRoute.about => AppRoute.settingsAbout,
+    _SettingsChildRoute.dateFormat => AppRoute.settingsDateFormat,
     _SettingsChildRoute.sync => AppRoute.settingsSync,
     _SettingsChildRoute.notify => AppRoute.settingsNotify,
   };
 
   String get path => switch (this) {
     _SettingsChildRoute.about => 'about',
+    _SettingsChildRoute.dateFormat => 'date-format',
     _SettingsChildRoute.sync => 'sync',
     _SettingsChildRoute.notify => 'notify',
   };
@@ -91,6 +96,7 @@ bool appShellFlowVisibilityPolicy(List<String?> routeNames) {
     AppRoute.habitEdit ||
     AppRoute.settings ||
     AppRoute.settingsAbout ||
+    AppRoute.settingsDateFormat ||
     AppRoute.settingsSync ||
     AppRoute.settingsNotify ||
     AppRoute.experimental ||
@@ -107,6 +113,7 @@ _SettingsFlowMembership _settingsFlowMembership(AppRoute route) =>
     switch (route) {
       AppRoute.settings ||
       AppRoute.settingsAbout ||
+      AppRoute.settingsDateFormat ||
       AppRoute.settingsSync ||
       AppRoute.settingsNotify ||
       AppRoute.experimental => _SettingsFlowMembership.direct,
@@ -227,6 +234,7 @@ class AppFlowRouterBuilder with _AppRouteAdder {
   void addSettingsFlow({
     required GoRouterPageBuilder settingsBuilder,
     required GoRouterWidgetBuilder aboutBuilder,
+    required GoRouterWidgetBuilder dateFormatBuilder,
     required GoRouterWidgetBuilder syncBuilder,
     required GoRouterWidgetBuilder notifyBuilder,
     required GoRouterWidgetBuilder experimentalBuilder,
@@ -239,6 +247,10 @@ class AppFlowRouterBuilder with _AppRouteAdder {
           pageBuilder: settingsBuilder,
           routes: [
             _settingsChildRoute(_SettingsChildRoute.about, aboutBuilder),
+            _settingsChildRoute(
+              _SettingsChildRoute.dateFormat,
+              dateFormatBuilder,
+            ),
             _settingsChildRoute(_SettingsChildRoute.sync, syncBuilder),
             _settingsChildRoute(_SettingsChildRoute.notify, notifyBuilder),
           ],

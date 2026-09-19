@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
@@ -22,7 +23,7 @@ import '../../../providers/workflow/app_sync.dart';
 Future<AppSyncFetchInterval?> showAppSyncFetchIntervalSwitchDialog({
   required BuildContext context,
   AppSyncFetchInterval? select,
-}) => showDialog(
+}) => showAdaptiveSheet<AppSyncFetchInterval>(
   context: context,
   builder: (context) => AppSyncFetchIntervalSwitchDialog(select: select),
 );
@@ -32,30 +33,28 @@ class AppSyncFetchIntervalSwitchDialog extends StatelessWidget {
 
   const AppSyncFetchIntervalSwitchDialog({super.key, required this.select});
 
-  Widget _buildOption(
-    BuildContext context,
-    AppSyncFetchInterval interval, [
-    L10n? l10n,
-  ]) => SimpleDialogOption(
-    key: ValueKey(interval.index),
-    onPressed: () => Navigator.of(context).pop(interval),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(interval.getShowText(l10n)),
-        if (select == interval) const Icon(Icons.check),
-      ],
-    ),
-  );
-
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return SimpleDialog(
-      title: Text(l10n?.appSync_syncIntervalTile_title ?? "Fetch Interval"),
-      children: AppSyncFetchInterval.values
-          .map((e) => _buildOption(context, e, l10n))
-          .toList(),
+    return AdaptiveModal(
+      size: const AdaptiveModalSize.constrained(),
+      title: Text(l10n?.appSync_syncIntervalTile_title ?? 'Fetch Interval'),
+      body: AdaptiveListSection(
+        appleTransparent: true,
+        padding: EdgeInsets.zero,
+        children: [
+          for (final interval in AppSyncFetchInterval.values)
+            Semantics(
+              key: ValueKey(interval.index),
+              selected: select == interval,
+              child: AdaptiveListTile(
+                title: Text(interval.getShowText(l10n)),
+                trailing: select == interval ? const AdaptiveCheckmark() : null,
+                onTap: () => Navigator.of(context).pop(interval),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -74,7 +73,7 @@ class AppSyncFetchIntervalTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return ListTile(
+    return AdaptiveListTile.navigation(
       title: Text(l10n?.appSync_syncIntervalTile_title ?? "Fetch Interval"),
       subtitle: buildSubtitle(l10n),
       onTap: onPressed,

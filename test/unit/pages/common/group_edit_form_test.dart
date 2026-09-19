@@ -20,6 +20,7 @@ import 'package:mhabit/models/habit_group.dart';
 import 'package:mhabit/pages/common/_widgets/group_edit_form.dart';
 import 'package:mhabit/providers/app_ui/app_custom_date_format.dart';
 import 'package:mhabit/widgets/widgets.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 Widget _wrap(Widget child) {
@@ -27,7 +28,7 @@ Widget _wrap(Widget child) {
     theme: ThemeData(extensions: const []),
     home: ChangeNotifierProvider<AppCustomDateYmdHmsConfigViewModel>(
       create: (_) => AppCustomDateYmdHmsConfigViewModel(),
-      child: Scaffold(body: child),
+      child: Scaffold(body: SingleChildScrollView(child: child)),
     ),
   );
 }
@@ -209,6 +210,13 @@ void main() {
 
       expect(find.text('Created'), findsOneWidget);
       expect(find.text('Modified'), findsNothing);
+      expect(
+        find.ancestor(
+          of: find.text('Created'),
+          matching: find.byType(AdaptiveListSection),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows modified date when modifyT is set', (tester) async {

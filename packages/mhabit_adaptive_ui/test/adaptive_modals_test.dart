@@ -876,7 +876,7 @@ void main() {
       );
       await firstDrag.moveBy(const Offset(0, 20));
       await tester.pump(const Duration(milliseconds: 100));
-      await firstDrag.moveBy(const Offset(0, 280));
+      await firstDrag.moveBy(Offset(0, tester.getSize(popup).height * 0.35));
       await tester.pump(const Duration(milliseconds: 300));
       await firstDrag.up();
       await tester.pumpAndSettle();
@@ -973,7 +973,7 @@ void main() {
       );
       await reboundDrag.moveBy(const Offset(0, 20));
       await tester.pump(const Duration(milliseconds: 100));
-      await reboundDrag.moveBy(const Offset(0, 280));
+      await reboundDrag.moveBy(Offset(0, tester.getSize(popup).height * 0.35));
       await tester.pump(const Duration(milliseconds: 300));
       expect(tester.getTopLeft(popup).dy, greaterThan(initialTop));
       await reboundDrag.up();
@@ -1030,7 +1030,7 @@ void main() {
       tester.binding.handlePointerEvent(
         PointerScrollEvent(
           position: tester.getCenter(scrollBody),
-          scrollDelta: const Offset(0, -300),
+          scrollDelta: Offset(0, -tester.getSize(popup).height * 0.4),
         ),
       );
       await tester.pump();

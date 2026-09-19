@@ -16,6 +16,7 @@ import 'dart:io';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../routes/navigator_helpers.dart';
@@ -36,7 +37,7 @@ class _AndroidAppSettingNotifyTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return ListTile(
+    return AdaptiveListTile.external(
       title: Text(l10n?.appSetting_notify_titleTile ?? "Notifications"),
       subtitle: l10n != null
           ? Text(l10n.appSetting_notify_subtitleTile_android)
@@ -54,7 +55,7 @@ class _AppSettingNotifyTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return ListTile(
+    return AdaptiveListTile.navigation(
       title: Text(l10n?.appSetting_notify_titleTile ?? "Notifications"),
       subtitle: l10n != null ? Text(l10n.appSetting_notify_subtitleTile) : null,
       onTap: () => naviToNotifyConfigPage(context: context),
