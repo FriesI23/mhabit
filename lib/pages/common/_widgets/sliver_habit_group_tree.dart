@@ -66,6 +66,10 @@ class HabitGroupTreeEntry {
 /// Expansion belongs to this widget; replacing row decorations preserves it.
 /// Row slots should fit the two-line row height, which follows text scaling.
 class SliverHabitGroupTree extends StatefulWidget {
+  /// Maximum number of edges from a top-level entry to a descendant.
+  /// The app's root/group/habit previews use only two edges.
+  static const int maxEntryDepth = 32;
+
   const SliverHabitGroupTree({
     super.key,
     required this.groups,
@@ -126,12 +130,28 @@ class _SliverHabitGroupTreeState extends State<SliverHabitGroupTree> {
   void _updateTree() {
     final entries = <String, HabitGroupTreeEntry>{};
     final structure = <(String, String?)>[];
-    void collect(HabitGroupTreeEntry entry, String? parent) {
-      assert(!entries.containsKey(entry.id), 'Tree IDs must be unique');
+
+    void collect(HabitGroupTreeEntry entry, String? parent, int depth) {
+      if (entries.containsKey(entry.id)) {
+        throw ArgumentError.value(
+          entry.id,
+          'id',
+          'Habit group tree entry IDs must be unique',
+        );
+      }
+      if (depth > SliverHabitGroupTree.maxEntryDepth) {
+        throw RangeError.range(
+          depth,
+          0,
+          SliverHabitGroupTree.maxEntryDepth,
+          'depth',
+          'Habit group tree is too deep',
+        );
+      }
       entries[entry.id] = entry;
       structure.add((entry.id, parent));
       for (final child in entry.children) {
-        collect(child, entry.id);
+        collect(child, entry.id, depth + 1);
       }
     }
 
@@ -141,12 +161,14 @@ class _SliverHabitGroupTreeState extends State<SliverHabitGroupTree> {
       structure.add((root.id, null));
     }
     for (final group in widget.groups) {
-      collect(group, root?.id);
+      collect(group, root?.id, root == null ? 0 : 1);
     }
     _entries = entries;
     _groupIds = widget.groups.map((entry) => entry.id).toSet();
     if (listEquals(_structure, structure)) return;
+
     final expanded = <String, bool>{};
+
     void remember(TreeSliverNode<String> node) {
       expanded[node.content] = node.isExpanded;
       for (final child in node.children) {
@@ -157,6 +179,7 @@ class _SliverHabitGroupTreeState extends State<SliverHabitGroupTree> {
     for (final node in _tree) {
       remember(node);
     }
+
     TreeSliverNode<String> build(
       HabitGroupTreeEntry entry,
       List<HabitGroupTreeEntry> children,
@@ -165,6 +188,7 @@ class _SliverHabitGroupTreeState extends State<SliverHabitGroupTree> {
       expanded: expanded[entry.id] ?? entry.initiallyExpanded,
       children: [for (final child in children) build(child, child.children)],
     );
+
     _tree = root == null
         ? [for (final group in widget.groups) build(group, group.children)]
         : [build(root, widget.groups)];

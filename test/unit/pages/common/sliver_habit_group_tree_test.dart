@@ -10,7 +10,72 @@ import 'package:mhabit/theme/color.dart'
     show darkCustomColors, lightCustomColors;
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
+Widget _treeHost({
+  HabitGroupTreeEntry? root,
+  required List<HabitGroupTreeEntry> groups,
+}) => MaterialApp(
+  home: Scaffold(
+    body: CustomScrollView(
+      slivers: [SliverHabitGroupTree(root: root, groups: groups)],
+    ),
+  ),
+);
+
+HabitGroupTreeEntry _chainWithDepth(int depth) {
+  var entry = const HabitGroupTreeEntry(id: 'leaf', title: Text('Leaf'));
+  for (var index = 0; index < depth; index++) {
+    entry = HabitGroupTreeEntry(
+      id: 'ancestor-$index',
+      title: const Text('Ancestor'),
+      children: [entry],
+    );
+  }
+  return entry;
+}
+
 void main() {
+  testWidgets('tree rejects duplicate IDs at runtime', (tester) async {
+    await tester.pumpWidget(
+      _treeHost(
+        root: const HabitGroupTreeEntry(id: 'same', title: Text('Root')),
+        groups: const [HabitGroupTreeEntry(id: 'same', title: Text('Group'))],
+      ),
+    );
+    final error = tester.takeException();
+    expect(error, isA<ArgumentError>());
+    expect(error.toString(), contains('same'));
+  });
+
+  testWidgets('tree rejects cyclic children at runtime', (tester) async {
+    final children = <HabitGroupTreeEntry>[];
+    final entry = HabitGroupTreeEntry(
+      id: 'cycle',
+      title: const Text('Cycle'),
+      children: children,
+    );
+    children.add(entry);
+    await tester.pumpWidget(_treeHost(groups: [entry]));
+    final error = tester.takeException();
+    expect(error, isA<ArgumentError>());
+    expect(error.toString(), contains('cycle'));
+  });
+
+  testWidgets('tree accepts its maximum depth', (tester) async {
+    await tester.pumpWidget(
+      _treeHost(groups: [_chainWithDepth(SliverHabitGroupTree.maxEntryDepth)]),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('tree rejects entries beyond its maximum depth', (tester) async {
+    await tester.pumpWidget(
+      _treeHost(
+        groups: [_chainWithDepth(SliverHabitGroupTree.maxEntryDepth + 1)],
+      ),
+    );
+    expect(tester.takeException(), isA<RangeError>());
+  });
+
   for (final style in AdaptiveStyle.values) {
     for (final brightness in Brightness.values) {
       testWidgets(
