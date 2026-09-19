@@ -62,8 +62,7 @@ melos:
     build-runner:
       description: Run build_runner generators and gen-l10n.
       steps:
-        - flutter pub run build_runner build --delete-conflicting-outputs
-        - (cd packages/mhabit_adaptive_ui && flutter pub run build_runner build --delete-conflicting-outputs)
+        - flutter pub run build_runner build --workspace
         - flutter gen-l10n
     fix:
       description: Apply fixes and formatting in the root app and internal packages.
