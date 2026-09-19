@@ -295,14 +295,16 @@ class _CollapsibleCupertinoSliverAppBar extends StatelessWidget {
   final EdgeInsets? windowControlAvoidance;
   final EdgeInsetsDirectional windowControlEdgePadding;
 
-  @override
-  Widget build(BuildContext context) {
+  bool _useLargeTitle(BuildContext context) {
     // Portrait always needs the large-title slot because the SDK chooses the
     // expanded presentation by aspect ratio. Landscape follows WindowSize.
-    final isPortrait =
-        MediaQuery.orientationOf(context) == Orientation.portrait;
-    final useLargeTitle =
-        isPortrait || WindowSize.of(context).width == WindowSizeClass.compact;
+    return MediaQuery.orientationOf(context) == Orientation.portrait ||
+        WindowSize.of(context).width == WindowSizeClass.compact;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final useLargeTitle = _useLargeTitle(context);
     final navigationBar = WindowControlCupertinoSliverNavigationBar(
       middle: useLargeTitle ? null : title,
       largeTitle: useLargeTitle ? title : null,

@@ -23,6 +23,21 @@ class MaterialAdaptiveChoiceListTile<T extends Object> extends StatelessWidget {
   final Map<T, String> labels;
   final ValueChanged<T>? onChanged;
 
+  bool _isStacked(
+    BuildContext context,
+    BoxConstraints constraints, {
+    required bool segmented,
+  }) {
+    final layout = segmented ? config.segmented : config.choice;
+    return switch (layout) {
+      AdaptiveChoiceLayout.inline => false,
+      AdaptiveChoiceLayout.stacked => true,
+      AdaptiveChoiceLayout.responsive =>
+        constraints.maxWidth < 400 ||
+            MediaQuery.textScalerOf(context).scale(14) > 20,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final segmented = labels.length <= config.maxSegmentCount;
@@ -70,14 +85,7 @@ class MaterialAdaptiveChoiceListTile<T extends Object> extends StatelessWidget {
           );
     return LayoutBuilder(
       builder: (context, constraints) {
-        final layout = segmented ? config.segmented : config.choice;
-        final stacked = switch (layout) {
-          AdaptiveChoiceLayout.inline => false,
-          AdaptiveChoiceLayout.stacked => true,
-          AdaptiveChoiceLayout.responsive =>
-            constraints.maxWidth < 400 ||
-                MediaQuery.textScalerOf(context).scale(14) > 20,
-        };
+        final stacked = _isStacked(context, constraints, segmented: segmented);
         return AdaptiveListTile.material(
           title: title,
           trailing: stacked

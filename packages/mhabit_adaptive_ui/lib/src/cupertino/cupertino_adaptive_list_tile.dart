@@ -40,6 +40,11 @@ class CupertinoAdaptiveListTile extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
 
+  ListSectionRowScope? _groupedSectionOf(BuildContext context) {
+    final section = ListSectionRowScope.maybeOf(context);
+    return section?.style == AdaptiveStyle.apple ? section : null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -81,8 +86,8 @@ class CupertinoAdaptiveListTile extends StatelessWidget {
           defaults.iconColor,
       context,
     );
-    final section = ListSectionRowScope.maybeOf(context);
-    final grouped = section?.style == AdaptiveStyle.apple;
+    final section = _groupedSectionOf(context);
+    final grouped = section != null;
     final effectiveTrailing = grouped && trailing != null
         ? ConstrainedBox(
             constraints: const BoxConstraints(
@@ -140,7 +145,7 @@ class CupertinoAdaptiveListTile extends StatelessWidget {
       onLongPress: onLongPress,
       pressedColor: activatedColor,
       focusColor: focusColor,
-      shape: grouped ? section!.shape : const RoundedRectangleBorder(),
+      shape: section?.shape ?? const RoundedRectangleBorder(),
       child: content,
     );
   }

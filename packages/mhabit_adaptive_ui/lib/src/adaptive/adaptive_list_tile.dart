@@ -82,22 +82,24 @@ class AdaptiveListTile extends StatelessWidget {
   final VoidCallback? onLongPress;
   final _AdaptiveListTileKind _kind;
 
+  Widget? _trailingFor(AdaptiveStyle style) => switch ((_kind, style)) {
+    (_AdaptiveListTileKind.external, AdaptiveStyle.material) => const Icon(
+      Icons.open_in_new,
+    ),
+    (_AdaptiveListTileKind.external, AdaptiveStyle.apple) => const Icon(
+      CupertinoIcons.arrow_up_right_square,
+    ),
+    (_AdaptiveListTileKind.navigation, AdaptiveStyle.material) => null,
+    (_AdaptiveListTileKind.navigation, AdaptiveStyle.apple) => const Icon(
+      CupertinoIcons.chevron_forward,
+    ),
+    (_AdaptiveListTileKind.standard, _) => trailing,
+  };
+
   @override
   Widget build(BuildContext context) {
     final effective = style ?? AdaptiveStyle.of(context);
-    final effectiveTrailing = switch ((_kind, effective)) {
-      (_AdaptiveListTileKind.external, AdaptiveStyle.material) => const Icon(
-        Icons.open_in_new,
-      ),
-      (_AdaptiveListTileKind.external, AdaptiveStyle.apple) => const Icon(
-        CupertinoIcons.arrow_up_right_square,
-      ),
-      (_AdaptiveListTileKind.navigation, AdaptiveStyle.material) => null,
-      (_AdaptiveListTileKind.navigation, AdaptiveStyle.apple) => const Icon(
-        CupertinoIcons.chevron_forward,
-      ),
-      (_AdaptiveListTileKind.standard, _) => trailing,
-    };
+    final effectiveTrailing = _trailingFor(effective);
     return switch (effective) {
       AdaptiveStyle.apple => CupertinoAdaptiveListTile(
         title: title,

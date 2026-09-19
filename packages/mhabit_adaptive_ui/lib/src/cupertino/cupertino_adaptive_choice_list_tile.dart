@@ -32,14 +32,11 @@ class CupertinoAdaptiveChoiceListTile<T extends Object>
   final AdaptiveChoiceListTileConfig config;
   final Key? controlKey;
 
-  @override
-  Widget build(BuildContext context) {
-    final segmented = labels.length <= config.maxSegmentCount;
-    final style = CupertinoTheme.of(
-      context,
-    ).textTheme.textStyle.copyWith(fontSize: 14);
-    final scaler = MediaQuery.textScalerOf(context);
-    final direction = Directionality.of(context);
+  double _measureLabelWidth(
+    TextStyle style,
+    TextScaler scaler,
+    TextDirection direction,
+  ) {
     var labelWidth = 0.0;
     for (final label in labels.values) {
       final painter = TextPainter(
@@ -51,6 +48,33 @@ class CupertinoAdaptiveChoiceListTile<T extends Object>
       labelWidth = math.max(labelWidth, painter.width);
       painter.dispose();
     }
+    return labelWidth;
+  }
+
+  bool _isSideBySide({
+    required bool segmented,
+    required double controlWidth,
+    required double availableWidth,
+    required TextScaler scaler,
+  }) {
+    final layout = segmented ? config.segmented : config.choice;
+    return switch (layout) {
+      AdaptiveChoiceLayout.inline => true,
+      AdaptiveChoiceLayout.stacked => false,
+      AdaptiveChoiceLayout.responsive =>
+        availableWidth >= controlWidth + math.max(200, scaler.scale(160)) + 48,
+    };
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final segmented = labels.length <= config.maxSegmentCount;
+    final style = CupertinoTheme.of(
+      context,
+    ).textTheme.textStyle.copyWith(fontSize: 14);
+    final scaler = MediaQuery.textScalerOf(context);
+    final direction = Directionality.of(context);
+    final labelWidth = _measureLabelWidth(style, scaler, direction);
     final controlWidth = segmented
         // Equal-width segments, including padding and the outer inset.
         ? (labelWidth + 32) * labels.length + 8
@@ -123,14 +147,12 @@ class CupertinoAdaptiveChoiceListTile<T extends Object>
           );
     return LayoutBuilder(
       builder: (context, constraints) {
-        final layout = segmented ? config.segmented : config.choice;
-        final sideBySide = switch (layout) {
-          AdaptiveChoiceLayout.inline => true,
-          AdaptiveChoiceLayout.stacked => false,
-          AdaptiveChoiceLayout.responsive =>
-            constraints.maxWidth >=
-                controlWidth + math.max(200, scaler.scale(160)) + 48,
-        };
+        final sideBySide = _isSideBySide(
+          segmented: segmented,
+          controlWidth: controlWidth,
+          availableWidth: constraints.maxWidth,
+          scaler: scaler,
+        );
         return AdaptiveListTile.apple(
           title: title,
           trailing: sideBySide
