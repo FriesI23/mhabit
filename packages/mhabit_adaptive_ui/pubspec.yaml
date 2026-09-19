@@ -10,11 +10,14 @@ environment:
 
 dependencies:
   adaptive_actions: ^0.6.1
+  copy_with_extension: ^17.0.0
   flutter:
     sdk: flutter
   ios_window_control_layout: ^0.5.0
   sliver_tools: ^0.2.9
 
 dev_dependencies:
+  build_runner: ^2.3.3
+  copy_with_extension_gen: ^17.0.0
   flutter_test:
     sdk: flutter

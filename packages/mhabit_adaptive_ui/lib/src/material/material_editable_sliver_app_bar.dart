@@ -1,8 +1,12 @@
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/material.dart';
 
 import '../window_control/material_app_bar.dart';
 
+part 'material_editable_sliver_app_bar.g.dart';
+
 /// Material configuration for an editable large sliver app bar.
+@CopyWith(skipFields: true)
 class MaterialEditableAppBarStyle {
   const MaterialEditableAppBarStyle({
     this.scrolledUnderElevation,
@@ -15,19 +19,6 @@ class MaterialEditableAppBarStyle {
   final Color? shadowColor;
   final Color? backgroundColor;
   final Color? surfaceTintColor;
-
-  MaterialEditableAppBarStyle copyWith({
-    double? scrolledUnderElevation,
-    Color? shadowColor,
-    Color? backgroundColor,
-    Color? surfaceTintColor,
-  }) => MaterialEditableAppBarStyle(
-    scrolledUnderElevation:
-        scrolledUnderElevation ?? this.scrolledUnderElevation,
-    shadowColor: shadowColor ?? this.shadowColor,
-    backgroundColor: backgroundColor ?? this.backgroundColor,
-    surfaceTintColor: surfaceTintColor ?? this.surfaceTintColor,
-  );
 
   @override
   bool operator ==(Object other) =>

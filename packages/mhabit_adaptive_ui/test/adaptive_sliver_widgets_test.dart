@@ -676,6 +676,30 @@ void main() {
       expect(updated.material, same(material));
       expect(updated.apple, isNotNull);
     });
+
+    test('generated copyWith can clear nullable style fields', () {
+      const material = AppBarMaterialStyle(
+        backgroundColor: Colors.red,
+        scrolledUnderElevation: 2,
+      );
+      const apple = AppBarAppleStyle(
+        border: Border(bottom: BorderSide(color: Colors.red)),
+        padding: EdgeInsetsDirectional.only(start: 8),
+      );
+      final clearedMaterial = material.copyWith(backgroundColor: null);
+      final clearedApple = apple.copyWith(border: null);
+      final clearedStyles = const AppBarStyles(
+        material: material,
+        apple: apple,
+      ).copyWith(apple: null);
+
+      expect(clearedMaterial.backgroundColor, isNull);
+      expect(clearedMaterial.scrolledUnderElevation, 2);
+      expect(clearedApple.border, isNull);
+      expect(clearedApple.padding, apple.padding);
+      expect(clearedStyles.material, same(material));
+      expect(clearedStyles.apple, isNull);
+    });
   });
 
   group('AdaptiveSliverSearchBar', () {

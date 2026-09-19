@@ -1,3 +1,4 @@
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/material.dart';
 
 import '../adaptive_style.dart';
@@ -5,24 +6,19 @@ import '../cupertino/cupertino_editable_sliver_app_bar.dart';
 import '../material/material_editable_sliver_app_bar.dart';
 
 export '../cupertino/cupertino_editable_sliver_app_bar.dart'
-    show AppleEditableAppBarStyle;
+    show $AppleEditableAppBarStyleCopyWith, AppleEditableAppBarStyle;
 export '../material/material_editable_sliver_app_bar.dart'
-    show MaterialEditableAppBarStyle;
+    show $MaterialEditableAppBarStyleCopyWith, MaterialEditableAppBarStyle;
+
+part 'adaptive_editable_sliver_app_bar.g.dart';
 
 /// Per-platform configuration for [AdaptiveEditableSliverAppBar].
+@CopyWith(skipFields: true)
 class EditableAppBarStyles {
   const EditableAppBarStyles({this.material, this.apple});
 
   final MaterialEditableAppBarStyle? material;
   final AppleEditableAppBarStyle? apple;
-
-  EditableAppBarStyles copyWith({
-    MaterialEditableAppBarStyle? material,
-    AppleEditableAppBarStyle? apple,
-  }) => EditableAppBarStyles(
-    material: material ?? this.material,
-    apple: apple ?? this.apple,
-  );
 
   @override
   bool operator ==(Object other) =>
