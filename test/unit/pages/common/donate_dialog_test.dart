@@ -92,6 +92,19 @@ void main() {
         tester.view.physicalSize = Size(width, 1000);
         addTearDown(tester.view.reset);
         await tester.pumpWidget(_host(style));
+        await tester.runAsync(() async {
+          final context = tester.element(find.text('Open'));
+          await Future.wait([
+            precacheImage(
+              const AssetImage('assets/images/donate-alipay.jpg'),
+              context,
+            ),
+            precacheImage(
+              const AssetImage('assets/images/donate-wechatpay.png'),
+              context,
+            ),
+          ]);
+        });
         await tester.tap(find.text('Open'));
         await tester.pumpAndSettle();
         expect(find.bySubtype<AdaptiveModal>(), findsOneWidget);
@@ -103,6 +116,33 @@ void main() {
         expect(find.byType(CryptoDonateButton), findsNWidgets(5));
         expect(find.text(_address), findsNothing);
         expect(find.byType(Image), findsNWidgets(2));
+        final qrImages = find.byType(Image);
+        for (final (index, qrImage) in qrImages.evaluate().indexed) {
+          expect((qrImage.widget as Image).fit, BoxFit.contain);
+          final imageSize = tester.getSize(
+            find.byElementPredicate((element) => element == qrImage),
+          );
+          expect(imageSize.height, width == 320 ? 180 : 300);
+          expect(
+            imageSize.aspectRatio,
+            closeTo(index == 0 ? 743 / 745 : 550 / 533, 0.001),
+          );
+        }
+        if (width == 320) {
+          for (final qrImage in qrImages.evaluate()) {
+            final imageFinder = find.byElementPredicate(
+              (element) => element == qrImage,
+            );
+            final section = find.ancestor(
+              of: imageFinder,
+              matching: find.byType(AdaptiveListSection),
+            );
+            expect(
+              tester.getCenter(imageFinder).dx,
+              closeTo(tester.getCenter(section).dx, 1),
+            );
+          }
+        }
         final content = tester.element(find.byType(DonateContent));
         expect(AdaptiveStyle.of(content), style);
         final buttons = find.descendant(

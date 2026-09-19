@@ -247,16 +247,12 @@ class _DonateContentState extends State<DonateContent> {
         builder: (context, windowSize, _) {
           final wide = windowSize.width >= WindowSizeClass.medium;
           final screenWidth = MediaQuery.sizeOf(context).width;
-          final qrSize = wide
+          final qrHeight = wide
               ? 300.0
               : (screenWidth * 0.55).clamp(180.0, 280.0);
 
-          Widget qrImage(String path) => Image.asset(
-            path,
-            width: qrSize,
-            height: qrSize,
-            fit: BoxFit.fill,
-          );
+          Widget qrImage(String path) =>
+              Image.asset(path, height: qrHeight, fit: BoxFit.contain);
           Widget alipayQR() => qrImage(widget.alipayQRCodePath);
           Widget wechatQR() => qrImage(widget.wechatPayQRCodePath);
 
@@ -264,6 +260,7 @@ class _DonateContentState extends State<DonateContent> {
             return _DonateSection(
               title: l10n?.donateWay_firstQRGroup,
               child: Wrap(
+                alignment: WrapAlignment.center,
                 spacing: 8.0,
                 runSpacing: 6.0,
                 children: [
@@ -280,12 +277,12 @@ class _DonateContentState extends State<DonateContent> {
               if (hasAlipay)
                 _DonateSection(
                   title: l10n?.donateWay_alipay,
-                  child: alipayQR(),
+                  child: Center(child: alipayQR()),
                 ),
               if (hasWechat)
                 _DonateSection(
                   title: l10n?.donateWay_wechatPay,
-                  child: wechatQR(),
+                  child: Center(child: wechatQR()),
                 ),
             ],
           );
@@ -352,79 +349,28 @@ class _DonateBrandButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => switch (AdaptiveStyle.of(context)) {
-    AdaptiveStyle.material => _MaterialDonateBrandButton(
+    AdaptiveStyle.material => ElevatedButton.icon(
       onPressed: onPressed,
-      backgroundColor: backgroundColor,
-      foregroundColor: foregroundColor,
-      minimumSize: minimumSize,
+      style: ElevatedButton.styleFrom(
+        minimumSize: minimumSize,
+        backgroundColor: backgroundColor,
+        foregroundColor: foregroundColor,
+      ),
       icon: icon,
       label: label,
     ),
-    AdaptiveStyle.apple => _AppleDonateBrandButton(
+    AdaptiveStyle.apple => CupertinoButton(
       onPressed: onPressed,
-      backgroundColor: backgroundColor,
-      foregroundColor: foregroundColor,
-      icon: icon,
-      label: label,
+      color: backgroundColor,
+      foregroundColor: foregroundColor ?? CupertinoColors.white,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          icon,
+          const SizedBox(width: 8),
+          Flexible(child: label),
+        ],
+      ),
     ),
   };
-}
-
-class _MaterialDonateBrandButton extends StatelessWidget {
-  const _MaterialDonateBrandButton({
-    required this.onPressed,
-    required this.backgroundColor,
-    required this.foregroundColor,
-    required this.icon,
-    required this.label,
-    this.minimumSize,
-  });
-  final VoidCallback? onPressed;
-  final Color backgroundColor;
-  final Color? foregroundColor;
-  final Widget icon;
-  final Widget label;
-  final Size? minimumSize;
-
-  @override
-  Widget build(BuildContext context) => ElevatedButton.icon(
-    onPressed: onPressed,
-    style: ElevatedButton.styleFrom(
-      minimumSize: minimumSize,
-      backgroundColor: backgroundColor,
-      foregroundColor: foregroundColor,
-    ),
-    icon: icon,
-    label: label,
-  );
-}
-
-class _AppleDonateBrandButton extends StatelessWidget {
-  const _AppleDonateBrandButton({
-    required this.onPressed,
-    required this.backgroundColor,
-    required this.foregroundColor,
-    required this.icon,
-    required this.label,
-  });
-  final VoidCallback? onPressed;
-  final Color backgroundColor;
-  final Color? foregroundColor;
-  final Widget icon;
-  final Widget label;
-
-  @override
-  Widget build(BuildContext context) => CupertinoButton(
-    onPressed: onPressed,
-    color: backgroundColor,
-    foregroundColor: foregroundColor ?? CupertinoColors.white,
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        icon,
-        const SizedBox(width: 8),
-        Flexible(child: label),
-      ],
-    ),
-  );
 }

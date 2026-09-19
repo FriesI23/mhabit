@@ -79,65 +79,20 @@ class CryptoDonateButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => switch (AdaptiveStyle.of(context)) {
-    AdaptiveStyle.material => _MaterialCryptoDonateButton(
+    AdaptiveStyle.material => ElevatedButton(
       onPressed: onPressed,
-      onLongPressed: onLongPressed,
+      onLongPress: onLongPressed,
       style: address.isNotEmpty ? getButtonStyle() : null,
-      icon: buttonIcon,
+      child: Icon(buttonIcon),
     ),
-    AdaptiveStyle.apple => _AppleCryptoDonateButton(
+    AdaptiveStyle.apple => CupertinoButton(
       onPressed: onPressed,
-      onLongPressed: onLongPressed,
-      backgroundColor: brandColor,
-      foregroundColor: brandForegroundColor,
-      icon: buttonIcon,
+      onLongPress: onLongPressed,
+      color: brandColor,
+      foregroundColor: onPressed != null || onLongPressed != null
+          ? brandForegroundColor
+          : CupertinoColors.secondaryLabel.resolveFrom(context),
+      child: Icon(buttonIcon),
     ),
   };
-}
-
-class _MaterialCryptoDonateButton extends StatelessWidget {
-  const _MaterialCryptoDonateButton({
-    required this.onPressed,
-    required this.onLongPressed,
-    required this.style,
-    required this.icon,
-  });
-  final VoidCallback? onPressed;
-  final VoidCallback? onLongPressed;
-  final ButtonStyle? style;
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) => ElevatedButton(
-    onPressed: onPressed,
-    onLongPress: onLongPressed,
-    style: style,
-    child: Icon(icon),
-  );
-}
-
-class _AppleCryptoDonateButton extends StatelessWidget {
-  const _AppleCryptoDonateButton({
-    required this.onPressed,
-    required this.onLongPressed,
-    required this.backgroundColor,
-    required this.foregroundColor,
-    required this.icon,
-  });
-  final VoidCallback? onPressed;
-  final VoidCallback? onLongPressed;
-  final Color backgroundColor;
-  final Color foregroundColor;
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) => CupertinoButton(
-    onPressed: onPressed,
-    onLongPress: onLongPressed,
-    color: backgroundColor,
-    foregroundColor: onPressed != null || onLongPressed != null
-        ? foregroundColor
-        : CupertinoColors.secondaryLabel.resolveFrom(context),
-    child: Icon(icon),
-  );
 }
