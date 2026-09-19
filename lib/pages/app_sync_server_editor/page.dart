@@ -137,7 +137,7 @@ class _PageState extends State<_Page> {
       confirmed =
           await showAdaptiveConfirmDialog(
             context: context,
-            confirmLabel: L10n.of(context)?.confirmDialog_confirm_text('exit'),
+            confirmLabel: AppActionVerb.label(context, AppActionVerb.exit),
             title: L10nBuilder(
               builder: (context, l10n) => Text(
                 l10n?.appSync_serverEditor_exitDialog_titleText ??
@@ -169,7 +169,7 @@ class _PageState extends State<_Page> {
       ),
       content: Text(l10n?.appSync_serverEditor_deleteDialog_subtitleText ?? ''),
       cancelLabel: l10n?.confirmDialog_cancel_text ?? 'Cancel',
-      confirmLabel: l10n?.confirmDialog_confirm_text('delete') ?? 'Delete',
+      confirmLabel: AppActionVerb.label(context, AppActionVerb.delete),
       isDestructiveAction: true,
     );
     if (!mounted || confirmed != true) return;

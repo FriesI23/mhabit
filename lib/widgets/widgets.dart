@@ -23,7 +23,6 @@ export '_widgets/chip_list.dart';
 export '_widgets/color_display_chip.dart';
 export '_widgets/color_swatch_button.dart';
 export '_widgets/colorful_navibar.dart';
-export '_widgets/confirm_dialog.dart';
 export '_widgets/crypto_donate_button.dart';
 export '_widgets/data_arrow_container.dart';
 export '_widgets/data_container.dart';

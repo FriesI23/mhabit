@@ -30,6 +30,11 @@ void main() {
       var completions = 0;
       await tester.pumpWidget(
         MaterialApp(
+          theme: ThemeData(
+            platform: style == AdaptiveStyle.apple
+                ? TargetPlatform.iOS
+                : TargetPlatform.android,
+          ),
           home: AdaptiveStyleScope(
             override: style,
             child: Builder(
@@ -55,7 +60,13 @@ void main() {
       }
 
       await open();
-      final action = adaptiveDialogActions(tester).last.onPressed!;
+      expect(adaptiveDialogActions(tester).map((action) => action.label), [
+        'Cancel',
+        'Confirm',
+      ]);
+      final action = adaptiveDialogActions(
+        tester,
+      ).firstWhere((action) => action.label == 'Confirm').onPressed!;
       action();
       action();
       await tester.pumpAndSettle();
@@ -67,7 +78,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(result, false);
       await open();
-      final staleAction = adaptiveDialogActions(tester).last.onPressed!;
+      final staleAction = adaptiveDialogActions(
+        tester,
+      ).firstWhere((action) => action.label == 'Confirm').onPressed!;
       await tester.tapAt(const Offset(5, 5));
       staleAction();
       await tester.pumpAndSettle();
@@ -82,10 +95,13 @@ void main() {
     (AdaptiveStyle.material, TargetPlatform.android),
     (AdaptiveStyle.apple, TargetPlatform.macOS),
     (AdaptiveStyle.apple, TargetPlatform.iOS),
+    (AdaptiveStyle.apple, TargetPlatform.android),
+    (AdaptiveStyle.apple, TargetPlatform.windows),
     (AdaptiveStyle.material, TargetPlatform.iOS),
   ]) {
     final useSkipAction =
-        style == AdaptiveStyle.apple && platform == TargetPlatform.iOS;
+        style == AdaptiveStyle.apple &&
+        (platform == TargetPlatform.iOS || platform == TargetPlatform.android);
     testWidgets(
       '$style $platform large text and resize keep optional confirmation reachable',
       (tester) async {

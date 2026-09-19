@@ -802,13 +802,11 @@ void main() {
     await tester.tap(find.text('Delete'));
     await tester.pumpAndSettle();
     expect(find.byType(AdaptiveConfirmDialog), findsOneWidget);
-    expect(find.byType(ConfirmDialog), findsNothing);
     await tester.tapAt(Offset.zero);
     await tester.pumpAndSettle();
     await tester.tap(find.byIcon(Icons.unarchive_rounded));
     await tester.pumpAndSettle();
     expect(find.byType(AdaptiveConfirmDialog), findsOneWidget);
-    expect(find.byType(ConfirmDialog), findsNothing);
   });
 
   testWidgets('HabitDetailPage Apple actions keep 44pt targets and callbacks', (

@@ -135,8 +135,7 @@ class _HabitGroupModifyConfirmPageState
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    final confirmLabel =
-        l10n?.confirmDialog_confirm_text('confirm') ?? 'Confirm';
+    final confirmLabel = AppActionVerb.label(context, AppActionVerb.confirm);
     final confirmAction = switch (AdaptiveStyle.of(context)) {
       AdaptiveStyle.material => FilledButton(
         key: const ValueKey('group-modify-confirm'),

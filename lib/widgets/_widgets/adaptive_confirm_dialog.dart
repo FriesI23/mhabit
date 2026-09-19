@@ -16,6 +16,7 @@ import 'package:flutter/cupertino.dart' show CupertinoCheckbox;
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
+import '../../extensions/target_platform_extensions.dart';
 import '../../l10n/localizations.dart';
 
 /// Returns true for confirm, false for cancel, and null for external dismissal.
@@ -46,7 +47,8 @@ Future<bool?> showAdaptiveConfirmDialog({
       icon: icon,
       title: title,
       content: content,
-      confirmLabel: confirmLabel ?? l10n?.confirmDialog_confirm_text('confirm'),
+      confirmLabel:
+          confirmLabel ?? AppActionVerb.label(context, AppActionVerb.confirm),
       cancelLabel: cancelLabel ?? l10n?.confirmDialog_cancel_text,
       isDestructiveAction: isDestructiveAction,
       onSkipConfirmed: onSkipConfirmed,
@@ -100,8 +102,7 @@ class _AdaptiveConfirmDialogState extends State<AdaptiveConfirmDialog> {
     final l10n = L10n.of(context);
     final confirmLabel =
         widget.confirmLabel ??
-        l10n?.confirmDialog_confirm_text('confirm') ??
-        'Confirm';
+        AppActionVerb.label(context, AppActionVerb.confirm);
     final cancelLabel =
         widget.cancelLabel ?? l10n?.confirmDialog_cancel_text ?? 'Cancel';
     return switch (AdaptiveStyle.of(context)) {
@@ -219,9 +220,54 @@ class _CupertinoConfirmDialog extends StatelessWidget {
   final VoidCallback onCancel;
 
   @override
+  Widget build(BuildContext context) =>
+      Theme.of(context).platform.isMobileOperatingSystem
+      ? _MobileCupertinoConfirmDialog(
+          title: title,
+          content: content,
+          confirmLabel: confirmLabel,
+          cancelLabel: cancelLabel,
+          isDestructiveAction: isDestructiveAction,
+          hasSkip: onSkipChanged != null,
+          onConfirm: onConfirm,
+          onCancel: onCancel,
+        )
+      : _DesktopCupertinoConfirmDialog(
+          title: title,
+          content: content,
+          confirmLabel: confirmLabel,
+          cancelLabel: cancelLabel,
+          isDestructiveAction: isDestructiveAction,
+          skip: skip,
+          onSkipChanged: onSkipChanged,
+          onConfirm: onConfirm,
+          onCancel: onCancel,
+        );
+}
+
+class _MobileCupertinoConfirmDialog extends StatelessWidget {
+  const _MobileCupertinoConfirmDialog({
+    this.title,
+    this.content,
+    required this.confirmLabel,
+    required this.cancelLabel,
+    required this.isDestructiveAction,
+    required this.hasSkip,
+    required this.onConfirm,
+    required this.onCancel,
+  });
+
+  final Widget? title;
+  final Widget? content;
+  final String confirmLabel;
+  final String cancelLabel;
+  final bool isDestructiveAction;
+  final bool hasSkip;
+  final ValueChanged<bool> onConfirm;
+  final VoidCallback onCancel;
+
+  @override
   Widget build(BuildContext context) {
-    final useSkipAction = Theme.of(context).platform == TargetPlatform.iOS;
-    final hasSkip = onSkipChanged != null;
     final cancelAction = AdaptiveDialogAction(
       label: cancelLabel,
       onPressed: onCancel,
@@ -230,24 +276,12 @@ class _CupertinoConfirmDialog extends StatelessWidget {
       label: confirmLabel,
       isDefaultAction: !isDestructiveAction,
       isDestructiveAction: isDestructiveAction,
-      onPressed: () => onConfirm(hasSkip && !useSkipAction && skip),
+      onPressed: () => onConfirm(false),
     );
     return CupertinoAdaptiveDialog(
       title: title,
-      content: !hasSkip || useSkipAction
-          ? content
-          : Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ?content,
-                _CupertinoConfirmSkipCheckbox(
-                  value: skip,
-                  onChanged: onSkipChanged!,
-                ),
-              ],
-            ),
-      actions: hasSkip && useSkipAction
+      content: content,
+      actions: hasSkip
           ? [
               confirmAction,
               AdaptiveDialogAction(
@@ -264,6 +298,57 @@ class _CupertinoConfirmDialog extends StatelessWidget {
           : [cancelAction, confirmAction],
     );
   }
+}
+
+class _DesktopCupertinoConfirmDialog extends StatelessWidget {
+  const _DesktopCupertinoConfirmDialog({
+    this.title,
+    this.content,
+    required this.confirmLabel,
+    required this.cancelLabel,
+    required this.isDestructiveAction,
+    required this.skip,
+    required this.onSkipChanged,
+    required this.onConfirm,
+    required this.onCancel,
+  });
+
+  final Widget? title;
+  final Widget? content;
+  final String confirmLabel;
+  final String cancelLabel;
+  final bool isDestructiveAction;
+  final bool skip;
+  final ValueChanged<bool>? onSkipChanged;
+  final ValueChanged<bool> onConfirm;
+  final VoidCallback onCancel;
+
+  @override
+  Widget build(BuildContext context) => CupertinoAdaptiveDialog(
+    title: title,
+    content: onSkipChanged == null
+        ? content
+        : Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ?content,
+              _CupertinoConfirmSkipCheckbox(
+                value: skip,
+                onChanged: onSkipChanged!,
+              ),
+            ],
+          ),
+    actions: [
+      AdaptiveDialogAction(label: cancelLabel, onPressed: onCancel),
+      AdaptiveDialogAction(
+        label: confirmLabel,
+        isDefaultAction: !isDestructiveAction,
+        isDestructiveAction: isDestructiveAction,
+        onPressed: () => onConfirm(onSkipChanged != null && skip),
+      ),
+    ],
+  );
 }
 
 class _CupertinoConfirmSkipCheckbox extends StatelessWidget {

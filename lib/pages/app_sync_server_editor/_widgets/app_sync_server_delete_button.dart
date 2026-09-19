@@ -16,7 +16,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
-import '../../../widgets/widgets.dart';
 import '../_providers/app_sync_server_form.dart';
 
 class AppSyncServerDeleteButton extends StatelessWidget {
@@ -37,13 +36,8 @@ class AppSyncServerDeleteButton extends StatelessWidget {
     return TextButtonThemeData(style: buttonStyle);
   }
 
-  // TODO(mhabit-adaptive-dialog): Phase 3-8h: decouple this label from
-  // NormalizeConfirmDialogType before removing the legacy confirm dialog.
   Widget _buildDeleteText(BuildContext context) => Text(
-    L10n.of(
-          context,
-        )?.confirmDialog_confirm_text(NormalizeConfirmDialogType.delete.name) ??
-        'delete',
+    AppActionVerb.label(context, AppActionVerb.delete, fallback: 'delete'),
   );
 
   @override
