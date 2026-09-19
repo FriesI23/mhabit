@@ -430,10 +430,14 @@ class _PageState extends State<_Page> {
                   kHabitDivider,
                   buildCreateAndModifyTimeField(context),
                 ],
-                if (context.read<AppDeveloperViewModel>().isInDevelopMode) ...[
-                  kHabitDivider,
-                  _buildDebugInfo(context),
-                ],
+                Selector<AppDeveloperViewModel, bool>(
+                  selector: (context, vm) => vm.isInDevelopMode,
+                  builder: (context, isInDevelopMode, child) => isInDevelopMode
+                      ? Column(
+                          children: [kHabitDivider, _buildDebugInfo(context)],
+                        )
+                      : const SizedBox.shrink(),
+                ),
                 const FixedPagePlaceHolder(),
               ],
             ),

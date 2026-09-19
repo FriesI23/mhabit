@@ -64,13 +64,21 @@ final class _FakeAppSyncSettingsAccess extends ChangeNotifier
   Future<void> setSyncSwitch(bool value, {bool listen = true}) async {}
 }
 
-Widget _host({required AdaptiveStyle style}) {
+Widget _host({
+  required AdaptiveStyle style,
+  AppDeveloperViewModel? developerOverride,
+}) {
   final global = Global()..switchDevelopMode(false);
   return MultiProvider(
     providers: [
-      ChangeNotifierProvider<AppDeveloperViewModel>(
-        create: (_) => AppDeveloperViewModel(global: global),
-      ),
+      if (developerOverride == null)
+        ChangeNotifierProvider<AppDeveloperViewModel>(
+          create: (_) => AppDeveloperViewModel(global: global),
+        )
+      else
+        ChangeNotifierProvider<AppDeveloperViewModel>.value(
+          value: developerOverride,
+        ),
       ChangeNotifierProvider<_FakeAppSyncSettingsAccess>(
         create: (_) => _FakeAppSyncSettingsAccess(),
       ),
@@ -99,6 +107,36 @@ class _Launcher extends StatelessWidget {
 }
 
 void main() {
+  testWidgets('sync editor debug row tracks developer mode while open', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(800, 800);
+    addTearDown(tester.view.reset);
+    final developer = AppDeveloperViewModel(
+      global: Global()..switchDevelopMode(false),
+    );
+    addTearDown(developer.dispose);
+    await tester.pumpWidget(
+      _host(style: AdaptiveStyle.material, developerOverride: developer),
+    );
+    naviToAppSyncServerEditorDialog(
+      context: tester.element(find.text('Launcher')),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.text('DEBUG'), findsNothing);
+
+    developer.switchDevelopMode(true);
+    await tester.pump();
+    expect(find.text('DEBUG'), findsOneWidget);
+
+    developer.switchDevelopMode(false);
+    await tester.pump();
+    expect(find.text('DEBUG'), findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   for (final style in AdaptiveStyle.values) {
     for (final presentation in AdaptiveModalPresentation.values) {
       testWidgets('sync editor forces Material from ${style.name} in '

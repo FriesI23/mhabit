@@ -321,9 +321,12 @@ class _PageState extends State<_Page> {
         ),
         habitTitle: SliverPinnedHeader(child: buildHabitTitle(context)),
         habitsContent: const _HabitList(key: ValueKey(1)),
-        debugContent: context.read<AppDeveloperViewModel>().isInDevelopMode
-            ? SafedSliverList(children: [div, _buildDebugInfo(context)])
-            : null,
+        debugContent: Selector<AppDeveloperViewModel, bool>(
+          selector: (context, vm) => vm.isInDevelopMode,
+          builder: (context, isInDevelopMode, child) => isInDevelopMode
+              ? SafedSliverList(children: [div, _buildDebugInfo(context)])
+              : const SliverToBoxAdapter(),
+        ),
         mainController: _mainScrollController,
       ),
     );

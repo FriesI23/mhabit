@@ -136,13 +136,17 @@ final class _PageState extends State<_Page> {
                     ],
                   ),
                 ),
-                if (context.read<AppDeveloperViewModel>().isInDevelopMode)
-                  const SliverToBoxAdapter(
-                    child: AdaptiveListSection(
-                      hasLeading: true,
-                      children: [_DebugTile()],
-                    ),
-                  ),
+                Selector<AppDeveloperViewModel, bool>(
+                  selector: (context, vm) => vm.isInDevelopMode,
+                  builder: (context, isInDevelopMode, child) => isInDevelopMode
+                      ? const SliverToBoxAdapter(
+                          child: AdaptiveListSection(
+                            hasLeading: true,
+                            children: [_DebugTile()],
+                          ),
+                        )
+                      : const SliverToBoxAdapter(),
+                ),
               ],
             ),
           ),

@@ -71,6 +71,7 @@ final class _FakeAppSyncOwner extends AppSyncOwner {
 
 Widget _host({
   required AppSyncOwner owner,
+  AppDeveloperViewModel? developerOverride,
   TargetPlatform? platform,
   bool develop = false,
   TextDirection direction = TextDirection.ltr,
@@ -78,7 +79,7 @@ Widget _host({
   Locale? locale,
 }) {
   final global = Global()..switchDevelopMode(develop);
-  final developer = AppDeveloperViewModel(global: global);
+  final developer = developerOverride ?? AppDeveloperViewModel(global: global);
   return MultiProvider(
     providers: [
       ChangeNotifierProvider<AppSyncOwner>.value(value: owner),
@@ -106,6 +107,34 @@ Widget _host({
 }
 
 void main() {
+  testWidgets('Sync debug section tracks developer mode while mounted', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 1200);
+    addTearDown(tester.view.reset);
+    final owner = _FakeAppSyncOwner();
+    final developer = AppDeveloperViewModel(
+      global: Global()..switchDevelopMode(false),
+    );
+    addTearDown(owner.dispose);
+    addTearDown(developer.dispose);
+    await tester.pumpWidget(_host(owner: owner, developerOverride: developer));
+    await tester.pumpAndSettle();
+    expect(find.text('DEBUG'), findsNothing);
+
+    developer.switchDevelopMode(true);
+    await tester.pumpAndSettle();
+    expect(find.text('DEBUG'), findsOneWidget);
+
+    developer.switchDevelopMode(false);
+    await tester.pumpAndSettle();
+    expect(find.text('DEBUG'), findsNothing);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(seconds: 10));
+  });
+
   testWidgets('Sync preserves its pinned Material small app bar and switch', (
     tester,
   ) async {

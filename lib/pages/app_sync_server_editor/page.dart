@@ -263,8 +263,11 @@ class _PageBody extends StatelessWidget {
             expanded: showAdvanceConfig,
             onExpansionChanged: onAdvConfigExpansionChanged,
           ),
-          if (context.read<AppDeveloperViewModel>().isInDevelopMode)
-            const _DebugTile(),
+          Selector<AppDeveloperViewModel, bool>(
+            selector: (context, vm) => vm.isInDevelopMode,
+            builder: (context, isInDevelopMode, child) =>
+                isInDevelopMode ? const _DebugTile() : const SizedBox.shrink(),
+          ),
         ],
       );
     },
