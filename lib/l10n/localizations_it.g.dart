@@ -46,10 +46,10 @@ class L10nIt extends L10n {
   String get habitEdit_colorPicker_tintToggleLabel => 'Tint to theme';
 
   @override
-  String get habitEdit_colorPicker_tintedLabel => 'Tinted';
+  String get habitEdit_colorPicker_tintedLabel => 'Colorato';
 
   @override
-  String get habitEdit_colorPicker_untintedLabel => 'Not tinted';
+  String get habitEdit_colorPicker_untintedLabel => 'Non colorato';
 
   @override
   String get habitEdit_colorPicker_tintToggleOnHint =>
@@ -57,7 +57,7 @@ class L10nIt extends L10n {
 
   @override
   String get habitEdit_colorPicker_tintToggleOffHint =>
-      'Some colors may reduce text readability in light or dark theme.';
+      'Alcuni colori potrebbero ridurre la leggibilità per temi chiari o scuri';
 
   @override
   String get habitEdit_habitTypeDialog_title => 'Tipologia abitudine';
