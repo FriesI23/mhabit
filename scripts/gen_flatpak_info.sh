@@ -55,7 +55,9 @@ RELEASE_META_PATH="$HERE/../flatpak/io.github.friesi23.mhabit.metainfo.xml"
 TIMESTAMP=$(date +"%Y-%m-%d")
 
 VERSION=$(awk -F': ' '/^version:/ {gsub(/\r/, "", $2); print $2; exit}' pubspec.yaml)
-if [[ "$VERSION" =~ ^([0-9]+\.[0-9]+\.[0-9]+)-pre(\.[0-9]+)?(\+[0-9]+)?$ ]]; then
+if [[ "$VERSION" =~ ^([0-9]+\.[0-9]+\.[0-9]+)\+([0-9]+)-pre$ ]]; then
+  VERSION_TAG="${PREFIX}pre-v${BASH_REMATCH[1]}+${BASH_REMATCH[2]}"
+elif [[ "$VERSION" =~ ^([0-9]+\.[0-9]+\.[0-9]+)-pre(\.[0-9]+)?(\+[0-9]+)?$ ]]; then
   BASE_VERSION="${BASH_REMATCH[1]}"
   PRE_SUFFIX="${BASH_REMATCH[2]}"
   BUILD_META="${BASH_REMATCH[3]}"

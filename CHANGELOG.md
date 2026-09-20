@@ -2,6 +2,17 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.27.8+197-pre
+
+- Feature: cycle check-ins to unknown; confirm single or batch deletion (#657)
+- Feature: improve habit actions and refresh details (#662)
+- Feature: improve Settings, dialogs, group editing, and import progress (#663)
+- Feature: preserve unknown WebDAV fields for groups and records (#665)
+- Fix: improve loading error recovery (#662)
+- Fix: keep import results and group actions accurate (#663)
+- Update Italian translation, thanks to Simone De Carli's contribution on
+  Weblate (#664)
+
 ## 1.27.7+196-pre
 
 - Feature: improve dialogs and page layouts across window sizes (#661)
