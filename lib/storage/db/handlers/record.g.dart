@@ -27,6 +27,7 @@ abstract class _$RecordDBCellCWProxy {
     HabitRecordUUID? uuid,
     HabitUUID? parentUUID,
     String? reason,
+    String? syncExtras,
   });
 }
 
@@ -56,6 +57,7 @@ class _$RecordDBCellCWProxyImpl implements _$RecordDBCellCWProxy {
     Object? uuid = const $CopyWithPlaceholder(),
     Object? parentUUID = const $CopyWithPlaceholder(),
     Object? reason = const $CopyWithPlaceholder(),
+    Object? syncExtras = const $CopyWithPlaceholder(),
   }) {
     return RecordDBCell(
       id: id == const $CopyWithPlaceholder()
@@ -98,6 +100,10 @@ class _$RecordDBCellCWProxyImpl implements _$RecordDBCellCWProxy {
           ? _value.reason
           // ignore: cast_nullable_to_non_nullable
           : reason as String?,
+      syncExtras: syncExtras == const $CopyWithPlaceholder()
+          ? _value.syncExtras
+          // ignore: cast_nullable_to_non_nullable
+          : syncExtras as String?,
     );
   }
 }
@@ -124,6 +130,7 @@ RecordDBCell _$RecordDBCellFromJson(Map<String, dynamic> json) => RecordDBCell(
   uuid: json['uuid'] as String?,
   parentUUID: json['parent_uuid'] as String?,
   reason: json['reason'] as String?,
+  syncExtras: json['sync_extras'] as String?,
 );
 
 Map<String, dynamic> _$RecordDBCellToJson(RecordDBCell instance) =>
@@ -138,4 +145,5 @@ Map<String, dynamic> _$RecordDBCellToJson(RecordDBCell instance) =>
       'uuid': ?instance.uuid,
       'parent_uuid': ?instance.parentUUID,
       'reason': ?instance.reason,
+      'sync_extras': ?instance.syncExtras,
     };

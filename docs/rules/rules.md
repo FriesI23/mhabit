@@ -146,6 +146,9 @@ existing architecture and tooling contracts.
 - Follow the existing generated-model style with `json_serializable`,
   `copy_with_extension`, and adjacent `part` files when the type already uses
   that pattern.
+- For new WebDAV sync fields, preserve unknown JSON fields through the local DB
+  and re-upload for habits, groups, and records. Fields with business meaning
+  also need an explicit cross-version behavior plan.
 - For workflow execution with meaningful outcomes, prefer explicit result
   contracts like `AppSyncTaskResult` over anonymous success flags.
 

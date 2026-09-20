@@ -36,10 +36,17 @@ class NormalizingListConverter
   @override
   List<List> toJson(Iterable<JsonMap> object) {
     final result = <List>[];
-    if (object.isNotEmpty) {
-      final keyList = object.first.keys.toList();
+    final items = object.toList(growable: false);
+    if (items.isNotEmpty) {
+      final keyList = <String>[];
+      final seenKeys = <String>{};
+      for (final item in items) {
+        for (final key in item.keys) {
+          if (seenKeys.add(key)) keyList.add(key);
+        }
+      }
       result.add(keyList);
-      for (var item in object) {
+      for (final item in items) {
         final data = keyList.map((key) => item[key]).toList();
         result.add(data);
       }

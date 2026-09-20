@@ -8,5 +8,6 @@ CREATE TABLE IF NOT EXISTS mh_records (
     modify_t INTEGER NOT NULL DEFAULT (cast(strftime('%s','now') as int)),
     uuid TEXT NOT NULL UNIQUE,
     parent_uuid TEXT NOT NULL REFERENCES mh_habits(uuid),
-    reason TEXT NOT NULL DEFAULT ''
+    reason TEXT NOT NULL DEFAULT '',
+    sync_extras TEXT
 );
