@@ -424,6 +424,25 @@ class HabitDetailViewModel extends ChangeNotifier
   //#endregion
 
   //#region actions
+  Future<ChangeRecordStatusResult?> deleteRecord(
+    HabitRecordDate date, {
+    bool listen = true,
+  }) async {
+    final data = _habitDetailData?.data;
+    if (data == null || data.getRecordByDate(date) == null) return null;
+    final results = await _access.changeHabitRecordStatus(
+      preAction: DeleteRecordStatusAction(data: data, dateList: [date]),
+      postActionBuilder: (results) =>
+          ChangeRecordStatusPostAction(data: data, results: results),
+      beforeReminderUpdate: (_, _) => _updateHabitAutoCompleteStatistics(),
+    );
+    final result = results.firstOrNull;
+    if (result == null) return null;
+    _updateHabitAutoCompleteStatistics();
+    if (listen) notifyListeners();
+    return result;
+  }
+
   Future<ChangeRecordStatusResult?> changeRecordStatus(
     HabitRecordDate date, {
     bool listen = true,
@@ -680,7 +699,7 @@ class HeatmapColorsCalculator {
       case HabitRecordStatus.unknown:
         return null;
       case HabitRecordStatus.skip:
-        return null;
+        return HabitHeatMapColorMapDefine.skip;
       case HabitRecordStatus.done:
         final data = _data.data;
         final complateStatus = HabitDailyRecordForm.getImp(
@@ -709,7 +728,7 @@ class HeatmapColorsCalculator {
       case HabitRecordStatus.unknown:
         return null;
       case HabitRecordStatus.skip:
-        return null;
+        return HabitHeatMapColorMapDefine.skip;
       case HabitRecordStatus.done:
         final data = _data.data;
         final complateStatus = HabitDailyRecordForm.getImp(

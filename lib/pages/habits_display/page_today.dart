@@ -342,6 +342,7 @@ class _HabitsTodayController {
       recordDate: date,
       targetExtraValue: data.dailyGoalExtra,
       color: data.color,
+      onDelete: record != null ? () => _vm.deleteRecord(uuid) : null,
     );
 
     if (result == null || result == record?.value) return;
@@ -356,6 +357,7 @@ class _HabitsTodayController {
     if (data == null) return;
 
     final date = HabitRecordDate.now();
+    final hasRecord = data.getRecordByDate(date) != null;
     final initReason = await _vm.loadRecordReason(data, date) ?? '';
     if (!context.mounted) return;
 
@@ -365,6 +367,7 @@ class _HabitsTodayController {
       recordDate: date,
       chipTextList: skipReasonChipTextList,
       color: data.color,
+      onDelete: hasRecord ? () => _vm.deleteRecord(uuid) : null,
     );
 
     if (result == null || result == initReason) return;

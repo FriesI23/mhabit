@@ -789,6 +789,28 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   //#region actions
+  Future<ChangeRecordStatusResult?> deleteRecord(
+    HabitUUID habitUUID,
+    HabitRecordDate date, {
+    bool listen = true,
+  }) async {
+    final data = _data.getHabitByUUID(habitUUID);
+    if (data == null || data.getRecordByDate(date) == null) return null;
+    final results = await _access.changeHabitRecordStatus(
+      preAction: DeleteRecordStatusAction(data: data, dateList: [date]),
+      postActionBuilder: (results) =>
+          ChangeRecordStatusPostAction(data: data, results: results),
+      beforeReminderUpdate: (habit, _) =>
+          _updateHabitAutoCompleteStatistics(habit),
+    );
+    final result = results.firstOrNull;
+    if (result == null) return null;
+    _updateHabitAutoCompleteStatistics(data);
+    if (listen) notifyListeners();
+    _reloadBridge.eventSubs?.pushHabitRecordChanged(habitUUID, result);
+    return result;
+  }
+
   Future<ChangeRecordStatusResult?> changeRecordStatus(
     HabitUUID habitUUID,
     HabitRecordDate date, {

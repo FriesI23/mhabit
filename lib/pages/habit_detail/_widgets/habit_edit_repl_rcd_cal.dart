@@ -132,6 +132,12 @@ class _HabitEditReplacementRecordCalendarDialog
     }
   }
 
+  Future<void> _deleteRecord(HabitRecordDate date) async {
+    if (!(mounted && _vm.mounted)) return;
+    final change = await _vm.deleteRecord(date);
+    if (change != null && mounted) _onRecordChangeConfirmed(change);
+  }
+
   void _openHabitRecordResonModifierDialog(HabitRecordDate date) async {
     if (!_vm.mounted) return;
     final initReason = await _vm.loadRecordReason(date) ?? '';
@@ -143,6 +149,9 @@ class _HabitEditReplacementRecordCalendarDialog
       recordDate: date,
       chipTextList: skipReasonChipTextList,
       color: habitColor,
+      onDelete: _vm.getHabitRecordData(date) != null
+          ? () => _deleteRecord(date)
+          : null,
     );
     if (result == null || result == initReason) return;
     if (!(mounted && _vm.mounted)) return;
@@ -177,6 +186,7 @@ class _HabitEditReplacementRecordCalendarDialog
       recordDate: date,
       targetExtraValue: _vm.habitDailyGoalExtra,
       color: _vm.habitColor,
+      onDelete: record != null ? () => _deleteRecord(date) : null,
     );
 
     if (result == null || result == orgNum) return;

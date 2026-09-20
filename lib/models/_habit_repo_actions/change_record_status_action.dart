@@ -82,6 +82,34 @@ abstract interface class ChangeRecordStatusAction<T>
   ChangeRecordStatusResult resolveSingle(T value);
 }
 
+final class DeleteRecordStatusAction
+    implements ChangeRecordStatusAction<HabitRecordDate> {
+  @override
+  final HabitSummaryData data;
+  final List<HabitRecordDate> dateList;
+
+  const DeleteRecordStatusAction({required this.data, required this.dateList});
+
+  @override
+  List<HabitRecordDate> get valueList => dateList;
+
+  @override
+  List<ChangeRecordStatusResult> resolve() => dateList
+      .where((date) => data.getRecordByDate(date) != null)
+      .map(resolveSingle)
+      .toList();
+
+  @override
+  ChangeRecordStatusResult resolveSingle(HabitRecordDate date) {
+    final record = data.getRecordByDate(date)!;
+    return ChangeRecordStatusResult(
+      habit: data,
+      origin: record,
+      data: record.copyWith(isDeleted: true),
+    );
+  }
+}
+
 final class ChangeRecordStatusPostAction
     implements ChangeRecordStatusAction<ChangeRecordStatusResult> {
   @override

@@ -123,5 +123,40 @@ void main() {
 
       vm.dispose();
     });
+
+    test(
+      'deletes existing record and restores its UUID on later save',
+      () async {
+        final seedData = _buildHabitSummaryData();
+        final date = HabitDate.now();
+        seedData.addRecord(
+          HabitSummaryRecord(
+            'existing-record',
+            date,
+            HabitRecordStatus.skip,
+            0,
+          ),
+        );
+        final access = _FakeHabitStatusChangerAccess(seedData: seedData);
+        final vm = HabitStatusChangerViewModel(uuidList: [seedData.uuid])
+          ..attachAccess(access);
+        await vm.loadData(listen: false);
+
+        expect(vm.deletableRecordCount, 1);
+        expect(await vm.deleteSelectDateRecords(listen: false), 1);
+        final deleted = access.lastSavedRecords!.single;
+        expect(deleted.operation, HabitRecordWriteOperation.markDeleted);
+        expect(deleted.data.uuid, 'existing-record');
+        expect(deleted.data.status, HabitRecordStatus.skip);
+        expect(seedData.getRecordByDate(date), isNull);
+        expect(vm.deletableRecordCount, 0);
+
+        vm.updateSelectStatus(RecordStatusChangerStatus.ok, listen: false);
+        expect(await vm.saveSelectStatus(listen: false), 1);
+        expect(access.lastSavedRecords!.single.data.uuid, 'existing-record');
+        expect(access.lastSavedRecords!.single.data.isDeleted, isFalse);
+        vm.dispose();
+      },
+    );
   });
 }

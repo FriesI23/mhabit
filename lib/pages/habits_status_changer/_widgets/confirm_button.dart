@@ -19,6 +19,8 @@ import '../../../l10n/localizations.dart';
 class ConfirmButton extends StatelessWidget {
   final bool enbaleConfirm;
   final VoidCallback? onConfirmPressed;
+  final VoidCallback? onDeletePressed;
+  final int deleteCount;
   final bool enableReset;
   final VoidCallback? onResetPressed;
 
@@ -26,6 +28,8 @@ class ConfirmButton extends StatelessWidget {
     super.key,
     this.enbaleConfirm = true,
     this.onConfirmPressed,
+    this.onDeletePressed,
+    this.deleteCount = 0,
     this.enableReset = true,
     this.onResetPressed,
   });
@@ -48,6 +52,18 @@ class ConfirmButton extends StatelessWidget {
             child: l10n != null
                 ? Text(l10n.batchCheckin_save_button_text)
                 : const Text("Save"),
+          ),
+          OutlinedButton.icon(
+            onPressed: onDeletePressed,
+            icon: const Icon(Icons.delete_outline),
+            label: Text(
+              l10n?.habitRecord_delete_buttonText(deleteCount) ??
+                  'Delete check-ins',
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+              side: BorderSide(color: Theme.of(context).colorScheme.error),
+            ),
           ),
           TextButton(
             onPressed: realCancelCallback,

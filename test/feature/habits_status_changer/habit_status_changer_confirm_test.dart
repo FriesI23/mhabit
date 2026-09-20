@@ -34,6 +34,7 @@ import 'package:mhabit/providers/support/global.dart';
 import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/profile_provider.dart';
+import 'package:mhabit/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -224,6 +225,44 @@ void main() {
           expect(page.vm.selectStatus, RecordStatusChangerStatus.skip);
         }
         expect(find.byType(HabitsStatusChangerPage), findsOneWidget);
+      });
+    }
+
+    for (final outcome in ['cancel', 'confirm', 'no-record']) {
+      testWidgets('$platform delete check-ins $outcome', (tester) async {
+        final access = _Access(existingRecord: outcome != 'no-record');
+        final page = await _pumpPage(tester, access, platform);
+        final delete = tester.widget<ConfirmButton>(find.byType(ConfirmButton));
+        if (outcome == 'no-record') {
+          expect(delete.onDeletePressed, isNull);
+          return;
+        }
+        expect(delete.onDeletePressed, isNotNull);
+        delete.onDeletePressed!();
+        await _pumpTransitions(tester);
+        final l10n = L10n.of(tester.element(adaptiveDialogFinder))!;
+        expect(
+          find.text(l10n.habitRecord_deleteConfirmDialog_title(1)),
+          findsOneWidget,
+        );
+        expect(
+          tester
+              .widget<AdaptiveConfirmDialog>(find.byType(AdaptiveConfirmDialog))
+              .content,
+          isNull,
+        );
+        expect(adaptiveDialogActions(tester).last.isDestructiveAction, isTrue);
+        if (outcome == 'cancel') {
+          await tester.tap(find.text('cancel'));
+        } else {
+          adaptiveDialogActions(tester).last.onPressed!();
+        }
+        await _pumpTransitions(tester);
+        expect(access.saves, hasLength(outcome == 'confirm' ? 1 : 0));
+        expect(page.vm.deletableRecordCount, outcome == 'confirm' ? 0 : 1);
+        if (outcome == 'confirm') {
+          expect(access.saves.single.single.data.isDeleted, isTrue);
+        }
       });
     }
 

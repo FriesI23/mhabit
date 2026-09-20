@@ -1817,6 +1817,28 @@ class L10nHu extends L10n {
   String get batchCheckin_save_confirmDialog_cancelButton_text => 'mégse';
 
   @override
+  String habitRecord_delete_buttonText(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Delete check-ins',
+      one: 'Delete check-in',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String habitRecord_deleteConfirmDialog_title(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Delete check-ins?',
+      one: 'Delete check-in?',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get batchCheckin_close_confirmDialog_title => 'Kilépés megerősítése';
 
   @override

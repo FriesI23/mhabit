@@ -137,6 +137,27 @@ void main() {
       expect(rechecked.effectiveRecord, same(rechecked.data));
     });
 
+    test('explicit delete preserves status and value', () {
+      final date = _date(4);
+      final original = HabitSummaryRecord(
+        'record-done',
+        date,
+        HabitRecordStatus.done,
+        3,
+      );
+      data.addRecord(original);
+      final result = DeleteRecordStatusAction(
+        data: data,
+        dateList: [date],
+      ).resolveSingle(date);
+      expect(result.operation, HabitRecordWriteOperation.markDeleted);
+      expect(result.origin, same(original));
+      expect(result.data.uuid, original.uuid);
+      expect(result.data.status, original.status);
+      expect(result.data.value, original.value);
+      expect(result.isRemoved, isTrue);
+    });
+
     test('recheck after deleting a valued record uses the default goal', () {
       data = _buildHabitSummaryData();
       final date = _date(5);

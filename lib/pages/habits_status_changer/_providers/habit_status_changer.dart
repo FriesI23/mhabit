@@ -52,7 +52,7 @@ extension on AppEventSubscriptions {
   void pushRecordsSaved({
     required List<HabitUUID> uuidList,
     required List<HabitRecordDate> dateList,
-    required HabitRecordStatus status,
+    required HabitRecordStatus? status,
     String? reason,
   }) => push(
     HabitRecordsChangedEvent(
@@ -264,6 +264,14 @@ class HabitStatusChangerViewModel
       .nonNulls
       .where((e) => e.status != HabitRecordStatus.unknown);
 
+  int get deletableRecordCount => _habitDataController.habits
+      .where(
+        (habit) =>
+            habit.startDate <= _form.selectDate &&
+            habit.getRecordByDate(_form.selectDate) != null,
+      )
+      .length;
+
   HabitDate get selectDate => _form.selectDate;
 
   String get skipReason => _form.skipReason ?? '';
@@ -350,6 +358,43 @@ class HabitStatusChangerViewModel
   void resetStatusForm({bool listen = true}) {
     _updateForm(_form.toDefault(), withDefaultChangerStatus: true);
     if (listen) notifyListeners();
+  }
+
+  Future<int> deleteSelectDateRecords({bool listen = true}) async {
+    if (!mounted) return 0;
+    final records = _habitDataController.habits
+        .where((habit) => habit.startDate <= _form.selectDate)
+        .map((habit) {
+          final record = habit.getRecordByDate(_form.selectDate);
+          if (record == null) return null;
+          return ChangeRecordStatusResult(
+            habit: habit,
+            origin: record,
+            data: record.copyWith(isDeleted: true),
+          );
+        })
+        .nonNulls
+        .toList(growable: false);
+    if (records.isEmpty) return 0;
+    await _access.saveChangedHabitRecords(
+      records: records,
+      beforeReminderUpdate: (habit, changedRecords) {
+        for (final record in changedRecords) {
+          habit.addRecord(record.data, replaced: true);
+        }
+        habit.reCalculateAutoComplateRecords(firstDay: firstday);
+      },
+    );
+    if (!mounted) return 0;
+    _updateForm(_form.toDefault(), withDefaultChangerStatus: true);
+    requestReloadData();
+    _eventSubs?.pushRecordsSaved(
+      uuidList: records.map((record) => record.habit.uuid).toList(),
+      dateList: records.map((record) => record.date).toList(),
+      status: null,
+    );
+    if (listen) notifyListeners();
+    return records.length;
   }
 
   Future<int> saveSelectStatus({bool listen = true}) async {
@@ -444,7 +489,7 @@ final class HabitStatusChangerForm {
       copyWith(selectStatus: null, skipReason: null);
 
   HabitSummaryRecord? buildRecordFromHabit(HabitSummaryData data) {
-    final uuid = data.getRecordByDate(selectDate)?.uuid;
+    final uuid = data.getStoredRecordByDate(selectDate)?.uuid;
     switch (selectStatus) {
       case RecordStatusChangerStatus.skip:
         return HabitSummaryRecord.generate(

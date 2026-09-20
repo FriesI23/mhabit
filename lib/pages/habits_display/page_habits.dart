@@ -399,6 +399,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     if (!_vm.mounted) return;
     final data = _vm.getHabit(parentUUID);
     if (data == null) return;
+    final hasRecord = data.getRecordByDate(date) != null;
     final initReason = await _vm.loadRecordReason(data, date) ?? '';
     if (!mounted) return;
     final result = await showHabitRecordReasonModifierDialog(
@@ -407,6 +408,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
       recordDate: date,
       chipTextList: skipReasonChipTextList,
       color: data.color,
+      onDelete: hasRecord ? () => _vm.deleteRecord(parentUUID, date) : null,
     );
 
     if (result == null || result == initReason) return;
@@ -439,6 +441,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
       recordDate: date,
       targetExtraValue: data.dailyGoalExtra,
       color: data.color,
+      onDelete: record != null
+          ? () => _vm.deleteRecord(parentUUID, date)
+          : null,
     );
 
     if (result == null || result == record?.value) return;

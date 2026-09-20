@@ -159,6 +159,27 @@ class _PageState extends State<_Page> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+  Future<void> _onDeleteButtonPressed() async {
+    if (!(mounted && _vm.mounted) || _vm.deletableRecordCount == 0) return;
+    final deleteCount = _vm.deletableRecordCount;
+    final l10n = L10n.of(context);
+    final confirmed = await showAdaptiveConfirmDialog(
+      context: context,
+      title: Text(
+        l10n?.habitRecord_deleteConfirmDialog_title(deleteCount) ??
+            'Delete check-ins?',
+      ),
+      confirmLabel:
+          l10n?.habitRecord_delete_buttonText(deleteCount) ??
+          'Delete check-ins',
+      cancelLabel:
+          l10n?.batchCheckin_save_confirmDialog_cancelButton_text ?? 'Cancel',
+      isDestructiveAction: true,
+    );
+    if (!(mounted && _vm.mounted && confirmed == true)) return;
+    await _vm.deleteSelectDateRecords();
+  }
+
   void _onResetButtonPressed() {
     if (!(mounted && _vm.mounted)) return;
     _vm.resetStatusForm();
@@ -259,13 +280,15 @@ class _PageState extends State<_Page> {
         );
 
     Widget buildConfirmButton(BuildContext context) {
-      return Selector<HabitStatusChangerViewModel, bool>(
-        selector: (context, vm) => vm.canSave,
-        builder: (context, canSave, child) => Material(
+      return Selector<HabitStatusChangerViewModel, (bool, int)>(
+        selector: (context, vm) => (vm.canSave, vm.deletableRecordCount),
+        builder: (context, state, child) => Material(
           color: Theme.of(context).colorScheme.surface,
           child: ConfirmButton(
-            enbaleConfirm: canSave,
+            enbaleConfirm: state.$1,
             onConfirmPressed: _onConfirmButtonpressed,
+            onDeletePressed: state.$2 > 0 ? _onDeleteButtonPressed : null,
+            deleteCount: state.$2,
             onResetPressed: _onResetButtonPressed,
           ),
         ),

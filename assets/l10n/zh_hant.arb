@@ -911,6 +911,24 @@
     "batchCheckin_save_confirmDialog_body": "儲存後，現有記錄將被覆蓋，之前的記錄將會遺失。",
     "batchCheckin_save_confirmDialog_confirmButton_text": "儲存",
     "batchCheckin_save_confirmDialog_cancelButton_text": "取消",
+    "habitRecord_delete_buttonText": "{count, plural, =1{刪除打卡} other{刪除打卡}}",
+    "@habitRecord_delete_buttonText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitRecord_deleteConfirmDialog_title": "{count, plural, =1{刪除這次打卡？} other{刪除這些打卡？}}",
+    "@habitRecord_deleteConfirmDialog_title": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
     "batchCheckin_close_confirmDialog_title": "確認返回",
     "batchCheckin_close_confirmDialog_body": "打卡狀態的變更在儲存前不會被套用",
     "batchCheckin_close_confirmDialog_confirmButton_text": "離開",

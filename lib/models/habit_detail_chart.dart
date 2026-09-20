@@ -24,6 +24,7 @@ enum HabitDetailFreqChartCombine { weekly, monthly, yearly }
 enum HabitDetailScoreChartCombine { daily, weekly, monthly, yearly }
 
 class HabitHeatMapColorMapDefine {
+  static num skip = -1;
   static num uncomplate = 0;
   static num partiallyCompleted = 1;
   static num autoComplate = 2;

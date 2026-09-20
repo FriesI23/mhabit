@@ -2796,6 +2796,18 @@ abstract class L10n {
   /// **'cancel'**
   String get batchCheckin_save_confirmDialog_cancelButton_text;
 
+  /// No description provided for @habitRecord_delete_buttonText.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Delete check-in} other{Delete check-ins}}'**
+  String habitRecord_delete_buttonText(int count);
+
+  /// No description provided for @habitRecord_deleteConfirmDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Delete check-in?} other{Delete check-ins?}}'**
+  String habitRecord_deleteConfirmDialog_title(int count);
+
   /// No description provided for @batchCheckin_close_confirmDialog_title.
   ///
   /// In en, this message translates to:
