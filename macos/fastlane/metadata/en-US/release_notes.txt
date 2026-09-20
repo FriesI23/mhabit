@@ -1,9 +1,9 @@
-- Feature: add resizable side navigation for wider layouts (#653)
-- Feature: improve app bars, habit actions, and batch status changes across
-  window sizes (#655)
-- Feature: add quick theme mode controls to app bars and wider navigation
-  layouts (#659)
-- Feature: complete the adaptive interface migration across navigation,
-  settings, page headers, search, selection, and habit actions
-- Fix: keep dialogs above app navigation and refresh selection state after
-  reordering or regrouping habits (#656)
+- Feature: cycle check-ins to unknown; delete records in batches (#657)
+- Feature: improve dialogs, Settings, groups, and imports (#661, #663)
+- Feature: improve habit actions and detail refresh (#662)
+- Feature: preserve unknown WebDAV group and record fields (#665)
+- Fix: restore batch actions and Settings scroll; fix group saves and import
+  results (#661, #663)
+- Fix: improve error recovery (#662)
+- Update Italian translation, thanks to Simone De Carli's contribution on
+  Weblate (#664)

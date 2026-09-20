@@ -2,22 +2,17 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.27.8+197-pre
+## 1.27.9+198
 
-- Feature: cycle check-ins to unknown; confirm single or batch deletion (#657)
-- Feature: improve habit actions and refresh details (#662)
-- Feature: improve Settings, dialogs, group editing, and import progress (#663)
-- Feature: preserve unknown WebDAV fields for groups and records (#665)
-- Fix: improve loading error recovery (#662)
-- Fix: keep import results and group actions accurate (#663)
+- Feature: cycle check-ins to unknown; delete records in batches (#657)
+- Feature: improve dialogs, Settings, groups, and imports (#661, #663)
+- Feature: improve habit actions and detail refresh (#662)
+- Feature: preserve unknown WebDAV group and record fields (#665)
+- Fix: restore batch actions and Settings scroll; fix group saves and import
+  results (#661, #663)
+- Fix: improve error recovery (#662)
 - Update Italian translation, thanks to Simone De Carli's contribution on
   Weblate (#664)
-
-## 1.27.7+196-pre
-
-- Feature: improve dialogs and page layouts across window sizes (#661)
-- Fix: restore batch check-in actions and preserve Settings scroll position (#661)
-- Fix: prevent delayed group saves from closing the wrong page (#661)
 
 ## 1.27.6+195
 
