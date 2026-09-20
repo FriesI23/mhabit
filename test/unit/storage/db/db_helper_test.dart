@@ -452,4 +452,95 @@ CREATE TABLE IF NOT EXISTS ${TableName.groups} (
       expect(rows[1]['sort_position'], 2.5);
     });
   });
+
+  group('DB v8→v9 migration — group and record sync extras', () {
+    setUp(() {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+    });
+
+    tearDown(() {
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    test('opens a v8 database and preserves existing rows', () async {
+      final originalPath = await databaseFactory.getDatabasesPath();
+      final tempDir = await Directory.systemTemp.createTemp('mhabit_db_v9_');
+      await databaseFactory.setDatabasesPath(tempDir.path);
+      final dbPath = path.join(tempDir.path, appDBName);
+      final oldDb = await databaseFactory.openDatabase(
+        dbPath,
+        options: OpenDatabaseOptions(
+          version: 8,
+          onCreate: (db, version) async {
+            await db.execute(
+              'CREATE TABLE mh_groups (uuid TEXT PRIMARY KEY, name TEXT)',
+            );
+            await db.execute(
+              'CREATE TABLE mh_records '
+              '(uuid TEXT PRIMARY KEY, record_type INTEGER)',
+            );
+          },
+        ),
+      );
+      await oldDb.insert(TableName.groups, {
+        'uuid': 'old-group',
+        'name': 'Existing group',
+      });
+      await oldDb.insert(TableName.records, {
+        'uuid': 'old-record',
+        'record_type': 2,
+      });
+      await oldDb.close();
+
+      final helper = DBHelperViewModel();
+      addTearDown(() async {
+        helper.dispose();
+        await databaseFactory.setDatabasesPath(originalPath);
+        await _deleteTempDir(tempDir);
+      });
+      await helper.init();
+
+      for (final table in [TableName.groups, TableName.records]) {
+        final columns = await helper.local.db.rawQuery(
+          'PRAGMA table_info($table)',
+        );
+        expect(
+          columns.any((column) => column['name'] == 'sync_extras'),
+          isTrue,
+        );
+      }
+      final groups = await helper.local.db.query(TableName.groups);
+      final records = await helper.local.db.query(TableName.records);
+      expect(groups.single['name'], 'Existing group');
+      expect(groups.single['sync_extras'], isNull);
+      expect(records.single['record_type'], 2);
+      expect(records.single['sync_extras'], isNull);
+      expect(await helper.local.db.getVersion(), appDBVersion);
+    });
+
+    test('fresh database has both sync extras columns', () async {
+      final originalPath = await databaseFactory.getDatabasesPath();
+      final tempDir = await Directory.systemTemp.createTemp(
+        'mhabit_db_v9_new_',
+      );
+      await databaseFactory.setDatabasesPath(tempDir.path);
+      final helper = DBHelperViewModel();
+      addTearDown(() async {
+        helper.dispose();
+        await databaseFactory.setDatabasesPath(originalPath);
+        await _deleteTempDir(tempDir);
+      });
+      await helper.init();
+
+      for (final table in [TableName.groups, TableName.records]) {
+        final columns = await helper.local.db.rawQuery(
+          'PRAGMA table_info($table)',
+        );
+        expect(
+          columns.any((column) => column['name'] == 'sync_extras'),
+          isTrue,
+        );
+      }
+    });
+  });
 }

@@ -240,6 +240,14 @@ class _DBHelper implements DBHelper {
           .execute(CustomSql.rmAutoAddSortPostionWhenAddNewGroupTrigger)
           .then((_) => db.execute(CustomSql.autoAddSortPostionWhenAddNewGroup));
     }
+    if (oldVersion < 9) {
+      for (final table in [TableName.groups, TableName.records]) {
+        final columns = await db.rawQuery('PRAGMA table_info($table)');
+        if (!columns.any((column) => column['name'] == 'sync_extras')) {
+          await db.execute('ALTER TABLE $table ADD COLUMN sync_extras TEXT');
+        }
+      }
+    }
   }
 
   Future<Database> _openDB(String dbPath) async {

@@ -27,6 +27,7 @@ abstract class _$WebDavSyncRecordDataCWProxy {
     String? reason,
     String? sessionId,
     int? dirty,
+    Map<String, dynamic>? unknown,
   });
 }
 
@@ -57,6 +58,7 @@ class _$WebDavSyncRecordDataCWProxyImpl
     Object? reason = const $CopyWithPlaceholder(),
     Object? sessionId = const $CopyWithPlaceholder(),
     Object? dirty = const $CopyWithPlaceholder(),
+    Object? unknown = const $CopyWithPlaceholder(),
   }) {
     return WebDavSyncRecordData(
       recordDate: recordDate == const $CopyWithPlaceholder()
@@ -99,6 +101,10 @@ class _$WebDavSyncRecordDataCWProxyImpl
           ? _value.dirty
           // ignore: cast_nullable_to_non_nullable
           : dirty as int?,
+      unknown: unknown == const $CopyWithPlaceholder()
+          ? _value.unknown
+          // ignore: cast_nullable_to_non_nullable
+          : unknown as Map<String, dynamic>?,
     );
   }
 }
@@ -147,6 +153,7 @@ abstract class _$WebDavSyncHabitDataCWProxy {
     String? etag,
     int? dirty,
     int? dirtyTotal,
+    Map<String, dynamic>? unknown,
   });
 }
 
@@ -193,6 +200,7 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
     Object? etag = const $CopyWithPlaceholder(),
     Object? dirty = const $CopyWithPlaceholder(),
     Object? dirtyTotal = const $CopyWithPlaceholder(),
+    Object? unknown = const $CopyWithPlaceholder(),
   }) {
     return WebDavSyncHabitData(
       schemaVersion:
@@ -304,6 +312,10 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
           ? _value.dirtyTotal
           // ignore: cast_nullable_to_non_nullable
           : dirtyTotal as int?,
+      unknown: unknown == const $CopyWithPlaceholder()
+          ? _value.unknown
+          // ignore: cast_nullable_to_non_nullable
+          : unknown as Map<String, dynamic>?,
     );
   }
 }

@@ -37,6 +37,7 @@ class RecordDBCellKey {
   static const String uuid = 'uuid';
   static const String parentUUID = 'parent_uuid';
   static const String reason = 'reason';
+  static const String syncExtras = 'sync_extras';
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake, includeIfNull: false)
@@ -62,6 +63,8 @@ class RecordDBCell with DBCell {
   final HabitUUID? parentUUID;
   @JsonKey(name: RecordDBCellKey.reason)
   final String? reason;
+  @JsonKey(name: RecordDBCellKey.syncExtras)
+  final String? syncExtras;
 
   RecordDBCell({
     this.id,
@@ -74,6 +77,7 @@ class RecordDBCell with DBCell {
     this.uuid,
     this.parentUUID,
     this.reason,
+    this.syncExtras,
   });
 
   RecordDBCell.build({
@@ -86,6 +90,7 @@ class RecordDBCell with DBCell {
     this.modifyT,
     this.uuid,
     this.reason,
+    this.syncExtras,
   }) : id = null;
 
   factory RecordDBCell.fromJson(Map<String, Object?> cell) =>

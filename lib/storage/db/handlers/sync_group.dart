@@ -83,9 +83,13 @@ class SyncGroupDBHelper {
         if ((localEtag ?? '').isNotEmpty && localEtag == data.etag) {
           return true;
         }
+        final groupDbMap = data.toGroupDBCell().toJson();
+        if (data.unknown == null || data.unknown!.isEmpty) {
+          groupDbMap[GroupDBCellKey.syncExtras] = null;
+        }
         await txn.update(
           TableName.groups,
-          data.toGroupDBCell().toJson(),
+          groupDbMap,
           where: '${GroupDBCellKey.uuid} = ?',
           whereArgs: [uuid],
         );
@@ -146,6 +150,7 @@ class SyncGroupDBHelper {
           ? sessionId
           : syncSessionId,
       etag: (loadedConfigId != configId) ? null : syncEtag,
+      unknown: decodeSyncExtras(cell.syncExtras),
     );
   }
 

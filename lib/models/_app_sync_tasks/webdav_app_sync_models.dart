@@ -18,6 +18,7 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mhabit_proxy_annotation/proxy_annotation.dart';
 import 'package:retry/retry.dart';
@@ -255,6 +256,19 @@ class WebDavSyncRecordKey {
   static const String reason = 'reason';
   static const String sessionId = 'sessionId';
   static const String convertType = '_convert_type';
+
+  static const Set<String> allKnownKeys = {
+    recordDate,
+    recordType,
+    recordValue,
+    createT,
+    modifyT,
+    uuid,
+    parentUUID,
+    reason,
+    sessionId,
+    convertType,
+  };
 }
 
 /// More model design refs:
@@ -265,6 +279,7 @@ class WebDavSyncRecordKey {
   ignoreUnannotated: true,
 )
 @CopyWith(skipFields: true)
+@immutable
 class WebDavSyncRecordData implements JsonAdaptor {
   static const _convertType = 'record_';
 
@@ -289,6 +304,9 @@ class WebDavSyncRecordData implements JsonAdaptor {
 
   final int? dirty;
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  final Map<String, dynamic>? unknown;
+
   const WebDavSyncRecordData({
     this.recordDate,
     this.recordType,
@@ -300,12 +318,14 @@ class WebDavSyncRecordData implements JsonAdaptor {
     this.reason,
     this.sessionId,
     this.dirty,
+    this.unknown,
   });
 
   WebDavSyncRecordData.fromRecordDBCell(
     RecordDBCell cell, {
     this.dirty,
     this.sessionId,
+    required this.unknown,
   }) : recordDate = cell.recordDate,
        recordType = cell.recordType,
        recordValue = cell.recordValue,
@@ -321,7 +341,9 @@ class WebDavSyncRecordData implements JsonAdaptor {
           ? json[WebDavSyncRecordKey.convertType] == _convertType
           : true,
     );
-    return _$WebDavSyncRecordDataFromJson(json);
+    return _$WebDavSyncRecordDataFromJson(json).copyWith(
+      unknown: captureSyncUnknown(json, WebDavSyncRecordKey.allKnownKeys),
+    );
   }
 
   RecordDBCell toRecordDBCell() => RecordDBCell(
@@ -333,12 +355,16 @@ class WebDavSyncRecordData implements JsonAdaptor {
     uuid: uuid,
     parentUUID: parentUUID,
     reason: reason,
+    syncExtras: encodeSyncExtras(unknown),
   );
 
   @override
-  JsonMap toJson() =>
-      _$WebDavSyncRecordDataToJson(this)
-        ..[WebDavSyncRecordKey.convertType] = _convertType;
+  JsonMap toJson() {
+    final json = _$WebDavSyncRecordDataToJson(this)
+      ..[WebDavSyncRecordKey.convertType] = _convertType;
+    mergeSyncUnknown(json, unknown);
+    return json;
+  }
 
   SyncDBCell genSyncDBCell({String? configId}) => SyncDBCell(
     recordUUID: uuid,
@@ -466,6 +492,7 @@ extension on HabitColor {
   ignoreUnannotated: true,
 )
 @CopyWith(skipFields: true)
+@immutable
 class WebDavSyncHabitData implements JsonAdaptor {
   static const _convertType = 'habit_';
 
@@ -534,7 +561,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
 
   /// Runtime bucket for JSON keys not recognized by the current schema.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  Map<String, dynamic>? unknown;
+  final Map<String, dynamic>? unknown;
 
   static List<List> _recordsToJson(
     Map<HabitRecordUUID, WebDavSyncRecordData> records,
@@ -552,7 +579,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
         .nonNulls,
   );
 
-  WebDavSyncHabitData({
+  const WebDavSyncHabitData({
     this.schemaVersion = 1,
     this.uuid,
     this.createT,
@@ -580,6 +607,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
     this.etag,
     this.dirty,
     this.dirtyTotal,
+    this.unknown,
   });
 
   factory WebDavSyncHabitData.fromHabitDBCell(
@@ -589,7 +617,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
     int? dirtyTotal,
     String? sessionId,
     Map<HabitRecordUUID, WebDavSyncRecordData> records = const {},
-    Map<String, dynamic>? unknown,
+    required Map<String, dynamic>? unknown,
   }) {
     final habitColor = HabitColor.fromRaw(
       colorType: cell.customColor != null
@@ -598,7 +626,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
       customColor: cell.customColor,
       customColorTinted: cell.customColorTinted,
     );
-    final data = WebDavSyncHabitData(
+    return WebDavSyncHabitData(
       schemaVersion: currentSchemaVersion,
       uuid: cell.uuid,
       createT: cell.createT,
@@ -626,11 +654,8 @@ class WebDavSyncHabitData implements JsonAdaptor {
       dirtyTotal: dirtyTotal,
       sessionId: sessionId,
       records: records,
+      unknown: unknown != null && unknown.isNotEmpty ? unknown : null,
     );
-    if (unknown != null && unknown.isNotEmpty) {
-      data.unknown = unknown;
-    }
-    return data;
   }
 
   factory WebDavSyncHabitData.fromJson(JsonMap json) {
@@ -639,9 +664,9 @@ class WebDavSyncHabitData implements JsonAdaptor {
           ? json[WebDavSyncHabitKey.convertType] == _convertType
           : true,
     );
-    final data = _$WebDavSyncHabitDataFromJson(json);
-    data.unknown = captureSyncUnknown(json, WebDavSyncHabitKeys.allKnownKeys);
-    return data;
+    return _$WebDavSyncHabitDataFromJson(json).copyWith(
+      unknown: captureSyncUnknown(json, WebDavSyncHabitKeys.allKnownKeys),
+    );
   }
 
   HabitDBCell toHabitDBCell() {
@@ -815,6 +840,7 @@ enum WebDavSyncGroupKeys {
   ignoreUnannotated: true,
 )
 @CopyWith(skipFields: true)
+@immutable
 class WebDavSyncGroupData implements JsonAdaptor {
   static const _convertType = 'group_';
   static const int currentSchemaVersion = 1;
@@ -854,9 +880,9 @@ class WebDavSyncGroupData implements JsonAdaptor {
   final int? dirtyTotal;
 
   @JsonKey(includeFromJson: false, includeToJson: false)
-  Map<String, dynamic>? unknown;
+  final Map<String, dynamic>? unknown;
 
-  WebDavSyncGroupData({
+  const WebDavSyncGroupData({
     this.schemaVersion = currentSchemaVersion,
     this.uuid,
     this.createT,
@@ -889,7 +915,7 @@ class WebDavSyncGroupData implements JsonAdaptor {
     int? dirty,
     int? dirtyTotal,
     String? sessionId,
-    Map<String, dynamic>? unknown,
+    required Map<String, dynamic>? unknown,
   }) {
     final groupColor = cell.color == null && cell.customColor == null
         ? null
@@ -917,6 +943,7 @@ class WebDavSyncGroupData implements JsonAdaptor {
       etag: etag,
       dirty: dirty,
       dirtyTotal: dirtyTotal,
+      unknown: unknown,
     );
   }
 
@@ -924,9 +951,9 @@ class WebDavSyncGroupData implements JsonAdaptor {
   ///
   /// Uses [captureSyncUnknown] to capture unknown fields, ensuring round-trip compatibility.
   factory WebDavSyncGroupData.fromJson(JsonMap json) {
-    final data = _$WebDavSyncGroupDataFromJson(json);
-    data.unknown = captureSyncUnknown(json, WebDavSyncGroupKeys.allKnownKeys);
-    return data;
+    return _$WebDavSyncGroupDataFromJson(json).copyWith(
+      unknown: captureSyncUnknown(json, WebDavSyncGroupKeys.allKnownKeys),
+    );
   }
 
   /// Converts to [GroupDBCell] for writing to the local DB.
@@ -952,6 +979,7 @@ class WebDavSyncGroupData implements JsonAdaptor {
       customColorTinted: groupColor?.dbCustomColorTinted,
       status: status,
       sortPosition: sortPosition,
+      syncExtras: encodeSyncExtras(unknown),
     );
   }
 

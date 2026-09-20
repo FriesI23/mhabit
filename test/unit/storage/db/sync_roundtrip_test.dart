@@ -17,7 +17,10 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/_app_sync_tasks/webdav_app_sync_models.dart';
+import 'package:mhabit/models/group.dart';
 import 'package:mhabit/models/habit_form.dart';
+import 'package:mhabit/storage/db/handlers/group.dart';
+import 'package:mhabit/storage/db/handlers/record.dart';
 import 'package:mhabit/storage/db/handlers/sync.dart';
 import 'package:mhabit/storage/db_helper_provider.dart';
 
@@ -113,7 +116,7 @@ void main() {
       },
     );
 
-    test('loadHabitDataFromBb passes syncExtras as unknown', () async {
+    test('loadHabitDataFromBb restores syncExtras as unknown', () async {
       // Seed: insert habit + sync row directly via raw SQL
       await viewModel.local.db.insert('mh_habits', {
         ..._baseDbRow('upload-test-uuid', 'Upload Test'),
@@ -279,6 +282,163 @@ void main() {
       expect(restoredJson.containsKey('removed_field'), isFalse);
       expect(restoredJson['kept_field'], 99);
     });
+
+    test(
+      'record unknown fields survive DB and local edits, then clear',
+      () async {
+        const habitUuid = 'record-extras-habit';
+        const recordUuid = 'record-extras-record';
+
+        WebDavSyncHabitData download({
+          required String session,
+          required bool withUnknown,
+        }) {
+          final record = WebDavSyncRecordData.fromJson({
+            '_convert_type': 'record_',
+            'uuid': recordUuid,
+            'parent_uuid': habitUuid,
+            'record_date': 20000,
+            'record_type': 1,
+            'record_value': 1,
+            'sessionId': session,
+            if (withUnknown)
+              'future_record': {
+                'items': [1, 2],
+              },
+          });
+          return WebDavSyncHabitData.fromJson({
+            ..._basePayload(habitUuid, 'Record Extras'),
+            'sessionId': session,
+          }).copyWith(records: {recordUuid: record});
+        }
+
+        await syncHelper.syncHabitDataToDb(
+          download(session: 'remote-1', withUnknown: true),
+        );
+        final recordHelper = RecordDBHelper(viewModel.local);
+        await recordHelper.updateRecord(
+          RecordDBCell(uuid: recordUuid, parentUUID: habitUuid, recordValue: 2),
+        );
+
+        final uploaded = await syncHelper.loadHabitDataFromBb(
+          habitUuid,
+          configId: 'cfg',
+          sessionId: 'local-session',
+        );
+        final uploadedRecord = uploaded!.records[recordUuid]!;
+        expect(uploadedRecord.recordValue, 2);
+        expect(uploadedRecord.toJson()['future_record'], {
+          'items': [1, 2],
+        });
+
+        await syncHelper.syncHabitDataToDb(
+          download(session: 'remote-2', withUnknown: false),
+        );
+        final rows = await viewModel.local.db.query(
+          'mh_records',
+          columns: ['sync_extras'],
+          where: 'uuid = ?',
+          whereArgs: [recordUuid],
+        );
+        expect(rows.single['sync_extras'], isNull);
+
+        await syncHelper.syncHabitDataToDb(
+          download(session: 'remote-3', withUnknown: true),
+        );
+        final restoredExtras = await viewModel.local.db.query(
+          'mh_records',
+          columns: ['sync_extras'],
+          where: 'uuid = ?',
+          whereArgs: [recordUuid],
+        );
+        expect(restoredExtras.single['sync_extras'], isNotNull);
+        final emptyUnknown = download(session: 'remote-4', withUnknown: true);
+        await syncHelper.syncHabitDataToDb(
+          emptyUnknown.copyWith(
+            records: {
+              recordUuid: emptyUnknown.records[recordUuid]!.copyWith(
+                unknown: {},
+              ),
+            },
+          ),
+        );
+        final emptyRows = await viewModel.local.db.query(
+          'mh_records',
+          columns: ['sync_extras'],
+          where: 'uuid = ?',
+          whereArgs: [recordUuid],
+        );
+        expect(emptyRows.single['sync_extras'], isNull);
+      },
+    );
+
+    test(
+      'group unknown fields survive DB and local edits, then clear',
+      () async {
+        const uuid = 'group-extras';
+        WebDavSyncGroupData download({
+          required String etag,
+          required bool withUnknown,
+        }) => WebDavSyncGroupData.fromJson({
+          ..._baseGroupPayload(uuid, 'Group Extras'),
+          if (withUnknown)
+            'future_group': {
+              'items': [3, 4],
+            },
+        }).copyWith(etag: etag);
+
+        await syncHelper.group.syncGroupDataToDb(
+          download(etag: 'etag-1', withUnknown: true),
+        );
+        await GroupDBHelper(viewModel.local).updateExistGroup(
+          const GroupDBCell(uuid: uuid, name: 'Locally Edited'),
+        );
+
+        final uploaded = await syncHelper.group.loadGroupDataFromDb(
+          uuid,
+          configId: 'cfg',
+          sessionId: 'local-session',
+        );
+        expect(uploaded!.name, 'Locally Edited');
+        expect(uploaded.toJson()['future_group'], {
+          'items': [3, 4],
+        });
+
+        await syncHelper.group.syncGroupDataToDb(
+          download(etag: 'etag-2', withUnknown: false),
+        );
+        final rows = await viewModel.local.db.query(
+          'mh_groups',
+          columns: ['sync_extras'],
+          where: 'uuid = ?',
+          whereArgs: [uuid],
+        );
+        expect(rows.single['sync_extras'], isNull);
+
+        await syncHelper.group.syncGroupDataToDb(
+          download(etag: 'etag-3', withUnknown: true),
+        );
+        final restoredExtras = await viewModel.local.db.query(
+          'mh_groups',
+          columns: ['sync_extras'],
+          where: 'uuid = ?',
+          whereArgs: [uuid],
+        );
+        expect(restoredExtras.single['sync_extras'], isNotNull);
+        final emptyUnknown = download(
+          etag: 'etag-4',
+          withUnknown: true,
+        ).copyWith(unknown: {});
+        await syncHelper.group.syncGroupDataToDb(emptyUnknown);
+        final emptyRows = await viewModel.local.db.query(
+          'mh_groups',
+          columns: ['sync_extras'],
+          where: 'uuid = ?',
+          whereArgs: [uuid],
+        );
+        expect(emptyRows.single['sync_extras'], isNull);
+      },
+    );
 
     test(
       'syncGroupDataToDb inserts and loadGroupDataFromDb reads it back',

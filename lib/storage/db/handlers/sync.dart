@@ -426,12 +426,16 @@ class SyncDBHelper extends DBHelperHandler {
       } else if (recordSyncInfo?.lastMark != record.sessionId) {
         if (recordSyncInfo?.lastSesionUUID == record.sessionId) continue;
         updateCount += 1;
+        final recordDbMap = record
+            .toRecordDBCell()
+            .copyWith(id: null, parentId: null, uuid: null, parentUUID: null)
+            .toJson();
+        if (record.unknown == null || record.unknown!.isEmpty) {
+          recordDbMap[RecordDBCellKey.syncExtras] = null;
+        }
         batch.update(
           TableName.records,
-          record
-              .toRecordDBCell()
-              .copyWith(id: null, parentId: null, uuid: null, parentUUID: null)
-              .toJson(),
+          recordDbMap,
           where: "${RecordDBCellKey.uuid} = ?",
           whereArgs: [record.uuid],
           conflictAlgorithm: ConflictAlgorithm.rollback,
@@ -555,27 +559,24 @@ class SyncDBHelper extends DBHelperHandler {
               final dirty = result[dirtyKey] as int?;
               final lastMarkId = result[lastMarkKey] as String?;
               final lastConfigId = result[configIdKey] as String?;
+              final cell = RecordDBCell.fromJson(result);
               return WebDavSyncRecordData.fromRecordDBCell(
-                RecordDBCell.fromJson(result),
+                cell,
                 dirty: dirty,
                 sessionId: ((dirty ?? 0) > 0 || lastConfigId != configId)
                     ? sessionId
                     : lastMarkId,
+                unknown: decodeSyncExtras(cell.syncExtras),
               );
             }),
           );
-      final unknown = habit.unknown;
-      final result = habit.copyWith(
+      return habit.copyWith(
         records: Map.fromEntries(
           records
               .map((e) => e.uuid != null ? MapEntry(e.uuid!, e) : null)
               .nonNulls,
         ),
       );
-      if (unknown != null && unknown.isNotEmpty) {
-        result.unknown = unknown;
-      }
-      return result;
     });
   }
 
