@@ -14,5 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-flutter pub run build_runner build --delete-conflicting-outputs
+set -euo pipefail
+
+dart run build_runner build --workspace
 flutter gen-l10n

@@ -12,8 +12,8 @@
 @rem See the License for the specific language governing permissions and
 @rem limitations under the License.
 
-(
-flutter pub run build_runner build --delete-conflicting-outputs
-) & (
-flutter gen-l10n
-)
+call dart run build_runner build --workspace
+if errorlevel 1 exit /b %errorlevel%
+
+call flutter gen-l10n
+if errorlevel 1 exit /b %errorlevel%
