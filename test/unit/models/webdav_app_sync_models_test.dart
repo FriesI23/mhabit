@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/annotations/_json_converters/normalizing_list_converter.dart';
 import 'package:mhabit/models/_app_sync_tasks/webdav_app_sync_models.dart';
 import 'package:mhabit/models/group.dart';
 import 'package:mhabit/models/habit_form.dart';
@@ -683,6 +684,102 @@ void main() {
       'nested': [1, 2],
     });
     expect(json.containsKey('unknown'), isFalse);
+  });
+
+  test('habit upload preserves unknown fields on later records', () {
+    const habit = WebDavSyncHabitData(
+      uuid: 'habit-1',
+      records: {
+        'record-1': WebDavSyncRecordData(uuid: 'record-1'),
+        'record-2': WebDavSyncRecordData(
+          uuid: 'record-2',
+          unknown: {'future_record': 'keep-me'},
+        ),
+      },
+    );
+
+    final uploaded = habit.toJson();
+    final restored = WebDavSyncHabitData.fromJson(uploaded);
+    expect(restored.records['record-2']!.unknown?['future_record'], 'keep-me');
+  });
+
+  test('mixed record extras remain readable by the pre-extras client', () {
+    const newerHabit = WebDavSyncHabitData(
+      uuid: 'habit-1',
+      records: {
+        'record-1': WebDavSyncRecordData(
+          uuid: 'record-1',
+          recordType: 1,
+          recordValue: 1,
+        ),
+        'record-2': WebDavSyncRecordData(
+          uuid: 'record-2',
+          recordType: 1,
+          recordValue: 2,
+          unknown: {'future_record': 'keep-me'},
+        ),
+      },
+    );
+    final uploaded = newerHabit.toJson();
+    expect(WebDavSyncHabitData.fromJson(uploaded).validate, returnsNormally);
+    final wireRows = (uploaded['records'] as List)
+        .map((row) => row as List)
+        .toList();
+
+    // The decoder is unchanged from the pre-extras client. Its record model
+    // reads known fields and ignores the additional column.
+    final decodedRows = const NormalizingListConverter().fromJson(wireRows);
+    expect(decodedRows[0]['future_record'], isNull);
+    expect(decodedRows[1]['future_record'], 'keep-me');
+    final legacyRecords = {
+      for (final row in decodedRows)
+        row['uuid'] as String: WebDavSyncRecordData(
+          uuid: row['uuid'] as String,
+          recordType: (row['record_type'] as num?)?.toInt(),
+          recordValue: row['record_value'] as num?,
+        ),
+    };
+    expect(legacyRecords['record-1']!.recordValue, 1);
+    expect(legacyRecords['record-2']!.recordValue, 2);
+    for (final record in legacyRecords.values) {
+      expect(record.validated, returnsNormally);
+    }
+
+    // A pre-extras client re-uploads its known field set. The newer client
+    // must still read the records, although the old client drops extras.
+    final legacyUpload = WebDavSyncHabitData(
+      uuid: newerHabit.uuid,
+      records: legacyRecords,
+    ).toJson();
+    final newerRead = WebDavSyncHabitData.fromJson(legacyUpload);
+    expect(newerRead.validate, returnsNormally);
+    expect(newerRead.records['record-1']!.recordValue, 1);
+    expect(newerRead.records['record-2']!.recordValue, 2);
+    expect(newerRead.records['record-2']!.unknown, isNull);
+  });
+
+  test('new fields on one habit do not appear on another habit', () {
+    const firstHabit = WebDavSyncHabitData(
+      uuid: 'habit-1',
+      unknown: {'future_extra': 'existing'},
+    );
+    const secondHabit = WebDavSyncHabitData(
+      uuid: 'habit-2',
+      unknown: {'new_field': 'new'},
+    );
+
+    final firstUpload = firstHabit.toJson();
+    final secondUpload = secondHabit.toJson();
+    expect(firstUpload['future_extra'], 'existing');
+    expect(firstUpload.containsKey('new_field'), isFalse);
+    expect(secondUpload['new_field'], 'new');
+    expect(secondUpload.containsKey('future_extra'), isFalse);
+    expect(WebDavSyncHabitData.fromJson(firstUpload).unknown, {
+      'future_extra': 'existing',
+    });
+    expect(WebDavSyncHabitData.fromJson(secondUpload).unknown, {
+      'new_field': 'new',
+    });
   });
 
   test('group unknown fields cannot replace known keys', () {
