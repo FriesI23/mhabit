@@ -199,7 +199,7 @@ void main() {
       const data = WebDavSyncHabitData(
         schemaVersion: WebDavSyncHabitData.currentSchemaVersion,
       );
-      expect(data.toJson()['_schema_version'], 2);
+      expect(data.toJson()['_schema_version'], 3);
     });
 
     test('fromHabitDBCell stamps currentSchemaVersion', () {
@@ -684,6 +684,52 @@ void main() {
       'nested': [1, 2],
     });
     expect(json.containsKey('unknown'), isFalse);
+  });
+
+  test('record deletion marker is explicit and survives sync round-trip', () {
+    final deleted = WebDavSyncRecordData.fromJson({
+      '_convert_type': 'record_',
+      'uuid': 'deleted-record',
+      'record_type': 2,
+      'is_deleted': true,
+    });
+    expect(deleted.isDeleted, isTrue);
+    expect(deleted.unknown, isNull);
+    expect(deleted.validated, returnsNormally);
+    expect(deleted.toRecordDBCell().isDeleted, 1);
+    final restored = WebDavSyncRecordData.fromJson(
+      deleted.copyWith(isDeleted: false).toJson(),
+    );
+    expect(restored.isDeleted, isFalse);
+    expect(restored.toJson()['is_deleted'], false);
+    expect(
+      WebDavSyncRecordData.fromJson({
+        '_convert_type': 'record_',
+        'record_type': 2,
+      }).isDeleted,
+      isFalse,
+    );
+  });
+
+  test('older record readers preserve or drop deletion as documented', () {
+    const record = WebDavSyncRecordData(
+      uuid: 'record-1',
+      recordType: 2,
+      isDeleted: true,
+    );
+    final wire = record.toJson();
+    final oldKnownKeys = {...WebDavSyncRecordKey.allKnownKeys}
+      ..remove(WebDavSyncRecordKey.isDeleted);
+    final extras = captureSyncUnknown(wire, oldKnownKeys);
+    final oldWithExtras = <String, dynamic>{'record_type': 2};
+    mergeSyncUnknown(oldWithExtras, extras);
+    expect(oldWithExtras['is_deleted'], true);
+
+    final preExtrasUpload = <String, dynamic>{
+      '_convert_type': 'record_',
+      'record_type': 2,
+    };
+    expect(WebDavSyncRecordData.fromJson(preExtrasUpload).isDeleted, isFalse);
   });
 
   test('habit upload preserves unknown fields on later records', () {

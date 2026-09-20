@@ -29,6 +29,7 @@ import '../../logging/helper.dart';
 import '../../models/habit_daily_record_form.dart';
 import '../../models/habit_date.dart';
 import '../../models/habit_form.dart';
+import '../../models/habit_repo_actions.dart';
 import '../../models/habit_summary.dart';
 import '../../providers/app_ui/app_developer.dart';
 import '../../providers/workflow/app_sync.dart';
@@ -289,7 +290,7 @@ class _HabitsTodayController {
 
   void _onRecordChangeConfirmed(
     HabitUUID uuid,
-    HabitSummaryRecord record, {
+    ChangeRecordStatusResult change, {
     String? reason,
   }) {}
 

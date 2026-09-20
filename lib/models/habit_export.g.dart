@@ -23,6 +23,7 @@ abstract class _$RecordExportDataCWProxy {
     int? createT,
     int? modifyT,
     String? reason,
+    bool isDeleted,
   });
 }
 
@@ -48,6 +49,7 @@ class _$RecordExportDataCWProxyImpl implements _$RecordExportDataCWProxy {
     Object? createT = const $CopyWithPlaceholder(),
     Object? modifyT = const $CopyWithPlaceholder(),
     Object? reason = const $CopyWithPlaceholder(),
+    Object? isDeleted = const $CopyWithPlaceholder(),
   }) {
     return RecordExportData(
       recordDate: recordDate == const $CopyWithPlaceholder()
@@ -74,6 +76,10 @@ class _$RecordExportDataCWProxyImpl implements _$RecordExportDataCWProxy {
           ? _value.reason
           // ignore: cast_nullable_to_non_nullable
           : reason as String?,
+      isDeleted: isDeleted == const $CopyWithPlaceholder() || isDeleted == null
+          ? _value.isDeleted
+          // ignore: cast_nullable_to_non_nullable
+          : isDeleted as bool,
     );
   }
 }
@@ -258,6 +264,7 @@ RecordExportData _$RecordExportDataFromJson(Map<String, dynamic> json) =>
       createT: (json['create_t'] as num?)?.toInt(),
       modifyT: (json['modify_t'] as num?)?.toInt(),
       reason: json['reason'] as String?,
+      isDeleted: json['is_deleted'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$RecordExportDataToJson(RecordExportData instance) =>
@@ -268,6 +275,7 @@ Map<String, dynamic> _$RecordExportDataToJson(RecordExportData instance) =>
       'create_t': ?instance.createT,
       'modify_t': ?instance.modifyT,
       'reason': ?instance.reason,
+      'is_deleted': instance.isDeleted,
     };
 
 HabitExportData _$HabitExportDataFromJson(Map<String, dynamic> json) =>

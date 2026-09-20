@@ -453,7 +453,7 @@ CREATE TABLE IF NOT EXISTS ${TableName.groups} (
     });
   });
 
-  group('DB v8→v9 migration — group and record sync extras', () {
+  group('DB v8→v10 migration — group and record sync extras', () {
     setUp(() {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
     });
@@ -541,6 +541,60 @@ CREATE TABLE IF NOT EXISTS ${TableName.groups} (
           isTrue,
         );
       }
+    });
+  });
+
+  group('DB v9→v10 migration — record deletion marker', () {
+    setUp(() {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+    });
+
+    tearDown(() {
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    test('moves preserved deletion marker out of sync_extras', () async {
+      final originalPath = await databaseFactory.getDatabasesPath();
+      final tempDir = await Directory.systemTemp.createTemp('mhabit_db_v10_');
+      await databaseFactory.setDatabasesPath(tempDir.path);
+      final dbPath = path.join(tempDir.path, appDBName);
+      final oldDb = await databaseFactory.openDatabase(
+        dbPath,
+        options: OpenDatabaseOptions(
+          version: 9,
+          onCreate: (db, _) async {
+            await db.execute(
+              'CREATE TABLE mh_records '
+              '(id_ INTEGER PRIMARY KEY, uuid TEXT, sync_extras TEXT)',
+            );
+          },
+        ),
+      );
+      await oldDb.insert(TableName.records, {
+        'uuid': 'deleted-record',
+        'sync_extras': '{"is_deleted":true,"future_field":42}',
+      });
+      await oldDb.insert(TableName.records, {'uuid': 'active-record'});
+      await oldDb.close();
+
+      final helper = DBHelperViewModel();
+      addTearDown(() async {
+        helper.dispose();
+        await databaseFactory.setDatabasesPath(originalPath);
+        await _deleteTempDir(tempDir);
+      });
+      await helper.init();
+
+      final rows = await helper.local.db.query(
+        TableName.records,
+        orderBy: 'uuid ASC',
+      );
+      expect(rows[0]['uuid'], 'active-record');
+      expect(rows[0]['is_deleted'], 0);
+      expect(rows[1]['uuid'], 'deleted-record');
+      expect(rows[1]['is_deleted'], 1);
+      expect(rows[1]['sync_extras'], '{"future_field":42}');
+      expect(await helper.local.db.getVersion(), 10);
     });
   });
 }

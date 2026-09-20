@@ -29,6 +29,7 @@ class RecordExportDataKey {
   static const String createT = 'create_t';
   static const String modifyT = 'modify_t';
   static const String reason = 'reason';
+  static const String isDeleted = 'is_deleted';
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake, includeIfNull: false)
@@ -46,6 +47,8 @@ class RecordExportData implements JsonAdaptor {
   final int? modifyT;
   @JsonKey(name: RecordExportDataKey.reason)
   final String? reason;
+  @JsonKey(name: RecordExportDataKey.isDeleted, defaultValue: false)
+  final bool isDeleted;
 
   const RecordExportData({
     this.recordDate,
@@ -54,6 +57,7 @@ class RecordExportData implements JsonAdaptor {
     this.createT,
     this.modifyT,
     this.reason,
+    this.isDeleted = false,
   });
 
   RecordExportData.fromHabitDBCell(RecordDBCell cell)
@@ -62,7 +66,8 @@ class RecordExportData implements JsonAdaptor {
       recordValue = cell.recordValue,
       createT = cell.createT,
       modifyT = cell.modifyT,
-      reason = cell.reason;
+      reason = cell.reason,
+      isDeleted = cell.deleted;
 
   factory RecordExportData.fromJson(dynamic json) =>
       _$RecordExportDataFromJson(json);
@@ -74,6 +79,7 @@ class RecordExportData implements JsonAdaptor {
     createT: createT,
     modifyT: modifyT,
     reason: reason,
+    isDeleted: const RecordDeletionCodec().encode(isDeleted),
   );
 
   @override

@@ -36,6 +36,7 @@ import '../../models/habit_date.dart';
 import '../../models/habit_display.dart';
 import '../../models/habit_form.dart';
 import '../../models/habit_group_display.dart';
+import '../../models/habit_repo_actions.dart';
 import '../../models/habit_status.dart';
 import "../../models/habit_summary.dart";
 import '../../providers/app_ui/app_compact_ui_switcher.dart';
@@ -194,7 +195,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
   void _onRecordChangeConfirmed(
     HabitUUID uuid,
-    HabitSummaryRecord record, {
+    ChangeRecordStatusResult change, {
     String? reason,
   }) {
     if (!mounted) return;

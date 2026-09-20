@@ -25,7 +25,7 @@ import '../../../models/habit_daily_record_form.dart';
 import '../../../models/habit_date.dart';
 import '../../../models/habit_detail_chart.dart';
 import '../../../models/habit_form.dart';
-import '../../../models/habit_summary.dart';
+import '../../../models/habit_repo_actions.dart';
 import '../../../providers/app_ui/app_custom_date_format.dart';
 import '../../../theme/color.dart';
 import '../../../widgets/widgets.dart';
@@ -95,14 +95,17 @@ class _HabitEditReplacementRecordCalendarDialog
     }
   }
 
-  void _onRecordChangeConfirmed(HabitSummaryRecord record, {String? reason}) {
+  void _onRecordChangeConfirmed(
+    ChangeRecordStatusResult change, {
+    String? reason,
+  }) {
     if (!mounted) return;
     final habitUUID = _vm.habitUUID;
     if (habitUUID != null) {
       _vm.onCalendarRecordChanged(
         uuid: habitUUID,
-        date: record.date,
-        status: record.status,
+        date: change.date,
+        status: change.status,
         reason: reason,
       );
     }

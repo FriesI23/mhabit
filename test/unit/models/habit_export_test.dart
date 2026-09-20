@@ -17,8 +17,25 @@ import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_export.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/storage/db/handlers/habit.dart';
+import 'package:mhabit/storage/db/handlers/record.dart';
 
 void main() {
+  test('record deletion marker survives local backup round-trip', () {
+    final record = RecordDBCell(
+      recordDate: 20000,
+      recordType: 2,
+      recordValue: 7,
+      isDeleted: 1,
+    );
+    final exported = RecordExportData.fromHabitDBCell(record);
+    final restored = RecordExportData.fromJson(exported.toJson());
+    expect(restored.toRecordDBCell().isDeleted, 1);
+    expect(
+      RecordExportData.fromJson({'record_type': 2}).toRecordDBCell().isDeleted,
+      0,
+    );
+  });
+
   group('HabitExportData', () {
     test('round-trips customColor / customColorTinted through'
         ' fromHabitDBCell → toJson → fromJson → toHabitDBCell', () {

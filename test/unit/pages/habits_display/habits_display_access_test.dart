@@ -310,6 +310,54 @@ void main() {
       vm.dispose();
     });
 
+    test('undoing a skip broadcasts no effective record', () async {
+      final seedData = _buildHabitSummaryData();
+      final date = HabitDate.now();
+      final storedRecord = HabitSummaryRecord.generate(
+        date,
+        status: HabitRecordStatus.skip,
+        value: 1,
+        parentUUID: seedData.uuid,
+      );
+      seedData.addRecord(storedRecord);
+      final access = _FakeHabitsDisplayAccess(seedData: seedData);
+      final bus = AppEventBus();
+      final events = <HabitRecordsChangedEvent>[];
+      bus.on<HabitRecordsChangedEvent>().listen(events.add);
+      final vm = HabitSummaryViewModel()
+        ..updateAppEvent(bus)
+        ..attachAccess(access)
+        ..attachGroupManager(_StubGroupManager());
+
+      await vm.loadData(listen: false);
+      final result = await vm.changeRecordStatus(
+        seedData.uuid,
+        date,
+        listen: false,
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      expect(result?.isRemoved, isTrue);
+      expect(result?.effectiveRecord, isNull);
+      expect(seedData.getRecordByDate(date), isNull);
+      expect(events.single.status, isNull);
+      expect(events.single.dateList, [date]);
+
+      final restored = await vm.changeRecordStatus(
+        seedData.uuid,
+        date,
+        listen: false,
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(restored?.isRemoved, isFalse);
+      expect(restored?.effectiveRecord?.uuid, storedRecord.uuid);
+      expect(restored?.status, HabitRecordStatus.done);
+      expect(events.last.status, HabitRecordStatus.done);
+
+      vm.dispose();
+      bus.dispose();
+    });
+
     test(
       'HabitSummaryViewModel applies sort filter and keyword search',
       () async {

@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:convert';
+
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sqflite/sqflite.dart';
@@ -37,7 +39,33 @@ class RecordDBCellKey {
   static const String uuid = 'uuid';
   static const String parentUUID = 'parent_uuid';
   static const String reason = 'reason';
+  static const String isDeleted = 'is_deleted';
   static const String syncExtras = 'sync_extras';
+}
+
+/// Converts the record deletion marker between domain and SQLite values.
+final class RecordDeletionCodec extends Codec<bool, int> {
+  const RecordDeletionCodec();
+
+  @override
+  Converter<int, bool> get decoder => const _RecordDeletionDecoder();
+
+  @override
+  Converter<bool, int> get encoder => const _RecordDeletionEncoder();
+}
+
+final class _RecordDeletionDecoder extends Converter<int, bool> {
+  const _RecordDeletionDecoder();
+
+  @override
+  bool convert(int input) => input == 1;
+}
+
+final class _RecordDeletionEncoder extends Converter<bool, int> {
+  const _RecordDeletionEncoder();
+
+  @override
+  int convert(bool input) => input ? 1 : 0;
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake, includeIfNull: false)
@@ -63,6 +91,8 @@ class RecordDBCell with DBCell {
   final HabitUUID? parentUUID;
   @JsonKey(name: RecordDBCellKey.reason)
   final String? reason;
+  @JsonKey(name: RecordDBCellKey.isDeleted)
+  final int? isDeleted;
   @JsonKey(name: RecordDBCellKey.syncExtras)
   final String? syncExtras;
 
@@ -77,6 +107,7 @@ class RecordDBCell with DBCell {
     this.uuid,
     this.parentUUID,
     this.reason,
+    this.isDeleted,
     this.syncExtras,
   });
 
@@ -90,6 +121,7 @@ class RecordDBCell with DBCell {
     this.modifyT,
     this.uuid,
     this.reason,
+    this.isDeleted,
     this.syncExtras,
   }) : id = null;
 
@@ -98,6 +130,10 @@ class RecordDBCell with DBCell {
 
   @override
   Map<String, Object?> toJson() => _$RecordDBCellToJson(this);
+}
+
+extension RecordDBCellDeletion on RecordDBCell {
+  bool get deleted => const RecordDeletionCodec().decode(isDeleted ?? 0);
 }
 
 class RecordDBHelper extends DBHelperHandler {
@@ -208,6 +244,7 @@ class RecordDBHelper extends DBHelperHandler {
     RecordDBCellKey.recordDate,
     RecordDBCellKey.recordType,
     RecordDBCellKey.recordValue,
+    RecordDBCellKey.isDeleted,
   ];
 
   Future<Iterable<RecordDBCell>> loadRecords(HabitUUID uuid) async {
@@ -242,6 +279,7 @@ WHERE $table.${RecordDBCellKey.recordDate}
     RecordDBCellKey.recordDate,
     RecordDBCellKey.recordType,
     RecordDBCellKey.recordValue,
+    RecordDBCellKey.isDeleted,
   ];
 
   Future<Iterable<RecordDBCell>> loadAllRecords({

@@ -21,6 +21,7 @@ abstract class _$HabitSummaryRecordCWProxy {
     HabitRecordDate date,
     HabitRecordStatus status,
     HabitDailyGoal value,
+    bool isDeleted,
   });
 }
 
@@ -44,6 +45,7 @@ class _$HabitSummaryRecordCWProxyImpl implements _$HabitSummaryRecordCWProxy {
     Object? date = const $CopyWithPlaceholder(),
     Object? status = const $CopyWithPlaceholder(),
     Object? value = const $CopyWithPlaceholder(),
+    Object? isDeleted = const $CopyWithPlaceholder(),
   }) {
     return HabitSummaryRecord(
       uuid == const $CopyWithPlaceholder() || uuid == null
@@ -62,6 +64,10 @@ class _$HabitSummaryRecordCWProxyImpl implements _$HabitSummaryRecordCWProxy {
           ? _value.value
           // ignore: cast_nullable_to_non_nullable
           : value as HabitDailyGoal,
+      isDeleted: isDeleted == const $CopyWithPlaceholder() || isDeleted == null
+          ? _value.isDeleted
+          // ignore: cast_nullable_to_non_nullable
+          : isDeleted as bool,
     );
   }
 }

@@ -25,6 +25,7 @@ abstract class _$WebDavSyncRecordDataCWProxy {
     HabitRecordUUID? uuid,
     HabitUUID? parentUUID,
     String? reason,
+    bool isDeleted,
     String? sessionId,
     int? dirty,
     Map<String, dynamic>? unknown,
@@ -56,6 +57,7 @@ class _$WebDavSyncRecordDataCWProxyImpl
     Object? uuid = const $CopyWithPlaceholder(),
     Object? parentUUID = const $CopyWithPlaceholder(),
     Object? reason = const $CopyWithPlaceholder(),
+    Object? isDeleted = const $CopyWithPlaceholder(),
     Object? sessionId = const $CopyWithPlaceholder(),
     Object? dirty = const $CopyWithPlaceholder(),
     Object? unknown = const $CopyWithPlaceholder(),
@@ -93,6 +95,10 @@ class _$WebDavSyncRecordDataCWProxyImpl
           ? _value.reason
           // ignore: cast_nullable_to_non_nullable
           : reason as String?,
+      isDeleted: isDeleted == const $CopyWithPlaceholder() || isDeleted == null
+          ? _value.isDeleted
+          // ignore: cast_nullable_to_non_nullable
+          : isDeleted as bool,
       sessionId: sessionId == const $CopyWithPlaceholder()
           ? _value.sessionId
           // ignore: cast_nullable_to_non_nullable
@@ -488,6 +494,7 @@ WebDavSyncRecordData _$WebDavSyncRecordDataFromJson(
   uuid: json['uuid'] as String?,
   parentUUID: json['parent_uuid'] as String?,
   reason: json['reason'] as String?,
+  isDeleted: json['is_deleted'] as bool? ?? false,
   sessionId: json['sessionId'] as String?,
 );
 
@@ -502,6 +509,7 @@ Map<String, dynamic> _$WebDavSyncRecordDataToJson(
   'uuid': instance.uuid,
   'parent_uuid': instance.parentUUID,
   'reason': instance.reason,
+  'is_deleted': instance.isDeleted,
   'sessionId': instance.sessionId,
 };
 

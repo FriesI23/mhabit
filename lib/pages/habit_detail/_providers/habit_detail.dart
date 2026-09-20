@@ -87,7 +87,7 @@ extension on AppEventSubscriptions {
   void pushRecordChanged({
     required HabitUUID uuid,
     required HabitRecordDate date,
-    required HabitRecordStatus status,
+    required HabitRecordStatus? status,
     String? reason,
   }) => push(
     HabitRecordsChangedEvent(
@@ -424,7 +424,7 @@ class HabitDetailViewModel extends ChangeNotifier
   //#endregion
 
   //#region actions
-  Future<HabitSummaryRecord?> changeRecordStatus(
+  Future<ChangeRecordStatusResult?> changeRecordStatus(
     HabitRecordDate date, {
     bool listen = true,
   }) async {
@@ -449,10 +449,10 @@ class HabitDetailViewModel extends ChangeNotifier
 
     _updateHabitAutoCompleteStatistics();
     if (listen) notifyListeners();
-    return result.data;
+    return result;
   }
 
-  Future<HabitSummaryRecord?> changeRecordReason(
+  Future<ChangeRecordStatusResult?> changeRecordReason(
     HabitRecordDate date,
     String newReason, {
     bool listen = true,
@@ -483,10 +483,10 @@ class HabitDetailViewModel extends ChangeNotifier
 
     _updateHabitAutoCompleteStatistics();
     if (listen) notifyListeners();
-    return result.data;
+    return result;
   }
 
-  Future<HabitSummaryRecord?> changeRecordValue(
+  Future<ChangeRecordStatusResult?> changeRecordValue(
     HabitRecordDate date,
     HabitDailyGoal newValue, {
     bool listen = true,
@@ -516,7 +516,7 @@ class HabitDetailViewModel extends ChangeNotifier
 
     _updateHabitAutoCompleteStatistics();
     if (listen) notifyListeners();
-    return result.data;
+    return result;
   }
 
   Future<HabitStatusChangedRecord?> _changeHabitsStatus(
@@ -574,7 +574,7 @@ class HabitDetailViewModel extends ChangeNotifier
   void onCalendarRecordChanged({
     required HabitUUID uuid,
     required HabitRecordDate date,
-    required HabitRecordStatus status,
+    required HabitRecordStatus? status,
     String? reason,
   }) => _eventSubs?.pushRecordChanged(
     uuid: uuid,

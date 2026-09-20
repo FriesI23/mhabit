@@ -53,7 +53,7 @@ extension on AppEventSubscriptions {
   void pushRecordChanged({
     required HabitUUID uuid,
     required HabitRecordDate date,
-    required HabitRecordStatus status,
+    required HabitRecordStatus? status,
     String? reason,
   }) => push(
     HabitRecordsChangedEvent(
@@ -478,7 +478,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   //#endregion
 
   //#region actions
-  Future<HabitSummaryRecord?> changeRecordStatus(
+  Future<ChangeRecordStatusResult?> changeRecordStatus(
     HabitUUID uuid, {
     String? reason,
     bool listen = true,
@@ -515,14 +515,14 @@ class HabitsTodayViewModel extends ChangeNotifier
     if (mounted && listen) notifyListeners();
     _reloadBridge.eventSubs?.pushRecordChanged(
       uuid: uuid,
-      date: result.data.date,
-      status: result.data.status,
+      date: result.date,
+      status: result.status,
       reason: reason,
     );
-    return result.data;
+    return result;
   }
 
-  Future<HabitSummaryRecord?> changeRecordValue(
+  Future<ChangeRecordStatusResult?> changeRecordValue(
     HabitUUID uuid,
     HabitDailyGoal newValue, {
     bool listen = true,
@@ -558,10 +558,10 @@ class HabitsTodayViewModel extends ChangeNotifier
     if (mounted && listen) notifyListeners();
     _reloadBridge.eventSubs?.pushRecordChanged(
       uuid: uuid,
-      date: result.data.date,
-      status: result.data.status,
+      date: result.date,
+      status: result.status,
     );
-    return result.data;
+    return result;
   }
   //#endregion
 

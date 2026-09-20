@@ -458,6 +458,7 @@ class HabitsManager
         data.uuid,
         preResults.first.data,
         isNew: preResults.first.isNew,
+        operation: preResults.first.operation,
         withReason: preResults.first.reason,
       );
     } else {
@@ -486,11 +487,20 @@ class HabitsManager
     HabitUUID parentUUID,
     HabitSummaryRecord record, {
     bool isNew = false,
+    required HabitRecordWriteOperation operation,
     String? withReason,
   }) async {
     final int dbid;
     final RecordDBCell dbCell;
-    if (isNew) {
+    if (operation == HabitRecordWriteOperation.markDeleted) {
+      assert(!isNew);
+      dbCell = RecordDBCell(
+        uuid: record.uuid,
+        parentUUID: parentUUID,
+        isDeleted: const RecordDeletionCodec().encode(true),
+      );
+      dbid = await recordDBHelper.updateRecord(dbCell);
+    } else if (isNew) {
       dbCell = RecordDBCell.build(
         parentId: parentId,
         parentUUID: parentUUID,
@@ -498,6 +508,7 @@ class HabitsManager
         recordDate: record.date.epochDay,
         recordType: record.status.dbCode,
         recordValue: record.value,
+        isDeleted: const RecordDeletionCodec().encode(record.isDeleted),
         reason: withReason,
       );
       dbid = await recordDBHelper.insertNewRecord(dbCell);
@@ -507,6 +518,7 @@ class HabitsManager
         parentUUID: parentUUID,
         recordType: record.status.dbCode,
         recordValue: record.value,
+        isDeleted: const RecordDeletionCodec().encode(record.isDeleted),
         reason: withReason,
       );
       dbid = await recordDBHelper.updateRecord(dbCell);
@@ -519,15 +531,24 @@ class HabitsManager
     Iterable<ChangeRecordStatusResult> records,
   ) => recordDBHelper.insertOrUpdateMultiRecords(
     records.map(
-      (record) => RecordDBCell.build(
-        parentId: record.habit.id,
-        parentUUID: record.habit.uuid,
-        uuid: record.data.uuid,
-        recordDate: record.data.date.epochDay,
-        recordType: record.data.status.dbCode,
-        recordValue: record.data.value,
-        reason: record.reason,
-      ),
+      (record) => record.operation == HabitRecordWriteOperation.markDeleted
+          ? RecordDBCell(
+              uuid: record.data.uuid,
+              parentUUID: record.habit.uuid,
+              isDeleted: const RecordDeletionCodec().encode(true),
+            )
+          : RecordDBCell.build(
+              parentId: record.habit.id,
+              parentUUID: record.habit.uuid,
+              uuid: record.data.uuid,
+              recordDate: record.data.date.epochDay,
+              recordType: record.data.status.dbCode,
+              recordValue: record.data.value,
+              isDeleted: const RecordDeletionCodec().encode(
+                record.data.isDeleted,
+              ),
+              reason: record.reason,
+            ),
     ),
   );
 
