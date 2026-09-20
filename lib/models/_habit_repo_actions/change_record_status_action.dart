@@ -170,6 +170,10 @@ final class AutoChangeRecordStatusAction
       isNew = true;
     }
 
+    // status changed: unknown -> done(ok) -> done(zero, when applicable)
+    // -> skip -> deleted -> done(default)
+    // status changed(with valued): unknown -> done(value) -> skip -> deleted
+    // -> done(default). Restoring keeps the stored UUID.
     if (orgRecord.isDeleted) {
       record = orgRecord.copyWith(
         status: HabitRecordStatus.done,
