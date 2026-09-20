@@ -53,19 +53,28 @@ class HabitSummaryRecord {
   final HabitRecordDate date;
   final HabitRecordStatus status;
   final HabitDailyGoal value;
+  final bool isDeleted;
 
-  const HabitSummaryRecord(this.uuid, this.date, this.status, this.value);
+  const HabitSummaryRecord(
+    this.uuid,
+    this.date,
+    this.status,
+    this.value, {
+    this.isDeleted = false,
+  });
 
   HabitSummaryRecord.fromDBQueryCell(RecordDBCell cell)
     : uuid = cell.uuid!,
       date = HabitRecordDate.fromEpochDay(cell.recordDate!),
       status = HabitRecordStatus.getFromDBCode(cell.recordType!)!,
-      value = cell.recordValue!;
+      value = cell.recordValue!,
+      isDeleted = cell.deleted;
 
   HabitSummaryRecord.generate(
     this.date, {
     this.status = HabitRecordStatus.unknown,
     this.value = 0.0,
+    this.isDeleted = false,
     required HabitUUID? parentUUID,
     HabitRecordUUID? uuid,
   }) : uuid =
@@ -77,7 +86,7 @@ class HabitSummaryRecord {
 
   @override
   String toString() {
-    return "Rcd($date: $status $value)";
+    return "Rcd($date: $status $value deleted=$isDeleted)";
   }
 }
 
@@ -85,39 +94,48 @@ final class _HabitSummaryRecordIndex {
   final Map<HabitRecordUUID, HabitSummaryRecord> _recordMap = {};
   final SplayTreeMap<HabitRecordDate, HabitSummaryRecord> _recordDateCacheMap =
       SplayTreeMap((a, b) => a.compareTo(b));
+  final SplayTreeMap<HabitRecordDate, HabitSummaryRecord> _activeRecordMap =
+      SplayTreeMap((a, b) => a.compareTo(b));
 
   void initRecords(Iterable<HabitSummaryRecord> records) {
     clearRecords();
     addAll(records, behaviour: HabitReocrdAddRepeatedBehaviour.skipped);
   }
 
-  int get length => _recordDateCacheMap.length;
+  int get length => _activeRecordMap.length;
 
-  bool get isEmpty => _recordDateCacheMap.isEmpty;
+  bool get isEmpty => _activeRecordMap.isEmpty;
 
-  Iterable<HabitSummaryRecord> get records => _recordDateCacheMap.values;
+  Iterable<HabitSummaryRecord> get records => _activeRecordMap.values;
 
   Iterable<MapEntry<HabitRecordDate, HabitSummaryRecord>> get datedEntries =>
-      _recordDateCacheMap.entries;
+      _activeRecordMap.entries;
 
-  Iterable<HabitRecordDate> get dates => _recordDateCacheMap.keys;
+  Iterable<HabitRecordDate> get dates => _activeRecordMap.keys;
 
-  HabitRecordDate? get lastDate => _recordDateCacheMap.lastKey();
+  HabitRecordDate? get lastDate => _activeRecordMap.lastKey();
 
   void clearRecords() {
     _recordMap.clear();
     _recordDateCacheMap.clear();
+    _activeRecordMap.clear();
   }
 
   HabitSummaryRecord? removeByUUID(HabitRecordUUID uuid) {
     final result = _recordMap.remove(uuid);
-    if (result != null) _recordDateCacheMap.remove(result.date);
+    if (result != null) {
+      _recordDateCacheMap.remove(result.date);
+      _activeRecordMap.remove(result.date);
+    }
     return result;
   }
 
   HabitSummaryRecord? removeByDate(HabitRecordDate date) {
     final result = _recordDateCacheMap.remove(date);
-    if (result != null) _recordMap.remove(result.uuid);
+    if (result != null) {
+      _recordMap.remove(result.uuid);
+      _activeRecordMap.remove(date);
+    }
     return result;
   }
 
@@ -131,6 +149,7 @@ final class _HabitSummaryRecordIndex {
     removeByDate(record.date);
     _recordMap[record.uuid] = record;
     _recordDateCacheMap[record.date] = record;
+    if (!record.isDeleted) _activeRecordMap[record.date] = record;
     return true;
   }
 
@@ -157,15 +176,19 @@ final class _HabitSummaryRecordIndex {
     return true;
   }
 
-  HabitSummaryRecord? getByUUID(HabitRecordUUID uuid) => _recordMap[uuid];
+  HabitSummaryRecord? getByUUID(HabitRecordUUID uuid) {
+    final record = _recordMap[uuid];
+    return record?.isDeleted == true ? null : record;
+  }
 
-  HabitSummaryRecord? getByDate(HabitRecordDate date) =>
+  HabitSummaryRecord? getByDate(HabitRecordDate date) => _activeRecordMap[date];
+
+  HabitSummaryRecord? getStoredByDate(HabitRecordDate date) =>
       _recordDateCacheMap[date];
 
-  bool containsUUID(HabitRecordUUID uuid) => _recordMap.containsKey(uuid);
+  bool containsUUID(HabitRecordUUID uuid) => getByUUID(uuid) != null;
 
-  bool containsDate(HabitRecordDate date) =>
-      _recordDateCacheMap.containsKey(date);
+  bool containsDate(HabitRecordDate date) => _activeRecordMap.containsKey(date);
 }
 
 class _HabitSummaryAutoComplateCalculator {
@@ -383,6 +406,9 @@ class HabitSummaryData with DirtyMarkMixin {
 
   HabitSummaryRecord? getRecordByDate(HabitRecordDate date) =>
       _records.getByDate(date);
+
+  HabitSummaryRecord? getStoredRecordByDate(HabitRecordDate date) =>
+      _records.getStoredByDate(date);
 
   bool containsRecordUUID(HabitRecordUUID uuid) => _records.containsUUID(uuid);
 

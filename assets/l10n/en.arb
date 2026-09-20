@@ -1515,6 +1515,24 @@
     "@batchCheckin_save_confirmDialog_confirmButton_text": {},
     "batchCheckin_save_confirmDialog_cancelButton_text": "cancel",
     "@batchCheckin_save_confirmDialog_cancelButton_text": {},
+    "habitRecord_delete_buttonText": "{count, plural, =1{Delete check-in} other{Delete check-ins}}",
+    "@habitRecord_delete_buttonText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitRecord_deleteConfirmDialog_title": "{count, plural, =1{Delete check-in?} other{Delete {count} check-ins?}}",
+    "@habitRecord_deleteConfirmDialog_title": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
     "batchCheckin_close_confirmDialog_title": "Confirm Return",
     "@batchCheckin_close_confirmDialog_title": {},
     "batchCheckin_close_confirmDialog_body": "Check-in Status Changes won't be applied before saved",

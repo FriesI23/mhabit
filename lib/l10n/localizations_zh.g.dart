@@ -1671,6 +1671,28 @@ class L10nZh extends L10n {
   String get batchCheckin_save_confirmDialog_cancelButton_text => '取消';
 
   @override
+  String habitRecord_delete_buttonText(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '删除打卡',
+      one: '删除打卡',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String habitRecord_deleteConfirmDialog_title(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '删除这 $count 次打卡？',
+      one: '删除这次打卡？',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get batchCheckin_close_confirmDialog_title => '确认返回';
 
   @override
@@ -3504,6 +3526,28 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get batchCheckin_save_confirmDialog_cancelButton_text => '取消';
+
+  @override
+  String habitRecord_delete_buttonText(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '刪除打卡',
+      one: '刪除打卡',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String habitRecord_deleteConfirmDialog_title(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '刪除這 $count 次打卡？',
+      one: '刪除這次打卡？',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get batchCheckin_close_confirmDialog_title => '確認返回';

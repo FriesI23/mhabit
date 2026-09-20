@@ -36,6 +36,7 @@ import '../../models/habit_date.dart';
 import '../../models/habit_display.dart';
 import '../../models/habit_form.dart';
 import '../../models/habit_group_display.dart';
+import '../../models/habit_repo_actions.dart';
 import '../../models/habit_status.dart';
 import "../../models/habit_summary.dart";
 import '../../providers/app_ui/app_compact_ui_switcher.dart';
@@ -194,7 +195,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
   void _onRecordChangeConfirmed(
     HabitUUID uuid,
-    HabitSummaryRecord record, {
+    ChangeRecordStatusResult change, {
     String? reason,
   }) {
     if (!mounted) return;
@@ -398,6 +399,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     if (!_vm.mounted) return;
     final data = _vm.getHabit(parentUUID);
     if (data == null) return;
+    final hasRecord = data.getRecordByDate(date) != null;
     final initReason = await _vm.loadRecordReason(data, date) ?? '';
     if (!mounted) return;
     final result = await showHabitRecordReasonModifierDialog(
@@ -406,6 +408,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
       recordDate: date,
       chipTextList: skipReasonChipTextList,
       color: data.color,
+      onDelete: hasRecord ? () => _vm.deleteRecord(parentUUID, date) : null,
     );
 
     if (result == null || result == initReason) return;
@@ -438,6 +441,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
       recordDate: date,
       targetExtraValue: data.dailyGoalExtra,
       color: data.color,
+      onDelete: record != null
+          ? () => _vm.deleteRecord(parentUUID, date)
+          : null,
     );
 
     if (result == null || result == record?.value) return;

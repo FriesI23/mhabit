@@ -248,6 +248,9 @@ class _DBHelper implements DBHelper {
         }
       }
     }
+    if (oldVersion < 10) {
+      await DatabaseToV10MigrateHelper(db).migrate();
+    }
   }
 
   Future<Database> _openDB(String dbPath) async {
@@ -478,6 +481,63 @@ class DatabaseToV4MigrateHelper {
       "DatabaseToV4MigrateHelper.reCalcHabitRecordUUIDs",
       ex: ['Done', updateCount, deleteCount, (stopwatch..stop()).elapsed],
     );
+  }
+}
+
+class DatabaseToV10MigrateHelper {
+  final Database db;
+
+  const DatabaseToV10MigrateHelper(this.db);
+
+  Future<void> migrate() async {
+    await _addRecordDeletionColumn();
+    await _moveDeletionMarkersFromSyncExtras();
+  }
+
+  Future<void> _addRecordDeletionColumn() async {
+    final columns = await db.rawQuery(
+      'PRAGMA table_info(${TableName.records})',
+    );
+    if (columns.any((column) => column['name'] == RecordDBCellKey.isDeleted)) {
+      return;
+    }
+    await db.execute(
+      'ALTER TABLE ${TableName.records} '
+      'ADD COLUMN ${RecordDBCellKey.isDeleted} INTEGER NOT NULL DEFAULT 0',
+    );
+  }
+
+  Future<void> _moveDeletionMarkersFromSyncExtras() async {
+    final rows = await db.rawQuery(
+      'SELECT rowid AS migration_row_id, ${RecordDBCellKey.syncExtras} '
+      'FROM ${TableName.records} '
+      'WHERE ${RecordDBCellKey.syncExtras} IS NOT NULL',
+    );
+    for (final row in rows) {
+      final raw = row[RecordDBCellKey.syncExtras] as String?;
+      if (raw == null) continue;
+      final Object? decoded;
+      try {
+        decoded = jsonDecode(raw);
+      } catch (_) {
+        continue;
+      }
+      if (decoded is! Map<String, dynamic>) continue;
+      final marker = decoded[RecordDBCellKey.isDeleted];
+      if (marker is! bool) continue;
+      decoded.remove(RecordDBCellKey.isDeleted);
+      await db.update(
+        TableName.records,
+        {
+          RecordDBCellKey.isDeleted: const RecordDeletionCodec().encode(marker),
+          RecordDBCellKey.syncExtras: decoded.isEmpty
+              ? null
+              : jsonEncode(decoded),
+        },
+        where: 'rowid = ?',
+        whereArgs: [row['migration_row_id']],
+      );
+    }
   }
 }
 

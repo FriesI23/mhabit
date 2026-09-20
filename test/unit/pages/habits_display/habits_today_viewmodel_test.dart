@@ -13,11 +13,32 @@
 // limitations under the License.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/common/types.dart';
 import 'package:mhabit/models/app_event.dart';
+import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_form.dart';
+import 'package:mhabit/models/habit_freq.dart';
+import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/_providers/habits_today.dart';
 import 'package:mhabit/providers/workflow/app_event.dart';
+
+import '../../../support/stub/habits_display_access.dart';
+
+final class _LoadedTodayAccess extends StubHabitsDisplayAccess {
+  _LoadedTodayAccess(this.habit);
+
+  final HabitSummaryData habit;
+
+  @override
+  Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
+    HabitSummaryDataCollection? initedCollection,
+    List<String>? habitsColmns,
+    List<HabitUUID>? habitUUIDs,
+  }) async =>
+      (initedCollection ?? HabitSummaryDataCollection())
+        ..addHabit(habit, forceAdd: true);
+}
 
 Map<AppEventPageSource, Set<AppEventFunctionSource>> _trace(
   AppEventPageSource source, [
@@ -72,6 +93,51 @@ void main() {
             uuidList: ['u1'],
             dateList: [now],
             trace: _trace(AppEventPageSource.habitEdit),
+          ),
+        );
+        await Future<void>.delayed(Duration.zero);
+
+        expect(vm.consumeForceReloadFlag(), isTrue);
+      },
+    );
+
+    test(
+      'reloads deleted check-in even when today cache still has it',
+      () async {
+        final now = HabitDate.now();
+        final habit = HabitSummaryData(
+          id: 1,
+          uuid: 'u1',
+          type: HabitType.normal,
+          name: 'Test Habit',
+          desc: '',
+          color: const HabitColor.builtIn(HabitColorType.cc1),
+          dailyGoal: 1,
+          targetDays: 1,
+          frequency: HabitFrequency.daily,
+          startDate: now.subtractDays(1),
+          status: HabitStatus.activated,
+          sortPostion: 1,
+          createTime: DateTime(2026),
+        )..addRecord(HabitSummaryRecord('r1', now, HabitRecordStatus.done, 1));
+        final bus = AppEventBus();
+        final vm = HabitsTodayViewModel()
+          ..attachAccess(_LoadedTodayAccess(habit))
+          ..updateAppEvent(bus);
+        addTearDown(() {
+          vm.dispose();
+          bus.dispose();
+        });
+        await vm.loadData(listen: false);
+        expect(vm.getHabit('u1')?.getRecordByDate(now), isNotNull);
+        vm.consumeForceReloadFlag();
+
+        bus.push(
+          HabitRecordsChangedEvent(
+            uuidList: ['u1'],
+            dateList: [now],
+            status: null,
+            trace: _trace(AppEventPageSource.habitStatusChanger),
           ),
         );
         await Future<void>.delayed(Duration.zero);

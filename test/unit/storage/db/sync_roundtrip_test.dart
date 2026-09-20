@@ -18,7 +18,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/_app_sync_tasks/webdav_app_sync_models.dart';
 import 'package:mhabit/models/group.dart';
+import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_form.dart';
+import 'package:mhabit/models/habit_repo_actions.dart';
+import 'package:mhabit/models/habit_summary.dart';
+import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/db/handlers/group.dart';
 import 'package:mhabit/storage/db/handlers/record.dart';
 import 'package:mhabit/storage/db/handlers/sync.dart';
@@ -75,6 +79,142 @@ void main() {
     tearDown(() {
       debugDefaultTargetPlatformOverride = null;
       viewModel.dispose();
+    });
+
+    test('record deletion and recheck round-trip through sync DB', () async {
+      const habitUuid = 'deleted-record-habit';
+      const recordUuid = 'deleted-record-uuid';
+      WebDavSyncHabitData payload(bool deleted, String session) =>
+          WebDavSyncHabitData.fromJson({
+            ..._basePayload(habitUuid, 'Deleted Record'),
+            'sessionId': session,
+          }).copyWith(
+            records: {
+              recordUuid: WebDavSyncRecordData(
+                uuid: recordUuid,
+                parentUUID: habitUuid,
+                recordDate: 20000,
+                recordType: 2,
+                recordValue: 1,
+                isDeleted: deleted,
+                sessionId: session,
+              ),
+            },
+          );
+
+      await syncHelper.syncHabitDataToDb(payload(true, 'delete-session'));
+      final deleted = await syncHelper.loadHabitDataFromBb(
+        habitUuid,
+        configId: 'cfg',
+        sessionId: 'upload-session',
+      );
+      expect(deleted!.records[recordUuid]!.isDeleted, isTrue);
+      expect(deleted.toJson()['records'].toString(), contains('is_deleted'));
+
+      await syncHelper.syncHabitDataToDb(payload(false, 'recheck-session'));
+      final rechecked = await syncHelper.loadHabitDataFromBb(
+        habitUuid,
+        configId: 'cfg',
+        sessionId: 'upload-session-2',
+      );
+      expect(rechecked!.records[recordUuid]!.isDeleted, isFalse);
+    });
+
+    test(
+      'record undo updates only the marker, then restores the same row',
+      () async {
+        const habitUuid = 'record-marker-habit';
+        const recordUuid = 'record-marker-uuid';
+        final habitId = await viewModel.local.db.insert(
+          'mh_habits',
+          _baseDbRow(habitUuid, 'Record Marker'),
+        );
+        final helper = RecordDBHelper(viewModel.local);
+        await helper.insertNewRecord(
+          RecordDBCell.build(
+            parentId: habitId,
+            parentUUID: habitUuid,
+            recordDate: 20000,
+            recordType: HabitRecordStatus.skip.dbCode,
+            recordValue: 7,
+            uuid: recordUuid,
+            reason: 'old reason',
+            isDeleted: 0,
+          ),
+        );
+        final manager = HabitsManager()..updateDBHelper(viewModel);
+        final date = HabitDate.fromEpochDay(20000);
+        final removed = HabitSummaryRecord(
+          recordUuid,
+          date,
+          HabitRecordStatus.skip,
+          7,
+          isDeleted: true,
+        );
+        await manager.saveHabitRecordToDB(
+          habitId,
+          habitUuid,
+          removed,
+          operation: HabitRecordWriteOperation.markDeleted,
+        );
+        final afterUndo = await helper.loadSingleRecord(recordUuid);
+        expect(afterUndo?.recordType, HabitRecordStatus.skip.dbCode);
+        expect(afterUndo?.recordValue, 7);
+        expect(afterUndo?.reason, 'old reason');
+        expect(afterUndo?.isDeleted, 1);
+
+        await manager.saveHabitRecordToDB(
+          habitId,
+          habitUuid,
+          removed.copyWith(
+            status: HabitRecordStatus.done,
+            value: 1,
+            isDeleted: false,
+          ),
+          operation: HabitRecordWriteOperation.restore,
+        );
+        final afterRestore = await helper.loadSingleRecord(recordUuid);
+        expect(afterRestore?.id, afterUndo?.id);
+        expect(afterRestore?.recordType, HabitRecordStatus.done.dbCode);
+        expect(afterRestore?.recordValue, 1);
+        expect(afterRestore?.reason, 'old reason');
+        expect(afterRestore?.isDeleted, 0);
+      },
+    );
+
+    test('explicitly updating a record reason can clear it', () async {
+      const habitUuid = 'reason-clear-habit';
+      const recordUuid = 'reason-clear-record';
+      final habitId = await viewModel.local.db.insert(
+        'mh_habits',
+        _baseDbRow(habitUuid, 'Reason Clear'),
+      );
+      final helper = RecordDBHelper(viewModel.local);
+      await helper.insertNewRecord(
+        RecordDBCell.build(
+          parentId: habitId,
+          parentUUID: habitUuid,
+          recordDate: 20000,
+          recordType: 2,
+          recordValue: 1,
+          uuid: recordUuid,
+          reason: 'old skip reason',
+          isDeleted: 1,
+        ),
+      );
+      await helper.updateRecord(
+        RecordDBCell(
+          uuid: recordUuid,
+          parentUUID: habitUuid,
+          recordType: 1,
+          recordValue: 1,
+          reason: '',
+          isDeleted: 0,
+        ),
+      );
+      final restored = await helper.loadSingleRecord(recordUuid);
+      expect(restored!.reason, isEmpty);
+      expect(restored.isDeleted, 0);
     });
 
     test('syncHabitDataToDb stores unknown in sync_extras column', () async {

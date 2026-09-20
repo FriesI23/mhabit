@@ -458,6 +458,7 @@ class HabitsManager
         data.uuid,
         preResults.first.data,
         isNew: preResults.first.isNew,
+        operation: preResults.first.operation,
         withReason: preResults.first.reason,
       );
     } else {
@@ -486,48 +487,69 @@ class HabitsManager
     HabitUUID parentUUID,
     HabitSummaryRecord record, {
     bool isNew = false,
+    required HabitRecordWriteOperation operation,
     String? withReason,
   }) async {
-    final int dbid;
-    final RecordDBCell dbCell;
-    if (isNew) {
-      dbCell = RecordDBCell.build(
-        parentId: parentId,
-        parentUUID: parentUUID,
-        uuid: record.uuid,
-        recordDate: record.date.epochDay,
-        recordType: record.status.dbCode,
-        recordValue: record.value,
-        reason: withReason,
-      );
-      dbid = await recordDBHelper.insertNewRecord(dbCell);
-    } else {
-      dbCell = RecordDBCell(
-        uuid: record.uuid,
-        parentUUID: parentUUID,
-        recordType: record.status.dbCode,
-        recordValue: record.value,
-        reason: withReason,
-      );
-      dbid = await recordDBHelper.updateRecord(dbCell);
-    }
-
-    return dbCell.copyWith(id: dbid);
+    assert(operation != HabitRecordWriteOperation.markDeleted || !isNew);
+    final (dbCell, save) = switch ((operation, isNew)) {
+      (HabitRecordWriteOperation.markDeleted, _) => (
+        RecordDBCell(
+          uuid: record.uuid,
+          parentUUID: parentUUID,
+          isDeleted: const RecordDeletionCodec().encode(true),
+        ),
+        recordDBHelper.updateRecord,
+      ),
+      (_, true) => (
+        RecordDBCell.build(
+          parentId: parentId,
+          parentUUID: parentUUID,
+          uuid: record.uuid,
+          recordDate: record.date.epochDay,
+          recordType: record.status.dbCode,
+          recordValue: record.value,
+          isDeleted: const RecordDeletionCodec().encode(record.isDeleted),
+          reason: withReason,
+        ),
+        recordDBHelper.insertNewRecord,
+      ),
+      (_, false) => (
+        RecordDBCell(
+          uuid: record.uuid,
+          parentUUID: parentUUID,
+          recordType: record.status.dbCode,
+          recordValue: record.value,
+          isDeleted: const RecordDeletionCodec().encode(record.isDeleted),
+          reason: withReason,
+        ),
+        recordDBHelper.updateRecord,
+      ),
+    };
+    return dbCell.copyWith(id: await save(dbCell));
   }
 
   Future<void> saveMultiHabitRecordToDB(
     Iterable<ChangeRecordStatusResult> records,
   ) => recordDBHelper.insertOrUpdateMultiRecords(
     records.map(
-      (record) => RecordDBCell.build(
-        parentId: record.habit.id,
-        parentUUID: record.habit.uuid,
-        uuid: record.data.uuid,
-        recordDate: record.data.date.epochDay,
-        recordType: record.data.status.dbCode,
-        recordValue: record.data.value,
-        reason: record.reason,
-      ),
+      (record) => switch (record.operation) {
+        HabitRecordWriteOperation.markDeleted => RecordDBCell(
+          uuid: record.data.uuid,
+          parentUUID: record.habit.uuid,
+          isDeleted: const RecordDeletionCodec().encode(true),
+        ),
+        HabitRecordWriteOperation.write ||
+        HabitRecordWriteOperation.restore => RecordDBCell.build(
+          parentId: record.habit.id,
+          parentUUID: record.habit.uuid,
+          uuid: record.data.uuid,
+          recordDate: record.data.date.epochDay,
+          recordType: record.data.status.dbCode,
+          recordValue: record.data.value,
+          isDeleted: const RecordDeletionCodec().encode(record.data.isDeleted),
+          reason: record.reason,
+        ),
+      },
     ),
   );
 

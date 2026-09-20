@@ -31,6 +31,15 @@ class _TestDBHelper implements DBHelper {
 }
 
 void main() {
+  test('record deletion marker converts only at the DB boundary', () {
+    const codec = RecordDeletionCodec();
+    expect(codec.decode(0), isFalse);
+    expect(codec.decode(1), isTrue);
+    expect(codec.encode(false), 0);
+    expect(codec.encode(true), 1);
+    expect(RecordDBCell().deleted, isFalse);
+  });
+
   group("RecordDBCell", () {
     final record1 = RecordDBCell(
       id: 1,
@@ -80,7 +89,8 @@ void main() {
         uuid TEXT PRIMARY KEY,
         record_date INTEGER NOT NULL,
         record_type INTEGER NOT NULL,
-        record_value REAL NOT NULL
+        record_value REAL NOT NULL,
+        is_deleted INTEGER NOT NULL DEFAULT 0
       )
     ''');
     const habitUUID = "habit-'quoted-value";

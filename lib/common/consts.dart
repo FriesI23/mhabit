@@ -61,7 +61,9 @@ const String appSyncFailedZipFile = "app_sync_failed.zip";
 /// - add mh_groups.sort_position column (manual group sort)
 /// ## version 9
 /// - add sync_extras to mh_groups and mh_records
-const int appDBVersion = 9;
+/// ## version 10
+/// - add is_deleted to mh_records and migrate preserved sync markers
+const int appDBVersion = 10;
 //#endregion
 
 //#region app-theme

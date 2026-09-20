@@ -23,6 +23,8 @@ import '../habit_summary.dart';
 
 part 'change_record_status_action.g.dart';
 
+enum HabitRecordWriteOperation { write, markDeleted, restore }
+
 @CopyWith(skipFields: true)
 class ChangeRecordStatusResult {
   final HabitSummaryData habit;
@@ -48,6 +50,21 @@ class ChangeRecordStatusResult {
 
   bool get isNew => origin == null;
 
+  HabitRecordWriteOperation get operation => data.isDeleted
+      ? HabitRecordWriteOperation.markDeleted
+      : origin?.isDeleted == true
+      ? HabitRecordWriteOperation.restore
+      : HabitRecordWriteOperation.write;
+
+  HabitRecordDate get date => data.date;
+
+  /// The effective record exposed to UI consumers; null after an undo.
+  HabitSummaryRecord? get effectiveRecord => data.isDeleted ? null : data;
+
+  HabitRecordStatus? get status => effectiveRecord?.status;
+
+  bool get isRemoved => effectiveRecord == null;
+
   @override
   String toString() =>
       'ChangeRecordStatusResult('
@@ -63,6 +80,34 @@ abstract interface class ChangeRecordStatusAction<T>
   List<T> get valueList;
 
   ChangeRecordStatusResult resolveSingle(T value);
+}
+
+final class DeleteRecordStatusAction
+    implements ChangeRecordStatusAction<HabitRecordDate> {
+  @override
+  final HabitSummaryData data;
+  final List<HabitRecordDate> dateList;
+
+  const DeleteRecordStatusAction({required this.data, required this.dateList});
+
+  @override
+  List<HabitRecordDate> get valueList => dateList;
+
+  @override
+  List<ChangeRecordStatusResult> resolve() => dateList
+      .where((date) => data.getRecordByDate(date) != null)
+      .map(resolveSingle)
+      .toList();
+
+  @override
+  ChangeRecordStatusResult resolveSingle(HabitRecordDate date) {
+    final record = data.getRecordByDate(date)!;
+    return ChangeRecordStatusResult(
+      habit: data,
+      origin: record,
+      data: record.copyWith(isDeleted: true),
+    );
+  }
 }
 
 final class ChangeRecordStatusPostAction
@@ -116,16 +161,32 @@ final class AutoChangeRecordStatusAction
     final HabitSummaryRecord record;
     final bool isNew;
 
-    if (data.containsRecordDate(date)) {
-      orgRecord = data.getRecordByDate(date)!;
+    final storedRecord = data.getStoredRecordByDate(date);
+    if (storedRecord != null) {
+      orgRecord = storedRecord;
       isNew = false;
     } else {
       orgRecord = HabitSummaryRecord.generate(date, parentUUID: data.uuid);
       isNew = true;
     }
 
-    // status changed: unknown -> (done(ok), done(zero), skip)
-    // status changed(with valued): unknown -> (done(value), skip)
+    // status changed: unknown -> done(ok) -> done(zero, when applicable)
+    // -> skip -> deleted -> done(default)
+    // status changed(with valued): unknown -> done(value) -> skip -> deleted
+    // -> done(default). Restoring keeps the stored UUID.
+    if (orgRecord.isDeleted) {
+      record = orgRecord.copyWith(
+        status: HabitRecordStatus.done,
+        value: data.habitOkValue,
+        isDeleted: false,
+      );
+      return ChangeRecordStatusResult(
+        habit: data,
+        origin: orgRecord,
+        data: record,
+      );
+    }
+
     final habitRecordForm = HabitDailyRecordForm.getImp(
       type: data.type,
       value: orgRecord.value,
@@ -136,11 +197,13 @@ final class AutoChangeRecordStatusAction
     final valued = habitRecordForm.isValued;
     switch (orgRecord.status) {
       case HabitRecordStatus.unknown:
-      case HabitRecordStatus.skip:
         record = orgRecord.copyWith(
           status: HabitRecordStatus.done,
           value: valued ? orgRecord.value : data.habitOkValue,
         );
+        break;
+      case HabitRecordStatus.skip:
+        record = orgRecord.copyWith(isDeleted: true);
         break;
       case HabitRecordStatus.done:
         if (valued) {
@@ -194,8 +257,9 @@ final class ChangeMultiRecordStatusAction
     final HabitSummaryRecord record;
     final bool isNew;
 
-    if (data.containsRecordDate(date)) {
-      orgRecord = data.getRecordByDate(date)!;
+    final storedRecord = data.getStoredRecordByDate(date);
+    if (storedRecord != null) {
+      orgRecord = storedRecord;
       isNew = false;
     } else {
       orgRecord = HabitSummaryRecord.generate(date, parentUUID: data.uuid);
@@ -206,6 +270,7 @@ final class ChangeMultiRecordStatusAction
     record = orgRecord.copyWith(
       value: newGoal ?? orgRecord.value,
       status: status,
+      isDeleted: false,
     );
 
     return ChangeRecordStatusResult(

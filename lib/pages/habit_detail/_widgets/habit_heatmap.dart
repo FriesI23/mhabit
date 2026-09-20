@@ -186,6 +186,13 @@ mixin HabitHeatmapColorChooseMixin<T extends StatefulWidget> on State<T> {
     final CustomColors? colorData = themeData.extension<CustomColors>();
     final viewmodel = context.read<HabitDetailViewModel>();
     return {
+      HabitHeatMapColorMapDefine.skip:
+          (colorData?.getColor(
+                    viewmodel.habitColor!,
+                    brightness: themeData.brightness,
+                  ) ??
+                  themeData.colorScheme.primary)
+              .withValues(alpha: 0.12),
       HabitHeatMapColorMapDefine.uncomplate:
           (colorData?.getColor(
                     viewmodel.habitColor!,
@@ -228,6 +235,12 @@ mixin HabitHeatmapColorChooseMixin<T extends StatefulWidget> on State<T> {
     final CustomColors? colorData = themeData.extension<CustomColors>();
     final viewmodel = context.read<HabitDetailViewModel>();
     return {
+      HabitHeatMapColorMapDefine.skip:
+          colorData?.getColor(
+            viewmodel.habitColor!,
+            brightness: themeData.brightness,
+          ) ??
+          themeData.colorScheme.primary,
       HabitHeatMapColorMapDefine.uncomplate:
           colorData?.getColor(
             viewmodel.habitColor!,

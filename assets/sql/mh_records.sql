@@ -9,5 +9,6 @@ CREATE TABLE IF NOT EXISTS mh_records (
     uuid TEXT NOT NULL UNIQUE,
     parent_uuid TEXT NOT NULL REFERENCES mh_habits(uuid),
     reason TEXT NOT NULL DEFAULT '',
+    is_deleted INTEGER NOT NULL DEFAULT 0,
     sync_extras TEXT
 );

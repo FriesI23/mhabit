@@ -254,6 +254,7 @@ class WebDavSyncRecordKey {
   static const String uuid = 'uuid';
   static const String parentUUID = 'parent_uuid';
   static const String reason = 'reason';
+  static const String isDeleted = 'is_deleted';
   static const String sessionId = 'sessionId';
   static const String convertType = '_convert_type';
 
@@ -266,6 +267,7 @@ class WebDavSyncRecordKey {
     uuid,
     parentUUID,
     reason,
+    isDeleted,
     sessionId,
     convertType,
   };
@@ -299,6 +301,8 @@ class WebDavSyncRecordData implements JsonAdaptor {
   final HabitUUID? parentUUID;
   @JsonKey(name: WebDavSyncRecordKey.reason)
   final String? reason;
+  @JsonKey(name: WebDavSyncRecordKey.isDeleted, defaultValue: false)
+  final bool isDeleted;
   @JsonKey(name: WebDavSyncRecordKey.sessionId)
   final String? sessionId;
 
@@ -316,6 +320,7 @@ class WebDavSyncRecordData implements JsonAdaptor {
     this.uuid,
     this.parentUUID,
     this.reason,
+    this.isDeleted = false,
     this.sessionId,
     this.dirty,
     this.unknown,
@@ -333,7 +338,8 @@ class WebDavSyncRecordData implements JsonAdaptor {
        modifyT = cell.modifyT,
        uuid = cell.uuid,
        parentUUID = cell.parentUUID,
-       reason = cell.reason;
+       reason = cell.reason,
+       isDeleted = cell.deleted;
 
   factory WebDavSyncRecordData.fromJson(JsonMap json) {
     assert(
@@ -355,6 +361,7 @@ class WebDavSyncRecordData implements JsonAdaptor {
     uuid: uuid,
     parentUUID: parentUUID,
     reason: reason,
+    isDeleted: const RecordDeletionCodec().encode(isDeleted),
     syncExtras: encodeSyncExtras(unknown),
   );
 
@@ -499,7 +506,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
   /// Bump this whenever this class's JSON field shape changes in a way that
   /// older clients need to distinguish (see
   /// docs/design/draft/20260619-webdav-sync-schema-version.md).
-  static const int currentSchemaVersion = 2;
+  static const int currentSchemaVersion = 3;
 
   @JsonKey(name: WebDavSyncHabitKey.schemaVersion, defaultValue: 1)
   final int schemaVersion;

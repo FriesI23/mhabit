@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/models/_habit_repo_actions/change_record_status_action.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_form.dart';
@@ -42,7 +43,8 @@ HabitSummaryRecord _buildRecord({
   required int day,
   HabitRecordStatus status = HabitRecordStatus.done,
   num value = 1,
-}) => HabitSummaryRecord(uuid, _date(day), status, value);
+  bool isDeleted = false,
+}) => HabitSummaryRecord(uuid, _date(day), status, value, isDeleted: isDeleted);
 
 void main() {
   group('HabitSummaryData record storage', () {
@@ -72,6 +74,140 @@ void main() {
       expect(data.containsRecordUUID(record.uuid), isTrue);
       expect(data.containsRecordDate(record.date), isTrue);
       expect(data.records.toList(), [record]);
+    });
+
+    test('deleted records stay stored but are absent from business views', () {
+      final active = _buildRecord(uuid: 'record-1', day: 2);
+      final deleted = _buildRecord(
+        uuid: 'record-2',
+        day: 3,
+        status: HabitRecordStatus.skip,
+        isDeleted: true,
+      );
+      data.addAllRecords([active, deleted]);
+
+      expect(data.getStoredRecordByDate(deleted.date), same(deleted));
+      expect(data.getRecordByDate(deleted.date), isNull);
+      expect(data.containsRecordDate(deleted.date), isFalse);
+      expect(data.getRecordByUUID(deleted.uuid), isNull);
+      expect(data.recordCount, 1);
+      expect(data.records.toList(), [active]);
+      expect(data.firstUntrackedDate, _date(3));
+    });
+
+    test('auto cycle deletes and rechecks with the same record UUID', () {
+      final date = _date(4);
+      ChangeRecordStatusResult tap() {
+        final result = AutoChangeRecordStatusAction(
+          data: data,
+          dateList: [date],
+        ).resolveSingle(date);
+        ChangeRecordStatusPostAction(data: data, results: [result]).resolve();
+        return result;
+      }
+
+      final done = tap();
+      expect(done.data.status, HabitRecordStatus.done);
+      expect(done.isNew, isTrue);
+      expect(done.operation, HabitRecordWriteOperation.write);
+      expect(done.effectiveRecord, same(done.data));
+      final zero = tap();
+      expect(zero.data.status, HabitRecordStatus.done);
+      expect(zero.data.value, 0);
+      final skipped = tap();
+      expect(skipped.data.status, HabitRecordStatus.skip);
+      final deleted = tap();
+      expect(deleted.data.isDeleted, isTrue);
+      expect(deleted.data.status, HabitRecordStatus.skip);
+      expect(deleted.operation, HabitRecordWriteOperation.markDeleted);
+      expect(deleted.isRemoved, isTrue);
+      expect(deleted.effectiveRecord, isNull);
+      expect(deleted.status, isNull);
+      expect(deleted.date, date);
+      expect(deleted.reason, isNull);
+      expect(data.getRecordByDate(date), isNull);
+      expect(data.recordCount, 0);
+      final rechecked = tap();
+      expect(rechecked.isNew, isFalse);
+      expect(rechecked.reason, isNull);
+      expect(rechecked.data.isDeleted, isFalse);
+      expect(rechecked.data.status, HabitRecordStatus.done);
+      expect(rechecked.data.uuid, done.data.uuid);
+      expect(rechecked.operation, HabitRecordWriteOperation.restore);
+      expect(rechecked.effectiveRecord, same(rechecked.data));
+    });
+
+    test('explicit delete preserves status and value', () {
+      final date = _date(4);
+      final original = HabitSummaryRecord(
+        'record-done',
+        date,
+        HabitRecordStatus.done,
+        3,
+      );
+      data.addRecord(original);
+      final result = DeleteRecordStatusAction(
+        data: data,
+        dateList: [date],
+      ).resolveSingle(date);
+      expect(result.operation, HabitRecordWriteOperation.markDeleted);
+      expect(result.origin, same(original));
+      expect(result.data.uuid, original.uuid);
+      expect(result.data.status, original.status);
+      expect(result.data.value, original.value);
+      expect(result.isRemoved, isTrue);
+    });
+
+    test('recheck after deleting a valued record uses the default goal', () {
+      data = _buildHabitSummaryData();
+      final date = _date(5);
+      final valued = HabitSummaryRecord(
+        'record-valued',
+        date,
+        HabitRecordStatus.skip,
+        7,
+      );
+      data.addRecord(valued);
+      final deleted = AutoChangeRecordStatusAction(
+        data: data,
+        dateList: [date],
+      ).resolveSingle(date);
+      data.addRecord(deleted.data, replaced: true);
+      final rechecked = AutoChangeRecordStatusAction(
+        data: data,
+        dateList: [date],
+      ).resolveSingle(date);
+      expect(rechecked.data.value, data.habitOkValue);
+      expect(rechecked.data.uuid, valued.uuid);
+    });
+
+    test('explicit record changes clear a deletion marker', () {
+      final deleted = _buildRecord(
+        uuid: 'record-1',
+        day: 6,
+        status: HabitRecordStatus.skip,
+        isDeleted: true,
+      );
+      data.addRecord(deleted);
+      final changed = ChangeMultiRecordStatusAction(
+        data: data,
+        status: HabitRecordStatus.done,
+        goal: 3,
+        dateList: [deleted.date],
+      ).resolveSingle(deleted.date);
+      expect(changed.isNew, isFalse);
+      expect(changed.reason, isNull);
+      expect(changed.data.isDeleted, isFalse);
+      expect(changed.data.value, 3);
+      expect(changed.operation, HabitRecordWriteOperation.restore);
+
+      final changedWithReason = ChangeMultiRecordStatusAction(
+        data: data,
+        status: HabitRecordStatus.skip,
+        reason: 'new reason',
+        dateList: [deleted.date],
+      ).resolveSingle(deleted.date);
+      expect(changedWithReason.reason, 'new reason');
     });
 
     test('addRecord rejects duplicate uuid without replacement', () {

@@ -1162,6 +1162,24 @@
     "batchCheckin_save_confirmDialog_body": "保存后将覆盖现有记录，之前记录将丢失。",
     "batchCheckin_save_confirmDialog_confirmButton_text": "保存",
     "batchCheckin_save_confirmDialog_cancelButton_text": "取消",
+    "habitRecord_delete_buttonText": "{count, plural, =1{删除打卡} other{删除打卡}}",
+    "@habitRecord_delete_buttonText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitRecord_deleteConfirmDialog_title": "{count, plural, =1{删除这次打卡？} other{删除这 {count} 次打卡？}}",
+    "@habitRecord_deleteConfirmDialog_title": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
     "batchCheckin_close_confirmDialog_title": "确认返回",
     "batchCheckin_close_confirmDialog_body": "未保存的打卡状态更改将不会生效。",
     "batchCheckin_close_confirmDialog_confirmButton_text": "确认",

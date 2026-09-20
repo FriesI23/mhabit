@@ -80,14 +80,14 @@ extension on AppEventSubscriptions {
 
   void pushHabitRecordChanged(
     HabitUUID uuid,
-    HabitSummaryRecord record, {
+    ChangeRecordStatusResult change, {
     String? reason,
   }) => push(
     HabitRecordsChangedEvent(
       msg: "habit_display.record.changed",
       uuidList: [uuid],
-      dateList: [record.date],
-      status: record.status,
+      dateList: [change.date],
+      status: change.status,
       reason: reason,
       trace: _kRecordChangedTrace,
     ),
@@ -789,7 +789,29 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   //#region actions
-  Future<HabitSummaryRecord?> changeRecordStatus(
+  Future<ChangeRecordStatusResult?> deleteRecord(
+    HabitUUID habitUUID,
+    HabitRecordDate date, {
+    bool listen = true,
+  }) async {
+    final data = _data.getHabitByUUID(habitUUID);
+    if (data == null || data.getRecordByDate(date) == null) return null;
+    final results = await _access.changeHabitRecordStatus(
+      preAction: DeleteRecordStatusAction(data: data, dateList: [date]),
+      postActionBuilder: (results) =>
+          ChangeRecordStatusPostAction(data: data, results: results),
+      beforeReminderUpdate: (habit, _) =>
+          _updateHabitAutoCompleteStatistics(habit),
+    );
+    final result = results.firstOrNull;
+    if (result == null) return null;
+    _updateHabitAutoCompleteStatistics(data);
+    if (listen) notifyListeners();
+    _reloadBridge.eventSubs?.pushHabitRecordChanged(habitUUID, result);
+    return result;
+  }
+
+  Future<ChangeRecordStatusResult?> changeRecordStatus(
     HabitUUID habitUUID,
     HabitRecordDate date, {
     bool listen = true,
@@ -816,11 +838,11 @@ class HabitSummaryViewModel extends ChangeNotifier
 
     _updateHabitAutoCompleteStatistics(data);
     if (listen) notifyListeners();
-    _reloadBridge.eventSubs?.pushHabitRecordChanged(habitUUID, result.data);
-    return result.data;
+    _reloadBridge.eventSubs?.pushHabitRecordChanged(habitUUID, result);
+    return result;
   }
 
-  Future<HabitSummaryRecord?> changeRecordValue(
+  Future<ChangeRecordStatusResult?> changeRecordValue(
     HabitUUID habitUUID,
     HabitRecordDate date,
     HabitDailyGoal newValue, {
@@ -852,11 +874,11 @@ class HabitSummaryViewModel extends ChangeNotifier
 
     _updateHabitAutoCompleteStatistics(data);
     if (listen) notifyListeners();
-    _reloadBridge.eventSubs?.pushHabitRecordChanged(habitUUID, result.data);
-    return result.data;
+    _reloadBridge.eventSubs?.pushHabitRecordChanged(habitUUID, result);
+    return result;
   }
 
-  Future<HabitSummaryRecord?> changeRecordReason(
+  Future<ChangeRecordStatusResult?> changeRecordReason(
     HabitUUID habitUUID,
     HabitRecordDate date,
     String newReason, {
@@ -891,10 +913,10 @@ class HabitSummaryViewModel extends ChangeNotifier
     if (listen) notifyListeners();
     _reloadBridge.eventSubs?.pushHabitRecordChanged(
       habitUUID,
-      result.data,
+      result,
       reason: newReason,
     );
-    return result.data;
+    return result;
   }
 
   void _applyHabitReorder(int index, int dropIndex) {

@@ -42,6 +42,7 @@ Future<HabitDailyGoal?> showHabitRecordCustomNumberPickerDialog({
   HabitDailyGoal? targetExtraValue,
   HabitDate? recordDate,
   HabitColor? color,
+  VoidCallback? onDelete,
 }) async {
   return showDialog<HabitDailyGoal>(
     context: context,
@@ -52,6 +53,7 @@ Future<HabitDailyGoal?> showHabitRecordCustomNumberPickerDialog({
         recordStatus: recordStatus,
         recordTargetExtraValue: targetExtraValue,
         recordDate: recordDate,
+        onDelete: onDelete,
       ),
     ),
   );
@@ -62,6 +64,7 @@ class HabitRecordCustomNumberPickerDialog extends StatefulWidget {
   final HabitRecordStatus recordStatus;
   final HabitDailyGoal? recordTargetExtraValue;
   final HabitDate? recordDate;
+  final VoidCallback? onDelete;
 
   const HabitRecordCustomNumberPickerDialog({
     super.key,
@@ -69,6 +72,7 @@ class HabitRecordCustomNumberPickerDialog extends StatefulWidget {
     required this.recordStatus,
     this.recordTargetExtraValue,
     this.recordDate,
+    this.onDelete,
   });
 
   @override
@@ -205,6 +209,25 @@ class _HabitRecordCustomNumberPickerDialog
     }
   }
 
+  Future<void> _onDeletePressed() async {
+    if (!mounted) return;
+    final onDelete = widget.onDelete;
+    if (onDelete == null) return;
+    final route = ModalRoute.of(context);
+    final l10n = L10n.of(context);
+    final confirmed = await showAdaptiveConfirmDialog(
+      context: context,
+      title: Text(
+        l10n?.habitRecord_deleteConfirmDialog_title(1) ?? 'Delete check-in?',
+      ),
+      confirmLabel: l10n?.habitRecord_delete_buttonText(1) ?? 'Delete check-in',
+      isDestructiveAction: true,
+    );
+    if (confirmed != true || !mounted || route?.isCurrent != true) return;
+    Navigator.of(context).pop();
+    onDelete();
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
@@ -298,6 +321,18 @@ class _HabitRecordCustomNumberPickerDialog
                   spacing: 8.0,
                   alignment: MainAxisAlignment.end,
                   children: [
+                    if (widget.onDelete != null)
+                      TextButton.icon(
+                        onPressed: _onDeletePressed,
+                        icon: const Icon(Icons.delete_outline),
+                        label: Text(
+                          l10n?.habitRecord_delete_buttonText(1) ??
+                              'Delete check-in',
+                        ),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context);

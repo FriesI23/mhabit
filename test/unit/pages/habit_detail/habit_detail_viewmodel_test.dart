@@ -20,6 +20,7 @@ import 'package:mhabit/models/app_event.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_detail.dart';
+import 'package:mhabit/models/habit_detail_chart.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/models/habit_repo_actions.dart';
@@ -173,6 +174,28 @@ HabitDetailData _buildHabitDetailData() {
 }
 
 void main() {
+  test('heatmap distinguishes skipped dates from deleted records', () {
+    final detailData = _buildHabitDetailData();
+    final skippedDate = HabitDate.now();
+    final deletedDate = skippedDate.subtractDays(1);
+    detailData.data.addRecord(
+      HabitSummaryRecord('skip', skippedDate, HabitRecordStatus.skip, 0),
+    );
+    detailData.data.addRecord(
+      HabitSummaryRecord(
+        'deleted',
+        deletedDate,
+        HabitRecordStatus.skip,
+        0,
+        isDeleted: true,
+      ),
+    );
+
+    final colors = HeatmapColorsCalculator(detailData).calculate();
+    expect(colors[skippedDate], HabitHeatMapColorMapDefine.skip);
+    expect(colors.containsKey(deletedDate), isFalse);
+  });
+
   group('HabitDetailViewModel seams', () {
     test('loads and reads through detail queries', () async {
       final detailData = _buildHabitDetailData();

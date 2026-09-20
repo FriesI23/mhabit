@@ -34,6 +34,8 @@ import 'package:mhabit/providers/support/global.dart';
 import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/profile_provider.dart';
+import 'package:mhabit/widgets/widgets.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -43,12 +45,16 @@ import '../../support/stub/habits_display_access.dart';
 const _uuid = '11111111-1111-4111-8111-111111111111';
 
 class _Access extends StubHabitStatusChangerAccess {
-  _Access({bool existingRecord = true}) {
+  _Access({
+    bool existingRecord = true,
+    HabitType habitType = HabitType.normal,
+    HabitRecordStatus recordStatus = HabitRecordStatus.done,
+  }) {
     final date = HabitDate.now();
     habit = HabitSummaryData(
       id: 1,
       uuid: _uuid,
-      type: HabitType.normal,
+      type: habitType,
       name: 'Test Habit',
       desc: '',
       color: const HabitColor.builtIn(HabitColorType.cc1),
@@ -61,9 +67,7 @@ class _Access extends StubHabitStatusChangerAccess {
       createTime: DateTime(2026),
     );
     if (existingRecord) {
-      habit.addRecord(
-        HabitSummaryRecord('record', date, HabitRecordStatus.done, 1),
-      );
+      habit.addRecord(HabitSummaryRecord('record', date, recordStatus, 1));
     }
   }
 
@@ -165,6 +169,101 @@ _pumpPage(WidgetTester tester, _Access access, TargetPlatform platform) async {
 
 void main() {
   for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+    testWidgets('$platform loads date bounds and keeps empty status', (
+      tester,
+    ) async {
+      final page = await _pumpPage(
+        tester,
+        _Access(existingRecord: false),
+        platform,
+      );
+      final previousDate = HabitDate.now().subtractDays(1);
+      final picker = tester.widget<DatePickerTile>(find.byType(DatePickerTile));
+      expect(picker.firstDate, previousDate);
+      expect(page.vm.selectStatus, isNull);
+      expect(
+        tester
+            .widget<SegmentedButton<RecordStatusChangerStatus>>(
+              find.byType(SegmentedButton<RecordStatusChangerStatus>),
+            )
+            .selected,
+        isEmpty,
+      );
+
+      final previousButton = find.descendant(
+        of: find.byType(DatePickerTile),
+        matching: find.byIcon(Icons.arrow_left_outlined),
+      );
+      await tester.tap(previousButton);
+      await _pumpTransitions(tester);
+      expect(page.vm.selectDate, previousDate);
+      expect(page.vm.selectStatus, isNull);
+    });
+
+    testWidgets('$platform refreshes allowed status after initial load', (
+      tester,
+    ) async {
+      final page = await _pumpPage(
+        tester,
+        _Access(existingRecord: false, habitType: HabitType.negative),
+        platform,
+      );
+      expect(page.vm.selectStatus, isNull);
+      expect(
+        tester
+            .widget<RecordStatusChangeTile>(find.byType(RecordStatusChangeTile))
+            .allowedStatus,
+        isNot(contains(RecordStatusChangerStatus.zero)),
+      );
+    });
+
+    testWidgets('$platform resets skip selection when changing date', (
+      tester,
+    ) async {
+      final page = await _pumpPage(
+        tester,
+        _Access(recordStatus: HabitRecordStatus.skip),
+        platform,
+      );
+      final datePicker = find.byType(DatePickerTile);
+      Set<RecordStatusChangerStatus> selected() => tester
+          .widget<SegmentedButton<RecordStatusChangerStatus>>(
+            find.byType(SegmentedButton<RecordStatusChangerStatus>),
+          )
+          .selected;
+      AdaptiveIconButton deleteAction() => tester.widget<AdaptiveIconButton>(
+        find.ancestor(
+          of: find.byIcon(Icons.delete_outline),
+          matching: find.byType(AdaptiveIconButton),
+        ),
+      );
+      expect(page.vm.selectStatus, RecordStatusChangerStatus.skip);
+      expect(selected(), {RecordStatusChangerStatus.skip});
+      expect(deleteAction().onPressed, isNotNull);
+
+      await tester.tap(
+        find.descendant(
+          of: datePicker,
+          matching: find.byIcon(Icons.arrow_left_outlined),
+        ),
+      );
+      await _pumpTransitions(tester);
+      expect(page.vm.selectStatus, isNull);
+      expect(selected(), isEmpty);
+      expect(deleteAction().onPressed, isNull);
+
+      await tester.tap(
+        find.descendant(
+          of: datePicker,
+          matching: find.byIcon(Icons.arrow_right_outlined),
+        ),
+      );
+      await _pumpTransitions(tester);
+      expect(page.vm.selectStatus, RecordStatusChangerStatus.skip);
+      expect(selected(), {RecordStatusChangerStatus.skip});
+      expect(deleteAction().onPressed, isNotNull);
+    });
+
     for (final outcome in ['cancel', 'barrier', 'confirm', 'no-record']) {
       testWidgets('$platform overwrite $outcome', (tester) async {
         final access = _Access(existingRecord: outcome != 'no-record');
@@ -224,6 +323,79 @@ void main() {
           expect(page.vm.selectStatus, RecordStatusChangerStatus.skip);
         }
         expect(find.byType(HabitsStatusChangerPage), findsOneWidget);
+      });
+    }
+
+    for (final outcome in ['cancel', 'confirm', 'no-record']) {
+      testWidgets('$platform delete check-ins $outcome', (tester) async {
+        final access = _Access(existingRecord: outcome != 'no-record');
+        final page = await _pumpPage(tester, access, platform);
+        final deleteIcon = find.descendant(
+          of: find.byType(HabitStatusChangerAppbar),
+          matching: find.byIcon(Icons.delete_outline),
+        );
+        expect(deleteIcon, findsOneWidget);
+        final delete = tester.widget<AdaptiveIconButton>(
+          find.ancestor(
+            of: deleteIcon,
+            matching: find.byType(AdaptiveIconButton),
+          ),
+        );
+        expect(
+          find.descendant(
+            of: find.byType(ConfirmButton),
+            matching: find.byIcon(Icons.delete_outline),
+          ),
+          findsNothing,
+        );
+        if (outcome == 'no-record') {
+          expect(delete.onPressed, isNull);
+          return;
+        }
+        expect(delete.onPressed, isNotNull);
+        await tester.tap(deleteIcon);
+        await _pumpTransitions(tester);
+        final l10n = L10n.of(tester.element(adaptiveDialogFinder))!;
+        expect(
+          find.text(l10n.habitRecord_deleteConfirmDialog_title(1)),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: adaptiveDialogFinder,
+            matching: find.textContaining('${page.vm.selectDate.year}'),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          tester
+              .widget<AdaptiveConfirmDialog>(find.byType(AdaptiveConfirmDialog))
+              .content,
+          isA<Text>(),
+        );
+        expect(adaptiveDialogActions(tester).last.isDestructiveAction, isTrue);
+        if (outcome == 'cancel') {
+          await tester.tap(find.text('cancel'));
+        } else {
+          adaptiveDialogActions(tester).last.onPressed!();
+        }
+        await _pumpTransitions(tester);
+        expect(access.saves, hasLength(outcome == 'confirm' ? 1 : 0));
+        expect(page.vm.deletableRecordCount, outcome == 'confirm' ? 0 : 1);
+        if (outcome == 'confirm') {
+          expect(access.saves.single.single.data.isDeleted, isTrue);
+          expect(
+            tester
+                .widget<AdaptiveIconButton>(
+                  find.ancestor(
+                    of: deleteIcon,
+                    matching: find.byType(AdaptiveIconButton),
+                  ),
+                )
+                .onPressed,
+            isNull,
+          );
+        }
       });
     }
 

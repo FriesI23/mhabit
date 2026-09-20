@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/foundation.dart' show setEquals;
 import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
@@ -159,6 +161,33 @@ class _PageState extends State<_Page> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+  Future<void> _onDeleteButtonPressed() async {
+    if (!(mounted && _vm.mounted) || _vm.deletableRecordCount == 0) return;
+    final deleteCount = _vm.deletableRecordCount;
+    final l10n = L10n.of(context);
+    final selectedDate = context
+        .read<AppCustomDateYmdHmsConfigViewModel>()
+        .config
+        .getYMDBatchCheckinFormatter(l10n?.localeName)
+        .format(_vm.selectDate);
+    final confirmed = await showAdaptiveConfirmDialog(
+      context: context,
+      title: Text(
+        l10n?.habitRecord_deleteConfirmDialog_title(deleteCount) ??
+            'Delete $deleteCount check-ins?',
+      ),
+      content: Text(selectedDate),
+      confirmLabel:
+          l10n?.habitRecord_delete_buttonText(deleteCount) ??
+          'Delete check-ins',
+      cancelLabel:
+          l10n?.batchCheckin_save_confirmDialog_cancelButton_text ?? 'Cancel',
+      isDestructiveAction: true,
+    );
+    if (!(mounted && _vm.mounted && confirmed == true)) return;
+    await _vm.deleteSelectDateRecords();
+  }
+
   void _onResetButtonPressed() {
     if (!(mounted && _vm.mounted)) return;
     _vm.resetStatusForm();
@@ -223,35 +252,40 @@ class _PageState extends State<_Page> {
   Widget build(BuildContext context) {
     appLog.build.debug(context);
 
-    Widget buildDatePickerTile(BuildContext context) =>
-        Selector<AppCustomDateYmdHmsConfigViewModel, CustomDateYmdHmsConfig>(
-          selector: (context, vm) => vm.config,
-          builder: (context, formatter, child) {
-            return Selector<HabitStatusChangerViewModel, bool>(
-              selector: (context, vm) => vm.hasLoad,
-              shouldRebuild: (previous, next) => previous != next,
-              builder: (context, _, child) {
-                return DatePickerTile(
-                  initDate: _vm.selectDate,
-                  firstDate: _vm.earlistStartDate,
-                  formatter: formatter,
-                  onSelectDateChanged: _onSelectedDateChanged,
-                );
-              },
+    Widget buildDatePickerTile(
+      BuildContext context,
+    ) => Selector<AppCustomDateYmdHmsConfigViewModel, CustomDateYmdHmsConfig>(
+      selector: (context, vm) => vm.config,
+      builder: (context, formatter, child) {
+        return Selector<HabitStatusChangerViewModel, (HabitDate, HabitDate)>(
+          selector: (context, vm) => (vm.selectDate, vm.earlistStartDate),
+          builder: (context, dates, child) {
+            return DatePickerTile(
+              initDate: dates.$1,
+              firstDate: dates.$2,
+              formatter: formatter,
+              onSelectDateChanged: _onSelectedDateChanged,
             );
           },
         );
+      },
+    );
 
     Widget buildStatusChangeTile(BuildContext context) =>
-        Selector<HabitStatusChangerViewModel, RecordStatusChangerStatus?>(
-          selector: (context, vm) => vm.selectStatus,
-          shouldRebuild: (previous, next) => previous != next,
-          builder: (context, _, child) {
+        Selector<
+          HabitStatusChangerViewModel,
+          (RecordStatusChangerStatus?, Set<RecordStatusChangerStatus>)
+        >(
+          selector: (context, vm) =>
+              (vm.selectStatus, vm.selectDateAllowedStatus),
+          shouldRebuild: (previous, next) =>
+              previous.$1 != next.$1 || !setEquals(previous.$2, next.$2),
+          builder: (context, selection, child) {
             return Material(
               color: Theme.of(context).colorScheme.surface,
               child: RecordStatusChangeTile(
-                initStatus: _vm.selectStatus,
-                allowedStatus: _vm.selectDateAllowedStatus,
+                initStatus: selection.$1,
+                allowedStatus: selection.$2,
                 onSelectedNewStatus: _onSelectedStatusChanged,
               ),
             );
@@ -271,6 +305,18 @@ class _PageState extends State<_Page> {
         ),
       );
     }
+
+    Widget buildDeleteAction(BuildContext context) =>
+        Selector<HabitStatusChangerViewModel, int>(
+          selector: (context, vm) => vm.deletableRecordCount,
+          builder: (context, deleteCount, child) => AdaptiveIconButton(
+            icon: const Icon(Icons.delete_outline),
+            tooltip:
+                L10n.of(context)?.habitRecord_delete_buttonText(deleteCount) ??
+                'Delete check-ins',
+            onPressed: deleteCount > 0 ? _onDeleteButtonPressed : null,
+          ),
+        );
 
     Widget buildHabitTitle(BuildContext context) {
       return Selector<HabitStatusChangerViewModel, int>(
@@ -309,6 +355,7 @@ class _PageState extends State<_Page> {
                 : const Text("Multi Check-in"),
           ),
           bottomWidget: buildDatePickerTile(context),
+          trailing: buildDeleteAction(context),
           onCloseButtonPressed: _onClosePageButtonPressed,
         ),
         content: SafedMultiSliver(

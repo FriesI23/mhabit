@@ -29,6 +29,7 @@ import '../../logging/helper.dart';
 import '../../models/habit_daily_record_form.dart';
 import '../../models/habit_date.dart';
 import '../../models/habit_form.dart';
+import '../../models/habit_repo_actions.dart';
 import '../../models/habit_summary.dart';
 import '../../providers/app_ui/app_developer.dart';
 import '../../providers/workflow/app_sync.dart';
@@ -289,7 +290,7 @@ class _HabitsTodayController {
 
   void _onRecordChangeConfirmed(
     HabitUUID uuid,
-    HabitSummaryRecord record, {
+    ChangeRecordStatusResult change, {
     String? reason,
   }) {}
 
@@ -341,6 +342,7 @@ class _HabitsTodayController {
       recordDate: date,
       targetExtraValue: data.dailyGoalExtra,
       color: data.color,
+      onDelete: record != null ? () => _vm.deleteRecord(uuid) : null,
     );
 
     if (result == null || result == record?.value) return;
@@ -355,6 +357,7 @@ class _HabitsTodayController {
     if (data == null) return;
 
     final date = HabitRecordDate.now();
+    final hasRecord = data.getRecordByDate(date) != null;
     final initReason = await _vm.loadRecordReason(data, date) ?? '';
     if (!context.mounted) return;
 
@@ -364,6 +367,7 @@ class _HabitsTodayController {
       recordDate: date,
       chipTextList: skipReasonChipTextList,
       color: data.color,
+      onDelete: hasRecord ? () => _vm.deleteRecord(uuid) : null,
     );
 
     if (result == null || result == initReason) return;
