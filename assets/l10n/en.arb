@@ -1524,7 +1524,7 @@
             }
         }
     },
-    "habitRecord_deleteConfirmDialog_title": "{count, plural, =1{Delete check-in?} other{Delete check-ins?}}",
+    "habitRecord_deleteConfirmDialog_title": "{count, plural, =1{Delete check-in?} other{Delete {count} check-ins?}}",
     "@habitRecord_deleteConfirmDialog_title": {
         "placeholders": {
             "count": {

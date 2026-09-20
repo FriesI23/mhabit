@@ -27,10 +27,16 @@ void main() {
   test('delete copy uses the record count', () {
     final en = lookupL10n(const Locale('en'));
     final zh = lookupL10n(const Locale('zh'));
+    final zhHant = lookupL10n(
+      const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
+    );
     expect(en.habitRecord_delete_buttonText(1), 'Delete check-in');
     expect(en.habitRecord_delete_buttonText(2), 'Delete check-ins');
+    expect(en.habitRecord_deleteConfirmDialog_title(1), 'Delete check-in?');
+    expect(en.habitRecord_deleteConfirmDialog_title(2), 'Delete 2 check-ins?');
     expect(zh.habitRecord_deleteConfirmDialog_title(1), '删除这次打卡？');
-    expect(zh.habitRecord_deleteConfirmDialog_title(2), '删除这些打卡？');
+    expect(zh.habitRecord_deleteConfirmDialog_title(2), '删除这 2 次打卡？');
+    expect(zhHant.habitRecord_deleteConfirmDialog_title(2), '刪除這 2 次打卡？');
   });
 
   for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {

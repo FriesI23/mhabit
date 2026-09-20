@@ -402,12 +402,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   }
 
   void _handleRecordsChanged(HabitRecordsChangedEvent event) {
-    final now = HabitDate.now();
-    if (!event.dateList.contains(now)) return;
-    final allHabitCheckedIn = event.uuidList
-        .map((e) => getHabit(e)?.getRecordByDate(now))
-        .every((e) => e != null);
-    if (allHabitCheckedIn) return;
+    if (!event.dateList.contains(HabitDate.now())) return;
     appLog.habit.debug(
       "HabitsTody",
       ex: ["record changed event triggered", event],

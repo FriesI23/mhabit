@@ -920,7 +920,7 @@
             }
         }
     },
-    "habitRecord_deleteConfirmDialog_title": "{count, plural, =1{刪除這次打卡？} other{刪除這些打卡？}}",
+    "habitRecord_deleteConfirmDialog_title": "{count, plural, =1{刪除這次打卡？} other{刪除這 {count} 次打卡？}}",
     "@habitRecord_deleteConfirmDialog_title": {
         "placeholders": {
             "count": {

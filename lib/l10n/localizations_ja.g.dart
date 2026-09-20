@@ -1774,7 +1774,7 @@ class L10nJa extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete check-ins?',
+      other: 'Delete $count check-ins?',
       one: 'Delete check-in?',
     );
     return '$_temp0';

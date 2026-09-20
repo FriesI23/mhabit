@@ -20,12 +20,14 @@ import '../../../extensions/adaptive_style_extensions.dart';
 class HabitStatusChangerAppbar extends StatelessWidget {
   final Widget? title;
   final Widget? bottomWidget;
+  final Widget? trailing;
   final VoidCallback? onCloseButtonPressed;
 
   const HabitStatusChangerAppbar({
     super.key,
     this.title,
     this.bottomWidget,
+    this.trailing,
     this.onCloseButtonPressed,
   });
 
@@ -46,6 +48,7 @@ class HabitStatusChangerAppbar extends StatelessWidget {
         onPressed: onCloseButtonPressed,
       ),
       title: title ?? const SizedBox.shrink(),
+      actions: [?trailing],
       bottom: bottomWidget != null
           ? PreferredSize(
               preferredSize: const Size.fromHeight(kToolbarHeight),

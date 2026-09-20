@@ -1686,7 +1686,7 @@ class L10nZh extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '删除这些打卡？',
+      other: '删除这 $count 次打卡？',
       one: '删除这次打卡？',
     );
     return '$_temp0';
@@ -3543,7 +3543,7 @@ class L10nZhHant extends L10nZh {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '刪除這些打卡？',
+      other: '刪除這 $count 次打卡？',
       one: '刪除這次打卡？',
     );
     return '$_temp0';

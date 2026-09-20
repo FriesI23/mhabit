@@ -2805,7 +2805,7 @@ abstract class L10n {
   /// No description provided for @habitRecord_deleteConfirmDialog_title.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{Delete check-in?} other{Delete check-ins?}}'**
+  /// **'{count, plural, =1{Delete check-in?} other{Delete {count} check-ins?}}'**
   String habitRecord_deleteConfirmDialog_title(int count);
 
   /// No description provided for @batchCheckin_close_confirmDialog_title.

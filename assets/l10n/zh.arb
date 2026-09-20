@@ -1171,7 +1171,7 @@
             }
         }
     },
-    "habitRecord_deleteConfirmDialog_title": "{count, plural, =1{删除这次打卡？} other{删除这些打卡？}}",
+    "habitRecord_deleteConfirmDialog_title": "{count, plural, =1{删除这次打卡？} other{删除这 {count} 次打卡？}}",
     "@habitRecord_deleteConfirmDialog_title": {
         "placeholders": {
             "count": {
