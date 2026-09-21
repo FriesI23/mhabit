@@ -23,6 +23,7 @@
   <img src="https://img.shields.io/badge/WebDAV-supported-brightgreen?style=flat-square" alt="WebDAV sync supported">
   <a href="https://hosted.weblate.org/engage/mhabit/"><img src="https://hosted.weblate.org/widget/mhabit/app/svg-badge.svg" alt="Translation status"></a>
   <a href="https://discord.gg/medWsVYpb4"><img src="https://img.shields.io/badge/Discord-7289DA?style=flat-square&logo=discord&logoColor=white" alt="Discord community"></a>
+  <a href="https://hellogithub.com/repository/FriesI23/mhabit" target="_blank"><img src="https://api.hellogithub.com/v1/widgets/recommend.svg?rid=7bd7e27a0af94903bdde6428c4c6cef0&claim_uid=oD9a1uWezPwKBS7&theme=small" alt="Featured｜HelloGitHub" /></a>
 </p>
 
 <p align="center">
