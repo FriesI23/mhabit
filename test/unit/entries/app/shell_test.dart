@@ -403,6 +403,14 @@ void _setSurface(WidgetTester tester, Size size) {
   addTearDown(tester.view.reset);
 }
 
+Future<void> _tapSideDestination(
+  WidgetTester tester,
+  Finder destination,
+) async {
+  final rect = tester.getRect(destination);
+  await tester.tapAt(Offset(rect.center.dx, rect.top + 16));
+}
+
 Page<dynamic> _pageNamed(WidgetTester tester, String name) => tester
     .widgetList<Navigator>(find.byType(Navigator))
     .expand((navigator) => navigator.pages)
@@ -786,7 +794,7 @@ void main() {
           1,
         );
 
-        await tester.tap(action);
+        await _tapSideDestination(tester, action);
         await tester.pump();
 
         expect(theme.value, AppThemeType.light);
@@ -1090,7 +1098,7 @@ void main() {
         expect(shell.selectedAuxiliaryIndex, isNull);
         expect(launchEntry.entries, [AppEntrys.habitToday]);
 
-        await tester.tap(find.byKey(testCase.auxiliaryKey));
+        await _tapSideDestination(tester, find.byKey(testCase.auxiliaryKey));
         await tester.pumpAndSettle();
 
         expect(find.text('settings page'), findsOneWidget);
@@ -1144,7 +1152,10 @@ void main() {
       selectedIndexes.add(lastSelectedIndex);
     });
 
-    await tester.tap(find.byKey(const ValueKey('material-rail-destination-1')));
+    await _tapSideDestination(
+      tester,
+      find.byKey(const ValueKey('material-rail-destination-1')),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('today page'), findsOneWidget);
@@ -1266,7 +1277,10 @@ void main() {
       AppRoute.settings.name,
       AppRoute.settingsAbout.name,
     ]);
-    await tester.tap(find.byKey(const ValueKey('material-rail-destination-1')));
+    await _tapSideDestination(
+      tester,
+      find.byKey(const ValueKey('material-rail-destination-1')),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('today page'), findsOneWidget);

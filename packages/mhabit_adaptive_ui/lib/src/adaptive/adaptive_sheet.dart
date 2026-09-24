@@ -11,9 +11,6 @@ import 'adaptive_back_button.dart';
 import 'adaptive_modal_content.dart';
 import 'adaptive_modal_layout.dart';
 
-export 'adaptive_modal_layout.dart'
-    show AdaptiveModalConstraints, AdaptiveModalPresentation;
-
 /// Shows content as a platform-styled sheet on compact windows and a dialog
 /// when both window axes reach the medium size class.
 ///

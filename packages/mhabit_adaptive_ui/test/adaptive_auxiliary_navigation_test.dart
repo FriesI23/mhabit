@@ -168,11 +168,11 @@ void main() {
     final leadingGap =
         tester.getTopLeft(primaryDestinationList).dy -
         tester.getBottomLeft(toggle).dy;
-    expect(leadingGap, 40);
+    expect(leadingGap, 44);
     expect(
       tester
           .getBottomLeft(
-            find.byKey(const ValueKey('material-rail-destination-slot-1')),
+            find.byKey(const ValueKey('material-rail-destination-1')),
           )
           .dy,
       lessThan(
@@ -185,7 +185,7 @@ void main() {
             .dy,
       ),
     );
-    await tester.tap(button);
+    await tester.tap(find.byIcon(Icons.help));
     expect(selectedIndex, 1);
   });
 
@@ -243,7 +243,7 @@ void main() {
       const ValueKey('material-rail-auxiliary-destination-list'),
     );
     final firstDestination = find.byKey(
-      const ValueKey('material-rail-destination-slot-0'),
+      const ValueKey('material-rail-destination-0'),
     );
     final toggle = find.byKey(
       const ValueKey('rail-toggle-button'),
@@ -254,7 +254,7 @@ void main() {
     final initialAuxiliaryTop = tester.getTopLeft(auxiliaryList).dy;
 
     expect(scrollable.position.maxScrollExtent, greaterThan(0));
-    expect(initialDestinationTop - tester.getBottomLeft(toggle).dy, 8);
+    expect(initialDestinationTop - tester.getBottomLeft(toggle).dy, 12);
     expect(
       tester.getBottomLeft(scrollView).dy,
       lessThanOrEqualTo(initialAuxiliaryTop),
@@ -268,7 +268,7 @@ void main() {
       tester.getTopLeft(firstDestination).dy,
       lessThan(initialDestinationTop),
     );
-    expect(tester.getTopLeft(toggle).dy, lessThan(initialToggleTop));
+    expect(tester.getTopLeft(toggle).dy, initialToggleTop);
     expect(tester.getTopLeft(auxiliaryList).dy, initialAuxiliaryTop);
     expect(tester.takeException(), isNull);
   });

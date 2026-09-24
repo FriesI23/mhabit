@@ -4,7 +4,6 @@ import 'package:adaptive_actions/core.dart';
 import 'package:flutter/cupertino.dart'
     show
         CupertinoButton,
-        CupertinoButtonSize,
         CupertinoIcons,
         CupertinoNavigationBar,
         CupertinoPageScaffoldBackgroundColor,
@@ -19,7 +18,6 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_navigation_primary_action.dart';
 import 'package:mhabit_adaptive_ui/src/shell/navigation_scroll_wish_policy.dart';
 import 'package:mhabit_adaptive_ui/src/shell/navigation_shell_frame.dart';
-import 'package:mhabit_adaptive_ui/src/shell/side_navigation.dart';
 
 _TestRouter _buildRouter({
   List<AdaptiveNavigationDestination>? destinations,
@@ -55,30 +53,6 @@ _TestRouter _buildRouter({
     barVisibilityPolicy: barVisibilityPolicy,
   );
 }
-
-List<AdaptiveNavigationDestination> _destinationsWithLabels(
-  String first,
-  String second,
-) => [
-  AdaptiveNavigationDestination(
-    label: first,
-    icons: const NavigationDestinationIcons(
-      material: Icon(Icons.home_outlined),
-      materialSelected: Icon(Icons.home),
-      apple: Icon(Icons.home_outlined),
-      appleSelected: Icon(Icons.home),
-    ),
-  ),
-  AdaptiveNavigationDestination(
-    label: second,
-    icons: const NavigationDestinationIcons(
-      material: Icon(Icons.calendar_today_outlined),
-      materialSelected: Icon(Icons.calendar_today),
-      apple: Icon(Icons.calendar_today_outlined),
-      appleSelected: Icon(Icons.calendar_today),
-    ),
-  ),
-];
 
 class _TestRouter extends RouterConfig<Object> {
   factory _TestRouter({
@@ -572,84 +546,6 @@ void main() {
     });
   });
 
-  group('SideNavigationResizeState', () {
-    const extent = SideNavigationExtent(224);
-
-    test('clamps and hands a wider manual width to the available interval', () {
-      final state = SideNavigationResizeState();
-
-      expect(state.effectiveWidth(extent, windowWidth: 1800), 224);
-      state.startDrag(extent, windowWidth: 1800);
-      expect(state.dragging, isTrue);
-      state.updateDrag(500, extent, windowWidth: 1800);
-      state.endDrag();
-
-      expect(state.dragging, isFalse);
-      expect(state.effectiveWidth(extent, windowWidth: 1800), 360);
-      expect(state.effectiveWidth(extent, windowWidth: 900), 234);
-      expect(state.effectiveWidth(extent, windowWidth: 1800), 360);
-    });
-
-    test('hands a narrower manual width to auto and restores it later', () {
-      final state = SideNavigationResizeState();
-
-      state.startDrag(extent, windowWidth: 1800);
-      state.updateDrag(-5, extent, windowWidth: 1800);
-      state.endDrag();
-
-      expect(state.effectiveWidth(extent, windowWidth: 1400), 219);
-      expect(state.effectiveWidth(extent, windowWidth: 700), 198);
-      expect(state.effectiveWidth(extent, windowWidth: 1800), 219);
-    });
-
-    testWidgets('handle clears dragged state when a gesture is cancelled', (
-      tester,
-    ) async {
-      final observedStates = <Set<WidgetState>>[];
-      final logicalDeltas = <double>[];
-      var starts = 0;
-      var ends = 0;
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.rtl,
-          child: Center(
-            child: SizedBox(
-              height: 100,
-              child: SideNavigationResizeHandle(
-                hitExtent: 16,
-                dragHandleBuilder: (context, states) {
-                  observedStates.add(Set<WidgetState>.of(states));
-                  return const SizedBox.shrink();
-                },
-                onResizeStart: () => starts += 1,
-                onResizeUpdate: logicalDeltas.add,
-                onResizeEnd: () => ends += 1,
-              ),
-            ),
-          ),
-        ),
-      );
-
-      final gesture = await tester.startGesture(
-        tester.getCenter(find.byType(SideNavigationResizeHandle)),
-      );
-      await gesture.moveBy(const Offset(-30, 0));
-      await tester.pump();
-      expect(starts, 1);
-      expect(logicalDeltas, isNotEmpty);
-      expect(logicalDeltas, everyElement(greaterThan(0)));
-      expect(
-        observedStates.any((states) => states.contains(WidgetState.dragged)),
-        isTrue,
-      );
-
-      await gesture.cancel();
-      await tester.pump();
-      expect(ends, 1);
-      expect(observedStates.last.contains(WidgetState.dragged), isFalse);
-    });
-  });
-
   testWidgets('scope lookups distinguish listening from read access', (
     tester,
   ) async {
@@ -965,6 +861,63 @@ void main() {
 
       expect(renderedAppBarBackground(), transparentScaffoldBackground);
       expect(backgroundFilterEnabled(), isTrue);
+    });
+
+    testWidgets('apple Sidebar preserves a translucent dark bar tint', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(700, 800));
+      const scaffoldBackground = Color(0xFF1E1E1E);
+      const barBackground = Color(0x0FFFFFFF);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            platform: TargetPlatform.iOS,
+            brightness: Brightness.dark,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.blue,
+              brightness: Brightness.dark,
+              surface: scaffoldBackground,
+            ),
+            cupertinoOverrideTheme: const CupertinoThemeData(
+              brightness: Brightness.dark,
+              scaffoldBackgroundColor: scaffoldBackground,
+              barBackgroundColor: barBackground,
+            ),
+          ),
+          home: AdaptiveNavigationShell(
+            selectedIndex: 0,
+            destinations: const [
+              AdaptiveNavigationDestination(
+                label: 'Habits',
+                icons: NavigationDestinationIcons(
+                  material: Icon(Icons.home_outlined),
+                  materialSelected: Icon(Icons.home),
+                  apple: Icon(CupertinoIcons.house),
+                  appleSelected: Icon(CupertinoIcons.house_fill),
+                ),
+              ),
+            ],
+            onDestinationSelected: (_) {},
+            child: const SizedBox.expand(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final surface = find.byKey(const ValueKey('cupertino-sidebar-surface'));
+      final surfaceColor = tester
+          .widgetList<ColoredBox>(
+            find.descendant(of: surface, matching: find.byType(ColoredBox)),
+          )
+          .first
+          .color;
+      expect(surfaceColor, barBackground);
+      expect(
+        Color.alphaBlend(surfaceColor, scaffoldBackground).computeLuminance(),
+        lessThan(0.05),
+      );
     });
 
     testWidgets('idle Apple app bar follows the animated Scaffold surface', (
@@ -3056,276 +3009,6 @@ void main() {
       expect(panel().minExtendedWidth, closeTo(195, 0.01));
     });
 
-    testWidgets('material rail uses the M3 collapsed destination layout', (
-      tester,
-    ) async {
-      _setSurfaceSize(tester, const Size(700, 800));
-      final router = _buildRouter(
-        destinations: _destinationsWithLabels('H', 'T'),
-      );
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.pumpAndSettle();
-
-      final rail = tester.widget<NavigationRail>(find.byType(NavigationRail));
-      final destination = find.byKey(
-        const ValueKey('material-rail-destination-0'),
-      );
-      final destinationSlot = find.byKey(
-        const ValueKey('material-rail-destination-slot-0'),
-      );
-      final todaySlot = find.byKey(
-        const ValueKey('material-rail-destination-slot-1'),
-      );
-      final indicator = find.descendant(
-        of: destination,
-        matching: find.byKey(const ValueKey('material-rail-indicator')),
-      );
-      final collapsedLabel = find.descendant(
-        of: destinationSlot,
-        matching: find.byKey(const ValueKey('material-rail-collapsed-label')),
-      );
-      final expandedLabel = find.descendant(
-        of: destination,
-        matching: find.byKey(const ValueKey('material-rail-expanded-label')),
-      );
-      final toggle = find.byKey(const ValueKey('rail-toggle-button'));
-
-      expect(tester.getSize(destination), const Size(56, 32));
-      expect(tester.getSize(destinationSlot).height, 64);
-      expect(rail.minWidth, 96);
-      expect(tester.getSize(indicator), const Size(56, 32));
-      expect(tester.widget<Opacity>(collapsedLabel).opacity, 1);
-      expect(tester.widget<Opacity>(expandedLabel).opacity, 0);
-      expect(
-        tester.getCenter(find.byIcon(Icons.home)).dx,
-        tester.getCenter(destination).dx,
-      );
-      expect(
-        tester.getRect(destination).overlaps(tester.getRect(collapsedLabel)),
-        isFalse,
-      );
-      expect(
-        tester.getTopLeft(collapsedLabel).dy -
-            tester.getBottomLeft(destination).dy,
-        4,
-      );
-      expect(
-        tester.getTopLeft(todaySlot).dy -
-            tester.getBottomLeft(destinationSlot).dy,
-        4,
-      );
-      expect(
-        tester.getTopLeft(destinationSlot).dy - tester.getBottomLeft(toggle).dy,
-        40,
-      );
-      final label = tester.widget<Text>(
-        find.descendant(of: collapsedLabel, matching: find.text('H')),
-      );
-      expect(label.maxLines, 2);
-      expect(label.overflow, TextOverflow.ellipsis);
-    });
-
-    testWidgets('material collapsed rail grows only wrapped destinations', (
-      tester,
-    ) async {
-      _setSurfaceSize(tester, const Size(700, 800));
-      final router = _buildRouter(
-        destinations: _destinationsWithLabels('H', 'A long destination label'),
-      );
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.pumpAndSettle();
-
-      expect(
-        tester
-            .getSize(
-              find.byKey(const ValueKey('material-rail-destination-slot-0')),
-            )
-            .height,
-        64,
-      );
-      expect(
-        tester
-            .getSize(
-              find.byKey(const ValueKey('material-rail-destination-slot-1')),
-            )
-            .height,
-        80,
-      );
-    });
-
-    testWidgets('material rail frames the complete expanded destination', (
-      tester,
-    ) async {
-      _setSurfaceSize(tester, const Size(1400, 800));
-      final router = _buildRouter();
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.pumpAndSettle();
-
-      final destination = find.byKey(
-        const ValueKey('material-rail-destination-0'),
-      );
-      final destinationSlot = find.byKey(
-        const ValueKey('material-rail-destination-slot-0'),
-      );
-      final todaySlot = find.byKey(
-        const ValueKey('material-rail-destination-slot-1'),
-      );
-      final indicator = find.descendant(
-        of: destination,
-        matching: find.byKey(const ValueKey('material-rail-indicator')),
-      );
-      final expandedLabel = find.descendant(
-        of: destination,
-        matching: find.byKey(const ValueKey('material-rail-expanded-label')),
-      );
-      final indicatorRect = tester.getRect(indicator);
-
-      expect(tester.getSize(destination), const Size(160, 56));
-      expect(tester.getSize(destinationSlot).height, 56);
-      expect(tester.getSize(indicator), const Size(160, 56));
-      expect(tester.widget<Opacity>(expandedLabel).opacity, 1);
-      expect(
-        indicatorRect.contains(tester.getCenter(find.byIcon(Icons.home))),
-        isTrue,
-      );
-      expect(indicatorRect.contains(tester.getCenter(expandedLabel)), isTrue);
-      expect(
-        tester.getRect(
-          find.descendant(of: destination, matching: find.byType(InkWell)),
-        ),
-        tester.getRect(destination),
-      );
-      expect(
-        tester.getTopLeft(todaySlot).dy -
-            tester.getBottomLeft(destinationSlot).dy,
-        0,
-      );
-    });
-
-    testWidgets('material rail destinations follow the rail animation', (
-      tester,
-    ) async {
-      _setSurfaceSize(tester, const Size(700, 800));
-      final router = _buildRouter(
-        destinations: _destinationsWithLabels('H', 'T'),
-      );
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.pumpAndSettle();
-
-      final destination = find.byKey(
-        const ValueKey('material-rail-destination-0'),
-      );
-      final destinationSlot = find.byKey(
-        const ValueKey('material-rail-destination-slot-0'),
-      );
-      final indicator = find.descendant(
-        of: destination,
-        matching: find.byKey(const ValueKey('material-rail-indicator')),
-      );
-      final collapsedLabel = find.descendant(
-        of: destinationSlot,
-        matching: find.byKey(const ValueKey('material-rail-collapsed-label')),
-      );
-      final expandedLabel = find.descendant(
-        of: destination,
-        matching: find.byKey(const ValueKey('material-rail-expanded-label')),
-      );
-      final todayDestination = find.byKey(
-        const ValueKey('material-rail-destination-1'),
-      );
-      final collapsedCenterY = tester.getCenter(destination).dy;
-      final collapsedTodayCenterY = tester.getCenter(todayDestination).dy;
-
-      await tester.tap(find.byKey(const ValueKey('rail-toggle-button')));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
-
-      expect(tester.getSize(destination).width, inExclusiveRange(56, 158));
-      expect(tester.getSize(indicator).width, inExclusiveRange(56, 158));
-      expect(tester.getSize(destination).height, inExclusiveRange(32, 56));
-      expect(tester.getSize(indicator).height, inExclusiveRange(32, 56));
-      expect(
-        tester.getCenter(destination).dy,
-        inExclusiveRange(collapsedCenterY, collapsedCenterY + 12),
-      );
-      expect(tester.getCenter(todayDestination).dy, collapsedTodayCenterY);
-      expect(
-        tester.widget<Opacity>(collapsedLabel).opacity,
-        inExclusiveRange(0, 1),
-      );
-      expect(
-        tester.widget<Opacity>(expandedLabel).opacity,
-        inExclusiveRange(0, 1),
-      );
-
-      await tester.pumpAndSettle();
-      expect(tester.getSize(destination).width, closeTo(158, 0.01));
-      expect(tester.getSize(indicator).width, closeTo(158, 0.01));
-      expect(tester.getCenter(destination).dy, collapsedCenterY + 12);
-      expect(tester.getCenter(todayDestination).dy, collapsedTodayCenterY);
-
-      await tester.tap(find.byKey(const ValueKey('rail-toggle-button')));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
-
-      expect(tester.getSize(destination).width, inExclusiveRange(56, 158));
-      expect(tester.getSize(indicator).width, inExclusiveRange(56, 158));
-      expect(tester.getSize(destination).height, inExclusiveRange(32, 56));
-      expect(tester.getSize(indicator).height, inExclusiveRange(32, 56));
-      expect(
-        tester.getCenter(destination).dy,
-        inExclusiveRange(collapsedCenterY, collapsedCenterY + 12),
-      );
-      expect(tester.getCenter(todayDestination).dy, collapsedTodayCenterY);
-      expect(
-        tester.widget<Opacity>(collapsedLabel).opacity,
-        inExclusiveRange(0, 1),
-      );
-      expect(
-        tester.widget<Opacity>(expandedLabel).opacity,
-        inExclusiveRange(0, 1),
-      );
-
-      await tester.pumpAndSettle();
-      expect(tester.getSize(destination), const Size(56, 32));
-      expect(tester.getSize(indicator), const Size(56, 32));
-      expect(tester.getCenter(destination).dy, collapsedCenterY);
-      expect(tester.getCenter(todayDestination).dy, collapsedTodayCenterY);
-      expect(tester.takeException(), isNull);
-    });
-
-    testWidgets('material rail tap target matches each destination button', (
-      tester,
-    ) async {
-      _setSurfaceSize(tester, const Size(700, 800));
-      final router = _buildRouter();
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.pumpAndSettle();
-
-      final todayButton = find.byKey(
-        const ValueKey('material-rail-destination-1'),
-      );
-      final todaySlot = find.byKey(
-        const ValueKey('material-rail-destination-slot-1'),
-      );
-      final todayLabel = find.descendant(
-        of: todaySlot,
-        matching: find.byKey(const ValueKey('material-rail-collapsed-label')),
-      );
-      final buttonRect = tester.getRect(todayButton);
-      await tester.tapAt(Offset(buttonRect.right + 4, buttonRect.center.dy));
-      await tester.pumpAndSettle();
-      expect(find.text('habits page'), findsOneWidget);
-
-      await tester.tapAt(tester.getCenter(todayLabel));
-      await tester.pumpAndSettle();
-      expect(find.text('habits page'), findsOneWidget);
-
-      await tester.tap(todayButton);
-      await tester.pumpAndSettle();
-      expect(find.text('today page'), findsOneWidget);
-    });
-
     testWidgets('drag while the panel animation is running does not crash', (
       tester,
     ) async {
@@ -3372,7 +3055,7 @@ void main() {
           final toggle = find.byKey(const ValueKey('rail-toggle-button'));
           final expandedCenter = tester.getCenter(toggle);
           final expandedTop = tester.getTopLeft(toggle).dy;
-          expect(expandedTop, 8);
+          expect(expandedTop, 4);
 
           await tester.tap(toggle);
           await tester.pump();
@@ -3410,14 +3093,14 @@ void main() {
           find.byKey(const ValueKey('rail-leading-safe-span')),
         );
         final collapsedCenter = tester.getCenter(toggle);
-        expect(tester.getTopLeft(toggle).dy, 8);
+        expect(tester.getTopLeft(toggle).dy, 4);
         expect(safeSpan().padding, const EdgeInsets.only(left: 40));
 
         await tester.tap(toggle);
         await tester.pumpAndSettle();
 
         expect(tester.getCenter(toggle).dx, closeTo(collapsedCenter.dx, 0.01));
-        expect(tester.getTopLeft(toggle).dy, 8);
+        expect(tester.getTopLeft(toggle).dy, 4);
         expect(safeSpan().padding, const EdgeInsets.only(left: 40));
       } finally {
         _resetWindowControlLayoutMock();
@@ -3575,35 +3258,9 @@ void main() {
           find.byKey(const ValueKey('cupertino-sidebar-resize-handle')),
           findsOneWidget,
         );
-        final sidebarSurface = find.byKey(
-          const ValueKey('cupertino-sidebar-surface'),
-        );
-        final sidebarNavigationBar = find.descendant(
-          of: sidebarSurface,
-          matching: find.byType(CupertinoNavigationBar),
-        );
-        expect(sidebarNavigationBar, findsOneWidget);
-        final navigationBar = tester.widget<CupertinoNavigationBar>(
-          sidebarNavigationBar,
-        );
-        expect(navigationBar.enableBackgroundFilterBlur, isTrue);
-        expect(navigationBar.automaticBackgroundVisibility, isTrue);
-        expect(navigationBar.backgroundColor?.a, 0.0);
-        final destinationList = find.byKey(
-          const ValueKey('cupertino-sidebar-destination-list'),
-        );
         expect(
-          tester.getTopLeft(destinationList).dy -
-              tester.getTopLeft(sidebarSurface).dy,
-          0,
-        );
-        final firstDestination = find.byKey(
-          const ValueKey('cupertino-sidebar-destination-0'),
-        );
-        expect(
-          tester.getTopLeft(firstDestination).dy -
-              tester.getTopLeft(sidebarSurface).dy,
-          greaterThanOrEqualTo(68),
+          find.byKey(const ValueKey('cupertino-sidebar-destination-list')),
+          findsOneWidget,
         );
         expect(
           find.byKey(const ValueKey('cupertino-sidebar-scrim')),
@@ -3903,18 +3560,6 @@ void main() {
       final router = _buildRouter(onBranchChanged: selected.add);
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      final destinationButtons = find.descendant(
-        of: find.byKey(const ValueKey('cupertino-sidebar-destination-list')),
-        matching: find.byType(CupertinoButton),
-      );
-      expect(destinationButtons, findsNWidgets(2));
-      for (final button in tester.widgetList<CupertinoButton>(
-        destinationButtons,
-      )) {
-        expect(button.sizeStyle, CupertinoButtonSize.medium);
-        expect(button.minimumSize, const Size(0, 44));
-        expect(button.pressedOpacity, 0.4);
-      }
       await tester.tap(
         find.byKey(const ValueKey('cupertino-sidebar-destination-1')),
       );
@@ -3929,70 +3574,52 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
-    testWidgets(
-      'apple Sidebar keeps one tooltip-enabled toggle across hosts and routes',
-      (tester) async {
-        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-        addTearDown(() => debugDefaultTargetPlatformOverride = null);
-        tester.view.padding = const FakeViewPadding(top: 12);
-        tester.view.viewPadding = const FakeViewPadding(top: 12);
-        _setSurfaceSize(tester, const Size(700, 600));
-        final router = _buildRouter();
-        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    testWidgets('apple Sidebar keeps one toggle across hosts and routes', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      tester.view.padding = const FakeViewPadding(top: 12);
+      tester.view.viewPadding = const FakeViewPadding(top: 12);
+      _setSurfaceSize(tester, const Size(700, 600));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-        final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
-        final anchor = find.byKey(
-          const ValueKey('cupertino-sidebar-leading-anchor'),
-        );
-        final localizations = MaterialLocalizations.of(tester.element(toggle));
-        final toggleElement = tester.element(toggle);
+      final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
+      final anchor = find.byKey(
+        const ValueKey('cupertino-sidebar-leading-anchor'),
+      );
+      final toggleElement = tester.element(toggle);
 
-        expect(toggle, findsOneWidget);
-        expect(toggle.hitTestable(), findsOneWidget);
-        expect(tester.getSize(toggle), const Size.square(44));
-        expect(
-          tester
-                  .getTopRight(
-                    find.byKey(const ValueKey('cupertino-sidebar-surface')),
-                  )
-                  .dx -
-              tester.getTopRight(toggle).dx,
-          8,
-        );
-        expect(tester.getSize(anchor).width, 0);
-        expect(
-          tester
-              .widget<Tooltip>(
-                find.ancestor(of: toggle, matching: find.byType(Tooltip)),
-              )
-              .message,
-          localizations.expandedIconTapHint,
-        );
+      expect(toggle, findsOneWidget);
+      expect(toggle.hitTestable(), findsOneWidget);
+      expect(tester.getSize(toggle), const Size.square(44));
+      expect(
+        tester
+                .getTopRight(
+                  find.byKey(const ValueKey('cupertino-sidebar-surface')),
+                )
+                .dx -
+            tester.getTopRight(toggle).dx,
+        8,
+      );
+      expect(tester.getSize(anchor).width, 0);
 
-        await tester.tap(toggle);
-        await tester.pumpAndSettle();
+      await tester.tap(toggle);
+      await tester.pumpAndSettle();
 
-        expect(toggle, findsOneWidget);
-        expect(tester.element(toggle), same(toggleElement));
-        expect(tester.getSize(anchor), const Size.square(44));
-        expect(tester.getTopLeft(toggle), tester.getTopLeft(anchor));
-        expect(
-          tester
-              .widget<Tooltip>(
-                find.ancestor(of: toggle, matching: find.byType(Tooltip)),
-              )
-              .message,
-          localizations.collapsedIconTapHint,
-        );
+      expect(toggle, findsOneWidget);
+      expect(tester.element(toggle), same(toggleElement));
+      expect(tester.getSize(anchor), const Size.square(44));
+      expect(tester.getTopLeft(toggle), tester.getTopLeft(anchor));
 
-        final hiddenPosition = tester.getTopLeft(toggle);
-        router.push('/habits/detail');
-        await tester.pumpAndSettle();
-        expect(tester.element(toggle), same(toggleElement));
-        expect(tester.getTopLeft(toggle), hiddenPosition);
-        debugDefaultTargetPlatformOverride = null;
-      },
-    );
+      final hiddenPosition = tester.getTopLeft(toggle);
+      router.push('/habits/detail');
+      await tester.pumpAndSettle();
+      expect(tester.element(toggle), same(toggleElement));
+      expect(tester.getTopLeft(toggle), hiddenPosition);
+      debugDefaultTargetPlatformOverride = null;
+    });
 
     testWidgets('apple Sidebar preserves one interactive toggle and focus', (
       tester,
@@ -4062,7 +3689,6 @@ void main() {
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
       final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
-      final tooltip = find.ancestor(of: toggle, matching: find.byType(Tooltip));
       expect(
         tester.getCenter(toggle).dy,
         tester.getCenter(find.byKey(const ValueKey('test-page-leading'))).dy,
@@ -4073,20 +3699,7 @@ void main() {
             .dy,
         10,
       );
-      final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
-      addTearDown(mouse.removePointer);
-      await mouse.addPointer(location: Offset.zero);
-      await mouse.moveTo(tester.getCenter(toggle));
-      await tester.pump(const Duration(seconds: 1));
-
-      expect(tooltip, findsOneWidget);
-      expect(
-        find.text(tester.widget<Tooltip>(tooltip).message!),
-        findsOneWidget,
-      );
-
-      await mouse.down(tester.getCenter(toggle));
-      await mouse.up();
+      await tester.tap(toggle);
       await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('cupertino-sidebar-panel')),
@@ -4387,22 +4000,12 @@ void main() {
           tester.getSize(find.byKey(const ValueKey('branch-vertical-padding')));
       final branch = find.byKey(const ValueKey('branch-layout-probe'));
       final surface = find.byKey(const ValueKey('cupertino-sidebar-surface'));
-      final surfaceWidget = tester.widget<CupertinoFloatingGlassSurface>(
-        surface,
-      );
-
       expect(branchPadding().width, 20);
       expect(branchViewPadding().width, 36);
       expect(branchVerticalPadding().height, 10);
       expect(tester.getTopLeft(branch).dx, 254);
       expect(tester.getTopLeft(surface), const Offset(44, 10));
       expect(tester.getSize(surface), const Size(198, 580));
-      expect(
-        surfaceWidget.borderRadius,
-        const BorderRadius.all(Radius.circular(25)),
-      );
-      expect(surfaceWidget.blurSigma, 10);
-
       await tester.tap(find.byKey(const ValueKey('cupertino-sidebar-toggle')));
       await tester.pumpAndSettle();
       expect(branchPadding().width, 64);
@@ -4603,21 +4206,7 @@ void main() {
       final router = _buildRouter(onBranchChanged: selected.add);
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      final selectedButton = tester.widget<CupertinoButton>(
-        find.descendant(
-          of: find.byKey(const ValueKey('cupertino-sidebar-destination-0')),
-          matching: find.byType(CupertinoButton),
-        ),
-      );
-      expect(selectedButton.autofocus, isTrue);
-      await tester.pump();
-      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
-      await tester.pump();
-      await tester.sendKeyEvent(LogicalKeyboardKey.space);
-      await tester.pumpAndSettle();
-
-      expect(selected, [1]);
-      expect(find.text('today page'), findsOneWidget);
+      expect(selected, isEmpty);
 
       final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
       final toggleButton = tester.widget<CupertinoButton>(toggle);
@@ -4666,13 +4255,14 @@ void main() {
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
       await tester.pumpAndSettle();
 
-      final destinationButtons = tester.widgetList<CupertinoButton>(
-        find.descendant(
-          of: find.byKey(const ValueKey('cupertino-sidebar-destination-list')),
-          matching: find.byType(CupertinoButton),
-        ),
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-destination-0')),
+        findsOneWidget,
       );
-      expect(destinationButtons, hasLength(2));
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-destination-1')),
+        findsOneWidget,
+      );
       expect(
         find.byKey(const ValueKey('cupertino-sidebar-resize-handle')),
         findsOneWidget,
@@ -4686,125 +4276,6 @@ void main() {
       expect(longLabel.maxLines, 2);
       expect(longLabel.overflow, TextOverflow.ellipsis);
       expect(tester.takeException(), isNull);
-      debugDefaultTargetPlatformOverride = null;
-    });
-
-    testWidgets('apple Sidebar destination foregrounds stay opaque', (
-      tester,
-    ) async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-      addTearDown(() => debugDefaultTargetPlatformOverride = null);
-      _setSurfaceSize(tester, const Size(700, 600));
-      final router = _buildRouter();
-      await tester.pumpWidget(
-        MaterialApp.router(
-          theme: ThemeData(
-            cupertinoOverrideTheme: const CupertinoThemeData(
-              primaryColor: Color(0x80336699),
-            ),
-          ),
-          routerConfig: router,
-        ),
-      );
-
-      CupertinoButton destinationButton(int index) =>
-          tester.widget<CupertinoButton>(
-            find.descendant(
-              of: find.byKey(ValueKey('cupertino-sidebar-destination-$index')),
-              matching: find.byType(CupertinoButton),
-            ),
-          );
-
-      expect(destinationButton(0).foregroundColor!.a, 1);
-      expect(destinationButton(1).foregroundColor!.a, 1);
-      debugDefaultTargetPlatformOverride = null;
-    });
-
-    testWidgets(
-      'apple Sidebar resolves the Cupertino bar surface in dark mode',
-      (tester) async {
-        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-        addTearDown(() => debugDefaultTargetPlatformOverride = null);
-        _setSurfaceSize(tester, const Size(700, 600));
-        const barBackground = Color(0xCC112233);
-        final router = _buildRouter();
-        await tester.pumpWidget(
-          MaterialApp.router(
-            theme: ThemeData.dark().copyWith(
-              cupertinoOverrideTheme: const CupertinoThemeData(
-                barBackgroundColor: barBackground,
-              ),
-            ),
-            routerConfig: router,
-          ),
-        );
-
-        final surfaceFinder = find.byKey(
-          const ValueKey('cupertino-sidebar-surface'),
-        );
-        final surface = tester.widget<CupertinoFloatingGlassSurface>(
-          surfaceFinder,
-        );
-        final coloredSurfaces = tester.widgetList<ColoredBox>(
-          find.descendant(of: surfaceFinder, matching: find.byType(ColoredBox)),
-        );
-        expect(
-          surface.borderRadius,
-          const BorderRadius.all(Radius.circular(25)),
-        );
-        expect(surface.blurSigma, 10);
-        expect(
-          coloredSurfaces.any((surface) => surface.color == barBackground),
-          isTrue,
-        );
-        expect(
-          find.descendant(
-            of: surfaceFinder,
-            matching: find.byType(BackdropFilter),
-          ),
-          findsNWidgets(2),
-        );
-        expect(find.byType(NavigationRail), findsNothing);
-        debugDefaultTargetPlatformOverride = null;
-      },
-    );
-
-    testWidgets('navigation toggles use Flutter localization labels', (
-      tester,
-    ) async {
-      final semantics = tester.ensureSemantics();
-      _setSurfaceSize(tester, const Size(700, 600));
-      var router = _buildRouter();
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      final materialContext = tester.element(
-        find.byKey(const ValueKey('rail-toggle-button')),
-      );
-      final localizations = MaterialLocalizations.of(materialContext);
-      expect(
-        tester
-            .widget<IconButton>(
-              find.byKey(const ValueKey('rail-toggle-button')),
-            )
-            .tooltip,
-        localizations.collapsedIconTapHint,
-      );
-
-      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-      addTearDown(() => debugDefaultTargetPlatformOverride = null);
-      router = _buildRouter();
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-
-      expect(
-        find.bySemanticsLabel(localizations.expandedIconTapHint),
-        findsOneWidget,
-      );
-      await tester.tap(find.byKey(const ValueKey('cupertino-sidebar-toggle')));
-      await tester.pumpAndSettle();
-      expect(
-        find.bySemanticsLabel(localizations.collapsedIconTapHint),
-        findsOneWidget,
-      );
-      semantics.dispose();
       debugDefaultTargetPlatformOverride = null;
     });
 

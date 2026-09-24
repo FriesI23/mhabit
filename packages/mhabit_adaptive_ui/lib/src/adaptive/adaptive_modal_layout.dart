@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-import 'adaptive_sheet.dart' show AdaptiveModalSize;
+import 'adaptive_sheet.dart';
 
 /// The route presentation used to display adaptive modal content.
 enum AdaptiveModalPresentation { sheet, dialog }

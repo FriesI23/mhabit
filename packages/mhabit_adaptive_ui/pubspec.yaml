@@ -13,6 +13,8 @@ dependencies:
   copy_with_extension: ^17.0.0
   flutter:
     sdk: flutter
+  flutter_adaptive_sidebar:
+    path: ../../../flutter_adaptive_sidebar
   ios_window_control_layout: ^0.5.0
   sliver_tools: ^0.2.9
 

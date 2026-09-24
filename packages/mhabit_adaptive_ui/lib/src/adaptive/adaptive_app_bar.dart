@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
 import '../adaptive_style.dart';
-import '../shell/navigation_sidebar_app_bar_leading.dart';
+import '../shell/sidebar_adapter.dart';
 import '../window_control/cupertino_navigation_bar.dart';
 import '../window_control/material_app_bar.dart';
 
@@ -131,7 +132,7 @@ class CupertinoAdaptiveAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidebarLeading = NavigationSidebarAppBarLeading.maybeOf(context);
+    final sidebarLeading = SidebarLeadingScope.maybeOf(context);
     final effectiveLeading = sidebarLeading == null && leading == null
         ? null
         : Row(
@@ -141,7 +142,7 @@ class CupertinoAdaptiveAppBar extends StatelessWidget {
                 SizedBox(
                   key: const ValueKey('cupertino-sidebar-leading-anchor'),
                   width: sidebarLeading.reservedExtent,
-                  height: NavigationSidebarAppBarLeading.buttonExtent,
+                  height: SidebarLeadingScope.buttonExtent,
                 ),
               ?leading,
             ],
@@ -158,7 +159,9 @@ class CupertinoAdaptiveAppBar extends StatelessWidget {
       backgroundColor: CupertinoColors.transparent,
       automaticBackgroundVisibility: automaticBackgroundVisibility,
       transitionBetweenRoutes: false,
-      windowControlAvoidance: sidebarLeading?.toolbarAvoidance,
+      windowControlAvoidance: context.sidebarToolbarAvoidance(
+        sidebarLeading: sidebarLeading,
+      ),
     );
   }
 }

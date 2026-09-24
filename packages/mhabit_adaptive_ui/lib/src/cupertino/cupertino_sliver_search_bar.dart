@@ -3,11 +3,12 @@ import 'dart:math' as math;
 import 'package:adaptive_actions/cupertino.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Easing;
+import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
 import '../adaptive/adaptive_app_bar_actions.dart';
 import '../breakpoints/breakpoints.dart';
 import '../breakpoints/window_size_class.dart';
-import '../shell/navigation_sidebar_app_bar_leading.dart';
+import '../shell/sidebar_adapter.dart';
 import '../window_control/cupertino_navigation_bar.dart';
 import '../window_control/toolbar_geometry.dart';
 import 'cupertino_toolbar_padding.dart';
@@ -175,7 +176,7 @@ class _CupertinoSliverSearchBarState<T extends Object>
 
   @override
   Widget build(BuildContext context) {
-    final sidebarLeading = NavigationSidebarAppBarLeading.maybeOf(context);
+    final sidebarLeading = SidebarLeadingScope.maybeOf(context);
     final screenWidth = MediaQuery.sizeOf(context).width;
     final widthClass = Breakpoints.of(context).widthClass(screenWidth);
     final isCompact = !(widthClass >= WindowSizeClass.medium);
@@ -317,7 +318,7 @@ class _CupertinoSearchToolbar<T extends Object> extends StatelessWidget {
   final bool showTitle;
   final bool centerTitle;
   final bool preferPersistentSearch;
-  final NavigationSidebarAppBarLeading? sidebarLeading;
+  final SidebarLeadingScope? sidebarLeading;
   final Widget? leading;
   final ActionCollection<T> collection;
   final AdaptiveAppBarActionCallback<T> onInvoke;
@@ -364,7 +365,9 @@ class _CupertinoSearchToolbar<T extends Object> extends StatelessWidget {
     final sidebarLeading = this.sidebarLeading;
     final insets = WindowControlToolbarGeometry.resolve(
       context,
-      avoidance: sidebarLeading?.toolbarAvoidance,
+      avoidance: context.sidebarToolbarAvoidance(
+        sidebarLeading: sidebarLeading,
+      ),
       edgePadding: contentPadding,
     ).cupertinoInsets;
     return Padding(
@@ -495,7 +498,7 @@ class _CupertinoSearchToolbarLeading extends StatelessWidget {
     required this.itemExtent,
   });
 
-  final NavigationSidebarAppBarLeading? sidebarLeading;
+  final SidebarLeadingScope? sidebarLeading;
   final Widget? leading;
   final double itemExtent;
 

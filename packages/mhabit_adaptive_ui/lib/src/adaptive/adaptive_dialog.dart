@@ -1,13 +1,9 @@
-import 'package:flutter/cupertino.dart' show showCupertinoDialog;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../adaptive_style.dart';
 import '../cupertino/cupertino_adaptive_dialog.dart';
 import '../material/material_adaptive_dialog.dart';
-
-export '../cupertino/cupertino_adaptive_dialog.dart'
-    show CupertinoAdaptiveDialog;
-export '../material/material_adaptive_dialog.dart' show MaterialAdaptiveDialog;
 
 /// Opens a standard centered dialog, without sheet or drag behavior.
 ///

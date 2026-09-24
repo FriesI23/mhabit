@@ -1,8 +1,6 @@
 import 'dart:ui' show DisplayFeature;
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart'
-    show BuildContext, MediaQuery, Size, Theme;
+import 'package:flutter/material.dart';
 
 /// The device environment for adaptive decisions: window geometry, platform
 /// and display features.

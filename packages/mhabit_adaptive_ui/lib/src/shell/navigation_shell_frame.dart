@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart' show ValueListenable;
-import 'package:flutter/gestures.dart' show kMinFlingVelocity, kTouchSlop;
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../breakpoints/window_size_class.dart';

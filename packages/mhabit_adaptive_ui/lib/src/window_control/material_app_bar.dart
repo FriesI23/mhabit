@@ -1,8 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
-import '../shell/navigation_sidebar_app_bar_leading.dart';
+import '../shell/sidebar_adapter.dart';
 import 'toolbar_geometry.dart';
 
 /// A Material [AppBar] whose leading and action slots avoid window controls.
@@ -587,7 +588,7 @@ _MaterialToolbarSlots _resolveMaterialToolbarSlots(
   required EdgeInsets? avoidance,
   required EdgeInsetsDirectional edgePadding,
 }) {
-  final sidebarLeading = NavigationSidebarAppBarLeading.maybeOf(context);
+  final sidebarLeading = SidebarLeadingScope.maybeOf(context);
   final effectiveEdgePadding = sidebarLeading == null
       ? edgePadding
       : EdgeInsetsDirectional.fromSTEB(
@@ -598,7 +599,10 @@ _MaterialToolbarSlots _resolveMaterialToolbarSlots(
         );
   final geometry = WindowControlToolbarGeometry.resolve(
     context,
-    avoidance: avoidance ?? sidebarLeading?.toolbarAvoidance,
+    avoidance: context.sidebarToolbarAvoidance(
+      sidebarLeading: sidebarLeading,
+      override: avoidance,
+    ),
     edgePadding: effectiveEdgePadding,
   );
   final startInset = geometry.materialStartInset;
@@ -650,7 +654,7 @@ _MaterialToolbarSlots _resolveMaterialToolbarSlots(
         SizedBox(
           key: const ValueKey('cupertino-sidebar-leading-anchor'),
           width: sidebarExtent,
-          height: NavigationSidebarAppBarLeading.buttonExtent,
+          height: SidebarLeadingScope.buttonExtent,
         ),
         if (effectiveLeading case final effectiveLeading?)
           SizedBox(width: baseLeadingWidth, child: effectiveLeading),

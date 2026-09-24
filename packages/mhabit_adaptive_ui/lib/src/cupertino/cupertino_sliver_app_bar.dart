@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
 import '../breakpoints/window_size_class.dart';
-import '../shell/navigation_sidebar_app_bar_leading.dart';
+import '../shell/sidebar_adapter.dart';
 import '../window_control/cupertino_navigation_bar.dart';
 import '../window_control/toolbar_geometry.dart';
 import 'app_bar_apple_style.dart';
@@ -45,7 +46,7 @@ class CupertinoSliverAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidebarLeading = NavigationSidebarAppBarLeading.maybeOf(context);
+    final sidebarLeading = SidebarLeadingScope.maybeOf(context);
     final hasLeading =
         sidebarLeading != null || leading != null || onLeadingPressed != null;
     final effectiveLeading = hasLeading
@@ -56,8 +57,10 @@ class CupertinoSliverAppBar extends StatelessWidget {
           )
         : null;
     final effectiveTrailing = _effectiveTrailing(actions);
-    final effectiveWindowControlAvoidance =
-        windowControlAvoidance ?? sidebarLeading?.toolbarAvoidance;
+    final effectiveWindowControlAvoidance = context.sidebarToolbarAvoidance(
+      sidebarLeading: sidebarLeading,
+      override: windowControlAvoidance,
+    );
     final height = this.height;
     if (height != null) {
       return _FixedCupertinoSliverAppBar(
@@ -100,7 +103,7 @@ class _CupertinoSliverAppBarLeading extends StatelessWidget {
     required this.onLeadingPressed,
   });
 
-  final NavigationSidebarAppBarLeading? sidebarLeading;
+  final SidebarLeadingScope? sidebarLeading;
   final Widget? leading;
   final VoidCallback? onLeadingPressed;
 
@@ -123,7 +126,7 @@ class _CupertinoSliverAppBarLeading extends StatelessWidget {
           SizedBox(
             key: const ValueKey('cupertino-sidebar-leading-anchor'),
             width: sidebarLeading.reservedExtent,
-            height: NavigationSidebarAppBarLeading.buttonExtent,
+            height: SidebarLeadingScope.buttonExtent,
           ),
         ?leading,
       ],

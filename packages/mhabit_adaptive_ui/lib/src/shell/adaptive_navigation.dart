@@ -1,22 +1,14 @@
 import 'package:flutter/material.dart' show MaterialLocalizations;
 import 'package:flutter/widgets.dart';
+import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
+    hide AdaptiveNavigationDestination, NavigationDestinationIcons;
 
 import '../adaptive/adaptive_navigation_destination.dart';
 import '../adaptive_style.dart';
-import '../cupertino/cupertino_adaptive_navigation_bar.dart'
-    show AppleNavigationBarStyle;
-import '../cupertino/cupertino_navigation_primary_action.dart'
-    show CupertinoNavigationPrimaryAction;
+import '../cupertino/cupertino_adaptive_navigation_bar.dart';
+import '../cupertino/cupertino_navigation_primary_action.dart';
 import '../cupertino/cupertino_navigation_shell.dart';
-import '../material/material_navigation_rail.dart'
-    show MaterialNavigationRailStyle;
 import '../material/material_navigation_shell.dart';
-import 'side_navigation.dart';
-
-export '../material/material_navigation_rail.dart'
-    show MaterialNavigationRailStyle;
-export 'side_navigation.dart'
-    show SideNavigationDragHandleBuilder, SideNavigationExtent;
 
 /// Adaptive navigation chrome around [child].
 ///

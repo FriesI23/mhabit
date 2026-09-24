@@ -1,9 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
-import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_navigation_sidebar.dart';
-import 'package:mhabit_adaptive_ui/src/shell/navigation_sidebar_app_bar_leading.dart';
 
 Widget _host({required Widget appBar, TargetPlatform? platform}) => MaterialApp(
   theme: platform == null ? null : ThemeData(platform: platform),
@@ -12,16 +11,10 @@ Widget _host({required Widget appBar, TargetPlatform? platform}) => MaterialApp(
 
 Widget _sidebarHost({required Widget child}) => MaterialApp(
   theme: ThemeData(platform: TargetPlatform.iOS),
-  home: CupertinoNavigationSidebar(
-    form: NavigationShellForm.constrainedSide,
-    selectedIndex: 0,
-    destinations: const [],
-    onDestinationSelected: (_) {},
-    auxiliaryDestinations: const [],
-    selectedAuxiliaryIndex: null,
-    onAuxiliaryDestinationSelected: null,
-    sideNavigationExtent: const SideNavigationExtent(224),
-    dragHandleBuilder: null,
+  home: CupertinoSidebar(
+    controller: AdaptiveNavigationController(),
+    content: const SizedBox.shrink(),
+    extent: const SideNavigationExtent(224),
     child: child,
   ),
 );
@@ -147,7 +140,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(platform: TargetPlatform.iOS),
-        home: const NavigationSidebarAppBarLeading(
+        home: const SidebarLeadingScope(
           toolbarAvoidance: EdgeInsets.zero,
           progress: 1,
           child: Scaffold(

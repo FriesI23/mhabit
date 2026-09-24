@@ -1,8 +1,5 @@
-import 'package:flutter/cupertino.dart'
-    show CupertinoButton, CupertinoButtonSize;
-import 'package:flutter/material.dart' show IconButton, Tooltip;
-import 'package:flutter/widgets.dart'
-    show BuildContext, EdgeInsets, Size, StatelessWidget, VoidCallback, Widget;
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import '../adaptive_style.dart';
 

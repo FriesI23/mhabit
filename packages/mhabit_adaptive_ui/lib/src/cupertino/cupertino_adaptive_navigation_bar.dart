@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart';
 
 import '../adaptive/adaptive_navigation_destination.dart';
 import 'cupertino_floating_surface.dart';
