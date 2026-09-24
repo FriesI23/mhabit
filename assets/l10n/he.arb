@@ -1512,5 +1512,38 @@
     "habitDisplay_groupType_manual": "ידני",
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
-    }
+    },
+    "common_listSeparator": "‏, ",
+    "@common_listSeparator": {
+        "description": "Separator used between items in compact localized lists."
+    },
+    "habitDisplay_statisticsAction_label": "סטטיסטיקה",
+    "habitDisplay_displayFilterAction_label": "סינון התצוגה",
+    "appSetting_appThemeModeTile_titleText": "סגנון עיצוב",
+    "appSetting_changeLanguageDialog_currentLanguage_text": "השפה הנוכחית: {localeName}",
+    "@appSetting_changeLanguageDialog_currentLanguage_text": {
+        "placeholders": {
+            "localeName": {
+                "type": "String",
+                "example": "English"
+            }
+        }
+    },
+    "appDateFormat_leadingZero_text": "מחיקת אפסים מיותרים",
+    "appDateFormat_preview_text": "תצוגה מקדימה",
+    "groupManage_createButton_tooltip": "יצירת קבוצה",
+    "@groupManage_createButton_tooltip": {
+        "description": "Tooltip for the create group action"
+    },
+    "confirmDialog_confirmAndSkip_text": "{action}, ולא לשאול שוב",
+    "@confirmDialog_confirmAndSkip_text": {
+        "description": "Button that performs the named action now and skips this confirmation in future.",
+        "placeholders": {
+            "action": {
+                "type": "String",
+                "example": "Save"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_previewTitle": "תצוגה מקדימה"
 }
