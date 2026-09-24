@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
+import '../../common/app_info.dart';
 import '../../models/app_entry.dart';
 import '../../providers/app_ui/app_launch_entry.dart';
 import '../../routes/app_navigation_branch.dart';
@@ -188,6 +189,9 @@ class _AppNavigationShellChrome extends StatelessWidget {
                   },
             appleBarStyle: const AppleNavigationBarStyle(
               expandedNavigationWidth: 220.0,
+            ),
+            appleSidebarStyle: AppleSidebarStyle.from(
+              AppInfo().iosSystemVersion,
             ),
             destinations: [
               AppNavigationDestinations.habits(

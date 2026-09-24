@@ -667,6 +667,12 @@ void main() {
         );
 
     await tester.pumpWidget(buildApp(firstCoordinator));
+    expect(
+      tester
+          .widget<AdaptiveNavigationShell>(find.byType(AdaptiveNavigationShell))
+          .appleSidebarStyle,
+      AppleSidebarStyle.inset,
+    );
     firstCoordinator.selectIndex(1);
     await tester.pump();
     expect(launchEntry.entries, [AppEntrys.habitToday]);

@@ -12,6 +12,8 @@ import 'package:flutter/cupertino.dart'
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
+    show CupertinoSidebar, CupertinoSidebarStyle;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
@@ -3221,6 +3223,268 @@ void main() {
       await gesture.up();
       await tester.pumpAndSettle();
     });
+
+    testWidgets('apple Sidebar style defaults to inset and selects edge', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      _setSurfaceSize(tester, const Size(700, 600));
+      const destinations = [
+        AdaptiveNavigationDestination(
+          label: 'Habits',
+          icons: NavigationDestinationIcons(
+            material: Icon(Icons.home_outlined),
+            materialSelected: Icon(Icons.home),
+            apple: Icon(CupertinoIcons.home),
+            appleSelected: Icon(CupertinoIcons.house_fill),
+          ),
+        ),
+      ];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AdaptiveNavigationShell(
+            selectedIndex: 0,
+            destinations: destinations,
+            onDestinationSelected: (_) {},
+            child: const SizedBox(),
+          ),
+        ),
+      );
+
+      CupertinoSidebar sidebar() =>
+          tester.widget<CupertinoSidebar>(find.byType(CupertinoSidebar));
+      expect(sidebar().style, CupertinoSidebarStyle.liquid);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AdaptiveNavigationShell(
+            selectedIndex: 0,
+            destinations: destinations,
+            onDestinationSelected: (_) {},
+            appleSidebarStyle: AppleSidebarStyle.inset,
+            child: const SizedBox(),
+          ),
+        ),
+      );
+      expect(sidebar().style, CupertinoSidebarStyle.liquid);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AdaptiveNavigationShell(
+            selectedIndex: 0,
+            destinations: destinations,
+            onDestinationSelected: (_) {},
+            appleSidebarStyle: AppleSidebarStyle.edge,
+            child: const SizedBox(),
+          ),
+        ),
+      );
+      expect(sidebar().style, CupertinoSidebarStyle.liquidEdge);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('compact Apple navigation ignores edge Sidebar style', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      _setSurfaceSize(tester, const Size(599, 600));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AdaptiveNavigationShell(
+            selectedIndex: 0,
+            destinations: const [
+              AdaptiveNavigationDestination(
+                label: 'Habits',
+                icons: NavigationDestinationIcons(
+                  material: Icon(Icons.home_outlined),
+                  materialSelected: Icon(Icons.home),
+                  apple: Icon(CupertinoIcons.home),
+                  appleSelected: Icon(CupertinoIcons.house_fill),
+                ),
+              ),
+            ],
+            onDestinationSelected: (_) {},
+            appleSidebarStyle: AppleSidebarStyle.edge,
+            child: const SizedBox(),
+          ),
+        ),
+      );
+
+      expect(find.byType(CupertinoSidebar), findsNothing);
+      expect(
+        find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
+        findsOneWidget,
+      );
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets(
+      'switching Apple Sidebar style preserves width visibility and branch',
+      (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+        _setSurfaceSize(tester, const Size(1000, 600));
+        final style = ValueNotifier(AppleSidebarStyle.inset);
+        addTearDown(style.dispose);
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: ValueListenableBuilder<AppleSidebarStyle>(
+              valueListenable: style,
+              builder: (context, value, child) => AdaptiveNavigationShell(
+                selectedIndex: 1,
+                destinations: const [
+                  AdaptiveNavigationDestination(
+                    label: 'Habits',
+                    icons: NavigationDestinationIcons(
+                      material: Icon(Icons.home_outlined),
+                      materialSelected: Icon(Icons.home),
+                      apple: Icon(CupertinoIcons.home),
+                      appleSelected: Icon(CupertinoIcons.house_fill),
+                    ),
+                  ),
+                  AdaptiveNavigationDestination(
+                    label: 'Today',
+                    icons: NavigationDestinationIcons(
+                      material: Icon(Icons.today_outlined),
+                      materialSelected: Icon(Icons.today),
+                      apple: Icon(CupertinoIcons.today),
+                      appleSelected: Icon(CupertinoIcons.today),
+                    ),
+                  ),
+                ],
+                onDestinationSelected: (_) {},
+                appleSidebarStyle: value,
+                child: child!,
+              ),
+              child: const _StatefulBranchProbe(),
+            ),
+          ),
+        );
+
+        await tester.tap(find.text('branch count 0'));
+        await tester.pump();
+        final branchState = tester.state<_StatefulBranchProbeState>(
+          find.byType(_StatefulBranchProbe),
+        );
+        final resizeHandle = find.byKey(
+          const ValueKey('cupertino-sidebar-resize-handle'),
+        );
+        await tester.drag(resizeHandle, const Offset(30, 0));
+        await tester.pumpAndSettle();
+        final resizedWidth = tester
+            .getSize(find.byKey(const ValueKey('cupertino-sidebar-panel')))
+            .width;
+
+        await tester.tap(
+          find.byKey(const ValueKey('cupertino-sidebar-toggle')),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-panel')),
+          findsNothing,
+        );
+
+        style.value = AppleSidebarStyle.edge;
+        await tester.pumpAndSettle();
+
+        expect(
+          tester.widget<CupertinoSidebar>(find.byType(CupertinoSidebar)).style,
+          CupertinoSidebarStyle.liquidEdge,
+        );
+        expect(
+          tester.state<_StatefulBranchProbeState>(
+            find.byType(_StatefulBranchProbe),
+          ),
+          same(branchState),
+        );
+        expect(find.text('branch count 1'), findsOneWidget);
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-panel')),
+          findsNothing,
+        );
+
+        await tester.tap(
+          find.byKey(const ValueKey('cupertino-sidebar-toggle')),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          tester
+              .getSize(find.byKey(const ValueKey('cupertino-sidebar-panel')))
+              .width,
+          resizedWidth,
+        );
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-destination-1')),
+          findsOneWidget,
+        );
+        debugDefaultTargetPlatformOverride = null;
+      },
+    );
+
+    for (final direction in TextDirection.values) {
+      testWidgets(
+        'Apple Sidebar styles keep $direction branch obstruction unchanged',
+        (tester) async {
+          debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+          addTearDown(() => debugDefaultTargetPlatformOverride = null);
+          tester.view.padding = const FakeViewPadding(left: 44, right: 20);
+          tester.view.viewPadding = const FakeViewPadding(left: 50, right: 30);
+          _setSurfaceSize(tester, const Size(700, 600));
+          final style = ValueNotifier(AppleSidebarStyle.inset);
+          addTearDown(style.dispose);
+
+          await tester.pumpWidget(
+            MaterialApp(
+              home: Directionality(
+                textDirection: direction,
+                child: ValueListenableBuilder<AppleSidebarStyle>(
+                  valueListenable: style,
+                  builder: (context, value, child) => AdaptiveNavigationShell(
+                    selectedIndex: 0,
+                    destinations: const [
+                      AdaptiveNavigationDestination(
+                        label: 'Habits',
+                        icons: NavigationDestinationIcons(
+                          material: Icon(Icons.home_outlined),
+                          materialSelected: Icon(Icons.home),
+                          apple: Icon(CupertinoIcons.home),
+                          appleSelected: Icon(CupertinoIcons.house_fill),
+                        ),
+                      ),
+                    ],
+                    onDestinationSelected: (_) {},
+                    appleSidebarStyle: value,
+                    child: child!,
+                  ),
+                  child: const _BranchInsetsProbe(),
+                ),
+              ),
+            ),
+          );
+
+          Size padding() => tester.getSize(
+            find.byKey(const ValueKey('branch-horizontal-padding')),
+          );
+          Size viewPadding() => tester.getSize(
+            find.byKey(const ValueKey('branch-horizontal-view-padding')),
+          );
+          final insetPadding = padding();
+          final insetViewPadding = viewPadding();
+
+          style.value = AppleSidebarStyle.edge;
+          await tester.pumpAndSettle();
+
+          expect(padding(), insetPadding);
+          expect(viewPadding(), insetViewPadding);
+          debugDefaultTargetPlatformOverride = null;
+        },
+      );
+    }
 
     testWidgets('apple boundaries use beside Sidebar from medium upward', (
       tester,

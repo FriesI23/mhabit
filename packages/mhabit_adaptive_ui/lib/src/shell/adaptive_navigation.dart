@@ -5,6 +5,7 @@ import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
 
 import '../adaptive/adaptive_navigation_destination.dart';
 import '../adaptive_style.dart';
+import '../cupertino/apple_sidebar_style.dart';
 import '../cupertino/cupertino_adaptive_navigation_bar.dart';
 import '../cupertino/cupertino_navigation_primary_action.dart';
 import '../cupertino/cupertino_navigation_shell.dart';
@@ -48,6 +49,7 @@ class AdaptiveNavigationShell extends StatefulWidget {
     this.materialRailStyle = const MaterialNavigationRailStyle(),
     this.sideNavigationDragHandleBuilder,
     this.appleBarStyle = const AppleNavigationBarStyle(),
+    this.appleSidebarStyle = AppleSidebarStyle.inset,
   });
 
   /// Content displayed beside or underneath the navigation chrome.
@@ -105,6 +107,11 @@ class AdaptiveNavigationShell extends StatefulWidget {
 
   /// Apple compact navigation-bar geometry and spacing.
   final AppleNavigationBarStyle appleBarStyle;
+
+  /// Visual treatment for Apple side-navigation forms.
+  ///
+  /// Compact Apple navigation ignores this value and keeps using its Tab Bar.
+  final AppleSidebarStyle appleSidebarStyle;
 
   @override
   State<AdaptiveNavigationShell> createState() =>
@@ -170,6 +177,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
         sideNavigationExtent: widget.sideNavigationExtent,
         dragHandleBuilder: widget.sideNavigationDragHandleBuilder,
         appleBarStyle: widget.appleBarStyle,
+        sidebarStyle: widget.appleSidebarStyle,
         child: child,
       ),
     };

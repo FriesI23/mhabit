@@ -34,6 +34,10 @@ void main() {
     });
   });
 
+  test('iOS system version is null before initialization', () {
+    expect(AppInfo().iosSystemVersion, isNull);
+  });
+
   group('AppInfo.changelogVersion', () {
     test('returns "version+buildNumber" format after init', () async {
       PackageInfo.setMockInitialValues(

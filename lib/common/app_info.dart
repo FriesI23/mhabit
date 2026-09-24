@@ -17,6 +17,8 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' hide appFlavor;
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart'
+    show IosSystemVersion;
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../utils/app_path_provider.dart';
@@ -54,6 +56,7 @@ class AppInfo implements AsyncInitialization {
 
   AndroidBuildVersion? _androidBuildVersion;
   String? _iosMachineIdentifier;
+  IosSystemVersion? _iosSystemVersion;
   LinuxPlatformArchitecture? _linuxArchitecture;
   late String _packageName;
   late String _appName;
@@ -87,6 +90,9 @@ class AppInfo implements AsyncInitialization {
 
   LinuxPlatformArchitecture? get linuxArchitecture => _linuxArchitecture;
 
+  /// The current iOS or iPadOS version, when initialized successfully.
+  IosSystemVersion? get iosSystemVersion => _iosSystemVersion;
+
   /// Whether the current device is a known rectangular-screen iPhone.
   bool get usesRectangularIPhoneDisplay =>
       _iosMachineIdentifier != null &&
@@ -94,6 +100,7 @@ class AppInfo implements AsyncInitialization {
 
   @override
   Future<void> init() async {
+    _iosSystemVersion = null;
     final deviceInfo = DeviceInfoPlugin();
     if (Platform.isAndroid) {
       final androidInfo = await deviceInfo.androidInfo;
@@ -101,6 +108,7 @@ class AppInfo implements AsyncInitialization {
     } else if (Platform.isIOS) {
       final iosInfo = await deviceInfo.iosInfo;
       _iosMachineIdentifier = iosInfo.utsname.machine;
+      _iosSystemVersion = IosSystemVersion.tryParse(iosInfo.systemVersion);
     } else if (Platform.isLinux) {
       final result = await Process.run('uname', ['-m']);
       _linuxArchitecture = result.stdout.toString().contains('aarch64')

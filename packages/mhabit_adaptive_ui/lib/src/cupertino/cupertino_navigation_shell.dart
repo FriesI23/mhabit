@@ -10,6 +10,7 @@ import '../shell/navigation_shell_form.dart';
 import '../shell/navigation_shell_frame.dart';
 import '../shell/sidebar_adapter.dart';
 import '../window_control/window_control_layout.dart';
+import 'apple_sidebar_style.dart';
 import 'cupertino_adaptive_navigation_bar.dart';
 import 'cupertino_floating_surface.dart';
 import 'cupertino_navigation_primary_action.dart';
@@ -48,6 +49,7 @@ class CupertinoNavigationShell extends StatefulWidget {
     required this.sideNavigationExtent,
     required this.dragHandleBuilder,
     required this.appleBarStyle,
+    required this.sidebarStyle,
     this.expandNavigationLabel,
     this.collapseNavigationLabel,
   });
@@ -84,6 +86,9 @@ class CupertinoNavigationShell extends StatefulWidget {
 
   /// Geometry and spacing for the compact Apple navigation bar.
   final AppleNavigationBarStyle appleBarStyle;
+
+  /// Visual treatment for the medium-and-larger Sidebar.
+  final AppleSidebarStyle sidebarStyle;
 
   /// Localized action label used when the Sidebar can be shown.
   ///
@@ -166,16 +171,16 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
           onDestinationSelected: onSelected,
           onAuxiliaryDestinationSelected: widget.onAuxiliaryDestinationSelected,
         );
-        return NavigationObstructionScope(
-          obstruction: context.sidebarNavigationObstruction,
-          child: CupertinoSidebar(
+        final sidebarContent = CupertinoSidebarNavigation(
+          destinations: adapter.destinations,
+          selection: adapter.selection,
+          onSelectionChanged: adapter.select,
+          auxiliaryDestinations: adapter.auxiliaryDestinations,
+        );
+        final sidebar = switch (widget.sidebarStyle) {
+          AppleSidebarStyle.inset => CupertinoSidebar(
             controller: _controller,
-            content: CupertinoSidebarNavigation(
-              destinations: adapter.destinations,
-              selection: adapter.selection,
-              onSelectionChanged: adapter.select,
-              auxiliaryDestinations: adapter.auxiliaryDestinations,
-            ),
+            content: sidebarContent,
             extent: widget.sideNavigationExtent,
             dragHandleBuilder: widget.dragHandleBuilder,
             expandLabel: widget.expandNavigationLabel,
@@ -183,6 +188,20 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
             scaffoldBackgroundColor: scaffoldBackground,
             child: child,
           ),
+          AppleSidebarStyle.edge => CupertinoSidebar.edge(
+            controller: _controller,
+            content: sidebarContent,
+            extent: widget.sideNavigationExtent,
+            dragHandleBuilder: widget.dragHandleBuilder,
+            expandLabel: widget.expandNavigationLabel,
+            collapseLabel: widget.collapseNavigationLabel,
+            scaffoldBackgroundColor: scaffoldBackground,
+            child: child,
+          ),
+        };
+        return NavigationObstructionScope(
+          obstruction: context.sidebarNavigationObstruction,
+          child: sidebar,
         );
       },
       windowControlOwnerResolver: _resolveWindowControlOwner,

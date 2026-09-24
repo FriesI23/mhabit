@@ -30,6 +30,7 @@ export 'src/breakpoints/device_context.dart';
 export 'src/breakpoints/window_size_class.dart';
 export 'src/cupertino/app_bar_apple_style.dart'
     show $AppBarAppleStyleCopyWith, AppBarAppleStyle;
+export 'src/cupertino/apple_sidebar_style.dart' show AppleSidebarStyle;
 export 'src/cupertino/cupertino_adaptive_dialog.dart'
     show CupertinoAdaptiveDialog;
 export 'src/cupertino/cupertino_adaptive_modal.dart'
@@ -55,6 +56,7 @@ export 'src/material/material_navigation_bar.dart'
 export 'src/material/material_navigation_shell.dart'
     show MaterialNavigationRailStyle;
 export 'src/material/material_sliver_search_bar.dart';
+export 'src/platform/ios_system_version.dart';
 export 'src/shell/adaptive_branch_route_observer.dart';
 export 'src/shell/adaptive_nav_scope.dart';
 export 'src/shell/adaptive_nav_visibility.dart';
