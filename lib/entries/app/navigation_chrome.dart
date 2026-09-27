@@ -17,6 +17,7 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../l10n/localizations.dart';
+import '../../pages/common/widgets.dart';
 import '../../providers/app_ui/app_theme.dart';
 import '../../routes/app_navigation_branch.dart';
 import '../../theme/color.dart';
@@ -50,20 +51,11 @@ final class AppNavigationAuxiliaryChrome {
       AppThemeType.unknown ||
       AppThemeType.followSystem => l10n.common_appThemeMode_followSystem,
     };
-    final icon = Icon(switch (themeType) {
-      AppThemeType.light => Icons.light_mode_rounded,
-      AppThemeType.dark => Icons.dark_mode_rounded,
-      AppThemeType.unknown ||
-      AppThemeType.followSystem => Icons.hdr_auto_rounded,
-    });
     return AppNavigationAuxiliaryChrome(
       destination: AdaptiveNavigationDestination(
         label: label,
-        icons: NavigationDestinationIcons(
-          material: icon,
-          materialSelected: icon,
-          apple: icon,
-          appleSelected: icon,
+        icons: NavigationDestinationIcons.union(
+          AppThemeModeIcon(themeType: themeType),
         ),
       ),
       selected: false,

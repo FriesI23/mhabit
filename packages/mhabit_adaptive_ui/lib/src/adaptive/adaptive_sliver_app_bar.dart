@@ -7,11 +7,6 @@ import '../cupertino/cupertino_sliver_app_bar.dart';
 import '../material/app_bar_material_style.dart';
 import '../material/material_sliver_app_bar.dart';
 
-export '../cupertino/app_bar_apple_style.dart'
-    show $AppBarAppleStyleCopyWith, AppBarAppleStyle;
-export '../material/app_bar_material_style.dart'
-    show $AppBarMaterialStyleCopyWith, AppBarMaterialStyle;
-
 part 'adaptive_sliver_app_bar.g.dart';
 
 const List<Widget> _kDefaultActions = <Widget>[];

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/app_adaptive_style_mode.dart';
+import 'package:mhabit/models/app_apple_sidebar_style_mode.dart';
 import 'package:mhabit/pages/app_settings/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
@@ -17,12 +18,14 @@ void main() {
       addTearDown(tester.view.reset);
       var mode = AppAdaptiveStyleMode.automatic;
       TextDirection? direction;
+      var sidebarMode = AppAppleSidebarStyleMode.automatic;
       var debug = false;
       var active = true;
       var enabled = true;
       var debugCalls = 0;
       var modeCalls = 0;
       var directionCalls = 0;
+      var sidebarModeCalls = 0;
       var exportCalls = 0;
       var clearCalls = 0;
       late StateSetter update;
@@ -52,6 +55,7 @@ void main() {
                         isInDevelopMode: active,
                         isDisplayDebugMenuSelect: debug,
                         adaptiveStyleMode: mode,
+                        appleSidebarStyleMode: sidebarMode,
                         textDirectionOverride: direction,
                         onDisplayDebugMenuSelectChanged: enabled
                             ? (value) => setState(() {
@@ -69,6 +73,12 @@ void main() {
                             ? (value) => setState(() {
                                 direction = value;
                                 directionCalls++;
+                              })
+                            : null,
+                        onAppleSidebarStyleModeChanged: enabled
+                            ? (value) => setState(() {
+                                sidebarMode = value;
+                                sidebarModeCalls++;
                               })
                             : null,
                         onExportDBTilePressed: enabled
@@ -94,7 +104,7 @@ void main() {
             )
             .children
             .length,
-        5,
+        platform == TargetPlatform.android ? 5 : 6,
       );
       await tester.tap(
         find.byType(
@@ -114,7 +124,10 @@ void main() {
       await select('developer-ui-style-control', 'Apple');
       expect(mode, AppAdaptiveStyleMode.apple);
       expect(modeCalls, 1);
-      expect(find.byType(CupertinoMenuAnchor), findsNWidgets(2));
+      expect(find.byType(CupertinoMenuAnchor), findsNWidgets(3));
+      await select('developer-apple-sidebar-style-control', 'OS 27');
+      expect(sidebarMode, AppAppleSidebarStyleMode.os27);
+      expect(sidebarModeCalls, 1);
       await select('developer-ui-style-control', 'Material');
       expect(mode, AppAdaptiveStyleMode.material);
       expect(find.byType(CupertinoMenuAnchor), findsNothing);

@@ -5,11 +5,6 @@ import '../adaptive_style.dart';
 import '../cupertino/cupertino_editable_sliver_app_bar.dart';
 import '../material/material_editable_sliver_app_bar.dart';
 
-export '../cupertino/cupertino_editable_sliver_app_bar.dart'
-    show $AppleEditableAppBarStyleCopyWith, AppleEditableAppBarStyle;
-export '../material/material_editable_sliver_app_bar.dart'
-    show $MaterialEditableAppBarStyleCopyWith, MaterialEditableAppBarStyle;
-
 part 'adaptive_editable_sliver_app_bar.g.dart';
 
 /// Per-platform configuration for [AdaptiveEditableSliverAppBar].

@@ -1,18 +1,6 @@
-import 'package:flutter/cupertino.dart'
-    show CupertinoIcons, CupertinoLocalizations;
-import 'package:flutter/material.dart'
-    show BackButton, CloseButton, Color, MaterialLocalizations;
-import 'package:flutter/scheduler.dart' show timeDilation;
-import 'package:flutter/widgets.dart'
-    show
-        BuildContext,
-        Center,
-        Icon,
-        Navigator,
-        RawTooltip,
-        StatelessWidget,
-        VoidCallback,
-        Widget;
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import '../adaptive_style.dart';
 import 'adaptive_icon_button.dart';

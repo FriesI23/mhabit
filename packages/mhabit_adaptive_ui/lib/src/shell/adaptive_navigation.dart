@@ -1,22 +1,15 @@
 import 'package:flutter/material.dart' show MaterialLocalizations;
 import 'package:flutter/widgets.dart';
+import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
+    hide AdaptiveNavigationDestination, NavigationDestinationIcons;
 
 import '../adaptive/adaptive_navigation_destination.dart';
 import '../adaptive_style.dart';
-import '../cupertino/cupertino_adaptive_navigation_bar.dart'
-    show AppleNavigationBarStyle;
-import '../cupertino/cupertino_navigation_primary_action.dart'
-    show CupertinoNavigationPrimaryAction;
+import '../cupertino/apple_sidebar_style.dart';
+import '../cupertino/cupertino_adaptive_navigation_bar.dart';
+import '../cupertino/cupertino_navigation_primary_action.dart';
 import '../cupertino/cupertino_navigation_shell.dart';
-import '../material/material_navigation_rail.dart'
-    show MaterialNavigationRailStyle;
 import '../material/material_navigation_shell.dart';
-import 'side_navigation.dart';
-
-export '../material/material_navigation_rail.dart'
-    show MaterialNavigationRailStyle;
-export 'side_navigation.dart'
-    show SideNavigationDragHandleBuilder, SideNavigationExtent;
 
 /// Adaptive navigation chrome around [child].
 ///
@@ -56,6 +49,7 @@ class AdaptiveNavigationShell extends StatefulWidget {
     this.materialRailStyle = const MaterialNavigationRailStyle(),
     this.sideNavigationDragHandleBuilder,
     this.appleBarStyle = const AppleNavigationBarStyle(),
+    this.appleSidebarStyle = AppleSidebarStyle.inset,
   });
 
   /// Content displayed beside or underneath the navigation chrome.
@@ -113,6 +107,11 @@ class AdaptiveNavigationShell extends StatefulWidget {
 
   /// Apple compact navigation-bar geometry and spacing.
   final AppleNavigationBarStyle appleBarStyle;
+
+  /// Visual treatment for Apple side-navigation forms.
+  ///
+  /// Compact Apple navigation ignores this value and keeps using its Tab Bar.
+  final AppleSidebarStyle appleSidebarStyle;
 
   @override
   State<AdaptiveNavigationShell> createState() =>
@@ -178,6 +177,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
         sideNavigationExtent: widget.sideNavigationExtent,
         dragHandleBuilder: widget.sideNavigationDragHandleBuilder,
         appleBarStyle: widget.appleBarStyle,
+        sidebarStyle: widget.appleSidebarStyle,
         child: child,
       ),
     };

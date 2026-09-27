@@ -16,15 +16,18 @@ import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../models/app_adaptive_style_mode.dart';
+import '../../../models/app_apple_sidebar_style_mode.dart';
 import '../../../widgets/widgets.dart';
 
 class AppSettingDevelopSubGroup extends StatelessWidget {
   final bool isInDevelopMode;
   final bool isDisplayDebugMenuSelect;
   final AppAdaptiveStyleMode adaptiveStyleMode;
+  final AppAppleSidebarStyleMode appleSidebarStyleMode;
   final TextDirection? textDirectionOverride;
   final ValueChanged<bool>? onDisplayDebugMenuSelectChanged;
   final ValueChanged<AppAdaptiveStyleMode>? onAdaptiveStyleModeChanged;
+  final ValueChanged<AppAppleSidebarStyleMode>? onAppleSidebarStyleModeChanged;
   final ValueChanged<TextDirection?>? onTextDirectionOverrideChanged;
   final void Function(BuildContext context)? onExportDBTilePressed;
   final void Function(BuildContext context)? onClearDBTilePressed;
@@ -34,9 +37,11 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
     this.isInDevelopMode = false,
     this.isDisplayDebugMenuSelect = false,
     this.adaptiveStyleMode = AppAdaptiveStyleMode.automatic,
+    this.appleSidebarStyleMode = AppAppleSidebarStyleMode.automatic,
     this.textDirectionOverride,
     this.onDisplayDebugMenuSelectChanged,
     this.onAdaptiveStyleModeChanged,
+    this.onAppleSidebarStyleModeChanged,
     this.onTextDirectionOverrideChanged,
     this.onExportDBTilePressed,
     this.onClearDBTilePressed,
@@ -66,6 +71,18 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
           },
           onChanged: onAdaptiveStyleModeChanged,
         ),
+        if (AdaptiveStyle.of(context) == AdaptiveStyle.apple)
+          _DeveloperChoiceTile<AppAppleSidebarStyleMode>(
+            title: 'Apple Sidebar',
+            controlKey: const ValueKey('developer-apple-sidebar-style-control'),
+            value: appleSidebarStyleMode,
+            labels: const {
+              AppAppleSidebarStyleMode.automatic: 'Automatic',
+              AppAppleSidebarStyleMode.os26: 'OS 26',
+              AppAppleSidebarStyleMode.os27: 'OS 27',
+            },
+            onChanged: onAppleSidebarStyleModeChanged,
+          ),
         _DeveloperChoiceTile<_DeveloperTextDirection>(
           title: 'Text direction',
           controlKey: const ValueKey('developer-text-direction-control'),

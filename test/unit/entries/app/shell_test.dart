@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show Tristate;
 
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/foundation.dart';
@@ -11,6 +12,7 @@ import 'package:mhabit/entries/app/navigation_chrome.dart';
 import 'package:mhabit/entries/app/navigation_destination.dart';
 import 'package:mhabit/entries/app/shell.dart';
 import 'package:mhabit/l10n/localizations.dart';
+import 'package:mhabit/models/app_apple_sidebar_style_mode.dart';
 import 'package:mhabit/models/app_entry.dart';
 import 'package:mhabit/pages/app_debugger/_widgets/debugger_app_bar.dart';
 import 'package:mhabit/pages/app_debugger/page.dart'
@@ -112,6 +114,20 @@ class _StubPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: Center(child: Text(label)));
+  }
+}
+
+class _AppBarStubPage extends StatelessWidget {
+  const _AppBarStubPage(this.label);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AdaptiveAppBar.apple(title: Text(label)),
+      body: Center(child: Text('$label page')),
+    );
   }
 }
 
@@ -273,8 +289,10 @@ class _PrimaryActionRegressionPage extends StatelessWidget {
 GoRouter _buildRouter(
   List<AdaptiveBranchRouteObserver> observers, {
   Widget habitsPage = const _StubPage('habits page'),
+  Widget todayPage = const _StubPage('today page'),
   AppRoute home = AppRoute.habits,
   Widget detailPage = const _StubPage('detail page'),
+  Widget settingsPage = const _StubPage('settings page'),
   Widget? groupManagePage,
   Widget debuggerPage = const _StubPage('debugger page'),
 }) {
@@ -283,8 +301,7 @@ GoRouter _buildRouter(
     BranchRouterBuilder()
       ..addHabits(builder: (_, _) => habitsPage)
       ..addHabitDetail(builder: (_, _) => detailPage),
-    BranchRouterBuilder()
-      ..addToday(builder: (_, _) => const _StubPage('today page')),
+    BranchRouterBuilder()..addToday(builder: (_, _) => todayPage),
   ];
   late final AppNavigationCoordinator coordinator;
   final appFlow = AppFlowRouterBuilder()
@@ -292,7 +309,7 @@ GoRouter _buildRouter(
       settingsBuilder: (context, state) {
         final child = _AppFlowRootStub(
           onRootPop: coordinator.returnToPrimaryBranch,
-          child: const _StubPage('settings page'),
+          child: settingsPage,
         );
         final arguments = <String, String>{
           ...state.pathParameters,
@@ -401,6 +418,14 @@ void _setSurface(WidgetTester tester, Size size) {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = size;
   addTearDown(tester.view.reset);
+}
+
+Future<void> _tapSideDestination(
+  WidgetTester tester,
+  Finder destination,
+) async {
+  final rect = tester.getRect(destination);
+  await tester.tapAt(Offset(rect.center.dx, rect.top + 16));
 }
 
 Page<dynamic> _pageNamed(WidgetTester tester, String name) => tester
@@ -542,7 +567,11 @@ void main() {
               await tester.pumpAndSettle();
               expect(shellAction, findsNothing);
               expect(pageAction, findsOneWidget);
-              expect(tester.takeException(), isNull);
+              expect(
+                tester.takeException(),
+                isNull,
+                reason: 'page: $page, size: $size',
+              );
             }
             await tester.tap(pageAction);
             await tester.pumpAndSettle();
@@ -646,19 +675,41 @@ void main() {
     addTearDown(chromeController.dispose);
     addTearDown(launchEntry.dispose);
 
-    Widget buildApp(AppNavigationCoordinator coordinator) =>
-        ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
-          value: launchEntry,
-          child: MaterialApp(
-            home: AppNavigationShell(
-              coordinator: coordinator,
-              chromeController: chromeController,
-              child: const _StubPage('content'),
-            ),
-          ),
-        );
+    Widget buildApp(
+      AppNavigationCoordinator coordinator, {
+      AppAppleSidebarStyleMode sidebarStyleMode =
+          AppAppleSidebarStyleMode.automatic,
+    }) => ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
+      value: launchEntry,
+      child: MaterialApp(
+        home: AppNavigationShell(
+          coordinator: coordinator,
+          chromeController: chromeController,
+          appleSidebarStyleMode: sidebarStyleMode,
+          child: const _StubPage('content'),
+        ),
+      ),
+    );
 
     await tester.pumpWidget(buildApp(firstCoordinator));
+    expect(
+      tester
+          .widget<AdaptiveNavigationShell>(find.byType(AdaptiveNavigationShell))
+          .appleSidebarStyle,
+      AppleSidebarStyle.inset,
+    );
+    await tester.pumpWidget(
+      buildApp(
+        firstCoordinator,
+        sidebarStyleMode: AppAppleSidebarStyleMode.os27,
+      ),
+    );
+    expect(
+      tester
+          .widget<AdaptiveNavigationShell>(find.byType(AdaptiveNavigationShell))
+          .appleSidebarStyle,
+      AppleSidebarStyle.edge,
+    );
     firstCoordinator.selectIndex(1);
     await tester.pump();
     expect(launchEntry.entries, [AppEntrys.habitToday]);
@@ -705,7 +756,10 @@ void main() {
     testWidgets(
       '${testCase.platform.name} theme action cycles without changing navigation',
       (tester) async {
-        _setSurface(tester, const Size(700, 800));
+        _setSurface(
+          tester,
+          Size(testCase.platform == TargetPlatform.iOS ? 1000 : 700, 800),
+        );
         final coordinator = _MutableNavigationCoordinator(initialIndex: 1);
         final chromeController = AppNavigationChromeController();
         final launchEntry = _RecordingLaunchEntryViewModel();
@@ -768,11 +822,19 @@ void main() {
         );
         expect(find.text('Follow System'), findsWidgets);
         expect(
+          find.descendant(of: action, matching: find.byType(AppThemeModeIcon)),
+          findsOneWidget,
+        );
+        expect(
           find.descendant(
             of: action,
             matching: find.byWidgetPredicate(
               (widget) =>
-                  widget is Icon && widget.icon == Icons.hdr_auto_rounded,
+                  widget is Icon &&
+                  widget.icon ==
+                      (testCase.platform == TargetPlatform.iOS
+                          ? CupertinoIcons.circle_lefthalf_fill
+                          : Icons.hdr_auto_rounded),
             ),
           ),
           findsOneWidget,
@@ -786,7 +848,7 @@ void main() {
           1,
         );
 
-        await tester.tap(action);
+        await _tapSideDestination(tester, action);
         await tester.pump();
 
         expect(theme.value, AppThemeType.light);
@@ -1064,7 +1126,10 @@ void main() {
     testWidgets(
       'Today preserves its branch through the ${testCase.description} Settings entry',
       (tester) async {
-        _setSurface(tester, const Size(700, 800));
+        _setSurface(
+          tester,
+          Size(testCase.platform == TargetPlatform.iOS ? 1000 : 700, 800),
+        );
         final observers = [
           AdaptiveBranchRouteObserver(),
           AdaptiveBranchRouteObserver(),
@@ -1090,7 +1155,7 @@ void main() {
         expect(shell.selectedAuxiliaryIndex, isNull);
         expect(launchEntry.entries, [AppEntrys.habitToday]);
 
-        await tester.tap(find.byKey(testCase.auxiliaryKey));
+        await _tapSideDestination(tester, find.byKey(testCase.auxiliaryKey));
         await tester.pumpAndSettle();
 
         expect(find.text('settings page'), findsOneWidget);
@@ -1144,7 +1209,10 @@ void main() {
       selectedIndexes.add(lastSelectedIndex);
     });
 
-    await tester.tap(find.byKey(const ValueKey('material-rail-destination-1')));
+    await _tapSideDestination(
+      tester,
+      find.byKey(const ValueKey('material-rail-destination-1')),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('today page'), findsOneWidget);
@@ -1266,7 +1334,10 @@ void main() {
       AppRoute.settings.name,
       AppRoute.settingsAbout.name,
     ]);
-    await tester.tap(find.byKey(const ValueKey('material-rail-destination-1')));
+    await _tapSideDestination(
+      tester,
+      find.byKey(const ValueKey('material-rail-destination-1')),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('today page'), findsOneWidget);
@@ -1277,7 +1348,7 @@ void main() {
   testWidgets('keeps Apple Sidebar mounted while Settings is pushed', (
     tester,
   ) async {
-    _setSurface(tester, const Size(700, 600));
+    _setSurface(tester, const Size(1000, 600));
     final observers = [
       AdaptiveBranchRouteObserver(),
       AdaptiveBranchRouteObserver(),
@@ -1311,6 +1382,97 @@ void main() {
       0,
     );
   });
+
+  testWidgets(
+    'Apple collapsed capsule stays fixed across retained shell routes',
+    (tester) async {
+      _setSurface(tester, const Size(700, 600));
+      final observers = [
+        AdaptiveBranchRouteObserver(),
+        AdaptiveBranchRouteObserver(),
+      ];
+      final router = _buildRouter(
+        observers,
+        habitsPage: const _AppBarStubPage('habits'),
+        todayPage: const _AppBarStubPage('today'),
+        detailPage: const _AppBarStubPage('detail'),
+        settingsPage: const _AppBarStubPage('settings'),
+      );
+      addTearDown(router.dispose);
+      await _pumpApp(
+        tester,
+        router: router,
+        launchEntry: _RecordingLaunchEntryViewModel(),
+        platform: TargetPlatform.iOS,
+      );
+      await tester.pumpAndSettle();
+
+      final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
+      final collapsedBar = find.byKey(
+        const ValueKey('cupertino-sidebar-collapsed-bar'),
+      );
+      final capsule = find.byKey(
+        const ValueKey('cupertino-sidebar-collapsed-capsule'),
+      );
+      final collapsedBarElement = tester.element(collapsedBar);
+      final capsuleCenter = tester.getCenter(capsule);
+
+      expect(toggle.hitTestable(), findsOneWidget);
+      expect(capsule, findsOneWidget);
+
+      await tester.tap(
+        find.byKey(const ValueKey('cupertino-sidebar-collapsed-destination-1')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('today page'), findsOneWidget);
+      expect(find.text('habits page', skipOffstage: false), findsOneWidget);
+      expect(
+        TickerMode.valuesOf(
+          tester.element(find.text('habits page', skipOffstage: false)),
+        ).enabled,
+        isFalse,
+      );
+      expect(tester.element(collapsedBar), same(collapsedBarElement));
+      expect(tester.getCenter(capsule), capsuleCenter);
+      expect(toggle.hitTestable(), findsOneWidget);
+
+      await tester.tap(
+        find.byKey(const ValueKey('cupertino-sidebar-collapsed-destination-0')),
+      );
+      await tester.pumpAndSettle();
+      router.push('/habits/detail');
+      await tester.pumpAndSettle();
+
+      expect(find.text('detail page'), findsOneWidget);
+      expect(find.text('habits page', skipOffstage: false), findsOneWidget);
+      expect(tester.element(collapsedBar), same(collapsedBarElement));
+      expect(tester.getCenter(capsule), capsuleCenter);
+      expect(toggle.hitTestable(), findsOneWidget);
+
+      unawaited(
+        naviToAppSettingPage(context: tester.element(find.text('detail page'))),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('settings page'), findsOneWidget);
+      expect(find.text('detail page', skipOffstage: false), findsOneWidget);
+      expect(tester.element(collapsedBar), same(collapsedBarElement));
+      expect(tester.getCenter(capsule), capsuleCenter);
+      expect(toggle.hitTestable(), findsOneWidget);
+      final semantics = tester.ensureSemantics();
+      for (var index = 0; index < 2; index++) {
+        final destination = find.byKey(
+          ValueKey('cupertino-sidebar-collapsed-destination-$index'),
+        );
+        expect(
+          tester.getSemantics(destination).flagsCollection.isSelected,
+          Tristate.isFalse,
+        );
+      }
+      semantics.dispose();
+    },
+  );
 
   testWidgets('deep-linked Settings child pops to the Settings root', (
     tester,
@@ -1694,6 +1856,85 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.text('group manage page'), findsOneWidget);
   });
+
+  testWidgets(
+    'Apple top sidebar stays fixed across Group Manage push and pop',
+    (tester) async {
+      _setSurface(tester, const Size(700, 800));
+      final observers = [
+        AdaptiveBranchRouteObserver(),
+        AdaptiveBranchRouteObserver(),
+      ];
+      final groups = GroupManageViewModel();
+      final launchEntry = _RecordingLaunchEntryViewModel();
+      addTearDown(groups.dispose);
+      addTearDown(launchEntry.dispose);
+      late final GoRouter router;
+      router = _buildRouter(
+        observers,
+        habitsPage: Scaffold(
+          appBar: const AdaptiveAppBar.apple(title: Text('Habits')),
+          body: Center(
+            child: MenuAnchor(
+              menuChildren: [
+                MenuItemButton(
+                  onPressed: () => router.push('/group/manage'),
+                  child: const Text('Manage'),
+                ),
+              ],
+              builder: (context, controller, child) => TextButton(
+                onPressed: controller.open,
+                child: const Text('Open menu'),
+              ),
+            ),
+          ),
+        ),
+        groupManagePage: ChangeNotifierProvider.value(
+          value: groups,
+          child: _PrimaryActionRegressionPage(_RegressionPage.groups, (_) {}),
+        ),
+      );
+      addTearDown(router.dispose);
+      await _pumpApp(
+        tester,
+        router: router,
+        launchEntry: launchEntry,
+        platform: TargetPlatform.iOS,
+        localized: true,
+      );
+      await tester.pumpAndSettle();
+
+      final capsule = find.byKey(
+        const ValueKey('cupertino-sidebar-collapsed-capsule'),
+      );
+      final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
+      final capsuleElement = tester.element(capsule);
+      final toggleElement = tester.element(toggle);
+      final capsuleCenter = tester.getCenter(capsule);
+
+      await tester.tap(find.text('Open menu'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Manage'));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('body-groups'), findsOneWidget);
+      expect(tester.element(capsule), same(capsuleElement));
+      expect(tester.element(toggle), same(toggleElement));
+      expect(tester.getCenter(capsule), capsuleCenter);
+      expect(capsule.hitTestable(), findsOneWidget);
+
+      router.pop();
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Open menu'), findsOneWidget);
+      expect(tester.element(capsule), same(capsuleElement));
+      expect(tester.element(toggle), same(toggleElement));
+      expect(tester.getCenter(capsule), capsuleCenter);
+      expect(capsule.hitTestable(), findsOneWidget);
+    },
+  );
 
   testWidgets('shows compact chrome after leaving a hidden detail branch', (
     tester,

@@ -32,6 +32,7 @@ import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_stat.dart';
+import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/widgets.dart';
 import 'package:mhabit/providers/app_ui/app_experimental_feature.dart';
@@ -455,6 +456,147 @@ void main() {
           .placement,
       ActionPlacement.pinned,
     );
+  });
+
+  testWidgets('Apple auxiliary actions show only while Sidebar is collapsed', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1000, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(platform: TargetPlatform.iOS),
+        localizationsDelegates: L10n.localizationsDelegates,
+        supportedLocales: L10n.supportedLocales,
+        home: AdaptiveNavigationShell(
+          selectedIndex: 0,
+          destinations: const [
+            AdaptiveNavigationDestination(
+              label: 'Habits',
+              icons: NavigationDestinationIcons(
+                material: Icon(Icons.home_outlined),
+                materialSelected: Icon(Icons.home),
+                apple: Icon(CupertinoIcons.home),
+                appleSelected: Icon(CupertinoIcons.house_fill),
+              ),
+            ),
+          ],
+          onDestinationSelected: (_) {},
+          child: Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                SliverViewTopAppBar(
+                  config: HabitDisplayViewAppBarConfig(
+                    onOpenSettings: () {},
+                    callbacks: HabitDisplayOptionsCallbacks(
+                      onThemeToggled: () {},
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    bool hasSettings() => tester
+        .widget<AdaptiveAppBarActions>(adaptiveActions())
+        .collection
+        .roots
+        .any((action) => action.id.value == 'habits.view.open-settings');
+    bool hasTheme() => tester
+        .widget<AdaptiveAppBarActions>(adaptiveActions())
+        .collection
+        .roots
+        .any((action) => action.id == habitDisplayThemeActionId);
+
+    expect(hasSettings(), isFalse);
+    expect(hasTheme(), isFalse);
+    expect(
+      tester.widget<AdaptiveAppBarActions>(adaptiveActions()).maxPrimaryActions,
+      3,
+    );
+
+    final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
+    await tester.tap(toggle);
+    await tester.pumpAndSettle();
+    expect(hasSettings(), isTrue);
+    expect(hasTheme(), isTrue);
+    expect(
+      tester.widget<AdaptiveAppBarActions>(adaptiveActions()).maxPrimaryActions,
+      2,
+    );
+
+    await tester.tap(toggle);
+    await tester.pumpAndSettle();
+    expect(hasSettings(), isFalse);
+    expect(hasTheme(), isFalse);
+    expect(
+      tester.widget<AdaptiveAppBarActions>(adaptiveActions()).maxPrimaryActions,
+      3,
+    );
+
+    final vm = _TestHabitSummaryViewModel();
+    addTearDown(vm.dispose);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpWidget(
+      ChangeNotifierProvider<HabitSummaryViewModel>.value(
+        value: vm,
+        child: MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          localizationsDelegates: L10n.localizationsDelegates,
+          supportedLocales: L10n.supportedLocales,
+          home: AdaptiveNavigationShell(
+            selectedIndex: 0,
+            destinations: const [
+              AdaptiveNavigationDestination(
+                label: 'Habits',
+                icons: NavigationDestinationIcons(
+                  material: Icon(Icons.home_outlined),
+                  materialSelected: Icon(Icons.home),
+                  apple: Icon(CupertinoIcons.home),
+                  appleSelected: Icon(CupertinoIcons.house_fill),
+                ),
+              ),
+            ],
+            onDestinationSelected: (_) {},
+            child: Scaffold(
+              body: CustomScrollView(
+                slivers: [
+                  SliverSearchTopAppBar.apple(
+                    onOpenSettingsPressed: () {},
+                    callbacks: HabitDisplayOptionsCallbacks(
+                      onThemeToggled: () {},
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    bool searchHasSettings() => tester
+        .widget<AdaptiveAppBarActions>(adaptiveActions())
+        .collection
+        .roots
+        .any((action) => action.id.value == 'habits.search.open-settings');
+    bool searchHasTheme() => tester
+        .widget<AdaptiveAppBarActions>(adaptiveActions())
+        .collection
+        .roots
+        .any((action) => action.id == habitDisplayThemeActionId);
+
+    expect(searchHasSettings(), isFalse);
+    expect(searchHasTheme(), isFalse);
+    await tester.tap(find.byKey(const ValueKey('cupertino-sidebar-toggle')));
+    await tester.pumpAndSettle();
+    expect(searchHasSettings(), isTrue);
+    expect(searchHasTheme(), isTrue);
   });
 
   testWidgets('Material keeps Settings as the final action', (tester) async {
@@ -925,6 +1067,8 @@ void main() {
 
     final action = find.byKey(const ValueKey('open-settings-action'));
     expect(action, findsOneWidget);
+    expect(find.byType(AppSettingsButton), findsOneWidget);
+    expect(find.byIcon(Icons.settings), findsOneWidget);
     await tester.tap(action);
     expect(opened, isTrue);
     expect(adaptiveActions(), findsOneWidget);
@@ -946,6 +1090,8 @@ void main() {
 
     final action = find.byKey(const ValueKey('open-settings-action'));
     expect(action, findsOneWidget);
+    expect(find.byType(AppSettingsButton), findsOneWidget);
+    expect(find.byIcon(Icons.settings), findsOneWidget);
     await tester.tap(action);
     expect(opened, isTrue);
     expect(adaptiveActions(), findsOneWidget);

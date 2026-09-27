@@ -1,7 +1,6 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart' show BuildContext, MediaQuery, Size;
+import 'package:flutter/widgets.dart';
 
-import 'breakpoints.dart' show Breakpoints;
+import 'breakpoints.dart';
 
 /// Window size classes for adaptive layout decisions.
 ///

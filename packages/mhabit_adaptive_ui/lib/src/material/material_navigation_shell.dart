@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
+    hide AdaptiveNavigationDestination, NavigationDestinationIcons;
 
 import '../adaptive/adaptive_navigation_destination.dart';
 import '../breakpoints/window_size_class.dart';
 import '../shell/navigation_scroll_wish_policy.dart';
 import '../shell/navigation_shell_form.dart';
 import '../shell/navigation_shell_frame.dart';
-import '../shell/side_navigation.dart';
+import '../shell/sidebar_adapter.dart';
 import '../window_control/window_control_layout.dart';
 import 'material_navigation_bar.dart';
-import 'material_navigation_rail.dart';
+
+/// Material-specific NavigationRail geometry.
+class MaterialNavigationRailStyle {
+  const MaterialNavigationRailStyle({this.collapsedExtent = 96.0})
+    : assert(collapsedExtent > 0);
+
+  /// Width of a collapsed Material 3 wide navigation rail.
+  final double collapsedExtent;
+}
 
 /// Composes the Material renderers around style-neutral shell mechanics.
 ///
@@ -152,7 +162,7 @@ class MaterialNavigationShell extends StatelessWidget {
   }
 }
 
-class _MaterialNavigationShellBody extends StatelessWidget {
+class _MaterialNavigationShellBody extends StatefulWidget {
   const _MaterialNavigationShellBody({
     required this.form,
     required this.selectedIndex,
@@ -184,31 +194,77 @@ class _MaterialNavigationShellBody extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => ColoredBox(
-    color: Theme.of(context).colorScheme.surface,
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        MaterialNavigationRailRegion(
-          form: form,
-          selectedIndex: selectedIndex,
-          destinations: destinations,
-          onDestinationSelected: onDestinationSelected,
-          auxiliaryDestinations: auxiliaryDestinations,
-          selectedAuxiliaryIndex: selectedAuxiliaryIndex,
-          onAuxiliaryDestinationSelected: onAuxiliaryDestinationSelected,
-          sideNavigationExtent: sideNavigationExtent,
-          style: railStyle,
-          dragHandleBuilder: dragHandleBuilder,
-          expandNavigationLabel: expandNavigationLabel,
-          collapseNavigationLabel: collapseNavigationLabel,
-        ),
-        Expanded(
-          child: _MaterialNavigationBranch(form: form, child: child),
-        ),
-      ],
-    ),
-  );
+  State<_MaterialNavigationShellBody> createState() =>
+      _MaterialNavigationShellBodyState();
+}
+
+class _MaterialNavigationShellBodyState
+    extends State<_MaterialNavigationShellBody> {
+  late final AdaptiveNavigationController _controller =
+      AdaptiveNavigationController(
+        initialExpanded: widget.form == NavigationShellForm.expandedSide,
+      );
+
+  @override
+  void didUpdateWidget(covariant _MaterialNavigationShellBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.form == widget.form) return;
+    _controller.expanded = widget.form == NavigationShellForm.expandedSide;
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final widget = this.widget;
+    if (widget.form == NavigationShellForm.compact) return widget.child;
+
+    final adapter = SidebarNavigationAdapter(
+      destinations: widget.destinations,
+      auxiliaryDestinations: widget.auxiliaryDestinations,
+      selectedIndex: widget.selectedIndex,
+      selectedAuxiliaryIndex: widget.selectedAuxiliaryIndex,
+      onDestinationSelected: widget.onDestinationSelected,
+      onAuxiliaryDestinationSelected: widget.onAuxiliaryDestinationSelected,
+    );
+    final navigation = MaterialSidebarNavigation(
+      destinations: adapter.destinations,
+      selection: adapter.selection,
+      onSelectionChanged: adapter.select,
+      auxiliaryDestinations: adapter.auxiliaryDestinations,
+    );
+    final sideNavigation = NavigationObstructionScope(
+      obstruction: context.sidebarNavigationObstruction,
+      child: MaterialSidebar(
+        controller: _controller,
+        content: navigation,
+        extent: widget.sideNavigationExtent,
+        collapsedExtent: widget.railStyle.collapsedExtent,
+        dragHandleBuilder: widget.dragHandleBuilder,
+        expandLabel: widget.expandNavigationLabel,
+        collapseLabel: widget.collapseNavigationLabel,
+      ),
+    );
+    return ColoredBox(
+      color: Theme.of(context).colorScheme.surface,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          sideNavigation,
+          Expanded(
+            child: _MaterialNavigationBranch(
+              form: widget.form,
+              child: widget.child,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _MaterialNavigationBranch extends StatelessWidget {

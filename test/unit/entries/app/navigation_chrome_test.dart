@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/entries/app/navigation_chrome.dart';
 import 'package:mhabit/entries/app/navigation_destination.dart';
+import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/routes/app_navigation_branch.dart';
 
 void main() {
@@ -61,5 +62,14 @@ void main() {
     expect(chrome.selected, isTrue);
     chrome.onSelected();
     expect(selected, isTrue);
+  });
+
+  test('uses shared settings icons for navigation chrome', () {
+    final icons = AppNavigationDestinations.settings(label: 'Settings').icons;
+
+    expect(icons.material, isA<AppSettingsIcon>());
+    expect(icons.materialSelected, isA<AppSettingsIcon>());
+    expect(icons.apple, isA<AppSettingsIcon>());
+    expect(icons.appleSelected, isA<AppSettingsIcon>());
   });
 }

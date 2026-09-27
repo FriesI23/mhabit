@@ -19,6 +19,7 @@ import 'package:flutter/cupertino.dart'
     show
         CupertinoAlertDialog,
         CupertinoButton,
+        CupertinoIcons,
         CupertinoMenuItem,
         CupertinoNavigationBar,
         CupertinoPopupSurface,
@@ -784,6 +785,10 @@ void main() {
     expect(adaptiveAppBar.actions, [isA<AppThemeSwitchButton>()]);
     expect(find.byType(AppThemeSwitchButton), findsOneWidget);
     expect(
+      find.byKey(const ValueKey('today-open-settings-action')),
+      findsNothing,
+    );
+    expect(
       find.byWidgetPredicate((widget) => widget is AdaptiveAppBarActions),
       findsNothing,
     );
@@ -807,6 +812,8 @@ void main() {
       ),
       findsOneWidget,
     );
+    expect(find.byIcon(CupertinoIcons.circle_lefthalf_fill), findsOneWidget);
+    expect(find.byIcon(Icons.hdr_auto_rounded), findsNothing);
   });
 
   testWidgets('Today Material keeps only the theme switch AppBar action', (
@@ -835,13 +842,15 @@ void main() {
     );
     expect(adaptiveAppBar.actions, [isA<AppThemeSwitchButton>()]);
     expect(find.byType(AppThemeSwitchButton), findsOneWidget);
+    expect(find.byIcon(Icons.hdr_auto_rounded), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.circle_lefthalf_fill), findsNothing);
     expect(
       find.byWidgetPredicate((widget) => widget is AdaptiveAppBarActions),
       findsNothing,
     );
   });
 
-  testWidgets('Today medium uses the fixed native blurred toolbar surface', (
+  testWidgets('Today medium exposes auxiliary actions only when horizontal', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(700, 800);
@@ -861,6 +870,7 @@ void main() {
       access: access,
       sync: sync,
       platform: TargetPlatform.iOS,
+      useAdaptiveShell: true,
     );
 
     expect(find.byType(CupertinoSliverNavigationBar), findsNothing);
@@ -873,9 +883,25 @@ void main() {
     final header = tester.widget<SliverPersistentHeader>(
       find.byType(SliverPersistentHeader),
     );
-    expect(header.delegate.minExtent, 44);
-    expect(header.delegate.maxExtent, 44);
+    expect(header.delegate.minExtent, 64);
+    expect(header.delegate.maxExtent, 64);
+    expect(find.byType(AppThemeSwitchButton), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('today-open-settings-action')),
+      findsOneWidget,
+    );
+    expect(find.byType(AppSettingsButton), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.settings_solid), findsOneWidget);
+    expect(find.byIcon(Icons.settings), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey('cupertino-sidebar-toggle')));
+    await tester.pumpAndSettle();
+
     expect(find.byType(AppThemeSwitchButton), findsNothing);
+    expect(
+      find.byKey(const ValueKey('today-open-settings-action')),
+      findsNothing,
+    );
   });
 
   for (final testCase
@@ -1514,10 +1540,7 @@ void main() {
 
     tester.view.physicalSize = const Size(700, 800);
     await tester.pump();
-    expect(
-      find.byKey(const ValueKey('cupertino-sidebar-panel')),
-      findsOneWidget,
-    );
+    expect(find.byKey(const ValueKey('cupertino-sidebar-panel')), findsNothing);
     expect(find.byType(NavigationBar), findsNothing);
 
     tester.view.physicalSize = const Size(390, 800);
@@ -1681,10 +1704,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 350));
 
-    expect(
-      find.byKey(const ValueKey('cupertino-sidebar-panel')),
-      findsOneWidget,
-    );
+    expect(find.byKey(const ValueKey('cupertino-sidebar-panel')), findsNothing);
     expect(compactButton, findsOneWidget);
     expect(tester.element(compactButton), same(compactButtonElement));
     expect(find.byType(ScrollingFAB), findsNothing);

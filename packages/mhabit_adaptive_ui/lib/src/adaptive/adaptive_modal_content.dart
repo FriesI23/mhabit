@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import 'adaptive_modal_layout.dart';
-import 'adaptive_sheet.dart' show AdaptiveModalSize;
+import 'adaptive_sheet.dart';
 
 /// Platform chrome supplies layout inputs without knowing the content format.
 class AdaptiveModalLayoutScope extends InheritedWidget {

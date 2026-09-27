@@ -1,8 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
-import '../shell/navigation_sidebar_app_bar_leading.dart';
+import '../shell/sidebar_adapter.dart';
 import 'toolbar_geometry.dart';
 
 /// A Material [AppBar] whose leading and action slots avoid window controls.
@@ -127,6 +128,14 @@ class WindowControlAppBar extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
+    final sidebarLeading = SidebarLeadingScope.maybeOf(context);
+    final effectiveFlexibleSpace = _centeredSidebarAnchorFlexibleSpace(
+      context,
+      sidebarLeading: sidebarLeading,
+      flexibleSpace: flexibleSpace,
+      toolbarHeight: toolbarHeight ?? kToolbarHeight,
+      primary: primary,
+    );
     final slots = _resolveMaterialToolbarSlots(
       context,
       leading: leading,
@@ -143,7 +152,7 @@ class WindowControlAppBar extends StatelessWidget
       title: title,
       actions: slots.actions,
       automaticallyImplyActions: slots.automaticallyImplyActions,
-      flexibleSpace: flexibleSpace,
+      flexibleSpace: effectiveFlexibleSpace,
       bottom: bottom,
       elevation: elevation,
       scrolledUnderElevation: scrolledUnderElevation,
@@ -155,7 +164,7 @@ class WindowControlAppBar extends StatelessWidget
       iconTheme: iconTheme,
       actionsIconTheme: actionsIconTheme,
       primary: primary,
-      centerTitle: centerTitle,
+      centerTitle: sidebarLeading == null ? centerTitle : false,
       titleSpacing: titleSpacing,
       toolbarHeight: toolbarHeight,
       leadingWidth: slots.leadingWidth,
@@ -167,6 +176,33 @@ class WindowControlAppBar extends StatelessWidget
 }
 
 enum _WindowControlSliverAppBarVariant { small, medium, large }
+
+Widget? _centeredSidebarAnchorFlexibleSpace(
+  BuildContext context, {
+  required SidebarLeadingScope? sidebarLeading,
+  required Widget? flexibleSpace,
+  required double toolbarHeight,
+  required bool primary,
+}) {
+  if (sidebarLeading == null) return flexibleSpace;
+  final top = primary ? MediaQuery.paddingOf(context).top : 0.0;
+  return Stack(
+    fit: StackFit.expand,
+    children: [
+      ?flexibleSpace,
+      Positioned(
+        top: top,
+        left: 0,
+        right: 0,
+        height: toolbarHeight,
+        child: CupertinoSidebarToolbarMiddleLayout(
+          builder: (context, middle, _) =>
+              IgnorePointer(child: Center(child: middle)),
+        ),
+      ),
+    ],
+  );
+}
 
 /// A [SliverAppBar] counterpart to [WindowControlAppBar].
 ///
@@ -398,6 +434,16 @@ class WindowControlSliverAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sidebarLeading = SidebarLeadingScope.maybeOf(context);
+    final effectiveTitle = title;
+    final effectiveCenterTitle = sidebarLeading == null ? centerTitle : false;
+    final effectiveFlexibleSpace = _centeredSidebarAnchorFlexibleSpace(
+      context,
+      sidebarLeading: sidebarLeading,
+      flexibleSpace: flexibleSpace,
+      toolbarHeight: toolbarHeight ?? kToolbarHeight,
+      primary: primary,
+    );
     final slots = _resolveMaterialToolbarSlots(
       context,
       leading: leading,
@@ -412,10 +458,10 @@ class WindowControlSliverAppBar extends StatelessWidget {
       _WindowControlSliverAppBarVariant.small => SliverAppBar(
         leading: slots.leading,
         automaticallyImplyLeading: slots.automaticallyImplyLeading,
-        title: title,
+        title: effectiveTitle,
         actions: slots.actions,
         automaticallyImplyActions: slots.automaticallyImplyActions,
-        flexibleSpace: flexibleSpace,
+        flexibleSpace: effectiveFlexibleSpace,
         bottom: bottom,
         elevation: elevation,
         scrolledUnderElevation: scrolledUnderElevation,
@@ -427,7 +473,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
         iconTheme: iconTheme,
         actionsIconTheme: actionsIconTheme,
         primary: primary,
-        centerTitle: centerTitle,
+        centerTitle: effectiveCenterTitle,
         titleSpacing: titleSpacing,
         collapsedHeight: collapsedHeight,
         expandedHeight: expandedHeight,
@@ -444,18 +490,33 @@ class WindowControlSliverAppBar extends StatelessWidget {
         forceMaterialTransparency: forceMaterialTransparency,
         actionsPadding: actionsPadding,
       ),
-      _WindowControlSliverAppBarVariant.medium => _buildMedium(slots),
-      _WindowControlSliverAppBarVariant.large => _buildLarge(slots),
+      _WindowControlSliverAppBarVariant.medium => _buildMedium(
+        slots,
+        effectiveTitle,
+        effectiveCenterTitle,
+        effectiveFlexibleSpace,
+      ),
+      _WindowControlSliverAppBarVariant.large => _buildLarge(
+        slots,
+        effectiveTitle,
+        effectiveCenterTitle,
+        effectiveFlexibleSpace,
+      ),
     };
   }
 
-  Widget _buildMedium(_MaterialToolbarSlots slots) => SliverAppBar.medium(
+  Widget _buildMedium(
+    _MaterialToolbarSlots slots,
+    Widget? effectiveTitle,
+    bool? effectiveCenterTitle,
+    Widget? effectiveFlexibleSpace,
+  ) => SliverAppBar.medium(
     leading: slots.leading,
     automaticallyImplyLeading: slots.automaticallyImplyLeading,
-    title: title,
+    title: effectiveTitle,
     actions: slots.actions,
     automaticallyImplyActions: slots.automaticallyImplyActions,
-    flexibleSpace: flexibleSpace,
+    flexibleSpace: effectiveFlexibleSpace,
     bottom: bottom,
     elevation: elevation,
     scrolledUnderElevation: scrolledUnderElevation,
@@ -467,7 +528,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
     iconTheme: iconTheme,
     actionsIconTheme: actionsIconTheme,
     primary: primary,
-    centerTitle: centerTitle,
+    centerTitle: effectiveCenterTitle,
     titleSpacing: titleSpacing,
     collapsedHeight: collapsedHeight,
     expandedHeight: expandedHeight,
@@ -485,16 +546,21 @@ class WindowControlSliverAppBar extends StatelessWidget {
     actionsPadding: actionsPadding,
   );
 
-  Widget _buildLarge(_MaterialToolbarSlots slots) {
+  Widget _buildLarge(
+    _MaterialToolbarSlots slots,
+    Widget? effectiveTitle,
+    bool? effectiveCenterTitle,
+    Widget? effectiveFlexibleSpace,
+  ) {
     final toolbarHeight = this.toolbarHeight;
     if (toolbarHeight == null) {
       return SliverAppBar.large(
         leading: slots.leading,
         automaticallyImplyLeading: slots.automaticallyImplyLeading,
-        title: title,
+        title: effectiveTitle,
         actions: slots.actions,
         automaticallyImplyActions: slots.automaticallyImplyActions,
-        flexibleSpace: flexibleSpace,
+        flexibleSpace: effectiveFlexibleSpace,
         bottom: bottom,
         elevation: elevation,
         scrolledUnderElevation: scrolledUnderElevation,
@@ -506,7 +572,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
         iconTheme: iconTheme,
         actionsIconTheme: actionsIconTheme,
         primary: primary,
-        centerTitle: centerTitle,
+        centerTitle: effectiveCenterTitle,
         titleSpacing: titleSpacing,
         collapsedHeight: collapsedHeight,
         expandedHeight: expandedHeight,
@@ -526,10 +592,10 @@ class WindowControlSliverAppBar extends StatelessWidget {
     return SliverAppBar.large(
       leading: slots.leading,
       automaticallyImplyLeading: slots.automaticallyImplyLeading,
-      title: title,
+      title: effectiveTitle,
       actions: slots.actions,
       automaticallyImplyActions: slots.automaticallyImplyActions,
-      flexibleSpace: flexibleSpace,
+      flexibleSpace: effectiveFlexibleSpace,
       bottom: bottom,
       elevation: elevation,
       scrolledUnderElevation: scrolledUnderElevation,
@@ -541,7 +607,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
       iconTheme: iconTheme,
       actionsIconTheme: actionsIconTheme,
       primary: primary,
-      centerTitle: centerTitle,
+      centerTitle: effectiveCenterTitle,
       titleSpacing: titleSpacing,
       collapsedHeight: collapsedHeight,
       expandedHeight: expandedHeight,
@@ -587,7 +653,7 @@ _MaterialToolbarSlots _resolveMaterialToolbarSlots(
   required EdgeInsets? avoidance,
   required EdgeInsetsDirectional edgePadding,
 }) {
-  final sidebarLeading = NavigationSidebarAppBarLeading.maybeOf(context);
+  final sidebarLeading = SidebarLeadingScope.maybeOf(context);
   final effectiveEdgePadding = sidebarLeading == null
       ? edgePadding
       : EdgeInsetsDirectional.fromSTEB(
@@ -598,7 +664,10 @@ _MaterialToolbarSlots _resolveMaterialToolbarSlots(
         );
   final geometry = WindowControlToolbarGeometry.resolve(
     context,
-    avoidance: avoidance ?? sidebarLeading?.toolbarAvoidance,
+    avoidance: context.sidebarToolbarAvoidance(
+      sidebarLeading: sidebarLeading,
+      override: avoidance,
+    ),
     edgePadding: effectiveEdgePadding,
   );
   final startInset = geometry.materialStartInset;
@@ -650,7 +719,7 @@ _MaterialToolbarSlots _resolveMaterialToolbarSlots(
         SizedBox(
           key: const ValueKey('cupertino-sidebar-leading-anchor'),
           width: sidebarExtent,
-          height: NavigationSidebarAppBarLeading.buttonExtent,
+          height: SidebarLeadingScope.buttonExtent,
         ),
         if (effectiveLeading case final effectiveLeading?)
           SizedBox(width: baseLeadingWidth, child: effectiveLeading),

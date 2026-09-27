@@ -19,6 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
+import '../../common/app_info.dart';
+import '../../models/app_apple_sidebar_style_mode.dart';
 import '../../models/app_entry.dart';
 import '../../providers/app_ui/app_launch_entry.dart';
 import '../../routes/app_navigation_branch.dart';
@@ -37,11 +39,15 @@ class AppNavigationShell extends StatelessWidget {
     required this.chromeController,
     required this.child,
     this.auxiliaryChromeBuilder,
+    this.appleSidebarStyleMode = AppAppleSidebarStyleMode.automatic,
   });
 
   final AppNavigationCoordinator coordinator;
   final AppNavigationChromeController chromeController;
   final Widget child;
+
+  /// Automatic or developer-forced Apple Sidebar generation.
+  final AppAppleSidebarStyleMode appleSidebarStyleMode;
 
   /// Builds optional auxiliary navigation without coupling the shell to its
   /// route or business meaning.
@@ -77,6 +83,7 @@ class AppNavigationShell extends StatelessWidget {
                   onDestinationSelected: coordinator.selectBranch,
                   auxiliaryChromeBuilder: auxiliaryChromeBuilder,
                   compactRouteVisible: compactRouteVisible,
+                  appleSidebarStyleMode: appleSidebarStyleMode,
                   child: child!,
                 ),
               );
@@ -134,6 +141,7 @@ class _AppNavigationShellChrome extends StatelessWidget {
     required this.onDestinationSelected,
     required this.auxiliaryChromeBuilder,
     required this.compactRouteVisible,
+    required this.appleSidebarStyleMode,
     required this.child,
   });
 
@@ -142,6 +150,7 @@ class _AppNavigationShellChrome extends StatelessWidget {
   final ValueChanged<int> onDestinationSelected;
   final AppNavigationAuxiliaryChromeBuilder? auxiliaryChromeBuilder;
   final bool compactRouteVisible;
+  final AppAppleSidebarStyleMode appleSidebarStyleMode;
   final Widget child;
 
   @override
@@ -188,6 +197,9 @@ class _AppNavigationShellChrome extends StatelessWidget {
                   },
             appleBarStyle: const AppleNavigationBarStyle(
               expandedNavigationWidth: 220.0,
+            ),
+            appleSidebarStyle: appleSidebarStyleMode.resolve(
+              AppInfo().appleSystemVersion,
             ),
             destinations: [
               AppNavigationDestinations.habits(

@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
 import '../breakpoints/window_size_class.dart';
-import '../shell/navigation_sidebar_app_bar_leading.dart';
+import '../shell/sidebar_adapter.dart';
 import '../window_control/cupertino_navigation_bar.dart';
 import '../window_control/toolbar_geometry.dart';
 import 'app_bar_apple_style.dart';
+import 'cupertino_sidebar_navigation_bar_bottom.dart';
 import 'cupertino_toolbar_padding.dart';
 
 const List<Widget> _kDefaultActions = <Widget>[];
@@ -23,6 +25,7 @@ class CupertinoSliverAppBar extends StatelessWidget {
     this.bottomExtent = 0.0,
     required this.style,
     this.windowControlAvoidance,
+    this.wrapSidebarMiddle = true,
   }) : assert(bottomExtent >= 0.0),
        assert(bottom != null || bottomExtent == 0.0),
        assert(bottom == null || height != null);
@@ -37,15 +40,17 @@ class CupertinoSliverAppBar extends StatelessWidget {
   final double bottomExtent;
   final AppBarAppleStyle style;
   final EdgeInsets? windowControlAvoidance;
+  final bool wrapSidebarMiddle;
 
-  Widget? _effectiveTrailing(List<Widget> effectiveActions) =>
-      effectiveActions.isEmpty
-      ? null
-      : Row(mainAxisSize: MainAxisSize.min, children: effectiveActions);
+  Widget? _effectiveTrailing(List<Widget> effectiveActions) {
+    if (effectiveActions.isEmpty) return null;
+    if (effectiveActions.length == 1) return effectiveActions.single;
+    return Row(mainAxisSize: MainAxisSize.min, children: effectiveActions);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final sidebarLeading = NavigationSidebarAppBarLeading.maybeOf(context);
+    final sidebarLeading = SidebarLeadingScope.maybeOf(context);
     final hasLeading =
         sidebarLeading != null || leading != null || onLeadingPressed != null;
     final effectiveLeading = hasLeading
@@ -56,15 +61,28 @@ class CupertinoSliverAppBar extends StatelessWidget {
           )
         : null;
     final effectiveTrailing = _effectiveTrailing(actions);
-    final effectiveWindowControlAvoidance =
-        windowControlAvoidance ?? sidebarLeading?.toolbarAvoidance;
+    final hasSidebarToolbar = sidebarLeading != null;
+    final useSidebarToolbar = wrapSidebarMiddle && hasSidebarToolbar;
+    final toolbarGeometry = CupertinoSidebarPresentationScope.toolbarGeometryOf(
+      context,
+    );
+    final effectiveWindowControlAvoidance = context.sidebarToolbarAvoidance(
+      sidebarLeading: sidebarLeading,
+      override: windowControlAvoidance,
+    );
     final height = this.height;
-    if (height != null) {
+    if (height != null || hasSidebarToolbar) {
       return _FixedCupertinoSliverAppBar(
         title: title,
         leading: effectiveLeading,
         trailing: effectiveTrailing,
-        toolbarHeight: height,
+        toolbarHeight: height ?? toolbarGeometry.contentHeight,
+        useSidebarToolbar: useSidebarToolbar,
+        sidebarNavigationBarBottom: hasSidebarToolbar
+            ? CupertinoSidebarNavigationBarBottom.maybeFromGeometry(
+                toolbarGeometry,
+              )
+            : null,
         bottom: bottom,
         bottomExtent: bottomExtent,
         enableBackgroundFilterBlur: style.enableBackgroundFilterBlur,
@@ -100,7 +118,7 @@ class _CupertinoSliverAppBarLeading extends StatelessWidget {
     required this.onLeadingPressed,
   });
 
-  final NavigationSidebarAppBarLeading? sidebarLeading;
+  final SidebarLeadingScope? sidebarLeading;
   final Widget? leading;
   final VoidCallback? onLeadingPressed;
 
@@ -123,7 +141,7 @@ class _CupertinoSliverAppBarLeading extends StatelessWidget {
           SizedBox(
             key: const ValueKey('cupertino-sidebar-leading-anchor'),
             width: sidebarLeading.reservedExtent,
-            height: NavigationSidebarAppBarLeading.buttonExtent,
+            height: SidebarLeadingScope.buttonExtent,
           ),
         ?leading,
       ],
@@ -137,6 +155,8 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
     required this.leading,
     required this.trailing,
     required this.toolbarHeight,
+    required this.useSidebarToolbar,
+    required this.sidebarNavigationBarBottom,
     required this.bottom,
     required this.bottomExtent,
     required this.enableBackgroundFilterBlur,
@@ -152,6 +172,8 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
   final Widget? leading;
   final Widget? trailing;
   final double toolbarHeight;
+  final bool useSidebarToolbar;
+  final PreferredSizeWidget? sidebarNavigationBarBottom;
   final Widget? bottom;
   final double bottomExtent;
   final bool enableBackgroundFilterBlur;
@@ -165,7 +187,10 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.paddingOf(context).top;
-    final extent = topPadding + toolbarHeight + bottomExtent;
+    final sidebarBottomExtent =
+        sidebarNavigationBarBottom?.preferredSize.height ?? 0.0;
+    final extent =
+        topPadding + toolbarHeight + sidebarBottomExtent + bottomExtent;
     return SliverPersistentHeader(
       pinned: true,
       delegate: _FixedCupertinoToolbarDelegate(
@@ -182,6 +207,7 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
                 enableBackgroundFilterBlur: enableBackgroundFilterBlur,
                 border: border,
                 backgroundColor: backgroundColor,
+                bottom: sidebarNavigationBarBottom,
               ),
               Positioned(
                 top: topPadding,
@@ -192,6 +218,7 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
                   title: title,
                   leading: leading,
                   trailing: trailing,
+                  useSidebarToolbar: useSidebarToolbar,
                   padding: padding,
                   windowControlAvoidance: windowControlAvoidance,
                   windowControlEdgePadding: windowControlEdgePadding,
@@ -199,7 +226,7 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
               ),
               if (bottom case final bottom?)
                 Positioned(
-                  top: topPadding + toolbarHeight,
+                  top: topPadding + toolbarHeight + sidebarBottomExtent,
                   left: 0,
                   right: 0,
                   height: bottomExtent,
@@ -221,6 +248,7 @@ class _CupertinoToolbar extends StatelessWidget {
     required this.padding,
     required this.windowControlAvoidance,
     required this.windowControlEdgePadding,
+    required this.useSidebarToolbar,
   });
 
   final Widget title;
@@ -229,6 +257,7 @@ class _CupertinoToolbar extends StatelessWidget {
   final EdgeInsetsDirectional? padding;
   final EdgeInsets? windowControlAvoidance;
   final EdgeInsetsDirectional windowControlEdgePadding;
+  final bool useSidebarToolbar;
 
   @override
   Widget build(BuildContext context) {
@@ -255,12 +284,18 @@ class _CupertinoToolbar extends StatelessWidget {
       style: CupertinoTheme.of(context).textTheme.navTitleTextStyle,
       child: Padding(
         padding: EdgeInsets.only(top: insets.top, bottom: insets.bottom),
-        child: NavigationToolbar(
-          leading: effectiveLeading,
-          middle: title,
-          trailing: effectiveTrailing,
-          middleSpacing: 6.0,
-        ),
+        child: useSidebarToolbar
+            ? CupertinoSidebarToolbarLayout(
+                leading: effectiveLeading,
+                title: title,
+                trailing: effectiveTrailing,
+              )
+            : NavigationToolbar(
+                leading: effectiveLeading,
+                middle: title,
+                trailing: effectiveTrailing,
+                middleSpacing: 6.0,
+              ),
       ),
     );
   }

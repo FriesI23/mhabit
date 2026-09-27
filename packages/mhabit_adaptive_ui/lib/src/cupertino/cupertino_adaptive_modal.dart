@@ -7,6 +7,7 @@ import 'package:flutter/material.dart' show MaterialLocalizations;
 
 import '../adaptive/adaptive_icon_button.dart';
 import '../adaptive/adaptive_modal_content.dart';
+import '../adaptive/adaptive_modal_layout.dart';
 import '../adaptive/adaptive_sheet.dart';
 import '../adaptive/modal_sheet_drag_region.dart';
 import '../window_control/cupertino_navigation_bar.dart';

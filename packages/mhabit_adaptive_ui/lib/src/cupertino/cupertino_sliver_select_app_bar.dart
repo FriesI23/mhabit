@@ -3,10 +3,13 @@ import 'dart:ui' show ImageFilter;
 
 import 'package:adaptive_actions/cupertino.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
+    show SidebarLeadingScope;
 
 import '../adaptive/adaptive_app_bar_actions.dart';
 import '../breakpoints/breakpoints.dart';
 import '../breakpoints/window_size_class.dart';
+import '../shell/sidebar_adapter.dart';
 import 'app_bar_apple_style.dart';
 import 'cupertino_sliver_app_bar.dart';
 
@@ -78,6 +81,7 @@ class CupertinoSliverSelectAppBar<T extends Object> extends StatelessWidget {
       bottom: bottom,
       bottomExtent: bottomExtent,
       style: _effectiveStyle,
+      wrapSidebarMiddle: false,
       title: _viewMode
           ? _CupertinoSelectEntryToolbar<T>(
               title: title,
@@ -191,57 +195,62 @@ class _CupertinoSelectTopToolbar<T extends Object> extends StatelessWidget {
   final CupertinoActionPresentationCallback<T>? presentationForAction;
 
   @override
-  Widget build(BuildContext context) => SizedBox.expand(
-    child: CustomMultiChildLayout(
-      delegate: _SelectToolbarLayoutDelegate(
-        textDirection: Directionality.of(context),
-      ),
-      children: [
-        LayoutId(
-          id: _SelectToolbarSlot.leading,
-          child: _FixedTextAction(
-            key: const ValueKey('cupertino-select-all-top'),
-            label: selectAllLabel,
-            onPressed: onSelectAll,
-          ),
+  Widget build(BuildContext context) => CupertinoSidebarToolbarMiddleLayout(
+    enabled: false,
+    builder: (context, middle, visibilityProgress) => SizedBox.expand(
+      child: CustomMultiChildLayout(
+        delegate: _SelectToolbarLayoutDelegate(
+          textDirection: Directionality.of(context),
+          sidebarVisibility: visibilityProgress,
         ),
-        LayoutId(
-          id: _SelectToolbarSlot.title,
-          child: DefaultTextStyle.merge(
-            maxLines: 1,
-            softWrap: false,
-            overflow: TextOverflow.ellipsis,
-            child: title,
-          ),
-        ),
-        LayoutId(
-          id: _SelectToolbarSlot.actions,
-          child: compact
-              ? const SizedBox.shrink()
-              : _CupertinoSelectActions<T>(
-                  collection: collection,
-                  onInvoke: onInvoke,
-                  iconBuilder: iconBuilder,
-                  actionButtonBuilder: actionButtonBuilder,
-                  menuBuilderForAction: menuBuilderForAction,
-                  presentationForAction: presentationForAction,
-                ),
-        ),
-        LayoutId(
-          id: _SelectToolbarSlot.trailing,
-          child: Semantics(
-            button: true,
-            label: doneLabel,
-            child: CupertinoButton(
-              key: const ValueKey('cupertino-select-done'),
-              padding: EdgeInsets.zero,
-              minimumSize: const Size.square(44),
-              onPressed: onDone,
-              child: const Icon(CupertinoIcons.check_mark),
+        children: [
+          LayoutId(
+            id: _SelectToolbarSlot.leading,
+            child: _FixedTextAction(
+              key: const ValueKey('cupertino-select-all-top'),
+              label: selectAllLabel,
+              onPressed: onSelectAll,
             ),
           ),
-        ),
-      ],
+          LayoutId(
+            id: _SelectToolbarSlot.title,
+            child: DefaultTextStyle.merge(
+              maxLines: 1,
+              softWrap: false,
+              overflow: TextOverflow.ellipsis,
+              child: title,
+            ),
+          ),
+          LayoutId(
+            id: _SelectToolbarSlot.actions,
+            child: compact
+                ? const SizedBox.shrink()
+                : _CupertinoSelectActions<T>(
+                    collection: collection,
+                    onInvoke: onInvoke,
+                    iconBuilder: iconBuilder,
+                    actionButtonBuilder: actionButtonBuilder,
+                    menuBuilderForAction: menuBuilderForAction,
+                    presentationForAction: presentationForAction,
+                  ),
+          ),
+          LayoutId(
+            id: _SelectToolbarSlot.trailing,
+            child: Semantics(
+              button: true,
+              label: doneLabel,
+              child: CupertinoButton(
+                key: const ValueKey('cupertino-select-done'),
+                padding: EdgeInsets.zero,
+                minimumSize: const Size.square(44),
+                onPressed: onDone,
+                child: const Icon(CupertinoIcons.check_mark),
+              ),
+            ),
+          ),
+          LayoutId(id: _SelectToolbarSlot.sidebar, child: middle),
+        ],
+      ),
     ),
   );
 }
@@ -266,14 +275,49 @@ class _CupertinoSelectEntryToolbar<T extends Object> extends StatelessWidget {
   final CupertinoActionPresentationCallback<T>? presentationForAction;
 
   @override
-  Widget build(BuildContext context) => SizedBox.expand(
-    child: LayoutBuilder(
-      builder: (context, constraints) {
-        final visibleCount = collection.roots.length;
-        final maxActionWidth = math.max(44.0, constraints.maxWidth - 96.0);
-        return Row(
+  Widget build(BuildContext context) {
+    if (SidebarLeadingScope.maybeOf(context) == null) {
+      return SizedBox.expand(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final visibleCount = collection.roots.length;
+            final maxActionWidth = math.max(44.0, constraints.maxWidth - 96.0);
+            return Row(
+              children: [
+                Expanded(
+                  child: DefaultTextStyle.merge(
+                    maxLines: 1,
+                    softWrap: false,
+                    overflow: TextOverflow.ellipsis,
+                    child: title,
+                  ),
+                ),
+                if (visibleCount > 0)
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxActionWidth),
+                    child: _buildActions(),
+                  ),
+              ],
+            );
+          },
+        ),
+      );
+    }
+    return CupertinoSidebarToolbarMiddleLayout(
+      enabled: false,
+      builder: (context, middle, visibilityProgress) => SizedBox.expand(
+        child: CustomMultiChildLayout(
+          delegate: _SelectToolbarLayoutDelegate(
+            textDirection: Directionality.of(context),
+            sidebarVisibility: visibilityProgress,
+          ),
           children: [
-            Expanded(
+            LayoutId(
+              id: _SelectToolbarSlot.leading,
+              child: const SizedBox.shrink(),
+            ),
+            LayoutId(
+              id: _SelectToolbarSlot.title,
               child: DefaultTextStyle.merge(
                 maxLines: 1,
                 softWrap: false,
@@ -281,33 +325,40 @@ class _CupertinoSelectEntryToolbar<T extends Object> extends StatelessWidget {
                 child: title,
               ),
             ),
-            if (visibleCount > 0)
-              ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: maxActionWidth),
-                child: _CupertinoSelectActions<T>(
-                  collection: collection,
-                  onInvoke: onInvoke,
-                  iconBuilder: iconBuilder,
-                  actionButtonBuilder: actionButtonBuilder,
-                  menuBuilderForAction: menuBuilderForAction,
-                  presentationForAction: presentationForAction,
-                ),
-              ),
+            LayoutId(id: _SelectToolbarSlot.actions, child: _buildActions()),
+            LayoutId(
+              id: _SelectToolbarSlot.trailing,
+              child: const SizedBox.shrink(),
+            ),
+            LayoutId(id: _SelectToolbarSlot.sidebar, child: middle),
           ],
-        );
-      },
-    ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActions() => _CupertinoSelectActions<T>(
+    collection: collection,
+    onInvoke: onInvoke,
+    iconBuilder: iconBuilder,
+    actionButtonBuilder: actionButtonBuilder,
+    menuBuilderForAction: menuBuilderForAction,
+    presentationForAction: presentationForAction,
   );
 }
 
-enum _SelectToolbarSlot { leading, title, actions, trailing }
+enum _SelectToolbarSlot { leading, title, actions, trailing, sidebar }
 
 class _SelectToolbarLayoutDelegate extends MultiChildLayoutDelegate {
-  _SelectToolbarLayoutDelegate({required this.textDirection});
+  _SelectToolbarLayoutDelegate({
+    required this.textDirection,
+    required this.sidebarVisibility,
+  });
 
   static const double spacing = 6.0;
 
   final TextDirection textDirection;
+  final double sidebarVisibility;
 
   @override
   void performLayout(Size size) {
@@ -318,6 +369,10 @@ class _SelectToolbarLayoutDelegate extends MultiChildLayoutDelegate {
     );
     final trailingSize = layoutChild(
       _SelectToolbarSlot.trailing,
+      looseConstraints,
+    );
+    final sidebarSize = layoutChild(
+      _SelectToolbarSlot.sidebar,
       looseConstraints,
     );
     positionChild(
@@ -336,6 +391,58 @@ class _SelectToolbarLayoutDelegate extends MultiChildLayoutDelegate {
         (size.height - trailingSize.height) / 2,
       ),
     );
+    positionChild(
+      _SelectToolbarSlot.sidebar,
+      Offset(
+        (size.width - sidebarSize.width) / 2,
+        (size.height - sidebarSize.height) / 2,
+      ),
+    );
+
+    final excludedSidebarWidth = sidebarSize.width * sidebarVisibility;
+    if (excludedSidebarWidth > 0) {
+      final sidebarStart = (size.width - excludedSidebarWidth) / 2;
+      final sidebarEnd = sidebarStart + excludedSidebarWidth;
+      final titleStart = switch (textDirection) {
+        TextDirection.ltr => leadingSize.width + spacing,
+        TextDirection.rtl => sidebarEnd + spacing,
+      };
+      final titleEnd = switch (textDirection) {
+        TextDirection.ltr => sidebarStart - spacing,
+        TextDirection.rtl => size.width - leadingSize.width - spacing,
+      };
+      final titleWidth = math.max(0.0, titleEnd - titleStart);
+      final titleSize = layoutChild(
+        _SelectToolbarSlot.title,
+        BoxConstraints.loose(Size(titleWidth, size.height)),
+      );
+      final titleX = textDirection == TextDirection.ltr
+          ? titleStart
+          : titleEnd - titleSize.width;
+      positionChild(
+        _SelectToolbarSlot.title,
+        Offset(titleX, (size.height - titleSize.height) / 2),
+      );
+
+      final actionStart = switch (textDirection) {
+        TextDirection.ltr => sidebarEnd + spacing,
+        TextDirection.rtl => trailingSize.width,
+      };
+      final actionEnd = switch (textDirection) {
+        TextDirection.ltr => size.width - trailingSize.width,
+        TextDirection.rtl => sidebarStart - spacing,
+      };
+      final actionWidth = math.max(0.0, actionEnd - actionStart);
+      final actionSize = layoutChild(
+        _SelectToolbarSlot.actions,
+        BoxConstraints.tightFor(width: actionWidth, height: size.height),
+      );
+      positionChild(
+        _SelectToolbarSlot.actions,
+        Offset(actionStart, (size.height - actionSize.height) / 2),
+      );
+      return;
+    }
 
     final titleSideInset = math.max(leadingSize.width, trailingSize.width);
     final titleSize = layoutChild(
@@ -371,7 +478,8 @@ class _SelectToolbarLayoutDelegate extends MultiChildLayoutDelegate {
 
   @override
   bool shouldRelayout(_SelectToolbarLayoutDelegate oldDelegate) =>
-      textDirection != oldDelegate.textDirection;
+      textDirection != oldDelegate.textDirection ||
+      sidebarVisibility != oldDelegate.sidebarVisibility;
 }
 
 class _FixedTextAction extends StatelessWidget {

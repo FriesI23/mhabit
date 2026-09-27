@@ -5,11 +5,6 @@ import '../cupertino/cupertino_adaptive_navigation_bar.dart';
 import '../material/material_navigation_bar.dart';
 import 'adaptive_navigation_destination.dart';
 
-export '../cupertino/cupertino_adaptive_navigation_bar.dart'
-    show AdaptiveNavigationBarPresentation, AppleNavigationBarStyle;
-export '../material/material_navigation_bar.dart'
-    show MaterialNavigationBarStyle;
-
 /// Adaptive bottom navigation bar (box, for a `Scaffold.bottomNavigationBar`
 /// slot).
 ///

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export '_widgets/app_navigation_action_buttons.dart';
 export '_widgets/app_sync_confirm_dialog.dart';
 export '_widgets/app_theme_switch_button.dart';
 export '_widgets/contributor_tile.dart';
