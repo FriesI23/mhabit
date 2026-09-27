@@ -29,6 +29,7 @@ import '../../common/utils.dart';
 import '../../extensions/context_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
+import '../../models/app_apple_sidebar_style_mode.dart';
 import '../../models/app_entry.dart';
 import '../../models/app_sync_tasks.dart';
 import '../../models/app_theme_color.dart';
@@ -244,16 +245,23 @@ class _AppEntryState extends State<_AppEntry> {
           branches: branches,
           navigatorKey: appChromeNavigatorKey,
           observers: [appFlowObserver],
-          builder: (context, state, child) => ChangelogBanner(
-            child: AppPostInit(
-              child: AppNavigationShell(
-                coordinator: _navigationCoordinator,
-                chromeController: _navigationChromeController,
-                auxiliaryChromeBuilder: _buildAuxiliaryChrome,
-                child: child,
+          builder: (context, state, child) {
+            final appleSidebarStyleMode = context
+                .select<AppDeveloperViewModel, AppAppleSidebarStyleMode>(
+                  (viewModel) => viewModel.appleSidebarStyleMode,
+                );
+            return ChangelogBanner(
+              child: AppPostInit(
+                child: AppNavigationShell(
+                  coordinator: _navigationCoordinator,
+                  chromeController: _navigationChromeController,
+                  auxiliaryChromeBuilder: _buildAuxiliaryChrome,
+                  appleSidebarStyleMode: appleSidebarStyleMode,
+                  child: child,
+                ),
               ),
-            ),
-          ),
+            );
+          },
           branchBuilder: (context, state, navigationShell) {
             _navigationCoordinator.attachTabShell(navigationShell);
             return navigationShell;

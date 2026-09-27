@@ -7,13 +7,18 @@ import 'package:flutter/cupertino.dart'
         CupertinoIcons,
         CupertinoNavigationBar,
         CupertinoPageScaffoldBackgroundColor,
+        CupertinoSearchTextField,
         CupertinoSliverNavigationBar,
         CupertinoThemeData;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
-    show CupertinoSidebar, CupertinoSidebarStyle;
+    show
+        CupertinoSidebar,
+        CupertinoSidebarCollapsedBar,
+        CupertinoSidebarStyle,
+        CupertinoSidebarToolbarGeometry;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
@@ -868,7 +873,7 @@ void main() {
     testWidgets('apple Sidebar preserves a translucent dark bar tint', (
       tester,
     ) async {
-      _setSurfaceSize(tester, const Size(700, 800));
+      _setSurfaceSize(tester, const Size(1000, 800));
       const scaffoldBackground = Color(0xFF1E1E1E);
       const barBackground = Color(0x0FFFFFFF);
 
@@ -918,6 +923,69 @@ void main() {
       expect(surfaceColor, barBackground);
       expect(
         Color.alphaBlend(surfaceColor, scaffoldBackground).computeLuminance(),
+        lessThan(0.05),
+      );
+    });
+
+    testWidgets('apple top Sidebar preserves a translucent dark bar tint', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(700, 800));
+      const scaffoldBackground = Color(0xFF1E1E1E);
+      const barBackground = Color(0x0FFFFFFF);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            platform: TargetPlatform.iOS,
+            brightness: Brightness.dark,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.blue,
+              brightness: Brightness.dark,
+              surface: scaffoldBackground,
+            ),
+            cupertinoOverrideTheme: const CupertinoThemeData(
+              brightness: Brightness.dark,
+              scaffoldBackgroundColor: scaffoldBackground,
+              barBackgroundColor: barBackground,
+            ),
+          ),
+          home: AdaptiveNavigationShell(
+            selectedIndex: 0,
+            destinations: const [
+              AdaptiveNavigationDestination(
+                label: 'Habits',
+                icons: NavigationDestinationIcons(
+                  material: Icon(Icons.home_outlined),
+                  materialSelected: Icon(Icons.home),
+                  apple: Icon(CupertinoIcons.house),
+                  appleSelected: Icon(CupertinoIcons.house_fill),
+                ),
+              ),
+            ],
+            onDestinationSelected: (_) {},
+            child: const Scaffold(
+              body: CustomScrollView(
+                slivers: [AdaptiveSliverAppBar.apple(title: Text('Habits'))],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final capsule = find.byKey(
+        const ValueKey('cupertino-sidebar-collapsed-capsule'),
+      );
+      final capsuleColor = tester
+          .widgetList<ColoredBox>(
+            find.descendant(of: capsule, matching: find.byType(ColoredBox)),
+          )
+          .first
+          .color;
+      expect(capsuleColor, barBackground);
+      expect(
+        Color.alphaBlend(capsuleColor, scaffoldBackground).computeLuminance(),
         lessThan(0.05),
       );
     });
@@ -1636,7 +1704,7 @@ void main() {
           const BorderRadius.all(Radius.circular(62)),
         );
 
-        tester.view.physicalSize = const Size(700, 800);
+        tester.view.physicalSize = const Size(1000, 800);
         await tester.pumpAndSettle();
 
         context = tester.element(find.text('habits page'));
@@ -1701,7 +1769,11 @@ void main() {
           find.byKey(const ValueKey('cupertino-sidebar-panel')),
           findsNothing,
         );
-        expect(tester.getTopLeft(toggle).dx, 56);
+        final capsule = find.byKey(
+          const ValueKey('cupertino-sidebar-collapsed-capsule'),
+        );
+        expect(tester.getTopLeft(capsule).dx, greaterThanOrEqualTo(56));
+        expect(tester.getTopRight(capsule).dx, lessThanOrEqualTo(688));
       } finally {
         _resetWindowControlLayoutMock();
       }
@@ -1773,6 +1845,79 @@ void main() {
       expect(find.text('today page'), findsOneWidget);
       expect(find.text('habits page'), findsNothing);
     });
+
+    testWidgets(
+      'apple collapsed bar clears primary highlight for auxiliary selection',
+      (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+        _setSurfaceSize(tester, const Size(700, 600));
+        final selected = <int>[];
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: AdaptiveNavigationShell(
+              selectedIndex: 0,
+              destinations: const [
+                AdaptiveNavigationDestination(
+                  label: 'Habits',
+                  icons: NavigationDestinationIcons(
+                    material: Icon(Icons.home_outlined),
+                    materialSelected: Icon(Icons.home),
+                    apple: Icon(CupertinoIcons.home),
+                    appleSelected: Icon(CupertinoIcons.house_fill),
+                  ),
+                ),
+                AdaptiveNavigationDestination(
+                  label: 'Today',
+                  icons: NavigationDestinationIcons(
+                    material: Icon(Icons.today_outlined),
+                    materialSelected: Icon(Icons.today),
+                    apple: Icon(CupertinoIcons.today),
+                    appleSelected: Icon(CupertinoIcons.today),
+                  ),
+                ),
+              ],
+              auxiliaryDestinations: const [
+                AdaptiveNavigationDestination(
+                  label: 'Settings',
+                  icons: NavigationDestinationIcons(
+                    material: Icon(Icons.settings_outlined),
+                    materialSelected: Icon(Icons.settings),
+                    apple: Icon(CupertinoIcons.settings),
+                    appleSelected: Icon(CupertinoIcons.settings_solid),
+                  ),
+                ),
+              ],
+              selectedAuxiliaryIndex: 0,
+              onDestinationSelected: selected.add,
+              onAuxiliaryDestinationSelected: (_) {},
+              child: const Scaffold(
+                appBar: AdaptiveAppBar.apple(title: Text('Settings')),
+                body: SizedBox.shrink(),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final collapsedBar = tester.widget<CupertinoSidebarCollapsedBar>(
+          find.byKey(const ValueKey('cupertino-sidebar-collapsed-bar')),
+        );
+        expect(collapsedBar.destinations, hasLength(2));
+        expect(collapsedBar.selectedIndex, isNull);
+
+        await tester.tap(
+          find.byKey(
+            const ValueKey('cupertino-sidebar-collapsed-destination-1'),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(selected, [1]);
+        debugDefaultTargetPlatformOverride = null;
+      },
+    );
 
     testWidgets('switches branches with one observer per branch', (
       tester,
@@ -2729,8 +2874,6 @@ void main() {
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      // macOS resolves the three-tier Apple system, so 700dp classifies as
-      // medium and uses the same visible beside Sidebar as larger windows.
       expect(find.byType(NavigationRail), findsNothing);
       expect(
         find.byKey(const ValueKey('cupertino-sidebar-beside-host')),
@@ -2738,7 +2881,7 @@ void main() {
       );
       expect(
         find.byKey(const ValueKey('cupertino-sidebar-panel')),
-        findsOneWidget,
+        findsNothing,
       );
       expect(
         find.byKey(const ValueKey('cupertino-sidebar-toggle')),
@@ -3361,10 +3504,14 @@ void main() {
                 appleSidebarStyle: value,
                 child: child!,
               ),
-              child: const _StatefulBranchProbe(),
+              child: const Scaffold(
+                appBar: AdaptiveAppBar.apple(title: Text('Probe')),
+                body: _StatefulBranchProbe(),
+              ),
             ),
           ),
         );
+        await tester.pumpAndSettle();
 
         await tester.tap(find.text('branch count 0'));
         await tester.pump();
@@ -3486,7 +3633,7 @@ void main() {
       );
     }
 
-    testWidgets('apple boundaries use beside Sidebar from medium upward', (
+    testWidgets('apple boundaries use top bar at medium and side at large', (
       tester,
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
@@ -3503,13 +3650,51 @@ void main() {
         find.byKey(const ValueKey('cupertino-sidebar-beside-host')),
         findsNothing,
       );
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-collapsed-bar')),
+        findsNothing,
+      );
 
-      for (final width in [600.0, 905.0, 906.0, 1400.0]) {
+      for (final width in [600.0, 905.0]) {
         tester.view.physicalSize = Size(width, 479);
         await tester.pumpAndSettle();
 
         expect(find.byType(NavigationRail), findsNothing);
         expect(find.byType(NavigationDrawer), findsNothing);
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-beside-host')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-collapsed-bar')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-panel')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-resize-handle')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-destination-list')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-scrim')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-edge-gesture')),
+          findsOneWidget,
+        );
+      }
+
+      for (final width in [906.0, 1400.0]) {
+        tester.view.physicalSize = Size(width, 479);
+        await tester.pumpAndSettle();
+
         expect(
           find.byKey(const ValueKey('cupertino-sidebar-beside-host')),
           findsOneWidget,
@@ -3527,10 +3712,6 @@ void main() {
           findsOneWidget,
         );
         expect(
-          find.byKey(const ValueKey('cupertino-sidebar-scrim')),
-          findsNothing,
-        );
-        expect(
           find.byKey(const ValueKey('cupertino-sidebar-edge-gesture')),
           findsOneWidget,
         );
@@ -3543,7 +3724,7 @@ void main() {
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
-      _setSurfaceSize(tester, const Size(700, 160));
+      _setSurfaceSize(tester, const Size(1000, 160));
       final router = _buildRouter(
         destinations: List<AdaptiveNavigationDestination>.generate(
           6,
@@ -3585,7 +3766,7 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
-    testWidgets('apple Sidebar visibility survives width-class round trips', (
+    testWidgets('apple Sidebar retains only compact round-trip state', (
       tester,
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
@@ -3596,7 +3777,7 @@ void main() {
 
       expect(
         find.byKey(const ValueKey('cupertino-sidebar-panel')),
-        findsOneWidget,
+        findsNothing,
       );
 
       await tester.tap(find.byKey(const ValueKey('cupertino-sidebar-toggle')));
@@ -3604,18 +3785,7 @@ void main() {
 
       expect(
         find.byKey(const ValueKey('cupertino-sidebar-panel')),
-        findsNothing,
-      );
-      expect(
-        find.byKey(const ValueKey('cupertino-sidebar-resize-handle')),
-        findsNothing,
-      );
-
-      tester.view.physicalSize = const Size(906, 600);
-      await tester.pumpAndSettle();
-      expect(
-        find.byKey(const ValueKey('cupertino-sidebar-panel')),
-        findsNothing,
+        findsOneWidget,
       );
 
       tester.view.physicalSize = const Size(599, 600);
@@ -3629,14 +3799,56 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('cupertino-sidebar-panel')),
-        findsNothing,
+        findsOneWidget,
+      );
+
+      tester.view.physicalSize = const Size(906, 600);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-panel')),
+        findsOneWidget,
       );
 
       await tester.tap(find.byKey(const ValueKey('cupertino-sidebar-toggle')));
       await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('cupertino-sidebar-panel')),
+        findsNothing,
+      );
+
+      tester.view.physicalSize = const Size(700, 600);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-panel')),
+        findsNothing,
+      );
+
+      tester.view.physicalSize = const Size(906, 600);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-panel')),
         findsOneWidget,
+      );
+
+      await tester.tap(find.byKey(const ValueKey('cupertino-sidebar-toggle')));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-panel')),
+        findsNothing,
+      );
+
+      tester.view.physicalSize = const Size(599, 600);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
+        findsOneWidget,
+      );
+
+      tester.view.physicalSize = const Size(906, 600);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('cupertino-sidebar-panel')),
+        findsNothing,
       );
       debugDefaultTargetPlatformOverride = null;
     });
@@ -3652,20 +3864,19 @@ void main() {
           await tester.pumpAndSettle();
 
           final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
-          final toggleElement = tester.element(toggle);
-          await tester.tap(toggle);
-          await tester.pumpAndSettle();
           router.push('/habits/detail');
           await tester.pumpAndSettle();
 
           final pageLeading = find.byKey(const ValueKey('test-page-leading'));
+          final capsule = find.byKey(
+            const ValueKey('cupertino-sidebar-collapsed-capsule'),
+          );
           expect(find.text('detail page'), findsOneWidget);
           expect(toggle.hitTestable(), findsOneWidget);
-          expect(tester.element(toggle), same(toggleElement));
-          expect(tester.getTopLeft(toggle).dx, 56);
+          expect(capsule, findsOneWidget);
           expect(
-            tester.getTopLeft(pageLeading).dx,
-            greaterThanOrEqualTo(tester.getTopRight(toggle).dx),
+            tester.getTopRight(pageLeading).dx,
+            lessThanOrEqualTo(tester.getTopLeft(capsule).dx),
           );
         } finally {
           _resetWindowControlLayoutMock();
@@ -3675,7 +3886,7 @@ void main() {
 
     for (final sliver in [false, true]) {
       testWidgets(
-        'apple Sidebar command precedes existing ${sliver ? 'sliver ' : ''}app bar leading',
+        'apple Sidebar capsule avoids existing ${sliver ? 'sliver ' : ''}app bar leading',
         (tester) async {
           _mockWindowControlLayout();
           try {
@@ -3722,26 +3933,109 @@ void main() {
             );
             await tester.pumpAndSettle();
 
-            await tester.tap(
-              find.byKey(const ValueKey('cupertino-sidebar-toggle')),
-            );
-            await tester.pumpAndSettle();
-
             final toggle = find.byKey(
               const ValueKey('cupertino-sidebar-toggle'),
             );
             final existingLeading = find.byKey(
               const ValueKey('test-existing-leading'),
             );
+            final capsule = find.byKey(
+              const ValueKey('cupertino-sidebar-collapsed-capsule'),
+            );
             expect(toggle.hitTestable(), findsOneWidget);
-            expect(tester.getTopLeft(toggle).dx, 56);
+            expect(capsule, findsOneWidget);
+            expect(tester.getCenter(capsule).dx, closeTo(350, 0.5));
             expect(
-              tester.getTopLeft(existingLeading).dx,
-              greaterThanOrEqualTo(tester.getTopRight(toggle).dx),
+              tester.getTopRight(existingLeading).dx,
+              lessThanOrEqualTo(tester.getTopLeft(capsule).dx),
             );
           } finally {
             _resetWindowControlLayoutMock();
           }
+        },
+      );
+    }
+
+    for (final sliver in [false, true]) {
+      testWidgets(
+        'apple medium ${sliver ? 'sliver ' : ''}title stays before a centered capsule',
+        (tester) async {
+          _setSurfaceSize(tester, const Size(700, 600));
+          const titleKey = ValueKey('test-sidebar-page-title');
+          const actionKey = ValueKey('test-wide-sidebar-page-action');
+          await tester.pumpWidget(
+            MaterialApp(
+              theme: ThemeData(platform: TargetPlatform.iOS),
+              home: AdaptiveNavigationShell(
+                selectedIndex: 0,
+                destinations: const [
+                  AdaptiveNavigationDestination(
+                    label: 'Habits',
+                    icons: NavigationDestinationIcons(
+                      material: Icon(Icons.home_outlined),
+                      materialSelected: Icon(Icons.home),
+                      apple: Icon(CupertinoIcons.home),
+                      appleSelected: Icon(CupertinoIcons.house_fill),
+                    ),
+                  ),
+                ],
+                onDestinationSelected: (_) {},
+                child: Scaffold(
+                  appBar: sliver
+                      ? null
+                      : const AdaptiveAppBar.apple(
+                          title: Text('A very long title', key: titleKey),
+                          actions: [SizedBox(key: actionKey, width: 300)],
+                        ),
+                  body: sliver
+                      ? const CustomScrollView(
+                          slivers: [
+                            AdaptiveSliverAppBar.apple(
+                              title: Text('A very long title', key: titleKey),
+                              actions: [SizedBox(key: actionKey, width: 300)],
+                            ),
+                            SliverFillRemaining(child: SizedBox.shrink()),
+                          ],
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          final title = find.byKey(titleKey);
+          final capsule = find.byKey(
+            const ValueKey('cupertino-sidebar-collapsed-capsule'),
+          );
+          final endRegion = find.byKey(
+            const ValueKey('cupertino-sidebar-toolbar-end-region'),
+          );
+          final startRegion = find.byKey(
+            const ValueKey('cupertino-sidebar-toolbar-start-region'),
+          );
+          expect(title, findsOneWidget);
+          expect(find.byKey(actionKey), findsOneWidget);
+          expect(capsule, findsOneWidget);
+          expect(endRegion, findsOneWidget);
+          expect(tester.getCenter(capsule).dx, closeTo(350, 0.5));
+          expect(
+            tester.getTopLeft(title).dx - tester.getTopLeft(startRegion).dx,
+            greaterThanOrEqualTo(10),
+          );
+          expect(
+            tester.getTopRight(title).dx,
+            lessThanOrEqualTo(tester.getTopLeft(capsule).dx),
+          );
+          expect(
+            tester.getTopLeft(endRegion).dx,
+            greaterThanOrEqualTo(tester.getTopRight(capsule).dx),
+          );
+          expect(
+            tester.getTopRight(find.byKey(actionKey)).dx,
+            greaterThanOrEqualTo(tester.getTopRight(endRegion).dx - 16.0),
+          );
+          expect(tester.takeException(), isNull);
         },
       );
     }
@@ -3761,11 +4055,6 @@ void main() {
                 Directionality(textDirection: direction, child: child!),
           ),
         );
-
-        await tester.tap(
-          find.byKey(const ValueKey('cupertino-sidebar-toggle')),
-        );
-        await tester.pumpAndSettle();
 
         expect(
           find.byKey(const ValueKey('cupertino-sidebar-panel')),
@@ -3819,7 +4108,7 @@ void main() {
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
-      _setSurfaceSize(tester, const Size(700, 600));
+      _setSurfaceSize(tester, const Size(1000, 600));
       final selected = <int>[];
       final router = _buildRouter(onBranchChanged: selected.add);
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
@@ -3838,14 +4127,14 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
-    testWidgets('apple Sidebar keeps one toggle across hosts and routes', (
+    testWidgets('apple Sidebar keeps one capsule across hosts and routes', (
       tester,
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
       tester.view.padding = const FakeViewPadding(top: 12);
       tester.view.viewPadding = const FakeViewPadding(top: 12);
-      _setSurfaceSize(tester, const Size(700, 600));
+      _setSurfaceSize(tester, const Size(1000, 600));
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
@@ -3853,7 +4142,10 @@ void main() {
       final anchor = find.byKey(
         const ValueKey('cupertino-sidebar-leading-anchor'),
       );
-      final toggleElement = tester.element(toggle);
+      final collapsedBar = find.byKey(
+        const ValueKey('cupertino-sidebar-collapsed-bar'),
+      );
+      final collapsedBarElement = tester.element(collapsedBar);
 
       expect(toggle, findsOneWidget);
       expect(toggle.hitTestable(), findsOneWidget);
@@ -3873,14 +4165,13 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(toggle, findsOneWidget);
-      expect(tester.element(toggle), same(toggleElement));
-      expect(tester.getSize(anchor), const Size.square(44));
-      expect(tester.getTopLeft(toggle), tester.getTopLeft(anchor));
+      expect(tester.element(collapsedBar), same(collapsedBarElement));
+      expect(tester.getSize(anchor).width, 0);
 
       final hiddenPosition = tester.getTopLeft(toggle);
       router.push('/habits/detail');
       await tester.pumpAndSettle();
-      expect(tester.element(toggle), same(toggleElement));
+      expect(tester.element(collapsedBar), same(collapsedBarElement));
       expect(tester.getTopLeft(toggle), hiddenPosition);
       debugDefaultTargetPlatformOverride = null;
     });
@@ -3897,8 +4188,8 @@ void main() {
 
       final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
       final localizations = MaterialLocalizations.of(tester.element(toggle));
-      final toggleElement = tester.element(toggle);
       final button = tester.widget<CupertinoButton>(toggle);
+      final toggleFocusNode = button.focusNode;
       button.focusNode!.requestFocus();
       await tester.pump();
       expect(button.focusNode!.hasFocus, isTrue);
@@ -3908,11 +4199,11 @@ void main() {
       await tester.pump(const Duration(milliseconds: 125));
 
       expect(toggle, findsOneWidget);
-      expect(tester.element(toggle), same(toggleElement));
       expect(
-        tester.widget<CupertinoButton>(toggle).focusNode!.hasFocus,
-        isTrue,
+        tester.widget<CupertinoButton>(toggle).focusNode,
+        same(toggleFocusNode),
       );
+      expect(toggleFocusNode!.hasFocus, isTrue);
       expect(
         find
                 .bySemanticsLabel(localizations.expandedIconTapHint)
@@ -3926,19 +4217,19 @@ void main() {
       );
 
       await tester.pumpAndSettle();
-      expect(tester.element(toggle), same(toggleElement));
       expect(
-        tester.widget<CupertinoButton>(toggle).focusNode!.hasFocus,
-        isTrue,
+        tester.widget<CupertinoButton>(toggle).focusNode,
+        same(toggleFocusNode),
       );
+      expect(toggleFocusNode.hasFocus, isTrue);
 
       await tester.tap(toggle);
       await tester.pumpAndSettle();
-      expect(tester.element(toggle), same(toggleElement));
       expect(
-        tester.widget<CupertinoButton>(toggle).focusNode!.hasFocus,
-        isTrue,
+        tester.widget<CupertinoButton>(toggle).focusNode,
+        same(toggleFocusNode),
       );
+      expect(toggleFocusNode.hasFocus, isTrue);
       semantics.dispose();
       debugDefaultTargetPlatformOverride = null;
     });
@@ -3948,11 +4239,25 @@ void main() {
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
-      _setSurfaceSize(tester, const Size(700, 600));
+      _setSurfaceSize(tester, const Size(1000, 600));
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
       final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
+      expect(
+        tester
+            .widget<CupertinoSidebar>(find.byType(CupertinoSidebar))
+            .toolbarGeometry,
+        CupertinoSidebarToolbarGeometry.compact,
+      );
+      expect(
+        tester
+            .getSize(
+              find.byKey(const ValueKey('cupertino-sidebar-collapsed-capsule')),
+            )
+            .height,
+        36,
+      );
       expect(
         tester.getCenter(toggle).dy,
         tester.getCenter(find.byKey(const ValueKey('test-page-leading'))).dy,
@@ -3973,6 +4278,49 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
+    testWidgets('apple macOS edge Sidebar keeps the compact toolbar inset', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      _setSurfaceSize(tester, const Size(1000, 600));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AdaptiveNavigationShell(
+            selectedIndex: 0,
+            destinations: const [
+              AdaptiveNavigationDestination(
+                label: 'Habits',
+                icons: NavigationDestinationIcons(
+                  material: Icon(Icons.home_outlined),
+                  materialSelected: Icon(Icons.home),
+                  apple: Icon(CupertinoIcons.home),
+                  appleSelected: Icon(CupertinoIcons.house_fill),
+                ),
+              ),
+            ],
+            onDestinationSelected: (_) {},
+            appleSidebarStyle: AppleSidebarStyle.edge,
+            child: const _StubPage(text: 'habits page'),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final fixedHost = find.byKey(
+        const ValueKey('cupertino-sidebar-fixed-toolbar-host'),
+      );
+      expect(
+        tester
+            .getTopLeft(find.byKey(const ValueKey('cupertino-sidebar-surface')))
+            .dy,
+        0,
+      );
+      expect(tester.getTopLeft(fixedHost).dy, 10);
+      expect(tester.getSize(fixedHost).height, 44);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
     testWidgets(
       'apple hidden Sidebar toggle anchors to the search command bar',
       (tester) async {
@@ -3981,93 +4329,462 @@ void main() {
         _setSurfaceSize(tester, const Size(700, 600));
         final controller = TextEditingController();
         final focusNode = FocusNode();
+        var keyword = '';
+        late StateSetter setHostState;
         addTearDown(controller.dispose);
         addTearDown(focusNode.dispose);
+        final collection = ActionCollection<String>(
+          roots: [
+            for (final id in ['chart', 'filter', 'forward'])
+              AdaptiveAction<String>.action(
+                id: ActionId(id),
+                metadata: ActionMetadata(label: id, iconKey: id),
+                payload: id,
+              ),
+          ],
+        );
 
         await tester.pumpWidget(
           MaterialApp(
-            home: AdaptiveNavigationShell(
-              selectedIndex: 0,
-              destinations: const [
-                AdaptiveNavigationDestination(
-                  label: 'Habits',
-                  icons: NavigationDestinationIcons(
-                    material: Icon(Icons.home_outlined),
-                    materialSelected: Icon(Icons.home),
-                    apple: Icon(Icons.home_outlined),
-                    appleSelected: Icon(Icons.home),
-                  ),
-                ),
-                AdaptiveNavigationDestination(
-                  label: 'Today',
-                  icons: NavigationDestinationIcons(
-                    material: Icon(Icons.calendar_today_outlined),
-                    materialSelected: Icon(Icons.calendar_today),
-                    apple: Icon(Icons.calendar_today_outlined),
-                    appleSelected: Icon(Icons.calendar_today),
-                  ),
-                ),
-              ],
-              onDestinationSelected: (_) {},
-              child: Scaffold(
-                body: CustomScrollView(
-                  slivers: [
-                    AdaptiveSliverSearchBar.apple(
-                      title: const Text('Habits'),
-                      collection: ActionCollection<String>(roots: const []),
-                      onInvoke: (_, _) {},
-                      leading: const Icon(
-                        Icons.article_outlined,
-                        key: ValueKey('test-search-leading'),
+            home: StatefulBuilder(
+              builder: (context, setState) {
+                setHostState = setState;
+                return AdaptiveNavigationShell(
+                  selectedIndex: 0,
+                  destinations: const [
+                    AdaptiveNavigationDestination(
+                      label: 'Habits',
+                      icons: NavigationDestinationIcons(
+                        material: Icon(Icons.home_outlined),
+                        materialSelected: Icon(Icons.home),
+                        apple: Icon(Icons.home_outlined),
+                        appleSelected: Icon(Icons.home),
                       ),
-                      controller: controller,
-                      focusNode: focusNode,
-                      isSearchActive: false,
-                      keyword: '',
-                      onChanged: (_) {},
-                      onSearchActivated: () {},
-                      onSearchDismissed: () {},
                     ),
-                    const SliverFillRemaining(child: SizedBox.shrink()),
+                    AdaptiveNavigationDestination(
+                      label: 'Today',
+                      icons: NavigationDestinationIcons(
+                        material: Icon(Icons.calendar_today_outlined),
+                        materialSelected: Icon(Icons.calendar_today),
+                        apple: Icon(Icons.calendar_today_outlined),
+                        appleSelected: Icon(Icons.calendar_today),
+                      ),
+                    ),
                   ],
-                ),
-              ),
+                  onDestinationSelected: (_) {},
+                  child: Scaffold(
+                    body: CustomScrollView(
+                      slivers: [
+                        AdaptiveSliverSearchBar.apple(
+                          title: const Text('Habits'),
+                          collection: collection,
+                          onInvoke: (_, _) {},
+                          apple: CupertinoSliverSearchBarConfig<String>(
+                            actions: CupertinoAppBarActionsConfig<String>(
+                              iconBuilder: (_, action) => Icon(
+                                CupertinoIcons.circle,
+                                key: ValueKey('test-search-${action.id.value}'),
+                              ),
+                            ),
+                          ),
+                          leading: const Icon(
+                            Icons.article_outlined,
+                            key: ValueKey('test-search-leading'),
+                          ),
+                          controller: controller,
+                          focusNode: focusNode,
+                          isSearchActive: keyword.isNotEmpty,
+                          keyword: keyword,
+                          hintText: 'Search',
+                          onChanged: (value) =>
+                              setHostState(() => keyword = value),
+                          onSearchActivated: () {},
+                          onSearchDismissed: () {},
+                        ),
+                        const SliverFillRemaining(child: SizedBox.shrink()),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         );
+        await tester.pumpAndSettle();
 
         final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
         final anchor = find.byKey(
           const ValueKey('cupertino-sidebar-leading-anchor'),
         );
+        expect(
+          tester
+              .widget<CupertinoSidebar>(find.byType(CupertinoSidebar))
+              .toolbarGeometry,
+          CupertinoSidebarToolbarGeometry.standard,
+        );
         final header = tester.widget<SliverPersistentHeader>(
           find.byType(SliverPersistentHeader),
         );
 
-        expect(header.delegate.minExtent, 54);
-        expect(header.delegate.maxExtent, 54);
-        final toggleElement = tester.element(toggle);
+        expect(header.delegate.minExtent, 64);
+        expect(header.delegate.maxExtent, 64);
+        final collapsedBar = find.byKey(
+          const ValueKey('cupertino-sidebar-collapsed-bar'),
+        );
+        final collapsedBarElement = tester.element(collapsedBar);
         expect(toggle, findsOneWidget);
         expect(toggle.hitTestable(), findsOneWidget);
         expect(tester.getSize(anchor).width, 0);
 
-        await tester.tap(toggle);
-        await tester.pumpAndSettle();
-
         expect(toggle.hitTestable(), findsOneWidget);
-        expect(tester.element(toggle), same(toggleElement));
-        expect(tester.getSize(anchor), const Size.square(44));
-        expect(tester.getTopLeft(anchor).dy, 10);
-        expect(tester.getTopLeft(toggle), tester.getTopLeft(anchor));
+        expect(tester.element(collapsedBar), same(collapsedBarElement));
+        expect(tester.getSize(anchor).width, 0);
+        final capsule = find.byKey(
+          const ValueKey('cupertino-sidebar-collapsed-capsule'),
+        );
+        final startRegion = find.byKey(
+          const ValueKey('cupertino-sidebar-toolbar-start-region'),
+        );
+        final endRegion = find.byKey(
+          const ValueKey('cupertino-sidebar-toolbar-end-region'),
+        );
+        expect(tester.getCenter(capsule).dy, 32);
+        expect(
+          tester.getTopRight(startRegion).dx,
+          lessThanOrEqualTo(tester.getTopLeft(capsule).dx),
+        );
+        expect(
+          tester.getTopLeft(endRegion).dx,
+          greaterThanOrEqualTo(tester.getTopRight(capsule).dx),
+        );
         expect(
           tester
-              .getTopLeft(find.byKey(const ValueKey('test-search-leading')))
+              .getTopRight(find.byKey(const ValueKey('test-search-leading')))
               .dx,
-          greaterThan(tester.getTopLeft(toggle).dx),
+          lessThanOrEqualTo(
+            tester
+                .getTopLeft(
+                  find.byKey(
+                    const ValueKey('cupertino-sidebar-collapsed-capsule'),
+                  ),
+                )
+                .dx,
+          ),
         );
+
+        final searchRegion = find.byKey(
+          const ValueKey('cupertino-expandable-search-region'),
+        );
+        expect(tester.getSize(searchRegion).width, 44);
+        await tester.tap(
+          find.byKey(const ValueKey('activate-cupertino-search')),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 1));
+        await tester.pump(const Duration(milliseconds: 150));
+
+        expect(tester.getSize(searchRegion).width, greaterThan(44));
+        final visibilityTransition = tester.widget<Opacity>(
+          find
+              .descendant(
+                of: find.byKey(
+                  const ValueKey('cupertino-sidebar-collapsed-transition'),
+                ),
+                matching: find.byType(Opacity),
+              )
+              .first,
+        );
+        expect(visibilityTransition.opacity, greaterThan(0));
+        expect(visibilityTransition.opacity, lessThan(1));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(CupertinoSearchTextField), findsOneWidget);
+        expect(capsule.hitTestable(), findsNothing);
+        expect(
+          find.descendant(
+            of: find.byKey(const ValueKey('cupertino-search-title')),
+            matching: find.text('Habits'),
+          ),
+          findsOneWidget,
+        );
+
+        await tester.enterText(find.byType(CupertinoSearchTextField), 'alpha');
+        await tester.pump();
+
+        expect(keyword, 'alpha');
+        expect(capsule.hitTestable(), findsNothing);
+        expect(
+          find.descendant(
+            of: find.byKey(const ValueKey('cupertino-search-title')),
+            matching: find.text('Search'),
+          ),
+          findsOneWidget,
+        );
+        expect(tester.takeException(), isNull);
         debugDefaultTargetPlatformOverride = null;
       },
     );
+
+    testWidgets(
+      'apple persistent search keeps the collapsed bar while active',
+      (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+        _setSurfaceSize(tester, const Size(1200, 700));
+        final controller = TextEditingController();
+        final focusNode = FocusNode();
+        var keyword = '';
+        late StateSetter setHostState;
+        addTearDown(controller.dispose);
+        addTearDown(focusNode.dispose);
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: StatefulBuilder(
+              builder: (context, setState) {
+                setHostState = setState;
+                return AdaptiveNavigationShell(
+                  selectedIndex: 0,
+                  destinations: const [
+                    AdaptiveNavigationDestination(
+                      label: 'Habits',
+                      icons: NavigationDestinationIcons(
+                        material: Icon(Icons.home_outlined),
+                        materialSelected: Icon(Icons.home),
+                        apple: Icon(CupertinoIcons.home),
+                        appleSelected: Icon(CupertinoIcons.house_fill),
+                      ),
+                    ),
+                  ],
+                  onDestinationSelected: (_) {},
+                  child: Scaffold(
+                    body: CustomScrollView(
+                      slivers: [
+                        AdaptiveSliverSearchBar.apple(
+                          title: const Text('Habits'),
+                          collection: ActionCollection<String>(roots: const []),
+                          onInvoke: (_, _) {},
+                          controller: controller,
+                          focusNode: focusNode,
+                          isSearchActive: keyword.isNotEmpty,
+                          keyword: keyword,
+                          hintText: 'Search',
+                          onChanged: (value) =>
+                              setHostState(() => keyword = value),
+                          onSearchActivated: () {},
+                          onSearchDismissed: () {},
+                        ),
+                        const SliverFillRemaining(child: SizedBox.shrink()),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+
+        await tester.tap(
+          find.byKey(const ValueKey('cupertino-sidebar-toggle')),
+        );
+        await tester.pumpAndSettle();
+
+        final capsule = find.byKey(
+          const ValueKey('cupertino-sidebar-collapsed-capsule'),
+        );
+        final searchField = find.byType(CupertinoSearchTextField);
+        expect(searchField, findsOneWidget);
+        expect(capsule.hitTestable(), findsOneWidget);
+
+        await tester.tap(searchField);
+        await tester.pumpAndSettle();
+        expect(focusNode.hasFocus, isTrue);
+        expect(capsule.hitTestable(), findsOneWidget);
+
+        await tester.enterText(searchField, 'alpha');
+        await tester.pumpAndSettle();
+        expect(keyword, 'alpha');
+        expect(capsule.hitTestable(), findsOneWidget);
+        expect(
+          find.descendant(
+            of: find.byKey(const ValueKey('cupertino-search-title')),
+            matching: find.text('Search'),
+          ),
+          findsOneWidget,
+        );
+        expect(tester.takeException(), isNull);
+        debugDefaultTargetPlatformOverride = null;
+      },
+    );
+
+    testWidgets('apple select toolbar hides the fixed collapsed bar', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      _setSurfaceSize(tester, const Size(700, 600));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AdaptiveNavigationShell(
+            selectedIndex: 0,
+            destinations: const [
+              AdaptiveNavigationDestination(
+                label: 'Habits',
+                icons: NavigationDestinationIcons(
+                  material: Icon(Icons.home_outlined),
+                  materialSelected: Icon(Icons.home),
+                  apple: Icon(CupertinoIcons.home),
+                  appleSelected: Icon(CupertinoIcons.house_fill),
+                ),
+              ),
+            ],
+            onDestinationSelected: (_) {},
+            child: Scaffold(
+              body: CustomScrollView(
+                slivers: [
+                  CupertinoSliverSelectAppBar<String>(
+                    title: const Text('Selected 1'),
+                    selectAllLabel: 'Select All',
+                    doneLabel: 'Done',
+                    onSelectAll: () {},
+                    onDone: () {},
+                    collection: ActionCollection(roots: const []),
+                    onInvoke: (_, _) {},
+                  ),
+                  const SliverFillRemaining(child: SizedBox.shrink()),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
+      final capsule = find.byKey(
+        const ValueKey('cupertino-sidebar-collapsed-capsule'),
+      );
+
+      expect(capsule.hitTestable(), findsNothing);
+      expect(toggle.hitTestable(), findsNothing);
+      expect(tester.takeException(), isNull);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('apple select mode animates the fixed collapsed bar', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      _setSurfaceSize(tester, const Size(700, 600));
+      var selecting = false;
+      late StateSetter setHostState;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: StatefulBuilder(
+            builder: (context, setState) {
+              setHostState = setState;
+              return AdaptiveNavigationShell(
+                selectedIndex: 0,
+                destinations: const [
+                  AdaptiveNavigationDestination(
+                    label: 'Habits',
+                    icons: NavigationDestinationIcons(
+                      material: Icon(Icons.home_outlined),
+                      materialSelected: Icon(Icons.home),
+                      apple: Icon(CupertinoIcons.home),
+                      appleSelected: Icon(CupertinoIcons.house_fill),
+                    ),
+                  ),
+                ],
+                onDestinationSelected: (_) {},
+                child: Scaffold(
+                  body: CustomScrollView(
+                    slivers: [
+                      if (selecting)
+                        CupertinoSliverSelectAppBar<String>(
+                          title: const Text('Selected 1'),
+                          selectAllLabel: 'Select All',
+                          doneLabel: 'Done',
+                          onSelectAll: () {},
+                          onDone: () {},
+                          collection: ActionCollection(roots: const []),
+                          onInvoke: (_, _) {},
+                        )
+                      else
+                        const AdaptiveSliverAppBar.apple(title: Text('Habits')),
+                      const SliverFillRemaining(child: SizedBox.shrink()),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      );
+
+      final capsule = find.byKey(
+        const ValueKey('cupertino-sidebar-collapsed-capsule'),
+      );
+      final capsuleElement = tester.element(capsule);
+      final capsuleCenter = tester.getCenter(capsule);
+      expect(capsule.hitTestable(), findsOneWidget);
+
+      setHostState(() => selecting = true);
+      await tester.pump();
+      final initialTitleCenter = tester.getCenter(find.text('Selected 1')).dx;
+      await tester.pump(const Duration(milliseconds: 1));
+      await tester.pump(const Duration(milliseconds: 150));
+
+      final hidingTransition = tester.widget<Opacity>(
+        find
+            .descendant(
+              of: find.byKey(
+                const ValueKey('cupertino-sidebar-collapsed-transition'),
+              ),
+              matching: find.byType(Opacity),
+            )
+            .first,
+      );
+      expect(hidingTransition.opacity, inExclusiveRange(0, 1));
+      expect(capsule.hitTestable(), findsNothing);
+      expect(tester.element(capsule), same(capsuleElement));
+      expect(
+        tester.getCenter(find.text('Selected 1')).dx,
+        greaterThan(initialTitleCenter),
+      );
+
+      await tester.pumpAndSettle();
+      expect(tester.element(capsule), same(capsuleElement));
+      expect(capsule.hitTestable(), findsNothing);
+
+      setHostState(() => selecting = false);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 1));
+      await tester.pump(const Duration(milliseconds: 150));
+      final showingTransition = tester.widget<Opacity>(
+        find
+            .descendant(
+              of: find.byKey(
+                const ValueKey('cupertino-sidebar-collapsed-transition'),
+              ),
+              matching: find.byType(Opacity),
+            )
+            .first,
+      );
+      expect(showingTransition.opacity, inExclusiveRange(0, 1));
+      expect(capsule.hitTestable(), findsNothing);
+      expect(tester.element(capsule), same(capsuleElement));
+
+      await tester.pumpAndSettle();
+      expect(tester.element(capsule), same(capsuleElement));
+      expect(tester.getCenter(capsule), capsuleCenter);
+      expect(capsule.hitTestable(), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      debugDefaultTargetPlatformOverride = null;
+    });
 
     for (final direction in TextDirection.values) {
       testWidgets('apple Sidebar resizes and remembers width in $direction', (
@@ -4231,7 +4948,7 @@ void main() {
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
       tester.view.padding = const FakeViewPadding(left: 44, right: 20);
       tester.view.viewPadding = const FakeViewPadding(left: 50, right: 30);
-      _setSurfaceSize(tester, const Size(700, 600));
+      _setSurfaceSize(tester, const Size(1000, 600));
 
       await tester.pumpWidget(
         MaterialApp(
@@ -4267,9 +4984,9 @@ void main() {
       expect(branchPadding().width, 20);
       expect(branchViewPadding().width, 36);
       expect(branchVerticalPadding().height, 10);
-      expect(tester.getTopLeft(branch).dx, 254);
+      expect(tester.getTopLeft(branch).dx, 256);
       expect(tester.getTopLeft(surface), const Offset(44, 10));
-      expect(tester.getSize(surface), const Size(198, 580));
+      expect(tester.getSize(surface), const Size(200, 580));
       await tester.tap(find.byKey(const ValueKey('cupertino-sidebar-toggle')));
       await tester.pumpAndSettle();
       expect(branchPadding().width, 64);
@@ -4286,7 +5003,7 @@ void main() {
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
       tester.view.padding = const FakeViewPadding(left: 44, right: 20);
       tester.view.viewPadding = const FakeViewPadding(left: 50, right: 30);
-      _setSurfaceSize(tester, const Size(700, 600));
+      _setSurfaceSize(tester, const Size(1000, 600));
 
       await tester.pumpWidget(
         MaterialApp(
@@ -4352,7 +5069,7 @@ void main() {
         right: 7,
         bottom: 90,
       );
-      _setSurfaceSize(tester, const Size(700, 600));
+      _setSurfaceSize(tester, const Size(1000, 600));
 
       await tester.pumpWidget(
         MaterialApp(
@@ -4413,7 +5130,7 @@ void main() {
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
-      _setSurfaceSize(tester, const Size(700, 600));
+      _setSurfaceSize(tester, const Size(1000, 600));
       final router = _buildRouter();
       await tester.pumpWidget(
         MaterialApp.router(
@@ -4447,7 +5164,7 @@ void main() {
       final semanticsHandle = tester.ensureSemantics();
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
-      _setSurfaceSize(tester, const Size(700, 600));
+      _setSurfaceSize(tester, const Size(1000, 600));
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
@@ -4465,7 +5182,7 @@ void main() {
     testWidgets('apple Sidebar supports keyboard activation', (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
-      _setSurfaceSize(tester, const Size(700, 600));
+      _setSurfaceSize(tester, const Size(1000, 600));
       final selected = <int>[];
       final router = _buildRouter(onBranchChanged: selected.add);
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
@@ -4493,7 +5210,7 @@ void main() {
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
       tester.platformDispatcher.textScaleFactorTestValue = 3;
       addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-      _setSurfaceSize(tester, const Size(700, 240));
+      _setSurfaceSize(tester, const Size(1000, 240));
       final router = _buildRouter(
         destinations: const [
           AdaptiveNavigationDestination(

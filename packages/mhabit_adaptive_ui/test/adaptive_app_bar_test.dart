@@ -9,12 +9,18 @@ Widget _host({required Widget appBar, TargetPlatform? platform}) => MaterialApp(
   home: Scaffold(appBar: appBar as PreferredSizeWidget),
 );
 
-Widget _sidebarHost({required Widget child}) => MaterialApp(
-  theme: ThemeData(platform: TargetPlatform.iOS),
+Widget _sidebarHost({
+  required Widget child,
+  TargetPlatform platform = TargetPlatform.iOS,
+}) => MaterialApp(
+  theme: ThemeData(platform: platform),
   home: CupertinoSidebar(
     controller: AdaptiveNavigationController(),
     content: const SizedBox.shrink(),
     extent: const SideNavigationExtent(224),
+    toolbarGeometry: platform == TargetPlatform.macOS
+        ? CupertinoSidebarToolbarGeometry.compact
+        : CupertinoSidebarToolbarGeometry.standard,
     child: child,
   ),
 );
@@ -163,7 +169,7 @@ void main() {
   });
 
   testWidgets(
-    'Apple Sidebar aligns regular and sliver 44pt toolbars below its safe area',
+    'Apple Sidebar aligns regular and sliver standard toolbar geometry',
     (tester) async {
       tester.view.devicePixelRatio = 1;
       tester.view.physicalSize = const Size(800, 600);
@@ -187,9 +193,9 @@ void main() {
             .widget<AdaptiveAppBar>(find.byType(AdaptiveAppBar))
             .preferredSize
             .height,
-        kMinInteractiveDimensionCupertino,
+        54,
       );
-      expect(tester.getSize(regularBar).height, 54);
+      expect(tester.getSize(regularBar).height, 64);
       final regularTitleCenter = tester.getCenter(find.text('Settings')).dy;
 
       await tester.pumpWidget(
@@ -212,14 +218,75 @@ void main() {
         of: find.byType(CustomScrollView),
         matching: find.byType(CupertinoNavigationBar),
       );
-      expect(tester.getSize(sliverBar).height, 54);
+      expect(tester.getSize(sliverBar).height, 64);
       expect(tester.getCenter(find.text('Habits')).dy, regularTitleCenter);
       expect(regularTitleCenter, 32);
     },
   );
 
-  test('Apple app bar fixes its preferred toolbar height to 44pt', () {
+  testWidgets('macOS aligns regular and sliver compact toolbar geometry', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(800, 600);
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      _sidebarHost(
+        platform: TargetPlatform.macOS,
+        child: const Scaffold(
+          appBar: AdaptiveAppBar.apple(
+            title: Text('Settings'),
+            sidebarToolbarGeometry: CupertinoSidebarToolbarGeometry.compact,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final regularBar = find.descendant(
+      of: find.byType(Scaffold),
+      matching: find.byType(CupertinoNavigationBar),
+    );
+    expect(tester.getSize(regularBar).height, 54);
+    final regularTitleCenter = tester.getCenter(find.text('Settings')).dy;
+
+    await tester.pumpWidget(
+      _sidebarHost(
+        platform: TargetPlatform.macOS,
+        child: const Scaffold(
+          body: CustomScrollView(
+            slivers: [
+              AdaptiveSliverAppBar.apple(
+                height: kMinInteractiveDimensionCupertino,
+                title: Text('Habits'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final sliverBar = find.descendant(
+      of: find.byType(CustomScrollView),
+      matching: find.byType(CupertinoNavigationBar),
+    );
+    expect(tester.getSize(sliverBar).height, 54);
+    expect(tester.getCenter(find.text('Habits')).dy, regularTitleCenter);
+  });
+
+  test('Apple app bar defaults to the standard 54pt toolbar geometry', () {
     const appBar = AdaptiveAppBar.apple(title: Text('Settings'));
+
+    expect(appBar.preferredSize, const Size.fromHeight(54));
+  });
+
+  test('Apple app bar accepts the compact 44pt toolbar geometry', () {
+    const appBar = AdaptiveAppBar.apple(
+      title: Text('Settings'),
+      sidebarToolbarGeometry: CupertinoSidebarToolbarGeometry.compact,
+    );
 
     expect(appBar.preferredSize, const Size.fromHeight(44));
   });

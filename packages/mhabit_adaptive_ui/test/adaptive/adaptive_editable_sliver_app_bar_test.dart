@@ -396,12 +396,14 @@ void main() {
         find.byKey(const ValueKey('cupertino-sidebar-leading-anchor')),
         findsOneWidget,
       );
-      final toolbar = tester
-          .widgetList<NavigationToolbar>(find.byType(NavigationToolbar))
-          .singleWhere((widget) => widget.leading is Padding);
       expect(
-        (toolbar.leading! as Padding).padding,
-        const EdgeInsetsDirectional.only(start: 56),
+        tester
+            .widgetList<Padding>(find.byType(Padding))
+            .where(
+              (widget) =>
+                  widget.padding == const EdgeInsetsDirectional.only(start: 56),
+            ),
+        hasLength(1),
       );
 
       await tester.drag(find.byType(CustomScrollView), const Offset(0, -900));

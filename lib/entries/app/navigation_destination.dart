@@ -17,6 +17,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
+import '../../pages/common/widgets.dart';
+
 /// App-specific top-level navigation destinations.
 ///
 /// Keeps business meaning at call sites while owning the platform icon matrix.
@@ -47,10 +49,10 @@ abstract final class AppNavigationDestinations {
       AdaptiveNavigationDestination(
         label: label,
         icons: const NavigationDestinationIcons(
-          material: Icon(Icons.settings_outlined),
-          materialSelected: Icon(Icons.settings),
-          apple: Icon(CupertinoIcons.settings),
-          appleSelected: Icon(CupertinoIcons.settings_solid),
+          material: AppSettingsIcon.material(selected: false),
+          materialSelected: AppSettingsIcon.material(),
+          apple: AppSettingsIcon.apple(selected: false),
+          appleSelected: AppSettingsIcon.apple(),
         ),
       );
 }

@@ -26,6 +26,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../common/consts.dart';
 import '../../common/enums.dart';
 import '../../common/types.dart';
+import '../../extensions/adaptive_navigation_context_extensions.dart';
 import '../../extensions/adaptive_style_extensions.dart';
 import '../../extensions/color_extensions.dart';
 import '../../l10n/localizations.dart';
@@ -1024,8 +1025,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
       collapsedViewportFraction: displayPageOccupyPrt / 100,
       expandedViewportFraction: kDefaultHabitCalendarBarExtendedPrt,
     );
-    final showThemeAction =
-        WindowSize.of(context).width == WindowSizeClass.compact;
+    final compact = WindowSize.of(context).width == WindowSizeClass.compact;
+    final collapsedAppleSidebar = context.hasCollapsedAppleSidebar;
+    final showThemeAction = compact || collapsedAppleSidebar;
     const trackPadding = kDefaultHabitListTileTrackPadding;
 
     //#region: appbar

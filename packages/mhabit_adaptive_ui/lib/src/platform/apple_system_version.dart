@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// A structured iOS or iPadOS release number.
+/// A structured iOS, iPadOS, or macOS release number.
 ///
 /// Missing minor or patch components are normalized to zero.
-final class IosSystemVersion implements Comparable<IosSystemVersion> {
-  const IosSystemVersion(this.major, [this.minor = 0, this.patch = 0])
+final class AppleSystemVersion implements Comparable<AppleSystemVersion> {
+  const AppleSystemVersion(this.major, [this.minor = 0, this.patch = 0])
     : assert(major >= 0),
       assert(minor >= 0),
       assert(patch >= 0);
@@ -33,7 +33,7 @@ final class IosSystemVersion implements Comparable<IosSystemVersion> {
   /// Parses one to three dot-separated non-negative integer components.
   ///
   /// Returns null when [source] is empty or malformed.
-  static IosSystemVersion? tryParse(String source) {
+  static AppleSystemVersion? tryParse(String source) {
     final components = source.trim().split('.');
     if (components.isEmpty || components.length > 3) return null;
 
@@ -44,15 +44,34 @@ final class IosSystemVersion implements Comparable<IosSystemVersion> {
       if (value == null) return null;
       values.add(value);
     }
-    return IosSystemVersion(
+    return AppleSystemVersion(
       values[0],
       values.length > 1 ? values[1] : 0,
       values.length > 2 ? values[2] : 0,
     );
   }
 
+  /// Parses Dart's decorated Apple operating-system version string.
+  ///
+  /// macOS commonly reports values such as
+  /// `Version 27.0.1 (Build 26A123)`. A plain dotted version is accepted too.
+  static AppleSystemVersion? tryParseOperatingSystemVersion(String source) {
+    final plain = tryParse(source);
+    if (plain != null) return plain;
+
+    final match = RegExp(
+      r'\bVersion\s+(\d+)(?:\.(\d+))?(?:\.(\d+))?',
+    ).firstMatch(source);
+    if (match == null) return null;
+    return AppleSystemVersion(
+      int.parse(match.group(1)!),
+      int.tryParse(match.group(2) ?? '') ?? 0,
+      int.tryParse(match.group(3) ?? '') ?? 0,
+    );
+  }
+
   @override
-  int compareTo(IosSystemVersion other) {
+  int compareTo(AppleSystemVersion other) {
     final majorComparison = major.compareTo(other.major);
     if (majorComparison != 0) return majorComparison;
 
@@ -62,17 +81,17 @@ final class IosSystemVersion implements Comparable<IosSystemVersion> {
     return patch.compareTo(other.patch);
   }
 
-  bool operator <(IosSystemVersion other) => compareTo(other) < 0;
+  bool operator <(AppleSystemVersion other) => compareTo(other) < 0;
 
-  bool operator <=(IosSystemVersion other) => compareTo(other) <= 0;
+  bool operator <=(AppleSystemVersion other) => compareTo(other) <= 0;
 
-  bool operator >(IosSystemVersion other) => compareTo(other) > 0;
+  bool operator >(AppleSystemVersion other) => compareTo(other) > 0;
 
-  bool operator >=(IosSystemVersion other) => compareTo(other) >= 0;
+  bool operator >=(AppleSystemVersion other) => compareTo(other) >= 0;
 
   @override
   bool operator ==(Object other) =>
-      other is IosSystemVersion &&
+      other is AppleSystemVersion &&
       major == other.major &&
       minor == other.minor &&
       patch == other.patch;

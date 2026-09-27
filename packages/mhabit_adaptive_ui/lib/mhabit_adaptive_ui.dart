@@ -56,12 +56,13 @@ export 'src/material/material_navigation_bar.dart'
 export 'src/material/material_navigation_shell.dart'
     show MaterialNavigationRailStyle;
 export 'src/material/material_sliver_search_bar.dart';
-export 'src/platform/ios_system_version.dart';
+export 'src/platform/apple_system_version.dart';
 export 'src/shell/adaptive_branch_route_observer.dart';
 export 'src/shell/adaptive_nav_scope.dart';
 export 'src/shell/adaptive_nav_visibility.dart';
 export 'src/shell/adaptive_navigation.dart';
 export 'src/shell/navigation_shell_form.dart';
+export 'src/shell/sidebar_adapter.dart' show CupertinoSidebarPresentationScope;
 export 'src/window_control/cupertino_navigation_bar.dart';
 export 'src/window_control/material_app_bar.dart';
 export 'src/window_control/window_control_layout.dart';

@@ -33,6 +33,7 @@ import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../logging/logger_stack.dart';
 import '../../models/app_adaptive_style_mode.dart';
+import '../../models/app_apple_sidebar_style_mode.dart';
 import '../../models/app_event.dart';
 import '../../models/app_reminder_config.dart';
 import '../../models/custom_date_format.dart';
@@ -451,6 +452,11 @@ class _PageState extends State<_Page> with XShare {
   void _onTextDirectionOverrideChanged(TextDirection? value) {
     if (!mounted) return;
     context.read<AppDeveloperViewModel>().setTextDirectionOverride(value);
+  }
+
+  void _onAppleSidebarStyleModeChanged(AppAppleSidebarStyleMode value) {
+    if (!mounted) return;
+    context.read<AppDeveloperViewModel>().setAppleSidebarStyleMode(value);
   }
 
   void _onExportDBTilePressed(BuildContext context) async {
@@ -906,26 +912,44 @@ class _PageState extends State<_Page> with XShare {
     Widget buildDevelopSubGroup(BuildContext context) =>
         Selector<
           AppDeveloperViewModel,
-          (bool, bool, AppAdaptiveStyleMode, TextDirection?)
+          (
+            bool,
+            bool,
+            AppAdaptiveStyleMode,
+            TextDirection?,
+            AppAppleSidebarStyleMode,
+          )
         >(
           selector: (context, vm) => (
             vm.isInDevelopMode,
             vm.displayDebugMenu,
             vm.adaptiveStyleMode,
             vm.textDirectionOverride,
+            vm.appleSidebarStyleMode,
           ),
           shouldRebuild: (previous, next) => previous != next,
-          builder: (context, value, child) => AppSettingDevelopSubGroup(
-            isInDevelopMode: value.$1,
-            isDisplayDebugMenuSelect: value.$2,
-            adaptiveStyleMode: value.$3,
-            textDirectionOverride: value.$4,
-            onDisplayDebugMenuSelectChanged: _onDisplayDebugMenuSelectChanged,
-            onAdaptiveStyleModeChanged: _onAdaptiveStyleModeChanged,
-            onTextDirectionOverrideChanged: _onTextDirectionOverrideChanged,
-            onExportDBTilePressed: _onExportDBTilePressed,
-            onClearDBTilePressed: _onClearDBTilePressed,
-          ),
+          builder: (context, value, child) {
+            final (
+              isInDevelopMode,
+              displayDebugMenu,
+              adaptiveStyleMode,
+              textDirectionOverride,
+              appleSidebarStyleMode,
+            ) = value;
+            return AppSettingDevelopSubGroup(
+              isInDevelopMode: isInDevelopMode,
+              isDisplayDebugMenuSelect: displayDebugMenu,
+              adaptiveStyleMode: adaptiveStyleMode,
+              textDirectionOverride: textDirectionOverride,
+              appleSidebarStyleMode: appleSidebarStyleMode,
+              onDisplayDebugMenuSelectChanged: _onDisplayDebugMenuSelectChanged,
+              onAdaptiveStyleModeChanged: _onAdaptiveStyleModeChanged,
+              onTextDirectionOverrideChanged: _onTextDirectionOverrideChanged,
+              onAppleSidebarStyleModeChanged: _onAppleSidebarStyleModeChanged,
+              onExportDBTilePressed: _onExportDBTilePressed,
+              onClearDBTilePressed: _onClearDBTilePressed,
+            );
+          },
         );
 
     Widget buildChinaIPC(BuildContext context) => Builder(

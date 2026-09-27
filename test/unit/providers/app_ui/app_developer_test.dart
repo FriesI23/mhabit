@@ -15,6 +15,7 @@
 import 'package:flutter/widgets.dart' show TextDirection;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/app_adaptive_style_mode.dart';
+import 'package:mhabit/models/app_apple_sidebar_style_mode.dart';
 import 'package:mhabit/providers/app_ui/app_developer.dart';
 import 'package:mhabit/providers/support/global.dart';
 import 'package:mhabit/storage/profile/handlers.dart';
@@ -33,6 +34,22 @@ Future<ProfileViewModel> _loadProfile({
 }
 
 void main() {
+  test('Apple Sidebar modes resolve automatic and forced generations', () {
+    expect(
+      AppAppleSidebarStyleMode.automatic.resolve(const AppleSystemVersion(26)),
+      AppleSidebarStyle.inset,
+    );
+    expect(
+      AppAppleSidebarStyleMode.automatic.resolve(const AppleSystemVersion(27)),
+      AppleSidebarStyle.edge,
+    );
+    expect(
+      AppAppleSidebarStyleMode.os26.resolve(const AppleSystemVersion(99)),
+      AppleSidebarStyle.inset,
+    );
+    expect(AppAppleSidebarStyleMode.os27.resolve(null), AppleSidebarStyle.edge);
+  });
+
   group('AppDeveloperViewModel adaptive style', () {
     test('defaults missing and unknown values to automatic', () async {
       for (final values in [
@@ -145,7 +162,7 @@ void main() {
     );
   });
 
-  test('text direction override is in-memory only', () async {
+  test('runtime-only developer overrides reset with the view model', () async {
     final profile = await _loadProfile();
     final firstViewModel = AppDeveloperViewModel(
       global: Global(),
@@ -153,7 +170,9 @@ void main() {
     );
 
     firstViewModel.setTextDirectionOverride(TextDirection.rtl);
+    firstViewModel.setAppleSidebarStyleMode(AppAppleSidebarStyleMode.os27);
     expect(firstViewModel.textDirectionOverride, TextDirection.rtl);
+    expect(firstViewModel.appleSidebarStyleMode, AppAppleSidebarStyleMode.os27);
     firstViewModel.dispose();
 
     final secondViewModel = AppDeveloperViewModel(
@@ -161,6 +180,10 @@ void main() {
       profile: profile,
     );
     expect(secondViewModel.textDirectionOverride, isNull);
+    expect(
+      secondViewModel.appleSidebarStyleMode,
+      AppAppleSidebarStyleMode.automatic,
+    );
 
     secondViewModel.dispose();
     profile.dispose();

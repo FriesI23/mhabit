@@ -17,6 +17,7 @@ import 'package:flutter/widgets.dart' show TextDirection;
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../models/app_adaptive_style_mode.dart';
+import '../../models/app_apple_sidebar_style_mode.dart';
 import '../../storage/profile/handlers.dart';
 import '../../storage/profile_provider.dart';
 import '../support/global.dart';
@@ -25,6 +26,8 @@ class AppDeveloperViewModel extends ChangeNotifier
     with GlobalLoadedMixin, ProfileHandlerLoadedMixin {
   AdaptiveStyleOverrideProfileHandler? _adaptiveStyleOverride;
   TextDirection? _textDirectionOverride;
+  AppAppleSidebarStyleMode _appleSidebarStyleMode =
+      AppAppleSidebarStyleMode.automatic;
 
   AppDeveloperViewModel({required Global global, ProfileViewModel? profile}) {
     updateGlobal(global);
@@ -71,6 +74,8 @@ class AppDeveloperViewModel extends ChangeNotifier
 
   TextDirection? get textDirectionOverride => _textDirectionOverride;
 
+  AppAppleSidebarStyleMode get appleSidebarStyleMode => _appleSidebarStyleMode;
+
   Future<void> setAdaptiveStyleMode(AppAdaptiveStyleMode mode) async {
     if (adaptiveStyleMode == mode) return;
     await _adaptiveStyleOverride?.set(mode);
@@ -80,6 +85,12 @@ class AppDeveloperViewModel extends ChangeNotifier
   void setTextDirectionOverride(TextDirection? textDirection) {
     if (_textDirectionOverride == textDirection) return;
     _textDirectionOverride = textDirection;
+    notifyListeners();
+  }
+
+  void setAppleSidebarStyleMode(AppAppleSidebarStyleMode mode) {
+    if (_appleSidebarStyleMode == mode) return;
+    _appleSidebarStyleMode = mode;
     notifyListeners();
   }
 }

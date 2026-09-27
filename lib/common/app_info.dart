@@ -18,7 +18,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' hide appFlavor;
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart'
-    show IosSystemVersion;
+    show AppleSystemVersion;
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../utils/app_path_provider.dart';
@@ -56,7 +56,7 @@ class AppInfo implements AsyncInitialization {
 
   AndroidBuildVersion? _androidBuildVersion;
   String? _iosMachineIdentifier;
-  IosSystemVersion? _iosSystemVersion;
+  AppleSystemVersion? _appleSystemVersion;
   LinuxPlatformArchitecture? _linuxArchitecture;
   late String _packageName;
   late String _appName;
@@ -90,8 +90,8 @@ class AppInfo implements AsyncInitialization {
 
   LinuxPlatformArchitecture? get linuxArchitecture => _linuxArchitecture;
 
-  /// The current iOS or iPadOS version, when initialized successfully.
-  IosSystemVersion? get iosSystemVersion => _iosSystemVersion;
+  /// The current iOS, iPadOS, or macOS version, when initialized successfully.
+  AppleSystemVersion? get appleSystemVersion => _appleSystemVersion;
 
   /// Whether the current device is a known rectangular-screen iPhone.
   bool get usesRectangularIPhoneDisplay =>
@@ -100,7 +100,7 @@ class AppInfo implements AsyncInitialization {
 
   @override
   Future<void> init() async {
-    _iosSystemVersion = null;
+    _appleSystemVersion = null;
     final deviceInfo = DeviceInfoPlugin();
     if (Platform.isAndroid) {
       final androidInfo = await deviceInfo.androidInfo;
@@ -108,7 +108,20 @@ class AppInfo implements AsyncInitialization {
     } else if (Platform.isIOS) {
       final iosInfo = await deviceInfo.iosInfo;
       _iosMachineIdentifier = iosInfo.utsname.machine;
-      _iosSystemVersion = IosSystemVersion.tryParse(iosInfo.systemVersion);
+      _appleSystemVersion = AppleSystemVersion.tryParse(iosInfo.systemVersion);
+    } else if (Platform.isMacOS) {
+      try {
+        final macOsInfo = await deviceInfo.macOsInfo;
+        _appleSystemVersion = AppleSystemVersion(
+          macOsInfo.majorVersion,
+          macOsInfo.minorVersion,
+          macOsInfo.patchVersion,
+        );
+      } on MissingPluginException {
+        _appleSystemVersion = AppleSystemVersion.tryParseOperatingSystemVersion(
+          Platform.operatingSystemVersion,
+        );
+      }
     } else if (Platform.isLinux) {
       final result = await Process.run('uname', ['-m']);
       _linuxArchitecture = result.stdout.toString().contains('aarch64')

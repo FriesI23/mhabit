@@ -406,7 +406,9 @@ class HabitDisplayOptionsActions<T extends Object> extends StatelessWidget {
             ? Icons.check
             : Icons.swap_vert,
       ),
-      CycleHabitDisplayTheme() => _themeIcon(),
+      CycleHabitDisplayTheme() => AppThemeModeIcon.material(
+        themeType: config.themeType,
+      ),
     };
   }
 
@@ -427,8 +429,10 @@ class HabitDisplayOptionsActions<T extends Object> extends StatelessWidget {
       SelectHabitDisplaySortType() ||
       ToggleHabitDisplaySortDirection() ||
       SelectHabitDisplayGroupType() ||
-      ToggleHabitDisplayGroupDirection() ||
-      CycleHabitDisplayTheme() => _materialIntentIcon(payload),
+      ToggleHabitDisplayGroupDirection() => _materialIntentIcon(payload),
+      CycleHabitDisplayTheme() => AppThemeModeIcon.apple(
+        themeType: config.themeType,
+      ),
     };
   }
 
@@ -455,12 +459,6 @@ class HabitDisplayOptionsActions<T extends Object> extends StatelessWidget {
     ),
     _ => null,
   };
-
-  Widget _themeIcon() => Icon(switch (config.themeType) {
-    AppThemeType.light => Icons.light_mode_rounded,
-    AppThemeType.dark => Icons.dark_mode_rounded,
-    AppThemeType.unknown || AppThemeType.followSystem => Icons.hdr_auto_rounded,
-  });
 
   List<Widget>? _materialMenuForAction(
     BuildContext context,

@@ -12,8 +12,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
+import '../../../../extensions/adaptive_navigation_context_extensions.dart';
 import '../../../../l10n/localizations.dart';
 import '../../../../widgets/app_bar_action_budget.dart';
+import '../../../common/widgets.dart';
 import 'habit_display_options_actions.dart';
 
 sealed class HabitDisplayViewAction {
@@ -167,7 +169,8 @@ class HabitDisplayViewActions extends StatelessWidget {
         ?displayOptionActions.sortAction,
         ?displayOptionActions.groupAction,
         _buildStatisticsAction(l10n),
-        ?displayOptionActions.themeAction,
+        if (context.showsAppleAuxiliaryActionsInAppBar)
+          ?displayOptionActions.themeAction,
         ?settingsAction,
         ?displayOptionActions.filterAction,
       ],
@@ -204,8 +207,7 @@ class HabitDisplayViewActions extends StatelessWidget {
     BuildContext context,
     L10n l10n,
   ) {
-    if (AdaptiveNavScope.maybeOf(context)?.form !=
-        NavigationShellForm.compact) {
+    if (!context.showsAppleAuxiliaryActionsInAppBar) {
       return null;
     }
     return AdaptiveAction.action(
@@ -241,7 +243,7 @@ class HabitDisplayViewActions extends StatelessWidget {
     HabitDisplayOptionsActionsData<HabitDisplayViewAction> displayOptionActions,
     ActionCollection<HabitDisplayViewAction> collection,
   ) {
-    const maxPrimaryActions = 2;
+    final maxPrimaryActions = _maxPrimaryActions(context);
     final primaryCount = collection.roots
         .where(
           (action) =>
@@ -283,6 +285,13 @@ class HabitDisplayViewActions extends StatelessWidget {
     );
   }
 
+  int _maxPrimaryActions(BuildContext context) {
+    final sideAppleSidebar =
+        context.hasExpandedAppleSidebar &&
+        AdaptiveNavScope.maybeOf(context)?.form != NavigationShellForm.compact;
+    return sideAppleSidebar ? 3 : 2;
+  }
+
   void _onActionInvoked(
     HabitDisplayViewAction action,
     HabitDisplayOptionsActionsData<HabitDisplayViewAction> displayOptionActions,
@@ -308,7 +317,7 @@ class HabitDisplayViewActions extends StatelessWidget {
     return switch (action.payload) {
       HabitDisplayViewOptionAction() => const Icon(Icons.more_vert),
       HabitDisplayViewSelectAction() => const Icon(Icons.select_all),
-      HabitDisplayViewOpenSettingsAction() => const Icon(Icons.settings),
+      HabitDisplayViewOpenSettingsAction() => const AppSettingsIcon.material(),
       HabitDisplayViewStatisticsAction() => const Icon(Icons.bar_chart_rounded),
       null => const Icon(Icons.more_vert),
     };
@@ -325,9 +334,7 @@ class HabitDisplayViewActions extends StatelessWidget {
       HabitDisplayViewSelectAction() => const Icon(
         CupertinoIcons.checkmark_alt_circle,
       ),
-      HabitDisplayViewOpenSettingsAction() => const Icon(
-        CupertinoIcons.settings_solid,
-      ),
+      HabitDisplayViewOpenSettingsAction() => const AppSettingsIcon.apple(),
       HabitDisplayViewStatisticsAction() => const Icon(
         CupertinoIcons.chart_bar,
       ),
@@ -343,9 +350,10 @@ class HabitDisplayViewActions extends StatelessWidget {
   ) {
     final child = defaultBuilder(context, action, onPressed);
     return switch (action.payload) {
-      HabitDisplayViewOpenSettingsAction() => KeyedSubtree(
+      HabitDisplayViewOpenSettingsAction() => AppSettingsButton(
         key: const ValueKey('open-settings-action'),
-        child: child,
+        tooltip: action.metadata.tooltip,
+        onPressed: onPressed,
       ),
       HabitDisplayViewSelectAction() ||
       HabitDisplayViewStatisticsAction() ||
@@ -366,9 +374,10 @@ class HabitDisplayViewActions extends StatelessWidget {
       onPressed: onPressed,
       child: Text(action.metadata.label, maxLines: 1, softWrap: false),
     ),
-    HabitDisplayViewOpenSettingsAction() => KeyedSubtree(
+    HabitDisplayViewOpenSettingsAction() => AppSettingsButton(
       key: const ValueKey('open-settings-action'),
-      child: defaultBuilder(context, action, onPressed),
+      tooltip: action.metadata.tooltip,
+      onPressed: onPressed,
     ),
     HabitDisplayViewStatisticsAction() ||
     HabitDisplayViewOptionAction() ||

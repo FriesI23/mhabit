@@ -276,7 +276,7 @@ void main() {
   testWidgets('Apple Sidebar renders and invokes auxiliary destination', (
     tester,
   ) async {
-    _setSurface(tester, const Size(700, 800));
+    _setSurface(tester, const Size(1000, 800));
     var invoked = false;
     await tester.pumpWidget(
       _host(

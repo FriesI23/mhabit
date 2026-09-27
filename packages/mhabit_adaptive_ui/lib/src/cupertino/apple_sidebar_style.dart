@@ -1,4 +1,4 @@
-import '../platform/ios_system_version.dart';
+import '../platform/apple_system_version.dart';
 
 /// Visual treatment for the Apple medium-and-larger Sidebar.
 enum AppleSidebarStyle {
@@ -8,10 +8,10 @@ enum AppleSidebarStyle {
   /// A liquid-glass column flush with the window edge.
   edge;
 
-  /// Selects the app-owned presentation for an iOS or iPadOS release.
-  static AppleSidebarStyle from(IosSystemVersion? version) =>
+  /// Selects the app-owned presentation for an Apple OS release.
+  static AppleSidebarStyle from(AppleSystemVersion? version) =>
       version != null &&
-          version >= const IosSystemVersion(_edgeMinimumMajorVersion)
+          version >= const AppleSystemVersion(_edgeMinimumMajorVersion)
       ? edge
       : inset;
 

@@ -12,11 +12,48 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:io';
+
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/app_info.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  const deviceInfoChannel = MethodChannel(
+    'dev.fluttercommunity.plus/device_info',
+  );
+
+  setUpAll(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(deviceInfoChannel, (call) async {
+          expect(call.method, 'getDeviceInfo');
+          return <String, Object?>{
+            'computerName': 'Test Mac',
+            'hostName': 'test-mac.local',
+            'arch': 'arm64',
+            'model': 'Mac16,1',
+            'modelName': 'Mac',
+            'kernelVersion': 'Darwin Kernel Version',
+            'osRelease': '27.0.1',
+            'majorVersion': 27,
+            'minorVersion': 0,
+            'patchVersion': 1,
+            'activeCPUs': 8,
+            'memorySize': 16000000000,
+            'cpuFrequency': 0,
+            'systemGUID': 'test-guid',
+          };
+        });
+  });
+
+  tearDownAll(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(deviceInfoChannel, null);
+  });
+
   group('isRectangularIPhoneMachineIdentifier', () {
     test('recognizes home-button iPhones supported by iOS 15', () {
       expect(isRectangularIPhoneMachineIdentifier('iPhone8,1'), isTrue);
@@ -34,8 +71,8 @@ void main() {
     });
   });
 
-  test('iOS system version is null before initialization', () {
-    expect(AppInfo().iosSystemVersion, isNull);
+  test('Apple system version is null before initialization', () {
+    expect(AppInfo().appleSystemVersion, isNull);
   });
 
   group('AppInfo.changelogVersion', () {
@@ -50,6 +87,12 @@ void main() {
       await AppInfo().init();
 
       expect(AppInfo().changelogVersion, '1.25.3+168');
+      if (Platform.isMacOS) {
+        expect(
+          AppInfo().appleSystemVersion,
+          const AppleSystemVersion(27, 0, 1),
+        );
+      }
     });
 
     test('strips leading v from version', () async {

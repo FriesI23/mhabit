@@ -13,10 +13,12 @@ import 'package:flutter/cupertino.dart'
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
+import '../../../../extensions/adaptive_navigation_context_extensions.dart';
 import '../../../../extensions/iterable_extensions.dart';
 import '../../../../l10n/localizations.dart';
 import '../../../../models/habit_display.dart';
 import '../../../../models/habit_form.dart';
+import '../../../common/widgets.dart';
 import 'habit_display_options_actions.dart';
 
 sealed class HabitDisplaySearchAction {
@@ -185,6 +187,7 @@ class HabitDisplaySearchActions extends StatelessWidget {
       l10n,
       displayOptionActions,
       selectRetentionPriority: PrimaryRetentionPriority.high,
+      includeThemeAction: true,
     );
     final settingsAction = _buildSettingsAction(context, l10n);
     return ActionCollection<HabitDisplaySearchAction>(
@@ -207,6 +210,7 @@ class HabitDisplaySearchActions extends StatelessWidget {
       l10n,
       displayOptionActions,
       selectRetentionPriority: PrimaryRetentionPriority.normal,
+      includeThemeAction: context.showsAppleAuxiliaryActionsInAppBar,
     );
     final settingsAction = _buildSettingsAction(context, l10n);
     return ActionCollection<HabitDisplaySearchAction>(
@@ -249,6 +253,7 @@ class HabitDisplaySearchActions extends StatelessWidget {
     HabitDisplayOptionsActionsData<HabitDisplaySearchAction>
     displayOptionActions, {
     required PrimaryRetentionPriority selectRetentionPriority,
+    required bool includeThemeAction,
   }) {
     final effectiveShowSelectAction =
         showSelectAction ??
@@ -287,7 +292,7 @@ class HabitDisplaySearchActions extends StatelessWidget {
           ),
         ),
       ),
-      ?displayOptionActions.themeAction,
+      if (includeThemeAction) ?displayOptionActions.themeAction,
     ];
   }
 
@@ -295,8 +300,7 @@ class HabitDisplaySearchActions extends StatelessWidget {
     BuildContext context,
     L10n l10n,
   ) {
-    if (AdaptiveNavScope.maybeOf(context)?.form !=
-        NavigationShellForm.compact) {
+    if (!context.showsAppleAuxiliaryActionsInAppBar) {
       return null;
     }
     return AdaptiveAction.action(
@@ -458,7 +462,8 @@ class HabitDisplaySearchActions extends StatelessWidget {
     return switch (action.payload) {
       HabitDisplaySearchOptionAction() => const Icon(Icons.more_vert),
       HabitDisplaySearchSelectAction() => const Icon(Icons.select_all),
-      HabitDisplaySearchOpenSettingsAction() => const Icon(Icons.settings),
+      HabitDisplaySearchOpenSettingsAction() =>
+        const AppSettingsIcon.material(),
       HabitDisplaySearchStatisticsAction() => const Icon(
         Icons.bar_chart_rounded,
       ),
@@ -503,9 +508,7 @@ class HabitDisplaySearchActions extends StatelessWidget {
       HabitDisplaySearchSelectAction() => const Icon(
         CupertinoIcons.checkmark_alt_circle,
       ),
-      HabitDisplaySearchOpenSettingsAction() => const Icon(
-        CupertinoIcons.settings_solid,
-      ),
+      HabitDisplaySearchOpenSettingsAction() => const AppSettingsIcon.apple(),
       HabitDisplaySearchStatisticsAction() => const Icon(
         CupertinoIcons.chart_bar,
       ),
@@ -543,9 +546,10 @@ class HabitDisplaySearchActions extends StatelessWidget {
   ) {
     final child = defaultBuilder(context, action, onPressed);
     return switch (action.payload) {
-      HabitDisplaySearchOpenSettingsAction() => KeyedSubtree(
+      HabitDisplaySearchOpenSettingsAction() => AppSettingsButton(
         key: const ValueKey('open-settings-action'),
-        child: child,
+        tooltip: action.metadata.tooltip,
+        onPressed: onPressed,
       ),
       HabitDisplaySearchSelectAction() ||
       HabitDisplaySearchStatisticsAction() ||
@@ -570,9 +574,10 @@ class HabitDisplaySearchActions extends StatelessWidget {
       onPressed: onPressed,
       child: Text(action.metadata.label, maxLines: 1, softWrap: false),
     ),
-    HabitDisplaySearchOpenSettingsAction() => KeyedSubtree(
+    HabitDisplaySearchOpenSettingsAction() => AppSettingsButton(
       key: const ValueKey('open-settings-action'),
-      child: defaultBuilder(context, action, onPressed),
+      tooltip: action.metadata.tooltip,
+      onPressed: onPressed,
     ),
     HabitDisplaySearchStatisticsAction() ||
     HabitDisplaySearchOptionAction() ||

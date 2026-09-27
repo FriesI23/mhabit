@@ -23,15 +23,17 @@ import 'cupertino_navigation_primary_action.dart';
 /// ```text
 /// compact          constrained side  expanded side
 /// +----------+     +------------+    +------+-------+
-/// | content  |     | side |body |    | side |content|
-/// +----------+     | bar  |     |    | bar  |       |
-/// | Tab Bar  |     |      |     |    |      |       |
-/// +----------+     +------+-----+    +------+-------+
+/// | top bar  |     |  top bar   |    | side |content|
+/// | content  |     |  content   |    | bar  |       |
+/// +----------+     +------------+    |      |       |
+/// | Tab Bar  |                       +------+-------+
+/// +----------+
 /// ```
 ///
-/// Medium and larger widths use the same hideable beside presentation. In
-/// compact form, route and contextual state control visibility while scroll
-/// direction selects the expanded or minimized Tab Bar presentation.
+/// Medium widths default to the collapsed top-bar presentation; large widths
+/// default to the beside Sidebar. In compact form, route and contextual state
+/// control visibility while scroll direction selects the expanded or
+/// minimized Tab Bar presentation.
 class CupertinoNavigationShell extends StatefulWidget {
   /// Creates Cupertino navigation chrome around [child].
   const CupertinoNavigationShell({
@@ -108,6 +110,55 @@ class CupertinoNavigationShell extends StatefulWidget {
 class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
   final AdaptiveNavigationController _controller =
       AdaptiveNavigationController();
+  final CupertinoSidebarCollapsedBarController _collapsedBarController =
+      CupertinoSidebarCollapsedBarController();
+  bool _sidebarExpanded = true;
+  NavigationShellForm? _automaticForm;
+  bool? _compactRetainedExpanded;
+  bool _syncingAutomaticForm = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_handleSidebarChanged);
+  }
+
+  void _handleSidebarChanged() {
+    final expanded = _controller.expanded;
+    if (expanded == _sidebarExpanded) return;
+    if (_syncingAutomaticForm) {
+      _sidebarExpanded = expanded;
+      return;
+    }
+    if (!mounted) return;
+    setState(() => _sidebarExpanded = expanded);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final form = _resolveForm(WindowSize.of(context));
+    if (form == _automaticForm) return;
+    final previousForm = _automaticForm;
+    _automaticForm = form;
+    if (form == NavigationShellForm.compact) {
+      if (previousForm != null && previousForm != NavigationShellForm.compact) {
+        _compactRetainedExpanded = _controller.expanded;
+      }
+      return;
+    }
+
+    final expanded =
+        previousForm == NavigationShellForm.compact &&
+            _compactRetainedExpanded != null
+        ? _compactRetainedExpanded!
+        : form == NavigationShellForm.expandedSide;
+    _compactRetainedExpanded = null;
+    _syncingAutomaticForm = true;
+    _controller.expanded = expanded;
+    _sidebarExpanded = expanded;
+    _syncingAutomaticForm = false;
+  }
 
   NavigationShellForm _resolveForm(WindowSize windowSize) =>
       switch (windowSize.width) {
@@ -128,13 +179,18 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
 
   @override
   void dispose() {
+    _controller.removeListener(_handleSidebarChanged);
     _controller.dispose();
+    _collapsedBarController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final widget = this.widget;
+    final toolbarGeometry = CupertinoSidebarPresentationScope.toolbarGeometryOf(
+      context,
+    );
     final disableAnimations = MediaQuery.disableAnimationsOf(context);
     // Match the actual Material Scaffold surface during ThemeData animation.
     // CupertinoThemeData switches brightness discretely at the midpoint,
@@ -177,26 +233,52 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
           onSelectionChanged: adapter.select,
           auxiliaryDestinations: adapter.auxiliaryDestinations,
         );
+        final collapsedBar = CupertinoSidebarCollapsedBar(
+          key: const ValueKey('cupertino-sidebar-collapsed-bar'),
+          destinations: adapter.destinations,
+          selectedIndex: widget.selectedAuxiliaryIndex == null
+              ? widget.selectedIndex
+              : null,
+          onDestinationSelected: (index) =>
+              adapter.select(SidebarPrimarySelection(index)),
+          height: toolbarGeometry.collapsedBarHeight,
+        );
+        final branch = CupertinoSidebarPresentationScope(
+          expanded: _sidebarExpanded,
+          collapsedBarController: _collapsedBarController,
+          toolbarGeometry: toolbarGeometry,
+          child: child,
+        );
         final sidebar = switch (widget.sidebarStyle) {
           AppleSidebarStyle.inset => CupertinoSidebar(
             controller: _controller,
             content: sidebarContent,
+            collapsedBar: collapsedBar,
+            collapsedBarController: _collapsedBarController,
+            collapsedBarPlacement:
+                CupertinoSidebarCollapsedBarPlacement.fixedToolbar,
+            toolbarGeometry: toolbarGeometry,
             extent: widget.sideNavigationExtent,
             dragHandleBuilder: widget.dragHandleBuilder,
             expandLabel: widget.expandNavigationLabel,
             collapseLabel: widget.collapseNavigationLabel,
             scaffoldBackgroundColor: scaffoldBackground,
-            child: child,
+            child: branch,
           ),
           AppleSidebarStyle.edge => CupertinoSidebar.edge(
             controller: _controller,
             content: sidebarContent,
+            collapsedBar: collapsedBar,
+            collapsedBarController: _collapsedBarController,
+            collapsedBarPlacement:
+                CupertinoSidebarCollapsedBarPlacement.fixedToolbar,
+            toolbarGeometry: toolbarGeometry,
             extent: widget.sideNavigationExtent,
             dragHandleBuilder: widget.dragHandleBuilder,
             expandLabel: widget.expandNavigationLabel,
             collapseLabel: widget.collapseNavigationLabel,
             scaffoldBackgroundColor: scaffoldBackground,
-            child: child,
+            child: branch,
           ),
         };
         return NavigationObstructionScope(

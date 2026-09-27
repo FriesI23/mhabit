@@ -22,6 +22,7 @@ import 'package:provider/provider.dart';
 
 import '../../common/consts.dart';
 import '../../common/types.dart';
+import '../../extensions/adaptive_navigation_context_extensions.dart';
 import '../../extensions/adaptive_style_extensions.dart';
 import '../../extensions/window_size_extensions.dart';
 import '../../l10n/localizations.dart';
@@ -33,6 +34,7 @@ import '../../models/habit_repo_actions.dart';
 import '../../models/habit_summary.dart';
 import '../../providers/app_ui/app_developer.dart';
 import '../../providers/workflow/app_sync.dart';
+import '../../routes/navigator_helpers.dart';
 import '../../widgets/widgets.dart';
 import '../common/widgets.dart';
 import '_providers/habit_summary.dart';
@@ -170,8 +172,8 @@ class _Appbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    final useLargeTitle =
-        WindowSize.of(context).width == WindowSizeClass.compact;
+    final compact = WindowSize.of(context).width == WindowSizeClass.compact;
+    final collapsedAppleSidebar = context.hasCollapsedAppleSidebar;
     return AdaptiveSliverAppBar(
       height: toolbarHeight,
       styles: AppBarStyles(
@@ -180,10 +182,18 @@ class _Appbar extends StatelessWidget {
           snap: false,
           pinned: false,
         ),
-        apple: AppBarAppleStyle(collapsible: useLargeTitle),
+        apple: AppBarAppleStyle(collapsible: compact),
       ),
       title: Text(l10n?.habitToday_appBar_title ?? "Today"),
-      actions: useLargeTitle ? const [AppThemeSwitchButton()] : const [],
+      actions: [
+        if (compact || collapsedAppleSidebar) const AppThemeSwitchButton(),
+        if (collapsedAppleSidebar)
+          AppSettingsButton(
+            key: const ValueKey('today-open-settings-action'),
+            tooltip: l10n?.appSetting_appbar_titleText ?? 'Settings',
+            onPressed: () => naviToAppSettingPage(context: context),
+          ),
+      ],
     );
   }
 }
