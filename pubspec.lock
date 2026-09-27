@@ -562,9 +562,10 @@ packages:
   flutter_adaptive_sidebar:
     dependency: transitive
     description:
-      path: "../flutter_adaptive_sidebar"
-      relative: true
-    source: path
+      name: flutter_adaptive_sidebar
+      sha256: "6499a670efe78da231444d7e75a743993db65d537376e7fd822bcb4becc05cc6"
+      url: "https://pub.dev"
+    source: hosted
     version: "0.1.0"
   flutter_gen:
     dependency: "direct dev"
