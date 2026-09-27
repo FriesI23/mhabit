@@ -1025,9 +1025,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
       collapsedViewportFraction: displayPageOccupyPrt / 100,
       expandedViewportFraction: kDefaultHabitCalendarBarExtendedPrt,
     );
-    final compact = WindowSize.of(context).width == WindowSizeClass.compact;
-    final collapsedAppleSidebar = context.hasCollapsedAppleSidebar;
-    final showThemeAction = compact || collapsedAppleSidebar;
+    final showThemeAction = context.showsAppleAuxiliaryActionsInAppBar;
     const trackPadding = kDefaultHabitListTileTrackPadding;
 
     //#region: appbar

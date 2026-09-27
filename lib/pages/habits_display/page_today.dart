@@ -186,7 +186,8 @@ class _Appbar extends StatelessWidget {
       ),
       title: Text(l10n?.habitToday_appBar_title ?? "Today"),
       actions: [
-        if (compact || collapsedAppleSidebar) const AppThemeSwitchButton(),
+        if (context.showsAppleAuxiliaryActionsInAppBar)
+          const AppThemeSwitchButton(),
         if (collapsedAppleSidebar)
           AppSettingsButton(
             key: const ValueKey('today-open-settings-action'),

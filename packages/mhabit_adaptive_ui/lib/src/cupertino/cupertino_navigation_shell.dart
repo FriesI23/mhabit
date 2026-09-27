@@ -309,7 +309,6 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
     BuildContext context,
     NavigationShellChromeState state,
   ) {
-    final widget = this.widget;
     return ValueListenableBuilder<bool>(
       valueListenable: state.scrollWish,
       builder: (context, scrollWish, child) =>

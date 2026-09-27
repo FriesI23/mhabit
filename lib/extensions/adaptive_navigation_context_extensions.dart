@@ -12,16 +12,24 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 extension AdaptiveNavigationContext on BuildContext {
   bool get hasCollapsedAppleSidebar => _appleSidebarExpanded == false;
 
-  bool get hasExpandedAppleSidebar => _appleSidebarExpanded == true;
+  bool get hasExpandedAppleSidebar =>
+      switch ((AdaptiveNavScope.maybeOf(this)?.form, _appleSidebarExpanded)) {
+        (NavigationShellForm.compact, _) => false,
+        (_, true) => true,
+        _ => false,
+      };
 
   bool get showsAppleAuxiliaryActionsInAppBar {
     final compact =
-        AdaptiveNavScope.maybeOf(this)?.form == NavigationShellForm.compact;
+        AdaptiveNavScope.maybeOf(this)?.form == NavigationShellForm.compact ||
+        WindowSize.of(this).width == WindowSizeClass.compact;
     return compact || hasCollapsedAppleSidebar;
   }
 
-  bool? get _appleSidebarExpanded =>
-      AdaptiveStyle.of(this) == AdaptiveStyle.apple
-      ? CupertinoSidebarPresentationScope.maybeOf(this)?.expanded
-      : null;
+  bool? get _appleSidebarExpanded => switch (AdaptiveStyle.of(this)) {
+    AdaptiveStyle.material => null,
+    AdaptiveStyle.apple => CupertinoSidebarPresentationScope.maybeOf(
+      this,
+    )?.expanded,
+  };
 }

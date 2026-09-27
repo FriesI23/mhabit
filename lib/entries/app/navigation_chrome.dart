@@ -54,11 +54,8 @@ final class AppNavigationAuxiliaryChrome {
     return AppNavigationAuxiliaryChrome(
       destination: AdaptiveNavigationDestination(
         label: label,
-        icons: NavigationDestinationIcons(
-          material: AppThemeModeIcon.material(themeType: themeType),
-          materialSelected: AppThemeModeIcon.material(themeType: themeType),
-          apple: AppThemeModeIcon.apple(themeType: themeType),
-          appleSelected: AppThemeModeIcon.apple(themeType: themeType),
+        icons: NavigationDestinationIcons.union(
+          AppThemeModeIcon(themeType: themeType),
         ),
       ),
       selected: false,

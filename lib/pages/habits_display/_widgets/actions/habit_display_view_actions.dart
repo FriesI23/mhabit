@@ -243,7 +243,6 @@ class HabitDisplayViewActions extends StatelessWidget {
     HabitDisplayOptionsActionsData<HabitDisplayViewAction> displayOptionActions,
     ActionCollection<HabitDisplayViewAction> collection,
   ) {
-    final maxPrimaryActions = _maxPrimaryActions(context);
     final primaryCount = collection.roots
         .where(
           (action) =>
@@ -257,7 +256,7 @@ class HabitDisplayViewActions extends StatelessWidget {
     );
     final budget = AppBarActionBudget.candidates(
       primaryCount: primaryCount,
-      maxPrimaryActions: maxPrimaryActions,
+      maxPrimaryActions: context.hasExpandedAppleSidebar ? 3 : 2,
       hasOverflow: needsOverflow,
     );
     return builder(
@@ -283,13 +282,6 @@ class HabitDisplayViewActions extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  int _maxPrimaryActions(BuildContext context) {
-    final sideAppleSidebar =
-        context.hasExpandedAppleSidebar &&
-        AdaptiveNavScope.maybeOf(context)?.form != NavigationShellForm.compact;
-    return sideAppleSidebar ? 3 : 2;
   }
 
   void _onActionInvoked(
