@@ -156,6 +156,9 @@ class _AppNavigationShellChrome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final branch = AppNavigationBranch.fromNavigationIndex(selectedIndex);
+    final appleSidebarStyle = appleSidebarStyleMode.resolve(
+      AppInfo().appleSystemVersion,
+    );
     return L10nBuilder(
       builder: (context, l10n) => ListenableBuilder(
         listenable: chromeController,
@@ -198,9 +201,7 @@ class _AppNavigationShellChrome extends StatelessWidget {
             appleBarStyle: const AppleNavigationBarStyle(
               expandedNavigationWidth: 220.0,
             ),
-            appleSidebarStyle: appleSidebarStyleMode.resolve(
-              AppInfo().appleSystemVersion,
-            ),
+            appleSidebarStyle: appleSidebarStyle,
             destinations: [
               AppNavigationDestinations.habits(
                 label: l10n?.habitDisplay_tab_habits_label ?? 'Habits',

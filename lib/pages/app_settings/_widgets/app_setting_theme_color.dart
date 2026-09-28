@@ -21,6 +21,7 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
+import '../../../extensions/adaptive_style_extensions.dart';
 import '../../../extensions/app_theme_color_extensions.dart';
 import '../../../extensions/custom_color_extensions.dart';
 import '../../../l10n/localizations.dart';
@@ -77,7 +78,7 @@ class AppSettingThemeColorTile extends StatelessWidget {
       ),
       subtitle: Text(buildSubTitleText(themeColor, l10n)),
       trailing: AppSettingThemeColorContainer(
-        child: ColoredBox(color: Theme.of(context).colorScheme.primary),
+        child: ColoredBox(color: context.adaptivePrimaryColor),
       ),
       onTap: onPressed,
     );
@@ -165,14 +166,18 @@ class _SystemChosenOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
+    final primaryColor = context.adaptivePrimaryColor;
     return Semantics(
       selected: isSelected,
       child: AdaptiveListTile(
         title: Text(l10n?.common_appThemeColor_system ?? "System"),
-        subtitle: debug
-            ? Text("${Theme.of(context).colorScheme.primary}")
-            : null,
-        leading: const AppSettingThemeColorContainer(child: SizedBox.expand()),
+        subtitle: debug ? Text("$primaryColor") : null,
+        leading: AppSettingThemeColorContainer(
+          child: ColoredBox(
+            key: const ValueKey('system-theme-color-swatch'),
+            color: primaryColor,
+          ),
+        ),
         trailing: isSelected ? const AdaptiveCheckmark() : null,
         onTap: () => Navigator.of(context).pop(const SystemAppThemeColor()),
       ),

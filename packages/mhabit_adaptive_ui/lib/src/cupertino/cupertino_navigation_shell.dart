@@ -52,6 +52,9 @@ class CupertinoNavigationShell extends StatefulWidget {
     required this.dragHandleBuilder,
     required this.appleBarStyle,
     required this.sidebarStyle,
+    required this.sidebarBackgroundColor,
+    required this.sidebarItemStyle,
+    required this.collapsedSidebarItemStyle,
     this.expandNavigationLabel,
     this.collapseNavigationLabel,
   });
@@ -91,6 +94,15 @@ class CupertinoNavigationShell extends StatefulWidget {
 
   /// Visual treatment for the medium-and-larger Sidebar.
   final AppleSidebarStyle sidebarStyle;
+
+  /// Optional fill override used only by the edge Sidebar presentation.
+  final Color? sidebarBackgroundColor;
+
+  /// Optional destination colors used only by the edge Sidebar.
+  final CupertinoSidebarItemStyle? sidebarItemStyle;
+
+  /// Optional destination colors used only by the collapsed edge Sidebar.
+  final CupertinoSidebarItemStyle? collapsedSidebarItemStyle;
 
   /// Localized action label used when the Sidebar can be shown.
   ///
@@ -232,6 +244,10 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
           selection: adapter.selection,
           onSelectionChanged: adapter.select,
           auxiliaryDestinations: adapter.auxiliaryDestinations,
+          itemStyle: switch (widget.sidebarStyle) {
+            AppleSidebarStyle.inset => null,
+            AppleSidebarStyle.edge => widget.sidebarItemStyle,
+          },
         );
         final collapsedBar = CupertinoSidebarCollapsedBar(
           key: const ValueKey('cupertino-sidebar-collapsed-bar'),
@@ -242,6 +258,10 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
           onDestinationSelected: (index) =>
               adapter.select(SidebarPrimarySelection(index)),
           height: toolbarGeometry.collapsedBarHeight,
+          itemStyle: switch (widget.sidebarStyle) {
+            AppleSidebarStyle.inset => null,
+            AppleSidebarStyle.edge => widget.collapsedSidebarItemStyle,
+          },
         );
         final branch = CupertinoSidebarPresentationScope(
           expanded: _sidebarExpanded,
@@ -277,6 +297,7 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
             dragHandleBuilder: widget.dragHandleBuilder,
             expandLabel: widget.expandNavigationLabel,
             collapseLabel: widget.collapseNavigationLabel,
+            backgroundColor: widget.sidebarBackgroundColor,
             scaffoldBackgroundColor: scaffoldBackground,
             child: branch,
           ),

@@ -324,7 +324,9 @@ final class SidebarNavigationAdapter {
           material: destination.icons.material,
           materialSelected: destination.icons.materialSelected,
           cupertino: destination.icons.apple,
-          cupertinoSelected: destination.icons.appleSelected,
+          // Files keeps the same Sidebar glyph and changes only its color.
+          // Compact Apple navigation still consumes appleSelected directly.
+          cupertinoSelected: destination.icons.apple,
         ),
       ),
   ];

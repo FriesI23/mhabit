@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart'
-    show CupertinoDynamicColor, CupertinoTextThemeData;
+    show CupertinoDynamicColor, CupertinoTextThemeData, CupertinoThemeData;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,6 +11,8 @@ import 'package:mhabit/theme/app_theme_builder.dart';
 import 'package:mhabit/theme/color.dart';
 import 'package:mhabit/theme/linux_bundled_font.dart';
 import 'package:mhabit/widgets/styles.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart'
+    show CupertinoSidebarThemeData;
 
 void _withPlatform(TargetPlatform platform, void Function() body) {
   debugDefaultTargetPlatformOverride = platform;
@@ -127,8 +129,12 @@ void main() {
         expect(theme.brightness, Brightness.light);
         expect(theme.cupertinoOverrideTheme?.textTheme, isNotNull);
         expect(
+          theme.cupertinoOverrideTheme!.primaryColor,
+          const CupertinoThemeData().primaryColor,
+        );
+        expect(
           theme.cupertinoOverrideTheme!.textTheme!.actionTextStyle.color,
-          theme.colorScheme.primary,
+          const CupertinoThemeData().primaryColor,
         );
         expect(theme.textTheme.bodyMedium!.fontFamily, linuxBundledFontFamily);
         expect(
@@ -189,7 +195,7 @@ void main() {
   });
 
   group('AppThemeBuilder cupertino mapping', () {
-    test('maps scheme chrome and uses the neutral apple glass tint', () {
+    test('system palette keeps Material colors and uses Cupertino blue', () {
       _withPlatform(TargetPlatform.macOS, () {
         final theme = builder.buildLight(
           themeColor: const SystemAppThemeColor(),
@@ -199,7 +205,8 @@ void main() {
         final override = theme.cupertinoOverrideTheme;
         expect(override, isNotNull);
         expect(override!.brightness, scheme.brightness);
-        expect(override.primaryColor, scheme.primary);
+        expect(override.primaryColor, const CupertinoThemeData().primaryColor);
+        expect(override.primaryColor, isNot(scheme.primary));
         expect(
           override.barBackgroundColor,
           const CupertinoDynamicColor.withBrightness(
@@ -209,6 +216,55 @@ void main() {
           ),
         );
         expect(override.scaffoldBackgroundColor, scheme.surface);
+        expect(
+          theme.extension<CupertinoSidebarThemeData>()?.edgeBackgroundColor,
+          isNull,
+        );
+      });
+    });
+
+    test('non-system palettes still map their primary color to Cupertino', () {
+      _withPlatform(TargetPlatform.macOS, () {
+        final theme = builder.buildLight(
+          themeColor: const PrimaryAppThemeColor(),
+          themeMainColor: fallbackMainColor,
+        );
+
+        expect(
+          theme.cupertinoOverrideTheme?.primaryColor,
+          theme.colorScheme.primary,
+        );
+        expect(
+          theme.extension<CupertinoSidebarThemeData>()?.edgeBackgroundColor,
+          theme.colorScheme.surfaceContainer,
+        );
+      });
+    });
+
+    test('dynamic palette maps its surface into the Cupertino theme', () {
+      _withPlatform(TargetPlatform.iOS, () {
+        final dynamicScheme = ColorScheme.fromSeed(
+          seedColor: Colors.orange,
+          brightness: Brightness.light,
+        );
+        final theme = builder.buildLight(
+          themeColor: const DynamicAppThemeColor(),
+          themeMainColor: fallbackMainColor,
+          dynamicScheme: dynamicScheme,
+        );
+
+        expect(
+          theme.cupertinoOverrideTheme?.scaffoldBackgroundColor,
+          theme.colorScheme.surface,
+        );
+        expect(
+          theme.cupertinoOverrideTheme?.primaryColor,
+          theme.colorScheme.primary,
+        );
+        expect(
+          theme.extension<CupertinoSidebarThemeData>()?.edgeBackgroundColor,
+          theme.colorScheme.surfaceContainer,
+        );
       });
     });
 
