@@ -129,10 +129,9 @@ class AdaptiveNavigationShell extends StatefulWidget {
 
   /// Optional destination colors for the collapsed Apple edge Sidebar.
   ///
-  /// This remains separate from [appleSidebarItemStyle] because iPadOS 27
-  /// uses an accent label over a neutral horizontal selection instead of the
-  /// vertical Sidebar's retained active treatment. The inset style ignores
-  /// this value.
+  /// This remains separate from [appleSidebarItemStyle] so callers can
+  /// customize horizontal and vertical destinations independently. The inset
+  /// style ignores this value.
   final CupertinoSidebarItemStyle? appleCollapsedSidebarItemStyle;
 
   @override

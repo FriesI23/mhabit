@@ -21,7 +21,7 @@ import 'package:flutter/cupertino.dart'
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart'
-    show AdaptiveListThemeData;
+    show AdaptiveListThemeData, CupertinoSidebarThemeData;
 
 import '../common/app_info.dart';
 import '../common/consts.dart';
@@ -193,6 +193,11 @@ class AppThemeBuilder {
       menuTheme: _mobileMenuTheme,
       extensions: [
         customColor,
+        CupertinoSidebarThemeData(
+          edgeBackgroundColor: systemColors || colorScheme == null
+              ? null
+              : colorScheme.surfaceContainer,
+        ),
         if (systemColors)
           AdaptiveListThemeData(
             surfaceColor: switch (defaultTargetPlatform) {
@@ -210,18 +215,22 @@ class AppThemeBuilder {
           const AdaptiveListThemeData(),
       ],
     );
+    final cupertinoPrimaryColor = systemColors
+        ? const CupertinoThemeData().primaryColor
+        : colorScheme!.primary;
     final cupertinoTextTheme = _getCupertinoTextTheme(
-      primaryColor: baseTheme.colorScheme.primary,
+      primaryColor: cupertinoPrimaryColor,
     );
-    // Maps the app scheme onto Cupertino components so apple variants follow
-    // the app's dynamic color instead of the Cupertino default blue. Linux
-    // also keeps a text-only override when using the system Material scheme.
+    // Custom palettes map onto Cupertino components. The system palette keeps
+    // Cupertino's native blue while Material retains the app system scheme.
+    // Linux also applies that resolved primary color to its font override when
+    // no Material scheme exists.
     final cupertinoOverrideTheme =
         colorScheme == null && cupertinoTextTheme == null
         ? null
         : CupertinoThemeData(
             brightness: colorScheme?.brightness,
-            primaryColor: colorScheme?.primary,
+            primaryColor: cupertinoPrimaryColor,
             textTheme: cupertinoTextTheme,
             barBackgroundColor: colorScheme == null
                 ? null
@@ -253,12 +262,12 @@ class AppThemeBuilder {
     };
   }
 
-  CupertinoTextThemeData? _getCupertinoTextTheme({Color? primaryColor}) {
+  CupertinoTextThemeData? _getCupertinoTextTheme({
+    required Color primaryColor,
+  }) {
     if (defaultTargetPlatform != TargetPlatform.linux) return null;
 
-    final defaults = CupertinoTextThemeData(
-      primaryColor: primaryColor ?? const CupertinoThemeData().primaryColor,
-    );
+    final defaults = CupertinoTextThemeData(primaryColor: primaryColor);
     TextStyle withLinuxFonts(TextStyle style) => style.copyWith(
       fontFamily: linuxBundledFontFamily,
       fontFamilyFallback: _linuxFontFamilyFallbacks,

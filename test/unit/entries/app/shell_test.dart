@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:ui' show Tristate;
 
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
+import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoTheme;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -774,7 +774,7 @@ void main() {
     expect(launchEntry.entries, [AppEntrys.habitToday, AppEntrys.habitToday]);
   });
 
-  testWidgets('themes only the OS 27 Sidebar for non-system color palettes', (
+  testWidgets('leaves Apple Sidebar colors to the Cupertino theme', (
     tester,
   ) async {
     _setCompactSurface(tester);
@@ -782,36 +782,33 @@ void main() {
     final chromeController = AppNavigationChromeController();
     final launchEntry = _RecordingLaunchEntryViewModel();
     final theme = _TestThemeViewModel();
-    final themeData = ThemeData(
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-    );
     addTearDown(coordinator.dispose);
     addTearDown(chromeController.dispose);
     addTearDown(launchEntry.dispose);
     addTearDown(theme.dispose);
 
-    Future<void> pump(
-      AppAppleSidebarStyleMode sidebarStyleMode, {
-      ThemeData? materialTheme,
-    }) => tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
-            value: launchEntry,
+    Future<void> pump(AppAppleSidebarStyleMode sidebarStyleMode) =>
+        tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
+                value: launchEntry,
+              ),
+              ChangeNotifierProvider<AppThemeViewModel>.value(value: theme),
+            ],
+            child: MaterialApp(
+              theme: ThemeData(
+                colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              ),
+              home: AppNavigationShell(
+                coordinator: coordinator,
+                chromeController: chromeController,
+                appleSidebarStyleMode: sidebarStyleMode,
+                child: const _StubPage('content'),
+              ),
+            ),
           ),
-          ChangeNotifierProvider<AppThemeViewModel>.value(value: theme),
-        ],
-        child: MaterialApp(
-          theme: materialTheme ?? themeData,
-          home: AppNavigationShell(
-            coordinator: coordinator,
-            chromeController: chromeController,
-            appleSidebarStyleMode: sidebarStyleMode,
-            child: const _StubPage('content'),
-          ),
-        ),
-      ),
-    );
+        );
 
     AdaptiveNavigationShell shell() =>
         tester.widget(find.byType(AdaptiveNavigationShell));
@@ -824,86 +821,9 @@ void main() {
 
     theme.setThemeColor(const PrimaryAppThemeColor());
     await tester.pump();
-    expect(
-      shell().appleSidebarBackgroundColor,
-      themeData.colorScheme.surfaceContainer.withValues(
-        alpha: kCupertinoSidebarEdgeFillAlpha,
-      ),
-    );
-    final itemStyle = shell().appleSidebarItemStyle!;
-    expect(
-      itemStyle.backgroundColor?.resolve({WidgetState.selected}),
-      themeData.colorScheme.surfaceContainerHighest,
-    );
-    expect(
-      itemStyle.backgroundColor?.resolve({WidgetState.focused}),
-      themeData.colorScheme.primary,
-    );
-    expect(
-      itemStyle.iconColor?.resolve({WidgetState.selected}),
-      themeData.colorScheme.primary,
-    );
-    expect(
-      itemStyle.iconColor?.resolve({WidgetState.pressed}),
-      themeData.colorScheme.onPrimary,
-    );
-    expect(
-      itemStyle.labelColor?.resolve({WidgetState.selected}),
-      themeData.colorScheme.onSurface,
-    );
-    expect(
-      itemStyle.labelColor?.resolve({WidgetState.focused}),
-      themeData.colorScheme.onPrimary,
-    );
-    final collapsedItemStyle = shell().appleCollapsedSidebarItemStyle!;
-    expect(
-      collapsedItemStyle.selectedColor,
-      themeData.colorScheme.surfaceContainerHighest,
-    );
-    expect(
-      collapsedItemStyle.selectedForegroundColor,
-      themeData.colorScheme.primary,
-    );
-    expect(collapsedItemStyle.foregroundColor, themeData.colorScheme.onSurface);
-
-    final darkThemeData = ThemeData(
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.deepOrange,
-        brightness: Brightness.dark,
-      ),
-    );
-    await pump(AppAppleSidebarStyleMode.os27, materialTheme: darkThemeData);
-    await tester.pumpAndSettle();
-    expect(
-      shell().appleSidebarItemStyle?.backgroundColor?.resolve({
-        WidgetState.selected,
-      }),
-      darkThemeData.colorScheme.surfaceContainerHighest,
-    );
-    expect(
-      shell().appleSidebarItemStyle?.backgroundColor?.resolve({
-        WidgetState.pressed,
-      }),
-      darkThemeData.colorScheme.primaryContainer,
-    );
-    expect(
-      shell().appleSidebarItemStyle?.iconColor?.resolve({WidgetState.pressed}),
-      darkThemeData.colorScheme.onPrimaryContainer,
-    );
-    expect(
-      shell().appleSidebarItemStyle?.labelColor?.resolve({WidgetState.focused}),
-      darkThemeData.colorScheme.onPrimaryContainer,
-    );
-    expect(
-      shell().appleCollapsedSidebarItemStyle?.selectedColor,
-      darkThemeData.colorScheme.surfaceContainerHighest,
-    );
-    expect(
-      darkThemeData.colorScheme.surfaceContainerHighest.computeLuminance(),
-      greaterThan(
-        darkThemeData.colorScheme.surfaceContainer.computeLuminance(),
-      ),
-    );
+    expect(shell().appleSidebarBackgroundColor, isNull);
+    expect(shell().appleSidebarItemStyle, isNull);
+    expect(shell().appleCollapsedSidebarItemStyle, isNull);
 
     await pump(AppAppleSidebarStyleMode.os26);
     expect(shell().appleSidebarStyle, AppleSidebarStyle.inset);
@@ -1026,10 +946,19 @@ void main() {
         expect(coordinator.selectedIndex, 1);
         expect(launchEntry.entries, isEmpty);
         if (testCase.platform == TargetPlatform.iOS) {
-          expect(_sideDestinationFill(tester, action)?.toARGB32(), 0xFF0081F6);
+          final primaryColor = CupertinoTheme.of(
+            tester.element(settings),
+          ).primaryColor;
+          expect(
+            _sideDestinationFill(tester, action)?.toARGB32(),
+            primaryColor.withValues(alpha: 1).toARGB32(),
+          );
+          final expectedSelectedFill = CupertinoTheme.of(
+            tester.element(settings),
+          ).primaryColor.withValues(alpha: 0.14);
           expect(
             _sideDestinationFill(tester, settings)?.toARGB32(),
-            0xFFD2D6DA,
+            expectedSelectedFill.toARGB32(),
           );
         }
       },

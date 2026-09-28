@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart' show CupertinoThemeData;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/l10n/localizations.dart';
@@ -12,6 +13,9 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  const materialPrimaryColor = Color(0xFFAA1122);
+  const cupertinoPrimaryColor = Color(0xFF22AA33);
+
   for (final platform in [
     TargetPlatform.android,
     TargetPlatform.iOS,
@@ -37,6 +41,13 @@ void main() {
               theme: ThemeData(
                 platform: platform,
                 brightness: debug ? Brightness.dark : Brightness.light,
+                colorScheme: ColorScheme.fromSeed(
+                  seedColor: materialPrimaryColor,
+                  brightness: debug ? Brightness.dark : Brightness.light,
+                ).copyWith(primary: materialPrimaryColor),
+                cupertinoOverrideTheme: const CupertinoThemeData(
+                  primaryColor: cupertinoPrimaryColor,
+                ),
               ),
               locale: const Locale('de'),
               localizationsDelegates: L10n.localizationsDelegates,
@@ -83,6 +94,15 @@ void main() {
             InternalAppThemeColor(colorType: type),
         ];
         expect(rows, findsNWidgets(values.length));
+        final systemSwatch = tester.widget<ColoredBox>(
+          find.byKey(const ValueKey('system-theme-color-swatch')),
+        );
+        expect(
+          systemSwatch.color,
+          platform == TargetPlatform.android
+              ? materialPrimaryColor
+              : cupertinoPrimaryColor,
+        );
         for (final size in [
           const Size(320, 700),
           const Size(900, 400),

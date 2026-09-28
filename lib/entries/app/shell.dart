@@ -20,11 +20,9 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/app_info.dart';
-import '../../extensions/app_theme_color_extensions.dart';
 import '../../models/app_apple_sidebar_style_mode.dart';
 import '../../models/app_entry.dart';
 import '../../providers/app_ui/app_launch_entry.dart';
-import '../../providers/app_ui/app_theme.dart';
 import '../../routes/app_navigation_branch.dart';
 import '../../routes/app_navigation_coordinator.dart';
 import '../../widgets/widgets.dart';
@@ -161,60 +159,6 @@ class _AppNavigationShellChrome extends StatelessWidget {
     final appleSidebarStyle = appleSidebarStyleMode.resolve(
       AppInfo().appleSystemVersion,
     );
-    final usesSystemThemeColor = context.select<AppThemeViewModel, bool>(
-      (viewModel) => viewModel.themeColor.isSystem,
-    );
-    final appleSidebarBackgroundColor =
-        appleSidebarStyle == AppleSidebarStyle.edge && !usesSystemThemeColor
-        ? Theme.of(context).colorScheme.surfaceContainer.withValues(
-            alpha: kCupertinoSidebarEdgeFillAlpha,
-          )
-        : null;
-    final colorScheme = Theme.of(context).colorScheme;
-    final (
-      appleSidebarActiveColor,
-      appleSidebarActiveForegroundColor,
-    ) = switch (colorScheme.brightness) {
-      Brightness.light => (colorScheme.primary, colorScheme.onPrimary),
-      Brightness.dark => (
-        colorScheme.primaryContainer,
-        colorScheme.onPrimaryContainer,
-      ),
-    };
-    final appleSidebarItemStyle =
-        appleSidebarStyle == AppleSidebarStyle.edge && !usesSystemThemeColor
-        ? CupertinoSidebarItemStyle(
-            backgroundColor: WidgetStateProperty.resolveWith((states) {
-              if (states.contains(WidgetState.focused) ||
-                  states.contains(WidgetState.pressed)) {
-                return appleSidebarActiveColor;
-              }
-              return states.contains(WidgetState.selected)
-                  ? colorScheme.surfaceContainerHighest
-                  : null;
-            }),
-            iconColor: WidgetStateProperty.resolveWith((states) {
-              return states.contains(WidgetState.focused) ||
-                      states.contains(WidgetState.pressed)
-                  ? appleSidebarActiveForegroundColor
-                  : colorScheme.primary;
-            }),
-            labelColor: WidgetStateProperty.resolveWith((states) {
-              return states.contains(WidgetState.focused) ||
-                      states.contains(WidgetState.pressed)
-                  ? appleSidebarActiveForegroundColor
-                  : colorScheme.onSurface;
-            }),
-          )
-        : null;
-    final appleCollapsedSidebarItemStyle =
-        appleSidebarStyle == AppleSidebarStyle.edge && !usesSystemThemeColor
-        ? CupertinoSidebarItemStyle(
-            selectedColor: colorScheme.surfaceContainerHighest,
-            selectedForegroundColor: colorScheme.primary,
-            foregroundColor: colorScheme.onSurface,
-          )
-        : null;
     return L10nBuilder(
       builder: (context, l10n) => ListenableBuilder(
         listenable: chromeController,
@@ -258,9 +202,6 @@ class _AppNavigationShellChrome extends StatelessWidget {
               expandedNavigationWidth: 220.0,
             ),
             appleSidebarStyle: appleSidebarStyle,
-            appleSidebarBackgroundColor: appleSidebarBackgroundColor,
-            appleSidebarItemStyle: appleSidebarItemStyle,
-            appleCollapsedSidebarItemStyle: appleCollapsedSidebarItemStyle,
             destinations: [
               AppNavigationDestinations.habits(
                 label: l10n?.habitDisplay_tab_habits_label ?? 'Habits',

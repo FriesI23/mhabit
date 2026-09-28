@@ -4,6 +4,7 @@ library;
 export 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
     show
         CupertinoSidebarItemStyle,
+        CupertinoSidebarThemeData,
         SideNavigationDragHandleBuilder,
         SideNavigationExtent,
         kCupertinoSidebarEdgeFillAlpha;
