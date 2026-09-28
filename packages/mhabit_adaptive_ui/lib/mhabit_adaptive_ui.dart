@@ -2,7 +2,10 @@
 library;
 
 export 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
-    show SideNavigationDragHandleBuilder, SideNavigationExtent;
+    show
+        SideNavigationDragHandleBuilder,
+        SideNavigationExtent,
+        kCupertinoSidebarEdgeFillAlpha;
 export 'src/adaptive/adaptive_app_bar.dart';
 export 'src/adaptive/adaptive_app_bar_actions.dart';
 export 'src/adaptive/adaptive_back_button.dart';

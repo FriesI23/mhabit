@@ -560,12 +560,11 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_adaptive_sidebar:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: flutter_adaptive_sidebar
-      sha256: "6499a670efe78da231444d7e75a743993db65d537376e7fd822bcb4becc05cc6"
-      url: "https://pub.dev"
-    source: hosted
+      path: "/Users/weooh/Projects/flutter_adaptive_sidebar"
+      relative: false
+    source: path
     version: "0.1.0"
   flutter_gen:
     dependency: "direct dev"
@@ -2020,5 +2019,5 @@ packages:
     source: hosted
     version: "2.2.4"
 sdks:
-  dart: ">=3.12.2 <4.0.0"
+  dart: ">=3.12.0 <4.0.0"
   flutter: ">=3.44.0"

@@ -20,9 +20,11 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/app_info.dart';
+import '../../extensions/app_theme_color_extensions.dart';
 import '../../models/app_apple_sidebar_style_mode.dart';
 import '../../models/app_entry.dart';
 import '../../providers/app_ui/app_launch_entry.dart';
+import '../../providers/app_ui/app_theme.dart';
 import '../../routes/app_navigation_branch.dart';
 import '../../routes/app_navigation_coordinator.dart';
 import '../../widgets/widgets.dart';
@@ -156,6 +158,18 @@ class _AppNavigationShellChrome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final branch = AppNavigationBranch.fromNavigationIndex(selectedIndex);
+    final appleSidebarStyle = appleSidebarStyleMode.resolve(
+      AppInfo().appleSystemVersion,
+    );
+    final usesSystemThemeColor = context.select<AppThemeViewModel, bool>(
+      (viewModel) => viewModel.themeColor.isSystem,
+    );
+    final appleSidebarBackgroundColor =
+        appleSidebarStyle == AppleSidebarStyle.edge && !usesSystemThemeColor
+        ? Theme.of(context).colorScheme.surfaceContainer.withValues(
+            alpha: kCupertinoSidebarEdgeFillAlpha,
+          )
+        : null;
     return L10nBuilder(
       builder: (context, l10n) => ListenableBuilder(
         listenable: chromeController,
@@ -198,9 +212,8 @@ class _AppNavigationShellChrome extends StatelessWidget {
             appleBarStyle: const AppleNavigationBarStyle(
               expandedNavigationWidth: 220.0,
             ),
-            appleSidebarStyle: appleSidebarStyleMode.resolve(
-              AppInfo().appleSystemVersion,
-            ),
+            appleSidebarStyle: appleSidebarStyle,
+            appleSidebarBackgroundColor: appleSidebarBackgroundColor,
             destinations: [
               AppNavigationDestinations.habits(
                 label: l10n?.habitDisplay_tab_habits_label ?? 'Habits',

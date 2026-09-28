@@ -3425,6 +3425,35 @@ void main() {
         ),
       );
       expect(sidebar().style, CupertinoSidebarStyle.liquidEdge);
+
+      const themedBackground = Color(0xCC123456);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AdaptiveNavigationShell(
+            selectedIndex: 0,
+            destinations: destinations,
+            onDestinationSelected: (_) {},
+            appleSidebarStyle: AppleSidebarStyle.edge,
+            appleSidebarBackgroundColor: themedBackground,
+            child: const SizedBox(),
+          ),
+        ),
+      );
+      expect(sidebar().backgroundColor, themedBackground);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AdaptiveNavigationShell(
+            selectedIndex: 0,
+            destinations: destinations,
+            onDestinationSelected: (_) {},
+            appleSidebarStyle: AppleSidebarStyle.inset,
+            appleSidebarBackgroundColor: themedBackground,
+            child: const SizedBox(),
+          ),
+        ),
+      );
+      expect(sidebar().backgroundColor, isNull);
       debugDefaultTargetPlatformOverride = null;
     });
 

@@ -52,6 +52,7 @@ class CupertinoNavigationShell extends StatefulWidget {
     required this.dragHandleBuilder,
     required this.appleBarStyle,
     required this.sidebarStyle,
+    required this.sidebarBackgroundColor,
     this.expandNavigationLabel,
     this.collapseNavigationLabel,
   });
@@ -91,6 +92,9 @@ class CupertinoNavigationShell extends StatefulWidget {
 
   /// Visual treatment for the medium-and-larger Sidebar.
   final AppleSidebarStyle sidebarStyle;
+
+  /// Optional fill override used only by the edge Sidebar presentation.
+  final Color? sidebarBackgroundColor;
 
   /// Localized action label used when the Sidebar can be shown.
   ///
@@ -277,6 +281,7 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
             dragHandleBuilder: widget.dragHandleBuilder,
             expandLabel: widget.expandNavigationLabel,
             collapseLabel: widget.collapseNavigationLabel,
+            backgroundColor: widget.sidebarBackgroundColor,
             scaffoldBackgroundColor: scaffoldBackground,
             child: branch,
           ),

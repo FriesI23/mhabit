@@ -14,6 +14,7 @@ import 'package:mhabit/entries/app/shell.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/app_apple_sidebar_style_mode.dart';
 import 'package:mhabit/models/app_entry.dart';
+import 'package:mhabit/models/app_theme_color.dart';
 import 'package:mhabit/pages/app_debugger/_widgets/debugger_app_bar.dart';
 import 'package:mhabit/pages/app_debugger/page.dart'
     show onDebuggerNotificationTapped;
@@ -48,13 +49,22 @@ class _RecordingLaunchEntryViewModel extends AppLaunchEntryViewModel {
 
 class _TestThemeViewModel extends AppThemeViewModel {
   AppThemeType value = AppThemeType.followSystem;
+  AppThemeColor color = const SystemAppThemeColor();
 
   @override
   AppThemeType get themeType => value;
 
   @override
+  AppThemeColor get themeColor => color;
+
+  @override
   Future<void> setNewthemeType(AppThemeType newThemeType) async {
     value = newThemeType;
+    notifyListeners();
+  }
+
+  void setThemeColor(AppThemeColor newColor) {
+    color = newColor;
     notifyListeners();
   }
 }
@@ -441,8 +451,15 @@ Future<void> _pumpApp(
   bool localized = false,
 }) {
   return tester.pumpWidget(
-    ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
-      value: launchEntry,
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
+          value: launchEntry,
+        ),
+        ChangeNotifierProvider<AppThemeViewModel>(
+          create: (_) => _TestThemeViewModel(),
+        ),
+      ],
       child: MaterialApp.router(
         routerConfig: router,
         localizationsDelegates: localized ? L10n.localizationsDelegates : null,
@@ -670,17 +687,24 @@ void main() {
     final secondCoordinator = _MutableNavigationCoordinator(initialIndex: 0);
     final chromeController = AppNavigationChromeController();
     final launchEntry = _RecordingLaunchEntryViewModel();
+    final theme = _TestThemeViewModel();
     addTearDown(firstCoordinator.dispose);
     addTearDown(secondCoordinator.dispose);
     addTearDown(chromeController.dispose);
     addTearDown(launchEntry.dispose);
+    addTearDown(theme.dispose);
 
     Widget buildApp(
       AppNavigationCoordinator coordinator, {
       AppAppleSidebarStyleMode sidebarStyleMode =
           AppAppleSidebarStyleMode.automatic,
-    }) => ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
-      value: launchEntry,
+    }) => MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
+          value: launchEntry,
+        ),
+        ChangeNotifierProvider<AppThemeViewModel>.value(value: theme),
+      ],
       child: MaterialApp(
         home: AppNavigationShell(
           coordinator: coordinator,
@@ -741,6 +765,64 @@ void main() {
       1,
     );
     expect(launchEntry.entries, [AppEntrys.habitToday, AppEntrys.habitToday]);
+  });
+
+  testWidgets('themes only the OS 27 Sidebar for non-system color palettes', (
+    tester,
+  ) async {
+    _setCompactSurface(tester);
+    final coordinator = _MutableNavigationCoordinator(initialIndex: 0);
+    final chromeController = AppNavigationChromeController();
+    final launchEntry = _RecordingLaunchEntryViewModel();
+    final theme = _TestThemeViewModel();
+    final themeData = ThemeData(
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+    );
+    addTearDown(coordinator.dispose);
+    addTearDown(chromeController.dispose);
+    addTearDown(launchEntry.dispose);
+    addTearDown(theme.dispose);
+
+    Future<void> pump(AppAppleSidebarStyleMode sidebarStyleMode) =>
+        tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
+                value: launchEntry,
+              ),
+              ChangeNotifierProvider<AppThemeViewModel>.value(value: theme),
+            ],
+            child: MaterialApp(
+              theme: themeData,
+              home: AppNavigationShell(
+                coordinator: coordinator,
+                chromeController: chromeController,
+                appleSidebarStyleMode: sidebarStyleMode,
+                child: const _StubPage('content'),
+              ),
+            ),
+          ),
+        );
+
+    AdaptiveNavigationShell shell() =>
+        tester.widget(find.byType(AdaptiveNavigationShell));
+
+    await pump(AppAppleSidebarStyleMode.os27);
+    expect(shell().appleSidebarStyle, AppleSidebarStyle.edge);
+    expect(shell().appleSidebarBackgroundColor, isNull);
+
+    theme.setThemeColor(const PrimaryAppThemeColor());
+    await tester.pump();
+    expect(
+      shell().appleSidebarBackgroundColor,
+      themeData.colorScheme.surfaceContainer.withValues(
+        alpha: kCupertinoSidebarEdgeFillAlpha,
+      ),
+    );
+
+    await pump(AppAppleSidebarStyleMode.os26);
+    expect(shell().appleSidebarStyle, AppleSidebarStyle.inset);
+    expect(shell().appleSidebarBackgroundColor, isNull);
   });
 
   for (final testCase in <({TargetPlatform platform, String actionKey})>[
