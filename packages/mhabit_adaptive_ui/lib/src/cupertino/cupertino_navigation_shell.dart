@@ -244,9 +244,10 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
           selection: adapter.selection,
           onSelectionChanged: adapter.select,
           auxiliaryDestinations: adapter.auxiliaryDestinations,
-          itemStyle: widget.sidebarStyle == AppleSidebarStyle.edge
-              ? widget.sidebarItemStyle
-              : null,
+          itemStyle: switch (widget.sidebarStyle) {
+            AppleSidebarStyle.inset => null,
+            AppleSidebarStyle.edge => widget.sidebarItemStyle,
+          },
         );
         final collapsedBar = CupertinoSidebarCollapsedBar(
           key: const ValueKey('cupertino-sidebar-collapsed-bar'),
@@ -257,9 +258,10 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
           onDestinationSelected: (index) =>
               adapter.select(SidebarPrimarySelection(index)),
           height: toolbarGeometry.collapsedBarHeight,
-          itemStyle: widget.sidebarStyle == AppleSidebarStyle.edge
-              ? widget.collapsedSidebarItemStyle
-              : null,
+          itemStyle: switch (widget.sidebarStyle) {
+            AppleSidebarStyle.inset => null,
+            AppleSidebarStyle.edge => widget.collapsedSidebarItemStyle,
+          },
         );
         final branch = CupertinoSidebarPresentationScope(
           expanded: _sidebarExpanded,
