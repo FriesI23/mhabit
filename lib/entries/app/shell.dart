@@ -171,13 +171,23 @@ class _AppNavigationShellChrome extends StatelessWidget {
           )
         : null;
     final colorScheme = Theme.of(context).colorScheme;
+    final (
+      appleSidebarActiveColor,
+      appleSidebarActiveForegroundColor,
+    ) = switch (colorScheme.brightness) {
+      Brightness.light => (colorScheme.primary, colorScheme.onPrimary),
+      Brightness.dark => (
+        colorScheme.primaryContainer,
+        colorScheme.onPrimaryContainer,
+      ),
+    };
     final appleSidebarItemStyle =
         appleSidebarStyle == AppleSidebarStyle.edge && !usesSystemThemeColor
         ? CupertinoSidebarItemStyle(
             backgroundColor: WidgetStateProperty.resolveWith((states) {
               if (states.contains(WidgetState.focused) ||
                   states.contains(WidgetState.pressed)) {
-                return colorScheme.primary;
+                return appleSidebarActiveColor;
               }
               return states.contains(WidgetState.selected)
                   ? colorScheme.surfaceContainerHighest
@@ -186,13 +196,13 @@ class _AppNavigationShellChrome extends StatelessWidget {
             iconColor: WidgetStateProperty.resolveWith((states) {
               return states.contains(WidgetState.focused) ||
                       states.contains(WidgetState.pressed)
-                  ? colorScheme.onPrimary
+                  ? appleSidebarActiveForegroundColor
                   : colorScheme.primary;
             }),
             labelColor: WidgetStateProperty.resolveWith((states) {
               return states.contains(WidgetState.focused) ||
                       states.contains(WidgetState.pressed)
-                  ? colorScheme.onPrimary
+                  ? appleSidebarActiveForegroundColor
                   : colorScheme.onSurface;
             }),
           )

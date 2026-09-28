@@ -26,6 +26,7 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_navigation_primary_action.dart';
 import 'package:mhabit_adaptive_ui/src/shell/navigation_scroll_wish_policy.dart';
 import 'package:mhabit_adaptive_ui/src/shell/navigation_shell_frame.dart';
+import 'package:mhabit_adaptive_ui/src/shell/sidebar_adapter.dart';
 
 _TestRouter _buildRouter({
   List<AdaptiveNavigationDestination>? destinations,
@@ -505,6 +506,32 @@ void _resetWindowControlLayoutMock() {
 }
 
 void main() {
+  test('Sidebar adapter keeps one Apple glyph across selection', () {
+    const normalKey = ValueKey('apple-normal');
+    const selectedKey = ValueKey('apple-selected');
+    const destination = AdaptiveNavigationDestination(
+      label: 'Habits',
+      icons: NavigationDestinationIcons(
+        material: Icon(Icons.home_outlined),
+        materialSelected: Icon(Icons.home),
+        apple: Icon(CupertinoIcons.home, key: normalKey),
+        appleSelected: Icon(CupertinoIcons.house_fill, key: selectedKey),
+      ),
+    );
+    final adapter = SidebarNavigationAdapter(
+      destinations: const [destination],
+      auxiliaryDestinations: const [],
+      selectedIndex: 0,
+      selectedAuxiliaryIndex: null,
+      onDestinationSelected: (_) {},
+      onAuxiliaryDestinationSelected: null,
+    );
+
+    expect(adapter.destinations.single.icons.cupertino.key, normalKey);
+    expect(adapter.destinations.single.icons.cupertinoSelected.key, normalKey);
+    expect(destination.icons.appleSelected.key, selectedKey);
+  });
+
   group('SideNavigationExtent', () {
     test('fixed target clamps to the available interval', () {
       const extent = SideNavigationExtent(224);

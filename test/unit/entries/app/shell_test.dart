@@ -881,6 +881,20 @@ void main() {
       darkThemeData.colorScheme.surfaceContainerHighest,
     );
     expect(
+      shell().appleSidebarItemStyle?.backgroundColor?.resolve({
+        WidgetState.pressed,
+      }),
+      darkThemeData.colorScheme.primaryContainer,
+    );
+    expect(
+      shell().appleSidebarItemStyle?.iconColor?.resolve({WidgetState.pressed}),
+      darkThemeData.colorScheme.onPrimaryContainer,
+    );
+    expect(
+      shell().appleSidebarItemStyle?.labelColor?.resolve({WidgetState.focused}),
+      darkThemeData.colorScheme.onPrimaryContainer,
+    );
+    expect(
       shell().appleCollapsedSidebarItemStyle?.selectedColor,
       darkThemeData.colorScheme.surfaceContainerHighest,
     );
