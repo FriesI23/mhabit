@@ -52,6 +52,7 @@ class AdaptiveNavigationShell extends StatefulWidget {
     this.appleSidebarStyle = AppleSidebarStyle.inset,
     this.appleSidebarBackgroundColor,
     this.appleSidebarItemStyle,
+    this.appleCollapsedSidebarItemStyle,
   });
 
   /// Content displayed beside or underneath the navigation chrome.
@@ -126,6 +127,14 @@ class AdaptiveNavigationShell extends StatefulWidget {
   /// The inset Sidebar ignores this value.
   final CupertinoSidebarItemStyle? appleSidebarItemStyle;
 
+  /// Optional destination colors for the collapsed Apple edge Sidebar.
+  ///
+  /// This remains separate from [appleSidebarItemStyle] because iPadOS 27
+  /// uses an accent label over a neutral horizontal selection instead of the
+  /// vertical Sidebar's retained active treatment. The inset style ignores
+  /// this value.
+  final CupertinoSidebarItemStyle? appleCollapsedSidebarItemStyle;
+
   @override
   State<AdaptiveNavigationShell> createState() =>
       _AdaptiveNavigationShellState();
@@ -193,6 +202,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
         sidebarStyle: widget.appleSidebarStyle,
         sidebarBackgroundColor: widget.appleSidebarBackgroundColor,
         sidebarItemStyle: widget.appleSidebarItemStyle,
+        collapsedSidebarItemStyle: widget.appleCollapsedSidebarItemStyle,
         child: child,
       ),
     };

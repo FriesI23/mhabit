@@ -3431,6 +3431,9 @@ void main() {
       const themedItemStyle = CupertinoSidebarItemStyle(
         selectedColor: Color(0xFF112233),
       );
+      const themedCollapsedItemStyle = CupertinoSidebarItemStyle(
+        selectedColor: Color(0xFF445566),
+      );
       await tester.pumpWidget(
         MaterialApp(
           home: AdaptiveNavigationShell(
@@ -3440,6 +3443,7 @@ void main() {
             appleSidebarStyle: AppleSidebarStyle.edge,
             appleSidebarBackgroundColor: themedBackground,
             appleSidebarItemStyle: themedItemStyle,
+            appleCollapsedSidebarItemStyle: themedCollapsedItemStyle,
             child: const SizedBox(),
           ),
         ),
@@ -3448,6 +3452,14 @@ void main() {
       expect(
         (sidebar().content as CupertinoSidebarNavigation).itemStyle,
         same(themedItemStyle),
+      );
+      expect(
+        tester
+            .widget<CupertinoSidebarCollapsedBar>(
+              find.byType(CupertinoSidebarCollapsedBar),
+            )
+            .itemStyle,
+        same(themedCollapsedItemStyle),
       );
 
       await tester.pumpWidget(
@@ -3459,6 +3471,7 @@ void main() {
             appleSidebarStyle: AppleSidebarStyle.inset,
             appleSidebarBackgroundColor: themedBackground,
             appleSidebarItemStyle: themedItemStyle,
+            appleCollapsedSidebarItemStyle: themedCollapsedItemStyle,
             child: const SizedBox(),
           ),
         ),
@@ -3466,6 +3479,14 @@ void main() {
       expect(sidebar().backgroundColor, isNull);
       expect(
         (sidebar().content as CupertinoSidebarNavigation).itemStyle,
+        isNull,
+      );
+      expect(
+        tester
+            .widget<CupertinoSidebarCollapsedBar>(
+              find.byType(CupertinoSidebarCollapsedBar),
+            )
+            .itemStyle,
         isNull,
       );
       debugDefaultTargetPlatformOverride = null;

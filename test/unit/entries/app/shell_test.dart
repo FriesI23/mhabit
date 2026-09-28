@@ -820,6 +820,7 @@ void main() {
     expect(shell().appleSidebarStyle, AppleSidebarStyle.edge);
     expect(shell().appleSidebarBackgroundColor, isNull);
     expect(shell().appleSidebarItemStyle, isNull);
+    expect(shell().appleCollapsedSidebarItemStyle, isNull);
 
     theme.setThemeColor(const PrimaryAppThemeColor());
     await tester.pump();
@@ -854,6 +855,16 @@ void main() {
       itemStyle.labelColor?.resolve({WidgetState.focused}),
       themeData.colorScheme.onPrimary,
     );
+    final collapsedItemStyle = shell().appleCollapsedSidebarItemStyle!;
+    expect(
+      collapsedItemStyle.selectedColor,
+      themeData.colorScheme.surfaceContainerHighest,
+    );
+    expect(
+      collapsedItemStyle.selectedForegroundColor,
+      themeData.colorScheme.primary,
+    );
+    expect(collapsedItemStyle.foregroundColor, themeData.colorScheme.onSurface);
 
     final darkThemeData = ThemeData(
       colorScheme: ColorScheme.fromSeed(
@@ -870,6 +881,10 @@ void main() {
       darkThemeData.colorScheme.surfaceContainerHighest,
     );
     expect(
+      shell().appleCollapsedSidebarItemStyle?.selectedColor,
+      darkThemeData.colorScheme.surfaceContainerHighest,
+    );
+    expect(
       darkThemeData.colorScheme.surfaceContainerHighest.computeLuminance(),
       greaterThan(
         darkThemeData.colorScheme.surfaceContainer.computeLuminance(),
@@ -880,6 +895,7 @@ void main() {
     expect(shell().appleSidebarStyle, AppleSidebarStyle.inset);
     expect(shell().appleSidebarBackgroundColor, isNull);
     expect(shell().appleSidebarItemStyle, isNull);
+    expect(shell().appleCollapsedSidebarItemStyle, isNull);
   });
 
   for (final testCase in <({TargetPlatform platform, String actionKey})>[

@@ -197,6 +197,14 @@ class _AppNavigationShellChrome extends StatelessWidget {
             }),
           )
         : null;
+    final appleCollapsedSidebarItemStyle =
+        appleSidebarStyle == AppleSidebarStyle.edge && !usesSystemThemeColor
+        ? CupertinoSidebarItemStyle(
+            selectedColor: colorScheme.surfaceContainerHighest,
+            selectedForegroundColor: colorScheme.primary,
+            foregroundColor: colorScheme.onSurface,
+          )
+        : null;
     return L10nBuilder(
       builder: (context, l10n) => ListenableBuilder(
         listenable: chromeController,
@@ -242,6 +250,7 @@ class _AppNavigationShellChrome extends StatelessWidget {
             appleSidebarStyle: appleSidebarStyle,
             appleSidebarBackgroundColor: appleSidebarBackgroundColor,
             appleSidebarItemStyle: appleSidebarItemStyle,
+            appleCollapsedSidebarItemStyle: appleCollapsedSidebarItemStyle,
             destinations: [
               AppNavigationDestinations.habits(
                 label: l10n?.habitDisplay_tab_habits_label ?? 'Habits',

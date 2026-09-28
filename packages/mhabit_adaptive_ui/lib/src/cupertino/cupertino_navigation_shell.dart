@@ -54,6 +54,7 @@ class CupertinoNavigationShell extends StatefulWidget {
     required this.sidebarStyle,
     required this.sidebarBackgroundColor,
     required this.sidebarItemStyle,
+    required this.collapsedSidebarItemStyle,
     this.expandNavigationLabel,
     this.collapseNavigationLabel,
   });
@@ -99,6 +100,9 @@ class CupertinoNavigationShell extends StatefulWidget {
 
   /// Optional destination colors used only by the edge Sidebar.
   final CupertinoSidebarItemStyle? sidebarItemStyle;
+
+  /// Optional destination colors used only by the collapsed edge Sidebar.
+  final CupertinoSidebarItemStyle? collapsedSidebarItemStyle;
 
   /// Localized action label used when the Sidebar can be shown.
   ///
@@ -253,6 +257,9 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
           onDestinationSelected: (index) =>
               adapter.select(SidebarPrimarySelection(index)),
           height: toolbarGeometry.collapsedBarHeight,
+          itemStyle: widget.sidebarStyle == AppleSidebarStyle.edge
+              ? widget.collapsedSidebarItemStyle
+              : null,
         );
         final branch = CupertinoSidebarPresentationScope(
           expanded: _sidebarExpanded,
