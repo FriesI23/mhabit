@@ -19,6 +19,72 @@ import '../../common/utils.dart';
 import '../../models/habit_color.dart';
 import 'theme_with_custom_colors.dart' show ThemeWithCustomColors;
 
+MarkdownConfig _buildThemedMarkdownConfig(BuildContext context) {
+  final themeData = Theme.of(context);
+  final textTheme = themeData.textTheme;
+  final colorScheme = themeData.colorScheme;
+  final isDark = themeData.brightness == Brightness.dark;
+  final baseConfig = isDark
+      ? MarkdownConfig.darkConfig
+      : MarkdownConfig.defaultConfig;
+  final basePreConfig = isDark ? PreConfig.darkConfig : const PreConfig();
+  final bodyStyle = textTheme.bodyMedium ?? const TextStyle();
+
+  return baseConfig.copy(
+    configs: [
+      PConfig(textStyle: bodyStyle),
+      H1Config(
+        style: (textTheme.headlineSmall ?? bodyStyle).copyWith(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      H2Config(
+        style: (textTheme.titleLarge ?? bodyStyle).copyWith(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      H3Config(
+        style: (textTheme.titleMedium ?? bodyStyle).copyWith(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      H4Config(
+        style: (textTheme.titleSmall ?? bodyStyle).copyWith(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      H5Config(style: bodyStyle.copyWith(fontWeight: FontWeight.bold)),
+      H6Config(
+        style: (textTheme.bodySmall ?? bodyStyle).copyWith(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      basePreConfig.copy(
+        textStyle: bodyStyle,
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainer,
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
+        ),
+      ),
+      CodeConfig(
+        style: TextStyle(backgroundColor: colorScheme.surfaceContainerHighest),
+      ),
+      BlockquoteConfig(
+        sideColor: colorScheme.primary.withValues(alpha: 0.5),
+        textColor: colorScheme.onSurfaceVariant,
+      ),
+      LinkConfig(
+        style: TextStyle(
+          color: colorScheme.primary,
+          decoration: TextDecoration.underline,
+        ),
+      ),
+      HrConfig(color: colorScheme.outlineVariant),
+      TableConfig(border: TableBorder.all(color: colorScheme.outlineVariant)),
+    ],
+  );
+}
+
 class ColorfulMarkdownBlock extends StatelessWidget {
   final String data;
   final bool selectable;
@@ -35,18 +101,8 @@ class ColorfulMarkdownBlock extends StatelessWidget {
 
   MarkdownConfig _getConfig(BuildContext context) {
     final themeData = Theme.of(context);
-    final isDark = themeData.brightness == Brightness.dark;
-    final config = isDark
-        ? MarkdownConfig.darkConfig
-        : MarkdownConfig.defaultConfig;
-
-    return config.copy(
+    return _buildThemedMarkdownConfig(context).copy(
       configs: [
-        isDark ? PreConfig.darkConfig : const PreConfig(),
-        BlockquoteConfig(
-          sideColor: themeData.colorScheme.primary.withValues(alpha: 0.5),
-          textColor: themeData.colorScheme.onSurface.withValues(alpha: 0.8),
-        ),
         LinkConfig(
           style: TextStyle(
             color: themeData.colorScheme.primary,
@@ -100,10 +156,7 @@ class ThematicMarkdownBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final config = isDark
-        ? MarkdownConfig.darkConfig
-        : MarkdownConfig.defaultConfig;
+    final config = _buildThemedMarkdownConfig(context);
     return MarkdownBlock(
       data: data,
       selectable: selectable,

@@ -413,22 +413,13 @@ class L10nTr extends L10n {
   String get habitDisplay_displayFilter_completed => 'Tamamlandı';
 
   @override
-  String get common_appThemeMode_light => 'Açık Tema';
+  String get common_appThemeMode_light => 'Açık';
 
   @override
-  String get common_appThemeMode_dark => 'Koyu Tema';
+  String get common_appThemeMode_dark => 'Koyu';
 
   @override
-  String get common_appThemeMode_followSystem => 'Sistemi İzle';
-
-  @override
-  String get habitDisplay_mainMenu_lightTheme => 'Açık Tema';
-
-  @override
-  String get habitDisplay_mainMenu_darkTheme => 'Koyu Tema';
-
-  @override
-  String get habitDisplay_mainMenu_followSystemTheme => 'Sistemi İzle';
+  String get common_appThemeMode_followSystem => 'Otomatik';
 
   @override
   String get habitDisplay_mainMenu_showArchivedTileText =>

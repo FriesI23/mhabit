@@ -413,22 +413,13 @@ class L10nHu extends L10n {
   String get habitDisplay_displayFilter_completed => 'Teljesített';
 
   @override
-  String get common_appThemeMode_light => 'Világos téma';
+  String get common_appThemeMode_light => 'Világos';
 
   @override
-  String get common_appThemeMode_dark => 'Sötét téma';
+  String get common_appThemeMode_dark => 'Sötét';
 
   @override
-  String get common_appThemeMode_followSystem => 'Rendszer követése';
-
-  @override
-  String get habitDisplay_mainMenu_lightTheme => 'Világos téma';
-
-  @override
-  String get habitDisplay_mainMenu_darkTheme => 'Sötét téma';
-
-  @override
-  String get habitDisplay_mainMenu_followSystemTheme => 'Rendszer követése';
+  String get common_appThemeMode_followSystem => 'Automatikus';
 
   @override
   String get habitDisplay_mainMenu_showArchivedTileText =>

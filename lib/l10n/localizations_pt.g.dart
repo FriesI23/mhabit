@@ -413,22 +413,13 @@ class L10nPt extends L10n {
   String get habitDisplay_displayFilter_completed => 'Completo';
 
   @override
-  String get common_appThemeMode_light => 'Tema claro';
+  String get common_appThemeMode_light => 'Claro';
 
   @override
-  String get common_appThemeMode_dark => 'Tema escuro';
+  String get common_appThemeMode_dark => 'Escuro';
 
   @override
-  String get common_appThemeMode_followSystem => 'Seguir o sistema';
-
-  @override
-  String get habitDisplay_mainMenu_lightTheme => 'Tema claro';
-
-  @override
-  String get habitDisplay_mainMenu_darkTheme => 'Tema escuro';
-
-  @override
-  String get habitDisplay_mainMenu_followSystemTheme => 'Seguir o sistema';
+  String get common_appThemeMode_followSystem => 'Automático';
 
   @override
   String get habitDisplay_mainMenu_showArchivedTileText => 'Mostrar arquivados';

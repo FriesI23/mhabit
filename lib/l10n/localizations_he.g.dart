@@ -409,22 +409,13 @@ class L10nHe extends L10n {
   String get habitDisplay_displayFilter_completed => 'הושלם';
 
   @override
-  String get common_appThemeMode_light => 'סגנון בהיר';
+  String get common_appThemeMode_light => 'בהיר';
 
   @override
-  String get common_appThemeMode_dark => 'סגנון כהה';
+  String get common_appThemeMode_dark => 'כהה';
 
   @override
-  String get common_appThemeMode_followSystem => 'לפי המערכת';
-
-  @override
-  String get habitDisplay_mainMenu_lightTheme => 'סגנון בהיר';
-
-  @override
-  String get habitDisplay_mainMenu_darkTheme => 'סגנון כהה';
-
-  @override
-  String get habitDisplay_mainMenu_followSystemTheme => 'לפי המערכת';
+  String get common_appThemeMode_followSystem => 'אוטומטי';
 
   @override
   String get habitDisplay_mainMenu_showArchivedTileText =>

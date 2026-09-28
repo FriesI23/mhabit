@@ -413,22 +413,13 @@ class L10nEs extends L10n {
   String get habitDisplay_displayFilter_completed => 'Completados';
 
   @override
-  String get common_appThemeMode_light => 'Tema Claro';
+  String get common_appThemeMode_light => 'Claro';
 
   @override
-  String get common_appThemeMode_dark => 'Tema Oscuro';
+  String get common_appThemeMode_dark => 'Oscuro';
 
   @override
-  String get common_appThemeMode_followSystem => 'Según el sistema';
-
-  @override
-  String get habitDisplay_mainMenu_lightTheme => 'Tema Claro';
-
-  @override
-  String get habitDisplay_mainMenu_darkTheme => 'Tema Oscuro';
-
-  @override
-  String get habitDisplay_mainMenu_followSystemTheme => 'Según el sistema';
+  String get common_appThemeMode_followSystem => 'Automático';
 
   @override
   String get habitDisplay_mainMenu_showArchivedTileText => 'Mostrar archivados';

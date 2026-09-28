@@ -411,23 +411,13 @@ class L10nFa extends L10n {
   String get habitDisplay_displayFilter_completed => 'به اتمام رسیده';
 
   @override
-  String get common_appThemeMode_light => 'تم روشن';
+  String get common_appThemeMode_light => 'روشن';
 
   @override
-  String get common_appThemeMode_dark => 'تم تاریک';
+  String get common_appThemeMode_dark => 'تیره';
 
   @override
-  String get common_appThemeMode_followSystem => 'پیروی از تنظیمات سیستم';
-
-  @override
-  String get habitDisplay_mainMenu_lightTheme => 'تم روشن';
-
-  @override
-  String get habitDisplay_mainMenu_darkTheme => 'تم تاریک';
-
-  @override
-  String get habitDisplay_mainMenu_followSystemTheme =>
-      'پیروی از تنظیمات سیستم';
+  String get common_appThemeMode_followSystem => 'خودکار';
 
   @override
   String get habitDisplay_mainMenu_showArchivedTileText => 'نمایش آرشیو شده‌ها';

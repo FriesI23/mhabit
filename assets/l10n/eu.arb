@@ -5,6 +5,9 @@
         "description": "The human-readable name of the language used for the locale."
     },
     "appName": "🚧(eu) - Table Habit",
+    "common_appThemeMode_light": "Argia",
+    "common_appThemeMode_dark": "Iluna",
+    "common_appThemeMode_followSystem": "Automatikoa",
     "changelog_banner_title": "What's New in v{version}",
     "@changelog_banner_title": {
         "description": "Title in the MaterialBanner showing the current version changelog on first open after upgrade.",

@@ -910,7 +910,7 @@ void main() {
           tester.getTopLeft(action).dy,
           lessThan(tester.getTopLeft(settings).dy),
         );
-        expect(find.text('Follow System'), findsWidgets);
+        expect(find.text('Auto'), findsWidgets);
         expect(
           find.descendant(of: action, matching: find.byType(AppThemeModeIcon)),
           findsOneWidget,
@@ -942,7 +942,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(theme.value, AppThemeType.light);
-        expect(find.text('Light Theme'), findsWidgets);
+        expect(find.text('Light'), findsWidgets);
         expect(coordinator.selectedIndex, 1);
         expect(launchEntry.entries, isEmpty);
         if (testCase.platform == TargetPlatform.iOS) {

@@ -403,22 +403,13 @@ class L10nJa extends L10n {
   String get habitDisplay_displayFilter_completed => '完了';
 
   @override
-  String get common_appThemeMode_light => 'ライトテーマ';
+  String get common_appThemeMode_light => 'ライト';
 
   @override
-  String get common_appThemeMode_dark => 'ダークテーマ';
+  String get common_appThemeMode_dark => 'ダーク';
 
   @override
-  String get common_appThemeMode_followSystem => 'システムに従う';
-
-  @override
-  String get habitDisplay_mainMenu_lightTheme => 'ライトテーマ';
-
-  @override
-  String get habitDisplay_mainMenu_darkTheme => 'ダークテーマ';
-
-  @override
-  String get habitDisplay_mainMenu_followSystemTheme => 'システムに従う';
+  String get common_appThemeMode_followSystem => '自動';
 
   @override
   String get habitDisplay_mainMenu_showArchivedTileText => 'アーカイブを表示';

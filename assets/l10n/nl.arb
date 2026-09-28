@@ -4,5 +4,8 @@
     "@localeScriptName": {
         "description": "The human-readable name of the language used for the locale."
     },
-    "appName": "🚧(nl) - Table Habit"
+    "appName": "🚧(nl) - Table Habit",
+    "common_appThemeMode_light": "Licht",
+    "common_appThemeMode_dark": "Donker",
+    "common_appThemeMode_followSystem": "Automatisch"
 }

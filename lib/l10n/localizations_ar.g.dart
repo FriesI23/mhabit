@@ -409,22 +409,13 @@ class L10nAr extends L10n {
   String get habitDisplay_displayFilter_completed => 'مكتملة';
 
   @override
-  String get common_appThemeMode_light => 'عرض خفيف';
+  String get common_appThemeMode_light => 'فاتح';
 
   @override
-  String get common_appThemeMode_dark => 'عرض داكن';
+  String get common_appThemeMode_dark => 'داكن';
 
   @override
-  String get common_appThemeMode_followSystem => 'مطابقة نظام الجهاز';
-
-  @override
-  String get habitDisplay_mainMenu_lightTheme => 'عرض خفيف';
-
-  @override
-  String get habitDisplay_mainMenu_darkTheme => 'عرض داكن';
-
-  @override
-  String get habitDisplay_mainMenu_followSystemTheme => 'مطابقة نظام الجهاز';
+  String get common_appThemeMode_followSystem => 'تلقائي';
 
   @override
   String get habitDisplay_mainMenu_showArchivedTileText => 'أظهر المؤرشفة';

@@ -13,6 +13,9 @@
     "@habitDisplay_doneButton_label": {
         "description": "Mirrors Apple's localized UIKitCore Localizable.strings \"Done\" system bar button item."
     },
+    "common_appThemeMode_light": "Lys",
+    "common_appThemeMode_dark": "Mørk",
+    "common_appThemeMode_followSystem": "Auto",
     "changelog_banner_title": "What's New in v{version}",
     "@changelog_banner_title": {
         "description": "Title in the MaterialBanner showing the current version changelog on first open after upgrade.",

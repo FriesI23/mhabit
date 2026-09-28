@@ -399,22 +399,13 @@ class L10nZh extends L10n {
   String get habitDisplay_displayFilter_completed => '已完成';
 
   @override
-  String get common_appThemeMode_light => '明亮主题';
+  String get common_appThemeMode_light => '浅色';
 
   @override
-  String get common_appThemeMode_dark => '黑暗主题';
+  String get common_appThemeMode_dark => '深色';
 
   @override
-  String get common_appThemeMode_followSystem => '跟随系统';
-
-  @override
-  String get habitDisplay_mainMenu_lightTheme => '明亮主题';
-
-  @override
-  String get habitDisplay_mainMenu_darkTheme => '黑暗主题';
-
-  @override
-  String get habitDisplay_mainMenu_followSystemTheme => '跟随系统';
+  String get common_appThemeMode_followSystem => '自动';
 
   @override
   String get habitDisplay_mainMenu_showArchivedTileText => '已归档';
@@ -2531,22 +2522,13 @@ class L10nZhHant extends L10nZh {
   String get habitDisplay_displayFilter_completed => '已完成';
 
   @override
-  String get common_appThemeMode_light => '淺色主題';
+  String get common_appThemeMode_light => '淺色';
 
   @override
-  String get common_appThemeMode_dark => '深色主題';
+  String get common_appThemeMode_dark => '深色';
 
   @override
-  String get common_appThemeMode_followSystem => '依照系統設定';
-
-  @override
-  String get habitDisplay_mainMenu_lightTheme => '淺色主題';
-
-  @override
-  String get habitDisplay_mainMenu_darkTheme => '深色主題';
-
-  @override
-  String get habitDisplay_mainMenu_followSystemTheme => '依照系統設定';
+  String get common_appThemeMode_followSystem => '自動';
 
   @override
   String get habitDisplay_mainMenu_showArchivedTileText => '顯示已封存';
