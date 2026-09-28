@@ -170,6 +170,33 @@ class _AppNavigationShellChrome extends StatelessWidget {
             alpha: kCupertinoSidebarEdgeFillAlpha,
           )
         : null;
+    final colorScheme = Theme.of(context).colorScheme;
+    final appleSidebarItemStyle =
+        appleSidebarStyle == AppleSidebarStyle.edge && !usesSystemThemeColor
+        ? CupertinoSidebarItemStyle(
+            backgroundColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.focused) ||
+                  states.contains(WidgetState.pressed)) {
+                return colorScheme.primary;
+              }
+              return states.contains(WidgetState.selected)
+                  ? colorScheme.surfaceContainerHighest
+                  : null;
+            }),
+            iconColor: WidgetStateProperty.resolveWith((states) {
+              return states.contains(WidgetState.focused) ||
+                      states.contains(WidgetState.pressed)
+                  ? colorScheme.onPrimary
+                  : colorScheme.primary;
+            }),
+            labelColor: WidgetStateProperty.resolveWith((states) {
+              return states.contains(WidgetState.focused) ||
+                      states.contains(WidgetState.pressed)
+                  ? colorScheme.onPrimary
+                  : colorScheme.onSurface;
+            }),
+          )
+        : null;
     return L10nBuilder(
       builder: (context, l10n) => ListenableBuilder(
         listenable: chromeController,
@@ -214,6 +241,7 @@ class _AppNavigationShellChrome extends StatelessWidget {
             ),
             appleSidebarStyle: appleSidebarStyle,
             appleSidebarBackgroundColor: appleSidebarBackgroundColor,
+            appleSidebarItemStyle: appleSidebarItemStyle,
             destinations: [
               AppNavigationDestinations.habits(
                 label: l10n?.habitDisplay_tab_habits_label ?? 'Habits',

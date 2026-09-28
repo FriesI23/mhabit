@@ -438,6 +438,13 @@ Future<void> _tapSideDestination(
   await tester.tapAt(Offset(rect.center.dx, rect.top + 16));
 }
 
+Color? _sideDestinationFill(WidgetTester tester, Finder destination) {
+  final box = tester.widget<DecoratedBox>(
+    find.descendant(of: destination, matching: find.byType(DecoratedBox)),
+  );
+  return (box.decoration as BoxDecoration).color;
+}
+
 Page<dynamic> _pageNamed(WidgetTester tester, String name) => tester
     .widgetList<Navigator>(find.byType(Navigator))
     .expand((navigator) => navigator.pages)
@@ -783,26 +790,28 @@ void main() {
     addTearDown(launchEntry.dispose);
     addTearDown(theme.dispose);
 
-    Future<void> pump(AppAppleSidebarStyleMode sidebarStyleMode) =>
-        tester.pumpWidget(
-          MultiProvider(
-            providers: [
-              ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
-                value: launchEntry,
-              ),
-              ChangeNotifierProvider<AppThemeViewModel>.value(value: theme),
-            ],
-            child: MaterialApp(
-              theme: themeData,
-              home: AppNavigationShell(
-                coordinator: coordinator,
-                chromeController: chromeController,
-                appleSidebarStyleMode: sidebarStyleMode,
-                child: const _StubPage('content'),
-              ),
-            ),
+    Future<void> pump(
+      AppAppleSidebarStyleMode sidebarStyleMode, {
+      ThemeData? materialTheme,
+    }) => tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
+            value: launchEntry,
           ),
-        );
+          ChangeNotifierProvider<AppThemeViewModel>.value(value: theme),
+        ],
+        child: MaterialApp(
+          theme: materialTheme ?? themeData,
+          home: AppNavigationShell(
+            coordinator: coordinator,
+            chromeController: chromeController,
+            appleSidebarStyleMode: sidebarStyleMode,
+            child: const _StubPage('content'),
+          ),
+        ),
+      ),
+    );
 
     AdaptiveNavigationShell shell() =>
         tester.widget(find.byType(AdaptiveNavigationShell));
@@ -810,6 +819,7 @@ void main() {
     await pump(AppAppleSidebarStyleMode.os27);
     expect(shell().appleSidebarStyle, AppleSidebarStyle.edge);
     expect(shell().appleSidebarBackgroundColor, isNull);
+    expect(shell().appleSidebarItemStyle, isNull);
 
     theme.setThemeColor(const PrimaryAppThemeColor());
     await tester.pump();
@@ -819,10 +829,57 @@ void main() {
         alpha: kCupertinoSidebarEdgeFillAlpha,
       ),
     );
+    final itemStyle = shell().appleSidebarItemStyle!;
+    expect(
+      itemStyle.backgroundColor?.resolve({WidgetState.selected}),
+      themeData.colorScheme.surfaceContainerHighest,
+    );
+    expect(
+      itemStyle.backgroundColor?.resolve({WidgetState.focused}),
+      themeData.colorScheme.primary,
+    );
+    expect(
+      itemStyle.iconColor?.resolve({WidgetState.selected}),
+      themeData.colorScheme.primary,
+    );
+    expect(
+      itemStyle.iconColor?.resolve({WidgetState.pressed}),
+      themeData.colorScheme.onPrimary,
+    );
+    expect(
+      itemStyle.labelColor?.resolve({WidgetState.selected}),
+      themeData.colorScheme.onSurface,
+    );
+    expect(
+      itemStyle.labelColor?.resolve({WidgetState.focused}),
+      themeData.colorScheme.onPrimary,
+    );
+
+    final darkThemeData = ThemeData(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: Colors.deepOrange,
+        brightness: Brightness.dark,
+      ),
+    );
+    await pump(AppAppleSidebarStyleMode.os27, materialTheme: darkThemeData);
+    await tester.pumpAndSettle();
+    expect(
+      shell().appleSidebarItemStyle?.backgroundColor?.resolve({
+        WidgetState.selected,
+      }),
+      darkThemeData.colorScheme.surfaceContainerHighest,
+    );
+    expect(
+      darkThemeData.colorScheme.surfaceContainerHighest.computeLuminance(),
+      greaterThan(
+        darkThemeData.colorScheme.surfaceContainer.computeLuminance(),
+      ),
+    );
 
     await pump(AppAppleSidebarStyleMode.os26);
     expect(shell().appleSidebarStyle, AppleSidebarStyle.inset);
     expect(shell().appleSidebarBackgroundColor, isNull);
+    expect(shell().appleSidebarItemStyle, isNull);
   });
 
   for (final testCase in <({TargetPlatform platform, String actionKey})>[
@@ -866,6 +923,7 @@ void main() {
               home: AppNavigationShell(
                 coordinator: coordinator,
                 chromeController: chromeController,
+                appleSidebarStyleMode: AppAppleSidebarStyleMode.os27,
                 auxiliaryChromeBuilder: (context) => [
                   AppNavigationAuxiliaryChrome.themeMode(context),
                   AppNavigationAuxiliaryChrome(
@@ -931,12 +989,19 @@ void main() {
         );
 
         await _tapSideDestination(tester, action);
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(theme.value, AppThemeType.light);
         expect(find.text('Light Theme'), findsWidgets);
         expect(coordinator.selectedIndex, 1);
         expect(launchEntry.entries, isEmpty);
+        if (testCase.platform == TargetPlatform.iOS) {
+          expect(_sideDestinationFill(tester, action)?.toARGB32(), 0xFF0081F6);
+          expect(
+            _sideDestinationFill(tester, settings)?.toARGB32(),
+            0xFFD2D6DA,
+          );
+        }
       },
     );
   }

@@ -51,6 +51,7 @@ class AdaptiveNavigationShell extends StatefulWidget {
     this.appleBarStyle = const AppleNavigationBarStyle(),
     this.appleSidebarStyle = AppleSidebarStyle.inset,
     this.appleSidebarBackgroundColor,
+    this.appleSidebarItemStyle,
   });
 
   /// Content displayed beside or underneath the navigation chrome.
@@ -120,6 +121,11 @@ class AdaptiveNavigationShell extends StatefulWidget {
   /// presentation without changing the established inset appearance.
   final Color? appleSidebarBackgroundColor;
 
+  /// Optional destination colors for the Apple edge Sidebar.
+  ///
+  /// The inset Sidebar ignores this value.
+  final CupertinoSidebarItemStyle? appleSidebarItemStyle;
+
   @override
   State<AdaptiveNavigationShell> createState() =>
       _AdaptiveNavigationShellState();
@@ -186,6 +192,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
         appleBarStyle: widget.appleBarStyle,
         sidebarStyle: widget.appleSidebarStyle,
         sidebarBackgroundColor: widget.appleSidebarBackgroundColor,
+        sidebarItemStyle: widget.appleSidebarItemStyle,
         child: child,
       ),
     };

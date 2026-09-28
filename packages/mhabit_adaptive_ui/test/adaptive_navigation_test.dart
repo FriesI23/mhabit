@@ -17,6 +17,7 @@ import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
     show
         CupertinoSidebar,
         CupertinoSidebarCollapsedBar,
+        CupertinoSidebarNavigation,
         CupertinoSidebarStyle,
         CupertinoSidebarToolbarGeometry;
 import 'package:flutter_test/flutter_test.dart';
@@ -3427,6 +3428,9 @@ void main() {
       expect(sidebar().style, CupertinoSidebarStyle.liquidEdge);
 
       const themedBackground = Color(0xCC123456);
+      const themedItemStyle = CupertinoSidebarItemStyle(
+        selectedColor: Color(0xFF112233),
+      );
       await tester.pumpWidget(
         MaterialApp(
           home: AdaptiveNavigationShell(
@@ -3435,11 +3439,16 @@ void main() {
             onDestinationSelected: (_) {},
             appleSidebarStyle: AppleSidebarStyle.edge,
             appleSidebarBackgroundColor: themedBackground,
+            appleSidebarItemStyle: themedItemStyle,
             child: const SizedBox(),
           ),
         ),
       );
       expect(sidebar().backgroundColor, themedBackground);
+      expect(
+        (sidebar().content as CupertinoSidebarNavigation).itemStyle,
+        same(themedItemStyle),
+      );
 
       await tester.pumpWidget(
         MaterialApp(
@@ -3449,11 +3458,16 @@ void main() {
             onDestinationSelected: (_) {},
             appleSidebarStyle: AppleSidebarStyle.inset,
             appleSidebarBackgroundColor: themedBackground,
+            appleSidebarItemStyle: themedItemStyle,
             child: const SizedBox(),
           ),
         ),
       );
       expect(sidebar().backgroundColor, isNull);
+      expect(
+        (sidebar().content as CupertinoSidebarNavigation).itemStyle,
+        isNull,
+      );
       debugDefaultTargetPlatformOverride = null;
     });
 
