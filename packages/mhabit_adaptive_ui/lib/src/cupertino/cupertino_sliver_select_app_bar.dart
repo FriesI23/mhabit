@@ -11,6 +11,7 @@ import '../breakpoints/breakpoints.dart';
 import '../breakpoints/window_size_class.dart';
 import '../shell/sidebar_adapter.dart';
 import 'app_bar_apple_style.dart';
+import 'cupertino_focus_halo_clip.dart';
 import 'cupertino_sliver_app_bar.dart';
 
 /// Cupertino selection-mode sliver command bar.
@@ -134,33 +135,38 @@ class CupertinoSelectBottomToolbar<T extends Object> extends StatelessWidget {
       CupertinoTheme.of(context).barBackgroundColor,
       context,
     );
-    return ClipRect(
+    return Stack(
       key: const ValueKey('cupertino-select-bottom-toolbar'),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-        child: ColoredBox(
-          color: background,
-          child: SafeArea(
-            top: false,
-            minimum: EdgeInsets.zero,
-            child: SizedBox(
-              height: contentHeight,
-              child: Padding(
-                padding: const EdgeInsetsDirectional.symmetric(horizontal: 8),
-                child: _CupertinoSelectActions<T>(
-                  collection: collection,
-                  onInvoke: onInvoke,
-                  iconBuilder: actions?.iconBuilder,
-                  actionButtonBuilder: actions?.actionButtonBuilder,
-                  menuBuilderForAction: actions?.menuBuilderForAction,
-                  presentationForAction: actions?.presentationForAction,
-                  layoutDelegate: const _TrailingOverflowLayoutDelegate(),
-                ),
+      clipBehavior: Clip.none,
+      children: [
+        Positioned.fill(
+          child: ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: ColoredBox(color: background),
+            ),
+          ),
+        ),
+        SafeArea(
+          top: false,
+          minimum: EdgeInsets.zero,
+          child: SizedBox(
+            height: contentHeight,
+            child: Padding(
+              padding: const EdgeInsetsDirectional.symmetric(horizontal: 8),
+              child: _CupertinoSelectActions<T>(
+                collection: collection,
+                onInvoke: onInvoke,
+                iconBuilder: actions?.iconBuilder,
+                actionButtonBuilder: actions?.actionButtonBuilder,
+                menuBuilderForAction: actions?.menuBuilderForAction,
+                presentationForAction: actions?.presentationForAction,
+                layoutDelegate: const _TrailingOverflowLayoutDelegate(),
               ),
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -534,7 +540,7 @@ class _CupertinoSelectActions<T extends Object> extends StatelessWidget {
       builder: (context, constraints) {
         final capacity = constraints.maxWidth;
         if (capacity < 44.0) return const SizedBox.shrink();
-        return ClipRect(
+        return CupertinoFocusHaloClip(
           child: Align(
             alignment: AlignmentDirectional.centerEnd,
             widthFactor: 1,

@@ -1,6 +1,8 @@
 import 'package:adaptive_actions/cupertino.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'adaptive_cupertino_focus_theme.dart';
+
 /// Cupertino renderer adapter for adaptive app-bar actions.
 class CupertinoAppBarActions<T extends Object> extends StatelessWidget {
   const CupertinoAppBarActions({
@@ -57,6 +59,7 @@ class CupertinoAppBarActions<T extends Object> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final focusTheme = AdaptiveCupertinoFocusThemeData.of(context);
     final primaryAnchors = <T, BuildContext>{};
     BuildContext? overflowAnchor;
     return CupertinoAdaptiveActions<T>.moreAction(
@@ -86,6 +89,7 @@ class CupertinoAppBarActions<T extends Object> extends StatelessWidget {
           },
         );
       },
+      focusHaloBuilder: focusTheme.buildHalo,
       menuBuilderForAction: menuBuilderForAction,
       overflowButtonBuilder: (context, onPressed, defaultBuilder) {
         /// Keeps the anchor context inside the concrete button subtree because

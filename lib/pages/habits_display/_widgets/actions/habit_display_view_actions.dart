@@ -360,11 +360,14 @@ class HabitDisplayViewActions extends StatelessWidget {
     VoidCallback? onPressed,
     CupertinoActionButtonDefaultBuilder<HabitDisplayViewAction> defaultBuilder,
   ) => switch (action.payload) {
-    HabitDisplayViewSelectAction() => CupertinoButton(
-      key: const ValueKey('habit-select-primary'),
-      sizeStyle: CupertinoButtonSize.small,
-      onPressed: onPressed,
-      child: Text(action.metadata.label, maxLines: 1, softWrap: false),
+    HabitDisplayViewSelectAction() => AdaptiveCupertinoFocusHalo(
+      child: CupertinoButton(
+        key: const ValueKey('habit-select-primary'),
+        sizeStyle: CupertinoButtonSize.small,
+        focusColor: CupertinoColors.transparent,
+        onPressed: onPressed,
+        child: Text(action.metadata.label, maxLines: 1, softWrap: false),
+      ),
     ),
     HabitDisplayViewOpenSettingsAction() => AppSettingsButton(
       key: const ValueKey('open-settings-action'),

@@ -8,6 +8,7 @@ import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 import '../adaptive/adaptive_app_bar_actions.dart';
 import '../shell/sidebar_adapter.dart';
 import '../window_control/toolbar_geometry.dart';
+import 'cupertino_focus_halo_clip.dart';
 import 'cupertino_toolbar_padding.dart';
 
 const double _toolbarItemExtent = kMinInteractiveDimensionCupertino;
@@ -589,56 +590,55 @@ class _CupertinoCommandRegion<T extends Object> extends StatelessWidget {
       final keepTitle = showTitle && availableTitleWidth >= _minimumTitleExtent;
       final titleWidth = keepTitle ? availableTitleWidth : 0.0;
 
-      return ClipRect(
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            if (showTitle)
-              PositionedDirectional(
-                key: const ValueKey('cupertino-search-title'),
-                start: 0,
-                width: titleWidth,
-                top: 0,
-                bottom: 0,
-                child: ClipRect(
-                  child: Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: Padding(
-                      padding: const EdgeInsetsDirectional.only(
-                        start: _compactTitleStartPadding,
-                      ),
-                      child: DefaultTextStyle.merge(
-                        maxLines: 1,
-                        softWrap: false,
-                        overflow: TextOverflow.ellipsis,
-                        child: title,
-                      ),
+      return Stack(
+        clipBehavior: Clip.none,
+        fit: StackFit.expand,
+        children: [
+          if (showTitle)
+            PositionedDirectional(
+              key: const ValueKey('cupertino-search-title'),
+              start: 0,
+              width: titleWidth,
+              top: 0,
+              bottom: 0,
+              child: ClipRect(
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.only(
+                      start: _compactTitleStartPadding,
+                    ),
+                    child: DefaultTextStyle.merge(
+                      maxLines: 1,
+                      softWrap: false,
+                      overflow: TextOverflow.ellipsis,
+                      child: title,
                     ),
                   ),
                 ),
               ),
-            if (actionRegionWidth > 0)
-              PositionedDirectional(
-                end: 0,
-                width: actionRegionWidth,
-                top: 0,
-                bottom: 0,
-                child: _CupertinoSearchActions<T>(
-                  collection: collection,
-                  onInvoke: onInvoke,
-                  iconBuilder: iconBuilder,
-                  actionButtonBuilder: actionButtonBuilder,
-                  menuBuilderForAction: menuBuilderForAction,
-                  presentationForAction: presentationForAction,
-                  primaryCapacity: adaptiveCapacity,
-                  searchExpanded: searchExpanded,
-                  onOverflowMenuOpened: onOverflowMenuOpened,
-                  onOverflowMenuClosed: onOverflowMenuClosed,
-                  onOverflowPressed: onOverflowPressed,
-                ),
+            ),
+          if (actionRegionWidth > 0)
+            PositionedDirectional(
+              end: 0,
+              width: actionRegionWidth,
+              top: 0,
+              bottom: 0,
+              child: _CupertinoSearchActions<T>(
+                collection: collection,
+                onInvoke: onInvoke,
+                iconBuilder: iconBuilder,
+                actionButtonBuilder: actionButtonBuilder,
+                menuBuilderForAction: menuBuilderForAction,
+                presentationForAction: presentationForAction,
+                primaryCapacity: adaptiveCapacity,
+                searchExpanded: searchExpanded,
+                onOverflowMenuOpened: onOverflowMenuOpened,
+                onOverflowMenuClosed: onOverflowMenuClosed,
+                onOverflowPressed: onOverflowPressed,
               ),
-          ],
-        ),
+            ),
+        ],
       );
     },
   );
@@ -687,7 +687,7 @@ class _CupertinoSearchActions<T extends Object> extends StatelessWidget {
     );
     return SizedBox(
       width: primaryCapacity,
-      child: ClipRect(
+      child: CupertinoFocusHaloClip(
         child: OverflowBox(
           alignment: AlignmentDirectional.centerEnd,
           minWidth: 0,
@@ -837,23 +837,23 @@ class _CupertinoExpandableSearchItemState
         duration: animateWidth ? _duration : Duration.zero,
         curve: Easing.standard,
         onEnd: animateWidth ? _handleAnimationEnd : null,
-        child: ClipRect(
-          child: _showSearchField
-              ? OverflowBox(
+        child: _showSearchField
+            ? ClipRect(
+                child: OverflowBox(
                   alignment: AlignmentDirectional.centerEnd,
                   minWidth: expandedWidth,
                   maxWidth: expandedWidth,
                   child: _buildSearchField(expandedWidth),
-                )
-              : CupertinoButton(
-                  key: const ValueKey('activate-cupertino-search'),
-                  padding: EdgeInsets.zero,
-                  minimumSize: const Size.square(_collapsedExtent),
-                  sizeStyle: CupertinoButtonSize.small,
-                  onPressed: _activateSearch,
-                  child: const Icon(CupertinoIcons.search),
                 ),
-        ),
+              )
+            : CupertinoButton(
+                key: const ValueKey('activate-cupertino-search'),
+                padding: EdgeInsets.zero,
+                minimumSize: const Size.square(_collapsedExtent),
+                sizeStyle: CupertinoButtonSize.small,
+                onPressed: _activateSearch,
+                child: const Icon(CupertinoIcons.search),
+              ),
       ),
     );
   }

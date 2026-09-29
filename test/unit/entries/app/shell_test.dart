@@ -442,7 +442,11 @@ Color? _sideDestinationFill(WidgetTester tester, Finder destination) {
   final box = tester.widget<DecoratedBox>(
     find.descendant(of: destination, matching: find.byType(DecoratedBox)),
   );
-  return (box.decoration as BoxDecoration).color;
+  return switch (box.decoration) {
+    BoxDecoration(:final color) => color,
+    ShapeDecoration(:final color) => color,
+    _ => null,
+  };
 }
 
 Page<dynamic> _pageNamed(WidgetTester tester, String name) => tester

@@ -12,10 +12,9 @@ packages:
   adaptive_actions:
     dependency: "direct main"
     description:
-      name: adaptive_actions
-      sha256: a3ff06e57e401c288350852c523527b570e0e4a4fe8d8533208ddb1ba30fc2df
-      url: "https://pub.dev"
-    source: hosted
+      path: "../../../../adaptive_actions"
+      relative: true
+    source: path
     version: "0.6.1"
   analyzer:
     dependency: "direct dev"
@@ -560,12 +559,11 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_adaptive_sidebar:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: flutter_adaptive_sidebar
-      sha256: "2feba2a1b9e34cdf6645aef00c567305b740acca226c8f681dabec756f8c49af"
-      url: "https://pub.dev"
-    source: hosted
+      path: "../../../../flutter_adaptive_sidebar"
+      relative: true
+    source: path
     version: "0.2.0"
   flutter_gen:
     dependency: "direct dev"
@@ -2020,5 +2018,5 @@ packages:
     source: hosted
     version: "2.2.4"
 sdks:
-  dart: ">=3.12.2 <4.0.0"
+  dart: ">=3.12.0 <4.0.0"
   flutter: ">=3.44.0"

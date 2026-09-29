@@ -1,14 +1,20 @@
-import 'package:flutter/cupertino.dart' show CupertinoButton;
+import 'package:flutter/cupertino.dart' show CupertinoButton, CupertinoColors;
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
-Widget _host({required TargetPlatform platform, required Widget child}) =>
-    MaterialApp(
-      theme: ThemeData(platform: platform),
-      home: Scaffold(body: Center(child: child)),
-    );
+Widget _host({
+  required TargetPlatform platform,
+  required Widget child,
+  AdaptiveCupertinoFocusThemeData? focusTheme,
+}) => MaterialApp(
+  theme: ThemeData(
+    platform: platform,
+    extensions: [focusTheme ?? const AdaptiveCupertinoFocusThemeData()],
+  ),
+  home: Scaffold(body: Center(child: child)),
+);
 
 void main() {
   testWidgets('uses Material IconButton on Material platforms', (tester) async {
@@ -27,12 +33,19 @@ void main() {
     expect(find.byType(CupertinoButton), findsNothing);
   });
 
-  testWidgets('uses standard CupertinoButton on Apple platforms', (
+  testWidgets('uses the shared Cupertino focus halo on Apple platforms', (
     tester,
   ) async {
+    FocusManager.instance.highlightStrategy =
+        FocusHighlightStrategy.alwaysTraditional;
+    addTearDown(
+      () => FocusManager.instance.highlightStrategy =
+          FocusHighlightStrategy.automatic,
+    );
     await tester.pumpWidget(
       _host(
         platform: TargetPlatform.iOS,
+        focusTheme: const AdaptiveCupertinoFocusThemeData(haloWidth: 6),
         child: AdaptiveIconButton(
           icon: const Icon(Icons.settings),
           tooltip: 'Settings',
@@ -45,8 +58,25 @@ void main() {
     expect(find.byType(IconButton), findsNothing);
     expect(button.minimumSize, const Size.square(44));
     expect(button.color, isNull);
+    expect(button.focusColor, CupertinoColors.transparent);
     expect(find.byType(Tooltip), findsOneWidget);
     expect(find.byType(RawTooltip), findsOneWidget);
+
+    Focus.of(tester.element(find.byIcon(Icons.settings))).requestFocus();
+    await tester.pump();
+    final halo = tester
+        .widgetList<DecoratedBox>(
+          find.ancestor(
+            of: find.byType(CupertinoButton),
+            matching: find.byType(DecoratedBox),
+          ),
+        )
+        .map((box) => box.decoration)
+        .whereType<ShapeDecoration>()
+        .map((decoration) => decoration.shape)
+        .whereType<OutlinedBorder>()
+        .singleWhere((shape) => shape.side.width == 6);
+    expect(halo.side.strokeAlign, BorderSide.strokeAlignOutside);
   });
 
   testWidgets('Apple tooltip uses Material presentation on mouse hover', (

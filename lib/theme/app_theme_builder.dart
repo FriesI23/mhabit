@@ -21,7 +21,10 @@ import 'package:flutter/cupertino.dart'
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart'
-    show AdaptiveListThemeData, CupertinoSidebarThemeData;
+    show
+        AdaptiveCupertinoFocusThemeData,
+        AdaptiveListThemeData,
+        CupertinoSidebarThemeData;
 
 import '../common/app_info.dart';
 import '../common/consts.dart';
@@ -171,6 +174,7 @@ class AppThemeBuilder {
     required CustomColors customColor,
     required bool systemColors,
   }) {
+    const cupertinoFocusTheme = AdaptiveCupertinoFocusThemeData();
     final pageTransitionsTheme = PageTransitionsTheme(
       builders: {
         ...const PageTransitionsTheme().builders,
@@ -197,7 +201,9 @@ class AppThemeBuilder {
           edgeBackgroundColor: systemColors || colorScheme == null
               ? null
               : colorScheme.surfaceContainer,
+          focusHaloBuilder: cupertinoFocusTheme.buildHalo,
         ),
+        cupertinoFocusTheme,
         if (systemColors)
           AdaptiveListThemeData(
             surfaceColor: switch (defaultTargetPlatform) {

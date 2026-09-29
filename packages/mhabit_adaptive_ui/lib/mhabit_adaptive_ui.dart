@@ -33,6 +33,7 @@ export 'src/adaptive_style.dart';
 export 'src/breakpoints/breakpoints.dart';
 export 'src/breakpoints/device_context.dart';
 export 'src/breakpoints/window_size_class.dart';
+export 'src/cupertino/adaptive_cupertino_focus_theme.dart';
 export 'src/cupertino/app_bar_apple_style.dart'
     show $AppBarAppleStyleCopyWith, AppBarAppleStyle;
 export 'src/cupertino/apple_sidebar_style.dart' show AppleSidebarStyle;
