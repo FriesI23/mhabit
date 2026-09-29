@@ -14,6 +14,7 @@
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
@@ -64,7 +65,7 @@ class SearchFilterIcon extends StatelessWidget {
 
 // TODO(mhabit-adaptive-dialog): Adapt this filter-editing menu with the
 // filter sheet above in its own slice, not the archive popup pilot.
-class SearchFilterPopupMenuButton extends StatelessWidget {
+class SearchFilterPopupMenuButton extends StatefulWidget {
   final MenuController? controller;
   final ValueChanged<bool?>? ongoingChanged;
   final ValueChanged<bool?>? completedChanged;
@@ -81,40 +82,100 @@ class SearchFilterPopupMenuButton extends StatelessWidget {
   });
 
   @override
+  State<SearchFilterPopupMenuButton> createState() =>
+      _SearchFilterPopupMenuButtonState();
+}
+
+class _SearchFilterPopupMenuButtonState
+    extends State<SearchFilterPopupMenuButton> {
+  late final FocusNode _triggerFocusNode;
+  final _firstMenuItemFocusNode = FocusNode(
+    debugLabel: 'Search filter first menu item',
+  );
+  bool _keyboardActivationPending = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _triggerFocusNode = FocusNode(
+      debugLabel: 'Search filter menu trigger',
+      onKeyEvent: _handleTriggerKeyEvent,
+    );
+  }
+
+  KeyEventResult _handleTriggerKeyEvent(FocusNode node, KeyEvent event) {
+    if (event is KeyDownEvent &&
+        (event.logicalKey == LogicalKeyboardKey.enter ||
+            event.logicalKey == LogicalKeyboardKey.numpadEnter ||
+            event.logicalKey == LogicalKeyboardKey.space ||
+            event.logicalKey == LogicalKeyboardKey.gameButtonA)) {
+      _keyboardActivationPending = true;
+    }
+    return KeyEventResult.ignored;
+  }
+
+  @override
+  void dispose() {
+    _triggerFocusNode.dispose();
+    _firstMenuItemFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     const div = PopupMenuDivider();
-    final typeChanged = this.typeChanged;
+    final typeChanged = widget.typeChanged;
     final l10n = L10n.of(context);
     final options = context
         .select<HabitSummaryViewModel, HabitDisplaySearchOptions>(
           (vm) => vm.searchOptions,
         );
     return MenuAnchor(
-      controller: controller,
+      controller: widget.controller,
       animated: true,
-      builder: (context, controller, child) => AdaptiveIconButton(
-        icon: SearchFilterIcon(
-          filtered: !options.isFilterEmpty,
-          opacity: controller.isOpen ? 0.2 : 1.0,
-        ),
-        tooltip: l10n?.habitDisplay_searchFilter_tooltips,
-        onPressed: () =>
-            controller.isOpen ? controller.close() : controller.open(),
-      ),
+      childFocusNode: _triggerFocusNode,
+      builder: (context, controller, child) {
+        void onPressed() {
+          if (controller.isOpen) {
+            controller.close();
+            return;
+          }
+          final focusMenu = _keyboardActivationPending;
+          _keyboardActivationPending = false;
+          controller.open();
+          if (!focusMenu) return;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && controller.isOpen) {
+              _firstMenuItemFocusNode.requestFocus();
+            }
+          });
+        }
+
+        return IconButton(
+          focusNode: _triggerFocusNode,
+          icon: SearchFilterIcon(
+            filtered: !options.isFilterEmpty,
+            opacity: controller.isOpen ? 0.2 : 1.0,
+          ),
+          tooltip: l10n?.habitDisplay_searchFilter_tooltips,
+          onPressed: onPressed,
+        );
+      },
       menuChildren: [
         Tooltip(
           message: l10n?.habitDisplay_searchFilter_ongoing_desc,
           child: CheckboxListTile(
+            focusNode: _firstMenuItemFocusNode,
             value: options.activated,
             controlAffinity: ListTileControlAffinity.leading,
-            onChanged: ongoingChanged,
+            onChanged: widget.ongoingChanged,
             title: Text(l10n?.habitDisplay_searchFilter_ongoing ?? "Onging"),
           ),
         ),
         CheckboxListTile(
           value: options.completed,
           controlAffinity: ListTileControlAffinity.leading,
-          onChanged: completedChanged,
+          onChanged: widget.completedChanged,
           title: Text(l10n?.habitDisplay_searchFilter_completed ?? "Completed"),
         ),
         div,
@@ -145,7 +206,7 @@ class SearchFilterPopupMenuButton extends StatelessWidget {
             ),
             iconColor: Theme.of(context).colorScheme.error,
             textColor: Theme.of(context).colorScheme.error,
-            onTap: onClearFilterPressed,
+            onTap: widget.onClearFilterPressed,
           ),
         ],
       ],

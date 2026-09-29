@@ -1112,6 +1112,121 @@ void main() {
     expect(vm.searchOptions, const HabitDisplaySearchOptions.empty());
   });
 
+  testWidgets('Material filter menu keeps keyboard focus out of habit rows', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+    final vm = await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      useBranchPage: true,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    vm.onSearchOngoingChanged(true);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    final filter = find.byType(SearchFilterPopupMenuButton);
+    final trigger = tester.widget<IconButton>(
+      find.descendant(of: filter, matching: find.byType(IconButton)),
+    );
+    trigger.focusNode!.requestFocus();
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pump();
+    var focusedContext = FocusManager.instance.primaryFocus?.context;
+    expect(focusedContext, isNotNull);
+    expect(
+      focusedContext!.findAncestorWidgetOfExactType<CheckboxListTile>(),
+      isNotNull,
+    );
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+
+    focusedContext = FocusManager.instance.primaryFocus?.context;
+    expect(focusedContext, isNotNull);
+    expect(
+      focusedContext!.findAncestorWidgetOfExactType<CheckboxListTile>(),
+      isNotNull,
+    );
+  });
+
+  testWidgets('Material More menu keeps keyboard focus out of habit rows', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+    await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      useBranchPage: true,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    final trigger = tester
+        .widgetList<IconButton>(find.byType(IconButton))
+        .firstWhere(
+          (button) =>
+              button.focusNode?.debugLabel == 'Material overflow trigger',
+        );
+    trigger.focusNode!.requestFocus();
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    expect(find.byType(MenuItemButton), findsWidgets);
+    var focusedContext = FocusManager.instance.primaryFocus?.context;
+    expect(focusedContext, isNotNull);
+    expect(
+      focusedContext!.findAncestorWidgetOfExactType<MenuItemButton>() != null ||
+          focusedContext.findAncestorWidgetOfExactType<SubmenuButton>() != null,
+      isTrue,
+    );
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pump();
+    focusedContext = FocusManager.instance.primaryFocus?.context;
+    expect(focusedContext, isNotNull);
+    expect(
+      focusedContext!.findAncestorWidgetOfExactType<MenuItemButton>() != null ||
+          focusedContext.findAncestorWidgetOfExactType<SubmenuButton>() != null,
+      isTrue,
+    );
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    focusedContext = FocusManager.instance.primaryFocus?.context;
+    expect(focusedContext, isNotNull);
+    expect(
+      focusedContext!.findAncestorWidgetOfExactType<MenuItemButton>() != null ||
+          focusedContext.findAncestorWidgetOfExactType<SubmenuButton>() != null,
+      isTrue,
+    );
+  });
+
   testWidgets('habit rows follow calendar expand and collapse geometry', (
     tester,
   ) async {

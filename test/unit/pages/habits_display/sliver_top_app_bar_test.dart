@@ -25,6 +25,7 @@ import 'package:flutter/cupertino.dart'
         CupertinoSearchTextField,
         CupertinoSliverNavigationBar;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/extensions/adaptive_style_extensions.dart';
@@ -1671,6 +1672,49 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(SearchBar), findsNothing);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Material search filter menu supports keyboard navigation', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final vm = _TestHabitSummaryViewModel();
+    addTearDown(vm.dispose);
+    await tester.pumpWidget(_searchBarHost(vm));
+
+    final filter = find.byType(SearchFilterPopupMenuButton);
+    final trigger = tester.widget<IconButton>(
+      find.descendant(of: filter, matching: find.byType(IconButton)),
+    );
+    expect(trigger.focusNode, isNotNull);
+    trigger.focusNode!.requestFocus();
+    await tester.pump();
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(find.byType(CheckboxListTile), findsWidgets);
+    var focusedContext = FocusManager.instance.primaryFocus?.context;
+    expect(focusedContext, isNotNull);
+    expect(
+      focusedContext!.findAncestorWidgetOfExactType<CheckboxListTile>(),
+      isNotNull,
+    );
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    focusedContext = FocusManager.instance.primaryFocus?.context;
+    expect(focusedContext, isNotNull);
+    expect(
+      focusedContext!.findAncestorWidgetOfExactType<CheckboxListTile>(),
+      isNotNull,
+    );
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+
+    expect(vm.searchOptions.completed, isTrue);
   });
 
   testWidgets('breakpoint rebuild preserves controller, focus and filters', (
