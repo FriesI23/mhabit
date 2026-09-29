@@ -1514,21 +1514,11 @@
   ],
 
   "he": [
-    "common_listSeparator",
-    "habitDisplay_statisticsAction_label",
-    "habitDisplay_displayFilterAction_label",
     "habitDetail_recordCalendar_label",
     "habitDetail_recordCalendar_tooltip",
-    "appSetting_appThemeModeTile_titleText",
-    "appSetting_changeLanguageDialog_currentLanguage_text",
     "habitRecord_delete_buttonText",
     "habitRecord_deleteConfirmDialog_title",
-    "appDateFormat_leadingZero_text",
-    "appDateFormat_preview_text",
-    "debug_shareDebugZip_tooltip",
-    "groupManage_createButton_tooltip",
-    "confirmDialog_confirmAndSkip_text",
-    "habitDisplay_groupModifyConfirm_previewTitle"
+    "debug_shareDebugZip_tooltip"
   ],
 
   "hu": [

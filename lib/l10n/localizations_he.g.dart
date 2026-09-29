@@ -15,7 +15,7 @@ class L10nHe extends L10n {
   String get appName => 'רשימת הרגלים';
 
   @override
-  String get common_listSeparator => ', ';
+  String get common_listSeparator => '‏, ';
 
   @override
   String get habitEdit_saveButton_text => 'שמירה';
@@ -394,10 +394,10 @@ class L10nHe extends L10n {
       'ההרגלים המובילים: שינויים ב־30 הימים האחרונים';
 
   @override
-  String get habitDisplay_statisticsAction_label => 'Statistics';
+  String get habitDisplay_statisticsAction_label => 'סטטיסטיקה';
 
   @override
-  String get habitDisplay_displayFilterAction_label => 'Display Filter';
+  String get habitDisplay_displayFilterAction_label => 'סינון התצוגה';
 
   @override
   String get habitDisplay_displayFilter_inProgress => 'בתהליך';
@@ -967,7 +967,7 @@ class L10nHe extends L10n {
   String get appSetting_appThemeColorTile_titleText => 'צבע נושא';
 
   @override
-  String get appSetting_appThemeModeTile_titleText => 'Theme Mode';
+  String get appSetting_appThemeModeTile_titleText => 'סגנון עיצוב';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText => 'בחירת צבע נושא';
@@ -1017,7 +1017,7 @@ class L10nHe extends L10n {
   String appSetting_changeLanguageDialog_currentLanguage_text(
     String localeName,
   ) {
-    return 'Current language: $localeName';
+    return 'השפה הנוכחית: $localeName';
   }
 
   @override
@@ -1914,10 +1914,10 @@ class L10nHe extends L10n {
       'שימוש בשם המלא';
 
   @override
-  String get appDateFormat_leadingZero_text => 'Use leading zeros';
+  String get appDateFormat_leadingZero_text => 'מחיקת אפסים מיותרים';
 
   @override
-  String get appDateFormat_preview_text => 'Preview';
+  String get appDateFormat_preview_text => 'תצוגה מקדימה';
 
   @override
   String get common_customDateTimeFormatPicker_applyFreqChart_text =>
@@ -2215,7 +2215,7 @@ class L10nHe extends L10n {
   String get groupManage_editDialog_title => 'עריכת קבוצה';
 
   @override
-  String get groupManage_createButton_tooltip => 'Create group';
+  String get groupManage_createButton_tooltip => 'יצירת קבוצה';
 
   @override
   String get groupManage_createDialog_title => 'יצירת קבוצה';
@@ -2293,9 +2293,9 @@ class L10nHe extends L10n {
 
   @override
   String confirmDialog_confirmAndSkip_text(String action) {
-    return '$action, and don\'t ask again';
+    return '$action, ולא לשאול שוב';
   }
 
   @override
-  String get habitDisplay_groupModifyConfirm_previewTitle => 'Preview';
+  String get habitDisplay_groupModifyConfirm_previewTitle => 'תצוגה מקדימה';
 }
