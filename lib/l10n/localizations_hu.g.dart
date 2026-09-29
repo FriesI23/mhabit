@@ -1068,6 +1068,14 @@ class L10nHu extends L10n {
       'Lehetővé teszi, hogy a szokások ellenőrző táblája több tartalmat jelenítsen meg, de egyes UI elemek és szövegek kisebbnek tűnhetnek.';
 
   @override
+  String get appSetting_appleCollapsedSidebarSwitcher_titleText =>
+      'Show horizontal Sidebar';
+
+  @override
+  String get appSetting_appleCollapsedSidebarSwitcher_subtitleText =>
+      'Show navigation destinations in the top bar while the Sidebar is hidden.';
+
+  @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
       'Szokások ellenőrző terület rádió-beállítása';
 

@@ -986,6 +986,13 @@ class L10nZh extends L10n {
       '允许习惯检查表格显示更多内容，但部分用户界面和文字可能会变小。';
 
   @override
+  String get appSetting_appleCollapsedSidebarSwitcher_titleText => '显示横向侧边栏';
+
+  @override
+  String get appSetting_appleCollapsedSidebarSwitcher_subtitleText =>
+      '隐藏侧边栏时，在顶部栏中显示导航目的地。';
+
+  @override
   String get appSetting_collapsed_calendar_bararea_titleText => '习惯打卡区域占比调整';
 
   @override
@@ -3112,6 +3119,13 @@ class L10nZhHant extends L10nZh {
   @override
   String get appSetting_compactUISwitcher_subtitleText =>
       '允許習慣打卡表格顯示更多內容，但某些 UI 和文字可能會變小。';
+
+  @override
+  String get appSetting_appleCollapsedSidebarSwitcher_titleText => '顯示橫向側邊欄';
+
+  @override
+  String get appSetting_appleCollapsedSidebarSwitcher_subtitleText =>
+      '隱藏側邊欄時，在頂端列中顯示導覽目的地。';
 
   @override
   String get appSetting_collapsed_calendar_bararea_titleText => '習慣打卡區域比例調整';

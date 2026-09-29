@@ -1064,6 +1064,14 @@ class L10nCs extends L10n {
       'Umožnit tabulce kontroly zvyků zobrazovat více obsahu, ale některé prvky uživatelského rozhraní a texty se mohou jevit jako (příliš) malé.';
 
   @override
+  String get appSetting_appleCollapsedSidebarSwitcher_titleText =>
+      'Show horizontal Sidebar';
+
+  @override
+  String get appSetting_appleCollapsedSidebarSwitcher_subtitleText =>
+      'Show navigation destinations in the top bar while the Sidebar is hidden.';
+
+  @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
       'Přizpůsobení bezdrátového oblasti kontroly návyku';
 

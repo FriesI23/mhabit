@@ -1071,6 +1071,14 @@ class L10nIt extends L10n {
       'Permetti alla tabella di conferma delle abitudini di visualizzare più contenuto, ma il testo e alcuni elementi dell\'interfaccia potrebbero diventare più piccoli.';
 
   @override
+  String get appSetting_appleCollapsedSidebarSwitcher_titleText =>
+      'Show horizontal Sidebar';
+
+  @override
+  String get appSetting_appleCollapsedSidebarSwitcher_subtitleText =>
+      'Show navigation destinations in the top bar while the Sidebar is hidden.';
+
+  @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
       'Modifica dell\'area di conferma dell\'abitudine';
 

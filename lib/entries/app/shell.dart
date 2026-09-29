@@ -40,6 +40,7 @@ class AppNavigationShell extends StatelessWidget {
     required this.child,
     this.auxiliaryChromeBuilder,
     this.appleSidebarStyleMode = AppAppleSidebarStyleMode.automatic,
+    this.appleCollapsedSidebarEnabled = true,
   });
 
   final AppNavigationCoordinator coordinator;
@@ -48,6 +49,9 @@ class AppNavigationShell extends StatelessWidget {
 
   /// Automatic or developer-forced Apple Sidebar generation.
   final AppAppleSidebarStyleMode appleSidebarStyleMode;
+
+  /// Whether a hidden Apple Sidebar exposes destinations in the top toolbar.
+  final bool appleCollapsedSidebarEnabled;
 
   /// Builds optional auxiliary navigation without coupling the shell to its
   /// route or business meaning.
@@ -84,6 +88,7 @@ class AppNavigationShell extends StatelessWidget {
                   auxiliaryChromeBuilder: auxiliaryChromeBuilder,
                   compactRouteVisible: compactRouteVisible,
                   appleSidebarStyleMode: appleSidebarStyleMode,
+                  appleCollapsedSidebarEnabled: appleCollapsedSidebarEnabled,
                   child: child!,
                 ),
               );
@@ -142,6 +147,7 @@ class _AppNavigationShellChrome extends StatelessWidget {
     required this.auxiliaryChromeBuilder,
     required this.compactRouteVisible,
     required this.appleSidebarStyleMode,
+    required this.appleCollapsedSidebarEnabled,
     required this.child,
   });
 
@@ -151,6 +157,7 @@ class _AppNavigationShellChrome extends StatelessWidget {
   final AppNavigationAuxiliaryChromeBuilder? auxiliaryChromeBuilder;
   final bool compactRouteVisible;
   final AppAppleSidebarStyleMode appleSidebarStyleMode;
+  final bool appleCollapsedSidebarEnabled;
   final Widget child;
 
   @override
@@ -201,6 +208,7 @@ class _AppNavigationShellChrome extends StatelessWidget {
             appleBarStyle: const AppleNavigationBarStyle(
               expandedNavigationWidth: 220.0,
             ),
+            appleCollapsedSidebarEnabled: appleCollapsedSidebarEnabled,
             appleSidebarStyle: appleSidebarStyle,
             destinations: [
               AppNavigationDestinations.habits(

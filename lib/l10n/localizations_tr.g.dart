@@ -1067,6 +1067,14 @@ class L10nTr extends L10n {
       'Alışkanlıklar kontrol tablosunun daha fazla içerik görüntülemesine izin verin, ancak bazı kullanıcı arayüzü ve metinler daha küçük görünebilir.';
 
   @override
+  String get appSetting_appleCollapsedSidebarSwitcher_titleText =>
+      'Show horizontal Sidebar';
+
+  @override
+  String get appSetting_appleCollapsedSidebarSwitcher_subtitleText =>
+      'Show navigation destinations in the top bar while the Sidebar is hidden.';
+
+  @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
       'Alışkanlık işaretleme alanı boyut ayarı';
 

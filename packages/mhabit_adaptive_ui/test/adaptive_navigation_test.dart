@@ -33,6 +33,7 @@ _TestRouter _buildRouter({
   ValueChanged<int>? onBranchChanged,
   List<AdaptiveBranchRouteObserver>? observers,
   bool Function(List<String?> routeNames)? barVisibilityPolicy,
+  bool appleCollapsedSidebarEnabled = true,
 }) {
   return _TestRouter(
     destinations:
@@ -60,6 +61,7 @@ _TestRouter _buildRouter({
     onBranchChanged: onBranchChanged,
     observers: observers ?? const [],
     barVisibilityPolicy: barVisibilityPolicy,
+    appleCollapsedSidebarEnabled: appleCollapsedSidebarEnabled,
   );
 }
 
@@ -69,12 +71,14 @@ class _TestRouter extends RouterConfig<Object> {
     required List<AdaptiveBranchRouteObserver> observers,
     ValueChanged<int>? onBranchChanged,
     bool Function(List<String?> routeNames)? barVisibilityPolicy,
+    bool appleCollapsedSidebarEnabled = true,
   }) {
     final delegate = _TestRouterDelegate(
       destinations: destinations,
       onBranchChanged: onBranchChanged,
       observers: observers,
       barVisibilityPolicy: barVisibilityPolicy,
+      appleCollapsedSidebarEnabled: appleCollapsedSidebarEnabled,
     );
     return _TestRouter._(delegate);
   }
@@ -112,6 +116,7 @@ class _TestRouterDelegate extends RouterDelegate<Object>
     required this.observers,
     this.onBranchChanged,
     this.barVisibilityPolicy,
+    required this.appleCollapsedSidebarEnabled,
   }) {
     _pushEntry(
       0,
@@ -124,6 +129,7 @@ class _TestRouterDelegate extends RouterDelegate<Object>
   final List<AdaptiveBranchRouteObserver> observers;
   final ValueChanged<int>? onBranchChanged;
   final bool Function(List<String?> routeNames)? barVisibilityPolicy;
+  final bool appleCollapsedSidebarEnabled;
 
   final List<List<_TestRouteEntry>> _branchStacks = [[], []];
   int _selectedIndex = 0;
@@ -212,6 +218,7 @@ class _TestRouterDelegate extends RouterDelegate<Object>
             destinations: destinations,
             compactRouteVisible: _compactRouteVisible,
             contextualChromeSuppressed: _contextualChromeSuppressed,
+            appleCollapsedSidebarEnabled: appleCollapsedSidebarEnabled,
             onDestinationSelected: _selectDestination,
             child: _StubPage(text: currentEntry.label),
           ),
@@ -3809,6 +3816,56 @@ void main() {
       }
       debugDefaultTargetPlatformOverride = null;
     });
+
+    testWidgets(
+      'disabled Apple collapsed Sidebar keeps the toggle and other forms',
+      (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+        _setSurfaceSize(tester, const Size(700, 600));
+        final router = _buildRouter(appleCollapsedSidebarEnabled: false);
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-collapsed-bar')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-collapsed-capsule')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(
+            const ValueKey('cupertino-sidebar-fixed-toolbar-placeholder'),
+          ),
+          findsNothing,
+        );
+        expect(find.text('Test page'), findsOneWidget);
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-toggle')).hitTestable(),
+          findsOneWidget,
+        );
+
+        tester.view.physicalSize = const Size(1000, 600);
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-panel')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-destination-1')),
+          findsOneWidget,
+        );
+
+        tester.view.physicalSize = const Size(599, 600);
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
+          findsOneWidget,
+        );
+        debugDefaultTargetPlatformOverride = null;
+      },
+    );
 
     testWidgets('apple Sidebar spaces destinations below toolbar blur', (
       tester,

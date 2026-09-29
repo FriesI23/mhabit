@@ -1758,6 +1758,18 @@ abstract class L10n {
   /// **'Allow habits check table to display more content, but some UI and text may appear smaller.'**
   String get appSetting_compactUISwitcher_subtitleText;
 
+  /// No description provided for @appSetting_appleCollapsedSidebarSwitcher_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Show horizontal Sidebar'**
+  String get appSetting_appleCollapsedSidebarSwitcher_titleText;
+
+  /// No description provided for @appSetting_appleCollapsedSidebarSwitcher_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Show navigation destinations in the top bar while the Sidebar is hidden.'**
+  String get appSetting_appleCollapsedSidebarSwitcher_subtitleText;
+
   /// No description provided for @appSetting_collapsed_calendar_bararea_titleText.
   ///
   /// In en, this message translates to:

@@ -233,6 +233,7 @@ final class _CupertinoSearchToolbarMetrics {
     required bool preferPersistentSearch,
     required bool manuallyExpanded,
     required double maxSearchWidth,
+    required bool wasPersistent,
   }) {
     const minimumPersistentSearchWidth = 100.0;
     final fullActionWidth = actionCount * _toolbarItemExtent;
@@ -245,15 +246,17 @@ final class _CupertinoSearchToolbarMetrics {
       minimumPersistentSearchWidth,
       math.max(_toolbarItemExtent, maxSearchWidth),
     );
+    final retainedSearchWidth = math.max(
+      0.0,
+      availableWidth - minimumAdaptiveWidth,
+    );
     final persistent =
         preferPersistentSearch &&
-        automaticSearchWidth >= effectiveMinimumPersistentWidth;
+        (wasPersistent
+            ? retainedSearchWidth > _toolbarItemExtent
+            : automaticSearchWidth >= effectiveMinimumPersistentWidth);
     final expanded = persistent || manuallyExpanded;
-    final preferredSearchWidth = persistent
-        ? math.min(maxSearchWidth, automaticSearchWidth)
-        : expanded
-        ? maxSearchWidth
-        : _toolbarItemExtent;
+    final preferredSearchWidth = expanded ? maxSearchWidth : _toolbarItemExtent;
     final searchWidth = math.min(
       preferredSearchWidth,
       math.max(0.0, availableWidth - minimumAdaptiveWidth),
@@ -264,6 +267,64 @@ final class _CupertinoSearchToolbarMetrics {
       searchWidth: searchWidth,
     );
   }
+}
+
+typedef _CupertinoSearchToolbarMetricsBuilder =
+    Widget Function(
+      BuildContext context,
+      _CupertinoSearchToolbarMetrics metrics,
+    );
+
+final class _CupertinoSearchToolbarMetricsLayout extends StatefulWidget {
+  final double availableWidth;
+  final int actionCount;
+  final bool preferPersistentSearch;
+  final bool manuallyExpanded;
+  final double maxSearchWidth;
+  final _CupertinoSearchToolbarMetricsBuilder builder;
+
+  const _CupertinoSearchToolbarMetricsLayout({
+    required this.availableWidth,
+    required this.actionCount,
+    required this.preferPersistentSearch,
+    required this.manuallyExpanded,
+    required this.maxSearchWidth,
+    required this.builder,
+  });
+
+  @override
+  State<_CupertinoSearchToolbarMetricsLayout> createState() =>
+      _CupertinoSearchToolbarMetricsLayoutState();
+}
+
+final class _CupertinoSearchToolbarMetricsLayoutState
+    extends State<_CupertinoSearchToolbarMetricsLayout> {
+  late _CupertinoSearchToolbarMetrics _metrics;
+
+  @override
+  void initState() {
+    super.initState();
+    _metrics = _resolve(wasPersistent: false);
+  }
+
+  @override
+  void didUpdateWidget(_CupertinoSearchToolbarMetricsLayout oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _metrics = _resolve(wasPersistent: _metrics.persistent);
+  }
+
+  _CupertinoSearchToolbarMetrics _resolve({required bool wasPersistent}) =>
+      _CupertinoSearchToolbarMetrics.resolve(
+        availableWidth: widget.availableWidth,
+        actionCount: widget.actionCount,
+        preferPersistentSearch: widget.preferPersistentSearch,
+        manuallyExpanded: widget.manuallyExpanded,
+        maxSearchWidth: widget.maxSearchWidth,
+        wasPersistent: wasPersistent,
+      );
+
+  @override
+  Widget build(BuildContext context) => widget.builder(context, _metrics);
 }
 
 class _CupertinoSidebarSearchToolbar<T extends Object> extends StatelessWidget {
@@ -314,21 +375,21 @@ class _CupertinoSidebarSearchToolbar<T extends Object> extends StatelessWidget {
     end: LayoutBuilder(
       builder: (context, constraints) {
         final availableWidth = math.max(0.0, constraints.maxWidth - insets.end);
-        final metrics = _CupertinoSearchToolbarMetrics.resolve(
+        return _CupertinoSearchToolbarMetricsLayout(
           availableWidth: availableWidth,
           actionCount: actions.collection.roots.length,
           preferPersistentSearch: preferPersistentSearch,
           manuallyExpanded: manuallyExpanded,
           maxSearchWidth: search.maxWidth,
-        );
-        return _CupertinoSearchToolbarContent<T>(
-          title: title,
-          actions: actions,
-          search: search,
-          insets: insets,
-          metrics: metrics,
-          showTitle: false,
-          preferredTitleExtent: 0.0,
+          builder: (context, metrics) => _CupertinoSearchToolbarContent<T>(
+            title: title,
+            actions: actions,
+            search: search,
+            insets: insets,
+            metrics: metrics,
+            showTitle: false,
+            preferredTitleExtent: 0.0,
+          ),
         );
       },
     ),
@@ -369,55 +430,59 @@ class _CupertinoStandardSearchToolbar<T extends Object>
   Widget build(BuildContext context) {
     final contentWidth = math.max(0.0, maxWidth - insets.start - insets.end);
     final availableWidth = math.max(0.0, contentWidth - leadingWidth);
-    final metrics = _CupertinoSearchToolbarMetrics.resolve(
+    return _CupertinoSearchToolbarMetricsLayout(
       availableWidth: availableWidth,
       actionCount: actions.collection.roots.length,
       preferPersistentSearch: preferPersistentSearch,
       manuallyExpanded: manuallyExpanded,
       maxSearchWidth: search.maxWidth,
-    );
-    final showCenteredTitle = showTitle && centerTitle && !metrics.expanded;
-    final centeredTitleActionLimit = showCenteredTitle
-        ? math.max(
-            0.0,
-            maxWidth / 2 -
-                preferredTitleExtent / 2 -
-                metrics.searchWidth -
-                insets.end,
-          )
-        : null;
+      builder: (context, metrics) {
+        final showCenteredTitle = showTitle && centerTitle && !metrics.expanded;
+        final centeredTitleActionLimit = showCenteredTitle
+            ? math.max(
+                0.0,
+                maxWidth / 2 -
+                    preferredTitleExtent / 2 -
+                    metrics.searchWidth -
+                    insets.end,
+              )
+            : null;
 
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        _CupertinoSearchToolbarContent<T>(
-          title: title,
-          actions: actions,
-          search: search,
-          insets: insets,
-          metrics: metrics,
-          leadingRegion: leadingRegion,
-          showTitle: showTitle && !centerTitle,
-          maxActionRegionWidth: centeredTitleActionLimit,
-          preferredTitleExtent: metrics.expanded ? 0.0 : preferredTitleExtent,
-        ),
-        if (showCenteredTitle)
-          IgnorePointer(
-            child: Center(
-              child: SizedBox(
-                key: const ValueKey('cupertino-search-title'),
-                width: preferredTitleExtent,
-                child: DefaultTextStyle.merge(
-                  maxLines: 1,
-                  softWrap: false,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                  child: title,
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            _CupertinoSearchToolbarContent<T>(
+              title: title,
+              actions: actions,
+              search: search,
+              insets: insets,
+              metrics: metrics,
+              leadingRegion: leadingRegion,
+              showTitle: showTitle && !centerTitle,
+              maxActionRegionWidth: centeredTitleActionLimit,
+              preferredTitleExtent: metrics.expanded
+                  ? 0.0
+                  : preferredTitleExtent,
+            ),
+            if (showCenteredTitle)
+              IgnorePointer(
+                child: Center(
+                  child: SizedBox(
+                    key: const ValueKey('cupertino-search-title'),
+                    width: preferredTitleExtent,
+                    child: DefaultTextStyle.merge(
+                      maxLines: 1,
+                      softWrap: false,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      child: title,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-      ],
+          ],
+        );
+      },
     );
   }
 }
@@ -768,7 +833,7 @@ class _CupertinoExpandableSearchItemState
   void didUpdateWidget(_CupertinoExpandableSearchItem oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.expanded != oldWidget.expanded) {
-      _animateWidth = widget.persistent == oldWidget.persistent;
+      _animateWidth = true;
       _showSearchField = widget.expanded;
       if (!widget.expanded) _autofocusSearchField = false;
     }

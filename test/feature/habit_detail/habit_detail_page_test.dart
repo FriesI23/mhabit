@@ -31,7 +31,8 @@ import 'package:mhabit/models/habit_repo_actions.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/habit_detail/_providers/habit_detail.dart';
 import 'package:mhabit/pages/habit_detail/page.dart';
-import 'package:mhabit/pages/habit_detail/widgets.dart' show HabitHeatmap;
+import 'package:mhabit/pages/habit_detail/widgets.dart'
+    show HabitDetailAppBarAction, HabitHeatmap;
 import 'package:mhabit/providers/app_ui/app_custom_date_format.dart';
 import 'package:mhabit/providers/app_ui/app_developer.dart';
 import 'package:mhabit/providers/app_ui/app_first_day.dart';
@@ -959,6 +960,58 @@ void main() {
     expect(find.byIcon(CupertinoIcons.ellipsis), findsOneWidget);
     expect(find.byType(FloatingActionButton), findsNothing);
   });
+
+  testWidgets(
+    'HabitDetailPage Apple collapsed Sidebar keeps actions outside the capsule',
+    (tester) async {
+      tester.view.physicalSize = const Size(700, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final profile = await _loadProfile();
+      final detailData = _buildHabitDetailData();
+      final access = _FakeHabitDetailAccess(seedData: detailData);
+      final rebuildToken = ValueNotifier(0);
+
+      addTearDown(() {
+        rebuildToken.dispose();
+        profile.dispose();
+      });
+
+      await _pumpHabitDetailPage(
+        tester,
+        profile: profile,
+        access: access,
+        rebuildToken: rebuildToken,
+        habitUUID: detailData.data.uuid,
+        wrapWithAdaptiveShell: true,
+        platform: TargetPlatform.iOS,
+        withAppLocalizations: true,
+      );
+      await tester.pumpAndSettle();
+
+      final capsule = find.byKey(
+        const ValueKey('cupertino-sidebar-collapsed-capsule'),
+      );
+      final actions = find.byType(
+        AdaptiveAppBarActions<HabitDetailAppBarAction>,
+      );
+      expect(capsule, findsOneWidget);
+      expect(actions, findsOneWidget);
+      expect(
+        tester
+            .widget<AdaptiveAppBarActions<HabitDetailAppBarAction>>(actions)
+            .maxPrimaryActions,
+        isNull,
+      );
+      expect(
+        tester.getTopLeft(actions).dx,
+        greaterThanOrEqualTo(tester.getTopRight(capsule).dx),
+      );
+      expect(find.byIcon(CupertinoIcons.calendar_badge_plus), findsOneWidget);
+      expect(find.byIcon(CupertinoIcons.ellipsis), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('HabitDetailPage Material compact uses a medium title', (
     tester,

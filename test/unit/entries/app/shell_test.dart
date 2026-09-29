@@ -709,6 +709,7 @@ void main() {
       AppNavigationCoordinator coordinator, {
       AppAppleSidebarStyleMode sidebarStyleMode =
           AppAppleSidebarStyleMode.automatic,
+      bool collapsedSidebarEnabled = true,
     }) => MultiProvider(
       providers: [
         ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
@@ -721,6 +722,7 @@ void main() {
           coordinator: coordinator,
           chromeController: chromeController,
           appleSidebarStyleMode: sidebarStyleMode,
+          appleCollapsedSidebarEnabled: collapsedSidebarEnabled,
           child: const _StubPage('content'),
         ),
       ),
@@ -744,6 +746,15 @@ void main() {
           .widget<AdaptiveNavigationShell>(find.byType(AdaptiveNavigationShell))
           .appleSidebarStyle,
       AppleSidebarStyle.edge,
+    );
+    await tester.pumpWidget(
+      buildApp(firstCoordinator, collapsedSidebarEnabled: false),
+    );
+    expect(
+      tester
+          .widget<AdaptiveNavigationShell>(find.byType(AdaptiveNavigationShell))
+          .appleCollapsedSidebarEnabled,
+      isFalse,
     );
     firstCoordinator.selectIndex(1);
     await tester.pump();

@@ -24,6 +24,7 @@ export 'handlers/app_sync.dart';
 export 'handlers/app_theme_color.dart';
 export 'handlers/app_theme_main_color.dart';
 export 'handlers/app_theme_type.dart';
+export 'handlers/apple_collapsed_sidebar.dart';
 export 'handlers/collect_logs_switcher.dart';
 export 'handlers/compact_ui_switcher.dart';
 export 'handlers/custom_color_history.dart';

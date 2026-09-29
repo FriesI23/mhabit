@@ -1061,6 +1061,14 @@ class L10nFa extends L10n {
       'اجازه دهید جدول بررسی عادت‌ها بیشترین محتوا را نشان دهد، اما برخی از رابط کاربری و متن‌ها به صورت کوچکتر نمایش داده می‌شود.';
 
   @override
+  String get appSetting_appleCollapsedSidebarSwitcher_titleText =>
+      'Show horizontal Sidebar';
+
+  @override
+  String get appSetting_appleCollapsedSidebarSwitcher_subtitleText =>
+      'Show navigation destinations in the top bar while the Sidebar is hidden.';
+
+  @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
       'تنظیمات نسبت محیط بررسی عادت‌ها';
 

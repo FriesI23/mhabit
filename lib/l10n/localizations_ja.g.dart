@@ -1043,6 +1043,14 @@ class L10nJa extends L10n {
       '習慣チェックテーブルにより多くのコンテンツを表示できるようにしますが、一部のUIやテキストが小さく表示される場合があります。';
 
   @override
+  String get appSetting_appleCollapsedSidebarSwitcher_titleText =>
+      'Show horizontal Sidebar';
+
+  @override
+  String get appSetting_appleCollapsedSidebarSwitcher_subtitleText =>
+      'Show navigation destinations in the top bar while the Sidebar is hidden.';
+
+  @override
   String get appSetting_collapsed_calendar_bararea_titleText => '習慣チェック領域の表示比率';
 
   @override

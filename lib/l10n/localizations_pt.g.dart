@@ -1065,6 +1065,14 @@ class L10nPt extends L10n {
       'Habilitar que o gráfico de verificação de hábitos mostre mais conteúdo, contudo, algumas interfaces e textos ficarão mais pequenos.';
 
   @override
+  String get appSetting_appleCollapsedSidebarSwitcher_titleText =>
+      'Show horizontal Sidebar';
+
+  @override
+  String get appSetting_appleCollapsedSidebarSwitcher_subtitleText =>
+      'Show navigation destinations in the top bar while the Sidebar is hidden.';
+
+  @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
       'Habits check area radio adjustment';
 

@@ -1056,6 +1056,14 @@ class L10nHe extends L10n {
       'מאפשרת לרשימת ההרגלים לסימון להציג יותר תוכן, כאשר ממשק המשתמש והטקסט עשויים להופיע בקטן יותר.';
 
   @override
+  String get appSetting_appleCollapsedSidebarSwitcher_titleText =>
+      'Show horizontal Sidebar';
+
+  @override
+  String get appSetting_appleCollapsedSidebarSwitcher_subtitleText =>
+      'Show navigation destinations in the top bar while the Sidebar is hidden.';
+
+  @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
       'כוונון גודל השטח לסימון הרגלים';
 
