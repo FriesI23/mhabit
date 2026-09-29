@@ -2,6 +2,15 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.27.10+199-pre
+
+- Feature: add adaptive, collapsible side navigation and preserve page state
+  across layouts (#667)
+- Feature: apply app theme colors and custom palettes to side navigation (#668)
+- Fix: improve adaptive interactions, keyboard focus, search filters, theme
+  labels, and Markdown typography (#669)
+- Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate
+
 ## 1.27.9+198
 
 - Feature: cycle check-ins to unknown; delete records in batches (#657)

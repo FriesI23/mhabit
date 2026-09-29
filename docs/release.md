@@ -1,39 +1,24 @@
-# Release: v1.27.9+198
+# Pre-Released: v1.27.10+199-pre
 
-> Includes updates since the previous stable release, v1.27.6+195.
+> Includes updates since the previous stable release, v1.27.9+198.
 
 ## ✨ Features
 
-- Cycle check-ins from unknown to done, skipped, and back to unknown (#657)
-  - Delete a single check-in or several at once with confirmation
-  - Sync deletions across devices and keep record identity for later check-ins
-- Improve dialogs and page layouts across window sizes (#661)
-  - Adapt sheets and dialogs when resizing while preserving the open form
-    and navigation state
-  - Migrate group management, sync editing, changelog, donation, and about
-    dialogs to shared adaptive presentation
-  - Keep nested navigation and close confirmation within the active dialog
-  - Align scrolling page headers, safe areas, and window-control avoidance
-- Improve habit detail actions and refresh retained details when returning
-  to them (#662)
-- Improve Settings, grouped lists, and dialogs across window sizes (#663)
-  - Add date format, reminder, export, import progress, and group editing flows
-  - Keep import results and group actions tied to the selected items
-- Preserve unknown WebDAV fields when syncing groups and records, improving
-  compatibility with newer app versions (#665)
+- Add adaptive, collapsible side navigation with an edge style on newer Apple
+  systems (#667)
+  - Preserve navigation state, search, selection, and page actions across
+    layout changes
+- Apply app theme colors and custom palettes to the side navigation (#668)
 
 ## 🐛 Fixes
 
-- Restore batch check-in actions for selected habits in Apple layouts (#661)
-- Preserve Settings scroll position when rebuilding the page (#661)
-- Prevent a delayed group save from closing the group selector after the
-  user has already returned from the creation form (#661)
-- Improve loading error recovery (#662)
-- Bound import concurrency and expose failures for individual items (#663)
+- Improve adaptive interaction styling, keyboard focus, and action-menu
+  behavior (#669)
+- Keep search filters available across layout changes (#669)
+- Align theme labels and Markdown typography (#669)
 
 ## 🌐 Localization
 
-- Update Italian translation, thanks to Simone De Carli's contribution on
-  Weblate (#664)
+- Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate
 
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.6+195...v1.27.9+198)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.9+198...v1.27.10+199-pre)
