@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -31,7 +30,6 @@ import '../../../models/habit_group.dart';
 import '../../../models/habit_reminder.dart';
 import '../../../providers/support/commons.dart';
 import '../../../providers/workflow/app_event.dart';
-import '../../../providers/workflow/app_sync.dart';
 import '../../../providers/workflow/group_manager.dart';
 import '../../../providers/workflow/habits_manager.dart';
 import '../../../storage/db/handlers/habit.dart';
@@ -84,7 +82,6 @@ class HabitFormViewModel extends ChangeNotifier
   GroupCollection? _groupCollection;
 
   AppEventSubscriptions? _subs;
-  StreamSubscription<String>? _startSyncSub;
   int _groupVersion = 0;
 
   final HabitForm _form;
@@ -96,7 +93,6 @@ class HabitFormViewModel extends ChangeNotifier
   void dispose() {
     if (!_mounted) return;
     _subs?.cancelAll();
-    _startSyncSub?.cancel();
     super.dispose();
     _mounted = false;
   }
@@ -158,13 +154,6 @@ class HabitFormViewModel extends ChangeNotifier
   /// group so the picker tile reflects selection changes.
   ({int version, String? groupId}) get groupState =>
       (version: _groupVersion, groupId: _form.groupId);
-
-  void attachSyncWorkflow(AppSyncWorkflowAccess workflow) {
-    _startSyncSub?.cancel();
-    _startSyncSub = workflow.startSyncEvents.listen((_) async {
-      await _refreshGroups();
-    });
-  }
 
   @override
   void updateAppEvent(AppEventBus newAppEvent) {

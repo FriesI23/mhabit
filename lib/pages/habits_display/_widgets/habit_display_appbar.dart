@@ -25,6 +25,7 @@ import '../../../logging/helper.dart';
 import '../../../models/habit_summary.dart';
 import '../../../providers/app_ui/app_experimental_feature.dart';
 import '../../../providers/app_ui/habits_record_scroll_behavior.dart';
+import '../../../providers/workflow/app_sync.dart';
 import '../../../widgets/widgets.dart';
 import '../../common/widgets.dart';
 import '../_providers/habit_summary.dart';
@@ -381,8 +382,11 @@ class _LoadingIndicator extends StatelessWidget {
     final hasLoaded = context.select<HabitSummaryViewModel, bool>(
       (vm) => vm.hasLoaded,
     );
+    final isSyncing = context.select<AppSyncStatusSource, bool>(
+      (vm) => vm.syncStatus?.isProcessing ?? false,
+    );
     return AnimatedOpacity(
-      opacity: hasLoaded ? 0.0 : 1.0,
+      opacity: !hasLoaded || isSyncing ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 200),
       child: const AppSyncLoadingIndicator(),
     );

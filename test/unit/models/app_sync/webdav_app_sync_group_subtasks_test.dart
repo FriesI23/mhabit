@@ -180,9 +180,11 @@ void main() {
       cell.eTagFromServer = 'e1';
 
       var serverCalled = false;
+      final applied = <String>[];
 
       final task = SingleGroupSyncTask(
         cell: cell,
+        onDownloadApplied: applied.add,
         serverToLocalTask: (c, c2) async {
           serverCalled = true;
           expect(c2.uuid, 'g1');
@@ -196,6 +198,7 @@ void main() {
       final result = await task.run(_FakeAppSyncContext());
       expect(result.isSuccessed, isTrue);
       expect(serverCalled, isTrue);
+      expect(applied, ['g1']);
     });
 
     test("runs download-then-upload when both needed", () async {
@@ -220,13 +223,34 @@ void main() {
       expect(calls, ['download', 'upload']);
     });
 
+    test("keeps applied group when upload fails after download", () async {
+      cell.eTagFromLocal = 'a';
+      cell.eTagFromServer = 'b';
+      cell.makeDirty();
+
+      final applied = <String>[];
+      final task = SingleGroupSyncTask(
+        cell: cell,
+        onDownloadApplied: applied.add,
+        serverToLocalTask: (c, c2) async => WebDavAppSyncTaskResult.success(),
+        localToServerTask: (c, c2) async => WebDavAppSyncTaskResult.failed(),
+      );
+
+      final result = await task.run(_FakeAppSyncContext());
+
+      expect(result.isSuccessed, isFalse);
+      expect(applied, ['g1']);
+    });
+
     test("stops early when download fails", () async {
       cell.eTagFromLocal = 'a';
       cell.eTagFromServer = 'b';
 
       var uploadCalled = false;
+      final applied = <String>[];
       final task = SingleGroupSyncTask(
         cell: cell,
+        onDownloadApplied: applied.add,
         serverToLocalTask: (c, c2) async => WebDavAppSyncTaskResult.failed(),
         localToServerTask: (c, c2) async {
           uploadCalled = true;
@@ -237,6 +261,7 @@ void main() {
       final result = await task.run(_FakeAppSyncContext());
       expect(result.isSuccessed, isFalse);
       expect(uploadCalled, isFalse);
+      expect(applied, isEmpty);
     });
   });
 

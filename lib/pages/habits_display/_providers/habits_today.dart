@@ -39,7 +39,6 @@ import '../../../models/habit_summary.dart';
 import '../../../providers/support/commons.dart';
 import '../../../providers/support/page_load_runtime.dart';
 import '../../../providers/workflow/app_event.dart';
-import '../../../providers/workflow/app_sync.dart';
 import '../../../providers/workflow/habits_manager.dart';
 import '../../../storage/db/handlers/habit.dart';
 import '../../../storage/profile/handlers/natural_sort.dart';
@@ -341,18 +340,6 @@ class HabitsTodayViewModel extends ChangeNotifier
   }
   //#endregion
 
-  //#region: auto sync
-  void attachWorkflow(AppSyncWorkflowAccess workflow) {
-    _reloadBridge.attachWorkflow(
-      workflow,
-      onStartSync: (id) {
-        appLog.habit.debug("onStartSyncEventTriggered", ex: [id]);
-        requestReload();
-      },
-    );
-  }
-  //#endregion
-
   //#region: app event
   @override
   void updateAppEvent(AppEventBus newAppEvent) {
@@ -485,15 +472,15 @@ class HabitsTodayViewModel extends ChangeNotifier
       preAction: DeleteRecordStatusAction(data: data, dateList: [date]),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
-      beforeReminderUpdate: (habit, _) =>
-          _updateHabitAutoCompleteStatistics(habit),
+      beforeReminderUpdate: (habit, _) async {
+        _updateHabitAutoCompleteStatistics(habit);
+        await _resortData();
+        _removeHabitExpandStatus(uuid);
+        if (mounted && listen) notifyListeners();
+      },
     );
     final result = results.firstOrNull;
     if (result == null) return null;
-    _updateHabitAutoCompleteStatistics(data);
-    await _resortData();
-    _removeHabitExpandStatus(uuid);
-    if (mounted && listen) notifyListeners();
     _reloadBridge.eventSubs?.pushRecordChanged(
       uuid: uuid,
       date: result.date,
@@ -520,8 +507,12 @@ class HabitsTodayViewModel extends ChangeNotifier
       ),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
-      beforeReminderUpdate: (habit, _) =>
-          _updateHabitAutoCompleteStatistics(habit),
+      beforeReminderUpdate: (habit, _) async {
+        _updateHabitAutoCompleteStatistics(habit);
+        await _resortData();
+        _removeHabitExpandStatus(uuid);
+        if (mounted && listen) notifyListeners();
+      },
     );
     final result = results.firstOrNull;
     if (result == null) return null;
@@ -533,10 +524,6 @@ class HabitsTodayViewModel extends ChangeNotifier
       ex: ["rst=$result", data.id, data.progress],
     );
 
-    _updateHabitAutoCompleteStatistics(data);
-    await _resortData();
-    _removeHabitExpandStatus(uuid);
-    if (mounted && listen) notifyListeners();
     _reloadBridge.eventSubs?.pushRecordChanged(
       uuid: uuid,
       date: result.date,
@@ -563,8 +550,12 @@ class HabitsTodayViewModel extends ChangeNotifier
       ),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
-      beforeReminderUpdate: (habit, _) =>
-          _updateHabitAutoCompleteStatistics(habit),
+      beforeReminderUpdate: (habit, _) async {
+        _updateHabitAutoCompleteStatistics(habit);
+        await _resortData();
+        _removeHabitExpandStatus(uuid);
+        if (mounted && listen) notifyListeners();
+      },
     );
     final result = results.firstOrNull;
     if (result == null) return null;
@@ -576,10 +567,6 @@ class HabitsTodayViewModel extends ChangeNotifier
       ex: ["rst=$result", data.id, data.progress],
     );
 
-    _updateHabitAutoCompleteStatistics(data);
-    await _resortData();
-    _removeHabitExpandStatus(uuid);
-    if (mounted && listen) notifyListeners();
     _reloadBridge.eventSubs?.pushRecordChanged(
       uuid: uuid,
       date: result.date,

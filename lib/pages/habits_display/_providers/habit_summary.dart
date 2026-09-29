@@ -45,7 +45,6 @@ import '../../../pages/common/widgets.dart';
 import '../../../providers/support/commons.dart';
 import '../../../providers/support/page_load_runtime.dart';
 import '../../../providers/workflow/app_event.dart';
-import '../../../providers/workflow/app_sync.dart';
 import '../../../providers/workflow/group_manager.dart';
 import '../../../providers/workflow/habits_manager.dart';
 import '../../../storage/db/handlers/habit.dart';
@@ -727,18 +726,6 @@ class HabitSummaryViewModel extends ChangeNotifier
       _selectorData._selectUUIDColl.map(getHabit);
   //#endregion
 
-  //#region: auto sync
-  void attachWorkflow(AppSyncWorkflowAccess workflow) {
-    _reloadBridge.attachWorkflow(
-      workflow,
-      onStartSync: (id) {
-        appLog.habit.debug("onStartSyncEventTriggered", ex: [id]);
-        requestReload(clearSnackBar: false);
-      },
-    );
-  }
-  //#endregion
-
   //#region: app event
   @override
   void updateAppEvent(AppEventBus newAppEvent) {
@@ -746,6 +733,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     _reloadBridge.eventSubs
       ?..subscribe<GroupChangedEvent>()
       ..subscribe<ReloadDataEvent>()
+      ..subscribe<HabitDataChangedEvent>()
       ..subscribe<HabitStatusChangedEvent>()
       ..subscribe<HabitRecordsChangedEvent>();
   }
@@ -760,7 +748,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     HabitStatusChangedEvent() ||
     HabitRecordsChangedEvent() ||
     GroupChangedEvent() => requestReload(clearSnackBar: false),
-    HabitDataChangedEvent() => null,
+    HabitDataChangedEvent() => requestReload(clearSnackBar: false),
   };
 
   void _handleReloadData(ReloadDataEvent event) {
@@ -788,13 +776,13 @@ class HabitSummaryViewModel extends ChangeNotifier
       preAction: DeleteRecordStatusAction(data: data, dateList: [date]),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
-      beforeReminderUpdate: (habit, _) =>
-          _updateHabitAutoCompleteStatistics(habit),
+      beforeReminderUpdate: (habit, _) {
+        _updateHabitAutoCompleteStatistics(habit);
+        if (mounted && listen) notifyListeners();
+      },
     );
     final result = results.firstOrNull;
     if (result == null) return null;
-    _updateHabitAutoCompleteStatistics(data);
-    if (listen) notifyListeners();
     _reloadBridge.eventSubs?.pushHabitRecordChanged(habitUUID, result);
     return result;
   }
@@ -811,8 +799,10 @@ class HabitSummaryViewModel extends ChangeNotifier
       preAction: AutoChangeRecordStatusAction(data: data, dateList: [date]),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
-      beforeReminderUpdate: (habit, _) =>
-          _updateHabitAutoCompleteStatistics(habit),
+      beforeReminderUpdate: (habit, _) {
+        _updateHabitAutoCompleteStatistics(habit);
+        if (mounted && listen) notifyListeners();
+      },
     );
     final result = results.firstOrNull;
     if (result == null) return null;
@@ -824,8 +814,6 @@ class HabitSummaryViewModel extends ChangeNotifier
       ex: ["rst=$result", data.id, data.progress],
     );
 
-    _updateHabitAutoCompleteStatistics(data);
-    if (listen) notifyListeners();
     _reloadBridge.eventSubs?.pushHabitRecordChanged(habitUUID, result);
     return result;
   }
@@ -847,8 +835,10 @@ class HabitSummaryViewModel extends ChangeNotifier
       ),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
-      beforeReminderUpdate: (habit, _) =>
-          _updateHabitAutoCompleteStatistics(habit),
+      beforeReminderUpdate: (habit, _) {
+        _updateHabitAutoCompleteStatistics(habit);
+        if (mounted && listen) notifyListeners();
+      },
     );
     final result = results.firstOrNull;
     if (result == null) return null;
@@ -860,8 +850,6 @@ class HabitSummaryViewModel extends ChangeNotifier
       ex: ["rst=$result", data.id, data.progress],
     );
 
-    _updateHabitAutoCompleteStatistics(data);
-    if (listen) notifyListeners();
     _reloadBridge.eventSubs?.pushHabitRecordChanged(habitUUID, result);
     return result;
   }
@@ -884,8 +872,10 @@ class HabitSummaryViewModel extends ChangeNotifier
       ),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
-      beforeReminderUpdate: (habit, _) =>
-          _updateHabitAutoCompleteStatistics(habit),
+      beforeReminderUpdate: (habit, _) {
+        _updateHabitAutoCompleteStatistics(habit);
+        if (mounted && listen) notifyListeners();
+      },
     );
     final result = results.firstOrNull;
     if (result == null) return null;
@@ -897,8 +887,6 @@ class HabitSummaryViewModel extends ChangeNotifier
       ex: ["rst=$result", data.id, data.progress],
     );
 
-    _updateHabitAutoCompleteStatistics(data);
-    if (listen) notifyListeners();
     _reloadBridge.eventSubs?.pushHabitRecordChanged(
       habitUUID,
       result,

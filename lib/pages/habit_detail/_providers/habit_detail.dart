@@ -125,12 +125,11 @@ class HabitDetailViewModel extends ChangeNotifier
   @override
   void updateAppEvent(AppEventBus newAppEvent) {
     _eventSubs?.cancelAll();
-    _eventSubs = AppEventSubscriptions(this, newAppEvent);
-    // NOTE: This VM is an event producer only — it pushes events
-    // via push*() helpers but does not react to any incoming events.
-    // handleEvent returns null for all types, so no subscribe<>()
-    // calls are needed. shouldReceive / handleEvent exist only
-    // to satisfy the AppEventSubscriber contract.
+    _eventSubs = AppEventSubscriptions(this, newAppEvent)
+      ..subscribe<HabitDataChangedEvent>()
+      ..subscribe<HabitStatusChangedEvent>()
+      ..subscribe<HabitRecordsChangedEvent>()
+      ..subscribe<GroupChangedEvent>();
   }
 
   @override
@@ -139,12 +138,22 @@ class HabitDetailViewModel extends ChangeNotifier
 
   @override
   void handleEvent(AppEvent event) => switch (event) {
-    ReloadDataEvent() ||
-    HabitDataChangedEvent() ||
-    HabitStatusChangedEvent() ||
-    HabitRecordsChangedEvent() ||
-    GroupChangedEvent() => null,
+    HabitDataChangedEvent() => _handleHabitChanged(event.uuidList),
+    HabitStatusChangedEvent() => _handleHabitChanged(event.uuidList),
+    HabitRecordsChangedEvent() => _handleHabitChanged(event.uuidList),
+    GroupChangedEvent() => _handleGroupChanged(event),
+    ReloadDataEvent() => null,
   };
+
+  void _handleHabitChanged(Iterable<HabitUUID> uuidList) {
+    final uuid = habitUUID;
+    if (uuid != null && uuidList.contains(uuid)) requestReload();
+  }
+
+  void _handleGroupChanged(GroupChangedEvent event) {
+    final groupId = habitGroupId;
+    if (groupId != null && event.uuidList.contains(groupId)) requestReload();
+  }
 
   @override
   bool get mounted => _mounted;

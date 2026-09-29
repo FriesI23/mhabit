@@ -197,6 +197,47 @@ void main() {
   });
 
   group('HabitDetailViewModel seams', () {
+    test('reloads only for the current habit or group', () async {
+      final detailData = _buildHabitDetailData()..data.groupId = 'group-1';
+      final access = _FakeHabitDetailAccess(seedData: detailData);
+      final bus = AppEventBus();
+      final vm = HabitDetailViewModel()
+        ..attachAccess(access)
+        ..updateAppEvent(bus);
+      await vm.loadData(detailData.data.uuid, listen: false);
+
+      bus.push(
+        const HabitDataChangedEvent(
+          uuidList: ['other-habit'],
+          changeType: HabitDataChangeType.updated,
+        ),
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(vm.consumeForceReloadFlag(), isFalse);
+
+      bus.push(
+        const HabitDataChangedEvent(
+          uuidList: ['11111111-1111-4111-8111-111111111111'],
+          changeType: HabitDataChangeType.updated,
+        ),
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(vm.consumeForceReloadFlag(), isTrue);
+
+      await vm.loadData(detailData.data.uuid, listen: false);
+      bus.push(
+        const GroupChangedEvent(
+          uuidList: ['group-1'],
+          changeType: GroupChangeType.updated,
+        ),
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(vm.consumeForceReloadFlag(), isTrue);
+
+      vm.dispose();
+      bus.dispose();
+    });
+
     test('loads and reads through detail queries', () async {
       final detailData = _buildHabitDetailData();
       final access = _FakeHabitDetailAccess(seedData: detailData);

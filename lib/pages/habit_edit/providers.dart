@@ -18,7 +18,6 @@ import 'package:provider/provider.dart';
 
 import '../../models/habit_form.dart';
 import '../../providers/workflow/app_event.dart';
-import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/group_manager.dart';
 import '../../providers/workflow/habits_manager.dart';
 import '../../widgets/provider.dart';
@@ -47,10 +46,6 @@ class PageProviders extends SingleChildStatelessWidget {
         post: (t, _, vm) {
           vm.ensureGroupsLoaded();
         },
-      ),
-      ViewModelProxyProvider<AppSyncWorkflowAccess, HabitFormViewModel>(
-        update: (context, value, previous) =>
-            previous..attachSyncWorkflow(value),
       ),
     ],
     child: child,

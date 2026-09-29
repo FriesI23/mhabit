@@ -31,6 +31,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/extensions/adaptive_style_extensions.dart';
 import 'package:mhabit/l10n/localizations.dart';
+import 'package:mhabit/models/app_sync_tasks.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_display.dart';
@@ -131,7 +132,23 @@ final class _PendingHabitsDisplayAccess extends StubHabitsDisplayAccess {
   }
 }
 
-final class _FakeAppSyncWorkflowAccess extends StubAppSyncWorkflowAccess {}
+final class _FakeAppSyncWorkflowAccess extends StubAppSyncWorkflowAccess {
+  @override
+  AppSyncStatusSnapshot? syncStatus;
+
+  void emitSyncStatus(AppSyncTaskStatus status) {
+    syncStatus = AppSyncStatusSnapshot(
+      id: 'task',
+      sessionId: 'session',
+      status: status,
+      startTime: null,
+      endedTime: null,
+      result: null,
+      percentage: null,
+    );
+    notifyListeners();
+  }
+}
 
 final class _RecordingNavigatorObserver extends NavigatorObserver {
   int habitCreatePushes = 0;
@@ -1370,6 +1387,86 @@ void main() {
 
     expect(pinnedTop, AppAdaptiveStyle.materialToolbarHeight);
     expect(tester.getTopLeft(calendar).dy, 0);
+  });
+
+  testWidgets('Habits progress bar follows sync processing states', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess(habitCount: 1);
+    final sync = _FakeAppSyncWorkflowAccess();
+
+    addTearDown(() {
+      sync.dispose();
+      profile.dispose();
+    });
+
+    await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    final opacityFinder = find.ancestor(
+      of: find.byType(AppSyncLoadingIndicator),
+      matching: find.byType(AnimatedOpacity),
+    );
+    expect(tester.widget<AnimatedOpacity>(opacityFinder).opacity, 0);
+
+    sync.emitSyncStatus(AppSyncTaskStatus.running);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 250));
+
+    expect(tester.widget<AnimatedOpacity>(opacityFinder).opacity, 1);
+
+    sync.emitSyncStatus(AppSyncTaskStatus.cancelling);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 250));
+
+    expect(tester.widget<AnimatedOpacity>(opacityFinder).opacity, 1);
+
+    sync.emitSyncStatus(AppSyncTaskStatus.completed);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 250));
+
+    expect(tester.widget<AnimatedOpacity>(opacityFinder).opacity, 0);
+  });
+
+  testWidgets('Habits progress bar remains visible during initial load', (
+    tester,
+  ) async {
+    final profile = await _loadProfile();
+    final access = _PendingHabitsDisplayAccess();
+    final sync = _FakeAppSyncWorkflowAccess();
+
+    addTearDown(() {
+      access.completeLoad();
+      sync.dispose();
+      profile.dispose();
+    });
+
+    await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+    );
+    await tester.pump();
+
+    final opacityFinder = find.ancestor(
+      of: find.byType(AppSyncLoadingIndicator),
+      matching: find.byType(AnimatedOpacity),
+    );
+    expect(tester.widget<AnimatedOpacity>(opacityFinder).opacity, 1);
+
+    access.completeLoad();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    expect(tester.widget<AnimatedOpacity>(opacityFinder).opacity, 0);
   });
 
   testWidgets('Apple appbar and calendar share one pinned glass surface', (
