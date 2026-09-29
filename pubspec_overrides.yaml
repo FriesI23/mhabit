@@ -1,5 +1,0 @@
-dependency_overrides:
-  adaptive_actions:
-    path: ../../../../adaptive_actions
-  flutter_adaptive_sidebar:
-    path: ../../../../flutter_adaptive_sidebar
