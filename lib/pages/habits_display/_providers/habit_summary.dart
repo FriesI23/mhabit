@@ -522,15 +522,10 @@ class HabitSummaryViewModel extends ChangeNotifier
     HabitDisplaySearchOptions newOptions, {
     required bool listen,
   }) {
-    final lastKeyword = _searchController.options.keyword;
     final result = _searchController.updateOptions(newOptions);
-    if (!result && newOptions.isNotEmpty) return;
-    if (_searchController.options.isEmpty) {
-      if (_searchController.enabled && lastKeyword.isEmpty) {
-        _searchController.disable();
-      }
-    } else {
-      if (!_searchController.enabled) _searchController.enable();
+    if (!result) return;
+    if (_searchController.options.isNotEmpty && !_searchController.enabled) {
+      _searchController.enable();
     }
     resortData(listen: listen);
   }
@@ -576,13 +571,6 @@ class HabitSummaryViewModel extends ChangeNotifier
         listen: listen,
       );
 
-  void onSearchFilterChanged(
-    HabitDisplaySearchOptions options, {
-    bool listen = true,
-  }) => _onSeachOptionsChanged(
-    options.copyWith(keyword: _searchController.options.keyword),
-    listen: listen,
-  );
   //#endregion
 
   //#region statistics

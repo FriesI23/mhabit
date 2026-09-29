@@ -106,7 +106,6 @@ class HabitDisplayAppBar extends StatelessWidget {
         mode: mode,
         calendarHeight: calendarHeight,
         calendarContent: calendarContent,
-        searchFilterMenuController: searchFilterMenuController,
         viewConfig: config,
         selectCallbacks: selectCallbacks,
         showSelectAction: showSelectAction,
@@ -177,7 +176,6 @@ class _AppleHabitDisplayAppBar extends StatelessWidget {
     required this.mode,
     required this.calendarHeight,
     required this.calendarContent,
-    required this.searchFilterMenuController,
     required this.viewConfig,
     required this.selectCallbacks,
     required this.showSelectAction,
@@ -186,7 +184,6 @@ class _AppleHabitDisplayAppBar extends StatelessWidget {
   final _HabitDisplayAppBarMode mode;
   final double calendarHeight;
   final Widget calendarContent;
-  final MenuController? searchFilterMenuController;
   final HabitDisplayViewAppBarConfig viewConfig;
   final HabitDisplaySelectAppBarCallbacks selectCallbacks;
   final bool? showSelectAction;
@@ -200,7 +197,6 @@ class _AppleHabitDisplayAppBar extends StatelessWidget {
         showSelectAction: showSelectAction,
       ),
       _HabitDisplayAppBarMode.search => SliverSearchTopAppBar.apple(
-        searchFilterMenuController: searchFilterMenuController,
         onInfoButtonPressed: viewConfig.onInfo,
         onOpenSettingsPressed: viewConfig.onOpenSettings,
         onSelectButtonPressed: viewConfig.onSelect,

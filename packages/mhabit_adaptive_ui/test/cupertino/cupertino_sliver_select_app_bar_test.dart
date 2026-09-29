@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_focus_halo_clip.dart';
 
 ActionCollection<String> _collection() => ActionCollection<String>(
   roots: [
@@ -144,6 +145,11 @@ void main() {
       findsOneWidget,
     );
     expect(find.byType(AdaptiveAppBarActions<String>), findsOneWidget);
+    final toolbar = tester.widget<Stack>(
+      find.byKey(const ValueKey('cupertino-select-bottom-toolbar')),
+    );
+    expect(toolbar.clipBehavior, Clip.none);
+    expect(find.byType(CupertinoFocusHaloClip), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

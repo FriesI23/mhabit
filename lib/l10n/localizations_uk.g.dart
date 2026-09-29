@@ -414,22 +414,13 @@ class L10nUk extends L10n {
   String get habitDisplay_displayFilter_completed => 'Виконано';
 
   @override
-  String get common_appThemeMode_light => 'Світла тема';
+  String get common_appThemeMode_light => 'Світла';
 
   @override
-  String get common_appThemeMode_dark => 'Темна тема';
+  String get common_appThemeMode_dark => 'Темна';
 
   @override
-  String get common_appThemeMode_followSystem => 'Слідкуйте за системою';
-
-  @override
-  String get habitDisplay_mainMenu_lightTheme => 'Світла тема';
-
-  @override
-  String get habitDisplay_mainMenu_darkTheme => 'Темна тема';
-
-  @override
-  String get habitDisplay_mainMenu_followSystemTheme => 'Слідкуйте за системою';
+  String get common_appThemeMode_followSystem => 'Авто';
 
   @override
   String get habitDisplay_mainMenu_showArchivedTileText => 'Показати в архіві';

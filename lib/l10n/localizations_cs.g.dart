@@ -413,22 +413,13 @@ class L10nCs extends L10n {
   String get habitDisplay_displayFilter_completed => 'Dokončené';
 
   @override
-  String get common_appThemeMode_light => 'Světlý vzhled';
+  String get common_appThemeMode_light => 'Světlý';
 
   @override
-  String get common_appThemeMode_dark => 'Tmavý vzhled';
+  String get common_appThemeMode_dark => 'Tmavý';
 
   @override
-  String get common_appThemeMode_followSystem => 'Podle systému';
-
-  @override
-  String get habitDisplay_mainMenu_lightTheme => 'Světlý vzhled';
-
-  @override
-  String get habitDisplay_mainMenu_darkTheme => 'Tmavý vzhled';
-
-  @override
-  String get habitDisplay_mainMenu_followSystemTheme => 'Podle systému';
+  String get common_appThemeMode_followSystem => 'Automaticky';
 
   @override
   String get habitDisplay_mainMenu_showArchivedTileText =>

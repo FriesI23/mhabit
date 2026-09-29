@@ -27,16 +27,62 @@ class _TestThemeViewModel extends AppThemeViewModel {
 
 void main() {
   const localizedLabels = <(Locale, String, String, String, String)>[
-    (Locale('en'), 'Theme Mode', 'Follow System', 'Light Theme', 'Dark Theme'),
-    (Locale('zh'), '主题模式', '跟随系统', '明亮主题', '黑暗主题'),
+    (Locale('en'), 'Theme Mode', 'Auto', 'Light', 'Dark'),
+    (Locale('zh'), '主题模式', '自动', '浅色', '深色'),
     (
       Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
       '主題模式',
-      '依照系統設定',
-      '淺色主題',
-      '深色主題',
+      '自動',
+      '淺色',
+      '深色',
     ),
   ];
+
+  final themeModeLabels = <Locale, (String, String, String)>{
+    const Locale('ar'): ('فاتح', 'داكن', 'تلقائي'),
+    const Locale('cs'): ('Světlý', 'Tmavý', 'Automaticky'),
+    const Locale('de'): ('Hell', 'Dunkel', 'Automatisch'),
+    const Locale('en'): ('Light', 'Dark', 'Auto'),
+    const Locale('es'): ('Claro', 'Oscuro', 'Automático'),
+    const Locale('eu'): ('Argia', 'Iluna', 'Automatikoa'),
+    const Locale('fa'): ('روشن', 'تیره', 'خودکار'),
+    const Locale('fr'): ('Clair', 'Sombre', 'Auto'),
+    const Locale('he'): ('בהיר', 'כהה', 'אוטומטי'),
+    const Locale('hu'): ('Világos', 'Sötét', 'Automatikus'),
+    const Locale('it'): ('Chiaro', 'Scuro', 'Auto'),
+    const Locale('ja'): ('ライト', 'ダーク', '自動'),
+    const Locale('nb'): ('Lys', 'Mørk', 'Auto'),
+    const Locale('nl'): ('Licht', 'Donker', 'Automatisch'),
+    const Locale('pl'): ('Jasny', 'Ciemny', 'Automatyczny'),
+    const Locale('pt'): ('Claro', 'Escuro', 'Automático'),
+    const Locale('ru'): ('Светлая', 'Тёмная', 'Авто'),
+    const Locale('tr'): ('Açık', 'Koyu', 'Otomatik'),
+    const Locale('uk'): ('Світла', 'Темна', 'Авто'),
+    const Locale('vi'): ('Sáng', 'Tối', 'Tự động'),
+    const Locale('zh'): ('浅色', '深色', '自动'),
+    const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'): (
+      '淺色',
+      '深色',
+      '自動',
+    ),
+  };
+
+  test('all supported locales use the exact short theme mode labels', () {
+    expect(themeModeLabels.keys.toSet(), L10n.supportedLocales.toSet());
+    for (final MapEntry(key: locale, value: labels)
+        in themeModeLabels.entries) {
+      final l10n = lookupL10n(locale);
+      expect(
+        (
+          l10n.common_appThemeMode_light,
+          l10n.common_appThemeMode_dark,
+          l10n.common_appThemeMode_followSystem,
+        ),
+        labels,
+        reason: locale.toLanguageTag(),
+      );
+    }
+  });
 
   for (final entry in localizedLabels) {
     testWidgets('Theme Mode labels localize for ${entry.$1}', (tester) async {
@@ -77,23 +123,23 @@ void main() {
       ),
     );
 
-    expect(find.text('Follow System'), findsOneWidget);
+    expect(find.text('Auto'), findsOneWidget);
     expect(find.byType(MenuAnchor), findsOneWidget);
     expect(find.byType(SegmentedButton<AppThemeType>), findsNothing);
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('theme-mode-control')),
-        matching: find.text('Follow System'),
+        matching: find.text('Auto'),
       ),
       findsOneWidget,
     );
     await tester.tap(find.byKey(const ValueKey('theme-mode-control')));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Dark Theme'));
+    await tester.tap(find.text('Dark'));
     await tester.pumpAndSettle();
 
     expect(viewModel.value, AppThemeType.dark);
-    expect(find.text('Dark Theme'), findsOneWidget);
+    expect(find.text('Dark'), findsOneWidget);
   });
 
   testWidgets('Theme Mode tile keeps the Apple segmented control', (
@@ -121,7 +167,7 @@ void main() {
     );
     expect(find.byType(CupertinoMenuAnchor), findsNothing);
     expect(find.byType(MenuAnchor), findsNothing);
-    await tester.tap(find.text('Dark Theme'));
+    await tester.tap(find.text('Dark'));
     await tester.pumpAndSettle();
 
     expect(viewModel.value, AppThemeType.dark);

@@ -13,10 +13,10 @@ packages:
     dependency: "direct main"
     description:
       name: adaptive_actions
-      sha256: a3ff06e57e401c288350852c523527b570e0e4a4fe8d8533208ddb1ba30fc2df
+      sha256: e331d17aac5e0ead593247ba19723c055d12e09f947748eb979fce05adc0f13a
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.1"
+    version: "0.7.0"
   analyzer:
     dependency: "direct dev"
     description:
@@ -563,10 +563,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_adaptive_sidebar
-      sha256: "2feba2a1b9e34cdf6645aef00c567305b740acca226c8f681dabec756f8c49af"
+      sha256: "01eaa86f208b916b5f62eeaa0ba647e6638373ee0a70a3eb622b1a0187d7c45a"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.0"
+    version: "0.3.0"
   flutter_gen:
     dependency: "direct dev"
     description:

@@ -18,7 +18,6 @@ import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
 import '../../../extensions/adaptive_style_extensions.dart';
-import '../../../extensions/window_size_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_form.dart';
 import '../_providers/habit_summary.dart';
@@ -54,7 +53,6 @@ class SliverSearchTopAppBar extends StatefulWidget {
 
   const SliverSearchTopAppBar.apple({
     super.key,
-    this.searchFilterMenuController,
     this.onInfoButtonPressed,
     this.onOpenSettingsPressed,
     this.onSelectButtonPressed,
@@ -64,6 +62,7 @@ class SliverSearchTopAppBar extends StatefulWidget {
     this.cupertinoBottom,
     this.cupertinoBottomExtent = 0.0,
   }) : style = AdaptiveStyle.apple,
+       searchFilterMenuController = null,
        assert(cupertinoBottom != null || cupertinoBottomExtent == 0.0);
 
   @override
@@ -178,15 +177,6 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
     _vm.onSearchHabitTypeChanged(type, include);
   }
 
-  Future<void> _openSearchFilterBottomSheet() async {
-    final result = await showSearchFilterBottomSheet(
-      context: context,
-      options: _vm.searchOptions,
-    );
-    if (!mounted || result == null) return;
-    _vm.onSearchFilterChanged(result);
-  }
-
   void _onMaterialSearchActivated() {
     if (!_isViewModelMounted) return;
     _vm.enterSearchMode();
@@ -242,24 +232,12 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
     material: MaterialSliverSearchBarConfig(
       relocatedActionIds: {habitDisplaySearchFilterActionId},
       actions: data.material,
-      searchTrailing: Builder(
-        builder: (context) {
-          final windowSize = WindowSize.of(context);
-          final isLargeLayout = switch (DeviceContext.of(context).platform) {
-            TargetPlatform.android ||
-            TargetPlatform.iOS => windowSize.isTabletFormFactor,
-            _ => true,
-          };
-          return isLargeLayout
-              ? SearchFilterPopupMenuButton(
-                  controller: widget.searchFilterMenuController,
-                  ongoingChanged: _onOngoingFilterChanged,
-                  completedChanged: _onCompletedFilterChanged,
-                  typeChanged: _onTypeFilterChanged,
-                  onClearFilterPressed: _vm.onClearSearchFilter,
-                )
-              : SearchFilterIconButton(onPreesed: _openSearchFilterBottomSheet);
-        },
+      searchTrailing: SearchFilterPopupMenuButton(
+        controller: widget.searchFilterMenuController,
+        ongoingChanged: _onOngoingFilterChanged,
+        completedChanged: _onCompletedFilterChanged,
+        typeChanged: _onTypeFilterChanged,
+        onClearFilterPressed: _vm.onClearSearchFilter,
       ),
       style: const MaterialSliverSearchBarStyle(
         toolbarHeight: AppAdaptiveStyle.materialToolbarHeight,

@@ -415,22 +415,13 @@ class L10nRu extends L10n {
   String get habitDisplay_displayFilter_completed => 'Завершённые';
 
   @override
-  String get common_appThemeMode_light => 'Светлая тема';
+  String get common_appThemeMode_light => 'Светлая';
 
   @override
-  String get common_appThemeMode_dark => 'Тёмная тема';
+  String get common_appThemeMode_dark => 'Тёмная';
 
   @override
-  String get common_appThemeMode_followSystem => 'Как в системе';
-
-  @override
-  String get habitDisplay_mainMenu_lightTheme => 'Светлая тема';
-
-  @override
-  String get habitDisplay_mainMenu_darkTheme => 'Тёмная тема';
-
-  @override
-  String get habitDisplay_mainMenu_followSystemTheme => 'Как в системе';
+  String get common_appThemeMode_followSystem => 'Авто';
 
   @override
   String get habitDisplay_mainMenu_showArchivedTileText =>

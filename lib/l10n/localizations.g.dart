@@ -775,38 +775,20 @@ abstract class L10n {
   /// No description provided for @common_appThemeMode_light.
   ///
   /// In en, this message translates to:
-  /// **'Light Theme'**
+  /// **'Light'**
   String get common_appThemeMode_light;
 
   /// No description provided for @common_appThemeMode_dark.
   ///
   /// In en, this message translates to:
-  /// **'Dark Theme'**
+  /// **'Dark'**
   String get common_appThemeMode_dark;
 
   /// No description provided for @common_appThemeMode_followSystem.
   ///
   /// In en, this message translates to:
-  /// **'Follow System'**
+  /// **'Auto'**
   String get common_appThemeMode_followSystem;
-
-  /// No description provided for @habitDisplay_mainMenu_lightTheme.
-  ///
-  /// In en, this message translates to:
-  /// **'Light Theme'**
-  String get habitDisplay_mainMenu_lightTheme;
-
-  /// No description provided for @habitDisplay_mainMenu_darkTheme.
-  ///
-  /// In en, this message translates to:
-  /// **'Dark Theme'**
-  String get habitDisplay_mainMenu_darkTheme;
-
-  /// No description provided for @habitDisplay_mainMenu_followSystemTheme.
-  ///
-  /// In en, this message translates to:
-  /// **'Follow System'**
-  String get habitDisplay_mainMenu_followSystemTheme;
 
   /// No description provided for @habitDisplay_mainMenu_showArchivedTileText.
   ///

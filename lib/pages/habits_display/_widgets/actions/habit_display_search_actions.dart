@@ -9,7 +9,7 @@
 import 'package:adaptive_actions/cupertino.dart';
 import 'package:adaptive_actions/material.dart';
 import 'package:flutter/cupertino.dart'
-    show CupertinoButton, CupertinoButtonSize, CupertinoIcons;
+    show CupertinoButton, CupertinoButtonSize, CupertinoColors, CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
@@ -568,11 +568,14 @@ class HabitDisplaySearchActions extends StatelessWidget {
     CupertinoActionButtonDefaultBuilder<HabitDisplaySearchAction>
     defaultBuilder,
   ) => switch (action.payload) {
-    HabitDisplaySearchSelectAction() => CupertinoButton(
-      key: const ValueKey('habit-select-primary'),
-      sizeStyle: CupertinoButtonSize.small,
-      onPressed: onPressed,
-      child: Text(action.metadata.label, maxLines: 1, softWrap: false),
+    HabitDisplaySearchSelectAction() => AdaptiveCupertinoFocusHalo(
+      child: CupertinoButton(
+        key: const ValueKey('habit-select-primary'),
+        sizeStyle: CupertinoButtonSize.small,
+        focusColor: CupertinoColors.transparent,
+        onPressed: onPressed,
+        child: Text(action.metadata.label, maxLines: 1, softWrap: false),
+      ),
     ),
     HabitDisplaySearchOpenSettingsAction() => AppSettingsButton(
       key: const ValueKey('open-settings-action'),

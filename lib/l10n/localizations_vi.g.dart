@@ -415,22 +415,13 @@ class L10nVi extends L10n {
   String get habitDisplay_displayFilter_completed => 'Đã hoàn thành';
 
   @override
-  String get common_appThemeMode_light => 'Chủ đề sáng';
+  String get common_appThemeMode_light => 'Sáng';
 
   @override
-  String get common_appThemeMode_dark => 'Chủ đề tối';
+  String get common_appThemeMode_dark => 'Tối';
 
   @override
-  String get common_appThemeMode_followSystem => 'Theo hệ thống';
-
-  @override
-  String get habitDisplay_mainMenu_lightTheme => 'Chủ đề sáng';
-
-  @override
-  String get habitDisplay_mainMenu_darkTheme => 'Chủ đề tối';
-
-  @override
-  String get habitDisplay_mainMenu_followSystemTheme => 'Theo hệ thống';
+  String get common_appThemeMode_followSystem => 'Tự động';
 
   @override
   String get habitDisplay_mainMenu_showArchivedTileText =>

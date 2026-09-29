@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_focus_halo_clip.dart';
 
 ActionCollection<String> _collection() => ActionCollection<String>(
   roots: [
@@ -38,8 +39,10 @@ Widget _host({
   VoidCallback? onSearchDismissed,
   ActionCollection<String>? collection,
   CupertinoActionMenuBuilder<String>? menuBuilderForAction,
+  AdaptiveCupertinoFocusThemeData focusTheme =
+      const AdaptiveCupertinoFocusThemeData(),
 }) => MaterialApp(
-  theme: ThemeData(platform: TargetPlatform.iOS),
+  theme: ThemeData(platform: TargetPlatform.iOS, extensions: [focusTheme]),
   home: Directionality(
     textDirection: direction,
     child: CustomScrollView(
@@ -167,10 +170,26 @@ void main() {
         focusNode: focusNode,
         direction: TextDirection.rtl,
         onInvoke: (_) {},
+        focusTheme: const AdaptiveCupertinoFocusThemeData(haloPaintOutset: 7),
       ),
     );
 
     expect(find.byKey(const ValueKey('activate-cupertino-search')), findsOne);
+    final searchRegion = tester.widget<AnimatedContainer>(
+      find.byKey(const ValueKey('cupertino-expandable-search-region')),
+    );
+    expect(searchRegion.child, isA<CupertinoButton>());
+    final haloClip = tester.widget<ClipRect>(
+      find.descendant(
+        of: find.byType(CupertinoFocusHaloClip),
+        matching: find.byType(ClipRect),
+      ),
+    );
+    final clipSize = tester.getSize(find.byType(CupertinoFocusHaloClip));
+    expect(
+      haloClip.clipper!.getClip(clipSize),
+      Rect.fromLTRB(-7, -7, clipSize.width + 7, clipSize.height + 7),
+    );
     expect(find.byType(CupertinoNavigationBar), findsOneWidget);
     expect(tester.takeException(), isNull);
   });

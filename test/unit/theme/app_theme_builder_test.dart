@@ -12,7 +12,7 @@ import 'package:mhabit/theme/color.dart';
 import 'package:mhabit/theme/linux_bundled_font.dart';
 import 'package:mhabit/widgets/styles.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart'
-    show CupertinoSidebarThemeData;
+    show AdaptiveCupertinoFocusThemeData, CupertinoSidebarThemeData;
 
 void _withPlatform(TargetPlatform platform, void Function() body) {
   debugDefaultTargetPlatformOverride = platform;
@@ -219,6 +219,13 @@ void main() {
         expect(
           theme.extension<CupertinoSidebarThemeData>()?.edgeBackgroundColor,
           isNull,
+        );
+        final focusTheme = theme.extension<AdaptiveCupertinoFocusThemeData>()!;
+        expect(focusTheme.haloWidth, 3.5);
+        expect(focusTheme.haloPaintOutset, 4);
+        expect(
+          theme.extension<CupertinoSidebarThemeData>()?.focusHaloBuilder,
+          isNotNull,
         );
       });
     });

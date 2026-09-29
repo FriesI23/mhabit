@@ -14,7 +14,7 @@
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
@@ -22,21 +22,6 @@ import '../../../models/habit_display.dart';
 import '../../../models/habit_form.dart';
 import '../../../widgets/widgets.dart';
 import '../_providers/habit_summary.dart';
-
-// TODO(mhabit-adaptive-dialog): Track search-filter editing as a separate migration; preserve
-// filter drafts/results rather than replacing it with the Phase 3-8 popup pilot.
-Future<HabitDisplaySearchOptions?> showSearchFilterBottomSheet({
-  required BuildContext context,
-  HabitDisplaySearchOptions? options,
-}) => showModalBottomSheet<HabitDisplaySearchOptions>(
-  context: context,
-  enableDrag: true,
-  showDragHandle: true,
-  useSafeArea: true,
-  isScrollControlled: true,
-  builder: (context) =>
-      SearchFilterBottomSheet(options: options, keepOptions: true),
-);
 
 class SearchFilterIcon extends StatelessWidget {
   final double opacity;
@@ -62,9 +47,7 @@ class SearchFilterIcon extends StatelessWidget {
   }
 }
 
-// TODO(mhabit-adaptive-dialog): Adapt this filter-editing menu with the
-// filter sheet above in its own slice, not the archive popup pilot.
-class SearchFilterPopupMenuButton extends StatelessWidget {
+class SearchFilterPopupMenuButton extends StatefulWidget {
   final MenuController? controller;
   final ValueChanged<bool?>? ongoingChanged;
   final ValueChanged<bool?>? completedChanged;
@@ -81,40 +64,100 @@ class SearchFilterPopupMenuButton extends StatelessWidget {
   });
 
   @override
+  State<SearchFilterPopupMenuButton> createState() =>
+      _SearchFilterPopupMenuButtonState();
+}
+
+class _SearchFilterPopupMenuButtonState
+    extends State<SearchFilterPopupMenuButton> {
+  late final FocusNode _triggerFocusNode;
+  final _firstMenuItemFocusNode = FocusNode(
+    debugLabel: 'Search filter first menu item',
+  );
+  bool _keyboardActivationPending = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _triggerFocusNode = FocusNode(
+      debugLabel: 'Search filter menu trigger',
+      onKeyEvent: _handleTriggerKeyEvent,
+    );
+  }
+
+  KeyEventResult _handleTriggerKeyEvent(FocusNode node, KeyEvent event) {
+    if (event is KeyDownEvent &&
+        (event.logicalKey == LogicalKeyboardKey.enter ||
+            event.logicalKey == LogicalKeyboardKey.numpadEnter ||
+            event.logicalKey == LogicalKeyboardKey.space ||
+            event.logicalKey == LogicalKeyboardKey.gameButtonA)) {
+      _keyboardActivationPending = true;
+    }
+    return KeyEventResult.ignored;
+  }
+
+  @override
+  void dispose() {
+    _triggerFocusNode.dispose();
+    _firstMenuItemFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     const div = PopupMenuDivider();
-    final typeChanged = this.typeChanged;
+    final typeChanged = widget.typeChanged;
     final l10n = L10n.of(context);
     final options = context
         .select<HabitSummaryViewModel, HabitDisplaySearchOptions>(
           (vm) => vm.searchOptions,
         );
     return MenuAnchor(
-      controller: controller,
+      controller: widget.controller,
       animated: true,
-      builder: (context, controller, child) => AdaptiveIconButton(
-        icon: SearchFilterIcon(
-          filtered: !options.isFilterEmpty,
-          opacity: controller.isOpen ? 0.2 : 1.0,
-        ),
-        tooltip: l10n?.habitDisplay_searchFilter_tooltips,
-        onPressed: () =>
-            controller.isOpen ? controller.close() : controller.open(),
-      ),
+      childFocusNode: _triggerFocusNode,
+      builder: (context, controller, child) {
+        void onPressed() {
+          if (controller.isOpen) {
+            controller.close();
+            return;
+          }
+          final focusMenu = _keyboardActivationPending;
+          _keyboardActivationPending = false;
+          controller.open();
+          if (!focusMenu) return;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && controller.isOpen) {
+              _firstMenuItemFocusNode.requestFocus();
+            }
+          });
+        }
+
+        return IconButton(
+          focusNode: _triggerFocusNode,
+          icon: SearchFilterIcon(
+            filtered: !options.isFilterEmpty,
+            opacity: controller.isOpen ? 0.2 : 1.0,
+          ),
+          tooltip: l10n?.habitDisplay_searchFilter_tooltips,
+          onPressed: onPressed,
+        );
+      },
       menuChildren: [
         Tooltip(
           message: l10n?.habitDisplay_searchFilter_ongoing_desc,
           child: CheckboxListTile(
+            focusNode: _firstMenuItemFocusNode,
             value: options.activated,
             controlAffinity: ListTileControlAffinity.leading,
-            onChanged: ongoingChanged,
+            onChanged: widget.ongoingChanged,
             title: Text(l10n?.habitDisplay_searchFilter_ongoing ?? "Onging"),
           ),
         ),
         CheckboxListTile(
           value: options.completed,
           controlAffinity: ListTileControlAffinity.leading,
-          onChanged: completedChanged,
+          onChanged: widget.completedChanged,
           title: Text(l10n?.habitDisplay_searchFilter_completed ?? "Completed"),
         ),
         div,
@@ -145,230 +188,10 @@ class SearchFilterPopupMenuButton extends StatelessWidget {
             ),
             iconColor: Theme.of(context).colorScheme.error,
             textColor: Theme.of(context).colorScheme.error,
-            onTap: onClearFilterPressed,
+            onTap: widget.onClearFilterPressed,
           ),
         ],
       ],
-    );
-  }
-}
-
-class SearchFilterIconButton extends StatelessWidget {
-  final VoidCallback? onPreesed;
-
-  const SearchFilterIconButton({super.key, this.onPreesed});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = L10n.of(context);
-    final options = context
-        .select<HabitSummaryViewModel, HabitDisplaySearchOptions>(
-          (vm) => vm.searchOptions,
-        );
-    return AdaptiveIconButton(
-      tooltip: l10n?.habitDisplay_searchFilter_tooltips,
-      icon: SearchFilterIcon(filtered: !options.isFilterEmpty),
-      onPressed: onPreesed,
-    );
-  }
-}
-
-class SearchFilterBottomSheet extends StatefulWidget {
-  final HabitDisplaySearchOptions initOptions;
-  final bool keepOptions;
-
-  const SearchFilterBottomSheet({
-    super.key,
-    HabitDisplaySearchOptions? options,
-    this.keepOptions = false,
-  }) : initOptions = options ?? const HabitDisplaySearchOptions.empty();
-
-  @override
-  State<StatefulWidget> createState() => _SearchFilterBottomSheetState();
-}
-
-class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
-  late HabitDisplaySearchOptions _options;
-
-  bool get canSave => widget.initOptions != _options;
-
-  bool get filtered => !_options.isFilterEmpty;
-
-  @override
-  void initState() {
-    super.initState();
-    _options = widget.initOptions;
-  }
-
-  @override
-  void didUpdateWidget(covariant SearchFilterBottomSheet oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (!widget.keepOptions) _options = widget.initOptions;
-  }
-
-  void _pop([HabitDisplaySearchOptions? result]) =>
-      Navigator.of(context).pop(result ?? _options);
-
-  void _onPopInvokedWithResult(bool didPop, HabitDisplaySearchOptions? result) {
-    if (didPop || !mounted) return;
-    _pop(result);
-  }
-
-  void _onOngoingChanged(bool? value) {
-    if (value == null || value == _options.activated) return;
-    setState(() {
-      _options = _options.copyWith(activated: value);
-    });
-  }
-
-  void _onCompletedChanged(bool? value) {
-    if (value == null || value == _options.completed) return;
-    setState(() {
-      _options = _options.copyWith(completed: value);
-    });
-  }
-
-  void _onHabitTypeChanged(HabitType type, bool? value) {
-    if (value == null) return;
-    final newTypes = value
-        ? {..._options.types, type}
-        : ({..._options.types}..remove(type));
-    setState(() {
-      _options = _options.copyWith(types: newTypes);
-    });
-  }
-
-  void _doClearFilter() {
-    _pop(const HabitDisplaySearchOptions.empty());
-  }
-
-  void _doSave() => _pop();
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = L10n.of(context);
-    return PopScope<HabitDisplaySearchOptions>(
-      canPop: !filtered,
-      onPopInvokedWithResult: _onPopInvokedWithResult,
-      child: EnhancedSafeArea.all(
-        top: false,
-        left: true,
-        right: true,
-        bottom: true,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Tooltip(
-                      message: l10n?.habitDisplay_searchFilter_ongoing_desc,
-                      triggerMode: TooltipTriggerMode.longPress,
-                      child: CheckboxListTile(
-                        value: _options.activated,
-                        controlAffinity: ListTileControlAffinity.leading,
-                        visualDensity: VisualDensity.compact,
-                        onChanged: _onOngoingChanged,
-                        title: Text(
-                          l10n?.habitDisplay_searchFilter_ongoing ?? "Ongoing",
-                        ),
-                      ),
-                    ),
-                    CheckboxListTile(
-                      value: _options.completed,
-                      controlAffinity: ListTileControlAffinity.leading,
-                      visualDensity: VisualDensity.compact,
-                      onChanged: _onCompletedChanged,
-                      title: Text(
-                        l10n?.habitDisplay_searchFilter_completed ??
-                            "Completed",
-                      ),
-                    ),
-                    const HabitDivider(),
-                    const GroupTitleListTile(
-                      title: Text("Habit Type"),
-                      visualDensity: VisualDensity.compact,
-                    ),
-                    ...HabitType.values
-                        .whereNot((e) => e == HabitType.unknown)
-                        .map(
-                          (e) => CheckboxListTile(
-                            value: _options.types.contains(e),
-                            visualDensity: VisualDensity.compact,
-                            controlAffinity: ListTileControlAffinity.leading,
-                            onChanged: (value) => _onHabitTypeChanged(e, value),
-                            title: Text(e.getTypeName(l10n)),
-                          ),
-                        ),
-                  ],
-                ),
-              ),
-            ),
-            WindowSizeClassLayoutBuilder(
-              builder: (context, windowSize, child) {
-                final filtered =
-                    this.filtered || !widget.initOptions.isFilterEmpty;
-
-                final saveButton = ListTile(
-                  minVerticalPadding: 0.0,
-                  title: FilledButton(
-                    onPressed: canSave ? _doSave : null,
-                    child: Text(
-                      AppActionVerb.label(context, AppActionVerb.save),
-                    ),
-                  ),
-                );
-
-                final clearButton = ListTile(
-                  enabled: filtered,
-                  minVerticalPadding: 0.0,
-                  title: TextButton.icon(
-                    onPressed: filtered ? _doClearFilter : null,
-                    label: Text(
-                      l10n?.habitDisplay_searchFilter_clearFilter ??
-                          "Clear Filters",
-                    ),
-                    icon: const Icon(Icons.filter_alt_off_outlined),
-                  ),
-                );
-
-                return windowSize.width >= WindowSizeClass.medium
-                    ? ExpandedSection(
-                        expand: filtered || canSave,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const HabitDivider(),
-                            Row(
-                              children: [
-                                saveButton,
-                                clearButton,
-                              ].map((e) => Expanded(child: e)).toList(),
-                            ),
-                          ],
-                        ),
-                      )
-                    : ExpandedSection(
-                        expand: filtered || canSave,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const HabitDivider(),
-                            ExpandedSection(expand: canSave, child: saveButton),
-                            ExpandedSection(
-                              expand: filtered,
-                              child: clearButton,
-                            ),
-                          ],
-                        ),
-                      );
-              },
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
