@@ -5,6 +5,10 @@
         "description": "The human-readable name of the language used for the locale."
     },
     "appName": "רשימת הרגלים",
+    "common_listSeparator": "‏, ",
+    "@common_listSeparator": {
+        "description": "Separator used between items in compact localized lists."
+    },
     "habitEdit_saveButton_text": "שמירה",
     "habitEdit_habitName_hintText": "שם ההרגל",
     "habitEdit_colorPicker_title": "נא לבחור צבע",
@@ -296,6 +300,8 @@
     "habitDisplay_statsMenu_inProgresTileText": "בתהליך",
     "habitDisplay_statsMenu_archivedTileText": "בארכיון",
     "habitDisplay_statsMenu_popularitySubgroupText": "ההרגלים המובילים: שינויים ב־30 הימים האחרונים",
+    "habitDisplay_statisticsAction_label": "סטטיסטיקה",
+    "habitDisplay_displayFilterAction_label": "סינון התצוגה",
     "habitDisplay_displayFilter_inProgress": "בתהליך",
     "habitDisplay_displayFilter_archived": "בארכיון",
     "habitDisplay_displayFilter_completed": "הושלם",
@@ -627,6 +633,7 @@
     "appSetting_expandTimerDelay_fast": "מהיר",
     "appSetting_expandTimerDelay_slow": "איטי",
     "appSetting_appThemeColorTile_titleText": "צבע נושא",
+    "appSetting_appThemeModeTile_titleText": "סגנון עיצוב",
     "appSetting_appThemeColorChosenDiloag_titleText": "בחירת צבע נושא",
     "appSetting_appThemeColorChosenDialog_subTitleText_android": "שימוש בצבע הראשי של הרקע (אנדרואיד 12‏+)",
     "appSetting_appThemeColorChosenDialog_subTitleText_linux": "שימוש בצבע הנבחר של ערכת הנושא ל־GTK‏+",
@@ -647,6 +654,15 @@
     "appSetting_changeLanguage_followSystem_noLocale_text": "לפי המערכת",
     "appSetting_changeLanguageTile_titleText": "שפה",
     "appSetting_changeLanguageDialog_titleText": "נא לבחור שפה",
+    "appSetting_changeLanguageDialog_currentLanguage_text": "השפה הנוכחית: {localeName}",
+    "@appSetting_changeLanguageDialog_currentLanguage_text": {
+        "placeholders": {
+            "localeName": {
+                "type": "String",
+                "example": "English"
+            }
+        }
+    },
     "appSetting_languageSubgroupText": "שפה",
     "appSetting_openSystemLanguageTile_titleText": "הגדרות שפת המערכת",
     "appSetting_openSystemLanguageTile_dialogTitle": "פתיחת הגדרות שפת המערכת",
@@ -1196,6 +1212,8 @@
     },
     "common_customDateTimeFormatPicker_12Hour_text": "שימוש בתבנית 12 שעות",
     "common_customDateTimeFormatPicker_monthName_text": "שימוש בשם המלא",
+    "appDateFormat_leadingZero_text": "מחיקת אפסים מיותרים",
+    "appDateFormat_preview_text": "תצוגה מקדימה",
     "common_customDateTimeFormatPicker_applyFreqChart_text": "החלה על תרשים התדירות",
     "common_customDateTimeFormatPicker_applyHeapmap_text": "החלה על לוח השנה",
     "common_customDateTimeFormatPicker_cancelButton_text": "ביטול",
@@ -1411,6 +1429,10 @@
     "@groupManage_editDialog_title": {
         "description": "Title for the group edit dialog"
     },
+    "groupManage_createButton_tooltip": "יצירת קבוצה",
+    "@groupManage_createButton_tooltip": {
+        "description": "Tooltip for the create group action"
+    },
     "groupManage_createDialog_title": "יצירת קבוצה",
     "@groupManage_createDialog_title": {
         "description": "Title for the group creation dialog"
@@ -1512,28 +1534,6 @@
     "habitDisplay_groupType_manual": "ידני",
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
-    },
-    "common_listSeparator": "‏, ",
-    "@common_listSeparator": {
-        "description": "Separator used between items in compact localized lists."
-    },
-    "habitDisplay_statisticsAction_label": "סטטיסטיקה",
-    "habitDisplay_displayFilterAction_label": "סינון התצוגה",
-    "appSetting_appThemeModeTile_titleText": "סגנון עיצוב",
-    "appSetting_changeLanguageDialog_currentLanguage_text": "השפה הנוכחית: {localeName}",
-    "@appSetting_changeLanguageDialog_currentLanguage_text": {
-        "placeholders": {
-            "localeName": {
-                "type": "String",
-                "example": "English"
-            }
-        }
-    },
-    "appDateFormat_leadingZero_text": "מחיקת אפסים מיותרים",
-    "appDateFormat_preview_text": "תצוגה מקדימה",
-    "groupManage_createButton_tooltip": "יצירת קבוצה",
-    "@groupManage_createButton_tooltip": {
-        "description": "Tooltip for the create group action"
     },
     "confirmDialog_confirmAndSkip_text": "{action}, ולא לשאול שוב",
     "@confirmDialog_confirmAndSkip_text": {
