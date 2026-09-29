@@ -1717,6 +1717,40 @@ void main() {
     expect(vm.searchOptions.completed, isTrue);
   });
 
+  testWidgets('Material compact filter popup stays open when cleared', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(500, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final vm = _TestHabitSummaryViewModel();
+    addTearDown(vm.dispose);
+    await tester.pumpWidget(_searchBarHost(vm));
+
+    expect(find.byType(SearchFilterPopupMenuButton), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('activate-search')));
+    await tester.pumpAndSettle();
+
+    final filter = find.byType(SearchFilterPopupMenuButton);
+    expect(filter, findsOneWidget);
+    await tester.tap(
+      find.descendant(of: filter, matching: find.byType(IconButton)),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CheckboxListTile), findsWidgets);
+    await tester.tap(find.text('Completed'));
+    await tester.pumpAndSettle();
+    expect(vm.searchOptions.completed, isTrue);
+
+    await tester.tap(find.text('Completed'));
+    await tester.pumpAndSettle();
+    expect(vm.searchOptions.isEmpty, isTrue);
+    expect(vm.isInSearchMode, isTrue);
+    expect(find.byType(SearchFilterPopupMenuButton), findsOneWidget);
+    expect(find.byType(CheckboxListTile), findsWidgets);
+  });
+
   testWidgets('breakpoint rebuild preserves controller, focus and filters', (
     tester,
   ) async {
@@ -1882,7 +1916,6 @@ void main() {
       find.byIcon(CupertinoIcons.line_horizontal_3_decrease_circle),
     );
     await tester.pumpAndSettle();
-    expect(find.byType(SearchFilterBottomSheet), findsNothing);
     expect(find.byType(CupertinoPopupSurface), findsOneWidget);
     expect(find.text('By Status'), findsOneWidget);
     expect(find.text('Habit Type'), findsOneWidget);
@@ -2000,7 +2033,6 @@ void main() {
       find.byIcon(CupertinoIcons.line_horizontal_3_decrease_circle),
     );
     await tester.pumpAndSettle();
-    expect(find.byType(SearchFilterBottomSheet), findsNothing);
     expect(find.byType(CupertinoPopupSurface), findsOneWidget);
     expect(find.text('By Status'), findsOneWidget);
     expect(find.text('Habit Type'), findsOneWidget);
