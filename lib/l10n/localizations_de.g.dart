@@ -1065,6 +1065,14 @@ class L10nDe extends L10n {
       'Es werden mehr Informationen angezeigt werden, allerdings sind einige Textelemente kleiner dargestellt.';
 
   @override
+  String get appSetting_appleCollapsedSidebarSwitcher_titleText =>
+      'Show horizontal Sidebar';
+
+  @override
+  String get appSetting_appleCollapsedSidebarSwitcher_subtitleText =>
+      'Show navigation destinations in the top bar while the Sidebar is hidden.';
+
+  @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
       'Bereich der Gewohnheitslist';
 

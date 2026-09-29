@@ -1057,6 +1057,14 @@ class L10nAr extends L10n {
       'السماح بعرض مزيد من المحتوى في جدول التأكيد، ولكن ستظهر بعض النصوص بحجم أصغر.';
 
   @override
+  String get appSetting_appleCollapsedSidebarSwitcher_titleText =>
+      'Show horizontal Sidebar';
+
+  @override
+  String get appSetting_appleCollapsedSidebarSwitcher_subtitleText =>
+      'Show navigation destinations in the top bar while the Sidebar is hidden.';
+
+  @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
       'تعديل زر تنفيذ العادة';
 

@@ -1074,6 +1074,14 @@ class L10nPl extends L10n {
       'Pozwala tabeli kontroli nawyków wyświetlać więcej treści, ale niektóre elementy i tekst mogą być mniejsze.';
 
   @override
+  String get appSetting_appleCollapsedSidebarSwitcher_titleText =>
+      'Show horizontal Sidebar';
+
+  @override
+  String get appSetting_appleCollapsedSidebarSwitcher_subtitleText =>
+      'Show navigation destinations in the top bar while the Sidebar is hidden.';
+
+  @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
       'Dostosowanie obszaru kalendarza na stronie nawyków';
 

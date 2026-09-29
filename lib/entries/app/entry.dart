@@ -50,6 +50,7 @@ import '../../pages/habits_display/navigation_chrome.dart';
 import '../../pages/habits_display/page.dart' show HabitsPage, TodayPage;
 import '../../pages/habits_status_changer/page.dart'
     show HabitsStatusChangerPage;
+import '../../providers/app_ui/app_apple_collapsed_sidebar.dart';
 import '../../providers/app_ui/app_debugger.dart';
 import '../../providers/app_ui/app_developer.dart';
 import '../../providers/app_ui/app_language.dart';
@@ -120,6 +121,7 @@ class AppEntry extends StatelessWidget {
     AppLastChangelogVersionProfileHandler.new,
     NaturalSortExperimentalFeature.new,
     AdaptiveStyleOverrideProfileHandler.new,
+    AppleCollapsedSidebarProfileHandler.new,
   ];
 
   const AppEntry({super.key});
@@ -250,6 +252,10 @@ class _AppEntryState extends State<_AppEntry> {
                 .select<AppDeveloperViewModel, AppAppleSidebarStyleMode>(
                   (viewModel) => viewModel.appleSidebarStyleMode,
                 );
+            final appleCollapsedSidebarEnabled = context
+                .select<AppAppleCollapsedSidebarViewModel, bool>(
+                  (viewModel) => viewModel.enabled,
+                );
             return ChangelogBanner(
               child: AppPostInit(
                 child: AppNavigationShell(
@@ -257,6 +263,7 @@ class _AppEntryState extends State<_AppEntry> {
                   chromeController: _navigationChromeController,
                   auxiliaryChromeBuilder: _buildAuxiliaryChrome,
                   appleSidebarStyleMode: appleSidebarStyleMode,
+                  appleCollapsedSidebarEnabled: appleCollapsedSidebarEnabled,
                   child: child,
                 ),
               ),

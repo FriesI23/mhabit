@@ -50,6 +50,7 @@ class AdaptiveNavigationShell extends StatefulWidget {
     this.sideNavigationDragHandleBuilder,
     this.appleBarStyle = const AppleNavigationBarStyle(),
     this.appleSidebarStyle = AppleSidebarStyle.inset,
+    this.appleCollapsedSidebarEnabled = true,
     this.appleSidebarBackgroundColor,
     this.appleSidebarItemStyle,
     this.appleCollapsedSidebarItemStyle,
@@ -115,6 +116,11 @@ class AdaptiveNavigationShell extends StatefulWidget {
   ///
   /// Compact Apple navigation ignores this value and keeps using its Tab Bar.
   final AppleSidebarStyle appleSidebarStyle;
+
+  /// Whether a hidden Apple Sidebar exposes destinations in the top toolbar.
+  ///
+  /// Compact Apple navigation ignores this value and keeps using its Tab Bar.
+  final bool appleCollapsedSidebarEnabled;
 
   /// Optional background color for the Apple edge Sidebar.
   ///
@@ -199,6 +205,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
         dragHandleBuilder: widget.sideNavigationDragHandleBuilder,
         appleBarStyle: widget.appleBarStyle,
         sidebarStyle: widget.appleSidebarStyle,
+        collapsedSidebarEnabled: widget.appleCollapsedSidebarEnabled,
         sidebarBackgroundColor: widget.appleSidebarBackgroundColor,
         sidebarItemStyle: widget.appleSidebarItemStyle,
         collapsedSidebarItemStyle: widget.appleCollapsedSidebarItemStyle,

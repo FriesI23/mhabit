@@ -34,6 +34,7 @@ import 'package:mhabit/pages/app_settings/_widgets/app_setting_reminder_tile.dar
 import 'package:mhabit/pages/app_settings/_widgets/app_setting_sync_failed_tile.dart';
 import 'package:mhabit/pages/app_settings/page.dart';
 import 'package:mhabit/pages/common/_widgets/exporter_confirm_dialog.dart';
+import 'package:mhabit/providers/app_ui/app_apple_collapsed_sidebar.dart';
 import 'package:mhabit/providers/app_ui/app_compact_ui_switcher.dart';
 import 'package:mhabit/providers/app_ui/app_custom_date_format.dart';
 import 'package:mhabit/providers/app_ui/app_developer.dart';
@@ -91,6 +92,23 @@ class _CompactUi extends AppCompactUISwitcherViewModel {
   @override
   Future<void> setFlag(bool newFlag) async {
     value = newFlag;
+    changes++;
+    notifyListeners();
+  }
+}
+
+class _AppleCollapsedSidebar extends AppAppleCollapsedSidebarViewModel {
+  _AppleCollapsedSidebar(this.value);
+
+  bool value;
+  int changes = 0;
+
+  @override
+  bool get enabled => value;
+
+  @override
+  Future<void> setEnabled(bool newValue) async {
+    value = newValue;
     changes++;
     notifyListeners();
   }
@@ -205,6 +223,9 @@ void main() {
         ..updateProfile(profile);
       final firstDay = AppFirstDayViewModel()..updateProfile(profile);
       final compactUi = _CompactUi()..updateProfile(profile);
+      final collapsedSidebar = _AppleCollapsedSidebar(
+        platform == TargetPlatform.iOS,
+      );
       final developer = AppDeveloperViewModel(
         global: Global()..switchDevelopMode(false),
       );
@@ -253,6 +274,7 @@ void main() {
         reminder.dispose();
         reminderOwner.dispose();
         developer.dispose();
+        collapsedSidebar.dispose();
         compactUi.dispose();
         firstDay.dispose();
         customDate.dispose();
@@ -274,6 +296,9 @@ void main() {
             ChangeNotifierProvider<AppFirstDayViewModel>.value(value: firstDay),
             ChangeNotifierProvider<AppCompactUISwitcherViewModel>.value(
               value: compactUi,
+            ),
+            ChangeNotifierProvider<AppAppleCollapsedSidebarViewModel>.value(
+              value: collapsedSidebar,
             ),
             ChangeNotifierProvider<AppDeveloperViewModel>.value(
               value: developer,
@@ -314,6 +339,36 @@ void main() {
         expect(find.byType(WindowControlSliverAppBar), findsOneWidget);
       }
       expect(find.byType(CustomScrollView), findsOneWidget);
+      final collapsedSidebarTile = find.byKey(
+        const ValueKey('settings-apple-collapsed-sidebar'),
+      );
+      if (platform == TargetPlatform.android) {
+        expect(collapsedSidebarTile, findsNothing);
+      } else {
+        expect(collapsedSidebarTile, findsOneWidget);
+        expect(
+          tester
+              .widget<CupertinoSwitch>(
+                find.descendant(
+                  of: collapsedSidebarTile,
+                  matching: find.byType(CupertinoSwitch),
+                ),
+              )
+              .value,
+          platform == TargetPlatform.iOS,
+        );
+        await Scrollable.ensureVisible(
+          tester.element(collapsedSidebarTile),
+          alignment: 0.5,
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(collapsedSidebarTile);
+        await tester.pump();
+        expect(collapsedSidebar.changes, 1);
+        expect(collapsedSidebar.value, platform != TargetPlatform.iOS);
+        await tester.drag(find.byType(CustomScrollView), const Offset(0, 1000));
+        await tester.pumpAndSettle();
+      }
       final adaptiveAppBar = tester.widget<AdaptiveSliverAppBar>(
         find.byType(AdaptiveSliverAppBar),
       );
@@ -420,9 +475,8 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
       expect(groups, findsNothing);
 
-      final display = find.byKey(const ValueKey('settings-display'));
       final compact = find.descendant(
-        of: display,
+        of: find.byKey(const ValueKey('settings-compact-ui')),
         matching: find.byType(
           platform == TargetPlatform.android ? Switch : CupertinoSwitch,
         ),

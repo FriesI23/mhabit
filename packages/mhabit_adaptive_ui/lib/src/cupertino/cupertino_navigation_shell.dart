@@ -52,6 +52,7 @@ class CupertinoNavigationShell extends StatefulWidget {
     required this.dragHandleBuilder,
     required this.appleBarStyle,
     required this.sidebarStyle,
+    required this.collapsedSidebarEnabled,
     required this.sidebarBackgroundColor,
     required this.sidebarItemStyle,
     required this.collapsedSidebarItemStyle,
@@ -94,6 +95,9 @@ class CupertinoNavigationShell extends StatefulWidget {
 
   /// Visual treatment for the medium-and-larger Sidebar.
   final AppleSidebarStyle sidebarStyle;
+
+  /// Whether a hidden Sidebar exposes destinations in the top toolbar.
+  final bool collapsedSidebarEnabled;
 
   /// Optional fill override used only by the edge Sidebar presentation.
   final Color? sidebarBackgroundColor;
@@ -273,7 +277,7 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
           AppleSidebarStyle.inset => CupertinoSidebar(
             controller: _controller,
             content: sidebarContent,
-            collapsedBar: collapsedBar,
+            collapsedBar: widget.collapsedSidebarEnabled ? collapsedBar : null,
             collapsedBarController: _collapsedBarController,
             collapsedBarPlacement:
                 CupertinoSidebarCollapsedBarPlacement.fixedToolbar,
@@ -288,7 +292,7 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
           AppleSidebarStyle.edge => CupertinoSidebar.edge(
             controller: _controller,
             content: sidebarContent,
-            collapsedBar: collapsedBar,
+            collapsedBar: widget.collapsedSidebarEnabled ? collapsedBar : null,
             collapsedBarController: _collapsedBarController,
             collapsedBarPlacement:
                 CupertinoSidebarCollapsedBarPlacement.fixedToolbar,

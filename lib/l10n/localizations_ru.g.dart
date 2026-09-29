@@ -1069,6 +1069,14 @@ class L10nRu extends L10n {
       'Позволяет показывать больше контента в таблице привычек, но некоторые элементы интерфейса и текст могут оказаться меньше.';
 
   @override
+  String get appSetting_appleCollapsedSidebarSwitcher_titleText =>
+      'Show horizontal Sidebar';
+
+  @override
+  String get appSetting_appleCollapsedSidebarSwitcher_subtitleText =>
+      'Show navigation destinations in the top bar while the Sidebar is hidden.';
+
+  @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
       'Habits check area radio adjustment';
 

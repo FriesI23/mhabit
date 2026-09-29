@@ -1074,6 +1074,14 @@ class L10nFr extends L10n {
       'Permet au tableau des habitudes d’afficher plus de contenu. Certains éléments et textes apparaitront plus petits.';
 
   @override
+  String get appSetting_appleCollapsedSidebarSwitcher_titleText =>
+      'Show horizontal Sidebar';
+
+  @override
+  String get appSetting_appleCollapsedSidebarSwitcher_subtitleText =>
+      'Show navigation destinations in the top bar while the Sidebar is hidden.';
+
+  @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
       'Ajustement de la zone de validation des habitudes';
 

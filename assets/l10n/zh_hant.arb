@@ -662,6 +662,8 @@
     "appSetting_dateDisplayFormat_subTitleText": "設定的日期格式將套用於習慣詳細頁面的日期顯示。",
     "appSetting_compactUISwitcher_titleText": "在習慣頁面啟用精簡 UI",
     "appSetting_compactUISwitcher_subtitleText": "允許習慣打卡表格顯示更多內容，但某些 UI 和文字可能會變小。",
+    "appSetting_appleCollapsedSidebarSwitcher_titleText": "顯示橫向側邊欄",
+    "appSetting_appleCollapsedSidebarSwitcher_subtitleText": "隱藏側邊欄時，在頂端列中顯示導覽目的地。",
     "appSetting_collapsed_calendar_bararea_titleText": "習慣打卡區域比例調整",
     "appSetting_collapsed_calendar_bararea_subtitleText": "調整百分比以在習慣打卡表格區域取得更多或更少空間。",
     "appSetting_collapsed_calendar_bararea_defaultText": "預設",

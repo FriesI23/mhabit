@@ -37,6 +37,7 @@ import '../../models/app_apple_sidebar_style_mode.dart';
 import '../../models/app_event.dart';
 import '../../models/app_reminder_config.dart';
 import '../../models/custom_date_format.dart';
+import '../../providers/app_ui/app_apple_collapsed_sidebar.dart';
 import '../../providers/app_ui/app_caches.dart';
 import '../../providers/app_ui/app_compact_ui_switcher.dart';
 import '../../providers/app_ui/app_custom_date_format.dart';
@@ -75,6 +76,7 @@ import 'widgets.dart';
 ///   - [AppCustomDateYmdHmsConfigViewModel]
 ///   - [AppFirstDayViewModel]
 ///   - [AppCompactUISwitcherViewModel]
+///   - [AppAppleCollapsedSidebarViewModel]
 ///   - [AppDeveloperViewModel]
 ///   - [AppReminderViewModel]
 ///   - [AppThemeViewModel]
@@ -221,6 +223,11 @@ class _PageState extends State<_Page> with XShare {
   void _onCompactTileChanged(bool value) {
     if (!mounted) return;
     context.read<AppCompactUISwitcherViewModel>().setFlag(value);
+  }
+
+  void _onAppleCollapsedSidebarTileChanged(bool value) {
+    if (!mounted) return;
+    context.read<AppAppleCollapsedSidebarViewModel>().setEnabled(value);
   }
 
   void _onChangeRecordStatusSelected(UserAction action) {
@@ -585,6 +592,7 @@ class _PageState extends State<_Page> with XShare {
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, flag, child) => L10nBuilder(
             builder: (context, l10n) => AdaptiveSwitchListTile(
+              key: const ValueKey('settings-compact-ui'),
               title: Text(
                 l10n?.appSetting_compactUISwitcher_titleText ?? 'Compact mode',
               ),
@@ -596,6 +604,24 @@ class _PageState extends State<_Page> with XShare {
             ),
           ),
         ),
+        if (AdaptiveStyle.of(context) == AdaptiveStyle.apple)
+          Selector<AppAppleCollapsedSidebarViewModel, bool>(
+            selector: (context, vm) => vm.enabled,
+            builder: (context, enabled, child) {
+              final l10n = L10n.of(context)!;
+              return AdaptiveSwitchListTile(
+                key: const ValueKey('settings-apple-collapsed-sidebar'),
+                title: Text(
+                  l10n.appSetting_appleCollapsedSidebarSwitcher_titleText,
+                ),
+                subtitle: Text(
+                  l10n.appSetting_appleCollapsedSidebarSwitcher_subtitleText,
+                ),
+                value: enabled,
+                onChanged: _onAppleCollapsedSidebarTileChanged,
+              );
+            },
+          ),
       ],
     );
 

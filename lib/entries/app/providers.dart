@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
+import '../../providers/app_ui/app_apple_collapsed_sidebar.dart';
 import '../../providers/app_ui/app_caches.dart';
 import '../../providers/app_ui/app_compact_ui_switcher.dart';
 import '../../providers/app_ui/app_custom_date_format.dart';
@@ -216,6 +217,10 @@ class AppProviders extends SingleChildStatelessWidget {
     ),
     ViewModelProxyProvider<ProfileViewModel, AppCompactUISwitcherViewModel>(
       create: (context) => AppCompactUISwitcherViewModel(),
+      update: (context, profile, previous) => previous..updateProfile(profile),
+    ),
+    ViewModelProxyProvider<ProfileViewModel, AppAppleCollapsedSidebarViewModel>(
+      create: (context) => AppAppleCollapsedSidebarViewModel(),
       update: (context, profile, previous) => previous..updateProfile(profile),
     ),
     ViewModelProxyProvider<ProfileViewModel, AppFirstDayViewModel>(
