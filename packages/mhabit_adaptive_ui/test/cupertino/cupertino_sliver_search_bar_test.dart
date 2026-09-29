@@ -288,4 +288,48 @@ void main() {
       hasLength(1),
     );
   });
+
+  testWidgets(
+    'persistent Search reaches its preferred width after the threshold',
+    (tester) async {
+      tester.view.physicalSize = const Size(1200, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final controller = TextEditingController();
+      final focusNode = FocusNode();
+      addTearDown(controller.dispose);
+      addTearDown(focusNode.dispose);
+      final collection = ActionCollection<String>(
+        roots: List.generate(
+          24,
+          (index) => AdaptiveAction<String>.action(
+            id: ActionId('action-$index'),
+            metadata: ActionMetadata(label: '$index'),
+            payload: 'action-$index',
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(
+        _host(
+          controller: controller,
+          focusNode: focusNode,
+          onInvoke: (_) {},
+          collection: collection,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(CupertinoSearchTextField), findsOneWidget);
+      expect(
+        tester
+            .getSize(
+              find.byKey(const ValueKey('cupertino-expandable-search-region')),
+            )
+            .width,
+        240,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
 }

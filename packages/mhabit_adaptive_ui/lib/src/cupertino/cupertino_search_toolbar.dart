@@ -249,11 +249,7 @@ final class _CupertinoSearchToolbarMetrics {
         preferPersistentSearch &&
         automaticSearchWidth >= effectiveMinimumPersistentWidth;
     final expanded = persistent || manuallyExpanded;
-    final preferredSearchWidth = persistent
-        ? math.min(maxSearchWidth, automaticSearchWidth)
-        : expanded
-        ? maxSearchWidth
-        : _toolbarItemExtent;
+    final preferredSearchWidth = expanded ? maxSearchWidth : _toolbarItemExtent;
     final searchWidth = math.min(
       preferredSearchWidth,
       math.max(0.0, availableWidth - minimumAdaptiveWidth),

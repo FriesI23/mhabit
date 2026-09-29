@@ -242,38 +242,47 @@ class _AppleHabitDetailAppBarActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = WindowSize.of(context).width;
-    final showsExtendedRecordAction = width >= WindowSizeClass.medium;
+    final prefersExtendedRecordAction = width >= WindowSizeClass.medium;
     final budget = AppBarActionBudget.slots(
       maxPrimaryActions: _baseMaxPrimaryActions(context) + 1,
       reserveOverflow: true,
-      additionalCapacity: showsExtendedRecordAction
+      additionalCapacity: prefersExtendedRecordAction
           ? _appleExtendedActionAllowance
           : 0,
     );
-    return AdaptiveAppBarActions<HabitDetailAppBarAction>.apple(
-      collection: collection,
-      primaryCapacity: budget.primaryCapacity,
-      maxPrimaryActions: budget.maxPrimaryActions,
-      onInvoke: onInvoke,
-      apple: CupertinoAppBarActionsConfig(
-        iconBuilder: (context, action) => Icon(switch (action.payload) {
-          HabitDetailAppBarAction.recordCalendar =>
-            CupertinoIcons.calendar_badge_plus,
-          HabitDetailAppBarAction.edit => CupertinoIcons.pencil,
-          HabitDetailAppBarAction.unarchive => CupertinoIcons.tray_arrow_up,
-          HabitDetailAppBarAction.archive => CupertinoIcons.archivebox,
-          HabitDetailAppBarAction.clone => CupertinoIcons.square_on_square,
-          HabitDetailAppBarAction.export => CupertinoIcons.share_up,
-          HabitDetailAppBarAction.delete => CupertinoIcons.delete,
-          null => CupertinoIcons.ellipsis,
-        }, color: color),
-        overflowIcon: Icon(CupertinoIcons.ellipsis, color: color),
-        presentationForAction: (context, action) =>
-            action.payload == HabitDetailAppBarAction.recordCalendar &&
-                showsExtendedRecordAction
-            ? CupertinoActionPresentation.extended
-            : CupertinoActionPresentation.iconOnly,
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final primaryCapacity = constraints.hasBoundedWidth
+            ? constraints.maxWidth.clamp(0.0, budget.primaryCapacity).toDouble()
+            : budget.primaryCapacity;
+        final showsExtendedRecordAction =
+            prefersExtendedRecordAction &&
+            primaryCapacity >= budget.primaryCapacity;
+        return AdaptiveAppBarActions<HabitDetailAppBarAction>.apple(
+          collection: collection,
+          primaryCapacity: primaryCapacity,
+          onInvoke: onInvoke,
+          apple: CupertinoAppBarActionsConfig(
+            iconBuilder: (context, action) => Icon(switch (action.payload) {
+              HabitDetailAppBarAction.recordCalendar =>
+                CupertinoIcons.calendar_badge_plus,
+              HabitDetailAppBarAction.edit => CupertinoIcons.pencil,
+              HabitDetailAppBarAction.unarchive => CupertinoIcons.tray_arrow_up,
+              HabitDetailAppBarAction.archive => CupertinoIcons.archivebox,
+              HabitDetailAppBarAction.clone => CupertinoIcons.square_on_square,
+              HabitDetailAppBarAction.export => CupertinoIcons.share_up,
+              HabitDetailAppBarAction.delete => CupertinoIcons.delete,
+              null => CupertinoIcons.ellipsis,
+            }, color: color),
+            overflowIcon: Icon(CupertinoIcons.ellipsis, color: color),
+            presentationForAction: (context, action) =>
+                action.payload == HabitDetailAppBarAction.recordCalendar &&
+                    showsExtendedRecordAction
+                ? CupertinoActionPresentation.extended
+                : CupertinoActionPresentation.iconOnly,
+          ),
+        );
+      },
     );
   }
 }

@@ -281,10 +281,8 @@ class CupertinoSidebarToolbarLayout extends StatelessWidget {
       ],
     ),
     end: ClipRect(
-      child: OverflowBox(
+      child: Align(
         alignment: AlignmentDirectional.centerEnd,
-        minWidth: 0.0,
-        maxWidth: double.infinity,
         child: trailing ?? const SizedBox.shrink(),
       ),
     ),
