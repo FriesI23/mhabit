@@ -332,4 +332,76 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets('persistent Search survives an adaptive action-count handoff', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final controller = TextEditingController();
+    final focusNode = FocusNode();
+    addTearDown(controller.dispose);
+    addTearDown(focusNode.dispose);
+    var actionCount = 24;
+    late StateSetter setHostState;
+
+    ActionCollection<String> collection() => ActionCollection<String>(
+      roots: List.generate(
+        actionCount,
+        (index) => AdaptiveAction<String>.action(
+          id: ActionId('action-$index'),
+          metadata: ActionMetadata(label: '$index'),
+          payload: 'action-$index',
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(
+      StatefulBuilder(
+        builder: (context, setState) {
+          setHostState = setState;
+          return _host(
+            controller: controller,
+            focusNode: focusNode,
+            onInvoke: (_) {},
+            collection: collection(),
+          );
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CupertinoSearchTextField), findsOneWidget);
+    setHostState(() => actionCount = 26);
+    await tester.pump();
+
+    expect(find.byType(CupertinoSearchTextField), findsOneWidget);
+    expect(
+      tester
+          .getSize(
+            find.byKey(const ValueKey('cupertino-expandable-search-region')),
+          )
+          .width,
+      240,
+    );
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpWidget(
+      _host(
+        controller: controller,
+        focusNode: focusNode,
+        onInvoke: (_) {},
+        collection: collection(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CupertinoSearchTextField), findsNothing);
+    expect(
+      find.byKey(const ValueKey('activate-cupertino-search')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
 }
