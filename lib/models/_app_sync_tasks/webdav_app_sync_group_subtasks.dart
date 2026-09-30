@@ -158,11 +158,13 @@ class SingleGroupSyncTask implements AppSyncSubTask<WebDavAppSyncTaskResult> {
     WebDavAppSyncGroupInfo cell,
   )
   localToServerTask;
+  final void Function(GroupUUID uuid)? onDownloadApplied;
 
   SingleGroupSyncTask({
     required this.cell,
     required this.serverToLocalTask,
     required this.localToServerTask,
+    this.onDownloadApplied,
   });
 
   bool get isNeedDownload => cell.isNeedDownload;
@@ -174,6 +176,7 @@ class SingleGroupSyncTask implements AppSyncSubTask<WebDavAppSyncTaskResult> {
     if (isNeedDownload) {
       final result = await serverToLocalTask(context, cell);
       if (!result.isSuccessed) return result;
+      onDownloadApplied?.call(cell.uuid);
     }
     if (isNeedUpload) {
       final result = await localToServerTask(context, cell);

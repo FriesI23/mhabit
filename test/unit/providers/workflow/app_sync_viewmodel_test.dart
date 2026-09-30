@@ -15,9 +15,11 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/models/app_event.dart';
 import 'package:mhabit/models/app_sync_options.dart';
 import 'package:mhabit/models/app_sync_server.dart';
 import 'package:mhabit/models/app_sync_tasks.dart';
+import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/app_sync.dart';
 import 'package:mhabit/reminders/providers/noti_app_sync_provider.dart';
 import 'package:mhabit/storage/profile/handlers/app_sync.dart';
@@ -34,6 +36,15 @@ class _TestAppSyncOwner extends AppSyncOwner {
   @override
   Future<bool> writePassword({String? identity, required String? value}) async {
     return true;
+  }
+}
+
+class _EventTrackingAppSyncOwner extends _TestAppSyncOwner {
+  int delayedSyncCount = 0;
+
+  @override
+  void delayedStartTaskOnce({Duration delay = kAppSyncOnceDelay}) {
+    delayedSyncCount += 1;
   }
 }
 
@@ -99,6 +110,61 @@ Future<ProfileViewModel> _buildProfile() async {
 
 void main() {
   group('AppSyncOwner', () {
+    test('publishes applied data without scheduling a feedback sync', () async {
+      final bus = AppEventBus();
+      final owner = _EventTrackingAppSyncOwner()..attachEventBus(bus);
+      final events = <AppEvent>[];
+      final subscription = bus.on<AppEvent>().listen(events.add);
+      addTearDown(() async {
+        await subscription.cancel();
+        owner.dispose();
+        bus.dispose();
+      });
+
+      owner.publishAppliedChanges(
+        habitUUIDs: const ['habit-1', 'habit-2'],
+        groupUUIDs: const ['group-1'],
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      expect(events, hasLength(2));
+      expect(events.whereType<HabitDataChangedEvent>().single.uuidList, [
+        'habit-1',
+        'habit-2',
+      ]);
+      expect(events.whereType<GroupChangedEvent>().single.uuidList, [
+        'group-1',
+      ]);
+      expect(
+        events.every(
+          (event) => event.isInTrace(
+            AppEventPageSource.appSync,
+            AppEventFunctionSource.syncApplied,
+          ),
+        ),
+        isTrue,
+      );
+      expect(owner.delayedSyncCount, 0);
+    });
+
+    test('does not publish when sync applied no local changes', () async {
+      final bus = AppEventBus();
+      final owner = _EventTrackingAppSyncOwner()..attachEventBus(bus);
+      final events = <AppEvent>[];
+      final subscription = bus.on<AppEvent>().listen(events.add);
+      addTearDown(() async {
+        await subscription.cancel();
+        owner.dispose();
+        bus.dispose();
+      });
+
+      owner.publishAppliedChanges(habitUUIDs: const [], groupUUIDs: const []);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(events, isEmpty);
+      expect(owner.delayedSyncCount, 0);
+    });
+
     test('idle trigger and status surfaces stay safe', () {
       final vm = _TestAppSyncOwner();
       final trigger = vm as AppSyncTriggerAccess;

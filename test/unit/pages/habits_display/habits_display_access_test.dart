@@ -32,7 +32,6 @@ import 'package:mhabit/providers/workflow/group_manager.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/db/handlers/habit.dart';
 
-import '../../../support/stub/app_sync.dart';
 import '../../../support/stub/habits_display_access.dart';
 
 final class _FakeHabitsDisplayAccess extends StubHabitsDisplayAccess {
@@ -50,6 +49,7 @@ final class _FakeHabitsDisplayAccess extends StubHabitsDisplayAccess {
   num? lastIncreaseStep;
   int? lastDecimalPlaces;
   List<String>? lastHabitsColumns;
+  Future<void>? afterCommitBarrier;
 
   _FakeHabitsDisplayAccess({
     required this.seedData,
@@ -126,6 +126,7 @@ final class _FakeHabitsDisplayAccess extends StubHabitsDisplayAccess {
         await beforeReminderUpdate(entry.value, recordsByHabit[entry.key]!);
       }
     }
+    await afterCommitBarrier;
     if (extraResolver != null) {
       for (final result in results) {
         await extraResolver(result);
@@ -153,19 +154,6 @@ final class _FakeHabitsDisplayAccess extends StubHabitsDisplayAccess {
     reminderRepairParamsList.add(params);
     return Future.value();
   }
-}
-
-final class _FakeAppSyncWorkflowAccess extends StubAppSyncWorkflowAccess {
-  final _controller = StreamController<String>.broadcast(sync: true);
-
-  @override
-  Stream<String> get startSyncEvents => _controller.stream;
-
-  void emit(String id) {
-    _controller.add(id);
-  }
-
-  Future<void> close() => _controller.close();
 }
 
 final class _StubGroupManager extends GroupManager {
@@ -310,6 +298,73 @@ void main() {
       vm.dispose();
     });
 
+    test(
+      'HabitSummaryViewModel notifies before post-commit work ends',
+      () async {
+        final seedData = _buildHabitSummaryData();
+        final barrier = Completer<void>();
+        final access = _FakeHabitsDisplayAccess(seedData: seedData)
+          ..afterCommitBarrier = barrier.future;
+        final vm = HabitSummaryViewModel()
+          ..attachAccess(access)
+          ..attachGroupManager(_StubGroupManager());
+        await vm.loadData(listen: false);
+        var notifications = 0;
+        vm.addListener(() => notifications += 1);
+
+        var completed = false;
+        final operation = vm
+            .changeRecordStatus(seedData.uuid, HabitDate.now())
+            .whenComplete(() => completed = true);
+        await Future<void>.delayed(Duration.zero);
+
+        expect(notifications, 1);
+        expect(completed, isFalse);
+        expect(
+          seedData.getRecordByDate(HabitDate.now())?.status,
+          HabitRecordStatus.done,
+        );
+
+        barrier.complete();
+        await operation;
+        vm.dispose();
+      },
+    );
+
+    test(
+      'HabitSummaryViewModel keeps committed UI state when post-commit work fails',
+      () async {
+        final seedData = _buildHabitSummaryData();
+        final barrier = Completer<void>();
+        final access = _FakeHabitsDisplayAccess(seedData: seedData)
+          ..afterCommitBarrier = barrier.future;
+        final vm = HabitSummaryViewModel()
+          ..attachAccess(access)
+          ..attachGroupManager(_StubGroupManager());
+        await vm.loadData(listen: false);
+        var notifications = 0;
+        vm.addListener(() => notifications += 1);
+
+        final operation = vm.changeRecordStatus(seedData.uuid, HabitDate.now());
+        await Future<void>.delayed(Duration.zero);
+
+        expect(notifications, 1);
+        expect(
+          seedData.getRecordByDate(HabitDate.now())?.status,
+          HabitRecordStatus.done,
+        );
+
+        barrier.completeError(StateError('reminder failed'));
+        await expectLater(operation, throwsStateError);
+        expect(notifications, 1);
+        expect(
+          seedData.getRecordByDate(HabitDate.now())?.status,
+          HabitRecordStatus.done,
+        );
+        vm.dispose();
+      },
+    );
+
     test('undoing a skip broadcasts no effective record', () async {
       final seedData = _buildHabitSummaryData();
       final date = HabitDate.now();
@@ -420,27 +475,33 @@ void main() {
       },
     );
 
-    test(
-      'HabitSummaryViewModel reloads through sync start event source',
-      () async {
-        final seedData = _buildHabitSummaryData();
-        final access = _FakeHabitsDisplayAccess(seedData: seedData);
-        final appSync = _FakeAppSyncWorkflowAccess();
-        final vm = HabitSummaryViewModel()
-          ..attachWorkflow(appSync)
-          ..attachAccess(access)
-          ..attachGroupManager(_StubGroupManager());
+    test('HabitSummaryViewModel reloads for sync-applied habit data', () async {
+      final seedData = _buildHabitSummaryData();
+      final access = _FakeHabitsDisplayAccess(seedData: seedData);
+      final appEvent = AppEventBus();
+      final vm = HabitSummaryViewModel()
+        ..updateAppEvent(appEvent)
+        ..attachAccess(access)
+        ..attachGroupManager(_StubGroupManager());
 
-        await vm.loadData(listen: false);
-        appSync.emit('sync-1');
+      await vm.loadData(listen: false);
+      appEvent.push(
+        HabitDataChangedEvent(
+          uuidList: [seedData.uuid],
+          changeType: HabitDataChangeType.updated,
+          trace: const {
+            AppEventPageSource.appSync: {AppEventFunctionSource.syncApplied},
+          },
+        ),
+      );
+      await Future<void>.delayed(Duration.zero);
 
-        expect(vm.consumeForceReloadFlag(), isTrue);
-        expect(vm.consumeClearSnackBarFlag(), isFalse);
+      expect(vm.consumeForceReloadFlag(), isTrue);
+      expect(vm.consumeClearSnackBarFlag(), isFalse);
 
-        vm.dispose();
-        await appSync.close();
-      },
-    );
+      vm.dispose();
+      appEvent.dispose();
+    });
 
     test('HabitSummaryViewModel reloads through app event bus', () async {
       final seedData = _buildHabitSummaryData();
@@ -476,6 +537,33 @@ void main() {
 
       vm.dispose();
     });
+
+    test(
+      'HabitsTodayViewModel notifies before post-commit work ends',
+      () async {
+        final seedData = _buildHabitSummaryData();
+        final barrier = Completer<void>();
+        final access = _FakeHabitsDisplayAccess(seedData: seedData)
+          ..afterCommitBarrier = barrier.future;
+        final vm = HabitsTodayViewModel()..attachAccess(access);
+        await vm.loadData(listen: false);
+        var notifications = 0;
+        vm.addListener(() => notifications += 1);
+
+        var completed = false;
+        final operation = vm
+            .changeRecordStatus(seedData.uuid)
+            .whenComplete(() => completed = true);
+        await Future<void>.delayed(Duration.zero);
+
+        expect(notifications, 1);
+        expect(completed, isFalse);
+
+        barrier.complete();
+        await operation;
+        vm.dispose();
+      },
+    );
 
     test('HabitsTodayViewModel applies today predicate and sort', () async {
       final checkedInToday =
@@ -541,25 +629,31 @@ void main() {
       vm.dispose();
     });
 
-    test(
-      'HabitsTodayViewModel reloads through sync start event source',
-      () async {
-        final seedData = _buildHabitSummaryData();
-        final access = _FakeHabitsDisplayAccess(seedData: seedData);
-        final appSync = _FakeAppSyncWorkflowAccess();
-        final vm = HabitsTodayViewModel()
-          ..attachAccess(access)
-          ..attachWorkflow(appSync);
+    test('HabitsTodayViewModel reloads for sync-applied habit data', () async {
+      final seedData = _buildHabitSummaryData();
+      final access = _FakeHabitsDisplayAccess(seedData: seedData);
+      final appEvent = AppEventBus();
+      final vm = HabitsTodayViewModel()
+        ..attachAccess(access)
+        ..updateAppEvent(appEvent);
 
-        await vm.loadData(listen: false);
-        appSync.emit('sync-1');
+      await vm.loadData(listen: false);
+      appEvent.push(
+        HabitDataChangedEvent(
+          uuidList: [seedData.uuid],
+          changeType: HabitDataChangeType.updated,
+          trace: const {
+            AppEventPageSource.appSync: {AppEventFunctionSource.syncApplied},
+          },
+        ),
+      );
+      await Future<void>.delayed(Duration.zero);
 
-        expect(vm.consumeForceReloadFlag(), isTrue);
+      expect(vm.consumeForceReloadFlag(), isTrue);
 
-        vm.dispose();
-        await appSync.close();
-      },
-    );
+      vm.dispose();
+      appEvent.dispose();
+    });
 
     test('HabitsTodayViewModel reloads through app event bus', () async {
       final seedData = _buildHabitSummaryData();

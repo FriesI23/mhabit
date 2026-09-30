@@ -14,6 +14,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
+import 'package:mhabit/models/app_event.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_form.dart';
@@ -21,6 +22,7 @@ import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/models/habit_repo_actions.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/habits_status_changer/_providers/habit_status_changer.dart';
+import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 
 import '../../../support/stub/habits_display_access.dart';
@@ -90,6 +92,37 @@ HabitSummaryData _buildHabitSummaryData({
 
 void main() {
   group('HabitStatusChangerViewModel seams', () {
+    test(
+      'reloads matching external changes without losing the draft',
+      () async {
+        final seedData = _buildHabitSummaryData();
+        final access = _FakeHabitStatusChangerAccess(seedData: seedData);
+        final bus = AppEventBus();
+        final vm = HabitStatusChangerViewModel(uuidList: [seedData.uuid])
+          ..attachAccess(access)
+          ..updateAppEvent(bus);
+        await vm.loadData(listen: false);
+        vm.updateSelectStatus(RecordStatusChangerStatus.skip, listen: false);
+        vm.skipReason = 'draft reason';
+
+        bus.push(
+          HabitDataChangedEvent(
+            uuidList: [seedData.uuid],
+            changeType: HabitDataChangeType.updated,
+          ),
+        );
+        await Future<void>.delayed(Duration.zero);
+        await vm.loadData(listen: false);
+
+        expect(vm.selectStatus, RecordStatusChangerStatus.skip);
+        expect(vm.skipReason, 'draft reason');
+        expect(vm.canSave, isTrue);
+
+        vm.dispose();
+        bus.dispose();
+      },
+    );
+
     test('loads through access', () async {
       final seedData = _buildHabitSummaryData();
       final access = _FakeHabitStatusChangerAccess(seedData: seedData);

@@ -133,6 +133,149 @@ void testWebdavAppSyncTaskMainBody() =>
           verify(singleHabitTask.run(task)).called(1);
         }
       });
+
+      test("successful download reports the applied habit once", () async {
+        final config = MockAppWebDavSyncServer();
+        final context = MockAppSyncContext();
+        when(context.sessionId).thenReturn('session-1');
+        when(context.status).thenReturn(AppSyncTaskStatus.running);
+        final applied = <String>[];
+        final cell = WebDavAppSyncHabitInfo(
+          configUUID: 'config',
+          uuid: 'habit-1',
+          status: WebDavAppSyncInfoStatus.server,
+        );
+        final task = SingleHabitSyncTask(
+          config: config,
+          cell: cell,
+          onDownloadApplied: applied.add,
+          serverToLocalTask: (_, _, _) async =>
+              WebDavAppSyncTaskResult.success(),
+          localToServerTask: (_, _, _) async =>
+              WebDavAppSyncTaskResult.success(),
+        );
+
+        final result = await task.run(context);
+
+        expect(result.isSuccessed, isTrue);
+        expect(applied, ['habit-1']);
+      });
+
+      test("failed download does not report an applied habit", () async {
+        final config = MockAppWebDavSyncServer();
+        final context = MockAppSyncContext();
+        when(context.sessionId).thenReturn('session-1');
+        when(context.status).thenReturn(AppSyncTaskStatus.running);
+        final applied = <String>[];
+        final task = SingleHabitSyncTask(
+          config: config,
+          cell: WebDavAppSyncHabitInfo(
+            configUUID: 'config',
+            uuid: 'habit-1',
+            status: WebDavAppSyncInfoStatus.server,
+          ),
+          onDownloadApplied: applied.add,
+          serverToLocalTask: (_, _, _) async =>
+              WebDavAppSyncTaskResult.failed(),
+          localToServerTask: (_, _, _) async =>
+              WebDavAppSyncTaskResult.success(),
+        );
+
+        await task.run(context);
+
+        expect(applied, isEmpty);
+      });
+
+      test("successful download remains reported when upload fails", () async {
+        final config = MockAppWebDavSyncServer();
+        final context = MockAppSyncContext();
+        when(context.sessionId).thenReturn('session-1');
+        when(context.status).thenReturn(AppSyncTaskStatus.running);
+        final applied = <String>[];
+        final cell =
+            WebDavAppSyncHabitInfo(
+                configUUID: 'config',
+                uuid: 'habit-1',
+                status: WebDavAppSyncInfoStatus.both,
+              )
+              ..eTagFromLocal = 'local'
+              ..eTagFromServer = 'server'
+              ..makeDirty();
+        final task = SingleHabitSyncTask(
+          config: config,
+          cell: cell,
+          onDownloadApplied: applied.add,
+          serverToLocalTask: (_, _, _) async =>
+              WebDavAppSyncTaskResult.success(),
+          localToServerTask: (_, _, _) async =>
+              WebDavAppSyncTaskResult.failed(),
+        );
+
+        final result = await task.run(context);
+
+        expect(result.isSuccessed, isFalse);
+        expect(applied, ['habit-1']);
+      });
+
+      test(
+        "successful download remains reported when upload is cancelled",
+        () async {
+          final config = MockAppWebDavSyncServer();
+          final context = MockAppSyncContext();
+          when(context.sessionId).thenReturn('session-1');
+          when(context.status).thenReturn(AppSyncTaskStatus.running);
+          final applied = <String>[];
+          final cell =
+              WebDavAppSyncHabitInfo(
+                  configUUID: 'config',
+                  uuid: 'habit-1',
+                  status: WebDavAppSyncInfoStatus.both,
+                )
+                ..eTagFromLocal = 'local'
+                ..eTagFromServer = 'server'
+                ..makeDirty();
+          final task = SingleHabitSyncTask(
+            config: config,
+            cell: cell,
+            onDownloadApplied: applied.add,
+            serverToLocalTask: (_, _, _) async =>
+                WebDavAppSyncTaskResult.success(),
+            localToServerTask: (_, _, _) async =>
+                WebDavAppSyncTaskResult.cancelled(),
+          );
+
+          final result = await task.run(context);
+
+          expect(result.isCancelled, isTrue);
+          expect(applied, ['habit-1']);
+        },
+      );
+
+      test("upload-only sync does not report an applied habit", () async {
+        final config = MockAppWebDavSyncServer();
+        final context = MockAppSyncContext();
+        when(context.sessionId).thenReturn('session-1');
+        when(context.status).thenReturn(AppSyncTaskStatus.running);
+        final applied = <String>[];
+        final task = SingleHabitSyncTask(
+          config: config,
+          cell: WebDavAppSyncHabitInfo(
+            configUUID: 'config',
+            uuid: 'habit-1',
+            status: WebDavAppSyncInfoStatus.local,
+          ),
+          onDownloadApplied: applied.add,
+          serverToLocalTask: (_, _, _) async =>
+              WebDavAppSyncTaskResult.success(),
+          localToServerTask: (_, _, _) async =>
+              WebDavAppSyncTaskResult.success(),
+        );
+
+        final result = await task.run(context);
+
+        expect(result.isSuccessed, isTrue);
+        expect(applied, isEmpty);
+      });
     });
 
 void main() {

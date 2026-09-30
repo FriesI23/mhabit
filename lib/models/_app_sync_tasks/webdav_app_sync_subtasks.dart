@@ -206,12 +206,14 @@ class SingleHabitSyncTask implements AppSyncSubTask<WebDavAppSyncTaskResult> {
     WebDavAppSyncHabitInfo cell,
   )
   localToServerTask;
+  final void Function(HabitUUID uuid)? onDownloadApplied;
 
   SingleHabitSyncTask({
     required this.config,
     required this.cell,
     required this.serverToLocalTask,
     required this.localToServerTask,
+    this.onDownloadApplied,
   });
 
   bool get isNeedDownload => cell.isNeedDownload;
@@ -231,6 +233,7 @@ class SingleHabitSyncTask implements AppSyncSubTask<WebDavAppSyncTaskResult> {
         ex: ['server2local sync completed', result, config, cell],
       );
       if (!result.isSuccessed) return result;
+      onDownloadApplied?.call(cell.uuid);
     }
     if (isNeedUpload) {
       appLog.appsynctask.info(

@@ -1391,18 +1391,6 @@ class _HabitListState extends State<_HabitList> {
   Future<void> loadData() async {
     if (!mounted) return;
     final minBarShowTimeFuture = Future.delayed(kHabitListFutureLoadDuration);
-    final sync = context.read<AppSyncWorkflowAccess>();
-    try {
-      await sync.syncProcessing;
-    } catch (e, s) {
-      appLog.appsync.error(
-        "HabitsTabPage",
-        ex: ["sync failed"],
-        error: e,
-        stackTrace: s,
-      );
-    }
-    if (!(mounted && _vm.mounted)) return;
     if (!_vm.hasLoad) {
       await Future.wait([_vm.loadData(), minBarShowTimeFuture]);
       if (!(mounted && _vm.mounted)) return;

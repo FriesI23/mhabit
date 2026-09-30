@@ -26,6 +26,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../common/consts.dart';
+import '../../common/types.dart';
 import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
@@ -151,6 +152,10 @@ class AppSyncOwner
   bool _clearLogsOnStartup = false;
 
   AppEventSubscriptions? _eventSubs;
+
+  static const _kSyncAppliedTrace = {
+    AppEventPageSource.appSync: {AppEventFunctionSource.syncApplied},
+  };
 
   AppSyncOwner() : _passwordStore = const _AppSyncPasswordStore() {
     _appSyncTask = AppSyncTaskDispatcher(this);
@@ -520,7 +525,37 @@ class AppSyncOwner
   }
 
   @override
-  bool shouldReceive(AppEvent event) => true;
+  bool shouldReceive(AppEvent event) =>
+      !event.isInTrace(AppEventPageSource.appSync);
+
+  void publishAppliedChanges({
+    required Iterable<HabitUUID> habitUUIDs,
+    required Iterable<GroupUUID> groupUUIDs,
+  }) {
+    final appliedHabitUUIDs = habitUUIDs.toList(growable: false);
+    if (appliedHabitUUIDs.isNotEmpty) {
+      _eventSubs?.push(
+        HabitDataChangedEvent(
+          msg: "app_sync.download.applied",
+          uuidList: appliedHabitUUIDs,
+          changeType: HabitDataChangeType.updated,
+          trace: _kSyncAppliedTrace,
+        ),
+      );
+    }
+
+    final appliedGroupUUIDs = groupUUIDs.toList(growable: false);
+    if (appliedGroupUUIDs.isNotEmpty) {
+      _eventSubs?.push(
+        GroupChangedEvent(
+          msg: "app_sync.group.download.applied",
+          uuidList: appliedGroupUUIDs,
+          changeType: GroupChangeType.updated,
+          trace: _kSyncAppliedTrace,
+        ),
+      );
+    }
+  }
 
   @override
   void handleEvent(AppEvent event) => switch (event) {
@@ -964,6 +999,12 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
 
     newTask.startRuntimeLifecycle();
     newTask.task.run().whenComplete(() async {
+      if (newTask.task case final WebDavAppSyncTask task) {
+        _root.publishAppliedChanges(
+          habitUUIDs: task.appliedHabitUUIDs,
+          groupUUIDs: task.appliedGroupUUIDs,
+        );
+      }
       final crtTask = _task;
       if (crtTask == null ||
           newTask.id != crtTask.id ||

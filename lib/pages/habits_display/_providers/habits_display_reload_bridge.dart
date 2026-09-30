@@ -12,31 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:async';
-
 import '../../../providers/workflow/app_event.dart';
-import '../../../providers/workflow/app_sync.dart';
 
 /// Manages sync-workflow and app-event subscriptions shared by
 /// habits-display VMs.
 final class HabitsDisplayReloadBridge {
-  AppSyncWorkflowAccess? _workflow;
-  StreamSubscription<String>? _startSyncSub;
   AppEventSubscriptions? _eventSubs;
 
   /// The shared [AppEventSubscriptions] created by the last call to
   /// [updateAppEvent].
   AppEventSubscriptions? get eventSubs => _eventSubs;
-
-  void attachWorkflow(
-    AppSyncWorkflowAccess workflow, {
-    required void Function(String id) onStartSync,
-  }) {
-    if (identical(workflow, _workflow)) return;
-    _workflow = workflow;
-    _startSyncSub?.cancel();
-    _startSyncSub = workflow.startSyncEvents.listen(onStartSync);
-  }
 
   /// Replaces the current event subscriptions with a new set backed by
   /// [bus] and filtered by [subscriber].
@@ -46,7 +31,6 @@ final class HabitsDisplayReloadBridge {
   }
 
   void dispose() {
-    _startSyncSub?.cancel();
     _eventSubs?.cancelAll();
   }
 }

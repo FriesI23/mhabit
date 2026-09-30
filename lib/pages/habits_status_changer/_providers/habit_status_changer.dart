@@ -103,6 +103,7 @@ class HabitStatusChangerViewModel
   // inside status
   bool _mounted = true;
   bool _isSkipReasonEdited = false;
+  bool _preserveFormOnNextLoad = false;
   // sync from setting
   int _firstday = defaultFirstDay;
   late HabitStatusChangerAccess _access;
@@ -120,12 +121,10 @@ class HabitStatusChangerViewModel
   @override
   void updateAppEvent(AppEventBus newAppEvent) {
     _eventSubs?.cancelAll();
-    _eventSubs = AppEventSubscriptions(this, newAppEvent);
-    // NOTE: This VM is an event producer only — it pushes events
-    // via _eventSubs but does not react to any incoming events.
-    // handleEvent returns null for all types, so no subscribe<>()
-    // calls are needed. shouldReceive / handleEvent exist only
-    // to satisfy the AppEventSubscriber contract.
+    _eventSubs = AppEventSubscriptions(this, newAppEvent)
+      ..subscribe<HabitDataChangedEvent>()
+      ..subscribe<HabitStatusChangedEvent>()
+      ..subscribe<HabitRecordsChangedEvent>();
   }
 
   @override
@@ -134,12 +133,17 @@ class HabitStatusChangerViewModel
 
   @override
   void handleEvent(AppEvent event) => switch (event) {
-    ReloadDataEvent() ||
-    HabitDataChangedEvent() ||
-    HabitStatusChangedEvent() ||
-    HabitRecordsChangedEvent() ||
-    GroupChangedEvent() => null,
+    HabitDataChangedEvent() => _handleHabitChanged(event.uuidList),
+    HabitStatusChangedEvent() => _handleHabitChanged(event.uuidList),
+    HabitRecordsChangedEvent() => _handleHabitChanged(event.uuidList),
+    ReloadDataEvent() || GroupChangedEvent() => null,
   };
+
+  void _handleHabitChanged(Iterable<HabitUUID> uuidList) {
+    if (!uuidList.any(_selectedUUIDList.contains)) return;
+    _preserveFormOnNextLoad = true;
+    requestReloadData();
+  }
 
   bool get hasLoad => _pageLoad.hasLoad;
 
@@ -194,6 +198,9 @@ class HabitStatusChangerViewModel
         if (loading.isCanceled) return loadingCancelled(loading);
         if (loading.isCompleted) return;
 
+        final preserveForm = _preserveFormOnNextLoad;
+        final previousForm = _form;
+        final skipReasonEdited = _isSkipReasonEdited;
         _habitDataController.replaceData(
           collection..forEach(
             (_, habit) =>
@@ -201,7 +208,18 @@ class HabitStatusChangerViewModel
           ),
         );
         _updateCurrentHabitList();
-        _updateForm(_form, withDefaultChangerStatus: true);
+        if (preserveForm) {
+          final previousStatus = previousForm.selectStatus;
+          _form = selectDateAllowedStatus.contains(previousStatus)
+              ? previousForm
+              : previousForm.copyWith(
+                  selectStatus: getDefaultChangerStatus(previousForm),
+                );
+          _isSkipReasonEdited = skipReasonEdited;
+        } else {
+          _updateForm(_form, withDefaultChangerStatus: true);
+        }
+        _preserveFormOnNextLoad = false;
 
         loading.complete();
         if (listen) notifyListeners();

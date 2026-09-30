@@ -24,6 +24,7 @@ import 'package:simple_webdav_client/utils.dart';
 
 import '../../common/consts.dart';
 import '../../common/exceptions.dart';
+import '../../common/types.dart';
 import '../../extensions/webdav_extensions.dart';
 import '../../logging/helper.dart';
 import '../../storage/db/handlers/sync.dart';
@@ -41,12 +42,18 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
   final Duration? initWait;
   final WebDavProgressController? progressController;
   final void Function(WebDavAppSyncTaskResult result)? onConfigTaskComplete;
+  final Set<HabitUUID> _appliedHabitUUIDs = {};
+  final Set<GroupUUID> _appliedGroupUUIDs = {};
 
   late final AppSyncTask<WebDavAppSyncTaskResult> _configTask;
   late final AppSyncTask<WebDavAppSyncTaskResult> _syncTask;
   late final String _sessionId;
 
   AppSyncTask<WebDavAppSyncTaskResult>? _crtTask;
+
+  Set<HabitUUID> get appliedHabitUUIDs => Set.unmodifiable(_appliedHabitUUIDs);
+
+  Set<GroupUUID> get appliedGroupUUIDs => Set.unmodifiable(_appliedGroupUUIDs);
 
   WebDavAppSyncTask({
     String? sessionId,
@@ -71,6 +78,8 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
       config: config,
       syncDBHelper: syncDBHelper,
       progressController: progressController,
+      onHabitDownloadApplied: _appliedHabitUUIDs.add,
+      onGroupDownloadApplied: _appliedGroupUUIDs.add,
     );
   }
 
@@ -265,6 +274,8 @@ class WebDavAppSyncTaskExecutor
     WebDavStdClient? overwriteClient,
     Duration? timeout,
     WebDavProgressController? progressController,
+    void Function(HabitUUID uuid)? onHabitDownloadApplied,
+    void Function(GroupUUID uuid)? onGroupDownloadApplied,
   }) {
     final client =
         overwriteClient ?? WebDavAppSyncTask.buildWebDavClient(config);
@@ -284,6 +295,7 @@ class WebDavAppSyncTaskExecutor
       singleHabitSyncTaskBuilder: (cell) => SingleHabitSyncTask(
         config: config,
         cell: cell,
+        onDownloadApplied: onHabitDownloadApplied,
         serverToLocalTask: (context, config, cell) =>
             SingleHabitSyncTask.downloadTask(
               context: context,
@@ -327,6 +339,7 @@ class WebDavAppSyncTaskExecutor
         mergerBuilder: SyncGroupsInfoMergerImpl.new,
         singleTaskBuilder: (cell) => SingleGroupSyncTask(
           cell: cell,
+          onDownloadApplied: onGroupDownloadApplied,
           serverToLocalTask: (context, cell) =>
               SingleGroupSyncTask.downloadTask(
                 context: context,

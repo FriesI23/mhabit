@@ -22,7 +22,6 @@ import '../../providers/app_ui/app_language.dart';
 import '../../providers/app_ui/habits_filter.dart';
 import '../../providers/app_ui/habits_sort.dart';
 import '../../providers/workflow/app_event.dart';
-import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/group_manager.dart';
 import '../../providers/workflow/habits_manager.dart';
 import '../../storage/profile_provider.dart';
@@ -80,9 +79,6 @@ class HabitsPageProviders extends SingleChildStatelessWidget {
     ),
     ViewModelProxyProvider<AppEventBus, HabitSummaryViewModel>(
       update: (context, value, previous) => previous..updateAppEvent(value),
-    ),
-    ViewModelProxyProvider<AppSyncWorkflowAccess, HabitSummaryViewModel>(
-      update: (context, value, previous) => previous..attachWorkflow(value),
     ),
     ViewModelProxyProvider2<
       HabitsSortViewModel,
@@ -152,9 +148,6 @@ class TodayPageProviders extends SingleChildStatelessWidget {
     ),
     ViewModelProxyProvider<AppEventBus, HabitsTodayViewModel>(
       update: (context, value, previous) => previous..updateAppEvent(value),
-    ),
-    ViewModelProxyProvider<AppSyncWorkflowAccess, HabitsTodayViewModel>(
-      update: (context, value, previous) => previous..attachWorkflow(value),
     ),
     ViewModelProxyProvider<HabitsSortViewModel, HabitsTodayViewModel>(
       update: (context, sortOptions, previous) => previous

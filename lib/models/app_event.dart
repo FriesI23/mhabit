@@ -16,6 +16,7 @@ import '../common/types.dart';
 import 'habit_form.dart';
 
 enum AppEventPageSource {
+  appSync,
   appSetting,
   habitDisplay,
   habitToday,
@@ -26,6 +27,7 @@ enum AppEventPageSource {
 }
 
 enum AppEventFunctionSource {
+  syncApplied,
   habitImport,
   databaseCleared,
   habitCreated,
