@@ -130,12 +130,10 @@ class _CupertinoSliverAppBarLeading extends StatelessWidget {
         this.leading ??
         (onLeadingPressed == null
             ? null
-            : CupertinoNeutralButtonBuilder(
-                builder: (context) => CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: onLeadingPressed,
-                  child: const Icon(CupertinoIcons.back),
-                ),
+            : NeutralCupertinoButton(
+                padding: EdgeInsets.zero,
+                onPressed: onLeadingPressed,
+                child: const Icon(CupertinoIcons.back),
               ));
     return Row(
       mainAxisSize: MainAxisSize.min,

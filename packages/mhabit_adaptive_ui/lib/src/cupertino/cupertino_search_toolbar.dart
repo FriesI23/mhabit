@@ -912,15 +912,13 @@ class _CupertinoExpandableSearchItemState
                   child: _buildSearchField(expandedWidth),
                 ),
               )
-            : CupertinoNeutralButtonBuilder(
-                builder: (context) => CupertinoButton(
-                  key: const ValueKey('activate-cupertino-search'),
-                  padding: EdgeInsets.zero,
-                  minimumSize: const Size.square(_collapsedExtent),
-                  sizeStyle: CupertinoButtonSize.small,
-                  onPressed: _activateSearch,
-                  child: const Icon(CupertinoIcons.search),
-                ),
+            : NeutralCupertinoButton(
+                key: const ValueKey('activate-cupertino-search'),
+                padding: EdgeInsets.zero,
+                minimumSize: const Size.square(_collapsedExtent),
+                sizeStyle: CupertinoButtonSize.small,
+                onPressed: _activateSearch,
+                child: const Icon(CupertinoIcons.search),
               ),
       ),
     );

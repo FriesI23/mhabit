@@ -49,15 +49,13 @@ class AdaptiveIconButton extends StatelessWidget {
 
   Widget _buildApple(BuildContext context) {
     final button = AdaptiveCupertinoFocusHalo(
-      child: CupertinoNeutralButtonBuilder(
-        builder: (context) => CupertinoButton(
-          padding: EdgeInsets.zero,
-          minimumSize: const Size.square(44),
-          sizeStyle: CupertinoButtonSize.small,
-          focusColor: CupertinoColors.transparent,
-          onPressed: onPressed,
-          child: icon,
-        ),
+      child: NeutralCupertinoButton(
+        padding: EdgeInsets.zero,
+        minimumSize: const Size.square(44),
+        sizeStyle: CupertinoButtonSize.small,
+        focusColor: CupertinoColors.transparent,
+        onPressed: onPressed,
+        child: icon,
       ),
     );
     final tooltip = this.tooltip;

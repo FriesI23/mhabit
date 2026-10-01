@@ -246,14 +246,12 @@ class _CupertinoSelectTopToolbar<T extends Object> extends StatelessWidget {
             child: Semantics(
               button: true,
               label: doneLabel,
-              child: CupertinoNeutralButtonBuilder(
-                builder: (context) => CupertinoButton(
-                  key: const ValueKey('cupertino-select-done'),
-                  padding: EdgeInsets.zero,
-                  minimumSize: const Size.square(44),
-                  onPressed: onDone,
-                  child: const Icon(CupertinoIcons.check_mark),
-                ),
+              child: NeutralCupertinoButton(
+                key: const ValueKey('cupertino-select-done'),
+                padding: EdgeInsets.zero,
+                minimumSize: const Size.square(44),
+                onPressed: onDone,
+                child: const Icon(CupertinoIcons.check_mark),
               ),
             ),
           ),
@@ -507,13 +505,11 @@ class _FixedTextAction extends StatelessWidget {
     child: Semantics(
       button: true,
       label: label,
-      child: CupertinoNeutralButtonBuilder(
-        builder: (context) => CupertinoButton(
-          padding: const EdgeInsetsDirectional.symmetric(horizontal: 8),
-          minimumSize: const Size(44, 44),
-          onPressed: onPressed,
-          child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
-        ),
+      child: NeutralCupertinoButton(
+        padding: const EdgeInsetsDirectional.symmetric(horizontal: 8),
+        minimumSize: const Size(44, 44),
+        onPressed: onPressed,
+        child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
       ),
     ),
   );

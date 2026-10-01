@@ -76,24 +76,31 @@ class CupertinoAppBarActions<T extends Object> extends StatelessWidget {
       maxPrimaryActions: maxPrimaryActions,
       iconBuilder: iconBuilder,
       actionButtonBuilder: (context, action, onPressed, defaultBuilder) =>
-          _buildActionButton(
-            context,
-            action,
-            onPressed,
-            defaultBuilder,
-            primaryAnchors,
+          _CupertinoAppBarActionButton<T>(
+            action: action,
+            onPressed: onPressed,
+            defaultBuilder: defaultBuilder,
+            actionButtonBuilder: actionButtonBuilder,
+            primaryActionDecorator: primaryActionDecorator,
+            onAnchor: (payload, anchorContext) =>
+                primaryAnchors[payload] = anchorContext,
           ),
-      submenuButtonBuilder: _buildSubmenuButton,
+      submenuButtonBuilder: (context, action, onPressed, defaultBuilder) =>
+          _CupertinoAppBarSubmenuButton<T>(
+            action: action,
+            onPressed: onPressed,
+            defaultBuilder: defaultBuilder,
+            submenuButtonBuilder: submenuButtonBuilder,
+          ),
       focusHaloBuilder: focusTheme.buildHalo,
       menuBuilderForAction: menuBuilderForAction,
-      overflowButtonBuilder: (context, onPressed, defaultBuilder) => Builder(
-        builder: (anchorContext) {
-          // Keep the anchor inside the concrete button subtree because the
-          // callback context can resolve to a RenderSliver in a pinned bar.
-          overflowAnchorContext = anchorContext;
-          return _buildOverflowButton(anchorContext, onPressed, defaultBuilder);
-        },
-      ),
+      overflowButtonBuilder: (context, onPressed, defaultBuilder) =>
+          _CupertinoAppBarOverflowButton(
+            onPressed: onPressed,
+            defaultBuilder: defaultBuilder,
+            overflowButtonBuilder: overflowButtonBuilder,
+            onAnchor: (anchorContext) => overflowAnchorContext = anchorContext,
+          ),
       overflowIcon: overflowIcon ?? const Icon(CupertinoIcons.ellipsis),
       overflowTooltip: overflowTooltip,
       tooltipBuilder: tooltipBuilder,
@@ -107,53 +114,76 @@ class CupertinoAppBarActions<T extends Object> extends StatelessWidget {
       resizeDuration: resizeDuration,
     );
   }
+}
 
-  Widget _buildActionButton(
-    BuildContext context,
-    AdaptiveAction<T> action,
-    VoidCallback? onPressed,
-    CupertinoActionButtonDefaultBuilder<T> defaultBuilder,
-    Map<T, BuildContext> primaryAnchors,
-  ) {
-    // Keep the anchor inside the concrete button subtree because [context]
-    // can resolve to a RenderSliver in a pinned bar.
-    return Builder(
-      builder: (anchorContext) {
-        Widget effectiveDefaultBuilder(
-          BuildContext context,
-          AdaptiveAction<T> action,
-          VoidCallback? onPressed,
-        ) => CupertinoNeutralButtonBuilder(
-          builder: (context) => defaultBuilder(context, action, onPressed),
-        );
-
-        final payload = action.payload;
-        if (payload != null) primaryAnchors[payload] = anchorContext;
-        final child =
-            actionButtonBuilder?.call(
-              anchorContext,
-              action,
-              onPressed,
-              effectiveDefaultBuilder,
-            ) ??
-            effectiveDefaultBuilder(anchorContext, action, onPressed);
-        return primaryActionDecorator?.call(anchorContext, action, child) ??
-            child;
-      },
+typedef _PrimaryActionDecorator<T extends Object> =
+    Widget Function(
+      BuildContext context,
+      AdaptiveAction<T> action,
+      Widget child,
     );
-  }
 
-  Widget _buildSubmenuButton(
-    BuildContext context,
-    AdaptiveAction<T> action,
-    VoidCallback? onPressed,
-    CupertinoSubmenuButtonDefaultBuilder<T> defaultBuilder,
-  ) {
+class _CupertinoAppBarActionButton<T extends Object> extends StatelessWidget {
+  const _CupertinoAppBarActionButton({
+    required this.action,
+    required this.onPressed,
+    required this.defaultBuilder,
+    required this.actionButtonBuilder,
+    required this.primaryActionDecorator,
+    required this.onAnchor,
+  });
+
+  final AdaptiveAction<T> action;
+  final VoidCallback? onPressed;
+  final CupertinoActionButtonDefaultBuilder<T> defaultBuilder;
+  final CupertinoActionButtonBuilder<T>? actionButtonBuilder;
+  final _PrimaryActionDecorator<T>? primaryActionDecorator;
+  final void Function(T payload, BuildContext context) onAnchor;
+
+  @override
+  Widget build(BuildContext context) {
     Widget effectiveDefaultBuilder(
       BuildContext context,
       AdaptiveAction<T> action,
       VoidCallback? onPressed,
-    ) => CupertinoNeutralButtonBuilder(
+    ) => NeutralCupertinoButtonBuilder(
+      builder: (context) => defaultBuilder(context, action, onPressed),
+    );
+
+    final payload = action.payload;
+    if (payload != null) onAnchor(payload, context);
+    final child =
+        actionButtonBuilder?.call(
+          context,
+          action,
+          onPressed,
+          effectiveDefaultBuilder,
+        ) ??
+        effectiveDefaultBuilder(context, action, onPressed);
+    return primaryActionDecorator?.call(context, action, child) ?? child;
+  }
+}
+
+class _CupertinoAppBarSubmenuButton<T extends Object> extends StatelessWidget {
+  const _CupertinoAppBarSubmenuButton({
+    required this.action,
+    required this.onPressed,
+    required this.defaultBuilder,
+    required this.submenuButtonBuilder,
+  });
+
+  final AdaptiveAction<T> action;
+  final VoidCallback? onPressed;
+  final CupertinoSubmenuButtonDefaultBuilder<T> defaultBuilder;
+  final CupertinoSubmenuButtonBuilder<T>? submenuButtonBuilder;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget effectiveDefaultBuilder(
+      BuildContext context,
+      AdaptiveAction<T> action,
+      VoidCallback? onPressed,
+    ) => NeutralCupertinoButtonBuilder(
       builder: (context) => defaultBuilder(context, action, onPressed),
     );
 
@@ -165,17 +195,32 @@ class CupertinoAppBarActions<T extends Object> extends StatelessWidget {
         ) ??
         effectiveDefaultBuilder(context, action, onPressed);
   }
+}
 
-  Widget _buildOverflowButton(
-    BuildContext context,
-    VoidCallback onPressed,
-    CupertinoOverflowButtonDefaultBuilder defaultBuilder,
-  ) {
+class _CupertinoAppBarOverflowButton extends StatelessWidget {
+  const _CupertinoAppBarOverflowButton({
+    required this.onPressed,
+    required this.defaultBuilder,
+    required this.overflowButtonBuilder,
+    required this.onAnchor,
+  });
+
+  final VoidCallback onPressed;
+  final CupertinoOverflowButtonDefaultBuilder defaultBuilder;
+  final CupertinoOverflowButtonBuilder? overflowButtonBuilder;
+  final ValueChanged<BuildContext> onAnchor;
+
+  @override
+  Widget build(BuildContext context) {
+    // Keep the anchor inside the concrete button subtree because the callback
+    // context can resolve to a RenderSliver in a pinned bar.
+    onAnchor(context);
+
     Widget effectiveDefaultBuilder(
       BuildContext context,
       VoidCallback onPressed, {
       Widget? icon,
-    }) => CupertinoNeutralButtonBuilder(
+    }) => NeutralCupertinoButtonBuilder(
       builder: (context) => defaultBuilder(context, onPressed, icon: icon),
     );
 

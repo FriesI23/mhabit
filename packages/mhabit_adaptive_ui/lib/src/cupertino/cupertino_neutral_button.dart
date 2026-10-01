@@ -39,15 +39,86 @@ class AdaptiveCupertinoButtonThemeData
   }
 }
 
-/// Builds a package-owned Cupertino button with a neutral app foreground.
+/// A [CupertinoButton] with the app's neutral foreground policy.
 ///
-/// [builder] is invoked below the local theme so the button retains its
-/// existing text, icon, pressed, disabled, focus, and semantics behavior.
-class CupertinoNeutralButtonBuilder extends StatelessWidget {
-  /// Creates a neutral Cupertino button build boundary.
-  const CupertinoNeutralButtonBuilder({super.key, required this.builder});
+/// Interaction, focus, disabled, and semantics behavior remain owned by the
+/// Flutter button. An explicit [foregroundColor] overrides the app default.
+class NeutralCupertinoButton extends StatelessWidget {
+  const NeutralCupertinoButton({
+    super.key,
+    required this.child,
+    this.sizeStyle = CupertinoButtonSize.large,
+    this.padding,
+    this.color,
+    this.foregroundColor,
+    this.disabledColor = CupertinoColors.quaternarySystemFill,
+    this.minimumSize,
+    this.pressedOpacity = 0.4,
+    this.borderRadius,
+    this.alignment = Alignment.center,
+    this.focusColor,
+    this.focusNode,
+    this.onFocusChange,
+    this.autofocus = false,
+    this.mouseCursor,
+    this.onLongPress,
+    required this.onPressed,
+  });
 
-  /// Builds the button below the locally overridden Cupertino theme.
+  final Widget child;
+  final CupertinoButtonSize sizeStyle;
+  final EdgeInsetsGeometry? padding;
+  final Color? color;
+  final Color? foregroundColor;
+  final Color disabledColor;
+  final Size? minimumSize;
+  final double? pressedOpacity;
+  final BorderRadius? borderRadius;
+  final AlignmentGeometry alignment;
+  final Color? focusColor;
+  final FocusNode? focusNode;
+  final ValueChanged<bool>? onFocusChange;
+  final bool autofocus;
+  final MouseCursor? mouseCursor;
+  final VoidCallback? onLongPress;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) => CupertinoTheme(
+    data: CupertinoTheme.of(context).copyWith(
+      primaryColor:
+          AdaptiveCupertinoButtonThemeData.of(context).neutralForegroundColor ??
+          CupertinoColors.label,
+    ),
+    child: CupertinoButton(
+      sizeStyle: sizeStyle,
+      padding: padding,
+      color: color,
+      foregroundColor: foregroundColor,
+      disabledColor: disabledColor,
+      minimumSize: minimumSize,
+      pressedOpacity: pressedOpacity,
+      borderRadius: borderRadius,
+      alignment: alignment,
+      focusColor: focusColor,
+      focusNode: focusNode,
+      onFocusChange: onFocusChange,
+      autofocus: autofocus,
+      mouseCursor: mouseCursor,
+      onLongPress: onLongPress,
+      onPressed: onPressed,
+      child: child,
+    ),
+  );
+}
+
+/// Internal theme boundary for package callbacks that build their own button.
+///
+/// This type is intentionally omitted from the package barrel API. Direct
+/// callers should use [NeutralCupertinoButton].
+class NeutralCupertinoButtonBuilder extends StatelessWidget {
+  const NeutralCupertinoButtonBuilder({super.key, required this.builder});
+
   final WidgetBuilder builder;
 
   @override

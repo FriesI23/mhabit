@@ -160,14 +160,12 @@ class AppleGroupManageItemActions extends StatelessWidget {
               )
             : selectionMode
             ? const SizedBox.square(dimension: 44)
-            : CupertinoNeutralButtonBuilder(
-                builder: (context) => CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () => menuController.isOpen
-                      ? menuController.close()
-                      : menuController.open(),
-                  child: const Icon(CupertinoIcons.ellipsis),
-                ),
+            : NeutralCupertinoButton(
+                padding: EdgeInsets.zero,
+                onPressed: () => menuController.isOpen
+                    ? menuController.close()
+                    : menuController.open(),
+                child: const Icon(CupertinoIcons.ellipsis),
               ),
       ),
     );

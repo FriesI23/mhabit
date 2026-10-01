@@ -785,14 +785,12 @@ class CupertinoAdaptiveModal extends StatelessWidget {
         ? Semantics(
             label: MaterialLocalizations.of(context).closeButtonLabel,
             button: true,
-            child: CupertinoNeutralButtonBuilder(
-              builder: (context) => CupertinoButton(
-                key: const ValueKey('adaptive-modal-implied-close'),
-                sizeStyle: CupertinoButtonSize.small,
-                padding: EdgeInsets.zero,
-                onPressed: onCloseRequested,
-                child: const Icon(CupertinoIcons.xmark),
-              ),
+            child: NeutralCupertinoButton(
+              key: const ValueKey('adaptive-modal-implied-close'),
+              sizeStyle: CupertinoButtonSize.small,
+              padding: EdgeInsets.zero,
+              onPressed: onCloseRequested,
+              child: const Icon(CupertinoIcons.xmark),
             ),
           )
         : null;

@@ -288,7 +288,7 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
             expandLabel: widget.expandNavigationLabel,
             collapseLabel: widget.collapseNavigationLabel,
             toggleButtonBuilder: (context, defaultBuilder) =>
-                CupertinoNeutralButtonBuilder(builder: defaultBuilder),
+                NeutralCupertinoButtonBuilder(builder: defaultBuilder),
             scaffoldBackgroundColor: scaffoldBackground,
             child: branch,
           ),
@@ -305,7 +305,7 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
             expandLabel: widget.expandNavigationLabel,
             collapseLabel: widget.collapseNavigationLabel,
             toggleButtonBuilder: (context, defaultBuilder) =>
-                CupertinoNeutralButtonBuilder(builder: defaultBuilder),
+                NeutralCupertinoButtonBuilder(builder: defaultBuilder),
             backgroundColor: widget.sidebarBackgroundColor,
             scaffoldBackgroundColor: scaffoldBackground,
             child: branch,

@@ -190,7 +190,7 @@ void main() {
     final searchRegion = tester.widget<AnimatedContainer>(
       find.byKey(const ValueKey('cupertino-expandable-search-region')),
     );
-    expect(searchRegion.child, isA<CupertinoNeutralButtonBuilder>());
+    expect(searchRegion.child, isA<NeutralCupertinoButton>());
     final searchIconContext = tester.element(
       find.byIcon(CupertinoIcons.search),
     );
