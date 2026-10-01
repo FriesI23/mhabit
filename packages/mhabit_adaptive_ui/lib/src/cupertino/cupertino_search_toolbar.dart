@@ -9,6 +9,7 @@ import '../adaptive/adaptive_app_bar_actions.dart';
 import '../shell/sidebar_adapter.dart';
 import '../window_control/toolbar_geometry.dart';
 import 'cupertino_focus_halo_clip.dart';
+import 'cupertino_neutral_button.dart';
 import 'cupertino_toolbar_padding.dart';
 
 const double _toolbarItemExtent = kMinInteractiveDimensionCupertino;
@@ -911,13 +912,15 @@ class _CupertinoExpandableSearchItemState
                   child: _buildSearchField(expandedWidth),
                 ),
               )
-            : CupertinoButton(
-                key: const ValueKey('activate-cupertino-search'),
-                padding: EdgeInsets.zero,
-                minimumSize: const Size.square(_collapsedExtent),
-                sizeStyle: CupertinoButtonSize.small,
-                onPressed: _activateSearch,
-                child: const Icon(CupertinoIcons.search),
+            : CupertinoNeutralButtonBuilder(
+                builder: (context) => CupertinoButton(
+                  key: const ValueKey('activate-cupertino-search'),
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size.square(_collapsedExtent),
+                  sizeStyle: CupertinoButtonSize.small,
+                  onPressed: _activateSearch,
+                  child: const Icon(CupertinoIcons.search),
+                ),
               ),
       ),
     );

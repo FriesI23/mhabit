@@ -1,4 +1,9 @@
-import 'package:flutter/cupertino.dart' show CupertinoButton, CupertinoColors;
+import 'package:flutter/cupertino.dart'
+    show
+        CupertinoButton,
+        CupertinoColors,
+        CupertinoDynamicColor,
+        CupertinoThemeData;
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,15 +13,118 @@ Widget _host({
   required TargetPlatform platform,
   required Widget child,
   AdaptiveCupertinoFocusThemeData? focusTheme,
+  Color? neutralForegroundColor,
+  Brightness brightness = Brightness.light,
 }) => MaterialApp(
   theme: ThemeData(
     platform: platform,
-    extensions: [focusTheme ?? const AdaptiveCupertinoFocusThemeData()],
+    brightness: brightness,
+    cupertinoOverrideTheme: CupertinoThemeData(
+      brightness: brightness,
+      primaryColor: CupertinoColors.systemPurple,
+    ),
+    extensions: [
+      focusTheme ?? const AdaptiveCupertinoFocusThemeData(),
+      if (neutralForegroundColor != null)
+        AdaptiveCupertinoButtonThemeData(
+          neutralForegroundColor: neutralForegroundColor,
+        ),
+    ],
   ),
   home: Scaffold(body: Center(child: child)),
 );
 
 void main() {
+  for (final brightness in Brightness.values) {
+    testWidgets('Apple button uses label in ${brightness.name}', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _host(
+          platform: TargetPlatform.iOS,
+          brightness: brightness,
+          child: AdaptiveIconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {},
+          ),
+        ),
+      );
+
+      final button = tester.widget<CupertinoButton>(
+        find.byType(CupertinoButton),
+      );
+      final iconContext = tester.element(find.byIcon(Icons.settings));
+      expect(button.foregroundColor, isNull);
+      expect(
+        IconTheme.of(iconContext).color,
+        CupertinoDynamicColor.resolve(CupertinoColors.label, iconContext),
+      );
+    });
+  }
+
+  testWidgets('Apple button uses the configured blended foreground', (
+    tester,
+  ) async {
+    const blended = Color(0xFF57525F);
+    await tester.pumpWidget(
+      _host(
+        platform: TargetPlatform.iOS,
+        neutralForegroundColor: blended,
+        child: AdaptiveIconButton(
+          icon: const Icon(Icons.settings),
+          onPressed: () {},
+        ),
+      ),
+    );
+
+    final iconContext = tester.element(find.byIcon(Icons.settings));
+    expect(IconTheme.of(iconContext).color, blended);
+  });
+
+  testWidgets('Apple button preserves disabled and explicit icon colors', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        platform: TargetPlatform.iOS,
+        child: const AdaptiveIconButton(
+          icon: Icon(Icons.settings),
+          onPressed: null,
+        ),
+      ),
+    );
+
+    var button = tester.widget<CupertinoButton>(find.byType(CupertinoButton));
+    var iconContext = tester.element(find.byIcon(Icons.settings));
+    expect(button.foregroundColor, isNull);
+    expect(
+      IconTheme.of(iconContext).color,
+      CupertinoDynamicColor.resolve(CupertinoColors.tertiaryLabel, iconContext),
+    );
+
+    await tester.pumpWidget(
+      _host(
+        platform: TargetPlatform.iOS,
+        child: AdaptiveIconButton(
+          icon: const Icon(Icons.settings, color: Colors.green),
+          onPressed: () {},
+        ),
+      ),
+    );
+
+    button = tester.widget<CupertinoButton>(find.byType(CupertinoButton));
+    iconContext = tester.element(find.byIcon(Icons.settings));
+    expect(button.foregroundColor, isNull);
+    expect(
+      tester.widget<Icon>(find.byIcon(Icons.settings)).color,
+      Colors.green,
+    );
+    expect(
+      IconTheme.of(iconContext).color,
+      CupertinoDynamicColor.resolve(CupertinoColors.label, iconContext),
+    );
+  });
+
   testWidgets('uses Material IconButton on Material platforms', (tester) async {
     await tester.pumpWidget(
       _host(

@@ -14,6 +14,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../widgets/widgets.dart';
@@ -132,32 +133,43 @@ class AppleGroupManageItemActions extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) => CupertinoMenuAnchor(
-    controller: controller.menuController,
-    menuChildren: buildMenuChildren(
+  Widget build(BuildContext context) {
+    final dragHandleColor = CupertinoDynamicColor.resolve(
+      CupertinoColors.secondaryLabel,
       context,
-      onEdit: onEdit,
-      onDelete: onDelete,
-    ),
-    builder: (context, menuController, child) => KeyedSubtree(
-      key: controller.anchorKey,
-      child: showDragHandle
-          ? ReorderableGridDragStartListener(
-              index: index,
-              child: const SizedBox.square(
-                dimension: 44,
-                child: Icon(CupertinoIcons.line_horizontal_3),
+    );
+    return CupertinoMenuAnchor(
+      controller: controller.menuController,
+      menuChildren: buildMenuChildren(
+        context,
+        onEdit: onEdit,
+        onDelete: onDelete,
+      ),
+      builder: (context, menuController, child) => KeyedSubtree(
+        key: controller.anchorKey,
+        child: showDragHandle
+            ? ReorderableGridDragStartListener(
+                index: index,
+                child: SizedBox.square(
+                  dimension: 44,
+                  child: Icon(
+                    CupertinoIcons.line_horizontal_3,
+                    color: dragHandleColor,
+                  ),
+                ),
+              )
+            : selectionMode
+            ? const SizedBox.square(dimension: 44)
+            : CupertinoNeutralButtonBuilder(
+                builder: (context) => CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () => menuController.isOpen
+                      ? menuController.close()
+                      : menuController.open(),
+                  child: const Icon(CupertinoIcons.ellipsis),
+                ),
               ),
-            )
-          : selectionMode
-          ? const SizedBox.square(dimension: 44)
-          : CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: () => menuController.isOpen
-                  ? menuController.close()
-                  : menuController.open(),
-              child: const Icon(CupertinoIcons.ellipsis),
-            ),
-    ),
-  );
+      ),
+    );
+  }
 }

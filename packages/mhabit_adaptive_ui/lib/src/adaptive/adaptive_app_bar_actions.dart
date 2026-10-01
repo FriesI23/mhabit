@@ -75,6 +75,7 @@ final class CupertinoAppBarActionsConfig<T extends Object>
     this.overflowIcon,
     this.presentationForAction,
     this.actionButtonBuilder,
+    this.submenuButtonBuilder,
     this.menuBuilderForAction,
     this.overflowButtonBuilder,
     this.onOverflowMenuOpened,
@@ -84,7 +85,9 @@ final class CupertinoAppBarActionsConfig<T extends Object>
   final CupertinoActionIconBuilder<T>? iconBuilder;
   final Widget? overflowIcon;
   final CupertinoActionPresentationCallback<T>? presentationForAction;
+
   final CupertinoActionButtonBuilder<T>? actionButtonBuilder;
+  final CupertinoSubmenuButtonBuilder<T>? submenuButtonBuilder;
   final CupertinoActionMenuBuilder<T>? menuBuilderForAction;
   final CupertinoOverflowButtonBuilder? overflowButtonBuilder;
   final VoidCallback? onOverflowMenuOpened;
@@ -242,6 +245,7 @@ class AdaptiveAppBarActions<T extends Object> extends StatelessWidget {
       primaryActionDecorator: primaryActionDecorator,
       presentationForAction: config.presentationForAction,
       actionButtonBuilder: config.actionButtonBuilder,
+      submenuButtonBuilder: config.submenuButtonBuilder,
       menuBuilderForAction: config.menuBuilderForAction,
       overflowButtonBuilder: config.overflowButtonBuilder,
       tooltipBuilder: _buildAppBarActionTooltip,

@@ -315,7 +315,7 @@ class HabitDisplayViewActions extends StatelessWidget {
     };
   }
 
-  Widget _appleIcon(
+  Widget? _appleIcon(
     AdaptiveAction<HabitDisplayViewAction> action,
     HabitDisplayOptionsActionsData<HabitDisplayViewAction> displayOptionActions,
   ) {
@@ -323,9 +323,7 @@ class HabitDisplayViewActions extends StatelessWidget {
     if (optionIcon != null) return optionIcon;
     return switch (action.payload) {
       HabitDisplayViewOptionAction() => const Icon(CupertinoIcons.ellipsis),
-      HabitDisplayViewSelectAction() => const Icon(
-        CupertinoIcons.checkmark_alt_circle,
-      ),
+      HabitDisplayViewSelectAction() => null,
       HabitDisplayViewOpenSettingsAction() => const AppSettingsIcon.apple(),
       HabitDisplayViewStatisticsAction() => const Icon(
         CupertinoIcons.chart_bar,
@@ -360,20 +358,12 @@ class HabitDisplayViewActions extends StatelessWidget {
     VoidCallback? onPressed,
     CupertinoActionButtonDefaultBuilder<HabitDisplayViewAction> defaultBuilder,
   ) => switch (action.payload) {
-    HabitDisplayViewSelectAction() => AdaptiveCupertinoFocusHalo(
-      child: CupertinoButton(
-        key: const ValueKey('habit-select-primary'),
-        sizeStyle: CupertinoButtonSize.small,
-        focusColor: CupertinoColors.transparent,
-        onPressed: onPressed,
-        child: Text(action.metadata.label, maxLines: 1, softWrap: false),
-      ),
-    ),
     HabitDisplayViewOpenSettingsAction() => AppSettingsButton(
       key: const ValueKey('open-settings-action'),
       tooltip: action.metadata.tooltip,
       onPressed: onPressed,
     ),
+    HabitDisplayViewSelectAction() ||
     HabitDisplayViewStatisticsAction() ||
     HabitDisplayViewOptionAction() ||
     null => defaultBuilder(context, action, onPressed),

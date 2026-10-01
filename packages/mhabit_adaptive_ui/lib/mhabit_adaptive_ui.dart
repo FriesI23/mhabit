@@ -49,6 +49,8 @@ export 'src/cupertino/cupertino_floating_surface.dart';
 export 'src/cupertino/cupertino_ink_well.dart';
 export 'src/cupertino/cupertino_navigation_primary_action.dart'
     show CupertinoNavigationPrimaryAction;
+export 'src/cupertino/cupertino_neutral_button.dart'
+    show AdaptiveCupertinoButtonThemeData, CupertinoNeutralButtonBuilder;
 export 'src/cupertino/cupertino_sliver_search_bar.dart';
 export 'src/cupertino/cupertino_sliver_select_app_bar.dart';
 export 'src/material/app_bar_material_style.dart'

@@ -16,7 +16,6 @@ import 'package:adaptive_actions/material.dart';
 import 'package:flutter/cupertino.dart'
     show
         CupertinoButton,
-        CupertinoButtonSize,
         CupertinoIcons,
         CupertinoMenuDivider,
         CupertinoMenuItem,
@@ -1474,10 +1473,20 @@ void main() {
 
     final select = find.widgetWithText(CupertinoButton, 'Select');
     expect(select, findsOneWidget);
-    final button = tester.widget<CupertinoButton>(select);
-    expect(button.sizeStyle, CupertinoButtonSize.small);
-    expect(button.padding, isNull);
-    expect(button.minimumSize, isNull);
+    final searchActions = tester
+        .widget<AdaptiveAppBarActions<HabitDisplaySearchAction>>(
+          adaptiveActions(),
+        );
+    final searchSelectAction = searchActions.collection.roots.singleWhere(
+      (action) => action.payload is HabitDisplaySearchSelectAction,
+    );
+    expect(
+      searchActions.apple!.iconBuilder!(
+        tester.element(select),
+        searchSelectAction,
+      ),
+      isNull,
+    );
     final selectLabel = tester.widget<Text>(find.text('Select'));
     expect(selectLabel.maxLines, 1);
     expect(selectLabel.softWrap, isFalse);
@@ -1514,15 +1523,22 @@ void main() {
 
     final select = find.widgetWithText(CupertinoButton, 'Select');
     expect(select, findsOneWidget);
-    final button = tester.widget<CupertinoButton>(select);
-    expect(button.sizeStyle, CupertinoButtonSize.small);
-    expect(button.padding, isNull);
-    expect(button.minimumSize, isNull);
+    final viewActions = tester
+        .widget<AdaptiveAppBarActions<HabitDisplayViewAction>>(
+          adaptiveActions(),
+        );
+    final viewSelectAction = viewActions.collection.roots.singleWhere(
+      (action) => action.payload is HabitDisplayViewSelectAction,
+    );
+    expect(
+      viewActions.apple!.iconBuilder!(tester.element(select), viewSelectAction),
+      isNull,
+    );
     await tester.tap(select);
     expect(selected, isTrue);
   });
 
-  testWidgets('Apple habits Select keeps its localized intrinsic label width', (
+  testWidgets('Apple habits Select keeps a tight localized label button', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(800, 800);
@@ -1540,7 +1556,10 @@ void main() {
     );
     var select = find.widgetWithText(CupertinoButton, 'Select');
     expect(select, findsOneWidget);
-    expect(tester.getSize(select).width, greaterThan(44));
+    expect(
+      tester.getSize(select).width - tester.getSize(find.text('Select')).width,
+      moreOrLessEquals(20),
+    );
     expect(
       find.descendant(of: select, matching: find.byType(FittedBox)),
       findsNothing,
@@ -1563,7 +1582,11 @@ void main() {
     );
     select = find.widgetWithText(CupertinoButton, 'Sélectionner');
     expect(select, findsOneWidget);
-    expect(tester.getSize(select).width, greaterThan(44));
+    expect(
+      tester.getSize(select).width -
+          tester.getSize(find.text('Sélectionner')).width,
+      moreOrLessEquals(20),
+    );
     expect(
       find.descendant(of: select, matching: find.byType(FittedBox)),
       findsNothing,

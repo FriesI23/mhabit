@@ -27,8 +27,16 @@ ActionCollection<String> _collection() => ActionCollection<String>(
   ],
 );
 
-Widget _app(Widget child) => MaterialApp(
-  theme: ThemeData(platform: TargetPlatform.iOS),
+Widget _app(Widget child, {Color? neutralForegroundColor}) => MaterialApp(
+  theme: ThemeData(
+    platform: TargetPlatform.iOS,
+    extensions: [
+      if (neutralForegroundColor != null)
+        AdaptiveCupertinoButtonThemeData(
+          neutralForegroundColor: neutralForegroundColor,
+        ),
+    ],
+  ),
   home: Scaffold(body: CustomScrollView(slivers: [child])),
 );
 
@@ -112,6 +120,33 @@ void main() {
     await tester.tap(find.byIcon(CupertinoIcons.pencil));
     await tester.pump();
     expect(invoked, 'edit');
+  });
+
+  testWidgets('Done check follows the neutral button theme', (tester) async {
+    tester.view.physicalSize = const Size(800, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    const blended = Color(0xFF57525F);
+
+    await tester.pumpWidget(
+      _app(
+        CupertinoSliverSelectAppBar<String>(
+          title: const Text('Selected 2'),
+          selectAllLabel: 'Select All',
+          doneLabel: 'Done',
+          onSelectAll: () {},
+          onDone: () {},
+          collection: _collection(),
+          onInvoke: (_, _) {},
+        ),
+        neutralForegroundColor: blended,
+      ),
+    );
+
+    final iconContext = tester.element(find.byIcon(CupertinoIcons.check_mark));
+    expect(IconTheme.of(iconContext).color, blended);
+    final selectAllContext = tester.element(find.text('Select All'));
+    expect(DefaultTextStyle.of(selectAllContext).style.color, blended);
   });
 
   testWidgets('compact bottom toolbar uses the same collection', (

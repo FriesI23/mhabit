@@ -14,6 +14,7 @@ import 'apple_sidebar_style.dart';
 import 'cupertino_adaptive_navigation_bar.dart';
 import 'cupertino_floating_surface.dart';
 import 'cupertino_navigation_primary_action.dart';
+import 'cupertino_neutral_button.dart';
 
 /// Composes the Cupertino renderers around style-neutral shell mechanics.
 ///
@@ -286,6 +287,8 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
             dragHandleBuilder: widget.dragHandleBuilder,
             expandLabel: widget.expandNavigationLabel,
             collapseLabel: widget.collapseNavigationLabel,
+            toggleButtonBuilder: (context, defaultBuilder) =>
+                CupertinoNeutralButtonBuilder(builder: defaultBuilder),
             scaffoldBackgroundColor: scaffoldBackground,
             child: branch,
           ),
@@ -301,6 +304,8 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
             dragHandleBuilder: widget.dragHandleBuilder,
             expandLabel: widget.expandNavigationLabel,
             collapseLabel: widget.collapseNavigationLabel,
+            toggleButtonBuilder: (context, defaultBuilder) =>
+                CupertinoNeutralButtonBuilder(builder: defaultBuilder),
             backgroundColor: widget.sidebarBackgroundColor,
             scaffoldBackgroundColor: scaffoldBackground,
             child: branch,

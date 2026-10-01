@@ -12,6 +12,7 @@ import '../adaptive/adaptive_sheet.dart';
 import '../adaptive/modal_sheet_drag_region.dart';
 import '../window_control/cupertino_navigation_bar.dart';
 import '../window_control/modal_app_bar_region.dart';
+import 'cupertino_neutral_button.dart';
 
 const _sheetHeightFactor = 0.92;
 const _sheetPopupSurfaceBottomOverflow = 13.0;
@@ -784,12 +785,14 @@ class CupertinoAdaptiveModal extends StatelessWidget {
         ? Semantics(
             label: MaterialLocalizations.of(context).closeButtonLabel,
             button: true,
-            child: CupertinoButton(
-              key: const ValueKey('adaptive-modal-implied-close'),
-              sizeStyle: CupertinoButtonSize.small,
-              padding: EdgeInsets.zero,
-              onPressed: onCloseRequested,
-              child: const Icon(CupertinoIcons.xmark),
+            child: CupertinoNeutralButtonBuilder(
+              builder: (context) => CupertinoButton(
+                key: const ValueKey('adaptive-modal-implied-close'),
+                sizeStyle: CupertinoButtonSize.small,
+                padding: EdgeInsets.zero,
+                onPressed: onCloseRequested,
+                child: const Icon(CupertinoIcons.xmark),
+              ),
             ),
           )
         : null;

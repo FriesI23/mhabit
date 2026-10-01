@@ -8,8 +8,7 @@
 
 import 'package:adaptive_actions/cupertino.dart';
 import 'package:adaptive_actions/material.dart';
-import 'package:flutter/cupertino.dart'
-    show CupertinoButton, CupertinoButtonSize, CupertinoColors, CupertinoIcons;
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
@@ -474,7 +473,7 @@ class HabitDisplaySearchActions extends StatelessWidget {
     };
   }
 
-  Widget _appleIcon(
+  Widget? _appleIcon(
     AdaptiveAction<HabitDisplaySearchAction> action,
     HabitDisplayOptionsActionsData<HabitDisplaySearchAction>
     displayOptionActions,
@@ -505,9 +504,7 @@ class HabitDisplaySearchActions extends StatelessWidget {
     }
     return switch (payload) {
       HabitDisplaySearchOptionAction() => const Icon(CupertinoIcons.ellipsis),
-      HabitDisplaySearchSelectAction() => const Icon(
-        CupertinoIcons.checkmark_alt_circle,
-      ),
+      HabitDisplaySearchSelectAction() => null,
       HabitDisplaySearchOpenSettingsAction() => const AppSettingsIcon.apple(),
       HabitDisplaySearchStatisticsAction() => const Icon(
         CupertinoIcons.chart_bar,
@@ -568,20 +565,12 @@ class HabitDisplaySearchActions extends StatelessWidget {
     CupertinoActionButtonDefaultBuilder<HabitDisplaySearchAction>
     defaultBuilder,
   ) => switch (action.payload) {
-    HabitDisplaySearchSelectAction() => AdaptiveCupertinoFocusHalo(
-      child: CupertinoButton(
-        key: const ValueKey('habit-select-primary'),
-        sizeStyle: CupertinoButtonSize.small,
-        focusColor: CupertinoColors.transparent,
-        onPressed: onPressed,
-        child: Text(action.metadata.label, maxLines: 1, softWrap: false),
-      ),
-    ),
     HabitDisplaySearchOpenSettingsAction() => AppSettingsButton(
       key: const ValueKey('open-settings-action'),
       tooltip: action.metadata.tooltip,
       onPressed: onPressed,
     ),
+    HabitDisplaySearchSelectAction() ||
     HabitDisplaySearchStatisticsAction() ||
     HabitDisplaySearchOptionAction() ||
     ToggleHabitDisplaySearchStatus() ||
