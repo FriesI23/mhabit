@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart'
-    show CupertinoDynamicColor, CupertinoTextThemeData, CupertinoThemeData;
+    show
+        CupertinoColors,
+        CupertinoDynamicColor,
+        CupertinoTextThemeData,
+        CupertinoThemeData;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,7 +16,10 @@ import 'package:mhabit/theme/color.dart';
 import 'package:mhabit/theme/linux_bundled_font.dart';
 import 'package:mhabit/widgets/styles.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart'
-    show AdaptiveCupertinoFocusThemeData, CupertinoSidebarThemeData;
+    show
+        AdaptiveCupertinoButtonThemeData,
+        AdaptiveCupertinoFocusThemeData,
+        CupertinoSidebarThemeData;
 
 void _withPlatform(TargetPlatform platform, void Function() body) {
   debugDefaultTargetPlatformOverride = platform;
@@ -227,6 +234,12 @@ void main() {
           theme.extension<CupertinoSidebarThemeData>()?.focusHaloBuilder,
           isNotNull,
         );
+        expect(
+          theme
+              .extension<AdaptiveCupertinoButtonThemeData>()
+              ?.neutralForegroundColor,
+          CupertinoColors.label,
+        );
       });
     });
 
@@ -244,6 +257,28 @@ void main() {
         expect(
           theme.extension<CupertinoSidebarThemeData>()?.edgeBackgroundColor,
           theme.colorScheme.surfaceContainer,
+        );
+        expect(
+          theme
+              .extension<AdaptiveCupertinoButtonThemeData>()
+              ?.neutralForegroundColor,
+          theme.colorScheme.onSurfaceVariant,
+        );
+      });
+    });
+
+    test('dark non-system palettes use the blended Material icon color', () {
+      _withPlatform(TargetPlatform.macOS, () {
+        final theme = builder.buildDark(
+          themeColor: const PrimaryAppThemeColor(),
+          themeMainColor: fallbackMainColor,
+        );
+
+        expect(
+          theme
+              .extension<AdaptiveCupertinoButtonThemeData>()
+              ?.neutralForegroundColor,
+          theme.colorScheme.onSurfaceVariant,
         );
       });
     });

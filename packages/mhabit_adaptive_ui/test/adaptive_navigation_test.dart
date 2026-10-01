@@ -4,6 +4,8 @@ import 'package:adaptive_actions/core.dart';
 import 'package:flutter/cupertino.dart'
     show
         CupertinoButton,
+        CupertinoColors,
+        CupertinoDynamicColor,
         CupertinoIcons,
         CupertinoNavigationBar,
         CupertinoPageScaffoldBackgroundColor,
@@ -4298,6 +4300,15 @@ void main() {
       expect(toggle, findsOneWidget);
       expect(toggle.hitTestable(), findsOneWidget);
       expect(tester.getSize(toggle), const Size.square(44));
+      final toggleIcon = find.descendant(
+        of: toggle,
+        matching: find.byType(Icon),
+      );
+      final toggleIconContext = tester.element(toggleIcon);
+      expect(
+        IconTheme.of(toggleIconContext).color,
+        CupertinoDynamicColor.resolve(CupertinoColors.label, toggleIconContext),
+      );
       expect(
         tester
                 .getTopRight(

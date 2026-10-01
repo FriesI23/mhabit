@@ -17,6 +17,8 @@ import 'package:flutter/cupertino.dart'
     show
         CupertinoButton,
         CupertinoCheckbox,
+        CupertinoColors,
+        CupertinoDynamicColor,
         CupertinoIcons,
         CupertinoMenuAnchor;
 import 'package:flutter/foundation.dart';
@@ -193,6 +195,7 @@ Future<GroupManageViewModel> _pumpPage(
   double textScale = 1,
   Brightness brightness = Brightness.light,
   Color? adaptiveSurface,
+  Color? neutralForegroundColor,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = size;
@@ -223,6 +226,10 @@ Future<GroupManageViewModel> _pumpPage(
           extensions: [
             if (adaptiveSurface != null)
               AdaptiveListThemeData(surfaceColor: adaptiveSurface),
+            if (neutralForegroundColor != null)
+              AdaptiveCupertinoButtonThemeData(
+                neutralForegroundColor: neutralForegroundColor,
+              ),
           ],
         ),
         builder: (context, child) => Directionality(
@@ -259,6 +266,53 @@ List<dynamic> _actionRoots(WidgetTester tester) =>
     List<dynamic>.from(_actionsWidget(tester).collection.roots as Iterable);
 
 void main() {
+  testWidgets('Apple item actions distinguish buttons from drag handles', (
+    tester,
+  ) async {
+    const appleForeground = Color(0xff57525f);
+    final appleFixture = await _createFixture();
+    addTearDown(appleFixture.dispose);
+    addTearDown(tester.view.reset);
+    final appleVm = await _pumpPage(
+      tester,
+      fixture: appleFixture,
+      platform: TargetPlatform.macOS,
+      neutralForegroundColor: appleForeground,
+    );
+    await tester.pumpAndSettle();
+
+    final firstAppleRow = find.byKey(const ValueKey('group-1'));
+    final more = find.descendant(
+      of: firstAppleRow,
+      matching: find.byIcon(CupertinoIcons.ellipsis),
+    );
+    expect(more, findsOneWidget);
+    expect(IconTheme.of(tester.element(more)).color, appleForeground);
+
+    await appleVm.setSortOptions(
+      HabitDisplayGroupType.manual,
+      HabitDisplaySortDirection.asc,
+    );
+    await tester.pumpAndSettle();
+    final appleHandle = tester.widget<Icon>(
+      find
+          .descendant(
+            of: firstAppleRow,
+            matching: find.byIcon(CupertinoIcons.line_horizontal_3),
+          )
+          .first,
+    );
+    expect(
+      appleHandle.color,
+      CupertinoDynamicColor.resolve(
+        CupertinoColors.secondaryLabel,
+        tester.element(firstAppleRow),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pumpAndSettle();
+  });
+
   for (final brightness in Brightness.values) {
     for (final width in [320.0, 900.0]) {
       testWidgets(

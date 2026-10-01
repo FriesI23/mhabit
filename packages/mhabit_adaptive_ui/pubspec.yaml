@@ -9,11 +9,11 @@ environment:
   flutter: ">=3.44.0"
 
 dependencies:
-  adaptive_actions: ^0.7.0
+  adaptive_actions: ^0.7.1
   copy_with_extension: ^17.0.0
   flutter:
     sdk: flutter
-  flutter_adaptive_sidebar: ^0.3.0
+  flutter_adaptive_sidebar: ^0.3.1
   ios_window_control_layout: ^0.5.0
   sliver_tools: ^0.2.9
 

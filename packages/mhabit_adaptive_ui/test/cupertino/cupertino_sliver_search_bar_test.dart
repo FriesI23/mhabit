@@ -39,10 +39,20 @@ Widget _host({
   VoidCallback? onSearchDismissed,
   ActionCollection<String>? collection,
   CupertinoActionMenuBuilder<String>? menuBuilderForAction,
+  Color? neutralForegroundColor,
   AdaptiveCupertinoFocusThemeData focusTheme =
       const AdaptiveCupertinoFocusThemeData(),
 }) => MaterialApp(
-  theme: ThemeData(platform: TargetPlatform.iOS, extensions: [focusTheme]),
+  theme: ThemeData(
+    platform: TargetPlatform.iOS,
+    extensions: [
+      focusTheme,
+      if (neutralForegroundColor != null)
+        AdaptiveCupertinoButtonThemeData(
+          neutralForegroundColor: neutralForegroundColor,
+        ),
+    ],
+  ),
   home: Directionality(
     textDirection: direction,
     child: CustomScrollView(
@@ -163,6 +173,7 @@ void main() {
     final focusNode = FocusNode();
     addTearDown(controller.dispose);
     addTearDown(focusNode.dispose);
+    const blended = Color(0xFF57525F);
 
     await tester.pumpWidget(
       _host(
@@ -170,6 +181,7 @@ void main() {
         focusNode: focusNode,
         direction: TextDirection.rtl,
         onInvoke: (_) {},
+        neutralForegroundColor: blended,
         focusTheme: const AdaptiveCupertinoFocusThemeData(haloPaintOutset: 7),
       ),
     );
@@ -178,7 +190,11 @@ void main() {
     final searchRegion = tester.widget<AnimatedContainer>(
       find.byKey(const ValueKey('cupertino-expandable-search-region')),
     );
-    expect(searchRegion.child, isA<CupertinoButton>());
+    expect(searchRegion.child, isA<NeutralCupertinoButton>());
+    final searchIconContext = tester.element(
+      find.byIcon(CupertinoIcons.search),
+    );
+    expect(IconTheme.of(searchIconContext).color, blended);
     final haloClip = tester.widget<ClipRect>(
       find.descendant(
         of: find.byType(CupertinoFocusHaloClip),

@@ -22,6 +22,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart'
     show
+        AdaptiveCupertinoButtonThemeData,
         AdaptiveCupertinoFocusThemeData,
         AdaptiveListThemeData,
         CupertinoSidebarThemeData;
@@ -204,6 +205,11 @@ class AppThemeBuilder {
           focusHaloBuilder: cupertinoFocusTheme.buildHalo,
         ),
         cupertinoFocusTheme,
+        AdaptiveCupertinoButtonThemeData(
+          neutralForegroundColor: systemColors || colorScheme == null
+              ? CupertinoColors.label
+              : colorScheme.onSurfaceVariant,
+        ),
         if (systemColors)
           AdaptiveListThemeData(
             surfaceColor: switch (defaultTargetPlatform) {

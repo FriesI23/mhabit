@@ -48,8 +48,9 @@ Widget _host({
   required Widget actions,
   TextDirection textDirection = TextDirection.ltr,
   TargetPlatform? platform,
+  ThemeData? theme,
 }) => MaterialApp(
-  theme: platform == null ? null : ThemeData(platform: platform),
+  theme: theme ?? (platform == null ? null : ThemeData(platform: platform)),
   home: Directionality(
     textDirection: textDirection,
     child: Scaffold(appBar: AppBar(actions: [actions])),
@@ -167,6 +168,87 @@ void main() {
         ),
       ),
     );
+  });
+
+  testWidgets('apple icon-only actions use a local neutral button theme', (
+    tester,
+  ) async {
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: CupertinoColors.systemPurple,
+    );
+    final theme = ThemeData(
+      platform: TargetPlatform.iOS,
+      colorScheme: colorScheme,
+      cupertinoOverrideTheme: const CupertinoThemeData(
+        primaryColor: CupertinoColors.systemPurple,
+      ),
+      extensions: [
+        AdaptiveCupertinoButtonThemeData(
+          neutralForegroundColor: colorScheme.onSurfaceVariant,
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      _host(
+        theme: theme,
+        actions: AdaptiveAppBarActions<String>.apple(
+          collection: _collection(),
+          onInvoke: (_, _) {},
+          primaryCapacity: 96,
+          maxPrimaryActions: 1,
+          apple: CupertinoAppBarActionsConfig(
+            iconBuilder: (context, action) => Icon(
+              action.id == _editId
+                  ? CupertinoIcons.pencil
+                  : CupertinoIcons.archivebox,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    for (final icon in [
+      find.byIcon(CupertinoIcons.pencil),
+      find.byIcon(CupertinoIcons.ellipsis),
+    ]) {
+      final iconContext = tester.element(icon);
+      expect(IconTheme.of(iconContext).color, colorScheme.onSurfaceVariant);
+    }
+  });
+
+  testWidgets('apple labeled actions use the neutral foreground', (
+    tester,
+  ) async {
+    const blended = Color(0xFF57525F);
+    await tester.pumpWidget(
+      _host(
+        theme: ThemeData(
+          platform: TargetPlatform.iOS,
+          cupertinoOverrideTheme: const CupertinoThemeData(
+            primaryColor: CupertinoColors.systemPurple,
+          ),
+          extensions: const [
+            AdaptiveCupertinoButtonThemeData(neutralForegroundColor: blended),
+          ],
+        ),
+        actions: AdaptiveAppBarActions<String>.apple(
+          collection: _collection(includeArchive: false),
+          onInvoke: (_, _) {},
+          primaryCapacity: 200,
+          apple: CupertinoAppBarActionsConfig(
+            iconBuilder: (context, action) => const Icon(CupertinoIcons.pencil),
+            presentationForAction: (context, action) =>
+                CupertinoActionPresentation.extended,
+          ),
+        ),
+      ),
+    );
+
+    final iconContext = tester.element(find.byIcon(CupertinoIcons.pencil));
+    final labelContext = tester.element(find.text('Edit'));
+    expect(find.text('Edit'), findsOneWidget);
+    expect(IconTheme.of(iconContext).color, blended);
+    expect(DefaultTextStyle.of(labelContext).style.color, blended);
   });
 
   testWidgets('material keeps one primary action and invokes its payload', (

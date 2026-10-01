@@ -853,6 +853,11 @@ void main() {
     expect(tester.widget<Icon>(more).color, lightCustomColors.cc1);
     expect(find.byType(FloatingActionButton), findsNothing);
     expect(find.text('Check in'), findsOneWidget);
+    final checkInContext = tester.element(find.text('Check in'));
+    expect(
+      DefaultTextStyle.of(checkInContext).style.color,
+      CupertinoDynamicColor.resolve(CupertinoColors.label, checkInContext),
+    );
     expect(
       find.byWidgetPredicate(
         (widget) =>

@@ -12,6 +12,7 @@ import '../adaptive/adaptive_sheet.dart';
 import '../adaptive/modal_sheet_drag_region.dart';
 import '../window_control/cupertino_navigation_bar.dart';
 import '../window_control/modal_app_bar_region.dart';
+import 'cupertino_neutral_button.dart';
 
 const _sheetHeightFactor = 0.92;
 const _sheetPopupSurfaceBottomOverflow = 13.0;
@@ -784,7 +785,7 @@ class CupertinoAdaptiveModal extends StatelessWidget {
         ? Semantics(
             label: MaterialLocalizations.of(context).closeButtonLabel,
             button: true,
-            child: CupertinoButton(
+            child: NeutralCupertinoButton(
               key: const ValueKey('adaptive-modal-implied-close'),
               sizeStyle: CupertinoButtonSize.small,
               padding: EdgeInsets.zero,
@@ -814,33 +815,20 @@ class CupertinoAdaptiveModal extends StatelessWidget {
             child: MediaQuery.removePadding(
               context: context,
               removeTop: true,
-              child: ListenableBuilder(
-                listenable: scrollController,
-                builder: (context, _) => WindowControlCupertinoNavigationBar(
-                  key: const ValueKey('adaptive-modal-app-bar'),
-                  leading: leading == null
-                      ? null
-                      : Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [leading],
-                        ),
-                  automaticallyImplyLeading: false,
-                  middle: title == null
-                      ? const SizedBox.shrink()
-                      : KeyedSubtree(
-                          key: const ValueKey('adaptive-modal-title'),
-                          child: title!,
-                        ),
-                  trailing: trailing.isEmpty
-                      ? null
-                      : Row(mainAxisSize: MainAxisSize.min, children: trailing),
-                  backgroundColor: CupertinoColors.transparent,
-                  transitionBetweenRoutes: false,
-                  automaticBackgroundVisibility: true,
-                  enableBackgroundFilterBlur:
-                      scrollController.hasClients &&
-                      scrollController.position.extentBefore > 0,
-                ),
+              child: _CupertinoModalAppBar(
+                scrollController: scrollController,
+                leading: leading == null
+                    ? null
+                    : Row(mainAxisSize: MainAxisSize.min, children: [leading]),
+                middle: title == null
+                    ? const SizedBox.shrink()
+                    : KeyedSubtree(
+                        key: const ValueKey('adaptive-modal-title'),
+                        child: title!,
+                      ),
+                trailing: trailing.isEmpty
+                    ? null
+                    : Row(mainAxisSize: MainAxisSize.min, children: trailing),
               ),
             ),
           );
@@ -913,6 +901,78 @@ class CupertinoAdaptiveModal extends StatelessWidget {
       _ => surface,
     };
   }
+}
+
+class _CupertinoModalAppBar extends StatefulWidget {
+  const _CupertinoModalAppBar({
+    required this.scrollController,
+    required this.leading,
+    required this.middle,
+    required this.trailing,
+  });
+
+  final ScrollController scrollController;
+  final Widget? leading;
+  final Widget middle;
+  final Widget? trailing;
+
+  @override
+  State<_CupertinoModalAppBar> createState() => _CupertinoModalAppBarState();
+}
+
+class _CupertinoModalAppBarState extends State<_CupertinoModalAppBar> {
+  bool _scrolledUnder = false;
+  bool _syncScheduled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.scrollController.addListener(_scheduleScrollStateSync);
+    _scheduleScrollStateSync();
+  }
+
+  @override
+  void didUpdateWidget(_CupertinoModalAppBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.scrollController == oldWidget.scrollController) return;
+    oldWidget.scrollController.removeListener(_scheduleScrollStateSync);
+    widget.scrollController.addListener(_scheduleScrollStateSync);
+    _scheduleScrollStateSync();
+  }
+
+  @override
+  void dispose() {
+    widget.scrollController.removeListener(_scheduleScrollStateSync);
+    super.dispose();
+  }
+
+  void _scheduleScrollStateSync() {
+    if (_syncScheduled) return;
+    _syncScheduled = true;
+    WidgetsBinding.instance.ensureVisualUpdate();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _syncScheduled = false;
+      if (!mounted) return;
+      final scrolledUnder = widget.scrollController.positions.any(
+        (position) => position.extentBefore > 0,
+      );
+      if (_scrolledUnder == scrolledUnder) return;
+      setState(() => _scrolledUnder = scrolledUnder);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => WindowControlCupertinoNavigationBar(
+    key: const ValueKey('adaptive-modal-app-bar'),
+    leading: widget.leading,
+    automaticallyImplyLeading: false,
+    middle: widget.middle,
+    trailing: widget.trailing,
+    backgroundColor: CupertinoColors.transparent,
+    transitionBetweenRoutes: false,
+    automaticBackgroundVisibility: true,
+    enableBackgroundFilterBlur: _scrolledUnder,
+  );
 }
 
 class _CupertinoCoveredRouteClipper extends CustomClipper<Rect> {

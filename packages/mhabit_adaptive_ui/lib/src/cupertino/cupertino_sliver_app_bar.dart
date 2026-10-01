@@ -6,6 +6,7 @@ import '../shell/sidebar_adapter.dart';
 import '../window_control/cupertino_navigation_bar.dart';
 import '../window_control/toolbar_geometry.dart';
 import 'app_bar_apple_style.dart';
+import 'cupertino_neutral_button.dart';
 import 'cupertino_sidebar_navigation_bar_bottom.dart';
 import 'cupertino_toolbar_padding.dart';
 
@@ -129,7 +130,7 @@ class _CupertinoSliverAppBarLeading extends StatelessWidget {
         this.leading ??
         (onLeadingPressed == null
             ? null
-            : CupertinoButton(
+            : NeutralCupertinoButton(
                 padding: EdgeInsets.zero,
                 onPressed: onLeadingPressed,
                 child: const Icon(CupertinoIcons.back),

@@ -1366,6 +1366,74 @@ void main() {
   });
 
   group('AdaptiveModalNavigator', () {
+    testWidgets(
+      'apple restores app bar blur after returning to a scrolled page',
+      (tester) async {
+        tester.view.physicalSize = const Size(800, 800);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        late NavigatorState innerNavigator;
+        await tester.pumpWidget(
+          MaterialApp(
+            home: AdaptiveStyleScope(
+              override: AdaptiveStyle.apple,
+              child: Builder(
+                builder: (context) => ElevatedButton(
+                  onPressed: () => showAdaptiveSheet<void>(
+                    context: context,
+                    presentationOverride: AdaptiveModalPresentation.dialog,
+                    builder: (_) => AdaptiveModalNavigator<void>(
+                      builder: (pageContext) {
+                        innerNavigator = Navigator.of(pageContext);
+                        return AdaptiveModal(
+                          title: const Text('First page'),
+                          pinnedBody: TextButton(
+                            onPressed: () => innerNavigator.push<void>(
+                              adaptiveModalPageRoute<void>(
+                                context: pageContext,
+                                builder: (_) => const AdaptiveModal(
+                                  title: Text('Second page'),
+                                  body: Text('Second body'),
+                                ),
+                              ),
+                            ),
+                            child: const Text('Next page'),
+                          ),
+                          body: const SizedBox(height: 1600),
+                        );
+                      },
+                    ),
+                  ),
+                  child: const Text('Open'),
+                ),
+              ),
+            ),
+          ),
+        );
+        await _openModal(tester);
+        await _scrollModalBodyAwayFromTop(tester);
+
+        BackdropFilter appBarBlur() => tester.widget<BackdropFilter>(
+          find.descendant(
+            of: find.byKey(const ValueKey('adaptive-modal-app-bar')),
+            matching: find.byType(BackdropFilter),
+          ),
+        );
+
+        expect(appBarBlur().enabled, isTrue);
+        await tester.tap(find.text('Next page'));
+        await tester.pumpAndSettle();
+        expect(find.text('Second page'), findsOneWidget);
+
+        innerNavigator.pop();
+        await tester.pumpAndSettle();
+
+        expect(_modalBodyScrollController(tester).offset, greaterThan(0));
+        expect(appBarBlur().enabled, isTrue);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
     for (final style in AdaptiveStyle.values) {
       testWidgets(
         '${style.name} close handler follows the current nested page',

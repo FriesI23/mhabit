@@ -12,6 +12,7 @@ import '../breakpoints/window_size_class.dart';
 import '../shell/sidebar_adapter.dart';
 import 'app_bar_apple_style.dart';
 import 'cupertino_focus_halo_clip.dart';
+import 'cupertino_neutral_button.dart';
 import 'cupertino_sliver_app_bar.dart';
 
 /// Cupertino selection-mode sliver command bar.
@@ -245,7 +246,7 @@ class _CupertinoSelectTopToolbar<T extends Object> extends StatelessWidget {
             child: Semantics(
               button: true,
               label: doneLabel,
-              child: CupertinoButton(
+              child: NeutralCupertinoButton(
                 key: const ValueKey('cupertino-select-done'),
                 padding: EdgeInsets.zero,
                 minimumSize: const Size.square(44),
@@ -504,7 +505,7 @@ class _FixedTextAction extends StatelessWidget {
     child: Semantics(
       button: true,
       label: label,
-      child: CupertinoButton(
+      child: NeutralCupertinoButton(
         padding: const EdgeInsetsDirectional.symmetric(horizontal: 8),
         minimumSize: const Size(44, 44),
         onPressed: onPressed,

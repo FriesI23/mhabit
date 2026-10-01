@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../adaptive_style.dart';
 import '../cupertino/adaptive_cupertino_focus_theme.dart';
+import '../cupertino/cupertino_neutral_button.dart';
 
 /// An icon button that uses the platform renderer selected by adaptive style.
 ///
@@ -43,12 +44,12 @@ class AdaptiveIconButton extends StatelessWidget {
           tooltip: tooltip,
           onPressed: onPressed,
         ),
-        AdaptiveStyle.apple => _buildApple(),
+        AdaptiveStyle.apple => _buildApple(context),
       };
 
-  Widget _buildApple() {
+  Widget _buildApple(BuildContext context) {
     final button = AdaptiveCupertinoFocusHalo(
-      child: CupertinoButton(
+      child: NeutralCupertinoButton(
         padding: EdgeInsets.zero,
         minimumSize: const Size.square(44),
         sizeStyle: CupertinoButtonSize.small,
