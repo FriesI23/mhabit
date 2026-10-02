@@ -15,7 +15,6 @@ flutter_native_splash:
   image_dark_ios: assets/logo/icon-ios-dark-1024x1024.png
 
   web: false
-  fullscreen: true
   info_plist_files:
     - ios/Runner/Info.plist
     - ios/Runner/dev-Info.plist
