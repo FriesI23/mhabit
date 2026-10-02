@@ -2,6 +2,16 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.27.11+200-pre
+
+- Feature: let users show or hide navigation destinations in the top toolbar
+  when the sidebar is collapsed (#671)
+- Fix: refresh habit and group views as soon as synced changes are applied
+  (#672)
+- Fix: keep neutral action colors consistent and restore modal app-bar blur
+  after nested navigation (#673)
+- Fix: keep system bars visible during launch
+
 ## 1.27.10+199-pre
 
 - Feature: add adaptive, collapsible side navigation and preserve page state

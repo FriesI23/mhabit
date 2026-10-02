@@ -1,0 +1,7 @@
+- Feature: let users show or hide navigation destinations in the top toolbar
+  when the sidebar is collapsed (#671)
+- Fix: refresh habit and group views as soon as synced changes are applied
+  (#672)
+- Fix: keep neutral action colors consistent and restore modal app-bar blur
+  after nested navigation (#673)
+- Fix: keep system bars visible during launch
