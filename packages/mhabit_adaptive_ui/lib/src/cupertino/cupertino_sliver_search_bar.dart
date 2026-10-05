@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
 import '../adaptive/adaptive_app_bar_actions.dart';
-import '../breakpoints/breakpoints.dart';
 import '../breakpoints/window_size_class.dart';
 import '../shell/sidebar_adapter.dart';
 import '../window_control/cupertino_navigation_bar.dart';
@@ -169,8 +168,7 @@ class _CupertinoSliverSearchBarState<T extends Object>
   @override
   Widget build(BuildContext context) {
     final sidebarLeading = SidebarLeadingScope.maybeOf(context);
-    final screenWidth = MediaQuery.sizeOf(context).width;
-    final widthClass = Breakpoints.of(context).widthClass(screenWidth);
+    final widthClass = WindowSize.of(context).width;
     final isCompact = !(widthClass >= WindowSizeClass.medium);
     final isLarge = widthClass >= WindowSizeClass.large;
     final topPadding = MediaQuery.paddingOf(context).top;

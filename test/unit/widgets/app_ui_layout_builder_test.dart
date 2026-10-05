@@ -22,7 +22,11 @@ Future<void> pumpWithConstraints(
   required double width,
   required double height,
   required Widget child,
+  Size viewport = const Size(1000, 700),
 }) async {
+  tester.view.physicalSize = viewport;
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
   await tester.pumpWidget(
     MaterialApp(
       home: Scaffold(
@@ -40,7 +44,7 @@ Widget Function(BuildContext, WindowSize, Widget?) windowSizeTextBuilder() =>
 
 void main() {
   group('WindowSizeClassLayoutBuilder', () {
-    testWidgets('classifies the LayoutBuilder constraints', (tester) async {
+    testWidgets('classifies local width with viewport height', (tester) async {
       await pumpWithConstraints(
         tester,
         width: 700,
@@ -55,7 +59,7 @@ void main() {
         height: 300,
         child: WindowSizeClassLayoutBuilder(builder: windowSizeTextBuilder()),
       );
-      expect(find.text('compact/compact'), findsOneWidget);
+      expect(find.text('compact/medium'), findsOneWidget);
     });
 
     testWidgets('.useScreenSize classifies the MediaQuery size', (
@@ -91,6 +95,64 @@ void main() {
         ),
       );
       expect(find.text('medium/medium'), findsOneWidget);
+    });
+
+    testWidgets('short viewport constrains unbounded scroll content', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: WindowSizeClassLayoutBuilder(
+                builder: windowSizeTextBuilder(),
+              ),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('compact/compact'), findsOneWidget);
+
+      tester.view.physicalSize = const Size(1000, 700);
+      await tester.pumpAndSettle();
+      expect(find.text('expanded/medium'), findsOneWidget);
+    });
+
+    testWidgets('short viewport constrains bounded local content', (
+      tester,
+    ) async {
+      await pumpWithConstraints(
+        tester,
+        width: 700,
+        height: 100,
+        viewport: const Size(1000, 400),
+        child: WindowSizeClassLayoutBuilder(builder: windowSizeTextBuilder()),
+      );
+      expect(find.text('compact/compact'), findsOneWidget);
+    });
+
+    testWidgets('keyboard insets do not change viewport classification', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 700);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: WindowSizeClassLayoutBuilder(
+              builder: windowSizeTextBuilder(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('expanded/medium'), findsOneWidget);
+      tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+      await tester.pumpAndSettle();
+      expect(find.text('expanded/medium'), findsOneWidget);
     });
   });
 }

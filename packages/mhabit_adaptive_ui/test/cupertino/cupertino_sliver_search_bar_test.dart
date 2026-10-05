@@ -83,6 +83,39 @@ Widget _host({
 );
 
 void main() {
+  testWidgets('short wide viewport collapses persistent search across resize', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 700);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final controller = TextEditingController();
+    final focusNode = FocusNode();
+    addTearDown(controller.dispose);
+    addTearDown(focusNode.dispose);
+    await tester.pumpWidget(
+      _host(controller: controller, focusNode: focusNode, onInvoke: (_) {}),
+    );
+    expect(
+      find.byKey(const ValueKey('cupertino-search-field')),
+      findsOneWidget,
+    );
+    tester.view.physicalSize = const Size(1200, 479);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('cupertino-search-field')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('activate-cupertino-search')),
+      findsOneWidget,
+    );
+    tester.view.physicalSize = const Size(1200, 480);
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('cupertino-search-field')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('forwards custom menu content into the Search overflow', (
     tester,
   ) async {

@@ -32,7 +32,7 @@ import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/habit_detail/_providers/habit_detail.dart';
 import 'package:mhabit/pages/habit_detail/page.dart';
 import 'package:mhabit/pages/habit_detail/widgets.dart'
-    show HabitDetailAppBarAction, HabitHeatmap;
+    show HabitDetailAppBarAction, HabitDetailFreqChart, HabitHeatmap;
 import 'package:mhabit/providers/app_ui/app_custom_date_format.dart';
 import 'package:mhabit/providers/app_ui/app_developer.dart';
 import 'package:mhabit/providers/app_ui/app_first_day.dart';
@@ -239,6 +239,76 @@ Future<void> _pumpHabitDetailPage(
 }
 
 void main() {
+  for (final platform in [
+    TargetPlatform.android,
+    TargetPlatform.iOS,
+    TargetPlatform.macOS,
+  ]) {
+    testWidgets('detail content responds to viewport height on $platform', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 700);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final profile = await _loadProfile();
+      final detailData = _buildHabitDetailData();
+      final access = _FakeHabitDetailAccess(seedData: detailData);
+      final rebuildToken = ValueNotifier(0);
+      addTearDown(() {
+        rebuildToken.dispose();
+        profile.dispose();
+      });
+      await _pumpHabitDetailPage(
+        tester,
+        profile: profile,
+        access: access,
+        rebuildToken: rebuildToken,
+        habitUUID: detailData.data.uuid,
+        platform: platform,
+        wrapWithAdaptiveShell: true,
+        withAppLocalizations: true,
+      );
+      await tester.pumpAndSettle();
+      for (final height in [700.0, 400.0, 700.0]) {
+        tester.view.physicalSize = Size(1000, height);
+        final scrollable = find
+            .descendant(
+              of: find.descendant(
+                of: find.byType(HabitDetailPage),
+                matching: find.byType(CustomScrollView),
+              ),
+              matching: find.byType(Scrollable),
+            )
+            .first;
+        tester.state<ScrollableState>(scrollable).position.jumpTo(0);
+        await tester.pumpAndSettle();
+        expect(
+          tester
+              .widget<HabitHeatmap>(find.byType(HabitHeatmap))
+              .useSideBySideLayout,
+          height >= 480,
+        );
+        // Sliver children are built lazily: bring the frequency chart into
+        // view before checking its local layout classification.
+        final chart = find.byType(HabitDetailFreqChart);
+        final position = tester.state<ScrollableState>(scrollable).position;
+        for (var step = 0; step < 20 && chart.evaluate().isEmpty; step++) {
+          position.jumpTo(
+            (position.pixels + 200).clamp(0, position.maxScrollExtent),
+          );
+          await tester.pumpAndSettle();
+        }
+        expect(chart, findsOneWidget, reason: 'viewport height $height');
+        expect(
+          tester.widget<HabitDetailFreqChart>(chart).useSideBySideLayout,
+          height >= 480,
+        );
+        expect(access.loadDetailDataCallCount, 1);
+        expect(tester.takeException(), isNull);
+      }
+    });
+  }
+
   for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
     for (final op in ['Unarchive', 'Delete']) {
       for (final outcome in ['cancel', 'confirm', 'covered']) {

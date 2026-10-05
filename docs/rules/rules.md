@@ -210,6 +210,14 @@ existing architecture and tooling contracts.
 - This repo already uses `DynamicColorBuilder`, Material 3, and top-level app
   shell composition. Extend those patterns rather than bypassing them.
 
+Adaptive layouts consume `WindowSize`, whose conversion constrains the
+width-derived layout class to compact whenever the viewport height is compact.
+Keep this policy in `WindowSize.fromBreakpoints`, without device or platform
+exceptions. For local content constraints, use
+`WindowSize.fromLayoutConstraints` so unbounded scroll height cannot bypass the
+viewport constraint. Raw `Breakpoints` axis classes remain available for
+geometry such as safe-area padding.
+
 App-bar action width budgets use `AppBarActionBudget` from
 `lib/widgets/app_bar_action_budget.dart`. Choose slots, candidate counts, or
 explicit capacity in the page renderer, then pass its computed `primaryCapacity` and `maxPrimaryActions` fields

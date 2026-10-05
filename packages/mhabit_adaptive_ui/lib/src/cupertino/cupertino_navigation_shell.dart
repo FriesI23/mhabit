@@ -18,8 +18,8 @@ import 'cupertino_neutral_button.dart';
 
 /// Composes the Cupertino renderers around style-neutral shell mechanics.
 ///
-/// Forms are resolved only from Apple width classes; compact height never
-/// downgrades a wider window to constrained side navigation.
+/// Forms use the height-constrained layout class resolved by [WindowSize].
+/// Compact height uses the Tab Bar regardless of width or platform.
 ///
 /// ```text
 /// compact          constrained side  expanded side

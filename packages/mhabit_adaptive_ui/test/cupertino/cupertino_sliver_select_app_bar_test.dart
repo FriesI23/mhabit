@@ -41,6 +41,37 @@ Widget _app(Widget child, {Color? neutralForegroundColor}) => MaterialApp(
 );
 
 void main() {
+  testWidgets('short wide viewport uses compact selection actions', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1000, 700);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      _app(
+        CupertinoSliverSelectAppBar<String>(
+          title: const Text('Selected 2'),
+          selectAllLabel: 'Select All',
+          doneLabel: 'Done',
+          onSelectAll: () {},
+          onDone: () {},
+          collection: _collection(),
+          onInvoke: (_, _) {},
+        ),
+      ),
+    );
+    expect(find.byType(AdaptiveAppBarActions<String>), findsOneWidget);
+    tester.view.physicalSize = const Size(1000, 479);
+    await tester.pumpAndSettle();
+    expect(find.byType(AdaptiveAppBarActions<String>), findsNothing);
+    expect(find.text('Select All'), findsOneWidget);
+    expect(find.byKey(const ValueKey('cupertino-select-done')), findsOneWidget);
+    tester.view.physicalSize = const Size(1000, 480);
+    await tester.pumpAndSettle();
+    expect(find.byType(AdaptiveAppBarActions<String>), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('forwards custom menu content into an overflow submenu', (
     tester,
   ) async {

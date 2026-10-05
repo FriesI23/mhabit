@@ -7,7 +7,6 @@ import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
     show SidebarLeadingScope;
 
 import '../adaptive/adaptive_app_bar_actions.dart';
-import '../breakpoints/breakpoints.dart';
 import '../breakpoints/window_size_class.dart';
 import '../shell/sidebar_adapter.dart';
 import 'app_bar_apple_style.dart';
@@ -74,9 +73,7 @@ class CupertinoSliverSelectAppBar<T extends Object> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final compact =
-        Breakpoints.of(context).widthClass(MediaQuery.sizeOf(context).width) ==
-        WindowSizeClass.compact;
+    final compact = WindowSize.of(context).width == WindowSizeClass.compact;
     return CupertinoSliverAppBar(
       key: const ValueKey('cupertino-sliver-select-app-bar'),
       height: toolbarHeight,

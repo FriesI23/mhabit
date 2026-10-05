@@ -22,9 +22,9 @@ class MaterialNavigationRailStyle {
 
 /// Composes the Material renderers around style-neutral shell mechanics.
 ///
-/// Compact-width windows use a bottom bar. Medium-width windows and windows
-/// with compact height use a collapsed rail; the remaining wider windows use
-/// an extended rail.
+/// Compact layouts, including windows with compact height, use a bottom bar.
+/// Medium layouts use a collapsed rail; the remaining wider layouts use an
+/// extended rail. [WindowSize] owns the shared height constraint.
 ///
 /// ```text
 /// compact          constrained side  expanded side
@@ -67,8 +67,6 @@ class MaterialNavigationShell extends StatelessWidget {
       switch (windowSize.width) {
         WindowSizeClass.compact => NavigationShellForm.compact,
         WindowSizeClass.medium => NavigationShellForm.constrainedSide,
-        _ when windowSize.height == WindowSizeClass.compact =>
-          NavigationShellForm.constrainedSide,
         _ => NavigationShellForm.expandedSide,
       };
 

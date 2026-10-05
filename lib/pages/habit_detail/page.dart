@@ -722,10 +722,7 @@ class _PageState extends State<_Page>
             final now = HabitDate.now();
 
             final useSideBySideLayout =
-                WindowSize.fromBreakpoints(
-                  Breakpoints.of(context),
-                  Size(constraints.maxWidth, constraints.maxHeight),
-                ).width >=
+                WindowSize.fromLayoutConstraints(context, constraints).width >=
                 WindowSizeClass.medium;
             final animatedDirection = chartvm.consumeCachedAnimateDirection();
 

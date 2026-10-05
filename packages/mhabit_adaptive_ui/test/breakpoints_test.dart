@@ -188,11 +188,110 @@ void main() {
     test('height is null when breakpoints do not classify height', () {
       final windowSize = WindowSize.fromBreakpoints(
         const CustomBreakpoints(width: [600]),
-        const Size(700, 500),
+        const Size(700, 100),
       );
       expect(windowSize.width, WindowSizeClass.medium);
       expect(windowSize.height, isNull);
     });
+
+    test('compact height constrains every width tier on both styles', () {
+      for (final breakpoints in [material, apple]) {
+        for (final width in [
+          599.0,
+          600.0,
+          839.0,
+          840.0,
+          905.0,
+          906.0,
+          1199.0,
+          1200.0,
+          1599.0,
+          1600.0,
+        ]) {
+          final short = WindowSize.fromBreakpoints(
+            breakpoints,
+            Size(width, 479),
+          );
+          expect(short.width, WindowSizeClass.compact);
+          expect(short.height, WindowSizeClass.compact);
+          final tall = WindowSize.fromBreakpoints(
+            breakpoints,
+            Size(width, 480),
+          );
+          expect(tall.width, breakpoints.widthClass(width));
+          expect(tall.height, WindowSizeClass.medium);
+        }
+      }
+    });
+
+    test('height constraint follows custom breakpoints', () {
+      const custom = CustomBreakpoints(width: [500, 1000], height: [320, 600]);
+      expect(
+        WindowSize.fromBreakpoints(custom, const Size(1200, 319)).width,
+        WindowSizeClass.compact,
+      );
+      expect(
+        WindowSize.fromBreakpoints(custom, const Size(1200, 320)).width,
+        WindowSizeClass.expanded,
+      );
+    });
+  });
+
+  group('WindowSize.fromLayoutConstraints', () {
+    for (final viewport in [const Size(1000, 400), const Size(1000, 700)]) {
+      testWidgets('uses viewport height for local constraints in $viewport', (
+        tester,
+      ) async {
+        tester.view.physicalSize = viewport;
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        final sizes = <WindowSize>[];
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Builder(
+              builder: (context) {
+                sizes.addAll([
+                  WindowSize.fromLayoutConstraints(
+                    context,
+                    const BoxConstraints(maxWidth: 700),
+                  ),
+                  WindowSize.fromLayoutConstraints(
+                    context,
+                    const BoxConstraints(maxWidth: 700, maxHeight: 100),
+                  ),
+                  WindowSize.fromLayoutConstraints(
+                    context,
+                    const BoxConstraints(),
+                  ),
+                  WindowSize.fromLayoutConstraints(
+                    context,
+                    const BoxConstraints(maxWidth: 500),
+                  ),
+                ]);
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+        );
+        final short = viewport.height < 480;
+        expect(
+          sizes[0].width,
+          short ? WindowSizeClass.compact : WindowSizeClass.medium,
+        );
+        expect(sizes[1].width, sizes[0].width);
+        expect(
+          sizes[2].width,
+          short ? WindowSizeClass.compact : WindowSizeClass.expanded,
+        );
+        expect(sizes[3].width, WindowSizeClass.compact);
+        for (final size in sizes) {
+          expect(
+            size.height,
+            short ? WindowSizeClass.compact : WindowSizeClass.medium,
+          );
+        }
+      });
+    }
   });
 
   group('WindowSize.of', () {
@@ -217,7 +316,7 @@ void main() {
       expect(WindowSizeClass.compact >= WindowSizeClass.medium, isFalse);
       expect(WindowSizeClass.compact >= WindowSizeClass.compact, isTrue);
       expect(WindowSizeClass.extraLarge >= WindowSizeClass.large, isTrue);
-      // Apple skips medium, but the relative order still holds.
+      // Apple skips expanded, but the relative order still holds.
       expect(WindowSizeClass.large >= WindowSizeClass.medium, isTrue);
     });
   });

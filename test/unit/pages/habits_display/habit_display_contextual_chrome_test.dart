@@ -100,4 +100,31 @@ void main() {
     expect(chrome.bottomPlaceholderHeight, 84);
     expect(chrome.fixedButtonNavigationHeight, isTrue);
   });
+
+  for (final platform in [TargetPlatform.iOS, TargetPlatform.macOS]) {
+    testWidgets('short wide Apple selection uses bottom toolbar on $platform', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      late HabitDisplayContextualChrome chrome;
+      await tester.pumpWidget(
+        _testApp(
+          platform: platform,
+          child: Builder(
+            builder: (context) {
+              chrome = context.resolveHabitDisplayContextualChrome(
+                isSelectionMode: true,
+              );
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      );
+      expect(chrome.suppressShellChrome, isTrue);
+      expect(chrome.showSelectionBottomToolbar, isTrue);
+      expect(chrome.fixedButtonNavigationHeight, isFalse);
+    });
+  }
 }
