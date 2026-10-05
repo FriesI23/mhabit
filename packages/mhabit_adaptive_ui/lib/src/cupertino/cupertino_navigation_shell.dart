@@ -244,15 +244,17 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
           onDestinationSelected: onSelected,
           onAuxiliaryDestinationSelected: widget.onAuxiliaryDestinationSelected,
         );
-        final sidebarContent = CupertinoSidebarNavigation(
-          destinations: adapter.destinations,
-          selection: adapter.selection,
-          onSelectionChanged: adapter.select,
-          auxiliaryDestinations: adapter.auxiliaryDestinations,
-          itemStyle: switch (widget.sidebarStyle) {
-            AppleSidebarStyle.inset => null,
-            AppleSidebarStyle.edge => widget.sidebarItemStyle,
-          },
+        final sidebarContent = CupertinoSidebarContentSafeArea(
+          child: CupertinoSidebarNavigation(
+            destinations: adapter.destinations,
+            selection: adapter.selection,
+            onSelectionChanged: adapter.select,
+            auxiliaryDestinations: adapter.auxiliaryDestinations,
+            itemStyle: switch (widget.sidebarStyle) {
+              AppleSidebarStyle.inset => null,
+              AppleSidebarStyle.edge => widget.sidebarItemStyle,
+            },
+          ),
         );
         final collapsedBar = CupertinoSidebarCollapsedBar(
           key: const ValueKey('cupertino-sidebar-collapsed-bar'),

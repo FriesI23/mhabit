@@ -174,10 +174,11 @@ class _ModalWindowControlAppBarRegionState
   @override
   Widget build(BuildContext context) {
     final parent = AdaptiveWindowControlLayoutScope.maybeOf(context);
+    final media = MediaQuery.of(context);
     final direction = parent == null
         ? TextDirection.ltr
         : Directionality.of(context);
-    final windowSize = parent == null ? Size.zero : MediaQuery.sizeOf(context);
+    final windowSize = media.size;
     return _ModalGeometryObserver(
       key: _regionKey,
       onGeometryInvalidated: _scheduleMeasurement,
@@ -187,7 +188,27 @@ class _ModalWindowControlAppBarRegionState
           valueListenable: _globalBounds,
           child: widget.child,
           builder: (context, bounds, child) {
-            if (parent == null) return child!;
+            // A centered dialog has already cleared part or all of the view's
+            // safe edges. Only the remaining overlap belongs to its toolbar.
+            EdgeInsets remainingHorizontal(EdgeInsets padding) =>
+                EdgeInsets.fromLTRB(
+                  (padding.left - (bounds?.left ?? 0)).clamp(0, padding.left),
+                  padding.top,
+                  (padding.right -
+                          (bounds == null
+                              ? 0
+                              : windowSize.width - bounds.right))
+                      .clamp(0, padding.right),
+                  padding.bottom,
+                );
+            final toolbar = MediaQuery(
+              data: media.copyWith(
+                padding: remainingHorizontal(media.padding),
+                viewPadding: remainingHorizontal(media.viewPadding),
+              ),
+              child: child!,
+            );
+            if (parent == null) return toolbar;
             final effectiveHorizontal = _intersectingHorizontalAvoidance(
               bounds: bounds,
               windowSize: windowSize,
@@ -203,7 +224,7 @@ class _ModalWindowControlAppBarRegionState
               effectiveCornerRadii: parent.effectiveCornerRadii,
               usesRectangularDisplay: parent.usesRectangularDisplay,
               owner: WindowControlLayoutOwner.appBar,
-              child: child!,
+              child: toolbar,
             );
           },
         ),

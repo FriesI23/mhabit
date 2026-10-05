@@ -3409,7 +3409,7 @@ void main() {
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
-      _setSurfaceSize(tester, const Size(700, 600));
+      _setSurfaceSize(tester, const Size(1000, 600));
       const destinations = [
         AdaptiveNavigationDestination(
           label: 'Habits',
@@ -3486,7 +3486,11 @@ void main() {
       );
       expect(sidebar().backgroundColor, themedBackground);
       expect(
-        (sidebar().content as CupertinoSidebarNavigation).itemStyle,
+        tester
+            .widget<CupertinoSidebarNavigation>(
+              find.byType(CupertinoSidebarNavigation, skipOffstage: false),
+            )
+            .itemStyle,
         same(themedItemStyle),
       );
       expect(
@@ -3514,7 +3518,11 @@ void main() {
       );
       expect(sidebar().backgroundColor, isNull);
       expect(
-        (sidebar().content as CupertinoSidebarNavigation).itemStyle,
+        tester
+            .widget<CupertinoSidebarNavigation>(
+              find.byType(CupertinoSidebarNavigation, skipOffstage: false),
+            )
+            .itemStyle,
         isNull,
       );
       expect(

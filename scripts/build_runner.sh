@@ -16,5 +16,4 @@
 
 set -euo pipefail
 
-dart run build_runner build --workspace
-flutter gen-l10n
+dart run melos run build-runner

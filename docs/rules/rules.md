@@ -59,6 +59,19 @@ existing architecture and tooling contracts.
 - When a task touches generated artifacts, prefer validating with `make gen` or
   `make verify-generated` instead of editing generated outputs directly.
 
+## Apple Toolchain
+
+- Xcode 27.0 is the local and CI build baseline. CI uses the shared `setup_xcode`
+  action with `"27.0"`, selecting an installed stable 27.0 release and recording
+  the selected version in the job log. Prefer major-version pinning (`^27`);
+  the current `"27.0"` pin is temporary. Restore `^27` after adapting and
+  verifying the SDK-gated iPhone Duo behavior introduced in 27.1.
+- Apple build and Store submission workflows use the dedicated `xcode-27`
+  runner label. GitHub currently marks the image as preview; this status alone
+  does not require switching labels when the image reaches GA. See the
+  [runner announcement](https://github.com/actions/runner-images/issues/14404).
+- Deployment targets remain iOS 15.0 and use macOS 12.0 for Xcode 27 compatibility.
+
 ## Project Structure
 
 - `lib/main.dart` owns startup ordering. Keep binding, logging, app info,
@@ -236,6 +249,11 @@ them; keep rows with independent actions separate from single-action controls.
   - generated asset accessors such as `lib/assets/assets.gen.dart`.
 - Change the owning source file, annotation, config, or generator input first,
   then regenerate.
+- `make gen` normalizes ARBs and generates icon fonts before invoking Melos
+  `build-runner`. The `build-runner` steps in `pubspec.yaml` own `build_runner`,
+  `flutter gen-l10n`, and the shared formatting command. Shell/CMD wrappers and
+  `make verify-generated` reuse that sequence; verification retains ARB
+  normalization and the Git before/after comparison.
 
 ## Validation
 

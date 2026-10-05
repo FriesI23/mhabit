@@ -215,14 +215,18 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
                 left: 0,
                 right: 0,
                 height: toolbarHeight,
-                child: _CupertinoToolbar(
-                  title: title,
-                  leading: leading,
-                  trailing: trailing,
-                  useSidebarToolbar: useSidebarToolbar,
-                  padding: padding,
-                  windowControlAvoidance: windowControlAvoidance,
-                  windowControlEdgePadding: windowControlEdgePadding,
+                child: SafeArea(
+                  top: false,
+                  bottom: false,
+                  child: _CupertinoToolbar(
+                    title: title,
+                    leading: leading,
+                    trailing: trailing,
+                    useSidebarToolbar: useSidebarToolbar,
+                    padding: padding,
+                    windowControlAvoidance: windowControlAvoidance,
+                    windowControlEdgePadding: windowControlEdgePadding,
+                  ),
                 ),
               ),
               if (bottom case final bottom?)

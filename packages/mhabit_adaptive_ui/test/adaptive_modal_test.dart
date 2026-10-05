@@ -270,6 +270,56 @@ void main() {
   });
 
   group('AdaptiveModal layout', () {
+    for (final direction in TextDirection.values) {
+      for (final width in [600.0, 900.0]) {
+        testWidgets(
+          'Apple dialog consumes safe edges outside its toolbar at $width in $direction',
+          (tester) async {
+            tester.view.physicalSize = Size(width, 800);
+            tester.view.devicePixelRatio = 1;
+            tester.view.padding = const FakeViewPadding(left: 90, right: 60);
+            tester.view.viewPadding = const FakeViewPadding(
+              left: 90,
+              right: 60,
+            );
+            addTearDown(tester.view.reset);
+            EdgeInsets? observedPadding;
+            await tester.pumpWidget(
+              _buildTestApp(
+                style: AdaptiveStyle.apple,
+                presentation: AdaptiveModalPresentation.dialog,
+                modalBuilder: (_) => Directionality(
+                  textDirection: direction,
+                  child: AdaptiveModal(
+                    title: Builder(
+                      builder: (context) {
+                        observedPadding = MediaQuery.paddingOf(context);
+                        return const Text('Title');
+                      },
+                    ),
+                    body: const Text('Body'),
+                  ),
+                ),
+              ),
+            );
+            await _open(tester);
+            expect(
+              observedPadding,
+              width == 900
+                  ? EdgeInsets.zero
+                  : const EdgeInsets.only(left: 60, right: 30),
+            );
+            final close = tester.getRect(
+              find.byKey(const ValueKey('adaptive-modal-implied-close')),
+            );
+            expect(close.left, greaterThanOrEqualTo(90));
+            expect(close.right, lessThanOrEqualTo(width - 60));
+            expect(tester.takeException(), isNull);
+          },
+        );
+      }
+    }
+
     for (final style in AdaptiveStyle.values) {
       for (final presentation in AdaptiveModalPresentation.values) {
         for (final verticalExtent in const [1.0, 800.0]) {

@@ -11,6 +11,25 @@ import '../window_control/window_control_layout.dart';
 typedef CupertinoSidebarToolbarMiddleBuilder =
     Widget Function(BuildContext context, Widget middle, double progress);
 
+/// The leading sidebar does not touch the window's opposite physical edge.
+/// Keep its local safe area from inheriting that edge's camera/status inset.
+class CupertinoSidebarContentSafeArea extends StatelessWidget {
+  const CupertinoSidebarContentSafeArea({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final direction = Directionality.of(context);
+    return MediaQuery.removePadding(
+      context: context,
+      removeLeft: direction == TextDirection.rtl,
+      removeRight: direction == TextDirection.ltr,
+      child: child,
+    );
+  }
+}
+
 /// Returns the route containing [context] followed by every route enclosing
 /// its nested Navigator.
 List<ModalRoute<dynamic>> _routesAcrossNavigators(BuildContext context) {

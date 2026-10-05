@@ -12,8 +12,5 @@
 @rem See the License for the specific language governing permissions and
 @rem limitations under the License.
 
-call dart run build_runner build --workspace
-if errorlevel 1 exit /b %errorlevel%
-
-call flutter gen-l10n
+call dart run melos run build-runner
 if errorlevel 1 exit /b %errorlevel%

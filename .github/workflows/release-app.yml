@@ -137,7 +137,7 @@ jobs:
     name: "Build Unsigned iOS IPA"
     needs:
       - pre-build
-    runs-on: macos-latest
+    runs-on: xcode-27
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup_xcode
@@ -178,7 +178,7 @@ jobs:
     name: "Build macOS DMG"
     needs:
       - pre-build
-    runs-on: macos-latest
+    runs-on: xcode-27
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup_xcode

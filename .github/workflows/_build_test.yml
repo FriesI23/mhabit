@@ -46,7 +46,7 @@ jobs:
             linux)
               MATRIX='[{"platform":"linux","arch":"x64","runner":"ubuntu-22.04"},{"platform":"linux","arch":"arm64","runner":"ubuntu-22.04-arm"}]' ;;
             ios|macos)
-              MATRIX="[{\"platform\":\"$PLATFORM\",\"arch\":\"\",\"runner\":\"macos-latest\"}]" ;;
+              MATRIX="[{\"platform\":\"$PLATFORM\",\"arch\":\"\",\"runner\":\"xcode-27\"}]" ;;
             *)
               MATRIX="[{\"platform\":\"$PLATFORM\",\"arch\":\"\",\"runner\":\"ubuntu-latest\"}]" ;;
           esac

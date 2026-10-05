@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:ios_window_control_layout/ios_window_control_layout.dart';
 
@@ -16,6 +18,44 @@ enum _WindowControlLayoutAspect {
   sideNavigationVerticalAvoidance,
   safeAreaGeometry,
   rectangularDisplay,
+}
+
+/// Extends the foreground's top safe area with UIKit's corner adaptation.
+/// Backgrounds still fill the window. Unavailable geometry adds no inset.
+/// Window-control layouts retain their existing horizontal toolbar avoidance.
+class AdaptiveWindowTopSafeArea extends StatelessWidget {
+  const AdaptiveWindowTopSafeArea({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    // Windowed iPadOS chrome shares the traffic-light row. Applying vertical
+    // adaptation globally would push that row below the window controls.
+    if (AdaptiveWindowControlLayoutScope.maybeOf(
+          context,
+        )?.hasWindowControlAvoidance ==
+        true) {
+      return MediaQuery(data: media, child: child);
+    }
+    final extraTop =
+        AdaptiveWindowControlLayoutScope.safeAreaGeometryOf(
+          context,
+        )?.verticalAvoidance.top ??
+        0.0;
+    if (extraTop <= 0) return MediaQuery(data: media, child: child);
+    final viewTop = media.viewPadding.top + extraTop;
+    return MediaQuery(
+      data: media.copyWith(
+        viewPadding: media.viewPadding.copyWith(top: viewTop),
+        padding: media.padding.copyWith(
+          top: math.max(media.padding.top, viewTop - media.viewInsets.top),
+        ),
+      ),
+      child: child,
+    );
+  }
 }
 
 /// Complete corner-adapted safe-area geometry reported by UIKit.
