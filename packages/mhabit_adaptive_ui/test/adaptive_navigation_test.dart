@@ -2775,10 +2775,19 @@ void main() {
         await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
         expect(find.byType(NavigationRail), findsNothing);
-        expect(find.byType(NavigationBar), findsOneWidget);
+        final navigationBar = tester.widget<NavigationBar>(
+          find.byType(NavigationBar),
+        );
+        expect(navigationBar.height, 64.0);
         expect(
-          AdaptiveNavScope.of(tester.element(find.text('habits page'))).form,
-          NavigationShellForm.compact,
+          navigationBar.labelBehavior,
+          NavigationDestinationLabelBehavior.alwaysHide,
+        );
+        expect(
+          AdaptiveNavScope.of(
+            tester.element(find.text('habits page')),
+          ).barHeight,
+          64.0,
         );
 
         await tester.tap(find.byIcon(Icons.calendar_today_outlined));
@@ -2793,7 +2802,10 @@ void main() {
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
       expect(find.byType(NavigationRail), findsNothing);
-      expect(find.byType(NavigationBar), findsOneWidget);
+      expect(
+        tester.widget<NavigationBar>(find.byType(NavigationBar)).height,
+        64.0,
+      );
     });
 
     testWidgets('expanded medium-height boundary defaults extended', (
@@ -2898,7 +2910,57 @@ void main() {
       tester.view.physicalSize = const Size(700, 400);
       await tester.pumpAndSettle();
       expect(find.byType(NavigationRail), findsNothing);
-      expect(find.byType(NavigationBar), findsOneWidget);
+      expect(
+        tester.widget<NavigationBar>(find.byType(NavigationBar)).labelBehavior,
+        NavigationDestinationLabelBehavior.alwaysHide,
+      );
+      final scope = AdaptiveNavScope.of(
+        tester.element(find.text('habits page')),
+      );
+      expect(scope.form, NavigationShellForm.compact);
+      expect(scope.barHeight, 64.0);
+    });
+
+    testWidgets('compact width uses icon-only short bar at compact height', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(599, 479));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      final navigationBar = tester.widget<NavigationBar>(
+        find.byType(NavigationBar),
+      );
+      expect(navigationBar.height, 64.0);
+      expect(
+        navigationBar.labelBehavior,
+        NavigationDestinationLabelBehavior.alwaysHide,
+      );
+      expect(
+        AdaptiveNavScope.of(tester.element(find.text('habits page'))).barHeight,
+        64.0,
+      );
+    });
+
+    testWidgets('medium compact-height boundary uses the short bar', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(600, 479));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      final navigationBar = tester.widget<NavigationBar>(
+        find.byType(NavigationBar),
+      );
+      expect(navigationBar.height, 64.0);
+      expect(
+        navigationBar.labelBehavior,
+        NavigationDestinationLabelBehavior.alwaysHide,
+      );
+      expect(
+        AdaptiveNavScope.of(tester.element(find.text('habits page'))).barHeight,
+        64.0,
+      );
     });
 
     testWidgets('unclassified height preserves width-only shell behavior', (
@@ -2932,7 +2994,16 @@ void main() {
         NavigationRail rail() =>
             tester.widget<NavigationRail>(find.byType(NavigationRail));
         expect(find.byType(NavigationRail), findsNothing);
-        expect(find.byType(NavigationBar), findsOneWidget);
+        expect(
+          tester.widget<NavigationBar>(find.byType(NavigationBar)).height,
+          64.0,
+        );
+        expect(
+          AdaptiveNavScope.of(
+            tester.element(find.text('habits page')),
+          ).barHeight,
+          64.0,
+        );
 
         tester.view.physicalSize = const Size(1000, 480);
         await tester.pumpAndSettle();
@@ -2941,7 +3012,12 @@ void main() {
         tester.view.physicalSize = const Size(1000, 479);
         await tester.pumpAndSettle();
         expect(find.byType(NavigationRail), findsNothing);
-        expect(find.byType(NavigationBar), findsOneWidget);
+        expect(
+          tester
+              .widget<NavigationBar>(find.byType(NavigationBar))
+              .labelBehavior,
+          NavigationDestinationLabelBehavior.alwaysHide,
+        );
       },
     );
 

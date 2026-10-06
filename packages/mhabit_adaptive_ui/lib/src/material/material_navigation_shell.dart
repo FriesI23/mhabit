@@ -3,6 +3,7 @@ import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
     hide AdaptiveNavigationDestination, NavigationDestinationIcons;
 
 import '../adaptive/adaptive_navigation_destination.dart';
+import '../breakpoints/breakpoints.dart';
 import '../breakpoints/window_size_class.dart';
 import '../shell/navigation_scroll_wish_policy.dart';
 import '../shell/navigation_shell_form.dart';
@@ -10,6 +11,8 @@ import '../shell/navigation_shell_frame.dart';
 import '../shell/sidebar_adapter.dart';
 import '../window_control/window_control_layout.dart';
 import 'material_navigation_bar.dart';
+
+enum _MaterialNavigationBarPresentation { full, short }
 
 /// Material-specific NavigationRail geometry.
 class MaterialNavigationRailStyle {
@@ -61,14 +64,25 @@ class MaterialNavigationShell extends StatelessWidget {
     required this.collapseNavigationLabel,
   });
 
-  static const double _barHeight = 80.0;
-
   NavigationShellForm _resolveForm(WindowSize windowSize) =>
       switch (windowSize.width) {
         WindowSizeClass.compact => NavigationShellForm.compact,
         WindowSizeClass.medium => NavigationShellForm.constrainedSide,
         _ => NavigationShellForm.expandedSide,
       };
+
+  _MaterialNavigationBarPresentation _resolveNavigationBarPresentation(
+    BuildContext context,
+  ) {
+    final viewport = MediaQuery.sizeOf(context);
+    final breakpoints = Breakpoints.of(context);
+    final rawHeight = breakpoints.heightClass(viewport.height);
+    if (rawHeight != WindowSizeClass.compact) {
+      return _MaterialNavigationBarPresentation.full;
+    }
+
+    return _MaterialNavigationBarPresentation.short;
+  }
 
   WindowControlLayoutOwner _resolveWindowControlOwner(
     NavigationShellForm form,
@@ -116,13 +130,23 @@ class MaterialNavigationShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final navigationBarPresentation = _resolveNavigationBarPresentation(
+      context,
+    );
+    final barHeight = switch (navigationBarPresentation) {
+      _MaterialNavigationBarPresentation.full =>
+        MaterialAdaptiveNavigationBar.fullHeight,
+      _MaterialNavigationBarPresentation.short =>
+        MaterialAdaptiveNavigationBar.shortHeight,
+    };
+
     return NavigationShellFrame(
       selectedIndex: selectedIndex,
       onDestinationSelected: onDestinationSelected,
       compactRouteVisible: compactRouteVisible,
       contextualChromeSuppressed: contextualChromeSuppressed,
-      barHeight: _barHeight,
-      navHeight: _barHeight + MediaQuery.paddingOf(context).bottom,
+      barHeight: barHeight,
+      navHeight: barHeight + MediaQuery.paddingOf(context).bottom,
       keepVisibleOnScroll: false,
       scrollWishPolicy: const NavigationScrollWishPolicy.directional(),
       formResolver: _resolveForm,
@@ -147,13 +171,20 @@ class MaterialNavigationShell extends StatelessWidget {
           CompactNavigationChromeTransition(
             visibility: state.visible,
             collapseLayout: true,
-            child: MaterialAdaptiveNavigationBar(
-              selectedIndex: selectedIndex,
-              onDestinationSelected: state.onDestinationSelected,
-              destinations: destinations,
-              height: _barHeight,
-              labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-            ),
+            child: switch (navigationBarPresentation) {
+              _MaterialNavigationBarPresentation.full =>
+                MaterialAdaptiveNavigationBar.full(
+                  selectedIndex: selectedIndex,
+                  onDestinationSelected: state.onDestinationSelected,
+                  destinations: destinations,
+                ),
+              _MaterialNavigationBarPresentation.short =>
+                MaterialAdaptiveNavigationBar.short(
+                  selectedIndex: selectedIndex,
+                  onDestinationSelected: state.onDestinationSelected,
+                  destinations: destinations,
+                ),
+            },
           ),
       child: child,
     );
