@@ -48,8 +48,12 @@ Widget _host({
   required TargetPlatform platform,
   required int? selectedAuxiliaryIndex,
   required ValueChanged<int> onSelected,
+  Breakpoints? breakpoints,
 }) => MaterialApp(
   theme: ThemeData(platform: platform),
+  builder: (context, child) => breakpoints == null
+      ? child!
+      : BreakpointsScope(breakpoints: breakpoints, child: child!),
   home: AdaptiveNavigationShell(
     selectedIndex: 0,
     destinations: _destinations,
@@ -196,6 +200,8 @@ void main() {
     await tester.pumpWidget(
       _host(
         platform: TargetPlatform.android,
+        // Exercise rail overflow independently of the default height policy.
+        breakpoints: const CustomBreakpoints(width: [600, 840]),
         selectedAuxiliaryIndex: null,
         onSelected: (_) {},
       ),
@@ -226,6 +232,7 @@ void main() {
     await tester.pumpWidget(
       _host(
         platform: TargetPlatform.android,
+        breakpoints: const CustomBreakpoints(width: [600, 840]),
         selectedAuxiliaryIndex: null,
         onSelected: (_) {},
       ),

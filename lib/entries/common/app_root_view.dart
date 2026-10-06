@@ -135,7 +135,7 @@ class _AppRootMaterialApp extends StatelessWidget {
           disableAnimations:
               disableAnimations || MediaQuery.disableAnimationsOf(context),
         ),
-        child: UnfocusOnTap(child: child),
+        child: AdaptiveWindowTopSafeArea(child: UnfocusOnTap(child: child)),
       ),
     );
     final textDirection = textDirectionOverride;

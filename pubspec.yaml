@@ -60,10 +60,11 @@ melos:
           --concurrency=1 \
           -- "dart format ."
     build-runner:
-      description: Run build_runner generators and gen-l10n.
+      description: Run build_runner generators and gen-l10n, then format.
       steps:
         - flutter pub run build_runner build --workspace
         - flutter gen-l10n
+        - dart run melos run format
     fix:
       description: Apply fixes and formatting in the root app and internal packages.
       run: |

@@ -10,6 +10,8 @@ import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/app_settings/widgets.dart';
 import 'package:mhabit/providers/app_ui/app_theme.dart';
 import 'package:mhabit/theme/color.dart';
+import 'package:mhabit/widgets/_widgets/app_ui_layout_builder.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 class _TestThemeViewModel extends AppThemeViewModel {
@@ -26,6 +28,84 @@ class _TestThemeViewModel extends AppThemeViewModel {
 }
 
 void main() {
+  for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+    testWidgets('theme mode layout follows viewport height on $platform', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 700);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final viewModel = _TestThemeViewModel();
+      addTearDown(viewModel.dispose);
+      await tester.pumpWidget(
+        ChangeNotifierProvider<AppThemeViewModel>.value(
+          value: viewModel,
+          child: MaterialApp(
+            theme: ThemeData(platform: platform),
+            localizationsDelegates: L10n.localizationsDelegates,
+            supportedLocales: L10n.supportedLocales,
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: WindowSizeClassLayoutBuilder(
+                  builder: (context, windowSize, child) =>
+                      AppSettingThemeModeTile(
+                        useSideBySideLayout:
+                            windowSize.width >= WindowSizeClass.medium,
+                      ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      final apple = platform == TargetPlatform.iOS;
+      final tile = find.byType(AppSettingThemeModeTile);
+      final control = find.byKey(const ValueKey('theme-mode-control'));
+      expect(
+        tester.widget<AppSettingThemeModeTile>(tile).useSideBySideLayout,
+        isTrue,
+      );
+      if (apple) {
+        expect(
+          tester.getCenter(find.text('Theme Mode')).dy,
+          closeTo(tester.getCenter(control).dy, 1),
+        );
+      }
+      tester.view.physicalSize = const Size(1000, 400);
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<AppSettingThemeModeTile>(tile).useSideBySideLayout,
+        isFalse,
+      );
+      if (apple) {
+        expect(
+          tester.getBottomLeft(find.text('Theme Mode')).dy,
+          lessThan(tester.getTopLeft(control).dy),
+        );
+      } else {
+        await tester.tap(control);
+        await tester.pumpAndSettle();
+      }
+      await tester.tap(find.text('Dark'));
+      await tester.pumpAndSettle();
+      expect(viewModel.value, AppThemeType.dark);
+      tester.view.physicalSize = const Size(1000, 700);
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<AppSettingThemeModeTile>(tile).useSideBySideLayout,
+        isTrue,
+      );
+      if (apple) {
+        expect(
+          tester.getCenter(find.text('Theme Mode')).dy,
+          closeTo(tester.getCenter(control).dy, 1),
+        );
+      }
+      expect(viewModel.value, AppThemeType.dark);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   const localizedLabels = <(Locale, String, String, String, String)>[
     (Locale('en'), 'Theme Mode', 'Auto', 'Light', 'Dark'),
     (Locale('zh'), '主题模式', '自动', '浅色', '深色'),

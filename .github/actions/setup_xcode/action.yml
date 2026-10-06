@@ -1,11 +1,13 @@
 name: Setup Xcode
-description: setup the project's pinned Xcode version, for common use.
+description: Select an installed stable Xcode 27.0 release.
 
 inputs:
   xcode-version:
-    description: Xcode version to select
+    description: Stable Xcode version to select
     required: false
-    default: "^26"
+    # TODO: Restore major-version pinning (^27) after adapting and verifying
+    # the SDK-gated iPhone Duo behavior introduced in iOS 27.1.
+    default: "27.0"
 
 runs:
   using: composite
@@ -13,3 +15,6 @@ runs:
     - uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: ${{ inputs.xcode-version }}
+    - name: Record selected Xcode
+      shell: bash
+      run: xcodebuild -version

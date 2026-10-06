@@ -19,7 +19,7 @@ on:
 jobs:
   submit-ios-app-store:
     name: "Submit iOS (App Store ${{ inputs.track }})"
-    runs-on: macos-latest
+    runs-on: xcode-27
     environment: store-submission
     steps:
       - uses: actions/checkout@v7

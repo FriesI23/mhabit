@@ -15,13 +15,13 @@
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
-/// Builds adaptive layouts from the window's width and height classes,
+/// Builds adaptive layouts from height-constrained window classes,
 /// resolved through the [Breakpoints] chain.
 ///
-/// The default constructor measures the incoming [LayoutBuilder] constraints;
+/// The default constructor measures local width and viewport height;
 /// [WindowSizeClassLayoutBuilder.useScreenSize] measures the ambient
-/// [MediaQuery] size instead. Both dimensions reach [builder] as a
-/// [WindowSize].
+/// [MediaQuery] size on both axes. Unbounded scrollable content height does
+/// not bypass the viewport's compact layout requirement.
 class WindowSizeClassLayoutBuilder extends StatelessWidget {
   final Widget? child;
   final Widget Function(
@@ -47,20 +47,12 @@ class WindowSizeClassLayoutBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final breakpoints = Breakpoints.of(context);
     return _useSize
-        ? builder(
-            context,
-            WindowSize.fromBreakpoints(breakpoints, MediaQuery.sizeOf(context)),
-            child,
-          )
+        ? builder(context, WindowSize.of(context), child)
         : LayoutBuilder(
             builder: (context, constraints) => builder(
               context,
-              WindowSize.fromBreakpoints(
-                breakpoints,
-                Size(constraints.maxWidth, constraints.maxHeight),
-              ),
+              WindowSize.fromLayoutConstraints(context, constraints),
               child,
             ),
           );

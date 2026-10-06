@@ -97,6 +97,20 @@ class _ModalWindowControlAppBarRegionState
   static bool _overlaps(Rect bounds, Rect avoidance) =>
       !avoidance.isEmpty && bounds.overlaps(avoidance);
 
+  static EdgeInsets _remainingHorizontalInsets({
+    required EdgeInsets insets,
+    required Rect? bounds,
+    required double windowWidth,
+  }) {
+    if (bounds == null) return insets;
+    return EdgeInsets.fromLTRB(
+      (insets.left - bounds.left).clamp(0, insets.left),
+      insets.top,
+      (insets.right - (windowWidth - bounds.right)).clamp(0, insets.right),
+      insets.bottom,
+    );
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -174,10 +188,11 @@ class _ModalWindowControlAppBarRegionState
   @override
   Widget build(BuildContext context) {
     final parent = AdaptiveWindowControlLayoutScope.maybeOf(context);
+    final media = MediaQuery.of(context);
     final direction = parent == null
         ? TextDirection.ltr
         : Directionality.of(context);
-    final windowSize = parent == null ? Size.zero : MediaQuery.sizeOf(context);
+    final windowSize = media.size;
     return _ModalGeometryObserver(
       key: _regionKey,
       onGeometryInvalidated: _scheduleMeasurement,
@@ -187,7 +202,24 @@ class _ModalWindowControlAppBarRegionState
           valueListenable: _globalBounds,
           child: widget.child,
           builder: (context, bounds, child) {
-            if (parent == null) return child!;
+            // A centered dialog has already cleared part or all of the view's
+            // safe edges. Only the remaining overlap belongs to its toolbar.
+            final toolbar = MediaQuery(
+              data: media.copyWith(
+                padding: _remainingHorizontalInsets(
+                  insets: media.padding,
+                  bounds: bounds,
+                  windowWidth: windowSize.width,
+                ),
+                viewPadding: _remainingHorizontalInsets(
+                  insets: media.viewPadding,
+                  bounds: bounds,
+                  windowWidth: windowSize.width,
+                ),
+              ),
+              child: child!,
+            );
+            if (parent == null) return toolbar;
             final effectiveHorizontal = _intersectingHorizontalAvoidance(
               bounds: bounds,
               windowSize: windowSize,
@@ -203,7 +235,7 @@ class _ModalWindowControlAppBarRegionState
               effectiveCornerRadii: parent.effectiveCornerRadii,
               usesRectangularDisplay: parent.usesRectangularDisplay,
               owner: WindowControlLayoutOwner.appBar,
-              child: child!,
+              child: toolbar,
             );
           },
         ),

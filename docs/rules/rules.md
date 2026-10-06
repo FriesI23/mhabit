@@ -197,6 +197,10 @@ existing architecture and tooling contracts.
 - This repo already uses `DynamicColorBuilder`, Material 3, and top-level app
   shell composition. Extend those patterns rather than bypassing them.
 
+- Use `WindowSize` for adaptive layout decisions. For local width constraints,
+  use `WindowSize.fromLayoutConstraints` so viewport-height policy stays
+  centralized instead of being reimplemented at call sites.
+
 App-bar action width budgets use `AppBarActionBudget` from
 `lib/widgets/app_bar_action_budget.dart`. Choose slots, candidate counts, or
 explicit capacity in the page renderer, then pass its computed `primaryCapacity` and `maxPrimaryActions` fields
@@ -236,6 +240,9 @@ them; keep rows with independent actions separate from single-action controls.
   - generated asset accessors such as `lib/assets/assets.gen.dart`.
 - Change the owning source file, annotation, config, or generator input first,
   then regenerate.
+- Keep generation centralized in the Melos `build-runner` script. Make, shell,
+  and CMD entrypoints should delegate to it; `verify-generated` additionally
+  owns normalization and Git-state comparison.
 
 ## Validation
 

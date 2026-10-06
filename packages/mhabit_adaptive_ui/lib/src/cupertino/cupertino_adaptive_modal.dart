@@ -811,10 +811,10 @@ class CupertinoAdaptiveModal extends StatelessWidget {
     ];
     final appBar = !showAppBar
         ? null
-        : ModalWindowControlAppBarRegion(
-            child: MediaQuery.removePadding(
-              context: context,
-              removeTop: true,
+        : MediaQuery.removePadding(
+            context: context,
+            removeTop: true,
+            child: ModalWindowControlAppBarRegion(
               child: _CupertinoModalAppBar(
                 scrollController: scrollController,
                 leading: leading == null

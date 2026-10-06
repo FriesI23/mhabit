@@ -44,7 +44,7 @@ git status --porcelain --untracked-files=all > "$before_status"
 git diff --binary --no-ext-diff > "$before_diff"
 
 bash "$SCRIPT_DIR/normalize_arb.sh"
-bash "$SCRIPT_DIR/build_runner.sh"
+dart run melos run build-runner
 
 git status --porcelain --untracked-files=all > "$after_status"
 git diff --binary --no-ext-diff > "$after_diff"

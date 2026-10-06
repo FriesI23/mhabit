@@ -24,6 +24,7 @@ runs:
       shell: bash
     - name: Get Flutter packages
       run: |
+        flutter --version
         flutter pub get
       shell: bash
     - name: Bootstrap Melos workspace

@@ -18,8 +18,8 @@ import 'cupertino_neutral_button.dart';
 
 /// Composes the Cupertino renderers around style-neutral shell mechanics.
 ///
-/// Forms are resolved only from Apple width classes; compact height never
-/// downgrades a wider window to constrained side navigation.
+/// Forms use the height-constrained layout class resolved by [WindowSize].
+/// Compact height uses the Tab Bar regardless of width or platform.
 ///
 /// ```text
 /// compact          constrained side  expanded side
@@ -244,15 +244,17 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
           onDestinationSelected: onSelected,
           onAuxiliaryDestinationSelected: widget.onAuxiliaryDestinationSelected,
         );
-        final sidebarContent = CupertinoSidebarNavigation(
-          destinations: adapter.destinations,
-          selection: adapter.selection,
-          onSelectionChanged: adapter.select,
-          auxiliaryDestinations: adapter.auxiliaryDestinations,
-          itemStyle: switch (widget.sidebarStyle) {
-            AppleSidebarStyle.inset => null,
-            AppleSidebarStyle.edge => widget.sidebarItemStyle,
-          },
+        final sidebarContent = CupertinoSidebarContentSafeArea(
+          child: CupertinoSidebarNavigation(
+            destinations: adapter.destinations,
+            selection: adapter.selection,
+            onSelectionChanged: adapter.select,
+            auxiliaryDestinations: adapter.auxiliaryDestinations,
+            itemStyle: switch (widget.sidebarStyle) {
+              AppleSidebarStyle.inset => null,
+              AppleSidebarStyle.edge => widget.sidebarItemStyle,
+            },
+          ),
         );
         final collapsedBar = CupertinoSidebarCollapsedBar(
           key: const ValueKey('cupertino-sidebar-collapsed-bar'),

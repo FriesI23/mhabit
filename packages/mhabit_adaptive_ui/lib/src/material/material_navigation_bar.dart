@@ -16,6 +16,12 @@ class MaterialNavigationBarStyle {
 
 /// Renders adaptive destinations with a Material [NavigationBar].
 class MaterialAdaptiveNavigationBar extends StatelessWidget {
+  /// Content height of the full navigation-bar presentation.
+  static const double fullHeight = 80.0;
+
+  /// Content height of the short navigation-bar presentation.
+  static const double shortHeight = 64.0;
+
   /// Creates a Material navigation bar for [destinations].
   const MaterialAdaptiveNavigationBar({
     super.key,
@@ -25,6 +31,27 @@ class MaterialAdaptiveNavigationBar extends StatelessWidget {
     this.height,
     this.labelBehavior,
   });
+
+  /// Creates the standard navigation bar with visible labels.
+  const MaterialAdaptiveNavigationBar.full({
+    super.key,
+    required this.selectedIndex,
+    required this.onDestinationSelected,
+    required this.destinations,
+  }) : height = fullHeight,
+       labelBehavior = NavigationDestinationLabelBehavior.alwaysShow;
+
+  /// Creates a shorter, icon-only navigation bar.
+  ///
+  /// Destination labels remain available to tooltips and accessibility
+  /// semantics through Flutter's [NavigationDestination].
+  const MaterialAdaptiveNavigationBar.short({
+    super.key,
+    required this.selectedIndex,
+    required this.onDestinationSelected,
+    required this.destinations,
+  }) : height = shortHeight,
+       labelBehavior = NavigationDestinationLabelBehavior.alwaysHide;
 
   /// Zero-based index of the selected destination.
   final int selectedIndex;
@@ -47,7 +74,9 @@ class MaterialAdaptiveNavigationBar extends StatelessWidget {
       context,
     ).colorScheme.surfaceContainer.withValues(alpha: 0.8);
     return NavigationBarTheme(
-      data: NavigationBarThemeData(backgroundColor: backgroundColor),
+      data: NavigationBarTheme.of(
+        context,
+      ).copyWith(backgroundColor: backgroundColor),
       child: NavigationBar(
         selectedIndex: selectedIndex,
         destinations: [

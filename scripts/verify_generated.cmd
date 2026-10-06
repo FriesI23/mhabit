@@ -47,7 +47,7 @@ if errorlevel 1 (
 
 call "%~dp0normalize_arb.cmd"
 if errorlevel 1 goto fail
-call "%~dp0build_runner.cmd"
+call dart run melos run build-runner
 if errorlevel 1 goto fail
 
 git status --porcelain --untracked-files=all > "%AFTER_STATUS%"

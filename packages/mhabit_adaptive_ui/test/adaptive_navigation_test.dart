@@ -2484,7 +2484,7 @@ void main() {
       ) async {
         tester.view.padding = const FakeViewPadding(left: 44, right: 20);
         tester.view.viewPadding = const FakeViewPadding(left: 50, right: 30);
-        _setSurfaceSize(tester, const Size(800, 400));
+        _setSurfaceSize(tester, const Size(800, 600));
 
         await tester.pumpWidget(
           MaterialApp(
@@ -2768,37 +2768,43 @@ void main() {
     });
 
     testWidgets(
-      'expanded compact-height defaults collapsed and remains expandable',
+      'expanded compact-height uses bottom navigation and switches branches',
       (tester) async {
         _setSurfaceSize(tester, const Size(1000, 479));
         final router = _buildRouter();
         await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-        NavigationRail rail() =>
-            tester.widget<NavigationRail>(find.byType(NavigationRail));
-        expect(rail().extended, isFalse);
+        expect(find.byType(NavigationRail), findsNothing);
+        final navigationBar = tester.widget<NavigationBar>(
+          find.byType(NavigationBar),
+        );
+        expect(navigationBar.height, 64.0);
         expect(
-          AdaptiveNavScope.of(tester.element(find.text('habits page'))).form,
-          NavigationShellForm.constrainedSide,
+          navigationBar.labelBehavior,
+          NavigationDestinationLabelBehavior.alwaysHide,
+        );
+        expect(
+          AdaptiveNavScope.of(
+            tester.element(find.text('habits page')),
+          ).barHeight,
+          64.0,
         );
 
-        await tester.tap(find.byIcon(Icons.menu));
+        await tester.tap(find.byIcon(Icons.calendar_today_outlined));
         await tester.pumpAndSettle();
-        expect(rail().extended, isTrue);
+        expect(find.text('today page'), findsOneWidget);
       },
     );
 
-    testWidgets('large compact-height defaults to a collapsed rail', (
-      tester,
-    ) async {
+    testWidgets('large compact-height uses bottom navigation', (tester) async {
       _setSurfaceSize(tester, const Size(1400, 479));
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(find.byType(NavigationRail), findsNothing);
       expect(
-        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
-        isFalse,
+        tester.widget<NavigationBar>(find.byType(NavigationBar)).height,
+        64.0,
       );
     });
 
@@ -2815,31 +2821,77 @@ void main() {
       );
     });
 
-    testWidgets('apple large ignores compact height and uses beside Sidebar', (
+    testWidgets('macOS large compact-height uses the Apple Tab Bar', (
       tester,
     ) async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
       _setSurfaceSize(tester, const Size(1000, 479));
       final router = _buildRouter();
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpWidget(
+        MaterialApp.router(
+          theme: ThemeData(platform: TargetPlatform.macOS),
+          routerConfig: router,
+        ),
+      );
 
       expect(find.byType(NavigationRail), findsNothing);
       expect(
         find.byKey(const ValueKey('cupertino-sidebar-beside-host')),
-        findsOneWidget,
+        findsNothing,
       );
       expect(
         find.byKey(const ValueKey('cupertino-sidebar-panel')),
-        findsOneWidget,
+        findsNothing,
       );
       expect(
         AdaptiveNavScope.of(tester.element(find.text('habits page'))).form,
-        NavigationShellForm.expandedSide,
+        NavigationShellForm.compact,
       );
-      debugDefaultTargetPlatformOverride = null;
+      expect(
+        find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('compact and medium widths remain authoritative over height', (
+    for (final platform in [TargetPlatform.iOS, TargetPlatform.macOS]) {
+      testWidgets(
+        'Apple height round trip restores hidden Sidebar on $platform',
+        (tester) async {
+          _setSurfaceSize(tester, const Size(1000, 600));
+          final router = _buildRouter();
+          await tester.pumpWidget(
+            MaterialApp.router(
+              theme: ThemeData(platform: platform),
+              routerConfig: router,
+            ),
+          );
+          final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
+          final panel = find.byKey(const ValueKey('cupertino-sidebar-panel'));
+          expect(panel, findsOneWidget);
+          await tester.tap(toggle);
+          await tester.pumpAndSettle();
+          expect(panel, findsNothing);
+
+          tester.view.physicalSize = const Size(1000, 479);
+          await tester.pumpAndSettle();
+          expect(toggle, findsNothing);
+          expect(
+            find.byKey(const ValueKey('cupertino-adaptive-navigation-bar')),
+            findsOneWidget,
+          );
+
+          tester.view.physicalSize = const Size(1000, 480);
+          await tester.pumpAndSettle();
+          expect(toggle, findsOneWidget);
+          expect(panel, findsNothing);
+          await tester.tap(toggle);
+          await tester.pumpAndSettle();
+          expect(panel, findsOneWidget);
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+
+    testWidgets('medium width returns to bottom navigation at compact height', (
       tester,
     ) async {
       _setSurfaceSize(tester, const Size(400, 1000));
@@ -2857,9 +2909,57 @@ void main() {
 
       tester.view.physicalSize = const Size(700, 400);
       await tester.pumpAndSettle();
+      expect(find.byType(NavigationRail), findsNothing);
       expect(
-        tester.widget<NavigationRail>(find.byType(NavigationRail)).extended,
-        isFalse,
+        tester.widget<NavigationBar>(find.byType(NavigationBar)).labelBehavior,
+        NavigationDestinationLabelBehavior.alwaysHide,
+      );
+      final scope = AdaptiveNavScope.of(
+        tester.element(find.text('habits page')),
+      );
+      expect(scope.form, NavigationShellForm.compact);
+      expect(scope.barHeight, 64.0);
+    });
+
+    testWidgets('compact width uses icon-only short bar at compact height', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(599, 479));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      final navigationBar = tester.widget<NavigationBar>(
+        find.byType(NavigationBar),
+      );
+      expect(navigationBar.height, 64.0);
+      expect(
+        navigationBar.labelBehavior,
+        NavigationDestinationLabelBehavior.alwaysHide,
+      );
+      expect(
+        AdaptiveNavScope.of(tester.element(find.text('habits page'))).barHeight,
+        64.0,
+      );
+    });
+
+    testWidgets('medium compact-height boundary uses the short bar', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(600, 479));
+      final router = _buildRouter();
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      final navigationBar = tester.widget<NavigationBar>(
+        find.byType(NavigationBar),
+      );
+      expect(navigationBar.height, 64.0);
+      expect(
+        navigationBar.labelBehavior,
+        NavigationDestinationLabelBehavior.alwaysHide,
+      );
+      expect(
+        AdaptiveNavScope.of(tester.element(find.text('habits page'))).barHeight,
+        64.0,
       );
     });
 
@@ -2884,25 +2984,42 @@ void main() {
       );
     });
 
-    testWidgets('height boundary switches the rail default form at runtime', (
-      tester,
-    ) async {
-      _setSurfaceSize(tester, const Size(1000, 479));
-      final router = _buildRouter();
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    testWidgets(
+      'height boundary switches bottom navigation and rail at runtime',
+      (tester) async {
+        _setSurfaceSize(tester, const Size(1000, 479));
+        final router = _buildRouter();
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      NavigationRail rail() =>
-          tester.widget<NavigationRail>(find.byType(NavigationRail));
-      expect(rail().extended, isFalse);
+        NavigationRail rail() =>
+            tester.widget<NavigationRail>(find.byType(NavigationRail));
+        expect(find.byType(NavigationRail), findsNothing);
+        expect(
+          tester.widget<NavigationBar>(find.byType(NavigationBar)).height,
+          64.0,
+        );
+        expect(
+          AdaptiveNavScope.of(
+            tester.element(find.text('habits page')),
+          ).barHeight,
+          64.0,
+        );
 
-      tester.view.physicalSize = const Size(1000, 480);
-      await tester.pumpAndSettle();
-      expect(rail().extended, isTrue);
+        tester.view.physicalSize = const Size(1000, 480);
+        await tester.pumpAndSettle();
+        expect(rail().extended, isTrue);
 
-      tester.view.physicalSize = const Size(1000, 479);
-      await tester.pumpAndSettle();
-      expect(rail().extended, isFalse);
-    });
+        tester.view.physicalSize = const Size(1000, 479);
+        await tester.pumpAndSettle();
+        expect(find.byType(NavigationRail), findsNothing);
+        expect(
+          tester
+              .widget<NavigationBar>(find.byType(NavigationBar))
+              .labelBehavior,
+          NavigationDestinationLabelBehavior.alwaysHide,
+        );
+      },
+    );
 
     testWidgets('macOS classifies with apple tiers', (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
@@ -3409,7 +3526,7 @@ void main() {
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
-      _setSurfaceSize(tester, const Size(700, 600));
+      _setSurfaceSize(tester, const Size(1000, 600));
       const destinations = [
         AdaptiveNavigationDestination(
           label: 'Habits',
@@ -3486,7 +3603,11 @@ void main() {
       );
       expect(sidebar().backgroundColor, themedBackground);
       expect(
-        (sidebar().content as CupertinoSidebarNavigation).itemStyle,
+        tester
+            .widget<CupertinoSidebarNavigation>(
+              find.byType(CupertinoSidebarNavigation, skipOffstage: false),
+            )
+            .itemStyle,
         same(themedItemStyle),
       );
       expect(
@@ -3514,7 +3635,11 @@ void main() {
       );
       expect(sidebar().backgroundColor, isNull);
       expect(
-        (sidebar().content as CupertinoSidebarNavigation).itemStyle,
+        tester
+            .widget<CupertinoSidebarNavigation>(
+              find.byType(CupertinoSidebarNavigation, skipOffstage: false),
+            )
+            .itemStyle,
         isNull,
       );
       expect(
@@ -3738,7 +3863,7 @@ void main() {
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
-      _setSurfaceSize(tester, const Size(599, 479));
+      _setSurfaceSize(tester, const Size(599, 480));
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
@@ -3756,7 +3881,7 @@ void main() {
       );
 
       for (final width in [600.0, 905.0]) {
-        tester.view.physicalSize = Size(width, 479);
+        tester.view.physicalSize = Size(width, 480);
         await tester.pumpAndSettle();
 
         expect(find.byType(NavigationRail), findsNothing);
@@ -3792,7 +3917,7 @@ void main() {
       }
 
       for (final width in [906.0, 1400.0]) {
-        tester.view.physicalSize = Size(width, 479);
+        tester.view.physicalSize = Size(width, 480);
         await tester.pumpAndSettle();
 
         expect(
@@ -3889,7 +4014,18 @@ void main() {
           ),
         ),
       );
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: router,
+          // Keep testing Sidebar overflow without the default height constraint.
+          builder: (context, child) => BreakpointsScope(
+            breakpoints: CustomBreakpoints(
+              width: const AppleBreakpoints().width,
+            ),
+            child: child!,
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
 
       final surface = find.byKey(const ValueKey('cupertino-sidebar-surface'));
@@ -5392,7 +5528,17 @@ void main() {
           ),
         ],
       );
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: router,
+          builder: (context, child) => BreakpointsScope(
+            breakpoints: CustomBreakpoints(
+              width: const AppleBreakpoints().width,
+            ),
+            child: child!,
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(

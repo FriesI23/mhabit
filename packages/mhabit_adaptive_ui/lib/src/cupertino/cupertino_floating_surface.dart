@@ -37,6 +37,7 @@ final class CupertinoFloatingSurfaceGeometry {
     double? floatingBottomMargin,
   }) {
     final viewPadding = MediaQuery.viewPaddingOf(context);
+    final remainingPadding = MediaQuery.paddingOf(context);
     final safeAreaGeometry =
         AdaptiveWindowControlLayoutScope.safeAreaGeometryOf(context);
     final usesRectangularDisplay =
@@ -62,7 +63,10 @@ final class CupertinoFloatingSurfaceGeometry {
             floatingMargin: floatingMargin,
           );
     return CupertinoFloatingSurfaceGeometry._(
-      horizontalPadding: EdgeInsets.only(left: leftMargin, right: rightMargin),
+      horizontalPadding: EdgeInsets.only(
+        left: math.max(leftMargin, remainingPadding.left),
+        right: math.max(rightMargin, remainingPadding.right),
+      ),
       floatingMargin: floatingMargin,
     );
   }

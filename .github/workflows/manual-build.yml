@@ -111,7 +111,7 @@ jobs:
     needs:
       - precheck-gate
     if: ${{ inputs.target == 'all' || inputs.target == 'ios' }}
-    runs-on: macos-latest
+    runs-on: xcode-27
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup_xcode
@@ -131,7 +131,7 @@ jobs:
     needs:
       - precheck-gate
     if: ${{ inputs.target == 'all' || inputs.target == 'macos' }}
-    runs-on: macos-latest
+    runs-on: xcode-27
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup_xcode
