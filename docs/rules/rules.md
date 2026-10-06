@@ -59,19 +59,6 @@ existing architecture and tooling contracts.
 - When a task touches generated artifacts, prefer validating with `make gen` or
   `make verify-generated` instead of editing generated outputs directly.
 
-## Apple Toolchain
-
-- Xcode 27.0 is the local and CI build baseline. CI uses the shared `setup_xcode`
-  action with `"27.0"`, selecting an installed stable 27.0 release and recording
-  the selected version in the job log. Prefer major-version pinning (`^27`);
-  the current `"27.0"` pin is temporary. Restore `^27` after adapting and
-  verifying the SDK-gated iPhone Duo behavior introduced in 27.1.
-- Apple build and Store submission workflows use the dedicated `xcode-27`
-  runner label. GitHub currently marks the image as preview; this status alone
-  does not require switching labels when the image reaches GA. See the
-  [runner announcement](https://github.com/actions/runner-images/issues/14404).
-- Deployment targets remain iOS 15.0 and use macOS 12.0 for Xcode 27 compatibility.
-
 ## Project Structure
 
 - `lib/main.dart` owns startup ordering. Keep binding, logging, app info,
@@ -210,13 +197,9 @@ existing architecture and tooling contracts.
 - This repo already uses `DynamicColorBuilder`, Material 3, and top-level app
   shell composition. Extend those patterns rather than bypassing them.
 
-Adaptive layouts consume `WindowSize`, whose conversion constrains the
-width-derived layout class to compact whenever the viewport height is compact.
-Keep this policy in `WindowSize.fromBreakpoints`, without device or platform
-exceptions. For local content constraints, use
-`WindowSize.fromLayoutConstraints` so unbounded scroll height cannot bypass the
-viewport constraint. Raw `Breakpoints` axis classes remain available for
-geometry such as safe-area padding.
+- Use `WindowSize` for adaptive layout decisions. For local width constraints,
+  use `WindowSize.fromLayoutConstraints` so viewport-height policy stays
+  centralized instead of being reimplemented at call sites.
 
 App-bar action width budgets use `AppBarActionBudget` from
 `lib/widgets/app_bar_action_budget.dart`. Choose slots, candidate counts, or
@@ -257,11 +240,9 @@ them; keep rows with independent actions separate from single-action controls.
   - generated asset accessors such as `lib/assets/assets.gen.dart`.
 - Change the owning source file, annotation, config, or generator input first,
   then regenerate.
-- `make gen` normalizes ARBs and generates icon fonts before invoking Melos
-  `build-runner`. The `build-runner` steps in `pubspec.yaml` own `build_runner`,
-  `flutter gen-l10n`, and the shared formatting command. Shell/CMD wrappers and
-  `make verify-generated` reuse that sequence; verification retains ARB
-  normalization and the Git before/after comparison.
+- Keep generation centralized in the Melos `build-runner` script. Make, shell,
+  and CMD entrypoints should delegate to it; `verify-generated` additionally
+  owns normalization and Git-state comparison.
 
 ## Validation
 

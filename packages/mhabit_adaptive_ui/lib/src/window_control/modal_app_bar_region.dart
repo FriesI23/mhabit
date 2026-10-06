@@ -97,6 +97,20 @@ class _ModalWindowControlAppBarRegionState
   static bool _overlaps(Rect bounds, Rect avoidance) =>
       !avoidance.isEmpty && bounds.overlaps(avoidance);
 
+  static EdgeInsets _remainingHorizontalInsets({
+    required EdgeInsets insets,
+    required Rect? bounds,
+    required double windowWidth,
+  }) {
+    if (bounds == null) return insets;
+    return EdgeInsets.fromLTRB(
+      (insets.left - bounds.left).clamp(0, insets.left),
+      insets.top,
+      (insets.right - (windowWidth - bounds.right)).clamp(0, insets.right),
+      insets.bottom,
+    );
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -190,21 +204,18 @@ class _ModalWindowControlAppBarRegionState
           builder: (context, bounds, child) {
             // A centered dialog has already cleared part or all of the view's
             // safe edges. Only the remaining overlap belongs to its toolbar.
-            EdgeInsets remainingHorizontal(EdgeInsets padding) =>
-                EdgeInsets.fromLTRB(
-                  (padding.left - (bounds?.left ?? 0)).clamp(0, padding.left),
-                  padding.top,
-                  (padding.right -
-                          (bounds == null
-                              ? 0
-                              : windowSize.width - bounds.right))
-                      .clamp(0, padding.right),
-                  padding.bottom,
-                );
             final toolbar = MediaQuery(
               data: media.copyWith(
-                padding: remainingHorizontal(media.padding),
-                viewPadding: remainingHorizontal(media.viewPadding),
+                padding: _remainingHorizontalInsets(
+                  insets: media.padding,
+                  bounds: bounds,
+                  windowWidth: windowSize.width,
+                ),
+                viewPadding: _remainingHorizontalInsets(
+                  insets: media.viewPadding,
+                  bounds: bounds,
+                  windowWidth: windowSize.width,
+                ),
               ),
               child: child!,
             );

@@ -30,21 +30,21 @@ class AdaptiveWindowTopSafeArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final media = MediaQuery.of(context);
     // Windowed iPadOS chrome shares the traffic-light row. Applying vertical
     // adaptation globally would push that row below the window controls.
     if (AdaptiveWindowControlLayoutScope.maybeOf(
           context,
         )?.hasWindowControlAvoidance ==
         true) {
-      return MediaQuery(data: media, child: child);
+      return child;
     }
     final extraTop =
         AdaptiveWindowControlLayoutScope.safeAreaGeometryOf(
           context,
         )?.verticalAvoidance.top ??
         0.0;
-    if (extraTop <= 0) return MediaQuery(data: media, child: child);
+    if (extraTop <= 0) return child;
+    final media = MediaQuery.of(context);
     final viewTop = media.viewPadding.top + extraTop;
     return MediaQuery(
       data: media.copyWith(
