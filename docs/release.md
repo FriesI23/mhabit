@@ -1,4 +1,4 @@
-# Pre-Released: v1.27.12+201-pre
+# Released: v1.27.13+202
 
 > Includes updates since the previous stable release, v1.27.9+198.
 
@@ -41,4 +41,4 @@
 - Raise the minimum supported macOS version to 12.0 (#674)
 - Centralize generated-code formatting in the Melos workflow (#674)
 
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.9+198...pre-v1.27.12+201)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.9+198...v1.27.13+202)

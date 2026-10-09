@@ -2,29 +2,18 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.27.12+201-pre
+## 1.27.13+202
 
-- Feature: adapt navigation and content spacing to compact-height layouts (#674)
-- Feature: tap the active Habits or Today tab again to scroll to the top (#675)
-
-## 1.27.11+200-pre
-
-- Feature: let users show or hide navigation destinations in the top toolbar
-  when the sidebar is collapsed (#671)
-- Fix: refresh habit and group views as soon as synced changes are applied
-  (#672)
-- Fix: keep neutral action colors consistent and restore modal app-bar blur
-  after nested navigation (#673)
-- Fix: keep system bars visible during launch
-
-## 1.27.10+199-pre
-
-- Feature: add adaptive, collapsible side navigation and preserve page state
-  across layouts (#667)
-- Feature: apply app theme colors and custom palettes to side navigation (#668)
-- Fix: improve adaptive interactions, keyboard focus, search filters, theme
-  labels, and Markdown typography (#669)
-- Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate
+- Feature: adaptive, collapsible sidebar keeps page state and theme/custom
+  palettes (#667, #668)
+- Feature: optional collapsed-sidebar toolbar links; compact-height spacing;
+  tap active tab to scroll to top (#671, #674, #675)
+- Fix: interactions, keyboard focus, filters, theme labels and Markdown
+  typography (#669)
+- Fix: show sync changes at once (#672); neutral colors and nested modal blur
+  (#673)
+- Fix: keep launch system bars visible
+- Update Hebrew, thanks to Omer I.S. on Weblate
 
 ## 1.27.9+198
 
