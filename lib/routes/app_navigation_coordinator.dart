@@ -20,6 +20,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import 'app_navigation_branch.dart';
+import 'app_navigation_scroll_controller.dart';
 import 'app_router.dart';
 
 class _NavigationTransactionController {
@@ -73,15 +74,13 @@ class _NavigationTransactionController {
   }
 }
 
-class _AppFlowStackController {
-  const _AppFlowStackController({
+class _NavigationStackController {
+  const _NavigationStackController({
     required this.observer,
-    required this.navigatorKey,
     required this.isDisposed,
   });
 
   final AdaptiveBranchRouteObserver observer;
-  final GlobalKey<NavigatorState> navigatorKey;
   final bool Function() isDisposed;
 
   Future<bool> popToRoot() => _popUntil(isComplete: () => observer.depth <= 1);
@@ -90,7 +89,7 @@ class _AppFlowStackController {
       _popUntil(isComplete: () => observer.topRouteName == routeName);
 
   Future<bool> _popUntil({required bool Function() isComplete}) async {
-    final navigator = navigatorKey.currentState;
+    final navigator = observer.navigator;
     if (navigator == null) return false;
     final initialDepth = observer.depth;
     final maximumPopCount = initialDepth > 1 ? initialDepth - 1 : 0;
@@ -129,9 +128,8 @@ class AppNavigationCoordinator extends ChangeNotifier {
       syncState: (selectedIndex) =>
           _synchronize(selectedIndexOverride: selectedIndex),
     );
-    _appFlowStack = _AppFlowStackController(
+    _appFlowStack = _NavigationStackController(
       observer: appFlowObserver,
-      navigatorKey: appChromeNavigatorKey,
       isDisposed: () => _disposed,
     );
     for (final observer in branchObservers) {
@@ -150,7 +148,7 @@ class AppNavigationCoordinator extends ChangeNotifier {
   final GlobalKey<NavigatorState> appChromeNavigatorKey;
 
   late final _NavigationTransactionController _transactions;
-  late final _AppFlowStackController _appFlowStack;
+  late final _NavigationStackController _appFlowStack;
   StatefulNavigationShell? _navigationShell;
   int _selectedIndex;
   String? _appFlowTopRouteName;
@@ -158,6 +156,9 @@ class AppNavigationCoordinator extends ChangeNotifier {
   bool _destinationSwitchInProgress = false;
   bool _notificationScheduled = false;
   bool _disposed = false;
+
+  /// Commands registered by the mounted branch root pages.
+  final scrollController = AppNavigationScrollController();
 
   /// Index of the currently selected primary branch.
   int get selectedIndex => _selectedIndex;
@@ -180,9 +181,13 @@ class AppNavigationCoordinator extends ChangeNotifier {
     _synchronize(scheduleNotification: true);
   }
 
-  /// Closes the current app flow and selects a primary branch.
-  Future<void> selectBranch(int index) =>
-      _goToPrimaryBranch(index, destinationSwitch: true);
+  /// Selects a branch, or returns its current stack to the root on reselection.
+  /// Reselecting an already visible root invokes its page-owned scroll command.
+  Future<void> selectBranch(int index) => _goToPrimaryBranch(
+    index,
+    destinationSwitch: true,
+    reselect: index == selectedIndex,
+  );
 
   /// Selects an auxiliary app-flow destination from the navigation chrome.
   Future<void> selectAppFlowRoot(String routeName) =>
@@ -242,10 +247,16 @@ class AppNavigationCoordinator extends ChangeNotifier {
   Future<void> _goToPrimaryBranch(
     int index, {
     bool destinationSwitch = false,
-    bool initialLocation = false,
+    bool reselect = false,
   }) async {
     if (!_transactions.tryBegin(destinationSwitch: destinationSwitch)) return;
     int? nextSelectedIndex;
+    final observer = _branchObserverAt(index);
+    final wasAtRoot =
+        appFlowObserver.depth <= 1 &&
+        observer?.depth == 1 &&
+        observer?.topRouteName ==
+            AppNavigationBranch.fromNavigationIndex(index).rootRouteName;
     try {
       if (destinationSwitch) {
         await SchedulerBinding.instance.endOfFrame;
@@ -255,9 +266,22 @@ class AppNavigationCoordinator extends ChangeNotifier {
 
       if (!await _appFlowStack.popToRoot()) return;
       if (_disposed) return;
+      if (reselect && _navigationShell != null) {
+        if (wasAtRoot) {
+          scrollController.scrollToTop(
+            AppNavigationBranch.fromNavigationIndex(index),
+          );
+        } else if (observer != null && observer.depth > 1) {
+          await _NavigationStackController(
+            observer: observer,
+            isDisposed: () => _disposed,
+          ).popToRoot();
+        }
+        return;
+      }
       final navigationShell = _navigationShell;
       if (navigationShell != null) {
-        navigationShell.goBranch(index, initialLocation: initialLocation);
+        navigationShell.goBranch(index);
         nextSelectedIndex = index;
         return;
       }
@@ -331,6 +355,7 @@ class AppNavigationCoordinator extends ChangeNotifier {
     if (_disposed) return;
     _disposed = true;
     _navigationShell = null;
+    scrollController.clear();
     for (final observer in branchObservers) {
       if (observer.onStackChanged == _handleStackChanged) {
         observer.onStackChanged = null;

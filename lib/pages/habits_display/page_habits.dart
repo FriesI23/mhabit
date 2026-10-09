@@ -51,6 +51,7 @@ import '../../providers/app_ui/habits_sort.dart';
 import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/habits_file_exporter.dart';
+import '../../routes/app_navigation_branch.dart';
 import '../../routes/navigator_helpers.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../theme/color.dart';
@@ -58,6 +59,7 @@ import '../../utils/xshare.dart';
 import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
 import '../common/debug.dart';
+import '../common/navigation_scroll_to_top.dart';
 import '../common/widgets.dart';
 import '../habit_detail/page.dart' as habit_detail;
 import '_providers/habit_summary.dart';
@@ -80,7 +82,19 @@ class HabitsTabPage extends StatefulWidget {
 }
 
 class HabitsTabPageState extends State<HabitsTabPage>
-    with HabitsDisplayViewDebug, XShare, AutomaticKeepAliveClientMixin {
+    with
+        HabitsDisplayViewDebug,
+        XShare,
+        AutomaticKeepAliveClientMixin,
+        NavigationScrollToTopMixin<HabitsTabPage> {
+  @override
+  AppNavigationBranch get navigationScrollToTopBranch =>
+      AppNavigationBranch.habits;
+
+  @override
+  ScrollController get navigationScrollToTopController =>
+      _verticalScrollController;
+
   late HabitSummaryViewModel _vm;
   late AppCompactUISwitcherViewModel _uiSwitcher;
 

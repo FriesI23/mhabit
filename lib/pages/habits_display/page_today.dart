@@ -34,8 +34,10 @@ import '../../models/habit_repo_actions.dart';
 import '../../models/habit_summary.dart';
 import '../../providers/app_ui/app_developer.dart';
 import '../../providers/workflow/app_sync.dart';
+import '../../routes/app_navigation_branch.dart';
 import '../../routes/navigator_helpers.dart';
 import '../../widgets/widgets.dart';
+import '../common/navigation_scroll_to_top.dart';
 import '../common/widgets.dart';
 import '_providers/habit_summary.dart';
 import '_providers/habits_today.dart';
@@ -51,11 +53,22 @@ class TodayTabPage extends StatefulWidget {
 }
 
 class TodayTabPageState extends State<TodayTabPage>
-    with AutomaticKeepAliveClientMixin {
+    with
+        AutomaticKeepAliveClientMixin,
+        NavigationScrollToTopMixin<TodayTabPage> {
+  @override
+  AppNavigationBranch get navigationScrollToTopBranch =>
+      AppNavigationBranch.today;
+
+  @override
+  ScrollController get navigationScrollToTopController =>
+      _verticalScrollController;
+
   late HabitsTodayViewModel _vm;
   AppSyncWorkflowAccess? _appSync;
   StreamSubscription<String>? _startSyncSub;
 
+  final _verticalScrollController = ScrollController();
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   @override
@@ -93,6 +106,7 @@ class TodayTabPageState extends State<TodayTabPage>
   @override
   void dispose() {
     _startSyncSub?.cancel();
+    _verticalScrollController.dispose();
     super.dispose();
   }
 
@@ -131,6 +145,7 @@ class TodayTabPageState extends State<TodayTabPage>
     final appbarHeight = AdaptiveStyle.of(context).appToolbarHeight;
 
     final body = CustomScrollView(
+      controller: _verticalScrollController,
       physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
         _Appbar(toolbarHeight: appbarHeight),

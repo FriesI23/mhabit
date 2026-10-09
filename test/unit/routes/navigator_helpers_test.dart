@@ -188,8 +188,10 @@ void main() {
       tester,
     ) async {
       final navigatorKey = GlobalKey<NavigatorState>();
+      final appFlowObserver = AdaptiveBranchRouteObserver();
       final router = GoRouter(
         navigatorKey: navigatorKey,
+        observers: [appFlowObserver],
         initialLocation: '/',
         routes: [
           GoRoute(path: '/', builder: (_, _) => const Text('home')),
@@ -202,7 +204,7 @@ void main() {
       );
       final coordinator = AppNavigationCoordinator(
         branchObservers: const [],
-        appFlowObserver: AdaptiveBranchRouteObserver(),
+        appFlowObserver: appFlowObserver,
         appChromeNavigatorKey: navigatorKey,
         initialIndex: 0,
       );
