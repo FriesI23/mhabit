@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.27.12+201-pre
+
+- Feature: adapt navigation and content spacing to compact-height layouts (#674)
+- Feature: tap the active Habits or Today tab again to scroll to the top (#675)
+
 ## 1.27.11+200-pre
 
 - Feature: let users show or hide navigation destinations in the top toolbar

@@ -1,4 +1,4 @@
-# Pre-Released: v1.27.11+200-pre
+# Pre-Released: v1.27.12+201-pre
 
 > Includes updates since the previous stable release, v1.27.9+198.
 
@@ -11,6 +11,12 @@
 - Apply app theme colors and custom palettes to the side navigation (#668)
 - Let users show or hide navigation destinations in the top toolbar when the
   Apple sidebar is collapsed (#671)
+- Adapt navigation and content safe areas for iPhone Duo and compact-height
+  layouts (#674)
+- Scroll Habits and Today to the top when reselecting the active root tab
+  (#675)
+  - Return nested pages to the tab's root before scrolling on a subsequent tap
+  - Respect reduced motion preferences and pages that prevent back navigation
 
 ## 🐛 Fixes
 
@@ -29,4 +35,10 @@
 
 - Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate.
 
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.9+198...v1.27.11+200-pre)
+## 🧹 Others
+
+- Pin Apple build and submission workflows to Xcode 27.0 (#674)
+- Raise the minimum supported macOS version to 12.0 (#674)
+- Centralize generated-code formatting in the Melos workflow (#674)
+
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.9+198...pre-v1.27.12+201)

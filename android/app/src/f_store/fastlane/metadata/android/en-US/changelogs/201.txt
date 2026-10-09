@@ -1,0 +1,2 @@
+- Feature: adapt navigation and content spacing to compact-height layouts (#674)
+- Feature: tap the active Habits or Today tab again to scroll to the top (#675)
