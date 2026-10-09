@@ -66,6 +66,8 @@ import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/app_sync.dart';
 import 'package:mhabit/providers/workflow/group_manager.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
+import 'package:mhabit/routes/app_navigation_branch.dart';
+import 'package:mhabit/routes/app_navigation_scroll_controller.dart';
 import 'package:mhabit/routes/app_router.dart';
 import 'package:mhabit/routes/helpers/habits_status_changer_helper.dart';
 import 'package:mhabit/storage/db/handlers/habit.dart';
@@ -263,6 +265,7 @@ Future<void> _pumpTodayTabPage(
   required AppSyncWorkflowAccess sync,
   TargetPlatform platform = TargetPlatform.android,
   bool useAdaptiveShell = false,
+  AppNavigationScrollController? navigationScrollController,
 }) async {
   final customDate = AppCustomDateYmdHmsConfigViewModel()
     ..updateProfile(profile);
@@ -316,6 +319,10 @@ Future<void> _pumpTodayTabPage(
   await tester.pumpWidget(
     MultiProvider(
       providers: [
+        if (navigationScrollController != null)
+          Provider<AppNavigationScrollController>.value(
+            value: navigationScrollController,
+          ),
         ChangeNotifierProvider<ProfileViewModel>.value(value: profile),
         ChangeNotifierProvider<HabitsTodayViewModel>.value(value: vm),
         ChangeNotifierProvider<AppCustomDateYmdHmsConfigViewModel>.value(
@@ -346,6 +353,7 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
   bool useCompactUi = false,
   bool useBranchPage = false,
   bool useAdaptiveShell = false,
+  AppNavigationScrollController? navigationScrollController,
   bool provideOuterHabitSummary = true,
   TargetPlatform platform = TargetPlatform.android,
   Widget Function(Widget home)? appBuilder,
@@ -450,6 +458,10 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
   await tester.pumpWidget(
     MultiProvider(
       providers: [
+        if (navigationScrollController != null)
+          Provider<AppNavigationScrollController>.value(
+            value: navigationScrollController,
+          ),
         Provider<HabitDisplayNavigationChrome>.value(value: navigationChrome),
         ChangeNotifierProvider<ProfileViewModel>.value(value: profile),
         if (provideOuterHabitSummary)
@@ -511,6 +523,66 @@ Future<void> _fastDirectDrag(
 }
 
 void main() {
+  for (final branch in AppNavigationBranch.values) {
+    testWidgets('$branch root owns its scroll-to-top command', (tester) async {
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final profile = await _loadProfile();
+      final access = _LoadedHabitsDisplayAccess(habitCount: 40);
+      final sync = _FakeAppSyncWorkflowAccess();
+      final commands = AppNavigationScrollController();
+      addTearDown(() {
+        profile.dispose();
+        sync.dispose();
+      });
+      if (branch == AppNavigationBranch.today) {
+        await _pumpTodayTabPage(
+          tester,
+          profile: profile,
+          access: access,
+          sync: sync,
+          navigationScrollController: commands,
+        );
+      } else {
+        await _pumpHabitsTabPage(
+          tester,
+          profile: profile,
+          access: access,
+          sync: sync,
+          navigationScrollController: commands,
+          useBranchPage: true,
+        );
+      }
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      final state = branch == AppNavigationBranch.today
+          ? tester.state<TodayTabPageState>(find.byType(TodayTabPage))
+          : tester.state<HabitsTabPageState>(find.byType(HabitsTabPage));
+      final controller = state is TodayTabPageState
+          ? state.navigationScrollToTopController
+          : (state as HabitsTabPageState).navigationScrollToTopController;
+      // Animated list layout publishes its extent after loading transitions.
+      for (
+        var frame = 0;
+        frame < 8 && controller.position.maxScrollExtent <= 300;
+        frame++
+      ) {
+        await tester.pump(const Duration(milliseconds: 350));
+      }
+      expect(controller.position.maxScrollExtent, greaterThan(300));
+      controller.jumpTo(300);
+      await tester.pump();
+      commands.scrollToTop(branch);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 350));
+      expect(controller.offset, controller.position.minScrollExtent);
+      await tester.pumpWidget(const SizedBox());
+      commands.scrollToTop(branch);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
     for (final operation in [
       HabitDisplaySelectAction.archive,

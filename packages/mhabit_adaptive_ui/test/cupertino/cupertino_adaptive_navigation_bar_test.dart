@@ -839,7 +839,7 @@ void main() {
       expect(selected, isEmpty);
     });
 
-    testWidgets('minimized shows only selected icon and requests expansion', (
+    testWidgets('minimized requests expansion and reports reselection', (
       tester,
     ) async {
       final semanticsHandle = tester.ensureSemantics();
@@ -907,11 +907,11 @@ void main() {
 
       await tester.tap(surface);
       expect(expandRequests, 1);
-      expect(selected, isEmpty);
+      expect(selected, [1]);
 
       await tester.tap(placeholder, warnIfMissed: false);
       expect(expandRequests, 1);
-      expect(selected, isEmpty);
+      expect(selected, [1]);
       semanticsHandle.dispose();
     });
 

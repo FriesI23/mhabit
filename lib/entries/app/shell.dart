@@ -25,6 +25,7 @@ import '../../models/app_entry.dart';
 import '../../providers/app_ui/app_launch_entry.dart';
 import '../../routes/app_navigation_branch.dart';
 import '../../routes/app_navigation_coordinator.dart';
+import '../../routes/app_navigation_scroll_controller.dart';
 import '../../widgets/widgets.dart';
 import 'navigation_chrome.dart';
 import 'navigation_destination.dart';
@@ -59,8 +60,15 @@ class AppNavigationShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<AppNavigationCoordinator>.value(
-      value: coordinator,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AppNavigationCoordinator>.value(
+          value: coordinator,
+        ),
+        Provider<AppNavigationScrollController>.value(
+          value: coordinator.scrollController,
+        ),
+      ],
       child: NavigatorPopHandler<Object?>(
         onPopWithResult: (result) {
           final navigator = coordinator.appChromeNavigatorKey.currentState;

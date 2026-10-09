@@ -18,6 +18,7 @@ import 'package:mhabit/models/app_theme_color.dart';
 import 'package:mhabit/pages/app_debugger/_widgets/debugger_app_bar.dart';
 import 'package:mhabit/pages/app_debugger/page.dart'
     show onDebuggerNotificationTapped;
+import 'package:mhabit/pages/common/navigation_scroll_to_top.dart';
 import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/pages/group_manage/_providers/group_manage.dart';
 import 'package:mhabit/pages/group_manage/_widgets/group_manage_app_bar.dart';
@@ -31,6 +32,7 @@ import 'package:mhabit/routes/app_flow_page.dart';
 import 'package:mhabit/routes/app_material_page.dart';
 import 'package:mhabit/routes/app_navigation_branch.dart';
 import 'package:mhabit/routes/app_navigation_coordinator.dart';
+import 'package:mhabit/routes/app_navigation_scroll_controller.dart';
 import 'package:mhabit/routes/app_router.dart';
 import 'package:mhabit/routes/navigator_helpers.dart';
 import 'package:mhabit/theme/color.dart';
@@ -235,6 +237,40 @@ class _NavigatingPrimaryActionStubPageState
       const Scaffold(body: Center(child: Text('habits action page')));
 }
 
+class _ScrollableBranchPage extends StatefulWidget {
+  const _ScrollableBranchPage(this.branch, {super.key});
+
+  final AppNavigationBranch branch;
+
+  @override
+  State<_ScrollableBranchPage> createState() => _ScrollableBranchPageState();
+}
+
+class _ScrollableBranchPageState extends State<_ScrollableBranchPage>
+    with NavigationScrollToTopMixin<_ScrollableBranchPage> {
+  @override
+  final navigationScrollToTopController = ScrollController();
+
+  @override
+  AppNavigationBranch get navigationScrollToTopBranch => widget.branch;
+
+  @override
+  void dispose() {
+    navigationScrollToTopController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    body: ListView(
+      controller: navigationScrollToTopController,
+      children: const [
+        SizedBox(height: 3000, child: Text('scrollable branch')),
+      ],
+    ),
+  );
+}
+
 // Composes production page chrome with the production router/shell. Page body
 // and persistence behavior are covered by the respective page tests.
 enum _RegressionPage { detail, groups, debugger }
@@ -420,6 +456,41 @@ GoRouter _buildRouter(
   return routerBuilder.build(home: home);
 }
 
+Future<void> _tapBranch(WidgetTester tester, int index) async {
+  for (final prefix in [
+    'cupertino-navigation-destination-',
+    'cupertino-sidebar-collapsed-destination-',
+    'cupertino-sidebar-destination-',
+  ]) {
+    final destination = find.byKey(ValueKey('$prefix$index')).hitTestable();
+    if (destination.evaluate().isNotEmpty) {
+      await tester.tap(destination);
+      return;
+    }
+  }
+  final icons = index == 0
+      ? [
+          Icons.home,
+          Icons.home_outlined,
+          CupertinoIcons.house_fill,
+          CupertinoIcons.house,
+        ]
+      : [
+          MdiIcons.calendarToday,
+          MdiIcons.calendarTodayOutline,
+          CupertinoIcons.today_fill,
+          CupertinoIcons.today,
+        ];
+  for (final icon in icons) {
+    final destination = find.byIcon(icon).hitTestable();
+    if (destination.evaluate().isNotEmpty) {
+      await tester.tap(destination.first);
+      return;
+    }
+  }
+  fail('No visible destination for branch $index');
+}
+
 void _setCompactSurface(WidgetTester tester) {
   _setSurface(tester, const Size(400, 800));
 }
@@ -512,6 +583,178 @@ Future<void> _commitPredictiveBack(WidgetTester tester) async {
 }
 
 void main() {
+  testWidgets(
+    'navigation scroll controller follows provider replacement and reduced motion',
+    (tester) async {
+      final key = GlobalKey<_ScrollableBranchPageState>();
+      final first = AppNavigationScrollController();
+      final second = AppNavigationScrollController();
+      Widget build(AppNavigationScrollController commands) => MaterialApp(
+        home: MediaQuery(
+          data: const MediaQueryData(disableAnimations: true),
+          child: Provider<AppNavigationScrollController>.value(
+            value: commands,
+            child: _ScrollableBranchPage(AppNavigationBranch.habits, key: key),
+          ),
+        ),
+      );
+      await tester.pumpWidget(build(first));
+      final controller = key.currentState!.navigationScrollToTopController;
+      controller.jumpTo(500);
+      first.scrollToTop(AppNavigationBranch.habits);
+      expect(controller.offset, 0);
+      first.scrollToTop(AppNavigationBranch.habits);
+      await tester.pumpWidget(build(second));
+      controller.jumpTo(500);
+      first.scrollToTop(AppNavigationBranch.habits);
+      expect(controller.offset, 500);
+      second.scrollToTop(AppNavigationBranch.habits);
+      expect(controller.offset, 0);
+      await tester.pumpWidget(const SizedBox());
+      first.scrollToTop(AppNavigationBranch.habits);
+      second.scrollToTop(AppNavigationBranch.habits);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+    for (final size in [
+      const Size(400, 800),
+      const Size(700, 600),
+      const Size(1200, 800),
+    ]) {
+      testWidgets(
+        'reselect scrolls only the active root on $platform at $size',
+        (tester) async {
+          _setSurface(tester, size);
+          final habitsKey = GlobalKey<_ScrollableBranchPageState>();
+          final todayKey = GlobalKey<_ScrollableBranchPageState>();
+          final observers = [
+            AdaptiveBranchRouteObserver(),
+            AdaptiveBranchRouteObserver(),
+          ];
+          final router = _buildRouter(
+            observers,
+            habitsPage: _ScrollableBranchPage(
+              AppNavigationBranch.habits,
+              key: habitsKey,
+            ),
+            todayPage: _ScrollableBranchPage(
+              AppNavigationBranch.today,
+              key: todayKey,
+            ),
+          );
+          addTearDown(router.dispose);
+          await _pumpApp(
+            tester,
+            router: router,
+            platform: platform,
+            launchEntry: _RecordingLaunchEntryViewModel(),
+          );
+          await tester.pumpAndSettle();
+          final shell = tester.widget<AdaptiveNavigationShell>(
+            find.byType(AdaptiveNavigationShell),
+          );
+          final habits =
+              habitsKey.currentState!.navigationScrollToTopController;
+          habits.jumpTo(500);
+          await tester.pumpAndSettle();
+          shell.onDestinationSelected(1);
+          await tester.pumpAndSettle();
+          expect(habits.offset, 500);
+          final today = todayKey.currentState!.navigationScrollToTopController;
+          today.jumpTo(600);
+          await tester.pumpAndSettle();
+          shell.onDestinationSelected(1);
+          await tester.pump();
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 150));
+          expect(today.offset, greaterThan(0));
+          expect(today.offset, lessThan(600));
+          await tester.pumpAndSettle();
+          expect(today.offset, 0);
+          shell.onDestinationSelected(0);
+          await tester.pumpAndSettle();
+          expect(habits.offset, 500);
+          router.push('/habits/detail');
+          await tester.pumpAndSettle();
+          router.push('/habits/another');
+          await tester.pumpAndSettle();
+          shell.onDestinationSelected(0);
+          shell.onDestinationSelected(0);
+          await tester.pumpAndSettle();
+          expect(observers[0].depth, 1);
+          expect(habits.offset, 500);
+          shell.onDestinationSelected(0);
+          await tester.pumpAndSettle();
+          expect(habits.offset, 0);
+          habits.jumpTo(400);
+          await tester.pumpAndSettle();
+          // Restore visible chrome as a user upward scroll would.
+          shell.onDestinationSelected(0);
+          await tester.pumpAndSettle();
+          await _tapBranch(tester, 0);
+          await tester.pumpAndSettle();
+          expect(habits.offset, 0);
+          habits.jumpTo(400);
+          router.push('/habits/detail');
+          await tester.pumpAndSettle();
+          router.push('/settings');
+          await tester.pumpAndSettle();
+          shell.onDestinationSelected(0);
+          await tester.pumpAndSettle();
+          expect(observers[0].depth, 1);
+          expect(habits.offset, 400);
+          shell.onDestinationSelected(0);
+          await tester.pumpAndSettle();
+          expect(habits.offset, 0);
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+  }
+
+  testWidgets('reselect respects a branch pop veto and does not scroll', (
+    tester,
+  ) async {
+    _setCompactSurface(tester);
+    final key = GlobalKey<_ScrollableBranchPageState>();
+    final observers = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final router = _buildRouter(
+      observers,
+      habitsPage: _ScrollableBranchPage(AppNavigationBranch.habits, key: key),
+      detailPage: const _OneShotPopVetoPage(),
+    );
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      router: router,
+      launchEntry: _RecordingLaunchEntryViewModel(),
+    );
+    await tester.pumpAndSettle();
+    final coordinator = tester
+        .widget<AppNavigationShell>(find.byType(AppNavigationShell))
+        .coordinator;
+    final controller = key.currentState!.navigationScrollToTopController;
+    controller.jumpTo(500);
+    router.push('/habits/detail');
+    await tester.pumpAndSettle();
+    unawaited(coordinator.selectBranch(0));
+    await tester.pumpAndSettle();
+    expect(observers[0].depth, 2);
+    expect(controller.offset, 500);
+    unawaited(coordinator.selectBranch(0));
+    await tester.pumpAndSettle();
+    expect(observers[0].depth, 1);
+    expect(controller.offset, 500);
+    unawaited(coordinator.selectBranch(0));
+    await tester.pumpAndSettle();
+    expect(controller.offset, 0);
+  });
+
   for (final platform in [TargetPlatform.iOS, TargetPlatform.macOS]) {
     for (final width in [400.0, 900.0]) {
       testWidgets(
