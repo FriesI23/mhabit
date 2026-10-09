@@ -839,7 +839,7 @@ void main() {
       expect(selected, isEmpty);
     });
 
-    testWidgets('minimized requests expansion and reports reselection', (
+    testWidgets('minimized only expands; expanded tap reports reselection', (
       tester,
     ) async {
       final semanticsHandle = tester.ensureSemantics();
@@ -907,9 +907,22 @@ void main() {
 
       await tester.tap(surface);
       expect(expandRequests, 1);
-      expect(selected, [1]);
+      expect(selected, isEmpty);
 
       await tester.tap(placeholder, warnIfMissed: false);
+      expect(expandRequests, 1);
+      expect(selected, isEmpty);
+      await tester.pumpWidget(
+        _wrap(
+          presentation: AdaptiveNavigationBarPresentation.expanded,
+          onDestinationSelected: selected.add,
+          onExpandRequested: () => expandRequests++,
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('cupertino-navigation-destination-1')),
+      );
       expect(expandRequests, 1);
       expect(selected, [1]);
       semanticsHandle.dispose();

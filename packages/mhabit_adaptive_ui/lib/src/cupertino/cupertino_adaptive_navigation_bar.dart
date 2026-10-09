@@ -507,10 +507,7 @@ class _NavigationSurfaceContentState extends State<_NavigationSurfaceContent> {
     final onTap = !visible
         ? null
         : compactSelected
-        ? () {
-            widget.onExpandRequested();
-            widget.onDestinationSelected(index);
-          }
+        ? widget.onExpandRequested
         : () => widget.onDestinationSelected(index);
 
     return _NavigationDestinationSlot(
