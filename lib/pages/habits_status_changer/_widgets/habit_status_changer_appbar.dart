@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../extensions/adaptive_style_extensions.dart';
+import '../../../extensions/target_platform_extensions.dart';
 
 class HabitStatusChangerAppbar extends StatelessWidget {
   final Widget? title;
@@ -36,9 +37,9 @@ class HabitStatusChangerAppbar extends StatelessWidget {
     final toolbarHeight = AdaptiveStyle.of(context).appToolbarHeight;
     return AdaptiveSliverAppBar(
       height: toolbarHeight,
-      styles: const AppBarStyles(
+      styles: AppBarStyles(
         material: AppBarMaterialStyle(
-          floating: true,
+          floating: DeviceContext.of(context).platform.isMobileOperatingSystem,
           snap: false,
           pinned: true,
         ),

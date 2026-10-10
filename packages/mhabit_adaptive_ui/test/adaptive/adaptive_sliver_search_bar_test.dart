@@ -29,6 +29,8 @@ void main() {
   AdaptiveSliverSearchBar<String> buildBar({
     AdaptiveStyle? forcedStyle,
     bool pinned = true,
+    MaterialSliverSearchBarStyle materialStyle =
+        const MaterialSliverSearchBarStyle(),
   }) {
     const arguments = (
       title: Text('Habits'),
@@ -54,6 +56,7 @@ void main() {
         collection: collection,
         onInvoke: (_, _) {},
         material: MaterialSliverSearchBarConfig(
+          style: materialStyle,
           searchTrailing: arguments.searchTrailing,
         ),
         controller: controller,
@@ -72,6 +75,7 @@ void main() {
         collection: collection,
         onInvoke: (_, _) {},
         material: MaterialSliverSearchBarConfig(
+          style: materialStyle,
           searchTrailing: arguments.searchTrailing,
         ),
         controller: controller,
@@ -121,6 +125,9 @@ void main() {
     expect(renderer.leading, isNotNull);
     expect(renderer.preferredActionCapacity, 48);
     expect(renderer.searchTrailing, isNotNull);
+    final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
+    expect(appBar.floating, isTrue);
+    expect(appBar.snap, isTrue);
     final actions = tester.widget<AdaptiveAppBarActions<String>>(
       find.byType(AdaptiveAppBarActions<String>),
     );
@@ -128,6 +135,30 @@ void main() {
     expect(actions.resizeDuration, const Duration(milliseconds: 300));
     expect(actions.maxPrimaryActions, 2);
   });
+
+  for (final pinned in [true, false]) {
+    testWidgets('forwards non-floating Material policy with pinned=$pinned', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _host(
+          platform: TargetPlatform.macOS,
+          searchBar: buildBar(
+            forcedStyle: AdaptiveStyle.material,
+            pinned: pinned,
+            materialStyle: const MaterialSliverSearchBarStyle(
+              floating: false,
+              snap: false,
+            ),
+          ),
+        ),
+      );
+      final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
+      expect(appBar.pinned, pinned);
+      expect(appBar.floating, isFalse);
+      expect(appBar.snap, isFalse);
+    });
+  }
 
   testWidgets('Apple default dispatch builds the Cupertino renderer', (
     tester,

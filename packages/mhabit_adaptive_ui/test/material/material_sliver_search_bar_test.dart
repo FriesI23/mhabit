@@ -2,18 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
-Widget _host(MaterialSliverSearchBar searchBar, {double? contentWidth}) =>
-    MaterialApp(
-      home: Scaffold(
-        body: Align(
-          alignment: Alignment.topLeft,
-          child: SizedBox(
-            width: contentWidth,
-            child: CustomScrollView(slivers: [searchBar]),
-          ),
+Widget _host(
+  MaterialSliverSearchBar searchBar, {
+  double? contentWidth,
+  double contentHeight = 0,
+}) => MaterialApp(
+  home: Scaffold(
+    body: Align(
+      alignment: Alignment.topLeft,
+      child: SizedBox(
+        width: contentWidth,
+        child: CustomScrollView(
+          slivers: [
+            searchBar,
+            SliverToBoxAdapter(child: SizedBox(height: contentHeight)),
+          ],
         ),
       ),
-    );
+    ),
+  ),
+);
 
 void main() {
   late TextEditingController controller;
@@ -64,6 +72,36 @@ void main() {
     onSearchActivated: () => activations++,
     onSearchDismissed: () => dismissals++,
     onTapOutside: (_) => outsideTaps++,
+  );
+
+  testWidgets(
+    'non-floating toolbar remains visible and interactive on scroll',
+    (tester) async {
+      tester.view.physicalSize = const Size(350, 520);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        _host(
+          buildBar(
+            style: const MaterialSliverSearchBarStyle(
+              floating: false,
+              snap: false,
+            ),
+          ),
+          contentHeight: 1600,
+        ),
+      );
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
+      await tester.pumpAndSettle();
+      final toolbar = find.byType(AppBar);
+      expect(tester.getTopLeft(toolbar).dy, 0);
+      expect(tester.getSize(toolbar).height, kToolbarHeight);
+      expect(tester.widget<AppBar>(toolbar).toolbarOpacity, 1);
+      final activate = find.byKey(const ValueKey('activate-search'));
+      expect(activate.hitTestable(), findsOneWidget);
+      await tester.tap(activate);
+      expect(activations, 1);
+    },
   );
 
   testWidgets('compact layout uses the 56 by 48 baseline', (tester) async {

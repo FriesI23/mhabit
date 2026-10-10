@@ -23,7 +23,8 @@ import 'package:flutter/cupertino.dart'
         CupertinoMenuItem,
         CupertinoNavigationBar,
         CupertinoPopupSurface,
-        CupertinoSliverNavigationBar;
+        CupertinoSliverNavigationBar,
+        CupertinoTextField;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -265,6 +266,7 @@ Future<void> _pumpTodayTabPage(
   required AppSyncWorkflowAccess sync,
   TargetPlatform platform = TargetPlatform.android,
   bool useAdaptiveShell = false,
+  AdaptiveStyle? style,
   AppNavigationScrollController? navigationScrollController,
 }) async {
   final customDate = AppCustomDateYmdHmsConfigViewModel()
@@ -339,6 +341,8 @@ Future<void> _pumpTodayTabPage(
         theme: ThemeData(platform: platform),
         localizationsDelegates: L10n.localizationsDelegates,
         supportedLocales: L10n.supportedLocales,
+        builder: (context, child) =>
+            AdaptiveStyleScope(override: style, child: child!),
         home: page,
       ),
     ),
@@ -357,6 +361,7 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
   bool provideOuterHabitSummary = true,
   TargetPlatform platform = TargetPlatform.android,
   Widget Function(Widget home)? appBuilder,
+  AdaptiveStyle? style,
 }) async {
   final customDate = AppCustomDateYmdHmsConfigViewModel()
     ..updateProfile(profile);
@@ -453,6 +458,8 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
         theme: ThemeData(platform: platform),
         localizationsDelegates: L10n.localizationsDelegates,
         supportedLocales: L10n.supportedLocales,
+        builder: (context, child) =>
+            AdaptiveStyleScope(override: style, child: child!),
         home: home,
       );
   await tester.pumpWidget(
@@ -522,7 +529,237 @@ Future<void> _fastDirectDrag(
   await gesture.cancel(timeStamp: const Duration(milliseconds: 48));
 }
 
+Future<void> _pumpPageChrome(WidgetTester tester) async {
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 350));
+  await tester.pump(const Duration(milliseconds: 600));
+}
+
+void _expectPinnedPageToolbar(WidgetTester tester, AdaptiveStyle style) {
+  final toolbar = style == AdaptiveStyle.material
+      ? find.byType(AppBar).first
+      : find.byType(NavigationToolbar).first;
+  expect(tester.getTopLeft(toolbar).dy, 0);
+  expect(tester.getSize(toolbar).height, greaterThanOrEqualTo(44));
+  if (style == AdaptiveStyle.material) {
+    expect(tester.widget<AppBar>(toolbar).toolbarOpacity, 1);
+  }
+}
+
 void main() {
+  for (final today in [true, false]) {
+    testWidgets(
+      'desktop Apple toolbar survives sidebar toggles: today=$today',
+      (tester) async {
+        tester.view.physicalSize = const Size(700, 700);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        final profile = await _loadProfile();
+        final sync = _FakeAppSyncWorkflowAccess();
+        final access = _LoadedHabitsDisplayAccess(habitCount: 30);
+        addTearDown(() {
+          sync.dispose();
+          profile.dispose();
+        });
+        if (today) {
+          await _pumpTodayTabPage(
+            tester,
+            profile: profile,
+            sync: sync,
+            access: access,
+            platform: TargetPlatform.macOS,
+            useAdaptiveShell: true,
+          );
+        } else {
+          await _pumpHabitsTabPage(
+            tester,
+            profile: profile,
+            sync: sync,
+            access: access,
+            platform: TargetPlatform.macOS,
+            useAdaptiveShell: true,
+          );
+        }
+        await _pumpPageChrome(tester);
+        final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
+        final toolbar = find.byType(CupertinoNavigationBar).last;
+        final top = tester.getTopLeft(toolbar).dy;
+        await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
+        await _pumpPageChrome(tester);
+        for (var i = 0; i < 2; i++) {
+          expect(tester.getTopLeft(toolbar).dy, top);
+          expect(toggle.hitTestable(), findsOneWidget);
+          await tester.tap(toggle);
+          await _pumpPageChrome(tester);
+        }
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
+  for (final platform in [
+    TargetPlatform.macOS,
+    TargetPlatform.windows,
+    TargetPlatform.linux,
+  ]) {
+    for (final style in AdaptiveStyle.values) {
+      for (final size in [const Size(350, 520), const Size(1000, 700)]) {
+        final description = '${platform.name} ${style.name} $size';
+        testWidgets('desktop Today toolbar remains pinned: $description', (
+          tester,
+        ) async {
+          tester.view.physicalSize = size;
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.reset);
+          final profile = await _loadProfile();
+          final sync = _FakeAppSyncWorkflowAccess();
+          addTearDown(() {
+            sync.dispose();
+            profile.dispose();
+          });
+          await _pumpTodayTabPage(
+            tester,
+            profile: profile,
+            access: _LoadedHabitsDisplayAccess(habitCount: 30),
+            sync: sync,
+            platform: platform,
+            style: style,
+          );
+          await _pumpPageChrome(tester);
+          await tester.drag(
+            find.byType(CustomScrollView),
+            const Offset(0, -400),
+          );
+          await _pumpPageChrome(tester);
+          _expectPinnedPageToolbar(tester, style);
+          expect(tester.takeException(), isNull);
+        });
+
+        testWidgets('desktop Habits modes keep the toolbar: $description', (
+          tester,
+        ) async {
+          tester.view.physicalSize = size;
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.reset);
+          final profile = await _loadProfile();
+          final sync = _FakeAppSyncWorkflowAccess();
+          addTearDown(() {
+            sync.dispose();
+            profile.dispose();
+          });
+          final vm = await _pumpHabitsTabPage(
+            tester,
+            profile: profile,
+            access: _LoadedHabitsDisplayAccess(habitCount: 30),
+            sync: sync,
+            platform: platform,
+            style: style,
+          );
+          await _pumpPageChrome(tester);
+          final calendar = find.byType(SliverCalendarBar);
+          final calendarTop = tester.getTopLeft(calendar).dy;
+          await tester.drag(
+            find.byType(CustomScrollView),
+            const Offset(0, -400),
+          );
+          await _pumpPageChrome(tester);
+          _expectPinnedPageToolbar(tester, style);
+          expect(tester.getTopLeft(calendar).dy, calendarTop);
+
+          final activate = find.byKey(
+            ValueKey(
+              style == AdaptiveStyle.material
+                  ? 'activate-search'
+                  : 'activate-cupertino-search',
+            ),
+          );
+          if (activate.evaluate().isNotEmpty) {
+            expect(activate.hitTestable(), findsOneWidget);
+            await tester.tap(activate);
+            await _pumpPageChrome(tester);
+          }
+          final field = style == AdaptiveStyle.material
+              ? find.byType(SearchBar)
+              : find.byType(CupertinoTextField);
+          expect(field.hitTestable(), findsOneWidget);
+          await tester.tap(field);
+          await tester.enterText(field, 'Geometry');
+          await _pumpPageChrome(tester);
+          expect(vm.searchOptions.keyword, 'Geometry');
+          await tester.drag(
+            find.byType(CustomScrollView),
+            const Offset(0, -200),
+          );
+          await _pumpPageChrome(tester);
+          _expectPinnedPageToolbar(tester, style);
+          expect(field.hitTestable(), findsOneWidget);
+
+          if (style == AdaptiveStyle.material) {
+            final dismiss = find.byKey(const ValueKey('dismiss-search'));
+            expect(dismiss.hitTestable(), findsOneWidget);
+            await tester.tap(dismiss);
+          } else {
+            await tester.tap(
+              find.byKey(const ValueKey('clear-cupertino-search')),
+            );
+            await _pumpPageChrome(tester);
+            expect(vm.searchOptions.keyword, isEmpty);
+            vm.exitSearchMode();
+          }
+          await _pumpPageChrome(tester);
+          expect(vm.isInSearchMode, isFalse);
+          _expectPinnedPageToolbar(tester, style);
+
+          vm.switchToEditMode();
+          await _pumpPageChrome(tester);
+          await tester.drag(
+            find.byType(CustomScrollView),
+            const Offset(0, -200),
+          );
+          await _pumpPageChrome(tester);
+          _expectPinnedPageToolbar(tester, style);
+          final done = style == AdaptiveStyle.material
+              ? find.byType(AdaptiveBackButton)
+              : find.byKey(const ValueKey('cupertino-select-done'));
+          expect(done.hitTestable(), findsOneWidget);
+          await tester.tap(done);
+          await _pumpPageChrome(tester);
+          expect(vm.isInEditMode, isFalse);
+          _expectPinnedPageToolbar(tester, style);
+          expect(tester.takeException(), isNull);
+        });
+      }
+    }
+  }
+
+  for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+    testWidgets('mobile Material Today still scrolls away: ${platform.name}', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(350, 520);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final profile = await _loadProfile();
+      final sync = _FakeAppSyncWorkflowAccess();
+      addTearDown(() {
+        sync.dispose();
+        profile.dispose();
+      });
+      await _pumpTodayTabPage(
+        tester,
+        profile: profile,
+        access: _LoadedHabitsDisplayAccess(habitCount: 30),
+        sync: sync,
+        platform: platform,
+        style: AdaptiveStyle.material,
+      );
+      await _pumpPageChrome(tester);
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
+      await _pumpPageChrome(tester);
+      expect(find.byType(AppBar).hitTestable(), findsNothing);
+    });
+  }
+
   for (final branch in AppNavigationBranch.values) {
     testWidgets('$branch root owns its scroll-to-top command', (tester) async {
       tester.view.physicalSize = const Size(400, 800);
@@ -1396,70 +1633,89 @@ void main() {
     expect(tester.getSize(rowTrack).width, collapsedWidth);
   });
 
-  testWidgets('calendar uses pinned regular header geometry', (tester) async {
-    await tester.binding.setSurfaceSize(const Size(800, 400));
-    addTearDown(() => tester.binding.setSurfaceSize(null));
-    final profile = await _loadProfile();
-    final access = _LoadedHabitsDisplayAccess(habitCount: 20);
-    final sync = _FakeAppSyncWorkflowAccess();
+  for (final platform in [
+    TargetPlatform.android,
+    TargetPlatform.iOS,
+    TargetPlatform.macOS,
+    TargetPlatform.windows,
+    TargetPlatform.linux,
+  ]) {
+    testWidgets('calendar pinned geometry: ${platform.name}', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(800, 400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      final profile = await _loadProfile();
+      final access = _LoadedHabitsDisplayAccess(habitCount: 20);
+      final sync = _FakeAppSyncWorkflowAccess();
 
-    addTearDown(() {
-      sync.dispose();
-      profile.dispose();
+      addTearDown(() {
+        sync.dispose();
+        profile.dispose();
+      });
+
+      await _pumpHabitsTabPage(
+        tester,
+        profile: profile,
+        access: access,
+        sync: sync,
+        platform: platform,
+        style: AdaptiveStyle.material,
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 350));
+      await tester.pump(const Duration(milliseconds: 600));
+
+      final calendar = find.byType(SliverCalendarBar);
+      expect(calendar, findsOneWidget);
+      expect(
+        find.ancestor(of: calendar, matching: find.byType(SliverAppBar)),
+        findsOneWidget,
+      );
+      expect(
+        find.ancestor(
+          of: calendar,
+          matching: find.byType(WindowControlSliverAppBar),
+        ),
+        findsNothing,
+      );
+      expect(tester.getSize(calendar).height, 48);
+      expect(
+        tester.widget<SliverCalendarBar>(calendar).geometry.columnExtent,
+        60,
+      );
+      expect(
+        tester.widget<SliverCalendarBar>(calendar).itemPadding,
+        const EdgeInsets.symmetric(horizontal: 8),
+      );
+      expect(
+        tester
+            .widget<RefreshIndicator>(find.byType(RefreshIndicator))
+            .edgeOffset,
+        AppAdaptiveStyle.materialToolbarHeight + 48,
+      );
+
+      final appBar = tester.widget<SliverAppBar>(
+        find.byType(SliverAppBar).last,
+      );
+      expect(appBar.toolbarHeight, 48);
+      expect(appBar.pinned, isTrue);
+      expect(appBar.primary, isFalse);
+      expect(appBar.backgroundColor, isNull);
+      expect(appBar.scrolledUnderElevation, kCommonEvalation);
+      final pinnedTop = tester.getTopLeft(calendar).dy;
+
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 600));
+
+      expect(pinnedTop, AppAdaptiveStyle.materialToolbarHeight);
+      expect(
+        tester.getTopLeft(calendar).dy,
+        platform == TargetPlatform.android || platform == TargetPlatform.iOS
+            ? 0
+            : AppAdaptiveStyle.materialToolbarHeight,
+      );
     });
-
-    await _pumpHabitsTabPage(
-      tester,
-      profile: profile,
-      access: access,
-      sync: sync,
-    );
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 350));
-    await tester.pump(const Duration(milliseconds: 600));
-
-    final calendar = find.byType(SliverCalendarBar);
-    expect(calendar, findsOneWidget);
-    expect(
-      find.ancestor(of: calendar, matching: find.byType(SliverAppBar)),
-      findsOneWidget,
-    );
-    expect(
-      find.ancestor(
-        of: calendar,
-        matching: find.byType(WindowControlSliverAppBar),
-      ),
-      findsNothing,
-    );
-    expect(tester.getSize(calendar).height, 48);
-    expect(
-      tester.widget<SliverCalendarBar>(calendar).geometry.columnExtent,
-      60,
-    );
-    expect(
-      tester.widget<SliverCalendarBar>(calendar).itemPadding,
-      const EdgeInsets.symmetric(horizontal: 8),
-    );
-    expect(
-      tester.widget<RefreshIndicator>(find.byType(RefreshIndicator)).edgeOffset,
-      AppAdaptiveStyle.materialToolbarHeight + 48,
-    );
-
-    final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar).last);
-    expect(appBar.toolbarHeight, 48);
-    expect(appBar.pinned, isTrue);
-    expect(appBar.primary, isFalse);
-    expect(appBar.backgroundColor, isNull);
-    expect(appBar.scrolledUnderElevation, kCommonEvalation);
-    final pinnedTop = tester.getTopLeft(calendar).dy;
-
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 600));
-
-    expect(pinnedTop, AppAdaptiveStyle.materialToolbarHeight);
-    expect(tester.getTopLeft(calendar).dy, 0);
-  });
+  }
 
   testWidgets('Habits progress bar follows sync processing states', (
     tester,

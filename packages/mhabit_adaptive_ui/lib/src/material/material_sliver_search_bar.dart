@@ -13,6 +13,8 @@ class MaterialSliverSearchBarStyle {
     this.toolbarHeight = kToolbarHeight,
     this.searchBarHeight = 48.0,
     this.maxSearchWidth = 312.0,
+    this.floating = true,
+    this.snap = true,
     this.scrolledUnderElevation,
     this.shadowColor = Colors.transparent,
   });
@@ -20,6 +22,15 @@ class MaterialSliverSearchBarStyle {
   final double toolbarHeight;
   final double searchBarHeight;
   final double maxSearchWidth;
+
+  /// Whether to reveal the toolbar as soon as the user scrolls towards it.
+  ///
+  /// Matches [SliverAppBar.floating]. Set this and [snap] to false to retain
+  /// the full toolbar when the search bar is pinned.
+  final bool floating;
+
+  /// Matches [SliverAppBar.snap]; requires [floating] to be true when enabled.
+  final bool snap;
   final double? scrolledUnderElevation;
   final Color? shadowColor;
 }
@@ -116,8 +127,8 @@ class MaterialSliverSearchBar extends StatelessWidget {
 
     return WindowControlSliverAppBar(
       key: const ValueKey('material-sliver-search-bar'),
-      floating: true,
-      snap: true,
+      floating: style.floating,
+      snap: style.snap,
       pinned: pinned,
       centerTitle: false,
       toolbarHeight: style.toolbarHeight,

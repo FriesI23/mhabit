@@ -24,14 +24,28 @@ import 'package:mhabit/pages/habit_edit/_widgets/habit_edit_app_bar.dart';
 import 'package:mhabit/pages/habits_status_changer/_widgets/habit_status_changer_appbar.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
-Widget _host(Widget appBar, {TargetPlatform? platform, Locale? locale}) =>
-    MaterialApp(
-      theme: platform == null ? null : ThemeData(platform: platform),
-      locale: locale,
-      localizationsDelegates: L10n.localizationsDelegates,
-      supportedLocales: L10n.supportedLocales,
-      home: Scaffold(body: CustomScrollView(slivers: [appBar])),
-    );
+Widget _host(
+  Widget appBar, {
+  TargetPlatform? platform,
+  Locale? locale,
+  AdaptiveStyle? style,
+  double contentHeight = 0,
+}) => MaterialApp(
+  theme: platform == null ? null : ThemeData(platform: platform),
+  locale: locale,
+  localizationsDelegates: L10n.localizationsDelegates,
+  supportedLocales: L10n.supportedLocales,
+  builder: (context, child) =>
+      AdaptiveStyleScope(override: style, child: child!),
+  home: Scaffold(
+    body: CustomScrollView(
+      slivers: [
+        appBar,
+        SliverToBoxAdapter(child: SizedBox(height: contentHeight)),
+      ],
+    ),
+  ),
+);
 
 Finder get _adaptiveAppBarActions => find.byWidgetPredicate(
   (widget) => widget is AdaptiveAppBarActions,
@@ -39,6 +53,98 @@ Finder get _adaptiveAppBarActions => find.byWidgetPredicate(
 );
 
 void main() {
+  for (final platform in [
+    TargetPlatform.macOS,
+    TargetPlatform.windows,
+    TargetPlatform.linux,
+  ]) {
+    for (final style in AdaptiveStyle.values) {
+      for (final size in [const Size(350, 520), const Size(1000, 700)]) {
+        testWidgets('desktop Batch toolbar and date remain interactive: '
+            '${platform.name} ${style.name} $size', (tester) async {
+          tester.view.physicalSize = size;
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.reset);
+          var closes = 0;
+          var deletes = 0;
+          var dateChanges = 0;
+          await tester.pumpWidget(
+            _host(
+              HabitStatusChangerAppbar(
+                title: const Text('Batch'),
+                onCloseButtonPressed: () => closes++,
+                trailing: AdaptiveIconButton(
+                  key: const ValueKey('batch-delete'),
+                  icon: const Icon(Icons.delete),
+                  onPressed: () => deletes++,
+                ),
+                bottomWidget: TextButton(
+                  key: const ValueKey('batch-date'),
+                  onPressed: () => dateChanges++,
+                  child: const Text('Date'),
+                ),
+              ),
+              platform: platform,
+              style: style,
+              contentHeight: 1600,
+            ),
+          );
+          final date = find.byKey(const ValueKey('batch-date'));
+          final dateTop = tester.getTopLeft(date).dy;
+          await tester.drag(
+            find.byType(CustomScrollView),
+            const Offset(0, -400),
+          );
+          await tester.pumpAndSettle();
+          final toolbar = style == AdaptiveStyle.material
+              ? find.byType(AppBar)
+              : find.byType(CupertinoNavigationBar);
+          expect(tester.getTopLeft(toolbar).dy, 0);
+          expect(tester.getSize(toolbar).height, greaterThanOrEqualTo(44));
+          if (style == AdaptiveStyle.material) {
+            expect(tester.widget<AppBar>(toolbar).toolbarOpacity, 1);
+          }
+          expect(tester.getTopLeft(date).dy, dateTop);
+          for (final button in [
+            find.byType(AdaptiveBackButton),
+            find.byKey(const ValueKey('batch-delete')),
+            date,
+          ]) {
+            expect(button.hitTestable(), findsOneWidget);
+            await tester.tap(button);
+          }
+          expect(closes, 1);
+          expect(deletes, 1);
+          expect(dateChanges, 1);
+          expect(tester.takeException(), isNull);
+        });
+      }
+    }
+  }
+
+  for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+    testWidgets(
+      'mobile Material Batch keeps date-only collapse: ${platform.name}',
+      (tester) async {
+        await tester.pumpWidget(
+          _host(
+            const HabitStatusChangerAppbar(
+              title: Text('Batch'),
+              bottomWidget: SizedBox(key: ValueKey('batch-bottom')),
+            ),
+            platform: platform,
+            style: AdaptiveStyle.material,
+            contentHeight: 1600,
+          ),
+        );
+        await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
+        await tester.pumpAndSettle();
+        expect(tester.widget<AppBar>(find.byType(AppBar)).toolbarOpacity, 0);
+        expect(tester.getSize(find.byType(AppBar)).height, kToolbarHeight);
+      },
+    );
+  }
+
   testWidgets('HabitDetailAppBar preserves its sliver configuration', (
     tester,
   ) async {
