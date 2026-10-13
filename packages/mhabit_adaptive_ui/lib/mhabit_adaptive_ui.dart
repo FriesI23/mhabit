@@ -5,6 +5,7 @@ export 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
     show
         CupertinoSidebarItemStyle,
         CupertinoSidebarThemeData,
+        CupertinoSidebarToolbarGeometry,
         SideNavigationDragHandleBuilder,
         SideNavigationExtent,
         kCupertinoSidebarEdgeFillAlpha;
@@ -72,5 +73,6 @@ export 'src/shell/adaptive_navigation.dart';
 export 'src/shell/navigation_shell_form.dart';
 export 'src/shell/sidebar_adapter.dart' show CupertinoSidebarPresentationScope;
 export 'src/window_control/cupertino_navigation_bar.dart';
+export 'src/window_control/interaction_region.dart';
 export 'src/window_control/material_app_bar.dart';
 export 'src/window_control/window_control_layout.dart';

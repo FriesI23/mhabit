@@ -34,6 +34,7 @@
 		D91BB4D32DAE34CB00E91D6C /* dev-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D91BB4D02DAE34CB00E91D6C /* dev-Info.plist */; };
 		D91BB4DB2DAE3A8200E91D6C /* dev-InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D91BB4D62DAE351C00E91D6C /* dev-InfoPlist.strings */; };
 		D91BB4DC2DAE3A8700E91D6C /* generic-InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D91BB4D92DAE351C00E91D6C /* generic-InfoPlist.strings */; };
+		DC010102026101200000001 /* mhabit-desktop-window-chrome in Frameworks */ = {isa = PBXBuildFile; productRef = DC010102026101200000002 /* mhabit-desktop-window-chrome */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -162,6 +163,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DC010102026101200000001 /* mhabit-desktop-window-chrome in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,6 +283,9 @@
 				331C80DA294CF71000263BE5 /* PBXTargetDependency */,
 			);
 			name = RunnerTests;
+			packageProductDependencies = (
+				DC010102026101200000002 /* mhabit-desktop-window-chrome */,
+			);
 			productName = RunnerTests;
 			productReference = 331C80D5294CF71000263BE5 /* RunnerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -1792,6 +1797,10 @@
 		78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = FlutterGeneratedPluginSwiftPackage;
+		};
+		DC010102026101200000002 /* mhabit-desktop-window-chrome */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "mhabit-desktop-window-chrome";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

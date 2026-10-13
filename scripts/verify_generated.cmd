@@ -38,6 +38,18 @@ git status --porcelain --untracked-files=all > "%BEFORE_STATUS%"
 if errorlevel 1 goto fail
 git diff --binary --no-ext-diff > "%BEFORE_DIFF%"
 if errorlevel 1 goto fail
+if exist "packages\mhabit_desktop_window_chrome\lib\src\desktop_window_chrome_api.g.dart" (
+  copy /b "packages\mhabit_desktop_window_chrome\lib\src\desktop_window_chrome_api.g.dart" "%WORK_DIR%\before.dart" >nul
+) else (
+  type nul > "%WORK_DIR%\before.dart"
+)
+if errorlevel 1 goto fail
+if exist "packages\mhabit_desktop_window_chrome\macos\mhabit_desktop_window_chrome\Sources\mhabit_desktop_window_chrome\DesktopWindowChrome.g.swift" (
+  copy /b "packages\mhabit_desktop_window_chrome\macos\mhabit_desktop_window_chrome\Sources\mhabit_desktop_window_chrome\DesktopWindowChrome.g.swift" "%WORK_DIR%\before.swift" >nul
+) else (
+  type nul > "%WORK_DIR%\before.swift"
+)
+if errorlevel 1 goto fail
 
 where poetry >nul 2>nul
 if errorlevel 1 (
@@ -49,6 +61,10 @@ call "%~dp0normalize_arb.cmd"
 if errorlevel 1 goto fail
 call dart run melos run build-runner
 if errorlevel 1 goto fail
+fc /b "%WORK_DIR%\before.dart" "packages\mhabit_desktop_window_chrome\lib\src\desktop_window_chrome_api.g.dart" >nul
+if errorlevel 1 goto pigeon_delta
+fc /b "%WORK_DIR%\before.swift" "packages\mhabit_desktop_window_chrome\macos\mhabit_desktop_window_chrome\Sources\mhabit_desktop_window_chrome\DesktopWindowChrome.g.swift" >nul
+if errorlevel 1 goto pigeon_delta
 
 git status --porcelain --untracked-files=all > "%AFTER_STATUS%"
 if errorlevel 1 goto fail
@@ -76,6 +92,11 @@ git status --short
 echo ------------------------
 echo Details:
 git diff
+set "ERR=1"
+goto cleanup
+
+:pigeon_delta
+echo Generated Pigeon output changed, including untracked files.
 set "ERR=1"
 goto cleanup
 

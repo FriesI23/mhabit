@@ -9,6 +9,7 @@ import '../shell/navigation_scroll_wish_policy.dart';
 import '../shell/navigation_shell_form.dart';
 import '../shell/navigation_shell_frame.dart';
 import '../shell/sidebar_adapter.dart';
+import '../window_control/interaction_region.dart';
 import '../window_control/window_control_layout.dart';
 import 'material_navigation_bar.dart';
 
@@ -268,14 +269,16 @@ class _MaterialNavigationShellBodyState
     );
     final sideNavigation = NavigationObstructionScope(
       obstruction: context.sidebarNavigationObstruction,
-      child: MaterialSidebar(
-        controller: _controller,
-        content: navigation,
-        extent: widget.sideNavigationExtent,
-        collapsedExtent: widget.railStyle.collapsedExtent,
-        dragHandleBuilder: widget.dragHandleBuilder,
-        expandLabel: widget.expandNavigationLabel,
-        collapseLabel: widget.collapseNavigationLabel,
+      child: AdaptiveWindowInteractionRegion(
+        child: MaterialSidebar(
+          controller: _controller,
+          content: navigation,
+          extent: widget.sideNavigationExtent,
+          collapsedExtent: widget.railStyle.collapsedExtent,
+          dragHandleBuilder: widget.dragHandleBuilder,
+          expandLabel: widget.expandNavigationLabel,
+          collapseLabel: widget.collapseNavigationLabel,
+        ),
       ),
     );
     return ColoredBox(

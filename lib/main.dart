@@ -14,8 +14,11 @@
 
 import 'dart:io';
 
-import 'package:flutter/widgets.dart' show WidgetsFlutterBinding, runApp;
+import 'package:flutter/widgets.dart'
+    show Size, WidgetsBinding, WidgetsFlutterBinding, runApp;
+import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
 import 'package:native_natural_sort/native_natural_sort.dart';
+import 'package:provider/provider.dart';
 
 import 'common/app_info.dart';
 import 'entries/app/entry.dart';
@@ -44,5 +47,18 @@ Future<void> main() async {
     ),
   );
 
-  runApp(const AppEntry());
+  // FIXME(mhabit): Once Windows/Linux window chrome is implemented and accepted,
+  // replace this gate with !defaultTargetPlatform.isMobileOperatingSystem from
+  // extensions/target_platform_extensions.dart.
+  if (Platform.isMacOS) {
+    final chrome = DesktopWindowChrome(minimumSize: const Size(350, 520));
+    await chrome.initialize();
+    runApp(
+      ChangeNotifierProvider(create: (_) => chrome, child: const AppEntry()),
+    );
+    await WidgetsBinding.instance.endOfFrame;
+    await chrome.show();
+  } else {
+    runApp(const AppEntry());
+  }
 }

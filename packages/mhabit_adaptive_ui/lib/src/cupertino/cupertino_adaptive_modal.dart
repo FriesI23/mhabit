@@ -3,7 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart' show MaterialLocalizations;
+import 'package:flutter/material.dart' show MaterialLocalizations, Theme;
 
 import '../adaptive/adaptive_icon_button.dart';
 import '../adaptive/adaptive_modal_content.dart';
@@ -13,6 +13,7 @@ import '../adaptive/modal_sheet_drag_region.dart';
 import '../window_control/cupertino_navigation_bar.dart';
 import '../window_control/modal_app_bar_region.dart';
 import 'cupertino_neutral_button.dart';
+import 'cupertino_toolbar_extensions.dart';
 
 const _sheetHeightFactor = 0.92;
 const _sheetPopupSurfaceBottomOverflow = 13.0;
@@ -746,6 +747,7 @@ class CupertinoAdaptiveModal extends StatelessWidget {
   const CupertinoAdaptiveModal({
     super.key,
     this.showAppBar = true,
+    this.toolbarTopInset,
     required this.title,
     required this.leadingAction,
     this.appBarActions = const [],
@@ -763,6 +765,11 @@ class CupertinoAdaptiveModal extends StatelessWidget {
   });
 
   final bool showAppBar;
+
+  /// Minimum local space above the Apple toolbar.
+  /// Null uses the desktop default; zero disables it. Modal chrome owns its
+  /// local safe-area handling.
+  final double? toolbarTopInset;
   final Widget? title;
   final Widget? leadingAction;
   final List<Widget> appBarActions;
@@ -780,6 +787,9 @@ class CupertinoAdaptiveModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final toolbarTopInset =
+        this.toolbarTopInset ??
+        Theme.of(context).platform.defaultCupertinoToolbarTopInset;
     final theme = CupertinoTheme.of(context);
     final impliedClose = automaticallyImplyCloseButton && leadingAction == null
         ? Semantics(
@@ -816,6 +826,7 @@ class CupertinoAdaptiveModal extends StatelessWidget {
             removeTop: true,
             child: ModalWindowControlAppBarRegion(
               child: _CupertinoModalAppBar(
+                toolbarTopInset: toolbarTopInset,
                 scrollController: scrollController,
                 leading: leading == null
                     ? null
@@ -845,7 +856,9 @@ class CupertinoAdaptiveModal extends StatelessWidget {
         ? null
         : _CupertinoModalActionArea(actions: actions);
 
-    final appBarHeight = showAppBar ? kMinInteractiveDimensionCupertino : 0.0;
+    final appBarHeight = showAppBar
+        ? kMinInteractiveDimensionCupertino + toolbarTopInset
+        : 0.0;
     final paddedPinnedBody = pinnedBody == null
         ? null
         : Padding(
@@ -906,6 +919,7 @@ class CupertinoAdaptiveModal extends StatelessWidget {
 class _CupertinoModalAppBar extends StatefulWidget {
   const _CupertinoModalAppBar({
     required this.scrollController,
+    required this.toolbarTopInset,
     required this.leading,
     required this.middle,
     required this.trailing,
@@ -914,6 +928,7 @@ class _CupertinoModalAppBar extends StatefulWidget {
   final ScrollController scrollController;
   final Widget? leading;
   final Widget middle;
+  final double toolbarTopInset;
   final Widget? trailing;
 
   @override
@@ -964,6 +979,7 @@ class _CupertinoModalAppBarState extends State<_CupertinoModalAppBar> {
   @override
   Widget build(BuildContext context) => WindowControlCupertinoNavigationBar(
     key: const ValueKey('adaptive-modal-app-bar'),
+    toolbarTopInset: widget.toolbarTopInset,
     leading: widget.leading,
     automaticallyImplyLeading: false,
     middle: widget.middle,

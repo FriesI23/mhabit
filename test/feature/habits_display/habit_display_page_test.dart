@@ -539,10 +539,21 @@ void _expectPinnedPageToolbar(WidgetTester tester, AdaptiveStyle style) {
   final toolbar = style == AdaptiveStyle.material
       ? find.byType(AppBar).first
       : find.byType(NavigationToolbar).first;
-  expect(tester.getTopLeft(toolbar).dy, 0);
+  expect(tester.getTopLeft(toolbar).dy, style == AdaptiveStyle.apple ? 10 : 0);
   expect(tester.getSize(toolbar).height, greaterThanOrEqualTo(44));
   if (style == AdaptiveStyle.material) {
     expect(tester.widget<AppBar>(toolbar).toolbarOpacity, 1);
+  } else {
+    expect(tester.getSize(toolbar).height, 44);
+    final backgrounds = find.byType(CupertinoNavigationBar);
+    if (backgrounds.evaluate().isNotEmpty) {
+      expect(tester.getTopLeft(backgrounds.first).dy, 0);
+      // Calendar and other bottom slots can extend the same background.
+      expect(
+        tester.getSize(backgrounds.first).height,
+        greaterThanOrEqualTo(54),
+      );
+    }
   }
 }
 

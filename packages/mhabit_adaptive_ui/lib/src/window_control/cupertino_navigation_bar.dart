@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
+import 'interaction_region.dart';
 import 'toolbar_geometry.dart';
 
 /// A [CupertinoNavigationBar] that pads only its leading and trailing controls.
@@ -23,6 +24,7 @@ class WindowControlCupertinoNavigationBar extends StatelessWidget
     this.padding,
     this.transitionBetweenRoutes = true,
     this.bottom,
+    this.toolbarTopInset = 0,
     this.windowControlAvoidance,
     this.windowControlEdgePadding = cupertinoWindowControlEdgePadding,
   });
@@ -69,6 +71,9 @@ class WindowControlCupertinoNavigationBar extends StatelessWidget
   /// See [CupertinoNavigationBar.bottom].
   final PreferredSizeWidget? bottom;
 
+  /// Minimum local space above the toolbar content row.
+  final double toolbarTopInset;
+
   /// {@macro mhabit.windowControlAvoidance}
   final EdgeInsets? windowControlAvoidance;
 
@@ -76,24 +81,39 @@ class WindowControlCupertinoNavigationBar extends StatelessWidget
   final EdgeInsetsDirectional windowControlEdgePadding;
 
   CupertinoNavigationBar _createNavigationBar({
+    BuildContext? context,
     EdgeInsetsDirectional? effectivePadding,
     required Color? effectiveBackgroundColor,
-  }) => CupertinoNavigationBar(
-    leading: leading,
-    automaticallyImplyLeading: automaticallyImplyLeading,
-    automaticallyImplyMiddle: automaticallyImplyMiddle,
-    previousPageTitle: previousPageTitle,
-    middle: middle,
-    trailing: trailing,
-    border: border,
-    backgroundColor: effectiveBackgroundColor,
-    automaticBackgroundVisibility: automaticBackgroundVisibility,
-    enableBackgroundFilterBlur: enableBackgroundFilterBlur,
-    brightness: brightness,
-    padding: effectivePadding,
-    transitionBetweenRoutes: transitionBetweenRoutes,
-    bottom: bottom,
-  );
+  }) {
+    final leading = this.leading;
+    final middle = this.middle;
+    final trailing = this.trailing;
+    final binding = context == null
+        ? null
+        : AdaptiveWindowInteractionBinding.maybeOf(context);
+    return CupertinoNavigationBar(
+      leading: leading == null
+          ? null
+          : binding?.wrapInteractionRegion(leading) ?? leading,
+      automaticallyImplyLeading: automaticallyImplyLeading,
+      automaticallyImplyMiddle: automaticallyImplyMiddle,
+      previousPageTitle: previousPageTitle,
+      middle: middle == null
+          ? null
+          : binding?.wrapInteractionRegion(middle) ?? middle,
+      trailing: trailing == null
+          ? null
+          : binding?.wrapInteractionRegion(trailing) ?? trailing,
+      border: border,
+      backgroundColor: effectiveBackgroundColor,
+      automaticBackgroundVisibility: automaticBackgroundVisibility,
+      enableBackgroundFilterBlur: enableBackgroundFilterBlur,
+      brightness: brightness,
+      padding: effectivePadding,
+      transitionBetweenRoutes: transitionBetweenRoutes,
+      bottom: bottom,
+    );
+  }
 
   // Delegate framework-owned geometry and dynamic-color resolution instead of
   // copying Flutter's private navigation-bar behavior into this wrapper.
@@ -105,6 +125,7 @@ class WindowControlCupertinoNavigationBar extends StatelessWidget
 
   @override
   bool shouldFullyObstruct(BuildContext context) => _createNavigationBar(
+    context: context,
     effectivePadding: padding,
     effectiveBackgroundColor: _resolveAutomaticBackgroundColor(
       context,
@@ -114,19 +135,30 @@ class WindowControlCupertinoNavigationBar extends StatelessWidget
   ).shouldFullyObstruct(context);
 
   @override
-  Widget build(BuildContext context) => _createNavigationBar(
-    effectivePadding: _resolveCupertinoPadding(
-      context,
-      padding: padding,
-      avoidance: windowControlAvoidance,
-      edgePadding: windowControlEdgePadding,
-    ),
-    effectiveBackgroundColor: _resolveAutomaticBackgroundColor(
-      context,
-      backgroundColor: backgroundColor,
-      automaticBackgroundVisibility: automaticBackgroundVisibility,
-    ),
-  );
+  Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    final top = media.padding.top < toolbarTopInset
+        ? toolbarTopInset
+        : media.padding.top;
+    final bar = _createNavigationBar(
+      context: context,
+      effectivePadding: _resolveCupertinoPadding(
+        context,
+        padding: padding,
+        avoidance: windowControlAvoidance,
+        edgePadding: windowControlEdgePadding,
+      ),
+      effectiveBackgroundColor: _resolveAutomaticBackgroundColor(
+        context,
+        backgroundColor: backgroundColor,
+        automaticBackgroundVisibility: automaticBackgroundVisibility,
+      ),
+    );
+    return MediaQuery(
+      data: media.copyWith(padding: media.padding.copyWith(top: top)),
+      child: bar,
+    );
+  }
 }
 
 /// A [CupertinoSliverNavigationBar] with window-control-aware toolbar padding.
@@ -151,6 +183,7 @@ class WindowControlCupertinoSliverNavigationBar extends StatelessWidget {
     this.padding,
     this.stretch = false,
     this.bottom,
+    this.toolbarTopInset = 0,
     this.windowControlAvoidance,
     this.windowControlEdgePadding = cupertinoWindowControlEdgePadding,
   });
@@ -200,6 +233,9 @@ class WindowControlCupertinoSliverNavigationBar extends StatelessWidget {
   /// See [CupertinoSliverNavigationBar.bottom].
   final PreferredSizeWidget? bottom;
 
+  /// Minimum local space above the toolbar content row.
+  final double toolbarTopInset;
+
   /// {@macro mhabit.windowControlAvoidance}
   final EdgeInsets? windowControlAvoidance;
 
@@ -207,32 +243,51 @@ class WindowControlCupertinoSliverNavigationBar extends StatelessWidget {
   final EdgeInsetsDirectional windowControlEdgePadding;
 
   @override
-  Widget build(BuildContext context) => CupertinoSliverNavigationBar(
-    largeTitle: largeTitle,
-    leading: leading,
-    automaticallyImplyLeading: automaticallyImplyLeading,
-    automaticallyImplyTitle: automaticallyImplyTitle,
-    previousPageTitle: previousPageTitle,
-    middle: middle,
-    trailing: trailing,
-    border: border,
-    backgroundColor: _resolveAutomaticBackgroundColor(
-      context,
-      backgroundColor: backgroundColor,
-      automaticBackgroundVisibility: automaticBackgroundVisibility,
-    ),
-    automaticBackgroundVisibility: automaticBackgroundVisibility,
-    enableBackgroundFilterBlur: enableBackgroundFilterBlur,
-    brightness: brightness,
-    padding: _resolveCupertinoPadding(
-      context,
-      padding: padding,
-      avoidance: windowControlAvoidance,
-      edgePadding: windowControlEdgePadding,
-    ),
-    stretch: stretch,
-    bottom: bottom,
-  );
+  Widget build(BuildContext context) {
+    final leading = this.leading;
+    final middle = this.middle;
+    final trailing = this.trailing;
+    final binding = AdaptiveWindowInteractionBinding.maybeOf(context);
+    final media = MediaQuery.of(context);
+    final top = media.padding.top < toolbarTopInset
+        ? toolbarTopInset
+        : media.padding.top;
+    return MediaQuery(
+      data: media.copyWith(padding: media.padding.copyWith(top: top)),
+      child: CupertinoSliverNavigationBar(
+        largeTitle: largeTitle,
+        leading: leading == null
+            ? null
+            : binding?.wrapInteractionRegion(leading) ?? leading,
+        automaticallyImplyLeading: automaticallyImplyLeading,
+        automaticallyImplyTitle: automaticallyImplyTitle,
+        previousPageTitle: previousPageTitle,
+        middle: middle == null
+            ? null
+            : binding?.wrapInteractionRegion(middle) ?? middle,
+        trailing: trailing == null
+            ? null
+            : binding?.wrapInteractionRegion(trailing) ?? trailing,
+        border: border,
+        backgroundColor: _resolveAutomaticBackgroundColor(
+          context,
+          backgroundColor: backgroundColor,
+          automaticBackgroundVisibility: automaticBackgroundVisibility,
+        ),
+        automaticBackgroundVisibility: automaticBackgroundVisibility,
+        enableBackgroundFilterBlur: enableBackgroundFilterBlur,
+        brightness: brightness,
+        padding: _resolveCupertinoPadding(
+          context,
+          padding: padding,
+          avoidance: windowControlAvoidance,
+          edgePadding: windowControlEdgePadding,
+        ),
+        stretch: stretch,
+        bottom: bottom,
+      ),
+    );
+  }
 }
 
 Color? _resolveAutomaticBackgroundColor(

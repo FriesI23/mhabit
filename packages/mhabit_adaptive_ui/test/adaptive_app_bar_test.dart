@@ -224,57 +224,123 @@ void main() {
     },
   );
 
-  testWidgets('macOS aligns regular and sliver compact toolbar geometry', (
-    tester,
-  ) async {
-    tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(800, 600);
-    addTearDown(tester.view.reset);
+  testWidgets(
+    'explicit inset aligns regular and sliver compact toolbar geometry',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(800, 600);
+      addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(
-      _sidebarHost(
-        platform: TargetPlatform.macOS,
-        child: const Scaffold(
-          appBar: AdaptiveAppBar.apple(
-            title: Text('Settings'),
-            sidebarToolbarGeometry: CupertinoSidebarToolbarGeometry.compact,
+      await tester.pumpWidget(
+        _sidebarHost(
+          platform: TargetPlatform.macOS,
+          child: const Scaffold(
+            appBar: AdaptiveAppBar.apple(
+              appleToolbarTopInset: 10,
+              title: Text('Settings'),
+              sidebarToolbarGeometry: CupertinoSidebarToolbarGeometry.compact,
+            ),
           ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    final regularBar = find.descendant(
-      of: find.byType(Scaffold),
-      matching: find.byType(CupertinoNavigationBar),
-    );
-    expect(tester.getSize(regularBar).height, 54);
-    final regularTitleCenter = tester.getCenter(find.text('Settings')).dy;
+      final regularBar = find.descendant(
+        of: find.byType(Scaffold),
+        matching: find.byType(CupertinoNavigationBar),
+      );
+      expect(tester.getSize(regularBar).height, 54);
+      final regularTitleCenter = tester.getCenter(find.text('Settings')).dy;
 
-    await tester.pumpWidget(
-      _sidebarHost(
-        platform: TargetPlatform.macOS,
-        child: const Scaffold(
-          body: CustomScrollView(
-            slivers: [
-              AdaptiveSliverAppBar.apple(
-                height: kMinInteractiveDimensionCupertino,
-                title: Text('Habits'),
+      await tester.pumpWidget(
+        _sidebarHost(
+          platform: TargetPlatform.macOS,
+          child: const Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                AdaptiveSliverAppBar.apple(
+                  appleToolbarTopInset: 10,
+                  height: kMinInteractiveDimensionCupertino,
+                  title: Text('Habits'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final sliverBar = find.descendant(
+        of: find.byType(CustomScrollView),
+        matching: find.byType(CupertinoNavigationBar),
+      );
+      expect(tester.getSize(sliverBar).height, 54);
+      expect(tester.getCenter(find.text('Habits')).dy, regularTitleCenter);
+    },
+  );
+
+  testWidgets(
+    'regular Apple toolbar resolves desktop defaults without parameters',
+    (tester) async {
+      for (final direction in TextDirection.values) {
+        for (final platform in [
+          TargetPlatform.macOS,
+          TargetPlatform.iOS,
+          TargetPlatform.macOS,
+        ]) {
+          await tester.pumpWidget(
+            MaterialApp(
+              theme: ThemeData(platform: platform),
+              home: Directionality(
+                textDirection: direction,
+                child: const Scaffold(
+                  appBar: AdaptiveAppBar.apple(title: Text('Settings')),
+                  body: SizedBox(key: ValueKey('regular-body'), height: 100),
+                ),
               ),
-            ],
+            ),
+          );
+          await tester.pumpAndSettle();
+          final row = tester.getRect(find.byType(NavigationToolbar));
+          expect(row.height, 44);
+          expect(row.center.dy, platform == TargetPlatform.macOS ? 32 : 22);
+          expect(
+            tester.getSize(find.byType(CupertinoNavigationBar)).height,
+            54,
+          );
+          expect(
+            tester.getTopLeft(find.byKey(const ValueKey('regular-body'))).dy,
+            54,
+          );
+          expect(tester.takeException(), isNull);
+        }
+      }
+    },
+  );
+
+  testWidgets(
+    'adaptive preferred size honors supplied height under a platform override',
+    (tester) async {
+      const appBar = AdaptiveAppBar(title: Text('Settings'), toolbarHeight: 54);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.macOS),
+          home: const Scaffold(
+            appBar: appBar,
+            body: SizedBox(key: ValueKey('adaptive-body'), height: 100),
           ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    final sliverBar = find.descendant(
-      of: find.byType(CustomScrollView),
-      matching: find.byType(CupertinoNavigationBar),
-    );
-    expect(tester.getSize(sliverBar).height, 54);
-    expect(tester.getCenter(find.text('Habits')).dy, regularTitleCenter);
-  });
+      );
+      await tester.pumpAndSettle();
+      expect(appBar.preferredSize, const Size.fromHeight(54));
+      expect(
+        tester.getTopLeft(find.byKey(const ValueKey('adaptive-body'))).dy,
+        54,
+      );
+      expect(tester.getRect(find.byType(NavigationToolbar)).center.dy, 32);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   test('Apple app bar defaults to the standard 54pt toolbar geometry', () {
     const appBar = AdaptiveAppBar.apple(title: Text('Settings'));

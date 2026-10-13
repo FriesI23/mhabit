@@ -1,11 +1,12 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart' show TargetPlatform, Theme;
+import 'package:flutter/material.dart' show Theme;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
 import '../adaptive/adaptive_navigation_destination.dart' as app;
 import '../breakpoints/window_size_class.dart';
+import '../cupertino/cupertino_toolbar_extensions.dart';
 import '../window_control/window_control_layout.dart';
 
 typedef CupertinoSidebarToolbarMiddleBuilder =
@@ -146,12 +147,12 @@ class CupertinoSidebarPresentationScope extends InheritedWidget {
   ) => context
       .dependOnInheritedWidgetOfExactType<CupertinoSidebarPresentationScope>();
 
-  /// Resolves the inherited geometry or mhabit's platform default.
+  /// Resolves inherited sidebar geometry or the platform visual baseline.
   static CupertinoSidebarToolbarGeometry toolbarGeometryOf(
     BuildContext context,
   ) =>
       maybeOf(context)?.toolbarGeometry ??
-      (Theme.of(context).platform == TargetPlatform.macOS
+      (Theme.of(context).platform.defaultCupertinoToolbarTopInset > 0
           ? CupertinoSidebarToolbarGeometry.compact
           : CupertinoSidebarToolbarGeometry.standard);
 

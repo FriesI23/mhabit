@@ -34,17 +34,32 @@ before_status="$(mktemp)"
 after_status="$(mktemp)"
 before_diff="$(mktemp)"
 after_diff="$(mktemp)"
+before_pigeon="$(mktemp -d)"
+pigeon_outputs=(packages/mhabit_desktop_window_chrome/lib/src/desktop_window_chrome_api.g.dart packages/mhabit_desktop_window_chrome/macos/mhabit_desktop_window_chrome/Sources/mhabit_desktop_window_chrome/DesktopWindowChrome.g.swift)
 
 cleanup() {
   rm -f "$before_status" "$after_status" "$before_diff" "$after_diff"
+  rm -rf "$before_pigeon"
 }
 trap cleanup EXIT
 
 git status --porcelain --untracked-files=all > "$before_status"
 git diff --binary --no-ext-diff > "$before_diff"
+for output in "${pigeon_outputs[@]}"; do
+  if [[ -f "$output" ]]; then
+    cp "$output" "$before_pigeon/$(basename "$output")"
+  fi
+done
 
 bash "$SCRIPT_DIR/normalize_arb.sh"
 dart run melos run build-runner
+
+for output in "${pigeon_outputs[@]}"; do
+  if ! cmp -s "$before_pigeon/$(basename "$output")" "$output"; then
+    echo "Generated output changed (including untracked files): $output" >&2
+    exit 1
+  fi
+done
 
 git status --porcelain --untracked-files=all > "$after_status"
 git diff --binary --no-ext-diff > "$after_diff"

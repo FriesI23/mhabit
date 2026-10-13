@@ -88,7 +88,37 @@ final class AdaptiveWindowSafeAreaGeometry {
       Object.hash(horizontalAvoidance, verticalAvoidance, effectiveCornerRadii);
 }
 
-/// Queries iOS window-control layout once above an application's navigators.
+/// Physical avoidance in logical pixels supplied by the app's platform owner.
+/// Insets stay on their physical edges across app direction changes. UIKit's
+/// corner-adapted safe areas remain separate from this layout.
+///
+/// With side navigation visible, ownership follows its logical leading edge:
+///
+/// ```text
+/// direction    physical left owner    physical right owner
+/// LTR          Sidebar / Rail         AppBar
+/// RTL          AppBar                 Sidebar / Rail
+/// ```
+///
+/// Compact or hidden side navigation returns both edges to the AppBar.
+@immutable
+class AdaptivePlatformWindowControlLayout {
+  final EdgeInsets horizontalAvoidance;
+
+  /// Occupied top height for side-navigation controls that cannot fit beside
+  /// the native buttons. Does not add a global content safe area.
+  final EdgeInsets verticalAvoidance;
+  final bool hasWindowControlAvoidance;
+
+  const AdaptivePlatformWindowControlLayout({
+    this.horizontalAvoidance = EdgeInsets.zero,
+    this.verticalAvoidance = EdgeInsets.zero,
+    this.hasWindowControlAvoidance = false,
+  });
+}
+
+/// Queries iOS layout, or consumes an app-owned platform override, once above
+/// an application's navigators.
 ///
 /// Root routes and overlays default to app-bar ownership. A nested
 /// [AdaptiveNavigationShell] overrides that allocation when side navigation
@@ -97,39 +127,57 @@ class AdaptiveWindowControlLayout extends StatelessWidget {
   const AdaptiveWindowControlLayout({
     super.key,
     this.usesRectangularDisplay = false,
+    this.platformLayout,
     required this.child,
   });
 
   /// Whether the current display has rectangular physical corners.
   final bool usesRectangularDisplay;
 
+  /// A non-null value bypasses the iOS plugin, even when its avoidance is empty.
+  /// The owner publishes updates; null retains the existing iPadOS behavior.
+  final AdaptivePlatformWindowControlLayout? platformLayout;
+
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => IosWindowControlLayout(
-    child: Builder(
-      builder: (context) {
-        final layout = IosWindowControlLayout.of(context);
-        return AdaptiveWindowControlLayoutScope(
-          hasWindowControlAvoidance: layout.hasWindowControlAvoidance,
-          horizontalAvoidance: layout.horizontalAvoidance,
-          verticalAvoidance: layout.verticalAvoidance,
-          horizontalSafeAreaAvoidance: layout.isAvailable
-              ? layout.horizontalSafeAreaAvoidance
-              : null,
-          verticalSafeAreaAvoidance: layout.isAvailable
-              ? layout.verticalSafeAreaAvoidance
-              : null,
-          effectiveCornerRadii: layout.isAvailable
-              ? layout.effectiveCornerRadii
-              : null,
-          usesRectangularDisplay: usesRectangularDisplay,
-          owner: WindowControlLayoutOwner.appBar,
-          child: child,
-        );
-      },
-    ),
-  );
+  Widget build(BuildContext context) {
+    final platform = platformLayout;
+    if (platform != null) {
+      return AdaptiveWindowControlLayoutScope(
+        hasWindowControlAvoidance: platform.hasWindowControlAvoidance,
+        horizontalAvoidance: platform.horizontalAvoidance,
+        verticalAvoidance: platform.verticalAvoidance,
+        usesRectangularDisplay: usesRectangularDisplay,
+        owner: WindowControlLayoutOwner.appBar,
+        child: child,
+      );
+    }
+    return IosWindowControlLayout(
+      child: Builder(
+        builder: (context) {
+          final layout = IosWindowControlLayout.of(context);
+          return AdaptiveWindowControlLayoutScope(
+            hasWindowControlAvoidance: layout.hasWindowControlAvoidance,
+            horizontalAvoidance: layout.horizontalAvoidance,
+            verticalAvoidance: layout.verticalAvoidance,
+            horizontalSafeAreaAvoidance: layout.isAvailable
+                ? layout.horizontalSafeAreaAvoidance
+                : null,
+            verticalSafeAreaAvoidance: layout.isAvailable
+                ? layout.verticalSafeAreaAvoidance
+                : null,
+            effectiveCornerRadii: layout.isAvailable
+                ? layout.effectiveCornerRadii
+                : null,
+            usesRectangularDisplay: usesRectangularDisplay,
+            owner: WindowControlLayoutOwner.appBar,
+            child: child,
+          );
+        },
+      ),
+    );
+  }
 }
 
 /// Distributes platform window-control avoidance between chrome consumers.
@@ -151,8 +199,7 @@ class AdaptiveWindowControlLayoutScope extends InheritedModel<Object> {
     required super.child,
   });
 
-  /// Whether the native layout reports an iPad windowed scene whose window
-  /// controls require horizontal avoidance.
+  /// Whether the current platform's window controls need local avoidance.
   final bool hasWindowControlAvoidance;
 
   final EdgeInsets horizontalAvoidance;

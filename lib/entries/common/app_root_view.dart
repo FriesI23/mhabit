@@ -18,10 +18,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
+import 'package:provider/provider.dart';
 
 import '../../common/app_info.dart';
 import '../../common/consts.dart';
 import '../../common/global.dart';
+import '../../extensions/desktop_window_chrome_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../widgets/widgets.dart';
 
@@ -86,8 +89,15 @@ class AppRootView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AdaptiveWindowControlLayout(
-      usesRectangularDisplay: AppInfo().usesRectangularIPhoneDisplay,
+    return Consumer<DesktopWindowChrome?>(
+      // Geometry updates rebuild the layout boundary, retaining MaterialApp.
+      // Consumers of the layout scope (including iPad window-level themes)
+      // still rebuild when their inherited dependencies actually change.
+      builder: (_, chrome, child) => AdaptiveWindowControlLayout(
+        platformLayout: chrome?.adaptiveLayout,
+        usesRectangularDisplay: AppInfo().usesRectangularIPhoneDisplay,
+        child: child!,
+      ),
       child: _AppRootMaterialApp(
         themeMode: themeMode,
         language: language,
@@ -135,7 +145,9 @@ class _AppRootMaterialApp extends StatelessWidget {
           disableAnimations:
               disableAnimations || MediaQuery.disableAnimationsOf(context),
         ),
-        child: AdaptiveWindowTopSafeArea(child: UnfocusOnTap(child: child)),
+        child: AppWindowInteractionHost(
+          child: AdaptiveWindowTopSafeArea(child: UnfocusOnTap(child: child)),
+        ),
       ),
     );
     final textDirection = textDirectionOverride;

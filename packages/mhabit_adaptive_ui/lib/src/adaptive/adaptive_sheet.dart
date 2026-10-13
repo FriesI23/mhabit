@@ -552,6 +552,7 @@ abstract class AdaptiveModal extends StatelessWidget {
     Widget? title,
     Widget? leadingAction,
     List<Widget> appBarActions,
+    double? appleToolbarTopInset,
     AdaptiveModalConfirmAction? confirmAction,
     List<Widget> actions,
     Widget? pinnedBody,
@@ -569,6 +570,7 @@ abstract class AdaptiveModal extends StatelessWidget {
     Widget? title,
     Widget? leadingAction,
     List<Widget> appBarActions,
+    double? appleToolbarTopInset,
     AdaptiveModalConfirmAction? confirmAction,
     List<Widget> actions,
     Widget? pinnedBody,
@@ -595,6 +597,7 @@ abstract class AdaptiveModal extends StatelessWidget {
     this.title,
     this.leadingAction,
     this.appBarActions = const [],
+    this.appleToolbarTopInset,
     this.confirmAction,
     this.actions = const [],
     this.pinnedBody,
@@ -610,6 +613,11 @@ abstract class AdaptiveModal extends StatelessWidget {
   final Widget? title;
   final Widget? leadingAction;
   final List<Widget> appBarActions;
+
+  /// Minimum local space above the Apple toolbar.
+  /// Null uses the desktop default; zero disables it. A larger top safe area
+  /// takes precedence without adding the two insets.
+  final double? appleToolbarTopInset;
   final AdaptiveModalConfirmAction? confirmAction;
   final List<Widget> actions;
   final Widget? pinnedBody;
@@ -626,6 +634,7 @@ class _AdaptiveBoxModal extends AdaptiveModal {
     super.title,
     super.leadingAction,
     super.appBarActions,
+    super.appleToolbarTopInset,
     super.confirmAction,
     super.actions,
     super.pinnedBody,
@@ -646,6 +655,7 @@ class _AdaptiveBoxModal extends AdaptiveModal {
     title: title,
     leadingAction: leadingAction,
     appBarActions: appBarActions,
+    appleToolbarTopInset: appleToolbarTopInset,
     confirmAction: confirmAction,
     actions: actions,
     pinnedBody: pinnedBody,
@@ -675,6 +685,7 @@ class _AdaptiveSliverModal extends AdaptiveModal {
     super.title,
     super.leadingAction,
     super.appBarActions,
+    super.appleToolbarTopInset,
     super.confirmAction,
     super.actions,
     super.pinnedBody,
@@ -694,6 +705,7 @@ class _AdaptiveSliverModal extends AdaptiveModal {
     title: title,
     leadingAction: leadingAction,
     appBarActions: appBarActions,
+    appleToolbarTopInset: appleToolbarTopInset,
     confirmAction: confirmAction,
     actions: actions,
     pinnedBody: pinnedBody,
@@ -713,6 +725,7 @@ class _AdaptiveModal extends StatefulWidget {
     required this.title,
     required this.leadingAction,
     required this.appBarActions,
+    required this.appleToolbarTopInset,
     required this.confirmAction,
     required this.actions,
     required this.pinnedBody,
@@ -728,6 +741,7 @@ class _AdaptiveModal extends StatefulWidget {
   final Widget? title;
   final Widget? leadingAction;
   final List<Widget> appBarActions;
+  final double? appleToolbarTopInset;
   final AdaptiveModalConfirmAction? confirmAction;
   final List<Widget> actions;
   final Widget? pinnedBody;
@@ -889,6 +903,7 @@ class _AdaptiveModalState extends State<_AdaptiveModal> {
         onContentSizeChanged: onContentSizeChanged,
       ),
       AdaptiveStyle.apple => CupertinoAdaptiveModal(
+        toolbarTopInset: widget.appleToolbarTopInset,
         showAppBar: widget.showAppBar,
         title: widget.title,
         leadingAction: leadingAction,

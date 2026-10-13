@@ -1,9 +1,13 @@
+import 'dart:math' as math;
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
 import '../adaptive_style.dart';
 import '../cupertino/cupertino_sidebar_navigation_bar_bottom.dart';
+import '../cupertino/cupertino_toolbar_extensions.dart';
 import '../shell/sidebar_adapter.dart';
 import '../window_control/cupertino_navigation_bar.dart';
 import '../window_control/material_app_bar.dart';
@@ -25,6 +29,7 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.actions = _kDefaultActions,
     this.automaticallyImplyLeading = true,
     this.automaticBackgroundVisibility = false,
+    this.appleToolbarTopInset,
     this.sidebarToolbarGeometry = _kBaseAppleToolbarGeometry,
     required this.toolbarHeight,
   }) : _adaptiveStyle = null;
@@ -36,7 +41,8 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.actions = _kDefaultActions,
     this.automaticallyImplyLeading = true,
     this.toolbarHeight = kToolbarHeight,
-  }) : automaticBackgroundVisibility = true,
+  }) : appleToolbarTopInset = 0,
+       automaticBackgroundVisibility = true,
        sidebarToolbarGeometry = _kBaseAppleToolbarGeometry,
        _adaptiveStyle = AdaptiveStyle.material;
 
@@ -47,6 +53,7 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.actions = _kDefaultActions,
     this.automaticallyImplyLeading = true,
     this.automaticBackgroundVisibility = false,
+    this.appleToolbarTopInset,
     this.sidebarToolbarGeometry = CupertinoSidebarToolbarGeometry.standard,
   }) : toolbarHeight = kMinInteractiveDimensionCupertino,
        _adaptiveStyle = AdaptiveStyle.apple;
@@ -66,6 +73,11 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// default because they share the page's scrollable.
   final bool automaticBackgroundVisibility;
 
+  /// Minimum local space above the Apple toolbar.
+  /// Null uses the desktop default; zero disables it. A larger top safe area
+  /// takes precedence without adding the two insets.
+  final double? appleToolbarTopInset;
+
   /// Geometry used when this bar hosts a collapsed Cupertino sidebar.
   final CupertinoSidebarToolbarGeometry sidebarToolbarGeometry;
 
@@ -81,7 +93,12 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => Size.fromHeight(
     _adaptiveStyle == AdaptiveStyle.material
         ? toolbarHeight
-        : sidebarToolbarGeometry.height,
+        : math.max(
+            math.max(toolbarHeight, sidebarToolbarGeometry.height),
+            kMinInteractiveDimensionCupertino +
+                (appleToolbarTopInset ??
+                    defaultTargetPlatform.defaultCupertinoToolbarTopInset),
+          ),
   );
 
   @override
@@ -101,6 +118,7 @@ class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
           automaticallyImplyLeading: automaticallyImplyLeading,
           automaticBackgroundVisibility: automaticBackgroundVisibility,
           sidebarToolbarGeometry: sidebarToolbarGeometry,
+          toolbarTopInset: appleToolbarTopInset,
         ),
       };
 }
@@ -142,6 +160,7 @@ class CupertinoAdaptiveAppBar extends StatelessWidget {
     required this.automaticallyImplyLeading,
     required this.automaticBackgroundVisibility,
     required this.sidebarToolbarGeometry,
+    this.toolbarTopInset,
   });
 
   final Widget title;
@@ -151,60 +170,80 @@ class CupertinoAdaptiveAppBar extends StatelessWidget {
   final bool automaticBackgroundVisibility;
   final CupertinoSidebarToolbarGeometry sidebarToolbarGeometry;
 
+  /// Minimum local top spacing. Null uses the desktop default; zero disables it.
+  /// A larger top safe area takes precedence without adding the two insets.
+  final double? toolbarTopInset;
+
   @override
   Widget build(BuildContext context) {
+    final toolbarTopInset =
+        this.toolbarTopInset ??
+        Theme.of(context).platform.defaultCupertinoToolbarTopInset;
     final sidebarLeading = SidebarLeadingScope.maybeOf(context);
+    final navigationBarBottom =
+        CupertinoSidebarNavigationBarBottom.maybeFromGeometry(
+          sidebarToolbarGeometry,
+          toolbarTopInset: toolbarTopInset,
+        );
     if (sidebarLeading != null) {
       final trailing = switch (actions) {
         [] => const SizedBox.shrink(),
         [final action] => action,
         _ => Row(mainAxisSize: MainAxisSize.min, children: actions),
       };
+      final toolbarAvoidance =
+          context.sidebarToolbarAvoidance(sidebarLeading: sidebarLeading) ??
+          EdgeInsets.zero;
       return WindowControlCupertinoNavigationBar(
+        toolbarTopInset: toolbarTopInset,
         automaticallyImplyLeading: false,
         automaticallyImplyMiddle: false,
-        middle: CupertinoSidebarToolbarRegions(
-          start: Row(
-            children: [
-              SizedBox(
-                key: const ValueKey('cupertino-sidebar-leading-anchor'),
-                width: sidebarLeading.reservedExtent,
-                height: SidebarLeadingScope.buttonExtent,
-              ),
-              ?leading,
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsetsDirectional.only(
-                    start: CupertinoSidebarToolbarLayout.titleStartPadding,
-                  ),
-                  child: Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: DefaultTextStyle.merge(
-                      maxLines: 1,
-                      softWrap: false,
-                      overflow: TextOverflow.ellipsis,
-                      child: title,
+        // CupertinoNavigationBar applies edge padding to leading/trailing,
+        // not to an all-in-middle sidebar toolbar. Consume its raw physical
+        // obstruction here; the renderer retains its existing visual spacing.
+        middle: Padding(
+          padding: toolbarAvoidance,
+          child: CupertinoSidebarToolbarRegions(
+            start: Row(
+              children: [
+                SizedBox(
+                  key: const ValueKey('cupertino-sidebar-leading-anchor'),
+                  width: sidebarLeading.reservedExtent,
+                  height: SidebarLeadingScope.buttonExtent,
+                ),
+                ?leading,
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.only(
+                      start: CupertinoSidebarToolbarLayout.titleStartPadding,
+                    ),
+                    child: Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: DefaultTextStyle.merge(
+                        maxLines: 1,
+                        softWrap: false,
+                        overflow: TextOverflow.ellipsis,
+                        child: title,
+                      ),
                     ),
                   ),
                 ),
+              ],
+            ),
+            end: ClipRect(
+              child: OverflowBox(
+                alignment: AlignmentDirectional.centerEnd,
+                minWidth: 0.0,
+                maxWidth: double.infinity,
+                child: trailing,
               ),
-            ],
-          ),
-          end: ClipRect(
-            child: OverflowBox(
-              alignment: AlignmentDirectional.centerEnd,
-              minWidth: 0.0,
-              maxWidth: double.infinity,
-              child: trailing,
             ),
           ),
         ),
         backgroundColor: CupertinoColors.transparent,
         automaticBackgroundVisibility: automaticBackgroundVisibility,
         transitionBetweenRoutes: false,
-        bottom: CupertinoSidebarNavigationBarBottom.maybeFromGeometry(
-          sidebarToolbarGeometry,
-        ),
+        bottom: navigationBarBottom,
         windowControlAvoidance: context.sidebarToolbarAvoidance(
           sidebarLeading: sidebarLeading,
         ),
@@ -214,6 +253,7 @@ class CupertinoAdaptiveAppBar extends StatelessWidget {
         ? null
         : Row(mainAxisSize: MainAxisSize.min, children: actions);
     return WindowControlCupertinoNavigationBar(
+      toolbarTopInset: toolbarTopInset,
       leading: leading,
       automaticallyImplyLeading: automaticallyImplyLeading,
       middle: title,
@@ -221,9 +261,7 @@ class CupertinoAdaptiveAppBar extends StatelessWidget {
       backgroundColor: CupertinoColors.transparent,
       automaticBackgroundVisibility: automaticBackgroundVisibility,
       transitionBetweenRoutes: false,
-      bottom: CupertinoSidebarNavigationBarBottom.maybeFromGeometry(
-        sidebarToolbarGeometry,
-      ),
+      bottom: navigationBarBottom,
       windowControlAvoidance: context.sidebarToolbarAvoidance(
         sidebarLeading: null,
       ),
