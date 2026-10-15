@@ -20,6 +20,8 @@ import 'package:mhabit/pages/app_changelog/changelog_dialog.dart';
 import 'package:mhabit/widgets/_widgets/markdown_block.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
+import '../../../support/adaptive_ui_theme.dart';
+
 const _currentVersionSection = '- item 1\n- item 2';
 const _fullChangelog = '## 1.0.0+1\n- old item\n';
 const _version = '1.2.3+45';
@@ -45,7 +47,10 @@ Widget _buildTestApp({
     ),
   );
   if (adaptiveStyleOverride case final style?) {
-    home = AdaptiveStyleScope(override: style, child: home);
+    home = TestAdaptiveUiTheme(
+      update: (parentTheme) => parentTheme.copyWith(style: style),
+      child: home,
+    );
   }
   home = AdaptiveWindowControlLayoutScope(
     horizontalAvoidance: horizontalAvoidance,

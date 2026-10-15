@@ -46,11 +46,14 @@ Widget _host({
   theme: ThemeData(
     platform: TargetPlatform.iOS,
     extensions: [
-      focusTheme,
-      if (neutralForegroundColor != null)
-        AdaptiveCupertinoButtonThemeData(
-          neutralForegroundColor: neutralForegroundColor,
-        ),
+      AppAdaptiveUiThemeData(
+        cupertinoFocusTheme: focusTheme,
+        cupertinoButtonTheme: neutralForegroundColor != null
+            ? AdaptiveCupertinoButtonThemeData(
+                neutralForegroundColor: neutralForegroundColor,
+              )
+            : const AdaptiveCupertinoButtonThemeData(),
+      ),
     ],
   ),
   home: Directionality(

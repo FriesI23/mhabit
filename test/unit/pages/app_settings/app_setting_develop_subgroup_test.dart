@@ -25,6 +25,8 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../support/adaptive_ui_theme.dart';
+
 Future<(ProfileViewModel, AppDeveloperViewModel)> _loadViewModel() async {
   SharedPreferences.setMockInitialValues({});
   final profile = ProfileViewModel([AdaptiveStyleOverrideProfileHandler.new]);
@@ -39,8 +41,8 @@ Widget _host(
 }) => ChangeNotifierProvider<AppDeveloperViewModel>.value(
   value: viewModel,
   child: MaterialApp(
-    home: AdaptiveStyleScope(
-      override: styleOverride,
+    home: TestAdaptiveUiTheme(
+      update: (parentTheme) => parentTheme.copyWith(style: styleOverride),
       child: Scaffold(
         body: SingleChildScrollView(
           child: Consumer<AppDeveloperViewModel>(

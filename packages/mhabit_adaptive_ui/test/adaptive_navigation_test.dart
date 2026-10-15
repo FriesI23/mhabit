@@ -727,8 +727,8 @@ void main() {
         MaterialApp(
           home: ValueListenableBuilder<AdaptiveStyle>(
             valueListenable: style,
-            builder: (context, value, child) => AdaptiveStyleScope(
-              override: value,
+            builder: (context, value, child) => AppAdaptiveUiTheme(
+              data: AppAdaptiveUiTheme.of(context).copyWith(style: value),
               child: AdaptiveNavigationShell(
                 selectedIndex: 0,
                 destinations: const [
@@ -2990,8 +2990,10 @@ void main() {
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: router,
-          builder: (context, child) => BreakpointsScope(
-            breakpoints: const CustomBreakpoints(width: [600, 840]),
+          builder: (context, child) => AppAdaptiveUiTheme(
+            data: AppAdaptiveUiTheme.of(
+              context,
+            ).copyWith(breakpoints: const CustomBreakpoints(width: [600, 840])),
             child: child!,
           ),
         ),
@@ -3398,8 +3400,10 @@ void main() {
         await tester.pumpWidget(
           MaterialApp.router(
             routerConfig: router,
-            builder: (context, child) => AdaptiveStyleScope(
-              override: AdaptiveStyle.material,
+            builder: (context, child) => AppAdaptiveUiTheme(
+              data: AppAdaptiveUiTheme.of(
+                context,
+              ).copyWith(style: AdaptiveStyle.material),
               child: child!,
             ),
           ),
@@ -4037,9 +4041,11 @@ void main() {
         MaterialApp.router(
           routerConfig: router,
           // Keep testing Sidebar overflow without the default height constraint.
-          builder: (context, child) => BreakpointsScope(
-            breakpoints: CustomBreakpoints(
-              width: const AppleBreakpoints().width,
+          builder: (context, child) => AppAdaptiveUiTheme(
+            data: AppAdaptiveUiTheme.of(context).copyWith(
+              breakpoints: CustomBreakpoints(
+                width: const AppleBreakpoints().width,
+              ),
             ),
             child: child!,
           ),
@@ -5581,9 +5587,11 @@ void main() {
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: router,
-          builder: (context, child) => BreakpointsScope(
-            breakpoints: CustomBreakpoints(
-              width: const AppleBreakpoints().width,
+          builder: (context, child) => AppAdaptiveUiTheme(
+            data: AppAdaptiveUiTheme.of(context).copyWith(
+              breakpoints: CustomBreakpoints(
+                width: const AppleBreakpoints().width,
+              ),
             ),
             child: child!,
           ),

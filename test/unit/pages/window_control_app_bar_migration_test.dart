@@ -35,8 +35,10 @@ Widget _host(
   locale: locale,
   localizationsDelegates: L10n.localizationsDelegates,
   supportedLocales: L10n.supportedLocales,
-  builder: (context, child) =>
-      AdaptiveStyleScope(override: style, child: child!),
+  builder: (context, child) => AppAdaptiveUiTheme(
+    data: AppAdaptiveUiTheme.of(context).copyWith(style: style),
+    child: child!,
+  ),
   home: Scaffold(
     body: CustomScrollView(
       slivers: [

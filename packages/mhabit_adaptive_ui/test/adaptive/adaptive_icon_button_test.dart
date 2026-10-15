@@ -24,11 +24,15 @@ Widget _host({
       primaryColor: CupertinoColors.systemPurple,
     ),
     extensions: [
-      focusTheme ?? const AdaptiveCupertinoFocusThemeData(),
-      if (neutralForegroundColor != null)
-        AdaptiveCupertinoButtonThemeData(
-          neutralForegroundColor: neutralForegroundColor,
-        ),
+      AppAdaptiveUiThemeData(
+        cupertinoFocusTheme:
+            focusTheme ?? const AdaptiveCupertinoFocusThemeData(),
+        cupertinoButtonTheme: neutralForegroundColor != null
+            ? AdaptiveCupertinoButtonThemeData(
+                neutralForegroundColor: neutralForegroundColor,
+              )
+            : const AdaptiveCupertinoButtonThemeData(),
+      ),
     ],
   ),
   home: Scaffold(body: Center(child: child)),

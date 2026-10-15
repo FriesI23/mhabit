@@ -23,8 +23,10 @@ import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart'
     show
         AdaptiveCupertinoButtonThemeData,
+        AdaptiveCupertinoFocusDecoration,
         AdaptiveCupertinoFocusThemeData,
         AdaptiveListThemeData,
+        AppAdaptiveUiThemeData,
         CupertinoSidebarThemeData;
 
 import '../common/app_info.dart';
@@ -202,29 +204,36 @@ class AppThemeBuilder {
           edgeBackgroundColor: systemColors || colorScheme == null
               ? null
               : colorScheme.surfaceContainer,
-          focusHaloBuilder: cupertinoFocusTheme.buildHalo,
+          focusHaloBuilder:
+              (_, {required child, required visible, required decoration}) =>
+                  AdaptiveCupertinoFocusDecoration(
+                    visible: visible,
+                    decoration: decoration,
+                    child: child,
+                  ),
         ),
-        cupertinoFocusTheme,
-        AdaptiveCupertinoButtonThemeData(
-          neutralForegroundColor: systemColors || colorScheme == null
-              ? CupertinoColors.label
-              : colorScheme.onSurfaceVariant,
+        AppAdaptiveUiThemeData(
+          cupertinoFocusTheme: cupertinoFocusTheme,
+          cupertinoButtonTheme: AdaptiveCupertinoButtonThemeData(
+            neutralForegroundColor: systemColors || colorScheme == null
+                ? CupertinoColors.label
+                : colorScheme.onSurfaceVariant,
+          ),
+          listTheme: systemColors
+              ? AdaptiveListThemeData(
+                  surfaceColor: switch (defaultTargetPlatform) {
+                    TargetPlatform.macOS => _macOSSystemListSurface,
+                    _ => CupertinoColors.secondarySystemBackground,
+                  },
+                  foregroundColor: CupertinoColors.label,
+                  secondaryColor: CupertinoColors.secondaryLabel,
+                  iconColor: CupertinoColors.systemGrey2,
+                  separatorColor: CupertinoColors.separator,
+                  activatedColor: CupertinoColors.systemGrey4,
+                  focusColor: CupertinoColors.systemGrey,
+                )
+              : const AdaptiveListThemeData(),
         ),
-        if (systemColors)
-          AdaptiveListThemeData(
-            surfaceColor: switch (defaultTargetPlatform) {
-              TargetPlatform.macOS => _macOSSystemListSurface,
-              _ => CupertinoColors.secondarySystemBackground,
-            },
-            foregroundColor: CupertinoColors.label,
-            secondaryColor: CupertinoColors.secondaryLabel,
-            iconColor: CupertinoColors.systemGrey2,
-            separatorColor: CupertinoColors.separator,
-            activatedColor: CupertinoColors.systemGrey4,
-            focusColor: CupertinoColors.systemGrey,
-          )
-        else
-          const AdaptiveListThemeData(),
       ],
     );
     final cupertinoPrimaryColor = systemColors

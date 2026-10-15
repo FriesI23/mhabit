@@ -9,8 +9,10 @@ export 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
         SideNavigationDragHandleBuilder,
         SideNavigationExtent,
         kCupertinoSidebarEdgeFillAlpha;
+
 export 'src/adaptive/adaptive_app_bar.dart';
 export 'src/adaptive/adaptive_app_bar_actions.dart';
+export 'src/adaptive/adaptive_app_bar_theme_data.dart';
 export 'src/adaptive/adaptive_back_button.dart';
 export 'src/adaptive/adaptive_checkmark.dart';
 export 'src/adaptive/adaptive_choice_list_tile.dart';
@@ -31,9 +33,13 @@ export 'src/adaptive/adaptive_sliver_app_bar.dart';
 export 'src/adaptive/adaptive_sliver_search_bar.dart';
 export 'src/adaptive/adaptive_switch_list_tile.dart';
 export 'src/adaptive_style.dart';
+export 'src/app_adaptive_ui_theme.dart'
+    show AppAdaptiveUiTheme, AppAdaptiveUiThemeData;
 export 'src/breakpoints/breakpoints.dart';
 export 'src/breakpoints/device_context.dart';
 export 'src/breakpoints/window_size_class.dart';
+export 'src/cupertino/adaptive_cupertino_focus_decoration.dart';
+export 'src/cupertino/adaptive_cupertino_focus_halo.dart';
 export 'src/cupertino/adaptive_cupertino_focus_theme.dart';
 export 'src/cupertino/app_bar_apple_style.dart'
     show $AppBarAppleStyleCopyWith, AppBarAppleStyle;
@@ -57,7 +63,6 @@ export 'src/cupertino/cupertino_sliver_select_app_bar.dart';
 export 'src/material/app_bar_material_style.dart'
     show $AppBarMaterialStyleCopyWith, AppBarMaterialStyle;
 export 'src/material/material_adaptive_dialog.dart' show MaterialAdaptiveDialog;
-export 'src/material/material_app_bar_scroll_policy.dart';
 export 'src/material/material_editable_sliver_app_bar.dart'
     show $MaterialEditableAppBarStyleCopyWith, MaterialEditableAppBarStyle;
 export 'src/material/material_expandable_search_bar.dart';

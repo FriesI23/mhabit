@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../adaptive_style.dart';
+import '../app_adaptive_ui_theme.dart';
 import '../cupertino/cupertino_adaptive_dialog.dart';
 import '../material/material_adaptive_dialog.dart';
 
@@ -27,8 +28,8 @@ Future<T?> showAdaptiveModalDialog<T>({
   Widget buildContent(BuildContext context) => themes.wrap(
     Directionality(
       textDirection: direction,
-      child: AdaptiveStyleScope(
-        override: style,
+      child: AdaptiveComponentTheme(
+        style: style,
         child: Builder(builder: builder),
       ),
     ),

@@ -43,12 +43,14 @@ void main() {
               child: StatefulBuilder(
                 builder: (context, setState) {
                   update = setState;
-                  return AdaptiveStyleScope(
-                    override: switch (mode) {
-                      AppAdaptiveStyleMode.automatic => null,
-                      AppAdaptiveStyleMode.material => AdaptiveStyle.material,
-                      AppAdaptiveStyleMode.apple => AdaptiveStyle.apple,
-                    },
+                  return AppAdaptiveUiTheme(
+                    data: AppAdaptiveUiTheme.of(context).copyWith(
+                      style: switch (mode) {
+                        AppAdaptiveStyleMode.automatic => null,
+                        AppAdaptiveStyleMode.material => AdaptiveStyle.material,
+                        AppAdaptiveStyleMode.apple => AdaptiveStyle.apple,
+                      },
+                    ),
                     child: Directionality(
                       textDirection: direction ?? TextDirection.ltr,
                       child: AppSettingDevelopSubGroup(

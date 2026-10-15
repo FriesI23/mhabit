@@ -1,7 +1,7 @@
 import 'package:adaptive_actions/cupertino.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'adaptive_cupertino_focus_theme.dart';
+import 'adaptive_cupertino_focus_decoration.dart';
 import 'cupertino_neutral_button.dart';
 
 /// Cupertino renderer adapter for adaptive app-bar actions.
@@ -62,7 +62,6 @@ class CupertinoAppBarActions<T extends Object> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final focusTheme = AdaptiveCupertinoFocusThemeData.of(context);
     final primaryAnchors = <T, BuildContext>{};
     BuildContext? overflowAnchorContext;
 
@@ -92,7 +91,13 @@ class CupertinoAppBarActions<T extends Object> extends StatelessWidget {
             defaultBuilder: defaultBuilder,
             submenuButtonBuilder: submenuButtonBuilder,
           ),
-      focusHaloBuilder: focusTheme.buildHalo,
+      focusHaloBuilder:
+          (_, {required child, required visible, required decoration}) =>
+              AdaptiveCupertinoFocusDecoration(
+                visible: visible,
+                decoration: decoration,
+                child: child,
+              ),
       menuBuilderForAction: menuBuilderForAction,
       overflowButtonBuilder: (context, onPressed, defaultBuilder) =>
           _CupertinoAppBarOverflowButton(

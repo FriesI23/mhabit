@@ -26,6 +26,8 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../support/adaptive_ui_theme.dart';
+
 void main() {
   for (final style in AdaptiveStyle.values) {
     testWidgets(
@@ -40,8 +42,8 @@ void main() {
         addTearDown(history.dispose);
         addTearDown(profile.dispose);
         await tester.pumpWidget(
-          AdaptiveStyleScope(
-            override: style,
+          TestAdaptiveUiTheme(
+            update: (parentTheme) => parentTheme.copyWith(style: style),
             child: ChangeNotifierProvider.value(
               value: history,
               child: MaterialApp(
@@ -110,8 +112,8 @@ void main() {
           GroupEditFormResult? result;
           var completed = false;
           await tester.pumpWidget(
-            AdaptiveStyleScope(
-              override: style,
+            TestAdaptiveUiTheme(
+              update: (parentTheme) => parentTheme.copyWith(style: style),
               child: ChangeNotifierProvider(
                 create: (_) => CustomColorHistoryViewModel(),
                 child: MaterialApp(
@@ -303,8 +305,8 @@ void main() {
           tester.view.physicalSize = size;
           addTearDown(tester.view.reset);
           await tester.pumpWidget(
-            AdaptiveStyleScope(
-              override: style,
+            TestAdaptiveUiTheme(
+              update: (parentTheme) => parentTheme.copyWith(style: style),
               child: ChangeNotifierProvider(
                 create: (_) => CustomColorHistoryViewModel(),
                 child: MaterialApp(

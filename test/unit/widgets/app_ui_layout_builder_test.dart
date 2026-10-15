@@ -17,6 +17,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/widgets/_widgets/app_ui_layout_builder.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
+import '../../support/adaptive_ui_theme.dart';
+
 Future<void> pumpWithConstraints(
   WidgetTester tester, {
   required double width,
@@ -89,8 +91,9 @@ void main() {
         tester,
         width: 700,
         height: 450,
-        child: BreakpointsScope(
-          breakpoints: legacyThresholds,
+        child: TestAdaptiveUiTheme(
+          update: (parentTheme) =>
+              parentTheme.copyWith(breakpoints: legacyThresholds),
           child: WindowSizeClassLayoutBuilder(builder: windowSizeTextBuilder()),
         ),
       );

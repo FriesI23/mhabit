@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 
 import '../adaptive/adaptive_dialog.dart' show AdaptiveDialogAction;
+import '../app_adaptive_ui_theme.dart';
 
 /// Cupertino alert content with platform-neutral action definitions.
 ///
-/// Always renders Cupertino, independently of [AdaptiveStyleScope]. This widget
+/// Always renders Cupertino, independently of [AppAdaptiveUiTheme]. This widget
 /// does not create a route; use [AdaptiveDialog] with [showAdaptiveModalDialog]
 /// for matching adaptive route and content styles.
 class CupertinoAdaptiveDialog extends StatelessWidget {

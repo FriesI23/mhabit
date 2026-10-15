@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
+import 'harness/adaptive_ui_theme.dart';
+
 Material barMaterial(WidgetTester tester) => tester.widget<Material>(
   find
       .descendant(of: find.byType(AppBar), matching: find.byType(Material))
@@ -89,8 +91,12 @@ void main() {
           await tester.pumpWidget(
             MaterialApp(
               theme: theme,
-              home: MaterialAppBarScrollPolicy(
-                fixedBackground: true,
+              home: TestAdaptiveUiTheme(
+                update: (parentTheme) => parentTheme.copyWith(
+                  appBarTheme: parentTheme.appBarTheme.copyWith(
+                    materialFixedScrollBackground: true,
+                  ),
+                ),
                 child: Scaffold(
                   appBar: variant == 'regular'
                       ? WindowControlAppBar(
@@ -128,8 +134,12 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: theme,
-        home: MaterialAppBarScrollPolicy(
-          fixedBackground: false,
+        home: TestAdaptiveUiTheme(
+          update: (parentTheme) => parentTheme.copyWith(
+            appBarTheme: parentTheme.appBarTheme.copyWith(
+              materialFixedScrollBackground: false,
+            ),
+          ),
           child: Scaffold(
             appBar: const WindowControlAppBar(title: Text('Title')),
             body: ListView.builder(

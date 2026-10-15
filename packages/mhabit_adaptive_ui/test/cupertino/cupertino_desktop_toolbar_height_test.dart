@@ -5,6 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_sliver_app_bar.dart';
 
+import '../harness/adaptive_ui_theme.dart';
+
 void main() {
   for (final platform in TargetPlatform.values) {
     final desktop = switch (platform) {
@@ -60,8 +62,9 @@ void main() {
           await tester.pumpWidget(
             MaterialApp(
               theme: ThemeData(platform: platform),
-              home: AdaptiveStyleScope(
-                override: AdaptiveStyle.apple,
+              home: TestAdaptiveUiTheme(
+                update: (parentTheme) =>
+                    parentTheme.copyWith(style: AdaptiveStyle.apple),
                 child: Directionality(
                   textDirection: direction,
                   child: Builder(
@@ -104,8 +107,9 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             theme: ThemeData(platform: platform),
-            home: AdaptiveStyleScope(
-              override: AdaptiveStyle.apple,
+            home: TestAdaptiveUiTheme(
+              update: (parentTheme) =>
+                  parentTheme.copyWith(style: AdaptiveStyle.apple),
               child: Builder(
                 builder: (context) => TextButton(
                   onPressed: () => showAdaptiveSheet<void>(

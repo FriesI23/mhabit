@@ -11,6 +11,8 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
 import 'package:provider/provider.dart';
 
+import '../../support/adaptive_ui_theme.dart';
+
 class _Api implements DesktopWindowTitleBarApi {
   @override
   bool get supported => true;
@@ -210,8 +212,8 @@ void main() {
         await tester.pumpWidget(
           Provider<DesktopWindowTitleBar>.value(
             value: owner,
-            child: AdaptiveStyleScope(
-              override: style,
+            child: TestAdaptiveUiTheme(
+              update: (parentTheme) => parentTheme.copyWith(style: style),
               child: AppRootView(
                 themeMode: mode,
                 lightThemeBuilder: (_) => light,
@@ -301,13 +303,15 @@ void main() {
       ]) {
         debugDefaultTargetPlatformOverride = platform;
         await tester.pumpWidget(
-          AdaptiveStyleScope(
-            override: style,
+          TestAdaptiveUiTheme(
+            update: (parentTheme) => parentTheme.copyWith(style: style),
             child: AppRootView.withDefault(
               child: Builder(
                 builder: (context) {
                   expect(
-                    MaterialAppBarScrollPolicy.fixedBackgroundOf(context),
+                    AppAdaptiveUiTheme.of(
+                      context,
+                    ).appBarTheme.materialFixedScrollBackground,
                     fixed,
                   );
                   final theme = Theme.of(context);
@@ -405,8 +409,8 @@ void main() {
       var mode = ThemeMode.light;
       Future<void> pump() async {
         await tester.pumpWidget(
-          AdaptiveStyleScope(
-            override: style,
+          TestAdaptiveUiTheme(
+            update: (parentTheme) => parentTheme.copyWith(style: style),
             child: AppRootView(
               themeMode: mode,
               lightThemeBuilder: (_) => theme,
@@ -454,8 +458,9 @@ void main() {
         await tester.pumpWidget(
           Provider<DesktopWindowTitleBar>.value(
             value: owner,
-            child: AdaptiveStyleScope(
-              override: AdaptiveStyle.apple,
+            child: TestAdaptiveUiTheme(
+              update: (parentTheme) =>
+                  parentTheme.copyWith(style: AdaptiveStyle.apple),
               child: AppRootView.withDefault(
                 lightThemeBuilder: (_) => theme,
                 child: AdaptiveNavScope(

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+
+import 'harness/adaptive_ui_theme.dart';
 
 const material = MaterialBreakpoints();
 const apple = AppleBreakpoints();
@@ -102,9 +103,10 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(platform: TargetPlatform.macOS),
-          home: const AdaptiveStyleScope(
-            override: AdaptiveStyle.material,
-            child: SizedBox(key: ValueKey('box')),
+          home: TestAdaptiveUiTheme(
+            update: (parentTheme) =>
+                parentTheme.copyWith(style: AdaptiveStyle.material),
+            child: const SizedBox(key: ValueKey('box')),
           ),
         ),
       );
@@ -116,10 +118,11 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: AdaptiveStyleScope(
-            override: AdaptiveStyle.apple,
-            child: SizedBox(key: ValueKey('box')),
+        MaterialApp(
+          home: TestAdaptiveUiTheme(
+            update: (parentTheme) =>
+                parentTheme.copyWith(style: AdaptiveStyle.apple),
+            child: const SizedBox(key: ValueKey('box')),
           ),
         ),
       );
@@ -130,10 +133,10 @@ void main() {
     testWidgets('prefers the scope over the platform default', (tester) async {
       const custom = CustomBreakpoints(width: [300]);
       await tester.pumpWidget(
-        const MaterialApp(
-          home: BreakpointsScope(
-            breakpoints: custom,
-            child: SizedBox(key: ValueKey('box')),
+        MaterialApp(
+          home: TestAdaptiveUiTheme(
+            update: (parentTheme) => parentTheme.copyWith(breakpoints: custom),
+            child: const SizedBox(key: ValueKey('box')),
           ),
         ),
       );
@@ -145,12 +148,12 @@ void main() {
       const outer = CustomBreakpoints(width: [300]);
       const inner = CustomBreakpoints(width: [400]);
       await tester.pumpWidget(
-        const MaterialApp(
-          home: BreakpointsScope(
-            breakpoints: outer,
-            child: BreakpointsScope(
-              breakpoints: inner,
-              child: SizedBox(key: ValueKey('box')),
+        MaterialApp(
+          home: TestAdaptiveUiTheme(
+            update: (parentTheme) => parentTheme.copyWith(breakpoints: outer),
+            child: TestAdaptiveUiTheme(
+              update: (parentTheme) => parentTheme.copyWith(breakpoints: inner),
+              child: const SizedBox(key: ValueKey('box')),
             ),
           ),
         ),

@@ -26,6 +26,7 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../support/adaptive_dialog.dart';
+import '../../../support/adaptive_ui_theme.dart';
 
 class _Caches extends AppCachesViewModel {
   bool skip = false;
@@ -70,8 +71,8 @@ void main() {
                 theme: ThemeData(platform: TargetPlatform.macOS),
                 localizationsDelegates: L10n.localizationsDelegates,
                 supportedLocales: L10n.supportedLocales,
-                home: AdaptiveStyleScope(
-                  override: style,
+                home: TestAdaptiveUiTheme(
+                  update: (parentTheme) => parentTheme.copyWith(style: style),
                   child: const Scaffold(
                     body: AppSettingOpenSystemLanguageTile(),
                   ),

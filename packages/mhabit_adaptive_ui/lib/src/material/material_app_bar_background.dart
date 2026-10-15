@@ -1,20 +1,11 @@
 import 'package:flutter/material.dart';
 
-/// Controls background changes without changing scroll shadows or geometry.
-class MaterialAppBarScrollPolicy extends InheritedWidget {
-  const MaterialAppBarScrollPolicy({
-    super.key,
-    required this.fixedBackground,
-    required super.child,
-  });
+import '../app_adaptive_ui_theme.dart';
 
-  final bool fixedBackground;
-
+/// Internal paint resolution for the adaptive app-bar theme.
+abstract final class MaterialAppBarBackground {
   static bool fixedBackgroundOf(BuildContext context) =>
-      context
-          .dependOnInheritedWidgetOfExactType<MaterialAppBarScrollPolicy>()
-          ?.fixedBackground ??
-      false;
+      AppAdaptiveUiTheme.of(context).appBarTheme.materialFixedScrollBackground;
 
   static Color? backgroundOf(BuildContext context, Color? explicitColor) {
     if (!fixedBackgroundOf(context)) return explicitColor;
@@ -29,8 +20,4 @@ class MaterialAppBarScrollPolicy extends InheritedWidget {
 
   static Color? tintOf(BuildContext context, Color? explicitColor) =>
       fixedBackgroundOf(context) ? Colors.transparent : explicitColor;
-
-  @override
-  bool updateShouldNotify(MaterialAppBarScrollPolicy oldWidget) =>
-      fixedBackground != oldWidget.fixedBackground;
 }

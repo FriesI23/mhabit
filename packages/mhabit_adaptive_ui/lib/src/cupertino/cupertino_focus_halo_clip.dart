@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import 'adaptive_cupertino_focus_theme.dart';
+import '../app_adaptive_ui_theme.dart';
 
 /// Keeps animated content bounded while allowing a Cupertino focus halo to
 /// paint just outside the layout slot.
@@ -11,9 +11,9 @@ class CupertinoFocusHaloClip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final overflow = AdaptiveCupertinoFocusThemeData.of(
+    final overflow = AppAdaptiveUiTheme.of(
       context,
-    ).haloPaintOutset;
+    ).cupertinoFocusTheme.haloPaintOutset;
     return ClipRect(
       clipper: _CupertinoFocusHaloRectClipper(overflow),
       child: child,

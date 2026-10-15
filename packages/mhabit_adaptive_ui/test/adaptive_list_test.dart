@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
+import 'harness/adaptive_ui_theme.dart';
+
 Widget host(Widget child, {TargetPlatform platform = TargetPlatform.iOS}) =>
     MaterialApp(
       theme: ThemeData(platform: platform),
@@ -56,9 +58,10 @@ void main() {
   testWidgets('forced constructors override scope', (tester) async {
     await tester.pumpWidget(
       host(
-        const AdaptiveStyleScope(
-          override: AdaptiveStyle.material,
-          child: Column(
+        TestAdaptiveUiTheme(
+          update: (parentTheme) =>
+              parentTheme.copyWith(style: AdaptiveStyle.material),
+          child: const Column(
             children: [
               AdaptiveListTile.apple(title: Text('Apple')),
               AdaptiveListTile.material(title: Text('Material')),

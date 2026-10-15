@@ -21,6 +21,8 @@ import 'package:mhabit/pages/common/_widgets/donate_dialog.dart';
 import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
+import '../../../support/adaptive_ui_theme.dart';
+
 void main() {
   for (final brightness in Brightness.values) {
     testWidgets('Crypto icon contrast and disabled Apple color $brightness', (
@@ -29,8 +31,9 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(brightness: brightness),
-          home: AdaptiveStyleScope(
-            override: AdaptiveStyle.apple,
+          home: TestAdaptiveUiTheme(
+            update: (parentTheme) =>
+                parentTheme.copyWith(style: AdaptiveStyle.apple),
             child: Scaffold(
               body: Wrap(
                 children: [
@@ -305,8 +308,8 @@ Widget _host(
   AdaptiveStyle style, {
   ValueChanged<DonateDialogResult?>? onResult,
   bool emptyTokens = false,
-}) => AdaptiveStyleScope(
-  override: style,
+}) => TestAdaptiveUiTheme(
+  update: (parentTheme) => parentTheme.copyWith(style: style),
   child: MaterialApp(
     localizationsDelegates: L10n.localizationsDelegates,
     supportedLocales: L10n.supportedLocales,

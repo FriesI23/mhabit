@@ -341,8 +341,10 @@ Future<void> _pumpTodayTabPage(
         theme: ThemeData(platform: platform),
         localizationsDelegates: L10n.localizationsDelegates,
         supportedLocales: L10n.supportedLocales,
-        builder: (context, child) =>
-            AdaptiveStyleScope(override: style, child: child!),
+        builder: (context, child) => AppAdaptiveUiTheme(
+          data: AppAdaptiveUiTheme.of(context).copyWith(style: style),
+          child: child!,
+        ),
         home: page,
       ),
     ),
@@ -458,8 +460,10 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
         theme: ThemeData(platform: platform),
         localizationsDelegates: L10n.localizationsDelegates,
         supportedLocales: L10n.supportedLocales,
-        builder: (context, child) =>
-            AdaptiveStyleScope(override: style, child: child!),
+        builder: (context, child) => AppAdaptiveUiTheme(
+          data: AppAdaptiveUiTheme.of(context).copyWith(style: style),
+          child: child!,
+        ),
         home: home,
       );
   await tester.pumpWidget(
@@ -2156,8 +2160,10 @@ void main() {
         home: ValueListenableBuilder<AdaptiveStyle>(
           valueListenable: style,
           child: home,
-          builder: (context, value, child) =>
-              AdaptiveStyleScope(override: value, child: child!),
+          builder: (context, value, child) => AppAdaptiveUiTheme(
+            data: AppAdaptiveUiTheme.of(context).copyWith(style: value),
+            child: child!,
+          ),
         ),
       ),
     );

@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/window_control/modal_app_bar_region.dart';
+
+import 'harness/adaptive_ui_theme.dart';
 
 class _MotionBuildHarness extends StatefulWidget {
   const _MotionBuildHarness();
@@ -55,8 +56,8 @@ Widget _buildTestApp({
   owner: WindowControlLayoutOwner.appBar,
   child: MaterialApp(
     theme: theme,
-    home: AdaptiveStyleScope(
-      override: style,
+    home: TestAdaptiveUiTheme(
+      update: (parentTheme) => parentTheme.copyWith(style: style),
       child: Builder(
         builder: (context) => Scaffold(
           body: ElevatedButton(
@@ -252,8 +253,8 @@ void main() {
       ) async {
         await tester.pumpWidget(
           MaterialApp(
-            home: AdaptiveStyleScope(
-              override: style,
+            home: TestAdaptiveUiTheme(
+              update: (parentTheme) => parentTheme.copyWith(style: style),
               child: const SizedBox(
                 width: 320,
                 height: 320,
@@ -512,8 +513,9 @@ void main() {
             verticalAvoidance: const EdgeInsets.only(top: 80),
             owner: WindowControlLayoutOwner.appBar,
             child: MaterialApp(
-              home: AdaptiveStyleScope(
-                override: AdaptiveStyle.apple,
+              home: TestAdaptiveUiTheme(
+                update: (parentTheme) =>
+                    parentTheme.copyWith(style: AdaptiveStyle.apple),
                 child: Builder(
                   builder: (context) => Scaffold(
                     body: ElevatedButton(
@@ -579,8 +581,9 @@ void main() {
             verticalAvoidance: const EdgeInsets.only(top: 120),
             owner: WindowControlLayoutOwner.appBar,
             child: MaterialApp(
-              home: AdaptiveStyleScope(
-                override: AdaptiveStyle.material,
+              home: TestAdaptiveUiTheme(
+                update: (parentTheme) =>
+                    parentTheme.copyWith(style: AdaptiveStyle.material),
                 child: Builder(
                   builder: (context) => Scaffold(
                     body: ElevatedButton(
@@ -760,8 +763,9 @@ void main() {
           verticalAvoidance: const EdgeInsets.only(top: 24),
           owner: WindowControlLayoutOwner.appBar,
           child: MaterialApp(
-            home: AdaptiveStyleScope(
-              override: AdaptiveStyle.material,
+            home: TestAdaptiveUiTheme(
+              update: (parentTheme) =>
+                  parentTheme.copyWith(style: AdaptiveStyle.material),
               child: Builder(
                 builder: (context) => ElevatedButton(
                   onPressed: () => showAdaptiveSheet<void>(

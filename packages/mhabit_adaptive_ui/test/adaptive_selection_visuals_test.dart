@@ -4,6 +4,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
+import 'harness/adaptive_ui_theme.dart';
+
 void main() {
   for (final style in AdaptiveStyle.values) {
     for (final brightness in Brightness.values) {
@@ -29,8 +31,9 @@ void main() {
                     child: SizedBox(
                       width: 400,
                       height: 200,
-                      child: AdaptiveStyleScope(
-                        override: style,
+                      child: TestAdaptiveUiTheme(
+                        update: (parentTheme) =>
+                            parentTheme.copyWith(style: style),
                         child: AdaptiveListSection(
                           appleTransparent: true,
                           padding: EdgeInsets.zero,
@@ -106,11 +109,12 @@ void main() {
 
   testWidgets('forced checkmarks ignore surrounding style', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         home: Scaffold(
-          body: AdaptiveStyleScope(
-            override: AdaptiveStyle.material,
-            child: Row(
+          body: TestAdaptiveUiTheme(
+            update: (parentTheme) =>
+                parentTheme.copyWith(style: AdaptiveStyle.material),
+            child: const Row(
               children: [
                 AdaptiveCheckmark.apple(),
                 AdaptiveCheckmark.material(),

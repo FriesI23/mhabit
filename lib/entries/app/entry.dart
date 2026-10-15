@@ -346,41 +346,39 @@ class _AppEntryState extends State<_AppEntry> {
               .select<AppDeveloperViewModel, TextDirection?>(
                 (vm) => vm.textDirectionOverride,
               );
-          return AdaptiveStyleScope(
-            override: adaptiveStyleOverride,
-            child: MultiProvider(
-              providers: [
-                Provider<HabitDisplayNavigationChrome>.value(
-                  value: _habitDisplayNavigationChrome,
-                ),
-              ],
-              child: AppRootView.router(
-                themeMode: transToMaterialThemeType(themeMode),
-                language: language,
-                disableAnimations: disableAnimations,
-                textDirectionOverride: textDirectionOverride,
-                lightThemeBuilder: (context) =>
-                    const AppThemeBuilder().buildLight(
-                      themeColor: themeColor,
-                      themeMainColor: themeMainColor,
-                      dynamicScheme: lightDynamic,
-                    ),
-                darkThemeBuilder: (context) =>
-                    switch (appWindowInterfaceLevel(context)) {
-                      CupertinoUserInterfaceLevelData.elevated =>
-                        const AppThemeBuilder().buildElevatedDark(
-                          themeColor: themeColor,
-                          themeMainColor: themeMainColor,
-                          dynamicScheme: darkDynamic,
-                        ),
-                      _ => const AppThemeBuilder().buildDark(
+          return MultiProvider(
+            providers: [
+              Provider<HabitDisplayNavigationChrome>.value(
+                value: _habitDisplayNavigationChrome,
+              ),
+            ],
+            child: AppRootView.router(
+              themeMode: transToMaterialThemeType(themeMode),
+              language: language,
+              disableAnimations: disableAnimations,
+              textDirectionOverride: textDirectionOverride,
+              lightThemeBuilder: (context) =>
+                  const AppThemeBuilder().buildLight(
+                    themeColor: themeColor,
+                    themeMainColor: themeMainColor,
+                    dynamicScheme: lightDynamic,
+                  ),
+              darkThemeBuilder: (context) =>
+                  switch (appWindowInterfaceLevel(context)) {
+                    CupertinoUserInterfaceLevelData.elevated =>
+                      const AppThemeBuilder().buildElevatedDark(
                         themeColor: themeColor,
                         themeMainColor: themeMainColor,
                         dynamicScheme: darkDynamic,
                       ),
-                    },
-                config: _router,
-              ),
+                    _ => const AppThemeBuilder().buildDark(
+                      themeColor: themeColor,
+                      themeMainColor: themeMainColor,
+                      dynamicScheme: darkDynamic,
+                    ),
+                  },
+              config: _router,
+              adaptiveStyleOverride: adaptiveStyleOverride,
             ),
           );
         },

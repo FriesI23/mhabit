@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
+import 'harness/adaptive_ui_theme.dart';
+
 void main() {
   testWidgets('renderers publish navigation surfaces for their resolved form', (
     tester,
@@ -26,8 +28,8 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: theme,
-          home: AdaptiveStyleScope(
-            override: style,
+          home: TestAdaptiveUiTheme(
+            update: (parentTheme) => parentTheme.copyWith(style: style),
             child: AdaptiveNavigationShell(
               selectedIndex: 0,
               onDestinationSelected: (_) {},

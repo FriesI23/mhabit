@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'material_app_bar_scroll_policy.dart';
+import 'material_app_bar_background.dart';
 
 /// A controlled Material search bar that expands from a compact search button.
 ///
@@ -164,7 +164,7 @@ class _MaterialExpandableSearchBarState
     // The search field has its own scroll palette, independent of AppBarTheme.
     // A separate title bar retains the field's normal (possibly themed) color.
     final isScrolledUnder =
-        !MaterialAppBarScrollPolicy.fixedBackgroundOf(context) &&
+        !MaterialAppBarBackground.fixedBackgroundOf(context) &&
         (settings?.isScrolledUnder ?? false);
 
     return LayoutBuilder(

@@ -54,6 +54,7 @@ class AppRootView extends StatelessWidget {
   final AppRootThemeBuilder? darkThemeBuilder;
   final bool disableAnimations;
   final TextDirection? textDirectionOverride;
+  final AdaptiveStyle? adaptiveStyleOverride;
 
   const AppRootView({
     super.key,
@@ -64,6 +65,7 @@ class AppRootView extends StatelessWidget {
     this.child,
     this.disableAnimations = false,
     this.textDirectionOverride,
+    this.adaptiveStyleOverride,
   }) : routerConfig = null;
 
   const AppRootView.router({
@@ -75,6 +77,7 @@ class AppRootView extends StatelessWidget {
     required GoRouter config,
     this.disableAnimations = false,
     this.textDirectionOverride,
+    this.adaptiveStyleOverride,
   }) : child = null,
        routerConfig = config;
 
@@ -87,6 +90,7 @@ class AppRootView extends StatelessWidget {
     this.child,
     this.disableAnimations = false,
     this.textDirectionOverride,
+    this.adaptiveStyleOverride,
   }) : routerConfig = null;
 
   @override
@@ -106,6 +110,7 @@ class AppRootView extends StatelessWidget {
         darkThemeBuilder: darkThemeBuilder,
         disableAnimations: disableAnimations,
         textDirectionOverride: textDirectionOverride,
+        adaptiveStyleOverride: adaptiveStyleOverride,
         child: child,
       ),
     );
@@ -123,6 +128,7 @@ class _AppRootMaterialApp extends StatelessWidget {
   final AppRootThemeBuilder? darkThemeBuilder;
   final bool disableAnimations;
   final TextDirection? textDirectionOverride;
+  final AdaptiveStyle? adaptiveStyleOverride;
 
   const _AppRootMaterialApp({
     required this.themeMode,
@@ -133,15 +139,24 @@ class _AppRootMaterialApp extends StatelessWidget {
     required this.darkThemeBuilder,
     required this.disableAnimations,
     required this.textDirectionOverride,
+    required this.adaptiveStyleOverride,
   });
 
   bool get _useRouter => routerConfig != null;
 
-  Widget _builder(BuildContext context, Widget? child) => _AppWindowView(
-    disableAnimations: disableAnimations,
-    textDirectionOverride: textDirectionOverride,
-    child: UnfocusOnTap(child: child),
-  );
+  Widget _builder(BuildContext context, Widget? child) {
+    final adaptiveTheme = AppAdaptiveUiTheme.of(context);
+    return AppAdaptiveUiTheme(
+      data: adaptiveTheme.copyWith(
+        style: adaptiveStyleOverride ?? adaptiveTheme.style,
+      ),
+      child: _AppWindowView(
+        disableAnimations: disableAnimations,
+        textDirectionOverride: textDirectionOverride,
+        child: UnfocusOnTap(child: child),
+      ),
+    );
+  }
 
   String _onGenerateTitle(BuildContext context) =>
       L10n.of(context)?.appName ?? appName;
@@ -252,6 +267,7 @@ class _AppSeparateBarTheme extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final fixedBackground = context._fixedMaterialAppBarBackground;
+    final adaptiveTheme = AppAdaptiveUiTheme.of(context);
     // Keep both wrappers mounted when the UI style changes. Navigator, focus
     // and search state must not depend on whether the theme is overridden.
     return Theme(
@@ -259,8 +275,12 @@ class _AppSeparateBarTheme extends StatelessWidget {
         true => theme._withFixedAppBarBackground,
         false => theme,
       },
-      child: MaterialAppBarScrollPolicy(
-        fixedBackground: fixedBackground,
+      child: AppAdaptiveUiTheme(
+        data: adaptiveTheme.copyWith(
+          appBarTheme: adaptiveTheme.appBarTheme.copyWith(
+            materialFixedScrollBackground: fixedBackground,
+          ),
+        ),
         child: child,
       ),
     );

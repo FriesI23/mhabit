@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+
+import 'harness/adaptive_ui_theme.dart';
 
 Widget _styleLabel({
   required TargetPlatform platform,
@@ -10,8 +11,8 @@ Widget _styleLabel({
   Widget? child,
 }) => MaterialApp(
   theme: ThemeData(platform: platform),
-  home: AdaptiveStyleScope(
-    override: override,
+  home: TestAdaptiveUiTheme(
+    update: (parentTheme) => parentTheme.copyWith(style: override),
     child:
         child ??
         Builder(
@@ -24,7 +25,7 @@ Widget _styleLabel({
 );
 
 void main() {
-  group('AdaptiveStyleScope', () {
+  group('AppAdaptiveUiTheme', () {
     testWidgets('falls back to the theme platform when override is null', (
       tester,
     ) async {
@@ -65,8 +66,8 @@ void main() {
           theme: ThemeData(platform: TargetPlatform.macOS),
           home: ValueListenableBuilder<AdaptiveStyle?>(
             valueListenable: style,
-            builder: (context, value, child) => AdaptiveStyleScope(
-              override: value,
+            builder: (context, value, child) => AppAdaptiveUiTheme(
+              data: AppAdaptiveUiTheme.of(context).copyWith(style: value),
               child: Builder(
                 builder: (context) => Text(AdaptiveStyle.of(context).name),
               ),

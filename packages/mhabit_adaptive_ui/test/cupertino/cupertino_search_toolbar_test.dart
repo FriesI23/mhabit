@@ -7,6 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_search_toolbar.dart';
 
+import '../harness/adaptive_ui_theme.dart';
+
 void main() {
   for (final direction in TextDirection.values) {
     testWidgets(
@@ -22,8 +24,9 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             theme: ThemeData(platform: TargetPlatform.macOS),
-            home: AdaptiveStyleScope(
-              override: AdaptiveStyle.apple,
+            home: TestAdaptiveUiTheme(
+              update: (parentTheme) =>
+                  parentTheme.copyWith(style: AdaptiveStyle.apple),
               child: Directionality(
                 textDirection: direction,
                 child: AdaptiveNavigationShell(

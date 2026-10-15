@@ -17,7 +17,7 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 /// Resolves the Habits page chrome for the current adaptive context.
 ///
-/// Resolve below the active [AdaptiveStyleScope], [MediaQuery], and
+/// Resolve below the active [AppAdaptiveUiTheme], [MediaQuery], and
 /// [AdaptiveNavScope] so every derived value uses the same context boundary.
 @immutable
 class HabitDisplayContextualChrome {

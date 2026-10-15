@@ -41,6 +41,8 @@ import 'package:mhabit/providers/workflow/group_manager.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
+import '../../../support/adaptive_ui_theme.dart';
+
 /// Creates a minimal [HabitSummaryData] for testing.
 HabitSummaryData _habit({
   required String uuid,
@@ -395,8 +397,8 @@ void main() {
     ) async {
       final manager = _LoadingGroupManager();
       await tester.pumpWidget(
-        AdaptiveStyleScope(
-          override: style,
+        TestAdaptiveUiTheme(
+          update: (parentTheme) => parentTheme.copyWith(style: style),
           child: MultiProvider(
             providers: [
               Provider<GroupManager>.value(value: manager),
@@ -452,8 +454,8 @@ void main() {
         GroupModifySelectorResult? result;
         var completed = false;
         await tester.pumpWidget(
-          AdaptiveStyleScope(
-            override: style,
+          TestAdaptiveUiTheme(
+            update: (parentTheme) => parentTheme.copyWith(style: style),
             child: MultiProvider(
               providers: [
                 Provider<GroupManager>(create: (_) => _EmptyGroupManager()),
@@ -601,8 +603,8 @@ void main() {
     ) async {
       GroupModifySelectorResult? result;
       await tester.pumpWidget(
-        AdaptiveStyleScope(
-          override: style,
+        TestAdaptiveUiTheme(
+          update: (parentTheme) => parentTheme.copyWith(style: style),
           child: MultiProvider(
             providers: [
               Provider<GroupManager>(create: (_) => _StaticGroupManager()),
@@ -844,8 +846,8 @@ void main() {
           final persistedValues = <bool>[];
 
           await tester.pumpWidget(
-            AdaptiveStyleScope(
-              override: style,
+            TestAdaptiveUiTheme(
+              update: (parentTheme) => parentTheme.copyWith(style: style),
               child: MaterialApp(
                 home: Builder(
                   builder: (context) => ElevatedButton(

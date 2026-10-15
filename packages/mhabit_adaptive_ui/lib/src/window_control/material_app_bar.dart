@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
-import '../material/material_app_bar_scroll_policy.dart';
+import '../material/material_app_bar_background.dart';
 import '../shell/sidebar_adapter.dart';
 import 'interaction_region.dart';
 import 'toolbar_geometry.dart';
@@ -165,12 +165,12 @@ class WindowControlAppBar extends StatelessWidget
       elevation: elevation,
       scrolledUnderElevation: scrolledUnderElevation,
       shadowColor: shadowColor,
-      surfaceTintColor: MaterialAppBarScrollPolicy.tintOf(
+      surfaceTintColor: MaterialAppBarBackground.tintOf(
         context,
         surfaceTintColor,
       ),
       shape: shape,
-      backgroundColor: MaterialAppBarScrollPolicy.backgroundOf(
+      backgroundColor: MaterialAppBarBackground.backgroundOf(
         context,
         backgroundColor,
       ),
@@ -486,12 +486,12 @@ class WindowControlSliverAppBar extends StatelessWidget {
         elevation: elevation,
         scrolledUnderElevation: scrolledUnderElevation,
         shadowColor: shadowColor,
-        surfaceTintColor: MaterialAppBarScrollPolicy.tintOf(
+        surfaceTintColor: MaterialAppBarBackground.tintOf(
           context,
           surfaceTintColor,
         ),
         forceElevated: forceElevated,
-        backgroundColor: MaterialAppBarScrollPolicy.backgroundOf(
+        backgroundColor: MaterialAppBarBackground.backgroundOf(
           context,
           backgroundColor,
         ),
@@ -550,12 +550,12 @@ class WindowControlSliverAppBar extends StatelessWidget {
     elevation: elevation,
     scrolledUnderElevation: scrolledUnderElevation,
     shadowColor: shadowColor,
-    surfaceTintColor: MaterialAppBarScrollPolicy.tintOf(
+    surfaceTintColor: MaterialAppBarBackground.tintOf(
       context,
       surfaceTintColor,
     ),
     forceElevated: forceElevated,
-    backgroundColor: MaterialAppBarScrollPolicy.backgroundOf(
+    backgroundColor: MaterialAppBarBackground.backgroundOf(
       context,
       backgroundColor,
     ),
@@ -601,12 +601,12 @@ class WindowControlSliverAppBar extends StatelessWidget {
         elevation: elevation,
         scrolledUnderElevation: scrolledUnderElevation,
         shadowColor: shadowColor,
-        surfaceTintColor: MaterialAppBarScrollPolicy.tintOf(
+        surfaceTintColor: MaterialAppBarBackground.tintOf(
           context,
           surfaceTintColor,
         ),
         forceElevated: forceElevated,
-        backgroundColor: MaterialAppBarScrollPolicy.backgroundOf(
+        backgroundColor: MaterialAppBarBackground.backgroundOf(
           context,
           backgroundColor,
         ),
@@ -642,12 +642,12 @@ class WindowControlSliverAppBar extends StatelessWidget {
       elevation: elevation,
       scrolledUnderElevation: scrolledUnderElevation,
       shadowColor: shadowColor,
-      surfaceTintColor: MaterialAppBarScrollPolicy.tintOf(
+      surfaceTintColor: MaterialAppBarBackground.tintOf(
         context,
         surfaceTintColor,
       ),
       forceElevated: forceElevated,
-      backgroundColor: MaterialAppBarScrollPolicy.backgroundOf(
+      backgroundColor: MaterialAppBarBackground.backgroundOf(
         context,
         backgroundColor,
       ),

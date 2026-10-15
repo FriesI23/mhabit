@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../adaptive_style.dart';
-import '../cupertino/adaptive_cupertino_focus_theme.dart';
+import '../cupertino/adaptive_cupertino_focus_halo.dart';
 import '../cupertino/cupertino_neutral_button.dart';
 
 /// An icon button that uses the platform renderer selected by adaptive style.

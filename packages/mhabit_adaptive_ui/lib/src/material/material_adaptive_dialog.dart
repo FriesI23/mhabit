@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../adaptive/adaptive_dialog.dart' show AdaptiveDialogAction;
+import '../app_adaptive_ui_theme.dart';
 
 /// Material alert content with platform-neutral action definitions.
 ///
-/// Always renders Material, independently of [AdaptiveStyleScope]. This widget
+/// Always renders Material, independently of [AppAdaptiveUiTheme]. This widget
 /// does not create a route; use [AdaptiveDialog] with [showAdaptiveModalDialog]
 /// for matching adaptive route and content styles.
 class MaterialAdaptiveDialog extends StatelessWidget {

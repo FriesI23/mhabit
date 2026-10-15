@@ -8,9 +8,198 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
 import 'package:provider/provider.dart';
 
+import '../../support/adaptive_ui_theme.dart';
 import '../../support/desktop_window_chrome_fakes.dart';
 
 void main() {
+  for (final platform in [TargetPlatform.windows, TargetPlatform.macOS]) {
+    testWidgets(
+      '$platform adaptive palette updates preserve root rebuild boundaries',
+      (tester) async {
+        final chrome = DesktopWindowChrome(api: FakeDesktopWindowChromeApi());
+        addTearDown(chrome.dispose);
+        await chrome.initialize();
+        final data = ValueNotifier(
+          const AppAdaptiveUiThemeData(style: AdaptiveStyle.material),
+        );
+        final input = TextEditingController(text: 'retained root input');
+        final focus = FocusNode();
+        addTearDown(data.dispose);
+        addTearDown(input.dispose);
+        addTearDown(focus.dispose);
+        var themeBuilds = 0;
+        var bodyBuilds = 0;
+        var consumerBuilds = 0;
+        ThemeData theme(Brightness brightness) {
+          themeBuilds++;
+          return ThemeData(platform: platform, brightness: brightness);
+        }
+
+        final page = Scaffold(
+          appBar: const AdaptiveAppBar(title: Text('Root'), toolbarHeight: 56),
+          body: Column(
+            children: [
+              Builder(
+                builder: (_) {
+                  bodyBuilds++;
+                  return TextField(controller: input, focusNode: focus);
+                },
+              ),
+              Builder(
+                builder: (context) {
+                  consumerBuilds++;
+                  return Text(
+                    'width:${AppAdaptiveUiTheme.of(context).cupertinoFocusTheme.haloWidth}',
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+        await tester.pumpWidget(
+          ChangeNotifierProvider.value(
+            value: chrome,
+            child: ValueListenableBuilder(
+              valueListenable: data,
+              builder: (_, value, child) =>
+                  AppAdaptiveUiTheme(data: value, child: child!),
+              child: AppRootView.withDefault(
+                lightThemeBuilder: (_) => theme(Brightness.light),
+                darkThemeBuilder: (_) => theme(Brightness.dark),
+                child: page,
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        focus.requestFocus();
+        await tester.pumpAndSettle();
+        final appElement = tester.element(find.byType(MaterialApp));
+        final navigatorElement = tester.element(find.byType(Navigator));
+        final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+        final navigator = tester.state<NavigatorState>(find.byType(Navigator));
+        final initialThemes = themeBuilds;
+        final initialBody = bodyBuilds;
+        final initialConsumers = consumerBuilds;
+        var appRebuilds = 0;
+        var navigatorRebuilds = 0;
+        final previous = debugOnRebuildDirtyWidget;
+        addTearDown(() => debugOnRebuildDirtyWidget = previous);
+        debugOnRebuildDirtyWidget = (element, builtOnce) {
+          previous?.call(element, builtOnce);
+          if (identical(element, appElement)) appRebuilds++;
+          if (identical(element, navigatorElement)) navigatorRebuilds++;
+        };
+        data.value = data.value.copyWith(
+          cupertinoFocusTheme: const AdaptiveCupertinoFocusThemeData(
+            haloWidth: 9,
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.text('width:9.0'), findsOneWidget);
+        expect(consumerBuilds, greaterThan(initialConsumers));
+        expect(themeBuilds, initialThemes);
+        expect(bodyBuilds, initialBody);
+        expect(appRebuilds, 0);
+        expect(navigatorRebuilds, 0);
+        expect(tester.widget<MaterialApp>(find.byType(MaterialApp)), same(app));
+        expect(
+          tester.state<NavigatorState>(find.byType(Navigator)),
+          same(navigator),
+        );
+        expect(input.text, 'retained root input');
+        expect(focus.hasFocus, isTrue);
+        expect(tester.takeException(), isNull);
+      },
+      variant: TargetPlatformVariant({platform}),
+    );
+  }
+
+  testWidgets(
+    'developer style override retains active theme data and root state',
+    (tester) async {
+      final chrome = DesktopWindowChrome(api: FakeDesktopWindowChromeApi());
+      addTearDown(chrome.dispose);
+      await chrome.initialize();
+      final settings = ValueNotifier<(AdaptiveStyle?, ThemeMode)>((
+        AdaptiveStyle.apple,
+        ThemeMode.light,
+      ));
+      final input = TextEditingController(text: 'preserved');
+      final focus = FocusNode();
+      addTearDown(settings.dispose);
+      addTearDown(input.dispose);
+      addTearDown(focus.dispose);
+      ThemeData theme(Brightness brightness) => ThemeData(
+        platform: TargetPlatform.android,
+        brightness: brightness,
+        extensions: [
+          AppAdaptiveUiThemeData(
+            listTheme: AdaptiveListThemeData(
+              iconColor: brightness == Brightness.light
+                  ? Colors.red
+                  : Colors.blue,
+            ),
+            cupertinoFocusTheme: const AdaptiveCupertinoFocusThemeData(
+              haloWidth: 7,
+            ),
+          ),
+        ],
+      );
+      await tester.pumpWidget(
+        ChangeNotifierProvider.value(
+          value: chrome,
+          child: ValueListenableBuilder(
+            valueListenable: settings,
+            builder: (_, value, child) => AppRootView.withDefault(
+              adaptiveStyleOverride: value.$1,
+              themeMode: value.$2,
+              lightThemeBuilder: (_) => theme(Brightness.light),
+              darkThemeBuilder: (_) => theme(Brightness.dark),
+              child: Scaffold(
+                body: Column(
+                  children: [
+                    TextField(controller: input, focusNode: focus),
+                    Builder(
+                      builder: (context) {
+                        final adaptive = AppAdaptiveUiTheme.of(context);
+                        final dark =
+                            Theme.of(context).brightness == Brightness.dark;
+                        expect(
+                          adaptive.listTheme.iconColor,
+                          dark ? Colors.blue : Colors.red,
+                        );
+                        expect(adaptive.cupertinoFocusTheme.haloWidth, 7);
+                        return Text(AdaptiveStyle.of(context).name);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('apple'), findsOneWidget);
+      focus.requestFocus();
+      await tester.pump();
+      final navigator = tester.state<NavigatorState>(find.byType(Navigator));
+      settings.value = (AdaptiveStyle.material, ThemeMode.dark);
+      await tester.pumpAndSettle();
+      expect(find.text('material'), findsOneWidget);
+      settings.value = (null, ThemeMode.dark);
+      await tester.pumpAndSettle();
+      expect(find.text('material'), findsOneWidget);
+      expect(input.text, 'preserved');
+      expect(focus.hasFocus, isTrue);
+      expect(
+        tester.state<NavigatorState>(find.byType(Navigator)),
+        same(navigator),
+      );
+    },
+  );
+
   for (final style in AdaptiveStyle.values) {
     for (final direction in TextDirection.values) {
       testWidgets(
@@ -27,8 +216,8 @@ void main() {
           await tester.pumpWidget(
             ChangeNotifierProvider.value(
               value: chrome,
-              child: AdaptiveStyleScope(
-                override: style,
+              child: TestAdaptiveUiTheme(
+                update: (parentTheme) => parentTheme.copyWith(style: style),
                 child: AppRootView.withDefault(
                   textDirectionOverride: direction,
                   lightThemeBuilder: (_) =>
