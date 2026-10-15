@@ -10,9 +10,9 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-    List<Object?>? replyList,
-    String channelName, {
-    required bool isNullValid,
+  List<Object?>? replyList,
+  String channelName, {
+  required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -33,8 +33,6 @@ Object? _extractReplyValueOrThrow(
   }
   return replyList.firstOrNull;
 }
-
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -65,9 +63,13 @@ class DesktopTitleBarHostApi {
   /// Constructor for [DesktopTitleBarHostApi]. The [binaryMessenger] named argument is
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  DesktopTitleBarHostApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  DesktopTitleBarHostApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -82,22 +84,28 @@ class DesktopTitleBarHostApi {
   /// color attributes or active high contrast; color failures attempt to restore
   /// both system color defaults. Once claimed, application ownership and the
   /// cached request remain active until reset, so system changes can retry it.
-  Future<bool> setAppearance(int backgroundArgb, int foregroundArgb, bool dark) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.mhabit_desktop_window_chrome.DesktopTitleBarHostApi.setAppearance$pigeonVar_messageChannelSuffix';
+  Future<bool> setAppearance(
+    int backgroundArgb,
+    int foregroundArgb,
+    bool dark,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.mhabit_desktop_window_chrome.DesktopTitleBarHostApi.setAppearance$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[backgroundArgb, foregroundArgb, dark]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[backgroundArgb, foregroundArgb, dark],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as bool;
   }
 
@@ -106,7 +114,8 @@ class DesktopTitleBarHostApi {
   /// Best-effort and safe to repeat, including after window destruction.
   /// Unsupported DWM reset attributes are ignored.
   Future<void> reset() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.mhabit_desktop_window_chrome.DesktopTitleBarHostApi.reset$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.mhabit_desktop_window_chrome.DesktopTitleBarHostApi.reset$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -116,10 +125,9 @@ class DesktopTitleBarHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 }

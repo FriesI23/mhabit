@@ -1681,12 +1681,16 @@ void main() {
         find.ancestor(of: calendar, matching: find.byType(SliverAppBar)),
         findsOneWidget,
       );
+      final calendarAppBar = find.ancestor(
+        of: calendar,
+        matching: find.byType(WindowControlSliverAppBar),
+      );
+      expect(calendarAppBar, findsOneWidget);
       expect(
-        find.ancestor(
-          of: calendar,
-          matching: find.byType(WindowControlSliverAppBar),
-        ),
-        findsNothing,
+        tester
+            .widget<WindowControlSliverAppBar>(calendarAppBar)
+            .windowControlAvoidance,
+        EdgeInsets.zero,
       );
       expect(tester.getSize(calendar).height, 48);
       expect(
