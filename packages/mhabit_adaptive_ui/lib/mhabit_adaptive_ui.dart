@@ -57,6 +57,7 @@ export 'src/cupertino/cupertino_sliver_select_app_bar.dart';
 export 'src/material/app_bar_material_style.dart'
     show $AppBarMaterialStyleCopyWith, AppBarMaterialStyle;
 export 'src/material/material_adaptive_dialog.dart' show MaterialAdaptiveDialog;
+export 'src/material/material_app_bar_scroll_policy.dart';
 export 'src/material/material_editable_sliver_app_bar.dart'
     show $MaterialEditableAppBarStyleCopyWith, MaterialEditableAppBarStyle;
 export 'src/material/material_expandable_search_bar.dart';

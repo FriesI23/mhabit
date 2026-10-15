@@ -12,15 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/widgets.dart'
-    show Size, WidgetsBinding, WidgetsFlutterBinding, runApp;
+    show WidgetsBinding, WidgetsFlutterBinding, runApp;
 import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
 import 'package:native_natural_sort/native_natural_sort.dart';
 import 'package:provider/provider.dart';
 
 import 'common/app_info.dart';
+import 'common/consts.dart';
 import 'entries/app/entry.dart';
 import 'logging/logger_manager.dart';
 import 'reminders/notification_service.dart';
@@ -47,17 +49,28 @@ Future<void> main() async {
     ),
   );
 
-  // FIXME(mhabit): Once Windows/Linux window chrome is implemented and accepted,
-  // replace this gate with !defaultTargetPlatform.isMobileOperatingSystem from
-  // extensions/target_platform_extensions.dart.
+  // macOS fuses native buttons into content; Windows retains its title bar.
+  // Linux native chrome remains a separate, deferred implementation.
   if (Platform.isMacOS) {
-    final chrome = DesktopWindowChrome(minimumSize: const Size(350, 520));
+    final chrome = DesktopWindowChrome(
+      minimumSize: appDesktopWindowMinimumSize,
+    );
     await chrome.initialize();
     runApp(
       ChangeNotifierProvider(create: (_) => chrome, child: const AppEntry()),
     );
     await WidgetsBinding.instance.endOfFrame;
     await chrome.show();
+  } else if (Platform.isWindows) {
+    final titleBar = DesktopWindowTitleBar();
+    await titleBar.initialize(minimumSize: appDesktopWindowMinimumSize);
+    runApp(
+      Provider<DesktopWindowTitleBar>(
+        create: (_) => titleBar,
+        dispose: (_, owner) => unawaited(owner.dispose()),
+        child: const AppEntry(),
+      ),
+    );
   } else {
     runApp(const AppEntry());
   }

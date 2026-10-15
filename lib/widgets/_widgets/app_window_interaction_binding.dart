@@ -4,14 +4,14 @@ import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart'
     as desktop;
 import 'package:provider/provider.dart';
 
-/// Hosts window interaction for the app's Navigator and root overlays.
+/// Connects native window interaction to the app's Navigator and root overlays.
 ///
 /// Reads the app-owned controller and provides adaptive UI's optional interaction
 /// markers. The window package measures the marked targets and manages their
 /// native passthrough views.
-class AppWindowInteractionHost extends StatelessWidget {
+class AppWindowInteractionBinding extends StatelessWidget {
   final Widget child;
-  const AppWindowInteractionHost({super.key, required this.child});
+  const AppWindowInteractionBinding({super.key, required this.child});
 
   static Widget _wrapInteractionRegion(Widget child) =>
       desktop.DesktopWindowInteractionRegion(child: child);

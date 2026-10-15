@@ -26,7 +26,7 @@ void main() {
             value: chrome,
             child: MaterialApp(
               theme: theme,
-              builder: (_, child) => AppWindowInteractionHost(child: child!),
+              builder: (_, child) => AppWindowInteractionBinding(child: child!),
               home: Scaffold(
                 appBar: AppBar(title: const Text('Theme')),
                 body: const Text('Body'),
@@ -70,7 +70,8 @@ void main() {
                     backgroundColor: scheme.surfaceContainer,
                   ),
                 ),
-                builder: (_, child) => AppWindowInteractionHost(child: child!),
+                builder: (_, child) =>
+                    AppWindowInteractionBinding(child: child!),
                 home: Scaffold(
                   appBar: const AdaptiveAppBar(
                     title: Text('Scroll'),
@@ -126,7 +127,7 @@ void main() {
               viewInsets: EdgeInsets.only(bottom: 100),
               textScaler: TextScaler.linear(1.5),
             ),
-            child: AppWindowInteractionHost(child: child!),
+            child: AppWindowInteractionBinding(child: child!),
           ),
           home: Builder(
             builder: (context) {

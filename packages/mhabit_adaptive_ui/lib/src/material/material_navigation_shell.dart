@@ -85,6 +85,16 @@ class MaterialNavigationShell extends StatelessWidget {
     return _MaterialNavigationBarPresentation.short;
   }
 
+  Color? _resolveNavigationSurfaceColor(
+    BuildContext context,
+    NavigationShellForm form,
+  ) => switch (form) {
+    NavigationShellForm.compact => null,
+    NavigationShellForm.constrainedSide || NavigationShellForm.expandedSide =>
+      NavigationRailTheme.of(context).backgroundColor ??
+          Theme.of(context).colorScheme.surface,
+  };
+
   WindowControlLayoutOwner _resolveWindowControlOwner(
     NavigationShellForm form,
   ) => switch (form) {
@@ -168,6 +178,7 @@ class MaterialNavigationShell extends StatelessWidget {
             child: child,
           ),
       windowControlOwnerResolver: _resolveWindowControlOwner,
+      navigationSurfaceColorResolver: _resolveNavigationSurfaceColor,
       compactNavigationBuilder: (context, state) =>
           CompactNavigationChromeTransition(
             visibility: state.visible,

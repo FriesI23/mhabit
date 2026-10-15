@@ -26,6 +26,7 @@ import '../../providers/app_ui/app_launch_entry.dart';
 import '../../routes/app_navigation_branch.dart';
 import '../../routes/app_navigation_coordinator.dart';
 import '../../routes/app_navigation_scroll_controller.dart';
+import '../../widgets/_widgets/app_window_title_bar_binding.dart';
 import '../../widgets/widgets.dart';
 import 'navigation_chrome.dart';
 import 'navigation_destination.dart';
@@ -227,7 +228,7 @@ class _AppNavigationShellChrome extends StatelessWidget {
               ),
             ],
             onDestinationSelected: onDestinationSelected,
-            child: child,
+            child: AppWindowNavigationSurfaceReporter(child: child),
           );
         },
       ),

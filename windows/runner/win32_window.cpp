@@ -1,5 +1,7 @@
 #include "win32_window.h"
 
+#include <mhabit_desktop_window_chrome/title_bar_ownership.h>
+
 #include <dwmapi.h>
 #include <flutter_windows.h>
 
@@ -273,6 +275,10 @@ void Win32Window::OnDestroy() {
 }
 
 void Win32Window::UpdateTheme(HWND const window) {
+  // The plugin owns DWM appearance after the window-level app theme is ready.
+  if (GetPropW(window, mhabit_desktop_window_chrome::kTitleBarAppearanceOwned)) {
+    return;
+  }
   DWORD light_mode;
   DWORD light_mode_size = sizeof(light_mode);
   LSTATUS result = RegGetValue(HKEY_CURRENT_USER, kGetPreferredBrightnessRegKey,

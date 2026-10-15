@@ -26,6 +26,8 @@ import '../../common/consts.dart';
 import '../../common/global.dart';
 import '../../extensions/desktop_window_chrome_extensions.dart';
 import '../../l10n/localizations.dart';
+import '../../models/app_desktop_bar_mode.dart';
+import '../../widgets/_widgets/app_window_title_bar_binding.dart';
 import '../../widgets/widgets.dart';
 
 typedef AppRootThemeBuilder = ThemeData Function(BuildContext context);
@@ -90,9 +92,7 @@ class AppRootView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<DesktopWindowChrome?>(
-      // Geometry updates rebuild the layout boundary, retaining MaterialApp.
-      // Consumers of the layout scope (including iPad window-level themes)
-      // still rebuild when their inherited dependencies actually change.
+      // Native geometry updates only rebuild the layout boundary.
       builder: (_, chrome, child) => AdaptiveWindowControlLayout(
         platformLayout: chrome?.adaptiveLayout,
         usesRectangularDisplay: AppInfo().usesRectangularIPhoneDisplay,
@@ -137,24 +137,11 @@ class _AppRootMaterialApp extends StatelessWidget {
 
   bool get _useRouter => routerConfig != null;
 
-  Widget _builder(BuildContext context, Widget? child) {
-    final content = CupertinoUserInterfaceLevel(
-      data: appWindowInterfaceLevel(context),
-      child: MediaQuery(
-        data: MediaQuery.of(context).copyWith(
-          disableAnimations:
-              disableAnimations || MediaQuery.disableAnimationsOf(context),
-        ),
-        child: AppWindowInteractionHost(
-          child: AdaptiveWindowTopSafeArea(child: UnfocusOnTap(child: child)),
-        ),
-      ),
-    );
-    final textDirection = textDirectionOverride;
-    return textDirection == null
-        ? content
-        : Directionality(textDirection: textDirection, child: content);
-  }
+  Widget _builder(BuildContext context, Widget? child) => _AppWindowView(
+    disableAnimations: disableAnimations,
+    textDirectionOverride: textDirectionOverride,
+    child: UnfocusOnTap(child: child),
+  );
 
   String _onGenerateTitle(BuildContext context) =>
       L10n.of(context)?.appName ?? appName;
@@ -198,4 +185,113 @@ class _AppRootMaterialApp extends StatelessWidget {
     );
     return _useRouter ? routerApp() : homeApp();
   }
+}
+
+/// Window composition is kept separate from routing and application content.
+class _AppWindowView extends StatelessWidget {
+  const _AppWindowView({
+    required this.disableAnimations,
+    required this.textDirectionOverride,
+    required this.child,
+  });
+
+  final bool disableAnimations;
+  final TextDirection? textDirectionOverride;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final content = CupertinoUserInterfaceLevel(
+      data: appWindowInterfaceLevel(context),
+      child: MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+          disableAnimations:
+              disableAnimations || MediaQuery.disableAnimationsOf(context),
+        ),
+        child: AdaptiveWindowTopSafeArea(child: child),
+      ),
+    );
+    final window = switch (context._desktopBarMode) {
+      AppDesktopBarMode.fused => _AppFusedWindowView(child: content),
+      AppDesktopBarMode.separate => _AppSeparateWindowView(child: content),
+      null => content,
+    };
+    return switch (textDirectionOverride) {
+      final direction? => Directionality(
+        textDirection: direction,
+        child: window,
+      ),
+      null => window,
+    };
+  }
+}
+
+class _AppFusedWindowView extends StatelessWidget {
+  const _AppFusedWindowView({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) =>
+      AppWindowInteractionBinding(child: child);
+}
+
+class _AppSeparateWindowView extends StatelessWidget {
+  const _AppSeparateWindowView({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) =>
+      _AppSeparateBarTheme(child: AppWindowTitleBarBinding(child: child));
+}
+
+class _AppSeparateBarTheme extends StatelessWidget {
+  const _AppSeparateBarTheme({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final fixedBackground = context._fixedMaterialAppBarBackground;
+    // Keep both wrappers mounted when the UI style changes. Navigator, focus
+    // and search state must not depend on whether the theme is overridden.
+    return Theme(
+      data: switch (fixedBackground) {
+        true => theme._withFixedAppBarBackground,
+        false => theme,
+      },
+      child: MaterialAppBarScrollPolicy(
+        fixedBackground: fixedBackground,
+        child: child,
+      ),
+    );
+  }
+}
+
+extension _AppWindowPresentationContext on BuildContext {
+  /// Native platform policy does not follow the adaptive style override.
+  AppDesktopBarMode? get _desktopBarMode => kIsWeb
+      ? null
+      : switch (defaultTargetPlatform) {
+          TargetPlatform.macOS => AppDesktopBarMode.fused,
+          TargetPlatform.windows => AppDesktopBarMode.separate,
+          _ => null,
+        };
+
+  bool get _fixedMaterialAppBarBackground =>
+      switch ((_desktopBarMode, AdaptiveStyle.of(this))) {
+        (AppDesktopBarMode.separate, AdaptiveStyle.material) => true,
+        _ => false,
+      };
+}
+
+extension _IndependentAppBarTheme on ThemeData {
+  ThemeData get _withFixedAppBarBackground => copyWith(
+    appBarTheme: appBarTheme.copyWith(
+      backgroundColor: WidgetStateProperty.resolveAs<Color>(
+        appBarTheme.backgroundColor ?? colorScheme.surface,
+        const <WidgetState>{},
+      ),
+      surfaceTintColor: Colors.transparent,
+    ),
+  );
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
+import '../material/material_app_bar_scroll_policy.dart';
 import '../shell/sidebar_adapter.dart';
 import 'interaction_region.dart';
 import 'toolbar_geometry.dart';
@@ -164,9 +165,15 @@ class WindowControlAppBar extends StatelessWidget
       elevation: elevation,
       scrolledUnderElevation: scrolledUnderElevation,
       shadowColor: shadowColor,
-      surfaceTintColor: surfaceTintColor,
+      surfaceTintColor: MaterialAppBarScrollPolicy.tintOf(
+        context,
+        surfaceTintColor,
+      ),
       shape: shape,
-      backgroundColor: backgroundColor,
+      backgroundColor: MaterialAppBarScrollPolicy.backgroundOf(
+        context,
+        backgroundColor,
+      ),
       foregroundColor: foregroundColor,
       iconTheme: iconTheme,
       actionsIconTheme: actionsIconTheme,
@@ -479,9 +486,15 @@ class WindowControlSliverAppBar extends StatelessWidget {
         elevation: elevation,
         scrolledUnderElevation: scrolledUnderElevation,
         shadowColor: shadowColor,
-        surfaceTintColor: surfaceTintColor,
+        surfaceTintColor: MaterialAppBarScrollPolicy.tintOf(
+          context,
+          surfaceTintColor,
+        ),
         forceElevated: forceElevated,
-        backgroundColor: backgroundColor,
+        backgroundColor: MaterialAppBarScrollPolicy.backgroundOf(
+          context,
+          backgroundColor,
+        ),
         foregroundColor: foregroundColor,
         iconTheme: iconTheme,
         actionsIconTheme: actionsIconTheme,
@@ -504,12 +517,14 @@ class WindowControlSliverAppBar extends StatelessWidget {
         actionsPadding: actionsPadding,
       ),
       _WindowControlSliverAppBarVariant.medium => _buildMedium(
+        context,
         slots,
         effectiveTitle,
         effectiveCenterTitle,
         effectiveFlexibleSpace,
       ),
       _WindowControlSliverAppBarVariant.large => _buildLarge(
+        context,
         slots,
         effectiveTitle,
         effectiveCenterTitle,
@@ -519,6 +534,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
   }
 
   Widget _buildMedium(
+    BuildContext context,
     _MaterialToolbarSlots slots,
     Widget? effectiveTitle,
     bool? effectiveCenterTitle,
@@ -534,9 +550,15 @@ class WindowControlSliverAppBar extends StatelessWidget {
     elevation: elevation,
     scrolledUnderElevation: scrolledUnderElevation,
     shadowColor: shadowColor,
-    surfaceTintColor: surfaceTintColor,
+    surfaceTintColor: MaterialAppBarScrollPolicy.tintOf(
+      context,
+      surfaceTintColor,
+    ),
     forceElevated: forceElevated,
-    backgroundColor: backgroundColor,
+    backgroundColor: MaterialAppBarScrollPolicy.backgroundOf(
+      context,
+      backgroundColor,
+    ),
     foregroundColor: foregroundColor,
     iconTheme: iconTheme,
     actionsIconTheme: actionsIconTheme,
@@ -560,6 +582,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
   );
 
   Widget _buildLarge(
+    BuildContext context,
     _MaterialToolbarSlots slots,
     Widget? effectiveTitle,
     bool? effectiveCenterTitle,
@@ -578,9 +601,15 @@ class WindowControlSliverAppBar extends StatelessWidget {
         elevation: elevation,
         scrolledUnderElevation: scrolledUnderElevation,
         shadowColor: shadowColor,
-        surfaceTintColor: surfaceTintColor,
+        surfaceTintColor: MaterialAppBarScrollPolicy.tintOf(
+          context,
+          surfaceTintColor,
+        ),
         forceElevated: forceElevated,
-        backgroundColor: backgroundColor,
+        backgroundColor: MaterialAppBarScrollPolicy.backgroundOf(
+          context,
+          backgroundColor,
+        ),
         foregroundColor: foregroundColor,
         iconTheme: iconTheme,
         actionsIconTheme: actionsIconTheme,
@@ -613,9 +642,15 @@ class WindowControlSliverAppBar extends StatelessWidget {
       elevation: elevation,
       scrolledUnderElevation: scrolledUnderElevation,
       shadowColor: shadowColor,
-      surfaceTintColor: surfaceTintColor,
+      surfaceTintColor: MaterialAppBarScrollPolicy.tintOf(
+        context,
+        surfaceTintColor,
+      ),
       forceElevated: forceElevated,
-      backgroundColor: backgroundColor,
+      backgroundColor: MaterialAppBarScrollPolicy.backgroundOf(
+        context,
+        backgroundColor,
+      ),
       foregroundColor: foregroundColor,
       iconTheme: iconTheme,
       actionsIconTheme: actionsIconTheme,
