@@ -142,7 +142,7 @@ void main() {
     await owner.applyAppearance(light);
     await owner.applyAppearance(light);
     expect(api.appearances, [light]);
-    expect(owner.customColorsSupported, true);
+    expect(owner.lastCustomColorsApplied, true);
     await owner.dispose();
     await owner.dispose();
     expect(api.resets, 1);
@@ -171,7 +171,7 @@ void main() {
       await owner.initialize();
       await owner.applyAppearance(dark);
       await owner.applyAppearance(dark);
-      expect(owner.customColorsSupported, false);
+      expect(owner.lastCustomColorsApplied, false);
       expect(api.appearances, [dark]);
       await owner.dispose();
     },

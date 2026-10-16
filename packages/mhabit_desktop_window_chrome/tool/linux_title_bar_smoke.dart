@@ -49,7 +49,7 @@ Future<void> main() async {
         ),
       );
       // Linux reports false for exact colors; GTK owns the light/dark palette.
-      final lightSupported = titleBar.customColorsSupported;
+      final lightColorsApplied = titleBar.lastCustomColorsApplied;
       await titleBar.applyAppearance(
         const DesktopTitleBarAppearance(
           background: Color(0xFF112233),
@@ -57,12 +57,13 @@ Future<void> main() async {
           brightness: Brightness.dark,
         ),
       );
-      if (lightSupported == null || titleBar.customColorsSupported == null) {
+      if (lightColorsApplied == null ||
+          titleBar.lastCustomColorsApplied == null) {
         throw StateError('Native appearance calls did not complete');
       }
       stdout.writeln(
-        'SMOKE customColors light=$lightSupported '
-        'dark=${titleBar.customColorsSupported}',
+        'SMOKE customColors light=$lightColorsApplied '
+        'dark=${titleBar.lastCustomColorsApplied}',
       );
     } else {
       stdout.writeln('SMOKE CONTROL: no native title bar appearance calls');

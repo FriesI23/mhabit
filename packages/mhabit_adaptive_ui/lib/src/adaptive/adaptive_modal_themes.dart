@@ -9,9 +9,9 @@ import 'adaptive_list_theme.dart';
 /// Capturing every theme here would additionally freeze ambient Cupertino
 /// themes derived by Sidebar, which responsive sheets previously inherited live.
 class AdaptiveModalThemes {
-  const AdaptiveModalThemes._(this.theme, this.listTheme);
+  const AdaptiveModalThemes._(this.adaptiveUiTheme, this.listTheme);
 
-  final AppAdaptiveUiThemeData? theme;
+  final AppAdaptiveUiThemeData? adaptiveUiTheme;
   final AdaptiveListThemeData? listTheme;
 
   static AdaptiveModalThemes capture(BuildContext from, BuildContext to) {
@@ -27,7 +27,7 @@ class AdaptiveModalThemes {
     if (listTheme case final data?) {
       child = AdaptiveListTheme(data: data, child: child);
     }
-    if (theme case final data?) {
+    if (adaptiveUiTheme case final data?) {
       child = AppAdaptiveUiTheme(data: data, child: child);
     }
     return child;

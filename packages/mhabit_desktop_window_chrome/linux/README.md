@@ -15,8 +15,9 @@ application's GTK preference. GTK 3 does not promise GTK 4/libadwaita button sha
 
 `setAppearance` returns `false` for exact-color support on Linux, even when the
 native brightness preference is applied successfully. This preserves the shared
-API's existing meaning. Dart `customColorsSupported` describes the last submitted
-request; it is not a general theme-success indicator. Windows keeps its ARGB
+API's existing meaning. Dart `lastCustomColorsApplied` records whether the last
+native response confirmed that custom colors were applied; it is not a platform
+capability or general theme-success indicator. Windows keeps its ARGB
 implementation, and macOS keeps its separate fused-window implementation.
 
 Window titles reuse the app's localized `L10n.appName` via the shared Dart

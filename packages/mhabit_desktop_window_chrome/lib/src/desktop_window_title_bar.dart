@@ -51,12 +51,16 @@ class DesktopWindowTitleBar {
   String? _requestedTitle;
   bool _initialized = false;
   bool _disposed = false;
-  bool? _customColorsSupported;
+  bool? _lastCustomColorsApplied;
   int _revision = 0;
   int _titleRevision = 0;
 
   bool get supported => _api.supported;
-  bool? get customColorsSupported => _customColorsSupported;
+
+  /// Whether the last native response confirmed that custom colors were applied.
+  /// Null until the first response; false also covers temporary conditions such
+  /// as high contrast or an unavailable window, rather than platform capability.
+  bool? get lastCustomColorsApplied => _lastCustomColorsApplied;
 
   Future<void> initialize({Size? minimumSize}) async {
     if (minimumSize != null && (!minimumSize.isFinite || minimumSize.isEmpty)) {
@@ -82,7 +86,7 @@ class DesktopWindowTitleBar {
     _pending = _pending.then((_) async {
       if (_disposed || revision != _revision) return;
       try {
-        _customColorsSupported = await _api
+        _lastCustomColorsApplied = await _api
             .applyAppearance(appearance)
             .timeout(const Duration(seconds: 2));
       } catch (error) {
