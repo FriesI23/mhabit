@@ -1,65 +1,22 @@
 # Linux native title bar
 
-Linux shares the independent Windows title-bar Dart controller and Pigeon schema,
-but GTK owns its complete native appearance. `setAppearance` maps the application's
-brightness to `GtkSettings:gtk-application-prefer-dark-theme`. It does not inject
-CSS, force a theme name, or apply the requested ARGB colors. GTK manages titlebar
-buttons, separators, shadows, inactive/hover/pressed states and accessibility.
+GTK owns native decorations. Appearance requests set the application's
+`gtk-application-prefer-dark-theme`; exact ARGB colors are not applied, so
+`lastCustomColorsApplied` is `false`. Titles use `window_manager.setTitle`.
 
-The GTK setting affects this application's native GTK widgets, including dialogs,
-not desktop-wide settings or other applications. The theme supplies a dark variant
-when available; otherwise GTK retains its native fallback. No theme-specific or
-high-contrast exceptions are implemented. The runner retains its existing choice
-of GTK HeaderBar or system decoration; window-manager decorations may ignore the
-application's GTK preference. GTK 3 does not promise GTK 4/libadwaita button shapes.
+Internal example: [Linux smoke test](../tool/linux_title_bar_smoke.dart).
+Native tests live in [test/](test/).
 
-`setAppearance` returns `false` for exact-color support on Linux, even when the
-native brightness preference is applied successfully. This preserves the shared
-API's existing meaning. Dart `lastCustomColorsApplied` records whether the last
-native response confirmed that custom colors were applied; it is not a platform
-capability or general theme-success indicator. Windows keeps its ARGB
-implementation, and macOS keeps its separate fused-window implementation.
-
-Window titles reuse the app's localized `L10n.appName` via the shared Dart
-controller and `window_manager.setTitle`; GTK's built-in GtkWindow/HeaderBar title synchronization keeps CSD and
-window-manager decoration on a single source.
-The English startup fallback is `Table Habit`. Application locale changes update
-the native title without adding a Pigeon method.
-
-The plugin holds a weak Flutter view reference, not a temporary registrar. Reset,
-window destroy and plugin disposal restore the original GTK preference, unless a
-newer native component has changed it. Only the single main window is supported.
-The `window_manager` minimum uses GDK geometry hints, not a portable outer-frame
-measurement (CSD shadows and titlebar sizes vary).
-
-## Validation
-
-From the app root, with a working graphical session:
+Run from the app root on Linux with a graphical session:
 
 ```sh
-GDK_BACKEND=wayland make test-linux
-GDK_BACKEND=x11 make test-linux
+make test-linux
 flutter run -d linux -t packages/mhabit_desktop_window_chrome/tool/linux_title_bar_smoke.dart
 ```
 
-For a headless X11 run (as in CI), use
-`GDK_BACKEND=x11 xvfb-run -a make test-linux`. Install CMake/CTest >= 3.21,
-a C++ compiler, pkg-config, GTK 3 development files, Xvfb and xauth. The Make
-target writes JUnit results to `build/test-results/native/native_test_linux.xml`.
+Native tests require CMake/CTest >= 3.21, a C++ compiler, pkg-config, and GTK 3
+development files. For headless runs, also install Xvfb and xauth, then use:
 
-Set the appropriate `DISPLAY`/`XAUTHORITY` or `WAYLAND_DISPLAY`. Native tests compare
-realized GTK HeaderBar trees with unmodified GTK reference windows, in normal,
-hover, pressed and backdrop states. Windows are not mapped so window-manager focus
-differences cannot contaminate those comparisons. Tests also cover dark/light
-requests, high contrast via GTK, no HeaderBar, reset, destroy, original-preference
-restoration and a newer preference written by another native component.
-
-The Flutter smoke test exercises real Pigeon channels after registrar disposal,
-resize, maximize/restore and close. `SMOKE customColors light=false dark=false`
-is expected on Linux. It means GTK native colors are used, not that theming failed.
-
-For a teardown control without title-bar appearance calls, run the smoke test with
-`--dart-define=SMOKE_SYSTEM_APPEARANCE=true`. Flutter 3.44.9 on the tested GNOME
-session emits implicit-view removal and messenger teardown warnings on close in
-both variants. Pointer-driven window interactions, other desktops and a standalone
-Xorg session still need manual acceptance testing.
+```sh
+NO_AT_BRIDGE=1 GDK_BACKEND=x11 xvfb-run -a make test-linux
+```
