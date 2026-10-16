@@ -34,29 +34,18 @@ class CupertinoAdaptiveListSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (children.isEmpty) return const SizedBox.shrink();
-    final theme = Theme.of(context);
     final palette = AdaptiveListTheme.of(context);
-    final global = theme.extension<AdaptiveListThemeData>();
     final defaults = _CupertinoListSectionDefaults(context);
     final surface = CupertinoDynamicColor.resolve(
-      surfaceColor ??
-          palette.surfaceColor ??
-          global?.surfaceColor ??
-          defaults.surfaceColor,
+      surfaceColor ?? palette.surfaceColor ?? defaults.surfaceColor,
       context,
     );
     final secondary = CupertinoDynamicColor.resolve(
-      secondaryColor ??
-          palette.secondaryColor ??
-          global?.secondaryColor ??
-          defaults.secondaryColor,
+      secondaryColor ?? palette.secondaryColor ?? defaults.secondaryColor,
       context,
     );
     final separator = CupertinoDynamicColor.resolve(
-      separatorColor ??
-          palette.separatorColor ??
-          global?.separatorColor ??
-          defaults.separatorColor,
+      separatorColor ?? palette.separatorColor ?? defaults.separatorColor,
       context,
     );
     return Padding(

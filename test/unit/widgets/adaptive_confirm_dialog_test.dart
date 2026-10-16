@@ -20,6 +20,7 @@ import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../support/adaptive_dialog.dart';
+import '../../support/adaptive_ui_theme.dart';
 
 void main() {
   for (final style in AdaptiveStyle.values) {
@@ -35,8 +36,8 @@ void main() {
                 ? TargetPlatform.iOS
                 : TargetPlatform.android,
           ),
-          home: AdaptiveStyleScope(
-            override: style,
+          home: TestAdaptiveUiTheme(
+            update: (parentTheme) => parentTheme.copyWith(style: style),
             child: Builder(
               builder: (context) => Scaffold(
                 body: TextButton(
@@ -123,8 +124,8 @@ void main() {
                 child: child!,
               ),
             ),
-            home: AdaptiveStyleScope(
-              override: style,
+            home: TestAdaptiveUiTheme(
+              update: (parentTheme) => parentTheme.copyWith(style: style),
               child: const Scaffold(body: Text('Host')),
             ),
           ),
@@ -180,8 +181,8 @@ void main() {
             theme: ThemeData(platform: platform),
             localizationsDelegates: L10n.localizationsDelegates,
             supportedLocales: L10n.supportedLocales,
-            home: AdaptiveStyleScope(
-              override: style,
+            home: TestAdaptiveUiTheme(
+              update: (parentTheme) => parentTheme.copyWith(style: style),
               child: const Scaffold(body: Text('Host')),
             ),
           ),

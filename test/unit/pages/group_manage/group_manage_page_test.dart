@@ -224,12 +224,16 @@ Future<GroupManageViewModel> _pumpPage(
           platform: platform,
           brightness: brightness,
           extensions: [
-            if (adaptiveSurface != null)
-              AdaptiveListThemeData(surfaceColor: adaptiveSurface),
-            if (neutralForegroundColor != null)
-              AdaptiveCupertinoButtonThemeData(
-                neutralForegroundColor: neutralForegroundColor,
-              ),
+            AppAdaptiveUiThemeData(
+              listTheme: adaptiveSurface != null
+                  ? AdaptiveListThemeData(surfaceColor: adaptiveSurface)
+                  : const AdaptiveListThemeData(),
+              cupertinoButtonTheme: neutralForegroundColor != null
+                  ? AdaptiveCupertinoButtonThemeData(
+                      neutralForegroundColor: neutralForegroundColor,
+                    )
+                  : const AdaptiveCupertinoButtonThemeData(),
+            ),
           ],
         ),
         builder: (context, child) => Directionality(

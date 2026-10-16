@@ -12,12 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/widgets.dart' show WidgetsFlutterBinding, runApp;
+import 'package:flutter/widgets.dart'
+    show WidgetsBinding, WidgetsFlutterBinding, runApp;
+import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
 import 'package:native_natural_sort/native_natural_sort.dart';
+import 'package:provider/provider.dart';
 
 import 'common/app_info.dart';
+import 'common/consts.dart';
 import 'entries/app/entry.dart';
 import 'logging/logger_manager.dart';
 import 'reminders/notification_service.dart';
@@ -44,5 +49,33 @@ Future<void> main() async {
     ),
   );
 
-  runApp(const AppEntry());
+  if (Platform.isMacOS) {
+    await _runMacOSApp();
+  } else if (Platform.isWindows || Platform.isLinux) {
+    await _runAppWithNativeTitleBar();
+  } else {
+    runApp(const AppEntry());
+  }
+}
+
+Future<void> _runMacOSApp() async {
+  final chrome = DesktopWindowChrome(minimumSize: appDesktopWindowMinimumSize);
+  await chrome.initialize();
+  runApp(
+    ChangeNotifierProvider(create: (_) => chrome, child: const AppEntry()),
+  );
+  await WidgetsBinding.instance.endOfFrame;
+  await chrome.show();
+}
+
+Future<void> _runAppWithNativeTitleBar() async {
+  final titleBar = DesktopWindowTitleBar();
+  await titleBar.initialize(minimumSize: appDesktopWindowMinimumSize);
+  runApp(
+    Provider<DesktopWindowTitleBar>(
+      create: (_) => titleBar,
+      dispose: (_, owner) => unawaited(owner.dispose()),
+      child: const AppEntry(),
+    ),
+  );
 }

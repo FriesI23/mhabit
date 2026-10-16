@@ -42,6 +42,7 @@ class AdaptiveEditableSliverAppBar extends StatelessWidget {
     this.leading,
     this.actions = const [],
     this.styles,
+    this.appleToolbarTopInset,
   }) : _adaptiveStyle = null;
 
   const AdaptiveEditableSliverAppBar.material({
@@ -56,6 +57,7 @@ class AdaptiveEditableSliverAppBar extends StatelessWidget {
     this.leading,
     this.actions = const [],
     this.styles,
+    this.appleToolbarTopInset,
   }) : _adaptiveStyle = AdaptiveStyle.material;
 
   const AdaptiveEditableSliverAppBar.apple({
@@ -70,6 +72,7 @@ class AdaptiveEditableSliverAppBar extends StatelessWidget {
     this.leading,
     this.actions = const [],
     this.styles,
+    this.appleToolbarTopInset,
   }) : _adaptiveStyle = AdaptiveStyle.apple;
 
   final AdaptiveStyle? _adaptiveStyle;
@@ -83,6 +86,10 @@ class AdaptiveEditableSliverAppBar extends StatelessWidget {
   final Widget? leading;
   final List<Widget> actions;
   final EditableAppBarStyles? styles;
+
+  /// Minimum local spacing above the Apple toolbar.
+  /// Null uses the desktop default; zero disables it.
+  final double? appleToolbarTopInset;
 
   @override
   Widget build(BuildContext context) {
@@ -111,6 +118,7 @@ class AdaptiveEditableSliverAppBar extends StatelessWidget {
         leading: leading,
         actions: actions,
         style: styles?.apple ?? const AppleEditableAppBarStyle(),
+        toolbarTopInset: appleToolbarTopInset,
       ),
     };
   }

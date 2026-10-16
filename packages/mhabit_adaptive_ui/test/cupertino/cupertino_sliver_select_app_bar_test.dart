@@ -31,10 +31,13 @@ Widget _app(Widget child, {Color? neutralForegroundColor}) => MaterialApp(
   theme: ThemeData(
     platform: TargetPlatform.iOS,
     extensions: [
-      if (neutralForegroundColor != null)
-        AdaptiveCupertinoButtonThemeData(
-          neutralForegroundColor: neutralForegroundColor,
-        ),
+      AppAdaptiveUiThemeData(
+        cupertinoButtonTheme: neutralForegroundColor != null
+            ? AdaptiveCupertinoButtonThemeData(
+                neutralForegroundColor: neutralForegroundColor,
+              )
+            : const AdaptiveCupertinoButtonThemeData(),
+      ),
     ],
   ),
   home: Scaffold(body: CustomScrollView(slivers: [child])),

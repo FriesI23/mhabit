@@ -58,6 +58,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.height,
     this.bottom,
     this.styles,
+    this.appleToolbarTopInset,
   }) : assert(bottom == null || height != null),
        _adaptiveStyle = null,
        _materialVariant = _MaterialAppBarVariant.small;
@@ -72,6 +73,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.height,
     this.bottom,
     this.styles,
+    this.appleToolbarTopInset,
   }) : _adaptiveStyle = AdaptiveStyle.material,
        _materialVariant = _MaterialAppBarVariant.small;
 
@@ -85,6 +87,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.height,
     this.bottom,
     this.styles,
+    this.appleToolbarTopInset,
   }) : _adaptiveStyle = AdaptiveStyle.material,
        _materialVariant = _MaterialAppBarVariant.small;
 
@@ -98,6 +101,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.height,
     this.bottom,
     this.styles,
+    this.appleToolbarTopInset,
   }) : _adaptiveStyle = AdaptiveStyle.material,
        _materialVariant = _MaterialAppBarVariant.medium;
 
@@ -111,6 +115,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.height,
     this.bottom,
     this.styles,
+    this.appleToolbarTopInset,
   }) : _adaptiveStyle = AdaptiveStyle.material,
        _materialVariant = _MaterialAppBarVariant.large;
 
@@ -124,6 +129,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     this.height,
     this.bottom,
     this.styles,
+    this.appleToolbarTopInset,
   }) : assert(bottom == null || height != null),
        _adaptiveStyle = AdaptiveStyle.apple,
        _materialVariant = _MaterialAppBarVariant.small;
@@ -138,6 +144,10 @@ class AdaptiveSliverAppBar extends StatelessWidget {
   final double? height;
   final PreferredSizeWidget? bottom;
   final AppBarStyles? styles;
+
+  /// Minimum local spacing above the Apple toolbar.
+  /// Null uses the desktop default; zero disables it.
+  final double? appleToolbarTopInset;
 
   AppBarMaterialStyle get _effectiveMaterialStyle =>
       styles?.material ?? const AppBarMaterialStyle();
@@ -195,6 +205,7 @@ class AdaptiveSliverAppBar extends StatelessWidget {
     bottom: bottom,
     bottomExtent: bottom?.preferredSize.height ?? 0.0,
     style: effectiveStyle,
+    toolbarTopInset: appleToolbarTopInset,
   );
 }
 

@@ -1,0 +1,30 @@
+name: mhabit_desktop_window_chrome
+description: Desktop window chrome, native geometry and package toolbar integration.
+version: 0.1.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ">=3.12.0 <4.0.0"
+  flutter: ">=3.44.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  window_manager: 0.5.2
+  macos_window_utils: 1.9.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  pigeon: 27.3.0
+
+flutter:
+  plugin:
+    platforms:
+      linux:
+        pluginClass: DesktopWindowChromePlugin
+      windows:
+        pluginClass: DesktopWindowChromePluginCApi
+      macos:
+        pluginClass: DesktopWindowChromePlugin

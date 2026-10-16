@@ -102,6 +102,7 @@ class CupertinoEditableSliverAppBar extends StatelessWidget {
     required this.leading,
     required this.actions,
     required this.style,
+    this.toolbarTopInset,
   });
 
   final String title;
@@ -114,6 +115,11 @@ class CupertinoEditableSliverAppBar extends StatelessWidget {
   final Widget? leading;
   final List<Widget> actions;
   final AppleEditableAppBarStyle style;
+
+  /// Minimum local space above the Apple toolbar.
+  /// Null uses the desktop default; zero disables it. A larger top safe area
+  /// takes precedence without adding the two insets.
+  final double? toolbarTopInset;
 
   @override
   Widget build(BuildContext context) {
@@ -130,6 +136,7 @@ class CupertinoEditableSliverAppBar extends StatelessWidget {
     final content = MultiSliver(
       children: [
         CupertinoSliverAppBar(
+          toolbarTopInset: toolbarTopInset,
           title: ExcludeSemantics(
             excluding: !isCollapsed,
             child: AnimatedSwitcher(

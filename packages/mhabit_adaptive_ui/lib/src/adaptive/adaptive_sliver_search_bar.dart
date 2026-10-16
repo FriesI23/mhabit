@@ -31,12 +31,18 @@ final class CupertinoSliverSearchBarConfig<T extends Object>
     extends SliverSearchBarConfig<T> {
   const CupertinoSliverSearchBarConfig({
     this.maxSearchWidth = 240.0,
+    this.toolbarTopInset,
     this.bottom,
     this.bottomExtent = 0.0,
     this.actions,
   }) : assert(bottom != null || bottomExtent == 0.0);
 
   final double maxSearchWidth;
+
+  /// Minimum local space above the Apple toolbar.
+  /// Null uses the desktop default; zero disables it. A larger top safe area
+  /// takes precedence without adding the two insets.
+  final double? toolbarTopInset;
   final Widget? bottom;
   final double bottomExtent;
   final CupertinoAppBarActionsConfig<T>? actions;
@@ -156,6 +162,7 @@ class AdaptiveSliverSearchBar<T extends Object> extends StatelessWidget {
       keyword: keyword,
       hintText: hintText,
       maxSearchWidth: config.maxSearchWidth,
+      toolbarTopInset: config.toolbarTopInset,
       bottom: config.bottom,
       bottomExtent: config.bottomExtent,
       pinned: pinned,

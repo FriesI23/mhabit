@@ -22,9 +22,7 @@ class MaterialAdaptiveListSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (children.isEmpty) return const SizedBox.shrink();
-    final theme = Theme.of(context);
     final local = AdaptiveListTheme.of(context);
-    final global = theme.extension<AdaptiveListThemeData>();
     final defaults = _MaterialListSectionDefaults(context);
     return Padding(
       padding: padding ?? const EdgeInsets.fromLTRB(16, 24, 16, 8),
@@ -56,7 +54,6 @@ class MaterialAdaptiveListSection extends StatelessWidget {
                 surfaceColor:
                     surfaceColor ??
                     local.materialSurfaceColor ??
-                    global?.materialSurfaceColor ??
                     defaults.materialSurfaceColor,
                 child: children[index],
               ),

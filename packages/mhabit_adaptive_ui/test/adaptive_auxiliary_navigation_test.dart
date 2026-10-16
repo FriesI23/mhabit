@@ -53,7 +53,12 @@ Widget _host({
   theme: ThemeData(platform: platform),
   builder: (context, child) => breakpoints == null
       ? child!
-      : BreakpointsScope(breakpoints: breakpoints, child: child!),
+      : AppAdaptiveUiTheme(
+          data: AppAdaptiveUiTheme.of(
+            context,
+          ).copyWith(breakpoints: breakpoints),
+          child: child!,
+        ),
   home: AdaptiveNavigationShell(
     selectedIndex: 0,
     destinations: _destinations,

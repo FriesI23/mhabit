@@ -9,6 +9,7 @@ import '../shell/navigation_scroll_wish_policy.dart';
 import '../shell/navigation_shell_form.dart';
 import '../shell/navigation_shell_frame.dart';
 import '../shell/sidebar_adapter.dart';
+import '../window_control/interaction_region.dart';
 import '../window_control/window_control_layout.dart';
 import 'apple_sidebar_style.dart';
 import 'cupertino_adaptive_navigation_bar.dart';
@@ -53,6 +54,7 @@ class CupertinoNavigationShell extends StatefulWidget {
     required this.dragHandleBuilder,
     required this.appleBarStyle,
     required this.sidebarStyle,
+    this.sidebarToolbarGeometry,
     required this.collapsedSidebarEnabled,
     required this.sidebarBackgroundColor,
     required this.sidebarItemStyle,
@@ -96,6 +98,9 @@ class CupertinoNavigationShell extends StatefulWidget {
 
   /// Visual treatment for the medium-and-larger Sidebar.
   final AppleSidebarStyle sidebarStyle;
+
+  /// Caller-selected geometry; otherwise inherits the current presentation.
+  final CupertinoSidebarToolbarGeometry? sidebarToolbarGeometry;
 
   /// Whether a hidden Sidebar exposes destinations in the top toolbar.
   final bool collapsedSidebarEnabled;
@@ -205,9 +210,9 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
   @override
   Widget build(BuildContext context) {
     final widget = this.widget;
-    final toolbarGeometry = CupertinoSidebarPresentationScope.toolbarGeometryOf(
-      context,
-    );
+    final toolbarGeometry =
+        widget.sidebarToolbarGeometry ??
+        CupertinoSidebarPresentationScope.toolbarGeometryOf(context);
     final disableAnimations = MediaQuery.disableAnimationsOf(context);
     // Match the actual Material Scaffold surface during ThemeData animation.
     // CupertinoThemeData switches brightness discretely at the midpoint,
@@ -256,19 +261,22 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
             },
           ),
         );
-        final collapsedBar = CupertinoSidebarCollapsedBar(
-          key: const ValueKey('cupertino-sidebar-collapsed-bar'),
-          destinations: adapter.destinations,
-          selectedIndex: widget.selectedAuxiliaryIndex == null
-              ? widget.selectedIndex
-              : null,
-          onDestinationSelected: (index) =>
-              adapter.select(SidebarPrimarySelection(index)),
-          height: toolbarGeometry.collapsedBarHeight,
-          itemStyle: switch (widget.sidebarStyle) {
-            AppleSidebarStyle.inset => null,
-            AppleSidebarStyle.edge => widget.collapsedSidebarItemStyle,
-          },
+        // The fixed bar is a shell overlay, outside the page AppBar's targets.
+        final collapsedBar = AdaptiveWindowInteractionRegion(
+          child: CupertinoSidebarCollapsedBar(
+            key: const ValueKey('cupertino-sidebar-collapsed-bar'),
+            destinations: adapter.destinations,
+            selectedIndex: widget.selectedAuxiliaryIndex == null
+                ? widget.selectedIndex
+                : null,
+            onDestinationSelected: (index) =>
+                adapter.select(SidebarPrimarySelection(index)),
+            height: toolbarGeometry.collapsedBarHeight,
+            itemStyle: switch (widget.sidebarStyle) {
+              AppleSidebarStyle.inset => null,
+              AppleSidebarStyle.edge => widget.collapsedSidebarItemStyle,
+            },
+          ),
         );
         final branch = CupertinoSidebarPresentationScope(
           expanded: _sidebarExpanded,
@@ -290,7 +298,9 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
             expandLabel: widget.expandNavigationLabel,
             collapseLabel: widget.collapseNavigationLabel,
             toggleButtonBuilder: (context, defaultBuilder) =>
-                NeutralCupertinoButtonBuilder(builder: defaultBuilder),
+                AdaptiveWindowInteractionRegion(
+                  child: NeutralCupertinoButtonBuilder(builder: defaultBuilder),
+                ),
             scaffoldBackgroundColor: scaffoldBackground,
             child: branch,
           ),
@@ -307,7 +317,9 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
             expandLabel: widget.expandNavigationLabel,
             collapseLabel: widget.collapseNavigationLabel,
             toggleButtonBuilder: (context, defaultBuilder) =>
-                NeutralCupertinoButtonBuilder(builder: defaultBuilder),
+                AdaptiveWindowInteractionRegion(
+                  child: NeutralCupertinoButtonBuilder(builder: defaultBuilder),
+                ),
             backgroundColor: widget.sidebarBackgroundColor,
             scaffoldBackgroundColor: scaffoldBackground,
             child: branch,

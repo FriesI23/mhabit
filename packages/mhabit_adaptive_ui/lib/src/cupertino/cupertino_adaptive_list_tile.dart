@@ -47,43 +47,28 @@ class CupertinoAdaptiveListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final palette = AdaptiveListTheme.of(context);
-    final global = theme.extension<AdaptiveListThemeData>();
     final defaults = _CupertinoListTileDefaults(context);
     final foregroundColor = CupertinoDynamicColor.resolve(
       this.foregroundColor ??
           palette.foregroundColor ??
-          global?.foregroundColor ??
           defaults.foregroundColor,
       context,
     );
     final secondaryColor = CupertinoDynamicColor.resolve(
-      this.secondaryColor ??
-          palette.secondaryColor ??
-          global?.secondaryColor ??
-          defaults.secondaryColor,
+      this.secondaryColor ?? palette.secondaryColor ?? defaults.secondaryColor,
       context,
     );
     final activatedColor = CupertinoDynamicColor.resolve(
-      this.activatedColor ??
-          palette.activatedColor ??
-          global?.activatedColor ??
-          defaults.activatedColor,
+      this.activatedColor ?? palette.activatedColor ?? defaults.activatedColor,
       context,
     );
     final focusColor = CupertinoDynamicColor.resolve(
-      this.focusColor ??
-          palette.focusColor ??
-          global?.focusColor ??
-          defaults.focusColor,
+      this.focusColor ?? palette.focusColor ?? defaults.focusColor,
       context,
     );
     final iconColor = CupertinoDynamicColor.resolve(
-      this.iconColor ??
-          palette.iconColor ??
-          global?.iconColor ??
-          defaults.iconColor,
+      this.iconColor ?? palette.iconColor ?? defaults.iconColor,
       context,
     );
     final section = _groupedSectionOf(context);

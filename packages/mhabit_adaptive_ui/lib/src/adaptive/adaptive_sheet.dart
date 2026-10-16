@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../adaptive_style.dart';
+import '../app_adaptive_ui_theme.dart';
 import '../breakpoints/breakpoints.dart';
 import '../breakpoints/window_size_class.dart';
 import '../cupertino/cupertino_adaptive_modal.dart';
@@ -10,6 +11,7 @@ import '../material/material_adaptive_modal.dart';
 import 'adaptive_back_button.dart';
 import 'adaptive_modal_content.dart';
 import 'adaptive_modal_layout.dart';
+import 'adaptive_modal_themes.dart';
 
 /// Shows content as a platform-styled sheet on compact windows and a dialog
 /// when both window axes reach the medium size class.
@@ -22,7 +24,7 @@ import 'adaptive_modal_layout.dart';
 ///
 /// A [styleOverride] forces the route and content renderer to a specific style.
 /// It is intended as a migration escape hatch and for tests; regular callers
-/// should inherit the style from [AdaptiveStyleScope].
+/// should inherit the style from [AppAdaptiveUiTheme].
 ///
 /// A null [barrierDismissible] makes dialog presentations dismissible, matching
 /// Flutter's regular dialog behavior. A fixed Cupertino sheet uses Flutter's
@@ -45,12 +47,11 @@ Future<T?> showAdaptiveSheet<T>({
   final style = styleOverride ?? AdaptiveStyle.of(context);
   final effectiveShowDragHandle =
       showDragHandle ?? style == AdaptiveStyle.material;
-  final breakpoints =
-      BreakpointsScope.maybeOf(context)?.breakpoints ??
-      switch (style) {
-        AdaptiveStyle.apple => const AppleBreakpoints(),
-        AdaptiveStyle.material => const MaterialBreakpoints(),
-      };
+  final breakpoints = Breakpoints.of(context, styleOverride: style);
+  final themes = AdaptiveModalThemes.capture(
+    context,
+    Navigator.of(context, rootNavigator: useRootNavigator).context,
+  );
   if (presentationOverride == null) {
     final effectiveBarrierDismissible = barrierDismissible ?? true;
     final barrierLabel = MaterialLocalizations.of(
@@ -62,14 +63,16 @@ Future<T?> showAdaptiveSheet<T>({
         useRootNavigator: useRootNavigator,
         routeSettings: routeSettings,
         barrierLabel: barrierLabel,
-        builder: (_) => _ResponsiveAdaptiveModalRoute(
-          style: AdaptiveStyle.apple,
-          breakpoints: breakpoints,
-          builder: builder,
-          enableDrag: enableDrag,
-          showDragHandle: effectiveShowDragHandle,
-          barrierDismissible: effectiveBarrierDismissible,
-          barrierLabel: barrierLabel,
+        builder: (_) => themes.wrap(
+          _ResponsiveAdaptiveModalRoute(
+            style: AdaptiveStyle.apple,
+            breakpoints: breakpoints,
+            builder: builder,
+            enableDrag: enableDrag,
+            showDragHandle: effectiveShowDragHandle,
+            barrierDismissible: effectiveBarrierDismissible,
+            barrierLabel: barrierLabel,
+          ),
         ),
       ),
       AdaptiveStyle.material => showMaterialAdaptiveModalRoute<T>(
@@ -79,14 +82,16 @@ Future<T?> showAdaptiveSheet<T>({
         routeSettings: routeSettings,
         presentationResolver: (context) =>
             _resolvePresentation(breakpoints, MediaQuery.sizeOf(context)),
-        builder: (_) => _ResponsiveAdaptiveModalRoute(
-          style: AdaptiveStyle.material,
-          breakpoints: breakpoints,
-          builder: builder,
-          enableDrag: enableDrag,
-          showDragHandle: effectiveShowDragHandle,
-          barrierDismissible: effectiveBarrierDismissible,
-          barrierLabel: barrierLabel,
+        builder: (_) => themes.wrap(
+          _ResponsiveAdaptiveModalRoute(
+            style: AdaptiveStyle.material,
+            breakpoints: breakpoints,
+            builder: builder,
+            enableDrag: enableDrag,
+            showDragHandle: effectiveShowDragHandle,
+            barrierDismissible: effectiveBarrierDismissible,
+            barrierLabel: barrierLabel,
+          ),
         ),
       ),
     };
@@ -96,15 +101,17 @@ Future<T?> showAdaptiveSheet<T>({
     context,
   ).modalBarrierDismissLabel;
 
-  Widget buildRouteContent({ScrollController? scrollController}) =>
-      AdaptiveStyleScope(
-        override: style,
-        child: _AdaptiveModalRouteScope(
-          presentation: presentation,
-          scrollController: scrollController,
-          child: Builder(builder: builder),
-        ),
-      );
+  Widget buildRouteContent(ScrollController? scrollController) => themes.wrap(
+    AdaptiveComponentTheme(
+      style: style,
+      breakpoints: breakpoints,
+      child: _AdaptiveModalRouteScope(
+        presentation: presentation,
+        scrollController: scrollController,
+        child: Builder(builder: builder),
+      ),
+    ),
+  );
 
   return switch ((style, presentation)) {
     (AdaptiveStyle.material, AdaptiveModalPresentation.dialog) =>
@@ -113,7 +120,7 @@ Future<T?> showAdaptiveSheet<T>({
         useRootNavigator: useRootNavigator,
         barrierDismissible: barrierDismissible ?? true,
         routeSettings: routeSettings,
-        builder: (_) => buildRouteContent(),
+        builder: (_) => buildRouteContent(null),
       ),
     (AdaptiveStyle.apple, AdaptiveModalPresentation.dialog) =>
       showCupertinoAdaptiveDialogRoute<T>(
@@ -121,15 +128,17 @@ Future<T?> showAdaptiveSheet<T>({
         useRootNavigator: useRootNavigator,
         routeSettings: routeSettings,
         barrierLabel: barrierLabel,
-        builder: (_) => _ResponsiveAdaptiveModalRoute(
-          style: AdaptiveStyle.apple,
-          breakpoints: breakpoints,
-          presentationOverride: AdaptiveModalPresentation.dialog,
-          builder: builder,
-          enableDrag: enableDrag,
-          showDragHandle: effectiveShowDragHandle,
-          barrierDismissible: barrierDismissible ?? true,
-          barrierLabel: barrierLabel,
+        builder: (_) => themes.wrap(
+          _ResponsiveAdaptiveModalRoute(
+            style: AdaptiveStyle.apple,
+            breakpoints: breakpoints,
+            presentationOverride: AdaptiveModalPresentation.dialog,
+            builder: builder,
+            enableDrag: enableDrag,
+            showDragHandle: effectiveShowDragHandle,
+            barrierDismissible: barrierDismissible ?? true,
+            barrierLabel: barrierLabel,
+          ),
         ),
       ),
     (AdaptiveStyle.material, AdaptiveModalPresentation.sheet) =>
@@ -140,8 +149,7 @@ Future<T?> showAdaptiveSheet<T>({
         enableDrag: enableDrag,
         showDragHandle: effectiveShowDragHandle,
         routeSettings: routeSettings,
-        builder: (controller) =>
-            buildRouteContent(scrollController: controller),
+        builder: buildRouteContent,
       ),
     (AdaptiveStyle.apple, AdaptiveModalPresentation.sheet) =>
       showCupertinoAdaptiveSheetRoute<T>(
@@ -150,8 +158,7 @@ Future<T?> showAdaptiveSheet<T>({
         enableDrag: enableDrag,
         showDragHandle: effectiveShowDragHandle,
         routeSettings: routeSettings,
-        builder: (controller) =>
-            buildRouteContent(scrollController: controller),
+        builder: buildRouteContent,
       ),
   };
 }
@@ -227,21 +234,27 @@ class _ResponsiveAdaptiveModalRouteState
     if (mounted) Navigator.pop(context);
   }
 
+  // AdaptiveComponentTheme owns the theme dependency; keep it off this State so
+  // palette updates do not rebuild the modal surface or barrier.
+  Widget _buildContent(
+    AdaptiveModalPresentation presentation,
+    ScrollController? controller,
+  ) => AdaptiveComponentTheme(
+    style: widget.style,
+    breakpoints: widget.breakpoints,
+    child: _AdaptiveModalRouteScope(
+      presentation: presentation,
+      scrollController: controller,
+      closeController: _closeController,
+      child: _content,
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     final presentation =
         widget.presentationOverride ??
         _resolvePresentation(widget.breakpoints, MediaQuery.sizeOf(context));
-
-    Widget buildContent(ScrollController? controller) => AdaptiveStyleScope(
-      override: widget.style,
-      child: _AdaptiveModalRouteScope(
-        presentation: presentation,
-        scrollController: controller,
-        closeController: _closeController,
-        child: _content,
-      ),
-    );
 
     final surface = switch (widget.style) {
       AdaptiveStyle.material => MaterialAdaptiveModalRouteSurface(
@@ -249,14 +262,14 @@ class _ResponsiveAdaptiveModalRouteState
         enableDrag: widget.enableDrag,
         showDragHandle: widget.showDragHandle,
         onCloseRequested: _closeController.requestClose,
-        contentBuilder: buildContent,
+        contentBuilder: (controller) => _buildContent(presentation, controller),
       ),
       AdaptiveStyle.apple => CupertinoAdaptiveModalRouteSurface(
         presentation: presentation,
         enableDrag: widget.enableDrag,
         showDragHandle: widget.showDragHandle,
         onCloseRequested: _closeController.requestClose,
-        contentBuilder: buildContent,
+        contentBuilder: (controller) => _buildContent(presentation, controller),
       ),
     };
     return Stack(
@@ -552,6 +565,7 @@ abstract class AdaptiveModal extends StatelessWidget {
     Widget? title,
     Widget? leadingAction,
     List<Widget> appBarActions,
+    double? appleToolbarTopInset,
     AdaptiveModalConfirmAction? confirmAction,
     List<Widget> actions,
     Widget? pinnedBody,
@@ -569,6 +583,7 @@ abstract class AdaptiveModal extends StatelessWidget {
     Widget? title,
     Widget? leadingAction,
     List<Widget> appBarActions,
+    double? appleToolbarTopInset,
     AdaptiveModalConfirmAction? confirmAction,
     List<Widget> actions,
     Widget? pinnedBody,
@@ -595,6 +610,7 @@ abstract class AdaptiveModal extends StatelessWidget {
     this.title,
     this.leadingAction,
     this.appBarActions = const [],
+    this.appleToolbarTopInset,
     this.confirmAction,
     this.actions = const [],
     this.pinnedBody,
@@ -610,6 +626,11 @@ abstract class AdaptiveModal extends StatelessWidget {
   final Widget? title;
   final Widget? leadingAction;
   final List<Widget> appBarActions;
+
+  /// Minimum local space above the Apple toolbar.
+  /// Null uses the desktop default; zero disables it. A larger top safe area
+  /// takes precedence without adding the two insets.
+  final double? appleToolbarTopInset;
   final AdaptiveModalConfirmAction? confirmAction;
   final List<Widget> actions;
   final Widget? pinnedBody;
@@ -626,6 +647,7 @@ class _AdaptiveBoxModal extends AdaptiveModal {
     super.title,
     super.leadingAction,
     super.appBarActions,
+    super.appleToolbarTopInset,
     super.confirmAction,
     super.actions,
     super.pinnedBody,
@@ -646,6 +668,7 @@ class _AdaptiveBoxModal extends AdaptiveModal {
     title: title,
     leadingAction: leadingAction,
     appBarActions: appBarActions,
+    appleToolbarTopInset: appleToolbarTopInset,
     confirmAction: confirmAction,
     actions: actions,
     pinnedBody: pinnedBody,
@@ -675,6 +698,7 @@ class _AdaptiveSliverModal extends AdaptiveModal {
     super.title,
     super.leadingAction,
     super.appBarActions,
+    super.appleToolbarTopInset,
     super.confirmAction,
     super.actions,
     super.pinnedBody,
@@ -694,6 +718,7 @@ class _AdaptiveSliverModal extends AdaptiveModal {
     title: title,
     leadingAction: leadingAction,
     appBarActions: appBarActions,
+    appleToolbarTopInset: appleToolbarTopInset,
     confirmAction: confirmAction,
     actions: actions,
     pinnedBody: pinnedBody,
@@ -713,6 +738,7 @@ class _AdaptiveModal extends StatefulWidget {
     required this.title,
     required this.leadingAction,
     required this.appBarActions,
+    required this.appleToolbarTopInset,
     required this.confirmAction,
     required this.actions,
     required this.pinnedBody,
@@ -728,6 +754,7 @@ class _AdaptiveModal extends StatefulWidget {
   final Widget? title;
   final Widget? leadingAction;
   final List<Widget> appBarActions;
+  final double? appleToolbarTopInset;
   final AdaptiveModalConfirmAction? confirmAction;
   final List<Widget> actions;
   final Widget? pinnedBody;
@@ -889,6 +916,7 @@ class _AdaptiveModalState extends State<_AdaptiveModal> {
         onContentSizeChanged: onContentSizeChanged,
       ),
       AdaptiveStyle.apple => CupertinoAdaptiveModal(
+        toolbarTopInset: widget.appleToolbarTopInset,
         showAppBar: widget.showAppBar,
         title: widget.title,
         leadingAction: leadingAction,

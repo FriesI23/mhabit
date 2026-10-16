@@ -9,6 +9,8 @@ import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_adaptive_list_tile.da
 import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_list_section.dart';
 import 'package:mhabit_adaptive_ui/src/material/material_list_section.dart';
 
+import 'harness/adaptive_ui_theme.dart';
+
 void main() {
   testWidgets('adaptive section forwards custom exterior padding', (
     tester,
@@ -125,10 +127,12 @@ void main() {
             theme: ThemeData(
               colorScheme: scheme,
               extensions: const [
-                AdaptiveListThemeData(
-                  surfaceColor: Colors.red,
-                  iconColor: Colors.green,
-                  materialSurfaceColor: Colors.yellow,
+                AppAdaptiveUiThemeData(
+                  listTheme: AdaptiveListThemeData(
+                    surfaceColor: Colors.red,
+                    iconColor: Colors.green,
+                    materialSurfaceColor: Colors.yellow,
+                  ),
                 ),
               ],
             ),
@@ -218,9 +222,11 @@ void main() {
           theme: ThemeData(
             colorScheme: scheme,
             extensions: const [
-              AdaptiveListThemeData(
-                surfaceColor: Colors.purple,
-                foregroundColor: Colors.green,
+              AppAdaptiveUiThemeData(
+                listTheme: AdaptiveListThemeData(
+                  surfaceColor: Colors.purple,
+                  foregroundColor: Colors.green,
+                ),
               ),
             ],
           ),
@@ -302,8 +308,9 @@ void main() {
                       child: SizedBox(
                         width: 402,
                         height: 300,
-                        child: AdaptiveStyleScope(
-                          override: style,
+                        child: TestAdaptiveUiTheme(
+                          update: (parentTheme) =>
+                              parentTheme.copyWith(style: style),
                           child: AdaptiveListSection(
                             header: const Text('Language'),
                             children: [
@@ -470,8 +477,8 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: AdaptiveStyleScope(
-              override: style,
+            body: TestAdaptiveUiTheme(
+              update: (parentTheme) => parentTheme.copyWith(style: style),
               child: AdaptiveListSection(
                 children: [
                   AdaptiveListTile(
@@ -525,8 +532,8 @@ void main() {
                   ),
                   const AdaptiveListTile(title: Text('Other')),
                 ];
-                return AdaptiveStyleScope(
-                  override: style,
+                return AppAdaptiveUiTheme(
+                  data: AppAdaptiveUiTheme.of(context).copyWith(style: style),
                   child: AdaptiveListSection(
                     children: reverse ? rows.reversed.toList() : rows,
                   ),

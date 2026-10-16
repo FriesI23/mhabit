@@ -1,4 +1,7 @@
+import 'dart:math' as math;
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' show Theme;
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
 import '../breakpoints/window_size_class.dart';
@@ -8,6 +11,7 @@ import '../window_control/toolbar_geometry.dart';
 import 'app_bar_apple_style.dart';
 import 'cupertino_neutral_button.dart';
 import 'cupertino_sidebar_navigation_bar_bottom.dart';
+import 'cupertino_toolbar_extensions.dart';
 import 'cupertino_toolbar_padding.dart';
 
 const List<Widget> _kDefaultActions = <Widget>[];
@@ -27,6 +31,7 @@ class CupertinoSliverAppBar extends StatelessWidget {
     required this.style,
     this.windowControlAvoidance,
     this.wrapSidebarMiddle = true,
+    this.toolbarTopInset,
   }) : assert(bottomExtent >= 0.0),
        assert(bottom != null || bottomExtent == 0.0),
        assert(bottom == null || height != null);
@@ -43,6 +48,11 @@ class CupertinoSliverAppBar extends StatelessWidget {
   final EdgeInsets? windowControlAvoidance;
   final bool wrapSidebarMiddle;
 
+  /// Minimum local space above the Apple toolbar.
+  /// Null uses the desktop default; zero disables it. A larger top safe area
+  /// takes precedence without adding the two insets.
+  final double? toolbarTopInset;
+
   Widget? _effectiveTrailing(List<Widget> effectiveActions) {
     if (effectiveActions.isEmpty) return null;
     if (effectiveActions.length == 1) return effectiveActions.single;
@@ -51,6 +61,9 @@ class CupertinoSliverAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final toolbarTopInset =
+        this.toolbarTopInset ??
+        Theme.of(context).platform.defaultCupertinoToolbarTopInset;
     final sidebarLeading = SidebarLeadingScope.maybeOf(context);
     final hasLeading =
         sidebarLeading != null || leading != null || onLeadingPressed != null;
@@ -78,10 +91,12 @@ class CupertinoSliverAppBar extends StatelessWidget {
         leading: effectiveLeading,
         trailing: effectiveTrailing,
         toolbarHeight: height ?? toolbarGeometry.contentHeight,
+        toolbarTopInset: toolbarTopInset,
         useSidebarToolbar: useSidebarToolbar,
         sidebarNavigationBarBottom: hasSidebarToolbar
             ? CupertinoSidebarNavigationBarBottom.maybeFromGeometry(
                 toolbarGeometry,
+                toolbarTopInset: toolbarTopInset,
               )
             : null,
         bottom: bottom,
@@ -96,6 +111,7 @@ class CupertinoSliverAppBar extends StatelessWidget {
       );
     }
     return _CollapsibleCupertinoSliverAppBar(
+      toolbarTopInset: toolbarTopInset,
       title: title,
       leading: effectiveLeading,
       trailing: effectiveTrailing,
@@ -167,6 +183,7 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
     required this.padding,
     required this.windowControlAvoidance,
     required this.windowControlEdgePadding,
+    required this.toolbarTopInset,
   });
 
   final Widget title;
@@ -184,10 +201,14 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
   final EdgeInsetsDirectional? padding;
   final EdgeInsets? windowControlAvoidance;
   final EdgeInsetsDirectional windowControlEdgePadding;
+  final double toolbarTopInset;
 
   @override
   Widget build(BuildContext context) {
-    final topPadding = MediaQuery.paddingOf(context).top;
+    final topPadding = math.max(
+      MediaQuery.paddingOf(context).top,
+      toolbarTopInset,
+    );
     final sidebarBottomExtent =
         sidebarNavigationBarBottom?.preferredSize.height ?? 0.0;
     final extent =
@@ -202,6 +223,7 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               WindowControlCupertinoNavigationBar(
+                toolbarTopInset: toolbarTopInset,
                 automaticallyImplyLeading: false,
                 transitionBetweenRoutes: false,
                 automaticBackgroundVisibility: automaticBackgroundVisibility,
@@ -320,6 +342,7 @@ class _CollapsibleCupertinoSliverAppBar extends StatelessWidget {
     required this.stretch,
     required this.windowControlAvoidance,
     required this.windowControlEdgePadding,
+    required this.toolbarTopInset,
   });
 
   final Widget title;
@@ -334,6 +357,7 @@ class _CollapsibleCupertinoSliverAppBar extends StatelessWidget {
   final bool stretch;
   final EdgeInsets? windowControlAvoidance;
   final EdgeInsetsDirectional windowControlEdgePadding;
+  final double toolbarTopInset;
 
   bool _useLargeTitle(BuildContext context) {
     // Portrait always needs the large-title slot because the SDK chooses the
@@ -346,6 +370,7 @@ class _CollapsibleCupertinoSliverAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final useLargeTitle = _useLargeTitle(context);
     final navigationBar = WindowControlCupertinoSliverNavigationBar(
+      toolbarTopInset: toolbarTopInset,
       middle: useLargeTitle ? null : title,
       largeTitle: useLargeTitle ? title : null,
       leading: leading,

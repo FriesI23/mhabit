@@ -2,18 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
-Widget _host(MaterialSliverSearchBar searchBar, {double? contentWidth}) =>
-    MaterialApp(
-      home: Scaffold(
-        body: Align(
-          alignment: Alignment.topLeft,
-          child: SizedBox(
-            width: contentWidth,
-            child: CustomScrollView(slivers: [searchBar]),
-          ),
+import '../harness/adaptive_ui_theme.dart';
+
+Widget _host(
+  MaterialSliverSearchBar searchBar, {
+  double? contentWidth,
+  double contentHeight = 0,
+}) => MaterialApp(
+  home: Scaffold(
+    body: Align(
+      alignment: Alignment.topLeft,
+      child: SizedBox(
+        width: contentWidth,
+        child: CustomScrollView(
+          slivers: [
+            searchBar,
+            SliverToBoxAdapter(child: SizedBox(height: contentHeight)),
+          ],
         ),
       ),
-    );
+    ),
+  ),
+);
 
 void main() {
   late TextEditingController controller;
@@ -64,6 +74,36 @@ void main() {
     onSearchActivated: () => activations++,
     onSearchDismissed: () => dismissals++,
     onTapOutside: (_) => outsideTaps++,
+  );
+
+  testWidgets(
+    'non-floating toolbar remains visible and interactive on scroll',
+    (tester) async {
+      tester.view.physicalSize = const Size(350, 520);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        _host(
+          buildBar(
+            style: const MaterialSliverSearchBarStyle(
+              floating: false,
+              snap: false,
+            ),
+          ),
+          contentHeight: 1600,
+        ),
+      );
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
+      await tester.pumpAndSettle();
+      final toolbar = find.byType(AppBar);
+      expect(tester.getTopLeft(toolbar).dy, 0);
+      expect(tester.getSize(toolbar).height, kToolbarHeight);
+      expect(tester.widget<AppBar>(toolbar).toolbarOpacity, 1);
+      final activate = find.byKey(const ValueKey('activate-search'));
+      expect(activate.hitTestable(), findsOneWidget);
+      await tester.tap(activate);
+      expect(activations, 1);
+    },
   );
 
   testWidgets('compact layout uses the 56 by 48 baseline', (tester) async {
@@ -205,6 +245,156 @@ void main() {
     expect(find.text('Habits'), findsOneWidget);
     expect(find.byType(SearchBar), findsOneWidget);
   });
+
+  for (final brightness in Brightness.values) {
+    for (final width in [350.0, 900.0]) {
+      for (final fixedBackground in [false, true]) {
+        testWidgets(
+          '$brightness $width search background follows fixed policy $fixedBackground',
+          (tester) async {
+            tester.view.physicalSize = Size(width, 800);
+            tester.view.devicePixelRatio = 1;
+            addTearDown(tester.view.reset);
+            final scrollController = ScrollController();
+            addTearDown(scrollController.dispose);
+            final theme = ThemeData(
+              brightness: brightness,
+              colorSchemeSeed: Colors.blue,
+            );
+            Material searchMaterial() => tester.widget<Material>(
+              find
+                  .descendant(
+                    of: find.byType(SearchBar),
+                    matching: find.byType(Material),
+                  )
+                  .first,
+            );
+            await tester.pumpWidget(
+              MaterialApp(
+                theme: theme,
+                home: TestAdaptiveUiTheme(
+                  update: (parentTheme) => parentTheme.copyWith(
+                    appBarTheme: parentTheme.appBarTheme.copyWith(
+                      materialFixedScrollBackground: fixedBackground,
+                    ),
+                  ),
+                  child: Scaffold(
+                    body: CustomScrollView(
+                      controller: scrollController,
+                      slivers: [
+                        buildBar(
+                          isSearchActive: true,
+                          style: const MaterialSliverSearchBarStyle(
+                            floating: false,
+                            snap: false,
+                            scrolledUnderElevation: 7,
+                          ),
+                        ),
+                        const SliverToBoxAdapter(child: SizedBox(height: 1600)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+            final normalColor = searchMaterial().color;
+            expect(normalColor, theme.colorScheme.surfaceContainerHigh);
+            scrollController.jumpTo(400);
+            await tester.pumpAndSettle();
+            final settings = tester
+                .element(find.byType(SearchBar))
+                .dependOnInheritedWidgetOfExactType<FlexibleSpaceBarSettings>();
+            expect(settings!.isScrolledUnder, isTrue);
+            expect(
+              searchMaterial().color,
+              fixedBackground
+                  ? normalColor
+                  : brightness == Brightness.dark
+                  ? theme.colorScheme.surfaceContainer
+                  : theme.colorScheme.surfaceContainerLowest,
+            );
+            final appBarMaterial = tester.widget<Material>(
+              find
+                  .descendant(
+                    of: find.byType(AppBar),
+                    matching: find.byType(Material),
+                  )
+                  .first,
+            );
+            expect(appBarMaterial.elevation, 7);
+            scrollController.jumpTo(0);
+            await tester.pumpAndSettle();
+            expect(searchMaterial().color, normalColor);
+            expect(tester.takeException(), isNull);
+          },
+        );
+      }
+    }
+  }
+
+  testWidgets(
+    'fixed policy retains custom search palette, focus and input on scroll',
+    (tester) async {
+      final scrollController = ScrollController();
+      addTearDown(scrollController.dispose);
+      final theme = ThemeData(
+        searchBarTheme: SearchBarThemeData(
+          backgroundColor: WidgetStateProperty.resolveWith(
+            (states) => states.contains(WidgetState.focused)
+                ? Colors.amber
+                : Colors.green,
+          ),
+        ),
+      );
+      Material searchMaterial() => tester.widget<Material>(
+        find
+            .descendant(
+              of: find.byType(SearchBar),
+              matching: find.byType(Material),
+            )
+            .first,
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: theme,
+          home: TestAdaptiveUiTheme(
+            update: (parentTheme) => parentTheme.copyWith(
+              appBarTheme: parentTheme.appBarTheme.copyWith(
+                materialFixedScrollBackground: true,
+              ),
+            ),
+            child: Scaffold(
+              body: CustomScrollView(
+                controller: scrollController,
+                slivers: [
+                  buildBar(
+                    isSearchActive: true,
+                    style: const MaterialSliverSearchBarStyle(
+                      floating: false,
+                      snap: false,
+                    ),
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 1600)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      expect(searchMaterial().color, Colors.green);
+      await tester.enterText(find.byType(SearchBar), 'kept');
+      await tester.pumpAndSettle();
+      expect(searchMaterial().color, Colors.amber);
+      scrollController.jumpTo(400);
+      await tester.pumpAndSettle();
+      expect(searchMaterial().color, Colors.amber);
+      expect(focusNode.hasFocus, isTrue);
+      expect(controller.text, 'kept');
+      focusNode.unfocus();
+      await tester.pumpAndSettle();
+      expect(searchMaterial().color, Colors.green);
+    },
+  );
 
   testWidgets('honors custom Material geometry', (tester) async {
     await tester.pumpWidget(

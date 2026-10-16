@@ -25,6 +25,10 @@ typedef NavigationShellBodyBuilder =
 typedef NavigationShellWindowControlOwnerResolver =
     WindowControlLayoutOwner Function(NavigationShellForm form);
 
+/// Lets a renderer contribute its surface without exposing its visual style.
+typedef NavigationShellSurfaceColorResolver =
+    Color? Function(BuildContext context, NavigationShellForm form);
+
 /// Builds compact navigation or floating action chrome from shell state.
 typedef NavigationShellChromeBuilder =
     Widget Function(BuildContext context, NavigationShellChromeState state);
@@ -76,6 +80,7 @@ class NavigationShellFrame extends StatefulWidget {
     required this.windowControlOwnerResolver,
     required this.compactNavigationBuilder,
     this.floatingActionButtonBuilder,
+    this.navigationSurfaceColorResolver,
     this.floatingActionButtonLocation,
     this.switchDuration = navigationShellAnimationDuration,
   });
@@ -117,6 +122,9 @@ class NavigationShellFrame extends StatefulWidget {
 
   /// Selects which chrome consumes platform window-control avoidance.
   final NavigationShellWindowControlOwnerResolver windowControlOwnerResolver;
+
+  /// Optional renderer-owned surface published through [AdaptiveNavScope].
+  final NavigationShellSurfaceColorResolver? navigationSurfaceColorResolver;
 
   /// Builds compact navigation from the current chrome state.
   final NavigationShellChromeBuilder compactNavigationBuilder;
@@ -223,6 +231,10 @@ class _NavigationShellFrameState extends State<NavigationShellFrame> {
       scrollWish: compact ? _scrollWish : null,
       barHeight: compact ? widget.barHeight : 0,
       navHeight: compact ? widget.navHeight : 0,
+      navigationSurfaceColor: widget.navigationSurfaceColorResolver?.call(
+        context,
+        _form,
+      ),
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
         extendBody: true,

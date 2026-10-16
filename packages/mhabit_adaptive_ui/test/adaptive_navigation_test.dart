@@ -36,6 +36,8 @@ _TestRouter _buildRouter({
   List<AdaptiveBranchRouteObserver>? observers,
   bool Function(List<String?> routeNames)? barVisibilityPolicy,
   bool appleCollapsedSidebarEnabled = true,
+  CupertinoSidebarToolbarGeometry? appleSidebarToolbarGeometry,
+  double? appleToolbarTopInset,
 }) {
   return _TestRouter(
     destinations:
@@ -64,6 +66,8 @@ _TestRouter _buildRouter({
     observers: observers ?? const [],
     barVisibilityPolicy: barVisibilityPolicy,
     appleCollapsedSidebarEnabled: appleCollapsedSidebarEnabled,
+    appleSidebarToolbarGeometry: appleSidebarToolbarGeometry,
+    appleToolbarTopInset: appleToolbarTopInset,
   );
 }
 
@@ -74,6 +78,8 @@ class _TestRouter extends RouterConfig<Object> {
     ValueChanged<int>? onBranchChanged,
     bool Function(List<String?> routeNames)? barVisibilityPolicy,
     bool appleCollapsedSidebarEnabled = true,
+    CupertinoSidebarToolbarGeometry? appleSidebarToolbarGeometry,
+    double? appleToolbarTopInset,
   }) {
     final delegate = _TestRouterDelegate(
       destinations: destinations,
@@ -81,6 +87,8 @@ class _TestRouter extends RouterConfig<Object> {
       observers: observers,
       barVisibilityPolicy: barVisibilityPolicy,
       appleCollapsedSidebarEnabled: appleCollapsedSidebarEnabled,
+      appleSidebarToolbarGeometry: appleSidebarToolbarGeometry,
+      appleToolbarTopInset: appleToolbarTopInset,
     );
     return _TestRouter._(delegate);
   }
@@ -119,6 +127,8 @@ class _TestRouterDelegate extends RouterDelegate<Object>
     this.onBranchChanged,
     this.barVisibilityPolicy,
     required this.appleCollapsedSidebarEnabled,
+    required this.appleSidebarToolbarGeometry,
+    required this.appleToolbarTopInset,
   }) {
     _pushEntry(
       0,
@@ -132,6 +142,8 @@ class _TestRouterDelegate extends RouterDelegate<Object>
   final ValueChanged<int>? onBranchChanged;
   final bool Function(List<String?> routeNames)? barVisibilityPolicy;
   final bool appleCollapsedSidebarEnabled;
+  final CupertinoSidebarToolbarGeometry? appleSidebarToolbarGeometry;
+  final double? appleToolbarTopInset;
 
   final List<List<_TestRouteEntry>> _branchStacks = [[], []];
   int _selectedIndex = 0;
@@ -221,8 +233,12 @@ class _TestRouterDelegate extends RouterDelegate<Object>
             compactRouteVisible: _compactRouteVisible,
             contextualChromeSuppressed: _contextualChromeSuppressed,
             appleCollapsedSidebarEnabled: appleCollapsedSidebarEnabled,
+            appleSidebarToolbarGeometry: appleSidebarToolbarGeometry,
             onDestinationSelected: _selectDestination,
-            child: _StubPage(text: currentEntry.label),
+            child: _StubPage(
+              text: currentEntry.label,
+              appleToolbarTopInset: appleToolbarTopInset,
+            ),
           ),
         ),
       ],
@@ -242,7 +258,9 @@ class _TestRouterDelegate extends RouterDelegate<Object>
 }
 
 class _StubPage extends StatelessWidget {
-  const _StubPage({required this.text});
+  const _StubPage({required this.text, this.appleToolbarTopInset});
+
+  final double? appleToolbarTopInset;
 
   final String text;
 
@@ -252,9 +270,10 @@ class _StubPage extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          const AdaptiveSliverAppBar(
-            title: Text('Test page'),
-            leading: Icon(
+          AdaptiveSliverAppBar(
+            appleToolbarTopInset: appleToolbarTopInset,
+            title: const Text('Test page'),
+            leading: const Icon(
               Icons.article_outlined,
               key: ValueKey('test-page-leading'),
             ),
@@ -708,8 +727,8 @@ void main() {
         MaterialApp(
           home: ValueListenableBuilder<AdaptiveStyle>(
             valueListenable: style,
-            builder: (context, value, child) => AdaptiveStyleScope(
-              override: value,
+            builder: (context, value, child) => AppAdaptiveUiTheme(
+              data: AppAdaptiveUiTheme.of(context).copyWith(style: value),
               child: AdaptiveNavigationShell(
                 selectedIndex: 0,
                 destinations: const [
@@ -2971,8 +2990,10 @@ void main() {
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: router,
-          builder: (context, child) => BreakpointsScope(
-            breakpoints: const CustomBreakpoints(width: [600, 840]),
+          builder: (context, child) => AppAdaptiveUiTheme(
+            data: AppAdaptiveUiTheme.of(
+              context,
+            ).copyWith(breakpoints: const CustomBreakpoints(width: [600, 840])),
             child: child!,
           ),
         ),
@@ -3379,8 +3400,10 @@ void main() {
         await tester.pumpWidget(
           MaterialApp.router(
             routerConfig: router,
-            builder: (context, child) => AdaptiveStyleScope(
-              override: AdaptiveStyle.material,
+            builder: (context, child) => AppAdaptiveUiTheme(
+              data: AppAdaptiveUiTheme.of(
+                context,
+              ).copyWith(style: AdaptiveStyle.material),
               child: child!,
             ),
           ),
@@ -4018,9 +4041,11 @@ void main() {
         MaterialApp.router(
           routerConfig: router,
           // Keep testing Sidebar overflow without the default height constraint.
-          builder: (context, child) => BreakpointsScope(
-            breakpoints: CustomBreakpoints(
-              width: const AppleBreakpoints().width,
+          builder: (context, child) => AppAdaptiveUiTheme(
+            data: AppAdaptiveUiTheme.of(context).copyWith(
+              breakpoints: CustomBreakpoints(
+                width: const AppleBreakpoints().width,
+              ),
             ),
             child: child!,
           ),
@@ -4529,13 +4554,36 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
-    testWidgets('apple macOS Sidebar keeps a compact inset toolbar', (
+    testWidgets('apple desktop Sidebar defaults to compact toolbar geometry', (
+      tester,
+    ) async {
+      _setSurfaceSize(tester, const Size(1000, 600));
+      await tester.pumpWidget(
+        MaterialApp.router(
+          theme: ThemeData(platform: TargetPlatform.macOS),
+          routerConfig: _buildRouter(),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<CupertinoSidebar>(find.byType(CupertinoSidebar))
+            .toolbarGeometry,
+        CupertinoSidebarToolbarGeometry.compact,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('apple explicit geometry keeps a compact inset toolbar', (
       tester,
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
       _setSurfaceSize(tester, const Size(1000, 600));
-      final router = _buildRouter();
+      final router = _buildRouter(
+        appleSidebarToolbarGeometry: CupertinoSidebarToolbarGeometry.compact,
+        appleToolbarTopInset: 10,
+      );
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
       final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
@@ -4573,48 +4621,56 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
-    testWidgets('apple macOS edge Sidebar keeps the compact toolbar inset', (
-      tester,
-    ) async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
-      addTearDown(() => debugDefaultTargetPlatformOverride = null);
-      _setSurfaceSize(tester, const Size(1000, 600));
-      await tester.pumpWidget(
-        MaterialApp(
-          home: AdaptiveNavigationShell(
-            selectedIndex: 0,
-            destinations: const [
-              AdaptiveNavigationDestination(
-                label: 'Habits',
-                icons: NavigationDestinationIcons(
-                  material: Icon(Icons.home_outlined),
-                  materialSelected: Icon(Icons.home),
-                  apple: Icon(CupertinoIcons.home),
-                  appleSelected: Icon(CupertinoIcons.house_fill),
+    testWidgets(
+      'apple explicit edge Sidebar geometry keeps the compact toolbar inset',
+      (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+        _setSurfaceSize(tester, const Size(1000, 600));
+        await tester.pumpWidget(
+          MaterialApp(
+            home: AdaptiveNavigationShell(
+              selectedIndex: 0,
+              destinations: const [
+                AdaptiveNavigationDestination(
+                  label: 'Habits',
+                  icons: NavigationDestinationIcons(
+                    material: Icon(Icons.home_outlined),
+                    materialSelected: Icon(Icons.home),
+                    apple: Icon(CupertinoIcons.home),
+                    appleSelected: Icon(CupertinoIcons.house_fill),
+                  ),
                 ),
+              ],
+              onDestinationSelected: (_) {},
+              appleSidebarStyle: AppleSidebarStyle.edge,
+              appleSidebarToolbarGeometry:
+                  CupertinoSidebarToolbarGeometry.compact,
+              child: const _StubPage(
+                text: 'habits page',
+                appleToolbarTopInset: 10,
               ),
-            ],
-            onDestinationSelected: (_) {},
-            appleSidebarStyle: AppleSidebarStyle.edge,
-            child: const _StubPage(text: 'habits page'),
+            ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      final fixedHost = find.byKey(
-        const ValueKey('cupertino-sidebar-fixed-toolbar-host'),
-      );
-      expect(
-        tester
-            .getTopLeft(find.byKey(const ValueKey('cupertino-sidebar-surface')))
-            .dy,
-        0,
-      );
-      expect(tester.getTopLeft(fixedHost).dy, 10);
-      expect(tester.getSize(fixedHost).height, 44);
-      debugDefaultTargetPlatformOverride = null;
-    });
+        final fixedHost = find.byKey(
+          const ValueKey('cupertino-sidebar-fixed-toolbar-host'),
+        );
+        expect(
+          tester
+              .getTopLeft(
+                find.byKey(const ValueKey('cupertino-sidebar-surface')),
+              )
+              .dy,
+          0,
+        );
+        expect(tester.getTopLeft(fixedHost).dy, 10);
+        expect(tester.getSize(fixedHost).height, 44);
+        debugDefaultTargetPlatformOverride = null;
+      },
+    );
 
     testWidgets(
       'apple hidden Sidebar toggle anchors to the search command bar',
@@ -5531,9 +5587,11 @@ void main() {
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: router,
-          builder: (context, child) => BreakpointsScope(
-            breakpoints: CustomBreakpoints(
-              width: const AppleBreakpoints().width,
+          builder: (context, child) => AppAdaptiveUiTheme(
+            data: AppAdaptiveUiTheme.of(context).copyWith(
+              breakpoints: CustomBreakpoints(
+                width: const AppleBreakpoints().width,
+              ),
             ),
             child: child!,
           ),

@@ -13,7 +13,7 @@
 // limitations under the License.
 // coverage:ignore-file
 
-import 'dart:ui' show Color, Locale;
+import 'dart:ui' show Color, Locale, Size;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show Icons;
@@ -72,6 +72,11 @@ const AppThemeType appDefaultThemeType = AppThemeType.followSystem;
 const int appCalendarBarMaxOccupyPrt = 70;
 const int appCalendarBarMinOccupyPrt = 20;
 const int appCalendarBarDefualtOccupyPrt = 50;
+//#endregion
+
+//#region desktop-window
+/// Minimum outer size of a desktop window, in logical pixels.
+const Size appDesktopWindowMinimumSize = Size(350, 520);
 //#endregion
 
 //#region l10n

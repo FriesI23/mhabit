@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
+import 'harness/adaptive_ui_theme.dart';
+
 class _Observer extends NavigatorObserver {
   final List<Route<dynamic>> dialogs = [];
   @override
@@ -103,8 +105,9 @@ void main() {
                   data: ThemeData.dark(),
                   child: CupertinoTheme(
                     data: const CupertinoThemeData(primaryColor: Colors.orange),
-                    child: AdaptiveStyleScope(
-                      override: style,
+                    child: TestAdaptiveUiTheme(
+                      update: (parentTheme) =>
+                          parentTheme.copyWith(style: style),
                       child: Builder(
                         builder: (context) => Scaffold(
                           body: TextButton(

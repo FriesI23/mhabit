@@ -4,6 +4,44 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 void main() {
+  testWidgets(
+    'platform override distributes physical insets without UIKit data',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AdaptiveWindowControlLayout(
+            platformLayout: const AdaptivePlatformWindowControlLayout(
+              hasWindowControlAvoidance: true,
+              horizontalAvoidance: EdgeInsets.only(left: 80),
+              verticalAvoidance: EdgeInsets.only(top: 22),
+            ),
+            child: Builder(
+              builder: (context) {
+                final layout = AdaptiveWindowControlLayoutScope.maybeOf(
+                  context,
+                )!;
+                expect(layout.hasWindowControlAvoidance, isTrue);
+                expect(
+                  layout.appBarHorizontalAvoidanceFor(TextDirection.ltr),
+                  const EdgeInsets.only(left: 80),
+                );
+                expect(
+                  layout.appBarHorizontalAvoidanceFor(TextDirection.rtl),
+                  const EdgeInsets.only(left: 80),
+                );
+                expect(layout.horizontalSafeAreaAvoidance, isNull);
+                expect(layout.verticalSafeAreaAvoidance, isNull);
+                expect(layout.effectiveCornerRadii, isNull);
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+        ),
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   Widget materialHost({
     required PreferredSizeWidget appBar,
     EdgeInsets avoidance = EdgeInsets.zero,

@@ -4,9 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/adaptive/modal_sheet_drag_region.dart';
+
+import 'harness/adaptive_ui_theme.dart';
 
 const _modalRouteName = '/adaptive-modal';
 
@@ -49,8 +50,8 @@ Widget _buildNestedNavigatorApp({
   bool? showDragHandle,
 }) => MaterialApp(
   navigatorObservers: [rootObserver],
-  home: AdaptiveStyleScope(
-    override: style,
+  home: TestAdaptiveUiTheme(
+    update: (parentTheme) => parentTheme.copyWith(style: style),
     child: Navigator(
       observers: [branchObserver],
       onGenerateRoute: (_) => MaterialPageRoute<void>(
@@ -173,13 +174,14 @@ void main() {
       expect(observer.modalRoutes.single, isA<DialogRoute<void>>());
     });
 
-    testWidgets('style override wins over AdaptiveStyleScope', (tester) async {
+    testWidgets('style override wins over AppAdaptiveUiTheme', (tester) async {
       final observer = _RecordingObserver();
       await tester.pumpWidget(
         MaterialApp(
           navigatorObservers: [observer],
-          home: AdaptiveStyleScope(
-            override: AdaptiveStyle.apple,
+          home: TestAdaptiveUiTheme(
+            update: (parentTheme) =>
+                parentTheme.copyWith(style: AdaptiveStyle.apple),
             child: Builder(
               builder: (context) => ElevatedButton(
                 onPressed: () => showAdaptiveSheet<void>(
@@ -205,7 +207,7 @@ void main() {
       expect(find.byType(CupertinoPopupSurface), findsNothing);
     });
 
-    testWidgets('automatic presentation respects BreakpointsScope', (
+    testWidgets('automatic presentation respects AppAdaptiveUiTheme', (
       tester,
     ) async {
       tester.view.physicalSize = const Size(800, 800);
@@ -216,8 +218,13 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           navigatorObservers: [observer],
-          home: BreakpointsScope(
-            breakpoints: const CustomBreakpoints(width: [1000], height: [1000]),
+          home: TestAdaptiveUiTheme(
+            update: (parentTheme) => parentTheme.copyWith(
+              breakpoints: const CustomBreakpoints(
+                width: [1000],
+                height: [1000],
+              ),
+            ),
             child: Builder(
               builder: (context) => ElevatedButton(
                 onPressed: () => showAdaptiveSheet<void>(
@@ -323,8 +330,8 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
-            home: AdaptiveStyleScope(
-              override: style,
+            home: TestAdaptiveUiTheme(
+              update: (parentTheme) => parentTheme.copyWith(style: style),
               child: Builder(
                 builder: (context) => ElevatedButton(
                   onPressed: () => showAdaptiveSheet<void>(
@@ -377,8 +384,8 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
-            home: AdaptiveStyleScope(
-              override: style,
+            home: TestAdaptiveUiTheme(
+              update: (parentTheme) => parentTheme.copyWith(style: style),
               child: Builder(
                 builder: (context) => ElevatedButton(
                   onPressed: () => showAdaptiveSheet<void>(
@@ -438,8 +445,8 @@ void main() {
 
           await tester.pumpWidget(
             MaterialApp(
-              home: AdaptiveStyleScope(
-                override: style,
+              home: TestAdaptiveUiTheme(
+                update: (parentTheme) => parentTheme.copyWith(style: style),
                 child: Builder(
                   builder: (context) => ElevatedButton(
                     onPressed: () => showAdaptiveSheet<void>(
@@ -600,8 +607,9 @@ void main() {
 
           await tester.pumpWidget(
             MaterialApp(
-              home: AdaptiveStyleScope(
-                override: testCase.$1,
+              home: TestAdaptiveUiTheme(
+                update: (parentTheme) =>
+                    parentTheme.copyWith(style: testCase.$1),
                 child: Builder(
                   builder: (context) => ElevatedButton(
                     onPressed: () => showAdaptiveSheet<void>(
@@ -641,8 +649,8 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
-            home: AdaptiveStyleScope(
-              override: style,
+            home: TestAdaptiveUiTheme(
+              update: (parentTheme) => parentTheme.copyWith(style: style),
               child: Builder(
                 builder: (context) => ElevatedButton(
                   onPressed: () => showAdaptiveSheet<void>(
@@ -721,8 +729,8 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
-            home: AdaptiveStyleScope(
-              override: testCase.$1,
+            home: TestAdaptiveUiTheme(
+              update: (parentTheme) => parentTheme.copyWith(style: testCase.$1),
               child: Builder(
                 builder: (context) => ElevatedButton(
                   onPressed: () => showAdaptiveSheet<void>(
@@ -840,8 +848,9 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: AdaptiveStyleScope(
-            override: AdaptiveStyle.apple,
+          home: TestAdaptiveUiTheme(
+            update: (parentTheme) =>
+                parentTheme.copyWith(style: AdaptiveStyle.apple),
             child: Builder(
               builder: (context) => ElevatedButton(
                 onPressed: () => showAdaptiveSheet<void>(
@@ -902,8 +911,9 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: AdaptiveStyleScope(
-            override: AdaptiveStyle.apple,
+          home: TestAdaptiveUiTheme(
+            update: (parentTheme) =>
+                parentTheme.copyWith(style: AdaptiveStyle.apple),
             child: Builder(
               builder: (context) => ElevatedButton(
                 onPressed: () => showAdaptiveSheet<void>(
@@ -941,8 +951,9 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: AdaptiveStyleScope(
-            override: AdaptiveStyle.apple,
+          home: TestAdaptiveUiTheme(
+            update: (parentTheme) =>
+                parentTheme.copyWith(style: AdaptiveStyle.apple),
             child: Builder(
               builder: (context) => ElevatedButton(
                 onPressed: () => showAdaptiveSheet<void>(
@@ -1190,8 +1201,8 @@ void main() {
             await tester.pumpWidget(
               MaterialApp(
                 navigatorKey: navigatorKey,
-                home: AdaptiveStyleScope(
-                  override: style,
+                home: TestAdaptiveUiTheme(
+                  update: (parentTheme) => parentTheme.copyWith(style: style),
                   child: Builder(
                     builder: (context) => ElevatedButton(
                       onPressed: () => showAdaptiveSheet<void>(
@@ -1268,8 +1279,9 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           navigatorKey: navigatorKey,
-          home: AdaptiveStyleScope(
-            override: AdaptiveStyle.apple,
+          home: TestAdaptiveUiTheme(
+            update: (parentTheme) =>
+                parentTheme.copyWith(style: AdaptiveStyle.apple),
             child: Builder(
               builder: (context) => ElevatedButton(
                 onPressed: () => showAdaptiveSheet<void>(
@@ -1332,8 +1344,8 @@ void main() {
             String? result;
             await tester.pumpWidget(
               MaterialApp(
-                home: AdaptiveStyleScope(
-                  override: style,
+                home: TestAdaptiveUiTheme(
+                  update: (parentTheme) => parentTheme.copyWith(style: style),
                   child: Builder(
                     builder: (context) => ElevatedButton(
                       onPressed: () async {
@@ -1375,8 +1387,9 @@ void main() {
         late NavigatorState innerNavigator;
         await tester.pumpWidget(
           MaterialApp(
-            home: AdaptiveStyleScope(
-              override: AdaptiveStyle.apple,
+            home: TestAdaptiveUiTheme(
+              update: (parentTheme) =>
+                  parentTheme.copyWith(style: AdaptiveStyle.apple),
               child: Builder(
                 builder: (context) => ElevatedButton(
                   onPressed: () => showAdaptiveSheet<void>(
@@ -1446,8 +1459,8 @@ void main() {
           late NavigatorState innerNavigator;
           await tester.pumpWidget(
             MaterialApp(
-              home: AdaptiveStyleScope(
-                override: style,
+              home: TestAdaptiveUiTheme(
+                update: (parentTheme) => parentTheme.copyWith(style: style),
                 child: Builder(
                   builder: (context) => ElevatedButton(
                     onPressed: () => showAdaptiveSheet<void>(
@@ -1509,8 +1522,8 @@ void main() {
       ) async {
         await tester.pumpWidget(
           MaterialApp(
-            home: AdaptiveStyleScope(
-              override: style,
+            home: TestAdaptiveUiTheme(
+              update: (parentTheme) => parentTheme.copyWith(style: style),
               child: Builder(
                 builder: (context) => ElevatedButton(
                   onPressed: () => showAdaptiveSheet<void>(
@@ -1564,8 +1577,8 @@ void main() {
             String? result;
             await tester.pumpWidget(
               MaterialApp(
-                home: AdaptiveStyleScope(
-                  override: style,
+                home: TestAdaptiveUiTheme(
+                  update: (parentTheme) => parentTheme.copyWith(style: style),
                   child: Builder(
                     builder: (context) => ElevatedButton(
                       onPressed: () async {

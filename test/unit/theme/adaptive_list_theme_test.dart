@@ -67,8 +67,12 @@ void main() {
                 await tester.pumpWidget(
                   MaterialApp(
                     theme: theme,
-                    builder: (context, child) =>
-                        AdaptiveStyleScope(override: style, child: child!),
+                    builder: (context, child) => AppAdaptiveUiTheme(
+                      data: AppAdaptiveUiTheme.of(
+                        context,
+                      ).copyWith(style: style),
+                      child: child!,
+                    ),
                     home: Scaffold(
                       body: AdaptiveListSection(
                         header: const Text('Header'),
@@ -103,7 +107,10 @@ void main() {
                       const Color(0xFF1E1E1E),
                     );
                     final surface = CupertinoDynamicColor.resolve(
-                      theme.extension<AdaptiveListThemeData>()!.surfaceColor!,
+                      theme
+                          .extension<AppAdaptiveUiThemeData>()!
+                          .listTheme
+                          .surfaceColor!,
                       context,
                     );
                     expect(surface.toARGB32(), 0xFF2C2C2E);

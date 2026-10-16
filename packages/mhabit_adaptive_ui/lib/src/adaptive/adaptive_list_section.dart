@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import '../adaptive_style.dart';
+import '../app_adaptive_ui_theme.dart';
 import '../cupertino/cupertino_list_section.dart';
 import '../material/material_list_section.dart';
 
@@ -54,8 +55,8 @@ class AdaptiveListSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (children.isEmpty) return const SizedBox.shrink();
     final effective = style ?? AdaptiveStyle.of(context);
-    return AdaptiveStyleScope(
-      override: effective,
+    return AdaptiveComponentTheme(
+      style: effective,
       child: switch (effective) {
         AdaptiveStyle.apple => CupertinoAdaptiveListSection(
           header: header,

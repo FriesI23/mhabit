@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.14)
+project(mhabit_native_title_bar_tests LANGUAGES CXX)
+enable_testing()
+add_executable(native_title_bar_test "native_title_bar_test.cpp" "../native_title_bar.cpp")
+target_compile_features(native_title_bar_test PRIVATE cxx_std_17)
+target_compile_definitions(native_title_bar_test PRIVATE NOMINMAX)
+target_link_libraries(native_title_bar_test PRIVATE dwmapi)
+add_test(NAME native_title_bar COMMAND native_title_bar_test)

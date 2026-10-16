@@ -4,7 +4,8 @@ name: Test CI Report
 on:
   workflow_run:
     workflows:
-      - Test CI
+      - Check PR
+      - Check Main Branch Push
     types:
       - completed
 
@@ -18,23 +19,42 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: dorny/test-reporter@v3
+        if: success() || failure()
         with:
           artifact: flutter-unittest-result
           name: Flutter Test
           path: test_report.log
           reporter: flutter-json
       - uses: dorny/test-reporter@v3
+        if: success() || failure()
         with:
           artifact: flutter-package-unittest-result
           name: Flutter Package Test
-          path: build/test-results/flutter/*.json
+          path: '*.json'
           reporter: flutter-json
       - uses: dorny/test-reporter@v3
+        if: success() || failure()
         with:
           artifact: dart-package-unittest-result
           name: Dart Package Test
-          path: build/test-results/dart/*.json
+          path: '*.json'
           reporter: dart-json
+          # There may be no pure-Dart packages with a test/ directory.
+          fail-on-empty: 'false'
+      - uses: dorny/test-reporter@v3
+        if: success() || failure()
+        with:
+          artifact: linux-native-xml
+          name: Linux Native Test
+          path: native_test_linux.xml
+          reporter: java-junit
+      - uses: dorny/test-reporter@v3
+        if: success() || failure()
+        with:
+          artifact: windows-native-xml
+          name: Windows Native Test
+          path: native_test_windows.xml
+          reporter: java-junit
       # - uses: dorny/test-reporter@v3
       #   with:
       #     artifact: android-unittest-xml

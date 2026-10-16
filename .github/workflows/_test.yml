@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup_flutter
       - name: Run app and package test suites
-        run: dart run melos run test-ci
+        run: make test-ci
       - uses: actions/upload-artifact@v7
         if: success() || failure()
         with:
@@ -27,6 +27,66 @@ jobs:
         with:
           name: dart-package-unittest-result
           path: build/test-results/dart/*.json
+
+  linux-native:
+    name: Linux Native Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install GTK build and display dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y cmake g++ pkg-config libgtk-3-dev xvfb xauth
+      - name: Run GTK native tests
+        run: xvfb-run -a make test-linux
+        env:
+          GDK_BACKEND: x11
+          # These title-bar tests do not need an accessibility bus in headless CI.
+          NO_AT_BRIDGE: "1"
+      - uses: actions/upload-artifact@v7
+        if: success() || failure()
+        with:
+          name: linux-native-xml
+          path: build/test-results/native/native_test_linux.xml
+          if-no-files-found: warn
+
+  windows-native:
+    name: Windows Native Test
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install GNU Make
+        run: choco install make -y --no-progress
+      - name: Run Win32 native tests
+        run: make test-windows
+      - uses: actions/upload-artifact@v7
+        if: success() || failure()
+        with:
+          name: windows-native-xml
+          path: build/test-results/native/native_test_windows.xml
+          if-no-files-found: warn
+
+  macos-native:
+    name: macOS Native Test (app-hosted XCTest)
+    # Match the app's existing Apple build runner and Xcode selection.
+    runs-on: xcode-27
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup_xcode
+      - uses: ./.github/actions/setup_flutter
+      - name: Run app-hosted XCTest
+        run: make test-macos MACOS_TEST_FLAVOR=f_generic
+      - uses: actions/upload-artifact@v7
+        if: success() || failure()
+        with:
+          name: macos-native-result
+          path: |
+            build/test-results/native/macos.xcresult
+            build/test-results/native/macos.log
+          if-no-files-found: warn
 
   # android-test:
   #   name: Android Unit Test

@@ -9,6 +9,7 @@ import '../shell/navigation_scroll_wish_policy.dart';
 import '../shell/navigation_shell_form.dart';
 import '../shell/navigation_shell_frame.dart';
 import '../shell/sidebar_adapter.dart';
+import '../window_control/interaction_region.dart';
 import '../window_control/window_control_layout.dart';
 import 'material_navigation_bar.dart';
 
@@ -83,6 +84,16 @@ class MaterialNavigationShell extends StatelessWidget {
 
     return _MaterialNavigationBarPresentation.short;
   }
+
+  Color? _resolveNavigationSurfaceColor(
+    BuildContext context,
+    NavigationShellForm form,
+  ) => switch (form) {
+    NavigationShellForm.compact => null,
+    NavigationShellForm.constrainedSide || NavigationShellForm.expandedSide =>
+      NavigationRailTheme.of(context).backgroundColor ??
+          Theme.of(context).colorScheme.surface,
+  };
 
   WindowControlLayoutOwner _resolveWindowControlOwner(
     NavigationShellForm form,
@@ -167,6 +178,7 @@ class MaterialNavigationShell extends StatelessWidget {
             child: child,
           ),
       windowControlOwnerResolver: _resolveWindowControlOwner,
+      navigationSurfaceColorResolver: _resolveNavigationSurfaceColor,
       compactNavigationBuilder: (context, state) =>
           CompactNavigationChromeTransition(
             visibility: state.visible,
@@ -268,14 +280,16 @@ class _MaterialNavigationShellBodyState
     );
     final sideNavigation = NavigationObstructionScope(
       obstruction: context.sidebarNavigationObstruction,
-      child: MaterialSidebar(
-        controller: _controller,
-        content: navigation,
-        extent: widget.sideNavigationExtent,
-        collapsedExtent: widget.railStyle.collapsedExtent,
-        dragHandleBuilder: widget.dragHandleBuilder,
-        expandLabel: widget.expandNavigationLabel,
-        collapseLabel: widget.collapseNavigationLabel,
+      child: AdaptiveWindowInteractionRegion(
+        child: MaterialSidebar(
+          controller: _controller,
+          content: navigation,
+          extent: widget.sideNavigationExtent,
+          collapsedExtent: widget.railStyle.collapsedExtent,
+          dragHandleBuilder: widget.dragHandleBuilder,
+          expandLabel: widget.expandNavigationLabel,
+          collapseLabel: widget.collapseNavigationLabel,
+        ),
       ),
     );
     return ColoredBox(

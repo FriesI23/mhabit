@@ -27,6 +27,7 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../support/adaptive_dialog.dart';
+import '../../../support/adaptive_ui_theme.dart';
 
 final class _FakeAppSyncSettingsAccess extends ChangeNotifier
     implements AppSyncSettingsAccess {
@@ -87,8 +88,8 @@ Widget _host({
         dispose: (_, _) {},
       ),
     ],
-    child: AdaptiveStyleScope(
-      override: style,
+    child: TestAdaptiveUiTheme(
+      update: (parentTheme) => parentTheme.copyWith(style: style),
       child: const MaterialApp(
         localizationsDelegates: L10n.localizationsDelegates,
         supportedLocales: L10n.supportedLocales,

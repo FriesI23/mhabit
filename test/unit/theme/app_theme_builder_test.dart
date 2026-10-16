@@ -17,8 +17,10 @@ import 'package:mhabit/theme/linux_bundled_font.dart';
 import 'package:mhabit/widgets/styles.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart'
     show
-        AdaptiveCupertinoButtonThemeData,
+        AdaptiveCupertinoFocusDecoration,
         AdaptiveCupertinoFocusThemeData,
+        AppAdaptiveUiTheme,
+        AppAdaptiveUiThemeData,
         CupertinoSidebarThemeData;
 
 void _withPlatform(TargetPlatform platform, void Function() body) {
@@ -39,6 +41,55 @@ void _expectMaterialRailSurface(ThemeData theme) {
 void main() {
   const builder = AppThemeBuilder();
   const fallbackMainColor = Color(0xFF112233);
+
+  testWidgets('sidebar halo reads the theme where its widget is inserted', (
+    tester,
+  ) async {
+    final theme = builder.buildLight(
+      themeColor: const PrimaryAppThemeColor(),
+      themeMainColor: fallbackMainColor,
+    );
+    final callback = theme
+        .extension<CupertinoSidebarThemeData>()!
+        .focusHaloBuilder!;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: theme,
+        home: Builder(
+          builder: (context) {
+            final halo = callback(
+              context,
+              visible: true,
+              decoration: const ShapeDecoration(
+                shape: RoundedRectangleBorder(),
+              ),
+              child: const SizedBox(width: 40, height: 40),
+            );
+            return AppAdaptiveUiTheme(
+              data: AppAdaptiveUiTheme.of(context).copyWith(
+                cupertinoFocusTheme: const AdaptiveCupertinoFocusThemeData(
+                  haloWidth: 9,
+                ),
+              ),
+              child: halo,
+            );
+          },
+        ),
+      ),
+    );
+    final decorated = tester.widget<DecoratedBox>(
+      find.descendant(
+        of: find.byType(AdaptiveCupertinoFocusDecoration),
+        matching: find.byType(DecoratedBox),
+      ),
+    );
+    expect(
+      ((decorated.decoration as ShapeDecoration).shape as OutlinedBorder)
+          .side
+          .width,
+      9,
+    );
+  });
 
   group('AppThemeBuilder.buildLight / buildDark', () {
     test(
@@ -227,7 +278,9 @@ void main() {
           theme.extension<CupertinoSidebarThemeData>()?.edgeBackgroundColor,
           isNull,
         );
-        final focusTheme = theme.extension<AdaptiveCupertinoFocusThemeData>()!;
+        final focusTheme = theme
+            .extension<AppAdaptiveUiThemeData>()!
+            .cupertinoFocusTheme;
         expect(focusTheme.haloWidth, 3.5);
         expect(focusTheme.haloPaintOutset, 4);
         expect(
@@ -236,8 +289,9 @@ void main() {
         );
         expect(
           theme
-              .extension<AdaptiveCupertinoButtonThemeData>()
-              ?.neutralForegroundColor,
+              .extension<AppAdaptiveUiThemeData>()
+              ?.cupertinoButtonTheme
+              .neutralForegroundColor,
           CupertinoColors.label,
         );
       });
@@ -260,8 +314,9 @@ void main() {
         );
         expect(
           theme
-              .extension<AdaptiveCupertinoButtonThemeData>()
-              ?.neutralForegroundColor,
+              .extension<AppAdaptiveUiThemeData>()
+              ?.cupertinoButtonTheme
+              .neutralForegroundColor,
           theme.colorScheme.onSurfaceVariant,
         );
       });
@@ -276,8 +331,9 @@ void main() {
 
         expect(
           theme
-              .extension<AdaptiveCupertinoButtonThemeData>()
-              ?.neutralForegroundColor,
+              .extension<AppAdaptiveUiThemeData>()
+              ?.cupertinoButtonTheme
+              .neutralForegroundColor,
           theme.colorScheme.onSurfaceVariant,
         );
       });

@@ -5,11 +5,14 @@ export 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
     show
         CupertinoSidebarItemStyle,
         CupertinoSidebarThemeData,
+        CupertinoSidebarToolbarGeometry,
         SideNavigationDragHandleBuilder,
         SideNavigationExtent,
         kCupertinoSidebarEdgeFillAlpha;
+
 export 'src/adaptive/adaptive_app_bar.dart';
 export 'src/adaptive/adaptive_app_bar_actions.dart';
+export 'src/adaptive/adaptive_app_bar_theme_data.dart';
 export 'src/adaptive/adaptive_back_button.dart';
 export 'src/adaptive/adaptive_checkmark.dart';
 export 'src/adaptive/adaptive_choice_list_tile.dart';
@@ -30,9 +33,13 @@ export 'src/adaptive/adaptive_sliver_app_bar.dart';
 export 'src/adaptive/adaptive_sliver_search_bar.dart';
 export 'src/adaptive/adaptive_switch_list_tile.dart';
 export 'src/adaptive_style.dart';
+export 'src/app_adaptive_ui_theme.dart'
+    show AppAdaptiveUiTheme, AppAdaptiveUiThemeData;
 export 'src/breakpoints/breakpoints.dart';
 export 'src/breakpoints/device_context.dart';
 export 'src/breakpoints/window_size_class.dart';
+export 'src/cupertino/adaptive_cupertino_focus_decoration.dart';
+export 'src/cupertino/adaptive_cupertino_focus_halo.dart';
 export 'src/cupertino/adaptive_cupertino_focus_theme.dart';
 export 'src/cupertino/app_bar_apple_style.dart'
     show $AppBarAppleStyleCopyWith, AppBarAppleStyle;
@@ -72,5 +79,6 @@ export 'src/shell/adaptive_navigation.dart';
 export 'src/shell/navigation_shell_form.dart';
 export 'src/shell/sidebar_adapter.dart' show CupertinoSidebarPresentationScope;
 export 'src/window_control/cupertino_navigation_bar.dart';
+export 'src/window_control/interaction_region.dart';
 export 'src/window_control/material_app_bar.dart';
 export 'src/window_control/window_control_layout.dart';

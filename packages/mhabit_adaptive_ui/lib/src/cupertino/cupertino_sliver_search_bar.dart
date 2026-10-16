@@ -1,5 +1,8 @@
+import 'dart:math' as math;
+
 import 'package:adaptive_actions/cupertino.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' show Theme;
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
 import '../adaptive/adaptive_app_bar_actions.dart';
@@ -8,6 +11,7 @@ import '../shell/sidebar_adapter.dart';
 import '../window_control/cupertino_navigation_bar.dart';
 import 'cupertino_search_toolbar.dart';
 import 'cupertino_sidebar_navigation_bar_bottom.dart';
+import 'cupertino_toolbar_extensions.dart';
 
 /// Cupertino presentation for an inline, sliver-based search command bar.
 ///
@@ -38,6 +42,7 @@ class CupertinoSliverSearchBar<T extends Object> extends StatefulWidget {
     this.onSubmitted,
     this.onTapOutside,
     this.maxSearchWidth = 240.0,
+    this.toolbarTopInset,
     this.bottom,
     this.bottomExtent = 0.0,
     this.pinned = true,
@@ -60,6 +65,11 @@ class CupertinoSliverSearchBar<T extends Object> extends StatefulWidget {
   final VoidCallback onSearchDismissed;
   final TapRegionCallback? onTapOutside;
   final double maxSearchWidth;
+
+  /// Minimum local space above the Apple toolbar.
+  /// Null uses the desktop default; zero disables it. A larger top safe area
+  /// takes precedence without adding the two insets.
+  final double? toolbarTopInset;
   final Widget? bottom;
   final double bottomExtent;
   final bool pinned;
@@ -167,11 +177,17 @@ class _CupertinoSliverSearchBarState<T extends Object>
 
   @override
   Widget build(BuildContext context) {
+    final toolbarTopInset =
+        widget.toolbarTopInset ??
+        Theme.of(context).platform.defaultCupertinoToolbarTopInset;
     final sidebarLeading = SidebarLeadingScope.maybeOf(context);
     final widthClass = WindowSize.of(context).width;
     final isCompact = !(widthClass >= WindowSizeClass.medium);
     final isLarge = widthClass >= WindowSizeClass.large;
-    final topPadding = MediaQuery.paddingOf(context).top;
+    final topPadding = math.max(
+      MediaQuery.paddingOf(context).top,
+      toolbarTopInset,
+    );
     final toolbarGeometry = CupertinoSidebarPresentationScope.toolbarGeometryOf(
       context,
     );
@@ -179,11 +195,13 @@ class _CupertinoSliverSearchBarState<T extends Object>
         ? null
         : CupertinoSidebarNavigationBarBottom.maybeFromGeometry(
             toolbarGeometry,
+            toolbarTopInset: toolbarTopInset,
           );
     final toolbarHeight = toolbarGeometry.contentHeight;
     final sidebarToolbarHeight = sidebarLeading == null
         ? toolbarHeight
-        : toolbarGeometry.height;
+        : toolbarHeight +
+              (sidebarNavigationBarBottom?.preferredSize.height ?? 0);
     final extent = topPadding + sidebarToolbarHeight + widget.bottomExtent;
 
     return SliverPersistentHeader(
@@ -197,6 +215,7 @@ class _CupertinoSliverSearchBarState<T extends Object>
             fit: StackFit.expand,
             children: [
               WindowControlCupertinoNavigationBar(
+                toolbarTopInset: toolbarTopInset,
                 automaticallyImplyLeading: false,
                 transitionBetweenRoutes: false,
                 automaticBackgroundVisibility: true,

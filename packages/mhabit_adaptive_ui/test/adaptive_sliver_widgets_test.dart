@@ -3,8 +3,9 @@ import 'package:flutter/cupertino.dart'
     show CupertinoColors, CupertinoNavigationBar, CupertinoSliverNavigationBar;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+
+import 'harness/adaptive_ui_theme.dart';
 
 void main() {
   group('AdaptiveStyle.of', () {
@@ -244,12 +245,14 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(platform: TargetPlatform.iOS),
-          home: const Scaffold(
+          home: Scaffold(
             body: CustomScrollView(
               slivers: [
-                BreakpointsScope(
-                  breakpoints: CustomBreakpoints(width: [1200]),
-                  child: AdaptiveSliverAppBar(title: Text('title')),
+                TestAdaptiveUiTheme(
+                  update: (parentTheme) => parentTheme.copyWith(
+                    breakpoints: const CustomBreakpoints(width: [1200]),
+                  ),
+                  child: const AdaptiveSliverAppBar(title: Text('title')),
                 ),
               ],
             ),

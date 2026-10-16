@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
+import '../material/material_app_bar_background.dart';
 import '../shell/sidebar_adapter.dart';
+import 'interaction_region.dart';
 import 'toolbar_geometry.dart';
 
 /// A Material [AppBar] whose leading and action slots avoid window controls.
@@ -128,6 +130,7 @@ class WindowControlAppBar extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
+    final title = this.title;
     final sidebarLeading = SidebarLeadingScope.maybeOf(context);
     final effectiveFlexibleSpace = _centeredSidebarAnchorFlexibleSpace(
       context,
@@ -149,7 +152,12 @@ class WindowControlAppBar extends StatelessWidget
     return AppBar(
       leading: slots.leading,
       automaticallyImplyLeading: slots.automaticallyImplyLeading,
-      title: title,
+      title: title == null
+          ? null
+          : AdaptiveWindowInteractionBinding.maybeOf(
+                  context,
+                )?.wrapInteractionRegion(title) ??
+                title,
       actions: slots.actions,
       automaticallyImplyActions: slots.automaticallyImplyActions,
       flexibleSpace: effectiveFlexibleSpace,
@@ -157,9 +165,15 @@ class WindowControlAppBar extends StatelessWidget
       elevation: elevation,
       scrolledUnderElevation: scrolledUnderElevation,
       shadowColor: shadowColor,
-      surfaceTintColor: surfaceTintColor,
+      surfaceTintColor: MaterialAppBarBackground.tintOf(
+        context,
+        surfaceTintColor,
+      ),
       shape: shape,
-      backgroundColor: backgroundColor,
+      backgroundColor: MaterialAppBarBackground.backgroundOf(
+        context,
+        backgroundColor,
+      ),
       foregroundColor: foregroundColor,
       iconTheme: iconTheme,
       actionsIconTheme: actionsIconTheme,
@@ -434,8 +448,14 @@ class WindowControlSliverAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final title = this.title;
     final sidebarLeading = SidebarLeadingScope.maybeOf(context);
-    final effectiveTitle = title;
+    final effectiveTitle = title == null
+        ? null
+        : AdaptiveWindowInteractionBinding.maybeOf(
+                context,
+              )?.wrapInteractionRegion(title) ??
+              title;
     final effectiveCenterTitle = sidebarLeading == null ? centerTitle : false;
     final effectiveFlexibleSpace = _centeredSidebarAnchorFlexibleSpace(
       context,
@@ -466,9 +486,15 @@ class WindowControlSliverAppBar extends StatelessWidget {
         elevation: elevation,
         scrolledUnderElevation: scrolledUnderElevation,
         shadowColor: shadowColor,
-        surfaceTintColor: surfaceTintColor,
+        surfaceTintColor: MaterialAppBarBackground.tintOf(
+          context,
+          surfaceTintColor,
+        ),
         forceElevated: forceElevated,
-        backgroundColor: backgroundColor,
+        backgroundColor: MaterialAppBarBackground.backgroundOf(
+          context,
+          backgroundColor,
+        ),
         foregroundColor: foregroundColor,
         iconTheme: iconTheme,
         actionsIconTheme: actionsIconTheme,
@@ -491,12 +517,14 @@ class WindowControlSliverAppBar extends StatelessWidget {
         actionsPadding: actionsPadding,
       ),
       _WindowControlSliverAppBarVariant.medium => _buildMedium(
+        context,
         slots,
         effectiveTitle,
         effectiveCenterTitle,
         effectiveFlexibleSpace,
       ),
       _WindowControlSliverAppBarVariant.large => _buildLarge(
+        context,
         slots,
         effectiveTitle,
         effectiveCenterTitle,
@@ -506,6 +534,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
   }
 
   Widget _buildMedium(
+    BuildContext context,
     _MaterialToolbarSlots slots,
     Widget? effectiveTitle,
     bool? effectiveCenterTitle,
@@ -521,9 +550,15 @@ class WindowControlSliverAppBar extends StatelessWidget {
     elevation: elevation,
     scrolledUnderElevation: scrolledUnderElevation,
     shadowColor: shadowColor,
-    surfaceTintColor: surfaceTintColor,
+    surfaceTintColor: MaterialAppBarBackground.tintOf(
+      context,
+      surfaceTintColor,
+    ),
     forceElevated: forceElevated,
-    backgroundColor: backgroundColor,
+    backgroundColor: MaterialAppBarBackground.backgroundOf(
+      context,
+      backgroundColor,
+    ),
     foregroundColor: foregroundColor,
     iconTheme: iconTheme,
     actionsIconTheme: actionsIconTheme,
@@ -547,6 +582,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
   );
 
   Widget _buildLarge(
+    BuildContext context,
     _MaterialToolbarSlots slots,
     Widget? effectiveTitle,
     bool? effectiveCenterTitle,
@@ -565,9 +601,15 @@ class WindowControlSliverAppBar extends StatelessWidget {
         elevation: elevation,
         scrolledUnderElevation: scrolledUnderElevation,
         shadowColor: shadowColor,
-        surfaceTintColor: surfaceTintColor,
+        surfaceTintColor: MaterialAppBarBackground.tintOf(
+          context,
+          surfaceTintColor,
+        ),
         forceElevated: forceElevated,
-        backgroundColor: backgroundColor,
+        backgroundColor: MaterialAppBarBackground.backgroundOf(
+          context,
+          backgroundColor,
+        ),
         foregroundColor: foregroundColor,
         iconTheme: iconTheme,
         actionsIconTheme: actionsIconTheme,
@@ -600,9 +642,15 @@ class WindowControlSliverAppBar extends StatelessWidget {
       elevation: elevation,
       scrolledUnderElevation: scrolledUnderElevation,
       shadowColor: shadowColor,
-      surfaceTintColor: surfaceTintColor,
+      surfaceTintColor: MaterialAppBarBackground.tintOf(
+        context,
+        surfaceTintColor,
+      ),
       forceElevated: forceElevated,
-      backgroundColor: backgroundColor,
+      backgroundColor: MaterialAppBarBackground.backgroundOf(
+        context,
+        backgroundColor,
+      ),
       foregroundColor: foregroundColor,
       iconTheme: iconTheme,
       actionsIconTheme: actionsIconTheme,
@@ -703,6 +751,14 @@ _MaterialToolbarSlots _resolveMaterialToolbarSlots(
   }
   if (endInset > 0) effectiveAutomaticallyImplyActions = false;
 
+  if (effectiveLeading != null) {
+    effectiveLeading =
+        AdaptiveWindowInteractionBinding.maybeOf(
+          context,
+        )?.wrapInteractionRegion(effectiveLeading) ??
+        effectiveLeading;
+  }
+
   Widget? paddedLeading;
   double? effectiveLeadingWidth = leadingWidth;
   final sidebarExtent = sidebarLeading?.reservedExtent ?? 0;
@@ -745,10 +801,20 @@ _MaterialToolbarSlots _resolveMaterialToolbarSlots(
   }
 
   return _MaterialToolbarSlots(
-    leading: startInset > 0 || sidebarLeading != null ? paddedLeading : leading,
+    leading: startInset > 0 || sidebarLeading != null
+        ? paddedLeading
+        : effectiveLeading,
     automaticallyImplyLeading: effectiveAutomaticallyImplyLeading,
     leadingWidth: effectiveLeadingWidth,
-    actions: effectiveActions,
+    actions: effectiveActions
+        ?.map(
+          (child) =>
+              AdaptiveWindowInteractionBinding.maybeOf(
+                context,
+              )?.wrapInteractionRegion(child) ??
+              child,
+        )
+        .toList(),
     automaticallyImplyActions: effectiveAutomaticallyImplyActions,
   );
 }

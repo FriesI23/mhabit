@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/window_control/modal_app_bar_region.dart';
+
+import 'harness/adaptive_ui_theme.dart';
 
 class _MotionBuildHarness extends StatefulWidget {
   const _MotionBuildHarness();
@@ -55,8 +56,8 @@ Widget _buildTestApp({
   owner: WindowControlLayoutOwner.appBar,
   child: MaterialApp(
     theme: theme,
-    home: AdaptiveStyleScope(
-      override: style,
+    home: TestAdaptiveUiTheme(
+      update: (parentTheme) => parentTheme.copyWith(style: style),
       child: Builder(
         builder: (context) => Scaffold(
           body: ElevatedButton(
@@ -252,8 +253,8 @@ void main() {
       ) async {
         await tester.pumpWidget(
           MaterialApp(
-            home: AdaptiveStyleScope(
-              override: style,
+            home: TestAdaptiveUiTheme(
+              update: (parentTheme) => parentTheme.copyWith(style: style),
               child: const SizedBox(
                 width: 320,
                 height: 320,
@@ -512,8 +513,9 @@ void main() {
             verticalAvoidance: const EdgeInsets.only(top: 80),
             owner: WindowControlLayoutOwner.appBar,
             child: MaterialApp(
-              home: AdaptiveStyleScope(
-                override: AdaptiveStyle.apple,
+              home: TestAdaptiveUiTheme(
+                update: (parentTheme) =>
+                    parentTheme.copyWith(style: AdaptiveStyle.apple),
                 child: Builder(
                   builder: (context) => Scaffold(
                     body: ElevatedButton(
@@ -579,8 +581,9 @@ void main() {
             verticalAvoidance: const EdgeInsets.only(top: 120),
             owner: WindowControlLayoutOwner.appBar,
             child: MaterialApp(
-              home: AdaptiveStyleScope(
-                override: AdaptiveStyle.material,
+              home: TestAdaptiveUiTheme(
+                update: (parentTheme) =>
+                    parentTheme.copyWith(style: AdaptiveStyle.material),
                 child: Builder(
                   builder: (context) => Scaffold(
                     body: ElevatedButton(
@@ -665,33 +668,86 @@ void main() {
       );
     });
 
-    testWidgets('Material modal keeps one themed surface color', (
-      tester,
-    ) async {
-      const backgroundColor = Color(0xFF123456);
-      await tester.pumpWidget(
-        _buildTestApp(
-          style: AdaptiveStyle.material,
-          presentation: AdaptiveModalPresentation.dialog,
-          theme: ThemeData(
-            dialogTheme: const DialogThemeData(
-              backgroundColor: backgroundColor,
-            ),
-          ),
-          modalBuilder: (_) =>
-              const AdaptiveModal(title: Text('Title'), body: Text('Body')),
-        ),
-      );
-      await _open(tester);
+    for (final platform in [TargetPlatform.windows, TargetPlatform.linux]) {
+      for (final brightness in Brightness.values) {
+        for (final customBackground in [false, true]) {
+          for (final fixedBackground in [false, true]) {
+            testWidgets(
+              'Material modal keeps one themed surface color: '
+              '$platform $brightness custom=$customBackground fixed=$fixedBackground',
+              (tester) async {
+                final theme = ThemeData(
+                  platform: platform,
+                  brightness: brightness,
+                  colorSchemeSeed: Colors.blue,
+                  dialogTheme: DialogThemeData(
+                    backgroundColor: customBackground
+                        ? const Color(0xFF123456)
+                        : null,
+                  ),
+                  extensions: [
+                    AppAdaptiveUiThemeData(
+                      appBarTheme: AdaptiveAppBarThemeData(
+                        materialFixedScrollBackground: fixedBackground,
+                      ),
+                    ),
+                  ],
+                );
+                final backgroundColor =
+                    theme.dialogTheme.backgroundColor ??
+                    theme.colorScheme.surfaceContainerHigh;
+                await tester.pumpWidget(
+                  _buildTestApp(
+                    style: AdaptiveStyle.material,
+                    presentation: AdaptiveModalPresentation.dialog,
+                    theme: theme,
+                    modalBuilder: (_) => const AdaptiveModal(
+                      title: Text('Title'),
+                      body: SizedBox(height: 1200, child: Text('Body')),
+                    ),
+                  ),
+                );
+                await _open(tester);
 
-      expect(
-        tester.widget<Dialog>(find.byType(Dialog)).backgroundColor,
-        backgroundColor,
-      );
-      final appBarTheme = AppBarTheme.of(tester.element(find.byType(AppBar)));
-      expect(appBarTheme.backgroundColor, backgroundColor);
-      expect(appBarTheme.surfaceTintColor, Colors.transparent);
-    });
+                expect(
+                  tester.widget<Dialog>(find.byType(Dialog)).backgroundColor,
+                  backgroundColor,
+                );
+                final appBarTheme = AppBarTheme.of(
+                  tester.element(find.byType(AppBar)),
+                );
+                expect(appBarTheme.backgroundColor, backgroundColor);
+                expect(appBarTheme.surfaceTintColor, Colors.transparent);
+                Material appBarMaterial() => tester.widget<Material>(
+                  find
+                      .descendant(
+                        of: find.byType(AppBar),
+                        matching: find.byType(Material),
+                      )
+                      .first,
+                );
+                expect(appBarMaterial().color, backgroundColor);
+                expect(appBarMaterial().surfaceTintColor, Colors.transparent);
+                final bodyMaterial = tester.widget<Material>(
+                  find
+                      .ancestor(
+                        of: find.text('Body'),
+                        matching: find.byType(Material),
+                      )
+                      .first,
+                );
+                expect(bodyMaterial.color, backgroundColor);
+                _scrollControllerOf(tester)!.jumpTo(100);
+                await tester.pumpAndSettle();
+                expect(appBarMaterial().color, backgroundColor);
+                expect(appBarMaterial().surfaceTintColor, Colors.transparent);
+                expect(tester.takeException(), isNull);
+              },
+            );
+          }
+        }
+      }
+    }
 
     for (final style in AdaptiveStyle.values) {
       testWidgets('${style.name} dialog does not stack bottom safe area', (
@@ -760,8 +816,9 @@ void main() {
           verticalAvoidance: const EdgeInsets.only(top: 24),
           owner: WindowControlLayoutOwner.appBar,
           child: MaterialApp(
-            home: AdaptiveStyleScope(
-              override: AdaptiveStyle.material,
+            home: TestAdaptiveUiTheme(
+              update: (parentTheme) =>
+                  parentTheme.copyWith(style: AdaptiveStyle.material),
               child: Builder(
                 builder: (context) => ElevatedButton(
                   onPressed: () => showAdaptiveSheet<void>(

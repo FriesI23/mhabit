@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../app_adaptive_ui_theme.dart';
+
 /// Optional list palette. Apple roles and the Material section surface are
 /// separate. Null roles fall back to renderer defaults from ColorScheme.
 /// Dynamic Cupertino colors are resolved by consumers in their own context.
 @immutable
-class AdaptiveListThemeData extends ThemeExtension<AdaptiveListThemeData> {
+class AdaptiveListThemeData {
   const AdaptiveListThemeData({
     this.surfaceColor,
     this.materialSurfaceColor,
@@ -27,7 +29,6 @@ class AdaptiveListThemeData extends ThemeExtension<AdaptiveListThemeData> {
   final Color? activatedColor;
   final Color? focusColor;
 
-  @override
   AdaptiveListThemeData copyWith({
     Color? surfaceColor,
     Color? materialSurfaceColor,
@@ -48,16 +49,39 @@ class AdaptiveListThemeData extends ThemeExtension<AdaptiveListThemeData> {
     focusColor: focusColor ?? this.focusColor,
   );
 
-  @override
   AdaptiveListThemeData lerp(covariant AdaptiveListThemeData? other, double t) {
     if (other == null) return this;
     // Keep dynamic system colors intact; resolve them in the live brightness
     // and interface-level context, rather than interpolating their light value.
     return t < 0.5 ? this : other;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is AdaptiveListThemeData &&
+      surfaceColor == other.surfaceColor &&
+      materialSurfaceColor == other.materialSurfaceColor &&
+      foregroundColor == other.foregroundColor &&
+      secondaryColor == other.secondaryColor &&
+      iconColor == other.iconColor &&
+      separatorColor == other.separatorColor &&
+      activatedColor == other.activatedColor &&
+      focusColor == other.focusColor;
+
+  @override
+  int get hashCode => Object.hash(
+    surfaceColor,
+    materialSurfaceColor,
+    foregroundColor,
+    secondaryColor,
+    iconColor,
+    separatorColor,
+    activatedColor,
+    focusColor,
+  );
 }
 
-/// A local list theme. Omitted fields fall back to the global theme in renderers.
+/// A local list palette. Omitted fields fall back to the active adaptive theme.
 class AdaptiveListTheme extends InheritedTheme {
   const AdaptiveListTheme({
     super.key,
@@ -67,10 +91,23 @@ class AdaptiveListTheme extends InheritedTheme {
 
   final AdaptiveListThemeData data;
 
-  static AdaptiveListThemeData of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<AdaptiveListTheme>()?.data ??
-      Theme.of(context).extension<AdaptiveListThemeData>() ??
-      const AdaptiveListThemeData();
+  static AdaptiveListThemeData of(BuildContext context) {
+    final global = AppAdaptiveUiTheme.of(context).listTheme;
+    final local = context
+        .dependOnInheritedWidgetOfExactType<AdaptiveListTheme>()
+        ?.data;
+    if (local == null) return global;
+    return global.copyWith(
+      surfaceColor: local.surfaceColor,
+      materialSurfaceColor: local.materialSurfaceColor,
+      foregroundColor: local.foregroundColor,
+      secondaryColor: local.secondaryColor,
+      iconColor: local.iconColor,
+      separatorColor: local.separatorColor,
+      activatedColor: local.activatedColor,
+      focusColor: local.focusColor,
+    );
+  }
 
   /// Retains the nearest component theme's values while applying non-null fields.
   static Widget merge({

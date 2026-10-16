@@ -18,6 +18,7 @@ import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
 import '../../../extensions/adaptive_style_extensions.dart';
+import '../../../extensions/target_platform_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_form.dart';
 import '../_providers/habit_summary.dart';
@@ -239,7 +240,9 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
         typeChanged: _onTypeFilterChanged,
         onClearFilterPressed: _vm.onClearSearchFilter,
       ),
-      style: const MaterialSliverSearchBarStyle(
+      style: MaterialSliverSearchBarStyle(
+        floating: DeviceContext.of(context).platform.isMobileOperatingSystem,
+        snap: DeviceContext.of(context).platform.isMobileOperatingSystem,
         toolbarHeight: AppAdaptiveStyle.materialToolbarHeight,
         scrolledUnderElevation: kCommonEvalation,
         shadowColor: Colors.transparent,

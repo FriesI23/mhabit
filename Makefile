@@ -15,6 +15,7 @@ define run_script
 endef
 else
 SHELL := /bin/bash
+HOST_PLATFORM := $(shell uname -s)
 LOCAL_FLUTTER := $(abspath ./.flutter/bin/flutter)
 LOCAL_DART := $(abspath ./.flutter/bin/dart)
 MELOS := "$(LOCAL_DART)" run melos
@@ -34,10 +35,15 @@ export MHABIT_MAKE_PATH_READY := 1
 endif
 
 SYNC_RULES_FILE ?= docs/rules/rules.md
+DESKTOP_WINDOW_CHROME_PACKAGE_DIR := packages/mhabit_desktop_window_chrome
+NATIVE_TEST_BUILD_DIR := build/native-tests
+NATIVE_TEST_RESULTS_DIR ?= build/test-results/native
+MACOS_TEST_FLAVOR ?= f_generic
 
 
 .PHONY: help init bootstrap \
 	normalize-l10n build-runner format fix gen-icons test gen \
+	test-ci test-native test-linux test-windows test-macos test-all \
 	verify-generated verify-submodules aio aio-full sync-rules unsync-rules \
 	gen-screenshot-data gen-natural-sort-data
 
@@ -47,16 +53,23 @@ help:
 	@echo   init              Configure git hooks and aliases, initialize submodule, fetch packages
 	@echo   bootstrap         Alias of init
 	@echo   normalize-l10n    Normalize ARB resources
-	@echo   build-runner      Run build_runner generators and gen-l10n
+	@echo   build-runner      Run Pigeon, build_runner generators and gen-l10n
 	@echo   format            Format Dart sources under lib and test
 	@echo   fix               Apply Dart fixes and then format sources
 	@echo   gen-icons         Generate icon fonts
-	@echo   test              Run the root app, internal package, and Android native test suites
+	@echo   test              Run the root app and internal Dart/Flutter package tests
+	@echo   test-ci           Run Dart/Flutter tests with machine-readable results
+	@echo   test-native       Run native tests for the current desktop host
+	@echo "  test-linux        Run GTK C++ tests; requires a display or xvfb-run"
+	@echo   test-windows      Run Win32 C++ tests with CMake and CTest
+	@echo   test-macos        Run app-hosted XCTest with Xcode
+	@echo "                    MACOS_TEST_FLAVOR=f_generic (default), f_dev, or f_store"
+	@echo   test-all          Run Dart/Flutter tests and current-host native tests
 	@echo   gen               Run the main generation workflow
 	@echo   verify-generated  Ensure normalized/generated files are up to date
 	@echo   verify-submodules Show recursive submodule status
 	@echo   aio               Run generation, fixes, and generation verification
-	@echo   aio-full          Run aio plus the root app and internal package test suites
+	@echo   aio-full          Run aio plus test-all
 	@echo "  sync-rules        Distribute rule references to AI tools (SYNC_RULES_FILE=docs/rules/rules.md)"
 	@echo "  gen-screenshot-data    Generate seed JSON for screenshots (all langs, default config)"
 	@echo "  gen-natural-sort-data  Generate seed JSON for natural-sort testing (zh+en, 39 groups)"
@@ -96,7 +109,69 @@ gen-icons:
 
 test:
 	@$(MELOS) run test
-# 	@cd android && ./gradlew :app:testF_genericDebugUnitTest --console=plain
+
+test-ci:
+	@$(MELOS) run test-ci
+
+# C++ suites compile the package's native implementation directly; they do not
+# need a Flutter app build. CTest >= 3.21 provides JUnit output for CI reporting.
+test-linux:
+ifeq ($(HOST_PLATFORM),Linux)
+	@cmake -S "$(DESKTOP_WINDOW_CHROME_PACKAGE_DIR)/linux/test" -B "$(NATIVE_TEST_BUILD_DIR)/linux" -DCMAKE_BUILD_TYPE=Debug
+	@cmake --build "$(NATIVE_TEST_BUILD_DIR)/linux" --config Debug
+	@cmake -E make_directory "$(NATIVE_TEST_RESULTS_DIR)"
+	@ctest --test-dir "$(NATIVE_TEST_BUILD_DIR)/linux" -C Debug --output-on-failure --no-tests=error --timeout 60 --output-junit "$(abspath $(NATIVE_TEST_RESULTS_DIR))/native_test_linux.xml"
+else
+	@echo ERROR: test-linux requires a Linux host
+	@exit 1
+endif
+
+test-windows:
+ifeq ($(OS),Windows_NT)
+	@cmake -S "$(DESKTOP_WINDOW_CHROME_PACKAGE_DIR)/windows/test" -B "$(NATIVE_TEST_BUILD_DIR)/windows"
+	@cmake --build "$(NATIVE_TEST_BUILD_DIR)/windows" --config Debug
+	@cmake -E make_directory "$(NATIVE_TEST_RESULTS_DIR)"
+	@ctest --test-dir "$(NATIVE_TEST_BUILD_DIR)/windows" -C Debug --output-on-failure --no-tests=error --timeout 60 --output-junit "$(abspath $(NATIVE_TEST_RESULTS_DIR))/native_test_windows.xml"
+else
+	@echo ERROR: test-windows requires a Windows host
+	@exit 1
+endif
+
+# These tests inspect MainFlutterWindow and need the initialized Flutter app.
+# Disable signing so the test build does not need a developer certificate/profile.
+test-macos:
+ifeq ($(HOST_PLATFORM),Darwin)
+	@"$(LOCAL_FLUTTER)" build macos --debug --config-only --flavor "$(MACOS_TEST_FLAVOR)"
+	@mkdir -p "$(NATIVE_TEST_RESULTS_DIR)"
+	@rm -rf "$(NATIVE_TEST_RESULTS_DIR)/macos.xcresult"
+	@set -o pipefail; xcodebuild test \
+		-workspace macos/Runner.xcworkspace -scheme "$(MACOS_TEST_FLAVOR)" \
+		-configuration "Debug-$(MACOS_TEST_FLAVOR)" -destination 'platform=macOS' \
+		-derivedDataPath "$(NATIVE_TEST_BUILD_DIR)/macos" \
+		-resultBundlePath "$(NATIVE_TEST_RESULTS_DIR)/macos.xcresult" \
+		-only-testing:RunnerTests -parallel-testing-enabled NO \
+		CODE_SIGNING_ALLOWED=NO \
+		2>&1 | tee "$(NATIVE_TEST_RESULTS_DIR)/macos.log"
+else
+	@echo ERROR: test-macos requires a macOS host
+	@exit 1
+endif
+
+test-native:
+ifeq ($(OS),Windows_NT)
+	@$(SUBMAKE) test-windows
+else ifeq ($(HOST_PLATFORM),Linux)
+	@$(SUBMAKE) test-linux
+else ifeq ($(HOST_PLATFORM),Darwin)
+	@$(SUBMAKE) test-macos
+else
+	@echo ERROR: no native test target for this host
+	@exit 1
+endif
+
+test-all:
+	@$(SUBMAKE) test
+	@$(SUBMAKE) test-native
 
 gen:
 	@$(SUBMAKE) normalize-l10n
@@ -127,4 +202,4 @@ aio:
 
 aio-full:
 	@$(SUBMAKE) aio
-	@$(SUBMAKE) test
+	@$(SUBMAKE) test-all

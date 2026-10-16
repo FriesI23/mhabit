@@ -7,6 +7,7 @@ import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
 import '../adaptive/adaptive_app_bar_actions.dart';
 import '../shell/sidebar_adapter.dart';
+import '../window_control/interaction_region.dart';
 import '../window_control/toolbar_geometry.dart';
 import 'cupertino_focus_halo_clip.dart';
 import 'cupertino_neutral_button.dart';
@@ -221,11 +222,13 @@ final class _CupertinoSearchToolbarMetrics {
   final bool persistent;
   final bool expanded;
   final double searchWidth;
+  final double searchWidthLimit;
 
   const _CupertinoSearchToolbarMetrics({
     required this.persistent,
     required this.expanded,
     required this.searchWidth,
+    required this.searchWidthLimit,
   });
 
   factory _CupertinoSearchToolbarMetrics.resolve({
@@ -266,6 +269,7 @@ final class _CupertinoSearchToolbarMetrics {
       persistent: persistent,
       expanded: expanded,
       searchWidth: searchWidth,
+      searchWidthLimit: retainedSearchWidth,
     );
   }
 }
@@ -538,16 +542,19 @@ class _CupertinoSearchToolbarContent<T extends Object> extends StatelessWidget {
             onOverflowPressed: actions.onOverflowPressed,
           ),
         ),
-        _CupertinoExpandableSearchItem(
-          expanded: metrics.expanded,
-          persistent: metrics.persistent,
-          controller: search.controller,
-          focusNode: search.focusNode,
-          hintText: search.hintText,
-          maxSearchWidth: metrics.searchWidth,
-          onChanged: search.onChanged,
-          onSubmitted: search.onSubmitted,
-          onSearchActivated: search.onActivated,
+        AdaptiveWindowInteractionRegion(
+          child: _CupertinoExpandableSearchItem(
+            expanded: metrics.expanded,
+            persistent: metrics.persistent,
+            controller: search.controller,
+            focusNode: search.focusNode,
+            hintText: search.hintText,
+            maxSearchWidth: metrics.searchWidth,
+            maxLayoutWidth: metrics.searchWidthLimit,
+            onChanged: search.onChanged,
+            onSubmitted: search.onSubmitted,
+            onSearchActivated: search.onActivated,
+          ),
         ),
         SizedBox(width: insets.end),
       ],
@@ -579,7 +586,11 @@ class _CupertinoSearchToolbarLeading extends StatelessWidget {
             height: itemExtent,
           ),
         if (leading case final leading?)
-          SizedBox(width: itemExtent, height: itemExtent, child: leading),
+          SizedBox(
+            width: itemExtent,
+            height: itemExtent,
+            child: AdaptiveWindowInteractionRegion(child: leading),
+          ),
       ],
     );
   }
@@ -758,27 +769,30 @@ class _CupertinoSearchActions<T extends Object> extends StatelessWidget {
           alignment: AlignmentDirectional.centerEnd,
           minWidth: 0,
           maxWidth: double.infinity,
-          child: AdaptiveAppBarActions<T>.apple(
-            key: const ValueKey('cupertino-search-adaptive-actions'),
-            collection: collection,
-            primaryCapacity: primaryCapacity,
-            onInvoke: onInvoke,
-            apple: CupertinoAppBarActionsConfig<T>(
-              presentationForAction: presentationForAction,
-              onOverflowMenuOpened: onOverflowMenuOpened,
-              onOverflowMenuClosed: onOverflowMenuClosed,
-              iconBuilder: iconBuilder,
-              actionButtonBuilder: actionButtonBuilder,
-              menuBuilderForAction: menuBuilderForAction,
-              overflowButtonBuilder: (context, onPressed, defaultBuilder) =>
-                  defaultBuilder(
-                    context,
-                    () => onOverflowPressed(searchExpanded, onPressed),
-                    icon: overflowIcon,
-                  ),
+          // Register the actual actions, leaving unused capacity draggable.
+          child: AdaptiveWindowInteractionRegion(
+            child: AdaptiveAppBarActions<T>.apple(
+              key: const ValueKey('cupertino-search-adaptive-actions'),
+              collection: collection,
+              primaryCapacity: primaryCapacity,
+              onInvoke: onInvoke,
+              apple: CupertinoAppBarActionsConfig<T>(
+                presentationForAction: presentationForAction,
+                onOverflowMenuOpened: onOverflowMenuOpened,
+                onOverflowMenuClosed: onOverflowMenuClosed,
+                iconBuilder: iconBuilder,
+                actionButtonBuilder: actionButtonBuilder,
+                menuBuilderForAction: menuBuilderForAction,
+                overflowButtonBuilder: (context, onPressed, defaultBuilder) =>
+                    defaultBuilder(
+                      context,
+                      () => onOverflowPressed(searchExpanded, onPressed),
+                      icon: overflowIcon,
+                    ),
+              ),
+              fadeDuration: const Duration(milliseconds: 300),
+              resizeDuration: const Duration(milliseconds: 300),
             ),
-            fadeDuration: const Duration(milliseconds: 300),
-            resizeDuration: const Duration(milliseconds: 300),
           ),
         ),
       ),
@@ -793,6 +807,7 @@ class _CupertinoExpandableSearchItem extends StatefulWidget {
   final FocusNode focusNode;
   final String? hintText;
   final double maxSearchWidth;
+  final double maxLayoutWidth;
   final ValueChanged<String> onChanged;
   final ValueChanged<String>? onSubmitted;
   final VoidCallback onSearchActivated;
@@ -803,6 +818,7 @@ class _CupertinoExpandableSearchItem extends StatefulWidget {
     required this.controller,
     required this.focusNode,
     required this.maxSearchWidth,
+    required this.maxLayoutWidth,
     required this.onChanged,
     required this.onSearchActivated,
     this.hintText,
@@ -896,30 +912,35 @@ class _CupertinoExpandableSearchItemState
 
     return Align(
       alignment: AlignmentDirectional.centerEnd,
-      child: AnimatedContainer(
-        key: const ValueKey('cupertino-expandable-search-region'),
-        width: widget.expanded ? expandedWidth : collapsedWidth,
-        height: _collapsedExtent,
-        duration: animateWidth ? _duration : Duration.zero,
-        curve: Easing.standard,
-        onEnd: animateWidth ? _handleAnimationEnd : null,
-        child: _showSearchField
-            ? ClipRect(
-                child: OverflowBox(
-                  alignment: AlignmentDirectional.centerEnd,
-                  minWidth: expandedWidth,
-                  maxWidth: expandedWidth,
-                  child: _buildSearchField(expandedWidth),
+      // Apply the current budget outside the animation, whose previous width
+      // can exceed the toolbar after a resize or sidebar handoff.
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: widget.maxLayoutWidth),
+        child: AnimatedContainer(
+          key: const ValueKey('cupertino-expandable-search-region'),
+          width: widget.expanded ? expandedWidth : collapsedWidth,
+          height: _collapsedExtent,
+          duration: animateWidth ? _duration : Duration.zero,
+          curve: Easing.standard,
+          onEnd: animateWidth ? _handleAnimationEnd : null,
+          child: _showSearchField
+              ? ClipRect(
+                  child: OverflowBox(
+                    alignment: AlignmentDirectional.centerEnd,
+                    minWidth: expandedWidth,
+                    maxWidth: expandedWidth,
+                    child: _buildSearchField(expandedWidth),
+                  ),
+                )
+              : NeutralCupertinoButton(
+                  key: const ValueKey('activate-cupertino-search'),
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size.square(_collapsedExtent),
+                  sizeStyle: CupertinoButtonSize.small,
+                  onPressed: _activateSearch,
+                  child: const Icon(CupertinoIcons.search),
                 ),
-              )
-            : NeutralCupertinoButton(
-                key: const ValueKey('activate-cupertino-search'),
-                padding: EdgeInsets.zero,
-                minimumSize: const Size.square(_collapsedExtent),
-                sizeStyle: CupertinoButtonSize.small,
-                onPressed: _activateSearch,
-                child: const Icon(CupertinoIcons.search),
-              ),
+        ),
       ),
     );
   }

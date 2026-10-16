@@ -19,6 +19,7 @@ import 'package:mhabit/pages/app_settings/_widgets/app_setting_clear_cache.dart'
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../support/adaptive_dialog.dart';
+import '../../../support/adaptive_ui_theme.dart';
 
 void main() {
   for (final style in AdaptiveStyle.values) {
@@ -27,8 +28,8 @@ void main() {
         MaterialApp(
           localizationsDelegates: L10n.localizationsDelegates,
           supportedLocales: L10n.supportedLocales,
-          home: AdaptiveStyleScope(
-            override: style,
+          home: TestAdaptiveUiTheme(
+            update: (parentTheme) => parentTheme.copyWith(style: style),
             child: const Scaffold(body: Text('Settings')),
           ),
         ),

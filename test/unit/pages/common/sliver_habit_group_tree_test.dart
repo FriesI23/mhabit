@@ -10,6 +10,8 @@ import 'package:mhabit/theme/color.dart'
     show darkCustomColors, lightCustomColors;
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
+import '../../../support/adaptive_ui_theme.dart';
+
 Widget _treeHost({
   HabitGroupTreeEntry? root,
   required List<HabitGroupTreeEntry> groups,
@@ -87,8 +89,8 @@ void main() {
           const custom = HabitColor.custom(0xff4488cc, tinted: false);
           const builtIn = HabitColor.builtIn(HabitColorType.cc3);
           await tester.pumpWidget(
-            AdaptiveStyleScope(
-              override: style,
+            TestAdaptiveUiTheme(
+              update: (parentTheme) => parentTheme.copyWith(style: style),
               child: MaterialApp(
                 theme: ThemeData(brightness: brightness, extensions: [palette]),
                 home: const Scaffold(
@@ -172,8 +174,8 @@ void main() {
         final toggles = <String>[];
         late StateSetter rebuild;
         await tester.pumpWidget(
-          AdaptiveStyleScope(
-            override: style,
+          TestAdaptiveUiTheme(
+            update: (parentTheme) => parentTheme.copyWith(style: style),
             child: MaterialApp(
               home: Scaffold(
                 body: StatefulBuilder(
@@ -259,8 +261,8 @@ void main() {
       var trailingTaps = 0;
       late StateSetter rebuild;
       await tester.pumpWidget(
-        AdaptiveStyleScope(
-          override: style,
+        TestAdaptiveUiTheme(
+          update: (parentTheme) => parentTheme.copyWith(style: style),
           child: MaterialApp(
             home: Scaffold(
               body: StatefulBuilder(
@@ -349,8 +351,8 @@ void main() {
         var reverse = false;
         late StateSetter rebuild;
         await tester.pumpWidget(
-          AdaptiveStyleScope(
-            override: style,
+          TestAdaptiveUiTheme(
+            update: (parentTheme) => parentTheme.copyWith(style: style),
             child: MaterialApp(
               home: Scaffold(
                 body: StatefulBuilder(

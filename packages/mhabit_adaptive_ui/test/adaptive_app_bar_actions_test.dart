@@ -183,8 +183,10 @@ void main() {
         primaryColor: CupertinoColors.systemPurple,
       ),
       extensions: [
-        AdaptiveCupertinoButtonThemeData(
-          neutralForegroundColor: colorScheme.onSurfaceVariant,
+        AppAdaptiveUiThemeData(
+          cupertinoButtonTheme: AdaptiveCupertinoButtonThemeData(
+            neutralForegroundColor: colorScheme.onSurfaceVariant,
+          ),
         ),
       ],
     );
@@ -228,7 +230,11 @@ void main() {
             primaryColor: CupertinoColors.systemPurple,
           ),
           extensions: const [
-            AdaptiveCupertinoButtonThemeData(neutralForegroundColor: blended),
+            AppAdaptiveUiThemeData(
+              cupertinoButtonTheme: AdaptiveCupertinoButtonThemeData(
+                neutralForegroundColor: blended,
+              ),
+            ),
           ],
         ),
         actions: AdaptiveAppBarActions<String>.apple(

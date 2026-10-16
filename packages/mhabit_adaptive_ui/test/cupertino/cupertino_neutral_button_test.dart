@@ -13,8 +13,10 @@ Widget _host({
       primaryColor: CupertinoColors.systemPurple,
     ),
     extensions: [
-      AdaptiveCupertinoButtonThemeData(
-        neutralForegroundColor: neutralForegroundColor,
+      AppAdaptiveUiThemeData(
+        cupertinoButtonTheme: AdaptiveCupertinoButtonThemeData(
+          neutralForegroundColor: neutralForegroundColor,
+        ),
       ),
     ],
   ),

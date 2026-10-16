@@ -33,6 +33,7 @@ class CupertinoSliverSelectAppBar<T extends Object> extends StatelessWidget {
     required this.onInvoke,
     this.actions,
     this.style,
+    this.toolbarTopInset,
     this.bottom,
     this.bottomExtent = 0.0,
   }) : assert(bottomExtent >= 0.0),
@@ -46,6 +47,7 @@ class CupertinoSliverSelectAppBar<T extends Object> extends StatelessWidget {
     required this.onInvoke,
     this.actions,
     this.style,
+    this.toolbarTopInset,
     this.bottom,
     this.bottomExtent = 0.0,
   }) : assert(bottomExtent >= 0.0),
@@ -65,6 +67,11 @@ class CupertinoSliverSelectAppBar<T extends Object> extends StatelessWidget {
   final AdaptiveAppBarActionCallback<T> onInvoke;
   final CupertinoAppBarActionsConfig<T>? actions;
   final AppBarAppleStyle? style;
+
+  /// Minimum local space above the Apple toolbar.
+  /// Null uses the desktop default; zero disables it. A larger top safe area
+  /// takes precedence without adding the two insets.
+  final double? toolbarTopInset;
   final Widget? bottom;
   final double bottomExtent;
   final bool _viewMode;
@@ -75,6 +82,7 @@ class CupertinoSliverSelectAppBar<T extends Object> extends StatelessWidget {
   Widget build(BuildContext context) {
     final compact = WindowSize.of(context).width == WindowSizeClass.compact;
     return CupertinoSliverAppBar(
+      toolbarTopInset: toolbarTopInset,
       key: const ValueKey('cupertino-sliver-select-app-bar'),
       height: toolbarHeight,
       bottom: bottom,

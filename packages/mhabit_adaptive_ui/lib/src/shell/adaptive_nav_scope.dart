@@ -24,6 +24,7 @@ class AdaptiveNavScope extends InheritedWidget {
     required this.barHeight,
     required this.navHeight,
     required super.child,
+    this.navigationSurfaceColor,
     this._visible,
     this._scrollWish,
   });
@@ -33,6 +34,13 @@ class AdaptiveNavScope extends InheritedWidget {
 
   /// Resolved navigation form used by the containing shell.
   final NavigationShellForm form;
+
+  /// Renderer-resolved solid surface suitable for adjacent window chrome.
+  ///
+  /// Null means the renderer contributes no window surface (for example,
+  /// compact navigation or a separate inset/translucent sidebar). Consumers
+  /// use their window background without interpreting the renderer's style.
+  final Color? navigationSurfaceColor;
 
   /// Fallback listenable for non-compact forms; always true, never notifies.
   static const ConstValueListenable<bool> _alwaysTrue = ConstValueListenable(
@@ -101,6 +109,7 @@ class AdaptiveNavScope extends InheritedWidget {
       _visible != oldWidget._visible ||
       _scrollWish != oldWidget._scrollWish ||
       form != oldWidget.form ||
+      navigationSurfaceColor != oldWidget.navigationSurfaceColor ||
       barHeight != oldWidget.barHeight ||
       navHeight != oldWidget.navHeight;
 }

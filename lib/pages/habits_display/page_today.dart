@@ -24,6 +24,7 @@ import '../../common/consts.dart';
 import '../../common/types.dart';
 import '../../extensions/adaptive_navigation_context_extensions.dart';
 import '../../extensions/adaptive_style_extensions.dart';
+import '../../extensions/target_platform_extensions.dart';
 import '../../extensions/window_size_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
@@ -192,10 +193,10 @@ class _Appbar extends StatelessWidget {
     return AdaptiveSliverAppBar(
       height: toolbarHeight,
       styles: AppBarStyles(
-        material: const AppBarMaterialStyle(
+        material: AppBarMaterialStyle(
           floating: false,
           snap: false,
-          pinned: false,
+          pinned: !DeviceContext.of(context).platform.isMobileOperatingSystem,
         ),
         apple: AppBarAppleStyle(collapsible: compact),
       ),

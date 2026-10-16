@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../adaptive_style.dart';
+import '../app_adaptive_ui_theme.dart';
 import 'window_size_class.dart';
 
 // Width bounds shared by the platform implementations.
@@ -35,12 +36,12 @@ abstract interface class Breakpoints {
 
   /// Resolves the active [Breakpoints]:
   ///
-  /// 1. the nearest [BreakpointsScope] (tree-level override),
+  /// 1. the active [AppAdaptiveUiThemeData.breakpoints] override,
   /// 2. the platform implementation selected by the adaptive style,
   /// 3. [MaterialBreakpoints] as the final fallback.
-  static Breakpoints of(BuildContext context) =>
-      BreakpointsScope.maybeOf(context)?.breakpoints ??
-      switch (AdaptiveStyle.of(context)) {
+  static Breakpoints of(BuildContext context, {AdaptiveStyle? styleOverride}) =>
+      AppAdaptiveUiTheme.of(context).breakpoints ??
+      switch (styleOverride ?? AdaptiveStyle.of(context)) {
         AdaptiveStyle.apple => const AppleBreakpoints(),
         AdaptiveStyle.material => const MaterialBreakpoints(),
       };
@@ -122,24 +123,4 @@ final class AppleBreakpoints extends CustomBreakpoints {
         // expanded >= 900.
         height: const [_compactHeightBound, _expandedHeightBound],
       );
-}
-
-/// Overrides [Breakpoints] for a subtree, like [Theme] overrides theme data.
-class BreakpointsScope extends InheritedWidget {
-  const BreakpointsScope({
-    super.key,
-    required this.breakpoints,
-    required super.child,
-  });
-
-  /// The manual breakpoints applied to the subtree.
-  final Breakpoints breakpoints;
-
-  /// Reads the nearest scope and rebuilds the caller when it changes.
-  static BreakpointsScope? maybeOf(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<BreakpointsScope>();
-
-  @override
-  bool updateShouldNotify(BreakpointsScope oldWidget) =>
-      oldWidget.breakpoints != breakpoints;
 }

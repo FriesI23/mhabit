@@ -343,6 +343,9 @@ void main() {
           result: await task.result,
           endedTime: DateTime(2026, 5, 28, 12),
         );
+        addTearDown(() async {
+          await completedContainer.loggerStreamer?.done;
+        });
         completedContainer.recordSyncFailureLog();
         completedContainer.stopRecordSyncLog();
         await notification.syncComplete(result: completedContainer.result);
@@ -358,6 +361,12 @@ void main() {
             completedContainer.result,
           ),
           isTrue,
+        );
+        await completedContainer.loggerStreamer!.done;
+        expect(completedContainer.loggerStreamer!.isComplete, isTrue);
+        expect(
+          await File(completedContainer.filePath!).readAsString(),
+          contains('----- COMPLETE TASK'),
         );
       },
     );

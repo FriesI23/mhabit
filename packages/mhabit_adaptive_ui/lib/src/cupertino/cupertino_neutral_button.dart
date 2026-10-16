@@ -1,10 +1,9 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' show Theme, ThemeExtension;
+import '../app_adaptive_ui_theme.dart';
 
 /// App-owned foreground policy for neutral Cupertino icon buttons.
 @immutable
-class AdaptiveCupertinoButtonThemeData
-    extends ThemeExtension<AdaptiveCupertinoButtonThemeData> {
+class AdaptiveCupertinoButtonThemeData {
   const AdaptiveCupertinoButtonThemeData({this.neutralForegroundColor});
 
   /// Foreground inherited by enabled neutral icon-only buttons.
@@ -12,18 +11,12 @@ class AdaptiveCupertinoButtonThemeData
   /// Null falls back to the native Cupertino label color.
   final Color? neutralForegroundColor;
 
-  static AdaptiveCupertinoButtonThemeData of(BuildContext context) =>
-      Theme.of(context).extension<AdaptiveCupertinoButtonThemeData>() ??
-      const AdaptiveCupertinoButtonThemeData();
-
-  @override
   AdaptiveCupertinoButtonThemeData copyWith({Color? neutralForegroundColor}) =>
       AdaptiveCupertinoButtonThemeData(
         neutralForegroundColor:
             neutralForegroundColor ?? this.neutralForegroundColor,
       );
 
-  @override
   AdaptiveCupertinoButtonThemeData lerp(
     covariant AdaptiveCupertinoButtonThemeData? other,
     double t,
@@ -37,6 +30,14 @@ class AdaptiveCupertinoButtonThemeData
       ),
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is AdaptiveCupertinoButtonThemeData &&
+      neutralForegroundColor == other.neutralForegroundColor;
+
+  @override
+  int get hashCode => neutralForegroundColor.hashCode;
 }
 
 /// A [CupertinoButton] with the app's neutral foreground policy.
@@ -87,7 +88,9 @@ class NeutralCupertinoButton extends StatelessWidget {
   Widget build(BuildContext context) => CupertinoTheme(
     data: CupertinoTheme.of(context).copyWith(
       primaryColor:
-          AdaptiveCupertinoButtonThemeData.of(context).neutralForegroundColor ??
+          AppAdaptiveUiTheme.of(
+            context,
+          ).cupertinoButtonTheme.neutralForegroundColor ??
           CupertinoColors.label,
     ),
     child: CupertinoButton(
@@ -125,7 +128,9 @@ class NeutralCupertinoButtonBuilder extends StatelessWidget {
   Widget build(BuildContext context) => CupertinoTheme(
     data: CupertinoTheme.of(context).copyWith(
       primaryColor:
-          AdaptiveCupertinoButtonThemeData.of(context).neutralForegroundColor ??
+          AppAdaptiveUiTheme.of(
+            context,
+          ).cupertinoButtonTheme.neutralForegroundColor ??
           CupertinoColors.label,
     ),
     child: Builder(builder: builder),
