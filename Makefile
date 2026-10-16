@@ -35,10 +35,10 @@ export MHABIT_MAKE_PATH_READY := 1
 endif
 
 SYNC_RULES_FILE ?= docs/rules/rules.md
-NATIVE_TEST_PACKAGE := packages/mhabit_desktop_window_chrome
-NATIVE_BUILD_DIR := build/native-tests
-NATIVE_RESULTS_DIR ?= build/test-results/native
-FLAVOR ?= f_generic
+DESKTOP_WINDOW_CHROME_PACKAGE_DIR := packages/mhabit_desktop_window_chrome
+NATIVE_TEST_BUILD_DIR := build/native-tests
+NATIVE_TEST_RESULTS_DIR ?= build/test-results/native
+MACOS_TEST_FLAVOR ?= f_generic
 
 
 .PHONY: help init bootstrap \
@@ -63,7 +63,7 @@ help:
 	@echo "  test-linux        Run GTK C++ tests; requires a display or xvfb-run"
 	@echo   test-windows      Run Win32 C++ tests with CMake and CTest
 	@echo   test-macos        Run app-hosted XCTest with Xcode
-	@echo "                    FLAVOR=f_generic (default), f_dev, or f_store"
+	@echo "                    MACOS_TEST_FLAVOR=f_generic (default), f_dev, or f_store"
 	@echo   test-all          Run Dart/Flutter tests and current-host native tests
 	@echo   gen               Run the main generation workflow
 	@echo   verify-generated  Ensure normalized/generated files are up to date
@@ -117,10 +117,10 @@ test-ci:
 # need a Flutter app build. CTest >= 3.21 provides JUnit output for CI reporting.
 test-linux:
 ifeq ($(HOST_PLATFORM),Linux)
-	@cmake -S "$(NATIVE_TEST_PACKAGE)/linux/test" -B "$(NATIVE_BUILD_DIR)/linux" -DCMAKE_BUILD_TYPE=Debug
-	@cmake --build "$(NATIVE_BUILD_DIR)/linux" --config Debug
-	@cmake -E make_directory "$(NATIVE_RESULTS_DIR)"
-	@ctest --test-dir "$(NATIVE_BUILD_DIR)/linux" -C Debug --output-on-failure --no-tests=error --timeout 60 --output-junit "$(abspath $(NATIVE_RESULTS_DIR))/native_test_linux.xml"
+	@cmake -S "$(DESKTOP_WINDOW_CHROME_PACKAGE_DIR)/linux/test" -B "$(NATIVE_TEST_BUILD_DIR)/linux" -DCMAKE_BUILD_TYPE=Debug
+	@cmake --build "$(NATIVE_TEST_BUILD_DIR)/linux" --config Debug
+	@cmake -E make_directory "$(NATIVE_TEST_RESULTS_DIR)"
+	@ctest --test-dir "$(NATIVE_TEST_BUILD_DIR)/linux" -C Debug --output-on-failure --no-tests=error --timeout 60 --output-junit "$(abspath $(NATIVE_TEST_RESULTS_DIR))/native_test_linux.xml"
 else
 	@echo ERROR: test-linux requires a Linux host
 	@exit 1
@@ -128,10 +128,10 @@ endif
 
 test-windows:
 ifeq ($(OS),Windows_NT)
-	@cmake -S "$(NATIVE_TEST_PACKAGE)/windows/test" -B "$(NATIVE_BUILD_DIR)/windows"
-	@cmake --build "$(NATIVE_BUILD_DIR)/windows" --config Debug
-	@cmake -E make_directory "$(NATIVE_RESULTS_DIR)"
-	@ctest --test-dir "$(NATIVE_BUILD_DIR)/windows" -C Debug --output-on-failure --no-tests=error --timeout 60 --output-junit "$(abspath $(NATIVE_RESULTS_DIR))/native_test_windows.xml"
+	@cmake -S "$(DESKTOP_WINDOW_CHROME_PACKAGE_DIR)/windows/test" -B "$(NATIVE_TEST_BUILD_DIR)/windows"
+	@cmake --build "$(NATIVE_TEST_BUILD_DIR)/windows" --config Debug
+	@cmake -E make_directory "$(NATIVE_TEST_RESULTS_DIR)"
+	@ctest --test-dir "$(NATIVE_TEST_BUILD_DIR)/windows" -C Debug --output-on-failure --no-tests=error --timeout 60 --output-junit "$(abspath $(NATIVE_TEST_RESULTS_DIR))/native_test_windows.xml"
 else
 	@echo ERROR: test-windows requires a Windows host
 	@exit 1
@@ -141,17 +141,17 @@ endif
 # Disable signing so the test build does not need a developer certificate/profile.
 test-macos:
 ifeq ($(HOST_PLATFORM),Darwin)
-	@"$(LOCAL_FLUTTER)" build macos --debug --config-only --flavor "$(FLAVOR)"
-	@mkdir -p "$(NATIVE_RESULTS_DIR)"
-	@rm -rf "$(NATIVE_RESULTS_DIR)/macos.xcresult"
+	@"$(LOCAL_FLUTTER)" build macos --debug --config-only --flavor "$(MACOS_TEST_FLAVOR)"
+	@mkdir -p "$(NATIVE_TEST_RESULTS_DIR)"
+	@rm -rf "$(NATIVE_TEST_RESULTS_DIR)/macos.xcresult"
 	@set -o pipefail; xcodebuild test \
-		-workspace macos/Runner.xcworkspace -scheme "$(FLAVOR)" \
-		-configuration "Debug-$(FLAVOR)" -destination 'platform=macOS' \
-		-derivedDataPath "$(NATIVE_BUILD_DIR)/macos" \
-		-resultBundlePath "$(NATIVE_RESULTS_DIR)/macos.xcresult" \
+		-workspace macos/Runner.xcworkspace -scheme "$(MACOS_TEST_FLAVOR)" \
+		-configuration "Debug-$(MACOS_TEST_FLAVOR)" -destination 'platform=macOS' \
+		-derivedDataPath "$(NATIVE_TEST_BUILD_DIR)/macos" \
+		-resultBundlePath "$(NATIVE_TEST_RESULTS_DIR)/macos.xcresult" \
 		-only-testing:RunnerTests -parallel-testing-enabled NO \
 		CODE_SIGNING_ALLOWED=NO \
-		2>&1 | tee "$(NATIVE_RESULTS_DIR)/macos.log"
+		2>&1 | tee "$(NATIVE_TEST_RESULTS_DIR)/macos.log"
 else
 	@echo ERROR: test-macos requires a macOS host
 	@exit 1
