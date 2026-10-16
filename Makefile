@@ -38,6 +38,7 @@ SYNC_RULES_FILE ?= docs/rules/rules.md
 NATIVE_TEST_PACKAGE := packages/mhabit_desktop_window_chrome
 NATIVE_BUILD_DIR := build/native-tests
 NATIVE_RESULTS_DIR ?= build/test-results/native
+FLAVOR ?= f_generic
 
 
 .PHONY: help init bootstrap \
@@ -62,6 +63,7 @@ help:
 	@echo "  test-linux        Run GTK C++ tests; requires a display or xvfb-run"
 	@echo   test-windows      Run Win32 C++ tests with CMake and CTest
 	@echo   test-macos        Run app-hosted XCTest with Xcode
+	@echo "                    FLAVOR=f_generic (default), f_dev, or f_store"
 	@echo   test-all          Run Dart/Flutter tests and current-host native tests
 	@echo   gen               Run the main generation workflow
 	@echo   verify-generated  Ensure normalized/generated files are up to date
@@ -139,12 +141,12 @@ endif
 # Disable signing so the test build does not need a developer certificate/profile.
 test-macos:
 ifeq ($(HOST_PLATFORM),Darwin)
-	@"$(LOCAL_FLUTTER)" build macos --debug --config-only --flavor f_dev
+	@"$(LOCAL_FLUTTER)" build macos --debug --config-only --flavor "$(FLAVOR)"
 	@mkdir -p "$(NATIVE_RESULTS_DIR)"
 	@rm -rf "$(NATIVE_RESULTS_DIR)/macos.xcresult"
 	@set -o pipefail; xcodebuild test \
-		-workspace macos/Runner.xcworkspace -scheme f_dev \
-		-configuration Debug-f_dev -destination 'platform=macOS' \
+		-workspace macos/Runner.xcworkspace -scheme "$(FLAVOR)" \
+		-configuration "Debug-$(FLAVOR)" -destination 'platform=macOS' \
 		-derivedDataPath "$(NATIVE_BUILD_DIR)/macos" \
 		-resultBundlePath "$(NATIVE_RESULTS_DIR)/macos.xcresult" \
 		-only-testing:RunnerTests -parallel-testing-enabled NO \

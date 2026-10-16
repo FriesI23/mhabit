@@ -76,7 +76,7 @@ jobs:
       - uses: ./.github/actions/setup_xcode
       - uses: ./.github/actions/setup_flutter
       - name: Run app-hosted XCTest
-        run: make test-macos
+        run: make test-macos FLAVOR=f_generic
       - uses: actions/upload-artifact@v7
         if: success() || failure()
         with:

@@ -62,8 +62,11 @@ existing architecture and tooling contracts.
 - Native test ownership stays with the platform implementation: Windows/Linux
   C++ tests live in `packages/mhabit_desktop_window_chrome/{windows,linux}/test`
   and run with CMake/CTest; macOS `RunnerTests` are app-hosted XCTest and run
-  through the `f_dev` Xcode scheme with a graphical login session. They are not
-  Melos Dart test suites.
+  through the Xcode scheme selected by `FLAVOR` with a graphical login session.
+  The default is `f_generic`; use `make test-macos FLAVOR=f_dev` or
+  `FLAVOR=f_store` to test another variant. The same override works through
+  `test-native` and `test-all`. CI explicitly tests `f_generic` to match the
+  macOS release build. They are not Melos Dart test suites.
 - Native test results go to `build/test-results/native/` by default
   (`NATIVE_RESULTS_DIR` overrides it): CTest JUnit XML on Windows/Linux,
   `.xcresult` and an Xcode log on macOS. CI runs all three platform suites.
