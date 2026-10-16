@@ -12,7 +12,7 @@ abstract final class MaterialAppBarBackground {
     final theme = Theme.of(context);
     return WidgetStateProperty.resolveAs<Color>(
       explicitColor ??
-          theme.appBarTheme.backgroundColor ??
+          AppBarTheme.of(context).backgroundColor ??
           theme.colorScheme.surface,
       const <WidgetState>{},
     );

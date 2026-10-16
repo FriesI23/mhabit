@@ -668,33 +668,86 @@ void main() {
       );
     });
 
-    testWidgets('Material modal keeps one themed surface color', (
-      tester,
-    ) async {
-      const backgroundColor = Color(0xFF123456);
-      await tester.pumpWidget(
-        _buildTestApp(
-          style: AdaptiveStyle.material,
-          presentation: AdaptiveModalPresentation.dialog,
-          theme: ThemeData(
-            dialogTheme: const DialogThemeData(
-              backgroundColor: backgroundColor,
-            ),
-          ),
-          modalBuilder: (_) =>
-              const AdaptiveModal(title: Text('Title'), body: Text('Body')),
-        ),
-      );
-      await _open(tester);
+    for (final platform in [TargetPlatform.windows, TargetPlatform.linux]) {
+      for (final brightness in Brightness.values) {
+        for (final customBackground in [false, true]) {
+          for (final fixedBackground in [false, true]) {
+            testWidgets(
+              'Material modal keeps one themed surface color: '
+              '$platform $brightness custom=$customBackground fixed=$fixedBackground',
+              (tester) async {
+                final theme = ThemeData(
+                  platform: platform,
+                  brightness: brightness,
+                  colorSchemeSeed: Colors.blue,
+                  dialogTheme: DialogThemeData(
+                    backgroundColor: customBackground
+                        ? const Color(0xFF123456)
+                        : null,
+                  ),
+                  extensions: [
+                    AppAdaptiveUiThemeData(
+                      appBarTheme: AdaptiveAppBarThemeData(
+                        materialFixedScrollBackground: fixedBackground,
+                      ),
+                    ),
+                  ],
+                );
+                final backgroundColor =
+                    theme.dialogTheme.backgroundColor ??
+                    theme.colorScheme.surfaceContainerHigh;
+                await tester.pumpWidget(
+                  _buildTestApp(
+                    style: AdaptiveStyle.material,
+                    presentation: AdaptiveModalPresentation.dialog,
+                    theme: theme,
+                    modalBuilder: (_) => const AdaptiveModal(
+                      title: Text('Title'),
+                      body: SizedBox(height: 1200, child: Text('Body')),
+                    ),
+                  ),
+                );
+                await _open(tester);
 
-      expect(
-        tester.widget<Dialog>(find.byType(Dialog)).backgroundColor,
-        backgroundColor,
-      );
-      final appBarTheme = AppBarTheme.of(tester.element(find.byType(AppBar)));
-      expect(appBarTheme.backgroundColor, backgroundColor);
-      expect(appBarTheme.surfaceTintColor, Colors.transparent);
-    });
+                expect(
+                  tester.widget<Dialog>(find.byType(Dialog)).backgroundColor,
+                  backgroundColor,
+                );
+                final appBarTheme = AppBarTheme.of(
+                  tester.element(find.byType(AppBar)),
+                );
+                expect(appBarTheme.backgroundColor, backgroundColor);
+                expect(appBarTheme.surfaceTintColor, Colors.transparent);
+                Material appBarMaterial() => tester.widget<Material>(
+                  find
+                      .descendant(
+                        of: find.byType(AppBar),
+                        matching: find.byType(Material),
+                      )
+                      .first,
+                );
+                expect(appBarMaterial().color, backgroundColor);
+                expect(appBarMaterial().surfaceTintColor, Colors.transparent);
+                final bodyMaterial = tester.widget<Material>(
+                  find
+                      .ancestor(
+                        of: find.text('Body'),
+                        matching: find.byType(Material),
+                      )
+                      .first,
+                );
+                expect(bodyMaterial.color, backgroundColor);
+                _scrollControllerOf(tester)!.jumpTo(100);
+                await tester.pumpAndSettle();
+                expect(appBarMaterial().color, backgroundColor);
+                expect(appBarMaterial().surfaceTintColor, Colors.transparent);
+                expect(tester.takeException(), isNull);
+              },
+            );
+          }
+        }
+      }
+    }
 
     for (final style in AdaptiveStyle.values) {
       testWidgets('${style.name} dialog does not stack bottom safe area', (
