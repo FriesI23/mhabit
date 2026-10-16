@@ -261,19 +261,22 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
             },
           ),
         );
-        final collapsedBar = CupertinoSidebarCollapsedBar(
-          key: const ValueKey('cupertino-sidebar-collapsed-bar'),
-          destinations: adapter.destinations,
-          selectedIndex: widget.selectedAuxiliaryIndex == null
-              ? widget.selectedIndex
-              : null,
-          onDestinationSelected: (index) =>
-              adapter.select(SidebarPrimarySelection(index)),
-          height: toolbarGeometry.collapsedBarHeight,
-          itemStyle: switch (widget.sidebarStyle) {
-            AppleSidebarStyle.inset => null,
-            AppleSidebarStyle.edge => widget.collapsedSidebarItemStyle,
-          },
+        // The fixed bar is a shell overlay, outside the page AppBar's targets.
+        final collapsedBar = AdaptiveWindowInteractionRegion(
+          child: CupertinoSidebarCollapsedBar(
+            key: const ValueKey('cupertino-sidebar-collapsed-bar'),
+            destinations: adapter.destinations,
+            selectedIndex: widget.selectedAuxiliaryIndex == null
+                ? widget.selectedIndex
+                : null,
+            onDestinationSelected: (index) =>
+                adapter.select(SidebarPrimarySelection(index)),
+            height: toolbarGeometry.collapsedBarHeight,
+            itemStyle: switch (widget.sidebarStyle) {
+              AppleSidebarStyle.inset => null,
+              AppleSidebarStyle.edge => widget.collapsedSidebarItemStyle,
+            },
+          ),
         );
         final branch = CupertinoSidebarPresentationScope(
           expanded: _sidebarExpanded,

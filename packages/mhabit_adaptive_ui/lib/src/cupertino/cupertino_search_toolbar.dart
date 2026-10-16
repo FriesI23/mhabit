@@ -7,6 +7,7 @@ import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
 import '../adaptive/adaptive_app_bar_actions.dart';
 import '../shell/sidebar_adapter.dart';
+import '../window_control/interaction_region.dart';
 import '../window_control/toolbar_geometry.dart';
 import 'cupertino_focus_halo_clip.dart';
 import 'cupertino_neutral_button.dart';
@@ -541,17 +542,19 @@ class _CupertinoSearchToolbarContent<T extends Object> extends StatelessWidget {
             onOverflowPressed: actions.onOverflowPressed,
           ),
         ),
-        _CupertinoExpandableSearchItem(
-          expanded: metrics.expanded,
-          persistent: metrics.persistent,
-          controller: search.controller,
-          focusNode: search.focusNode,
-          hintText: search.hintText,
-          maxSearchWidth: metrics.searchWidth,
-          maxLayoutWidth: metrics.searchWidthLimit,
-          onChanged: search.onChanged,
-          onSubmitted: search.onSubmitted,
-          onSearchActivated: search.onActivated,
+        AdaptiveWindowInteractionRegion(
+          child: _CupertinoExpandableSearchItem(
+            expanded: metrics.expanded,
+            persistent: metrics.persistent,
+            controller: search.controller,
+            focusNode: search.focusNode,
+            hintText: search.hintText,
+            maxSearchWidth: metrics.searchWidth,
+            maxLayoutWidth: metrics.searchWidthLimit,
+            onChanged: search.onChanged,
+            onSubmitted: search.onSubmitted,
+            onSearchActivated: search.onActivated,
+          ),
         ),
         SizedBox(width: insets.end),
       ],
@@ -583,7 +586,11 @@ class _CupertinoSearchToolbarLeading extends StatelessWidget {
             height: itemExtent,
           ),
         if (leading case final leading?)
-          SizedBox(width: itemExtent, height: itemExtent, child: leading),
+          SizedBox(
+            width: itemExtent,
+            height: itemExtent,
+            child: AdaptiveWindowInteractionRegion(child: leading),
+          ),
       ],
     );
   }
@@ -762,27 +769,30 @@ class _CupertinoSearchActions<T extends Object> extends StatelessWidget {
           alignment: AlignmentDirectional.centerEnd,
           minWidth: 0,
           maxWidth: double.infinity,
-          child: AdaptiveAppBarActions<T>.apple(
-            key: const ValueKey('cupertino-search-adaptive-actions'),
-            collection: collection,
-            primaryCapacity: primaryCapacity,
-            onInvoke: onInvoke,
-            apple: CupertinoAppBarActionsConfig<T>(
-              presentationForAction: presentationForAction,
-              onOverflowMenuOpened: onOverflowMenuOpened,
-              onOverflowMenuClosed: onOverflowMenuClosed,
-              iconBuilder: iconBuilder,
-              actionButtonBuilder: actionButtonBuilder,
-              menuBuilderForAction: menuBuilderForAction,
-              overflowButtonBuilder: (context, onPressed, defaultBuilder) =>
-                  defaultBuilder(
-                    context,
-                    () => onOverflowPressed(searchExpanded, onPressed),
-                    icon: overflowIcon,
-                  ),
+          // Register the actual actions, leaving unused capacity draggable.
+          child: AdaptiveWindowInteractionRegion(
+            child: AdaptiveAppBarActions<T>.apple(
+              key: const ValueKey('cupertino-search-adaptive-actions'),
+              collection: collection,
+              primaryCapacity: primaryCapacity,
+              onInvoke: onInvoke,
+              apple: CupertinoAppBarActionsConfig<T>(
+                presentationForAction: presentationForAction,
+                onOverflowMenuOpened: onOverflowMenuOpened,
+                onOverflowMenuClosed: onOverflowMenuClosed,
+                iconBuilder: iconBuilder,
+                actionButtonBuilder: actionButtonBuilder,
+                menuBuilderForAction: menuBuilderForAction,
+                overflowButtonBuilder: (context, onPressed, defaultBuilder) =>
+                    defaultBuilder(
+                      context,
+                      () => onOverflowPressed(searchExpanded, onPressed),
+                      icon: overflowIcon,
+                    ),
+              ),
+              fadeDuration: const Duration(milliseconds: 300),
+              resizeDuration: const Duration(milliseconds: 300),
             ),
-            fadeDuration: const Duration(milliseconds: 300),
-            resizeDuration: const Duration(milliseconds: 300),
           ),
         ),
       ),
