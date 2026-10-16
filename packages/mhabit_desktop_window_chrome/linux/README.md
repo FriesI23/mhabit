@@ -36,12 +36,15 @@ measurement (CSD shadows and titlebar sizes vary).
 From the app root, with a working graphical session:
 
 ```sh
-cmake -S packages/mhabit_desktop_window_chrome/linux/test -B /tmp/mhabit-gtk-tests
-cmake --build /tmp/mhabit-gtk-tests
-GDK_BACKEND=wayland ctest --test-dir /tmp/mhabit-gtk-tests --output-on-failure
-GDK_BACKEND=x11 ctest --test-dir /tmp/mhabit-gtk-tests --output-on-failure
+GDK_BACKEND=wayland make test-linux
+GDK_BACKEND=x11 make test-linux
 flutter run -d linux -t packages/mhabit_desktop_window_chrome/tool/linux_title_bar_smoke.dart
 ```
+
+For a headless X11 run (as in CI), use
+`GDK_BACKEND=x11 xvfb-run -a make test-linux`. Install CMake/CTest >= 3.21,
+a C++ compiler, pkg-config, GTK 3 development files, Xvfb and xauth. The Make
+target writes JUnit results to `build/test-results/native/native_test_linux.xml`.
 
 Set the appropriate `DISPLAY`/`XAUTHORITY` or `WAYLAND_DISPLAY`. Native tests compare
 realized GTK HeaderBar trees with unmodified GTK reference windows, in normal,

@@ -52,8 +52,21 @@ existing architecture and tooling contracts.
   - `make gen`: run normalization, icon generation, and build generation.
   - `make verify-generated`: verify generated and normalized outputs are current.
   - `make test`: run the root app and internal package tests.
+  - `make test-ci`: run those Dart/Flutter tests with machine-readable results.
+  - `make test-native`: run native tests for the current desktop host.
+  - `make test-linux`, `make test-windows`, `make test-macos`: run the named
+    platform's native tests on that platform (Linux needs a display or Xvfb).
+  - `make test-all`: run Dart/Flutter tests and current-host native tests.
   - `make aio`: run `gen`, `fix`, and `verify-generated`.
-  - `make aio-full`: run `aio` plus tests.
+  - `make aio-full`: run `aio` plus `test-all`.
+- Native test ownership stays with the platform implementation: Windows/Linux
+  C++ tests live in `packages/mhabit_desktop_window_chrome/{windows,linux}/test`
+  and run with CMake/CTest; macOS `RunnerTests` are app-hosted XCTest and run
+  through the `f_dev` Xcode scheme with a graphical login session. They are not
+  Melos Dart test suites.
+- Native test results go to `build/test-results/native/` by default
+  (`NATIVE_RESULTS_DIR` overrides it): CTest JUnit XML on Windows/Linux,
+  `.xcresult` and an Xcode log on macOS. CI runs all three platform suites.
 - `normalize-l10n` and `verify-generated` are intentionally Make-owned wrapper
   commands. Do not replace them with a new custom workflow.
 - When a task touches generated artifacts, prefer validating with `make gen` or
