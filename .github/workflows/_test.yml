@@ -42,6 +42,8 @@ jobs:
         run: xvfb-run -a make test-linux
         env:
           GDK_BACKEND: x11
+          # These title-bar tests do not need an accessibility bus in headless CI.
+          NO_AT_BRIDGE: "1"
       - uses: actions/upload-artifact@v7
         if: success() || failure()
         with:
