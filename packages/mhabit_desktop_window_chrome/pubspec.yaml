@@ -22,6 +22,8 @@ dev_dependencies:
 flutter:
   plugin:
     platforms:
+      linux:
+        pluginClass: DesktopWindowChromePlugin
       windows:
         pluginClass: DesktopWindowChromePluginCApi
       macos:

@@ -293,7 +293,8 @@ extension _AppWindowPresentationContext on BuildContext {
       ? null
       : switch (defaultTargetPlatform) {
           TargetPlatform.macOS => AppDesktopBarMode.fused,
-          TargetPlatform.windows => AppDesktopBarMode.separate,
+          TargetPlatform.windows ||
+          TargetPlatform.linux => AppDesktopBarMode.separate,
           _ => null,
         };
 

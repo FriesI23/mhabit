@@ -66,6 +66,9 @@ melos:
         - >-
           dart run melos exec --scope=mhabit_desktop_window_chrome
           --fail-fast -- "dart run pigeon --input pigeons/desktop_window_chrome.dart"
+        - >-
+          dart run melos exec --scope=mhabit_desktop_window_chrome
+          --fail-fast -- "dart run pigeon --input pigeons/desktop_title_bar.dart"
         - flutter pub run build_runner build --workspace
         - flutter gen-l10n
         - dart run melos run format

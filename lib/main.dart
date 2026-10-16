@@ -49,8 +49,7 @@ Future<void> main() async {
     ),
   );
 
-  // macOS fuses native buttons into content; Windows retains its title bar.
-  // Linux native chrome remains a separate, deferred implementation.
+  // macOS fuses native buttons into content; Windows/Linux retain title bars.
   if (Platform.isMacOS) {
     final chrome = DesktopWindowChrome(
       minimumSize: appDesktopWindowMinimumSize,
@@ -61,7 +60,7 @@ Future<void> main() async {
     );
     await WidgetsBinding.instance.endOfFrame;
     await chrome.show();
-  } else if (Platform.isWindows) {
+  } else if (Platform.isWindows || Platform.isLinux) {
     final titleBar = DesktopWindowTitleBar();
     await titleBar.initialize(minimumSize: appDesktopWindowMinimumSize);
     runApp(

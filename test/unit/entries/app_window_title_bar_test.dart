@@ -17,6 +17,9 @@ class _Api implements DesktopWindowTitleBarApi {
   @override
   bool get supported => true;
   final appearances = <DesktopTitleBarAppearance>[];
+  final titles = <String>[];
+  @override
+  Future<void> setTitle(String title) async => titles.add(title);
   @override
   Future<void> initialize({Size? minimumSize}) async {}
   @override
@@ -42,6 +45,41 @@ class _SurfaceAccess implements AppWindowNavigationSurfaceAccess {
 }
 
 void main() {
+  testWidgets(
+    'native title follows localized app name without duplicate submissions',
+    (tester) async {
+      final api = _Api();
+      final owner = DesktopWindowTitleBar(api: api);
+      await owner.initialize();
+      addTearDown(() => unawaited(owner.dispose()));
+      Future<void> pump(Locale language) async {
+        await tester.pumpWidget(
+          Provider<DesktopWindowTitleBar>.value(
+            value: owner,
+            child: AppRootView.withDefault(
+              language: language,
+              child: const Scaffold(body: Text('Content')),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+      }
+
+      await pump(const Locale('en'));
+      await pump(const Locale('en'));
+      await pump(const Locale('zh'));
+      await pump(
+        const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
+      );
+      expect(api.titles, ['Table Habit', '桌上习惯', '桌上習慣']);
+      expect(tester.takeException(), isNull);
+    },
+    variant: const TargetPlatformVariant({
+      TargetPlatform.windows,
+      TargetPlatform.linux,
+    }),
+  );
+
   testWidgets(
     'binding merges idle reports and cancels submissions after removal',
     (tester) async {
@@ -97,7 +135,10 @@ void main() {
       expect(api.appearances, hasLength(3));
       expect(tester.takeException(), isNull);
     },
-    variant: TargetPlatformVariant.only(TargetPlatform.windows),
+    variant: const TargetPlatformVariant({
+      TargetPlatform.windows,
+      TargetPlatform.linux,
+    }),
   );
 
   testWidgets(
@@ -124,7 +165,10 @@ void main() {
       expect(context.read<AppWindowNavigationSurfaceAccess>(), isNotNull);
       expect(tester.takeException(), isNull);
     },
-    variant: TargetPlatformVariant.only(TargetPlatform.windows),
+    variant: const TargetPlatformVariant({
+      TargetPlatform.windows,
+      TargetPlatform.linux,
+    }),
   );
 
   testWidgets('reporter releases replaced access and preserves its source', (
@@ -172,8 +216,6 @@ void main() {
   testWidgets(
     'resolved rail form, theme and style own native colors; overlays do not',
     (tester) async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
-      addTearDown(() => debugDefaultTargetPlatformOverride = null);
       tester.view.devicePixelRatio = 1;
       tester.view.physicalSize = const Size(1000, 800);
       addTearDown(tester.view.reset);
@@ -286,19 +328,22 @@ void main() {
       await pump();
       expect(api.appearances.last.background, dark.colorScheme.surface);
       expect(tester.takeException(), isNull);
-      debugDefaultTargetPlatformOverride = null;
     },
+    variant: const TargetPlatformVariant({
+      TargetPlatform.windows,
+      TargetPlatform.linux,
+    }),
   );
 
   testWidgets(
-    'Windows Material root supplies fixed backgrounds; other styles/platforms retain defaults',
+    'independent Material title bars use fixed backgrounds; other styles retain defaults',
     (tester) async {
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
       for (final (platform, style, fixed) in [
         (TargetPlatform.windows, AdaptiveStyle.material, true),
         (TargetPlatform.windows, AdaptiveStyle.apple, false),
         (TargetPlatform.macOS, AdaptiveStyle.material, false),
-        (TargetPlatform.linux, AdaptiveStyle.material, false),
+        (TargetPlatform.linux, AdaptiveStyle.material, true),
         (TargetPlatform.android, AdaptiveStyle.material, false),
       ]) {
         debugDefaultTargetPlatformOverride = platform;
@@ -394,11 +439,14 @@ void main() {
       expect(api.appearances.last.background, theme.colorScheme.surface);
       expect(tester.takeException(), isNull);
     },
-    variant: TargetPlatformVariant.only(TargetPlatform.windows),
+    variant: const TargetPlatformVariant({
+      TargetPlatform.windows,
+      TargetPlatform.linux,
+    }),
   );
 
   testWidgets(
-    'Windows theme dispatch preserves Navigator, input and focus across UI styles',
+    'independent title bar theme dispatch preserves Navigator, input and focus across UI styles',
     (tester) async {
       final controller = TextEditingController();
       final focus = FocusNode();
@@ -443,7 +491,10 @@ void main() {
       }
       expect(tester.takeException(), isNull);
     },
-    variant: TargetPlatformVariant.only(TargetPlatform.windows),
+    variant: const TargetPlatformVariant({
+      TargetPlatform.windows,
+      TargetPlatform.linux,
+    }),
   );
 
   testWidgets(
@@ -488,6 +539,9 @@ void main() {
       expect(api.appearances.last.background, theme.colorScheme.surface);
       expect(tester.takeException(), isNull);
     },
-    variant: TargetPlatformVariant.only(TargetPlatform.windows),
+    variant: const TargetPlatformVariant({
+      TargetPlatform.windows,
+      TargetPlatform.linux,
+    }),
   );
 }

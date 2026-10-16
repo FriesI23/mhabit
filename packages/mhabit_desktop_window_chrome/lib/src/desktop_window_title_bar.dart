@@ -30,12 +30,13 @@ class DesktopTitleBarAppearance {
   int get hashCode => Object.hash(background, foreground, brightness);
 }
 
-/// Injectable native boundary for the independent Windows title bar.
+/// Injectable native boundary for the independent native title bar.
 abstract interface class DesktopWindowTitleBarApi {
-  factory DesktopWindowTitleBarApi() => _WindowsTitleBarApi();
+  factory DesktopWindowTitleBarApi() => _NativeTitleBarApi();
   bool get supported;
   Future<void> initialize({Size? minimumSize});
   Future<bool> applyAppearance(DesktopTitleBarAppearance appearance);
+  Future<void> setTitle(String title);
   Future<void> reset();
 }
 
@@ -47,10 +48,12 @@ class DesktopWindowTitleBar {
   final DesktopWindowTitleBarApi _api;
   Future<void> _pending = Future.value();
   DesktopTitleBarAppearance? _requested;
+  String? _requestedTitle;
   bool _initialized = false;
   bool _disposed = false;
   bool? _customColorsSupported;
   int _revision = 0;
+  int _titleRevision = 0;
 
   bool get supported => _api.supported;
   bool? get customColorsSupported => _customColorsSupported;
@@ -93,6 +96,25 @@ class DesktopWindowTitleBar {
     return _pending;
   }
 
+  /// Synchronizes the native title, including later application locale changes.
+  Future<void> setTitle(String title) {
+    if (!_initialized || _disposed || !supported || title == _requestedTitle) {
+      return _pending;
+    }
+    _requestedTitle = title;
+    final revision = ++_titleRevision;
+    _pending = _pending.then((_) async {
+      if (_disposed || revision != _titleRevision) return;
+      try {
+        await _api.setTitle(title).timeout(const Duration(seconds: 2));
+      } catch (error) {
+        if (revision == _titleRevision) _requestedTitle = null;
+        debugPrint('Native window title unavailable: $error');
+      }
+    });
+    return _pending;
+  }
+
   Future<void> dispose() async {
     if (_disposed) return;
     _disposed = true;
@@ -107,12 +129,14 @@ class DesktopWindowTitleBar {
   }
 }
 
-class _WindowsTitleBarApi implements DesktopWindowTitleBarApi {
+class _NativeTitleBarApi implements DesktopWindowTitleBarApi {
   final _host = DesktopTitleBarHostApi();
 
   @override
   bool get supported =>
-      !kIsWeb && defaultTargetPlatform == TargetPlatform.windows;
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.windows ||
+          defaultTargetPlatform == TargetPlatform.linux);
 
   @override
   Future<void> initialize({Size? minimumSize}) async {
@@ -127,6 +151,9 @@ class _WindowsTitleBarApi implements DesktopWindowTitleBarApi {
         appearance.foreground.toARGB32(),
         appearance.brightness == Brightness.dark,
       );
+
+  @override
+  Future<void> setTitle(String title) => windowManager.setTitle(title);
 
   @override
   Future<void> reset() => _host.reset();

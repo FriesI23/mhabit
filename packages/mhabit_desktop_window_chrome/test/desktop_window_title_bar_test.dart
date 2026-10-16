@@ -14,6 +14,9 @@ class _Api implements DesktopWindowTitleBarApi {
   Size? minimum;
   int resets = 0;
   final appearances = <DesktopTitleBarAppearance>[];
+  final titles = <String>[];
+  @override
+  Future<void> setTitle(String title) async => titles.add(title);
   Completer<void>? blocked;
 
   @override
@@ -43,61 +46,91 @@ const dark = DesktopTitleBarAppearance(
 
 void main() {
   final binding = TestWidgetsFlutterBinding.ensureInitialized();
-  test(
-    'Windows adapter sends resolved ARGB and applies the outer frame minimum',
-    () async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
-      addTearDown(() => debugDefaultTargetPlatformOverride = null);
-      const windowChannel = MethodChannel('window_manager');
-      const prefix =
-          'dev.flutter.pigeon.mhabit_desktop_window_chrome.DesktopTitleBarHostApi';
-      const codec = DesktopTitleBarHostApi.pigeonChannelCodec;
-      Map<Object?, Object?>? minimum;
-      List<Object?>? payload;
-      var resets = 0;
-      binding.defaultBinaryMessenger.setMockMethodCallHandler(windowChannel, (
-        call,
-      ) async {
-        if (call.method == 'setMinimumSize') {
-          minimum = call.arguments as Map<Object?, Object?>;
-        }
-        return null;
-      });
-      binding.defaultBinaryMessenger.setMockMessageHandler(
-        '$prefix.setAppearance',
-        (message) async {
-          payload = codec.decodeMessage(message) as List<Object?>;
-          return codec.encodeMessage([true]);
-        },
-      );
-      binding.defaultBinaryMessenger.setMockMessageHandler('$prefix.reset', (
-        _,
-      ) async {
-        resets++;
-        return codec.encodeMessage([null]);
-      });
-      addTearDown(() {
-        binding.defaultBinaryMessenger.setMockMethodCallHandler(
-          windowChannel,
-          null,
-        );
+  for (final platform in [TargetPlatform.windows, TargetPlatform.linux]) {
+    test(
+      '$platform adapter sends resolved ARGB and applies the minimum',
+      () async {
+        debugDefaultTargetPlatformOverride = platform;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+        const windowChannel = MethodChannel('window_manager');
+        const prefix =
+            'dev.flutter.pigeon.mhabit_desktop_window_chrome.DesktopTitleBarHostApi';
+        const codec = DesktopTitleBarHostApi.pigeonChannelCodec;
+        Map<Object?, Object?>? minimum;
+        List<Object?>? payload;
+        var resets = 0;
+        String? title;
+        binding.defaultBinaryMessenger.setMockMethodCallHandler(windowChannel, (
+          call,
+        ) async {
+          if (call.method == 'setTitle') {
+            title = (call.arguments as Map)['title'] as String;
+          }
+          if (call.method == 'setMinimumSize') {
+            minimum = call.arguments as Map<Object?, Object?>;
+          }
+          return null;
+        });
         binding.defaultBinaryMessenger.setMockMessageHandler(
           '$prefix.setAppearance',
-          null,
+          (message) async {
+            payload = codec.decodeMessage(message) as List<Object?>;
+            return codec.encodeMessage([true]);
+          },
         );
-        binding.defaultBinaryMessenger.setMockMessageHandler(
-          '$prefix.reset',
-          null,
-        );
-      });
-      final owner = DesktopWindowTitleBar();
-      await owner.initialize(minimumSize: const Size(350, 520));
-      await owner.applyAppearance(dark);
-      expect(minimum!['width'], 350.0);
-      expect(minimum!['height'], 520.0);
-      expect(payload, [0xFF112233, 0xFFF2F2F2, true]);
+        binding.defaultBinaryMessenger.setMockMessageHandler('$prefix.reset', (
+          _,
+        ) async {
+          resets++;
+          return codec.encodeMessage([null]);
+        });
+        addTearDown(() {
+          binding.defaultBinaryMessenger.setMockMethodCallHandler(
+            windowChannel,
+            null,
+          );
+          binding.defaultBinaryMessenger.setMockMessageHandler(
+            '$prefix.setAppearance',
+            null,
+          );
+          binding.defaultBinaryMessenger.setMockMessageHandler(
+            '$prefix.reset',
+            null,
+          );
+        });
+        final owner = DesktopWindowTitleBar();
+        await owner.initialize(minimumSize: const Size(350, 520));
+        await owner.setTitle('桌上习惯');
+        expect(title, '桌上习惯');
+        await owner.applyAppearance(dark);
+        expect(minimum!['width'], 350.0);
+        expect(minimum!['height'], 520.0);
+        expect(payload, [0xFF112233, 0xFFF2F2F2, true]);
+        await owner.dispose();
+        expect(resets, 1);
+      },
+    );
+  }
+
+  test(
+    'titles coalesce without canceling appearance and stop after dispose',
+    () async {
+      final api = _Api()..blocked = Completer<void>();
+      final owner = DesktopWindowTitleBar(api: api);
+      await owner.initialize();
+      final appearance = owner.applyAppearance(dark);
+      await Future<void>.delayed(Duration.zero);
+      owner.setTitle('Table Habit');
+      final latest = owner.setTitle('桌上习惯');
+      api.blocked!.complete();
+      await appearance;
+      await latest;
+      await owner.setTitle('桌上习惯');
+      expect(api.titles, ['桌上习惯']);
+      expect(api.appearances, [dark]);
       await owner.dispose();
-      expect(resets, 1);
+      await owner.setTitle('Table Habit');
+      expect(api.titles, ['桌上习惯']);
     },
   );
 
