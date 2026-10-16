@@ -1,9 +1,10 @@
-# Adaptive UI（内部包）
+# Adaptive UI (internal package)
 
-Material / Cupertino 组件与布局基础设施。统一配置入口是
-`AppAdaptiveUiThemeData`，局部覆盖使用 `AppAdaptiveUiTheme`。
+Material and Cupertino components and layout infrastructure. Use
+`AppAdaptiveUiThemeData` for shared configuration and `AppAdaptiveUiTheme` for
+local overrides.
 
-## 全局配置
+## Global configuration
 
 ```dart
 ThemeData(
@@ -19,12 +20,13 @@ ThemeData(
 )
 ```
 
-配置字段：`style`、`breakpoints`、`listTheme`、`appBarTheme`、
-`cupertinoButtonTheme`、`cupertinoFocusTheme`。
+Configuration fields: `style`, `breakpoints`, `listTheme`, `appBarTheme`,
+`cupertinoButtonTheme`, and `cupertinoFocusTheme`.
 
-## 局部覆盖
+## Local overrides
 
-在已有 `build` 方法的 context 中读取父配置，无需额外的 Builder：
+Read the parent configuration from the context of an existing `build` method;
+no additional `Builder` is needed:
 
 ```dart
 @override
@@ -39,25 +41,38 @@ Widget build(BuildContext context) {
 }
 ```
 
-列表单独覆盖可以使用
-`AdaptiveListTheme.merge(data: const AdaptiveListThemeData(...), child: list)`。
+For list-specific overrides, use
+`AdaptiveListTheme.merge(data: const AdaptiveListThemeData(...), child: list)`.
 
-## 规则
+## Configuration rules
 
-- 总主题读取：最近局部主题 → Flutter Theme 扩展 → 默认配置。
-- 局部主题与组件内部选择共用一个数据节点，由 Flutter 处理最近覆盖和更新。
-- 局部 `data` 替换整套配置；保留其他字段时使用父配置的 `copyWith`。
-- `copyWith` 省略 `style` / `breakpoints` 保留原值，显式 null 恢复自动选择。
-- style 自动选择跟随 `ThemeData.platform`；断点跟随解析后的设计体系。
-- 列表字段：显式组件参数 → 局部列表主题 → 总主题 → renderer 默认值。
-- 固定 Material 滚动背景会关闭 tint，保留滚动阴影、布局和搜索焦点配色。
-- Dialog / Sheet 保留打开时的 style 和 Sheet 断点；内部选择不冻结整套配置。
-- 显式局部总主题、列表主题会被捕获；根主题继续更新。
-- Sheet 其他主题沿用底层 Flutter 路由的规则，不额外冻结 Sidebar 的 CupertinoTheme。
-- 窗口几何、导航状态、控制器和交互能力继续由各自的 Scope / Binding 管理。
-- 普通 Style 对象与外部包主题维持各自职责。
+- Adaptive UI theme lookup: nearest local theme → Flutter theme extension →
+  default configuration.
+- Local theme lookups and component selectors share the same data node. Flutter
+  resolves the nearest override and propagates updates.
+- Local `data` replaces the entire configuration. Use the parent configuration's
+  `copyWith` to preserve unrelated fields.
+- In `copyWith`, omitting `style` or `breakpoints` retains its current value;
+  explicitly passing `null` restores automatic selection.
+- Automatic style selection follows `ThemeData.platform`; breakpoints follow the
+  resolved design style.
+- List fields: explicit component arguments → local list theme → adaptive UI
+  theme → renderer defaults.
+- Fixed Material scroll backgrounds disable tint while preserving scroll
+  shadows, layout, and search focus colors.
+- Dialogs and sheets retain the style selected when opened; sheets also retain
+  their selected breakpoints. Component selectors keep the remaining
+  configuration live.
+- Explicit local adaptive UI and list themes are captured; root themes remain
+  live.
+- Other sheet themes follow the underlying Flutter route's rules, without an
+  additional snapshot of the sidebar's `CupertinoTheme`.
+- Window geometry, navigation state, controllers, and interaction capabilities
+  remain managed by their respective scopes and bindings.
+- Component `Style` objects and external package themes retain their existing
+  responsibilities.
 
-焦点外观由 `AdaptiveCupertinoFocusDecoration` 渲染：
+`AdaptiveCupertinoFocusDecoration` renders the focus appearance:
 
 ```dart
 AdaptiveCupertinoFocusDecoration(
@@ -67,6 +82,7 @@ AdaptiveCupertinoFocusDecoration(
 )
 ```
 
-它在构建时读取当前主题并解析动态颜色；`AdaptiveCupertinoFocusHalo` 负责观察焦点，
-Sidebar / Actions 使用各自已有的状态与形状组合同一个装饰 widget。
-`AdaptiveCupertinoFocusThemeData` 仅保存配置。
+It reads the current theme and resolves dynamic colors at build time.
+`AdaptiveCupertinoFocusHalo` observes focus changes. Sidebar and action components
+combine the same decoration widget with their existing state and shapes.
+`AdaptiveCupertinoFocusThemeData` stores configuration only.
