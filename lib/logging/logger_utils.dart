@@ -36,6 +36,7 @@ class ReplayAppLoggerStreamer<T extends AppLoggerMessage> {
   StreamSubscription<l.LogEvent>? _subscription;
   Completer<void>? _init;
   int _count = 0;
+  bool _isCompleting = false;
 
   ReplayAppLoggerStreamer({
     required this._replaySubject,
@@ -75,6 +76,8 @@ class ReplayAppLoggerStreamer<T extends AppLoggerMessage> {
 
   bool get isComplete => _completer.isCompleted;
 
+  Future<void> get done => _completer.future;
+
   Future<void> init() {
     if (_init != null) _init!.future;
 
@@ -109,12 +112,12 @@ class ReplayAppLoggerStreamer<T extends AppLoggerMessage> {
     return _completer.future;
   }
 
-  void onComplete() {
-    if (_completer.isCompleted) return;
+  Future<void> onComplete() async {
+    if (_isCompleting || _completer.isCompleted) return;
+    _isCompleting = true;
     try {
       handleData(l.LogEvent(l.Level.info, completeMessage));
-      outputer.destroy();
-      printer.destroy();
+      await Future.wait([outputer.destroy(), printer.destroy()]);
     } catch (e, s) {
       if (!_completer.isCompleted) _completer.completeError(e, s);
     } finally {
