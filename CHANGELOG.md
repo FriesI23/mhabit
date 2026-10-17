@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## Unreleased
+
+- Feature: interactive iOS Home Screen widgets with seven-day progress,
+  complete/undo actions, and refresh without opening the app (iOS 17+)
+
 ## 1.27.13+202
 
 - Feature: adaptive, collapsible sidebar keeps page state and theme/custom

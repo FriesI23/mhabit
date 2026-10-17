@@ -80,6 +80,7 @@ import '../../utils/app_clock.dart';
 import '../../widgets/widgets.dart';
 import '../app_error/entry.dart';
 import '../common/app_root_view.dart';
+import '../habit_widget_entry.dart';
 import 'navigation_chrome.dart';
 import 'navigation_destination.dart';
 import 'providers.dart';
@@ -415,11 +416,13 @@ class AppPostInit extends SingleChildStatefulWidget {
 class _AppPostInitState extends SingleChildState<AppPostInit> {
   final _appSyncBridge = _AppSyncPostInitBridge();
   final _habitReminderBridge = _HabitReminderPostInitBridge();
+  final _habitWidgetBridge = HabitWidgetPostInitBridge();
   bool _didHandlePostInit = false;
 
   void _syncL10n([L10n? l10n]) {
     context.maybeRead<NotificationChannelData>()?.onL10nUpdate(l10n);
     _habitReminderBridge.sync(context);
+    _habitWidgetBridge.sync(context, l10n: l10n);
     _appSyncBridge.sync(
       context,
       l10n: l10n,
@@ -447,6 +450,7 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
 
   @override
   void dispose() {
+    _habitWidgetBridge.dispose();
     _habitReminderBridge.dispose();
     _appSyncBridge.dispose();
     super.dispose();
