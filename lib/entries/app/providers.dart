@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
@@ -38,6 +39,7 @@ import '../../providers/workflow/app_notify_config.dart';
 import '../../providers/workflow/app_reminder.dart';
 import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/group_manager.dart';
+import '../../providers/workflow/habit_widget.dart';
 import '../../providers/workflow/habits_file_exporter.dart';
 import '../../providers/workflow/habits_file_importer.dart';
 import '../../providers/workflow/habits_manager.dart';
@@ -103,6 +105,13 @@ class AppProviders extends SingleChildStatelessWidget {
     ProxyProvider<HabitsManager, HabitImportAccess>(
       update: (context, value, previous) => value,
     ),
+    if (defaultTargetPlatform == TargetPlatform.iOS)
+      Provider<HabitWidgetService>(
+        create: (context) => HabitWidgetService(
+          database: context.read<DBHelperViewModel>().local,
+          habitsManager: context.read<HabitsManager>(),
+        ),
+      ),
   ];
 
   Iterable<SingleChildWidget> _buildGroupAppProviders() => [

@@ -83,6 +83,10 @@ existing architecture and tooling contracts.
 - `lib/entries/app/entry.dart` owns high-level app assembly. It wires profile
   loading, database loading, provider injection, dynamic color, and the app
   shell.
+- `lib/entries/habit_widget_entry.dart` owns iOS widget background startup and
+  foreground refresh wiring. Native WidgetKit views live in `ios/HabitWidget/`;
+  shared intents and snapshot types live in `ios/Shared/`. Keep record mutations
+  in the existing Dart workflow/storage owners; see `docs/ios-widgets.md`.
 - `lib/entries/common/app_root_view.dart` owns the `MaterialApp` shell.
   Keep global app-level concerns such as locale, theme, navigator keys,
   localization delegates, and top-level builders there.
@@ -244,6 +248,8 @@ them; keep rows with independent actions separate from single-action controls.
   generated localization outputs.
 - Use the existing normalization and generation workflow when changing l10n:
   `make normalize-l10n`, then `make gen` or the narrower needed step.
+- Widget-only native strings are owned by `ios/HabitWidget/*.lproj/Localizable.strings`.
+  Shared app labels reach the widget through its localized snapshot.
 
 ## Generated Code
 

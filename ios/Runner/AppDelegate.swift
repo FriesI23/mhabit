@@ -17,5 +17,7 @@ import UserNotifications
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+    HabitWidgetActionRunner.shared.setForegroundMessenger(
+      engineBridge.applicationRegistrar.messenger())
   }
 }
