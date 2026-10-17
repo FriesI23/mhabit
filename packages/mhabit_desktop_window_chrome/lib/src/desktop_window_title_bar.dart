@@ -57,6 +57,14 @@ class DesktopWindowTitleBar {
 
   bool get supported => _api.supported;
 
+  /// Runner keeps the window hidden until placement and the first frame exist.
+  Future<void> show() async {
+    if (!supported) return;
+    await windowManager.ensureInitialized();
+    await windowManager.show();
+    await windowManager.focus();
+  }
+
   /// Whether the last native response confirmed that custom colors were applied.
   /// Null until the first response; false also covers temporary conditions such
   /// as high contrast or an unavailable window, rather than platform capability.

@@ -6,6 +6,8 @@ add_library(${PLUGIN_NAME} SHARED
   "desktop_window_chrome_plugin.cpp"
   "desktop_title_bar.g.cpp"
   "native_title_bar.cpp"
+  "native_window_persistence.cpp"
+  "window_persistence.g.cpp"
 )
 apply_standard_settings(${PLUGIN_NAME})
 target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL NOMINMAX)
