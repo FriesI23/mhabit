@@ -81,6 +81,6 @@ Future<void> _runAppWithNativeTitleBar() async {
       child: const AppEntry(),
     ),
   );
-  await WidgetsBinding.instance.endOfFrame;
+  await WidgetsBinding.instance.waitUntilFirstFrameRasterized;
   await titleBar.show();
 }
