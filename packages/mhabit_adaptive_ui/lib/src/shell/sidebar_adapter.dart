@@ -133,12 +133,16 @@ class CupertinoSidebarPresentationScope extends InheritedWidget {
   const CupertinoSidebarPresentationScope({
     super.key,
     required this.expanded,
+    required this.collapsedBarEnabled,
     required this.collapsedBarController,
     required this.toolbarGeometry,
     required super.child,
   });
 
   final bool expanded;
+
+  /// Whether the hidden sidebar exposes destinations in the top toolbar.
+  final bool collapsedBarEnabled;
   final CupertinoSidebarCollapsedBarController collapsedBarController;
   final CupertinoSidebarToolbarGeometry toolbarGeometry;
 
@@ -159,6 +163,7 @@ class CupertinoSidebarPresentationScope extends InheritedWidget {
   @override
   bool updateShouldNotify(CupertinoSidebarPresentationScope oldWidget) =>
       expanded != oldWidget.expanded ||
+      collapsedBarEnabled != oldWidget.collapsedBarEnabled ||
       collapsedBarController != oldWidget.collapsedBarController ||
       toolbarGeometry != oldWidget.toolbarGeometry;
 }

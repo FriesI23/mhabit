@@ -28,6 +28,7 @@ import '../../common/enums.dart';
 import '../../common/exceptions.dart';
 import '../../common/flavor.dart';
 import '../../common/utils.dart';
+import '../../extensions/adaptive_navigation_context_extensions.dart';
 import '../../extensions/adaptive_style_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
@@ -1003,10 +1004,7 @@ class _PageState extends State<_Page> with XShare {
                     ? Text(l10n.appSetting_appbar_titleText)
                     : const Text("Settings"),
               ),
-              leading:
-                  (AdaptiveNavScope.maybeOf(context)?.form ??
-                          NavigationShellForm.compact) ==
-                      NavigationShellForm.compact
+              leading: context.showsAppFlowRootBackButton
                   ? AdaptiveBackButton(
                       type: AdaptiveBackButtonType.back,
                       onPressed: () => Navigator.maybePop(context),

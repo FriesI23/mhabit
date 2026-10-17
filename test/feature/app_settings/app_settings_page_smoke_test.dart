@@ -24,6 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mhabit/common/types.dart';
+import 'package:mhabit/entries/app/navigation_destination.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/app_sync_tasks.dart';
 import 'package:mhabit/models/group_export.dart';
@@ -226,6 +227,10 @@ void main() {
       final collapsedSidebar = _AppleCollapsedSidebar(
         platform == TargetPlatform.iOS,
       );
+      final shellDirection = ValueNotifier<TextDirection?>(null);
+      addTearDown(shellDirection.dispose);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       final developer = AppDeveloperViewModel(
         global: Global()..switchDevelopMode(false),
       );
@@ -235,6 +240,11 @@ void main() {
       final router = GoRouter(
         routes: [
           GoRoute(path: '/', builder: (_, _) => const AppSettingPage()),
+          GoRoute(
+            path: '/source/:name',
+            builder: (_, state) =>
+                Scaffold(body: Text('Source ${state.pathParameters['name']}')),
+          ),
           for (final route in [
             AppRoute.settingsSync,
             AppRoute.groupManage,
@@ -324,6 +334,35 @@ void main() {
           ],
           child: MaterialApp.router(
             routerConfig: router,
+            builder: (context, child) => ValueListenableBuilder<TextDirection?>(
+              valueListenable: shellDirection,
+              builder: (context, direction, _) {
+                if (direction == null) return child!;
+                return Overlay.wrap(
+                  child: Directionality(
+                    textDirection: direction,
+                    child: AdaptiveNavigationShell(
+                      selectedIndex: 0,
+                      selectedAuxiliaryIndex: 0,
+                      compactRouteVisible: false,
+                      destinations: [
+                        AppNavigationDestinations.habits(label: 'Habits'),
+                        AppNavigationDestinations.today(label: 'Today'),
+                      ],
+                      auxiliaryDestinations: [
+                        AppNavigationDestinations.settings(label: 'Settings'),
+                      ],
+                      onDestinationSelected: (_) {},
+                      onAuxiliaryDestinationSelected: (_) {},
+                      appleCollapsedSidebarEnabled: context
+                          .watch<AppAppleCollapsedSidebarViewModel>()
+                          .enabled,
+                      child: child!,
+                    ),
+                  ),
+                );
+              },
+            ),
             theme: ThemeData(platform: platform),
             localizationsDelegates: L10n.localizationsDelegates,
             supportedLocales: L10n.supportedLocales,
@@ -838,6 +877,116 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(scrollable.position.pixels, offsetBeforePush);
+
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(700, 900);
+      shellDirection.value = TextDirection.ltr;
+      await tester.pumpAndSettle();
+      final page = tester.element(find.byType(AppSettingPage));
+      final settingsView = find.byKey(
+        const PageStorageKey<String>('app-settings-scroll-view'),
+      );
+      final settingsScroll = tester
+          .widget<CustomScrollView>(settingsView)
+          .controller!;
+      settingsScroll.jumpTo(100);
+      await tester.pumpAndSettle();
+
+      void expectBack(bool visible) {
+        final appBar = tester.widget<AdaptiveSliverAppBar>(
+          find.byType(AdaptiveSliverAppBar),
+        );
+        expect(appBar.leading, visible ? isA<AdaptiveBackButton>() : isNull);
+        if (visible) {
+          expect(find.byType(AdaptiveBackButton).hitTestable(), findsOneWidget);
+        }
+        expect(tester.element(find.byType(AppSettingPage)), same(page));
+        expect(
+          tester.widget<CustomScrollView>(settingsView).controller,
+          same(settingsScroll),
+        );
+        expect(settingsScroll.offset, greaterThan(0));
+        expect(tester.takeException(), isNull);
+      }
+
+      for (final direction in TextDirection.values) {
+        shellDirection.value = direction;
+        await tester.pumpAndSettle();
+        for (final enabled in [true, false]) {
+          final offsetBeforeSwitch = settingsScroll.offset;
+          await collapsedSidebar.setEnabled(enabled);
+          await tester.pumpAndSettle();
+          expect(settingsScroll.offset, offsetBeforeSwitch);
+          expectBack(platform != TargetPlatform.android && !enabled);
+          if (platform != TargetPlatform.android) {
+            final toggle = find.byKey(
+              const ValueKey('cupertino-sidebar-toggle'),
+            );
+            if (!enabled) {
+              final backRect = tester.getRect(find.byType(AdaptiveBackButton));
+              final toggleRect = tester.getRect(toggle);
+              final titleRect = tester.getRect(
+                find.descendant(
+                  of: find.byType(AdaptiveSliverAppBar),
+                  matching: find.text('Settings'),
+                ),
+              );
+              expect(backRect.overlaps(toggleRect), isFalse);
+              expect(backRect.overlaps(titleRect), isFalse);
+              expect(
+                direction == TextDirection.ltr
+                    ? toggleRect.right <= backRect.left &&
+                          backRect.right <= titleRect.left
+                    : titleRect.right <= backRect.left &&
+                          backRect.right <= toggleRect.left,
+                isTrue,
+              );
+            }
+            await tester.tap(toggle);
+            await tester.pumpAndSettle();
+            expectBack(false);
+            await tester.tap(toggle);
+            await tester.pumpAndSettle();
+            expectBack(!enabled);
+          }
+        }
+        tester.view.physicalSize = const Size(400, 900);
+        await tester.pumpAndSettle();
+        expectBack(true);
+        tester.view.physicalSize = const Size(700, 900);
+        await tester.pumpAndSettle();
+        expectBack(platform != TargetPlatform.android);
+        tester.view.physicalSize = const Size(1200, 900);
+        await tester.pumpAndSettle();
+        expectBack(false);
+        if (platform != TargetPlatform.android) {
+          await tester.tap(
+            find.byKey(const ValueKey('cupertino-sidebar-toggle')),
+          );
+          await tester.pumpAndSettle();
+          expectBack(true);
+        }
+        tester.view.physicalSize = const Size(700, 900);
+        await tester.pumpAndSettle();
+        expectBack(platform != TargetPlatform.android);
+      }
+
+      for (final source in ['habits', 'today', 'detail']) {
+        router.go('/source/$source');
+        await tester.pumpAndSettle();
+        unawaited(router.push<void>('/'));
+        await tester.pumpAndSettle();
+        // Apple exercises the missing medium Back; Material uses compact.
+        if (platform == TargetPlatform.android) {
+          tester.view.physicalSize = const Size(400, 900);
+        }
+        await tester.pumpAndSettle();
+        await tester.tap(find.byType(AdaptiveBackButton));
+        await tester.pumpAndSettle();
+        expect(find.text('Source $source'), findsOneWidget);
+        tester.view.physicalSize = const Size(700, 900);
+        await tester.pumpAndSettle();
+      }
     });
   }
 }
