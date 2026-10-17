@@ -10,6 +10,7 @@ import '../cupertino/cupertino_adaptive_navigation_bar.dart';
 import '../cupertino/cupertino_navigation_primary_action.dart';
 import '../cupertino/cupertino_navigation_shell.dart';
 import '../material/material_navigation_shell.dart';
+import 'sidebar_collapse_memory.dart';
 
 /// Adaptive navigation chrome around [child].
 ///
@@ -31,6 +32,10 @@ import '../material/material_navigation_shell.dart';
 /// compact form, route visibility, contextual chrome, and scroll direction
 /// determine whether Material navigation is hidden or Apple navigation is
 /// minimized.
+///
+/// Explicit sidebar collapse is remembered across forms and visual styles
+/// until the user expands or this shell is disposed. Expansion is transient
+/// and returns to the form default when the form or visual style changes.
 class AdaptiveNavigationShell extends StatefulWidget {
   /// Creates adaptive navigation chrome around [child].
   const AdaptiveNavigationShell({
@@ -151,6 +156,7 @@ class AdaptiveNavigationShell extends StatefulWidget {
 }
 
 class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
+  final SidebarCollapseMemory _collapseMemory = SidebarCollapseMemory();
   final GlobalKey _childKey = GlobalKey(
     debugLabel: 'adaptive-navigation-shell-child',
   );
@@ -181,6 +187,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
     final child = KeyedSubtree(key: _childKey, child: widget.child);
     return switch (AdaptiveStyle.of(context)) {
       AdaptiveStyle.material => MaterialNavigationShell(
+        collapseMemory: _collapseMemory,
         selectedIndex: widget.selectedIndex,
         destinations: widget.destinations,
         onDestinationSelected: widget.onDestinationSelected,
@@ -197,6 +204,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
         child: child,
       ),
       AdaptiveStyle.apple => CupertinoNavigationShell(
+        collapseMemory: _collapseMemory,
         selectedIndex: widget.selectedIndex,
         destinations: widget.destinations,
         onDestinationSelected: widget.onDestinationSelected,

@@ -958,11 +958,21 @@ void main() {
         expectBack(platform != TargetPlatform.android);
         tester.view.physicalSize = const Size(1200, 900);
         await tester.pumpAndSettle();
-        expectBack(false);
+        // Explicit collapse survives wider windows, including on Settings.
+        expectBack(platform != TargetPlatform.android);
         if (platform != TargetPlatform.android) {
-          await tester.tap(
-            find.byKey(const ValueKey('cupertino-sidebar-toggle')),
-          );
+          final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
+          await tester.tap(toggle);
+          await tester.pumpAndSettle();
+          expectBack(false);
+          // Opening clears the preference; breakpoint defaults apply again.
+          tester.view.physicalSize = const Size(700, 900);
+          await tester.pumpAndSettle();
+          expectBack(true);
+          tester.view.physicalSize = const Size(1200, 900);
+          await tester.pumpAndSettle();
+          expectBack(false);
+          await tester.tap(toggle);
           await tester.pumpAndSettle();
           expectBack(true);
         }

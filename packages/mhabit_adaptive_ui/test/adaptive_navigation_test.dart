@@ -3492,6 +3492,12 @@ void main() {
           final expandOffset = direction == TextDirection.ltr
               ? const Offset(24, 0)
               : const Offset(-24, 0);
+          tester.view.physicalSize = const Size(700, 800);
+          await tester.pumpAndSettle();
+          tester.view.physicalSize = const Size(1800, 800);
+          await tester.pumpAndSettle();
+          expect(rail().extended, isFalse);
+
           await tester.drag(
             find.byKey(const ValueKey('rail-resize-gesture-handle')),
             expandOffset,
@@ -3507,6 +3513,13 @@ void main() {
             find.byKey(const ValueKey('material-side-navigation-drag-bar')),
             findsOneWidget,
           );
+
+          tester.view.physicalSize = const Size(700, 800);
+          await tester.pumpAndSettle();
+          expect(rail().extended, isFalse);
+          tester.view.physicalSize = const Size(1800, 800);
+          await tester.pumpAndSettle();
+          expect(rail().extended, isTrue);
         },
       );
     }
@@ -4077,7 +4090,7 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
-    testWidgets('apple Sidebar retains only compact round-trip state', (
+    testWidgets('apple Sidebar remembers collapse across forms', (
       tester,
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
@@ -4110,7 +4123,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('cupertino-sidebar-panel')),
-        findsOneWidget,
+        findsNothing,
       );
 
       tester.view.physicalSize = const Size(906, 600);
@@ -4135,13 +4148,6 @@ void main() {
       );
 
       tester.view.physicalSize = const Size(906, 600);
-      await tester.pumpAndSettle();
-      expect(
-        find.byKey(const ValueKey('cupertino-sidebar-panel')),
-        findsOneWidget,
-      );
-
-      await tester.tap(find.byKey(const ValueKey('cupertino-sidebar-toggle')));
       await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('cupertino-sidebar-panel')),
@@ -4376,6 +4382,13 @@ void main() {
           findsOneWidget,
         );
 
+        // Establish an explicit collapse so the edge gesture must clear it.
+        final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
+        await tester.tap(toggle);
+        await tester.pumpAndSettle();
+        await tester.tap(toggle);
+        await tester.pumpAndSettle();
+
         final edgeStart = direction == TextDirection.ltr
             ? const Offset(5, 300)
             : const Offset(695, 300);
@@ -4408,6 +4421,20 @@ void main() {
         );
         expect(
           find.byKey(const ValueKey('cupertino-sidebar-edge-gesture')),
+          findsOneWidget,
+        );
+        tester.view.physicalSize = const Size(1000, 600);
+        await tester.pumpAndSettle();
+        tester.view.physicalSize = const Size(700, 600);
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-panel')),
+          findsNothing,
+        );
+        tester.view.physicalSize = const Size(1000, 600);
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('cupertino-sidebar-panel')),
           findsOneWidget,
         );
         debugDefaultTargetPlatformOverride = null;
@@ -5658,9 +5685,7 @@ void main() {
       expect(compactScope.barHeight, 80.0);
     });
 
-    testWidgets('resets rail extension to the form default on form changes', (
-      tester,
-    ) async {
+    testWidgets('retains manual rail collapse on form changes', (tester) async {
       _setSurfaceSize(tester, const Size(1000, 800));
       final router = _buildRouter();
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
@@ -5679,8 +5704,18 @@ void main() {
       await tester.pumpAndSettle();
       expect(rail().extended, isFalse);
 
-      // Grow back into expanded: the expanded default (extended) applies
-      // again, overriding the manual collapse.
+      // Growing back must preserve the explicit collapse.
+      tester.view.physicalSize = const Size(1000, 800);
+      await tester.pumpAndSettle();
+      expect(rail().extended, isFalse);
+
+      // Explicit expansion clears the memory; automatic collapse does not
+      // establish a new preference.
+      await tester.tap(find.byIcon(Icons.menu));
+      await tester.pumpAndSettle();
+      tester.view.physicalSize = const Size(700, 600);
+      await tester.pumpAndSettle();
+      expect(rail().extended, isFalse);
       tester.view.physicalSize = const Size(1000, 800);
       await tester.pumpAndSettle();
       expect(rail().extended, isTrue);

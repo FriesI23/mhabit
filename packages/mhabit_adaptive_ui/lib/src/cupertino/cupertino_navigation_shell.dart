@@ -9,6 +9,8 @@ import '../shell/navigation_scroll_wish_policy.dart';
 import '../shell/navigation_shell_form.dart';
 import '../shell/navigation_shell_frame.dart';
 import '../shell/sidebar_adapter.dart';
+import '../shell/sidebar_collapse_memory.dart';
+import '../shell/sidebar_expansion_controller.dart';
 import '../window_control/interaction_region.dart';
 import '../window_control/window_control_layout.dart';
 import 'apple_sidebar_style.dart';
@@ -33,7 +35,8 @@ import 'cupertino_neutral_button.dart';
 /// ```
 ///
 /// Medium widths default to the collapsed top-bar presentation; large widths
-/// default to the beside Sidebar. In compact form, route and contextual state
+/// default to the beside Sidebar. An explicit collapse overrides that default
+/// until the user expands. In compact form, route and contextual state
 /// control visibility while scroll direction selects the expanded or
 /// minimized Tab Bar presentation.
 class CupertinoNavigationShell extends StatefulWidget {
@@ -61,7 +64,11 @@ class CupertinoNavigationShell extends StatefulWidget {
     required this.collapsedSidebarItemStyle,
     this.expandNavigationLabel,
     this.collapseNavigationLabel,
+    this.collapseMemory,
   });
+
+  /// Shared runtime collapse preference; null keeps local renderer memory.
+  final SidebarCollapseMemory? collapseMemory;
 
   /// Content displayed beside or underneath the navigation chrome.
   final Widget child;
@@ -130,57 +137,26 @@ class CupertinoNavigationShell extends StatefulWidget {
 }
 
 class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
-  final AdaptiveNavigationController _controller =
-      AdaptiveNavigationController();
+  final SidebarExpansionController _controller = SidebarExpansionController();
   final CupertinoSidebarCollapsedBarController _collapsedBarController =
       CupertinoSidebarCollapsedBarController();
-  bool _sidebarExpanded = true;
-  NavigationShellForm? _automaticForm;
-  bool? _compactRetainedExpanded;
-  bool _syncingAutomaticForm = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller.addListener(_handleSidebarChanged);
-  }
-
-  void _handleSidebarChanged() {
-    final expanded = _controller.expanded;
-    if (expanded == _sidebarExpanded) return;
-    if (_syncingAutomaticForm) {
-      _sidebarExpanded = expanded;
-      return;
-    }
-    if (!mounted) return;
-    setState(() => _sidebarExpanded = expanded);
-  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final form = _resolveForm(WindowSize.of(context));
-    if (form == _automaticForm) return;
-    final previousForm = _automaticForm;
-    _automaticForm = form;
-    if (form == NavigationShellForm.compact) {
-      if (previousForm != null && previousForm != NavigationShellForm.compact) {
-        _compactRetainedExpanded = _controller.expanded;
-      }
-      return;
-    }
-
-    final expanded =
-        previousForm == NavigationShellForm.compact &&
-            _compactRetainedExpanded != null
-        ? _compactRetainedExpanded!
-        : form == NavigationShellForm.expandedSide;
-    _compactRetainedExpanded = null;
-    _syncingAutomaticForm = true;
-    _controller.expanded = expanded;
-    _sidebarExpanded = expanded;
-    _syncingAutomaticForm = false;
+    _updateSidebar();
   }
+
+  @override
+  void didUpdateWidget(covariant CupertinoNavigationShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.collapseMemory != widget.collapseMemory) _updateSidebar();
+  }
+
+  void _updateSidebar() => _controller.updateForm(
+    _resolveForm(WindowSize.of(context)),
+    collapseMemory: widget.collapseMemory,
+  );
 
   NavigationShellForm _resolveForm(WindowSize windowSize) =>
       switch (windowSize.width) {
@@ -201,7 +177,6 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
 
   @override
   void dispose() {
-    _controller.removeListener(_handleSidebarChanged);
     _controller.dispose();
     _collapsedBarController.dispose();
     super.dispose();
@@ -279,7 +254,7 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
           ),
         );
         final branch = CupertinoSidebarPresentationScope(
-          expanded: _sidebarExpanded,
+          controller: _controller,
           collapsedBarEnabled: widget.collapsedSidebarEnabled,
           collapsedBarController: _collapsedBarController,
           toolbarGeometry: toolbarGeometry,

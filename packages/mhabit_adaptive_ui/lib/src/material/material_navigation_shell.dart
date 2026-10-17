@@ -9,6 +9,8 @@ import '../shell/navigation_scroll_wish_policy.dart';
 import '../shell/navigation_shell_form.dart';
 import '../shell/navigation_shell_frame.dart';
 import '../shell/sidebar_adapter.dart';
+import '../shell/sidebar_collapse_memory.dart';
+import '../shell/sidebar_expansion_controller.dart';
 import '../window_control/interaction_region.dart';
 import '../window_control/window_control_layout.dart';
 import 'material_navigation_bar.dart';
@@ -29,6 +31,7 @@ class MaterialNavigationRailStyle {
 /// Compact layouts, including windows with compact height, use a bottom bar.
 /// Medium layouts use a collapsed rail; the remaining wider layouts use an
 /// extended rail. [WindowSize] owns the shared height constraint.
+/// An explicit collapse overrides the form default until the user expands.
 ///
 /// ```text
 /// compact          constrained side  expanded side
@@ -63,7 +66,11 @@ class MaterialNavigationShell extends StatelessWidget {
     required this.dragHandleBuilder,
     required this.expandNavigationLabel,
     required this.collapseNavigationLabel,
+    this.collapseMemory,
   });
+
+  /// Shared runtime collapse preference; null keeps local renderer memory.
+  final SidebarCollapseMemory? collapseMemory;
 
   NavigationShellForm _resolveForm(WindowSize windowSize) =>
       switch (windowSize.width) {
@@ -163,6 +170,7 @@ class MaterialNavigationShell extends StatelessWidget {
       formResolver: _resolveForm,
       bodyBuilder: (context, form, onSelected, child) =>
           _MaterialNavigationShellBody(
+            collapseMemory: collapseMemory,
             form: form,
             selectedIndex: selectedIndex,
             destinations: destinations,
@@ -205,6 +213,7 @@ class MaterialNavigationShell extends StatelessWidget {
 
 class _MaterialNavigationShellBody extends StatefulWidget {
   const _MaterialNavigationShellBody({
+    required this.collapseMemory,
     required this.form,
     required this.selectedIndex,
     required this.destinations,
@@ -221,6 +230,7 @@ class _MaterialNavigationShellBody extends StatefulWidget {
   });
 
   final NavigationShellForm form;
+  final SidebarCollapseMemory? collapseMemory;
   final int selectedIndex;
   final List<AdaptiveNavigationDestination> destinations;
   final ValueChanged<int> onDestinationSelected;
@@ -241,16 +251,23 @@ class _MaterialNavigationShellBody extends StatefulWidget {
 
 class _MaterialNavigationShellBodyState
     extends State<_MaterialNavigationShellBody> {
-  late final AdaptiveNavigationController _controller =
-      AdaptiveNavigationController(
-        initialExpanded: widget.form == NavigationShellForm.expandedSide,
-      );
+  final SidebarExpansionController _controller = SidebarExpansionController();
+
+  @override
+  void initState() {
+    super.initState();
+    _updateSidebar();
+  }
+
+  void _updateSidebar() => _controller.updateForm(
+    widget.form,
+    collapseMemory: widget.collapseMemory,
+  );
 
   @override
   void didUpdateWidget(covariant _MaterialNavigationShellBody oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.form == widget.form) return;
-    _controller.expanded = widget.form == NavigationShellForm.expandedSide;
+    _updateSidebar();
   }
 
   @override

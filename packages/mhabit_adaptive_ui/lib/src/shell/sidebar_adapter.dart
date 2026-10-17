@@ -129,17 +129,21 @@ class _CupertinoSidebarToolbarMiddleLayoutState
 }
 
 /// Exposes the Cupertino sidebar presentation to branch content.
-class CupertinoSidebarPresentationScope extends InheritedWidget {
+///
+/// Listens to the sidebar controller so branch actions follow expansion changes
+/// without requiring an extra builder in the navigation shell.
+class CupertinoSidebarPresentationScope
+    extends InheritedNotifier<AdaptiveNavigationController> {
   const CupertinoSidebarPresentationScope({
     super.key,
-    required this.expanded,
+    required AdaptiveNavigationController controller,
     required this.collapsedBarEnabled,
     required this.collapsedBarController,
     required this.toolbarGeometry,
     required super.child,
-  });
+  }) : super(notifier: controller);
 
-  final bool expanded;
+  bool get expanded => notifier!.expanded;
 
   /// Whether the hidden sidebar exposes destinations in the top toolbar.
   final bool collapsedBarEnabled;
@@ -162,7 +166,7 @@ class CupertinoSidebarPresentationScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(CupertinoSidebarPresentationScope oldWidget) =>
-      expanded != oldWidget.expanded ||
+      super.updateShouldNotify(oldWidget) ||
       collapsedBarEnabled != oldWidget.collapsedBarEnabled ||
       collapsedBarController != oldWidget.collapsedBarController ||
       toolbarGeometry != oldWidget.toolbarGeometry;
