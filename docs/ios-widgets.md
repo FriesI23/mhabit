@@ -16,11 +16,13 @@ Use the repository's pinned Flutter SDK and `make bootstrap`. In Xcode, select
 your development team for both `Runner` and `HabitWidgetExtension`. Register the
 App Group for the build variant and enable it for both targets:
 
+<!-- markdownlint-disable MD013 -->
 | Variant | App bundle ID | Shared App Group |
 | --- | --- | --- |
 | default / `f_generic` | `io.github.friesi23.mhabit` | `group.io.github.friesi23.mhabit.widgets` |
 | `f_dev` | `io.github.friesi23.mhabit.dev` | `group.io.github.friesi23.mhabit.dev.widgets` |
 | `f_store` | `io.github.friesi23.mhabit.store` | `group.io.github.friesi23.mhabit.store.widgets` |
+<!-- markdownlint-enable MD013 -->
 
 The extension bundle ID is the app bundle ID followed by `.widgets`. When
 changing the app identifier for a fork, update the corresponding App Group and
@@ -93,9 +95,22 @@ covered by unit tests.
 
 ## Simulator screenshots
 
-Real Home Screen captures with synthetic habits, before and after completing
-the first habit, and after completing all three in dark appearance:
+Real Home Screen captures of the same synthetic habits. The medium widget is
+at the top; the small widget below shows the first habit, **Read a little**.
+The counter counts today's completed goals, and the colored squares show the
+last seven days, including today.
 
-| Before: 0/3 | After: 1/3 | Dark: 3/3 |
+1. **Before tapping Complete:** none of today's three goals is complete (0/3).
+   Earlier days already have check-ins; **Go for a walk** is partially done
+   today (10/30), which does not count as a completed goal.
+2. **After completing Read a little:** tapping Complete in the small widget
+   keeps the Home Screen visible and refreshes both widgets. The counter becomes
+   1/3, today's square fills in, and the action changes to Undo.
+3. **Dark appearance:** a later state, after completing all three goals (3/3)
+   and switching appearance, to show both widget sizes in dark mode.
+
+<!-- markdownlint-disable MD013 MD033 -->
+| Before tapping Complete (0/3) | After completing Read a little (1/3) | Dark appearance (3/3) |
 | --- | --- | --- |
-| <img src="images/ios-widgets/01-home-light-before.png" alt="Small and medium widgets before completion" width="260"> | <img src="images/ios-widgets/02-home-light-completed.png" alt="Both widgets refreshed after completing the first habit" width="260"> | <img src="images/ios-widgets/03-home-dark.png" alt="Both widgets in dark appearance after completing all habits" width="260"> |
+| <img src="images/ios-widgets/01-home-light-before.png" alt="Home Screen before tapping Complete: no daily goals completed" width="260"> | <img src="images/ios-widgets/02-home-light-completed.png" alt="Home Screen after completing Read a little: both widgets updated and Undo available" width="260"> | <img src="images/ios-widgets/03-home-dark.png" alt="Small and medium widgets in dark appearance with all three daily goals completed" width="260"> |
+<!-- markdownlint-enable MD013 MD033 -->
