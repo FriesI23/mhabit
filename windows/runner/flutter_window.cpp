@@ -28,11 +28,10 @@ bool FlutterWindow::OnCreate() {
 
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
 
-  flutter_controller_->engine()->SetNextFrameCallback([&]() { this->Show(); });
+  // Dart restores native placement before showing the first rendered frame.
 
-  // Flutter can complete the first frame before the "show window" callback is
-  // registered. The following call ensures a frame is pending to ensure the
-  // window is shown. It is a no-op if the first frame hasn't completed yet.
+  // Ensure a frame is pending for Dart's first-frame display gate. This is a
+  // no-op if the first frame has not completed yet.
   flutter_controller_->ForceRedraw();
 
   return true;

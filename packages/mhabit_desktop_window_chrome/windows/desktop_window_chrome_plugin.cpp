@@ -5,20 +5,25 @@
 
 #include "desktop_title_bar.g.h"
 #include "native_title_bar.h"
+#include "native_window_persistence.h"
+#include "window_persistence.g.h"
 
 namespace mhabit_desktop_window_chrome {
 /// Connects Flutter's title-bar requests and system notifications to the HWND.
 /// The registrar owns this plugin and must outlive its message handlers.
 class DesktopWindowChromePlugin : public flutter::Plugin,
-                                 public DesktopTitleBarHostApi {
+                                 public DesktopTitleBarHostApi,
+                                 public mhabit_window_persistence::WindowPersistenceHostApi {
  public:
   /// Registers Pigeon channels and a non-consuming window-message delegate.
   /// Borrows registrar; the top-level HWND is resolved lazily after attachment.
   explicit DesktopWindowChromePlugin(flutter::PluginRegistrarWindows* registrar)
       : registrar_(registrar), title_bar_(nullptr) {
     DesktopTitleBarHostApi::SetUp(registrar_->messenger(), this);
+    mhabit_window_persistence::WindowPersistenceHostApi::SetUp(registrar_->messenger(), this);
     delegate_id_ = registrar_->RegisterTopLevelWindowProcDelegate(
         [this](HWND, UINT message, WPARAM, LPARAM) -> std::optional<LRESULT> {
+          persistence_.OnMessage(message);
           if (message == WM_SETTINGCHANGE || message == WM_THEMECHANGED ||
               message == WM_DWMCOLORIZATIONCOLORCHANGED) {
             title_bar_.Refresh();
@@ -32,6 +37,7 @@ class DesktopWindowChromePlugin : public flutter::Plugin,
   ~DesktopWindowChromePlugin() override {
     registrar_->UnregisterTopLevelWindowProcDelegate(delegate_id_);
     DesktopTitleBarHostApi::SetUp(registrar_->messenger(), nullptr);
+    mhabit_window_persistence::WindowPersistenceHostApi::SetUp(registrar_->messenger(), nullptr);
   }
 
   /// Applies packed ARGB colors to the current top-level HWND.
@@ -52,9 +58,40 @@ class DesktopWindowChromePlugin : public flutter::Plugin,
     return std::nullopt;
   }
 
+  mhabit_window_persistence::ErrorOr<bool> Initialize(
+      const std::string&, double minimum_width, double minimum_height) override {
+    return persistence_.Initialize(
+        GetAncestor(registrar_->GetView()->GetNativeWindow(), GA_ROOT),
+        minimum_width, minimum_height);
+  }
+
+  std::optional<mhabit_window_persistence::FlutterError> Restore(
+      const flutter::EncodableList& values) override {
+    std::vector<double> placement;
+    for (const auto& value : values) {
+      const auto* number = std::get_if<double>(&value);
+      if (!number) return std::nullopt;
+      placement.push_back(*number);
+    }
+    persistence_.Restore(placement);
+    return std::nullopt;
+  }
+
+  mhabit_window_persistence::ErrorOr<std::optional<flutter::EncodableList>> Capture() override {
+    const auto placement = persistence_.Capture();
+    if (!placement) return std::optional<flutter::EncodableList>{};
+    flutter::EncodableList result;
+    for (double value : *placement) result.emplace_back(value);
+    return std::optional<flutter::EncodableList>{std::move(result)};
+  }
+
+  std::optional<mhabit_window_persistence::FlutterError> Flush() override { return std::nullopt; }
+  std::optional<mhabit_window_persistence::FlutterError> Dispose() override { return std::nullopt; }
+
  private:
   flutter::PluginRegistrarWindows* registrar_;
   NativeTitleBar title_bar_;
+  NativeWindowPersistence persistence_;
   int delegate_id_;
 };
 }
