@@ -61,7 +61,7 @@ final class HabitWidgetCommand {
     final parsed = DateTime.tryParse(dateText);
     if (parsed == null) return null;
     final day = HabitDate.dateTime(parsed);
-    if (habitWidgetDay(day) != dateText) return null;
+    if (_habitWidgetDay(day) != dateText) return null;
     return HabitWidgetCommand(
       action: action,
       habitId: id,
@@ -75,13 +75,13 @@ final class HabitWidgetCommand {
     host: action.name,
     queryParameters: {
       'habitId': habitId,
-      'day': habitWidgetDay(day),
+      'day': _habitWidgetDay(day),
       'expectedRecord': expectedRecord,
     },
   );
 }
 
-String habitWidgetDay(DateTime date) =>
+String _habitWidgetDay(DateTime date) =>
     '${date.year.toString().padLeft(4, '0')}-'
     '${date.month.toString().padLeft(2, '0')}-'
     '${date.day.toString().padLeft(2, '0')}';
@@ -122,7 +122,7 @@ final class HabitWidgetDayProgress {
   const HabitWidgetDayProgress(this.date, this.progress);
 
   Map<String, Object?> toJson() => {
-    'date': habitWidgetDay(date),
+    'date': _habitWidgetDay(date),
     'progress': progress,
   };
 }
@@ -181,7 +181,7 @@ final class HabitWidgetSnapshot {
   Map<String, Object?> toJson() => {
     'version': 1,
     'generatedAt': generatedAt.toUtc().toIso8601String(),
-    'day': habitWidgetDay(day),
+    'day': _habitWidgetDay(day),
     'nextDayAt': nextDayAt.toUtc().toIso8601String(),
     'habits': habits.map((habit) => habit.toJson()).toList(),
     'strings': strings,

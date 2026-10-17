@@ -15,6 +15,7 @@ import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/habit_widget.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/db/db_helper.dart';
+import 'package:mhabit/storage/habit_widget.dart';
 import 'package:mhabit/widgets/widgets.dart' show DateChangeNotifier;
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';

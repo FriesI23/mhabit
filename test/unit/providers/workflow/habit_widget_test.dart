@@ -14,6 +14,7 @@ import 'package:mhabit/storage/db/handlers/habit.dart';
 import 'package:mhabit/storage/db/handlers/record.dart';
 import 'package:mhabit/storage/db/handlers/sync.dart';
 import 'package:mhabit/storage/db_helper_provider.dart';
+import 'package:mhabit/storage/habit_widget.dart';
 import 'package:uuid/uuid.dart';
 
 class _Publisher implements HabitWidgetPublisher {
