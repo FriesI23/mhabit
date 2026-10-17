@@ -37,6 +37,11 @@ bool NativeWindowPersistence::Initialize(GtkWindow* window, double minimum_width
   }
   minimum_width_ = static_cast<int>(minimum_width);
   minimum_height_ = static_cast<int>(minimum_height);
+  // Keep the minimum on the content widget: GTK replaces window_manager's
+  // GDK-only hints on map/layout, and a toplevel request includes CSD shadows.
+  auto* content = gtk_bin_get_child(GTK_BIN(window_));
+  gtk_widget_set_size_request(content ? content : GTK_WIDGET(window_),
+                              minimum_width_, minimum_height_);
   if (initialized_) return false;
   initialized_ = true;
   configure_handler_ = g_signal_connect_after(window_, "configure-event",

@@ -6,10 +6,15 @@
 
 namespace mhabit_desktop_window_chrome {
 
+// Coordinates native GTK geometry for the persistence adapter; the caller owns
+// storage. Initialization establishes constraints independently of saved state.
 class NativeWindowPersistence {
  public:
   ~NativeWindowPersistence();
+  // Sets the content minimum in GTK logical pixels and observes geometry.
+  // Returns true only on first initialization while hidden, allowing Restore.
   bool Initialize(GtkWindow* window, double minimum_width, double minimum_height);
+  // Clamps and applies saved geometry while hidden; does not install constraints.
   bool Restore(const std::vector<double>& values);
   void Dispose();
   // Returns the latest ordinary frame, including during maximize/fullscreen.
