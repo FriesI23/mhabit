@@ -50,6 +50,8 @@ Reminder reconciliation and snapshot publication follow a successful commit.
 
 Commands include the displayed date and a compact revision token. Stale,
 duplicate, archived-habit, and malformed commands cannot overwrite newer data.
+The token includes the record and its existing sync counters, so rapid
+undo/redo within one second cannot make an old button current again.
 The private action URI is not registered as an external URL scheme.
 
 The foreground app republishes the snapshot after data, locale, and date
@@ -68,5 +70,32 @@ the existing sync workflow when the app next runs it.
 - Verify reminder updates and a WebDAV round trip after a widget change.
 
 Unit tests exercise the actual SQLite transaction and sync metadata, plus the
-background method-channel acknowledgement. Native compilation and Home Screen
-interaction still need Xcode and an iOS runtime.
+background method-channel acknowledgement. Validation for this change includes
+2,897 passing tests from `make test`, full Dart analysis with no issues, and a successful
+`f_dev` simulator debug build with the pinned Flutter SDK and Xcode 27.1.
+
+Verified on an iPhone Duo simulator running iOS 27.1:
+
+- Completing a habit in the small widget refreshed both widget sizes without
+  opening the app. Undo in the medium widget saved a tombstone and incremented
+  the sync dirty counter.
+- After terminating the app process, completing the numeric habit changed
+  10/30 to 30/30 through a newly started background process, without opening
+  the app UI. Numeric undo and a negative habit's configured goal also saved.
+- Reopening the app showed the saved data. Completing the remaining habits
+  brought the widget total to 3/3.
+- Both sizes render in light and dark appearance; dark action labels use the
+  primary text color to maintain contrast against the habit-colored background.
+
+Physical-device force-quit, reminder delivery, a WebDAV round trip, and live
+midnight/time-zone changes remain manual checks. Stale-date protection is
+covered by unit tests.
+
+## Simulator screenshots
+
+Real Home Screen captures with synthetic habits, before and after completing
+the first habit, and after completing all three in dark appearance:
+
+| Before: 0/3 | After: 1/3 | Dark: 3/3 |
+| --- | --- | --- |
+| <img src="images/ios-widgets/01-home-light-before.png" alt="Small and medium widgets before completion" width="260"> | <img src="images/ios-widgets/02-home-light-completed.png" alt="Both widgets refreshed after completing the first habit" width="260"> | <img src="images/ios-widgets/03-home-dark.png" alt="Both widgets in dark appearance after completing all habits" width="260"> |

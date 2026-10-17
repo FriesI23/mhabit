@@ -208,6 +208,8 @@ private struct HabitWeekGrid: View {
 }
 
 private struct HabitActionButton: View {
+  @Environment(\.colorScheme) private var colorScheme
+
   let habit: HabitWidgetHabit
   let snapshot: HabitWidgetSnapshot
   let compact: Bool
@@ -235,7 +237,7 @@ private struct HabitActionButton: View {
               .minimumScaleFactor(0.7)
           }
         }
-        .foregroundStyle(habit.tint)
+        .foregroundStyle(colorScheme == .dark ? Color.primary : habit.tint)
         .frame(maxWidth: compact ? nil : .infinity)
         .frame(width: compact ? 28 : nil, height: 28)
         .background(habit.tint.opacity(0.14), in: RoundedRectangle(cornerRadius: 9))
@@ -247,7 +249,7 @@ private struct HabitActionButton: View {
     } else {
       Text(habit.completed ? "✓" : "\(Int(habit.boundedProgress * 100))%")
         .font(.system(.caption, design: .rounded, weight: .semibold))
-        .foregroundStyle(habit.tint)
+        .foregroundStyle(colorScheme == .dark ? Color.primary : habit.tint)
         .frame(maxWidth: compact ? nil : .infinity)
         .frame(width: compact ? 28 : nil, height: 28)
         .accessibilityLabel(habit.name)
