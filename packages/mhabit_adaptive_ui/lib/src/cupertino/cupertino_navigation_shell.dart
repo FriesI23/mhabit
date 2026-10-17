@@ -280,6 +280,7 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
         );
         final branch = CupertinoSidebarPresentationScope(
           expanded: _sidebarExpanded,
+          collapsedBarEnabled: widget.collapsedSidebarEnabled,
           collapsedBarController: _collapsedBarController,
           toolbarGeometry: toolbarGeometry,
           child: child,

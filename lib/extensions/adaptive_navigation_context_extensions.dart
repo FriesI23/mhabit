@@ -10,6 +10,25 @@ import 'package:flutter/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 extension AdaptiveNavigationContext on BuildContext {
+  /// Whether an auxiliary app-flow root needs its own return affordance.
+  bool get showsAppFlowRootBackButton => switch ((
+    AdaptiveNavScope.maybeOf(this)?.form ?? NavigationShellForm.compact,
+    AdaptiveStyle.of(this),
+    CupertinoSidebarPresentationScope.maybeOf(this),
+  )) {
+    (NavigationShellForm.compact, _, _) => true,
+    (
+      _,
+      AdaptiveStyle.apple,
+      CupertinoSidebarPresentationScope(
+        expanded: false,
+        collapsedBarEnabled: false,
+      ),
+    ) =>
+      true,
+    _ => false,
+  };
+
   bool get hasCollapsedAppleSidebar => _appleSidebarExpanded == false;
 
   bool get hasExpandedAppleSidebar =>
