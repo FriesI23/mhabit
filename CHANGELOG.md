@@ -2,6 +2,14 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.27.14+203-pre
+
+- Feature: native title bars and pinned desktop app bars (#677)
+- Feature: remember manual sidebar collapse across layouts and styles (#679)
+- Feature: restore window size and position on launch (#681)
+- Fix: preserve open dialogs and update their colors when themes change (#677)
+- Fix: restore Settings Back when sidebar navigation is hidden (#678)
+
 ## 1.27.13+202
 
 - Feature: adaptive, collapsible sidebar keeps page state and theme/custom
