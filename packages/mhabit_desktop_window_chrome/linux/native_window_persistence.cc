@@ -20,7 +20,7 @@ void NativeWindowPersistence::Dispose() {
   if (window_ && configure_handler_)
     g_signal_handler_disconnect(window_, configure_handler_);
   configure_handler_ = 0;
-  initialized_ = false;
+  configured_minimum_size_.reset();
 }
 
 bool NativeWindowPersistence::CanPosition(GdkDisplay* display) {
@@ -35,21 +35,27 @@ bool NativeWindowPersistence::CanPosition(GdkDisplay* display) {
 bool NativeWindowPersistence::Initialize(GtkWindow* window,
                                          double minimum_width,
                                          double minimum_height) {
-  if (!window) return false;
+  if (!window || !std::isfinite(minimum_width) ||
+      !std::isfinite(minimum_height) || minimum_width < 1 ||
+      minimum_height < 1 || minimum_width > G_MAXINT ||
+      minimum_height > G_MAXINT) {
+    return false;
+  }
+  const bool was_initialized = configured_minimum_size_.has_value();
   if (!window_) {
     window_ = window;
     g_object_add_weak_pointer(G_OBJECT(window_),
                               reinterpret_cast<gpointer*>(&window_));
   }
-  minimum_width_ = static_cast<int>(minimum_width);
-  minimum_height_ = static_cast<int>(minimum_height);
+  configured_minimum_size_ = WindowMinimumSize{
+      static_cast<int>(minimum_width), static_cast<int>(minimum_height)};
   // Keep the minimum on the content widget: GTK replaces window_manager's
   // GDK-only hints on map/layout, and a toplevel request includes CSD shadows.
   auto* content = gtk_bin_get_child(GTK_BIN(window_));
   gtk_widget_set_size_request(content ? content : GTK_WIDGET(window_),
-                              minimum_width_, minimum_height_);
-  if (initialized_) return false;
-  initialized_ = true;
+                              configured_minimum_size_->width,
+                              configured_minimum_size_->height);
+  if (was_initialized) return false;
   configure_handler_ = g_signal_connect_after(
       window_, "configure-event",
       G_CALLBACK(
@@ -64,7 +70,10 @@ bool NativeWindowPersistence::Initialize(GtkWindow* window,
 }
 
 bool NativeWindowPersistence::Restore(const LinuxWindowState& state) {
-  if (!window_ || gtk_widget_get_visible(GTK_WIDGET(window_))) return false;
+  if (!configured_minimum_size_ || !window_ ||
+      gtk_widget_get_visible(GTK_WIDGET(window_))) {
+    return false;
+  }
   for (double value : {state.width, state.height}) {
     if (!std::isfinite(value) || std::abs(value) > 1e7) return false;
   }
@@ -86,9 +95,11 @@ bool NativeWindowPersistence::Restore(const LinuxWindowState& state) {
   GdkRectangle work{};
   gdk_monitor_get_workarea(monitor, &work);
   const int width = std::min(
-      work.width, std::max(minimum_width_, static_cast<int>(state.width)));
-  const int height = std::min(
-      work.height, std::max(minimum_height_, static_cast<int>(state.height)));
+      work.width,
+      std::max(configured_minimum_size_->width, static_cast<int>(state.width)));
+  const int height =
+      std::min(work.height, std::max(configured_minimum_size_->height,
+                                     static_cast<int>(state.height)));
   gtk_window_set_default_size(window_, width, height);
   // Unlike GTK 4, GTK 3 get_default_size is not updated by user resizing.
   // Only the X11 branch may call the global-coordinate APIs.

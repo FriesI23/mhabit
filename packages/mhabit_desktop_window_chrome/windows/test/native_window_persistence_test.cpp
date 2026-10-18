@@ -7,6 +7,9 @@
 #include <tuple>
 
 using mhabit_desktop_window_chrome::NativeWindowPersistence;
+constexpr double kConfiguredMinimumWidth = 410;
+constexpr double kConfiguredMinimumHeight = 540;
+
 void Check(bool condition, const char* message) {
   if (!condition) throw std::runtime_error(message);
 }
@@ -28,8 +31,25 @@ int main() {
   if (!window) return 1;
   try {
     NativeWindowPersistence owner;
-    Check(owner.Initialize(window, 350, 520), "hidden window initializes once");
-    Check(!owner.Initialize(window, 350, 520), "initialization is idempotent");
+    const mhabit_desktop_window_chrome::WindowsWindowState saved{
+        100, 100, 800, 600, 96, 0, 0, 1920, 1080};
+    Check(!owner.Restore(saved), "unconfigured window cannot restore");
+    Check(!owner.Initialize(window, 0, kConfiguredMinimumHeight),
+          "rejects an empty minimum without configuring the window");
+    Check(!owner.Initialize(window, std::numeric_limits<double>::quiet_NaN(),
+                            kConfiguredMinimumHeight),
+          "rejects a nonfinite minimum without configuring the window");
+    Check(!owner.Restore(saved),
+          "invalid initialization does not enable restore");
+    Check(owner.Initialize(window, kConfiguredMinimumWidth,
+                           kConfiguredMinimumHeight),
+          "hidden window initializes once");
+    Check(!owner.Initialize(window, kConfiguredMinimumWidth,
+                            kConfiguredMinimumHeight),
+          "initialization is idempotent");
+    Check(!owner.Initialize(window, std::numeric_limits<double>::infinity(),
+                            kConfiguredMinimumHeight),
+          "invalid reinitialization preserves the configured minimum");
     Check(!owner.Capture(), "hidden window never overwrites saved geometry");
     ShowWindow(window, SW_SHOWNORMAL);
     const auto original = owner.Capture();
@@ -61,6 +81,20 @@ int main() {
     auto invalid = *original;
     invalid.left = std::numeric_limits<double>::infinity();
     Check(!owner.Restore(invalid), "reject nonfinite coordinates");
+    auto undersized = *original;
+    undersized.width = 1;
+    undersized.height = 1;
+    Check(owner.Restore(undersized), "restores an undersized record");
+    ShowWindow(window, SW_SHOWNORMAL);
+    const auto clamped = owner.Capture();
+    Check(
+        clamped &&
+            clamped->width >=
+                kConfiguredMinimumWidth * clamped->dpi / 96.0 - 2 &&
+            clamped->height >=
+                kConfiguredMinimumHeight * clamped->dpi / 96.0 - 2,
+        "restored frame uses the supplied minimum rather than an app default");
+    ShowWindow(window, SW_HIDE);
     auto oversized = *original;
     oversized.left = 900000;
     oversized.top = 900000;

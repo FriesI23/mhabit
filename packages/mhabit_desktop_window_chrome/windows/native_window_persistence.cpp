@@ -28,16 +28,22 @@ UINT MonitorDpi(HMONITOR monitor) {
 
 bool NativeWindowPersistence::Initialize(HWND window, double minimum_width,
                                          double minimum_height) {
+  if (!IsWindow(window) || !std::isfinite(minimum_width) ||
+      !std::isfinite(minimum_height) || minimum_width <= 0 ||
+      minimum_height <= 0) {
+    return false;
+  }
+  const bool was_initialized = configured_minimum_size_.has_value();
   window_ = window;
-  minimum_width_ = minimum_width;
-  minimum_height_ = minimum_height;
-  if (initialized_ || !IsWindow(window_)) return false;
-  initialized_ = true;
-  return !IsWindowVisible(window_);
+  configured_minimum_size_ = WindowMinimumSize{minimum_width, minimum_height};
+  return !was_initialized && !IsWindowVisible(window_);
 }
 
 bool NativeWindowPersistence::Restore(const WindowsWindowState& state) {
-  if (!IsWindow(window_) || IsWindowVisible(window_)) return false;
+  if (!configured_minimum_size_ || !IsWindow(window_) ||
+      IsWindowVisible(window_)) {
+    return false;
+  }
   for (double value : {state.left, state.top, state.width, state.height,
                        state.dpi, state.monitor_left, state.monitor_top,
                        state.work_width, state.work_height}) {
@@ -60,12 +66,14 @@ bool NativeWindowPersistence::Restore(const WindowsWindowState& state) {
   const RECT& work = info.rcWork;
   const double dpi = MonitorDpi(monitor);
   const double ratio = dpi / state.dpi;
-  const LONG width = static_cast<LONG>(std::min<double>(
-      work.right - work.left,
-      std::max(state.width * ratio, minimum_width_ * dpi / 96.0)));
+  const LONG width = static_cast<LONG>(
+      std::min<double>(work.right - work.left,
+                       std::max(state.width * ratio,
+                                configured_minimum_size_->width * dpi / 96.0)));
   const LONG height = static_cast<LONG>(std::min<double>(
       work.bottom - work.top,
-      std::max(state.height * ratio, minimum_height_ * dpi / 96.0)));
+      std::max(state.height * ratio,
+               configured_minimum_size_->height * dpi / 96.0)));
   // Workspace origin differs from screen origin when a taskbar is at top/left.
   const LONG left = info.rcMonitor.left;
   const LONG top = info.rcMonitor.top;

@@ -19,6 +19,11 @@ struct WindowsWindowState {
   double work_height;
 };
 
+struct WindowMinimumSize {
+  double width;
+  double height;
+};
+
 // Placement's workspace coordinates and DPI never leave this adapter as
 // Flutter screen coordinates. No HWND ownership or message consumption.
 class NativeWindowPersistence {
@@ -30,9 +35,8 @@ class NativeWindowPersistence {
 
  private:
   HWND window_ = nullptr;
-  bool initialized_ = false;
-  double minimum_width_ = 350;
-  double minimum_height_ = 520;
+  // Unset until Initialize receives a valid constraint from Dart.
+  std::optional<WindowMinimumSize> configured_minimum_size_;
   std::optional<WindowsWindowState> ordinary_;
 };
 

@@ -18,6 +18,11 @@ struct LinuxWindowState {
   std::optional<LinuxWindowPosition> position;
 };
 
+struct WindowMinimumSize {
+  int width;
+  int height;
+};
+
 // Coordinates native GTK geometry for the persistence adapter; the caller owns
 // storage. Initialization establishes constraints independently of saved state.
 class NativeWindowPersistence {
@@ -38,9 +43,8 @@ class NativeWindowPersistence {
 
  private:
   GtkWindow* window_ = nullptr;  // weak, cleared automatically on destruction
-  bool initialized_ = false;
-  int minimum_width_ = 350;
-  int minimum_height_ = 520;
+  // Unset until Initialize receives a valid constraint from Dart.
+  std::optional<WindowMinimumSize> configured_minimum_size_;
   gulong configure_handler_ = 0;
   std::optional<LinuxWindowState> ordinary_;
 };
