@@ -30,7 +30,7 @@ class DesktopWindowPersistence implements AsyncInitialization {
     this.minimumSize = appDesktopWindowMinimumSize,
     DesktopWindowPersistenceAdapter? adapter,
     Future<SharedPreferences> Function()? loadPreferences,
-  }) : _adapter = adapter ?? DesktopWindowPersistenceAdapter(),
+  }) : _adapter = adapter ?? DesktopWindowPersistenceAdapter.create(),
        _loadPreferences = loadPreferences ?? SharedPreferences.getInstance;
 
   final Size minimumSize;
@@ -40,8 +40,7 @@ class DesktopWindowPersistence implements AsyncInitialization {
     store: _store,
     adapter: _adapter,
   );
-  late final _store = DesktopWindowStateStore(
-    format: _adapter.stateFormat,
+  late final _store = _adapter.stateFormat?.createStore(
     read: (key) => _pref?.getString(key),
     write: (key, value) => _pref?.setString(key, value) ?? Future.value(false),
   );
@@ -92,12 +91,6 @@ class DesktopWindowPersistence implements AsyncInitialization {
       }
     }
   }
-
-  /// Reads the saved state from the initialized preference cache.
-  DesktopWindowState? getSavedState() => _store.get();
-
-  /// Persists the supplied state through the local store.
-  Future<bool> saveState(DesktopWindowState state) => _store.set(state);
 
   Future<void> flush() => _window.flush();
 

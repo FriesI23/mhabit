@@ -8,13 +8,12 @@ import 'package:mhabit/storage/desktop_window_persistence.dart';
 import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart'
     show
         DesktopWindowPersistenceAdapter,
-        DesktopWindowState,
         DesktopWindowStateFormat,
         DesktopWindowStateStore,
         WindowsWindowState;
 import 'package:shared_preferences/shared_preferences.dart';
 
-const _state = WindowsWindowState(
+final _state = WindowsWindowState(
   left: -1200,
   top: 30,
   width: 900,
@@ -103,14 +102,14 @@ void main() {
       final profilePreferences = await SharedPreferences.getInstance();
       final AsyncInitialization initialization = windows;
       await initialization.init();
-      expect(windows.getSavedState(), isNull);
-      expect(await windows.saveState(_state), isTrue);
+      expect(adapter.store?.get(), isNull);
+      expect(await (adapter.store?.set(_state) ?? Future.value(false)), isTrue);
       await profilePreferences.setString('profile.setting', 'after');
       expect(
         profilePreferences.getString('desktop.window.windows.v1'),
         _record,
       );
-      expect(windows.getSavedState(), _state);
+      expect(adapter.store?.get(), _state);
       expect(profilePreferences.getString('profile.setting'), 'after');
     },
   );
@@ -161,15 +160,18 @@ void main() {
       expect(reported.single.stack, isNotNull);
       expect(reported.single.library, 'desktop window persistence');
       expect(adapter.initializations, 1);
-      expect(windows.getSavedState(), isNull);
-      expect(await windows.saveState(_state), isFalse);
+      expect(adapter.store?.get(), isNull);
+      expect(
+        await (adapter.store?.set(_state) ?? Future.value(false)),
+        isFalse,
+      );
 
       pending.complete(pref);
       await tester.pump();
-      expect(windows.getSavedState(), isNull);
+      expect(adapter.store?.get(), isNull);
       await windows.init();
-      expect(windows.getSavedState(), _state);
-      expect(await windows.saveState(_state), isTrue);
+      expect(adapter.store?.get(), _state);
+      expect(await (adapter.store?.set(_state) ?? Future.value(false)), isTrue);
       expect(reported, hasLength(1));
       expect(adapter.initializations, 1);
     } finally {
@@ -185,10 +187,10 @@ void main() {
       await windows.init();
       expect(adapter.initializations, 1);
       expect(adapter.restored, isEmpty);
-      expect(windows.getSavedState(), isNull);
+      expect(adapter.store?.get(), isNull);
       expect(reported, isEmpty);
-      expect(await windows.saveState(_state), isTrue);
-      expect(windows.getSavedState(), _state);
+      expect(await (adapter.store?.set(_state) ?? Future.value(false)), isTrue);
+      expect(adapter.store?.get(), _state);
       expect(pref.getString('profile.setting'), 'before');
     },
   );
@@ -240,7 +242,8 @@ void main() {
   );
 }
 
-class WindowAdapter implements DesktopWindowPersistenceAdapter {
+class WindowAdapter
+    implements DesktopWindowPersistenceAdapter<WindowsWindowState> {
   WindowAdapter({
     this.stateFormat = DesktopWindowStateFormat.windowsPlacement,
     this.supported = true,
@@ -250,10 +253,11 @@ class WindowAdapter implements DesktopWindowPersistenceAdapter {
   final bool supported;
 
   @override
-  final DesktopWindowStateFormat? stateFormat;
+  final DesktopWindowStateFormat<WindowsWindowState>? stateFormat;
+  DesktopWindowStateStore<WindowsWindowState>? store;
   int initializations = 0;
   int disposals = 0;
-  final restored = <DesktopWindowState>[];
+  final restored = <WindowsWindowState>[];
 
   @override
   bool get managesClose => false;
@@ -262,17 +266,18 @@ class WindowAdapter implements DesktopWindowPersistenceAdapter {
   Future<void> initialize(
     String name,
     Size minimumSize, {
-    DesktopWindowStateStore? store,
+    DesktopWindowStateStore<WindowsWindowState>? store,
     Duration operationTimeout = const Duration(seconds: 2),
   }) async {
     initializations++;
+    this.store = store;
     final state = store?.get();
     if (state != null) restored.add(state);
   }
 
   @override
   Future<void> flush(
-    DesktopWindowStateStore? store, {
+    DesktopWindowStateStore<WindowsWindowState>? store, {
     Duration operationTimeout = const Duration(seconds: 2),
   }) async {}
 

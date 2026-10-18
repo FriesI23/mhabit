@@ -10,6 +10,10 @@ add_library(${PLUGIN_NAME} SHARED
   "window_persistence.g.cpp"
 )
 apply_standard_settings(${PLUGIN_NAME})
+# Pigeon's data-class helpers include unused overloads for scalar types.
+set_source_files_properties("window_persistence.g.cpp" PROPERTIES
+  COMPILE_OPTIONS "$<$<CXX_COMPILER_ID:MSVC>:/wd4505>"
+)
 target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL NOMINMAX)
 target_include_directories(${PLUGIN_NAME} INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin dwmapi)

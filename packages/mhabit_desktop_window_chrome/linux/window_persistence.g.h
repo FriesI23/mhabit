@@ -8,7 +8,316 @@
 
 G_BEGIN_DECLS
 
+/**
+ * MhabitPersistenceWindowsWindowState:
+ *
+ * Ordinary Win32 frame in workspace coordinates plus source monitor metadata.
+ */
+
+G_DECLARE_FINAL_TYPE(MhabitPersistenceWindowsWindowState, mhabit_persistence_windows_window_state, MHABIT_PERSISTENCE, WINDOWS_WINDOW_STATE, GObject)
+
+/**
+ * mhabit_persistence_windows_window_state_new:
+ * left: field in this object.
+ * top: field in this object.
+ * width: field in this object.
+ * height: field in this object.
+ * dpi: field in this object.
+ * monitor_left: field in this object.
+ * monitor_top: field in this object.
+ * work_width: field in this object.
+ * work_height: field in this object.
+ *
+ * Creates a new #WindowsWindowState object.
+ *
+ * Returns: a new #MhabitPersistenceWindowsWindowState
+ */
+MhabitPersistenceWindowsWindowState* mhabit_persistence_windows_window_state_new(double left, double top, double width, double height, double dpi, double monitor_left, double monitor_top, double work_width, double work_height);
+
+/**
+ * mhabit_persistence_windows_window_state_get_left
+ * @object: a #MhabitPersistenceWindowsWindowState.
+ *
+ * Gets the value of the left field of @object.
+ *
+ * Returns: the field value.
+ */
+double mhabit_persistence_windows_window_state_get_left(MhabitPersistenceWindowsWindowState* object);
+
+/**
+ * mhabit_persistence_windows_window_state_get_top
+ * @object: a #MhabitPersistenceWindowsWindowState.
+ *
+ * Gets the value of the top field of @object.
+ *
+ * Returns: the field value.
+ */
+double mhabit_persistence_windows_window_state_get_top(MhabitPersistenceWindowsWindowState* object);
+
+/**
+ * mhabit_persistence_windows_window_state_get_width
+ * @object: a #MhabitPersistenceWindowsWindowState.
+ *
+ * Gets the value of the width field of @object.
+ *
+ * Returns: the field value.
+ */
+double mhabit_persistence_windows_window_state_get_width(MhabitPersistenceWindowsWindowState* object);
+
+/**
+ * mhabit_persistence_windows_window_state_get_height
+ * @object: a #MhabitPersistenceWindowsWindowState.
+ *
+ * Gets the value of the height field of @object.
+ *
+ * Returns: the field value.
+ */
+double mhabit_persistence_windows_window_state_get_height(MhabitPersistenceWindowsWindowState* object);
+
+/**
+ * mhabit_persistence_windows_window_state_get_dpi
+ * @object: a #MhabitPersistenceWindowsWindowState.
+ *
+ * Gets the value of the dpi field of @object.
+ *
+ * Returns: the field value.
+ */
+double mhabit_persistence_windows_window_state_get_dpi(MhabitPersistenceWindowsWindowState* object);
+
+/**
+ * mhabit_persistence_windows_window_state_get_monitor_left
+ * @object: a #MhabitPersistenceWindowsWindowState.
+ *
+ * Gets the value of the monitorLeft field of @object.
+ *
+ * Returns: the field value.
+ */
+double mhabit_persistence_windows_window_state_get_monitor_left(MhabitPersistenceWindowsWindowState* object);
+
+/**
+ * mhabit_persistence_windows_window_state_get_monitor_top
+ * @object: a #MhabitPersistenceWindowsWindowState.
+ *
+ * Gets the value of the monitorTop field of @object.
+ *
+ * Returns: the field value.
+ */
+double mhabit_persistence_windows_window_state_get_monitor_top(MhabitPersistenceWindowsWindowState* object);
+
+/**
+ * mhabit_persistence_windows_window_state_get_work_width
+ * @object: a #MhabitPersistenceWindowsWindowState.
+ *
+ * Gets the value of the workWidth field of @object.
+ *
+ * Returns: the field value.
+ */
+double mhabit_persistence_windows_window_state_get_work_width(MhabitPersistenceWindowsWindowState* object);
+
+/**
+ * mhabit_persistence_windows_window_state_get_work_height
+ * @object: a #MhabitPersistenceWindowsWindowState.
+ *
+ * Gets the value of the workHeight field of @object.
+ *
+ * Returns: the field value.
+ */
+double mhabit_persistence_windows_window_state_get_work_height(MhabitPersistenceWindowsWindowState* object);
+
+/**
+ * mhabit_persistence_windows_window_state_equals:
+ * @a: a #MhabitPersistenceWindowsWindowState.
+ * @b: another #MhabitPersistenceWindowsWindowState.
+ *
+ * Checks if two #MhabitPersistenceWindowsWindowState objects are equal.
+ *
+ * Returns: TRUE if @a and @b are equal.
+ */
+gboolean mhabit_persistence_windows_window_state_equals(MhabitPersistenceWindowsWindowState* a, MhabitPersistenceWindowsWindowState* b);
+
+/**
+ * mhabit_persistence_windows_window_state_hash:
+ * @object: a #MhabitPersistenceWindowsWindowState.
+ *
+ * Calculates a hash code for a #MhabitPersistenceWindowsWindowState object.
+ *
+ * Returns: the hash code.
+ */
+guint mhabit_persistence_windows_window_state_hash(MhabitPersistenceWindowsWindowState* object);
+
+/**
+ * mhabit_persistence_windows_window_state_to_string:
+ * @object: a #MhabitPersistenceWindowsWindowState.
+ *
+ * Returns a string representation of a #MhabitPersistenceWindowsWindowState object.
+ *
+ * Returns: (transfer full): a new string, free with g_free().
+ */
+gchar* mhabit_persistence_windows_window_state_to_string(MhabitPersistenceWindowsWindowState* object);
+
+/**
+ * MhabitPersistenceLinuxWindowPosition:
+ *
+ * Optional global position, available only on X11.
+ */
+
+G_DECLARE_FINAL_TYPE(MhabitPersistenceLinuxWindowPosition, mhabit_persistence_linux_window_position, MHABIT_PERSISTENCE, LINUX_WINDOW_POSITION, GObject)
+
+/**
+ * mhabit_persistence_linux_window_position_new:
+ * x: field in this object.
+ * y: field in this object.
+ *
+ * Creates a new #LinuxWindowPosition object.
+ *
+ * Returns: a new #MhabitPersistenceLinuxWindowPosition
+ */
+MhabitPersistenceLinuxWindowPosition* mhabit_persistence_linux_window_position_new(double x, double y);
+
+/**
+ * mhabit_persistence_linux_window_position_get_x
+ * @object: a #MhabitPersistenceLinuxWindowPosition.
+ *
+ * Gets the value of the x field of @object.
+ *
+ * Returns: the field value.
+ */
+double mhabit_persistence_linux_window_position_get_x(MhabitPersistenceLinuxWindowPosition* object);
+
+/**
+ * mhabit_persistence_linux_window_position_get_y
+ * @object: a #MhabitPersistenceLinuxWindowPosition.
+ *
+ * Gets the value of the y field of @object.
+ *
+ * Returns: the field value.
+ */
+double mhabit_persistence_linux_window_position_get_y(MhabitPersistenceLinuxWindowPosition* object);
+
+/**
+ * mhabit_persistence_linux_window_position_equals:
+ * @a: a #MhabitPersistenceLinuxWindowPosition.
+ * @b: another #MhabitPersistenceLinuxWindowPosition.
+ *
+ * Checks if two #MhabitPersistenceLinuxWindowPosition objects are equal.
+ *
+ * Returns: TRUE if @a and @b are equal.
+ */
+gboolean mhabit_persistence_linux_window_position_equals(MhabitPersistenceLinuxWindowPosition* a, MhabitPersistenceLinuxWindowPosition* b);
+
+/**
+ * mhabit_persistence_linux_window_position_hash:
+ * @object: a #MhabitPersistenceLinuxWindowPosition.
+ *
+ * Calculates a hash code for a #MhabitPersistenceLinuxWindowPosition object.
+ *
+ * Returns: the hash code.
+ */
+guint mhabit_persistence_linux_window_position_hash(MhabitPersistenceLinuxWindowPosition* object);
+
+/**
+ * mhabit_persistence_linux_window_position_to_string:
+ * @object: a #MhabitPersistenceLinuxWindowPosition.
+ *
+ * Returns a string representation of a #MhabitPersistenceLinuxWindowPosition object.
+ *
+ * Returns: (transfer full): a new string, free with g_free().
+ */
+gchar* mhabit_persistence_linux_window_position_to_string(MhabitPersistenceLinuxWindowPosition* object);
+
+/**
+ * MhabitPersistenceLinuxWindowState:
+ *
+ * GTK logical dimensions. Wayland leaves position unset.
+ */
+
+G_DECLARE_FINAL_TYPE(MhabitPersistenceLinuxWindowState, mhabit_persistence_linux_window_state, MHABIT_PERSISTENCE, LINUX_WINDOW_STATE, GObject)
+
+/**
+ * mhabit_persistence_linux_window_state_new:
+ * width: field in this object.
+ * height: field in this object.
+ * position: field in this object.
+ *
+ * Creates a new #LinuxWindowState object.
+ *
+ * Returns: a new #MhabitPersistenceLinuxWindowState
+ */
+MhabitPersistenceLinuxWindowState* mhabit_persistence_linux_window_state_new(double width, double height, MhabitPersistenceLinuxWindowPosition* position);
+
+/**
+ * mhabit_persistence_linux_window_state_get_width
+ * @object: a #MhabitPersistenceLinuxWindowState.
+ *
+ * Gets the value of the width field of @object.
+ *
+ * Returns: the field value.
+ */
+double mhabit_persistence_linux_window_state_get_width(MhabitPersistenceLinuxWindowState* object);
+
+/**
+ * mhabit_persistence_linux_window_state_get_height
+ * @object: a #MhabitPersistenceLinuxWindowState.
+ *
+ * Gets the value of the height field of @object.
+ *
+ * Returns: the field value.
+ */
+double mhabit_persistence_linux_window_state_get_height(MhabitPersistenceLinuxWindowState* object);
+
+/**
+ * mhabit_persistence_linux_window_state_get_position
+ * @object: a #MhabitPersistenceLinuxWindowState.
+ *
+ * Gets the value of the position field of @object.
+ *
+ * Returns: the field value.
+ */
+MhabitPersistenceLinuxWindowPosition* mhabit_persistence_linux_window_state_get_position(MhabitPersistenceLinuxWindowState* object);
+
+/**
+ * mhabit_persistence_linux_window_state_equals:
+ * @a: a #MhabitPersistenceLinuxWindowState.
+ * @b: another #MhabitPersistenceLinuxWindowState.
+ *
+ * Checks if two #MhabitPersistenceLinuxWindowState objects are equal.
+ *
+ * Returns: TRUE if @a and @b are equal.
+ */
+gboolean mhabit_persistence_linux_window_state_equals(MhabitPersistenceLinuxWindowState* a, MhabitPersistenceLinuxWindowState* b);
+
+/**
+ * mhabit_persistence_linux_window_state_hash:
+ * @object: a #MhabitPersistenceLinuxWindowState.
+ *
+ * Calculates a hash code for a #MhabitPersistenceLinuxWindowState object.
+ *
+ * Returns: the hash code.
+ */
+guint mhabit_persistence_linux_window_state_hash(MhabitPersistenceLinuxWindowState* object);
+
+/**
+ * mhabit_persistence_linux_window_state_to_string:
+ * @object: a #MhabitPersistenceLinuxWindowState.
+ *
+ * Returns a string representation of a #MhabitPersistenceLinuxWindowState object.
+ *
+ * Returns: (transfer full): a new string, free with g_free().
+ */
+gchar* mhabit_persistence_linux_window_state_to_string(MhabitPersistenceLinuxWindowState* object);
+
 G_DECLARE_FINAL_TYPE(MhabitPersistenceMessageCodec, mhabit_persistence_message_codec, MHABIT_PERSISTENCE, MESSAGE_CODEC, FlStandardMessageCodec)
+
+/**
+ * Custom type ID constants:
+ *
+ * Constants used to identify custom types in the codec.
+ * They are used in the codec to encode and decode custom types.
+ * They may be used in custom object creation functions to identify the type.
+ */
+extern const int mhabit_persistence_windows_window_state_type_id;
+extern const int mhabit_persistence_linux_window_position_type_id;
+extern const int mhabit_persistence_linux_window_state_type_id;
 
 G_DECLARE_FINAL_TYPE(MhabitPersistenceWindowPersistenceHostApi, mhabit_persistence_window_persistence_host_api, MHABIT_PERSISTENCE, WINDOW_PERSISTENCE_HOST_API, GObject)
 
@@ -34,52 +343,6 @@ MhabitPersistenceWindowPersistenceHostApiInitializeResponse* mhabit_persistence_
  * Returns: a new #MhabitPersistenceWindowPersistenceHostApiInitializeResponse
  */
 MhabitPersistenceWindowPersistenceHostApiInitializeResponse* mhabit_persistence_window_persistence_host_api_initialize_response_new_error(const gchar* code, const gchar* message, FlValue* details);
-
-G_DECLARE_FINAL_TYPE(MhabitPersistenceWindowPersistenceHostApiRestoreResponse, mhabit_persistence_window_persistence_host_api_restore_response, MHABIT_PERSISTENCE, WINDOW_PERSISTENCE_HOST_API_RESTORE_RESPONSE, GObject)
-
-/**
- * mhabit_persistence_window_persistence_host_api_restore_response_new:
- *
- * Creates a new response to WindowPersistenceHostApi.restore.
- *
- * Returns: a new #MhabitPersistenceWindowPersistenceHostApiRestoreResponse
- */
-MhabitPersistenceWindowPersistenceHostApiRestoreResponse* mhabit_persistence_window_persistence_host_api_restore_response_new();
-
-/**
- * mhabit_persistence_window_persistence_host_api_restore_response_new_error:
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Creates a new error response to WindowPersistenceHostApi.restore.
- *
- * Returns: a new #MhabitPersistenceWindowPersistenceHostApiRestoreResponse
- */
-MhabitPersistenceWindowPersistenceHostApiRestoreResponse* mhabit_persistence_window_persistence_host_api_restore_response_new_error(const gchar* code, const gchar* message, FlValue* details);
-
-G_DECLARE_FINAL_TYPE(MhabitPersistenceWindowPersistenceHostApiCaptureResponse, mhabit_persistence_window_persistence_host_api_capture_response, MHABIT_PERSISTENCE, WINDOW_PERSISTENCE_HOST_API_CAPTURE_RESPONSE, GObject)
-
-/**
- * mhabit_persistence_window_persistence_host_api_capture_response_new:
- *
- * Creates a new response to WindowPersistenceHostApi.capture.
- *
- * Returns: a new #MhabitPersistenceWindowPersistenceHostApiCaptureResponse
- */
-MhabitPersistenceWindowPersistenceHostApiCaptureResponse* mhabit_persistence_window_persistence_host_api_capture_response_new(FlValue* return_value);
-
-/**
- * mhabit_persistence_window_persistence_host_api_capture_response_new_error:
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Creates a new error response to WindowPersistenceHostApi.capture.
- *
- * Returns: a new #MhabitPersistenceWindowPersistenceHostApiCaptureResponse
- */
-MhabitPersistenceWindowPersistenceHostApiCaptureResponse* mhabit_persistence_window_persistence_host_api_capture_response_new_error(const gchar* code, const gchar* message, FlValue* details);
 
 G_DECLARE_FINAL_TYPE(MhabitPersistenceWindowPersistenceHostApiFlushResponse, mhabit_persistence_window_persistence_host_api_flush_response, MHABIT_PERSISTENCE, WINDOW_PERSISTENCE_HOST_API_FLUSH_RESPONSE, GObject)
 
@@ -134,8 +397,6 @@ MhabitPersistenceWindowPersistenceHostApiDisposeResponse* mhabit_persistence_win
  */
 typedef struct {
   MhabitPersistenceWindowPersistenceHostApiInitializeResponse* (*initialize)(const gchar* name, double minimum_width, double minimum_height, gpointer user_data);
-  MhabitPersistenceWindowPersistenceHostApiRestoreResponse* (*restore)(FlValue* placement, gpointer user_data);
-  MhabitPersistenceWindowPersistenceHostApiCaptureResponse* (*capture)(gpointer user_data);
   MhabitPersistenceWindowPersistenceHostApiFlushResponse* (*flush)(gpointer user_data);
   MhabitPersistenceWindowPersistenceHostApiDisposeResponse* (*dispose)(gpointer user_data);
 } MhabitPersistenceWindowPersistenceHostApiVTable;
@@ -162,6 +423,168 @@ void mhabit_persistence_window_persistence_host_api_set_method_handlers(FlBinary
  * Clears the method handlers in the WindowPersistenceHostApi API.
  */
 void mhabit_persistence_window_persistence_host_api_clear_method_handlers(FlBinaryMessenger* messenger, const gchar* suffix);
+
+G_DECLARE_FINAL_TYPE(MhabitPersistenceWindowsWindowPersistenceHostApi, mhabit_persistence_windows_window_persistence_host_api, MHABIT_PERSISTENCE, WINDOWS_WINDOW_PERSISTENCE_HOST_API, GObject)
+
+G_DECLARE_FINAL_TYPE(MhabitPersistenceWindowsWindowPersistenceHostApiRestoreResponse, mhabit_persistence_windows_window_persistence_host_api_restore_response, MHABIT_PERSISTENCE, WINDOWS_WINDOW_PERSISTENCE_HOST_API_RESTORE_RESPONSE, GObject)
+
+/**
+ * mhabit_persistence_windows_window_persistence_host_api_restore_response_new:
+ *
+ * Creates a new response to WindowsWindowPersistenceHostApi.restore.
+ *
+ * Returns: a new #MhabitPersistenceWindowsWindowPersistenceHostApiRestoreResponse
+ */
+MhabitPersistenceWindowsWindowPersistenceHostApiRestoreResponse* mhabit_persistence_windows_window_persistence_host_api_restore_response_new();
+
+/**
+ * mhabit_persistence_windows_window_persistence_host_api_restore_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to WindowsWindowPersistenceHostApi.restore.
+ *
+ * Returns: a new #MhabitPersistenceWindowsWindowPersistenceHostApiRestoreResponse
+ */
+MhabitPersistenceWindowsWindowPersistenceHostApiRestoreResponse* mhabit_persistence_windows_window_persistence_host_api_restore_response_new_error(const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(MhabitPersistenceWindowsWindowPersistenceHostApiCaptureResponse, mhabit_persistence_windows_window_persistence_host_api_capture_response, MHABIT_PERSISTENCE, WINDOWS_WINDOW_PERSISTENCE_HOST_API_CAPTURE_RESPONSE, GObject)
+
+/**
+ * mhabit_persistence_windows_window_persistence_host_api_capture_response_new:
+ *
+ * Creates a new response to WindowsWindowPersistenceHostApi.capture.
+ *
+ * Returns: a new #MhabitPersistenceWindowsWindowPersistenceHostApiCaptureResponse
+ */
+MhabitPersistenceWindowsWindowPersistenceHostApiCaptureResponse* mhabit_persistence_windows_window_persistence_host_api_capture_response_new(MhabitPersistenceWindowsWindowState* return_value);
+
+/**
+ * mhabit_persistence_windows_window_persistence_host_api_capture_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to WindowsWindowPersistenceHostApi.capture.
+ *
+ * Returns: a new #MhabitPersistenceWindowsWindowPersistenceHostApiCaptureResponse
+ */
+MhabitPersistenceWindowsWindowPersistenceHostApiCaptureResponse* mhabit_persistence_windows_window_persistence_host_api_capture_response_new_error(const gchar* code, const gchar* message, FlValue* details);
+
+/**
+ * MhabitPersistenceWindowsWindowPersistenceHostApiVTable:
+ *
+ * Table of functions exposed by WindowsWindowPersistenceHostApi to be implemented by the API provider.
+ */
+typedef struct {
+  MhabitPersistenceWindowsWindowPersistenceHostApiRestoreResponse* (*restore)(MhabitPersistenceWindowsWindowState* placement, gpointer user_data);
+  MhabitPersistenceWindowsWindowPersistenceHostApiCaptureResponse* (*capture)(gpointer user_data);
+} MhabitPersistenceWindowsWindowPersistenceHostApiVTable;
+
+/**
+ * mhabit_persistence_windows_window_persistence_host_api_set_method_handlers:
+ *
+ * @messenger: an #FlBinaryMessenger.
+ * @suffix: (allow-none): a suffix to add to the API or %NULL for none.
+ * @vtable: implementations of the methods in this API.
+ * @user_data: (closure): user data to pass to the functions in @vtable.
+ * @user_data_free_func: (allow-none): a function which gets called to free @user_data, or %NULL.
+ *
+ * Connects the method handlers in the WindowsWindowPersistenceHostApi API.
+ */
+void mhabit_persistence_windows_window_persistence_host_api_set_method_handlers(FlBinaryMessenger* messenger, const gchar* suffix, const MhabitPersistenceWindowsWindowPersistenceHostApiVTable* vtable, gpointer user_data, GDestroyNotify user_data_free_func);
+
+/**
+ * mhabit_persistence_windows_window_persistence_host_api_clear_method_handlers:
+ *
+ * @messenger: an #FlBinaryMessenger.
+ * @suffix: (allow-none): a suffix to add to the API or %NULL for none.
+ *
+ * Clears the method handlers in the WindowsWindowPersistenceHostApi API.
+ */
+void mhabit_persistence_windows_window_persistence_host_api_clear_method_handlers(FlBinaryMessenger* messenger, const gchar* suffix);
+
+G_DECLARE_FINAL_TYPE(MhabitPersistenceLinuxWindowPersistenceHostApi, mhabit_persistence_linux_window_persistence_host_api, MHABIT_PERSISTENCE, LINUX_WINDOW_PERSISTENCE_HOST_API, GObject)
+
+G_DECLARE_FINAL_TYPE(MhabitPersistenceLinuxWindowPersistenceHostApiRestoreResponse, mhabit_persistence_linux_window_persistence_host_api_restore_response, MHABIT_PERSISTENCE, LINUX_WINDOW_PERSISTENCE_HOST_API_RESTORE_RESPONSE, GObject)
+
+/**
+ * mhabit_persistence_linux_window_persistence_host_api_restore_response_new:
+ *
+ * Creates a new response to LinuxWindowPersistenceHostApi.restore.
+ *
+ * Returns: a new #MhabitPersistenceLinuxWindowPersistenceHostApiRestoreResponse
+ */
+MhabitPersistenceLinuxWindowPersistenceHostApiRestoreResponse* mhabit_persistence_linux_window_persistence_host_api_restore_response_new();
+
+/**
+ * mhabit_persistence_linux_window_persistence_host_api_restore_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to LinuxWindowPersistenceHostApi.restore.
+ *
+ * Returns: a new #MhabitPersistenceLinuxWindowPersistenceHostApiRestoreResponse
+ */
+MhabitPersistenceLinuxWindowPersistenceHostApiRestoreResponse* mhabit_persistence_linux_window_persistence_host_api_restore_response_new_error(const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(MhabitPersistenceLinuxWindowPersistenceHostApiCaptureResponse, mhabit_persistence_linux_window_persistence_host_api_capture_response, MHABIT_PERSISTENCE, LINUX_WINDOW_PERSISTENCE_HOST_API_CAPTURE_RESPONSE, GObject)
+
+/**
+ * mhabit_persistence_linux_window_persistence_host_api_capture_response_new:
+ *
+ * Creates a new response to LinuxWindowPersistenceHostApi.capture.
+ *
+ * Returns: a new #MhabitPersistenceLinuxWindowPersistenceHostApiCaptureResponse
+ */
+MhabitPersistenceLinuxWindowPersistenceHostApiCaptureResponse* mhabit_persistence_linux_window_persistence_host_api_capture_response_new(MhabitPersistenceLinuxWindowState* return_value);
+
+/**
+ * mhabit_persistence_linux_window_persistence_host_api_capture_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to LinuxWindowPersistenceHostApi.capture.
+ *
+ * Returns: a new #MhabitPersistenceLinuxWindowPersistenceHostApiCaptureResponse
+ */
+MhabitPersistenceLinuxWindowPersistenceHostApiCaptureResponse* mhabit_persistence_linux_window_persistence_host_api_capture_response_new_error(const gchar* code, const gchar* message, FlValue* details);
+
+/**
+ * MhabitPersistenceLinuxWindowPersistenceHostApiVTable:
+ *
+ * Table of functions exposed by LinuxWindowPersistenceHostApi to be implemented by the API provider.
+ */
+typedef struct {
+  MhabitPersistenceLinuxWindowPersistenceHostApiRestoreResponse* (*restore)(MhabitPersistenceLinuxWindowState* placement, gpointer user_data);
+  MhabitPersistenceLinuxWindowPersistenceHostApiCaptureResponse* (*capture)(gpointer user_data);
+} MhabitPersistenceLinuxWindowPersistenceHostApiVTable;
+
+/**
+ * mhabit_persistence_linux_window_persistence_host_api_set_method_handlers:
+ *
+ * @messenger: an #FlBinaryMessenger.
+ * @suffix: (allow-none): a suffix to add to the API or %NULL for none.
+ * @vtable: implementations of the methods in this API.
+ * @user_data: (closure): user data to pass to the functions in @vtable.
+ * @user_data_free_func: (allow-none): a function which gets called to free @user_data, or %NULL.
+ *
+ * Connects the method handlers in the LinuxWindowPersistenceHostApi API.
+ */
+void mhabit_persistence_linux_window_persistence_host_api_set_method_handlers(FlBinaryMessenger* messenger, const gchar* suffix, const MhabitPersistenceLinuxWindowPersistenceHostApiVTable* vtable, gpointer user_data, GDestroyNotify user_data_free_func);
+
+/**
+ * mhabit_persistence_linux_window_persistence_host_api_clear_method_handlers:
+ *
+ * @messenger: an #FlBinaryMessenger.
+ * @suffix: (allow-none): a suffix to add to the API or %NULL for none.
+ *
+ * Clears the method handlers in the LinuxWindowPersistenceHostApi API.
+ */
+void mhabit_persistence_linux_window_persistence_host_api_clear_method_handlers(FlBinaryMessenger* messenger, const gchar* suffix);
 
 G_END_DECLS
 

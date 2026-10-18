@@ -82,9 +82,6 @@ public final class WindowPersistence: WindowPersistenceHostApi {
     try? flush()
   }
 
-  func restore(placement: [Double]) throws {}
-  func capture() throws -> [Double]? { nil }
-
   func flush() throws {
     guard !name.isEmpty, !transitioning, let window, !window.isMiniaturized,
       !window.isZoomed, !window.styleMask.contains(.fullScreen)

@@ -50,12 +50,168 @@ template<class T> class ErrorOr {
 
  private:
   friend class WindowPersistenceHostApi;
+  friend class WindowsWindowPersistenceHostApi;
+  friend class LinuxWindowPersistenceHostApi;
   ErrorOr() = default;
   T TakeValue() && { return std::get<T>(std::move(v_)); }
 
   std::variant<T, FlutterError> v_;
 };
 
+
+
+// Ordinary Win32 frame in workspace coordinates plus source monitor metadata.
+//
+// Generated class from Pigeon that represents data sent in messages.
+class WindowsWindowState {
+ public:
+  // Constructs an object setting all fields.
+  explicit WindowsWindowState(
+    double left,
+    double top,
+    double width,
+    double height,
+    double dpi,
+    double monitor_left,
+    double monitor_top,
+    double work_width,
+    double work_height);
+
+  double left() const;
+  void set_left(double value_arg);
+
+  double top() const;
+  void set_top(double value_arg);
+
+  double width() const;
+  void set_width(double value_arg);
+
+  double height() const;
+  void set_height(double value_arg);
+
+  double dpi() const;
+  void set_dpi(double value_arg);
+
+  double monitor_left() const;
+  void set_monitor_left(double value_arg);
+
+  double monitor_top() const;
+  void set_monitor_top(double value_arg);
+
+  double work_width() const;
+  void set_work_width(double value_arg);
+
+  double work_height() const;
+  void set_work_height(double value_arg);
+
+  bool operator==(const WindowsWindowState& other) const;
+  bool operator!=(const WindowsWindowState& other) const;
+  /// Returns a hash code value for the object. This method is supported for the benefit of hash tables.
+  size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os, const WindowsWindowState& obj);
+ private:
+  static WindowsWindowState FromEncodableList(const ::flutter::EncodableList& list);
+  ::flutter::EncodableList ToEncodableList() const;
+  friend class WindowPersistenceHostApi;
+  friend class WindowsWindowPersistenceHostApi;
+  friend class LinuxWindowPersistenceHostApi;
+  friend class PigeonInternalCodecSerializer;
+  double left_;
+  double top_;
+  double width_;
+  double height_;
+  double dpi_;
+  double monitor_left_;
+  double monitor_top_;
+  double work_width_;
+  double work_height_;
+};
+
+
+// Optional global position, available only on X11.
+//
+// Generated class from Pigeon that represents data sent in messages.
+class LinuxWindowPosition {
+ public:
+  // Constructs an object setting all fields.
+  explicit LinuxWindowPosition(
+    double x,
+    double y);
+
+  double x() const;
+  void set_x(double value_arg);
+
+  double y() const;
+  void set_y(double value_arg);
+
+  bool operator==(const LinuxWindowPosition& other) const;
+  bool operator!=(const LinuxWindowPosition& other) const;
+  /// Returns a hash code value for the object. This method is supported for the benefit of hash tables.
+  size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os, const LinuxWindowPosition& obj);
+ private:
+  static LinuxWindowPosition FromEncodableList(const ::flutter::EncodableList& list);
+  ::flutter::EncodableList ToEncodableList() const;
+  friend class LinuxWindowState;
+  friend class WindowPersistenceHostApi;
+  friend class WindowsWindowPersistenceHostApi;
+  friend class LinuxWindowPersistenceHostApi;
+  friend class PigeonInternalCodecSerializer;
+  double x_;
+  double y_;
+};
+
+
+// GTK logical dimensions. Wayland leaves position unset.
+//
+// Generated class from Pigeon that represents data sent in messages.
+class LinuxWindowState {
+ public:
+  // Constructs an object setting all non-nullable fields.
+  explicit LinuxWindowState(
+    double width,
+    double height);
+
+  // Constructs an object setting all fields.
+  explicit LinuxWindowState(
+    double width,
+    double height,
+    const LinuxWindowPosition* position);
+
+  ~LinuxWindowState() = default;
+  LinuxWindowState(const LinuxWindowState& other);
+  LinuxWindowState& operator=(const LinuxWindowState& other);
+  LinuxWindowState(LinuxWindowState&& other) = default;
+  LinuxWindowState& operator=(LinuxWindowState&& other) noexcept = default;
+  double width() const;
+  void set_width(double value_arg);
+
+  double height() const;
+  void set_height(double value_arg);
+
+  const LinuxWindowPosition* position() const;
+  void set_position(const LinuxWindowPosition* value_arg);
+  void set_position(const LinuxWindowPosition& value_arg);
+
+  bool operator==(const LinuxWindowState& other) const;
+  bool operator!=(const LinuxWindowState& other) const;
+  /// Returns a hash code value for the object. This method is supported for the benefit of hash tables.
+  size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os, const LinuxWindowState& obj);
+ private:
+  static LinuxWindowState FromEncodableList(const ::flutter::EncodableList& list);
+  ::flutter::EncodableList ToEncodableList() const;
+  friend class WindowPersistenceHostApi;
+  friend class WindowsWindowPersistenceHostApi;
+  friend class LinuxWindowPersistenceHostApi;
+  friend class PigeonInternalCodecSerializer;
+  double width_;
+  double height_;
+  std::unique_ptr<LinuxWindowPosition> position_;
+};
 
 
 class PigeonInternalCodecSerializer : public ::flutter::StandardCodecSerializer {
@@ -75,9 +231,6 @@ class PigeonInternalCodecSerializer : public ::flutter::StandardCodecSerializer 
     ::flutter::ByteStreamReader* stream) const override;
 };
 
-// Internal transport only. Placement coordinates remain in each native
-// backend's units; they must never be applied through Flutter setBounds.
-//
 // Generated interface from Pigeon that represents a handler of messages from Flutter.
 class WindowPersistenceHostApi {
  public:
@@ -89,13 +242,6 @@ class WindowPersistenceHostApi {
     const std::string& name,
     double minimum_width,
     double minimum_height) = 0;
-  // Windows: normal rect, DPI, monitor work area (9 values).
-  // GTK: width, height, optional X11 position (2 or 4 values).
-  // macOS restores its AppKit autosave during initialize.
-  virtual std::optional<FlutterError> Restore(const ::flutter::EncodableList& placement) = 0;
-  // Latest ordinary frame; transient/maximized/fullscreen geometry is never
-  // returned. Null if unavailable. Adapters may retain the last ordinary frame.
-  virtual ErrorOr<std::optional<::flutter::EncodableList>> Capture() = 0;
   // Flushes AppKit's ordinary frame; other backends have no native storage.
   virtual std::optional<FlutterError> Flush() = 0;
   // Detaches persistence observers without removing saved state.
@@ -115,6 +261,54 @@ class WindowPersistenceHostApi {
   static ::flutter::EncodableValue WrapError(const FlutterError& error);
  protected:
   WindowPersistenceHostApi() = default;
+};
+// Generated interface from Pigeon that represents a handler of messages from Flutter.
+class WindowsWindowPersistenceHostApi {
+ public:
+  WindowsWindowPersistenceHostApi(const WindowsWindowPersistenceHostApi&) = delete;
+  WindowsWindowPersistenceHostApi& operator=(const WindowsWindowPersistenceHostApi&) = delete;
+  virtual ~WindowsWindowPersistenceHostApi() {}
+  virtual std::optional<FlutterError> Restore(const WindowsWindowState& placement) = 0;
+  virtual ErrorOr<std::optional<WindowsWindowState>> Capture() = 0;
+
+  // The codec used by WindowsWindowPersistenceHostApi.
+  static const ::flutter::StandardMessageCodec& GetCodec();
+  // Sets up an instance of `WindowsWindowPersistenceHostApi` to handle messages through the `binary_messenger`.
+  static void SetUp(
+    ::flutter::BinaryMessenger* binary_messenger,
+    WindowsWindowPersistenceHostApi* api);
+  static void SetUp(
+    ::flutter::BinaryMessenger* binary_messenger,
+    WindowsWindowPersistenceHostApi* api,
+    const std::string& message_channel_suffix);
+  static ::flutter::EncodableValue WrapError(std::string_view error_message);
+  static ::flutter::EncodableValue WrapError(const FlutterError& error);
+ protected:
+  WindowsWindowPersistenceHostApi() = default;
+};
+// Generated interface from Pigeon that represents a handler of messages from Flutter.
+class LinuxWindowPersistenceHostApi {
+ public:
+  LinuxWindowPersistenceHostApi(const LinuxWindowPersistenceHostApi&) = delete;
+  LinuxWindowPersistenceHostApi& operator=(const LinuxWindowPersistenceHostApi&) = delete;
+  virtual ~LinuxWindowPersistenceHostApi() {}
+  virtual std::optional<FlutterError> Restore(const LinuxWindowState& placement) = 0;
+  virtual ErrorOr<std::optional<LinuxWindowState>> Capture() = 0;
+
+  // The codec used by LinuxWindowPersistenceHostApi.
+  static const ::flutter::StandardMessageCodec& GetCodec();
+  // Sets up an instance of `LinuxWindowPersistenceHostApi` to handle messages through the `binary_messenger`.
+  static void SetUp(
+    ::flutter::BinaryMessenger* binary_messenger,
+    LinuxWindowPersistenceHostApi* api);
+  static void SetUp(
+    ::flutter::BinaryMessenger* binary_messenger,
+    LinuxWindowPersistenceHostApi* api,
+    const std::string& message_channel_suffix);
+  static ::flutter::EncodableValue WrapError(std::string_view error_message);
+  static ::flutter::EncodableValue WrapError(const FlutterError& error);
+ protected:
+  LinuxWindowPersistenceHostApi() = default;
 };
 }  // namespace mhabit_window_persistence
 #endif  // PIGEON_WINDOW_PERSISTENCE_G_H_

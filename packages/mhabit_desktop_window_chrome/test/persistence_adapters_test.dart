@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart' show Offset, Size;
+import 'package:flutter/widgets.dart' show Size;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
 import 'package:mhabit_desktop_window_chrome/src/persistence/window_persistence_api.g.dart';
 
-const _windowsState = WindowsWindowState(
+final _windowsState = WindowsWindowState(
   left: -1200,
   top: 30,
   width: 900,
@@ -18,28 +18,28 @@ const _windowsState = WindowsWindowState(
   workWidth: 1920,
   workHeight: 1040,
 );
-const _linuxState = LinuxWindowState(width: 800, height: 600);
+final _linuxState = LinuxWindowState(width: 800, height: 600);
 
 void main() {
   final binding = TestWidgetsFlutterBinding.ensureInitialized();
   const codec = WindowPersistenceHostApi.pigeonChannelCodec;
   const prefix =
       'dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowPersistenceHostApi';
-  final restored = <List<double>>[];
-  List<double>? snapshot;
+  final restored = <Object>[];
+  Object? snapshot;
   final nativeCalls = <String>[];
   var shouldRestore = true;
   final preferences = <String, String>{};
 
-  DesktopWindowStateStore store(DesktopWindowStateFormat? format) =>
-      DesktopWindowStateStore(
-        format: format,
-        read: (key) => preferences[key],
-        write: (key, value) async {
-          preferences[key] = value;
-          return true;
-        },
-      );
+  DesktopWindowStateStore<T> store<T extends Object>(
+    DesktopWindowStateFormat<T>? format,
+  ) => format!.createStore(
+    read: (key) => preferences[key],
+    write: (key, value) async {
+      preferences[key] = value;
+      return true;
+    },
+  );
 
   setUp(() {
     snapshot = null;
@@ -53,20 +53,26 @@ void main() {
       nativeCalls.add('initialize');
       return codec.encodeMessage([shouldRestore]);
     });
-    binding.defaultBinaryMessenger.setMockMessageHandler('$prefix.restore', (
-      message,
-    ) async {
-      nativeCalls.add('restore');
-      final arguments = codec.decodeMessage(message) as List<Object?>;
-      restored.add((arguments.first! as List<Object?>).cast<double>());
-      return codec.encodeMessage([null]);
-    });
-    binding.defaultBinaryMessenger.setMockMessageHandler('$prefix.capture', (
-      message,
-    ) async {
-      nativeCalls.add('capture');
-      return codec.encodeMessage([snapshot]);
-    });
+    for (final platform in ['Windows', 'Linux']) {
+      final geometryPrefix =
+          'dev.flutter.pigeon.mhabit_desktop_window_chrome.${platform}WindowPersistenceHostApi';
+      binding.defaultBinaryMessenger.setMockMessageHandler(
+        '$geometryPrefix.restore',
+        (message) async {
+          nativeCalls.add('restore');
+          final arguments = codec.decodeMessage(message) as List<Object?>;
+          restored.add(arguments.first!);
+          return codec.encodeMessage([null]);
+        },
+      );
+      binding.defaultBinaryMessenger.setMockMessageHandler(
+        '$geometryPrefix.capture',
+        (message) async {
+          nativeCalls.add('capture');
+          return codec.encodeMessage([snapshot]);
+        },
+      );
+    }
     binding.defaultBinaryMessenger.setMockMessageHandler('$prefix.flush', (
       _,
     ) async {
@@ -77,11 +83,19 @@ void main() {
 
   tearDown(() {
     debugDefaultTargetPlatformOverride = null;
-    for (final method in ['initialize', 'restore', 'capture', 'flush']) {
+    for (final method in ['initialize', 'flush']) {
       binding.defaultBinaryMessenger.setMockMessageHandler(
         '$prefix.$method',
         null,
       );
+    }
+    for (final platform in ['Windows', 'Linux']) {
+      for (final method in ['restore', 'capture']) {
+        binding.defaultBinaryMessenger.setMockMessageHandler(
+          'dev.flutter.pigeon.mhabit_desktop_window_chrome.${platform}WindowPersistenceHostApi.$method',
+          null,
+        );
+      }
     }
   });
 
@@ -91,7 +105,7 @@ void main() {
       final adapter =
           createAdapter(TargetPlatform.windows)
               as StoredWindowPersistenceAdapter;
-      snapshot = [-1200, 30, 900, 650, 144, -1920, 0, 1920, 1040];
+      snapshot = _windowsState;
       final state = await adapter.captureState();
       expect(state, _windowsState);
       await adapter.restoreState(state!);
@@ -102,15 +116,19 @@ void main() {
   test('Linux state has a position only when supplied by GTK', () async {
     final adapter =
         createAdapter(TargetPlatform.linux) as StoredWindowPersistenceAdapter;
-    snapshot = [800, 600];
+    snapshot = _linuxState;
     final waylandState = (await adapter.captureState())! as LinuxWindowState;
     expect(waylandState.position, isNull);
     await adapter.restoreState(waylandState);
-    expect(restored.single, [800, 600]);
+    expect(restored.single, _linuxState);
     restored.clear();
-    snapshot = [800, 600, -500, 100];
+    snapshot = LinuxWindowState(
+      width: 800,
+      height: 600,
+      position: LinuxWindowPosition(x: -500, y: 100),
+    );
     final x11State = (await adapter.captureState())! as LinuxWindowState;
-    expect(x11State.position, const Offset(-500, 100));
+    expect(x11State.position, LinuxWindowPosition(x: -500, y: 100));
     await adapter.restoreState(x11State);
     expect(restored.single, snapshot);
   });
@@ -152,10 +170,10 @@ void main() {
       preferences[key] =
           '{"version":1,"width":800,"height":600,"x":-500,"y":100}';
       final states = store(DesktopWindowStateFormat.gtkGeometry);
-      const positioned = LinuxWindowState(
+      final positioned = LinuxWindowState(
         width: 800,
         height: 600,
-        position: Offset(-500, 100),
+        position: LinuxWindowPosition(x: -500, y: 100),
       );
       expect(states.get(), positioned);
       expect(await states.set(positioned), isTrue);
@@ -251,14 +269,17 @@ void main() {
   test('store rejects mismatched state and invalid dimensions', () async {
     final windows = store(DesktopWindowStateFormat.windowsPlacement);
     final linux = store(DesktopWindowStateFormat.gtkGeometry);
-    expect(await windows.set(_linuxState), isFalse);
-    expect(await linux.set(_windowsState), isFalse);
     expect(
-      await linux.set(const LinuxWindowState(width: -1, height: 600)),
-      isFalse,
+      () => (windows as dynamic).set(_linuxState),
+      throwsA(isA<TypeError>()),
     );
     expect(
-      await linux.set(const LinuxWindowState(width: double.nan, height: 600)),
+      () => (linux as dynamic).set(_windowsState),
+      throwsA(isA<TypeError>()),
+    );
+    expect(await linux.set(LinuxWindowState(width: -1, height: 600)), isFalse);
+    expect(
+      await linux.set(LinuxWindowState(width: double.nan, height: 600)),
       isFalse,
     );
     expect(preferences, isEmpty);
@@ -305,8 +326,8 @@ void main() {
       final adapter = createAdapter(platform);
       final states = store(adapter.stateFormat);
       snapshot = platform == TargetPlatform.windows
-          ? [-1200, 30, 900, 650, 144, -1920, 0, 1920, 1040]
-          : [800, 600];
+          ? _windowsState
+          : _linuxState;
       final expected = platform == TargetPlatform.windows
           ? _windowsState
           : _linuxState;
@@ -351,7 +372,9 @@ void main() {
         await adapter.initialize(
           'main-window',
           const Size(350, 520),
-          store: ForbiddenStore(),
+          store: platform == TargetPlatform.windows
+              ? ForbiddenStore<WindowsWindowState>()
+              : ForbiddenStore<LinuxWindowState>(),
         );
         expect(nativeCalls, ['initialize']);
       }
@@ -392,17 +415,16 @@ DesktopWindowPersistenceAdapter createAdapter(TargetPlatform platform) {
   final previous = debugDefaultTargetPlatformOverride;
   debugDefaultTargetPlatformOverride = platform;
   try {
-    return DesktopWindowPersistenceAdapter();
+    return DesktopWindowPersistenceAdapter.create();
   } finally {
     debugDefaultTargetPlatformOverride = previous;
   }
 }
 
-class ForbiddenStore implements DesktopWindowStateStore {
+class ForbiddenStore<T extends Object> implements DesktopWindowStateStore<T> {
   @override
-  DesktopWindowState? get() => throw StateError('unexpected store read');
+  T? get() => throw StateError('unexpected store read');
 
   @override
-  Future<bool> set(DesktopWindowState state) =>
-      throw StateError('unexpected store write');
+  Future<bool> set(T state) => throw StateError('unexpected store write');
 }

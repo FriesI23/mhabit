@@ -8,18 +8,18 @@ import 'desktop_window_state_store.dart';
 
 /// Coordinates persistence only. Native adapters own geometry and state rules;
 /// the existing window owner remains responsible for displaying the window.
-class DesktopWindowPersistenceController with WindowListener {
+class DesktopWindowPersistenceController<T extends Object> with WindowListener {
   /// The adapter selects native or store-backed persistence; this owner
   /// coordinates scheduling and lifecycle for either implementation.
   DesktopWindowPersistenceController({
     this._store,
-    DesktopWindowPersistenceAdapter? adapter,
+    required this._adapter,
     this.debounce = const Duration(milliseconds: 300),
     this.operationTimeout = const Duration(seconds: 2),
-  }) : _adapter = adapter ?? DesktopWindowPersistenceAdapter();
+  });
 
-  final DesktopWindowStateStore? _store;
-  final DesktopWindowPersistenceAdapter _adapter;
+  final DesktopWindowStateStore<T>? _store;
+  final DesktopWindowPersistenceAdapter<T> _adapter;
   final Duration debounce;
   final Duration operationTimeout;
   Future<void>? _initialization;

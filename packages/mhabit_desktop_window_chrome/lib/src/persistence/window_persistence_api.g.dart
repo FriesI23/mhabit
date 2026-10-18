@@ -34,6 +34,261 @@ Object? _extractReplyValueOrThrow(
   return replyList.firstOrNull;
 }
 
+bool _deepEquals(Object? a, Object? b) {
+  if (identical(a, b)) {
+    return true;
+  }
+  if (a is double && b is double) {
+    if (a.isNaN && b.isNaN) {
+      return true;
+    }
+    return a == b;
+  }
+  if (a is List && b is List) {
+    return a.length == b.length &&
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
+  }
+  if (a is Map && b is Map) {
+    if (a.length != b.length) {
+      return false;
+    }
+    for (final MapEntry<Object?, Object?> entryA in a.entries) {
+      bool found = false;
+      for (final MapEntry<Object?, Object?> entryB in b.entries) {
+        if (_deepEquals(entryA.key, entryB.key)) {
+          if (_deepEquals(entryA.value, entryB.value)) {
+            found = true;
+            break;
+          } else {
+            return false;
+          }
+        }
+      }
+      if (!found) {
+        return false;
+      }
+    }
+    return true;
+  }
+  return a == b;
+}
+
+int _deepHash(Object? value) {
+  if (value is List) {
+    return Object.hashAll(value.map(_deepHash));
+  }
+  if (value is Map) {
+    int result = 0;
+    for (final MapEntry<Object?, Object?> entry in value.entries) {
+      result += (_deepHash(entry.key) * 31) ^ _deepHash(entry.value);
+    }
+    return result;
+  }
+  if (value is double && value.isNaN) {
+    // Normalize NaN to a consistent hash.
+    return 0x7FF8000000000000.hashCode;
+  }
+  if (value is double && value == 0.0) {
+    // Normalize -0.0 to 0.0 so they have the same hash code.
+    return 0.0.hashCode;
+  }
+  return value.hashCode;
+}
+
+/// Ordinary Win32 frame in workspace coordinates plus source monitor metadata.
+class WindowsWindowState {
+  WindowsWindowState({
+    required this.left,
+    required this.top,
+    required this.width,
+    required this.height,
+    required this.dpi,
+    required this.monitorLeft,
+    required this.monitorTop,
+    required this.workWidth,
+    required this.workHeight,
+  });
+
+  double left;
+
+  double top;
+
+  double width;
+
+  double height;
+
+  double dpi;
+
+  double monitorLeft;
+
+  double monitorTop;
+
+  double workWidth;
+
+  double workHeight;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      left,
+      top,
+      width,
+      height,
+      dpi,
+      monitorLeft,
+      monitorTop,
+      workWidth,
+      workHeight,
+    ];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static WindowsWindowState decode(Object result) {
+    result as List<Object?>;
+    return WindowsWindowState(
+      left: result[0]! as double,
+      top: result[1]! as double,
+      width: result[2]! as double,
+      height: result[3]! as double,
+      dpi: result[4]! as double,
+      monitorLeft: result[5]! as double,
+      monitorTop: result[6]! as double,
+      workWidth: result[7]! as double,
+      workHeight: result[8]! as double,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! WindowsWindowState || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(left, other.left) &&
+        _deepEquals(top, other.top) &&
+        _deepEquals(width, other.width) &&
+        _deepEquals(height, other.height) &&
+        _deepEquals(dpi, other.dpi) &&
+        _deepEquals(monitorLeft, other.monitorLeft) &&
+        _deepEquals(monitorTop, other.monitorTop) &&
+        _deepEquals(workWidth, other.workWidth) &&
+        _deepEquals(workHeight, other.workHeight);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'WindowsWindowState(left: $left, top: $top, width: $width, height: $height, dpi: $dpi, monitorLeft: $monitorLeft, monitorTop: $monitorTop, workWidth: $workWidth, workHeight: $workHeight)';
+  }
+}
+
+/// Optional global position, available only on X11.
+class LinuxWindowPosition {
+  LinuxWindowPosition({required this.x, required this.y});
+
+  double x;
+
+  double y;
+
+  List<Object?> _toList() {
+    return <Object?>[x, y];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static LinuxWindowPosition decode(Object result) {
+    result as List<Object?>;
+    return LinuxWindowPosition(
+      x: result[0]! as double,
+      y: result[1]! as double,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! LinuxWindowPosition || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(x, other.x) && _deepEquals(y, other.y);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'LinuxWindowPosition(x: $x, y: $y)';
+  }
+}
+
+/// GTK logical dimensions. Wayland leaves position unset.
+class LinuxWindowState {
+  LinuxWindowState({required this.width, required this.height, this.position});
+
+  double width;
+
+  double height;
+
+  LinuxWindowPosition? position;
+
+  List<Object?> _toList() {
+    return <Object?>[width, height, position];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static LinuxWindowState decode(Object result) {
+    result as List<Object?>;
+    return LinuxWindowState(
+      width: result[0]! as double,
+      height: result[1]! as double,
+      position: result[2] as LinuxWindowPosition?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! LinuxWindowState || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(width, other.width) &&
+        _deepEquals(height, other.height) &&
+        _deepEquals(position, other.position);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'LinuxWindowState(width: $width, height: $height, position: $position)';
+  }
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -41,6 +296,15 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
+    } else if (value is WindowsWindowState) {
+      buffer.putUint8(129);
+      writeValue(buffer, value.encode());
+    } else if (value is LinuxWindowPosition) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is LinuxWindowState) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -49,14 +313,18 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
+      case 129:
+        return WindowsWindowState.decode(readValue(buffer)!);
+      case 130:
+        return LinuxWindowPosition.decode(readValue(buffer)!);
+      case 131:
+        return LinuxWindowState.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
   }
 }
 
-/// Internal transport only. Placement coordinates remain in each native
-/// backend's units; they must never be applied through Flutter setBounds.
 class WindowPersistenceHostApi {
   /// Constructor for [WindowPersistenceHostApi]. The [binaryMessenger] named argument is
   /// available for dependency injection. If it is left null, the default
@@ -100,50 +368,6 @@ class WindowPersistenceHostApi {
     return pigeonVar_replyValue! as bool;
   }
 
-  /// Windows: normal rect, DPI, monitor work area (9 values).
-  /// GTK: width, height, optional X11 position (2 or 4 values).
-  /// macOS restores its AppKit autosave during initialize.
-  Future<void> restore(List<double> placement) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowPersistenceHostApi.restore$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[placement],
-    );
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
-  }
-
-  /// Latest ordinary frame; transient/maximized/fullscreen geometry is never
-  /// returned. Null if unavailable. Adapters may retain the last ordinary frame.
-  Future<List<double>?> capture() async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowPersistenceHostApi.capture$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
-    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
-    return (pigeonVar_replyValue as List<Object?>?)?.cast<double>();
-  }
-
   /// Flushes AppKit's ordinary frame; other backends have no native storage.
   Future<void> flush() async {
     final pigeonVar_channelName =
@@ -180,5 +404,119 @@ class WindowPersistenceHostApi {
       pigeonVar_channelName,
       isNullValid: true,
     );
+  }
+}
+
+class WindowsWindowPersistenceHostApi {
+  /// Constructor for [WindowsWindowPersistenceHostApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  WindowsWindowPersistenceHostApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
+  final BinaryMessenger? pigeonVar_binaryMessenger;
+
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String pigeonVar_messageChannelSuffix;
+
+  Future<void> restore(WindowsWindowState placement) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowsWindowPersistenceHostApi.restore$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[placement],
+    );
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+  }
+
+  Future<WindowsWindowState?> capture() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowsWindowPersistenceHostApi.capture$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as WindowsWindowState?;
+  }
+}
+
+class LinuxWindowPersistenceHostApi {
+  /// Constructor for [LinuxWindowPersistenceHostApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  LinuxWindowPersistenceHostApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
+  final BinaryMessenger? pigeonVar_binaryMessenger;
+
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String pigeonVar_messageChannelSuffix;
+
+  Future<void> restore(LinuxWindowState placement) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.mhabit_desktop_window_chrome.LinuxWindowPersistenceHostApi.restore$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[placement],
+    );
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+  }
+
+  Future<LinuxWindowState?> capture() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.mhabit_desktop_window_chrome.LinuxWindowPersistenceHostApi.capture$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as LinuxWindowState?;
   }
 }

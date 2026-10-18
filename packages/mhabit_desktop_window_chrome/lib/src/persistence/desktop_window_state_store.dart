@@ -1,222 +1,162 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart' show Offset;
+import 'window_persistence_api.g.dart';
 
-/// Native geometry, deliberately separate from Flutter window bounds.
-@immutable
-sealed class DesktopWindowState {
-  const DesktopWindowState();
-}
+export 'window_persistence_api.g.dart'
+    show LinuxWindowPosition, LinuxWindowState, WindowsWindowState;
 
-/// Win32 workspace coordinates and the source monitor's DPI/work area.
-final class WindowsWindowState extends DesktopWindowState {
-  const WindowsWindowState({
-    required this.left,
-    required this.top,
-    required this.width,
-    required this.height,
-    required this.dpi,
-    required this.monitorLeft,
-    required this.monitorTop,
-    required this.workWidth,
-    required this.workHeight,
-  });
-
-  final double left;
-  final double top;
-  final double width;
-  final double height;
-  final double dpi;
-  final double monitorLeft;
-  final double monitorTop;
-  final double workWidth;
-  final double workHeight;
-
-  Object get _values => (
-    left,
-    top,
-    width,
-    height,
-    dpi,
-    monitorLeft,
-    monitorTop,
-    workWidth,
-    workHeight,
+/// A typed codec for the existing local preference record. The same generated
+/// state travels between this store and Pigeon without a second model.
+enum DesktopWindowStateFormat<T extends Object> {
+  windowsPlacement<WindowsWindowState>(
+    'desktop.window.windows.v1',
+    _decodeWindows,
+    _encodeWindows,
+  ),
+  gtkGeometry<LinuxWindowState>(
+    'desktop.window.linux.v1',
+    _decodeLinux,
+    _encodeLinux,
   );
 
-  @override
-  bool operator ==(Object other) =>
-      other is WindowsWindowState && other._values == _values;
-  @override
-  int get hashCode => _values.hashCode;
-}
+  const DesktopWindowStateFormat(this._key, this._decode, this._encode);
 
-/// GTK dimensions with an optional X11 position. Wayland has no position.
-final class LinuxWindowState extends DesktopWindowState {
-  const LinuxWindowState({
-    required this.width,
-    required this.height,
-    this.position,
-  });
-
-  final double width;
-  final double height;
-  final Offset? position;
-
-  @override
-  bool operator ==(Object other) =>
-      other is LinuxWindowState &&
-      (other.width, other.height, other.position) == (width, height, position);
-  @override
-  int get hashCode => Object.hash(width, height, position);
-}
-
-/// The adapter chooses a record format; the store owns its key and encoding.
-enum DesktopWindowStateFormat {
-  windowsPlacement('desktop.window.windows.v1'),
-  gtkGeometry('desktop.window.linux.v1');
-
-  const DesktopWindowStateFormat(this._key);
   final String _key;
-}
+  final T? Function(Map<String, Object?> fields) _decode;
+  final Map<String, double> Function(T state) _encode;
 
-/// Semantic window storage independent of the application's preference backend.
-abstract interface class DesktopWindowStateStore {
-  /// Binds a native record format to an initialized preference cache.
-  /// A null format is used when the native window owns persistence (AppKit).
-  factory DesktopWindowStateStore({
-    required DesktopWindowStateFormat? format,
+  /// Retains the concrete platform type when selected through a platform factory.
+  DesktopWindowStateStore<T> createStore({
     required String? Function(String key) read,
     required Future<bool> Function(String key, String value) write,
-  }) = _PreferencesWindowStateStore;
-
-  /// Reads and constructs a state synchronously; corrupt records return null.
-  DesktopWindowState? get();
-
-  /// Completes with false or throws if the state could not be saved.
-  Future<bool> set(DesktopWindowState state);
+  }) => DesktopWindowStateStore<T>(format: this, read: read, write: write);
 }
 
-class _PreferencesWindowStateStore implements DesktopWindowStateStore {
+abstract interface class DesktopWindowStateStore<T extends Object> {
+  factory DesktopWindowStateStore({
+    required DesktopWindowStateFormat<T>? format,
+    required String? Function(String key) read,
+    required Future<bool> Function(String key, String value) write,
+  }) = _PreferencesWindowStateStore<T>;
+
+  T? get();
+  Future<bool> set(T state);
+}
+
+class _PreferencesWindowStateStore<T extends Object>
+    implements DesktopWindowStateStore<T> {
   _PreferencesWindowStateStore({
     required this._format,
     required this._read,
     required this._write,
   });
 
-  final DesktopWindowStateFormat? _format;
+  final DesktopWindowStateFormat<T>? _format;
   final String? Function(String key) _read;
   final Future<bool> Function(String key, String value) _write;
 
   @override
-  DesktopWindowState? get() {
+  T? get() {
     final format = _format;
     if (format == null) return null;
     final record = _read(format._key);
     if (record == null) return null;
     try {
       final value = jsonDecode(record);
-      if (value is! Map || value['version'] != 1) return null;
-      final width = _number(value['width']);
-      final height = _number(value['height']);
-      if (width == null || height == null || width <= 0 || height <= 0) {
-        return null;
-      }
-      switch (format) {
-        case DesktopWindowStateFormat.windowsPlacement:
-          final left = _number(value['left']);
-          final top = _number(value['top']);
-          final dpi = _number(value['dpi']);
-          final monitorLeft = _number(value['monitorLeft']);
-          final monitorTop = _number(value['monitorTop']);
-          final workWidth = _number(value['workWidth']);
-          final workHeight = _number(value['workHeight']);
-          if (left == null ||
-              top == null ||
-              dpi == null ||
-              dpi <= 0 ||
-              monitorLeft == null ||
-              monitorTop == null ||
-              workWidth == null ||
-              workWidth <= 0 ||
-              workHeight == null ||
-              workHeight <= 0) {
-            return null;
-          }
-          return WindowsWindowState(
-            left: left,
-            top: top,
-            width: width,
-            height: height,
-            dpi: dpi,
-            monitorLeft: monitorLeft,
-            monitorTop: monitorTop,
-            workWidth: workWidth,
-            workHeight: workHeight,
-          );
-        case DesktopWindowStateFormat.gtkGeometry:
-          final x = _number(value['x']);
-          final y = _number(value['y']);
-          return LinuxWindowState(
-            width: width,
-            height: height,
-            position: x != null && y != null ? Offset(x, y) : null,
-          );
-      }
+      if (value is! Map<String, Object?> || value['version'] != 1) return null;
+      return format._decode(value);
     } on FormatException {
       return null;
     }
   }
 
   @override
-  Future<bool> set(DesktopWindowState state) {
+  Future<bool> set(T state) {
     final format = _format;
-    final Map<String, double> fields;
-    switch ((format, state)) {
-      case (
-        DesktopWindowStateFormat.windowsPlacement,
-        final WindowsWindowState placement,
-      ):
-        if (placement.dpi <= 0 ||
-            placement.workWidth <= 0 ||
-            placement.workHeight <= 0) {
-          return Future.value(false);
-        }
-        fields = {
-          'left': placement.left,
-          'top': placement.top,
-          'width': placement.width,
-          'height': placement.height,
-          'dpi': placement.dpi,
-          'monitorLeft': placement.monitorLeft,
-          'monitorTop': placement.monitorTop,
-          'workWidth': placement.workWidth,
-          'workHeight': placement.workHeight,
-        };
-      case (
-        DesktopWindowStateFormat.gtkGeometry,
-        final LinuxWindowState placement,
-      ):
-        fields = {
-          'width': placement.width,
-          'height': placement.height,
-          if (placement.position case final position?) ...{
-            'x': position.dx,
-            'y': position.dy,
-          },
-        };
-      default:
-        return Future.value(false);
-    }
-    if (fields['width']! <= 0 ||
+    if (format == null) return Future.value(false);
+    final fields = format._encode(state);
+    if (fields.values.any((value) => !value.isFinite) ||
+        fields['width']! <= 0 ||
         fields['height']! <= 0 ||
-        fields.values.any((value) => !value.isFinite)) {
+        (fields['dpi'] ?? 1) <= 0 ||
+        (fields['workWidth'] ?? 1) <= 0 ||
+        (fields['workHeight'] ?? 1) <= 0) {
       return Future.value(false);
     }
-    return _write(format!._key, jsonEncode({'version': 1, ...fields}));
+    return _write(format._key, jsonEncode({'version': 1, ...fields}));
   }
 }
+
+WindowsWindowState? _decodeWindows(Map<String, Object?> value) {
+  final left = _number(value['left']);
+  final top = _number(value['top']);
+  final width = _number(value['width']);
+  final height = _number(value['height']);
+  final dpi = _number(value['dpi']);
+  final monitorLeft = _number(value['monitorLeft']);
+  final monitorTop = _number(value['monitorTop']);
+  final workWidth = _number(value['workWidth']);
+  final workHeight = _number(value['workHeight']);
+  if (left == null ||
+      top == null ||
+      width == null ||
+      width <= 0 ||
+      height == null ||
+      height <= 0 ||
+      dpi == null ||
+      dpi <= 0 ||
+      monitorLeft == null ||
+      monitorTop == null ||
+      workWidth == null ||
+      workWidth <= 0 ||
+      workHeight == null ||
+      workHeight <= 0) {
+    return null;
+  }
+  return WindowsWindowState(
+    left: left,
+    top: top,
+    width: width,
+    height: height,
+    dpi: dpi,
+    monitorLeft: monitorLeft,
+    monitorTop: monitorTop,
+    workWidth: workWidth,
+    workHeight: workHeight,
+  );
+}
+
+Map<String, double> _encodeWindows(WindowsWindowState state) => {
+  'left': state.left,
+  'top': state.top,
+  'width': state.width,
+  'height': state.height,
+  'dpi': state.dpi,
+  'monitorLeft': state.monitorLeft,
+  'monitorTop': state.monitorTop,
+  'workWidth': state.workWidth,
+  'workHeight': state.workHeight,
+};
+
+LinuxWindowState? _decodeLinux(Map<String, Object?> value) {
+  final width = _number(value['width']);
+  final height = _number(value['height']);
+  if (width == null || width <= 0 || height == null || height <= 0) return null;
+  final x = _number(value['x']);
+  final y = _number(value['y']);
+  return LinuxWindowState(
+    width: width,
+    height: height,
+    position: x != null && y != null ? LinuxWindowPosition(x: x, y: y) : null,
+  );
+}
+
+Map<String, double> _encodeLinux(LinuxWindowState state) => {
+  'width': state.width,
+  'height': state.height,
+  if (state.position case final position?) 'x': position.x,
+  if (state.position case final position?) 'y': position.y,
+};
 
 double? _number(Object? value) =>
     value is num && value.isFinite ? value.toDouble() : null;

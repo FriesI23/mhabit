@@ -319,18 +319,421 @@ std::string PigeonInternalToString(const ::flutter::EncodableValue& v) {
 }
 
 }  // namespace
+// WindowsWindowState
+
+WindowsWindowState::WindowsWindowState(
+  double left,
+  double top,
+  double width,
+  double height,
+  double dpi,
+  double monitor_left,
+  double monitor_top,
+  double work_width,
+  double work_height)
+ : left_(left),
+    top_(top),
+    width_(width),
+    height_(height),
+    dpi_(dpi),
+    monitor_left_(monitor_left),
+    monitor_top_(monitor_top),
+    work_width_(work_width),
+    work_height_(work_height) {}
+
+double WindowsWindowState::left() const {
+  return left_;
+}
+
+void WindowsWindowState::set_left(double value_arg) {
+  left_ = value_arg;
+}
+
+
+double WindowsWindowState::top() const {
+  return top_;
+}
+
+void WindowsWindowState::set_top(double value_arg) {
+  top_ = value_arg;
+}
+
+
+double WindowsWindowState::width() const {
+  return width_;
+}
+
+void WindowsWindowState::set_width(double value_arg) {
+  width_ = value_arg;
+}
+
+
+double WindowsWindowState::height() const {
+  return height_;
+}
+
+void WindowsWindowState::set_height(double value_arg) {
+  height_ = value_arg;
+}
+
+
+double WindowsWindowState::dpi() const {
+  return dpi_;
+}
+
+void WindowsWindowState::set_dpi(double value_arg) {
+  dpi_ = value_arg;
+}
+
+
+double WindowsWindowState::monitor_left() const {
+  return monitor_left_;
+}
+
+void WindowsWindowState::set_monitor_left(double value_arg) {
+  monitor_left_ = value_arg;
+}
+
+
+double WindowsWindowState::monitor_top() const {
+  return monitor_top_;
+}
+
+void WindowsWindowState::set_monitor_top(double value_arg) {
+  monitor_top_ = value_arg;
+}
+
+
+double WindowsWindowState::work_width() const {
+  return work_width_;
+}
+
+void WindowsWindowState::set_work_width(double value_arg) {
+  work_width_ = value_arg;
+}
+
+
+double WindowsWindowState::work_height() const {
+  return work_height_;
+}
+
+void WindowsWindowState::set_work_height(double value_arg) {
+  work_height_ = value_arg;
+}
+
+
+EncodableList WindowsWindowState::ToEncodableList() const {
+  EncodableList list;
+  list.reserve(9);
+  list.push_back(EncodableValue(left_));
+  list.push_back(EncodableValue(top_));
+  list.push_back(EncodableValue(width_));
+  list.push_back(EncodableValue(height_));
+  list.push_back(EncodableValue(dpi_));
+  list.push_back(EncodableValue(monitor_left_));
+  list.push_back(EncodableValue(monitor_top_));
+  list.push_back(EncodableValue(work_width_));
+  list.push_back(EncodableValue(work_height_));
+  return list;
+}
+
+WindowsWindowState WindowsWindowState::FromEncodableList(const EncodableList& list) {
+  WindowsWindowState decoded(
+    std::get<double>(list[0]),
+    std::get<double>(list[1]),
+    std::get<double>(list[2]),
+    std::get<double>(list[3]),
+    std::get<double>(list[4]),
+    std::get<double>(list[5]),
+    std::get<double>(list[6]),
+    std::get<double>(list[7]),
+    std::get<double>(list[8]));
+  return decoded;
+}
+
+bool WindowsWindowState::operator==(const WindowsWindowState& other) const {
+  return PigeonInternalDeepEquals(left_, other.left_) && PigeonInternalDeepEquals(top_, other.top_) && PigeonInternalDeepEquals(width_, other.width_) && PigeonInternalDeepEquals(height_, other.height_) && PigeonInternalDeepEquals(dpi_, other.dpi_) && PigeonInternalDeepEquals(monitor_left_, other.monitor_left_) && PigeonInternalDeepEquals(monitor_top_, other.monitor_top_) && PigeonInternalDeepEquals(work_width_, other.work_width_) && PigeonInternalDeepEquals(work_height_, other.work_height_);
+}
+
+bool WindowsWindowState::operator!=(const WindowsWindowState& other) const {
+  return !(*this == other);
+}
+
+size_t WindowsWindowState::Hash() const {
+  size_t result = 1;
+  result = result * 31 + PigeonInternalDeepHash(left_);
+  result = result * 31 + PigeonInternalDeepHash(top_);
+  result = result * 31 + PigeonInternalDeepHash(width_);
+  result = result * 31 + PigeonInternalDeepHash(height_);
+  result = result * 31 + PigeonInternalDeepHash(dpi_);
+  result = result * 31 + PigeonInternalDeepHash(monitor_left_);
+  result = result * 31 + PigeonInternalDeepHash(monitor_top_);
+  result = result * 31 + PigeonInternalDeepHash(work_width_);
+  result = result * 31 + PigeonInternalDeepHash(work_height_);
+  return result;
+}
+
+std::ostream& operator<<(
+  std::ostream& os,
+  const WindowsWindowState& obj) {
+  os << "WindowsWindowState(";
+  os << "left: ";
+  os << PigeonInternalToString(obj.left_);
+  os << ", top: ";
+  os << PigeonInternalToString(obj.top_);
+  os << ", width: ";
+  os << PigeonInternalToString(obj.width_);
+  os << ", height: ";
+  os << PigeonInternalToString(obj.height_);
+  os << ", dpi: ";
+  os << PigeonInternalToString(obj.dpi_);
+  os << ", monitor_left: ";
+  os << PigeonInternalToString(obj.monitor_left_);
+  os << ", monitor_top: ";
+  os << PigeonInternalToString(obj.monitor_top_);
+  os << ", work_width: ";
+  os << PigeonInternalToString(obj.work_width_);
+  os << ", work_height: ";
+  os << PigeonInternalToString(obj.work_height_);
+  os << ")";
+  return os;
+}
+
+size_t PigeonInternalDeepHash(const WindowsWindowState& v) {
+  return v.Hash();
+}
+
+// LinuxWindowPosition
+
+LinuxWindowPosition::LinuxWindowPosition(
+  double x,
+  double y)
+ : x_(x),
+    y_(y) {}
+
+double LinuxWindowPosition::x() const {
+  return x_;
+}
+
+void LinuxWindowPosition::set_x(double value_arg) {
+  x_ = value_arg;
+}
+
+
+double LinuxWindowPosition::y() const {
+  return y_;
+}
+
+void LinuxWindowPosition::set_y(double value_arg) {
+  y_ = value_arg;
+}
+
+
+EncodableList LinuxWindowPosition::ToEncodableList() const {
+  EncodableList list;
+  list.reserve(2);
+  list.push_back(EncodableValue(x_));
+  list.push_back(EncodableValue(y_));
+  return list;
+}
+
+LinuxWindowPosition LinuxWindowPosition::FromEncodableList(const EncodableList& list) {
+  LinuxWindowPosition decoded(
+    std::get<double>(list[0]),
+    std::get<double>(list[1]));
+  return decoded;
+}
+
+bool LinuxWindowPosition::operator==(const LinuxWindowPosition& other) const {
+  return PigeonInternalDeepEquals(x_, other.x_) && PigeonInternalDeepEquals(y_, other.y_);
+}
+
+bool LinuxWindowPosition::operator!=(const LinuxWindowPosition& other) const {
+  return !(*this == other);
+}
+
+size_t LinuxWindowPosition::Hash() const {
+  size_t result = 1;
+  result = result * 31 + PigeonInternalDeepHash(x_);
+  result = result * 31 + PigeonInternalDeepHash(y_);
+  return result;
+}
+
+std::ostream& operator<<(
+  std::ostream& os,
+  const LinuxWindowPosition& obj) {
+  os << "LinuxWindowPosition(";
+  os << "x: ";
+  os << PigeonInternalToString(obj.x_);
+  os << ", y: ";
+  os << PigeonInternalToString(obj.y_);
+  os << ")";
+  return os;
+}
+
+size_t PigeonInternalDeepHash(const LinuxWindowPosition& v) {
+  return v.Hash();
+}
+
+// LinuxWindowState
+
+LinuxWindowState::LinuxWindowState(
+  double width,
+  double height)
+ : width_(width),
+    height_(height) {}
+
+LinuxWindowState::LinuxWindowState(
+  double width,
+  double height,
+  const LinuxWindowPosition* position)
+ : width_(width),
+    height_(height),
+    position_(position ? std::make_unique<LinuxWindowPosition>(*position) : nullptr) {}
+
+LinuxWindowState::LinuxWindowState(const LinuxWindowState& other)
+ : width_(other.width_),
+    height_(other.height_),
+    position_(other.position_ ? std::make_unique<LinuxWindowPosition>(*other.position_) : nullptr) {}
+
+LinuxWindowState& LinuxWindowState::operator=(const LinuxWindowState& other) {
+  width_ = other.width_;
+  height_ = other.height_;
+  position_ = other.position_ ? std::make_unique<LinuxWindowPosition>(*other.position_) : nullptr;
+  return *this;
+}
+
+double LinuxWindowState::width() const {
+  return width_;
+}
+
+void LinuxWindowState::set_width(double value_arg) {
+  width_ = value_arg;
+}
+
+
+double LinuxWindowState::height() const {
+  return height_;
+}
+
+void LinuxWindowState::set_height(double value_arg) {
+  height_ = value_arg;
+}
+
+
+const LinuxWindowPosition* LinuxWindowState::position() const {
+  return position_.get();
+}
+
+void LinuxWindowState::set_position(const LinuxWindowPosition* value_arg) {
+  position_ = value_arg ? std::make_unique<LinuxWindowPosition>(*value_arg) : nullptr;
+}
+
+void LinuxWindowState::set_position(const LinuxWindowPosition& value_arg) {
+  position_ = std::make_unique<LinuxWindowPosition>(value_arg);
+}
+
+
+EncodableList LinuxWindowState::ToEncodableList() const {
+  EncodableList list;
+  list.reserve(3);
+  list.push_back(EncodableValue(width_));
+  list.push_back(EncodableValue(height_));
+  list.push_back(position_ ? CustomEncodableValue(*position_) : EncodableValue());
+  return list;
+}
+
+LinuxWindowState LinuxWindowState::FromEncodableList(const EncodableList& list) {
+  LinuxWindowState decoded(
+    std::get<double>(list[0]),
+    std::get<double>(list[1]));
+  auto& encodable_position = list[2];
+  if (!encodable_position.IsNull()) {
+    decoded.set_position(std::any_cast<const LinuxWindowPosition&>(std::get<CustomEncodableValue>(encodable_position)));
+  }
+  return decoded;
+}
+
+bool LinuxWindowState::operator==(const LinuxWindowState& other) const {
+  return PigeonInternalDeepEquals(width_, other.width_) && PigeonInternalDeepEquals(height_, other.height_) && PigeonInternalDeepEquals(position_, other.position_);
+}
+
+bool LinuxWindowState::operator!=(const LinuxWindowState& other) const {
+  return !(*this == other);
+}
+
+size_t LinuxWindowState::Hash() const {
+  size_t result = 1;
+  result = result * 31 + PigeonInternalDeepHash(width_);
+  result = result * 31 + PigeonInternalDeepHash(height_);
+  result = result * 31 + PigeonInternalDeepHash(position_);
+  return result;
+}
+
+std::ostream& operator<<(
+  std::ostream& os,
+  const LinuxWindowState& obj) {
+  os << "LinuxWindowState(";
+  os << "width: ";
+  os << PigeonInternalToString(obj.width_);
+  os << ", height: ";
+  os << PigeonInternalToString(obj.height_);
+  os << ", position: ";
+  if (obj.position_) {
+    os << *obj.position_;
+  }
+  else {
+    os << "null";
+  }
+  os << ")";
+  return os;
+}
+
+size_t PigeonInternalDeepHash(const LinuxWindowState& v) {
+  return v.Hash();
+}
+
 
 PigeonInternalCodecSerializer::PigeonInternalCodecSerializer() {}
 
 EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(
   uint8_t type,
   ::flutter::ByteStreamReader* stream) const {
-  return ::flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
+  switch (type) {
+    case 129: {
+        return CustomEncodableValue(WindowsWindowState::FromEncodableList(std::get<EncodableList>(ReadValue(stream))));
+      }
+    case 130: {
+        return CustomEncodableValue(LinuxWindowPosition::FromEncodableList(std::get<EncodableList>(ReadValue(stream))));
+      }
+    case 131: {
+        return CustomEncodableValue(LinuxWindowState::FromEncodableList(std::get<EncodableList>(ReadValue(stream))));
+      }
+    default:
+      return ::flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
+    }
 }
 
 void PigeonInternalCodecSerializer::WriteValue(
   const EncodableValue& value,
   ::flutter::ByteStreamWriter* stream) const {
+  if (const CustomEncodableValue* custom_value = std::get_if<CustomEncodableValue>(&value)) {
+    if (custom_value->type() == typeid(WindowsWindowState)) {
+      stream->WriteByte(129);
+      WriteValue(EncodableValue(std::any_cast<WindowsWindowState>(*custom_value).ToEncodableList()), stream);
+      return;
+    }
+    if (custom_value->type() == typeid(LinuxWindowPosition)) {
+      stream->WriteByte(130);
+      WriteValue(EncodableValue(std::any_cast<LinuxWindowPosition>(*custom_value).ToEncodableList()), stream);
+      return;
+    }
+    if (custom_value->type() == typeid(LinuxWindowState)) {
+      stream->WriteByte(131);
+      WriteValue(EncodableValue(std::any_cast<LinuxWindowState>(*custom_value).ToEncodableList()), stream);
+      return;
+    }
+  }
   ::flutter::StandardCodecSerializer::WriteValue(value, stream);
 }
 
@@ -382,60 +785,6 @@ void WindowPersistenceHostApi::SetUp(
           }
           EncodableList wrapped;
           wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
-          reply(EncodableValue(std::move(wrapped)));
-        } catch (const std::exception& exception) {
-          reply(WrapError(exception.what()));
-        }
-      });
-    } else {
-      channel.SetMessageHandler(nullptr);
-    }
-  }
-  {
-    BasicMessageChannel<> channel(binary_messenger, "dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowPersistenceHostApi.restore" + prepended_suffix, &GetCodec());
-    if (api != nullptr) {
-      channel.SetMessageHandler([api](const EncodableValue& message, const ::flutter::MessageReply<EncodableValue>& reply) {
-        try {
-          const auto& args = std::get<EncodableList>(message);
-          const auto& encodable_placement_arg = args.at(0);
-          if (encodable_placement_arg.IsNull()) {
-            reply(WrapError("placement_arg unexpectedly null."));
-            return;
-          }
-          const auto& placement_arg = std::get<EncodableList>(encodable_placement_arg);
-          std::optional<FlutterError> output = api->Restore(placement_arg);
-          if (output.has_value()) {
-            reply(WrapError(output.value()));
-            return;
-          }
-          EncodableList wrapped;
-          wrapped.push_back(EncodableValue());
-          reply(EncodableValue(std::move(wrapped)));
-        } catch (const std::exception& exception) {
-          reply(WrapError(exception.what()));
-        }
-      });
-    } else {
-      channel.SetMessageHandler(nullptr);
-    }
-  }
-  {
-    BasicMessageChannel<> channel(binary_messenger, "dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowPersistenceHostApi.capture" + prepended_suffix, &GetCodec());
-    if (api != nullptr) {
-      channel.SetMessageHandler([api](const EncodableValue& message, const ::flutter::MessageReply<EncodableValue>& reply) {
-        try {
-          ErrorOr<std::optional<EncodableList>> output = api->Capture();
-          if (output.has_error()) {
-            reply(WrapError(output.error()));
-            return;
-          }
-          EncodableList wrapped;
-          auto output_optional = std::move(output).TakeValue();
-          if (output_optional) {
-            wrapped.push_back(EncodableValue(std::move(output_optional).value()));
-          } else {
-            wrapped.push_back(EncodableValue());
-          }
           reply(EncodableValue(std::move(wrapped)));
         } catch (const std::exception& exception) {
           reply(WrapError(exception.what()));
@@ -498,6 +847,184 @@ EncodableValue WindowPersistenceHostApi::WrapError(std::string_view error_messag
 }
 
 EncodableValue WindowPersistenceHostApi::WrapError(const FlutterError& error) {
+  return EncodableValue(EncodableList{
+    EncodableValue(error.code()),
+    EncodableValue(error.message()),
+    error.details()
+  });
+}
+
+/// The codec used by WindowsWindowPersistenceHostApi.
+const ::flutter::StandardMessageCodec& WindowsWindowPersistenceHostApi::GetCodec() {
+  return ::flutter::StandardMessageCodec::GetInstance(&PigeonInternalCodecSerializer::GetInstance());
+}
+
+// Sets up an instance of `WindowsWindowPersistenceHostApi` to handle messages through the `binary_messenger`.
+void WindowsWindowPersistenceHostApi::SetUp(
+  ::flutter::BinaryMessenger* binary_messenger,
+  WindowsWindowPersistenceHostApi* api) {
+  WindowsWindowPersistenceHostApi::SetUp(binary_messenger, api, "");
+}
+
+void WindowsWindowPersistenceHostApi::SetUp(
+  ::flutter::BinaryMessenger* binary_messenger,
+  WindowsWindowPersistenceHostApi* api,
+  const std::string& message_channel_suffix) {
+  const std::string prepended_suffix = message_channel_suffix.length() > 0 ? std::string(".") + message_channel_suffix : "";
+  {
+    BasicMessageChannel<> channel(binary_messenger, "dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowsWindowPersistenceHostApi.restore" + prepended_suffix, &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler([api](const EncodableValue& message, const ::flutter::MessageReply<EncodableValue>& reply) {
+        try {
+          const auto& args = std::get<EncodableList>(message);
+          const auto& encodable_placement_arg = args.at(0);
+          if (encodable_placement_arg.IsNull()) {
+            reply(WrapError("placement_arg unexpectedly null."));
+            return;
+          }
+          const auto& placement_arg = std::any_cast<const WindowsWindowState&>(std::get<CustomEncodableValue>(encodable_placement_arg));
+          std::optional<FlutterError> output = api->Restore(placement_arg);
+          if (output.has_value()) {
+            reply(WrapError(output.value()));
+            return;
+          }
+          EncodableList wrapped;
+          wrapped.push_back(EncodableValue());
+          reply(EncodableValue(std::move(wrapped)));
+        } catch (const std::exception& exception) {
+          reply(WrapError(exception.what()));
+        }
+      });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(binary_messenger, "dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowsWindowPersistenceHostApi.capture" + prepended_suffix, &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler([api](const EncodableValue& message, const ::flutter::MessageReply<EncodableValue>& reply) {
+        try {
+          ErrorOr<std::optional<WindowsWindowState>> output = api->Capture();
+          if (output.has_error()) {
+            reply(WrapError(output.error()));
+            return;
+          }
+          EncodableList wrapped;
+          auto output_optional = std::move(output).TakeValue();
+          if (output_optional) {
+            wrapped.push_back(CustomEncodableValue(std::move(output_optional).value()));
+          } else {
+            wrapped.push_back(EncodableValue());
+          }
+          reply(EncodableValue(std::move(wrapped)));
+        } catch (const std::exception& exception) {
+          reply(WrapError(exception.what()));
+        }
+      });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+}
+
+EncodableValue WindowsWindowPersistenceHostApi::WrapError(std::string_view error_message) {
+  return EncodableValue(EncodableList{
+    EncodableValue(std::string(error_message)),
+    EncodableValue("Error"),
+    EncodableValue()
+  });
+}
+
+EncodableValue WindowsWindowPersistenceHostApi::WrapError(const FlutterError& error) {
+  return EncodableValue(EncodableList{
+    EncodableValue(error.code()),
+    EncodableValue(error.message()),
+    error.details()
+  });
+}
+
+/// The codec used by LinuxWindowPersistenceHostApi.
+const ::flutter::StandardMessageCodec& LinuxWindowPersistenceHostApi::GetCodec() {
+  return ::flutter::StandardMessageCodec::GetInstance(&PigeonInternalCodecSerializer::GetInstance());
+}
+
+// Sets up an instance of `LinuxWindowPersistenceHostApi` to handle messages through the `binary_messenger`.
+void LinuxWindowPersistenceHostApi::SetUp(
+  ::flutter::BinaryMessenger* binary_messenger,
+  LinuxWindowPersistenceHostApi* api) {
+  LinuxWindowPersistenceHostApi::SetUp(binary_messenger, api, "");
+}
+
+void LinuxWindowPersistenceHostApi::SetUp(
+  ::flutter::BinaryMessenger* binary_messenger,
+  LinuxWindowPersistenceHostApi* api,
+  const std::string& message_channel_suffix) {
+  const std::string prepended_suffix = message_channel_suffix.length() > 0 ? std::string(".") + message_channel_suffix : "";
+  {
+    BasicMessageChannel<> channel(binary_messenger, "dev.flutter.pigeon.mhabit_desktop_window_chrome.LinuxWindowPersistenceHostApi.restore" + prepended_suffix, &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler([api](const EncodableValue& message, const ::flutter::MessageReply<EncodableValue>& reply) {
+        try {
+          const auto& args = std::get<EncodableList>(message);
+          const auto& encodable_placement_arg = args.at(0);
+          if (encodable_placement_arg.IsNull()) {
+            reply(WrapError("placement_arg unexpectedly null."));
+            return;
+          }
+          const auto& placement_arg = std::any_cast<const LinuxWindowState&>(std::get<CustomEncodableValue>(encodable_placement_arg));
+          std::optional<FlutterError> output = api->Restore(placement_arg);
+          if (output.has_value()) {
+            reply(WrapError(output.value()));
+            return;
+          }
+          EncodableList wrapped;
+          wrapped.push_back(EncodableValue());
+          reply(EncodableValue(std::move(wrapped)));
+        } catch (const std::exception& exception) {
+          reply(WrapError(exception.what()));
+        }
+      });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(binary_messenger, "dev.flutter.pigeon.mhabit_desktop_window_chrome.LinuxWindowPersistenceHostApi.capture" + prepended_suffix, &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler([api](const EncodableValue& message, const ::flutter::MessageReply<EncodableValue>& reply) {
+        try {
+          ErrorOr<std::optional<LinuxWindowState>> output = api->Capture();
+          if (output.has_error()) {
+            reply(WrapError(output.error()));
+            return;
+          }
+          EncodableList wrapped;
+          auto output_optional = std::move(output).TakeValue();
+          if (output_optional) {
+            wrapped.push_back(CustomEncodableValue(std::move(output_optional).value()));
+          } else {
+            wrapped.push_back(EncodableValue());
+          }
+          reply(EncodableValue(std::move(wrapped)));
+        } catch (const std::exception& exception) {
+          reply(WrapError(exception.what()));
+        }
+      });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+}
+
+EncodableValue LinuxWindowPersistenceHostApi::WrapError(std::string_view error_message) {
+  return EncodableValue(EncodableList{
+    EncodableValue(std::string(error_message)),
+    EncodableValue("Error"),
+    EncodableValue()
+  });
+}
+
+EncodableValue LinuxWindowPersistenceHostApi::WrapError(const FlutterError& error) {
   return EncodableValue(EncodableList{
     EncodableValue(error.code()),
     EncodableValue(error.message()),

@@ -2,6 +2,7 @@
 
 #include <limits>
 
+using mhabit_desktop_window_chrome::LinuxWindowPosition;
 using mhabit_desktop_window_chrome::NativeWindowPersistence;
 
 static void settle_window() {
@@ -70,10 +71,11 @@ static void round_trip() {
   NativeWindowPersistence owner;
   g_assert_true(owner.Initialize(window, 350, 520));
   g_assert_false(owner.Initialize(window, 350, 520));
-  g_assert_true(owner.Capture().empty());
-  g_assert_false(owner.Restore({0, 600}));
-  g_assert_false(owner.Restore({800, std::numeric_limits<double>::quiet_NaN()}));
-  g_assert_true(owner.Restore({800, 600, 100, 100}));
+  g_assert_false(owner.Capture().has_value());
+  g_assert_false(owner.Restore({0, 600, std::nullopt}));
+  g_assert_false(owner.Restore(
+      {800, std::numeric_limits<double>::quiet_NaN(), std::nullopt}));
+  g_assert_true(owner.Restore({800, 600, LinuxWindowPosition{100, 100}}));
   g_assert_false(gtk_widget_get_visible(widget));
   int width, height;
   gtk_window_get_default_size(window, &width, &height);
@@ -81,34 +83,41 @@ static void round_trip() {
   g_assert_cmpint(height, >=, 520);
   gtk_widget_show(widget);
   // Native Wayland mapping waits for the compositor's first configure.
-  for (int attempt = 0; attempt < 100 && owner.Capture().empty(); ++attempt) {
+  for (int attempt = 0; attempt < 100 && !owner.Capture().has_value();
+       ++attempt) {
     while (gtk_events_pending()) gtk_main_iteration();
     g_usleep(10000);
   }
   const auto placement = owner.Capture();
-  g_assert_cmpuint(placement.size(), ==,
-      NativeWindowPersistence::CanPosition(gtk_widget_get_display(widget)) ? 4 : 2);
-  g_assert_false(owner.Restore({900, 700}));
+  g_assert_true(placement.has_value());
+  g_assert_cmpfloat(placement->width, >, 0);
+  g_assert_cmpfloat(placement->height, >, 0);
+  g_assert_true(
+      placement->position.has_value() ==
+      NativeWindowPersistence::CanPosition(gtk_widget_get_display(widget)));
+  g_assert_false(owner.Restore({900, 700, std::nullopt}));
   gtk_widget_hide(widget);
-  g_assert_true(owner.Restore({900000, 900000, 900000, 900000}));
+  g_assert_true(
+      owner.Restore({900000, 900000, LinuxWindowPosition{900000, 900000}}));
   GdkRectangle work{};
   auto* display = gtk_widget_get_display(widget);
-  auto* monitor = gdk_display_get_monitor_at_window(display, gtk_widget_get_window(widget));
+  auto* monitor =
+      gdk_display_get_monitor_at_window(display, gtk_widget_get_window(widget));
   gdk_monitor_get_workarea(monitor, &work);
   gtk_window_get_default_size(window, &width, &height);
   g_assert_cmpint(width, <=, work.width);
   g_assert_cmpint(height, <=, work.height);
   gtk_widget_destroy(widget);
-  g_assert_true(owner.Capture().empty());
-  g_assert_false(owner.Restore({800, 600}));
+  g_assert_false(owner.Capture().has_value());
+  g_assert_false(owner.Restore({800, 600, std::nullopt}));
 }
 
 int main(int argc, char** argv) {
   gtk_test_init(&argc, &argv, nullptr);
   g_test_add_func("/persistence/round-trip-and-backend-capability", round_trip);
   g_test_add_data_func("/persistence/minimum-size/server-decorations",
-      GINT_TO_POINTER(0), minimum_size);
+                       GINT_TO_POINTER(0), minimum_size);
   g_test_add_data_func("/persistence/minimum-size/header-bar",
-      GINT_TO_POINTER(1), minimum_size);
+                       GINT_TO_POINTER(1), minimum_size);
   return g_test_run();
 }

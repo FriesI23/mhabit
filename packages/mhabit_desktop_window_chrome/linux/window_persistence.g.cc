@@ -286,6 +286,412 @@ static gchar* G_GNUC_UNUSED flpigeon_to_string(FlValue* value) {
 }
 
 
+struct _MhabitPersistenceWindowsWindowState {
+  GObject parent_instance;
+
+  double left;
+  double top;
+  double width;
+  double height;
+  double dpi;
+  double monitor_left;
+  double monitor_top;
+  double work_width;
+  double work_height;
+};
+
+G_DEFINE_TYPE(MhabitPersistenceWindowsWindowState, mhabit_persistence_windows_window_state, G_TYPE_OBJECT)
+
+static void mhabit_persistence_windows_window_state_dispose(GObject* object) {
+  G_OBJECT_CLASS(mhabit_persistence_windows_window_state_parent_class)->dispose(object);
+}
+
+static void mhabit_persistence_windows_window_state_init(MhabitPersistenceWindowsWindowState* self) {
+}
+
+static void mhabit_persistence_windows_window_state_class_init(MhabitPersistenceWindowsWindowStateClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose = mhabit_persistence_windows_window_state_dispose;
+}
+
+MhabitPersistenceWindowsWindowState* mhabit_persistence_windows_window_state_new(double left, double top, double width, double height, double dpi, double monitor_left, double monitor_top, double work_width, double work_height) {
+  MhabitPersistenceWindowsWindowState* self = MHABIT_PERSISTENCE_WINDOWS_WINDOW_STATE(g_object_new(mhabit_persistence_windows_window_state_get_type(), nullptr));
+  self->left = left;
+  self->top = top;
+  self->width = width;
+  self->height = height;
+  self->dpi = dpi;
+  self->monitor_left = monitor_left;
+  self->monitor_top = monitor_top;
+  self->work_width = work_width;
+  self->work_height = work_height;
+  return self;
+}
+
+double mhabit_persistence_windows_window_state_get_left(MhabitPersistenceWindowsWindowState* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_WINDOWS_WINDOW_STATE(self), 0.0);
+  return self->left;
+}
+
+double mhabit_persistence_windows_window_state_get_top(MhabitPersistenceWindowsWindowState* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_WINDOWS_WINDOW_STATE(self), 0.0);
+  return self->top;
+}
+
+double mhabit_persistence_windows_window_state_get_width(MhabitPersistenceWindowsWindowState* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_WINDOWS_WINDOW_STATE(self), 0.0);
+  return self->width;
+}
+
+double mhabit_persistence_windows_window_state_get_height(MhabitPersistenceWindowsWindowState* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_WINDOWS_WINDOW_STATE(self), 0.0);
+  return self->height;
+}
+
+double mhabit_persistence_windows_window_state_get_dpi(MhabitPersistenceWindowsWindowState* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_WINDOWS_WINDOW_STATE(self), 0.0);
+  return self->dpi;
+}
+
+double mhabit_persistence_windows_window_state_get_monitor_left(MhabitPersistenceWindowsWindowState* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_WINDOWS_WINDOW_STATE(self), 0.0);
+  return self->monitor_left;
+}
+
+double mhabit_persistence_windows_window_state_get_monitor_top(MhabitPersistenceWindowsWindowState* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_WINDOWS_WINDOW_STATE(self), 0.0);
+  return self->monitor_top;
+}
+
+double mhabit_persistence_windows_window_state_get_work_width(MhabitPersistenceWindowsWindowState* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_WINDOWS_WINDOW_STATE(self), 0.0);
+  return self->work_width;
+}
+
+double mhabit_persistence_windows_window_state_get_work_height(MhabitPersistenceWindowsWindowState* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_WINDOWS_WINDOW_STATE(self), 0.0);
+  return self->work_height;
+}
+
+static FlValue* mhabit_persistence_windows_window_state_to_list(MhabitPersistenceWindowsWindowState* self) {
+  FlValue* values = fl_value_new_list();
+  fl_value_append_take(values, fl_value_new_float(self->left));
+  fl_value_append_take(values, fl_value_new_float(self->top));
+  fl_value_append_take(values, fl_value_new_float(self->width));
+  fl_value_append_take(values, fl_value_new_float(self->height));
+  fl_value_append_take(values, fl_value_new_float(self->dpi));
+  fl_value_append_take(values, fl_value_new_float(self->monitor_left));
+  fl_value_append_take(values, fl_value_new_float(self->monitor_top));
+  fl_value_append_take(values, fl_value_new_float(self->work_width));
+  fl_value_append_take(values, fl_value_new_float(self->work_height));
+  return values;
+}
+
+static MhabitPersistenceWindowsWindowState* mhabit_persistence_windows_window_state_new_from_list(FlValue* values) {
+  FlValue* value0 = fl_value_get_list_value(values, 0);
+  double left = fl_value_get_float(value0);
+  FlValue* value1 = fl_value_get_list_value(values, 1);
+  double top = fl_value_get_float(value1);
+  FlValue* value2 = fl_value_get_list_value(values, 2);
+  double width = fl_value_get_float(value2);
+  FlValue* value3 = fl_value_get_list_value(values, 3);
+  double height = fl_value_get_float(value3);
+  FlValue* value4 = fl_value_get_list_value(values, 4);
+  double dpi = fl_value_get_float(value4);
+  FlValue* value5 = fl_value_get_list_value(values, 5);
+  double monitor_left = fl_value_get_float(value5);
+  FlValue* value6 = fl_value_get_list_value(values, 6);
+  double monitor_top = fl_value_get_float(value6);
+  FlValue* value7 = fl_value_get_list_value(values, 7);
+  double work_width = fl_value_get_float(value7);
+  FlValue* value8 = fl_value_get_list_value(values, 8);
+  double work_height = fl_value_get_float(value8);
+  return mhabit_persistence_windows_window_state_new(left, top, width, height, dpi, monitor_left, monitor_top, work_width, work_height);
+}
+
+gboolean mhabit_persistence_windows_window_state_equals(MhabitPersistenceWindowsWindowState* a, MhabitPersistenceWindowsWindowState* b) {
+  if (a == b) {
+    return TRUE;
+  }
+  if (a == nullptr || b == nullptr) {
+    return FALSE;
+  }
+  if (!flpigeon_equals_double(a->left, b->left)) {
+    return FALSE;
+  }
+  if (!flpigeon_equals_double(a->top, b->top)) {
+    return FALSE;
+  }
+  if (!flpigeon_equals_double(a->width, b->width)) {
+    return FALSE;
+  }
+  if (!flpigeon_equals_double(a->height, b->height)) {
+    return FALSE;
+  }
+  if (!flpigeon_equals_double(a->dpi, b->dpi)) {
+    return FALSE;
+  }
+  if (!flpigeon_equals_double(a->monitor_left, b->monitor_left)) {
+    return FALSE;
+  }
+  if (!flpigeon_equals_double(a->monitor_top, b->monitor_top)) {
+    return FALSE;
+  }
+  if (!flpigeon_equals_double(a->work_width, b->work_width)) {
+    return FALSE;
+  }
+  if (!flpigeon_equals_double(a->work_height, b->work_height)) {
+    return FALSE;
+  }
+  return TRUE;
+}
+
+guint mhabit_persistence_windows_window_state_hash(MhabitPersistenceWindowsWindowState* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_WINDOWS_WINDOW_STATE(self), 0);
+  guint result = 0;
+  result = result * 31 + flpigeon_hash_double(self->left);
+  result = result * 31 + flpigeon_hash_double(self->top);
+  result = result * 31 + flpigeon_hash_double(self->width);
+  result = result * 31 + flpigeon_hash_double(self->height);
+  result = result * 31 + flpigeon_hash_double(self->dpi);
+  result = result * 31 + flpigeon_hash_double(self->monitor_left);
+  result = result * 31 + flpigeon_hash_double(self->monitor_top);
+  result = result * 31 + flpigeon_hash_double(self->work_width);
+  result = result * 31 + flpigeon_hash_double(self->work_height);
+  return result;
+}
+
+gchar* mhabit_persistence_windows_window_state_to_string(MhabitPersistenceWindowsWindowState* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_WINDOWS_WINDOW_STATE(self), NULL);
+  GString* str = g_string_new("WindowsWindowState(");
+  g_string_append(str, "left: ");
+  g_string_append_printf(str, "%g", self->left);
+  g_string_append(str, ", top: ");
+  g_string_append_printf(str, "%g", self->top);
+  g_string_append(str, ", width: ");
+  g_string_append_printf(str, "%g", self->width);
+  g_string_append(str, ", height: ");
+  g_string_append_printf(str, "%g", self->height);
+  g_string_append(str, ", dpi: ");
+  g_string_append_printf(str, "%g", self->dpi);
+  g_string_append(str, ", monitor_left: ");
+  g_string_append_printf(str, "%g", self->monitor_left);
+  g_string_append(str, ", monitor_top: ");
+  g_string_append_printf(str, "%g", self->monitor_top);
+  g_string_append(str, ", work_width: ");
+  g_string_append_printf(str, "%g", self->work_width);
+  g_string_append(str, ", work_height: ");
+  g_string_append_printf(str, "%g", self->work_height);
+  g_string_append(str, ")");
+  return g_string_free(str, FALSE);
+}
+
+struct _MhabitPersistenceLinuxWindowPosition {
+  GObject parent_instance;
+
+  double x;
+  double y;
+};
+
+G_DEFINE_TYPE(MhabitPersistenceLinuxWindowPosition, mhabit_persistence_linux_window_position, G_TYPE_OBJECT)
+
+static void mhabit_persistence_linux_window_position_dispose(GObject* object) {
+  G_OBJECT_CLASS(mhabit_persistence_linux_window_position_parent_class)->dispose(object);
+}
+
+static void mhabit_persistence_linux_window_position_init(MhabitPersistenceLinuxWindowPosition* self) {
+}
+
+static void mhabit_persistence_linux_window_position_class_init(MhabitPersistenceLinuxWindowPositionClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose = mhabit_persistence_linux_window_position_dispose;
+}
+
+MhabitPersistenceLinuxWindowPosition* mhabit_persistence_linux_window_position_new(double x, double y) {
+  MhabitPersistenceLinuxWindowPosition* self = MHABIT_PERSISTENCE_LINUX_WINDOW_POSITION(g_object_new(mhabit_persistence_linux_window_position_get_type(), nullptr));
+  self->x = x;
+  self->y = y;
+  return self;
+}
+
+double mhabit_persistence_linux_window_position_get_x(MhabitPersistenceLinuxWindowPosition* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_LINUX_WINDOW_POSITION(self), 0.0);
+  return self->x;
+}
+
+double mhabit_persistence_linux_window_position_get_y(MhabitPersistenceLinuxWindowPosition* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_LINUX_WINDOW_POSITION(self), 0.0);
+  return self->y;
+}
+
+static FlValue* mhabit_persistence_linux_window_position_to_list(MhabitPersistenceLinuxWindowPosition* self) {
+  FlValue* values = fl_value_new_list();
+  fl_value_append_take(values, fl_value_new_float(self->x));
+  fl_value_append_take(values, fl_value_new_float(self->y));
+  return values;
+}
+
+static MhabitPersistenceLinuxWindowPosition* mhabit_persistence_linux_window_position_new_from_list(FlValue* values) {
+  FlValue* value0 = fl_value_get_list_value(values, 0);
+  double x = fl_value_get_float(value0);
+  FlValue* value1 = fl_value_get_list_value(values, 1);
+  double y = fl_value_get_float(value1);
+  return mhabit_persistence_linux_window_position_new(x, y);
+}
+
+gboolean mhabit_persistence_linux_window_position_equals(MhabitPersistenceLinuxWindowPosition* a, MhabitPersistenceLinuxWindowPosition* b) {
+  if (a == b) {
+    return TRUE;
+  }
+  if (a == nullptr || b == nullptr) {
+    return FALSE;
+  }
+  if (!flpigeon_equals_double(a->x, b->x)) {
+    return FALSE;
+  }
+  if (!flpigeon_equals_double(a->y, b->y)) {
+    return FALSE;
+  }
+  return TRUE;
+}
+
+guint mhabit_persistence_linux_window_position_hash(MhabitPersistenceLinuxWindowPosition* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_LINUX_WINDOW_POSITION(self), 0);
+  guint result = 0;
+  result = result * 31 + flpigeon_hash_double(self->x);
+  result = result * 31 + flpigeon_hash_double(self->y);
+  return result;
+}
+
+gchar* mhabit_persistence_linux_window_position_to_string(MhabitPersistenceLinuxWindowPosition* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_LINUX_WINDOW_POSITION(self), NULL);
+  GString* str = g_string_new("LinuxWindowPosition(");
+  g_string_append(str, "x: ");
+  g_string_append_printf(str, "%g", self->x);
+  g_string_append(str, ", y: ");
+  g_string_append_printf(str, "%g", self->y);
+  g_string_append(str, ")");
+  return g_string_free(str, FALSE);
+}
+
+struct _MhabitPersistenceLinuxWindowState {
+  GObject parent_instance;
+
+  double width;
+  double height;
+  MhabitPersistenceLinuxWindowPosition* position;
+};
+
+G_DEFINE_TYPE(MhabitPersistenceLinuxWindowState, mhabit_persistence_linux_window_state, G_TYPE_OBJECT)
+
+static void mhabit_persistence_linux_window_state_dispose(GObject* object) {
+  MhabitPersistenceLinuxWindowState* self = MHABIT_PERSISTENCE_LINUX_WINDOW_STATE(object);
+  g_clear_object(&self->position);
+  G_OBJECT_CLASS(mhabit_persistence_linux_window_state_parent_class)->dispose(object);
+}
+
+static void mhabit_persistence_linux_window_state_init(MhabitPersistenceLinuxWindowState* self) {
+}
+
+static void mhabit_persistence_linux_window_state_class_init(MhabitPersistenceLinuxWindowStateClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose = mhabit_persistence_linux_window_state_dispose;
+}
+
+MhabitPersistenceLinuxWindowState* mhabit_persistence_linux_window_state_new(double width, double height, MhabitPersistenceLinuxWindowPosition* position) {
+  MhabitPersistenceLinuxWindowState* self = MHABIT_PERSISTENCE_LINUX_WINDOW_STATE(g_object_new(mhabit_persistence_linux_window_state_get_type(), nullptr));
+  self->width = width;
+  self->height = height;
+  if (position != nullptr) {
+    self->position = MHABIT_PERSISTENCE_LINUX_WINDOW_POSITION(g_object_ref(position));
+  }
+  else {
+    self->position = nullptr;
+  }
+  return self;
+}
+
+double mhabit_persistence_linux_window_state_get_width(MhabitPersistenceLinuxWindowState* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_LINUX_WINDOW_STATE(self), 0.0);
+  return self->width;
+}
+
+double mhabit_persistence_linux_window_state_get_height(MhabitPersistenceLinuxWindowState* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_LINUX_WINDOW_STATE(self), 0.0);
+  return self->height;
+}
+
+MhabitPersistenceLinuxWindowPosition* mhabit_persistence_linux_window_state_get_position(MhabitPersistenceLinuxWindowState* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_LINUX_WINDOW_STATE(self), nullptr);
+  return self->position;
+}
+
+static FlValue* mhabit_persistence_linux_window_state_to_list(MhabitPersistenceLinuxWindowState* self) {
+  FlValue* values = fl_value_new_list();
+  fl_value_append_take(values, fl_value_new_float(self->width));
+  fl_value_append_take(values, fl_value_new_float(self->height));
+  fl_value_append_take(values, self->position != nullptr ? fl_value_new_custom_object(mhabit_persistence_linux_window_position_type_id, G_OBJECT(self->position)) : fl_value_new_null());
+  return values;
+}
+
+static MhabitPersistenceLinuxWindowState* mhabit_persistence_linux_window_state_new_from_list(FlValue* values) {
+  FlValue* value0 = fl_value_get_list_value(values, 0);
+  double width = fl_value_get_float(value0);
+  FlValue* value1 = fl_value_get_list_value(values, 1);
+  double height = fl_value_get_float(value1);
+  FlValue* value2 = fl_value_get_list_value(values, 2);
+  MhabitPersistenceLinuxWindowPosition* position = nullptr;
+  if (fl_value_get_type(value2) != FL_VALUE_TYPE_NULL) {
+    position = MHABIT_PERSISTENCE_LINUX_WINDOW_POSITION(fl_value_get_custom_value_object(value2));
+  }
+  return mhabit_persistence_linux_window_state_new(width, height, position);
+}
+
+gboolean mhabit_persistence_linux_window_state_equals(MhabitPersistenceLinuxWindowState* a, MhabitPersistenceLinuxWindowState* b) {
+  if (a == b) {
+    return TRUE;
+  }
+  if (a == nullptr || b == nullptr) {
+    return FALSE;
+  }
+  if (!flpigeon_equals_double(a->width, b->width)) {
+    return FALSE;
+  }
+  if (!flpigeon_equals_double(a->height, b->height)) {
+    return FALSE;
+  }
+  if (!mhabit_persistence_linux_window_position_equals(a->position, b->position)) {
+    return FALSE;
+  }
+  return TRUE;
+}
+
+guint mhabit_persistence_linux_window_state_hash(MhabitPersistenceLinuxWindowState* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_LINUX_WINDOW_STATE(self), 0);
+  guint result = 0;
+  result = result * 31 + flpigeon_hash_double(self->width);
+  result = result * 31 + flpigeon_hash_double(self->height);
+  result = result * 31 + mhabit_persistence_linux_window_position_hash(self->position);
+  return result;
+}
+
+gchar* mhabit_persistence_linux_window_state_to_string(MhabitPersistenceLinuxWindowState* self) {
+  g_return_val_if_fail(MHABIT_PERSISTENCE_IS_LINUX_WINDOW_STATE(self), NULL);
+  GString* str = g_string_new("LinuxWindowState(");
+  g_string_append(str, "width: ");
+  g_string_append_printf(str, "%g", self->width);
+  g_string_append(str, ", height: ");
+  g_string_append_printf(str, "%g", self->height);
+  g_string_append(str, ", position: ");
+  if (self->position != nullptr) {
+    gchar* field_str = mhabit_persistence_linux_window_position_to_string(self->position);
+    g_string_append(str, field_str);
+    g_free(field_str);
+  }
+  else {
+    g_string_append(str, "null");
+  }
+  g_string_append(str, ")");
+  return g_string_free(str, FALSE);
+}
+
 struct _MhabitPersistenceMessageCodec {
   FlStandardMessageCodec parent_instance;
 
@@ -293,18 +699,99 @@ struct _MhabitPersistenceMessageCodec {
 
 G_DEFINE_TYPE(MhabitPersistenceMessageCodec, mhabit_persistence_message_codec, fl_standard_message_codec_get_type())
 
+const int mhabit_persistence_windows_window_state_type_id = 129;
+const int mhabit_persistence_linux_window_position_type_id = 130;
+const int mhabit_persistence_linux_window_state_type_id = 131;
+
+static gboolean mhabit_persistence_message_codec_write_mhabit_persistence_windows_window_state(FlStandardMessageCodec* codec, GByteArray* buffer, MhabitPersistenceWindowsWindowState* value, GError** error) {
+  uint8_t type = mhabit_persistence_windows_window_state_type_id;
+  g_byte_array_append(buffer, &type, sizeof(uint8_t));
+  g_autoptr(FlValue) values = mhabit_persistence_windows_window_state_to_list(value);
+  return fl_standard_message_codec_write_value(codec, buffer, values, error);
+}
+
+static gboolean mhabit_persistence_message_codec_write_mhabit_persistence_linux_window_position(FlStandardMessageCodec* codec, GByteArray* buffer, MhabitPersistenceLinuxWindowPosition* value, GError** error) {
+  uint8_t type = mhabit_persistence_linux_window_position_type_id;
+  g_byte_array_append(buffer, &type, sizeof(uint8_t));
+  g_autoptr(FlValue) values = mhabit_persistence_linux_window_position_to_list(value);
+  return fl_standard_message_codec_write_value(codec, buffer, values, error);
+}
+
+static gboolean mhabit_persistence_message_codec_write_mhabit_persistence_linux_window_state(FlStandardMessageCodec* codec, GByteArray* buffer, MhabitPersistenceLinuxWindowState* value, GError** error) {
+  uint8_t type = mhabit_persistence_linux_window_state_type_id;
+  g_byte_array_append(buffer, &type, sizeof(uint8_t));
+  g_autoptr(FlValue) values = mhabit_persistence_linux_window_state_to_list(value);
+  return fl_standard_message_codec_write_value(codec, buffer, values, error);
+}
 
 static gboolean mhabit_persistence_message_codec_write_value(FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value, GError** error) {
   if (fl_value_get_type(value) == FL_VALUE_TYPE_CUSTOM) {
     switch (fl_value_get_custom_type(value)) {
+      case mhabit_persistence_windows_window_state_type_id:
+        return mhabit_persistence_message_codec_write_mhabit_persistence_windows_window_state(codec, buffer, MHABIT_PERSISTENCE_WINDOWS_WINDOW_STATE(fl_value_get_custom_value_object(value)), error);
+      case mhabit_persistence_linux_window_position_type_id:
+        return mhabit_persistence_message_codec_write_mhabit_persistence_linux_window_position(codec, buffer, MHABIT_PERSISTENCE_LINUX_WINDOW_POSITION(fl_value_get_custom_value_object(value)), error);
+      case mhabit_persistence_linux_window_state_type_id:
+        return mhabit_persistence_message_codec_write_mhabit_persistence_linux_window_state(codec, buffer, MHABIT_PERSISTENCE_LINUX_WINDOW_STATE(fl_value_get_custom_value_object(value)), error);
     }
   }
 
   return FL_STANDARD_MESSAGE_CODEC_CLASS(mhabit_persistence_message_codec_parent_class)->write_value(codec, buffer, value, error);
 }
 
+static FlValue* mhabit_persistence_message_codec_read_mhabit_persistence_windows_window_state(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, GError** error) {
+  g_autoptr(FlValue) values = fl_standard_message_codec_read_value(codec, buffer, offset, error);
+  if (values == nullptr) {
+    return nullptr;
+  }
+
+  g_autoptr(MhabitPersistenceWindowsWindowState) value = mhabit_persistence_windows_window_state_new_from_list(values);
+  if (value == nullptr) {
+    g_set_error(error, FL_MESSAGE_CODEC_ERROR, FL_MESSAGE_CODEC_ERROR_FAILED, "Invalid data received for MessageData");
+    return nullptr;
+  }
+
+  return fl_value_new_custom_object(mhabit_persistence_windows_window_state_type_id, G_OBJECT(value));
+}
+
+static FlValue* mhabit_persistence_message_codec_read_mhabit_persistence_linux_window_position(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, GError** error) {
+  g_autoptr(FlValue) values = fl_standard_message_codec_read_value(codec, buffer, offset, error);
+  if (values == nullptr) {
+    return nullptr;
+  }
+
+  g_autoptr(MhabitPersistenceLinuxWindowPosition) value = mhabit_persistence_linux_window_position_new_from_list(values);
+  if (value == nullptr) {
+    g_set_error(error, FL_MESSAGE_CODEC_ERROR, FL_MESSAGE_CODEC_ERROR_FAILED, "Invalid data received for MessageData");
+    return nullptr;
+  }
+
+  return fl_value_new_custom_object(mhabit_persistence_linux_window_position_type_id, G_OBJECT(value));
+}
+
+static FlValue* mhabit_persistence_message_codec_read_mhabit_persistence_linux_window_state(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, GError** error) {
+  g_autoptr(FlValue) values = fl_standard_message_codec_read_value(codec, buffer, offset, error);
+  if (values == nullptr) {
+    return nullptr;
+  }
+
+  g_autoptr(MhabitPersistenceLinuxWindowState) value = mhabit_persistence_linux_window_state_new_from_list(values);
+  if (value == nullptr) {
+    g_set_error(error, FL_MESSAGE_CODEC_ERROR, FL_MESSAGE_CODEC_ERROR_FAILED, "Invalid data received for MessageData");
+    return nullptr;
+  }
+
+  return fl_value_new_custom_object(mhabit_persistence_linux_window_state_type_id, G_OBJECT(value));
+}
+
 static FlValue* mhabit_persistence_message_codec_read_value_of_type(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, int type, GError** error) {
   switch (type) {
+    case mhabit_persistence_windows_window_state_type_id:
+      return mhabit_persistence_message_codec_read_mhabit_persistence_windows_window_state(codec, buffer, offset, error);
+    case mhabit_persistence_linux_window_position_type_id:
+      return mhabit_persistence_message_codec_read_mhabit_persistence_linux_window_position(codec, buffer, offset, error);
+    case mhabit_persistence_linux_window_state_type_id:
+      return mhabit_persistence_message_codec_read_mhabit_persistence_linux_window_state(codec, buffer, offset, error);
     default:
       return FL_STANDARD_MESSAGE_CODEC_CLASS(mhabit_persistence_message_codec_parent_class)->read_value_of_type(codec, buffer, offset, type, error);
   }
@@ -353,80 +840,6 @@ MhabitPersistenceWindowPersistenceHostApiInitializeResponse* mhabit_persistence_
 
 MhabitPersistenceWindowPersistenceHostApiInitializeResponse* mhabit_persistence_window_persistence_host_api_initialize_response_new_error(const gchar* code, const gchar* message, FlValue* details) {
   MhabitPersistenceWindowPersistenceHostApiInitializeResponse* self = MHABIT_PERSISTENCE_WINDOW_PERSISTENCE_HOST_API_INITIALIZE_RESPONSE(g_object_new(mhabit_persistence_window_persistence_host_api_initialize_response_get_type(), nullptr));
-  self->value = fl_value_new_list();
-  fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message != nullptr ? message : ""));
-  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details) : fl_value_new_null());
-  return self;
-}
-
-struct _MhabitPersistenceWindowPersistenceHostApiRestoreResponse {
-  GObject parent_instance;
-
-  FlValue* value;
-};
-
-G_DEFINE_TYPE(MhabitPersistenceWindowPersistenceHostApiRestoreResponse, mhabit_persistence_window_persistence_host_api_restore_response, G_TYPE_OBJECT)
-
-static void mhabit_persistence_window_persistence_host_api_restore_response_dispose(GObject* object) {
-  MhabitPersistenceWindowPersistenceHostApiRestoreResponse* self = MHABIT_PERSISTENCE_WINDOW_PERSISTENCE_HOST_API_RESTORE_RESPONSE(object);
-  g_clear_pointer(&self->value, fl_value_unref);
-  G_OBJECT_CLASS(mhabit_persistence_window_persistence_host_api_restore_response_parent_class)->dispose(object);
-}
-
-static void mhabit_persistence_window_persistence_host_api_restore_response_init(MhabitPersistenceWindowPersistenceHostApiRestoreResponse* self) {
-}
-
-static void mhabit_persistence_window_persistence_host_api_restore_response_class_init(MhabitPersistenceWindowPersistenceHostApiRestoreResponseClass* klass) {
-  G_OBJECT_CLASS(klass)->dispose = mhabit_persistence_window_persistence_host_api_restore_response_dispose;
-}
-
-MhabitPersistenceWindowPersistenceHostApiRestoreResponse* mhabit_persistence_window_persistence_host_api_restore_response_new() {
-  MhabitPersistenceWindowPersistenceHostApiRestoreResponse* self = MHABIT_PERSISTENCE_WINDOW_PERSISTENCE_HOST_API_RESTORE_RESPONSE(g_object_new(mhabit_persistence_window_persistence_host_api_restore_response_get_type(), nullptr));
-  self->value = fl_value_new_list();
-  fl_value_append_take(self->value, fl_value_new_null());
-  return self;
-}
-
-MhabitPersistenceWindowPersistenceHostApiRestoreResponse* mhabit_persistence_window_persistence_host_api_restore_response_new_error(const gchar* code, const gchar* message, FlValue* details) {
-  MhabitPersistenceWindowPersistenceHostApiRestoreResponse* self = MHABIT_PERSISTENCE_WINDOW_PERSISTENCE_HOST_API_RESTORE_RESPONSE(g_object_new(mhabit_persistence_window_persistence_host_api_restore_response_get_type(), nullptr));
-  self->value = fl_value_new_list();
-  fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message != nullptr ? message : ""));
-  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details) : fl_value_new_null());
-  return self;
-}
-
-struct _MhabitPersistenceWindowPersistenceHostApiCaptureResponse {
-  GObject parent_instance;
-
-  FlValue* value;
-};
-
-G_DEFINE_TYPE(MhabitPersistenceWindowPersistenceHostApiCaptureResponse, mhabit_persistence_window_persistence_host_api_capture_response, G_TYPE_OBJECT)
-
-static void mhabit_persistence_window_persistence_host_api_capture_response_dispose(GObject* object) {
-  MhabitPersistenceWindowPersistenceHostApiCaptureResponse* self = MHABIT_PERSISTENCE_WINDOW_PERSISTENCE_HOST_API_CAPTURE_RESPONSE(object);
-  g_clear_pointer(&self->value, fl_value_unref);
-  G_OBJECT_CLASS(mhabit_persistence_window_persistence_host_api_capture_response_parent_class)->dispose(object);
-}
-
-static void mhabit_persistence_window_persistence_host_api_capture_response_init(MhabitPersistenceWindowPersistenceHostApiCaptureResponse* self) {
-}
-
-static void mhabit_persistence_window_persistence_host_api_capture_response_class_init(MhabitPersistenceWindowPersistenceHostApiCaptureResponseClass* klass) {
-  G_OBJECT_CLASS(klass)->dispose = mhabit_persistence_window_persistence_host_api_capture_response_dispose;
-}
-
-MhabitPersistenceWindowPersistenceHostApiCaptureResponse* mhabit_persistence_window_persistence_host_api_capture_response_new(FlValue* return_value) {
-  MhabitPersistenceWindowPersistenceHostApiCaptureResponse* self = MHABIT_PERSISTENCE_WINDOW_PERSISTENCE_HOST_API_CAPTURE_RESPONSE(g_object_new(mhabit_persistence_window_persistence_host_api_capture_response_get_type(), nullptr));
-  self->value = fl_value_new_list();
-  fl_value_append_take(self->value, return_value != nullptr ? fl_value_ref(return_value) : fl_value_new_null());
-  return self;
-}
-
-MhabitPersistenceWindowPersistenceHostApiCaptureResponse* mhabit_persistence_window_persistence_host_api_capture_response_new_error(const gchar* code, const gchar* message, FlValue* details) {
-  MhabitPersistenceWindowPersistenceHostApiCaptureResponse* self = MHABIT_PERSISTENCE_WINDOW_PERSISTENCE_HOST_API_CAPTURE_RESPONSE(g_object_new(mhabit_persistence_window_persistence_host_api_capture_response_get_type(), nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
   fl_value_append_take(self->value, fl_value_new_string(message != nullptr ? message : ""));
@@ -567,46 +980,6 @@ static void mhabit_persistence_window_persistence_host_api_initialize_cb(FlBasic
   }
 }
 
-static void mhabit_persistence_window_persistence_host_api_restore_cb(FlBasicMessageChannel* channel, FlValue* message_, FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  MhabitPersistenceWindowPersistenceHostApi* self = MHABIT_PERSISTENCE_WINDOW_PERSISTENCE_HOST_API(user_data);
-
-  if (self->vtable == nullptr || self->vtable->restore == nullptr) {
-    return;
-  }
-
-  FlValue* value0 = fl_value_get_list_value(message_, 0);
-  FlValue* placement = value0;
-  g_autoptr(MhabitPersistenceWindowPersistenceHostApiRestoreResponse) response = self->vtable->restore(placement, self->user_data);
-  if (response == nullptr) {
-    g_warning("No response returned to %s.%s", "WindowPersistenceHostApi", "restore");
-    return;
-  }
-
-  g_autoptr(GError) error = NULL;
-  if (!fl_basic_message_channel_respond(channel, response_handle, response->value, &error)) {
-    g_warning("Failed to send response to %s.%s: %s", "WindowPersistenceHostApi", "restore", error->message);
-  }
-}
-
-static void mhabit_persistence_window_persistence_host_api_capture_cb(FlBasicMessageChannel* channel, FlValue* message_, FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  MhabitPersistenceWindowPersistenceHostApi* self = MHABIT_PERSISTENCE_WINDOW_PERSISTENCE_HOST_API(user_data);
-
-  if (self->vtable == nullptr || self->vtable->capture == nullptr) {
-    return;
-  }
-
-  g_autoptr(MhabitPersistenceWindowPersistenceHostApiCaptureResponse) response = self->vtable->capture(self->user_data);
-  if (response == nullptr) {
-    g_warning("No response returned to %s.%s", "WindowPersistenceHostApi", "capture");
-    return;
-  }
-
-  g_autoptr(GError) error = NULL;
-  if (!fl_basic_message_channel_respond(channel, response_handle, response->value, &error)) {
-    g_warning("Failed to send response to %s.%s: %s", "WindowPersistenceHostApi", "capture", error->message);
-  }
-}
-
 static void mhabit_persistence_window_persistence_host_api_flush_cb(FlBasicMessageChannel* channel, FlValue* message_, FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   MhabitPersistenceWindowPersistenceHostApi* self = MHABIT_PERSISTENCE_WINDOW_PERSISTENCE_HOST_API(user_data);
 
@@ -653,12 +1026,6 @@ void mhabit_persistence_window_persistence_host_api_set_method_handlers(FlBinary
   g_autofree gchar* initialize_channel_name = g_strdup_printf("dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowPersistenceHostApi.initialize%s", dot_suffix);
   g_autoptr(FlBasicMessageChannel) initialize_channel = fl_basic_message_channel_new(messenger, initialize_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(initialize_channel, mhabit_persistence_window_persistence_host_api_initialize_cb, g_object_ref(api_data), g_object_unref);
-  g_autofree gchar* restore_channel_name = g_strdup_printf("dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowPersistenceHostApi.restore%s", dot_suffix);
-  g_autoptr(FlBasicMessageChannel) restore_channel = fl_basic_message_channel_new(messenger, restore_channel_name, FL_MESSAGE_CODEC(codec));
-  fl_basic_message_channel_set_message_handler(restore_channel, mhabit_persistence_window_persistence_host_api_restore_cb, g_object_ref(api_data), g_object_unref);
-  g_autofree gchar* capture_channel_name = g_strdup_printf("dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowPersistenceHostApi.capture%s", dot_suffix);
-  g_autoptr(FlBasicMessageChannel) capture_channel = fl_basic_message_channel_new(messenger, capture_channel_name, FL_MESSAGE_CODEC(codec));
-  fl_basic_message_channel_set_message_handler(capture_channel, mhabit_persistence_window_persistence_host_api_capture_cb, g_object_ref(api_data), g_object_unref);
   g_autofree gchar* flush_channel_name = g_strdup_printf("dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowPersistenceHostApi.flush%s", dot_suffix);
   g_autoptr(FlBasicMessageChannel) flush_channel = fl_basic_message_channel_new(messenger, flush_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(flush_channel, mhabit_persistence_window_persistence_host_api_flush_cb, g_object_ref(api_data), g_object_unref);
@@ -674,16 +1041,356 @@ void mhabit_persistence_window_persistence_host_api_clear_method_handlers(FlBina
   g_autofree gchar* initialize_channel_name = g_strdup_printf("dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowPersistenceHostApi.initialize%s", dot_suffix);
   g_autoptr(FlBasicMessageChannel) initialize_channel = fl_basic_message_channel_new(messenger, initialize_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(initialize_channel, nullptr, nullptr, nullptr);
-  g_autofree gchar* restore_channel_name = g_strdup_printf("dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowPersistenceHostApi.restore%s", dot_suffix);
-  g_autoptr(FlBasicMessageChannel) restore_channel = fl_basic_message_channel_new(messenger, restore_channel_name, FL_MESSAGE_CODEC(codec));
-  fl_basic_message_channel_set_message_handler(restore_channel, nullptr, nullptr, nullptr);
-  g_autofree gchar* capture_channel_name = g_strdup_printf("dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowPersistenceHostApi.capture%s", dot_suffix);
-  g_autoptr(FlBasicMessageChannel) capture_channel = fl_basic_message_channel_new(messenger, capture_channel_name, FL_MESSAGE_CODEC(codec));
-  fl_basic_message_channel_set_message_handler(capture_channel, nullptr, nullptr, nullptr);
   g_autofree gchar* flush_channel_name = g_strdup_printf("dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowPersistenceHostApi.flush%s", dot_suffix);
   g_autoptr(FlBasicMessageChannel) flush_channel = fl_basic_message_channel_new(messenger, flush_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(flush_channel, nullptr, nullptr, nullptr);
   g_autofree gchar* dispose_channel_name = g_strdup_printf("dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowPersistenceHostApi.dispose%s", dot_suffix);
   g_autoptr(FlBasicMessageChannel) dispose_channel = fl_basic_message_channel_new(messenger, dispose_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(dispose_channel, nullptr, nullptr, nullptr);
+}
+
+struct _MhabitPersistenceWindowsWindowPersistenceHostApiRestoreResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(MhabitPersistenceWindowsWindowPersistenceHostApiRestoreResponse, mhabit_persistence_windows_window_persistence_host_api_restore_response, G_TYPE_OBJECT)
+
+static void mhabit_persistence_windows_window_persistence_host_api_restore_response_dispose(GObject* object) {
+  MhabitPersistenceWindowsWindowPersistenceHostApiRestoreResponse* self = MHABIT_PERSISTENCE_WINDOWS_WINDOW_PERSISTENCE_HOST_API_RESTORE_RESPONSE(object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(mhabit_persistence_windows_window_persistence_host_api_restore_response_parent_class)->dispose(object);
+}
+
+static void mhabit_persistence_windows_window_persistence_host_api_restore_response_init(MhabitPersistenceWindowsWindowPersistenceHostApiRestoreResponse* self) {
+}
+
+static void mhabit_persistence_windows_window_persistence_host_api_restore_response_class_init(MhabitPersistenceWindowsWindowPersistenceHostApiRestoreResponseClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose = mhabit_persistence_windows_window_persistence_host_api_restore_response_dispose;
+}
+
+MhabitPersistenceWindowsWindowPersistenceHostApiRestoreResponse* mhabit_persistence_windows_window_persistence_host_api_restore_response_new() {
+  MhabitPersistenceWindowsWindowPersistenceHostApiRestoreResponse* self = MHABIT_PERSISTENCE_WINDOWS_WINDOW_PERSISTENCE_HOST_API_RESTORE_RESPONSE(g_object_new(mhabit_persistence_windows_window_persistence_host_api_restore_response_get_type(), nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_null());
+  return self;
+}
+
+MhabitPersistenceWindowsWindowPersistenceHostApiRestoreResponse* mhabit_persistence_windows_window_persistence_host_api_restore_response_new_error(const gchar* code, const gchar* message, FlValue* details) {
+  MhabitPersistenceWindowsWindowPersistenceHostApiRestoreResponse* self = MHABIT_PERSISTENCE_WINDOWS_WINDOW_PERSISTENCE_HOST_API_RESTORE_RESPONSE(g_object_new(mhabit_persistence_windows_window_persistence_host_api_restore_response_get_type(), nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value, fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details) : fl_value_new_null());
+  return self;
+}
+
+struct _MhabitPersistenceWindowsWindowPersistenceHostApiCaptureResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(MhabitPersistenceWindowsWindowPersistenceHostApiCaptureResponse, mhabit_persistence_windows_window_persistence_host_api_capture_response, G_TYPE_OBJECT)
+
+static void mhabit_persistence_windows_window_persistence_host_api_capture_response_dispose(GObject* object) {
+  MhabitPersistenceWindowsWindowPersistenceHostApiCaptureResponse* self = MHABIT_PERSISTENCE_WINDOWS_WINDOW_PERSISTENCE_HOST_API_CAPTURE_RESPONSE(object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(mhabit_persistence_windows_window_persistence_host_api_capture_response_parent_class)->dispose(object);
+}
+
+static void mhabit_persistence_windows_window_persistence_host_api_capture_response_init(MhabitPersistenceWindowsWindowPersistenceHostApiCaptureResponse* self) {
+}
+
+static void mhabit_persistence_windows_window_persistence_host_api_capture_response_class_init(MhabitPersistenceWindowsWindowPersistenceHostApiCaptureResponseClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose = mhabit_persistence_windows_window_persistence_host_api_capture_response_dispose;
+}
+
+MhabitPersistenceWindowsWindowPersistenceHostApiCaptureResponse* mhabit_persistence_windows_window_persistence_host_api_capture_response_new(MhabitPersistenceWindowsWindowState* return_value) {
+  MhabitPersistenceWindowsWindowPersistenceHostApiCaptureResponse* self = MHABIT_PERSISTENCE_WINDOWS_WINDOW_PERSISTENCE_HOST_API_CAPTURE_RESPONSE(g_object_new(mhabit_persistence_windows_window_persistence_host_api_capture_response_get_type(), nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, return_value != nullptr ? fl_value_new_custom_object(mhabit_persistence_windows_window_state_type_id, G_OBJECT(return_value)) : fl_value_new_null());
+  return self;
+}
+
+MhabitPersistenceWindowsWindowPersistenceHostApiCaptureResponse* mhabit_persistence_windows_window_persistence_host_api_capture_response_new_error(const gchar* code, const gchar* message, FlValue* details) {
+  MhabitPersistenceWindowsWindowPersistenceHostApiCaptureResponse* self = MHABIT_PERSISTENCE_WINDOWS_WINDOW_PERSISTENCE_HOST_API_CAPTURE_RESPONSE(g_object_new(mhabit_persistence_windows_window_persistence_host_api_capture_response_get_type(), nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value, fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details) : fl_value_new_null());
+  return self;
+}
+
+struct _MhabitPersistenceWindowsWindowPersistenceHostApi {
+  GObject parent_instance;
+
+  const MhabitPersistenceWindowsWindowPersistenceHostApiVTable* vtable;
+  gpointer user_data;
+  GDestroyNotify user_data_free_func;
+};
+
+G_DEFINE_TYPE(MhabitPersistenceWindowsWindowPersistenceHostApi, mhabit_persistence_windows_window_persistence_host_api, G_TYPE_OBJECT)
+
+static void mhabit_persistence_windows_window_persistence_host_api_dispose(GObject* object) {
+  MhabitPersistenceWindowsWindowPersistenceHostApi* self = MHABIT_PERSISTENCE_WINDOWS_WINDOW_PERSISTENCE_HOST_API(object);
+  if (self->user_data != nullptr) {
+    self->user_data_free_func(self->user_data);
+  }
+  self->user_data = nullptr;
+  G_OBJECT_CLASS(mhabit_persistence_windows_window_persistence_host_api_parent_class)->dispose(object);
+}
+
+static void mhabit_persistence_windows_window_persistence_host_api_init(MhabitPersistenceWindowsWindowPersistenceHostApi* self) {
+}
+
+static void mhabit_persistence_windows_window_persistence_host_api_class_init(MhabitPersistenceWindowsWindowPersistenceHostApiClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose = mhabit_persistence_windows_window_persistence_host_api_dispose;
+}
+
+static MhabitPersistenceWindowsWindowPersistenceHostApi* mhabit_persistence_windows_window_persistence_host_api_new(const MhabitPersistenceWindowsWindowPersistenceHostApiVTable* vtable, gpointer user_data, GDestroyNotify user_data_free_func) {
+  MhabitPersistenceWindowsWindowPersistenceHostApi* self = MHABIT_PERSISTENCE_WINDOWS_WINDOW_PERSISTENCE_HOST_API(g_object_new(mhabit_persistence_windows_window_persistence_host_api_get_type(), nullptr));
+  self->vtable = vtable;
+  self->user_data = user_data;
+  self->user_data_free_func = user_data_free_func;
+  return self;
+}
+
+static void mhabit_persistence_windows_window_persistence_host_api_restore_cb(FlBasicMessageChannel* channel, FlValue* message_, FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  MhabitPersistenceWindowsWindowPersistenceHostApi* self = MHABIT_PERSISTENCE_WINDOWS_WINDOW_PERSISTENCE_HOST_API(user_data);
+
+  if (self->vtable == nullptr || self->vtable->restore == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  MhabitPersistenceWindowsWindowState* placement = MHABIT_PERSISTENCE_WINDOWS_WINDOW_STATE(fl_value_get_custom_value_object(value0));
+  g_autoptr(MhabitPersistenceWindowsWindowPersistenceHostApiRestoreResponse) response = self->vtable->restore(placement, self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "WindowsWindowPersistenceHostApi", "restore");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle, response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "WindowsWindowPersistenceHostApi", "restore", error->message);
+  }
+}
+
+static void mhabit_persistence_windows_window_persistence_host_api_capture_cb(FlBasicMessageChannel* channel, FlValue* message_, FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  MhabitPersistenceWindowsWindowPersistenceHostApi* self = MHABIT_PERSISTENCE_WINDOWS_WINDOW_PERSISTENCE_HOST_API(user_data);
+
+  if (self->vtable == nullptr || self->vtable->capture == nullptr) {
+    return;
+  }
+
+  g_autoptr(MhabitPersistenceWindowsWindowPersistenceHostApiCaptureResponse) response = self->vtable->capture(self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "WindowsWindowPersistenceHostApi", "capture");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle, response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "WindowsWindowPersistenceHostApi", "capture", error->message);
+  }
+}
+
+void mhabit_persistence_windows_window_persistence_host_api_set_method_handlers(FlBinaryMessenger* messenger, const gchar* suffix, const MhabitPersistenceWindowsWindowPersistenceHostApiVTable* vtable, gpointer user_data, GDestroyNotify user_data_free_func) {
+  g_autofree gchar* dot_suffix = suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");
+  g_autoptr(MhabitPersistenceWindowsWindowPersistenceHostApi) api_data = mhabit_persistence_windows_window_persistence_host_api_new(vtable, user_data, user_data_free_func);
+
+  g_autoptr(MhabitPersistenceMessageCodec) codec = mhabit_persistence_message_codec_new();
+  g_autofree gchar* restore_channel_name = g_strdup_printf("dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowsWindowPersistenceHostApi.restore%s", dot_suffix);
+  g_autoptr(FlBasicMessageChannel) restore_channel = fl_basic_message_channel_new(messenger, restore_channel_name, FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(restore_channel, mhabit_persistence_windows_window_persistence_host_api_restore_cb, g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* capture_channel_name = g_strdup_printf("dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowsWindowPersistenceHostApi.capture%s", dot_suffix);
+  g_autoptr(FlBasicMessageChannel) capture_channel = fl_basic_message_channel_new(messenger, capture_channel_name, FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(capture_channel, mhabit_persistence_windows_window_persistence_host_api_capture_cb, g_object_ref(api_data), g_object_unref);
+}
+
+void mhabit_persistence_windows_window_persistence_host_api_clear_method_handlers(FlBinaryMessenger* messenger, const gchar* suffix) {
+  g_autofree gchar* dot_suffix = suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");
+
+  g_autoptr(MhabitPersistenceMessageCodec) codec = mhabit_persistence_message_codec_new();
+  g_autofree gchar* restore_channel_name = g_strdup_printf("dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowsWindowPersistenceHostApi.restore%s", dot_suffix);
+  g_autoptr(FlBasicMessageChannel) restore_channel = fl_basic_message_channel_new(messenger, restore_channel_name, FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(restore_channel, nullptr, nullptr, nullptr);
+  g_autofree gchar* capture_channel_name = g_strdup_printf("dev.flutter.pigeon.mhabit_desktop_window_chrome.WindowsWindowPersistenceHostApi.capture%s", dot_suffix);
+  g_autoptr(FlBasicMessageChannel) capture_channel = fl_basic_message_channel_new(messenger, capture_channel_name, FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(capture_channel, nullptr, nullptr, nullptr);
+}
+
+struct _MhabitPersistenceLinuxWindowPersistenceHostApiRestoreResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(MhabitPersistenceLinuxWindowPersistenceHostApiRestoreResponse, mhabit_persistence_linux_window_persistence_host_api_restore_response, G_TYPE_OBJECT)
+
+static void mhabit_persistence_linux_window_persistence_host_api_restore_response_dispose(GObject* object) {
+  MhabitPersistenceLinuxWindowPersistenceHostApiRestoreResponse* self = MHABIT_PERSISTENCE_LINUX_WINDOW_PERSISTENCE_HOST_API_RESTORE_RESPONSE(object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(mhabit_persistence_linux_window_persistence_host_api_restore_response_parent_class)->dispose(object);
+}
+
+static void mhabit_persistence_linux_window_persistence_host_api_restore_response_init(MhabitPersistenceLinuxWindowPersistenceHostApiRestoreResponse* self) {
+}
+
+static void mhabit_persistence_linux_window_persistence_host_api_restore_response_class_init(MhabitPersistenceLinuxWindowPersistenceHostApiRestoreResponseClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose = mhabit_persistence_linux_window_persistence_host_api_restore_response_dispose;
+}
+
+MhabitPersistenceLinuxWindowPersistenceHostApiRestoreResponse* mhabit_persistence_linux_window_persistence_host_api_restore_response_new() {
+  MhabitPersistenceLinuxWindowPersistenceHostApiRestoreResponse* self = MHABIT_PERSISTENCE_LINUX_WINDOW_PERSISTENCE_HOST_API_RESTORE_RESPONSE(g_object_new(mhabit_persistence_linux_window_persistence_host_api_restore_response_get_type(), nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_null());
+  return self;
+}
+
+MhabitPersistenceLinuxWindowPersistenceHostApiRestoreResponse* mhabit_persistence_linux_window_persistence_host_api_restore_response_new_error(const gchar* code, const gchar* message, FlValue* details) {
+  MhabitPersistenceLinuxWindowPersistenceHostApiRestoreResponse* self = MHABIT_PERSISTENCE_LINUX_WINDOW_PERSISTENCE_HOST_API_RESTORE_RESPONSE(g_object_new(mhabit_persistence_linux_window_persistence_host_api_restore_response_get_type(), nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value, fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details) : fl_value_new_null());
+  return self;
+}
+
+struct _MhabitPersistenceLinuxWindowPersistenceHostApiCaptureResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(MhabitPersistenceLinuxWindowPersistenceHostApiCaptureResponse, mhabit_persistence_linux_window_persistence_host_api_capture_response, G_TYPE_OBJECT)
+
+static void mhabit_persistence_linux_window_persistence_host_api_capture_response_dispose(GObject* object) {
+  MhabitPersistenceLinuxWindowPersistenceHostApiCaptureResponse* self = MHABIT_PERSISTENCE_LINUX_WINDOW_PERSISTENCE_HOST_API_CAPTURE_RESPONSE(object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(mhabit_persistence_linux_window_persistence_host_api_capture_response_parent_class)->dispose(object);
+}
+
+static void mhabit_persistence_linux_window_persistence_host_api_capture_response_init(MhabitPersistenceLinuxWindowPersistenceHostApiCaptureResponse* self) {
+}
+
+static void mhabit_persistence_linux_window_persistence_host_api_capture_response_class_init(MhabitPersistenceLinuxWindowPersistenceHostApiCaptureResponseClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose = mhabit_persistence_linux_window_persistence_host_api_capture_response_dispose;
+}
+
+MhabitPersistenceLinuxWindowPersistenceHostApiCaptureResponse* mhabit_persistence_linux_window_persistence_host_api_capture_response_new(MhabitPersistenceLinuxWindowState* return_value) {
+  MhabitPersistenceLinuxWindowPersistenceHostApiCaptureResponse* self = MHABIT_PERSISTENCE_LINUX_WINDOW_PERSISTENCE_HOST_API_CAPTURE_RESPONSE(g_object_new(mhabit_persistence_linux_window_persistence_host_api_capture_response_get_type(), nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, return_value != nullptr ? fl_value_new_custom_object(mhabit_persistence_linux_window_state_type_id, G_OBJECT(return_value)) : fl_value_new_null());
+  return self;
+}
+
+MhabitPersistenceLinuxWindowPersistenceHostApiCaptureResponse* mhabit_persistence_linux_window_persistence_host_api_capture_response_new_error(const gchar* code, const gchar* message, FlValue* details) {
+  MhabitPersistenceLinuxWindowPersistenceHostApiCaptureResponse* self = MHABIT_PERSISTENCE_LINUX_WINDOW_PERSISTENCE_HOST_API_CAPTURE_RESPONSE(g_object_new(mhabit_persistence_linux_window_persistence_host_api_capture_response_get_type(), nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value, fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details) : fl_value_new_null());
+  return self;
+}
+
+struct _MhabitPersistenceLinuxWindowPersistenceHostApi {
+  GObject parent_instance;
+
+  const MhabitPersistenceLinuxWindowPersistenceHostApiVTable* vtable;
+  gpointer user_data;
+  GDestroyNotify user_data_free_func;
+};
+
+G_DEFINE_TYPE(MhabitPersistenceLinuxWindowPersistenceHostApi, mhabit_persistence_linux_window_persistence_host_api, G_TYPE_OBJECT)
+
+static void mhabit_persistence_linux_window_persistence_host_api_dispose(GObject* object) {
+  MhabitPersistenceLinuxWindowPersistenceHostApi* self = MHABIT_PERSISTENCE_LINUX_WINDOW_PERSISTENCE_HOST_API(object);
+  if (self->user_data != nullptr) {
+    self->user_data_free_func(self->user_data);
+  }
+  self->user_data = nullptr;
+  G_OBJECT_CLASS(mhabit_persistence_linux_window_persistence_host_api_parent_class)->dispose(object);
+}
+
+static void mhabit_persistence_linux_window_persistence_host_api_init(MhabitPersistenceLinuxWindowPersistenceHostApi* self) {
+}
+
+static void mhabit_persistence_linux_window_persistence_host_api_class_init(MhabitPersistenceLinuxWindowPersistenceHostApiClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose = mhabit_persistence_linux_window_persistence_host_api_dispose;
+}
+
+static MhabitPersistenceLinuxWindowPersistenceHostApi* mhabit_persistence_linux_window_persistence_host_api_new(const MhabitPersistenceLinuxWindowPersistenceHostApiVTable* vtable, gpointer user_data, GDestroyNotify user_data_free_func) {
+  MhabitPersistenceLinuxWindowPersistenceHostApi* self = MHABIT_PERSISTENCE_LINUX_WINDOW_PERSISTENCE_HOST_API(g_object_new(mhabit_persistence_linux_window_persistence_host_api_get_type(), nullptr));
+  self->vtable = vtable;
+  self->user_data = user_data;
+  self->user_data_free_func = user_data_free_func;
+  return self;
+}
+
+static void mhabit_persistence_linux_window_persistence_host_api_restore_cb(FlBasicMessageChannel* channel, FlValue* message_, FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  MhabitPersistenceLinuxWindowPersistenceHostApi* self = MHABIT_PERSISTENCE_LINUX_WINDOW_PERSISTENCE_HOST_API(user_data);
+
+  if (self->vtable == nullptr || self->vtable->restore == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  MhabitPersistenceLinuxWindowState* placement = MHABIT_PERSISTENCE_LINUX_WINDOW_STATE(fl_value_get_custom_value_object(value0));
+  g_autoptr(MhabitPersistenceLinuxWindowPersistenceHostApiRestoreResponse) response = self->vtable->restore(placement, self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "LinuxWindowPersistenceHostApi", "restore");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle, response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "LinuxWindowPersistenceHostApi", "restore", error->message);
+  }
+}
+
+static void mhabit_persistence_linux_window_persistence_host_api_capture_cb(FlBasicMessageChannel* channel, FlValue* message_, FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  MhabitPersistenceLinuxWindowPersistenceHostApi* self = MHABIT_PERSISTENCE_LINUX_WINDOW_PERSISTENCE_HOST_API(user_data);
+
+  if (self->vtable == nullptr || self->vtable->capture == nullptr) {
+    return;
+  }
+
+  g_autoptr(MhabitPersistenceLinuxWindowPersistenceHostApiCaptureResponse) response = self->vtable->capture(self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "LinuxWindowPersistenceHostApi", "capture");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle, response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "LinuxWindowPersistenceHostApi", "capture", error->message);
+  }
+}
+
+void mhabit_persistence_linux_window_persistence_host_api_set_method_handlers(FlBinaryMessenger* messenger, const gchar* suffix, const MhabitPersistenceLinuxWindowPersistenceHostApiVTable* vtable, gpointer user_data, GDestroyNotify user_data_free_func) {
+  g_autofree gchar* dot_suffix = suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");
+  g_autoptr(MhabitPersistenceLinuxWindowPersistenceHostApi) api_data = mhabit_persistence_linux_window_persistence_host_api_new(vtable, user_data, user_data_free_func);
+
+  g_autoptr(MhabitPersistenceMessageCodec) codec = mhabit_persistence_message_codec_new();
+  g_autofree gchar* restore_channel_name = g_strdup_printf("dev.flutter.pigeon.mhabit_desktop_window_chrome.LinuxWindowPersistenceHostApi.restore%s", dot_suffix);
+  g_autoptr(FlBasicMessageChannel) restore_channel = fl_basic_message_channel_new(messenger, restore_channel_name, FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(restore_channel, mhabit_persistence_linux_window_persistence_host_api_restore_cb, g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* capture_channel_name = g_strdup_printf("dev.flutter.pigeon.mhabit_desktop_window_chrome.LinuxWindowPersistenceHostApi.capture%s", dot_suffix);
+  g_autoptr(FlBasicMessageChannel) capture_channel = fl_basic_message_channel_new(messenger, capture_channel_name, FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(capture_channel, mhabit_persistence_linux_window_persistence_host_api_capture_cb, g_object_ref(api_data), g_object_unref);
+}
+
+void mhabit_persistence_linux_window_persistence_host_api_clear_method_handlers(FlBinaryMessenger* messenger, const gchar* suffix) {
+  g_autofree gchar* dot_suffix = suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");
+
+  g_autoptr(MhabitPersistenceMessageCodec) codec = mhabit_persistence_message_codec_new();
+  g_autofree gchar* restore_channel_name = g_strdup_printf("dev.flutter.pigeon.mhabit_desktop_window_chrome.LinuxWindowPersistenceHostApi.restore%s", dot_suffix);
+  g_autoptr(FlBasicMessageChannel) restore_channel = fl_basic_message_channel_new(messenger, restore_channel_name, FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(restore_channel, nullptr, nullptr, nullptr);
+  g_autofree gchar* capture_channel_name = g_strdup_printf("dev.flutter.pigeon.mhabit_desktop_window_chrome.LinuxWindowPersistenceHostApi.capture%s", dot_suffix);
+  g_autoptr(FlBasicMessageChannel) capture_channel = fl_basic_message_channel_new(messenger, capture_channel_name, FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(capture_channel, nullptr, nullptr, nullptr);
 }

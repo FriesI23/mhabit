@@ -6,6 +6,9 @@ Native desktop window appearance and ordinary-window size/position persistence.
 - `DesktopWindowTitleBar`: Windows/Linux native title bar appearance.
 - `DesktopWindowPersistenceController`: restore, debounced saves, and close flushing.
   `DesktopWindowStateStore` provides typed storage with an app-supplied backend.
+  Windows and Linux reuse their Pigeon state classes from storage through the
+  typed platform APIs. Native adapters convert once at the Pigeon boundary and
+  keep their standalone tests independent of Flutter.
   Adapters implement native AppKit or store-backed initialization and saving.
 
 macOS uses AppKit autosave. Windows stores Win32 placement in local preferences.

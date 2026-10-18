@@ -4,31 +4,31 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
 
-const _saved = LinuxWindowState(width: 800, height: 600);
-const _ordinary = LinuxWindowState(width: 800, height: 600);
-const _first = LinuxWindowState(width: 810, height: 600);
-const _latest = LinuxWindowState(width: 820, height: 600);
-const _second = LinuxWindowState(width: 830, height: 600);
-const _last = LinuxWindowState(width: 840, height: 600);
+final _saved = LinuxWindowState(width: 800, height: 600);
+final _ordinary = LinuxWindowState(width: 800, height: 600);
+final _first = LinuxWindowState(width: 810, height: 600);
+final _latest = LinuxWindowState(width: 820, height: 600);
+final _second = LinuxWindowState(width: 830, height: 600);
+final _last = LinuxWindowState(width: 840, height: 600);
 
-class MemoryStore implements DesktopWindowStateStore {
-  DesktopWindowState? record;
-  final writes = <DesktopWindowState>[];
+class MemoryStore implements DesktopWindowStateStore<LinuxWindowState> {
+  LinuxWindowState? record;
+  final writes = <LinuxWindowState>[];
   final calls = <String>[];
   Completer<void>? blocked;
   bool failRead = false;
   bool failWrite = false;
   bool throwWrite = false;
   @override
-  DesktopWindowState? get() {
+  LinuxWindowState? get() {
     calls.add('read');
     if (failRead) throw StateError('read failed');
     return record;
   }
 
   @override
-  Future<bool> set(DesktopWindowState value) async {
-    calls.add('write:${(value as LinuxWindowState).width}');
+  Future<bool> set(LinuxWindowState value) async {
+    calls.add('write:${value.width}');
     if (throwWrite) throw StateError('write failed');
     if (failWrite) return false;
     await blocked?.future;
@@ -38,19 +38,20 @@ class MemoryStore implements DesktopWindowStateStore {
   }
 }
 
-class PlacementAdapter extends StoredWindowPersistenceAdapter {
+class PlacementAdapter
+    extends StoredWindowPersistenceAdapter<LinuxWindowState> {
   PlacementAdapter(this.calls);
   final List<String> calls;
   bool restoreAllowed = true;
   bool shouldClose = true;
   bool failInitialize = false;
-  DesktopWindowState? snapshot;
-  Completer<DesktopWindowState?>? pendingCapture;
+  LinuxWindowState? snapshot;
+  Completer<LinuxWindowState?>? pendingCapture;
   int initializations = 0;
   @override
   bool get supported => true;
   @override
-  DesktopWindowStateFormat get stateFormat =>
+  DesktopWindowStateFormat<LinuxWindowState> get stateFormat =>
       DesktopWindowStateFormat.gtkGeometry;
   @override
   bool get managesClose => shouldClose;
@@ -63,10 +64,10 @@ class PlacementAdapter extends StoredWindowPersistenceAdapter {
   }
 
   @override
-  Future<void> restoreState(DesktopWindowState state) async =>
-      calls.add('restore:${(state as LinuxWindowState).width}');
+  Future<void> restoreState(LinuxWindowState state) async =>
+      calls.add('restore:${state.width}');
   @override
-  Future<DesktopWindowState?> captureState() async {
+  Future<LinuxWindowState?> captureState() async {
     calls.add('capture');
     return pendingCapture == null ? snapshot : await pendingCapture!.future;
   }
@@ -79,7 +80,7 @@ void main() {
   final binding = TestWidgetsFlutterBinding.ensureInitialized();
   late MemoryStore store;
   late PlacementAdapter adapter;
-  late DesktopWindowPersistenceController persistence;
+  late DesktopWindowPersistenceController<LinuxWindowState> persistence;
   late List<String> windowCalls;
 
   setUp(() {
@@ -244,7 +245,7 @@ void main() {
     tester,
   ) async {
     await initialize();
-    final pending = Completer<DesktopWindowState?>();
+    final pending = Completer<LinuxWindowState?>();
     adapter.pendingCapture = pending;
     final first = persistence.flush();
     await tester.pump(const Duration(seconds: 2));
