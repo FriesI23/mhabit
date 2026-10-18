@@ -173,3 +173,47 @@ final class RunnerTests: XCTestCase {
     XCTAssertFalse(window.styleMask.contains(.fullSizeContentView))
   }
 }
+
+// Keep helper-only NSWindows separate from the live Flutter chrome tests.
+@MainActor
+final class WindowPersistenceTests: XCTestCase {
+  func testOrdinaryFrameAutosaveRestoresAndIgnoresTransientFrames() throws {
+    let name = "persistence-test-\(UUID().uuidString)"
+    let autosave = "mhabit.\(name).ordinary.v1"
+    defer { NSWindow.removeFrame(usingName: autosave) }
+    let first = NSWindow(contentRect: NSRect(x: 100, y: 100, width: 800, height: 600),
+                         styleMask: [.titled, .resizable], backing: .buffered, defer: false)
+    first.isReleasedWhenClosed = false
+    defer { first.close() }
+    let owner = WindowPersistence(window: first)
+    XCTAssertTrue(try owner.initialize(name: name, minimumWidth: 350, minimumHeight: 520))
+    first.setFrame(NSRect(x: 120, y: 120, width: 750, height: 580), display: false)
+    try owner.flush()
+    let ordinary = first.frame
+    XCTAssertFalse(try owner.initialize(name: name, minimumWidth: 350, minimumHeight: 520))
+    try owner.dispose()
+
+    let second = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 400, height: 530),
+                          styleMask: [.titled, .resizable], backing: .buffered, defer: false)
+    second.isReleasedWhenClosed = false
+    defer { second.close() }
+    let restored = WindowPersistence(window: second)
+    XCTAssertTrue(try restored.initialize(name: name, minimumWidth: 350, minimumHeight: 520))
+    XCTAssertEqual(second.frame, ordinary)
+    XCTAssertFalse(second.isVisible)
+    // Simulate a fullscreen/zoom transition: transient geometry must not save.
+    restored.suspend()
+    second.setFrame(NSRect(x: 0, y: 0, width: 1100, height: 900), display: false)
+    try restored.flush()
+    let third = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 400, height: 530),
+                         styleMask: [.titled, .resizable], backing: .buffered, defer: false)
+    third.isReleasedWhenClosed = false
+    defer { third.close() }
+    let verification = WindowPersistence(window: third)
+    XCTAssertTrue(try verification.initialize(name: name, minimumWidth: 350, minimumHeight: 520))
+    XCTAssertEqual(third.frame, ordinary)
+    try verification.dispose()
+    try restored.dispose()
+  }
+
+}

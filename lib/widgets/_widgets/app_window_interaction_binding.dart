@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
-import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart'
-    as desktop;
+import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
 import 'package:provider/provider.dart';
 
 /// Connects native window interaction to the app's Navigator and root overlays.
@@ -14,12 +13,12 @@ class AppWindowInteractionBinding extends StatelessWidget {
   const AppWindowInteractionBinding({super.key, required this.child});
 
   static Widget _wrapInteractionRegion(Widget child) =>
-      desktop.DesktopWindowInteractionRegion(child: child);
+      DesktopWindowInteractionRegion(child: child);
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<desktop.DesktopWindowChrome?>();
-    return desktop.DesktopWindowChromeHost(
+    final controller = context.watch<DesktopWindowChrome?>();
+    return DesktopWindowChromeHost(
       controller: controller,
       child: AdaptiveWindowInteractionBinding(
         wrapper: controller == null ? null : _wrapInteractionRegion,

@@ -7,6 +7,12 @@ import window_manager
 class MainFlutterWindow: NSWindow {
   private(set) var chrome: DesktopWindowChromePlugin?
 
+  override func zoom(_ sender: Any?) {
+    chrome?.persistence?.suspend()
+    super.zoom(sender)
+    chrome?.persistence?.didZoom()
+  }
+
   override var styleMask: NSWindow.StyleMask {
     get { super.styleMask }
     set {
