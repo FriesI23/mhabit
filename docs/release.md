@@ -1,6 +1,4 @@
-# Pre-Released: v1.27.14+203-pre
-
-> Includes updates since the previous stable release, v1.27.13+202.
+# Released: v1.27.15+204
 
 ## ✨ Features
 
@@ -25,8 +23,7 @@
 
 ## 🧹 Others
 
-- Refactor adaptive UI themes to keep appearance updates consistent (#677)
 - Add desktop native regression tests and integrate them into local and CI
   test workflows (#677)
 
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.13+202...pre-v1.27.14+203)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.13+202...v1.27.15+204)

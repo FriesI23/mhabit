@@ -2,7 +2,7 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.27.14+203-pre
+## 1.27.15+204
 
 - Feature: native title bars and pinned desktop app bars (#677)
 - Feature: remember manual sidebar collapse across layouts and styles (#679)
