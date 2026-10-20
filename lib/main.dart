@@ -17,7 +17,8 @@ import 'dart:io';
 
 import 'package:flutter/widgets.dart'
     show WidgetsBinding, WidgetsFlutterBinding, runApp;
-import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
+import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart'
+    show DesktopWindowChrome, DesktopWindowTitleBar;
 import 'package:native_natural_sort/native_natural_sort.dart';
 import 'package:provider/provider.dart';
 
@@ -27,6 +28,7 @@ import 'entries/app/entry.dart';
 import 'entries/habit_widget_entry.dart';
 import 'logging/logger_manager.dart';
 import 'reminders/notification_service.dart';
+import 'storage/desktop_window_persistence.dart';
 import 'theme/linux_bundled_font.dart';
 import 'utils/local_timezone.dart';
 import 'widgets/bingding.dart';
@@ -50,6 +52,7 @@ Future<void> main() async {
   await AppInfo().init();
   await NotificationService().init();
   await LocalTimeZoneManager().init();
+  await DesktopWindowPersistence().init();
 
   await NativeSort().config(
     SortOptions(
@@ -86,4 +89,6 @@ Future<void> _runAppWithNativeTitleBar() async {
       child: const AppEntry(),
     ),
   );
+  await WidgetsBinding.instance.waitUntilFirstFrameRasterized;
+  await titleBar.show();
 }

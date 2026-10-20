@@ -19,7 +19,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.27.13+202
+version: 1.27.15+204
 
 environment:
   sdk: ">=3.12.0 <4.0.0"
@@ -69,6 +69,9 @@ melos:
         - >-
           dart run melos exec --scope=mhabit_desktop_window_chrome
           --fail-fast -- "dart run pigeon --input pigeons/desktop_title_bar.dart"
+        - >-
+          dart run melos exec --scope=mhabit_desktop_window_chrome
+          --fail-fast -- "dart run pigeon --input pigeons/window_persistence.dart"
         - flutter pub run build_runner build --workspace
         - flutter gen-l10n
         - dart run melos run format

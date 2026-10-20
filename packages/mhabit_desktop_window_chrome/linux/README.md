@@ -4,6 +4,11 @@ GTK owns native decorations. Appearance requests set the application's
 `gtk-application-prefer-dark-theme`; exact ARGB colors are not applied, so
 `lastCustomColorsApplied` is `false`. Titles use `window_manager.setTitle`.
 
+Window persistence initialization also sets the GTK content widget's minimum
+size. This keeps the Flutter viewport constrained across mapping and layout
+changes; GDK-only geometry hints from `window_manager` can be overwritten by GTK.
+The content request excludes title bars and client-side decoration shadows.
+
 Internal example: [Linux smoke test](../tool/linux_title_bar_smoke.dart).
 Native tests live in [test/](test/).
 

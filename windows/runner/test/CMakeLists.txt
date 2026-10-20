@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.14)
+project(mhabit_flutter_surface_tests LANGUAGES CXX)
+enable_testing()
+
+add_executable(flutter_surface_refresh_test flutter_surface_refresh_test.cpp)
+target_compile_features(flutter_surface_refresh_test PRIVATE cxx_std_17)
+target_compile_definitions(flutter_surface_refresh_test PRIVATE NOMINMAX)
+add_test(NAME flutter_surface_refresh COMMAND flutter_surface_refresh_test)
