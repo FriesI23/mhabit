@@ -4,6 +4,8 @@ Following sections are based on `Android` platform.
 Others will be marked separately.
 Contributions to this guide are welcome via [README#Contributing][readme-contributing].
 
+For Home Screen widgets on iOS, see [iOS Widgets](./Feature꞉-iOS-Widgets).
+
 ## History
 
 - _\[2025-07-31\]_: Initialize documentation, based on [**88efd12**][commit-88efd12] with version 'v1.16.22+91'.

@@ -42,6 +42,9 @@ Build outputs located at `build/app/outputs`.
 
 ### Building for iOS / macOS
 
+For iOS widget extension signing, App Groups, and verification, see
+[Developing iOS Widgets](./Dev꞉-iOS-Widgets).
+
 iOS requires a scheme. Supported schemes are as follows:
 
 - `f_dev`

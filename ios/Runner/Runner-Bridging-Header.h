@@ -1,2 +1,2 @@
 #import "GeneratedPluginRegistrant.h"
-#import "HabitWidgetPluginRegistry.h"
+#import "../HabitWidget/App/HabitWidgetPluginRegistry.h"

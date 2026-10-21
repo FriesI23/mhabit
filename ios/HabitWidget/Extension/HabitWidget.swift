@@ -318,7 +318,9 @@ private extension HabitWidgetSnapshot {
   }
 
   func nativeText(_ key: String) -> String {
-    let language = widgetLocale.language.languageCode?.identifier ?? "en"
+    let preferences = [widgetLocale.identifier.replacingOccurrences(of: "_", with: "-"), "en"]
+    let language = Bundle.preferredLocalizations(
+      from: Bundle.main.localizations, forPreferences: preferences).first ?? "en"
     let path = Bundle.main.path(forResource: language, ofType: "lproj")
       ?? Bundle.main.path(forResource: "en", ofType: "lproj")
     let bundle = path.flatMap(Bundle.init(path:)) ?? .main

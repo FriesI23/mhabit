@@ -84,9 +84,11 @@ existing architecture and tooling contracts.
   loading, database loading, provider injection, dynamic color, and the app
   shell.
 - `lib/entries/habit_widget_entry.dart` owns iOS widget background startup and
-  foreground refresh wiring. Native WidgetKit views live in `ios/HabitWidget/`;
-  shared intents and snapshot types live in `ios/Shared/`. Keep record mutations
-  in the existing Dart workflow/storage owners; see `docs/ios-widgets.md`.
+  foreground refresh wiring. Native widget files live in `ios/HabitWidget/`:
+  `App/` owns the Runner-only bridge, `Extension/` owns WidgetKit views and
+  resources, and `Shared/` owns intents and snapshot types compiled by both
+  targets. Keep record mutations in the existing Dart workflow/storage owners;
+  see `docs/wiki/Dev꞉-iOS-Widgets.md`.
 - `lib/entries/common/app_root_view.dart` owns the `MaterialApp` shell.
   Keep global app-level concerns such as locale, theme, navigator keys,
   localization delegates, and top-level builders there.
@@ -248,7 +250,10 @@ them; keep rows with independent actions separate from single-action controls.
   generated localization outputs.
 - Use the existing normalization and generation workflow when changing l10n:
   `make normalize-l10n`, then `make gen` or the narrower needed step.
-- Widget-only native strings are owned by `ios/HabitWidget/*.lproj/Localizable.strings`.
+- Widget-only native strings are owned by
+  `ios/HabitWidget/Extension/*.lproj/Localizable.strings`.
+  Use Apple locale names (`zh-Hans` / `zh-Hant`) and preserve script and region
+  when matching the app's snapshot locale to native resources.
   Shared app labels reach the widget through its localized snapshot.
 
 ## Generated Code
