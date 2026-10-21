@@ -80,7 +80,7 @@ import '../../utils/app_clock.dart';
 import '../../widgets/widgets.dart';
 import '../app_error/entry.dart';
 import '../common/app_root_view.dart';
-import '../habit_widget_entry.dart';
+import 'habit_widget.dart';
 import 'navigation_chrome.dart';
 import 'navigation_destination.dart';
 import 'providers.dart';

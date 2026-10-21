@@ -7,10 +7,12 @@ struct HabitWidgetEntry: TimelineEntry {
 }
 
 struct HabitWidgetProvider: TimelineProvider {
-  func placeholder(in context: Context) -> HabitWidgetEntry { .preview }
+  func placeholder(in context: Context) -> HabitWidgetEntry {
+    HabitWidgetEntry(date: .now, snapshot: HabitWidgetShared.readSnapshot())
+  }
 
   func getSnapshot(in context: Context, completion: @escaping (HabitWidgetEntry) -> Void) {
-    completion(context.isPreview ? .preview : HabitWidgetEntry(date: .now, snapshot: HabitWidgetShared.readSnapshot()))
+    completion(HabitWidgetEntry(date: .now, snapshot: HabitWidgetShared.readSnapshot()))
   }
 
   func getTimeline(in context: Context, completion: @escaping (Timeline<HabitWidgetEntry>) -> Void) {
@@ -61,15 +63,19 @@ struct HabitWidgetView: View {
 
   @ViewBuilder
   private var content: some View {
-    if let snapshot = entry.snapshot, !snapshot.habits.isEmpty {
-      let current = snapshot.isCurrent(at: entry.date)
-      if family == .systemSmall {
-        SingleHabitView(snapshot: snapshot, current: current)
+    if let snapshot = entry.snapshot {
+      if snapshot.habits.isEmpty {
+        WidgetEmptyView(snapshot: snapshot)
       } else {
-        TodayHabitsView(snapshot: snapshot, current: current)
+        let current = snapshot.isCurrent(at: entry.date)
+        if family == .systemSmall {
+          SingleHabitView(snapshot: snapshot, current: current)
+        } else {
+          TodayHabitsView(snapshot: snapshot, current: current)
+        }
       }
     } else {
-      WidgetEmptyView(snapshot: entry.snapshot)
+      WidgetLoadingView()
     }
   }
 }
@@ -278,8 +284,24 @@ private struct WidgetRefreshButton: View {
   }
 }
 
+private struct WidgetLoadingView: View {
+  var body: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      WidgetHeading(title: "Table Habit")
+      Spacer(minLength: 0)
+      ProgressView("Loading…")
+        .font(.system(.subheadline, design: .rounded, weight: .semibold))
+        .unredacted()
+      Text("Open Table Habit to get started")
+        .font(.caption2)
+        .foregroundStyle(.secondary)
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+}
+
 private struct WidgetEmptyView: View {
-  let snapshot: HabitWidgetSnapshot?
+  let snapshot: HabitWidgetSnapshot
 
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
@@ -288,17 +310,10 @@ private struct WidgetEmptyView: View {
       Image(systemName: "square.grid.3x3")
         .font(.system(size: 25, weight: .light))
         .foregroundStyle(.secondary)
-      Text(snapshot?.text("empty", fallback: String(localized: "A little progress, every day."))
-        ?? String(localized: "A little progress, every day."))
+      Text(snapshot.text("empty", fallback: String(localized: "A little progress, every day.")))
         .font(.system(.subheadline, design: .rounded, weight: .semibold))
         .lineLimit(2)
-      if let snapshot {
-        WidgetRefreshButton(snapshot: snapshot, compact: false)
-      } else {
-        Text("Open Table Habit to get started")
-          .font(.caption2)
-          .foregroundStyle(.secondary)
-      }
+      WidgetRefreshButton(snapshot: snapshot, compact: false)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
   }
@@ -328,28 +343,5 @@ private extension HabitWidgetSnapshot {
   }
 }
 
-extension HabitWidgetEntry {
-  static var preview: HabitWidgetEntry {
-    let calendar = Calendar(identifier: .gregorian)
-    let now = Date()
-    let nextDay = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: now))!
-    let history = (0..<7).map { offset in
-      HabitWidgetDay(date: HabitWidgetSnapshot.dayString(calendar.date(byAdding: .day, value: offset - 6, to: now)!),
-        progress: [1.0, 0.5, 1, 0, 1, 1, 0][offset])
-    }
-    let habits = [
-      HabitWidgetHabit(id: "preview-read", name: String(localized: "Read a little"), color: 0xFF2D9B83,
-        completed: false, progress: 0, canComplete: true, canUndo: false, expectedRecord: "preview", sevenDays: history),
-      HabitWidgetHabit(id: "preview-walk", name: String(localized: "Go for a walk"), color: 0xFFD18C44,
-        completed: true, progress: 1, canComplete: false, canUndo: true, expectedRecord: "preview", sevenDays: history),
-      HabitWidgetHabit(id: "preview-focus", name: String(localized: "Make time to focus"), color: 0xFF7D81C9,
-        completed: false, progress: 0, canComplete: true, canUndo: false, expectedRecord: "preview", sevenDays: history)
-    ]
-    return HabitWidgetEntry(date: now, snapshot: HabitWidgetSnapshot(version: 1,
-      generatedAt: ISO8601DateFormatter().string(from: now), day: HabitWidgetSnapshot.dayString(now),
-      nextDayAt: ISO8601DateFormatter().string(from: nextDay), habits: habits, strings: nil))
-  }
-}
-
-#Preview(as: .systemSmall) { HabitWidget() } timeline: { HabitWidgetEntry.preview }
-#Preview(as: .systemMedium) { HabitWidget() } timeline: { HabitWidgetEntry.preview }
+#Preview(as: .systemSmall) { HabitWidget() } timeline: { HabitWidgetEntry(date: .now, snapshot: nil) }
+#Preview(as: .systemMedium) { HabitWidget() } timeline: { HabitWidgetEntry(date: .now, snapshot: nil) }

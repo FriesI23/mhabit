@@ -83,8 +83,9 @@ existing architecture and tooling contracts.
 - `lib/entries/app/entry.dart` owns high-level app assembly. It wires profile
   loading, database loading, provider injection, dynamic color, and the app
   shell.
-- `lib/entries/habit_widget_entry.dart` owns iOS widget background startup and
-  foreground refresh wiring. Native widget files live in `ios/HabitWidget/`:
+- `lib/entries/habit_widget/entry.dart` owns iOS widget background startup.
+  `lib/entries/app/habit_widget.dart` owns foreground refresh wiring. Native
+  widget files live in `ios/HabitWidget/`:
   `App/` owns the Runner-only bridge, `Extension/` owns WidgetKit views and
   resources, and `Shared/` owns intents and snapshot types compiled by both
   targets. `pigeons/habit_widget.dart` owns the typed bridge contract; `make gen`

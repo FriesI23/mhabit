@@ -15,10 +15,12 @@ final class RunnerTests: XCTestCase {
     XCTAssertTrue(Thread.isMainThread, "AppKit window checks must run on the main thread")
     let window = try XCTUnwrap(NSApp.windows.compactMap { $0 as? MainFlutterWindow }.first)
     let deadline = Date(timeIntervalSinceNow: 15)
-    while !window.isVisible && Date() < deadline {
+    while (!window.isVisible || window.chrome?.fusionEnabled != true) && Date() < deadline {
       RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.01))
     }
     XCTAssertTrue(window.isVisible, "Dart bootstrap must show the initialized window")
+    XCTAssertTrue(window.chrome?.fusionEnabled == true,
+                  "The native test host must initialize chrome before XCTest changes it")
   }
 
   func testProductMinimumAndOuterFrameSurviveDecorationChanges() throws {

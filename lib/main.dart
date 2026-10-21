@@ -25,7 +25,7 @@ import 'package:provider/provider.dart';
 import 'common/app_info.dart';
 import 'common/consts.dart';
 import 'entries/app/entry.dart';
-import 'entries/habit_widget_entry.dart';
+import 'entries/habit_widget/entry.dart';
 import 'logging/logger_manager.dart';
 import 'reminders/notification_service.dart';
 import 'storage/desktop_window_persistence.dart';

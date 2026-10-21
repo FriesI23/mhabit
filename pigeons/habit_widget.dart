@@ -2,7 +2,7 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
   PigeonOptions(
-    dartOut: 'lib/entries/habit_widget_api.g.dart',
+    dartOut: 'lib/entries/habit_widget/habit_widget_api.g.dart',
     swiftOut: 'ios/HabitWidget/App/HabitWidgetApi.g.swift',
     swiftOptions: SwiftOptions(errorClassName: 'HabitWidgetApiError'),
     dartPackageName: 'mhabit',

@@ -48,13 +48,15 @@ The Xcode groups match the directories under `ios/HabitWidget/`:
   `HABIT_WIDGET_EXTENSION` keeps app-only execution out of the extension.
 
 `pigeons/habit_widget.dart` defines the typed startup, action, and foreground
-refresh APIs. `make gen` generates `lib/entries/habit_widget_api.g.dart` and
+refresh APIs. `make gen` generates
+`lib/entries/habit_widget/habit_widget_api.g.dart` and
 `App/HabitWidgetApi.g.swift`; the Swift API compiles only in Runner. The headless
 and foreground APIs use their respective engines' binary messengers. Preserve
 the ready handshake, request queue, and timeout when changing the bridge.
 
-App startup stays in Runner. The Dart background entrypoint and foreground event
-bridge live in `lib/entries/habit_widget_entry.dart`; record mutations remain in
+App startup stays in Runner. The Dart background entrypoint lives in
+`lib/entries/habit_widget/entry.dart`, and the foreground event bridge lives in
+`lib/entries/app/habit_widget.dart`; record mutations remain in
 the existing Dart workflow and database storage layers. No separate Swift package
 or native habit database is required.
 
@@ -97,7 +99,8 @@ Run the focused Dart tests and repository checks:
 
 ```sh
 .flutter/bin/flutter test test/unit/providers/workflow/habit_widget_test.dart \
-  test/unit/entries/habit_widget_entry_test.dart
+  test/unit/entries/habit_widget/entry_test.dart \
+  test/unit/entries/app/habit_widget_test.dart
 CI=true make aio
 CI=true make test
 git diff --check
