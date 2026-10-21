@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A68000000000000000000010 /* HabitWidgetApi.g.swift in Sources */ = {isa = PBXBuildFile; fileRef = A68000000000000000000011 /* HabitWidgetApi.g.swift */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		1A787A9525D98EEC72F0B39E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 365132A26ABED5B285F575F8 /* Localizable.strings */; };
 		306ED32ECA37EAEB6A995560 /* HabitWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9AD5DA2D87D46D23C66AA4 /* HabitWidget.swift */; };
@@ -24,6 +23,7 @@
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		9C74B8FC98D64672969B1C20 /* HabitWidgetPluginRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C74B8FC98D64672969B1C21 /* HabitWidgetPluginRegistry.m */; };
+		A68000000000000000000010 /* HabitWidgetApi.g.swift in Sources */ = {isa = PBXBuildFile; fileRef = A68000000000000000000011 /* HabitWidgetApi.g.swift */; };
 		D91BB4AF2DABBEAB00E91D6C /* dev-InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D91BB4AE2DABBEAB00E91D6C /* dev-InfoPlist.strings */; };
 		D91BB4B32DABBEDD00E91D6C /* generic-InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D91BB4B22DABBEDD00E91D6C /* generic-InfoPlist.strings */; };
 		F1293D8FC47501B405038086 /* HabitWidgetActionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E6BE3BB37CA61725E29059 /* HabitWidgetActionIntent.swift */; };
@@ -64,7 +64,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		A68000000000000000000011 /* HabitWidgetApi.g.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitWidgetApi.g.swift; sourceTree = "<group>"; };
 		08CB37C811EAD3334C09DFC1 /* HabitWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HabitWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
@@ -88,6 +87,7 @@
 		A1663232702F62A20268C913 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A68000000000000000000003 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		A68000000000000000000004 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		A68000000000000000000011 /* HabitWidgetApi.g.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitWidgetApi.g.swift; sourceTree = "<group>"; };
 		A836FA369584165BB302EC69 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		AC23FAF5416796752CE30743 /* HabitWidgetActionRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitWidgetActionRunner.swift; sourceTree = "<group>"; };
 		AE71BB420B42323B13ABAEE0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
