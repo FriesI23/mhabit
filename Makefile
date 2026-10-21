@@ -137,7 +137,8 @@ else
 	@exit 1
 endif
 
-# These tests inspect MainFlutterWindow and need the initialized Flutter app.
+# These tests inspect the real MainFlutterWindow through a controlled Flutter
+# host, so app-side chrome updates cannot race XCTest's decoration changes.
 # Disable signing so the test build does not need a developer certificate/profile.
 test-macos:
 ifeq ($(HOST_PLATFORM),Darwin)
@@ -150,7 +151,7 @@ ifeq ($(HOST_PLATFORM),Darwin)
 		-derivedDataPath "$(NATIVE_TEST_BUILD_DIR)/macos" \
 		-resultBundlePath "$(NATIVE_TEST_RESULTS_DIR)/macos.xcresult" \
 		-only-testing:RunnerTests -parallel-testing-enabled NO \
-		CODE_SIGNING_ALLOWED=NO \
+		CODE_SIGNING_ALLOWED=NO FLUTTER_TARGET=test/native/macos_host.dart \
 		2>&1 | tee "$(NATIVE_TEST_RESULTS_DIR)/macos.log"
 else
 	@echo ERROR: test-macos requires a macOS host

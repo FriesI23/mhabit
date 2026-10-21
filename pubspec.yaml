@@ -63,6 +63,7 @@ melos:
     build-runner:
       description: Run Pigeon, build_runner generators and gen-l10n, then format.
       steps:
+        - dart run pigeon --input pigeons/habit_widget.dart
         - >-
           dart run melos exec --scope=mhabit_desktop_window_chrome
           --fail-fast -- "dart run pigeon --input pigeons/desktop_window_chrome.dart"
@@ -181,6 +182,7 @@ dependencies:
   flutter_local_notifications: ^22.3.0
   flutter_svg: ^2.0.4
   flutter_timezone: ^5.0.1
+  home_widget: ^0.10.0
   markdown: ^7.3.1
   markdown_widget: ^2.3.2+8
   url_launcher: ^6.1.10
@@ -263,6 +265,7 @@ dev_dependencies:
   mockito: ^5.4.4
 
   # Code Generation
+  pigeon: 27.3.0
   analyzer: ^12.1.0
   build_runner: ^2.3.3
   mhabit_color_builder: any

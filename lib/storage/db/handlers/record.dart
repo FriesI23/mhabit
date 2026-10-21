@@ -146,6 +146,95 @@ class RecordDBHelper extends DBHelperHandler {
 
   String get syncTable => TableName.sync;
 
+  /// Reads the current habit, record and sync revision under the same write
+  /// transaction as the mutation. The resolver may return null for a stale action.
+  /// All writes use the ordinary record/sync transaction helpers below.
+  Future<RecordDBCell?> mutateCurrentHabitRecord({
+    required HabitUUID habitUUID,
+    required int epochDay,
+    required RecordDBCell? Function(
+      HabitDBCell habit,
+      RecordDBCell? record,
+      SyncDBCell? sync,
+    )
+    resolve,
+  }) => db.transaction((txn) async {
+    final habits = await txn.query(
+      habitTable,
+      where: '${HabitDBCellKey.uuid} = ?',
+      whereArgs: [habitUUID],
+      limit: 1,
+    );
+    if (habits.isEmpty) return null;
+    final rows = await txn.query(
+      table,
+      where:
+          '${RecordDBCellKey.parentUUID} = ? AND '
+          '${RecordDBCellKey.recordDate} = ?',
+      whereArgs: [habitUUID, epochDay],
+      limit: 1,
+    );
+    final current = rows.isEmpty ? null : RecordDBCell.fromJson(rows.single);
+    final syncRows = current == null
+        ? const <Map<String, Object?>>[]
+        : await txn.query(
+            syncTable,
+            where: '${SyncDbCellKey.recordUUID} = ?',
+            whereArgs: [current.uuid],
+            limit: 1,
+          );
+    final changed = resolve(
+      HabitDBCell.fromJson(habits.single),
+      current,
+      syncRows.isEmpty ? null : SyncDBCell.fromJson(syncRows.single),
+    );
+    if (changed == null) return null;
+    if (current == null) {
+      await _insertNewRecordTransaction(changed, txn);
+    } else {
+      await _updateRecordTransaction(changed, txn);
+    }
+    return changed;
+  });
+
+  /// A coherent display read while another engine may be changing records.
+  Future<
+    ({
+      List<HabitDBCell> habits,
+      List<RecordDBCell> records,
+      Map<String, SyncDBCell> recordSync,
+    })
+  >
+  loadHabitsAndRecordsInDateRange({
+    required int fromEpochDay,
+    required int toEpochDay,
+  }) => db.transaction((txn) async {
+    final habits = await txn.query(habitTable);
+    final records = await txn.query(
+      table,
+      where:
+          '${RecordDBCellKey.recordDate} >= ? AND '
+          '${RecordDBCellKey.recordDate} <= ?',
+      whereArgs: [fromEpochDay, toEpochDay],
+    );
+    final syncRows = await txn.rawQuery(
+      'SELECT $syncTable.* FROM $syncTable '
+      'JOIN $table ON $syncTable.${SyncDbCellKey.recordUUID} '
+      '= $table.${RecordDBCellKey.uuid} '
+      'WHERE $table.${RecordDBCellKey.recordDate} >= ? '
+      'AND $table.${RecordDBCellKey.recordDate} <= ?',
+      [fromEpochDay, toEpochDay],
+    );
+    return (
+      habits: habits.map(HabitDBCell.fromJson).toList(growable: false),
+      records: records.map(RecordDBCell.fromJson).toList(growable: false),
+      recordSync: {
+        for (final row in syncRows)
+          row[SyncDbCellKey.recordUUID]! as String: SyncDBCell.fromJson(row),
+      },
+    );
+  });
+
   Future<int> insertNewRecord(RecordDBCell record) {
     assert(record.uuid != null);
 

@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## Unreleased
+
+- Feature: interactive iOS Home Screen widgets with seven-day progress,
+  complete/undo actions, and refresh without opening the app (iOS 17+)
+
 ## 1.27.15+204
 
 - Feature: native title bars and pinned desktop app bars (#677)

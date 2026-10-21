@@ -25,12 +25,20 @@ import 'package:provider/provider.dart';
 import 'common/app_info.dart';
 import 'common/consts.dart';
 import 'entries/app/entry.dart';
+import 'entries/habit_widget/entry.dart';
 import 'logging/logger_manager.dart';
 import 'reminders/notification_service.dart';
 import 'storage/desktop_window_persistence.dart';
 import 'theme/linux_bundled_font.dart';
 import 'utils/local_timezone.dart';
 import 'widgets/bingding.dart';
+
+/// Invoked by the native widget action engine without mounting the app UI.
+@pragma('vm:entry-point')
+Future<void> habitWidgetBackgroundMain() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await runHabitWidgetBackground();
+}
 
 Future<void> main() async {
   if (Platform.isIOS) {
