@@ -57,22 +57,23 @@ struct HabitWidgetActionIntent: AppIntent {
       }
     }
 
-    var components = URLComponents()
-    components.scheme = "tablehabit-widget"
-    components.host = operation.rawValue
-    components.queryItems = operation == .refresh ? nil : [
-      URLQueryItem(name: "habitId", value: habitId),
-      URLQueryItem(name: "day", value: day),
-      URLQueryItem(name: "expectedRecord", value: expectedRecord)
-    ]
-    guard let url = components.url else { throw HabitWidgetActionError.invalidAction }
-
     #if HABIT_WIDGET_EXTENSION
       // The app-only protocol conformance below routes this intent to Runner.
       // If the system cannot do that, leave the record and snapshot untouched.
       throw HabitWidgetActionError.unavailable
     #else
-      try await HabitWidgetActionRunner.shared.perform(url: url)
+      let wireOperation: HabitWidgetOperation
+      switch operation {
+      case .complete: wireOperation = .complete
+      case .undo: wireOperation = .undo
+      case .refresh: wireOperation = .refresh
+      }
+      let request = HabitWidgetRequest(
+        operation: wireOperation,
+        habitId: operation == .refresh ? nil : habitId,
+        day: operation == .refresh ? nil : day,
+        expectedRecord: operation == .refresh ? nil : expectedRecord)
+      try await HabitWidgetActionRunner.shared.perform(request: request)
     #endif
     WidgetCenter.shared.reloadTimelines(ofKind: HabitWidgetShared.kind)
     return .result()

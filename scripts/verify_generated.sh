@@ -36,6 +36,8 @@ before_diff="$(mktemp)"
 after_diff="$(mktemp)"
 before_pigeon="$(mktemp -d)"
 pigeon_outputs=(
+  lib/entries/habit_widget_api.g.dart
+  ios/HabitWidget/App/HabitWidgetApi.g.swift
   packages/mhabit_desktop_window_chrome/lib/src/desktop_window_chrome_api.g.dart
   packages/mhabit_desktop_window_chrome/macos/mhabit_desktop_window_chrome/Sources/mhabit_desktop_window_chrome/DesktopWindowChrome.g.swift
   packages/mhabit_desktop_window_chrome/lib/src/desktop_title_bar_api.g.dart

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A68000000000000000000010 /* HabitWidgetApi.g.swift in Sources */ = {isa = PBXBuildFile; fileRef = A68000000000000000000011 /* HabitWidgetApi.g.swift */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		1A787A9525D98EEC72F0B39E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 365132A26ABED5B285F575F8 /* Localizable.strings */; };
 		306ED32ECA37EAEB6A995560 /* HabitWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9AD5DA2D87D46D23C66AA4 /* HabitWidget.swift */; };
@@ -63,6 +64,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A68000000000000000000011 /* HabitWidgetApi.g.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitWidgetApi.g.swift; sourceTree = "<group>"; };
 		08CB37C811EAD3334C09DFC1 /* HabitWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HabitWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
@@ -225,6 +227,7 @@
 		A68000000000000000000001 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				A68000000000000000000011 /* HabitWidgetApi.g.swift */,
 				AC23FAF5416796752CE30743 /* HabitWidgetActionRunner.swift */,
 				9C74B8FC98D64672969B1C21 /* HabitWidgetPluginRegistry.m */,
 				9C74B8FC98D64672969B1C22 /* HabitWidgetPluginRegistry.h */,
@@ -441,6 +444,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A68000000000000000000010 /* HabitWidgetApi.g.swift in Sources */,
 				6A577DF75883C8C476C36B94 /* HabitWidgetSnapshot.swift in Sources */,
 				9694CC7167B21DD84A491E49 /* HabitWidgetActionIntent.swift in Sources */,
 				5EC2891245CE637C0D9B1A98 /* HabitWidgetActionRunner.swift in Sources */,

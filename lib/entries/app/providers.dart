@@ -109,7 +109,7 @@ class AppProviders extends SingleChildStatelessWidget {
       Provider<HabitWidgetService>(
         create: (context) => HabitWidgetService(
           database: context.read<DBHelperViewModel>().local,
-          habitsManager: context.read<HabitsManager>(),
+          habitsAccess: context.read<HabitsDisplayAccess>(),
         ),
       ),
   ];

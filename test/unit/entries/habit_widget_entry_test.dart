@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/entries/habit_widget_api.g.dart';
 import 'package:mhabit/entries/habit_widget_entry.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/app_event.dart';
@@ -20,19 +21,53 @@ import 'package:mhabit/widgets/widgets.dart' show DateChangeNotifier;
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-const _codec = StandardMethodCodec();
-const _backgroundChannel = MethodChannel(
-  HabitWidgetBackgroundChannel.channelName,
+const _backgroundChannel = BasicMessageChannel<Object?>(
+  'dev.flutter.pigeon.mhabit.HabitWidgetBackgroundApi.perform',
+  HabitWidgetBackgroundApi.pigeonChannelCodec,
+);
+const _foregroundChannel = BasicMessageChannel<Object?>(
+  'dev.flutter.pigeon.mhabit.HabitWidgetForegroundApi.changed',
+  HabitWidgetForegroundApi.pigeonChannelCodec,
+);
+const _hostChannel = BasicMessageChannel<Object?>(
+  'dev.flutter.pigeon.mhabit.HabitWidgetHostApi.ready',
+  HabitWidgetHostApi.pigeonChannelCodec,
 );
 
-Future<Object?> _sendNativeCall(String channel, MethodCall call) async {
+final class _HostApi extends HabitWidgetHostApi {
+  @override
+  Future<void> ready() async {}
+}
+
+Future<Object?> _sendNativeCall(
+  BasicMessageChannel<Object?> channel,
+  Object? message,
+) async {
   final result = Completer<Object?>();
   await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-      .handlePlatformMessage(channel, _codec.encodeMethodCall(call), (data) {
-        result.complete(data == null ? null : _codec.decodeEnvelope(data));
-      });
+      .handlePlatformMessage(
+        channel.name,
+        channel.codec.encodeMessage(message),
+        (data) {
+          result.complete(channel.codec.decodeMessage(data));
+        },
+      );
   return result.future;
 }
+
+Future<HabitWidgetResult> _perform(HabitWidgetRequest request) async {
+  final reply =
+      await _sendNativeCall(_backgroundChannel, [request]) as List<Object?>;
+  expect(reply, hasLength(1));
+  return reply.single! as HabitWidgetResult;
+}
+
+HabitWidgetRequest _completeRequest() => HabitWidgetRequest(
+  operation: HabitWidgetOperation.complete,
+  habitId: 'habit-id',
+  day: '2026-10-17',
+  expectedRecord: 'none',
+);
 
 final class _EmptyDatabase implements Database, Transaction {
   @override
@@ -117,87 +152,125 @@ class _BridgeHostState extends State<_BridgeHost> {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  tearDown(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(_backgroundChannel, null);
-  });
-
   test('native ready means the action handler is already installed', () async {
     final calls = <Uri>[];
+    HabitWidgetResult? firstResult;
     final bridge = HabitWidgetBackgroundChannel((uri) async {
       calls.add(uri);
-      return true;
+      return HabitWidgetActionResult.applied;
     });
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    messenger.setMockDecodedMessageHandler(_hostChannel, (message) async {
+      expect(message, isNull);
+      firstResult = await _perform(_completeRequest());
+      return <Object?>[];
+    });
+    addTearDown(
+      () => messenger.setMockDecodedMessageHandler(_hostChannel, null),
+    );
     addTearDown(bridge.dispose);
-    Object? firstResult;
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(_backgroundChannel, (call) async {
-          expect(call.method, 'ready');
-          firstResult = await _sendNativeCall(
-            _backgroundChannel.name,
-            const MethodCall('perform', 'tablehabit-widget://complete'),
-          );
-          return null;
-        });
 
     await bridge.start();
 
-    expect(firstResult, isTrue);
-    expect(calls.single.host, 'complete');
+    expect(firstResult, HabitWidgetResult.applied);
+    final command = HabitWidgetCommand.tryParse(calls.single)!;
+    expect(command.action, HabitWidgetAction.complete);
+    expect(command.habitId, 'habit-id');
+    expect(command.day, HabitDate(2026, 10, 17));
+    expect(command.expectedRecord, 'none');
   });
 
   test('native success waits for the persistence action to finish', () async {
-    final committed = Completer<bool>();
-    final bridge = HabitWidgetBackgroundChannel((_) => committed.future);
+    final committed = Completer<HabitWidgetActionResult>();
+    final bridge = HabitWidgetBackgroundChannel(
+      (_) => committed.future,
+      hostApi: _HostApi(),
+    );
     addTearDown(bridge.dispose);
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(_backgroundChannel, (_) async => null);
     await bridge.start();
     var acknowledged = false;
-    final result =
-        _sendNativeCall(
-          _backgroundChannel.name,
-          const MethodCall('perform', 'tablehabit-widget://complete'),
-        ).then((value) {
-          acknowledged = true;
-          return value;
-        });
+    final result = _perform(_completeRequest()).then((value) {
+      acknowledged = true;
+      return value;
+    });
     await Future<void>.delayed(Duration.zero);
     expect(acknowledged, isFalse);
 
-    committed.complete(true);
-    expect(await result, isTrue);
+    committed.complete(HabitWidgetActionResult.applied);
+    expect(await result, HabitWidgetResult.applied);
   });
 
   test(
-    'invalid messages and failed actions never acknowledge success',
+    'invalid requests and failed actions never acknowledge success',
     () async {
       var attempts = 0;
       final bridge = HabitWidgetBackgroundChannel((_) async {
         attempts++;
         throw StateError('Database unavailable');
-      });
+      }, hostApi: _HostApi());
       addTearDown(bridge.dispose);
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(_backgroundChannel, (_) async => null);
       await bridge.start();
 
-      for (final call in [
-        const MethodCall('other', 'tablehabit-widget://complete'),
-        const MethodCall('perform', {'uri': 'tablehabit-widget://complete'}),
-        const MethodCall('perform', 'http://[invalid'),
+      for (final request in [
+        HabitWidgetRequest(operation: HabitWidgetOperation.complete),
+        _completeRequest()..day = '2026-02-30',
+        _completeRequest()..habitId = '',
+        HabitWidgetRequest(
+          operation: HabitWidgetOperation.refresh,
+          habitId: 'unexpected',
+        ),
       ]) {
-        expect(await _sendNativeCall(_backgroundChannel.name, call), isFalse);
+        expect(await _perform(request), HabitWidgetResult.invalid);
       }
       expect(attempts, 0);
-      expect(
-        await _sendNativeCall(
-          _backgroundChannel.name,
-          const MethodCall('perform', 'tablehabit-widget://complete'),
-        ),
-        isFalse,
-      );
+      expect(await _perform(_completeRequest()), HabitWidgetResult.failed);
       expect(attempts, 1);
+    },
+  );
+
+  test(
+    'typed replies preserve workflow outcomes and refresh commands',
+    () async {
+      var outcome = HabitWidgetActionResult.applied;
+      final calls = <Uri>[];
+      final bridge = HabitWidgetBackgroundChannel((uri) async {
+        calls.add(uri);
+        return outcome;
+      }, hostApi: _HostApi());
+      addTearDown(bridge.dispose);
+      await bridge.start();
+
+      for (final pair in [
+        (HabitWidgetActionResult.applied, HabitWidgetResult.applied),
+        (HabitWidgetActionResult.unchanged, HabitWidgetResult.unchanged),
+        (HabitWidgetActionResult.stale, HabitWidgetResult.stale),
+        (HabitWidgetActionResult.invalid, HabitWidgetResult.invalid),
+      ]) {
+        outcome = pair.$1;
+        expect(
+          await _perform(
+            HabitWidgetRequest(operation: HabitWidgetOperation.refresh),
+          ),
+          pair.$2,
+        );
+      }
+      expect(
+        calls.every((uri) => uri.toString() == 'tablehabit-widget://refresh'),
+        isTrue,
+      );
+      outcome = HabitWidgetActionResult.applied;
+      await _perform(_completeRequest()..operation = HabitWidgetOperation.undo);
+      expect(
+        HabitWidgetCommand.tryParse(calls.last)!.action,
+        HabitWidgetAction.undo,
+      );
+
+      bridge.dispose();
+      expect(
+        await _sendNativeCall(_backgroundChannel, [_completeRequest()]),
+        isNull,
+      );
     },
   );
 
@@ -207,7 +280,7 @@ void main() {
     final publisher = _SnapshotPublisher();
     final service = HabitWidgetService(
       database: _EmptyDBHelper(),
-      habitsManager: HabitsManager(),
+      habitsAccess: HabitsManager(),
       publisher: publisher,
     );
     final events = AppEventBus();
@@ -242,10 +315,7 @@ void main() {
     expect(publisher.snapshots.length, greaterThan(published));
     published = publisher.snapshots.length;
 
-    await _sendNativeCall(
-      'table_habit/widget_foreground',
-      const MethodCall('changed'),
-    );
+    await _sendNativeCall(_foregroundChannel, null);
     await tester.pumpAndSettle();
     expect(reloads.last.msg, 'habit_widget.changed');
     expect(publisher.snapshots.length, greaterThan(published));

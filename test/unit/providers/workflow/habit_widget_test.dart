@@ -131,7 +131,7 @@ void main() {
     manager = _Manager()..updateDBHelper(helper);
     service = HabitWidgetService(
       database: helper.local,
-      habitsManager: manager,
+      habitsAccess: manager,
       publisher: publisher,
       now: () => now,
     );
@@ -367,7 +367,7 @@ void main() {
       await addHabit('shared');
       final other = HabitWidgetService(
         database: helper.local,
-        habitsManager: manager,
+        habitsAccess: manager,
         publisher: publisher,
         now: () => now,
       );

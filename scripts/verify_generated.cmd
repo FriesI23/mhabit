@@ -51,6 +51,15 @@ if exist "packages\mhabit_desktop_window_chrome\macos\mhabit_desktop_window_chro
 )
 if errorlevel 1 goto fail
 
+for %%F in ("lib\entries\habit_widget_api.g.dart" "ios\HabitWidget\App\HabitWidgetApi.g.swift") do (
+  if exist "%%~F" (
+    copy /b "%%~F" "%WORK_DIR%\before-%%~nxF" >nul
+  ) else (
+    type nul > "%WORK_DIR%\before-%%~nxF"
+  )
+  if errorlevel 1 goto fail
+)
+
 where poetry >nul 2>nul
 if errorlevel 1 (
   echo Poetry is required but not found in PATH.
@@ -65,6 +74,10 @@ fc /b "%WORK_DIR%\before.dart" "packages\mhabit_desktop_window_chrome\lib\src\de
 if errorlevel 1 goto pigeon_delta
 fc /b "%WORK_DIR%\before.swift" "packages\mhabit_desktop_window_chrome\macos\mhabit_desktop_window_chrome\Sources\mhabit_desktop_window_chrome\DesktopWindowChrome.g.swift" >nul
 if errorlevel 1 goto pigeon_delta
+for %%F in ("lib\entries\habit_widget_api.g.dart" "ios\HabitWidget\App\HabitWidgetApi.g.swift") do (
+  fc /b "%WORK_DIR%\before-%%~nxF" "%%~F" >nul
+  if errorlevel 1 goto pigeon_delta
+)
 
 git status --porcelain --untracked-files=all > "%AFTER_STATUS%"
 if errorlevel 1 goto fail

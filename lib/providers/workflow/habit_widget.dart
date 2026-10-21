@@ -22,7 +22,7 @@ import 'habits_manager.dart';
 /// Owns the compact native snapshot and compare-and-set record actions.
 /// SQLite remains authoritative; the App Group contains display data only.
 final class HabitWidgetService {
-  final HabitsManager _habitsManager;
+  final HabitsDisplayAccess _habitsAccess;
   final RecordDBHelper _records;
   final HabitWidgetPublisher _publisher;
   final DateTime Function() _now;
@@ -31,7 +31,7 @@ final class HabitWidgetService {
 
   HabitWidgetService({
     required DBHelper database,
-    required this._habitsManager,
+    required this._habitsAccess,
     HabitWidgetPublisher? publisher,
     DateTime Function()? now,
   }) : _records = RecordDBHelper(database),
@@ -126,7 +126,7 @@ final class HabitWidgetService {
     }
     if (outcome == HabitWidgetActionResult.applied) {
       try {
-        await _habitsManager.refreshHabitReminders(
+        await _habitsAccess.refreshHabitReminders(
           params: HabitReminderRefreshParams.habitUUID(command.habitId),
         );
       } catch (error, stackTrace) {

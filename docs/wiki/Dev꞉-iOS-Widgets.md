@@ -47,6 +47,12 @@ The Xcode groups match the directories under `ios/HabitWidget/`:
 - `Shared/`: snapshot decoding and the action intent, compiled in both targets.
   `HABIT_WIDGET_EXTENSION` keeps app-only execution out of the extension.
 
+`pigeons/habit_widget.dart` defines the typed startup, action, and foreground
+refresh APIs. `make gen` generates `lib/entries/habit_widget_api.g.dart` and
+`App/HabitWidgetApi.g.swift`; the Swift API compiles only in Runner. The headless
+and foreground APIs use their respective engines' binary messengers. Preserve
+the ready handshake, request queue, and timeout when changing the bridge.
+
 App startup stays in Runner. The Dart background entrypoint and foreground event
 bridge live in `lib/entries/habit_widget_entry.dart`; record mutations remain in
 the existing Dart workflow and database storage layers. No separate Swift package
@@ -71,7 +77,9 @@ Commands contain the displayed date and a compact record revision token. Dart
 rechecks both inside the write transaction and uses the existing record and sync
 helpers. Stale, duplicate, archived-habit, and malformed commands cannot overwrite
 newer records. The revision includes sync counters to distinguish rapid undo/redo.
-The private action URI is not registered as an external URL scheme.
+Native actions cross the engine boundary as Pigeon requests and typed results.
+Dart adapts requests to the existing internal command parser; its URI is not
+registered as an external URL scheme.
 
 Undo creates the app's usual deletion marker; restoring a check-in preserves its
 UUID. Reminder reconciliation and snapshot publication follow a successful commit.

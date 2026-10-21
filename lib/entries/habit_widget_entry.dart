@@ -4,7 +4,6 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import '../common/app_info.dart';
@@ -25,6 +24,7 @@ import '../storage/profile/handlers/app_notify_config.dart';
 import '../storage/profile_provider.dart';
 import '../utils/local_timezone.dart';
 import '../widgets/_widgets/date_change.dart';
+import 'habit_widget_api.g.dart';
 
 /// Runs in the app's private container, on the dedicated native widget engine.
 /// Neither runApp nor the foreground app's sync workflow is started here.
@@ -58,10 +58,9 @@ Future<void> runHabitWidgetBackground() async {
         ..setNotificationChannelData(NotificationChannelData());
       final service = HabitWidgetService(
         database: database.local,
-        habitsManager: habits,
+        habitsAccess: habits,
       );
-      final result = await service.perform(uri);
-      return result != HabitWidgetActionResult.invalid;
+      return await service.perform(uri);
     } finally {
       if (opened) await database.local.db.close();
       database.dispose();
@@ -70,44 +69,76 @@ Future<void> runHabitWidgetBackground() async {
 }
 
 /// Acknowledges native intents only after their database operation completes.
-final class HabitWidgetBackgroundChannel {
-  static const channelName = 'table_habit/widget_background';
-  static const _channel = MethodChannel(channelName);
-  final Future<bool> Function(Uri uri) _perform;
+final class HabitWidgetBackgroundChannel implements HabitWidgetBackgroundApi {
+  final Future<HabitWidgetActionResult> Function(Uri uri) _perform;
+  final HabitWidgetHostApi _hostApi;
 
-  const HabitWidgetBackgroundChannel(this._perform);
+  HabitWidgetBackgroundChannel(this._perform, {HabitWidgetHostApi? hostApi})
+    : _hostApi = hostApi ?? HabitWidgetHostApi();
 
   Future<void> start() async {
-    _channel.setMethodCallHandler(_handleCall);
-    await _channel.invokeMethod<void>('ready');
+    HabitWidgetBackgroundApi.setUp(this);
+    await _hostApi.ready();
   }
 
-  Future<bool> _handleCall(MethodCall call) async {
-    if (call.method != 'perform' || call.arguments is! String) return false;
-    final uri = Uri.tryParse(call.arguments as String);
-    if (uri == null) return false;
+  @override
+  Future<HabitWidgetResult> perform(HabitWidgetRequest request) async {
+    final uri = _widgetRequestUri(request);
+    if (uri == null) return HabitWidgetResult.invalid;
     try {
-      return await _perform(uri);
+      return switch (await _perform(uri)) {
+        HabitWidgetActionResult.applied => HabitWidgetResult.applied,
+        HabitWidgetActionResult.unchanged => HabitWidgetResult.unchanged,
+        HabitWidgetActionResult.stale => HabitWidgetResult.stale,
+        HabitWidgetActionResult.invalid => HabitWidgetResult.invalid,
+      };
     } catch (error, stackTrace) {
       appLog.habit.error(
         'HabitWidgetBackgroundChannel.perform',
         error: error,
         stackTrace: stackTrace,
       );
-      return false;
+      return HabitWidgetResult.failed;
     }
   }
 
-  void dispose() => _channel.setMethodCallHandler(null);
+  void dispose() => HabitWidgetBackgroundApi.setUp(null);
+}
+
+Uri? _widgetRequestUri(HabitWidgetRequest request) {
+  switch (request.operation) {
+    case HabitWidgetOperation.refresh:
+      if (request.habitId != null ||
+          request.day != null ||
+          request.expectedRecord != null) {
+        return null;
+      }
+      return Uri(scheme: 'tablehabit-widget', host: 'refresh');
+    case HabitWidgetOperation.complete || HabitWidgetOperation.undo:
+      final habitId = request.habitId;
+      final day = request.day;
+      final expectedRecord = request.expectedRecord;
+      if (habitId == null || day == null || expectedRecord == null) return null;
+      final uri = Uri(
+        scheme: 'tablehabit-widget',
+        host: request.operation.name,
+        queryParameters: {
+          'habitId': habitId,
+          'day': day,
+          'expectedRecord': expectedRecord,
+        },
+      );
+      return HabitWidgetCommand.tryParse(uri)?.toUri();
+  }
 }
 
 /// Connects the widget workflow to foreground app events and lifecycle.
-final class HabitWidgetPostInitBridge {
-  static const _channel = MethodChannel('table_habit/widget_foreground');
+final class HabitWidgetPostInitBridge
+    implements AppEventSubscriber, HabitWidgetForegroundApi {
   HabitWidgetService? _service;
   AppEventBus? _events;
   DateChangeNotifier? _dateChanges;
-  StreamSubscription<AppEvent>? _eventSubscription;
+  AppEventSubscriptions? _eventSubs;
   AppLifecycleListener? _lifecycle;
   Map<String, String>? _strings;
   bool _publishing = false;
@@ -127,12 +158,13 @@ final class HabitWidgetPostInitBridge {
       _events = events;
       _dateChanges = dateChanges;
       if (service != null) {
-        _eventSubscription = events?.on<AppEvent>().listen((_) => _publish());
+        if (events != null) {
+          _eventSubs = AppEventSubscriptions(this, events)
+            ..subscribe<AppEvent>();
+        }
         dateChanges?.addListener(_publish);
         _lifecycle = AppLifecycleListener(onResume: _onExternalChange);
-        _channel.setMethodCallHandler((call) async {
-          if (call.method == 'changed') _onExternalChange();
-        });
+        HabitWidgetForegroundApi.setUp(this);
       }
     }
 
@@ -151,6 +183,21 @@ final class HabitWidgetPostInitBridge {
     _strings = strings;
     if (changed || stringsChanged) _publish();
   }
+
+  @override
+  bool shouldReceive(AppEvent event) => true;
+
+  @override
+  void changed() => _onExternalChange();
+
+  @override
+  void handleEvent(AppEvent event) => switch (event) {
+    ReloadDataEvent() ||
+    HabitStatusChangedEvent() ||
+    HabitRecordsChangedEvent() ||
+    HabitDataChangedEvent() ||
+    GroupChangedEvent() => _publish(),
+  };
 
   void _onExternalChange() {
     if (_service == null) return;
@@ -190,12 +237,12 @@ final class HabitWidgetPostInitBridge {
   }
 
   void _detach() {
-    _eventSubscription?.cancel();
-    _eventSubscription = null;
+    _eventSubs?.cancelAll();
+    _eventSubs = null;
     _dateChanges?.removeListener(_publish);
     _lifecycle?.dispose();
     _lifecycle = null;
-    if (_service != null) _channel.setMethodCallHandler(null);
+    if (_service != null) HabitWidgetForegroundApi.setUp(null);
   }
 
   void dispose() {

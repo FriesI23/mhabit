@@ -87,7 +87,9 @@ existing architecture and tooling contracts.
   foreground refresh wiring. Native widget files live in `ios/HabitWidget/`:
   `App/` owns the Runner-only bridge, `Extension/` owns WidgetKit views and
   resources, and `Shared/` owns intents and snapshot types compiled by both
-  targets. Keep record mutations in the existing Dart workflow/storage owners;
+  targets. `pigeons/habit_widget.dart` owns the typed bridge contract; `make gen`
+  generates its Dart API and Runner-only Swift API. Keep each engine's messenger
+  separate. Keep record mutations in the existing Dart workflow/storage owners;
   see `docs/wiki/Dev꞉-iOS-Widgets.md`.
 - `lib/entries/common/app_root_view.dart` owns the `MaterialApp` shell.
   Keep global app-level concerns such as locale, theme, navigator keys,
