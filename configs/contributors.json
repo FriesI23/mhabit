@@ -71,6 +71,10 @@
         {
             "name": "ibrahim-iqbal",
             "url": "https://github.com/ibrahim-iqbal"
+        },
+        {
+            "name": "IlyaPalochkin",
+            "url": "https://github.com/IlyaPalochkin"
         }
     ],
     "translations": {
@@ -181,6 +185,10 @@
             {
                 "name": "nickfrn",
                 "email": "nicolafr3@proton.me"
+            },
+            {
+                "name": "Simone De Carli",
+                "email": "simone.decarli@studenti.unitn.it"
             }
         ],
         "ja": [ 11 ],
