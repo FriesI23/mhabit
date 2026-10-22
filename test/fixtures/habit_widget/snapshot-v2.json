@@ -1,0 +1,193 @@
+{
+  "version": 2,
+  "generatedAt": "2026-10-17T04:00:00.000Z",
+  "day": "2026-10-17",
+  "nextDayAt": "2026-10-17T16:00:00.000Z",
+  "strings": {
+    "today": "Сегодня"
+  },
+  "catalog": [
+    {
+      "id": "73c855f1-b888-5588-adef-f3bb0a4428f7",
+      "name": "first",
+      "color": 4287658192,
+      "completed": false,
+      "progress": 0.0,
+      "canComplete": true,
+      "canUndo": false,
+      "expectedRecord": "none",
+      "sevenDays": [
+        {
+          "date": "2026-10-11",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-12",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-13",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-14",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-15",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-16",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-17",
+          "progress": 0.0
+        }
+      ],
+      "state": "active",
+      "startDate": "2026-10-07",
+      "started": true,
+      "skipped": false,
+      "automaticEligible": true
+    },
+    {
+      "id": "476c26e0-4d5b-509e-a378-6c6306c0e256",
+      "name": "archived",
+      "color": 4287658192,
+      "completed": false,
+      "progress": 0.0,
+      "canComplete": true,
+      "canUndo": false,
+      "expectedRecord": "none",
+      "sevenDays": [
+        {
+          "date": "2026-10-11",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-12",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-13",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-14",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-15",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-16",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-17",
+          "progress": 0.0
+        }
+      ],
+      "state": "archived",
+      "startDate": "2026-10-07",
+      "started": true,
+      "skipped": false,
+      "automaticEligible": false
+    },
+    {
+      "id": "646425ce-3047-5817-b7e0-541dd03ead49",
+      "name": "future",
+      "color": 4287658192,
+      "completed": false,
+      "progress": 0.0,
+      "canComplete": false,
+      "canUndo": false,
+      "expectedRecord": "none",
+      "sevenDays": [
+        {
+          "date": "2026-10-11",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-12",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-13",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-14",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-15",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-16",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-17",
+          "progress": 0.0
+        }
+      ],
+      "state": "active",
+      "startDate": "2026-10-18",
+      "started": false,
+      "skipped": false,
+      "automaticEligible": false
+    },
+    {
+      "id": "2ba14746-ab93-5c6b-953a-2191c0898918",
+      "name": "unknown",
+      "color": 4287658192,
+      "completed": false,
+      "progress": 0.0,
+      "canComplete": false,
+      "canUndo": false,
+      "expectedRecord": "none",
+      "sevenDays": [
+        {
+          "date": "2026-10-11",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-12",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-13",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-14",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-15",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-16",
+          "progress": 0.0
+        },
+        {
+          "date": "2026-10-17",
+          "progress": 0.0
+        }
+      ],
+      "state": "unknown",
+      "startDate": "2026-10-07",
+      "started": true,
+      "skipped": false,
+      "automaticEligible": false
+    }
+  ],
+  "activeCount": 1,
+  "completedCount": 0
+}

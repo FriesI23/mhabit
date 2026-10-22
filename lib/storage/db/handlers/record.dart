@@ -132,10 +132,13 @@ class RecordDBCell with DBCell {
   Map<String, Object?> toJson() => _$RecordDBCellToJson(this);
 }
 
+/// Exposes the persisted deletion marker as a typed value.
 extension RecordDBCellDeletion on RecordDBCell {
+  /// Whether the row contains a deletion marker.
   bool get deleted => const RecordDeletionCodec().decode(isDeleted ?? 0);
 }
 
+/// Reads and mutates persisted records and their synchronization metadata.
 class RecordDBHelper extends DBHelperHandler {
   const RecordDBHelper(super.helper);
 
@@ -146,10 +149,27 @@ class RecordDBHelper extends DBHelperHandler {
 
   String get syncTable => TableName.sync;
 
-  /// Reads the current habit, record and sync revision under the same write
-  /// transaction as the mutation. The resolver may return null for a stale action.
-  /// All writes use the ordinary record/sync transaction helpers below.
-  Future<RecordDBCell?> mutateCurrentHabitRecord({
+  /// Resolves and commits a record change against one transaction snapshot.
+  ///
+  /// Returns null when the habit is absent or [resolve] declines the change.
+  /// The returned record and sync metadata include all trigger updates and are
+  /// read before the write transaction is released. Any failed write or missing
+  /// committed row aborts the entire transaction.
+  ///
+  /// Independent reads use batches to reduce platform-channel round trips.
+  /// SQLite still executes their statements serially on the same connection.
+  ///
+  /// ```text
+  /// +-- write transaction ---------------------------+
+  /// | read habit + record -> read sync -> resolve    |
+  /// |                                      |        |
+  /// |                    write <-----------+        |
+  /// |                      |                        |
+  /// |             read record + sync                |
+  /// +----------------------+------------------------+
+  ///                        +--> commit --> result
+  /// ```
+  Future<({RecordDBCell record, SyncDBCell sync})?> mutateCurrentHabitRecord({
     required HabitUUID habitUUID,
     required int epochDay,
     required RecordDBCell? Function(
@@ -159,21 +179,25 @@ class RecordDBHelper extends DBHelperHandler {
     )
     resolve,
   }) => db.transaction((txn) async {
-    final habits = await txn.query(
-      habitTable,
-      where: '${HabitDBCellKey.uuid} = ?',
-      whereArgs: [habitUUID],
-      limit: 1,
-    );
+    final currentBatch = txn.batch()
+      ..query(
+        habitTable,
+        where: '${HabitDBCellKey.uuid} = ?',
+        whereArgs: [habitUUID],
+        limit: 1,
+      )
+      ..query(
+        table,
+        where:
+            '${RecordDBCellKey.parentUUID} = ? AND '
+            '${RecordDBCellKey.recordDate} = ?',
+        whereArgs: [habitUUID, epochDay],
+        limit: 1,
+      );
+    final currentRows = await currentBatch.commit();
+    final habits = currentRows[0] as List<Map<String, Object?>>;
     if (habits.isEmpty) return null;
-    final rows = await txn.query(
-      table,
-      where:
-          '${RecordDBCellKey.parentUUID} = ? AND '
-          '${RecordDBCellKey.recordDate} = ?',
-      whereArgs: [habitUUID, epochDay],
-      limit: 1,
-    );
+    final rows = currentRows[1] as List<Map<String, Object?>>;
     final current = rows.isEmpty ? null : RecordDBCell.fromJson(rows.single);
     final syncRows = current == null
         ? const <Map<String, Object?>>[]
@@ -194,10 +218,31 @@ class RecordDBHelper extends DBHelperHandler {
     } else {
       await _updateRecordTransaction(changed, txn);
     }
-    return changed;
+    // Read after triggers and sync dirty updates, before releasing the write
+    // transaction. A later query could accidentally acknowledge another edit.
+    final committedBatch = txn.batch()
+      ..query(
+        table,
+        where: '${RecordDBCellKey.uuid} = ?',
+        whereArgs: [changed.uuid],
+        limit: 1,
+      )
+      ..query(
+        syncTable,
+        where: '${SyncDbCellKey.recordUUID} = ?',
+        whereArgs: [changed.uuid],
+        limit: 1,
+      );
+    final committedRows = await committedBatch.commit();
+    final updated = committedRows[0] as List<Map<String, Object?>>;
+    final updatedSync = committedRows[1] as List<Map<String, Object?>>;
+    return (
+      record: RecordDBCell.fromJson(updated.single),
+      sync: SyncDBCell.fromJson(updatedSync.single),
+    );
   });
 
-  /// A coherent display read while another engine may be changing records.
+  /// Reads a consistent record range with its habits and sync metadata.
   Future<
     ({
       List<HabitDBCell> habits,
@@ -241,6 +286,7 @@ class RecordDBHelper extends DBHelperHandler {
     return db.transaction((db) => _insertNewRecordTransaction(record, db));
   }
 
+  /// Inserts a record and initializes its sync metadata in [txn].
   Future<int> _insertNewRecordTransaction(
     RecordDBCell record,
     Transaction txn,
@@ -298,6 +344,7 @@ class RecordDBHelper extends DBHelperHandler {
     return db.transaction((db) => _updateRecordTransaction(record, db));
   }
 
+  /// Updates a record and advances its sync counters in [txn].
   Future<int> _updateRecordTransaction(
     RecordDBCell record,
     Transaction txn,

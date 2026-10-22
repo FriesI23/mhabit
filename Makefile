@@ -38,12 +38,13 @@ SYNC_RULES_FILE ?= docs/rules/rules.md
 DESKTOP_WINDOW_CHROME_PACKAGE_DIR := packages/mhabit_desktop_window_chrome
 NATIVE_TEST_BUILD_DIR := build/native-tests
 NATIVE_TEST_RESULTS_DIR ?= build/test-results/native
-MACOS_TEST_FLAVOR ?= f_generic
+FLAVOR ?= f_generic
+IOS_TEST_DESTINATION ?=
 
 
 .PHONY: help init bootstrap \
 	normalize-l10n build-runner format fix gen-icons test gen \
-	test-ci test-native test-linux test-windows test-macos test-all \
+	test-ci test-native test-linux test-windows test-macos test-ios test-ios-integration test-all test-integration \
 	verify-generated verify-submodules aio aio-full sync-rules unsync-rules \
 	gen-screenshot-data gen-natural-sort-data
 
@@ -57,14 +58,18 @@ help:
 	@echo   format            Format Dart sources under lib and test
 	@echo   fix               Apply Dart fixes and then format sources
 	@echo   gen-icons         Generate icon fonts
-	@echo   test              Run the root app and internal Dart/Flutter package tests
+	@echo   test              Run Dart/Flutter and iOS widget unit tests on macOS
 	@echo   test-ci           Run Dart/Flutter tests with machine-readable results
 	@echo   test-native       Run native tests for the current desktop host
 	@echo "  test-linux        Run GTK C++ tests; requires a display or xvfb-run"
 	@echo   test-windows      Run Win32 C++ tests with CMake and CTest
 	@echo   test-macos        Run app-hosted XCTest with Xcode
-	@echo "                    MACOS_TEST_FLAVOR=f_generic (default), f_dev, or f_store"
-	@echo   test-all          Run Dart/Flutter tests and current-host native tests
+	@echo "                    FLAVOR=f_generic (default), f_dev, or f_store"
+	@echo   test-ios          Run isolated widget unit XCTest without building the app
+	@echo   test-ios-integration  Build app/extension and run widget integration XCTest
+	@echo "                    FLAVOR selects app variant; IOS_TEST_DESTINATION selects simulator"
+	@echo   test-all          Run all unit tests, including native unit suites
+	@echo   test-integration  Run all integration suites supported on this host
 	@echo   gen               Run the main generation workflow
 	@echo   verify-generated  Ensure normalized/generated files are up to date
 	@echo   verify-submodules Show recursive submodule status
@@ -109,6 +114,9 @@ gen-icons:
 
 test:
 	@$(MELOS) run test
+ifeq ($(HOST_PLATFORM),Darwin)
+	@$(SUBMAKE) test-ios
+endif
 
 test-ci:
 	@$(MELOS) run test-ci
@@ -142,12 +150,12 @@ endif
 # Disable signing so the test build does not need a developer certificate/profile.
 test-macos:
 ifeq ($(HOST_PLATFORM),Darwin)
-	@"$(LOCAL_FLUTTER)" build macos --debug --config-only --flavor "$(MACOS_TEST_FLAVOR)"
+	@"$(LOCAL_FLUTTER)" build macos --debug --config-only --flavor "$(FLAVOR)"
 	@mkdir -p "$(NATIVE_TEST_RESULTS_DIR)"
 	@rm -rf "$(NATIVE_TEST_RESULTS_DIR)/macos.xcresult"
 	@set -o pipefail; xcodebuild test \
-		-workspace macos/Runner.xcworkspace -scheme "$(MACOS_TEST_FLAVOR)" \
-		-configuration "Debug-$(MACOS_TEST_FLAVOR)" -destination 'platform=macOS' \
+		-workspace macos/Runner.xcworkspace -scheme "$(FLAVOR)" \
+		-configuration "Debug-$(FLAVOR)" -destination 'platform=macOS' \
 		-derivedDataPath "$(NATIVE_TEST_BUILD_DIR)/macos" \
 		-resultBundlePath "$(NATIVE_TEST_RESULTS_DIR)/macos.xcresult" \
 		-only-testing:RunnerTests -parallel-testing-enabled NO \
@@ -155,6 +163,49 @@ ifeq ($(HOST_PLATFORM),Darwin)
 		2>&1 | tee "$(NATIVE_TEST_RESULTS_DIR)/macos.log"
 else
 	@echo ERROR: test-macos requires a macOS host
+	@exit 1
+endif
+
+# Compile unit tests directly without preparing or building the Flutter app.
+test-ios:
+ifeq ($(HOST_PLATFORM),Darwin)
+	@mkdir -p "$(NATIVE_TEST_RESULTS_DIR)"
+	@rm -rf "$(NATIVE_TEST_RESULTS_DIR)/ios-widget-unit.xcresult"
+	@set -e -o pipefail; \
+		destination="$(IOS_TEST_DESTINATION)"; \
+		if [[ -z "$$destination" ]]; then destination="$$(python3 scripts/select_ios_simulator.py)"; fi; \
+		xcodebuild test -project ios/HabitWidgetTests/HabitWidgetTests.xcodeproj \
+		-scheme HabitWidgetTests -configuration Debug -destination "$$destination" \
+		-derivedDataPath "$(NATIVE_TEST_BUILD_DIR)/ios-widget-unit" \
+		-resultBundlePath "$(NATIVE_TEST_RESULTS_DIR)/ios-widget-unit.xcresult" \
+		-only-testing:HabitWidgetTests -parallel-testing-enabled NO \
+		CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- \
+		2>&1 | tee "$(NATIVE_TEST_RESULTS_DIR)/ios-widget-unit.log"
+else
+	@echo ERROR: test-ios requires a macOS host with Xcode and an iOS simulator
+	@exit 1
+endif
+
+# Verify the actual HabitWidget app/extension products and file-backed components.
+test-ios-integration:
+ifeq ($(HOST_PLATFORM),Darwin)
+	@case "$(FLAVOR)" in f_dev|f_generic|f_store|Runner) ;; *) echo "Unknown FLAVOR: $(FLAVOR)" >&2; exit 1 ;; esac
+	@"$(LOCAL_FLUTTER)" build ios --simulator --debug --config-only --target lib/main.dart \
+		$(if $(filter Runner,$(FLAVOR)),,--flavor "$(FLAVOR)")
+	@mkdir -p "$(NATIVE_TEST_RESULTS_DIR)"
+	@rm -rf "$(NATIVE_TEST_RESULTS_DIR)/ios-widget-integration.xcresult"
+	@set -e -o pipefail; \
+		destination="$(IOS_TEST_DESTINATION)"; \
+		if [[ -z "$$destination" ]]; then destination="$$(python3 scripts/select_ios_simulator.py)"; fi; \
+		xcodebuild test -workspace ios/Runner.xcworkspace -scheme HabitWidgetIntegrationTests \
+		-configuration "$(if $(filter Runner,$(FLAVOR)),Debug,Debug-$(FLAVOR))" -destination "$$destination" \
+		-derivedDataPath "$(NATIVE_TEST_BUILD_DIR)/ios-widget-integration" \
+		-resultBundlePath "$(NATIVE_TEST_RESULTS_DIR)/ios-widget-integration.xcresult" \
+		-only-testing:HabitWidgetIntegrationTests -parallel-testing-enabled NO \
+		CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- FLUTTER_TARGET=lib/main.dart \
+		2>&1 | tee "$(NATIVE_TEST_RESULTS_DIR)/ios-widget-integration.log"
+else
+	@echo ERROR: test-ios-integration requires a macOS host with Xcode and an iOS simulator
 	@exit 1
 endif
 
@@ -172,7 +223,21 @@ endif
 
 test-all:
 	@$(SUBMAKE) test
-	@$(SUBMAKE) test-native
+ifeq ($(OS),Windows_NT)
+	@$(SUBMAKE) test-windows
+else ifeq ($(HOST_PLATFORM),Linux)
+	@$(SUBMAKE) test-linux
+endif
+
+# Keep app builds out of the unit-test workflow. Register future platform
+# integration suites (such as Android) here alongside the existing suites.
+test-integration:
+ifeq ($(HOST_PLATFORM),Darwin)
+	@$(SUBMAKE) test-macos
+	@$(SUBMAKE) test-ios-integration
+else
+	@echo No integration suites are configured for this host.
+endif
 
 gen:
 	@$(SUBMAKE) normalize-l10n

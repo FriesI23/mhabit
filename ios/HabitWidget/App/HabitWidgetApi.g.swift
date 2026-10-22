@@ -188,6 +188,23 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 }
 
 
+/// Stable keys for localized values in the shared snapshot JSON.
+///
+/// The enum names are wire identifiers and must remain compatible with stored
+/// snapshots. Pigeon generates matching identifiers for the native bridge.
+enum HabitWidgetStringKey: Int, CaseIterable {
+  case today = 0
+  case complete = 1
+  case undo = 2
+  case empty = 3
+  case allDone = 4
+  case completed = 5
+  case skipped = 6
+  case habits = 7
+  case locale = 8
+}
+
+/// Operations accepted by the background execution channel.
 enum HabitWidgetOperation: Int, CaseIterable {
   case complete = 0
   case undo = 1
@@ -203,23 +220,95 @@ enum HabitWidgetResult: Int, CaseIterable {
   case failed = 4
 }
 
+/// Identifies how the displayed entity was selected.
+enum HabitWidgetSelectionSource: Int, CaseIterable {
+  case automatic = 0
+  case fixed = 1
+}
+
+/// Transfers an execution outcome and any committed record identity.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct HabitWidgetResponse: Hashable, CustomStringConvertible {
+  /// The outcome of the requested operation.
+  var outcome: HabitWidgetResult
+  /// Whether publishing the resulting snapshot succeeded.
+  var snapshotPublished: Bool
+  /// The committed version; present only for an applied operation.
+  var recordVersion: String? = nil
+  /// UTC ISO-8601 acknowledgement time, sampled after the commit succeeded.
+  var committedAt: String? = nil
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> HabitWidgetResponse? {
+    let outcome = pigeonVar_list[0] as! HabitWidgetResult
+    let snapshotPublished = pigeonVar_list[1] as! Bool
+    let recordVersion: String? = nilOrValue(pigeonVar_list[2])
+    let committedAt: String? = nilOrValue(pigeonVar_list[3])
+
+    return HabitWidgetResponse(
+      outcome: outcome,
+      snapshotPublished: snapshotPublished,
+      recordVersion: recordVersion,
+      committedAt: committedAt
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      outcome,
+      snapshotPublished,
+      recordVersion,
+      committedAt,
+    ]
+  }
+  static func == (lhs: HabitWidgetResponse, rhs: HabitWidgetResponse) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return HabitWidgetApiPigeonInternal.deepEquals(lhs.outcome, rhs.outcome) && HabitWidgetApiPigeonInternal.deepEquals(lhs.snapshotPublished, rhs.snapshotPublished) && HabitWidgetApiPigeonInternal.deepEquals(lhs.recordVersion, rhs.recordVersion) && HabitWidgetApiPigeonInternal.deepEquals(lhs.committedAt, rhs.committedAt)
+  }
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine("HabitWidgetResponse")
+    HabitWidgetApiPigeonInternal.deepHash(value: outcome, hasher: &hasher)
+    HabitWidgetApiPigeonInternal.deepHash(value: snapshotPublished, hasher: &hasher)
+    HabitWidgetApiPigeonInternal.deepHash(value: recordVersion, hasher: &hasher)
+    HabitWidgetApiPigeonInternal.deepHash(value: committedAt, hasher: &hasher)
+  }
+
+  public var description: String {
+    return "HabitWidgetResponse(outcome: \(String(describing: outcome)), snapshotPublished: \(String(describing: snapshotPublished)), recordVersion: \(String(describing: recordVersion)), committedAt: \(String(describing: committedAt)))"
+  }
+}
+
+/// Carries a native operation and the displayed state used to validate it.
+///
 /// Generated class from Pigeon that represents data sent in messages.
 struct HabitWidgetRequest: Hashable, CustomStringConvertible {
+  /// The operation to execute.
   var operation: HabitWidgetOperation
+  /// The selection mode, required for record operations.
+  var source: HabitWidgetSelectionSource? = nil
+  /// The stable entity identifier, required for record operations.
   var habitId: String? = nil
+  /// The displayed local calendar date in ISO-8601 date form.
   var day: String? = nil
+  /// The displayed record version used for compare-and-set validation.
   var expectedRecord: String? = nil
 
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> HabitWidgetRequest? {
     let operation = pigeonVar_list[0] as! HabitWidgetOperation
-    let habitId: String? = nilOrValue(pigeonVar_list[1])
-    let day: String? = nilOrValue(pigeonVar_list[2])
-    let expectedRecord: String? = nilOrValue(pigeonVar_list[3])
+    let source: HabitWidgetSelectionSource? = nilOrValue(pigeonVar_list[1])
+    let habitId: String? = nilOrValue(pigeonVar_list[2])
+    let day: String? = nilOrValue(pigeonVar_list[3])
+    let expectedRecord: String? = nilOrValue(pigeonVar_list[4])
 
     return HabitWidgetRequest(
       operation: operation,
+      source: source,
       habitId: habitId,
       day: day,
       expectedRecord: expectedRecord
@@ -228,6 +317,7 @@ struct HabitWidgetRequest: Hashable, CustomStringConvertible {
   func toList() -> [Any?] {
     return [
       operation,
+      source,
       habitId,
       day,
       expectedRecord,
@@ -237,19 +327,20 @@ struct HabitWidgetRequest: Hashable, CustomStringConvertible {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return HabitWidgetApiPigeonInternal.deepEquals(lhs.operation, rhs.operation) && HabitWidgetApiPigeonInternal.deepEquals(lhs.habitId, rhs.habitId) && HabitWidgetApiPigeonInternal.deepEquals(lhs.day, rhs.day) && HabitWidgetApiPigeonInternal.deepEquals(lhs.expectedRecord, rhs.expectedRecord)
+    return HabitWidgetApiPigeonInternal.deepEquals(lhs.operation, rhs.operation) && HabitWidgetApiPigeonInternal.deepEquals(lhs.source, rhs.source) && HabitWidgetApiPigeonInternal.deepEquals(lhs.habitId, rhs.habitId) && HabitWidgetApiPigeonInternal.deepEquals(lhs.day, rhs.day) && HabitWidgetApiPigeonInternal.deepEquals(lhs.expectedRecord, rhs.expectedRecord)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("HabitWidgetRequest")
     HabitWidgetApiPigeonInternal.deepHash(value: operation, hasher: &hasher)
+    HabitWidgetApiPigeonInternal.deepHash(value: source, hasher: &hasher)
     HabitWidgetApiPigeonInternal.deepHash(value: habitId, hasher: &hasher)
     HabitWidgetApiPigeonInternal.deepHash(value: day, hasher: &hasher)
     HabitWidgetApiPigeonInternal.deepHash(value: expectedRecord, hasher: &hasher)
   }
 
   public var description: String {
-    return "HabitWidgetRequest(operation: \(String(describing: operation)), habitId: \(String(describing: habitId)), day: \(String(describing: day)), expectedRecord: \(String(describing: expectedRecord)))"
+    return "HabitWidgetRequest(operation: \(String(describing: operation)), source: \(String(describing: source)), habitId: \(String(describing: habitId)), day: \(String(describing: day)), expectedRecord: \(String(describing: expectedRecord)))"
   }
 }
 
@@ -259,16 +350,30 @@ private class HabitWidgetApiPigeonCodecReader: FlutterStandardReader {
     case 129:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return HabitWidgetOperation(rawValue: enumResultAsInt)
+        return HabitWidgetStringKey(rawValue: enumResultAsInt)
       }
       return nil
     case 130:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return HabitWidgetResult(rawValue: enumResultAsInt)
+        return HabitWidgetOperation(rawValue: enumResultAsInt)
       }
       return nil
     case 131:
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
+      if let enumResultAsInt = enumResultAsInt {
+        return HabitWidgetResult(rawValue: enumResultAsInt)
+      }
+      return nil
+    case 132:
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
+      if let enumResultAsInt = enumResultAsInt {
+        return HabitWidgetSelectionSource(rawValue: enumResultAsInt)
+      }
+      return nil
+    case 133:
+      return HabitWidgetResponse.fromList(self.readValue() as! [Any?])
+    case 134:
       return HabitWidgetRequest.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -278,14 +383,23 @@ private class HabitWidgetApiPigeonCodecReader: FlutterStandardReader {
 
 private class HabitWidgetApiPigeonCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
-    if let value = value as? HabitWidgetOperation {
+    if let value = value as? HabitWidgetStringKey {
       super.writeByte(129)
       super.writeValue(value.rawValue)
-    } else if let value = value as? HabitWidgetResult {
+    } else if let value = value as? HabitWidgetOperation {
       super.writeByte(130)
       super.writeValue(value.rawValue)
-    } else if let value = value as? HabitWidgetRequest {
+    } else if let value = value as? HabitWidgetResult {
       super.writeByte(131)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? HabitWidgetSelectionSource {
+      super.writeByte(132)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? HabitWidgetResponse {
+      super.writeByte(133)
+      super.writeValue(value.toList())
+    } else if let value = value as? HabitWidgetRequest {
+      super.writeByte(134)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -307,6 +421,8 @@ class HabitWidgetApiPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendabl
   static let shared = HabitWidgetApiPigeonCodec(readerWriter: HabitWidgetApiPigeonCodecReaderWriter())
 }
 
+/// Reports readiness from the background engine to its native owner.
+///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol HabitWidgetHostApi {
   /// Sent only after the headless Dart action handler is installed.
@@ -335,10 +451,43 @@ class HabitWidgetHostApiSetup {
     }
   }
 }
+/// Enqueues native display reconciliation; never waits behind its own action.
+///
+/// Generated protocol from Pigeon that represents a handler of messages from Flutter.
+protocol HabitWidgetDisplayHostApi {
+  /// Acknowledges enqueueing after a shared snapshot has been saved.
+  func published() throws
+}
 
+/// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
+class HabitWidgetDisplayHostApiSetup {
+  static var codec: FlutterStandardMessageCodec { HabitWidgetApiPigeonCodec.shared }
+  /// Sets up an instance of `HabitWidgetDisplayHostApi` to handle messages through the `binaryMessenger`.
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: HabitWidgetDisplayHostApi?, messageChannelSuffix: String = "") {
+    let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
+    /// Acknowledges enqueueing after a shared snapshot has been saved.
+    let publishedChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.mhabit.HabitWidgetDisplayHostApi.published\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      publishedChannel.setMessageHandler { _, reply in
+        do {
+          try api.published()
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      publishedChannel.setMessageHandler(nil)
+    }
+  }
+}
+
+/// Executes native requests on the background Dart engine.
+///
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol HabitWidgetBackgroundApiProtocol {
-  func perform(request requestArg: HabitWidgetRequest, completion: @escaping (Result<HabitWidgetResult, HabitWidgetApiError>) -> Void)
+  /// Completes after persistence and the publication attempt finish.
+  func perform(request requestArg: HabitWidgetRequest, completion: @escaping (Result<HabitWidgetResponse, HabitWidgetApiError>) -> Void)
 }
 class HabitWidgetBackgroundApi: HabitWidgetBackgroundApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -350,7 +499,8 @@ class HabitWidgetBackgroundApi: HabitWidgetBackgroundApiProtocol {
   var codec: HabitWidgetApiPigeonCodec {
     return HabitWidgetApiPigeonCodec.shared
   }
-  func perform(request requestArg: HabitWidgetRequest, completion: @escaping (Result<HabitWidgetResult, HabitWidgetApiError>) -> Void) {
+  /// Completes after persistence and the publication attempt finish.
+  func perform(request requestArg: HabitWidgetRequest, completion: @escaping (Result<HabitWidgetResponse, HabitWidgetApiError>) -> Void) {
     let channelName: String = "dev.flutter.pigeon.mhabit.HabitWidgetBackgroundApi.perform\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([requestArg] as [Any?]) { response in
@@ -366,13 +516,15 @@ class HabitWidgetBackgroundApi: HabitWidgetBackgroundApiProtocol {
       } else if listResponse[0] == nil {
         completion(.failure(HabitWidgetApiError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
-        let result = listResponse[0] as! HabitWidgetResult
+        let result = listResponse[0] as! HabitWidgetResponse
         completion(.success(result))
       }
     }
   }
 }
 
+/// Notifies the foreground Dart engine that its cached state may be outdated.
+///
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol HabitWidgetForegroundApiProtocol {
   /// Invalidates foreground caches after a completed background action.

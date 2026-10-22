@@ -51,23 +51,44 @@ existing architecture and tooling contracts.
   - `make fix`: apply Dart fixes, then format.
   - `make gen`: run normalization, icon generation, and build generation.
   - `make verify-generated`: verify generated and normalized outputs are current.
-  - `make test`: run the root app and internal package tests.
-  - `make test-ci`: run those Dart/Flutter tests with machine-readable results.
+  - `make test`: run Dart/Flutter unit tests and, on macOS, iOS widget unit XCTest.
+  - `make test-ci`: run Dart/Flutter tests with machine-readable results.
   - `make test-native`: run native tests for the current desktop host.
   - `make test-linux`, `make test-windows`, `make test-macos`: run the named
     platform's native tests on that platform (Linux needs a display or Xvfb).
-  - `make test-all`: run Dart/Flutter tests and current-host native tests.
+  - `make test-ios`: run isolated widget unit XCTest on an iOS simulator (macOS).
+  - `make test-ios-integration`: build app/extension and run widget integration
+    XCTest (macOS only).
+  - `make test-all`: run all current-host unit tests, adding Windows/Linux native
+    unit tests on those hosts; on macOS it does not build the app.
+  - `make test-integration`: run current-host integration suites. On macOS this
+    runs macOS app-hosted tests and iOS widget integration checks serially. Other
+    hosts currently report that no integration suites are registered. Future
+    platform suites, including Android, use this aggregate entrypoint.
   - `make aio`: run `gen`, `fix`, and `verify-generated`.
-  - `make aio-full`: run `aio` plus `test-all`.
+  - `make aio-full`: run `aio` plus `test-all` (unit tests only).
 - Native test ownership stays with the platform implementation: Windows/Linux
   C++ tests live in `packages/mhabit_desktop_window_chrome/{windows,linux}/test`
   and run with CMake/CTest; macOS `RunnerTests` are app-hosted XCTest and run
-  through the Xcode scheme selected by `MACOS_TEST_FLAVOR` with a graphical login
+  through the Xcode scheme selected by `FLAVOR` with a graphical login
   session.
-  The default is `f_generic`; use `make test-macos MACOS_TEST_FLAVOR=f_dev` or
-  `MACOS_TEST_FLAVOR=f_store` to test another variant. The same override works
-  through `test-native` and `test-all`. CI explicitly tests `f_generic` to match the
+  The shared test flavor defaults to `FLAVOR=f_generic`; use
+  `make test-macos FLAVOR=f_dev` or `FLAVOR=f_store` to test another variant.
+  The same override works through `test-native` and `test-integration`.
+  `test-native` retains its desktop-host dispatch; its macOS suite is an
+  integration test. CI explicitly tests `f_generic` to match the
   macOS release build. They are not Melos Dart test suites.
+  iOS widget unit tests live in `ios/HabitWidgetTests/` with their own native
+  Xcode project, compiling production sources without Flutter or an app build.
+  `ios/HabitWidgetIntegrationTests/` owns component and built-artifact checks
+  against Runner and its extension; `FLAVOR` selects that app variant too.
+  Both iOS modes select an installed iPhone simulator; `IOS_TEST_DESTINATION`
+  accepts an explicit Xcode destination. Unit and integration results have
+  separate `ios-widget-unit` and `ios-widget-integration` log/bundle names.
+  Make owns both Xcode commands and integration-only Flutter preparation;
+  `scripts/select_ios_simulator.py` only resolves the default destination.
+  CI invokes its existing explicit test targets and does not invoke
+  `test-integration` or iOS integration.
 - Native test results go to `build/test-results/native/` by default
   (`NATIVE_TEST_RESULTS_DIR` overrides it): CTest JUnit XML on Windows/Linux,
   `.xcresult` and an Xcode log on macOS. CI runs all three platform suites.
@@ -87,8 +108,10 @@ existing architecture and tooling contracts.
   `lib/entries/app/habit_widget.dart` owns foreground refresh wiring. Native
   widget files live in `ios/HabitWidget/`:
   `App/` owns the Runner-only bridge, `Extension/` owns WidgetKit views and
-  resources, and `Shared/` owns intents and snapshot types compiled by both
-  targets. `pigeons/habit_widget.dart` owns the typed bridge contract; `make gen`
+  resources (also bundled in Runner for queries), and `Shared/` owns intents,
+  snapshot types, slot resolution and shared display holds compiled by both
+  targets. Native display mutations stay in the Runner queue; only Dart writes
+  habit records. `pigeons/habit_widget.dart` owns the typed bridge contract; `make gen`
   generates its Dart API and Runner-only Swift API. Keep each engine's messenger
   separate. Keep record mutations in the existing Dart workflow/storage owners;
   see `docs/wiki/Dev꞉-iOS-Widgets.md`.

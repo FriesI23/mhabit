@@ -85,12 +85,16 @@ final class _EmptyDBHelper implements DBHelper {
 
 final class _SnapshotPublisher implements HabitWidgetPublisher {
   final snapshots = <HabitWidgetSnapshot>[];
+  Future<void> Function()? beforePublish;
+  int attempts = 0;
 
   @override
-  Future<Map<String, String>> readStrings() async => {};
+  Future<Map<HabitWidgetStringKey, String>> readStrings() async => {};
 
   @override
   Future<void> publish(HabitWidgetSnapshot snapshot) async {
+    attempts++;
+    await beforePublish?.call();
     snapshots.add(snapshot);
   }
 }
@@ -123,6 +127,55 @@ class _BridgeHostState extends State<_BridgeHost> {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets(
+    'pending refreshes coalesce and recover after a rejected publish',
+    (tester) async {
+      final firstPublish = Completer<void>();
+      final publisher = _SnapshotPublisher();
+      publisher.beforePublish = () async {
+        if (publisher.attempts == 1) await firstPublish.future;
+      };
+      final service = HabitWidgetService(
+        database: _EmptyDBHelper(),
+        habitsAccess: HabitsManager(),
+        publisher: publisher,
+      );
+      final events = AppEventBus();
+      addTearDown(events.dispose);
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider<HabitWidgetService>.value(value: service),
+            ChangeNotifierProvider<AppEventBus>.value(value: events),
+          ],
+          child: const MaterialApp(
+            localizationsDelegates: L10n.localizationsDelegates,
+            supportedLocales: L10n.supportedLocales,
+            home: _BridgeHost(),
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(publisher.attempts, 1);
+      for (var i = 0; i < 3; i++) {
+        events.push(const ReloadDataEvent());
+      }
+      await tester.pump();
+      expect(publisher.attempts, 1);
+
+      firstPublish.completeError(StateError('first publish rejected'));
+      await tester.pumpAndSettle();
+      expect(publisher.attempts, 2);
+      expect(publisher.snapshots, hasLength(1));
+      expect(tester.takeException(), isNull);
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      events.push(const ReloadDataEvent());
+      await tester.pumpAndSettle();
+      expect(publisher.attempts, 2);
+    },
+  );
 
   testWidgets('foreground refreshes snapshots and invalidates UI caches', (
     tester,
@@ -157,7 +210,10 @@ void main() {
 
     await tester.pumpWidget(app(const Locale('en')));
     await tester.pumpAndSettle();
-    expect(publisher.snapshots.last.strings['today'], 'Today');
+    expect(
+      publisher.snapshots.last.strings[HabitWidgetStringKey.today],
+      'Today',
+    );
     var published = publisher.snapshots.length;
 
     events.push(const ReloadDataEvent(msg: 'sync/import/clear'));
@@ -194,7 +250,7 @@ void main() {
     await tester.pumpWidget(app(const Locale('ru')));
     await tester.pumpAndSettle();
     expect(
-      publisher.snapshots.last.strings['today'],
+      publisher.snapshots.last.strings[HabitWidgetStringKey.today],
       lookupL10n(const Locale('ru')).habitDisplay_tab_today_label,
     );
 
