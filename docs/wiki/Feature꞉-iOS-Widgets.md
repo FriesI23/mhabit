@@ -11,42 +11,32 @@ later.
 
 ### Choose Habits
 
-Touch and hold the widget and choose **Edit Widget**. Configure up to one habit
-for the small size, three for medium, or six for large. Each choice, labeled
-**Habit 1**, **Habit 2**, and so on, defaults to **Automatic**, which shows an
-unfinished habit, or you can choose a specific habit.
+Touch and hold the widget and choose **Edit Widget**. Small widgets show one
+habit, medium three, and large six.
 
-Fixed habits appear first in configuration order, followed by automatic habits.
-Only the choices available for the current size are used. Fixed habits stay
-visible, including archived habits and completed habits with Undo. Habits that
-have not started are visible but cannot be checked in.
-
-When fewer habits are available, the list starts at the top and leaves the rest
-empty. An all-automatic widget shows one centered completion message after
-today's habits are complete and no completed habit is still waiting for Next.
-The header count still covers all started, active habits.
+Choose **Automatic** or a fixed habit. Fixed habits appear first and stay visible
+after check-in. Archived habits can be selected; habits that have not started
+cannot be checked in.
 
 ### Complete and Undo
 
-Tap the checkmark or **Done** to complete today's goal without opening the app.
-Tap **Undo** to remove today's check-in. Use the app to enter a custom value.
+Tap **Done** to complete today's goal, **Incomplete** to record an ordinary habit
+as incomplete, or **Undo** to remove today's check-in. Use the app for custom
+values. Negative habits show their goal status instead of Incomplete.
 
-After completing an automatic habit, use **Next** to show another habit.
-Next advances only that habit and preserves its completed check-in. Automatic
-widgets on this device share that completion display, so Undo or Next also
-updates the other widgets.
+For automatic habits, tap **Next** after check-in to show another habit while
+keeping the record. There is no Undo countdown. Fixed habits keep Undo and do not
+offer Next. Widgets on this device share Undo and Next updates.
+
+For ordinary habits, zero-value records count as handled but incomplete. When no
+habits remain displayed, incomplete or skipped goals show **No pending habits**
+instead of a completion message.
 
 ### Refresh and Limitations
 
 Tap **Refresh** after midnight or a time-zone change to load the current day.
-Widget labels follow the app language, with English as the fallback. System
-configuration titles follow the system language.
-
-- Widget refreshes are scheduled by iOS and may be delayed.
-- Widget selections stay on this device.
-- Skipped days cannot be completed or undone from the widget.
-- Widget changes sync through the app's usual WebDAV workflow, rather than
-  starting a sync on every tap.
+Widget labels follow the app language. Refreshes are scheduled by iOS and may
+be delayed.
 
 For building and testing widgets, see [Developing iOS Widgets][developer-guide].
 

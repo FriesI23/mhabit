@@ -245,6 +245,11 @@ final class HabitWidgetSnapshotTests: XCTestCase {
     XCTAssertLessThan(older, committed)
     XCTAssertEqual(committed.timeIntervalSince(older), 0.0008, accuracy: 0.000001)
     XCTAssertNotNil(HabitWidgetSnapshot.parseDate("2026-10-17T04:00:00Z"))
+    XCTAssertEqual(HabitWidgetSnapshot.parseDate("2026-10-17T12:00:00.000900+08:00"), committed)
+    XCTAssertLessThan(try XCTUnwrap(HabitWidgetSnapshot.parseDate("2026-10-17T04:00:00.999999Z")),
+      try XCTUnwrap(HabitWidgetSnapshot.parseDate("2026-10-17T04:00:01Z")))
+    XCTAssertNil(HabitWidgetSnapshot.parseDate("2026-10-17T04:00:00.Z"))
+    XCTAssertNil(HabitWidgetSnapshot.parseDate("2026-10-17T04:00:00.invalidZ"))
     XCTAssertNil(HabitWidgetSnapshot.parseDate("invalid timestamp"))
   }
 

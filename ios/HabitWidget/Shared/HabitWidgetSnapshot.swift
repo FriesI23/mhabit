@@ -78,10 +78,25 @@ struct HabitWidgetSnapshot: Decodable {
 
   /// Parses wire timestamps while preserving fractional-second ordering.
   static func parseDate(_ value: String) -> Date? {
-    // Preserve Dart's microseconds: millisecond truncation can make an older
-    // foreground publication appear simultaneous with a later record commit.
-    if let date = try? Date.ISO8601FormatStyle(includingFractionalSeconds: true).parse(value) { return date }
-    return try? Date.ISO8601FormatStyle().parse(value)
+    if #available(iOS 18.0, *) {
+      if let date = try? Date.ISO8601FormatStyle(includingFractionalSeconds: true).parse(value) { return date }
+      return try? Date.ISO8601FormatStyle().parse(value)
+    }
+    return parseDateFallback(value)
+  }
+
+  private static func parseDateFallback(_ value: String) -> Date? {
+    // iOS 17 compatibility fix: Foundation loses submillisecond ISO-8601
+    // precision (reproduced on iOS 17.5), so an older snapshot can incorrectly
+    // clear a newer display hold. Parse whole seconds and the fraction separately.
+    guard let decimal = value.firstIndex(of: ".") else {
+      return try? Date.ISO8601FormatStyle().parse(value)
+    }
+    let start = value.index(after: decimal)
+    let end = value[start...].firstIndex { !$0.isASCII || !$0.isNumber } ?? value.endIndex
+    guard start != end, let fraction = Double("0." + value[start..<end]),
+          let date = try? Date.ISO8601FormatStyle().parse(String(value[..<decimal]) + value[end...]) else { return nil }
+    return date.addingTimeInterval(fraction)
   }
 }
 
