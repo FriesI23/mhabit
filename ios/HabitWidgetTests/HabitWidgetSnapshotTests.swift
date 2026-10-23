@@ -5,8 +5,8 @@ import Foundation
 import XCTest
 
 final class HabitWidgetSnapshotTests: XCTestCase {
-  private func fixture(_ version: Int) throws -> Data {
-    let url = try XCTUnwrap(Bundle(for: Self.self).url(forResource: "snapshot-v\(version)", withExtension: "json"))
+  private func fixture() throws -> Data {
+    let url = try XCTUnwrap(Bundle(for: Self.self).url(forResource: "snapshot-v2", withExtension: "json"))
     return try Data(contentsOf: url)
   }
 
@@ -15,19 +15,9 @@ final class HabitWidgetSnapshotTests: XCTestCase {
   }
 
   private func modified(_ change: (inout [String: Any]) -> Void) throws -> Data {
-    var json = try XCTUnwrap(JSONSerialization.jsonObject(with: fixture(2)) as? [String: Any])
+    var json = try XCTUnwrap(JSONSerialization.jsonObject(with: fixture()) as? [String: Any])
     change(&json)
     return try JSONSerialization.data(withJSONObject: json)
-  }
-
-  func testV1RemainsAnIncompleteDirectoryWithItsOriginalHabitProjection() throws {
-    let snapshot = try decode(fixture(1))
-    XCTAssertFalse(snapshot.hasCompleteCatalog)
-    XCTAssertEqual(snapshot.catalog.filter { $0.state == .active && $0.started }.map(\.name), ["first"])
-    XCTAssertEqual(snapshot.activeCount, 1)
-    XCTAssertEqual(snapshot.completedCount, 0)
-    XCTAssertNil(snapshot.locale)
-    XCTAssertEqual(snapshot.catalog.first?.sevenDays.count, 7)
   }
 
   /// Creates isolated native tables without requiring an application build.
@@ -56,26 +46,18 @@ final class HabitWidgetSnapshotTests: XCTestCase {
     return try XCTUnwrap(Bundle(url: root))
   }
 
-  func testNewAndLegacySnapshotsResolveLocaleWithoutReadingLegacyText() throws {
+  func testSnapshotLocaleSelectsNativeResourcesAndLayoutDirection() throws {
     let resources = try resourceBundle(["ar": ["HomeWidgetToday": "اليوم"],
       "ru": ["HomeWidgetToday": "Сегодня"]])
-    for version in [1, 2] {
-      var json = try XCTUnwrap(JSONSerialization.jsonObject(with: fixture(version)) as? [String: Any])
-      json["strings"] = ["locale": "ru", "today": "Obsolete snapshot text"]
-      let legacy = try decode(JSONSerialization.data(withJSONObject: json))
-      XCTAssertEqual(legacy.locale, "ru")
-      XCTAssertEqual(legacy.text(.today, bundle: resources), "Сегодня")
-      json["locale"] = "ar"
-      let current = try decode(JSONSerialization.data(withJSONObject: json))
-      XCTAssertEqual(current.locale, "ar")
-      XCTAssertEqual(current.text(.today, bundle: resources), "اليوم")
-      XCTAssertEqual(current.widgetLocale.language.characterDirection, .rightToLeft)
-      json["locale"] = NSNull()
-      XCTAssertEqual(try decode(JSONSerialization.data(withJSONObject: json)).locale, "ru")
-      json.removeValue(forKey: "strings")
-      json["locale"] = "ar"
-      XCTAssertEqual(try decode(JSONSerialization.data(withJSONObject: json)).text(.today, bundle: resources), "اليوم")
+    for (locale, expected) in [("ru", "Сегодня"), ("ar", "اليوم")] {
+      let snapshot = try decode(modified { $0["locale"] = locale })
+      XCTAssertEqual(snapshot.locale, locale)
+      XCTAssertEqual(snapshot.text(.today, bundle: resources), expected)
+      XCTAssertEqual(snapshot.widgetLocale.language.characterDirection,
+        locale == "ar" ? .rightToLeft : .leftToRight)
     }
+    XCTAssertNil(try decode(modified { $0["locale"] = NSNull() }).locale)
+    XCTAssertNil(try decode(modified { $0.removeValue(forKey: "locale") }).locale)
   }
 
   func testNativeTextFallsBackThroughEnglishResourcesToHardcodedDefaults() throws {
@@ -93,8 +75,8 @@ final class HabitWidgetSnapshotTests: XCTestCase {
     let empty = try resourceBundle([:])
     XCTAssertEqual(HabitWidgetText.complete.localized(bundle: empty), "Done")
     XCTAssertEqual(HabitWidgetText.undo.localized(bundle: empty), "UNDO")
-    let old = try decode(fixture(1))
-    XCTAssertEqual(old.text(.today, bundle: empty), "Today")
+    let snapshot = try decode(fixture())
+    XCTAssertEqual(snapshot.text(.today, bundle: empty), "Today")
   }
 
   func testWidgetLanguageSelectionPreservesScriptRegionAndIgnoresUnrelatedTables() throws {
@@ -123,12 +105,11 @@ final class HabitWidgetSnapshotTests: XCTestCase {
       $0["activeCount"] = 100
     }))
     XCTAssertThrowsError(try decode(modified { $0["locale"] = 7 }))
-    XCTAssertThrowsError(try decode(modified { $0["strings"] = ["today": 7] }))
   }
 
-  func testV2DirectoryPreservesTheLegacyActiveStartedView() throws {
-    let snapshot = try decode(fixture(2))
-    XCTAssertTrue(snapshot.hasCompleteCatalog)
+  func testCompleteDirectoryIncludesEveryLifecycleAndCountsOnlyActiveStartedHabits() throws {
+    let snapshot = try decode(fixture())
+    XCTAssertEqual(snapshot.version, .v2)
     XCTAssertEqual(snapshot.catalog.map(\.name), ["first", "archived", "future", "unknown"])
     XCTAssertEqual(snapshot.catalog.filter { $0.state == .active && $0.started }.map(\.name), ["first"])
     XCTAssertTrue(snapshot.catalog[1].canComplete)
@@ -139,27 +120,15 @@ final class HabitWidgetSnapshotTests: XCTestCase {
     XCTAssertEqual(snapshot.activeCount, 1)
   }
 
-  func testLegacyRecordStateDoesNotInferPresenceFromProgressOrCapabilities() throws {
-    let legacy = try decode(fixture(1))
-    XCTAssertEqual(legacy.catalog.first?.recordState, .unknown)
-    let snapshot = try decode(modified { json in
-      var catalog = json["catalog"] as! [[String: Any]]
-      for index in catalog.indices {
-        catalog[index].removeValue(forKey: "recordState")
-        catalog[index].removeValue(forKey: "canMarkIncomplete")
-        catalog[index].removeValue(forKey: "automaticPending")
-      }
-      catalog[0]["canUndo"] = true
-      json["catalog"] = catalog
-    })
-    XCTAssertTrue(snapshot.hasCompleteCatalog)
-    XCTAssertTrue(snapshot.catalog.allSatisfy { $0.recordState == .unknown })
-    XCTAssertNil(snapshot.catalog[0].recordStatusText(snapshot))
-    XCTAssertTrue(snapshot.catalog[0].canComplete)
-    XCTAssertTrue(snapshot.catalog[0].canUndo)
-    XCTAssertTrue(snapshot.catalog[0].automaticEligible)
-    XCTAssertFalse(snapshot.catalog[0].canMarkIncomplete)
-    XCTAssertTrue(snapshot.catalog[0].automaticPending)
+  func testCatalogRequiresEveryProjectionField() throws {
+    for field in ["recordState", "canMarkIncomplete", "automaticPending", "state",
+      "startDate", "started", "skipped", "automaticEligible"] {
+      XCTAssertThrowsError(try decode(modified { json in
+        var catalog = json["catalog"] as! [[String: Any]]
+        catalog[0].removeValue(forKey: field)
+        json["catalog"] = catalog
+      }), field)
+    }
   }
 
   func testRecordLabelsDistinguishMissingAndRecordedZeroWithoutChangingCandidates() throws {
@@ -220,7 +189,9 @@ final class HabitWidgetSnapshotTests: XCTestCase {
 
   func testMalformedUnknownAndIncompleteSnapshotsCannotConfirmDeletion() throws {
     XCTAssertThrowsError(try decode(Data("not json".utf8)))
-    XCTAssertThrowsError(try decode(modified { $0["version"] = 99 }))
+    for version in [1, 3, 99] {
+      XCTAssertThrowsError(try decode(modified { $0["version"] = version }))
+    }
     XCTAssertThrowsError(try decode(modified { $0.removeValue(forKey: "catalog") }))
     XCTAssertThrowsError(try decode(modified { $0.removeValue(forKey: "activeCount") }))
     XCTAssertThrowsError(try decode(modified { $0["day"] = "2026-02-30" }))
@@ -232,7 +203,7 @@ final class HabitWidgetSnapshotTests: XCTestCase {
     }))
   }
 
-  func testProcessedZeroIsExplicitWhileOlderProjectionKeepsItsCandidateBehavior() throws {
+  func testProcessedZeroIsExplicitAndExcludedFromAutomaticCandidates() throws {
     let data = try modified { json in
       var habit = (json["catalog"] as! [[String: Any]])[0]
       habit["recordState"] = "notAchieved"; habit["automaticPending"] = false
@@ -246,15 +217,6 @@ final class HabitWidgetSnapshotTests: XCTestCase {
     XCTAssertFalse(habit.canMarkIncomplete)
     let now = try XCTUnwrap(HabitWidgetSnapshot.parseDate("2026-10-17T04:00:00Z"))
     XCTAssertEqual(HabitWidgetSlots.resolve(snapshot: snapshot, selections: [], count: 1, at: now)[0].empty, .noPending)
-    var legacy = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
-    var rows = legacy["catalog"] as! [[String: Any]]
-    rows[0].removeValue(forKey: "automaticPending"); rows[0].removeValue(forKey: "canMarkIncomplete")
-    legacy["catalog"] = rows
-    let old = try decode(JSONSerialization.data(withJSONObject: legacy))
-    XCTAssertTrue(old.catalog[0].automaticPending)
-    XCTAssertFalse(old.catalog[0].canMarkIncomplete)
-    XCTAssertEqual(old.catalog[0].recordStatusText(old), "Not achieved")
-    XCTAssertNotNil(HabitWidgetSlots.resolve(snapshot: old, selections: [], count: 1, at: now)[0].habit)
   }
 
   func testDuplicateIdentitiesAndInconsistentCountsAreRejected() throws {
@@ -267,16 +229,14 @@ final class HabitWidgetSnapshotTests: XCTestCase {
     }))
   }
 
-  func testBothVersionsDisableActionsAtTheCivilDayBoundary() throws {
+  func testSnapshotExpiresAtTheCivilDayBoundary() throws {
     let previous = NSTimeZone.default
     NSTimeZone.default = TimeZone(secondsFromGMT: 0)!
     defer { NSTimeZone.default = previous }
-    for version in [1, 2] {
-      let snapshot = try decode(fixture(version))
-      XCTAssertTrue(snapshot.isCurrent(at: try XCTUnwrap(HabitWidgetSnapshot.parseDate("2026-10-17T12:00:00Z"))))
-      XCTAssertFalse(snapshot.isCurrent(at: try XCTUnwrap(snapshot.nextDay)))
-      XCTAssertFalse(snapshot.isCurrent(at: try XCTUnwrap(HabitWidgetSnapshot.parseDate("2026-10-18T04:00:00Z"))))
-    }
+    let snapshot = try decode(fixture())
+    XCTAssertTrue(snapshot.isCurrent(at: try XCTUnwrap(HabitWidgetSnapshot.parseDate("2026-10-17T12:00:00Z"))))
+    XCTAssertFalse(snapshot.isCurrent(at: try XCTUnwrap(snapshot.nextDay)))
+    XCTAssertFalse(snapshot.isCurrent(at: try XCTUnwrap(HabitWidgetSnapshot.parseDate("2026-10-18T04:00:00Z"))))
   }
 
   func testFractionalTimestampsPreserveSubMillisecondOrdering() throws {

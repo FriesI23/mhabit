@@ -3,9 +3,6 @@
   "generatedAt": "2026-10-17T04:00:00.000Z",
   "day": "2026-10-17",
   "nextDayAt": "2026-10-17T16:00:00.000Z",
-  "strings": {
-    "today": "\u0421\u0435\u0433\u043e\u0434\u043d\u044f"
-  },
   "catalog": [
     {
       "id": "73c855f1-b888-5588-adef-f3bb0a4428f7",
@@ -201,5 +198,6 @@
     }
   ],
   "activeCount": 1,
-  "completedCount": 0
+  "completedCount": 0,
+  "locale": "ru"
 }

@@ -116,7 +116,7 @@ final class HabitWidgetCommand {
   /// Creates a command for the displayed entity state.
   const HabitWidgetCommand({
     required this.action,
-    this.source = HabitWidgetSource.automatic,
+    required this.source,
     required this.habitId,
     required this.day,
     required this.expectedRecord,
@@ -133,7 +133,7 @@ final class HabitWidgetCommand {
     }
     final action = HabitWidgetAction.fromUriHost(uri.host);
     final query = uri.queryParametersAll;
-    if ((query.length != 3 && query.length != 4) ||
+    if (query.length != 4 ||
         query.keys.any(
           (key) => !const {
             'habitId',
@@ -146,7 +146,7 @@ final class HabitWidgetCommand {
       return null;
     }
     final source = switch (uri.queryParameters['source']) {
-      null || 'automatic' => HabitWidgetSource.automatic,
+      'automatic' => HabitWidgetSource.automatic,
       'fixed' => HabitWidgetSource.fixed,
       _ => null,
     };

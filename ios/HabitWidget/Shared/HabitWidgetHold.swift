@@ -55,7 +55,7 @@ protocol HabitWidgetHoldStorage {
 
 /// Publishes an atomic file that is immediately readable across processes.
 struct HabitWidgetFileHoldStorage: HabitWidgetHoldStorage {
-  static let filename = "habit_widget_holds_v1.json"
+  static let filename = "habit_widget_holds.json"
   private let url: URL?
 
   /// Uses an explicit file URL or resolves the configured app-group container.
@@ -65,16 +65,10 @@ struct HabitWidgetFileHoldStorage: HabitWidgetHoldStorage {
     }?.appendingPathComponent(Self.filename)
   }
 
-  /// Reads the authoritative file, consulting legacy storage only if absent.
+  /// Reads the authoritative shared file without changing it.
   func load() -> Data? {
     guard let url else { return nil }
-    if FileManager.default.fileExists(atPath: url.path) {
-      return try? Data(contentsOf: url)
-    }
-    // Development builds used this same v1 JSON in preferences. Never fall back
-    // after a file exists, including corrupt data, or an ended hold could revive.
-    return HabitWidgetShared.appGroup.flatMap(UserDefaults.init(suiteName:))?
-      .data(forKey: "habit_widget_holds_v1")
+    return try? Data(contentsOf: url)
   }
 
   /// Completes an atomic, protected write before returning to its caller.
@@ -100,39 +94,10 @@ enum HabitWidgetHoldError: Error { case unavailable }
 final class HabitWidgetHoldStore {
   /// Versions the serialized envelope independently of the record projection.
   private struct State: Codable {
-    let version: Int
+    enum Version: Int, Codable { case v2 = 2 }
+
+    let version: Version
     let holds: [HabitWidgetHold]
-
-    private enum CodingKeys: String, CodingKey { case version, holds }
-
-    init(version: Int, holds: [HabitWidgetHold]) {
-      self.version = version
-      self.holds = holds
-    }
-
-    /// V1 is read-only compatibility; the first later mutation writes v2.
-    init(from decoder: Decoder) throws {
-      let values = try decoder.container(keyedBy: CodingKeys.self)
-      version = try values.decode(Int.self, forKey: .version)
-      switch version {
-      case 1:
-        holds = try values.decode([LegacyHold].self, forKey: .holds).map {
-          HabitWidgetHold(habitID: $0.habitID, day: $0.day, recordVersion: $0.recordVersion,
-            committedAt: $0.committedAt, identity: $0.identity, result: .completed)
-        }
-      case 2: holds = try values.decode([HabitWidgetHold].self, forKey: .holds)
-      default:
-        throw DecodingError.dataCorruptedError(forKey: .version, in: values, debugDescription: "Unsupported hold version")
-      }
-    }
-  }
-
-  private struct LegacyHold: Decodable {
-    let habitID: String
-    let day: String
-    let recordVersion: String
-    let committedAt: Date
-    let identity: String
   }
   private let storage: HabitWidgetHoldStorage
   /// Accepts a persistence boundary shared by live readers and isolated tests.
@@ -150,7 +115,7 @@ final class HabitWidgetHoldStore {
 
   /// Writes a deterministic envelope after all in-memory checks have passed.
   private func save(_ holds: [String: HabitWidgetHold]) throws {
-    let state = State(version: 2, holds: holds.values.sorted { $0.habitID < $1.habitID })
+    let state = State(version: .v2, holds: holds.values.sorted { $0.habitID < $1.habitID })
     try storage.save(JSONEncoder().encode(state))
   }
 
@@ -228,7 +193,7 @@ final class HabitWidgetHoldStore {
             generated >= hold.committedAt else { return true }
       // Only a current, complete directory can establish deletion. An older
       // publication cannot invalidate a commit which happened after its read.
-      guard let habit = snapshot.catalog.first(where: { $0.id == id }) else { return !snapshot.hasCompleteCatalog }
+      guard let habit = snapshot.catalog.first(where: { $0.id == id }) else { return false }
       return habit.state == .active && habit.started && !habit.skipped && hold.matches(habit)
         && habit.canUndo && habit.expectedRecord == hold.recordVersion
     }

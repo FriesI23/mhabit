@@ -47,32 +47,6 @@ final class HabitWidgetHoldTests: XCTestCase {
   }
 
   @MainActor
-  func testV1ReadPreservesIdentityAndOnlyTheNextMutationUpgradesToV2() throws {
-    let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
-    let snapshot = try snapshot(); let id = snapshot.catalog[0].id
-    let original = try XCTUnwrap(store.recorded(habitID: id, day: snapshot.day, source: .automatic,
-      commit: commit("v1"), at: now, identity: identity1))
-    var legacy = try XCTUnwrap(JSONSerialization.jsonObject(with: XCTUnwrap(storage.data)) as? [String: Any])
-    legacy["version"] = 1
-    var rows = legacy["holds"] as! [[String: Any]]
-    rows[0].removeValue(forKey: "result"); legacy["holds"] = rows
-    storage.data = try JSONSerialization.data(withJSONObject: legacy)
-    let before = storage.data
-    let reader = HabitWidgetHoldStore(storage: storage)
-    XCTAssertEqual(reader.validHolds(snapshot: snapshot, at: now)[id], original)
-    XCTAssertEqual(storage.data, before)
-    XCTAssertFalse(try reader.reconcile(snapshot: snapshot, at: now))
-    XCTAssertEqual(storage.writes, 1)
-    try reader.recorded(habitID: secondID, day: snapshot.day, source: .automatic,
-      commit: commit("zero"), at: now, identity: identity2, result: .incomplete)
-    let upgraded = try XCTUnwrap(JSONSerialization.jsonObject(with: XCTUnwrap(storage.data)) as? [String: Any])
-    XCTAssertEqual(upgraded["version"] as? Int, 2)
-    let stored = upgraded["holds"] as! [[String: Any]]
-    XCTAssertEqual(stored.first { $0["habitID"] as? String == id }?["identity"] as? String, identity1)
-    XCTAssertEqual(Set(stored.compactMap { $0["result"] as? String }), ["completed", "incomplete"])
-  }
-
-  @MainActor
   func testIncompleteHoldSharesAcrossReadersAndNextDoesNotReintroduceProcessedZero() throws {
     let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
     let snapshot = try incompleteSnapshot(); let id = snapshot.catalog[0].id
@@ -220,16 +194,11 @@ final class HabitWidgetHoldTests: XCTestCase {
   }
 
   @MainActor
-  func testCurrentCompleteDeletionAndCrossDayInvalidateButLegacyMissingDoesNot() throws {
+  func testDeletionAndCrossDayInvalidateHolds() throws {
     let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
     let snapshot = try snapshot(); let id = snapshot.catalog[0].id
     let hold = try XCTUnwrap(store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
     let empty = try self.snapshot { $0["catalog"] = []; $0["activeCount"] = 0; $0["completedCount"] = 0 }
-    let legacyURL = try XCTUnwrap(Bundle(for: Self.self).url(forResource: "snapshot-v1", withExtension: "json"))
-    var legacyJSON = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: legacyURL)) as? [String: Any])
-    legacyJSON["habits"] = []; legacyJSON["generatedAt"] = "2026-10-17T04:00:01Z"
-    let legacy = try JSONDecoder().decode(HabitWidgetSnapshot.self, from: JSONSerialization.data(withJSONObject: legacyJSON))
-    XCTAssertFalse(try store.reconcile(snapshot: legacy, at: now))
     XCTAssertTrue(try store.reconcile(snapshot: empty, at: now))
     try store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now)
     XCTAssertFalse(try store.advance(event(hold), snapshot: snapshot, at: now.addingTimeInterval(86400)))
@@ -365,6 +334,8 @@ final class HabitWidgetHoldTests: XCTestCase {
     let original = try XCTUnwrap(storage.data)
     let changes: [(inout [String: Any]) -> Void] = [
       { $0["version"] = 99 },
+      { $0["version"] = 1 },
+      { $0["version"] = 3 },
       { json in var holds = json["holds"] as! [[String: Any]]; holds[0].removeValue(forKey: "result"); json["holds"] = holds },
       { json in var holds = json["holds"] as! [[String: Any]]; holds[0]["result"] = "unknown"; json["holds"] = holds },
       { json in let holds = json["holds"] as! [[String: Any]]; json["holds"] = holds + holds },

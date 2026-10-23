@@ -40,12 +40,8 @@ enum HabitWidgetSlots {
     var rows = selections.prefix(count).compactMap { selection -> HabitWidgetSlot? in
       guard let id = selection, id != HabitWidgetShared.automaticSelectionID else { return nil }
       guard reserved.insert(id).inserted else { return nil }
-      if let habit = snapshot.catalog.first(where: { $0.id == id }) {
-        return HabitWidgetSlot(source: .fixed, habit: habit, empty: nil)
-      }
-      // A partial/legacy directory cannot establish deletion. Keep this choice
-      // unavailable until a complete, current directory can safely fall back.
-      return snapshot.hasCompleteCatalog ? nil : HabitWidgetSlot(source: .fixed, habit: nil, empty: .loading)
+      guard let habit = snapshot.catalog.first(where: { $0.id == id }) else { return nil }
+      return HabitWidgetSlot(source: .fixed, habit: habit, empty: nil)
     }
     var used = Set(rows.compactMap { $0.habit?.id })
     let candidates = snapshot.catalog.filter {

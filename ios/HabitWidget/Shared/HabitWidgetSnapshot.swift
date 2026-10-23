@@ -2,27 +2,26 @@ import Foundation
 
 /// Decodes and validates a versioned, read-only projection of app data.
 struct HabitWidgetSnapshot: Decodable {
-  let version: Int
+  /// Lists the wire formats this reader understands; unknown values fail decoding.
+  enum Version: Int, Decodable { case v2 = 2 }
+
+  let version: Version
   let generatedAt: String
   let day: String
   let nextDayAt: String
   let catalog: [HabitWidgetHabit]
   let activeCount: Int
   let completedCount: Int
-  let hasCompleteCatalog: Bool
   let locale: String?
 
   private enum CodingKeys: String, CodingKey {
-    case version, generatedAt, day, nextDayAt, habits, catalog, activeCount, completedCount, strings, locale
+    case version, generatedAt, day, nextDayAt, catalog, activeCount, completedCount, locale
   }
 
-  /// Normalizes supported formats while retaining their directory completeness.
+  /// Requires the current complete catalog and validates its summary counters.
   init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: CodingKeys.self)
-    version = try values.decode(Int.self, forKey: .version)
-    guard version == 1 || version == 2 else {
-      throw DecodingError.dataCorruptedError(forKey: .version, in: values, debugDescription: "Unsupported widget snapshot version")
-    }
+    version = try values.decode(Version.self, forKey: .version)
     generatedAt = try values.decode(String.self, forKey: .generatedAt)
     day = try values.decode(String.self, forKey: .day)
     nextDayAt = try values.decode(String.self, forKey: .nextDayAt)
@@ -30,25 +29,15 @@ struct HabitWidgetSnapshot: Decodable {
           let boundary = Self.parseDate(nextDayAt), boundary > generated else {
       throw DecodingError.dataCorruptedError(forKey: .day, in: values, debugDescription: "Invalid widget civil-day bounds")
     }
-    let legacyStrings = try values.decodeIfPresent([String: String].self, forKey: .strings)
-    locale = try values.decodeIfPresent(String.self, forKey: .locale) ?? legacyStrings?["locale"]
-    if version == 1 {
-      catalog = try values.decode([HabitWidgetHabit].self, forKey: .habits)
-      activeCount = catalog.count
-      completedCount = catalog.filter(\.completed).count
-      hasCompleteCatalog = false
-    } else {
-      catalog = try values.decode([HabitWidgetHabit].self, forKey: .catalog)
-      activeCount = try values.decode(Int.self, forKey: .activeCount)
-      completedCount = try values.decode(Int.self, forKey: .completedCount)
-      let active = catalog.filter { $0.state == .active && $0.started }
-      guard catalog.allSatisfy(\.hasCatalogMetadata),
-            Set(catalog.map(\.id)).count == catalog.count,
-            activeCount == active.count,
-            completedCount == active.filter(\.completed).count else {
-        throw DecodingError.dataCorruptedError(forKey: .catalog, in: values, debugDescription: "Incomplete or inconsistent widget directory")
-      }
-      hasCompleteCatalog = true
+    locale = try values.decodeIfPresent(String.self, forKey: .locale)
+    catalog = try values.decode([HabitWidgetHabit].self, forKey: .catalog)
+    activeCount = try values.decode(Int.self, forKey: .activeCount)
+    completedCount = try values.decode(Int.self, forKey: .completedCount)
+    let active = catalog.filter { $0.state == .active && $0.started }
+    guard Set(catalog.map(\.id)).count == catalog.count,
+          activeCount == active.count,
+          completedCount == active.filter(\.completed).count else {
+      throw DecodingError.dataCorruptedError(forKey: .catalog, in: values, debugDescription: "Inconsistent widget directory")
     }
   }
 
@@ -120,49 +109,39 @@ struct HabitWidgetHabit: Decodable, Identifiable {
   let expectedRecord: String
   let sevenDays: [HabitWidgetDay]
   let state: HabitWidgetHabitState
-  let startDate: String?
+  let startDate: String
   let started: Bool
   let skipped: Bool
   let automaticEligible: Bool
   let automaticPending: Bool
-  let hasCatalogMetadata: Bool
 
   private enum CodingKeys: String, CodingKey {
     case id, name, color, completed, recordState, progress, canComplete, canUndo, expectedRecord, sevenDays
     case state, startDate, started, skipped, automaticEligible, automaticPending, canMarkIncomplete
   }
 
-  /// Decodes legacy defaults and rejects inconsistent capability metadata.
+  /// Requires current projection fields and rejects inconsistent capabilities.
   init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: CodingKeys.self)
     id = try values.decode(String.self, forKey: .id)
     name = try values.decode(String.self, forKey: .name)
     color = try values.decode(UInt32.self, forKey: .color)
     completed = try values.decode(Bool.self, forKey: .completed)
-    // Legacy snapshots cannot distinguish a valid zero from no daily record.
-    recordState = try values.decodeIfPresent(HabitWidgetRecordState.self, forKey: .recordState) ?? .unknown
+    recordState = try values.decode(HabitWidgetRecordState.self, forKey: .recordState)
     progress = try values.decode(Double.self, forKey: .progress)
     canComplete = try values.decode(Bool.self, forKey: .canComplete)
-    canMarkIncomplete = try values.decodeIfPresent(Bool.self, forKey: .canMarkIncomplete) ?? false
-    automaticPending = try values.decodeIfPresent(Bool.self, forKey: .automaticPending) ?? !completed
+    canMarkIncomplete = try values.decode(Bool.self, forKey: .canMarkIncomplete)
+    automaticPending = try values.decode(Bool.self, forKey: .automaticPending)
     canUndo = try values.decode(Bool.self, forKey: .canUndo)
     expectedRecord = try values.decode(String.self, forKey: .expectedRecord)
     sevenDays = try values.decode([HabitWidgetDay].self, forKey: .sevenDays)
-    let decodedState = try values.decodeIfPresent(HabitWidgetHabitState.self, forKey: .state)
-    let decodedStarted = try values.decodeIfPresent(Bool.self, forKey: .started)
-    let decodedSkipped = try values.decodeIfPresent(Bool.self, forKey: .skipped)
-    let decodedEligibility = try values.decodeIfPresent(Bool.self, forKey: .automaticEligible)
-    startDate = try values.decodeIfPresent(String.self, forKey: .startDate)
-    state = decodedState ?? .active
-    started = decodedStarted ?? true
-    skipped = decodedSkipped ?? false
-    // V1 does not expose status or skip metadata. Its existing capability flags
-    // are the only safe fallback; absence from that catalog never means deleted.
-    automaticEligible = decodedEligibility ?? canComplete
-    hasCatalogMetadata = decodedState != nil && decodedStarted != nil
-      && decodedSkipped != nil && decodedEligibility != nil && startDate != nil
+    state = try values.decode(HabitWidgetHabitState.self, forKey: .state)
+    started = try values.decode(Bool.self, forKey: .started)
+    skipped = try values.decode(Bool.self, forKey: .skipped)
+    automaticEligible = try values.decode(Bool.self, forKey: .automaticEligible)
+    startDate = try values.decode(String.self, forKey: .startDate)
     if id.isEmpty || expectedRecord.isEmpty || !progress.isFinite
-        || (startDate != nil && !HabitWidgetSnapshot.isDay(startDate!))
+        || !HabitWidgetSnapshot.isDay(startDate)
         || sevenDays.count != 7 || sevenDays.contains(where: { !$0.progress.isFinite })
         || (automaticEligible && (state != .active || !started || skipped))
         || (canMarkIncomplete && (!canComplete || completed || !automaticPending))

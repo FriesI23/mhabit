@@ -5,8 +5,8 @@ import XCTest
 final class HabitWidgetSlotsTests: XCTestCase {
   private let now = HabitWidgetSnapshot.parseDate("2026-10-17T08:00:00Z")!
   private let missing = "d299490c-3341-48a5-96ae-972425626d13"
-  private func snapshot(version: Int = 2, change: (inout [String: Any]) -> Void = { _ in }) throws -> HabitWidgetSnapshot {
-    let url = try XCTUnwrap(Bundle(for: Self.self).url(forResource: "snapshot-v\(version)", withExtension: "json"))
+  private func snapshot(change: (inout [String: Any]) -> Void = { _ in }) throws -> HabitWidgetSnapshot {
+    let url = try XCTUnwrap(Bundle(for: Self.self).url(forResource: "snapshot-v2", withExtension: "json"))
     var json = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any])
     change(&json)
     return try JSONDecoder().decode(HabitWidgetSnapshot.self, from: JSONSerialization.data(withJSONObject: json))
@@ -66,11 +66,9 @@ final class HabitWidgetSlotsTests: XCTestCase {
     XCTAssertEqual(exhausted[2].empty, .noPending)
   }
 
-  func testOnlyCurrentCompleteDirectoryCanConfirmMissingFixedIdentity() throws {
+  func testMissingFixedIdentityFallsBackOnlyWithACurrentSnapshot() throws {
     XCTAssertEqual(rows(try snapshot(), [missing])[0].source, .automatic)
     XCTAssertNotNil(rows(try snapshot(), [missing])[0].habit)
-    XCTAssertEqual(rows(try snapshot(version: 1), [missing])[0].empty, .loading)
-    XCTAssertNil(rows(try snapshot(version: 1), [missing])[0].habit)
     XCTAssertEqual(rows(nil, [missing])[0].empty, .loading)
     let stale = HabitWidgetSlots.resolve(snapshot: try snapshot(), selections: [missing], count: 1,
       at: now.addingTimeInterval(86400))
@@ -97,10 +95,9 @@ final class HabitWidgetSlotsTests: XCTestCase {
     XCTAssertEqual(configuration.selections, Array(repeating: "auto", count: 6))
   }
 
-  func testDynamicPickerNamesUseCapturedLocaleAndIgnoreLegacyText() throws {
+  func testDynamicPickerNamesUseCapturedLocale() throws {
     let s = try snapshot {
       $0["locale"] = "ar"
-      $0["strings"] = ["locale": "ru", "automatic": "Legacy automatic", "unavailable": "Legacy unavailable"]
     }
     let automatic = HabitWidgetText.automatic.localized(locale: s.widgetLocale)
     let unavailable = HabitWidgetText.unavailable.localized(locale: s.widgetLocale)
@@ -204,9 +201,6 @@ final class HabitWidgetSlotsTests: XCTestCase {
     let resolved = rows(s, [nil, ids[3], ids[3], missing, nil, ids[1]], count: 6)
     XCTAssertEqual(resolved.compactMap { $0.habit?.id }, [ids[3], ids[1], ids[0], ids[2], ids[4], ids[5]])
     XCTAssertEqual(resolved.filter { $0.source == .fixed }.count, 2)
-    let incomplete = rows(try snapshot(version: 1), [nil, missing, nil], count: 3)
-    XCTAssertEqual(incomplete[0].source, .fixed)
-    XCTAssertEqual(incomplete[0].empty, .loading)
   }
 
   func testShortListKeepsAllEmptyCapacityAfterHabits() throws {

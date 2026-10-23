@@ -125,7 +125,6 @@ final class HabitWidgetIntegrationTests: XCTestCase {
       ("ar", "اليوم"), ("en_US", "Today")] {
       var json = try XCTUnwrap(JSONSerialization.jsonObject(with: snapshotData()) as? [String: Any])
       json["locale"] = locale
-      json["strings"] = ["locale": "ru", "today": "Legacy text must not override native resources"]
       let snapshot = try JSONDecoder().decode(HabitWidgetSnapshot.self, from: JSONSerialization.data(withJSONObject: json))
       for bundle in products {
         XCTAssertEqual(snapshot.text(.today, bundle: bundle), today, "\(bundle.bundleURL.lastPathComponent): \(locale)")

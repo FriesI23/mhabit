@@ -11,7 +11,7 @@ import '../models/habit_widget.dart';
 
 /// Reads the app locale and publishes shared display snapshots.
 abstract interface class HabitWidgetPublisher {
-  /// Reads the latest app locale, including the legacy snapshot location.
+  /// Reads the latest app locale from the shared snapshot.
   Future<String?> readLocale();
 
   /// Saves [snapshot] and acknowledges its native reconciliation request.
@@ -43,10 +43,6 @@ final class HomeWidgetPublisher implements HabitWidgetPublisher {
       final decoded = jsonDecode(raw);
       if (decoded is! Map<String, dynamic>) return null;
       if (decoded['locale'] case final String locale) return locale;
-      final legacyStrings = decoded['strings'];
-      if (legacyStrings is Map<String, dynamic>) {
-        if (legacyStrings['locale'] case final String locale) return locale;
-      }
       return null;
     } on FormatException {
       return null;

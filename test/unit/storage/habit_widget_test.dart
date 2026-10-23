@@ -95,42 +95,22 @@ void main() {
     },
   );
 
-  test(
-    'root locale takes priority and legacy locale is inherited read-only',
-    () async {
-      for (final (data, expectedLocale) in [
-        (
-          {
-            'locale': 'ar',
-            'strings': {'locale': 'zh_Hant'},
-          },
-          'ar',
-        ),
-        (
-          {
-            'locale': null,
-            'strings': {'locale': 'zh_Hant'},
-          },
-          'zh_Hant',
-        ),
-        (
-          {
-            'strings': {'locale': 'ru', 'today': 'Сегодня'},
-          },
-          'ru',
-        ),
-        ({'locale': 'en_US'}, 'en_US'),
-        ({'locale': ''}, ''),
-      ]) {
-        storedSnapshot = jsonEncode(data);
-        final original = storedSnapshot;
-        expect(await HomeWidgetPublisher().readLocale(), expectedLocale);
-        expect(storedSnapshot, original);
-      }
-      expect(events, everyElement(isIn(['setAppGroupId', 'getWidgetData'])));
-      expect(savedKeys, isEmpty);
-    },
-  );
+  test('stored root locale is read without writes', () async {
+    for (final (data, expectedLocale) in [
+      ({'locale': 'ar'}, 'ar'),
+      ({'locale': 'zh_Hant'}, 'zh_Hant'),
+      ({'locale': 'ru'}, 'ru'),
+      ({'locale': 'en_US'}, 'en_US'),
+      ({'locale': ''}, ''),
+    ]) {
+      storedSnapshot = jsonEncode(data);
+      final original = storedSnapshot;
+      expect(await HomeWidgetPublisher().readLocale(), expectedLocale);
+      expect(storedSnapshot, original);
+    }
+    expect(events, everyElement(isIn(['setAppGroupId', 'getWidgetData'])));
+    expect(savedKeys, isEmpty);
+  });
 
   test(
     'malformed or non-string stored locales return null without writes',
@@ -143,9 +123,6 @@ void main() {
         '{}',
         '{"locale":42}',
         '{"locale":null}',
-        '{"strings":[]}',
-        '{"strings":{"locale":false,"today":"ignored"}}',
-        '{"strings":{"locale":null}}',
       ]) {
         storedSnapshot = raw;
         expect(

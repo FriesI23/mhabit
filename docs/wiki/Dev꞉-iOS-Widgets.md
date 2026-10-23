@@ -41,6 +41,15 @@ Widget sources are under `ios/HabitWidget/`:
 The Dart entrypoint is `lib/entries/habit_widget/entry.dart`.
 After changing `pigeons/habit_widget.dart`, run `make gen` to regenerate the bridge.
 
+The widget has not been released. Snapshots and shared holds use only the current
+v2 structure, without development-format migrations or field defaults. The shared
+hold file is `habit_widget_holds.json`; locale comes from the snapshot's root
+`locale`. Action URIs require an explicit `automatic` or `fixed` source.
+After changing development formats, reopen the app to publish a current snapshot;
+old widget snapshots and holds are not migrated. Snapshot and hold versions are
+separate raw-value enums decoded by Codable. Accept only explicitly supported
+versions; route future supported formats at the decoding boundary.
+
 Maintain widget text in `Extension/*.lproj/Localizable.strings` with bare
 PascalCase `HomeWidget*` keys. `make gen` fills missing entries from ARB through
 `configs/l10n_strings_refs.json`, preserving existing translations.

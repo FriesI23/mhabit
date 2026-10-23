@@ -897,7 +897,6 @@ BEGIN SELECT RAISE(ABORT, 'test sync failure'); END
     // the projection use the same fixture that XCTest decodes.
     expected['generatedAt'] = now.toUtc().toIso8601String();
     expected['nextDayAt'] = DateTime(2026, 10, 18).toUtc().toIso8601String();
-    expected.remove('strings');
     expected['locale'] = 'ru';
     expect(snapshot.toJson(), expected);
     expect(snapshot.activeCount, 1);
@@ -1134,19 +1133,14 @@ BEGIN SELECT RAISE(ABORT, 'test sync failure'); END
   test('command parser rejects malformed or ambiguous actions', () {
     final valid = HabitWidgetCommand(
       action: HabitWidgetAction.complete,
+      source: HabitWidgetSource.automatic,
       habitId: 'id',
       day: today,
       expectedRecord: 'none',
     ).toUri();
     expect(HabitWidgetCommand.tryParse(valid), isNotNull);
-    final legacy = valid.replace(
-      query: 'habitId=id&day=2026-10-17&expectedRecord=none',
-    );
-    expect(
-      HabitWidgetCommand.tryParse(legacy)!.source,
-      HabitWidgetSource.automatic,
-    );
     for (final invalid in [
+      valid.replace(query: 'habitId=id&day=2026-10-17&expectedRecord=none'),
       valid.replace(scheme: 'tablehabit'),
       valid.replace(host: 'toggle'),
       valid.replace(

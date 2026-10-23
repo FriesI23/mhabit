@@ -32,7 +32,7 @@ enum HabitWidgetChoices {
     ids.compactMap { id in
       if id == HabitWidgetShared.automaticSelectionID { return .automatic(snapshot: snapshot) }
       guard UUID(uuidString: id) != nil else { return nil }
-      // Preserve saved identity even when a partial directory cannot resolve it.
+      // Preserve saved identity while a snapshot is unavailable or the habit is deleted.
       return HabitWidgetChoice(id: id, name: snapshot?.catalog.first(where: { $0.id == id })?.name
         ?? snapshot?.text(.unavailable) ?? HabitWidgetText.unavailable.localized())
     }

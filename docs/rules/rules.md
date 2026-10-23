@@ -115,6 +115,12 @@ existing architecture and tooling contracts.
   generates its Dart API and Runner-only Swift API. Keep each engine's messenger
   separate. Keep record mutations in the existing Dart workflow/storage owners;
   see `docs/wiki/Dev꞉-iOS-Widgets.md`.
+- Habit Widget is unreleased: snapshot and hold persistence accept only the
+  current v2 structure, with required catalog fields and explicit action sources.
+  Swift models declare supported wire versions with scoped raw-value Codable
+  enums; do not use open-ended version ranges. Add a decoding dispatch only when
+  another format is actually supported. Do not add compatibility defaults or
+  migrations for development-only formats.
 - `lib/entries/common/app_root_view.dart` owns the `MaterialApp` shell.
   Keep global app-level concerns such as locale, theme, navigator keys,
   localization delegates, and top-level builders there.

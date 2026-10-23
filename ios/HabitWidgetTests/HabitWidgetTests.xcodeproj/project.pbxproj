@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		2E443E3973FAFE110D145E09 /* HabitWidgetSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F99FC23A9C4FDFDB825F96F /* HabitWidgetSnapshotTests.swift */; };
-		32236470B9280D595F040238 /* snapshot-v1.json in Resources */ = {isa = PBXBuildFile; fileRef = E1B169EFA009BF7CC7F7C147 /* snapshot-v1.json */; };
 		36A45F59878DA911139D9EE9 /* HabitWidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992314119B442C859E1C78D6 /* HabitWidgetSnapshot.swift */; };
 		5A4EB7FDB4F56D7849A9B7B5 /* snapshot-v2.json in Resources */ = {isa = PBXBuildFile; fileRef = 3C828E7DE4C3E689EE6B4811 /* snapshot-v2.json */; };
 		5E9B5E8C6AC30C9F8EE06FB5 /* HabitWidgetExecutionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F04CECDD2AB19447721A509 /* HabitWidgetExecutionState.swift */; };
@@ -34,7 +33,6 @@
 		992314119B442C859E1C78D6 /* HabitWidgetSnapshot.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HabitWidgetSnapshot.swift; path = ../HabitWidget/Shared/HabitWidgetSnapshot.swift; sourceTree = "<group>"; };
 		DB712AA44A269AAD8718FE98 /* HabitWidgetHoldTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HabitWidgetHoldTests.swift; sourceTree = "<group>"; };
 		DE4C5B7B22E814D51A85832C /* HabitWidgetConfiguration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HabitWidgetConfiguration.swift; path = ../HabitWidget/Shared/HabitWidgetConfiguration.swift; sourceTree = "<group>"; };
-		E1B169EFA009BF7CC7F7C147 /* snapshot-v1.json */ = {isa = PBXFileReference; includeInIndex = 1; name = "snapshot-v1.json"; path = "../../test/fixtures/habit_widget/snapshot-v1.json"; sourceTree = "<group>"; };
 		FA4195B8A63ED3F2C56AB465 /* HabitWidgetConfiguredProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HabitWidgetConfiguredProvider.swift; path = ../HabitWidget/Extension/HabitWidgetConfiguredProvider.swift; sourceTree = "<group>"; };
 		FD4AA4A5D7DCB666C9B52CDA /* HabitWidgetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HabitWidgetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -94,7 +92,6 @@
 		AED163C0C05DEB2898020615 /* Fixtures */ = {
 			isa = PBXGroup;
 			children = (
-				E1B169EFA009BF7CC7F7C147 /* snapshot-v1.json */,
 				3C828E7DE4C3E689EE6B4811 /* snapshot-v2.json */,
 			);
 			name = Fixtures;
@@ -173,7 +170,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				32236470B9280D595F040238 /* snapshot-v1.json in Resources */,
 				5A4EB7FDB4F56D7849A9B7B5 /* snapshot-v2.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

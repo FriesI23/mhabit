@@ -76,11 +76,6 @@ struct HabitWidgetConfiguredView: View {
               HabitWeekGrid(habit: habit, labels: false).frame(width: 89)
               HabitWidgetConfiguredControls(habit: habit, snapshot: snapshot, source: slot.source,
                 hold: entry.holds[habit.id], compact: true)
-            } else if slot.source == .fixed {
-              // An incomplete catalog cannot establish that a saved choice was
-              // deleted. Keep its loading status instead of claiming completion.
-              Text((slot.empty ?? .noPending).message(snapshot)).font(.caption2).foregroundStyle(.tertiary)
-                .frame(maxWidth: .infinity, alignment: .leading)
             } else {
               Color.clear.accessibilityHidden(true)
             }

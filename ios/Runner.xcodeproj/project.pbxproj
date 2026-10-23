@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0E8D0C0931D36560FD3FA1D2 /* HabitWidgetConfiguredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384F54AB812BDD4EB96C01CF /* HabitWidgetConfiguredView.swift */; };
-		12FEF674DB40B497FF71D3F7 /* snapshot-v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 134B99C9BC1BB7D07BECDC8A /* snapshot-v1.json */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		1714DB54C40919133FDE8AD4 /* snapshot-v2.json in Resources */ = {isa = PBXBuildFile; fileRef = BCCE89FA0B5F29DC7A40897E /* snapshot-v2.json */; };
 		1A787A9525D98EEC72F0B39E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 365132A26ABED5B285F575F8 /* Localizable.strings */; };
@@ -92,7 +91,6 @@
 
 /* Begin PBXFileReference section */
 		08CB37C811EAD3334C09DFC1 /* HabitWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HabitWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		134B99C9BC1BB7D07BECDC8A /* snapshot-v1.json */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.json; name = "snapshot-v1.json"; path = "../../test/fixtures/habit_widget/snapshot-v1.json"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		14D1AFC844EB34C5687BA4EC /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -249,7 +247,6 @@
 			isa = PBXGroup;
 			children = (
 				D8BEDCF8E31C6A5CB9222A5F /* HabitWidgetIntegrationTests.swift */,
-				134B99C9BC1BB7D07BECDC8A /* snapshot-v1.json */,
 				BCCE89FA0B5F29DC7A40897E /* snapshot-v2.json */,
 			);
 			path = HabitWidgetIntegrationTests;
@@ -527,7 +524,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				12FEF674DB40B497FF71D3F7 /* snapshot-v1.json in Resources */,
 				1714DB54C40919133FDE8AD4 /* snapshot-v2.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
