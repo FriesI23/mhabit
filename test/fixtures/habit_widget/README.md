@@ -18,7 +18,20 @@ remain visible only when native shared hold metadata matches its record version.
 Archived capability flags describe fixed-slot actions; they do not grant automatic
 write permission. Dart remains authoritative inside the write transaction.
 
-`strings` is an optional application-language dictionary with native fallbacks.
+`recordState` is an optional display-only field: `unknown`, `unrecorded`,
+`notAchieved`, `achieved`, or `skipped`. Dart publishes it for every catalog item.
+Future or unknown-lifecycle items use `unknown`; deleted records are `unrecorded`.
+An effective `done/0` is evaluated by the existing domain goal calculation:
+normal zero is not achieved, while negative zero may be achieved (for example
+0–0 and 0–3 goals). Native code never infers record presence from progress.
+Older snapshots without this field decode as `unknown` and keep legacy display,
+capabilities, candidate selection, counters and holds. This field does not mark
+normal zero as processed or introduce an incomplete action.
+
+`locale` is the optional application language used by native resource lookup.
+Legacy `strings.locale` is a fallback when root `locale` is absent; other legacy
+string values no longer supply widget text. Missing native translations fall
+back through English resources to hardcoded English defaults.
 A stale civil day disables actions; it is not evidence of deletion or completion.
 Malformed data, unsupported versions, missing v2 fields, duplicate IDs and
 inconsistent counters fail closed and cannot confirm that a fixed habit was deleted.

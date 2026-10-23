@@ -5,3 +5,5 @@ HomeWidgetCompleted = "Teljesített";
 HomeWidgetSkipped = "Kihagyás";
 HomeWidgetToday = "Ma";
 HomeWidgetUndo = "VISSZA";
+HomeWidgetAchieved = "Teljesített";
+HomeWidgetNotAchieved = "Nem teljesített";

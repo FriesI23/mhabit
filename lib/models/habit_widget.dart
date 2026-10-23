@@ -70,6 +70,15 @@ final class HabitWidgetActionResponse {
 /// Supported lifecycle states exposed by the shared display projection.
 enum HabitWidgetHabitState { active, archived, unknown }
 
+/// Today's record result, independent of progress and action capabilities.
+enum HabitWidgetRecordState {
+  unknown,
+  unrecorded,
+  notAchieved,
+  achieved,
+  skipped,
+}
+
 /// An operation bound to the entity, date, and version that were displayed.
 final class HabitWidgetCommand {
   /// The requested record operation.
@@ -236,6 +245,9 @@ final class HabitWidgetHabit {
   /// Whether the projected daily target is complete.
   final bool completed;
 
+  /// Distinguishes missing records from recorded results, including valid zero.
+  final HabitWidgetRecordState recordState;
+
   /// Normalized progress between zero and one.
   final double progress;
 
@@ -272,6 +284,7 @@ final class HabitWidgetHabit {
     required this.name,
     required this.color,
     required this.completed,
+    required this.recordState,
     required this.progress,
     required this.canComplete,
     required this.canUndo,
@@ -290,6 +303,7 @@ final class HabitWidgetHabit {
     'name': name,
     'color': color,
     'completed': completed,
+    'recordState': recordState.name,
     'progress': progress,
     'canComplete': canComplete,
     'canUndo': canUndo,

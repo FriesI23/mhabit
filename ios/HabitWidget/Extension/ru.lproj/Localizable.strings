@@ -40,3 +40,5 @@ HomeWidgetSkipped = "Пропустить";
 HomeWidgetToday = "Сегодня";
 HomeWidgetUnavailable = "Привычка недоступна";
 HomeWidgetUndo = "UNDO";
+HomeWidgetAchieved = "Завершённые";
+HomeWidgetNotAchieved = "Незавершенно";

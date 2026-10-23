@@ -5,3 +5,5 @@ HomeWidgetCompleted = "Tamamlandı";
 HomeWidgetSkipped = "Geç";
 HomeWidgetToday = "Bugün";
 HomeWidgetUndo = "GERİ AL";
+HomeWidgetAchieved = "Tamamlandı";
+HomeWidgetNotAchieved = "Tamamlanmadı";

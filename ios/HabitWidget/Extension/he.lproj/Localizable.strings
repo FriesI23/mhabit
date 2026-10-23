@@ -5,3 +5,5 @@ HomeWidgetCompleted = "הושלם";
 HomeWidgetSkipped = "דילוג";
 HomeWidgetToday = "היום";
 HomeWidgetUndo = "ביטול";
+HomeWidgetAchieved = "הושלם";
+HomeWidgetNotAchieved = "לא הושלם";

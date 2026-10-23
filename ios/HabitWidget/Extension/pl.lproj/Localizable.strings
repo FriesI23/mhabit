@@ -4,3 +4,5 @@ HomeWidgetCompleted = "Ukończone";
 HomeWidgetSkipped = "Pomiń";
 HomeWidgetToday = "Dzisiaj";
 HomeWidgetUndo = "COFNIJ";
+HomeWidgetAchieved = "Ukończone";
+HomeWidgetNotAchieved = "Nieukończone";

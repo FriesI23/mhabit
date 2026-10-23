@@ -101,12 +101,18 @@ enum HabitWidgetHabitState: String, Decodable {
   case active, archived, unknown
 }
 
+/// Carries Dart's record-presence and goal result without recomputing targets.
+enum HabitWidgetRecordState: String, Decodable {
+  case unknown, unrecorded, notAchieved, achieved, skipped
+}
+
 /// Supplies validated identity, presentation data and action capabilities.
 struct HabitWidgetHabit: Decodable, Identifiable {
   let id: String
   let name: String
   let color: UInt32
   let completed: Bool
+  let recordState: HabitWidgetRecordState
   let progress: Double
   let canComplete: Bool
   let canUndo: Bool
@@ -120,7 +126,7 @@ struct HabitWidgetHabit: Decodable, Identifiable {
   let hasCatalogMetadata: Bool
 
   private enum CodingKeys: String, CodingKey {
-    case id, name, color, completed, progress, canComplete, canUndo, expectedRecord, sevenDays
+    case id, name, color, completed, recordState, progress, canComplete, canUndo, expectedRecord, sevenDays
     case state, startDate, started, skipped, automaticEligible
   }
 
@@ -131,6 +137,8 @@ struct HabitWidgetHabit: Decodable, Identifiable {
     name = try values.decode(String.self, forKey: .name)
     color = try values.decode(UInt32.self, forKey: .color)
     completed = try values.decode(Bool.self, forKey: .completed)
+    // Legacy snapshots cannot distinguish a valid zero from no daily record.
+    recordState = try values.decodeIfPresent(HabitWidgetRecordState.self, forKey: .recordState) ?? .unknown
     progress = try values.decode(Double.self, forKey: .progress)
     canComplete = try values.decode(Bool.self, forKey: .canComplete)
     canUndo = try values.decode(Bool.self, forKey: .canUndo)
@@ -161,6 +169,18 @@ struct HabitWidgetHabit: Decodable, Identifiable {
   /// Restricts progress to the range accepted by native visual controls.
   var boundedProgress: Double {
     progress.isFinite ? min(max(progress, 0), 1) : 0
+  }
+
+  /// Exposes an explicit record label only when the new projection is known.
+  func recordStatusText(_ snapshot: HabitWidgetSnapshot, bundle: Bundle = .main) -> String? {
+    guard started, state != .unknown else { return nil }
+    switch recordState {
+    case .unknown: return nil
+    case .unrecorded: return snapshot.text(.unrecorded, bundle: bundle)
+    case .notAchieved: return snapshot.text(.notAchieved, bundle: bundle)
+    case .achieved: return snapshot.text(.achieved, bundle: bundle)
+    case .skipped: return snapshot.text(.skipped, bundle: bundle)
+    }
   }
 }
 
@@ -209,6 +229,9 @@ enum HabitWidgetText: String, CaseIterable {
   case undo = "HomeWidgetUndo"
   case allDone = "HomeWidgetAllDone"
   case completed = "HomeWidgetCompleted"
+  case unrecorded = "HomeWidgetUnrecorded"
+  case notAchieved = "HomeWidgetNotAchieved"
+  case achieved = "HomeWidgetAchieved"
   case skipped = "HomeWidgetSkipped"
   case next = "HomeWidgetNext"
   case newDay = "HomeWidgetNewDay"
@@ -264,6 +287,9 @@ enum HabitWidgetText: String, CaseIterable {
     case .undo: return "UNDO"
     case .allDone: return "YOU MADE IT"
     case .completed: return "Completed"
+    case .unrecorded: return "Not recorded"
+    case .notAchieved: return "Not achieved"
+    case .achieved: return "Achieved"
     case .skipped: return "Skip"
     case .next: return "Next"
     case .newDay: return "New day"

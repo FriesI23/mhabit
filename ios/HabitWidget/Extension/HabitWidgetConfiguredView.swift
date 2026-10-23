@@ -34,8 +34,11 @@ struct HabitWidgetConfiguredView: View {
     VStack(alignment: .leading, spacing: 8) {
       WidgetHeading(title: snapshot.text(.today))
       if let slot = entry.slots.first, let habit = slot.habit {
-        Text(habit.name).font(.system(.headline, design: .rounded, weight: .bold))
-          .lineLimit(2).minimumScaleFactor(0.8).frame(maxWidth: .infinity, alignment: .leading)
+        VStack(alignment: .leading, spacing: 2) {
+          Text(habit.name).font(.system(.headline, design: .rounded, weight: .bold))
+            .lineLimit(2).minimumScaleFactor(0.8).frame(maxWidth: .infinity, alignment: .leading)
+          HabitWidgetRecordStatus(habit: habit, snapshot: snapshot, compact: false)
+        }
         Spacer(minLength: 0)
         HabitWeekGrid(habit: habit, labels: true)
         HabitWidgetConfiguredControls(habit: habit, snapshot: snapshot, source: slot.source,
@@ -68,6 +71,7 @@ struct HabitWidgetConfiguredView: View {
               RoundedRectangle(cornerRadius: 2).fill(habit.tint).frame(width: 3, height: 25).widgetAccentable()
               VStack(alignment: .leading, spacing: 2) {
                 Text(habit.name).font(.system(.subheadline, design: .rounded, weight: .semibold)).lineLimit(1)
+                HabitWidgetRecordStatus(habit: habit, snapshot: snapshot, compact: true)
               }.frame(maxWidth: .infinity, alignment: .leading)
               HabitWeekGrid(habit: habit, labels: false).frame(width: 89)
               HabitWidgetConfiguredControls(habit: habit, snapshot: snapshot, source: slot.source,
@@ -83,6 +87,21 @@ struct HabitWidgetConfiguredView: View {
           }.frame(maxWidth: .infinity, maxHeight: .infinity)
         }
       }
+    }
+  }
+}
+
+/// Keeps the daily result readable alongside actions and the seven-day grid.
+private struct HabitWidgetRecordStatus: View {
+  let habit: HabitWidgetHabit
+  let snapshot: HabitWidgetSnapshot
+  let compact: Bool
+
+  var body: some View {
+    if let status = habit.recordStatusText(snapshot) {
+      Text(status).font(compact ? .caption2 : .caption).foregroundStyle(.secondary)
+        .lineLimit(1).minimumScaleFactor(0.7)
+        .accessibilityLabel("\(habit.name): \(status)")
     }
   }
 }
@@ -125,7 +144,7 @@ private struct HabitWidgetConfiguredControls: View {
         button(.undo)
         if source == .automatic, hold != nil { button(.next) }
       }
-    } else {
+    } else if habit.recordStatusText(snapshot) == nil {
       Text(status).font(.system(size: compact ? 9 : 11, weight: .medium, design: .rounded))
         .foregroundStyle(.secondary).lineLimit(1).minimumScaleFactor(0.7)
         .frame(maxWidth: compact ? nil : .infinity).frame(width: compact ? 45 : nil, height: 28)
@@ -157,6 +176,7 @@ private struct HabitWidgetConfiguredControls: View {
       .background(habit.tint.opacity(0.14), in: RoundedRectangle(cornerRadius: 9)).contentShape(Rectangle())
     }
     .buttonStyle(.plain).accessibilityLabel("\(title): \(habit.name)")
+      .accessibilityValue(habit.recordStatusText(snapshot) ?? "")
       .accessibilityHint(action == .next ? snapshot.text(.nextHint) : "")
       .invalidatableContent()
   }

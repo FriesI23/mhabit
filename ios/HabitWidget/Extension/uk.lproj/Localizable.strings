@@ -5,3 +5,5 @@ HomeWidgetCompleted = "Виконано";
 HomeWidgetSkipped = "Пропустити";
 HomeWidgetToday = "Сьогодні";
 HomeWidgetUndo = "ВІДМІНИТИ";
+HomeWidgetAchieved = "Виконано";
+HomeWidgetNotAchieved = "Неповний";

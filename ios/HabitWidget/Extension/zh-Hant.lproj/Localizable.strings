@@ -1,4 +1,5 @@
 /* Widget text is maintained here. ARB mappings only fill missing keys. */
+HomeWidgetAchieved = "已達標";
 HomeWidgetAllDone = "全都完成囉！";
 HomeWidgetAutomatic = "自動";
 HomeWidgetComplete = "完成";
@@ -33,6 +34,7 @@ HomeWidgetNext = "下一項";
 HomeWidgetNextHint = "顯示下一項，不變更打卡記錄";
 HomeWidgetNoHabits = "沒有可用習慣";
 HomeWidgetNoPending = "沒有待辦習慣";
+HomeWidgetNotAchieved = "未達標";
 HomeWidgetNotStarted = "未開始";
 HomeWidgetOpenApp = "開啟桌上習慣以開始使用";
 HomeWidgetRefresh = "重新整理";
@@ -41,3 +43,4 @@ HomeWidgetSkipped = "跳過";
 HomeWidgetToday = "今日";
 HomeWidgetUnavailable = "習慣無法使用";
 HomeWidgetUndo = "復原";
+HomeWidgetUnrecorded = "未記錄";

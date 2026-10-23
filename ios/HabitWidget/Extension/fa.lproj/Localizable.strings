@@ -3,3 +3,5 @@ HomeWidgetCompleted = "به اتمام رسیده";
 HomeWidgetSkipped = "رد";
 HomeWidgetToday = "امروز";
 HomeWidgetUndo = "بازگشت";
+HomeWidgetAchieved = "به اتمام رسیده";
+HomeWidgetNotAchieved = "ناتکمیل";

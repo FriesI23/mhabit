@@ -279,6 +279,12 @@ HabitWidgetHabit _snapshotHabit(
         .getColor(habit.color, brightness: Brightness.light)!
         .toARGB32(),
     completed: completed,
+    recordState: _recordState(
+      habit,
+      record,
+      started: started,
+      completed: completed,
+    ),
     progress: _progress(habit, record),
     canComplete: writable && !completed && !skipped,
     canUndo: writable && record?.status == HabitRecordStatus.done,
@@ -303,6 +309,27 @@ HabitWidgetHabit _snapshotHabit(
         ),
     ],
   );
+}
+
+/// Projects record presence without inferring it from a normalized progress.
+HabitWidgetRecordState _recordState(
+  HabitSummaryData habit,
+  HabitSummaryRecord? record, {
+  required bool started,
+  required bool completed,
+}) {
+  if (!started || !(habit.isActived || habit.isArchived)) {
+    return HabitWidgetRecordState.unknown;
+  }
+  if (record == null) return HabitWidgetRecordState.unrecorded;
+  return switch (record.status) {
+    HabitRecordStatus.skip => HabitWidgetRecordState.skipped,
+    HabitRecordStatus.done =>
+      completed
+          ? HabitWidgetRecordState.achieved
+          : HabitWidgetRecordState.notAchieved,
+    _ => HabitWidgetRecordState.unknown,
+  };
 }
 
 /// Evaluates completion using the shared record-form calculation.

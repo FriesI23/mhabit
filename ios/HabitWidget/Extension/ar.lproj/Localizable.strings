@@ -5,3 +5,5 @@ HomeWidgetCompleted = "مكتملة";
 HomeWidgetSkipped = "تخطى";
 HomeWidgetToday = "اليوم";
 HomeWidgetUndo = "تراجع";
+HomeWidgetAchieved = "مكتملة";
+HomeWidgetNotAchieved = "غير مكتمل";

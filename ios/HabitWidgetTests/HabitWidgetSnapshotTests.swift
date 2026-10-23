@@ -139,6 +139,77 @@ final class HabitWidgetSnapshotTests: XCTestCase {
     XCTAssertEqual(snapshot.activeCount, 1)
   }
 
+  func testLegacyRecordStateDoesNotInferPresenceFromProgressOrCapabilities() throws {
+    let legacy = try decode(fixture(1))
+    XCTAssertEqual(legacy.catalog.first?.recordState, .unknown)
+    let snapshot = try decode(modified { json in
+      var catalog = json["catalog"] as! [[String: Any]]
+      for index in catalog.indices { catalog[index].removeValue(forKey: "recordState") }
+      catalog[0]["canUndo"] = true
+      json["catalog"] = catalog
+    })
+    XCTAssertTrue(snapshot.hasCompleteCatalog)
+    XCTAssertTrue(snapshot.catalog.allSatisfy { $0.recordState == .unknown })
+    XCTAssertNil(snapshot.catalog[0].recordStatusText(snapshot))
+    XCTAssertTrue(snapshot.catalog[0].canComplete)
+    XCTAssertTrue(snapshot.catalog[0].canUndo)
+    XCTAssertTrue(snapshot.catalog[0].automaticEligible)
+  }
+
+  func testRecordLabelsDistinguishMissingAndRecordedZeroWithoutChangingCandidates() throws {
+    let resources = try resourceBundle(["en": ["HomeWidgetUnrecorded": "Not recorded",
+      "HomeWidgetNotAchieved": "Not achieved", "HomeWidgetAchieved": "Achieved",
+      "HomeWidgetSkipped": "Skip"], "zh-Hans": ["HomeWidgetToday": "今天"]])
+    let now = try XCTUnwrap(HabitWidgetSnapshot.parseDate("2026-10-17T04:00:00Z"))
+    for (state, label, completed, skipped) in [
+      ("unrecorded", "Not recorded", false, false), ("notAchieved", "Not achieved", false, false),
+      ("achieved", "Achieved", true, false), ("skipped", "Skip", false, true),
+    ] {
+      let snapshot = try decode(modified { json in
+        var habit = (json["catalog"] as! [[String: Any]])[0]
+        habit["recordState"] = state
+        habit["completed"] = completed
+        habit["canComplete"] = !completed && !skipped
+        habit["canUndo"] = !skipped && state != "unrecorded"
+        habit["automaticEligible"] = !skipped
+        habit["skipped"] = skipped
+        // Presence and result come from Dart, never from progress=0.
+        habit["progress"] = 0.0
+        json["catalog"] = [habit]
+        json["activeCount"] = 1
+        json["completedCount"] = completed ? 1 : 0
+        json["locale"] = "zh"
+      })
+      XCTAssertEqual(snapshot.catalog[0].recordStatusText(snapshot, bundle: resources), label)
+      XCTAssertEqual(snapshot.catalog[0].recordState.rawValue, state)
+      let rows = HabitWidgetSlots.resolve(snapshot: snapshot, selections: [nil], count: 1, at: now)
+      XCTAssertEqual(rows[0].habit != nil, !completed && !skipped)
+      XCTAssertEqual(snapshot.completedCount, completed ? 1 : 0)
+    }
+  }
+
+  func testLifecycleLabelsTakePriorityAndMalformedRecordStatesAreRejected() throws {
+    let snapshot = try decode(modified { json in
+      var catalog = json["catalog"] as! [[String: Any]]
+      catalog[2]["recordState"] = "achieved"
+      catalog[3]["recordState"] = "achieved"
+      json["catalog"] = catalog
+    })
+    XCTAssertNil(snapshot.catalog[2].recordStatusText(snapshot))
+    XCTAssertNil(snapshot.catalog[3].recordStatusText(snapshot))
+    for invalid: Any in ["done", 42, ["achieved"]] {
+      XCTAssertThrowsError(try decode(modified { json in
+        var catalog = json["catalog"] as! [[String: Any]]
+        catalog[0]["recordState"] = invalid
+        json["catalog"] = catalog
+      }))
+    }
+    let empty = try resourceBundle([:])
+    XCTAssertEqual(HabitWidgetText.unrecorded.localized(bundle: empty), "Not recorded")
+    XCTAssertEqual(HabitWidgetText.notAchieved.localized(bundle: empty), "Not achieved")
+    XCTAssertEqual(HabitWidgetText.achieved.localized(bundle: empty), "Achieved")
+  }
+
   func testMalformedUnknownAndIncompleteSnapshotsCannotConfirmDeletion() throws {
     XCTAssertThrowsError(try decode(Data("not json".utf8)))
     XCTAssertThrowsError(try decode(modified { $0["version"] = 99 }))

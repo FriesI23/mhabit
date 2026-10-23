@@ -5,3 +5,5 @@ HomeWidgetCompleted = "Dokončené";
 HomeWidgetSkipped = "Přeskočit";
 HomeWidgetToday = "Dnes";
 HomeWidgetUndo = "ZPĚT";
+HomeWidgetAchieved = "Dokončené";
+HomeWidgetNotAchieved = "Nedokončeno";

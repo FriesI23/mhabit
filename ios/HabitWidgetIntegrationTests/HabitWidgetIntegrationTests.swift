@@ -153,6 +153,43 @@ final class HabitWidgetIntegrationTests: XCTestCase {
     }
   }
 
+  func testRecordStatesUseChineseScriptsAndTaiwanRegionAliasesInBothProducts() throws {
+    let application = try applicationBundle()
+    let states: [(HabitWidgetRecordState, HabitWidgetText)] = [
+      (.unrecorded, .unrecorded), (.notAchieved, .notAchieved), (.achieved, .achieved),
+    ]
+    for (locale, expected) in [
+      ("zh", ["未记录", "未达标", "已达标"]),
+      ("zh_CN", ["未记录", "未达标", "已达标"]),
+      ("zh_Hans_CN", ["未记录", "未达标", "已达标"]),
+      ("zh_TW", ["未記錄", "未達標", "已達標"]),
+      ("zh_tw", ["未記錄", "未達標", "已達標"]),
+      ("zh-Hant", ["未記錄", "未達標", "已達標"]),
+      ("zh_Hant_TW", ["未記錄", "未達標", "已達標"]),
+      ("en", ["Not recorded", "Not achieved", "Achieved"]),
+      ("xx_YY", ["Not recorded", "Not achieved", "Achieved"]),
+    ] {
+      for (index, state) in states.enumerated() {
+        var json = try XCTUnwrap(JSONSerialization.jsonObject(with: snapshotData()) as? [String: Any])
+        var habit = (json["catalog"] as! [[String: Any]])[0]
+        habit["recordState"] = state.0.rawValue
+        habit["completed"] = state.0 == .achieved
+        habit["canComplete"] = state.0 != .achieved
+        habit["canUndo"] = state.0 != .unrecorded
+        habit["progress"] = state.0 == .achieved ? 1.0 : 0.0
+        json["catalog"] = [habit]
+        json["completedCount"] = state.0 == .achieved ? 1 : 0
+        json["locale"] = locale
+        let snapshot = try JSONDecoder().decode(HabitWidgetSnapshot.self,
+          from: JSONSerialization.data(withJSONObject: json))
+        for bundle in [application, try widgetBundle(in: application)] {
+          XCTAssertEqual(snapshot.text(state.1, bundle: bundle), expected[index], locale)
+          XCTAssertEqual(snapshot.catalog[0].recordStatusText(snapshot, bundle: bundle), expected[index], locale)
+        }
+      }
+    }
+  }
+
   func testApplicationAndExtensionContainExtractedIntentMetadata() throws {
     let application = try applicationBundle()
     for bundle in [application, try widgetBundle(in: application)] {

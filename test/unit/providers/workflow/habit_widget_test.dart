@@ -108,6 +108,37 @@ void main() {
         habitId(id),
       ])).where((record) => record.recordDate == today.epochDay).firstOrNull;
 
+  Future<void> saveRecord(
+    String id,
+    num value, {
+    HabitRecordStatus status = HabitRecordStatus.done,
+    bool deleted = false,
+  }) async {
+    final existing = await current(id);
+    if (existing != null) {
+      await records.updateRecord(
+        existing.copyWith(
+          recordValue: value,
+          recordType: status.dbCode,
+          isDeleted: deleted ? 1 : 0,
+        ),
+      );
+      return;
+    }
+    final habit = (await habits.queryHabitByUUID(habitId(id)))!;
+    await records.insertNewRecord(
+      RecordDBCell.build(
+        parentId: habit.id,
+        parentUUID: habit.uuid,
+        uuid: habitId('$id-record'),
+        recordDate: today.epochDay,
+        recordType: status.dbCode,
+        recordValue: value,
+        isDeleted: deleted ? 1 : 0,
+      ),
+    );
+  }
+
   Future<String> revision(String id) async {
     final record = await current(id);
     if (record == null) return habitWidgetRecordRevision(null, sync: null);
@@ -359,6 +390,157 @@ void main() {
       expect(
         publisher.snapshot!.catalog.every((habit) => habit.completed),
         isTrue,
+      );
+    },
+  );
+
+  for (final (name, type, goal, extra, values) in [
+    ('normal', HabitType.normal, 10, 10, {0: false, 4: false, 10: true}),
+    ('negative-zero', HabitType.negative, 0, 0, {0: true, 1: false}),
+    (
+      'negative-range',
+      HabitType.negative,
+      0,
+      3,
+      {0: true, 2: true, 3: true, 4: false},
+    ),
+    (
+      'negative-minimum',
+      HabitType.negative,
+      2,
+      3,
+      {0: false, 1: false, 2: true, 3: true, 4: false},
+    ),
+  ]) {
+    test('$name projects record presence and domain goal boundaries', () async {
+      await addHabit(name, type: type, goal: goal, extraGoal: extra);
+      var snapshot = await service.publishSnapshot();
+      expect(
+        snapshot.catalog.single.recordState,
+        HabitWidgetRecordState.unrecorded,
+      );
+      expect(snapshot.catalog.single.progress, 0);
+      for (final entry in values.entries) {
+        await saveRecord(name, entry.key);
+        final version = await revision(name);
+        snapshot = await service.publishSnapshot();
+        final habit = snapshot.catalog.single;
+        expect(
+          habit.recordState,
+          entry.value
+              ? HabitWidgetRecordState.achieved
+              : HabitWidgetRecordState.notAchieved,
+          reason: 'value=${entry.key}',
+        );
+        expect(habit.toJson()['recordState'], habit.recordState.name);
+        expect(habit.completed, entry.value);
+        expect(snapshot.completedCount, entry.value ? 1 : 0);
+        expect(habit.canComplete, !entry.value);
+        expect(habit.canUndo, isTrue);
+        // Stage 2 must keep even a normal done/0 in the old candidate flow.
+        expect(habit.automaticEligible, isTrue);
+        expect(habit.expectedRecord, version);
+        expect(await revision(name), version);
+        expect(habit.toJson(), isNot(contains('automaticPending')));
+        expect(habit.toJson(), isNot(contains('canMarkIncomplete')));
+        if (type == HabitType.negative) {
+          expect(habit.progress, entry.value ? 1 : 0);
+        }
+      }
+      await saveRecord(name, 0, deleted: true);
+      snapshot = await service.publishSnapshot();
+      expect(
+        snapshot.catalog.single.recordState,
+        HabitWidgetRecordState.unrecorded,
+      );
+      expect(snapshot.catalog.single.canUndo, isFalse);
+      await saveRecord(name, 0, status: HabitRecordStatus.skip);
+      snapshot = await service.publishSnapshot();
+      expect(
+        snapshot.catalog.single.recordState,
+        HabitWidgetRecordState.skipped,
+      );
+      expect(snapshot.catalog.single.automaticEligible, isFalse);
+      expect(snapshot.catalog.single.canComplete, isFalse);
+      expect(snapshot.catalog.single.canUndo, isFalse);
+      await saveRecord(name, 0, status: HabitRecordStatus.unknown);
+      snapshot = await service.publishSnapshot();
+      expect(
+        snapshot.catalog.single.recordState,
+        HabitWidgetRecordState.unknown,
+      );
+    });
+  }
+
+  test(
+    'record states respect lifecycle and undo preserves missing-record semantics',
+    () async {
+      await addHabit(
+        'archived-negative',
+        type: HabitType.negative,
+        goal: 0,
+        extraGoal: 3,
+        status: HabitStatus.archived,
+      );
+      await addHabit(
+        'future-negative',
+        type: HabitType.negative,
+        goal: 0,
+        extraGoal: 3,
+        start: today.addDays(1),
+      );
+      await addHabit(
+        'unknown-negative',
+        type: HabitType.negative,
+        goal: 0,
+        extraGoal: 3,
+        status: HabitStatus.unknown,
+      );
+      for (final name in [
+        'archived-negative',
+        'future-negative',
+        'unknown-negative',
+      ]) {
+        await saveRecord(name, 0);
+      }
+      final snapshot = await service.publishSnapshot();
+      final byName = {for (final habit in snapshot.catalog) habit.name: habit};
+      expect(
+        byName['archived-negative']!.recordState,
+        HabitWidgetRecordState.achieved,
+      );
+      expect(byName['archived-negative']!.canUndo, isTrue);
+      expect(byName['archived-negative']!.automaticEligible, isFalse);
+      expect(
+        byName['future-negative']!.recordState,
+        HabitWidgetRecordState.unknown,
+      );
+      expect(byName['future-negative']!.canComplete, isFalse);
+      expect(byName['future-negative']!.canUndo, isFalse);
+      expect(
+        byName['unknown-negative']!.recordState,
+        HabitWidgetRecordState.unknown,
+      );
+      expect(byName['unknown-negative']!.canComplete, isFalse);
+      expect(byName['unknown-negative']!.canUndo, isFalse);
+      expect(snapshot.activeCount, 0);
+      expect(snapshot.completedCount, 0);
+      expect(
+        await service.perform(
+          await command(
+            'archived-negative',
+            HabitWidgetAction.undo,
+            source: HabitWidgetSource.fixed,
+          ),
+        ),
+        _hasOutcome(HabitWidgetActionResult.applied),
+      );
+      expect((await current('archived-negative'))!.deleted, isTrue);
+      expect(
+        publisher.snapshot!.catalog
+            .firstWhere((habit) => habit.name == 'archived-negative')
+            .recordState,
+        HabitWidgetRecordState.unrecorded,
       );
     },
   );

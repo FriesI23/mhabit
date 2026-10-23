@@ -4,7 +4,7 @@
   "day": "2026-10-17",
   "nextDayAt": "2026-10-17T16:00:00.000Z",
   "strings": {
-    "today": "Сегодня"
+    "today": "\u0421\u0435\u0433\u043e\u0434\u043d\u044f"
   },
   "catalog": [
     {
@@ -50,7 +50,8 @@
       "startDate": "2026-10-07",
       "started": true,
       "skipped": false,
-      "automaticEligible": true
+      "automaticEligible": true,
+      "recordState": "unrecorded"
     },
     {
       "id": "476c26e0-4d5b-509e-a378-6c6306c0e256",
@@ -95,7 +96,8 @@
       "startDate": "2026-10-07",
       "started": true,
       "skipped": false,
-      "automaticEligible": false
+      "automaticEligible": false,
+      "recordState": "unrecorded"
     },
     {
       "id": "646425ce-3047-5817-b7e0-541dd03ead49",
@@ -140,7 +142,8 @@
       "startDate": "2026-10-18",
       "started": false,
       "skipped": false,
-      "automaticEligible": false
+      "automaticEligible": false,
+      "recordState": "unknown"
     },
     {
       "id": "2ba14746-ab93-5c6b-953a-2191c0898918",
@@ -185,7 +188,8 @@
       "startDate": "2026-10-07",
       "started": true,
       "skipped": false,
-      "automaticEligible": false
+      "automaticEligible": false,
+      "recordState": "unknown"
     }
   ],
   "activeCount": 1,

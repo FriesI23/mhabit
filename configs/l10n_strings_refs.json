@@ -24,6 +24,16 @@
             "key": "HomeWidgetCompleted"
         }
     },
+    "habitDisplay_displayFilter_completed": {
+        "strings": {
+            "key": "HomeWidgetAchieved"
+        }
+    },
+    "batchCheckin_status_zero_text": {
+        "strings": {
+            "key": "HomeWidgetNotAchieved"
+        }
+    },
     "batchCheckin_status_skip_text": {
         "strings": {
             "key": "HomeWidgetSkipped"

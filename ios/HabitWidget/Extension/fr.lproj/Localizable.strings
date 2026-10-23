@@ -5,3 +5,5 @@ HomeWidgetCompleted = "Complétées";
 HomeWidgetSkipped = "Passer";
 HomeWidgetToday = "Aujourd’hui";
 HomeWidgetUndo = "ANNULER";
+HomeWidgetAchieved = "Complétées";
+HomeWidgetNotAchieved = "Incomplet";

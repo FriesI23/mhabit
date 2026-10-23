@@ -5,3 +5,5 @@ HomeWidgetCompleted = "Đã hoàn thành";
 HomeWidgetSkipped = "Bỏ qua";
 HomeWidgetToday = "Hôm nay";
 HomeWidgetUndo = "Hoàn tác";
+HomeWidgetAchieved = "Đã hoàn thành";
+HomeWidgetNotAchieved = "Chưa hoàn thành";

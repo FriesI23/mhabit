@@ -1,4 +1,5 @@
 /* Widget text is maintained here. ARB mappings only fill missing keys. */
+HomeWidgetAchieved = "Achieved";
 HomeWidgetAllDone = "YOU MADE IT";
 HomeWidgetAutomatic = "Automatic";
 HomeWidgetComplete = "Done";
@@ -37,6 +38,7 @@ HomeWidgetNext = "Next";
 HomeWidgetNextHint = "Show the next habit without changing records";
 HomeWidgetNoHabits = "No available habits";
 HomeWidgetNoPending = "No pending habits";
+HomeWidgetNotAchieved = "Not achieved";
 HomeWidgetNotStarted = "Not started";
 HomeWidgetOpenApp = "Open Table Habit to get started";
 HomeWidgetRefresh = "Refresh";
@@ -45,3 +47,4 @@ HomeWidgetSkipped = "Skip";
 HomeWidgetToday = "Today";
 HomeWidgetUnavailable = "Unavailable habit";
 HomeWidgetUndo = "UNDO";
+HomeWidgetUnrecorded = "Not recorded";
