@@ -7,3 +7,4 @@ HomeWidgetToday = "Dnes";
 HomeWidgetUndo = "ZPĚT";
 HomeWidgetAchieved = "Dokončené";
 HomeWidgetNotAchieved = "Nedokončeno";
+HomeWidgetIncomplete = "zrušit dokončení";

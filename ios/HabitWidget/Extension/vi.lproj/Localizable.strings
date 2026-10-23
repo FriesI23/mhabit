@@ -7,3 +7,4 @@ HomeWidgetToday = "Hôm nay";
 HomeWidgetUndo = "Hoàn tác";
 HomeWidgetAchieved = "Đã hoàn thành";
 HomeWidgetNotAchieved = "Chưa hoàn thành";
+HomeWidgetIncomplete = "hoàn tác";

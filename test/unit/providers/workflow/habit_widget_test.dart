@@ -435,14 +435,20 @@ void main() {
         expect(habit.toJson()['recordState'], habit.recordState.name);
         expect(habit.completed, entry.value);
         expect(snapshot.completedCount, entry.value ? 1 : 0);
-        expect(habit.canComplete, !entry.value);
+        final markedIncomplete = type == HabitType.normal && entry.key == 0;
+        expect(habit.canComplete, !entry.value && !markedIncomplete);
+        expect(
+          habit.canMarkIncomplete,
+          type == HabitType.normal && !entry.value && !markedIncomplete,
+        );
+        expect(habit.automaticPending, !entry.value && !markedIncomplete);
         expect(habit.canUndo, isTrue);
-        // Stage 2 must keep even a normal done/0 in the old candidate flow.
+        // Stable eligibility remains independent of today's processed result.
         expect(habit.automaticEligible, isTrue);
         expect(habit.expectedRecord, version);
         expect(await revision(name), version);
-        expect(habit.toJson(), isNot(contains('automaticPending')));
-        expect(habit.toJson(), isNot(contains('canMarkIncomplete')));
+        expect(habit.toJson()['automaticPending'], habit.automaticPending);
+        expect(habit.toJson()['canMarkIncomplete'], habit.canMarkIncomplete);
         if (type == HabitType.negative) {
           expect(habit.progress, entry.value ? 1 : 0);
         }
@@ -937,6 +943,191 @@ BEGIN SELECT RAISE(ABORT, 'test sync failure'); END
       expect(byName['future']!.started, isFalse);
       expect(byName['future']!.canComplete, isFalse);
       expect(byName['future']!.canUndo, isFalse);
+    },
+  );
+
+  test(
+    'incomplete writes zero, preserves metadata, and requires undo before replacing it',
+    () async {
+      await addHabit('incomplete', goal: 10);
+      await saveRecord('incomplete', 4);
+      await records.updateRecord(
+        (await current(
+          'incomplete',
+        ))!.copyWith(reason: 'Keep note', syncExtras: '{"futureField":true}'),
+      );
+      final original = (await current('incomplete'))!;
+      final request = await command(
+        'incomplete',
+        HabitWidgetAction.markIncomplete,
+      );
+      final response = await service.perform(request);
+      expect(response.outcome, HabitWidgetActionResult.applied);
+      final saved = (await current('incomplete'))!;
+      expect(saved.uuid, original.uuid);
+      expect(saved.recordValue, 0);
+      expect(saved.recordType, HabitRecordStatus.done.dbCode);
+      expect(saved.deleted, isFalse);
+      expect(saved.reason, original.reason);
+      expect(saved.syncExtras, original.syncExtras);
+      final projected = publisher.snapshot!.catalog.single;
+      expect(projected.recordState, HabitWidgetRecordState.notAchieved);
+      expect(projected.automaticEligible, isTrue);
+      expect(projected.automaticPending, isFalse);
+      expect(projected.canComplete, isFalse);
+      expect(projected.canMarkIncomplete, isFalse);
+      expect(projected.canUndo, isTrue);
+      expect(publisher.snapshot!.completedCount, 0);
+      expect(response.recordVersion, await revision('incomplete'));
+      expect(
+        (await service.perform(request)).outcome,
+        HabitWidgetActionResult.stale,
+      );
+      final version = await revision('incomplete');
+      for (final action in [
+        HabitWidgetAction.markIncomplete,
+        HabitWidgetAction.complete,
+      ]) {
+        expect(
+          (await service.perform(await command('incomplete', action))).outcome,
+          HabitWidgetActionResult.unchanged,
+        );
+        expect(await revision('incomplete'), version);
+      }
+      expect(
+        (await service.perform(
+          await command('incomplete', HabitWidgetAction.undo),
+        )).outcome,
+        HabitWidgetActionResult.applied,
+      );
+      expect((await current('incomplete'))!.deleted, isTrue);
+      expect(publisher.snapshot!.catalog.single.automaticPending, isTrue);
+      expect(
+        (await service.perform(
+          await command('incomplete', HabitWidgetAction.markIncomplete),
+        )).outcome,
+        HabitWidgetActionResult.applied,
+      );
+      expect((await current('incomplete'))!.uuid, original.uuid);
+      expect((await current('incomplete'))!.recordValue, 0);
+      expect((await current('incomplete'))!.deleted, isFalse);
+    },
+  );
+
+  test(
+    'incomplete permissions and existing results are checked inside the transaction',
+    () async {
+      await addHabit('new-zero', goal: 10);
+      await addHabit('archived-zero', goal: 10, status: HabitStatus.archived);
+      await addHabit(
+        'negative-zero',
+        type: HabitType.negative,
+        goal: 0,
+        extraGoal: 3,
+      );
+      await addHabit('future-zero', start: today.addDays(1));
+      await addHabit('deleted-zero', status: HabitStatus.deleted);
+      await addHabit('unknown-zero', status: HabitStatus.unknown);
+      await addHabit('skip-zero');
+      await addHabit('done-zero');
+      await saveRecord('skip-zero', 0, status: HabitRecordStatus.skip);
+      await saveRecord('done-zero', 1);
+      for (final name in ['new-zero', 'archived-zero']) {
+        final source = name == 'archived-zero'
+            ? HabitWidgetSource.fixed
+            : HabitWidgetSource.automatic;
+        expect(
+          (await service.perform(
+            await command(
+              name,
+              HabitWidgetAction.markIncomplete,
+              source: source,
+            ),
+          )).outcome,
+          HabitWidgetActionResult.applied,
+        );
+        expect((await current(name))!.recordValue, 0);
+        expect(
+          publisher.snapshot!.catalog.firstWhere((h) => h.name == name).canUndo,
+          isTrue,
+        );
+      }
+      for (final name in [
+        'archived-zero',
+        'future-zero',
+        'deleted-zero',
+        'unknown-zero',
+        'missing-zero',
+      ]) {
+        expect(
+          (await service.perform(
+            await command(name, HabitWidgetAction.markIncomplete),
+          )).outcome,
+          HabitWidgetActionResult.stale,
+        );
+      }
+      expect(
+        (await service.perform(
+          await command('negative-zero', HabitWidgetAction.markIncomplete),
+        )).outcome,
+        HabitWidgetActionResult.invalid,
+      );
+      expect(await current('negative-zero'), isNull);
+      for (final name in ['skip-zero', 'done-zero']) {
+        final version = await revision(name);
+        expect(
+          (await service.perform(
+            await command(name, HabitWidgetAction.markIncomplete),
+          )).outcome,
+          HabitWidgetActionResult.unchanged,
+        );
+        expect(await revision(name), version);
+      }
+      expect(manager.reminderRefreshCount, 2);
+    },
+  );
+
+  test(
+    'incomplete commit survives publication failure and concurrent duplicates commit once',
+    () async {
+      await addHabit('zero-race', goal: 10);
+      final request = await command(
+        'zero-race',
+        HabitWidgetAction.markIncomplete,
+      );
+      final other = HabitWidgetService(
+        database: helper.local,
+        habitsAccess: manager,
+        publisher: publisher,
+        now: () => now,
+      );
+      publisher.failPublish = true;
+      final results = await Future.wait([
+        service.perform(request),
+        other.perform(request),
+      ]);
+      expect(
+        results.map((r) => r.outcome),
+        unorderedEquals([
+          HabitWidgetActionResult.applied,
+          HabitWidgetActionResult.stale,
+        ]),
+      );
+      final applied = results.singleWhere(
+        (r) => r.outcome == HabitWidgetActionResult.applied,
+      );
+      expect(applied.snapshotPublished, isFalse);
+      expect(applied.recordVersion, await revision('zero-race'));
+      expect(applied.committedAt, isNotNull);
+      expect(await recordDirty((await current('zero-race'))!.uuid!), 1);
+      publisher.failPublish = false;
+      expect(
+        (await service.perform(
+          await command('zero-race', HabitWidgetAction.markIncomplete),
+        )).outcome,
+        HabitWidgetActionResult.unchanged,
+      );
+      expect(publisher.snapshot!.catalog.single.automaticPending, isFalse);
     },
   );
 

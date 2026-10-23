@@ -49,7 +49,7 @@ enum HabitWidgetSlots {
     }
     var used = Set(rows.compactMap { $0.habit?.id })
     let candidates = snapshot.catalog.filter {
-      $0.automaticEligible && (!$0.completed || retainedCompletions.contains($0.id))
+      $0.automaticEligible && ($0.automaticPending || retainedCompletions.contains($0.id))
     }
     while rows.count < count {
       let habit = candidates.first { !used.contains($0.id) }

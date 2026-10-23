@@ -9,7 +9,7 @@ import 'package:pigeon/pigeon.dart';
     dartPackageName: 'mhabit',
   ),
 )
-enum HabitWidgetOperation { complete, undo, refresh }
+enum HabitWidgetOperation { complete, undo, refresh, markIncomplete }
 
 /// Transport outcomes; domain rules and persistence stay in the Dart workflow.
 enum HabitWidgetResult { applied, unchanged, stale, invalid, failed }

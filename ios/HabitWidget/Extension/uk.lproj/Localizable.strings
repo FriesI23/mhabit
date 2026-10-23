@@ -7,3 +7,4 @@ HomeWidgetToday = "Сьогодні";
 HomeWidgetUndo = "ВІДМІНИТИ";
 HomeWidgetAchieved = "Виконано";
 HomeWidgetNotAchieved = "Неповний";
+HomeWidgetIncomplete = "скасовано";

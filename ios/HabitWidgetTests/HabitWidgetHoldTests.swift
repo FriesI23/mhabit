@@ -25,6 +25,7 @@ final class HabitWidgetHoldTests: XCTestCase {
     let url = try XCTUnwrap(Bundle(for: Self.self).url(forResource: "snapshot-v2", withExtension: "json"))
     var json = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any])
     var habit = (json["catalog"] as! [[String: Any]])[0]
+    habit["automaticPending"] = false; habit["canMarkIncomplete"] = false; habit["recordState"] = "achieved"
     habit["completed"] = true; habit["progress"] = 1.0
     habit["canComplete"] = false; habit["canUndo"] = true; habit["expectedRecord"] = version
     json["catalog"] = [habit]; json["activeCount"] = 1; json["completedCount"] = 1
@@ -36,15 +37,103 @@ final class HabitWidgetHoldTests: XCTestCase {
     HabitWidgetHoldEvent(habitID: hold.habitID, day: hold.day, recordVersion: hold.recordVersion, identity: identity ?? hold.identity)
   }
 
+  private func incompleteSnapshot(version: String = "zero") throws -> HabitWidgetSnapshot {
+    try snapshot(version: version) { json in
+      var habit = (json["catalog"] as! [[String: Any]])[0]
+      habit["completed"] = false; habit["recordState"] = "notAchieved"; habit["progress"] = 0.0
+      habit["automaticPending"] = false; habit["canMarkIncomplete"] = false
+      json["catalog"] = [habit]; json["completedCount"] = 0
+    }
+  }
+
+  @MainActor
+  func testV1ReadPreservesIdentityAndOnlyTheNextMutationUpgradesToV2() throws {
+    let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
+    let snapshot = try snapshot(); let id = snapshot.catalog[0].id
+    let original = try XCTUnwrap(store.recorded(habitID: id, day: snapshot.day, source: .automatic,
+      commit: commit("v1"), at: now, identity: identity1))
+    var legacy = try XCTUnwrap(JSONSerialization.jsonObject(with: XCTUnwrap(storage.data)) as? [String: Any])
+    legacy["version"] = 1
+    var rows = legacy["holds"] as! [[String: Any]]
+    rows[0].removeValue(forKey: "result"); legacy["holds"] = rows
+    storage.data = try JSONSerialization.data(withJSONObject: legacy)
+    let before = storage.data
+    let reader = HabitWidgetHoldStore(storage: storage)
+    XCTAssertEqual(reader.validHolds(snapshot: snapshot, at: now)[id], original)
+    XCTAssertEqual(storage.data, before)
+    XCTAssertFalse(try reader.reconcile(snapshot: snapshot, at: now))
+    XCTAssertEqual(storage.writes, 1)
+    try reader.recorded(habitID: secondID, day: snapshot.day, source: .automatic,
+      commit: commit("zero"), at: now, identity: identity2, result: .incomplete)
+    let upgraded = try XCTUnwrap(JSONSerialization.jsonObject(with: XCTUnwrap(storage.data)) as? [String: Any])
+    XCTAssertEqual(upgraded["version"] as? Int, 2)
+    let stored = upgraded["holds"] as! [[String: Any]]
+    XCTAssertEqual(stored.first { $0["habitID"] as? String == id }?["identity"] as? String, identity1)
+    XCTAssertEqual(Set(stored.compactMap { $0["result"] as? String }), ["completed", "incomplete"])
+  }
+
+  @MainActor
+  func testIncompleteHoldSharesAcrossReadersAndNextDoesNotReintroduceProcessedZero() throws {
+    let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
+    let snapshot = try incompleteSnapshot(); let id = snapshot.catalog[0].id
+    let hold = try XCTUnwrap(store.recorded(habitID: id, day: snapshot.day, source: .automatic,
+      commit: commit("zero"), at: now, identity: identity1, result: .incomplete))
+    let reader = HabitWidgetHoldStore(storage: storage)
+    let retained = reader.validHolds(snapshot: snapshot, at: now)
+    XCTAssertEqual(retained[id]?.result, .incomplete)
+    for count in [1, 3, 6] {
+      XCTAssertEqual(HabitWidgetSlots.resolve(snapshot: snapshot, selections: [], count: count,
+        at: now, retainedCompletions: Set(retained.keys)).first?.habit?.id, id)
+    }
+    XCTAssertFalse(try reader.advance(event(hold, identity: identity2), snapshot: snapshot, at: now))
+    storage.fail = true
+    XCTAssertThrowsError(try reader.advance(event(hold), snapshot: snapshot, at: now))
+    XCTAssertEqual(reader.validHolds(snapshot: snapshot, at: now)[id], hold)
+    storage.fail = false
+    XCTAssertTrue(try reader.advance(event(hold), snapshot: snapshot, at: now))
+    XCTAssertTrue(store.validHolds(snapshot: snapshot, at: now).isEmpty)
+    XCTAssertEqual(HabitWidgetSlots.resolve(snapshot: snapshot, selections: [], count: 1, at: now)[0].empty, .noPending)
+    let fixed = HabitWidgetSlots.resolve(snapshot: snapshot, selections: [id], count: 1, at: now)[0].habit
+    XCTAssertTrue(try XCTUnwrap(fixed).canUndo)
+    XCTAssertFalse(try XCTUnwrap(fixed).canComplete)
+    XCTAssertEqual(snapshot.completedCount, 0)
+  }
+
+  @MainActor
+  func testMixedResultsAdvanceOneIdentityAndExternalChangesInvalidateOnlyTheirOwnHold() throws {
+    let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
+    let snapshot = try snapshot { json in
+      let first = (json["catalog"] as! [[String: Any]])[0]
+      var second = first
+      second["id"] = self.secondID; second["expectedRecord"] = "zero"; second["completed"] = false
+      second["recordState"] = "notAchieved"; second["progress"] = 0.0
+      json["catalog"] = [first, second]; json["activeCount"] = 2
+    }
+    let id = snapshot.catalog[0].id
+    let completed = try XCTUnwrap(store.recorded(habitID: id, day: snapshot.day, source: .automatic,
+      commit: commit("v1"), at: now, identity: identity1))
+    let incomplete = try XCTUnwrap(store.recorded(habitID: secondID, day: snapshot.day, source: .automatic,
+      commit: commit("zero"), at: now, identity: identity2, result: .incomplete))
+    XCTAssertEqual(store.validHolds(snapshot: snapshot, at: now).count, 2)
+    XCTAssertFalse(try store.undone(habitID: secondID, day: snapshot.day, previousVersion: "zero",
+      identity: identity1, commit: commit("undo")))
+    XCTAssertTrue(try store.advance(event(completed), snapshot: snapshot, at: now))
+    XCTAssertEqual(store.validHolds(snapshot: snapshot, at: now), [secondID: incomplete])
+    let external = try incompleteSnapshot(version: "external")
+    XCTAssertTrue(try store.reconcile(snapshot: external, at: now))
+    XCTAssertTrue(store.validHolds(snapshot: snapshot, at: now).isEmpty)
+    XCTAssertFalse(try store.advance(event(incomplete), snapshot: snapshot, at: now))
+  }
+
   @MainActor
   func testOnlyAppliedAutomaticCompletionCreatesHoldAndDuplicateCannotRenew() throws {
     let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
     let snapshot = try snapshot(); let id = snapshot.catalog[0].id
-    XCTAssertNil(try store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: nil, at: now))
-    XCTAssertNil(try store.completed(habitID: id, day: snapshot.day, source: .fixed, commit: commit("v1"), at: now))
+    XCTAssertNil(try store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: nil, at: now))
+    XCTAssertNil(try store.recorded(habitID: id, day: snapshot.day, source: .fixed, commit: commit("v1"), at: now))
     XCTAssertEqual(storage.writes, 0)
-    let first = try XCTUnwrap(store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now, identity: identity1))
-    let repeated = try store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now.addingTimeInterval(60), identity: identity2)
+    let first = try XCTUnwrap(store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now, identity: identity1))
+    let repeated = try store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now.addingTimeInterval(60), identity: identity2)
     XCTAssertEqual(repeated, first)
     XCTAssertEqual(storage.writes, 1)
     let restored = HabitWidgetHoldStore(storage: storage)
@@ -55,11 +144,11 @@ final class HabitWidgetHoldTests: XCTestCase {
   func testUndoRedoAndOldIdentityEventsCannotConsumeNewRound() throws {
     let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
     let snapshot = try snapshot(); let id = snapshot.catalog[0].id
-    let first = try XCTUnwrap(store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now, identity: identity1))
+    let first = try XCTUnwrap(store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now, identity: identity1))
     XCTAssertFalse(try store.undone(habitID: id, day: snapshot.day, previousVersion: "v1", identity: identity2, commit: commit("undo")))
     XCTAssertFalse(try store.undone(habitID: id, day: snapshot.day, previousVersion: "v1", identity: identity1, commit: nil))
     XCTAssertTrue(try store.undone(habitID: id, day: snapshot.day, previousVersion: "v1", identity: identity1, commit: commit("undo")))
-    let next = try XCTUnwrap(store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v2"), at: now, identity: identity2))
+    let next = try XCTUnwrap(store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v2"), at: now, identity: identity2))
     let updated = try self.snapshot(version: "v2")
     XCTAssertFalse(try store.advance(event(first), snapshot: updated, at: now))
     XCTAssertFalse(try store.advance(event(next, identity: identity1), snapshot: updated, at: now))
@@ -79,8 +168,8 @@ final class HabitWidgetHoldTests: XCTestCase {
       json["activeCount"] = 2; json["completedCount"] = 2
     }
     let firstID = snapshot.catalog[0].id
-    let first = try XCTUnwrap(store.completed(habitID: firstID, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
-    try store.completed(habitID: secondID, day: snapshot.day, source: .automatic, commit: commit("v2"), at: now)
+    let first = try XCTUnwrap(store.recorded(habitID: firstID, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
+    try store.recorded(habitID: secondID, day: snapshot.day, source: .automatic, commit: commit("v2"), at: now)
     let shared = HabitWidgetHoldStore(storage: storage)
     let before = shared.validHolds(snapshot: snapshot, at: now)
     XCTAssertEqual(before.count, 2)
@@ -96,7 +185,7 @@ final class HabitWidgetHoldTests: XCTestCase {
   func testForegroundPublicationNeverRenewsAndExternalChangeInvalidatesPermanently() throws {
     let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
     let snapshot = try snapshot(); let id = snapshot.catalog[0].id
-    let hold = try XCTUnwrap(store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
+    let hold = try XCTUnwrap(store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
     let bytes = storage.data
     XCTAssertFalse(try store.reconcile(snapshot: snapshot, at: now.addingTimeInterval(10)))
     XCTAssertEqual(bytes, storage.data)
@@ -114,7 +203,7 @@ final class HabitWidgetHoldTests: XCTestCase {
     let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
     let snapshot = try snapshot(); let id = snapshot.catalog[0].id
     let committed = try XCTUnwrap(HabitWidgetCommit(recordVersion: "v1", committedAt: "2026-10-17T04:00:00.000900Z"))
-    try store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: committed, at: now, identity: identity1)
+    try store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: committed, at: now, identity: identity1)
     let older = try self.snapshot(version: "old") { $0["generatedAt"] = "2026-10-17T04:00:00.000100Z" }
     XCTAssertFalse(try store.reconcile(snapshot: older, at: now))
     XCTAssertEqual(store.validHolds(snapshot: snapshot, at: now)[id]?.identity, identity1)
@@ -124,8 +213,8 @@ final class HabitWidgetHoldTests: XCTestCase {
   func testAppliedFixedCompletionInvalidatesAnOlderAutomaticVersionWithoutCreatingHold() throws {
     let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
     let snapshot = try snapshot(); let id = snapshot.catalog[0].id
-    try store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now)
-    XCTAssertNil(try store.completed(habitID: id, day: snapshot.day, source: .fixed, commit: commit("v2"), at: now))
+    try store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now)
+    XCTAssertNil(try store.recorded(habitID: id, day: snapshot.day, source: .fixed, commit: commit("v2"), at: now))
     XCTAssertTrue(store.validHolds(snapshot: snapshot, at: now).isEmpty)
     XCTAssertTrue(store.validHolds(snapshot: try self.snapshot(version: "v2"), at: now).isEmpty)
   }
@@ -134,7 +223,7 @@ final class HabitWidgetHoldTests: XCTestCase {
   func testCurrentCompleteDeletionAndCrossDayInvalidateButLegacyMissingDoesNot() throws {
     let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
     let snapshot = try snapshot(); let id = snapshot.catalog[0].id
-    let hold = try XCTUnwrap(store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
+    let hold = try XCTUnwrap(store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
     let empty = try self.snapshot { $0["catalog"] = []; $0["activeCount"] = 0; $0["completedCount"] = 0 }
     let legacyURL = try XCTUnwrap(Bundle(for: Self.self).url(forResource: "snapshot-v1", withExtension: "json"))
     var legacyJSON = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: legacyURL)) as? [String: Any])
@@ -142,7 +231,7 @@ final class HabitWidgetHoldTests: XCTestCase {
     let legacy = try JSONDecoder().decode(HabitWidgetSnapshot.self, from: JSONSerialization.data(withJSONObject: legacyJSON))
     XCTAssertFalse(try store.reconcile(snapshot: legacy, at: now))
     XCTAssertTrue(try store.reconcile(snapshot: empty, at: now))
-    try store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now)
+    try store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now)
     XCTAssertFalse(try store.advance(event(hold), snapshot: snapshot, at: now.addingTimeInterval(86400)))
     XCTAssertTrue(try store.reconcile(snapshot: nil, at: now.addingTimeInterval(86400)))
     XCTAssertTrue(store.validHolds(snapshot: snapshot, at: now).isEmpty)
@@ -152,7 +241,7 @@ final class HabitWidgetHoldTests: XCTestCase {
   func testConcurrentNextConsumesIdentityOnce() async throws {
     let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
     let snapshot = try snapshot(); let id = snapshot.catalog[0].id
-    let hold = try XCTUnwrap(store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
+    let hold = try XCTUnwrap(store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
     let event = self.event(hold); let now = self.now
     let successes = await withTaskGroup(of: Bool.self) { group in
       for _ in 0..<20 { group.addTask { @MainActor in (try? store.advance(event, snapshot: snapshot, at: now)) ?? false } }
@@ -167,7 +256,7 @@ final class HabitWidgetHoldTests: XCTestCase {
   func testTimelineEntryCapturesTheMatchingDisplayStateBeforeArchiving() throws {
     let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
     let snapshot = try snapshot(); let id = snapshot.catalog[0].id
-    let hold = try XCTUnwrap(store.completed(habitID: id, day: snapshot.day, source: .automatic,
+    let hold = try XCTUnwrap(store.recorded(habitID: id, day: snapshot.day, source: .automatic,
       commit: commit("v1"), at: now))
     let before = HabitWidgetConfiguredEntry(date: now, snapshot: snapshot, selections: [], slotCount: 1,
       holds: store.validHolds(snapshot: snapshot, at: now))
@@ -187,7 +276,7 @@ final class HabitWidgetHoldTests: XCTestCase {
     storage.data = Data("{\"version\":99,\"holds\":[]}".utf8)
     XCTAssertTrue(store.validHolds(snapshot: snapshot, at: now).isEmpty)
     storage.fail = true
-    XCTAssertThrowsError(try store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
+    XCTAssertThrowsError(try store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
     XCTAssertTrue(HabitWidgetHoldStore(storage: storage).validHolds(snapshot: snapshot, at: now).isEmpty)
     XCTAssertNil(HabitWidgetCommit(recordVersion: "", committedAt: "2026-10-17T04:00:00Z"))
     XCTAssertNil(HabitWidgetCommit(recordVersion: "v1", committedAt: "broken"))
@@ -197,7 +286,7 @@ final class HabitWidgetHoldTests: XCTestCase {
   func testReadersNeverPersistWhenSnapshotsAreUnavailableStaleOrMismatched() throws {
     let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
     let snapshot = try snapshot(); let id = snapshot.catalog[0].id
-    try store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now)
+    try store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now)
     let bytes = storage.data, writes = storage.writes
     XCTAssertTrue(store.validHolds(snapshot: nil, at: now).isEmpty)
     XCTAssertTrue(store.validHolds(snapshot: snapshot, at: now.addingTimeInterval(86400)).isEmpty)
@@ -211,7 +300,7 @@ final class HabitWidgetHoldTests: XCTestCase {
   func testFailedAdvancePreservesTheIdentityForRetry() throws {
     let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
     let snapshot = try snapshot(); let id = snapshot.catalog[0].id
-    let hold = try XCTUnwrap(store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
+    let hold = try XCTUnwrap(store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
     let bytes = storage.data
     storage.fail = true
     XCTAssertThrowsError(try store.advance(event(hold), snapshot: snapshot, at: now))
@@ -227,7 +316,7 @@ final class HabitWidgetHoldTests: XCTestCase {
   func testFailedUndoPersistenceDoesNotConsumeTheMatchingIdentity() throws {
     let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
     let snapshot = try snapshot(); let id = snapshot.catalog[0].id
-    let hold = try XCTUnwrap(store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
+    let hold = try XCTUnwrap(store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
     storage.fail = true
     XCTAssertThrowsError(try store.undone(habitID: id, day: snapshot.day, previousVersion: "v1", identity: hold.identity, commit: commit("undo")))
     XCTAssertEqual(store.validHolds(snapshot: snapshot, at: now)[id], hold)
@@ -240,7 +329,7 @@ final class HabitWidgetHoldTests: XCTestCase {
   func testFailedReconciliationRetainsPersistedStateUntilSuccessfulRetry() throws {
     let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
     let snapshot = try snapshot(); let id = snapshot.catalog[0].id
-    let hold = try XCTUnwrap(store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
+    let hold = try XCTUnwrap(store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
     let changed = try self.snapshot(version: "external")
     storage.fail = true
     XCTAssertThrowsError(try store.reconcile(snapshot: changed, at: now))
@@ -256,7 +345,7 @@ final class HabitWidgetHoldTests: XCTestCase {
   func testAdvanceRequiresEveryDisplayedIdentityFieldAndCurrentSnapshot() throws {
     let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
     let snapshot = try snapshot(); let id = snapshot.catalog[0].id
-    let hold = try XCTUnwrap(store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
+    let hold = try XCTUnwrap(store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
     let wrongDay = HabitWidgetHoldEvent(habitID: id, day: "2026-10-16", recordVersion: "v1", identity: hold.identity)
     let wrongVersion = HabitWidgetHoldEvent(habitID: id, day: snapshot.day, recordVersion: "v2", identity: hold.identity)
     XCTAssertFalse(try store.advance(wrongDay, snapshot: snapshot, at: now))
@@ -272,10 +361,12 @@ final class HabitWidgetHoldTests: XCTestCase {
   func testMalformedPersistedEnvelopeFailsClosedWithoutRewritingStorage() throws {
     let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
     let snapshot = try snapshot(); let id = snapshot.catalog[0].id
-    try store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now)
+    try store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now)
     let original = try XCTUnwrap(storage.data)
     let changes: [(inout [String: Any]) -> Void] = [
-      { $0["version"] = 2 },
+      { $0["version"] = 99 },
+      { json in var holds = json["holds"] as! [[String: Any]]; holds[0].removeValue(forKey: "result"); json["holds"] = holds },
+      { json in var holds = json["holds"] as! [[String: Any]]; holds[0]["result"] = "unknown"; json["holds"] = holds },
       { json in let holds = json["holds"] as! [[String: Any]]; json["holds"] = holds + holds },
       { json in var holds = json["holds"] as! [[String: Any]]; holds[0]["identity"] = "invalid"; json["holds"] = holds },
       { json in var holds = json["holds"] as! [[String: Any]]; holds[0]["habitID"] = "invalid"; json["holds"] = holds },
@@ -298,9 +389,9 @@ final class HabitWidgetHoldTests: XCTestCase {
     let storage = MemoryHoldStorage(); let store = HabitWidgetHoldStore(storage: storage)
     let snapshot = try snapshot(); let id = snapshot.catalog[0].id
     let previousDayCommit = HabitWidgetCommit(recordVersion: "v1", committedAt: "2026-10-16T04:00:00Z")
-    XCTAssertNil(try store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: previousDayCommit, at: now))
-    XCTAssertNil(try store.completed(habitID: "invalid", day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
-    XCTAssertNil(try store.completed(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now, identity: "invalid"))
+    XCTAssertNil(try store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: previousDayCommit, at: now))
+    XCTAssertNil(try store.recorded(habitID: "invalid", day: snapshot.day, source: .automatic, commit: commit("v1"), at: now))
+    XCTAssertNil(try store.recorded(habitID: id, day: snapshot.day, source: .automatic, commit: commit("v1"), at: now, identity: "invalid"))
     XCTAssertEqual(storage.writes, 0)
   }
 }

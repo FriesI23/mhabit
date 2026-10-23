@@ -134,10 +134,17 @@ final class HabitWidgetActionRunner {
     let snapshot = HabitWidgetShared.readSnapshot()
     let habit = snapshot?.catalog.first { $0.id == command.habitId }
     let fixed = command.source == .fixed
+    let capable: Bool
+    switch command.operation {
+    case .complete: capable = habit?.canComplete == true
+    case .markIncomplete: capable = habit?.canMarkIncomplete == true
+    case .undo: capable = habit?.canUndo == true
+    case .refresh: capable = false
+    }
     var allowed = snapshot?.isCurrent(at: .now) == true && snapshot?.day == command.day
       && habit?.expectedRecord == command.expectedRecord
       && (habit?.state == .active || (fixed && habit?.state == .archived))
-      && (command.operation == .complete ? habit?.canComplete == true : habit?.canUndo == true)
+      && capable
     if !fixed {
       allowed = allowed && habit?.automaticEligible == true
       if command.operation == .undo {
@@ -202,12 +209,15 @@ final class HabitWidgetActionRunner {
        let previousVersion = command.expectedRecord,
        let commit = HabitWidgetCommit(recordVersion: response.recordVersion, committedAt: response.committedAt) {
       do {
-        if command.operation == .complete {
-          try holds.completed(habitID: habitID, day: day,
-            source: command.source == .fixed ? .fixed : .automatic, commit: commit, at: .now)
-        } else if command.operation == .undo {
+        switch command.operation {
+        case .complete, .markIncomplete:
+          try holds.recorded(habitID: habitID, day: day,
+            source: command.source == .fixed ? .fixed : .automatic, commit: commit, at: .now,
+            result: command.operation == .markIncomplete ? .incomplete : .completed)
+        case .undo:
           try holds.undone(habitID: habitID, day: day, previousVersion: previousVersion,
                            identity: command.source == .fixed ? nil : identity, commit: commit)
+        case .refresh: break
         }
         reload()
       } catch {

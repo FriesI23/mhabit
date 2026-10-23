@@ -124,8 +124,10 @@ Uri? _widgetRequestUri(HabitWidgetRequest request) {
           request.expectedRecord != null) {
         return null;
       }
-      return Uri(scheme: 'tablehabit-widget', host: 'refresh');
-    case HabitWidgetOperation.complete || HabitWidgetOperation.undo:
+      return Uri(scheme: 'tablehabit-widget', host: request.operation.uriHost);
+    case HabitWidgetOperation.complete ||
+        HabitWidgetOperation.undo ||
+        HabitWidgetOperation.markIncomplete:
       final habitId = request.habitId;
       final day = request.day;
       final expectedRecord = request.expectedRecord;
@@ -137,7 +139,7 @@ Uri? _widgetRequestUri(HabitWidgetRequest request) {
       }
       final uri = Uri(
         scheme: 'tablehabit-widget',
-        host: request.operation.name,
+        host: request.operation.uriHost,
         queryParameters: {
           'source': request.source!.name,
           'habitId': habitId,
@@ -147,4 +149,15 @@ Uri? _widgetRequestUri(HabitWidgetRequest request) {
       );
       return HabitWidgetCommand.tryParse(uri)?.toUri();
   }
+}
+
+/// Adapts wire operations to the domain's canonical internal URI hosts.
+extension on HabitWidgetOperation {
+  String get uriHost => switch (this) {
+    HabitWidgetOperation.complete => HabitWidgetAction.complete.uriHost,
+    HabitWidgetOperation.undo => HabitWidgetAction.undo.uriHost,
+    HabitWidgetOperation.markIncomplete =>
+      HabitWidgetAction.markIncomplete.uriHost,
+    HabitWidgetOperation.refresh => name,
+  };
 }

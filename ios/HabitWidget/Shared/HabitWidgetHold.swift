@@ -14,6 +14,11 @@ struct HabitWidgetCommit {
   }
 }
 
+/// Distinguishes a goal completion from an explicitly incomplete normal record.
+enum HabitWidgetHoldResult: String, Codable {
+  case completed, incomplete
+}
+
 /// Persists the identity and record version of a retained presentation.
 struct HabitWidgetHold: Codable, Equatable {
   let habitID: String
@@ -21,6 +26,15 @@ struct HabitWidgetHold: Codable, Equatable {
   let recordVersion: String
   let committedAt: Date
   let identity: String
+  let result: HabitWidgetHoldResult
+
+  /// Matches the authoritative result without interpreting native progress.
+  func matches(_ habit: HabitWidgetHabit) -> Bool {
+    switch result {
+    case .completed: return habit.completed
+    case .incomplete: return !habit.completed && !habit.automaticPending && habit.recordState == .notAchieved
+    }
+  }
 }
 
 /// Carries the displayed identity used to validate a subsequent UI action.
@@ -88,6 +102,37 @@ final class HabitWidgetHoldStore {
   private struct State: Codable {
     let version: Int
     let holds: [HabitWidgetHold]
+
+    private enum CodingKeys: String, CodingKey { case version, holds }
+
+    init(version: Int, holds: [HabitWidgetHold]) {
+      self.version = version
+      self.holds = holds
+    }
+
+    /// V1 is read-only compatibility; the first later mutation writes v2.
+    init(from decoder: Decoder) throws {
+      let values = try decoder.container(keyedBy: CodingKeys.self)
+      version = try values.decode(Int.self, forKey: .version)
+      switch version {
+      case 1:
+        holds = try values.decode([LegacyHold].self, forKey: .holds).map {
+          HabitWidgetHold(habitID: $0.habitID, day: $0.day, recordVersion: $0.recordVersion,
+            committedAt: $0.committedAt, identity: $0.identity, result: .completed)
+        }
+      case 2: holds = try values.decode([HabitWidgetHold].self, forKey: .holds)
+      default:
+        throw DecodingError.dataCorruptedError(forKey: .version, in: values, debugDescription: "Unsupported hold version")
+      }
+    }
+  }
+
+  private struct LegacyHold: Decodable {
+    let habitID: String
+    let day: String
+    let recordVersion: String
+    let committedAt: Date
+    let identity: String
   }
   private let storage: HabitWidgetHoldStorage
   /// Accepts a persistence boundary shared by live readers and isolated tests.
@@ -96,7 +141,6 @@ final class HabitWidgetHoldStore {
   /// Rejects unsupported, duplicate or malformed persisted identities.
   private func load() -> [String: HabitWidgetHold] {
     guard let data = storage.load(), let state = try? JSONDecoder().decode(State.self, from: data),
-          state.version == 1,
           Set(state.holds.map(\.habitID)).count == state.holds.count,
           state.holds.allSatisfy({ UUID(uuidString: $0.habitID) != nil
             && UUID(uuidString: $0.identity) != nil && HabitWidgetSnapshot.isDay($0.day)
@@ -106,7 +150,7 @@ final class HabitWidgetHoldStore {
 
   /// Writes a deterministic envelope after all in-memory checks have passed.
   private func save(_ holds: [String: HabitWidgetHold]) throws {
-    let state = State(version: 1, holds: holds.values.sorted { $0.habitID < $1.habitID })
+    let state = State(version: 2, holds: holds.values.sorted { $0.habitID < $1.habitID })
     try storage.save(JSONEncoder().encode(state))
   }
 
@@ -115,7 +159,7 @@ final class HabitWidgetHoldStore {
     guard let snapshot, snapshot.isCurrent(at: date) else { return [:] }
     return load().filter { id, hold in
       guard hold.day == snapshot.day, let habit = snapshot.catalog.first(where: { $0.id == id }) else { return false }
-      return habit.automaticEligible && habit.completed && habit.canUndo
+      return habit.automaticEligible && hold.matches(habit) && habit.canUndo
         && habit.expectedRecord == hold.recordVersion
     }
   }
@@ -123,8 +167,9 @@ final class HabitWidgetHoldStore {
   /// Records a committed presentation identity without renewing repeated versions.
   @MainActor
   @discardableResult
-  func completed(habitID: String, day: String, source: HabitWidgetSource,
-                 commit: HabitWidgetCommit?, at date: Date, identity: String = UUID().uuidString) throws -> HabitWidgetHold? {
+  func recorded(habitID: String, day: String, source: HabitWidgetSource,
+                 commit: HabitWidgetCommit?, at date: Date, identity: String = UUID().uuidString,
+                 result: HabitWidgetHoldResult = .completed) throws -> HabitWidgetHold? {
     guard let commit, UUID(uuidString: habitID) != nil,
           UUID(uuidString: identity) != nil, day == HabitWidgetSnapshot.dayString(date),
           day == HabitWidgetSnapshot.dayString(commit.committedAt) else { return nil }
@@ -138,7 +183,7 @@ final class HabitWidgetHoldStore {
     }
     if let previous = holds[habitID], previous.recordVersion == commit.recordVersion { return previous }
     let hold = HabitWidgetHold(habitID: habitID, day: day, recordVersion: commit.recordVersion,
-                              committedAt: commit.committedAt, identity: identity)
+                              committedAt: commit.committedAt, identity: identity, result: result)
     holds[habitID] = hold
     try save(holds)
     return hold
@@ -184,7 +229,7 @@ final class HabitWidgetHoldStore {
       // Only a current, complete directory can establish deletion. An older
       // publication cannot invalidate a commit which happened after its read.
       guard let habit = snapshot.catalog.first(where: { $0.id == id }) else { return !snapshot.hasCompleteCatalog }
-      return habit.state == .active && habit.started && !habit.skipped && habit.completed
+      return habit.state == .active && habit.started && !habit.skipped && hold.matches(habit)
         && habit.canUndo && habit.expectedRecord == hold.recordVersion
     }
     guard retained != holds else { return false }

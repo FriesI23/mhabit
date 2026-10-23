@@ -43,6 +43,9 @@ final class HabitWidgetIntegrationTests: XCTestCase {
     let url = try XCTUnwrap(Bundle(for: Self.self).url(forResource: "snapshot-v2", withExtension: "json"))
     var json = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any])
     var habit = (json["catalog"] as! [[String: Any]])[0]
+    habit["canMarkIncomplete"] = false
+    habit["automaticPending"] = false
+    habit["recordState"] = "achieved"
     habit["completed"] = true
     habit["progress"] = 1.0
     habit["canComplete"] = false
@@ -82,7 +85,7 @@ final class HabitWidgetIntegrationTests: XCTestCase {
   func testApplicationAndExtensionContainAllWidgetLocalesAndSeparateMetadataKeys() throws {
     let languages = ["ar", "cs", "de", "en", "es", "eu", "fa", "fr", "he", "hu", "it", "ja", "nb", "nl",
       "pl", "pt", "ru", "tr", "uk", "vi", "zh-Hans", "zh-Hant"]
-    let metadata = Set((["habitAction", "complete", "undo", "refresh", "next", "selectionSource", "automatic",
+    let metadata = Set((["habitAction", "complete", "undo", "refresh", "next", "markIncomplete", "selectionSource", "automatic",
       "fixed", "updateHabit", "actionDescription", "habit", "day", "expectedRecord", "holdIdentity", "action",
       "name", "configureHabits"] + (1...6).map { "habit\($0)" }).map { "HomeWidgetMetadata\($0.prefix(1).uppercased())\($0.dropFirst())" })
     let runtime = Set(HabitWidgetText.allCases.map(\.key))
@@ -96,7 +99,8 @@ final class HabitWidgetIntegrationTests: XCTestCase {
         XCTAssertTrue(Set(values.keys).isSubset(of: metadata.union(runtime)), "\(language)")
         XCTAssertTrue(values.values.allSatisfy { !$0.isEmpty })
         if ["en", "ru", "zh-Hans", "zh-Hant"].contains(language) {
-          XCTAssertTrue(metadata.isSubset(of: Set(values.keys)), "Keep existing metadata translations: \(language)")
+          let required = language == "ru" ? metadata.subtracting(["HomeWidgetMetadataMarkIncomplete"]) : metadata
+          XCTAssertTrue(required.isSubset(of: Set(values.keys)), "Keep existing metadata translations: \(language)")
         }
         if language == "en" {
           XCTAssertEqual(Set(values.keys), metadata.union(runtime))
@@ -104,6 +108,11 @@ final class HabitWidgetIntegrationTests: XCTestCase {
           XCTAssertEqual(values["HomeWidgetUndo"], "UNDO")
           XCTAssertEqual(values["HomeWidgetMetadataComplete"], "Complete")
           XCTAssertEqual(values["HomeWidgetMetadataUndo"], "Undo")
+          XCTAssertEqual(values["HomeWidgetIncomplete"], "Incomplete")
+          XCTAssertEqual(values["HomeWidgetMetadataMarkIncomplete"], "Mark incomplete")
+        }
+        if ["zh-Hans", "zh-Hant"].contains(language) {
+          XCTAssertEqual(values["HomeWidgetIncomplete"], "未完成")
         }
       }
     }
@@ -173,6 +182,8 @@ final class HabitWidgetIntegrationTests: XCTestCase {
         var json = try XCTUnwrap(JSONSerialization.jsonObject(with: snapshotData()) as? [String: Any])
         var habit = (json["catalog"] as! [[String: Any]])[0]
         habit["recordState"] = state.0.rawValue
+        habit["canMarkIncomplete"] = state.0 != .achieved
+        habit["automaticPending"] = state.0 != .achieved
         habit["completed"] = state.0 == .achieved
         habit["canComplete"] = state.0 != .achieved
         habit["canUndo"] = state.0 != .unrecorded
@@ -199,6 +210,12 @@ final class HabitWidgetIntegrationTests: XCTestCase {
       let actions = try XCTUnwrap(metadata["actions"] as? [String: Any])
       let entities = try XCTUnwrap(metadata["entities"] as? [String: Any])
       let queries = try XCTUnwrap(metadata["queries"] as? [String: Any])
+      let enums = try XCTUnwrap(metadata["enums"] as? [[String: Any]])
+      let actionEnum = try XCTUnwrap(enums.first { $0["identifier"] as? String == "HabitWidgetAction" })
+      let cases = try XCTUnwrap(actionEnum["cases"] as? [[String: Any]])
+      let incomplete = try XCTUnwrap(cases.first { $0["identifier"] as? String == "markIncomplete" })
+      let representation = try XCTUnwrap(incomplete["displayRepresentation"] as? [String: Any])
+      XCTAssertEqual((representation["title"] as? [String: Any])?["key"] as? String, "HomeWidgetMetadataMarkIncomplete")
       let update = try XCTUnwrap(actions["HabitWidgetActionIntent"] as? [String: Any])
       XCTAssertEqual((update["title"] as? [String: Any])?["key"] as? String, "HomeWidgetMetadataUpdateHabit")
       let configuration = try XCTUnwrap(actions["HabitWidgetConfiguration"] as? [String: Any])
@@ -235,7 +252,7 @@ final class HabitWidgetIntegrationTests: XCTestCase {
     let other = HabitWidgetHoldStore(storage: HabitWidgetFileHoldStorage(url: url))
     let snapshot = try snapshot(); let id = snapshot.catalog[0].id
     let commit = try XCTUnwrap(HabitWidgetCommit(recordVersion: "v1", committedAt: "2026-10-17T04:00:00Z"))
-    let hold = try XCTUnwrap(store.completed(habitID: id, day: snapshot.day, source: .automatic,
+    let hold = try XCTUnwrap(store.recorded(habitID: id, day: snapshot.day, source: .automatic,
       commit: commit, at: now))
     XCTAssertEqual(other.validHolds(snapshot: snapshot, at: now)[id], hold)
     XCTAssertTrue(try other.advance(event(hold), snapshot: snapshot, at: now))
@@ -265,7 +282,7 @@ final class HabitWidgetIntegrationTests: XCTestCase {
     let id = snapshot.catalog[0].id
     let writer = HabitWidgetHoldStore(storage: HabitWidgetFileHoldStorage(url: holdURL))
     let commit = try XCTUnwrap(HabitWidgetCommit(recordVersion: "v1", committedAt: "2026-10-17T04:00:00Z"))
-    let hold = try XCTUnwrap(writer.completed(habitID: id, day: snapshot.day, source: .automatic,
+    let hold = try XCTUnwrap(writer.recorded(habitID: id, day: snapshot.day, source: .automatic,
       commit: commit, at: now))
     let reader = HabitWidgetHoldStore(storage: HabitWidgetFileHoldStorage(url: holdURL))
     let retained = reader.validHolds(snapshot: snapshot, at: now)
@@ -295,7 +312,7 @@ final class HabitWidgetIntegrationTests: XCTestCase {
     let original = try snapshot()
     let writer = HabitWidgetHoldStore(storage: HabitWidgetFileHoldStorage(url: url))
     let commit = try XCTUnwrap(HabitWidgetCommit(recordVersion: "v1", committedAt: "2026-10-17T04:00:00Z"))
-    try writer.completed(habitID: original.catalog[0].id, day: original.day, source: .automatic,
+    try writer.recorded(habitID: original.catalog[0].id, day: original.day, source: .automatic,
       commit: commit, at: now)
     let changed = try snapshot(version: "external")
     XCTAssertTrue(try writer.reconcile(snapshot: changed, at: now))
@@ -305,5 +322,48 @@ final class HabitWidgetIntegrationTests: XCTestCase {
     XCTAssertTrue(entry.holds.isEmpty)
     XCTAssertEqual(entry.slots.first?.empty, .completed)
     XCTAssertTrue(restored.validHolds(snapshot: original, at: now).isEmpty)
+  }
+
+  @MainActor
+  func testIncompleteRestoresAcrossProductsAndNextLeavesItsProjectionUntouched() throws {
+    var json = try XCTUnwrap(JSONSerialization.jsonObject(with: snapshotData()) as? [String: Any])
+    var habit = (json["catalog"] as! [[String: Any]])[0]
+    habit["recordState"] = "notAchieved"
+    habit["completed"] = false
+    habit["progress"] = 0.0
+    json["catalog"] = [habit]
+    json["completedCount"] = 0
+    let published = try JSONSerialization.data(withJSONObject: json)
+    let snapshot = try JSONDecoder().decode(HabitWidgetSnapshot.self, from: published)
+    let id = snapshot.catalog[0].id
+    let holdURL = directory.appendingPathComponent("holds.json")
+    let writer = HabitWidgetHoldStore(storage: HabitWidgetFileHoldStorage(url: holdURL))
+    let commit = try XCTUnwrap(HabitWidgetCommit(recordVersion: "v1", committedAt: "2026-10-17T04:00:00Z"))
+    let hold = try XCTUnwrap(writer.recorded(habitID: id, day: snapshot.day, source: .automatic,
+      commit: commit, at: now, result: .incomplete))
+    let reader = HabitWidgetHoldStore(storage: HabitWidgetFileHoldStorage(url: holdURL))
+    let application = try applicationBundle()
+    for bundle in [application, try widgetBundle(in: application)] {
+      for locale in ["zh", "zh_tw", "zh_Hant"] {
+        XCTAssertEqual(HabitWidgetText.incomplete.localized(locale: Locale(identifier: locale), bundle: bundle), "未完成")
+      }
+    }
+    for count in [1, 3, 6] {
+      let entry = HabitWidgetConfiguredEntry(date: now, snapshot: snapshot, selections: [], slotCount: count,
+        holds: reader.validHolds(snapshot: snapshot, at: now))
+      XCTAssertEqual(entry.slots.first?.habit?.id, id)
+      XCTAssertEqual(entry.holds[id]?.result, .incomplete)
+      XCTAssertEqual(entry.holds[id]?.identity, hold.identity)
+      XCTAssertFalse(entry.slots.first!.habit!.canComplete)
+      XCTAssertFalse(entry.slots.first!.habit!.canMarkIncomplete)
+    }
+    XCTAssertTrue(try reader.advance(event(hold), snapshot: snapshot, at: now))
+    let next = HabitWidgetConfiguredEntry(date: now, snapshot: snapshot, selections: [], slotCount: 1,
+      holds: writer.validHolds(snapshot: snapshot, at: now))
+    XCTAssertEqual(next.slots.first?.empty, .noPending)
+    XCTAssertEqual(snapshot.completedCount, 0)
+    XCTAssertEqual(try JSONDecoder().decode(HabitWidgetSnapshot.self, from: published).catalog[0].expectedRecord, "v1")
+    let stored = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: holdURL)) as? [String: Any])
+    XCTAssertEqual(stored["version"] as? Int, 2)
   }
 }

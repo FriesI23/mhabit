@@ -144,7 +144,11 @@ final class HabitWidgetSnapshotTests: XCTestCase {
     XCTAssertEqual(legacy.catalog.first?.recordState, .unknown)
     let snapshot = try decode(modified { json in
       var catalog = json["catalog"] as! [[String: Any]]
-      for index in catalog.indices { catalog[index].removeValue(forKey: "recordState") }
+      for index in catalog.indices {
+        catalog[index].removeValue(forKey: "recordState")
+        catalog[index].removeValue(forKey: "canMarkIncomplete")
+        catalog[index].removeValue(forKey: "automaticPending")
+      }
       catalog[0]["canUndo"] = true
       json["catalog"] = catalog
     })
@@ -154,6 +158,8 @@ final class HabitWidgetSnapshotTests: XCTestCase {
     XCTAssertTrue(snapshot.catalog[0].canComplete)
     XCTAssertTrue(snapshot.catalog[0].canUndo)
     XCTAssertTrue(snapshot.catalog[0].automaticEligible)
+    XCTAssertFalse(snapshot.catalog[0].canMarkIncomplete)
+    XCTAssertTrue(snapshot.catalog[0].automaticPending)
   }
 
   func testRecordLabelsDistinguishMissingAndRecordedZeroWithoutChangingCandidates() throws {
@@ -168,6 +174,8 @@ final class HabitWidgetSnapshotTests: XCTestCase {
       let snapshot = try decode(modified { json in
         var habit = (json["catalog"] as! [[String: Any]])[0]
         habit["recordState"] = state
+        habit["canMarkIncomplete"] = !completed && !skipped
+        habit["automaticPending"] = !completed && !skipped
         habit["completed"] = completed
         habit["canComplete"] = !completed && !skipped
         habit["canUndo"] = !skipped && state != "unrecorded"
@@ -222,6 +230,31 @@ final class HabitWidgetSnapshotTests: XCTestCase {
       catalog[0].removeValue(forKey: "started")
       json["catalog"] = catalog
     }))
+  }
+
+  func testProcessedZeroIsExplicitWhileOlderProjectionKeepsItsCandidateBehavior() throws {
+    let data = try modified { json in
+      var habit = (json["catalog"] as! [[String: Any]])[0]
+      habit["recordState"] = "notAchieved"; habit["automaticPending"] = false
+      habit["canComplete"] = false; habit["canMarkIncomplete"] = false; habit["canUndo"] = true
+      json["catalog"] = [habit]; json["activeCount"] = 1
+    }
+    let snapshot = try decode(data)
+    let habit = snapshot.catalog[0]
+    XCTAssertEqual(habit.recordStatusText(snapshot), "Incomplete")
+    XCTAssertFalse(habit.canComplete)
+    XCTAssertFalse(habit.canMarkIncomplete)
+    let now = try XCTUnwrap(HabitWidgetSnapshot.parseDate("2026-10-17T04:00:00Z"))
+    XCTAssertEqual(HabitWidgetSlots.resolve(snapshot: snapshot, selections: [], count: 1, at: now)[0].empty, .noPending)
+    var legacy = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+    var rows = legacy["catalog"] as! [[String: Any]]
+    rows[0].removeValue(forKey: "automaticPending"); rows[0].removeValue(forKey: "canMarkIncomplete")
+    legacy["catalog"] = rows
+    let old = try decode(JSONSerialization.data(withJSONObject: legacy))
+    XCTAssertTrue(old.catalog[0].automaticPending)
+    XCTAssertFalse(old.catalog[0].canMarkIncomplete)
+    XCTAssertEqual(old.catalog[0].recordStatusText(old), "Not achieved")
+    XCTAssertNotNil(HabitWidgetSlots.resolve(snapshot: old, selections: [], count: 1, at: now)[0].habit)
   }
 
   func testDuplicateIdentitiesAndInconsistentCountsAreRejected() throws {

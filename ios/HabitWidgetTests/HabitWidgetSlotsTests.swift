@@ -18,6 +18,8 @@ final class HabitWidgetSlotsTests: XCTestCase {
         var habit = first
         habit["id"] = "b299490c-3341-48a5-96ae-972425626d1\(index)"
         habit["name"] = "Same name"
+        habit["automaticPending"] = !completed && !skipped
+        habit["canMarkIncomplete"] = !completed && !skipped
         habit["completed"] = completed
         habit["canComplete"] = !completed && !skipped
         habit["canUndo"] = completed && !skipped

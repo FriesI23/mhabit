@@ -6,3 +6,4 @@ HomeWidgetToday = "Hoje";
 HomeWidgetUndo = "Desfazer";
 HomeWidgetAchieved = "Completo";
 HomeWidgetNotAchieved = "Incompleto";
+HomeWidgetIncomplete = "Desfazer";

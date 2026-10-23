@@ -115,6 +115,7 @@ struct HabitWidgetHabit: Decodable, Identifiable {
   let recordState: HabitWidgetRecordState
   let progress: Double
   let canComplete: Bool
+  let canMarkIncomplete: Bool
   let canUndo: Bool
   let expectedRecord: String
   let sevenDays: [HabitWidgetDay]
@@ -123,11 +124,12 @@ struct HabitWidgetHabit: Decodable, Identifiable {
   let started: Bool
   let skipped: Bool
   let automaticEligible: Bool
+  let automaticPending: Bool
   let hasCatalogMetadata: Bool
 
   private enum CodingKeys: String, CodingKey {
     case id, name, color, completed, recordState, progress, canComplete, canUndo, expectedRecord, sevenDays
-    case state, startDate, started, skipped, automaticEligible
+    case state, startDate, started, skipped, automaticEligible, automaticPending, canMarkIncomplete
   }
 
   /// Decodes legacy defaults and rejects inconsistent capability metadata.
@@ -141,6 +143,8 @@ struct HabitWidgetHabit: Decodable, Identifiable {
     recordState = try values.decodeIfPresent(HabitWidgetRecordState.self, forKey: .recordState) ?? .unknown
     progress = try values.decode(Double.self, forKey: .progress)
     canComplete = try values.decode(Bool.self, forKey: .canComplete)
+    canMarkIncomplete = try values.decodeIfPresent(Bool.self, forKey: .canMarkIncomplete) ?? false
+    automaticPending = try values.decodeIfPresent(Bool.self, forKey: .automaticPending) ?? !completed
     canUndo = try values.decode(Bool.self, forKey: .canUndo)
     expectedRecord = try values.decode(String.self, forKey: .expectedRecord)
     sevenDays = try values.decode([HabitWidgetDay].self, forKey: .sevenDays)
@@ -161,7 +165,8 @@ struct HabitWidgetHabit: Decodable, Identifiable {
         || (startDate != nil && !HabitWidgetSnapshot.isDay(startDate!))
         || sevenDays.count != 7 || sevenDays.contains(where: { !$0.progress.isFinite })
         || (automaticEligible && (state != .active || !started || skipped))
-        || ((!started || state == .unknown || skipped) && (canComplete || canUndo)) {
+        || (canMarkIncomplete && (!canComplete || completed || !automaticPending))
+        || ((!started || state == .unknown || skipped) && (canComplete || canUndo || canMarkIncomplete)) {
       throw DecodingError.dataCorruptedError(forKey: .id, in: values, debugDescription: "Invalid widget habit projection")
     }
   }
@@ -177,7 +182,7 @@ struct HabitWidgetHabit: Decodable, Identifiable {
     switch recordState {
     case .unknown: return nil
     case .unrecorded: return snapshot.text(.unrecorded, bundle: bundle)
-    case .notAchieved: return snapshot.text(.notAchieved, bundle: bundle)
+    case .notAchieved: return snapshot.text(automaticPending ? .notAchieved : .incomplete, bundle: bundle)
     case .achieved: return snapshot.text(.achieved, bundle: bundle)
     case .skipped: return snapshot.text(.skipped, bundle: bundle)
     }
@@ -229,6 +234,7 @@ enum HabitWidgetText: String, CaseIterable {
   case undo = "HomeWidgetUndo"
   case allDone = "HomeWidgetAllDone"
   case completed = "HomeWidgetCompleted"
+  case incomplete = "HomeWidgetIncomplete"
   case unrecorded = "HomeWidgetUnrecorded"
   case notAchieved = "HomeWidgetNotAchieved"
   case achieved = "HomeWidgetAchieved"
@@ -287,6 +293,7 @@ enum HabitWidgetText: String, CaseIterable {
     case .undo: return "UNDO"
     case .allDone: return "YOU MADE IT"
     case .completed: return "Completed"
+    case .incomplete: return "Incomplete"
     case .unrecorded: return "Not recorded"
     case .notAchieved: return "Not achieved"
     case .achieved: return "Achieved"

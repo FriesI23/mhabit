@@ -7,3 +7,4 @@ HomeWidgetToday = "Heute";
 HomeWidgetUndo = "Rückgängig";
 HomeWidgetAchieved = "Abgeschlossen";
 HomeWidgetNotAchieved = "Unvollständig";
+HomeWidgetIncomplete = "Nicht fertiggestellt";

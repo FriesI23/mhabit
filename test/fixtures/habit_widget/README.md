@@ -13,8 +13,13 @@ Each catalog item requires identity/name/ARGB color, Dart-calculated `completed`
 `progress`, `canComplete`, `canUndo`, opaque `expectedRecord`, seven ordered daily
 progress cells, `state` (active/archived/unknown), local `startDate`, `started`,
 `skipped`, and stable `automaticEligible` (active, started, not skipped).
-Completion is separate from stable eligibility: a completed automatic item can
-remain visible only when native shared hold metadata matches its record version.
+`canMarkIncomplete` and `automaticPending` are optional additive v2 fields, defaulting
+to `false` and `!completed` when absent. Ordinary effective `done/0` records are
+processed: neither completion action is available and `automaticPending=false`.
+Missing/deleted records and positive partial values remain pending; negative zero
+uses the existing goal calculation. Native code does not infer this from progress.
+Automatic candidates require stable eligibility and either pending status or a
+matching shared hold, independently of the actual achieved counter.
 Archived capability flags describe fixed-slot actions; they do not grant automatic
 write permission. Dart remains authoritative inside the write transaction.
 
@@ -25,8 +30,9 @@ An effective `done/0` is evaluated by the existing domain goal calculation:
 normal zero is not achieved, while negative zero may be achieved (for example
 0–0 and 0–3 goals). Native code never infers record presence from progress.
 Older snapshots without this field decode as `unknown` and keep legacy display,
-capabilities, candidate selection, counters and holds. This field does not mark
-normal zero as processed or introduce an incomplete action.
+capabilities, candidate selection, counters and holds. An explicit `notAchieved`
+with `automaticPending=false` displays “Incomplete”; legacy missing fields cannot
+establish that a zero value was recorded.
 
 `locale` is the optional application language used by native resource lookup.
 Legacy `strings.locale` is a fallback when root `locale` is absent; other legacy
@@ -56,6 +62,14 @@ the snapshot was saved and its notification accepted, not that WidgetKit already
 rendered every component. A timeline entry captures hold values with its snapshot.
 
 Native holds use atomic `habit_widget_holds_v1.json` file replacement in the same
-App Group. Each reload follows the completed file write. Legacy development
+App Group. The v2 envelope stores a `completed` or `incomplete` result. A v1 hold
+reads as completed with its original identity; reading never writes a migration.
+The next actual change saves v2. Only an applied automatic mutation creates a
+hold; its day, eligibility, result projection and record version must still match.
+Next removes only the matching identity without changing records. Undo tombstones
+the record, including after overwriting a partial value with zero.
+Typed operations keep `complete=0`, `undo=1`, `refresh=2`, and append
+`markIncomplete=3`; internal URIs explicitly use `mark-incomplete`.
+Each reload follows the completed file write. Legacy development
 preference JSON is a fallback only while no file exists; an empty or invalid file
 never revives a previous preference value. Habit records and sync stay in Dart.

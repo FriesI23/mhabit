@@ -99,16 +99,35 @@ final class HabitWidgetService {
             }
             final current = habit.getRecordByDate(command.day);
             final completed = _isCompleted(habit, current);
+            final markedIncomplete = _isMarkedIncomplete(habit, current);
             final ChangeRecordStatusAction<HabitDate> action;
             switch (command.action) {
               case HabitWidgetAction.complete:
-                if (completed || current?.status == HabitRecordStatus.skip) {
+                if (completed ||
+                    markedIncomplete ||
+                    current?.status == HabitRecordStatus.skip) {
                   outcome = HabitWidgetActionResult.unchanged;
                   return null;
                 }
                 action = ChangeMultiRecordStatusAction(
                   data: habit,
                   goal: habit.habitOkValue,
+                  dateList: [command.day],
+                );
+              case HabitWidgetAction.markIncomplete:
+                if (habit.type != HabitType.normal) {
+                  outcome = HabitWidgetActionResult.invalid;
+                  return null;
+                }
+                if (completed ||
+                    markedIncomplete ||
+                    current?.status == HabitRecordStatus.skip) {
+                  outcome = HabitWidgetActionResult.unchanged;
+                  return null;
+                }
+                action = ChangeMultiRecordStatusAction(
+                  data: habit,
+                  goal: 0,
                   dateList: [command.day],
                 );
               case HabitWidgetAction.undo:
@@ -271,6 +290,7 @@ HabitWidgetHabit _snapshotHabit(
   final completed = _isCompleted(habit, record);
   final started = habit.startDate <= day;
   final skipped = record?.status == HabitRecordStatus.skip;
+  final markedIncomplete = _isMarkedIncomplete(habit, record);
   final writable = started && (habit.isActived || habit.isArchived);
   return HabitWidgetHabit(
     id: habit.uuid,
@@ -286,7 +306,13 @@ HabitWidgetHabit _snapshotHabit(
       completed: completed,
     ),
     progress: _progress(habit, record),
-    canComplete: writable && !completed && !skipped,
+    canComplete: writable && !completed && !skipped && !markedIncomplete,
+    canMarkIncomplete:
+        writable &&
+        habit.type == HabitType.normal &&
+        !completed &&
+        !skipped &&
+        !markedIncomplete,
     canUndo: writable && record?.status == HabitRecordStatus.done,
     state: habit.isActived
         ? HabitWidgetHabitState.active
@@ -297,6 +323,7 @@ HabitWidgetHabit _snapshotHabit(
     started: started,
     skipped: skipped,
     automaticEligible: habit.isActived && started && !skipped,
+    automaticPending: !completed && !skipped && !markedIncomplete,
     expectedRecord: habitWidgetRecordRevision(
       records[day.epochDay],
       sync: recordSync[records[day.epochDay]?.uuid],
@@ -310,6 +337,12 @@ HabitWidgetHabit _snapshotHabit(
     ],
   );
 }
+
+/// Effective normal zero records are processed regardless of their writer.
+bool _isMarkedIncomplete(HabitSummaryData habit, HabitSummaryRecord? record) =>
+    habit.type == HabitType.normal &&
+    record?.status == HabitRecordStatus.done &&
+    record?.value == 0;
 
 /// Projects record presence without inferring it from a normalized progress.
 HabitWidgetRecordState _recordState(

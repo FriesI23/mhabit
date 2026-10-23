@@ -9,13 +9,15 @@ enum HabitWidgetAction: String, AppEnum {
   case undo
   case refresh
   case next
+  case markIncomplete
 
   static var typeDisplayRepresentation = TypeDisplayRepresentation(name: LocalizedStringResource("HomeWidgetMetadataHabitAction", defaultValue: "Habit action"))
   static var caseDisplayRepresentations: [HabitWidgetAction: DisplayRepresentation] = [
     .complete: DisplayRepresentation(title: LocalizedStringResource("HomeWidgetMetadataComplete", defaultValue: "Complete")),
     .undo: DisplayRepresentation(title: LocalizedStringResource("HomeWidgetMetadataUndo", defaultValue: "Undo")),
     .refresh: DisplayRepresentation(title: LocalizedStringResource("HomeWidgetMetadataRefresh", defaultValue: "Refresh")),
-    .next: DisplayRepresentation(title: LocalizedStringResource("HomeWidgetMetadataNext", defaultValue: "Next"))
+    .next: DisplayRepresentation(title: LocalizedStringResource("HomeWidgetMetadataNext", defaultValue: "Next")),
+    .markIncomplete: DisplayRepresentation(title: LocalizedStringResource("HomeWidgetMetadataMarkIncomplete", defaultValue: "Mark incomplete"))
   ]
 }
 
@@ -32,7 +34,7 @@ extension HabitWidgetSource: AppEnum {
 @available(iOS 17.0, *)
 struct HabitWidgetActionIntent: AppIntent {
   static var title: LocalizedStringResource = LocalizedStringResource("HomeWidgetMetadataUpdateHabit", defaultValue: "Update habit")
-  static var description = IntentDescription(LocalizedStringResource("HomeWidgetMetadataActionDescription", defaultValue: "Complete or undo today's habit from its widget."))
+  static var description = IntentDescription(LocalizedStringResource("HomeWidgetMetadataActionDescription", defaultValue: "Record today's habit as complete or incomplete, or undo its record."))
   static var openAppWhenRun = false
   static var isDiscoverable = false
 
@@ -83,6 +85,7 @@ struct HabitWidgetActionIntent: AppIntent {
       switch action {
       case .complete: wireOperation = .complete
       case .undo: wireOperation = .undo
+      case .markIncomplete: wireOperation = .markIncomplete
       case .refresh: wireOperation = .refresh
       case .next: wireOperation = .refresh
       }

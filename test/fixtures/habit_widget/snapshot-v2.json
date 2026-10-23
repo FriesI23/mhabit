@@ -51,7 +51,9 @@
       "started": true,
       "skipped": false,
       "automaticEligible": true,
-      "recordState": "unrecorded"
+      "recordState": "unrecorded",
+      "canMarkIncomplete": true,
+      "automaticPending": true
     },
     {
       "id": "476c26e0-4d5b-509e-a378-6c6306c0e256",
@@ -97,7 +99,9 @@
       "started": true,
       "skipped": false,
       "automaticEligible": false,
-      "recordState": "unrecorded"
+      "recordState": "unrecorded",
+      "canMarkIncomplete": true,
+      "automaticPending": true
     },
     {
       "id": "646425ce-3047-5817-b7e0-541dd03ead49",
@@ -143,7 +147,9 @@
       "started": false,
       "skipped": false,
       "automaticEligible": false,
-      "recordState": "unknown"
+      "recordState": "unknown",
+      "canMarkIncomplete": false,
+      "automaticPending": true
     },
     {
       "id": "2ba14746-ab93-5c6b-953a-2191c0898918",
@@ -189,7 +195,9 @@
       "started": true,
       "skipped": false,
       "automaticEligible": false,
-      "recordState": "unknown"
+      "recordState": "unknown",
+      "canMarkIncomplete": false,
+      "automaticPending": true
     }
   ],
   "activeCount": 1,

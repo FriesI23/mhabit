@@ -70,6 +70,34 @@ HabitWidgetRequest _completeRequest() => HabitWidgetRequest(
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  test(
+    'incomplete enum appends without renumbering and uses a normalized explicit URI',
+    () async {
+      expect(HabitWidgetOperation.complete.index, 0);
+      expect(HabitWidgetOperation.undo.index, 1);
+      expect(HabitWidgetOperation.refresh.index, 2);
+      expect(HabitWidgetOperation.markIncomplete.index, 3);
+      Uri? received;
+      final bridge = HabitWidgetBackgroundChannel((uri) async {
+        received = uri;
+        return _receipt(HabitWidgetActionResult.applied);
+      }, hostApi: _HostApi());
+      addTearDown(bridge.dispose);
+      await bridge.start();
+      final request = _completeRequest()
+        ..operation = HabitWidgetOperation.markIncomplete;
+      expect(await _perform(request), HabitWidgetResult.applied);
+      expect(received!.host, 'mark-incomplete');
+      final command = HabitWidgetCommand.tryParse(received!)!;
+      expect(command.action, HabitWidgetAction.markIncomplete);
+      expect(command.toUri(), received);
+      expect(
+        HabitWidgetCommand.tryParse(received!.replace(host: 'markIncomplete')),
+        isNull,
+      );
+    },
+  );
+
   test('native ready means the action handler is already installed', () async {
     final calls = <Uri>[];
     HabitWidgetResult? firstResult;

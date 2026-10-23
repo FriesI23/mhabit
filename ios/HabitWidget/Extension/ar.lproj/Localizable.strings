@@ -7,3 +7,4 @@ HomeWidgetToday = "اليوم";
 HomeWidgetUndo = "تراجع";
 HomeWidgetAchieved = "مكتملة";
 HomeWidgetNotAchieved = "غير مكتمل";
+HomeWidgetIncomplete = "لم يكتمل";

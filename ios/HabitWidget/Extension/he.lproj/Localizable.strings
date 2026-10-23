@@ -7,3 +7,4 @@ HomeWidgetToday = "היום";
 HomeWidgetUndo = "ביטול";
 HomeWidgetAchieved = "הושלם";
 HomeWidgetNotAchieved = "לא הושלם";
+HomeWidgetIncomplete = "לא הושלם";

@@ -138,7 +138,10 @@ private struct HabitWidgetConfiguredControls: View {
 
   var body: some View {
     if habit.canComplete {
-      button(.complete)
+      HStack(spacing: 5) {
+        button(.complete)
+        if habit.canMarkIncomplete { button(.markIncomplete) }
+      }
     } else if habit.canUndo && (source == .fixed || hold != nil) {
       HStack(spacing: 5) {
         button(.undo)
@@ -162,9 +165,15 @@ private struct HabitWidgetConfiguredControls: View {
 
   /// Builds one control carrying the displayed version and optional identity.
   private func button(_ action: HabitWidgetAction) -> some View {
-    let title = action == .next ? snapshot.text(.next)
-      : snapshot.text(action == .undo ? .undo : .complete)
-    let icon = action == .next ? (direction == .rightToLeft ? "chevron.left" : "chevron.right") : action == .undo ? "arrow.uturn.backward" : "checkmark"
+    let title: String
+    let icon: String
+    switch action {
+    case .complete: title = snapshot.text(.complete); icon = "checkmark"
+    case .markIncomplete: title = snapshot.text(.incomplete); icon = "xmark"
+    case .undo: title = snapshot.text(.undo); icon = "arrow.uturn.backward"
+    case .next: title = snapshot.text(.next); icon = direction == .rightToLeft ? "chevron.left" : "chevron.right"
+    case .refresh: title = snapshot.text(.refresh); icon = "arrow.clockwise"
+    }
     return Button(intent: HabitWidgetActionIntent(habit: habit, day: snapshot.day,
       action: action, source: source, holdIdentity: source == .automatic ? hold?.identity : nil)) {
       HStack(spacing: 4) {

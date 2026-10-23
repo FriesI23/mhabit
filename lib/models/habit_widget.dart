@@ -10,7 +10,24 @@ import '../storage/db/handlers/sync.dart';
 import 'habit_date.dart';
 
 /// Record operations accepted by the widget workflow.
-enum HabitWidgetAction { complete, undo }
+enum HabitWidgetAction {
+  complete('complete'),
+  undo('undo'),
+  markIncomplete('mark-incomplete');
+
+  /// The stable URI host, independent of Dart and transport enum names.
+  final String uriHost;
+
+  const HabitWidgetAction(this.uriHost);
+
+  /// Resolves only defined hosts; URI host normalization cannot encode camelCase.
+  static HabitWidgetAction? fromUriHost(String host) {
+    for (final action in values) {
+      if (action.uriHost == host) return action;
+    }
+    return null;
+  }
+}
 
 /// The persistence outcome of a validated widget operation.
 enum HabitWidgetActionResult { applied, unchanged, stale, invalid, failed }
@@ -114,11 +131,7 @@ final class HabitWidgetCommand {
         uri.hasPort) {
       return null;
     }
-    final action = switch (uri.host) {
-      'complete' => HabitWidgetAction.complete,
-      'undo' => HabitWidgetAction.undo,
-      _ => null,
-    };
+    final action = HabitWidgetAction.fromUriHost(uri.host);
     final query = uri.queryParametersAll;
     if ((query.length != 3 && query.length != 4) ||
         query.keys.any(
@@ -168,7 +181,7 @@ final class HabitWidgetCommand {
   /// Encodes this command in the internal URI format.
   Uri toUri() => Uri(
     scheme: 'tablehabit-widget',
-    host: action.name,
+    host: action.uriHost,
     queryParameters: {
       'source': source.name,
       'habitId': habitId,
@@ -254,6 +267,9 @@ final class HabitWidgetHabit {
   /// Whether the complete operation is available.
   final bool canComplete;
 
+  /// Whether an ordinary habit can be explicitly recorded as incomplete.
+  final bool canMarkIncomplete;
+
   /// Whether the undo operation is available.
   final bool canUndo;
 
@@ -278,6 +294,9 @@ final class HabitWidgetHabit {
   /// Whether the entity is eligible for automatic slot selection.
   final bool automaticEligible;
 
+  /// Whether today's record still needs a result, independently of eligibility.
+  final bool automaticPending;
+
   /// Creates a catalog entry from the authoritative record projection.
   const HabitWidgetHabit({
     required this.id,
@@ -287,6 +306,7 @@ final class HabitWidgetHabit {
     required this.recordState,
     required this.progress,
     required this.canComplete,
+    required this.canMarkIncomplete,
     required this.canUndo,
     required this.expectedRecord,
     required this.sevenDays,
@@ -295,6 +315,7 @@ final class HabitWidgetHabit {
     required this.started,
     required this.skipped,
     required this.automaticEligible,
+    required this.automaticPending,
   });
 
   /// Encodes the shared snapshot representation.
@@ -306,6 +327,7 @@ final class HabitWidgetHabit {
     'recordState': recordState.name,
     'progress': progress,
     'canComplete': canComplete,
+    'canMarkIncomplete': canMarkIncomplete,
     'canUndo': canUndo,
     'expectedRecord': expectedRecord,
     'sevenDays': sevenDays.map((day) => day.toJson()).toList(),
@@ -314,6 +336,7 @@ final class HabitWidgetHabit {
     'started': started,
     'skipped': skipped,
     'automaticEligible': automaticEligible,
+    'automaticPending': automaticPending,
   };
 }
 

@@ -6,6 +6,42 @@ import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_widget.dart';
 
 void main() {
+  test('record actions have stable URI hosts and round-trip every source', () {
+    const hosts = {
+      HabitWidgetAction.complete: 'complete',
+      HabitWidgetAction.undo: 'undo',
+      HabitWidgetAction.markIncomplete: 'mark-incomplete',
+    };
+    for (final action in HabitWidgetAction.values) {
+      for (final source in HabitWidgetSource.values) {
+        final command = HabitWidgetCommand(
+          action: action,
+          source: source,
+          habitId: 'habit /?&=',
+          day: HabitDate(2026, 10, 23),
+          expectedRecord: 'version /?&=',
+        );
+        final uri = command.toUri();
+        expect(uri.host, hosts[action]);
+        final decoded = HabitWidgetCommand.tryParse(uri)!;
+        expect(decoded.action, action);
+        expect(decoded.source, source);
+        expect(decoded.habitId, command.habitId);
+        expect(decoded.day, command.day);
+        expect(decoded.expectedRecord, command.expectedRecord);
+        expect(decoded.toUri(), uri);
+      }
+    }
+    for (final host in [
+      'markIncomplete',
+      'markincomplete',
+      'next',
+      'refresh',
+    ]) {
+      expect(HabitWidgetAction.fromUriHost(host), isNull, reason: host);
+    }
+  });
+
   test('v2 snapshots publish only the nullable root locale', () {
     for (final locale in [null, 'en', 'zh_Hant', 'ar']) {
       final snapshot = HabitWidgetSnapshot(

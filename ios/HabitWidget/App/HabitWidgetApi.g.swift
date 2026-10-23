@@ -193,6 +193,7 @@ enum HabitWidgetOperation: Int, CaseIterable {
   case complete = 0
   case undo = 1
   case refresh = 2
+  case markIncomplete = 3
 }
 
 /// Transport outcomes; domain rules and persistence stay in the Dart workflow.

@@ -6,3 +6,4 @@ HomeWidgetToday = "Oggi";
 HomeWidgetUndo = "ANNULLA";
 HomeWidgetAchieved = "Completate";
 HomeWidgetNotAchieved = "Incompleto";
+HomeWidgetIncomplete = "Annullato";

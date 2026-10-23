@@ -112,7 +112,7 @@ int _deepHash(Object? value) {
 }
 
 /// Operations accepted by the background execution channel.
-enum HabitWidgetOperation { complete, undo, refresh }
+enum HabitWidgetOperation { complete, undo, refresh, markIncomplete }
 
 /// Transport outcomes; domain rules and persistence stay in the Dart workflow.
 enum HabitWidgetResult { applied, unchanged, stale, invalid, failed }
