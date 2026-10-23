@@ -13,7 +13,8 @@ struct HabitWidget: Widget {
         .containerBackground(for: .widget) { WidgetCanvas() }
     }
     .configurationDisplayName("Table Habit")
-    .description("Your habits today, one small step at a time.")
+    .description(Text(verbatim: HabitWidgetShared.readSnapshot()?.text(.galleryDescription)
+      ?? HabitWidgetText.galleryDescription.localized()))
     .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
   }
 }

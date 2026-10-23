@@ -1,0 +1,6 @@
+/* Widget text is maintained here. ARB mappings only fill missing keys. */
+HomeWidgetComplete = "完了";
+HomeWidgetCompleted = "完了";
+HomeWidgetSkipped = "スキップ";
+HomeWidgetToday = "今日";
+HomeWidgetUndo = "元に戻す";

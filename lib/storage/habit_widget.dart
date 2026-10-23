@@ -9,10 +9,10 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../entries/habit_widget/habit_widget_api.g.dart';
 import '../models/habit_widget.dart';
 
-/// Reads localized snapshot values and publishes shared display snapshots.
+/// Reads the app locale and publishes shared display snapshots.
 abstract interface class HabitWidgetPublisher {
-  /// Reads supported localized values from the last published snapshot.
-  Future<Map<HabitWidgetStringKey, String>> readStrings();
+  /// Reads the latest app locale, including the legacy snapshot location.
+  Future<String?> readLocale();
 
   /// Saves [snapshot] and acknowledges its native reconciliation request.
   Future<void> publish(HabitWidgetSnapshot snapshot);
@@ -35,21 +35,21 @@ final class HomeWidgetPublisher implements HabitWidgetPublisher {
   }
 
   @override
-  Future<Map<HabitWidgetStringKey, String>> readStrings() async {
+  Future<String?> readLocale() async {
     await _configure();
     final raw = await HomeWidget.getWidgetData<String>(snapshotKey);
-    if (raw == null) return const {};
+    if (raw == null) return null;
     try {
       final decoded = jsonDecode(raw);
-      if (decoded is! Map<String, dynamic>) return const {};
-      final strings = decoded['strings'];
-      if (strings is! Map<String, dynamic>) return const {};
-      return {
-        for (final key in HabitWidgetStringKey.values)
-          if (strings[key.name] case final String value) key: value,
-      };
+      if (decoded is! Map<String, dynamic>) return null;
+      if (decoded['locale'] case final String locale) return locale;
+      final legacyStrings = decoded['strings'];
+      if (legacyStrings is Map<String, dynamic>) {
+        if (legacyStrings['locale'] case final String locale) return locale;
+      }
+      return null;
     } on FormatException {
-      return const {};
+      return null;
     }
   }
 

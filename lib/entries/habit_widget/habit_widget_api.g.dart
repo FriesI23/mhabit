@@ -111,22 +111,6 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
-/// Stable keys for localized values in the shared snapshot JSON.
-///
-/// The enum names are wire identifiers and must remain compatible with stored
-/// snapshots. Pigeon generates matching identifiers for the native bridge.
-enum HabitWidgetStringKey {
-  today,
-  complete,
-  undo,
-  empty,
-  allDone,
-  completed,
-  skipped,
-  habits,
-  locale,
-}
-
 /// Operations accepted by the background execution channel.
 enum HabitWidgetOperation { complete, undo, refresh }
 
@@ -277,23 +261,20 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is HabitWidgetStringKey) {
+    } else if (value is HabitWidgetOperation) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is HabitWidgetOperation) {
+    } else if (value is HabitWidgetResult) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    } else if (value is HabitWidgetResult) {
+    } else if (value is HabitWidgetSelectionSource) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    } else if (value is HabitWidgetSelectionSource) {
-      buffer.putUint8(132);
-      writeValue(buffer, value.index);
     } else if (value is HabitWidgetResponse) {
-      buffer.putUint8(133);
+      buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else if (value is HabitWidgetRequest) {
-      buffer.putUint8(134);
+      buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -305,19 +286,16 @@ class _PigeonCodec extends StandardMessageCodec {
     switch (type) {
       case 129:
         final value = readValue(buffer) as int?;
-        return value == null ? null : HabitWidgetStringKey.values[value];
+        return value == null ? null : HabitWidgetOperation.values[value];
       case 130:
         final value = readValue(buffer) as int?;
-        return value == null ? null : HabitWidgetOperation.values[value];
+        return value == null ? null : HabitWidgetResult.values[value];
       case 131:
         final value = readValue(buffer) as int?;
-        return value == null ? null : HabitWidgetResult.values[value];
-      case 132:
-        final value = readValue(buffer) as int?;
         return value == null ? null : HabitWidgetSelectionSource.values[value];
-      case 133:
+      case 132:
         return HabitWidgetResponse.decode(readValue(buffer)!);
-      case 134:
+      case 133:
         return HabitWidgetRequest.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

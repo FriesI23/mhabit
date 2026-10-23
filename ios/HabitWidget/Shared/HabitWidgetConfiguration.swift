@@ -5,11 +5,17 @@ import Foundation
 @available(iOS 17.0, *)
 struct HabitWidgetChoice: AppEntity {
   let id: String
-  @Property(title: "Name") var name: String
+  @Property(title: LocalizedStringResource("HomeWidgetMetadataName", defaultValue: "Name")) var name: String
   init(id: String, name: String) { self.id = id; self.name = name }
-  static var typeDisplayRepresentation: TypeDisplayRepresentation = "Habit"
+  static var typeDisplayRepresentation = TypeDisplayRepresentation(name: LocalizedStringResource("HomeWidgetMetadataHabit", defaultValue: "Habit"))
   static var defaultQuery = HabitWidgetChoiceQuery()
-  static var automatic: HabitWidgetChoice { HabitWidgetChoice(id: HabitWidgetShared.automaticSelectionID, name: HabitWidgetShared.readSnapshot()?.nativeText("Automatic") ?? String(localized: "Automatic")) }
+  static var automatic: HabitWidgetChoice { automatic(snapshot: HabitWidgetShared.readSnapshot()) }
+
+  /// Uses the same captured language as the rest of a picker response.
+  static func automatic(snapshot: HabitWidgetSnapshot?) -> HabitWidgetChoice {
+    HabitWidgetChoice(id: HabitWidgetShared.automaticSelectionID,
+      name: snapshot?.text(.automatic) ?? HabitWidgetText.automatic.localized())
+  }
 
   var displayRepresentation: DisplayRepresentation {
     if id == HabitWidgetShared.automaticSelectionID { return DisplayRepresentation(title: "\(name)") }
@@ -24,18 +30,18 @@ enum HabitWidgetChoices {
   /// Resolves saved identities independently of the current recommendation list.
   static func identities(_ ids: [String], snapshot: HabitWidgetSnapshot?) -> [HabitWidgetChoice] {
     ids.compactMap { id in
-      if id == HabitWidgetShared.automaticSelectionID { return .automatic }
+      if id == HabitWidgetShared.automaticSelectionID { return .automatic(snapshot: snapshot) }
       guard UUID(uuidString: id) != nil else { return nil }
       // Preserve saved identity even when a partial directory cannot resolve it.
       return HabitWidgetChoice(id: id, name: snapshot?.catalog.first(where: { $0.id == id })?.name
-        ?? snapshot?.nativeText("Unavailable habit") ?? String(localized: "Unavailable habit"))
+        ?? snapshot?.text(.unavailable) ?? HabitWidgetText.unavailable.localized())
     }
   }
 
   /// Filters available names while preserving their snapshot ordering.
   static func suggestions(snapshot: HabitWidgetSnapshot?, excluding: Set<String>,
                           keeping: String?, search: String? = nil) -> [HabitWidgetChoice] {
-    let choices = [HabitWidgetChoice.automatic] + (snapshot?.catalog ?? []).map {
+    let choices = [HabitWidgetChoice.automatic(snapshot: snapshot)] + (snapshot?.catalog ?? []).map {
       HabitWidgetChoice(id: $0.id, name: $0.name)
     }
     return choices.filter {
@@ -48,13 +54,13 @@ enum HabitWidgetChoices {
 /// Describes the saved selections exposed by the system widget editor.
 @available(iOS 17.0, *)
 struct HabitWidgetConfiguration: WidgetConfigurationIntent {
-  static var title: LocalizedStringResource = "Configure habits"
-  @Parameter(title: "Habit 1", query: HabitWidgetChoiceQuery()) var slot1: HabitWidgetChoice?
-  @Parameter(title: "Habit 2", query: HabitWidgetSlot2Query()) var slot2: HabitWidgetChoice?
-  @Parameter(title: "Habit 3", query: HabitWidgetSlot3Query()) var slot3: HabitWidgetChoice?
-  @Parameter(title: "Habit 4", query: HabitWidgetSlot4Query()) var slot4: HabitWidgetChoice?
-  @Parameter(title: "Habit 5", query: HabitWidgetSlot5Query()) var slot5: HabitWidgetChoice?
-  @Parameter(title: "Habit 6", query: HabitWidgetSlot6Query()) var slot6: HabitWidgetChoice?
+  static var title: LocalizedStringResource = LocalizedStringResource("HomeWidgetMetadataConfigureHabits", defaultValue: "Configure habits")
+  @Parameter(title: LocalizedStringResource("HomeWidgetMetadataHabit1", defaultValue: "Habit 1"), query: HabitWidgetChoiceQuery()) var slot1: HabitWidgetChoice?
+  @Parameter(title: LocalizedStringResource("HomeWidgetMetadataHabit2", defaultValue: "Habit 2"), query: HabitWidgetSlot2Query()) var slot2: HabitWidgetChoice?
+  @Parameter(title: LocalizedStringResource("HomeWidgetMetadataHabit3", defaultValue: "Habit 3"), query: HabitWidgetSlot3Query()) var slot3: HabitWidgetChoice?
+  @Parameter(title: LocalizedStringResource("HomeWidgetMetadataHabit4", defaultValue: "Habit 4"), query: HabitWidgetSlot4Query()) var slot4: HabitWidgetChoice?
+  @Parameter(title: LocalizedStringResource("HomeWidgetMetadataHabit5", defaultValue: "Habit 5"), query: HabitWidgetSlot5Query()) var slot5: HabitWidgetChoice?
+  @Parameter(title: LocalizedStringResource("HomeWidgetMetadataHabit6", defaultValue: "Habit 6"), query: HabitWidgetSlot6Query()) var slot6: HabitWidgetChoice?
 
   static var parameterSummary: some ParameterSummary {
     When(widgetFamily: .equalTo, .systemSmall) {

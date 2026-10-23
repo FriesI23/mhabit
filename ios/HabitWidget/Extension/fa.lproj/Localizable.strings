@@ -1,0 +1,5 @@
+/* Widget text is maintained here. ARB mappings only fill missing keys. */
+HomeWidgetCompleted = "به اتمام رسیده";
+HomeWidgetSkipped = "رد";
+HomeWidgetToday = "امروز";
+HomeWidgetUndo = "بازگشت";

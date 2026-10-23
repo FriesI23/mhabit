@@ -14,9 +14,9 @@ struct HabitWidgetConfiguredView: View {
     if let snapshot = entry.snapshot {
       if !snapshot.isCurrent(at: entry.date) {
         VStack(alignment: .leading, spacing: 10) {
-          WidgetHeading(title: snapshot.nativeText("New day"))
+          WidgetHeading(title: snapshot.text(.newDay))
           Spacer(minLength: 0)
-          Text(snapshot.nativeText("Refresh to see today's progress")).font(.caption)
+          Text(snapshot.text(.refreshHint)).font(.caption)
           WidgetRefreshButton(snapshot: snapshot, compact: false)
         }
       } else if entry.slotCount == 1 {
@@ -32,7 +32,7 @@ struct HabitWidgetConfiguredView: View {
   /// Composes the single-row widget presentation.
   private func small(_ snapshot: HabitWidgetSnapshot) -> some View {
     VStack(alignment: .leading, spacing: 8) {
-      WidgetHeading(title: snapshot.text("today", fallback: snapshot.nativeText("Today")))
+      WidgetHeading(title: snapshot.text(.today))
       if let slot = entry.slots.first, let habit = slot.habit {
         Text(habit.name).font(.system(.headline, design: .rounded, weight: .bold))
           .lineLimit(2).minimumScaleFactor(0.8).frame(maxWidth: .infinity, alignment: .leading)
@@ -54,7 +54,7 @@ struct HabitWidgetConfiguredView: View {
     let isEmpty = slots.allSatisfy { $0.habit == nil }
     return VStack(alignment: .leading, spacing: 9) {
       HStack {
-        WidgetHeading(title: snapshot.text("today", fallback: snapshot.nativeText("Today")))
+        WidgetHeading(title: snapshot.text(.today))
         Spacer()
         Text("\(snapshot.completedCount)/\(snapshot.activeCount)")
           .font(.system(.caption, design: .rounded, weight: .semibold)).foregroundStyle(.secondary).monospacedDigit()
@@ -135,16 +135,16 @@ private struct HabitWidgetConfiguredControls: View {
 
   /// Supplies a localized description when no executable control is available.
   private var status: String {
-    if !habit.started { return snapshot.nativeText("Not started") }
-    if habit.skipped { return snapshot.text("skipped", fallback: snapshot.nativeText("Skipped")) }
-    if habit.state == .unknown { return snapshot.nativeText("Unavailable habit") }
-    return habit.completed ? snapshot.text("completed", fallback: snapshot.nativeText("Completed")) : "\(Int(habit.boundedProgress * 100))%"
+    if !habit.started { return snapshot.text(.notStarted) }
+    if habit.skipped { return snapshot.text(.skipped) }
+    if habit.state == .unknown { return snapshot.text(.unavailable) }
+    return habit.completed ? snapshot.text(.completed) : "\(Int(habit.boundedProgress * 100))%"
   }
 
   /// Builds one control carrying the displayed version and optional identity.
   private func button(_ action: HabitWidgetAction) -> some View {
-    let title = action == .next ? snapshot.text("next", fallback: snapshot.nativeText("Next"))
-      : snapshot.text(action == .undo ? "undo" : "complete", fallback: snapshot.nativeText(action == .undo ? "Undo" : "Complete"))
+    let title = action == .next ? snapshot.text(.next)
+      : snapshot.text(action == .undo ? .undo : .complete)
     let icon = action == .next ? (direction == .rightToLeft ? "chevron.left" : "chevron.right") : action == .undo ? "arrow.uturn.backward" : "checkmark"
     return Button(intent: HabitWidgetActionIntent(habit: habit, day: snapshot.day,
       action: action, source: source, holdIdentity: source == .automatic ? hold?.identity : nil)) {
@@ -157,20 +157,20 @@ private struct HabitWidgetConfiguredControls: View {
       .background(habit.tint.opacity(0.14), in: RoundedRectangle(cornerRadius: 9)).contentShape(Rectangle())
     }
     .buttonStyle(.plain).accessibilityLabel("\(title): \(habit.name)")
-      .accessibilityHint(action == .next ? snapshot.nativeText("Show the next habit without changing records") : "")
+      .accessibilityHint(action == .next ? snapshot.text(.nextHint) : "")
       .invalidatableContent()
   }
 }
 
 private extension HabitWidgetEmptyState {
-  /// Resolves the native message associated with an unoccupied row.
+  /// Resolves the native message using the captured app language.
   func message(_ snapshot: HabitWidgetSnapshot) -> String {
     switch self {
-    case .completed: return snapshot.text("allDone", fallback: snapshot.nativeText("All done today"))
-    case .noPending: return snapshot.nativeText("No pending habits")
-    case .noHabits: return snapshot.nativeText("No available habits")
-    case .loading: return snapshot.nativeText("Open Table Habit to get started")
-    case .refresh: return snapshot.nativeText("Refresh to see today's progress")
+    case .completed: return snapshot.text(.allDone)
+    case .noPending: return snapshot.text(.noPending)
+    case .noHabits: return snapshot.text(.noHabits)
+    case .loading: return snapshot.text(.openApp)
+    case .refresh: return snapshot.text(.refreshHint)
     }
   }
 }

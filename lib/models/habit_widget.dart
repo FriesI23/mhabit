@@ -5,8 +5,6 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 
-import '../entries/habit_widget/habit_widget_api.g.dart'
-    show HabitWidgetStringKey;
 import '../storage/db/handlers/record.dart';
 import '../storage/db/handlers/sync.dart';
 import 'habit_date.dart';
@@ -319,18 +317,17 @@ final class HabitWidgetSnapshot {
   /// The complete ordered catalog of non-deleted entities.
   final List<HabitWidgetHabit> catalog;
 
-  /// Localized display values keyed by stable wire identifiers.
-  final Map<HabitWidgetStringKey, String> strings;
+  /// The app language used by native widget localization and date formatting.
+  final String? locale;
 
-  /// Copies the catalog and localized values into unmodifiable collections.
+  /// Copies the catalog into an unmodifiable collection.
   HabitWidgetSnapshot({
     required this.generatedAt,
     required this.day,
     required this.nextDayAt,
     required List<HabitWidgetHabit> catalog,
-    Map<HabitWidgetStringKey, String> strings = const {},
-  }) : catalog = List.unmodifiable(catalog),
-       strings = Map.unmodifiable(strings);
+    this.locale,
+  }) : catalog = List.unmodifiable(catalog);
 
   /// Selects the population used for the shared summary counters.
   Iterable<HabitWidgetHabit> get _activeStarted => catalog.where(
@@ -344,7 +341,7 @@ final class HabitWidgetSnapshot {
   int get completedCount =>
       _activeStarted.where((habit) => habit.completed).length;
 
-  /// Encodes v2 JSON while preserving the existing string-key wire format.
+  /// Encodes v2 JSON with the app locale and no runtime translation payload.
   Map<String, Object?> toJson() => {
     'version': 2,
     'generatedAt': generatedAt.toUtc().toIso8601String(),
@@ -353,8 +350,6 @@ final class HabitWidgetSnapshot {
     'catalog': catalog.map((habit) => habit.toJson()).toList(),
     'activeCount': activeCount,
     'completedCount': completedCount,
-    'strings': {
-      for (final entry in strings.entries) entry.key.name: entry.value,
-    },
+    'locale': locale,
   };
 }

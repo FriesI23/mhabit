@@ -20,14 +20,110 @@ final class HabitWidgetSnapshotTests: XCTestCase {
     return try JSONSerialization.data(withJSONObject: json)
   }
 
-  func testV1RemainsAnIncompleteDirectoryWithItsOriginalDisplay() throws {
+  func testV1RemainsAnIncompleteDirectoryWithItsOriginalHabitProjection() throws {
     let snapshot = try decode(fixture(1))
     XCTAssertFalse(snapshot.hasCompleteCatalog)
     XCTAssertEqual(snapshot.catalog.filter { $0.state == .active && $0.started }.map(\.name), ["first"])
     XCTAssertEqual(snapshot.activeCount, 1)
     XCTAssertEqual(snapshot.completedCount, 0)
-    XCTAssertEqual(snapshot.strings?["today"], "Сегодня")
+    XCTAssertNil(snapshot.locale)
     XCTAssertEqual(snapshot.catalog.first?.sevenDays.count, 7)
+  }
+
+  /// Creates isolated native tables without requiring an application build.
+  private func resourceBundle(_ tables: [String: [String: String]],
+                              unrelated: [String] = []) throws -> Bundle {
+    let root = FileManager.default.temporaryDirectory
+      .appendingPathComponent("WidgetLocalization-\(UUID().uuidString).bundle")
+    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+    addTeardownBlock { try FileManager.default.removeItem(at: root) }
+    let info = ["CFBundleIdentifier": "io.github.friesi23.widgettests.\(UUID().uuidString)",
+      "CFBundleDevelopmentRegion": "en"]
+    try PropertyListSerialization.data(fromPropertyList: info, format: .xml, options: 0)
+      .write(to: root.appendingPathComponent("Info.plist"))
+    for (language, values) in tables {
+      let directory = root.appendingPathComponent("\(language).lproj")
+      try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+      try PropertyListSerialization.data(fromPropertyList: values, format: .binary, options: 0)
+        .write(to: directory.appendingPathComponent("Localizable.strings"))
+    }
+    for language in unrelated {
+      let directory = root.appendingPathComponent("\(language).lproj")
+      try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+      try PropertyListSerialization.data(fromPropertyList: ["CFBundleDisplayName": "Other"], format: .binary, options: 0)
+        .write(to: directory.appendingPathComponent("InfoPlist.strings"))
+    }
+    return try XCTUnwrap(Bundle(url: root))
+  }
+
+  func testNewAndLegacySnapshotsResolveLocaleWithoutReadingLegacyText() throws {
+    let resources = try resourceBundle(["ar": ["HomeWidgetToday": "اليوم"],
+      "ru": ["HomeWidgetToday": "Сегодня"]])
+    for version in [1, 2] {
+      var json = try XCTUnwrap(JSONSerialization.jsonObject(with: fixture(version)) as? [String: Any])
+      json["strings"] = ["locale": "ru", "today": "Obsolete snapshot text"]
+      let legacy = try decode(JSONSerialization.data(withJSONObject: json))
+      XCTAssertEqual(legacy.locale, "ru")
+      XCTAssertEqual(legacy.text(.today, bundle: resources), "Сегодня")
+      json["locale"] = "ar"
+      let current = try decode(JSONSerialization.data(withJSONObject: json))
+      XCTAssertEqual(current.locale, "ar")
+      XCTAssertEqual(current.text(.today, bundle: resources), "اليوم")
+      XCTAssertEqual(current.widgetLocale.language.characterDirection, .rightToLeft)
+      json["locale"] = NSNull()
+      XCTAssertEqual(try decode(JSONSerialization.data(withJSONObject: json)).locale, "ru")
+      json.removeValue(forKey: "strings")
+      json["locale"] = "ar"
+      XCTAssertEqual(try decode(JSONSerialization.data(withJSONObject: json)).text(.today, bundle: resources), "اليوم")
+    }
+  }
+
+  func testNativeTextFallsBackThroughEnglishResourcesToHardcodedDefaults() throws {
+    let resources = try resourceBundle(["en": ["HomeWidgetToday": "Native default", "HomeWidgetRefresh": "Other English text"],
+      "fr": ["HomeWidgetToday": "Aujourd’hui"]])
+    let defaults = try resourceBundle(["en": ["HomeWidgetToday": "Native default"]])
+    XCTAssertEqual(HabitWidgetText.today.localized(bundle: defaults), "Native default")
+    XCTAssertEqual(HabitWidgetText.today.localized(locale: Locale(identifier: "fr_CA"), bundle: resources), "Aujourd’hui")
+    XCTAssertEqual(HabitWidgetText.refresh.localized(locale: Locale(identifier: "fr"), bundle: resources), "Other English text")
+    XCTAssertEqual(HabitWidgetText.refresh.localized(locale: Locale(identifier: "xx_YY"), bundle: resources), "Other English text")
+    XCTAssertEqual(HabitWidgetText.complete.localized(locale: Locale(identifier: "fr"), bundle: resources), "Done")
+    let withoutEnglish = try resourceBundle(["fr": ["HomeWidgetToday": "Aujourd’hui"]])
+    XCTAssertEqual(HabitWidgetText.today.localized(locale: Locale(identifier: "fr"), bundle: withoutEnglish), "Aujourd’hui")
+    XCTAssertEqual(HabitWidgetText.refresh.localized(locale: Locale(identifier: "fr"), bundle: withoutEnglish), "Refresh")
+    let empty = try resourceBundle([:])
+    XCTAssertEqual(HabitWidgetText.complete.localized(bundle: empty), "Done")
+    XCTAssertEqual(HabitWidgetText.undo.localized(bundle: empty), "UNDO")
+    let old = try decode(fixture(1))
+    XCTAssertEqual(old.text(.today, bundle: empty), "Today")
+  }
+
+  func testWidgetLanguageSelectionPreservesScriptRegionAndIgnoresUnrelatedTables() throws {
+    let resources = try resourceBundle(["en": ["HomeWidgetToday": "Today"],
+      "zh-Hans": ["HomeWidgetToday": "今天"], "zh-Hant": ["HomeWidgetToday": "今日"],
+      "ar": ["HomeWidgetToday": "اليوم"]], unrelated: ["zh"])
+    for (identifier, expected) in [("zh", "今天"), ("zh_Hans_CN", "今天"),
+      ("zh_Hant", "今日"), ("zh-Hant-TW", "今日"), ("zh_TW", "今日"),
+      ("ar_SA", "اليوم"), ("en_US", "Today"), ("xx_YY", "Today")] {
+      XCTAssertEqual(HabitWidgetText.today.localized(locale: Locale(identifier: identifier), bundle: resources), expected, identifier)
+    }
+  }
+
+  func testMissingEnglishTableNeverFallsBackToAnUnrelatedLanguage() throws {
+    let resources = try resourceBundle(["fr": ["HomeWidgetToday": "Aujourd’hui"]])
+    XCTAssertEqual(HabitWidgetText.today.localized(locale: Locale(identifier: "de"), bundle: resources), "Today")
+    let empty = try resourceBundle([:])
+    for text in HabitWidgetText.allCases {
+      XCTAssertEqual(text.localized(locale: Locale(identifier: "de"), bundle: empty), text.englishDefault)
+    }
+  }
+
+  func testLocaleCannotMakeAnInvalidBusinessSnapshotReadable() throws {
+    XCTAssertThrowsError(try decode(modified {
+      $0["locale"] = "ar"
+      $0["activeCount"] = 100
+    }))
+    XCTAssertThrowsError(try decode(modified { $0["locale"] = 7 }))
+    XCTAssertThrowsError(try decode(modified { $0["strings"] = ["today": 7] }))
   }
 
   func testV2DirectoryPreservesTheLegacyActiveStartedView() throws {

@@ -1,0 +1,7 @@
+/* Widget text is maintained here. ARB mappings only fill missing keys. */
+HomeWidgetAllDone = "YOU MADE IT";
+HomeWidgetComplete = "Xong";
+HomeWidgetCompleted = "Đã hoàn thành";
+HomeWidgetSkipped = "Bỏ qua";
+HomeWidgetToday = "Hôm nay";
+HomeWidgetUndo = "Hoàn tác";

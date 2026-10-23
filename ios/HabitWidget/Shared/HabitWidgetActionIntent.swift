@@ -10,34 +10,38 @@ enum HabitWidgetAction: String, AppEnum {
   case refresh
   case next
 
-  static var typeDisplayRepresentation = TypeDisplayRepresentation(name: "Habit action")
+  static var typeDisplayRepresentation = TypeDisplayRepresentation(name: LocalizedStringResource("HomeWidgetMetadataHabitAction", defaultValue: "Habit action"))
   static var caseDisplayRepresentations: [HabitWidgetAction: DisplayRepresentation] = [
-    .complete: "Complete", .undo: "Undo", .refresh: "Refresh", .next: "Next"
+    .complete: DisplayRepresentation(title: LocalizedStringResource("HomeWidgetMetadataComplete", defaultValue: "Complete")),
+    .undo: DisplayRepresentation(title: LocalizedStringResource("HomeWidgetMetadataUndo", defaultValue: "Undo")),
+    .refresh: DisplayRepresentation(title: LocalizedStringResource("HomeWidgetMetadataRefresh", defaultValue: "Refresh")),
+    .next: DisplayRepresentation(title: LocalizedStringResource("HomeWidgetMetadataNext", defaultValue: "Next"))
   ]
 }
 
 @available(iOS 17.0, *)
 extension HabitWidgetSource: AppEnum {
-  static var typeDisplayRepresentation = TypeDisplayRepresentation(name: "Selection source")
+  static var typeDisplayRepresentation = TypeDisplayRepresentation(name: LocalizedStringResource("HomeWidgetMetadataSelectionSource", defaultValue: "Selection source"))
   static var caseDisplayRepresentations: [HabitWidgetSource: DisplayRepresentation] = [
-    .automatic: "Automatic", .fixed: "Fixed"
+    .automatic: DisplayRepresentation(title: LocalizedStringResource("HomeWidgetMetadataAutomatic", defaultValue: "Automatic")),
+    .fixed: DisplayRepresentation(title: LocalizedStringResource("HomeWidgetMetadataFixed", defaultValue: "Fixed"))
   ]
 }
 
 /// Routes serialized widget-control parameters to the app-process executor.
 @available(iOS 17.0, *)
 struct HabitWidgetActionIntent: AppIntent {
-  static var title: LocalizedStringResource = "Update habit"
-  static var description = IntentDescription("Complete or undo today's habit from its widget.")
+  static var title: LocalizedStringResource = LocalizedStringResource("HomeWidgetMetadataUpdateHabit", defaultValue: "Update habit")
+  static var description = IntentDescription(LocalizedStringResource("HomeWidgetMetadataActionDescription", defaultValue: "Complete or undo today's habit from its widget."))
   static var openAppWhenRun = false
   static var isDiscoverable = false
 
-  @Parameter(title: "Habit") var habitId: String
-  @Parameter(title: "Day") var day: String
-  @Parameter(title: "Expected record") var expectedRecord: String
-  @Parameter(title: "Hold identity") var holdIdentity: String
-  @Parameter(title: "Selection source") var source: HabitWidgetSource
-  @Parameter(title: "Action") var action: HabitWidgetAction
+  @Parameter(title: LocalizedStringResource("HomeWidgetMetadataHabit", defaultValue: "Habit")) var habitId: String
+  @Parameter(title: LocalizedStringResource("HomeWidgetMetadataDay", defaultValue: "Day")) var day: String
+  @Parameter(title: LocalizedStringResource("HomeWidgetMetadataExpectedRecord", defaultValue: "Expected record")) var expectedRecord: String
+  @Parameter(title: LocalizedStringResource("HomeWidgetMetadataHoldIdentity", defaultValue: "Hold identity")) var holdIdentity: String
+  @Parameter(title: LocalizedStringResource("HomeWidgetMetadataSelectionSource", defaultValue: "Selection source")) var source: HabitWidgetSource
+  @Parameter(title: LocalizedStringResource("HomeWidgetMetadataAction", defaultValue: "Action")) var action: HabitWidgetAction
 
   /// Creates a parameterless refresh action for loading and stale views.
   init() {
@@ -114,11 +118,13 @@ enum HabitWidgetActionError: Error, LocalizedError {
   case invalidAction, unavailable, timedOut, failed
 
   var errorDescription: String? {
+    let key: HabitWidgetText
     switch self {
-    case .invalidAction: return "This habit action is no longer available."
-    case .unavailable: return "Open Table Habit once before using widget actions."
-    case .timedOut: return "The habit could not be updated in time. Please try again."
-    case .failed: return "The habit could not be updated. Refresh the widget and try again."
+    case .invalidAction: key = .errorInvalidAction
+    case .unavailable: key = .errorUnavailable
+    case .timedOut: key = .errorTimedOut
+    case .failed: key = .errorFailed
     }
+    return HabitWidgetShared.readSnapshot()?.text(key) ?? key.localized()
   }
 }

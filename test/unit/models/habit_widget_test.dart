@@ -2,9 +2,30 @@
 // Licensed under the Apache License, Version 2.0.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_widget.dart';
 
 void main() {
+  test('v2 snapshots publish only the nullable root locale', () {
+    for (final locale in [null, 'en', 'zh_Hant', 'ar']) {
+      final snapshot = HabitWidgetSnapshot(
+        generatedAt: DateTime.utc(2026, 10, 22, 4),
+        day: HabitDate(2026, 10, 22),
+        nextDayAt: DateTime.utc(2026, 10, 22, 16),
+        catalog: [],
+        locale: locale,
+      );
+      final json = snapshot.toJson();
+      expect(json['version'], 2);
+      expect(snapshot.locale, locale);
+      expect(json, containsPair('locale', locale));
+      expect(json, isNot(contains('strings')));
+      expect(json['catalog'], isEmpty);
+      expect(json['activeCount'], 0);
+      expect(json['completedCount'], 0);
+    }
+  });
+
   test('non-applied responses never carry committed record metadata', () {
     for (final outcome in HabitWidgetActionResult.values) {
       if (outcome == HabitWidgetActionResult.applied) continue;

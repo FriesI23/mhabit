@@ -6,7 +6,6 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mhabit/entries/habit_widget/habit_widget_api.g.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_widget.dart';
@@ -24,14 +23,14 @@ class _Publisher implements HabitWidgetPublisher {
   bool failPublish = false;
   bool failRead = false;
   Future<void> Function(HabitWidgetSnapshot snapshot)? onPublish;
-  Map<HabitWidgetStringKey, String> storedStrings = const {
-    HabitWidgetStringKey.today: 'Сегодня',
-  };
+  String? storedLocale = 'ru';
+  int localeReads = 0;
 
   @override
-  Future<Map<HabitWidgetStringKey, String>> readStrings() async {
-    if (failRead) throw StateError('test localized snapshot read failure');
-    return storedStrings;
+  Future<String?> readLocale() async {
+    localeReads++;
+    if (failRead) throw StateError('test snapshot locale read failure');
+    return storedLocale;
   }
 
   @override
@@ -39,7 +38,7 @@ class _Publisher implements HabitWidgetPublisher {
     await onPublish?.call(snapshot);
     if (failPublish) throw StateError('test publication failure');
     this.snapshot = snapshot;
-    storedStrings = snapshot.strings;
+    storedLocale = snapshot.locale;
   }
 }
 
@@ -680,7 +679,7 @@ BEGIN SELECT RAISE(ABORT, 'test sync failure'); END
       await addHabit('hidden', status: HabitStatus.deleted);
       final snapshot = await service.publishSnapshot();
       expect(snapshot.catalog.map((habit) => habit.name), ['first', 'last']);
-      expect(snapshot.strings[HabitWidgetStringKey.today], 'Сегодня');
+      expect(snapshot.locale, 'ru');
       expect(snapshot.catalog.first.sevenDays.length, 7);
       expect(
         snapshot.catalog.first.sevenDays.first.date,
@@ -710,6 +709,8 @@ BEGIN SELECT RAISE(ABORT, 'test sync failure'); END
     // the projection use the same fixture that XCTest decodes.
     expected['generatedAt'] = now.toUtc().toIso8601String();
     expected['nextDayAt'] = DateTime(2026, 10, 18).toUtc().toIso8601String();
+    expected.remove('strings');
+    expected['locale'] = 'ru';
     expect(snapshot.toJson(), expected);
     expect(snapshot.activeCount, 1);
     expect(snapshot.completedCount, 0);
@@ -829,18 +830,95 @@ BEGIN SELECT RAISE(ABORT, 'test sync failure'); END
   );
 
   test(
-    'retained background owner reloads a locale changed by the app',
+    'background complete undo and refresh read the latest shared locale',
     () async {
       await addHabit('locale');
-      await service.publishSnapshot(
-        strings: {HabitWidgetStringKey.today: 'Today'},
+      await service.publishSnapshot(locale: 'en');
+      expect(publisher.localeReads, 0);
+      for (final (locale, action) in [
+        ('zh_Hant', HabitWidgetAction.complete),
+        ('ar', HabitWidgetAction.undo),
+        ('en', null),
+      ]) {
+        // The foreground app can change language while a background service
+        // remains alive with its previous publication in memory.
+        publisher.storedLocale = locale;
+        final previousReads = publisher.localeReads;
+        final response = await service.perform(
+          action == null
+              ? Uri.parse('tablehabit-widget://refresh')
+              : await command('locale', action),
+        );
+        expect(
+          response.outcome,
+          action == null
+              ? HabitWidgetActionResult.unchanged
+              : HabitWidgetActionResult.applied,
+        );
+        expect(response.snapshotPublished, isTrue);
+        expect(publisher.localeReads, previousReads + 1);
+        expect(publisher.snapshot!.locale, locale);
+        expect(publisher.snapshot!.toJson(), isNot(contains('strings')));
+        expect(
+          publisher.snapshot!.catalog.single.completed,
+          action == HabitWidgetAction.complete,
+        );
+      }
+    },
+  );
+
+  test(
+    'null locale inherits shared state without an isolate language cache',
+    () async {
+      await service.publishSnapshot(locale: 'en');
+      publisher.storedLocale = 'zh_Hant';
+      expect((await service.publishSnapshot()).locale, 'zh_Hant');
+      publisher.storedLocale = 'ar';
+      expect((await service.publishSnapshot(locale: null)).locale, 'ar');
+      publisher.storedLocale = null;
+      expect((await service.publishSnapshot()).locale, isNull);
+      expect(publisher.localeReads, 3);
+    },
+  );
+
+  test(
+    'locale read and publication failures preserve shared language',
+    () async {
+      await addHabit('locale-error');
+      await service.publishSnapshot(locale: 'en');
+      final previousSnapshot = publisher.snapshot;
+      publisher.storedLocale = 'ar';
+      publisher.failRead = true;
+      await expectLater(service.publishSnapshot(), throwsStateError);
+      expect(publisher.snapshot, same(previousSnapshot));
+      expect(publisher.storedLocale, 'ar');
+      final readFailure = await service.perform(
+        Uri.parse('tablehabit-widget://refresh'),
       );
-      publisher.storedStrings = {HabitWidgetStringKey.today: 'Сегодня'};
-      await service.perform(Uri.parse('tablehabit-widget://refresh'));
-      expect(
-        publisher.snapshot!.strings[HabitWidgetStringKey.today],
-        'Сегодня',
+      expect(readFailure.outcome, HabitWidgetActionResult.failed);
+      expect(readFailure.snapshotPublished, isFalse);
+      expect(publisher.snapshot, same(previousSnapshot));
+      expect(publisher.storedLocale, 'ar');
+
+      publisher.failRead = false;
+      publisher.failPublish = true;
+      final publishFailure = await service.perform(
+        Uri.parse('tablehabit-widget://refresh'),
       );
+      expect(publishFailure.outcome, HabitWidgetActionResult.failed);
+      expect(publishFailure.snapshotPublished, isFalse);
+      expect(publisher.snapshot, same(previousSnapshot));
+      expect(publisher.storedLocale, 'ar');
+      expect(await current('locale-error'), isNull);
+      expect(manager.reminderRefreshCount, 0);
+
+      publisher.failPublish = false;
+      final recovered = await service.perform(
+        Uri.parse('tablehabit-widget://refresh'),
+      );
+      expect(recovered.outcome, HabitWidgetActionResult.unchanged);
+      expect(recovered.snapshotPublished, isTrue);
+      expect(publisher.snapshot!.locale, 'ar');
     },
   );
 }

@@ -1,21 +1,5 @@
 import 'package:pigeon/pigeon.dart';
 
-/// Stable keys for localized values in the shared snapshot JSON.
-///
-/// The enum names are wire identifiers and must remain compatible with stored
-/// snapshots. Pigeon generates matching identifiers for the native bridge.
-enum HabitWidgetStringKey {
-  today,
-  complete,
-  undo,
-  empty,
-  allDone,
-  completed,
-  skipped,
-  habits,
-  locale,
-}
-
 /// Operations accepted by the background execution channel.
 @ConfigurePigeon(
   PigeonOptions(

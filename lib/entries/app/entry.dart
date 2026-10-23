@@ -422,7 +422,7 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
   void _syncL10n([L10n? l10n]) {
     context.maybeRead<NotificationChannelData>()?.onL10nUpdate(l10n);
     _habitReminderBridge.sync(context);
-    _habitWidgetBridge.sync(context, l10n: l10n);
+    _habitWidgetBridge.sync(context, locale: l10n?.localeName);
     _appSyncBridge.sync(
       context,
       l10n: l10n,

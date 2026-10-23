@@ -1,0 +1,7 @@
+/* Widget text is maintained here. ARB mappings only fill missing keys. */
+HomeWidgetAllDone = "ТИ ЦЕ ЗРОБИВ";
+HomeWidgetComplete = "Готово";
+HomeWidgetCompleted = "Виконано";
+HomeWidgetSkipped = "Пропустити";
+HomeWidgetToday = "Сьогодні";
+HomeWidgetUndo = "ВІДМІНИТИ";

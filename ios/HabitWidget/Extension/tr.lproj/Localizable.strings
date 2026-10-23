@@ -1,0 +1,7 @@
+/* Widget text is maintained here. ARB mappings only fill missing keys. */
+HomeWidgetAllDone = "BAŞARDIN";
+HomeWidgetComplete = "Bitti";
+HomeWidgetCompleted = "Tamamlandı";
+HomeWidgetSkipped = "Geç";
+HomeWidgetToday = "Bugün";
+HomeWidgetUndo = "GERİ AL";

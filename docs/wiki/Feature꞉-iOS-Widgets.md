@@ -39,7 +39,8 @@ updates the other widgets.
 ### Refresh and Limitations
 
 Tap **Refresh** after midnight or a time-zone change to load the current day.
-Widget labels follow the app language, with English as the fallback.
+Widget labels follow the app language, with English as the fallback. System
+configuration titles follow the system language.
 
 - Widget refreshes are scheduled by iOS and may be delayed.
 - Widget selections stay on this device.

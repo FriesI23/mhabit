@@ -3,8 +3,6 @@
 
 import 'package:flutter/material.dart' show Brightness;
 
-import '../../entries/habit_widget/habit_widget_api.g.dart'
-    show HabitWidgetStringKey;
 import '../../extensions/custom_color_extensions.dart';
 import '../../logging/helper.dart';
 import '../../models/habit_daily_record_form.dart';
@@ -36,7 +34,6 @@ final class HabitWidgetService {
   final HabitWidgetPublisher _publisher;
   final DateTime Function() _now;
   Future<void> _pending = Future<void>.value();
-  Map<HabitWidgetStringKey, String>? _strings;
 
   /// Creates a workflow bound to persistence, refresh, and publication owners.
   HabitWidgetService({
@@ -56,13 +53,9 @@ final class HabitWidgetService {
     return result;
   }
 
-  /// Publishes the current projection, optionally replacing localized values.
-  Future<HabitWidgetSnapshot> publishSnapshot({
-    Map<HabitWidgetStringKey, String>? strings,
-  }) => _serialize(() async {
-    if (strings != null) _strings = Map.unmodifiable(strings);
-    return _publishSnapshot();
-  });
+  /// Publishes the current projection, inheriting the stored language when null.
+  Future<HabitWidgetSnapshot> publishSnapshot({String? locale}) =>
+      _serialize(() => _publishSnapshot(locale: locale));
 
   /// Executes a validated internal command and reports the committed outcome.
   Future<HabitWidgetActionResponse> perform(Uri uri) => _serialize(() async {
@@ -198,7 +191,7 @@ final class HabitWidgetService {
   /// Attempts publication without converting a committed write into failure.
   Future<bool> _publishAfterAction() async {
     try {
-      await _publishSnapshot(reloadStrings: true);
+      await _publishSnapshot();
       return true;
     } catch (error, stackTrace) {
       appLog.habitWidget.error(
@@ -211,9 +204,7 @@ final class HabitWidgetService {
   }
 
   /// Reads one consistent projection and saves it through the publisher.
-  Future<HabitWidgetSnapshot> _publishSnapshot({
-    bool reloadStrings = false,
-  }) async {
+  Future<HabitWidgetSnapshot> _publishSnapshot({String? locale}) async {
     final now = _now();
     final day = HabitDate.dateTime(now);
     final data = await _records.loadHabitsAndRecordsInDateRange(
@@ -237,15 +228,15 @@ final class HabitWidgetService {
             final position = left.sortPostion.compareTo(right.sortPostion);
             return position != 0 ? position : left.uuid.compareTo(right.uuid);
           });
-    if (reloadStrings || _strings == null) {
-      _strings = await _publisher.readStrings();
-    }
+    // Background engines can outlive app language changes. Read shared state
+    // for every inherited publication instead of retaining an isolate cache.
+    final publishedLocale = locale ?? await _publisher.readLocale();
     final snapshot = HabitWidgetSnapshot(
       generatedAt: now,
       day: day,
       // Construct tomorrow in local civil time; DST days need not be 24 hours.
       nextDayAt: DateTime(now.year, now.month, now.day + 1),
-      strings: _strings!,
+      locale: publishedLocale,
       catalog: [
         for (final habit in habits)
           _snapshotHabit(

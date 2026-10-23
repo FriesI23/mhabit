@@ -95,6 +95,24 @@ final class HabitWidgetSlotsTests: XCTestCase {
     XCTAssertEqual(configuration.selections, Array(repeating: "auto", count: 6))
   }
 
+  func testDynamicPickerNamesUseCapturedLocaleAndIgnoreLegacyText() throws {
+    let s = try snapshot {
+      $0["locale"] = "ar"
+      $0["strings"] = ["locale": "ru", "automatic": "Legacy automatic", "unavailable": "Legacy unavailable"]
+    }
+    let automatic = HabitWidgetText.automatic.localized(locale: s.widgetLocale)
+    let unavailable = HabitWidgetText.unavailable.localized(locale: s.widgetLocale)
+    let choices = HabitWidgetChoices.suggestions(snapshot: s, excluding: [], keeping: nil)
+    XCTAssertEqual(choices.first?.id, "auto")
+    XCTAssertEqual(choices.first?.name, automatic)
+    XCTAssertEqual(HabitWidgetChoices.suggestions(snapshot: s, excluding: [], keeping: nil,
+      search: automatic).map(\.id), ["auto"])
+    XCTAssertEqual(HabitWidgetChoices.identities([missing, "auto"], snapshot: s).map(\.name),
+      [unavailable, automatic])
+    XCTAssertEqual(HabitWidgetChoices.identities([missing, "auto"], snapshot: nil).map(\.name),
+      [HabitWidgetText.unavailable.localized(), HabitWidgetText.automatic.localized()])
+  }
+
   func testIntentQueryWitnessesPreserveDefaultsIdentitySuggestionsAndSearch() async throws {
     try await assertQueryBehavior(HabitWidgetChoiceQuery())
     try await assertQueryBehavior(HabitWidgetSlot2Query())

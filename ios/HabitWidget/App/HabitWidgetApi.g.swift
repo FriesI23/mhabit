@@ -188,22 +188,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 }
 
 
-/// Stable keys for localized values in the shared snapshot JSON.
-///
-/// The enum names are wire identifiers and must remain compatible with stored
-/// snapshots. Pigeon generates matching identifiers for the native bridge.
-enum HabitWidgetStringKey: Int, CaseIterable {
-  case today = 0
-  case complete = 1
-  case undo = 2
-  case empty = 3
-  case allDone = 4
-  case completed = 5
-  case skipped = 6
-  case habits = 7
-  case locale = 8
-}
-
 /// Operations accepted by the background execution channel.
 enum HabitWidgetOperation: Int, CaseIterable {
   case complete = 0
@@ -350,30 +334,24 @@ private class HabitWidgetApiPigeonCodecReader: FlutterStandardReader {
     case 129:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return HabitWidgetStringKey(rawValue: enumResultAsInt)
+        return HabitWidgetOperation(rawValue: enumResultAsInt)
       }
       return nil
     case 130:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return HabitWidgetOperation(rawValue: enumResultAsInt)
+        return HabitWidgetResult(rawValue: enumResultAsInt)
       }
       return nil
     case 131:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return HabitWidgetResult(rawValue: enumResultAsInt)
-      }
-      return nil
-    case 132:
-      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
-      if let enumResultAsInt = enumResultAsInt {
         return HabitWidgetSelectionSource(rawValue: enumResultAsInt)
       }
       return nil
-    case 133:
+    case 132:
       return HabitWidgetResponse.fromList(self.readValue() as! [Any?])
-    case 134:
+    case 133:
       return HabitWidgetRequest.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -383,23 +361,20 @@ private class HabitWidgetApiPigeonCodecReader: FlutterStandardReader {
 
 private class HabitWidgetApiPigeonCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
-    if let value = value as? HabitWidgetStringKey {
+    if let value = value as? HabitWidgetOperation {
       super.writeByte(129)
       super.writeValue(value.rawValue)
-    } else if let value = value as? HabitWidgetOperation {
+    } else if let value = value as? HabitWidgetResult {
       super.writeByte(130)
       super.writeValue(value.rawValue)
-    } else if let value = value as? HabitWidgetResult {
+    } else if let value = value as? HabitWidgetSelectionSource {
       super.writeByte(131)
       super.writeValue(value.rawValue)
-    } else if let value = value as? HabitWidgetSelectionSource {
-      super.writeByte(132)
-      super.writeValue(value.rawValue)
     } else if let value = value as? HabitWidgetResponse {
-      super.writeByte(133)
+      super.writeByte(132)
       super.writeValue(value.toList())
     } else if let value = value as? HabitWidgetRequest {
-      super.writeByte(134)
+      super.writeByte(133)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)

@@ -71,14 +71,14 @@ struct HabitWeekGrid: View {
   }
 }
 
-/// Exposes a refresh intent using labels from the captured snapshot.
+/// Exposes a refresh intent using the captured app language.
 struct WidgetRefreshButton: View {
   let snapshot: HabitWidgetSnapshot
   let compact: Bool
 
   var body: some View {
     Button(intent: HabitWidgetActionIntent()) {
-      Label(snapshot.nativeText("Refresh"), systemImage: "arrow.clockwise")
+      Label(snapshot.text(.refresh), systemImage: "arrow.clockwise")
         .font(.system(size: 11, weight: .semibold, design: .rounded))
         .foregroundStyle(.primary)
         .frame(maxWidth: compact ? nil : .infinity)
@@ -87,7 +87,7 @@ struct WidgetRefreshButton: View {
         .background(Color.primary.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
     }
     .buttonStyle(.plain)
-    .accessibilityLabel(snapshot.nativeText("Refresh to see today's progress"))
+    .accessibilityLabel(snapshot.text(.refreshHint))
     .invalidatableContent()
   }
 }
@@ -98,10 +98,10 @@ struct WidgetLoadingView: View {
     VStack(alignment: .leading, spacing: 10) {
       WidgetHeading(title: "Table Habit")
       Spacer(minLength: 0)
-      ProgressView("Loading…")
+      ProgressView(HabitWidgetText.loading.localized())
         .font(.system(.subheadline, design: .rounded, weight: .semibold))
         .unredacted()
-      Text("Open Table Habit to get started")
+      Text(HabitWidgetText.openApp.localized())
         .font(.caption2)
         .foregroundStyle(.secondary)
     }

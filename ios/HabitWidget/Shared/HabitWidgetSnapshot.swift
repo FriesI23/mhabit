@@ -10,10 +10,10 @@ struct HabitWidgetSnapshot: Decodable {
   let activeCount: Int
   let completedCount: Int
   let hasCompleteCatalog: Bool
-  let strings: [String: String]?
+  let locale: String?
 
   private enum CodingKeys: String, CodingKey {
-    case version, generatedAt, day, nextDayAt, habits, catalog, activeCount, completedCount, strings
+    case version, generatedAt, day, nextDayAt, habits, catalog, activeCount, completedCount, strings, locale
   }
 
   /// Normalizes supported formats while retaining their directory completeness.
@@ -30,7 +30,8 @@ struct HabitWidgetSnapshot: Decodable {
           let boundary = Self.parseDate(nextDayAt), boundary > generated else {
       throw DecodingError.dataCorruptedError(forKey: .day, in: values, debugDescription: "Invalid widget civil-day bounds")
     }
-    strings = try values.decodeIfPresent([String: String].self, forKey: .strings)
+    let legacyStrings = try values.decodeIfPresent([String: String].self, forKey: .strings)
+    locale = try values.decodeIfPresent(String.self, forKey: .locale) ?? legacyStrings?["locale"]
     if version == 1 {
       catalog = try values.decode([HabitWidgetHabit].self, forKey: .habits)
       activeCount = catalog.count
@@ -51,9 +52,9 @@ struct HabitWidgetSnapshot: Decodable {
     }
   }
 
-  /// Returns a translated snapshot label or the caller's fallback.
-  func text(_ key: String, fallback: String) -> String {
-    strings?[key] ?? fallback
+  /// Resolves native text in the language captured by this projection.
+  func text(_ key: HabitWidgetText, bundle: Bundle = .main) -> String {
+    key.localized(locale: locale.map { Locale(identifier: $0) }, bundle: bundle)
   }
 
   var nextDay: Date? { Self.parseDate(nextDayAt) }
@@ -197,17 +198,90 @@ enum HabitWidgetShared {
 extension HabitWidgetSnapshot {
   /// Selects the app-provided locale with a system-locale fallback.
   var widgetLocale: Locale {
-    strings?["locale"].map { Locale(identifier: $0) } ?? .current
+    locale.map { Locale(identifier: $0) } ?? .current
+  }
+}
+
+/// Names shared runtime labels independently of static native metadata.
+enum HabitWidgetText: String, CaseIterable {
+  case today = "HomeWidgetToday"
+  case complete = "HomeWidgetComplete"
+  case undo = "HomeWidgetUndo"
+  case allDone = "HomeWidgetAllDone"
+  case completed = "HomeWidgetCompleted"
+  case skipped = "HomeWidgetSkipped"
+  case next = "HomeWidgetNext"
+  case newDay = "HomeWidgetNewDay"
+  case refresh = "HomeWidgetRefresh"
+  case loading = "HomeWidgetLoading"
+  case refreshHint = "HomeWidgetRefreshHint"
+  case openApp = "HomeWidgetOpenApp"
+  case galleryDescription = "HomeWidgetGalleryDescription"
+  case notStarted = "HomeWidgetNotStarted"
+  case noPending = "HomeWidgetNoPending"
+  case noHabits = "HomeWidgetNoHabits"
+  case automatic = "HomeWidgetAutomatic"
+  case unavailable = "HomeWidgetUnavailable"
+  case nextHint = "HomeWidgetNextHint"
+  case errorInvalidAction = "HomeWidgetErrorInvalidAction"
+  case errorUnavailable = "HomeWidgetErrorUnavailable"
+  case errorTimedOut = "HomeWidgetErrorTimedOut"
+  case errorFailed = "HomeWidgetErrorFailed"
+
+  var key: String { rawValue }
+
+  /// Selects a widget table, falling back through English resources to code.
+  func localized(locale: Locale? = nil, bundle: Bundle = .main) -> String {
+    var languages = bundle.localizations.filter {
+      FileManager.default.fileExists(atPath: bundle.bundleURL
+        .appendingPathComponent("\($0).lproj/Localizable.strings").path)
+    }.sorted { left, right in
+      if left == "en" { return right != "en" }
+      if right == "en" { return false }
+      return left < right
+    }
+    // Keep English as the matching fallback even when its table is missing.
+    if !languages.contains("en") { languages.insert("en", at: 0) }
+    let preferences = locale.map { locale -> [String] in
+      let identifier = locale.identifier.replacingOccurrences(of: "_", with: "-")
+      return [identifier == "zh" ? "zh-Hans" : identifier, "en"]
+    }
+    let english = Bundle(url: bundle.bundleURL.appendingPathComponent("en.lproj"))?
+      .localizedString(forKey: key, value: englishDefault, table: nil) ?? englishDefault
+    guard let language = Bundle.preferredLocalizations(from: languages,
+      forPreferences: preferences).first,
+      let localized = Bundle(url: bundle.bundleURL.appendingPathComponent("\(language).lproj")) else {
+      return english
+    }
+    return localized.localizedString(forKey: key, value: english, table: nil)
   }
 
-  /// Resolves a native resource using the app's language preference.
-  func nativeText(_ key: String) -> String {
-    let preferences = [widgetLocale.identifier.replacingOccurrences(of: "_", with: "-"), "en"]
-    let language = Bundle.preferredLocalizations(
-      from: Bundle.main.localizations, forPreferences: preferences).first ?? "en"
-    let path = Bundle.main.path(forResource: language, ofType: "lproj")
-      ?? Bundle.main.path(forResource: "en", ofType: "lproj")
-    let bundle = path.flatMap(Bundle.init(path:)) ?? .main
-    return bundle.localizedString(forKey: key, value: key, table: nil)
+  /// Supplies the last-resort text when a native translation is unavailable.
+  var englishDefault: String {
+    switch self {
+    case .today: return "Today"
+    case .complete: return "Done"
+    case .undo: return "UNDO"
+    case .allDone: return "YOU MADE IT"
+    case .completed: return "Completed"
+    case .skipped: return "Skip"
+    case .next: return "Next"
+    case .newDay: return "New day"
+    case .refresh: return "Refresh"
+    case .loading: return "Loading…"
+    case .refreshHint: return "Refresh to see today's progress"
+    case .openApp: return "Open Table Habit to get started"
+    case .galleryDescription: return "Your habits today, one small step at a time."
+    case .notStarted: return "Not started"
+    case .noPending: return "No pending habits"
+    case .noHabits: return "No available habits"
+    case .automatic: return "Automatic"
+    case .unavailable: return "Unavailable habit"
+    case .nextHint: return "Show the next habit without changing records"
+    case .errorInvalidAction: return "This habit action is no longer available."
+    case .errorUnavailable: return "Open Table Habit once before using widget actions."
+    case .errorTimedOut: return "The habit could not be updated in time. Please try again."
+    case .errorFailed: return "The habit could not be updated. Refresh the widget and try again."
+    }
   }
 }

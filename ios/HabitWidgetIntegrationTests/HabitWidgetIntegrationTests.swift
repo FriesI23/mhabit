@@ -52,6 +52,8 @@ final class HabitWidgetIntegrationTests: XCTestCase {
     json["activeCount"] = 1
     json["completedCount"] = 1
     json["generatedAt"] = "2026-10-17T04:00:01Z"
+    json["locale"] = "en"
+    json.removeValue(forKey: "strings")
     return try JSONSerialization.data(withJSONObject: json)
   }
 
@@ -77,17 +79,76 @@ final class HabitWidgetIntegrationTests: XCTestCase {
     XCTAssertFalse(group.contains("$("), "Build settings must be resolved in both products.")
   }
 
-  func testApplicationAndExtensionContainNativeFallbackTables() throws {
+  func testApplicationAndExtensionContainAllWidgetLocalesAndSeparateMetadataKeys() throws {
+    let languages = ["ar", "cs", "de", "en", "es", "eu", "fa", "fr", "he", "hu", "it", "ja", "nb", "nl",
+      "pl", "pt", "ru", "tr", "uk", "vi", "zh-Hans", "zh-Hant"]
+    let metadata = Set((["habitAction", "complete", "undo", "refresh", "next", "selectionSource", "automatic",
+      "fixed", "updateHabit", "actionDescription", "habit", "day", "expectedRecord", "holdIdentity", "action",
+      "name", "configureHabits"] + (1...6).map { "habit\($0)" }).map { "HomeWidgetMetadata\($0.prefix(1).uppercased())\($0.dropFirst())" })
+    let runtime = Set(HabitWidgetText.allCases.map(\.key))
     let application = try applicationBundle()
     for bundle in [application, try widgetBundle(in: application)] {
-      for language in ["en", "ru", "zh-Hans", "zh-Hant"] {
+      XCTAssertTrue(Set(languages).isSubset(of: Set(bundle.localizations)))
+      for language in languages {
         let table = bundle.bundleURL.appendingPathComponent("\(language).lproj/Localizable.strings")
         let values = try XCTUnwrap(PropertyListSerialization.propertyList(
           from: Data(contentsOf: table), format: nil) as? [String: String])
-        for key in ["Automatic", "Complete", "Undo", "Next", "All done today", "Unavailable habit"]
-          + (1...6).map({ "Habit \($0)" }) {
-          XCTAssertFalse(try XCTUnwrap(values[key], "\(bundle.bundleURL.lastPathComponent): \(language)/\(key)").isEmpty)
+        XCTAssertTrue(Set(values.keys).isSubset(of: metadata.union(runtime)), "\(language)")
+        XCTAssertTrue(values.values.allSatisfy { !$0.isEmpty })
+        if ["en", "ru", "zh-Hans", "zh-Hant"].contains(language) {
+          XCTAssertTrue(metadata.isSubset(of: Set(values.keys)), "Keep existing metadata translations: \(language)")
         }
+        if language == "en" {
+          XCTAssertEqual(Set(values.keys), metadata.union(runtime))
+          XCTAssertEqual(values["HomeWidgetComplete"], "Done")
+          XCTAssertEqual(values["HomeWidgetUndo"], "UNDO")
+          XCTAssertEqual(values["HomeWidgetMetadataComplete"], "Complete")
+          XCTAssertEqual(values["HomeWidgetMetadataUndo"], "Undo")
+        }
+      }
+    }
+  }
+
+  func testAppLocaleSelectsTheSameNativeRuntimeTextInBothProducts() throws {
+    let application = try applicationBundle()
+    let products = [application, try widgetBundle(in: application)]
+    for (locale, today) in [("zh", "今天"), ("zh_Hant", "今日"), ("zh-Hant-TW", "今日"),
+      ("ar", "اليوم"), ("en_US", "Today")] {
+      var json = try XCTUnwrap(JSONSerialization.jsonObject(with: snapshotData()) as? [String: Any])
+      json["locale"] = locale
+      json["strings"] = ["locale": "ru", "today": "Legacy text must not override native resources"]
+      let snapshot = try JSONDecoder().decode(HabitWidgetSnapshot.self, from: JSONSerialization.data(withJSONObject: json))
+      for bundle in products {
+        XCTAssertEqual(snapshot.text(.today, bundle: bundle), today, "\(bundle.bundleURL.lastPathComponent): \(locale)")
+        XCTAssertEqual(snapshot.text(.errorFailed, bundle: bundle), HabitWidgetText.errorFailed.englishDefault)
+      }
+    }
+    for bundle in products {
+      XCTAssertEqual(HabitWidgetText.undo.localized(locale: Locale(identifier: "ru"), bundle: bundle), "UNDO")
+      XCTAssertEqual(HabitWidgetText.allDone.localized(locale: Locale(identifier: "ru"), bundle: bundle), "YOU MADE IT")
+    }
+  }
+
+  func testEveryRuntimeKeyUsesItsTranslationOrEnglishInBothProducts() throws {
+    let application = try applicationBundle()
+    for bundle in [application, try widgetBundle(in: application)] {
+      func table(_ language: String) throws -> [String: String] {
+        let url = bundle.bundleURL.appendingPathComponent("\(language).lproj/Localizable.strings")
+        return try XCTUnwrap(PropertyListSerialization.propertyList(
+          from: Data(contentsOf: url), format: nil) as? [String: String])
+      }
+      let english = try table("en")
+      for language in bundle.localizations where FileManager.default.fileExists(atPath:
+        bundle.bundleURL.appendingPathComponent("\(language).lproj/Localizable.strings").path) {
+        let translated = try table(language)
+        for text in HabitWidgetText.allCases {
+          let expected = try XCTUnwrap(translated[text.key] ?? english[text.key])
+          XCTAssertEqual(text.localized(locale: Locale(identifier: language), bundle: bundle), expected,
+            "\(bundle.bundleURL.lastPathComponent): \(language): \(text.key)")
+        }
+      }
+      for text in HabitWidgetText.allCases {
+        XCTAssertEqual(text.localized(locale: Locale(identifier: "xx_YY"), bundle: bundle), english[text.key])
       }
     }
   }
@@ -101,10 +162,15 @@ final class HabitWidgetIntegrationTests: XCTestCase {
       let actions = try XCTUnwrap(metadata["actions"] as? [String: Any])
       let entities = try XCTUnwrap(metadata["entities"] as? [String: Any])
       let queries = try XCTUnwrap(metadata["queries"] as? [String: Any])
-      XCTAssertNotNil(actions["HabitWidgetActionIntent"])
+      let update = try XCTUnwrap(actions["HabitWidgetActionIntent"] as? [String: Any])
+      XCTAssertEqual((update["title"] as? [String: Any])?["key"] as? String, "HomeWidgetMetadataUpdateHabit")
       let configuration = try XCTUnwrap(actions["HabitWidgetConfiguration"] as? [String: Any])
       let choice = try XCTUnwrap(entities["HabitWidgetChoice"] as? [String: Any])
+      XCTAssertEqual((configuration["title"] as? [String: Any])?["key"] as? String, "HomeWidgetMetadataConfigureHabits")
+      XCTAssertEqual((choice["displayTypeName"] as? [String: Any])?["key"] as? String, "HomeWidgetMetadataHabit")
       let parameters = try XCTUnwrap(configuration["parameters"] as? [[String: Any]])
+      XCTAssertEqual(parameters.compactMap { ($0["title"] as? [String: Any])?["key"] as? String },
+        (1...6).map { "HomeWidgetMetadataHabit\($0)" })
       XCTAssertEqual(parameters.compactMap { $0["name"] as? String }, (1...6).map { "slot\($0)" })
       let queryNames = ["HabitWidgetChoiceQuery", "HabitWidgetSlot2Query", "HabitWidgetSlot3Query",
                         "HabitWidgetSlot4Query", "HabitWidgetSlot5Query", "HabitWidgetSlot6Query"]

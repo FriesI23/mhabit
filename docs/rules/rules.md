@@ -49,7 +49,7 @@ existing architecture and tooling contracts.
   - `make init` or `make bootstrap`: initialize submodules, hooks, and Melos.
   - `make format`: format Dart code in the app and internal packages.
   - `make fix`: apply Dart fixes, then format.
-  - `make gen`: run normalization, icon generation, and build generation.
+  - `make gen`: normalize ARB, fill native strings, and generate icons and code.
   - `make verify-generated`: verify generated and normalized outputs are current.
   - `make test`: run Dart/Flutter unit tests and, on macOS, iOS widget unit XCTest.
   - `make test-ci`: run Dart/Flutter tests with machine-readable results.
@@ -272,15 +272,17 @@ them; keep rows with independent actions separate from single-action controls.
   profile-backed theme handlers before adding new state.
 - Keep custom color behavior inside the existing theme model and generated color
   pipeline.
-- Localization is generated. Edit the source localization inputs, not the
+- Flutter localization is generated. Edit the source localization inputs, not the
   generated localization outputs.
 - Use the existing normalization and generation workflow when changing l10n:
   `make normalize-l10n`, then `make gen` or the narrower needed step.
-- Widget-only native strings are owned by
-  `ios/HabitWidget/Extension/*.lproj/Localizable.strings`.
-  Use Apple locale names (`zh-Hans` / `zh-Hant`) and preserve script and region
-  when matching the app's snapshot locale to native resources.
-  Shared app labels reach the widget through its localized snapshot.
+- Widget strings live in `ios/HabitWidget/Extension/*.lproj/Localizable.strings`
+  with bare PascalCase `HomeWidget*` keys. `make gen` fills missing entries through
+  `configs/l10n_strings_refs.json` without replacing existing translations.
+  For localization, snapshots carry only the locale. Preserve script and region
+  when matching Apple locale names (`zh-Hans` / `zh-Hant`).
+  Runtime text falls back from the selected language to `en.lproj`, then to
+  the exhaustive Swift `englishDefault` switch.
 
 ## Generated Code
 

@@ -9,6 +9,15 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.9"
 
+[tool.poetry.group.test]
+optional = true
+
+[tool.poetry.group.test.dependencies]
+pytest = ">=8.3,<9"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

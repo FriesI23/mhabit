@@ -41,6 +41,12 @@ Widget sources are under `ios/HabitWidget/`:
 The Dart entrypoint is `lib/entries/habit_widget/entry.dart`.
 After changing `pigeons/habit_widget.dart`, run `make gen` to regenerate the bridge.
 
+Maintain widget text in `Extension/*.lproj/Localizable.strings` with bare
+PascalCase `HomeWidget*` keys. `make gen` fills missing entries from ARB through
+`configs/l10n_strings_refs.json`, preserving existing translations.
+Runtime text falls back from the selected language to `en.lproj`, then to
+the hardcoded English default in Swift. Keep its enum switch exhaustive.
+
 ### Testing
 
 Run these commands on macOS with Xcode and an iOS 17+ simulator installed:

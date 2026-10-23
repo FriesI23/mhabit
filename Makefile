@@ -43,7 +43,7 @@ IOS_TEST_DESTINATION ?=
 
 
 .PHONY: help init bootstrap \
-	normalize-l10n build-runner format fix gen-icons test gen \
+	normalize-l10n sync-native-l10n build-runner format fix gen-icons test gen \
 	test-ci test-native test-linux test-windows test-macos test-ios test-ios-integration test-all test-integration \
 	verify-generated verify-submodules aio aio-full sync-rules unsync-rules \
 	gen-screenshot-data gen-natural-sort-data
@@ -54,6 +54,7 @@ help:
 	@echo   init              Configure git hooks and aliases, initialize submodule, fetch packages
 	@echo   bootstrap         Alias of init
 	@echo   normalize-l10n    Normalize ARB resources
+	@echo   sync-native-l10n  Fill missing native strings from configured ARB references
 	@echo   build-runner      Run Pigeon, build_runner generators and gen-l10n
 	@echo   format            Format Dart sources under lib and test
 	@echo   fix               Apply Dart fixes and then format sources
@@ -99,6 +100,9 @@ verify-submodules:
 
 normalize-l10n:
 	$(call run_script,normalize_arb)
+
+sync-native-l10n:
+	$(call run_script,sync_native_l10n)
 
 build-runner:
 	@$(MELOS) run build-runner
@@ -241,6 +245,7 @@ endif
 
 gen:
 	@$(SUBMAKE) normalize-l10n
+	@$(SUBMAKE) sync-native-l10n
 	@$(SUBMAKE) gen-icons
 	@$(SUBMAKE) build-runner
 

@@ -3,11 +3,9 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../extensions/context_extensions.dart';
-import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/app_event.dart';
 import '../../providers/workflow/app_event.dart';
@@ -23,12 +21,12 @@ final class HabitWidgetPostInitBridge
   DateChangeNotifier? _dateChanges;
   AppEventSubscriptions? _eventSubs;
   AppLifecycleListener? _lifecycle;
-  Map<HabitWidgetStringKey, String>? _strings;
+  String? _locale;
   bool _publishing = false;
   bool _publishPending = false;
 
-  /// Updates subscriptions and localized values from the current app scope.
-  void sync(BuildContext context, {required L10n? l10n}) {
+  /// Updates subscriptions and the app language from the current scope.
+  void sync(BuildContext context, {required String? locale}) {
     final service = context.maybeRead<HabitWidgetService>();
     final events = context.maybeRead<AppEventBus>();
     final dateChanges = context.maybeRead<DateChangeNotifier>();
@@ -52,23 +50,9 @@ final class HabitWidgetPostInitBridge
       }
     }
 
-    final strings = l10n == null
-        ? null
-        : <HabitWidgetStringKey, String>{
-            HabitWidgetStringKey.today: l10n.habitDisplay_tab_today_label,
-            HabitWidgetStringKey.complete: l10n.habitDisplay_doneButton_label,
-            HabitWidgetStringKey.undo: l10n.snackbar_undoText,
-            HabitWidgetStringKey.empty: l10n.habitDisplay_emptyImage_text_01,
-            HabitWidgetStringKey.allDone: l10n.habitToday_image_desc,
-            HabitWidgetStringKey.completed:
-                l10n.habitDisplay_displayFilter_completed,
-            HabitWidgetStringKey.skipped: l10n.batchCheckin_status_skip_text,
-            HabitWidgetStringKey.habits: l10n.habitDisplay_tab_habits_label,
-            HabitWidgetStringKey.locale: l10n.localeName,
-          };
-    final stringsChanged = !mapEquals(_strings, strings);
-    _strings = strings;
-    if (changed || stringsChanged) _publish();
+    final localeChanged = _locale != locale;
+    _locale = locale;
+    if (changed || localeChanged) _publish();
   }
 
   /// Accepts events from the subscribed application event bus.
@@ -115,7 +99,7 @@ final class HabitWidgetPostInitBridge
       while (_publishPending && _service != null) {
         _publishPending = false;
         try {
-          await _service!.publishSnapshot(strings: _strings);
+          await _service!.publishSnapshot(locale: _locale);
         } catch (error, stackTrace) {
           appLog.habitWidget.warn(
             'HabitWidgetPostInitBridge.publish',

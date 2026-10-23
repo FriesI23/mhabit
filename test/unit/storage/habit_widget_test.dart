@@ -45,7 +45,12 @@ void main() {
     );
     messenger.setMockMethodCallHandler(home, (call) async {
       events.add(call.method);
-      if (call.method == 'getWidgetData') return storedSnapshot;
+      if (call.method == 'getWidgetData') {
+        if (rejected == 'getWidgetData') {
+          throw PlatformException(code: 'unavailable');
+        }
+        return storedSnapshot;
+      }
       if (call.method == 'saveWidgetData') {
         final args = call.arguments as Map<Object?, Object?>;
         savedKeys.add(args['id']! as String);
@@ -80,7 +85,7 @@ void main() {
     'rejected App Group selection never reads or saves shared data',
     () async {
       rejected = 'setAppGroupId';
-      await expectLater(HomeWidgetPublisher().readStrings(), throwsStateError);
+      await expectLater(HomeWidgetPublisher().readLocale(), throwsStateError);
       await expectLater(
         HomeWidgetPublisher().publish(snapshot),
         throwsStateError,
@@ -90,51 +95,84 @@ void main() {
     },
   );
 
-  test('localized keys preserve their existing JSON identifiers', () async {
-    storedSnapshot = jsonEncode({
-      'strings': {
-        for (final key in HabitWidgetStringKey.values) key.name: key.name,
-        'futureNativeLabel': 'ignored',
-      },
-    });
-    final strings = await HomeWidgetPublisher().readStrings();
-    expect(strings, {
-      for (final key in HabitWidgetStringKey.values) key: key.name,
-    });
-    final localized = HabitWidgetSnapshot(
-      generatedAt: snapshot.generatedAt,
-      day: snapshot.day,
-      nextDayAt: snapshot.nextDayAt,
-      catalog: [],
-      strings: strings,
-    );
-    expect(localized.toJson()['strings'], {
-      for (final key in HabitWidgetStringKey.values) key.name: key.name,
-    });
-  });
+  test(
+    'root locale takes priority and legacy locale is inherited read-only',
+    () async {
+      for (final (data, expectedLocale) in [
+        (
+          {
+            'locale': 'ar',
+            'strings': {'locale': 'zh_Hant'},
+          },
+          'ar',
+        ),
+        (
+          {
+            'locale': null,
+            'strings': {'locale': 'zh_Hant'},
+          },
+          'zh_Hant',
+        ),
+        (
+          {
+            'strings': {'locale': 'ru', 'today': 'Сегодня'},
+          },
+          'ru',
+        ),
+        ({'locale': 'en_US'}, 'en_US'),
+        ({'locale': ''}, ''),
+      ]) {
+        storedSnapshot = jsonEncode(data);
+        final original = storedSnapshot;
+        expect(await HomeWidgetPublisher().readLocale(), expectedLocale);
+        expect(storedSnapshot, original);
+      }
+      expect(events, everyElement(isIn(['setAppGroupId', 'getWidgetData'])));
+      expect(savedKeys, isEmpty);
+    },
+  );
 
-  test('malformed or unsupported stored strings fall back safely', () async {
-    for (final raw in [
-      null,
-      '{invalid',
-      'null',
-      '[]',
-      '{}',
-      '{"strings":[]}',
-      '{"strings":{"today":42,"locale":null,"futureKey":"text"}}',
-    ]) {
-      storedSnapshot = raw;
-      expect(
-        await HomeWidgetPublisher().readStrings(),
-        isEmpty,
-        reason: '$raw',
+  test(
+    'malformed or non-string stored locales return null without writes',
+    () async {
+      for (final raw in [
+        null,
+        '{invalid',
+        'null',
+        '[]',
+        '{}',
+        '{"locale":42}',
+        '{"locale":null}',
+        '{"strings":[]}',
+        '{"strings":{"locale":false,"today":"ignored"}}',
+        '{"strings":{"locale":null}}',
+      ]) {
+        storedSnapshot = raw;
+        expect(
+          await HomeWidgetPublisher().readLocale(),
+          isNull,
+          reason: '$raw',
+        );
+        expect(storedSnapshot, raw);
+      }
+      expect(savedKeys, isEmpty);
+    },
+  );
+
+  test(
+    'shared locale read errors propagate without replacing stored data',
+    () async {
+      storedSnapshot = '{"locale":"ar"}';
+      rejected = 'getWidgetData';
+      await expectLater(
+        HomeWidgetPublisher().readLocale(),
+        throwsA(isA<PlatformException>()),
       );
-    }
-    storedSnapshot = '{"strings":{"today":"Today","undo":false}}';
-    expect(await HomeWidgetPublisher().readStrings(), {
-      HabitWidgetStringKey.today: 'Today',
-    });
-  });
+      expect(storedSnapshot, '{"locale":"ar"}');
+      expect(events, ['setAppGroupId', 'getWidgetData']);
+      expect(savedKeys, isEmpty);
+    },
+  );
 
   test(
     'failed save never reconciles against an unpublished directory',
