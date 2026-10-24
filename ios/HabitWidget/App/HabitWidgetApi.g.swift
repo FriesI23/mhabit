@@ -190,24 +190,35 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
 /// Operations accepted by the background execution channel.
 enum HabitWidgetOperation: Int, CaseIterable {
+  /// Records today's habit at its domain-defined completion value.
   case complete = 0
+  /// Marks today's displayed record as deleted.
   case undo = 1
+  /// Rebuilds and publishes the snapshot without changing habit records.
   case refresh = 2
+  /// Records an ordinary habit as done with zero value (missed).
   case markIncomplete = 3
 }
 
 /// Transport outcomes; domain rules and persistence stay in the Dart workflow.
 enum HabitWidgetResult: Int, CaseIterable {
+  /// A record mutation committed, independently of snapshot publication success.
   case applied = 0
+  /// The request completed without a record mutation.
   case unchanged = 1
+  /// The displayed day, habit state, or record version no longer matches.
   case stale = 2
+  /// The request format or requested operation is unsupported.
   case invalid = 3
+  /// A persistence or execution error prevented a successful response.
   case failed = 4
 }
 
 /// Identifies how the displayed entity was selected.
 enum HabitWidgetSelectionSource: Int, CaseIterable {
+  /// Selected from active, started, non-skipped automatic candidates.
   case automatic = 0
+  /// Explicitly selected by the user; may refer to an archived habit.
   case fixed = 1
 }
 

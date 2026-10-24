@@ -112,13 +112,46 @@ int _deepHash(Object? value) {
 }
 
 /// Operations accepted by the background execution channel.
-enum HabitWidgetOperation { complete, undo, refresh, markIncomplete }
+enum HabitWidgetOperation {
+  /// Records today's habit at its domain-defined completion value.
+  complete,
+
+  /// Marks today's displayed record as deleted.
+  undo,
+
+  /// Rebuilds and publishes the snapshot without changing habit records.
+  refresh,
+
+  /// Records an ordinary habit as done with zero value (missed).
+  markIncomplete,
+}
 
 /// Transport outcomes; domain rules and persistence stay in the Dart workflow.
-enum HabitWidgetResult { applied, unchanged, stale, invalid, failed }
+enum HabitWidgetResult {
+  /// A record mutation committed, independently of snapshot publication success.
+  applied,
+
+  /// The request completed without a record mutation.
+  unchanged,
+
+  /// The displayed day, habit state, or record version no longer matches.
+  stale,
+
+  /// The request format or requested operation is unsupported.
+  invalid,
+
+  /// A persistence or execution error prevented a successful response.
+  failed,
+}
 
 /// Identifies how the displayed entity was selected.
-enum HabitWidgetSelectionSource { automatic, fixed }
+enum HabitWidgetSelectionSource {
+  /// Selected from active, started, non-skipped automatic candidates.
+  automatic,
+
+  /// Explicitly selected by the user; may refer to an archived habit.
+  fixed,
+}
 
 /// Transfers an execution outcome and any committed record identity.
 class HabitWidgetResponse {

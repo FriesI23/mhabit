@@ -123,14 +123,8 @@ struct HabitWidgetChoiceQuery: HabitWidgetQuery {
 
 /// Adapts the shared query logic to the second parameter's dependency metadata.
 ///
-/// Each adapter's required `init()` reconstructs its fixed dependency set.
-/// Dependencies remain acyclic during system identity resolution:
-///
-/// ```text
-/// slot 1 <--- slot 2
-///    ^           ^
-///    +--- slot 3-+
-/// ```
+/// Each adapter reconstructs its earlier-slot dependencies in `init()` to keep
+/// system identity resolution acyclic.
 @available(iOS 17.0, *)
 struct HabitWidgetSlot2Query: HabitWidgetQuery {
   typealias Entity = HabitWidgetChoice

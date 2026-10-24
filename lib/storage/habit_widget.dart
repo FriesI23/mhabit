@@ -49,14 +49,7 @@ final class HomeWidgetPublisher implements HabitWidgetPublisher {
     }
   }
 
-  /// Saves before enqueueing reconciliation; the native queue owns reloading.
-  ///
-  /// ```text
-  /// save snapshot -> enqueue publication -> acknowledge Dart
-  ///                        |
-  ///                        v
-  ///                 reconcile -> reload
-  /// ```
+  /// Publishes snapshots while the native queue owns reconciliation and reloading.
   @override
   Future<void> publish(HabitWidgetSnapshot snapshot) async {
     await _configure();

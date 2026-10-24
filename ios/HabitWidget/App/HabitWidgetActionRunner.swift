@@ -4,14 +4,6 @@ import OSLog
 import WidgetKit
 
 /// Serializes widget requests and display-state updates in the app process.
-///
-/// ```text
-/// App intent ----> FIFO queue ----> Dart API ----> response
-///                     ^                             |
-/// Publication --------+                     persist display state
-///                                                   |
-///                                            reload -> resume
-/// ```
 @MainActor
 final class HabitWidgetActionRunner {
   static let shared = HabitWidgetActionRunner()

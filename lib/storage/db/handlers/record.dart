@@ -158,17 +158,6 @@ class RecordDBHelper extends DBHelperHandler {
   ///
   /// Independent reads use batches to reduce platform-channel round trips.
   /// SQLite still executes their statements serially on the same connection.
-  ///
-  /// ```text
-  /// +-- write transaction ---------------------------+
-  /// | read habit + record -> read sync -> resolve    |
-  /// |                                      |        |
-  /// |                    write <-----------+        |
-  /// |                      |                        |
-  /// |             read record + sync                |
-  /// +----------------------+------------------------+
-  ///                        +--> commit --> result
-  /// ```
   Future<({RecordDBCell record, SyncDBCell sync})?> mutateCurrentHabitRecord({
     required HabitUUID habitUUID,
     required int epochDay,

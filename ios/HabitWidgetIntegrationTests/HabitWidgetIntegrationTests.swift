@@ -266,14 +266,6 @@ final class HabitWidgetIntegrationTests: XCTestCase {
   }
 
   /// Connects snapshot decoding, persistent identities, entries, and advancement.
-  ///
-  /// ```text
-  /// fixture -> isolated snapshot file -> decoded projection
-  ///                                          |
-  /// commit -> atomic hold file -> fresh reader -> timeline entries
-  ///                ^                              |
-  ///                +---------- Next --------------+
-  /// ```
   @MainActor
   func testPersistedCompletionRestoresIntoTimelinesAndNextAdvancesIndependentReaders() throws {
     let snapshotURL = directory.appendingPathComponent("snapshot.json")

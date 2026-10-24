@@ -53,20 +53,25 @@ existing architecture and tooling contracts.
   - `make verify-generated`: verify generated and normalized outputs are current.
   - `make test`: run Dart/Flutter unit tests and, on macOS, iOS widget unit XCTest.
   - `make test-ci`: run Dart/Flutter tests with machine-readable results.
+  - `make test-scripts`: run local development script tests with Poetry and pytest.
   - `make test-native`: run native tests for the current desktop host.
   - `make test-linux`, `make test-windows`, `make test-macos`: run the named
     platform's native tests on that platform (Linux needs a display or Xvfb).
   - `make test-ios`: run isolated widget unit XCTest on an iOS simulator (macOS).
   - `make test-ios-integration`: build app/extension and run widget integration
     XCTest (macOS only).
-  - `make test-all`: run all current-host unit tests, adding Windows/Linux native
-    unit tests on those hosts; on macOS it does not build the app.
+  - `make test-all`: run Python tooling and all current-host unit tests, adding
+    Windows/Linux native unit tests on those hosts; on macOS it does not build
+    the app.
   - `make test-integration`: run current-host integration suites. On macOS this
     runs macOS app-hosted tests and iOS widget integration checks serially. Other
     hosts currently report that no integration suites are registered. Future
     platform suites, including Android, use this aggregate entrypoint.
   - `make aio`: run `gen`, `fix`, and `verify-generated`.
   - `make aio-full`: run `aio` plus `test-all` (unit tests only).
+- Python tests use the optional Poetry `test` group under `scripts/python-scripts/`.
+  Install it with `poetry install --with test --no-root` from that directory.
+  CI keeps its explicit test entrypoints and does not run the Python tests.
 - Native test ownership stays with the platform implementation: Windows/Linux
   C++ tests live in `packages/mhabit_desktop_window_chrome/{windows,linux}/test`
   and run with CMake/CTest; macOS `RunnerTests` are app-hosted XCTest and run
@@ -86,7 +91,8 @@ existing architecture and tooling contracts.
   accepts an explicit Xcode destination. Unit and integration results have
   separate `ios-widget-unit` and `ios-widget-integration` log/bundle names.
   Make owns both Xcode commands and integration-only Flutter preparation;
-  `scripts/select_ios_simulator.py` only resolves the default destination.
+  `scripts/python-scripts/bin/select_ios_simulator.py` only resolves the default
+  destination and runs through the same Poetry environment as the other scripts.
   CI invokes its existing explicit test targets and does not invoke
   `test-integration` or iOS integration.
 - Native test results go to `build/test-results/native/` by default

@@ -2,11 +2,6 @@ import Foundation
 
 /// Tracks the callback identities of one serialized engine request.
 ///
-/// ```text
-/// idle -> begin -> waiting for ready -> dispatch once -> complete -> idle
-///                  ^                                      |
-///                  +--------- reset engine generation ----+
-/// ```
 /// The runner owns scheduling and effects; this value validates transitions.
 struct HabitWidgetExecutionState {
   private(set) var engineGeneration = UUID()

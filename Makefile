@@ -40,11 +40,12 @@ NATIVE_TEST_BUILD_DIR := build/native-tests
 NATIVE_TEST_RESULTS_DIR ?= build/test-results/native
 FLAVOR ?= f_generic
 IOS_TEST_DESTINATION ?=
+SCRIPTS_PYTHON := poetry --directory scripts/python-scripts run python
 
 
 .PHONY: help init bootstrap \
 	normalize-l10n sync-native-l10n build-runner format fix gen-icons test gen \
-	test-ci test-native test-linux test-windows test-macos test-ios test-ios-integration test-all test-integration \
+	test-ci test-scripts test-native test-linux test-windows test-macos test-ios test-ios-integration test-all test-integration \
 	verify-generated verify-submodules aio aio-full sync-rules unsync-rules \
 	gen-screenshot-data gen-natural-sort-data
 
@@ -61,6 +62,7 @@ help:
 	@echo   gen-icons         Generate icon fonts
 	@echo   test              Run Dart/Flutter and iOS widget unit tests on macOS
 	@echo   test-ci           Run Dart/Flutter tests with machine-readable results
+	@echo   test-scripts      Run local development script tests with Poetry and pytest
 	@echo   test-native       Run native tests for the current desktop host
 	@echo "  test-linux        Run GTK C++ tests; requires a display or xvfb-run"
 	@echo   test-windows      Run Win32 C++ tests with CMake and CTest
@@ -69,7 +71,7 @@ help:
 	@echo   test-ios          Run isolated widget unit XCTest without building the app
 	@echo   test-ios-integration  Build app/extension and run widget integration XCTest
 	@echo "                    FLAVOR selects app variant; IOS_TEST_DESTINATION selects simulator"
-	@echo   test-all          Run all unit tests, including native unit suites
+	@echo   test-all          Run all unit tests, including Python and native unit suites
 	@echo   test-integration  Run all integration suites supported on this host
 	@echo   gen               Run the main generation workflow
 	@echo   verify-generated  Ensure normalized/generated files are up to date
@@ -125,6 +127,9 @@ endif
 test-ci:
 	@$(MELOS) run test-ci
 
+test-scripts:
+	@$(SCRIPTS_PYTHON) -m pytest
+
 # C++ suites compile the package's native implementation directly; they do not
 # need a Flutter app build. CTest >= 3.21 provides JUnit output for CI reporting.
 test-linux:
@@ -177,7 +182,7 @@ ifeq ($(HOST_PLATFORM),Darwin)
 	@rm -rf "$(NATIVE_TEST_RESULTS_DIR)/ios-widget-unit.xcresult"
 	@set -e -o pipefail; \
 		destination="$(IOS_TEST_DESTINATION)"; \
-		if [[ -z "$$destination" ]]; then destination="$$(python3 scripts/select_ios_simulator.py)"; fi; \
+		if [[ -z "$$destination" ]]; then destination="$$( $(SCRIPTS_PYTHON) bin/select_ios_simulator.py)"; fi; \
 		xcodebuild test -project ios/HabitWidgetTests/HabitWidgetTests.xcodeproj \
 		-scheme HabitWidgetTests -configuration Debug -destination "$$destination" \
 		-derivedDataPath "$(NATIVE_TEST_BUILD_DIR)/ios-widget-unit" \
@@ -200,7 +205,7 @@ ifeq ($(HOST_PLATFORM),Darwin)
 	@rm -rf "$(NATIVE_TEST_RESULTS_DIR)/ios-widget-integration.xcresult"
 	@set -e -o pipefail; \
 		destination="$(IOS_TEST_DESTINATION)"; \
-		if [[ -z "$$destination" ]]; then destination="$$(python3 scripts/select_ios_simulator.py)"; fi; \
+		if [[ -z "$$destination" ]]; then destination="$$( $(SCRIPTS_PYTHON) bin/select_ios_simulator.py)"; fi; \
 		xcodebuild test -workspace ios/Runner.xcworkspace -scheme HabitWidgetIntegrationTests \
 		-configuration "$(if $(filter Runner,$(FLAVOR)),Debug,Debug-$(FLAVOR))" -destination "$$destination" \
 		-derivedDataPath "$(NATIVE_TEST_BUILD_DIR)/ios-widget-integration" \
@@ -226,6 +231,7 @@ else
 endif
 
 test-all:
+	@$(SUBMAKE) test-scripts
 	@$(SUBMAKE) test
 ifeq ($(OS),Windows_NT)
 	@$(SUBMAKE) test-windows

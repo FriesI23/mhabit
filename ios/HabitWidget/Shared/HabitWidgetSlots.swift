@@ -18,12 +18,6 @@ struct HabitWidgetSlot {
 }
 
 /// Resolves visible selections into a deterministic, fixed-first list.
-///
-/// ```text
-/// visible selections -> fixed habits in selection order -> automatic habits
-///                                                               |
-///                                                    stable snapshot order
-/// ```
 enum HabitWidgetSlots {
   /// Packs fixed selections first, then fills capacity without duplicates.
   static func resolve(snapshot: HabitWidgetSnapshot?, selections: [String?], count: Int,

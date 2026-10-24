@@ -85,11 +85,6 @@ enum HabitWidgetHoldError: Error { case unavailable }
 
 /// Validates and persists shared presentation state through a single writer.
 ///
-/// ```text
-/// committed result -> retained identity -> matching event -> removed identity
-///                            |
-///                     read-only timelines
-/// ```
 /// Reads are side-effect free. Mutations are serialized by the app runner.
 final class HabitWidgetHoldStore {
   /// Versions the serialized envelope independently of the record projection.

@@ -21,13 +21,7 @@ import 'habits_manager.dart';
 
 /// Serializes snapshot publication and compare-and-set record operations.
 ///
-/// Persistence and publication have separate outcomes:
-///
-/// ```text
-/// request -> validate -> transaction commit -> refresh -> publish
-///                            |                             |
-///                            +------ action response ------+
-/// ```
+/// Persistence and publication have separate outcomes.
 final class HabitWidgetService {
   final HabitsDisplayAccess _habitsAccess;
   final RecordDBHelper _records;
