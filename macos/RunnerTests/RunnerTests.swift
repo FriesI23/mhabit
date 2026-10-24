@@ -1,13 +1,12 @@
 import Cocoa
 import FlutterMacOS
-import macos_window_utils
 import XCTest
+import macos_window_utils
+
 @testable import mhabit
 @testable import mhabit_desktop_window_chrome
 
-private final class FlippedChromeView: NSView {
-  override var isFlipped: Bool { true }
-}
+private final class FlippedChromeView: NSView { override var isFlipped: Bool { true } }
 
 @MainActor
 final class RunnerTests: XCTestCase {
@@ -19,8 +18,10 @@ final class RunnerTests: XCTestCase {
       RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.01))
     }
     XCTAssertTrue(window.isVisible, "Dart bootstrap must show the initialized window")
-    XCTAssertTrue(window.chrome?.fusionEnabled == true,
-                  "The native test host must initialize chrome before XCTest changes it")
+    XCTAssertTrue(
+      window.chrome?.fusionEnabled == true,
+      "The native test host must initialize chrome before XCTest changes it",
+    )
   }
 
   func testProductMinimumAndOuterFrameSurviveDecorationChanges() throws {
@@ -45,17 +46,24 @@ final class RunnerTests: XCTestCase {
   }
 
   func testCoordinateOriginAndFlip() {
-    for view in [NSView(frame: CGRect(x: 0, y: 0, width: 350, height: 520)),
-                 FlippedChromeView(frame: CGRect(x: 0, y: 0, width: 350, height: 520))] {
+    for view in [
+      NSView(frame: CGRect(x: 0, y: 0, width: 350, height: 520)),
+      FlippedChromeView(frame: CGRect(x: 0, y: 0, width: 350, height: 520)),
+    ] {
       view.bounds = CGRect(x: 10, y: 20, width: 350, height: 520)
       let native = CGRect(x: 17, y: view.isFlipped ? 29 : 517, width: 14, height: 14)
-      XCTAssertEqual(DesktopChromeCoordinates.toFlutter(native, in: view),
-                     ChromeRect(x: 7, y: 9, width: 14, height: 14))
+      XCTAssertEqual(
+        DesktopChromeCoordinates.toFlutter(native, in: view),
+        ChromeRect(x: 7, y: 9, width: 14, height: 14),
+      )
     }
   }
 
-  private func assertButtonHitTesting(in window: NSWindow,
-                                    file: StaticString = #filePath, line: UInt = #line) {
+  private func assertButtonHitTesting(
+    in window: NSWindow,
+    file: StaticString = #filePath,
+    line: UInt = #line,
+  ) {
     guard let root = window.contentView?.superview else {
       return XCTFail("Window frame view unavailable", file: file, line: line)
     }
@@ -64,12 +72,17 @@ final class RunnerTests: XCTestCase {
         XCTFail("Native button unavailable", file: file, line: line)
         continue
       }
-      let point = button.convert(NSPoint(x: button.bounds.midX, y: button.bounds.midY),
-                                 to: root.superview)
+      let point = button.convert(
+        NSPoint(x: button.bounds.midX, y: button.bounds.midY),
+        to: root.superview,
+      )
       let hit = root.hitTest(point)
-      XCTAssertTrue(hit === button || hit?.isDescendant(of: button) == true,
-                    "Native button must receive physical pointer input; hit=\(String(describing: hit))",
-                    file: file, line: line)
+      XCTAssertTrue(
+        hit === button || hit?.isDescendant(of: button) == true,
+        "Native button must receive physical pointer input; hit=\(String(describing: hit))",
+        file: file,
+        line: line,
+      )
     }
   }
 
@@ -158,7 +171,11 @@ final class RunnerTests: XCTestCase {
         let buttons = [NSWindow.ButtonType.closeButton, .miniaturizeButton, .zoomButton]
           .compactMap { window.standardWindowButton($0) }
         XCTAssertEqual(buttons.count, 3)
-        XCTAssertEqual(buttons.first!.convert(buttons.first!.bounds, to: nil).minX, 20, accuracy: 0.001)
+        XCTAssertEqual(
+          buttons.first!.convert(buttons.first!.bounds, to: nil).minX,
+          20,
+          accuracy: 0.001,
+        )
         for button in buttons {
           let rect = button.convert(button.bounds, to: nil)
           XCTAssertEqual(window.frame.height - rect.midY, 32, accuracy: 0.001)
@@ -183,8 +200,12 @@ final class WindowPersistenceTests: XCTestCase {
     let name = "persistence-test-\(UUID().uuidString)"
     let autosave = "mhabit.\(name).ordinary.v1"
     defer { NSWindow.removeFrame(usingName: autosave) }
-    let first = NSWindow(contentRect: NSRect(x: 100, y: 100, width: 800, height: 600),
-                         styleMask: [.titled, .resizable], backing: .buffered, defer: false)
+    let first = NSWindow(
+      contentRect: NSRect(x: 100, y: 100, width: 800, height: 600),
+      styleMask: [.titled, .resizable],
+      backing: .buffered,
+      defer: false,
+    )
     first.isReleasedWhenClosed = false
     defer { first.close() }
     let owner = WindowPersistence(window: first)
@@ -197,16 +218,24 @@ final class WindowPersistenceTests: XCTestCase {
 
     // AppKit may relocate a saved frame to another display. Compare with its
     // native restore result instead of assuming global coordinates are fixed.
-    let reference = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 400, height: 530),
-                             styleMask: [.titled, .resizable], backing: .buffered, defer: false)
+    let reference = NSWindow(
+      contentRect: NSRect(x: 0, y: 0, width: 400, height: 530),
+      styleMask: [.titled, .resizable],
+      backing: .buffered,
+      defer: false,
+    )
     reference.isReleasedWhenClosed = false
     defer { reference.close() }
     XCTAssertTrue(reference.setFrameUsingName(autosave))
     let expected = reference.frame
     XCTAssertEqual(expected.size, ordinary.size)
 
-    let second = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 400, height: 530),
-                          styleMask: [.titled, .resizable], backing: .buffered, defer: false)
+    let second = NSWindow(
+      contentRect: NSRect(x: 0, y: 0, width: 400, height: 530),
+      styleMask: [.titled, .resizable],
+      backing: .buffered,
+      defer: false,
+    )
     second.isReleasedWhenClosed = false
     defer { second.close() }
     let restored = WindowPersistence(window: second)
@@ -216,12 +245,20 @@ final class WindowPersistenceTests: XCTestCase {
     // Simulate a fullscreen/zoom transition: transient geometry must not save.
     restored.suspend()
     let savedOrdinary = try XCTUnwrap(
-      UserDefaults.standard.string(forKey: "NSWindow Frame \(autosave)"))
+      UserDefaults.standard.string(forKey: "NSWindow Frame \(autosave)")
+    )
     second.setFrame(NSRect(x: 0, y: 0, width: 1100, height: 900), display: false)
     try restored.flush()
-    XCTAssertEqual(UserDefaults.standard.string(forKey: "NSWindow Frame \(autosave)"), savedOrdinary)
-    let third = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 400, height: 530),
-                         styleMask: [.titled, .resizable], backing: .buffered, defer: false)
+    XCTAssertEqual(
+      UserDefaults.standard.string(forKey: "NSWindow Frame \(autosave)"),
+      savedOrdinary,
+    )
+    let third = NSWindow(
+      contentRect: NSRect(x: 0, y: 0, width: 400, height: 530),
+      styleMask: [.titled, .resizable],
+      backing: .buffered,
+      defer: false,
+    )
     third.isReleasedWhenClosed = false
     defer { third.close() }
     let verification = WindowPersistence(window: third)

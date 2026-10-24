@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "lineLength": 100,
+  "indentation": {
+    "spaces": 2
+  },
+  "respectsExistingLineBreaks": true,
+  "lineBreakBeforeEachArgument": true,
+  "multilineTrailingCommaBehavior": "alwaysUsed",
+  "lineBreakBetweenDeclarationAttributes": true,
+  "lineBreakAroundMultilineExpressionChainComponents": true
+}

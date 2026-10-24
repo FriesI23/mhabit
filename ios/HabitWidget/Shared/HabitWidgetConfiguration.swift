@@ -5,20 +5,30 @@ import Foundation
 @available(iOS 17.0, *)
 struct HabitWidgetChoice: AppEntity {
   let id: String
-  @Property(title: LocalizedStringResource("HomeWidgetMetadataName", defaultValue: "Name")) var name: String
-  init(id: String, name: String) { self.id = id; self.name = name }
-  static var typeDisplayRepresentation = TypeDisplayRepresentation(name: LocalizedStringResource("HomeWidgetMetadataHabit", defaultValue: "Habit"))
+  @Property(title: LocalizedStringResource("HomeWidgetMetadataName", defaultValue: "Name"))
+  var name: String
+  init(id: String, name: String) {
+    self.id = id
+    self.name = name
+  }
+  static var typeDisplayRepresentation = TypeDisplayRepresentation(
+    name: LocalizedStringResource("HomeWidgetMetadataHabit", defaultValue: "Habit")
+  )
   static var defaultQuery = HabitWidgetChoiceQuery()
   static var automatic: HabitWidgetChoice { automatic(snapshot: HabitWidgetShared.readSnapshot()) }
 
   /// Uses the same captured language as the rest of a picker response.
   static func automatic(snapshot: HabitWidgetSnapshot?) -> HabitWidgetChoice {
-    HabitWidgetChoice(id: HabitWidgetShared.automaticSelectionID,
-      name: snapshot?.text(.automatic) ?? HabitWidgetText.automatic.localized())
+    HabitWidgetChoice(
+      id: HabitWidgetShared.automaticSelectionID,
+      name: snapshot?.text(.automatic) ?? HabitWidgetText.automatic.localized(),
+    )
   }
 
   var displayRepresentation: DisplayRepresentation {
-    if id == HabitWidgetShared.automaticSelectionID { return DisplayRepresentation(title: "\(name)") }
+    if id == HabitWidgetShared.automaticSelectionID {
+      return DisplayRepresentation(title: "\(name)")
+    }
     // Stable identity also distinguishes equal names in the system picker.
     return DisplayRepresentation(title: "\(name)", subtitle: "\(id)")
   }
@@ -33,19 +43,27 @@ enum HabitWidgetChoices {
       if id == HabitWidgetShared.automaticSelectionID { return .automatic(snapshot: snapshot) }
       guard UUID(uuidString: id) != nil else { return nil }
       // Preserve saved identity while a snapshot is unavailable or the habit is deleted.
-      return HabitWidgetChoice(id: id, name: snapshot?.catalog.first(where: { $0.id == id })?.name
-        ?? snapshot?.text(.unavailable) ?? HabitWidgetText.unavailable.localized())
+      return HabitWidgetChoice(
+        id: id,
+        name: snapshot?.catalog.first(where: { $0.id == id })?.name ?? snapshot?.text(.unavailable)
+          ?? HabitWidgetText.unavailable.localized(),
+      )
     }
   }
 
   /// Filters available names while preserving their snapshot ordering.
-  static func suggestions(snapshot: HabitWidgetSnapshot?, excluding: Set<String>,
-                          keeping: String?, search: String? = nil) -> [HabitWidgetChoice] {
-    let choices = [HabitWidgetChoice.automatic(snapshot: snapshot)] + (snapshot?.catalog ?? []).map {
-      HabitWidgetChoice(id: $0.id, name: $0.name)
-    }
+  static func suggestions(
+    snapshot: HabitWidgetSnapshot?,
+    excluding: Set<String>,
+    keeping: String?,
+    search: String? = nil,
+  ) -> [HabitWidgetChoice] {
+    let choices =
+      [HabitWidgetChoice.automatic(snapshot: snapshot)]
+      + (snapshot?.catalog ?? []).map { HabitWidgetChoice(id: $0.id, name: $0.name) }
     return choices.filter {
-      ($0.id == HabitWidgetShared.automaticSelectionID || $0.id == keeping || !excluding.contains($0.id))
+      ($0.id == HabitWidgetShared.automaticSelectionID || $0.id == keeping
+        || !excluding.contains($0.id))
         && (search?.isEmpty != false || $0.name.localizedCaseInsensitiveContains(search!))
     }
   }
@@ -54,30 +72,72 @@ enum HabitWidgetChoices {
 /// Describes the saved selections exposed by the system widget editor.
 @available(iOS 17.0, *)
 struct HabitWidgetConfiguration: WidgetConfigurationIntent {
-  static var title: LocalizedStringResource = LocalizedStringResource("HomeWidgetMetadataConfigureHabits", defaultValue: "Configure habits")
-  @Parameter(title: LocalizedStringResource("HomeWidgetMetadataHabit1", defaultValue: "Habit 1"), query: HabitWidgetChoiceQuery()) var slot1: HabitWidgetChoice?
-  @Parameter(title: LocalizedStringResource("HomeWidgetMetadataHabit2", defaultValue: "Habit 2"), query: HabitWidgetSlot2Query()) var slot2: HabitWidgetChoice?
-  @Parameter(title: LocalizedStringResource("HomeWidgetMetadataHabit3", defaultValue: "Habit 3"), query: HabitWidgetSlot3Query()) var slot3: HabitWidgetChoice?
-  @Parameter(title: LocalizedStringResource("HomeWidgetMetadataHabit4", defaultValue: "Habit 4"), query: HabitWidgetSlot4Query()) var slot4: HabitWidgetChoice?
-  @Parameter(title: LocalizedStringResource("HomeWidgetMetadataHabit5", defaultValue: "Habit 5"), query: HabitWidgetSlot5Query()) var slot5: HabitWidgetChoice?
-  @Parameter(title: LocalizedStringResource("HomeWidgetMetadataHabit6", defaultValue: "Habit 6"), query: HabitWidgetSlot6Query()) var slot6: HabitWidgetChoice?
+  static var title: LocalizedStringResource = LocalizedStringResource(
+    "HomeWidgetMetadataConfigureHabits",
+    defaultValue: "Configure habits",
+  )
+  @Parameter(
+    title: LocalizedStringResource("HomeWidgetMetadataHabit1", defaultValue: "Habit 1"),
+    query: HabitWidgetChoiceQuery(),
+  )
+  var slot1: HabitWidgetChoice?
+  @Parameter(
+    title: LocalizedStringResource("HomeWidgetMetadataHabit2", defaultValue: "Habit 2"),
+    query: HabitWidgetSlot2Query(),
+  )
+  var slot2: HabitWidgetChoice?
+  @Parameter(
+    title: LocalizedStringResource("HomeWidgetMetadataHabit3", defaultValue: "Habit 3"),
+    query: HabitWidgetSlot3Query(),
+  )
+  var slot3: HabitWidgetChoice?
+  @Parameter(
+    title: LocalizedStringResource("HomeWidgetMetadataHabit4", defaultValue: "Habit 4"),
+    query: HabitWidgetSlot4Query(),
+  )
+  var slot4: HabitWidgetChoice?
+  @Parameter(
+    title: LocalizedStringResource("HomeWidgetMetadataHabit5", defaultValue: "Habit 5"),
+    query: HabitWidgetSlot5Query(),
+  )
+  var slot5: HabitWidgetChoice?
+  @Parameter(
+    title: LocalizedStringResource("HomeWidgetMetadataHabit6", defaultValue: "Habit 6"),
+    query: HabitWidgetSlot6Query(),
+  )
+  var slot6: HabitWidgetChoice?
 
   static var parameterSummary: some ParameterSummary {
     When(widgetFamily: .equalTo, .systemSmall) {
       Summary { \.$slot1 }
     } otherwise: {
       When(widgetFamily: .equalTo, .systemLarge) {
-        Summary { \.$slot1; \.$slot2; \.$slot3; \.$slot4; \.$slot5; \.$slot6 }
+        Summary {
+          \.$slot1
+          \.$slot2
+          \.$slot3
+          \.$slot4
+          \.$slot5
+          \.$slot6
+        }
       } otherwise: {
-        Summary { \.$slot1; \.$slot2; \.$slot3 }
+        Summary {
+          \.$slot1
+          \.$slot2
+          \.$slot3
+        }
       }
     }
   }
 
   /// Initializes every parameter explicitly, including currently hidden habits.
   init() {
-    slot1 = .automatic; slot2 = .automatic; slot3 = .automatic
-    slot4 = .automatic; slot5 = .automatic; slot6 = .automatic
+    slot1 = .automatic
+    slot2 = .automatic
+    slot3 = .automatic
+    slot4 = .automatic
+    slot5 = .automatic
+    slot6 = .automatic
   }
   /// Returns saved identities in configuration order; the family limits use.
   var selections: [String?] { [slot1?.id, slot2?.id, slot3?.id, slot4?.id, slot5?.id, slot6?.id] }
@@ -95,7 +155,8 @@ protocol HabitWidgetQuery: EntityStringQuery {
 /// inference through `AppEntity.defaultQuery`.
 @available(iOS 17.0, *)
 extension HabitWidgetQuery
-where Entity == HabitWidgetChoice, Result == [HabitWidgetChoice], DefaultValue == HabitWidgetChoice {
+where Entity == HabitWidgetChoice, Result == [HabitWidgetChoice], DefaultValue == HabitWidgetChoice
+{
   /// Resolves stored identifiers without applying picker exclusions.
   func entities(for identifiers: [String]) async throws -> [HabitWidgetChoice] {
     HabitWidgetChoices.identities(identifiers, snapshot: HabitWidgetShared.readSnapshot())
@@ -103,12 +164,18 @@ where Entity == HabitWidgetChoice, Result == [HabitWidgetChoice], DefaultValue =
   /// Supplies recommendations using the query's filtering context.
   func suggestedEntities() async throws -> [HabitWidgetChoice] { choices(search: nil) }
   /// Searches names using the same exclusions as recommendations.
-  func entities(matching string: String) async throws -> [HabitWidgetChoice] { choices(search: string) }
+  func entities(matching string: String) async throws -> [HabitWidgetChoice] {
+    choices(search: string)
+  }
   /// Supplies an explicit default for unset parameters.
   func defaultResult() async -> HabitWidgetChoice? { .automatic }
   private func choices(search: String?) -> [HabitWidgetChoice] {
-    HabitWidgetChoices.suggestions(snapshot: HabitWidgetShared.readSnapshot(), excluding: excludedIdentifiers,
-                                   keeping: nil, search: search)
+    HabitWidgetChoices.suggestions(
+      snapshot: HabitWidgetShared.readSnapshot(),
+      excluding: excludedIdentifiers,
+      keeping: nil,
+      search: search,
+    )
   }
 }
 
@@ -130,11 +197,10 @@ struct HabitWidgetSlot2Query: HabitWidgetQuery {
   typealias Entity = HabitWidgetChoice
   typealias Result = [HabitWidgetChoice]
   typealias DefaultValue = HabitWidgetChoice
-  @IntentParameterDependency<HabitWidgetConfiguration> var configuration: IntentProjection<HabitWidgetConfiguration>?
+  @IntentParameterDependency<HabitWidgetConfiguration>
+  var configuration: IntentProjection<HabitWidgetConfiguration>?
   init() { _configuration = IntentParameterDependency(\.$slot1) }
-  var excludedIdentifiers: Set<String> {
-    Set([configuration?.slot1.id].compactMap { $0 })
-  }
+  var excludedIdentifiers: Set<String> { Set([configuration?.slot1.id].compactMap { $0 }) }
 }
 
 /// Adapts the shared query logic to the third parameter's earlier dependencies.
@@ -143,7 +209,8 @@ struct HabitWidgetSlot3Query: HabitWidgetQuery {
   typealias Entity = HabitWidgetChoice
   typealias Result = [HabitWidgetChoice]
   typealias DefaultValue = HabitWidgetChoice
-  @IntentParameterDependency<HabitWidgetConfiguration> var configuration: IntentProjection<HabitWidgetConfiguration>?
+  @IntentParameterDependency<HabitWidgetConfiguration>
+  var configuration: IntentProjection<HabitWidgetConfiguration>?
   init() { _configuration = IntentParameterDependency(\.$slot1, \.$slot2) }
   var excludedIdentifiers: Set<String> {
     Set([configuration?.slot1.id, configuration?.slot2.id].compactMap { $0 })
@@ -156,10 +223,13 @@ struct HabitWidgetSlot4Query: HabitWidgetQuery {
   typealias Entity = HabitWidgetChoice
   typealias Result = [HabitWidgetChoice]
   typealias DefaultValue = HabitWidgetChoice
-  @IntentParameterDependency<HabitWidgetConfiguration> var configuration: IntentProjection<HabitWidgetConfiguration>?
+  @IntentParameterDependency<HabitWidgetConfiguration>
+  var configuration: IntentProjection<HabitWidgetConfiguration>?
   init() { _configuration = IntentParameterDependency(\.$slot1, \.$slot2, \.$slot3) }
   var excludedIdentifiers: Set<String> {
-    Set([configuration?.slot1.id, configuration?.slot2.id, configuration?.slot3.id].compactMap { $0 })
+    Set(
+      [configuration?.slot1.id, configuration?.slot2.id, configuration?.slot3.id].compactMap { $0 }
+    )
   }
 }
 
@@ -169,11 +239,17 @@ struct HabitWidgetSlot5Query: HabitWidgetQuery {
   typealias Entity = HabitWidgetChoice
   typealias Result = [HabitWidgetChoice]
   typealias DefaultValue = HabitWidgetChoice
-  @IntentParameterDependency<HabitWidgetConfiguration> var configuration: IntentProjection<HabitWidgetConfiguration>?
+  @IntentParameterDependency<HabitWidgetConfiguration>
+  var configuration: IntentProjection<HabitWidgetConfiguration>?
   init() { _configuration = IntentParameterDependency(\.$slot1, \.$slot2, \.$slot3, \.$slot4) }
   var excludedIdentifiers: Set<String> {
-    Set([configuration?.slot1.id, configuration?.slot2.id, configuration?.slot3.id,
-         configuration?.slot4.id].compactMap { $0 })
+    Set(
+      [
+        configuration?.slot1.id, configuration?.slot2.id, configuration?.slot3.id,
+        configuration?.slot4.id,
+      ]
+      .compactMap { $0 }
+    )
   }
 }
 
@@ -183,10 +259,18 @@ struct HabitWidgetSlot6Query: HabitWidgetQuery {
   typealias Entity = HabitWidgetChoice
   typealias Result = [HabitWidgetChoice]
   typealias DefaultValue = HabitWidgetChoice
-  @IntentParameterDependency<HabitWidgetConfiguration> var configuration: IntentProjection<HabitWidgetConfiguration>?
-  init() { _configuration = IntentParameterDependency(\.$slot1, \.$slot2, \.$slot3, \.$slot4, \.$slot5) }
+  @IntentParameterDependency<HabitWidgetConfiguration>
+  var configuration: IntentProjection<HabitWidgetConfiguration>?
+  init() {
+    _configuration = IntentParameterDependency(\.$slot1, \.$slot2, \.$slot3, \.$slot4, \.$slot5)
+  }
   var excludedIdentifiers: Set<String> {
-    Set([configuration?.slot1.id, configuration?.slot2.id, configuration?.slot3.id,
-         configuration?.slot4.id, configuration?.slot5.id].compactMap { $0 })
+    Set(
+      [
+        configuration?.slot1.id, configuration?.slot2.id, configuration?.slot3.id,
+        configuration?.slot4.id, configuration?.slot5.id,
+      ]
+      .compactMap { $0 }
+    )
   }
 }

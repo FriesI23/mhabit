@@ -9,6 +9,22 @@ multiple versions on your local machine, or simply use this submodule to build i
 Generally, you can build the app with `flutter build` (default: `--release`),
 or run it directly using `flutter run` (default: `--debug`).
 
+### Formatting Swift
+
+On macOS, use the same Xcode toolchain as CI (Swift 6.1+) and run from the
+application repository root:
+
+```shell
+make format-swift  # Format handwritten Swift
+make check-swift   # Check without writing files
+```
+
+Formatting options are defined in `.swift-format`. Generated files, dependencies,
+and build caches are excluded.
+
+`make format` and `make fix` also format Swift; `make aio` and CI run the check.
+These aggregate commands skip Swift on other platforms.
+
 ### Building for Android
 
 Following Android flavors are allowed:

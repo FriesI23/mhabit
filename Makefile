@@ -44,7 +44,7 @@ SCRIPTS_PYTHON := poetry --directory scripts/python-scripts run python
 
 
 .PHONY: help init bootstrap \
-	normalize-l10n sync-native-l10n build-runner format fix gen-icons test gen \
+	normalize-l10n sync-native-l10n build-runner format format-swift check-swift fix gen-icons test gen \
 	test-ci test-scripts test-native test-linux test-windows test-macos test-ios test-ios-integration test-all test-integration \
 	verify-generated verify-submodules aio aio-full sync-rules unsync-rules \
 	gen-screenshot-data gen-natural-sort-data
@@ -57,8 +57,10 @@ help:
 	@echo   normalize-l10n    Normalize ARB resources
 	@echo   sync-native-l10n  Fill missing native strings from configured ARB references
 	@echo   build-runner      Run Pigeon, build_runner generators and gen-l10n
-	@echo   format            Format Dart sources under lib and test
-	@echo   fix               Apply Dart fixes and then format sources
+	@echo   format            Format Dart sources and, on macOS, handwritten Swift
+	@echo   format-swift      Format handwritten Swift with the current Swift toolchain
+	@echo "  check-swift       Check Swift style without writing files; requires macOS"
+	@echo   fix               Apply Dart fixes and format Dart and Swift sources
 	@echo   gen-icons         Generate icon fonts
 	@echo   test              Run Dart/Flutter and iOS widget unit tests on macOS
 	@echo   test-ci           Run Dart/Flutter tests with machine-readable results
@@ -111,9 +113,31 @@ build-runner:
 
 format:
 	@$(MELOS) run format
+ifeq ($(HOST_PLATFORM),Darwin)
+	@$(SUBMAKE) format-swift
+endif
+
+format-swift:
+ifeq ($(HOST_PLATFORM),Darwin)
+	@bash scripts/swift_format.sh format
+else
+	@echo ERROR: Swift formatting requires macOS
+	@exit 1
+endif
+
+check-swift:
+ifeq ($(HOST_PLATFORM),Darwin)
+	@bash scripts/swift_format.sh check
+else
+	@echo ERROR: Swift checking requires macOS
+	@exit 1
+endif
 
 fix:
 	@$(MELOS) run fix
+ifeq ($(HOST_PLATFORM),Darwin)
+	@$(SUBMAKE) format-swift
+endif
 
 gen-icons:
 	$(call run_script,gen_icons)
@@ -276,6 +300,9 @@ aio:
 	@$(SUBMAKE) gen
 	@$(SUBMAKE) fix
 	@$(SUBMAKE) verify-generated
+ifeq ($(HOST_PLATFORM),Darwin)
+	@$(SUBMAKE) check-swift
+endif
 
 aio-full:
 	@$(SUBMAKE) aio

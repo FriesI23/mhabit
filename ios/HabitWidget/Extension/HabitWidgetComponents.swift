@@ -3,10 +3,12 @@ import WidgetKit
 
 /// Supplies the adaptive background used by the widget container.
 struct WidgetCanvas: View {
-  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.colorScheme)
+  private var colorScheme
 
   var body: some View {
-    (colorScheme == .dark ? Color(red: 0.055, green: 0.09, blue: 0.085) : Color(red: 0.97, green: 0.98, blue: 0.965))
+    (colorScheme == .dark
+      ? Color(red: 0.055, green: 0.09, blue: 0.085) : Color(red: 0.97, green: 0.98, blue: 0.965))
   }
 }
 
@@ -31,17 +33,21 @@ struct WidgetHeading: View {
 struct HabitWeekGrid: View {
   let habit: HabitWidgetHabit
   let labels: Bool
-  @Environment(\.colorScheme) private var colorScheme
-  @Environment(\.locale) private var locale
+  @Environment(\.colorScheme)
+  private var colorScheme
+  @Environment(\.locale)
+  private var locale
 
   var body: some View {
     HStack(spacing: labels ? 4 : 3) {
       ForEach(Array(habit.sevenDays.suffix(7).enumerated()), id: \.offset) { _, day in
         VStack(spacing: 4) {
           RoundedRectangle(cornerRadius: labels ? 4 : 2.5)
-            .fill(day.boundedProgress > 0
-              ? habit.tint.opacity(0.3 + day.boundedProgress * 0.7)
-              : Color.primary.opacity(colorScheme == .dark ? 0.14 : 0.08))
+            .fill(
+              day.boundedProgress > 0
+                ? habit.tint.opacity(0.3 + day.boundedProgress * 0.7)
+                : Color.primary.opacity(colorScheme == .dark ? 0.14 : 0.08)
+            )
             .aspectRatio(1, contentMode: .fit)
             .widgetAccentable(day.boundedProgress > 0)
           if labels {
@@ -112,8 +118,12 @@ struct WidgetLoadingView: View {
 extension HabitWidgetHabit {
   /// Converts the serialized RGB value into a native sRGB color.
   var tint: Color {
-    Color(.sRGB, red: Double((color >> 16) & 255) / 255,
+    Color(
+      .sRGB,
+      red: Double((color >> 16) & 255) / 255,
       green: Double((color >> 8) & 255) / 255,
-      blue: Double(color & 255) / 255, opacity: 1)
+      blue: Double(color & 255) / 255,
+      opacity: 1,
+    )
   }
 }

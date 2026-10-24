@@ -34,6 +34,10 @@ existing architecture and tooling contracts.
   user explicitly wants code-only work.
 - Keep rule updates minimal and evidence-based. Prefer adjusting the affected
   section instead of rewriting the whole document.
+- Match nearby documentation in tone and detail. Rules describe durable
+  constraints; Wiki pages give usage, prerequisites, and essential caveats.
+  Reference authoritative config or code instead of repeating options and
+  implementation details.
 - When updating rules, anchor them to current repo-owned sources such as
   `Makefile`, `analysis_options.yaml`, `pubspec.yaml`, entry wiring, provider
   assembly, or stable docs under `docs/`.
@@ -47,8 +51,11 @@ existing architecture and tooling contracts.
   equivalent target already exists.
 - Standard commands:
   - `make init` or `make bootstrap`: initialize submodules, hooks, and Melos.
-  - `make format`: format Dart code in the app and internal packages.
-  - `make fix`: apply Dart fixes, then format.
+  - `make format`: format Dart code in the app and internal packages, plus
+    handwritten Swift on macOS.
+  - `make format-swift`, `make check-swift`: format or strictly check handwritten
+    Swift with the current toolchain (macOS only).
+  - `make fix`: apply Dart fixes, then format Dart and, on macOS, Swift.
   - `make gen`: normalize ARB, fill native strings, and generate icons and code.
   - `make verify-generated`: verify generated and normalized outputs are current.
   - `make test`: run Dart/Flutter unit tests and, on macOS, iOS widget unit XCTest.
@@ -67,11 +74,19 @@ existing architecture and tooling contracts.
     runs macOS app-hosted tests and iOS widget integration checks serially. Other
     hosts currently report that no integration suites are registered. Future
     platform suites, including Android, use this aggregate entrypoint.
-  - `make aio`: run `gen`, `fix`, and `verify-generated`.
+  - `make aio`: run `gen`, `fix`, and `verify-generated`, then `check-swift` on macOS.
   - `make aio-full`: run `aio` plus `test-all` (unit tests only).
 - Python tests use the optional Poetry `test` group under `scripts/python-scripts/`.
   Install it with `poetry install --with test --no-root` from that directory.
   CI keeps its explicit test entrypoints and does not run the Python tests.
+- Follow each language's conventions and formatter: use `dart format` for Dart
+  and `swift format` for Swift through the shared Make/CI entrypoints.
+- Swift formatting is owned by `scripts/swift_format.sh` and `.swift-format`.
+  Keep the built-in rule set (`rules` omitted) and use the same Git-discovered
+  handwritten sources for formatting and checks, excluding generated files,
+  dependencies, and build caches. Match CI's Xcode toolchain. Aggregate commands
+  skip Swift outside macOS; standalone Swift targets require macOS. Direct Melos
+  formatting remains Dart-only.
 - Native test ownership stays with the platform implementation: Windows/Linux
   C++ tests live in `packages/mhabit_desktop_window_chrome/{windows,linux}/test`
   and run with CMake/CTest; macOS `RunnerTests` are app-hosted XCTest and run

@@ -25,9 +25,11 @@ final class DesktopWindowChrome: DesktopChromeHostApi {
   // MARK: - Lifecycle
 
   init(
-    window: NSWindow, controller: FlutterViewController, buttonPosition: CGPoint,
+    window: NSWindow,
+    controller: FlutterViewController,
+    buttonPosition: CGPoint,
     applyDecoration: @escaping (Bool) -> Void,
-    applyButtonOffsets: @escaping ([CGPoint]?) -> Void
+    applyButtonOffsets: @escaping ([CGPoint]?) -> Void,
   ) {
     self.window = window
     view = controller.view
@@ -39,11 +41,11 @@ final class DesktopWindowChrome: DesktopChromeHostApi {
     DesktopChromeHostApiSetup.setUp(binaryMessenger: messenger, api: self)
     controller.view.postsFrameChangedNotifications = true
     controller.view.postsBoundsChangedNotifications = true
-    for name in [NSWindow.didResizeNotification, NSWindow.didEndLiveResizeNotification,
-                 NSWindow.didChangeScreenNotification, NSWindow.didChangeBackingPropertiesNotification,
-                 NSWindow.didUpdateNotification] {
-      observe(name, object: window) { $0.scheduleRefresh() }
-    }
+    for name in [
+      NSWindow.didResizeNotification, NSWindow.didEndLiveResizeNotification,
+      NSWindow.didChangeScreenNotification, NSWindow.didChangeBackingPropertiesNotification,
+      NSWindow.didUpdateNotification,
+    ] { observe(name, object: window) { $0.scheduleRefresh() } }
     for name in [NSView.frameDidChangeNotification, NSView.boundsDidChangeNotification] {
       observe(name, object: controller.view) { $0.scheduleRefresh() }
     }
@@ -73,9 +75,9 @@ final class DesktopWindowChrome: DesktopChromeHostApi {
       // didExit. Finish on the next main-loop turn so the native button parent
       // regains its ordinary height and receives pointer input.
       DispatchQueue.main.async { [weak owner] in
-        guard let owner, owner.fusionEnabled, !owner.enteringFullScreen,
-              let window = owner.window, !window.styleMask.contains(.fullScreen),
-              window.toolbar?.isVisible == false else { return }
+        guard let owner, owner.fusionEnabled, !owner.enteringFullScreen, let window = owner.window,
+          !window.styleMask.contains(.fullScreen), window.toolbar?.isVisible == false
+        else { return }
         try? owner.restoreWindowedDecoration()
       }
     }
@@ -109,7 +111,8 @@ final class DesktopWindowChrome: DesktopChromeHostApi {
 
   private func applyConfiguration(fused requested: Bool) throws {
     guard !disposed, let window else { return }
-    let desired = requested && !enteringFullScreen
+    let desired =
+      requested && !enteringFullScreen
       && (exitingFullScreen || !window.styleMask.contains(.fullScreen))
     guard desired != fused else { return }
     // Set first so a partially applied configuration can still be restored.
@@ -121,11 +124,14 @@ final class DesktopWindowChrome: DesktopChromeHostApi {
       window.minSize = minimum
       let actual = window.minSize
       if actual != minimum {
-        window.minSize = NSSize(width: minimum.width - (actual.width - minimum.width),
-                               height: minimum.height - (actual.height - minimum.height))
+        window.minSize = NSSize(
+          width: minimum.width - (actual.width - minimum.width),
+          height: minimum.height - (actual.height - minimum.height),
+        )
       }
-      if !enteringFullScreen, !exitingFullScreen,
-         !window.styleMask.contains(.fullScreen), window.frame != frame {
+      if !enteringFullScreen, !exitingFullScreen, !window.styleMask.contains(.fullScreen),
+        window.frame != frame
+      {
         window.setFrame(frame, display: false)
       }
       window.layoutIfNeeded()
@@ -146,54 +152,90 @@ final class DesktopWindowChrome: DesktopChromeHostApi {
   private func buttonOffsets(in window: NSWindow) throws -> [CGPoint] {
     let buttons = window.chromeButtons
     guard buttons.count == 3 else {
-      throw PigeonError(code: "window-buttons", message: "Native buttons unavailable", details: nil)
+      throw PigeonError(
+        code: "window-buttons",
+        message: "Native buttons unavailable",
+        details: nil,
+      )
     }
     let rectangles = buttons.map { $0.convert($0.bounds, to: nil) }
     let leading = rectangles.map(\.minX).min()!
-    return try zip(buttons, rectangles).map { button, rectangle in
-      guard let parent = button.superview else {
-        throw PigeonError(code: "window-buttons", message: "Button parent unavailable", details: nil)
+    return try zip(buttons, rectangles)
+      .map { button, rectangle in
+        guard let parent = button.superview else {
+          throw PigeonError(
+            code: "window-buttons",
+            message: "Button parent unavailable",
+            details: nil,
+          )
+        }
+        let target = parent.convert(
+          CGRect(
+            x: buttonPosition.x + rectangle.minX - leading,
+            y: window.frame.height - buttonPosition.y - rectangle.height / 2,
+            width: rectangle.width,
+            height: rectangle.height,
+          ),
+          from: nil,
+        )
+        return CGPoint(
+          x: target.minX - parent.bounds.minX,
+          y: parent.isFlipped ? target.minY - parent.bounds.minY : parent.bounds.maxY - target.maxY,
+        )
       }
-      let target = parent.convert(CGRect(
-        x: buttonPosition.x + rectangle.minX - leading,
-        y: window.frame.height - buttonPosition.y - rectangle.height / 2,
-        width: rectangle.width, height: rectangle.height), from: nil)
-      return CGPoint(x: target.minX - parent.bounds.minX,
-                     y: parent.isFlipped ? target.minY - parent.bounds.minY : parent.bounds.maxY - target.maxY)
-    }
   }
 
   // MARK: - Geometry snapshots
 
   func geometry() throws -> ChromeGeometry {
     guard let window, let view else {
-      return ChromeGeometry(ready: false, valid: false, fullScreen: false,
-                            width: 0, height: 0, buttons: [])
+      return ChromeGeometry(
+        ready: false,
+        valid: false,
+        fullScreen: false,
+        width: 0,
+        height: 0,
+        buttons: [],
+      )
     }
-    let fullScreen = enteringFullScreen || exitingFullScreen || window.styleMask.contains(.fullScreen)
+    let fullScreen =
+      enteringFullScreen || exitingFullScreen || window.styleMask.contains(.fullScreen)
     let ready = view.window === window && !view.bounds.isEmpty
-    let buttons = fullScreen ? [] : window.chromeButtons.filter { !$0.isHidden }.map {
-      DesktopChromeCoordinates.toFlutter(view.convert($0.bounds, from: $0), in: view)
-    }
+    let buttons =
+      fullScreen
+      ? []
+      : window.chromeButtons.filter { !$0.isHidden }
+        .map {
+          DesktopChromeCoordinates.toFlutter(view.convert($0.bounds, from: $0), in: view)
+        }
     return ChromeGeometry(
-      ready: ready, valid: ready && (fullScreen || buttons.count == 3), fullScreen: fullScreen,
-      width: Double(view.bounds.width), height: Double(view.bounds.height),
-      buttons: buttons)
+      ready: ready,
+      valid: ready && (fullScreen || buttons.count == 3),
+      fullScreen: fullScreen,
+      width: Double(view.bounds.width),
+      height: Double(view.bounds.height),
+      buttons: buttons,
+    )
   }
 
   // MARK: - Observation and geometry notifications
 
-  private func observe(_ name: Notification.Name, object: AnyObject,
-                       action: @escaping (DesktopWindowChrome) -> Void) {
-    tokens.append(NotificationCenter.default.addObserver(forName: name, object: object, queue: .main) {
-      [weak self] _ in
-      guard let self, !self.disposed else { return }
-      action(self)
-    })
+  private func observe(
+    _ name: Notification.Name,
+    object: AnyObject,
+    action: @escaping (DesktopWindowChrome) -> Void,
+  ) {
+    tokens.append(
+      NotificationCenter.default.addObserver(forName: name, object: object, queue: .main) {
+        [weak self] _ in
+        guard let self, !self.disposed else { return }
+        action(self)
+      }
+    )
   }
 
   private func stopObserving() {
-    tokens.forEach { NotificationCenter.default.removeObserver($0) }
+    for token in tokens { NotificationCenter.default.removeObserver(token) }
     tokens.removeAll()
   }
 
@@ -216,9 +258,12 @@ final class DesktopWindowChrome: DesktopChromeHostApi {
 /// Flipped and offset view bounds are supported; do not apply backing scale.
 enum DesktopChromeCoordinates {
   static func toFlutter(_ rect: CGRect, in view: NSView) -> ChromeRect {
-    ChromeRect(x: Double(rect.minX - view.bounds.minX),
-               y: Double(view.isFlipped ? rect.minY - view.bounds.minY : view.bounds.maxY - rect.maxY),
-               width: Double(rect.width), height: Double(rect.height))
+    ChromeRect(
+      x: Double(rect.minX - view.bounds.minX),
+      y: Double(view.isFlipped ? rect.minY - view.bounds.minY : view.bounds.maxY - rect.maxY),
+      width: Double(rect.width),
+      height: Double(rect.height),
+    )
   }
 }
 
@@ -227,6 +272,8 @@ enum DesktopChromeCoordinates {
 extension NSWindow {
   fileprivate var chromeButtons: [NSButton] {
     [NSWindow.ButtonType.closeButton, .miniaturizeButton, .zoomButton]
-      .compactMap { standardWindowButton($0) }
+      .compactMap {
+        standardWindowButton($0)
+      }
   }
 }

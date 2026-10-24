@@ -27,9 +27,7 @@ struct HabitWidgetExecutionState {
   }
 
   /// Checks whether a callback belongs to the current engine instance.
-  func accepts(engineGeneration: UUID) -> Bool {
-    self.engineGeneration == engineGeneration
-  }
+  func accepts(engineGeneration: UUID) -> Bool { self.engineGeneration == engineGeneration }
 
   /// Accepts a ready handshake only from the current engine generation.
   mutating func markReady(engineGeneration: UUID) -> Bool {
@@ -40,8 +38,8 @@ struct HabitWidgetExecutionState {
 
   /// Grants a single dispatch after the current engine has become ready.
   mutating func markDispatched(operationID: UUID) -> Bool {
-    guard engineReady, isCurrent(operationID: operationID),
-          dispatchedOperationID != operationID else { return false }
+    guard engineReady, isCurrent(operationID: operationID), dispatchedOperationID != operationID
+    else { return false }
     dispatchedOperationID = operationID
     return true
   }

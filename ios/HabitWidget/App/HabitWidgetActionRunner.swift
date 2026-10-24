@@ -66,16 +66,28 @@ final class HabitWidgetActionRunner {
       if let generation, !self.execution.accepts(engineGeneration: generation) { return }
       // Capture this publication now, so an intermediate data reset cannot be
       // hidden by a later publication which restores the same record values.
-      self.pendingOperations.append(PendingWidgetOperation(operation: .snapshotPublished(HabitWidgetShared.readSnapshot()), continuation: nil))
+      self.pendingOperations.append(
+        PendingWidgetOperation(
+          operation: .snapshotPublished(HabitWidgetShared.readSnapshot()),
+          continuation: nil,
+        )
+      )
       self.beginNext()
     }
     HabitWidgetDisplayHostApiSetup.setUp(binaryMessenger: messenger, api: handler)
   }
 
   /// Enqueues a record request and returns its validated execution result.
-  func perform(request: HabitWidgetRequest, holdIdentity: String? = nil) async throws -> HabitWidgetResponse {
+  func perform(request: HabitWidgetRequest, holdIdentity: String? = nil) async throws
+    -> HabitWidgetResponse
+  {
     try await withCheckedThrowingContinuation { continuation in
-      pendingOperations.append(PendingWidgetOperation(operation: .recordAction(request, holdIdentity: holdIdentity), continuation: continuation))
+      pendingOperations.append(
+        PendingWidgetOperation(
+          operation: .recordAction(request, holdIdentity: holdIdentity),
+          continuation: continuation,
+        )
+      )
       beginNext()
     }
   }
@@ -83,19 +95,21 @@ final class HabitWidgetActionRunner {
   /// Enqueues an identity-checked display update without invoking Dart.
   func advance(_ event: HabitWidgetHoldEvent) async throws {
     let _: HabitWidgetResponse = try await withCheckedThrowingContinuation { continuation in
-      pendingOperations.append(PendingWidgetOperation(operation: .advanceDisplay(event), continuation: continuation))
+      pendingOperations.append(
+        PendingWidgetOperation(operation: .advanceDisplay(event), continuation: continuation)
+      )
       beginNext()
     }
   }
 
   /// Starts the queue head only after the previous operation has finished.
   private func beginNext() {
-    guard let request = pendingOperations.first, execution.begin(operationID: request.id) else { return }
+    guard let request = pendingOperations.first, execution.begin(operationID: request.id) else {
+      return
+    }
     switch request.operation {
     case .snapshotPublished(let snapshot):
-      do {
-        try holds.reconcile(snapshot: snapshot, at: .now)
-      } catch { logDisplayFailure(error) }
+      do { try holds.reconcile(snapshot: snapshot, at: .now) } catch { logDisplayFailure(error) }
       reload()
       finish(id: request.id, result: .success(noChange()), reset: false)
     case .advanceDisplay(let event):
@@ -111,17 +125,26 @@ final class HabitWidgetActionRunner {
     case .recordAction(let command, let identity):
       preparedCommand = validated(command, holdIdentity: identity)
       let deadline = DispatchWorkItem { [weak self] in
-        self?.finish(id: request.id, result: .failure(HabitWidgetActionError.timedOut), reset: true)
+        self?
+          .finish(
+            id: request.id,
+            result: .failure(HabitWidgetActionError.timedOut),
+            reset: true,
+          )
       }
       timeout = deadline
-      DispatchQueue.main.asyncAfter(deadline: .now() + BackgroundEngineConfiguration.responseTimeout, execute: deadline)
+      DispatchQueue.main.asyncAfter(
+        deadline: .now() + BackgroundEngineConfiguration.responseTimeout,
+        execute: deadline,
+      )
       if engine == nil { startEngine() }
       if execution.engineReady { send(request) }
     }
   }
 
   /// Revalidates a queued request against the snapshot visible at execution.
-  private func validated(_ command: HabitWidgetRequest, holdIdentity: String?) -> HabitWidgetRequest {
+  private func validated(_ command: HabitWidgetRequest, holdIdentity: String?) -> HabitWidgetRequest
+  {
     guard command.operation != .refresh else { return command }
     let snapshot = HabitWidgetShared.readSnapshot()
     let habit = snapshot?.catalog.first { $0.id == command.habitId }
@@ -133,10 +156,10 @@ final class HabitWidgetActionRunner {
     case .undo: capable = habit?.canUndo == true
     case .refresh: capable = false
     }
-    var allowed = snapshot?.isCurrent(at: .now) == true && snapshot?.day == command.day
+    var allowed =
+      snapshot?.isCurrent(at: .now) == true && snapshot?.day == command.day
       && habit?.expectedRecord == command.expectedRecord
-      && (habit?.state == .active || (fixed && habit?.state == .archived))
-      && capable
+      && (habit?.state == .active || (fixed && habit?.state == .archived)) && capable
     if !fixed {
       allowed = allowed && habit?.automaticEligible == true
       if command.operation == .undo {
@@ -150,7 +173,11 @@ final class HabitWidgetActionRunner {
   /// Starts an isolated headless engine and rejects callbacks from older engines.
   private func startEngine() {
     let generation = execution.beginEngine()
-    let engine = FlutterEngine(name: BackgroundEngineConfiguration.name, project: nil, allowHeadlessExecution: true)
+    let engine = FlutterEngine(
+      name: BackgroundEngineConfiguration.name,
+      project: nil,
+      allowHeadlessExecution: true,
+    )
     self.engine = engine
     guard engine.run(withEntrypoint: BackgroundEngineConfiguration.entrypoint) else {
       if let request = pendingOperations.first {
@@ -174,41 +201,68 @@ final class HabitWidgetActionRunner {
 
   /// Dispatches the current request once, including repeated ready handshakes.
   private func send(_ request: PendingWidgetOperation) {
-    guard let command = preparedCommand, execution.markDispatched(operationID: request.id) else { return }
-    backgroundApi?.perform(request: command) { [weak self] response in
-      switch response {
-      case .success(let response):
-        let valid = response.outcome == .applied
-          ? HabitWidgetCommit(recordVersion: response.recordVersion, committedAt: response.committedAt) != nil
-          : response.recordVersion == nil && response.committedAt == nil
-        self?.finish(id: request.id, result: valid ? .success(response) : .failure(HabitWidgetActionError.failed), reset: !valid)
-      case .failure:
-        self?.finish(id: request.id, result: .failure(HabitWidgetActionError.failed), reset: true)
-      }
+    guard let command = preparedCommand, execution.markDispatched(operationID: request.id) else {
+      return
     }
+    backgroundApi?
+      .perform(request: command) { [weak self] response in
+        switch response {
+        case .success(let response):
+          let valid =
+            response.outcome == .applied
+            ? HabitWidgetCommit(
+              recordVersion: response.recordVersion,
+              committedAt: response.committedAt,
+            ) != nil : response.recordVersion == nil && response.committedAt == nil
+          self?
+            .finish(
+              id: request.id,
+              result: valid ? .success(response) : .failure(HabitWidgetActionError.failed),
+              reset: !valid,
+            )
+        case .failure:
+          self?
+            .finish(id: request.id, result: .failure(HabitWidgetActionError.failed), reset: true)
+        }
+      }
   }
 
   /// Completes only the matching queue head, ignoring late or duplicate replies.
   private func finish(id: UUID, result: Result<HabitWidgetResponse, Error>, reset: Bool) {
     guard let request = pendingOperations.first, request.id == id,
-          execution.isCurrent(operationID: id) else { return }
+      execution.isCurrent(operationID: id)
+    else { return }
     timeout?.cancel()
     timeout = nil
     // Apply native state before releasing the queue or acknowledging the tap.
     if case .success(let response) = result, response.outcome == .applied,
-       case .recordAction(_, let identity) = request.operation, let command = preparedCommand,
-       let habitID = command.habitId, let day = command.day,
-       let previousVersion = command.expectedRecord,
-       let commit = HabitWidgetCommit(recordVersion: response.recordVersion, committedAt: response.committedAt) {
+      case .recordAction(_, let identity) = request.operation, let command = preparedCommand,
+      let habitID = command.habitId, let day = command.day,
+      let previousVersion = command.expectedRecord,
+      let commit = HabitWidgetCommit(
+        recordVersion: response.recordVersion,
+        committedAt: response.committedAt,
+      )
+    {
       do {
         switch command.operation {
         case .complete, .markIncomplete:
-          try holds.recorded(habitID: habitID, day: day,
-            source: command.source == .fixed ? .fixed : .automatic, commit: commit, at: .now,
-            result: command.operation == .markIncomplete ? .incomplete : .completed)
+          try holds.recorded(
+            habitID: habitID,
+            day: day,
+            source: command.source == .fixed ? .fixed : .automatic,
+            commit: commit,
+            at: .now,
+            result: command.operation == .markIncomplete ? .incomplete : .completed,
+          )
         case .undo:
-          try holds.undone(habitID: habitID, day: day, previousVersion: previousVersion,
-                           identity: command.source == .fixed ? nil : identity, commit: commit)
+          try holds.undone(
+            habitID: habitID,
+            day: day,
+            previousVersion: previousVersion,
+            identity: command.source == .fixed ? nil : identity,
+            commit: commit,
+          )
         case .refresh: break
         }
         reload()
@@ -231,16 +285,22 @@ final class HabitWidgetActionRunner {
       pluginRegistry = nil
     }
     if case .recordAction = request.operation, case .success(let response) = result,
-       response.outcome != .failed && response.outcome != .invalid {
+      response.outcome != .failed && response.outcome != .invalid
+    {
       foregroundApi?.changed { _ in }
     }
     request.continuation?.resume(with: result)
     beginNext()
   }
 
-  private func noChange() -> HabitWidgetResponse { HabitWidgetResponse(outcome: .unchanged, snapshotPublished: false) }
+  private func noChange() -> HabitWidgetResponse {
+    HabitWidgetResponse(outcome: .unchanged, snapshotPublished: false)
+  }
   private func reload() { WidgetCenter.shared.reloadTimelines(ofKind: HabitWidgetShared.kind) }
   private func logDisplayFailure(_ error: Error) {
-    Logger(subsystem: "io.github.friesi23.mhabit", category: "widget").error("Display state write failed: \(String(describing: error), privacy: .public)")
+    Logger(subsystem: "io.github.friesi23.mhabit", category: "widget")
+      .error(
+        "Display state write failed: \(String(describing: error), privacy: .public)"
+      )
   }
 }
