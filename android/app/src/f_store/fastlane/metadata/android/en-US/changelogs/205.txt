@@ -1,0 +1,7 @@
+- Feature: interactive Home Screen widgets with seven-day progress, check-in,
+  undo and refresh (#680)
+- Feature: automatic or fixed habits, including archived habits; up to six habits
+  in the large widget (#687)
+- Feature: shared check-in display, manual Next and empty-list messages (#687)
+- Feature: mark ordinary habits incomplete; clear ordinary/negative record states
+  and localized labels (#687)

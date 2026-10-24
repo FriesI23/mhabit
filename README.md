@@ -194,12 +194,19 @@ the `weblate-translation` branch.
 |   ✅   | **Loop Habit Tracker Import** | CSV import from Loop Habit Tracker ([v1.25.7+172]) |
 |   ✅   | **Habit Groups**              | Drag-and-drop reorder, collapsible ([v1.26.1+174]) |
 |   🟨   | **Android Widget**            | In progress                                        |
-|   🟨   | **iOS Widget**                | In progress                                        |
+|   ✅   | **iOS Widget**                | Home Screen widgets ([pre-v1.27.16+205])           |
 |   ⬜   | **More Sync Backends**        | Beyond WebDAV — planned                            |
 
+iOS Home Screen widgets now support progress tracking and check-ins in the
+beta. See the [widget guide][ios-widgets-guide]. Thanks to
+[@IlyaPalochkin](https://github.com/IlyaPalochkin) for the initial widget
+contribution!
+
+[ios-widgets-guide]: https://github.com/FriesI23/mhabit/wiki/Feature%EA%9E%89-iOS-Widgets
 [v1.25.1+164]: https://github.com/FriesI23/mhabit/releases/tag/v1.25.1+164
 [v1.25.7+172]: https://github.com/FriesI23/mhabit/releases/tag/v1.25.7+172
 [v1.26.1+174]: https://github.com/FriesI23/mhabit/releases/tag/v1.26.1+174
+[pre-v1.27.16+205]: https://github.com/FriesI23/mhabit/releases/tag/pre-v1.27.16+205
 
 ## Contributing
 

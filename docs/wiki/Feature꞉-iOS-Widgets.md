@@ -38,8 +38,17 @@ Tap **Refresh** after midnight or a time-zone change to load the current day.
 Widget labels follow the app language. Refreshes are scheduled by iOS and may
 be delayed.
 
+### Examples
+
+| Before check-in   | After check-in      | Dark appearance    |
+| ----------------- | ------------------- | ------------------ |
+| ![Before][before] | ![After][completed] | ![Dark mode][dark] |
+
 For building and testing widgets, see [Developing iOS Widgets][developer-guide].
 
 <!-- refs -->
 
+[before]: images/ios-widgets/01-home-light-before.jpg
+[completed]: images/ios-widgets/02-home-light-completed.jpg
+[dark]: images/ios-widgets/03-home-dark.jpg
 [developer-guide]: ./Dev꞉-iOS-Widgets
