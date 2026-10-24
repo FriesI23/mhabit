@@ -34,6 +34,10 @@ existing architecture and tooling contracts.
   user explicitly wants code-only work.
 - Keep rule updates minimal and evidence-based. Prefer adjusting the affected
   section instead of rewriting the whole document.
+- Match nearby documentation in tone and detail. Rules describe durable
+  constraints; Wiki pages give usage, prerequisites, and essential caveats.
+  Reference authoritative config or code instead of repeating options and
+  implementation details.
 - When updating rules, anchor them to current repo-owned sources such as
   `Makefile`, `analysis_options.yaml`, `pubspec.yaml`, entry wiring, provider
   assembly, or stable docs under `docs/`.
@@ -76,22 +80,13 @@ existing architecture and tooling contracts.
   Install it with `poetry install --with test --no-root` from that directory.
   CI keeps its explicit test entrypoints and does not run the Python tests.
 - Follow each language's conventions and formatter: use `dart format` for Dart
-  and `swift format` for Swift. Share Make/CI entrypoints, while keeping only a
-  few explicit readability preferences instead of making Swift imitate Dart.
-- Swift formatting is Make-owned, using `scripts/swift_format.sh` and a minimal
-  `.swift-format` setting two-space indentation and a 100-column limit, following
-  Flutter's Google Swift style reference. Project readability preferences
-  preserve handwritten line breaks for SwiftUI modifier chains; attributes and
-  wrapped arguments use separate lines and multiline lists use trailing commas.
-  Short getters may
-  retain their original single-line or multiline layout.
-  Other settings use tool defaults; omit `rules` to retain the built-in rule set.
-  Toolchain selection belongs to the local environment and CI setup; the script
-  directly uses `swift format`.
-  Both modes explicitly use the same config and Git-discovered handwritten Swift
-  files, excluding generated outputs, dependencies and build caches. CI calls
-  `make check-swift`. Aggregate commands silently skip Swift on other hosts;
-  direct Swift targets fail there. Direct Melos formatting remains Dart-only.
+  and `swift format` for Swift through the shared Make/CI entrypoints.
+- Swift formatting is owned by `scripts/swift_format.sh` and `.swift-format`.
+  Keep the built-in rule set (`rules` omitted) and use the same Git-discovered
+  handwritten sources for formatting and checks, excluding generated files,
+  dependencies, and build caches. Match CI's Xcode toolchain. Aggregate commands
+  skip Swift outside macOS; standalone Swift targets require macOS. Direct Melos
+  formatting remains Dart-only.
 - Native test ownership stays with the platform implementation: Windows/Linux
   C++ tests live in `packages/mhabit_desktop_window_chrome/{windows,linux}/test`
   and run with CMake/CTest; macOS `RunnerTests` are app-hosted XCTest and run
