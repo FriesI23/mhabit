@@ -7,6 +7,15 @@ env:
   _FN_GIT_CHECK_CHANGE: ""
 
 jobs:
+  swift-format:
+    name: Swift formatting
+    runs-on: xcode-27
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup_xcode
+      - name: Check Swift style with the local Make entrypoint
+        run: make check-swift
+
   file-integrity:
     name: Generated Files integrity checking
     runs-on: ubuntu-latest

@@ -26,18 +26,27 @@ struct HabitWidgetSnapshot: Decodable {
     day = try values.decode(String.self, forKey: .day)
     nextDayAt = try values.decode(String.self, forKey: .nextDayAt)
     guard Self.isDay(day), let generated = Self.parseDate(generatedAt),
-          let boundary = Self.parseDate(nextDayAt), boundary > generated else {
-      throw DecodingError.dataCorruptedError(forKey: .day, in: values, debugDescription: "Invalid widget civil-day bounds")
+      let boundary = Self.parseDate(nextDayAt), boundary > generated
+    else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .day,
+        in: values,
+        debugDescription: "Invalid widget civil-day bounds",
+      )
     }
     locale = try values.decodeIfPresent(String.self, forKey: .locale)
     catalog = try values.decode([HabitWidgetHabit].self, forKey: .catalog)
     activeCount = try values.decode(Int.self, forKey: .activeCount)
     completedCount = try values.decode(Int.self, forKey: .completedCount)
     let active = catalog.filter { $0.state == .active && $0.started }
-    guard Set(catalog.map(\.id)).count == catalog.count,
-          activeCount == active.count,
-          completedCount == active.filter(\.completed).count else {
-      throw DecodingError.dataCorruptedError(forKey: .catalog, in: values, debugDescription: "Inconsistent widget directory")
+    guard Set(catalog.map(\.id)).count == catalog.count, activeCount == active.count,
+      completedCount == active.filter(\.completed).count
+    else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .catalog,
+        in: values,
+        debugDescription: "Inconsistent widget directory",
+      )
     }
   }
 
@@ -79,7 +88,9 @@ struct HabitWidgetSnapshot: Decodable {
   /// Parses wire timestamps while preserving fractional-second ordering.
   static func parseDate(_ value: String) -> Date? {
     if #available(iOS 18.0, *) {
-      if let date = try? Date.ISO8601FormatStyle(includingFractionalSeconds: true).parse(value) { return date }
+      if let date = try? Date.ISO8601FormatStyle(includingFractionalSeconds: true).parse(value) {
+        return date
+      }
       return try? Date.ISO8601FormatStyle().parse(value)
     }
     return parseDateFallback(value)
@@ -95,15 +106,14 @@ struct HabitWidgetSnapshot: Decodable {
     let start = value.index(after: decimal)
     let end = value[start...].firstIndex { !$0.isASCII || !$0.isNumber } ?? value.endIndex
     guard start != end, let fraction = Double("0." + value[start..<end]),
-          let date = try? Date.ISO8601FormatStyle().parse(String(value[..<decimal]) + value[end...]) else { return nil }
+      let date = try? Date.ISO8601FormatStyle().parse(String(value[..<decimal]) + value[end...])
+    else { return nil }
     return date.addingTimeInterval(fraction)
   }
 }
 
 /// Represents the lifecycle states understood by the native snapshot reader.
-enum HabitWidgetHabitState: String, Decodable {
-  case active, archived, unknown
-}
+enum HabitWidgetHabitState: String, Decodable { case active, archived, unknown }
 
 /// Carries Dart's record-presence and goal result without recomputing targets.
 enum HabitWidgetRecordState: String, Decodable {
@@ -131,7 +141,8 @@ struct HabitWidgetHabit: Decodable, Identifiable {
   let automaticPending: Bool
 
   private enum CodingKeys: String, CodingKey {
-    case id, name, color, completed, recordState, progress, canComplete, canUndo, expectedRecord, sevenDays
+    case id, name, color, completed, recordState, progress, canComplete, canUndo, expectedRecord,
+      sevenDays
     case state, startDate, started, skipped, automaticEligible, automaticPending, canMarkIncomplete
   }
 
@@ -156,19 +167,23 @@ struct HabitWidgetHabit: Decodable, Identifiable {
     automaticEligible = try values.decode(Bool.self, forKey: .automaticEligible)
     startDate = try values.decode(String.self, forKey: .startDate)
     if id.isEmpty || expectedRecord.isEmpty || !progress.isFinite
-        || !HabitWidgetSnapshot.isDay(startDate)
-        || sevenDays.count != 7 || sevenDays.contains(where: { !$0.progress.isFinite })
-        || (automaticEligible && (state != .active || !started || skipped))
-        || (canMarkIncomplete && (!canComplete || completed || !automaticPending))
-        || ((!started || state == .unknown || skipped) && (canComplete || canUndo || canMarkIncomplete)) {
-      throw DecodingError.dataCorruptedError(forKey: .id, in: values, debugDescription: "Invalid widget habit projection")
+      || !HabitWidgetSnapshot.isDay(startDate) || sevenDays.count != 7
+      || sevenDays.contains(where: { !$0.progress.isFinite })
+      || (automaticEligible && (state != .active || !started || skipped))
+      || (canMarkIncomplete && (!canComplete || completed || !automaticPending))
+      || ((!started || state == .unknown || skipped)
+        && (canComplete || canUndo || canMarkIncomplete))
+    {
+      throw DecodingError.dataCorruptedError(
+        forKey: .id,
+        in: values,
+        debugDescription: "Invalid widget habit projection",
+      )
     }
   }
 
   /// Restricts progress to the range accepted by native visual controls.
-  var boundedProgress: Double {
-    progress.isFinite ? min(max(progress, 0), 1) : 0
-  }
+  var boundedProgress: Double { progress.isFinite ? min(max(progress, 0), 1) : 0 }
 
   /// Exposes an explicit record label only when the new projection is known.
   func recordStatusText(_ snapshot: HabitWidgetSnapshot, bundle: Bundle = .main) -> String? {
@@ -176,7 +191,8 @@ struct HabitWidgetHabit: Decodable, Identifiable {
     switch recordState {
     case .unknown: return nil
     case .unrecorded: return snapshot.text(.unrecorded, bundle: bundle)
-    case .notAchieved: return snapshot.text(automaticPending ? .notAchieved : .incomplete, bundle: bundle)
+    case .notAchieved:
+      return snapshot.text(automaticPending ? .notAchieved : .incomplete, bundle: bundle)
     case .achieved: return snapshot.text(.achieved, bundle: bundle)
     case .skipped: return snapshot.text(.skipped, bundle: bundle)
     }
@@ -189,9 +205,7 @@ struct HabitWidgetDay: Decodable {
   let progress: Double
 
   /// Restricts progress to the range accepted by native visual controls.
-  var boundedProgress: Double {
-    progress.isFinite ? min(max(progress, 0), 1) : 0
-  }
+  var boundedProgress: Double { progress.isFinite ? min(max(progress, 0), 1) : 0 }
 }
 
 /// Defines shared identifiers and the app-group snapshot read boundary.
@@ -207,18 +221,17 @@ enum HabitWidgetShared {
   /// Returns a validated snapshot, failing closed for missing or malformed data.
   static func readSnapshot() -> HabitWidgetSnapshot? {
     guard let group = appGroup,
-          let json = UserDefaults(suiteName: group)?.string(forKey: snapshotKey),
-          let data = json.data(using: .utf8),
-          let snapshot = try? JSONDecoder().decode(HabitWidgetSnapshot.self, from: data) else { return nil }
+      let json = UserDefaults(suiteName: group)?.string(forKey: snapshotKey),
+      let data = json.data(using: .utf8),
+      let snapshot = try? JSONDecoder().decode(HabitWidgetSnapshot.self, from: data)
+    else { return nil }
     return snapshot
   }
 }
 
 extension HabitWidgetSnapshot {
   /// Selects the app-provided locale with a system-locale fallback.
-  var widgetLocale: Locale {
-    locale.map { Locale(identifier: $0) } ?? .current
-  }
+  var widgetLocale: Locale { locale.map { Locale(identifier: $0) } ?? .current }
 }
 
 /// Names shared runtime labels independently of static native metadata.
@@ -255,27 +268,35 @@ enum HabitWidgetText: String, CaseIterable {
 
   /// Selects a widget table, falling back through English resources to code.
   func localized(locale: Locale? = nil, bundle: Bundle = .main) -> String {
-    var languages = bundle.localizations.filter {
-      FileManager.default.fileExists(atPath: bundle.bundleURL
-        .appendingPathComponent("\($0).lproj/Localizable.strings").path)
-    }.sorted { left, right in
-      if left == "en" { return right != "en" }
-      if right == "en" { return false }
-      return left < right
-    }
+    var languages = bundle.localizations
+      .filter {
+        FileManager.default.fileExists(
+          atPath: bundle.bundleURL.appendingPathComponent("\($0).lproj/Localizable.strings").path
+        )
+      }
+      .sorted { left, right in
+        if left == "en" { return right != "en" }
+        if right == "en" { return false }
+        return left < right
+      }
     // Keep English as the matching fallback even when its table is missing.
     if !languages.contains("en") { languages.insert("en", at: 0) }
     let preferences = locale.map { locale -> [String] in
       let identifier = locale.identifier.replacingOccurrences(of: "_", with: "-")
       return [identifier == "zh" ? "zh-Hans" : identifier, "en"]
     }
-    let english = Bundle(url: bundle.bundleURL.appendingPathComponent("en.lproj"))?
-      .localizedString(forKey: key, value: englishDefault, table: nil) ?? englishDefault
-    guard let language = Bundle.preferredLocalizations(from: languages,
-      forPreferences: preferences).first,
-      let localized = Bundle(url: bundle.bundleURL.appendingPathComponent("\(language).lproj")) else {
-      return english
-    }
+    let english =
+      Bundle(url: bundle.bundleURL.appendingPathComponent("en.lproj"))?
+      .localizedString(
+        forKey: key,
+        value: englishDefault,
+        table: nil,
+      ) ?? englishDefault
+    guard
+      let language = Bundle.preferredLocalizations(from: languages, forPreferences: preferences)
+        .first,
+      let localized = Bundle(url: bundle.bundleURL.appendingPathComponent("\(language).lproj"))
+    else { return english }
     return localized.localizedString(forKey: key, value: english, table: nil)
   }
 

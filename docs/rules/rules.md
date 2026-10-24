@@ -47,8 +47,11 @@ existing architecture and tooling contracts.
   equivalent target already exists.
 - Standard commands:
   - `make init` or `make bootstrap`: initialize submodules, hooks, and Melos.
-  - `make format`: format Dart code in the app and internal packages.
-  - `make fix`: apply Dart fixes, then format.
+  - `make format`: format Dart code in the app and internal packages, plus
+    handwritten Swift on macOS.
+  - `make format-swift`, `make check-swift`: format or strictly check handwritten
+    Swift with the current toolchain (macOS only).
+  - `make fix`: apply Dart fixes, then format Dart and, on macOS, Swift.
   - `make gen`: normalize ARB, fill native strings, and generate icons and code.
   - `make verify-generated`: verify generated and normalized outputs are current.
   - `make test`: run Dart/Flutter unit tests and, on macOS, iOS widget unit XCTest.
@@ -67,11 +70,28 @@ existing architecture and tooling contracts.
     runs macOS app-hosted tests and iOS widget integration checks serially. Other
     hosts currently report that no integration suites are registered. Future
     platform suites, including Android, use this aggregate entrypoint.
-  - `make aio`: run `gen`, `fix`, and `verify-generated`.
+  - `make aio`: run `gen`, `fix`, and `verify-generated`, then `check-swift` on macOS.
   - `make aio-full`: run `aio` plus `test-all` (unit tests only).
 - Python tests use the optional Poetry `test` group under `scripts/python-scripts/`.
   Install it with `poetry install --with test --no-root` from that directory.
   CI keeps its explicit test entrypoints and does not run the Python tests.
+- Follow each language's conventions and formatter: use `dart format` for Dart
+  and `swift format` for Swift. Share Make/CI entrypoints, while keeping only a
+  few explicit readability preferences instead of making Swift imitate Dart.
+- Swift formatting is Make-owned, using `scripts/swift_format.sh` and a minimal
+  `.swift-format` setting two-space indentation and a 100-column limit, following
+  Flutter's Google Swift style reference. Project readability preferences
+  preserve handwritten line breaks for SwiftUI modifier chains; attributes and
+  wrapped arguments use separate lines and multiline lists use trailing commas.
+  Short getters may
+  retain their original single-line or multiline layout.
+  Other settings use tool defaults; omit `rules` to retain the built-in rule set.
+  Toolchain selection belongs to the local environment and CI setup; the script
+  directly uses `swift format`.
+  Both modes explicitly use the same config and Git-discovered handwritten Swift
+  files, excluding generated outputs, dependencies and build caches. CI calls
+  `make check-swift`. Aggregate commands silently skip Swift on other hosts;
+  direct Swift targets fail there. Direct Melos formatting remains Dart-only.
 - Native test ownership stays with the platform implementation: Windows/Linux
   C++ tests live in `packages/mhabit_desktop_window_chrome/{windows,linux}/test`
   and run with CMake/CTest; macOS `RunnerTests` are app-hosted XCTest and run

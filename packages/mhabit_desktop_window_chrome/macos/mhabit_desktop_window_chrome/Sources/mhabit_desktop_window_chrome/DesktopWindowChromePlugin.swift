@@ -15,17 +15,26 @@ public final class DesktopWindowChromePlugin: NSObject, FlutterPlugin {
   }
 
   public func attach(
-    window: NSWindow, controller: FlutterViewController, buttonPosition: CGPoint,
+    window: NSWindow,
+    controller: FlutterViewController,
+    buttonPosition: CGPoint,
     applyDecoration: @escaping (Bool) -> Void,
-    applyButtonOffsets: @escaping ([CGPoint]?) -> Void
+    applyButtonOffsets: @escaping ([CGPoint]?) -> Void,
   ) {
     guard chrome == nil else { return }
     let persistence = WindowPersistence(window: window)
     self.persistence = persistence
-    WindowPersistenceHostApiSetup.setUp(binaryMessenger: controller.engine.binaryMessenger, api: persistence)
+    WindowPersistenceHostApiSetup.setUp(
+      binaryMessenger: controller.engine.binaryMessenger,
+      api: persistence,
+    )
     chrome = DesktopWindowChrome(
-      window: window, controller: controller, buttonPosition: buttonPosition,
-      applyDecoration: applyDecoration, applyButtonOffsets: applyButtonOffsets)
+      window: window,
+      controller: controller,
+      buttonPosition: buttonPosition,
+      applyDecoration: applyDecoration,
+      applyButtonOffsets: applyButtonOffsets,
+    )
   }
 
   deinit { try? chrome?.dispose() }

@@ -4,7 +4,8 @@ import XCTest
 final class HabitWidgetExecutionStateTests: XCTestCase {
   func testQueueHeadCannotBeReplacedUntilMatchingCompletion() {
     var state = HabitWidgetExecutionState()
-    let first = UUID(), second = UUID()
+    let first = UUID()
+    let second = UUID()
     XCTAssertTrue(state.begin(operationID: first))
     XCTAssertFalse(state.begin(operationID: second))
     XCTAssertFalse(state.complete(operationID: second, resetEngine: true))
@@ -31,7 +32,8 @@ final class HabitWidgetExecutionStateTests: XCTestCase {
 
   func testTimeoutInvalidatesOldEngineAndLateCompletionCannotFinishNextRequest() {
     var state = HabitWidgetExecutionState()
-    let expired = UUID(), next = UUID()
+    let expired = UUID()
+    let next = UUID()
     XCTAssertTrue(state.begin(operationID: expired))
     let oldEngine = state.beginEngine()
     XCTAssertTrue(state.markReady(engineGeneration: oldEngine))
@@ -51,7 +53,8 @@ final class HabitWidgetExecutionStateTests: XCTestCase {
 
   func testSuccessfulCompletionReusesReadyEngineAndIgnoresDuplicateReply() {
     var state = HabitWidgetExecutionState()
-    let first = UUID(), second = UUID()
+    let first = UUID()
+    let second = UUID()
     XCTAssertTrue(state.begin(operationID: first))
     let engine = state.beginEngine()
     XCTAssertTrue(state.markReady(engineGeneration: engine))

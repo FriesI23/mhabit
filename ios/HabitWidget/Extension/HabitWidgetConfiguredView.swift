@@ -6,11 +6,16 @@ struct HabitWidgetConfiguredView: View {
   let entry: HabitWidgetConfiguredEntry
   var body: some View {
     content.environment(\.locale, entry.snapshot?.widgetLocale ?? .current)
-      .environment(\.layoutDirection, (entry.snapshot?.widgetLocale ?? .current).language.characterDirection == .rightToLeft ? .rightToLeft : .leftToRight)
+      .environment(
+        \.layoutDirection,
+        (entry.snapshot?.widgetLocale ?? .current).language.characterDirection == .rightToLeft
+          ? .rightToLeft : .leftToRight,
+      )
   }
 
   /// Selects the current, expired or unavailable snapshot presentation.
-  @ViewBuilder private var content: some View {
+  @ViewBuilder
+  private var content: some View {
     if let snapshot = entry.snapshot {
       if !snapshot.isCurrent(at: entry.date) {
         VStack(alignment: .leading, spacing: 10) {
@@ -41,8 +46,13 @@ struct HabitWidgetConfiguredView: View {
         }
         Spacer(minLength: 0)
         HabitWeekGrid(habit: habit, labels: true)
-        HabitWidgetConfiguredControls(habit: habit, snapshot: snapshot, source: slot.source,
-          hold: entry.holds[habit.id], compact: false)
+        HabitWidgetConfiguredControls(
+          habit: habit,
+          snapshot: snapshot,
+          source: slot.source,
+          hold: entry.holds[habit.id],
+          compact: false,
+        )
       } else {
         let state = entry.slots.first?.empty ?? .noHabits
         HabitWidgetEmptyView(state: state, snapshot: snapshot)
@@ -60,7 +70,8 @@ struct HabitWidgetConfiguredView: View {
         WidgetHeading(title: snapshot.text(.today))
         Spacer()
         Text("\(snapshot.completedCount)/\(snapshot.activeCount)")
-          .font(.system(.caption, design: .rounded, weight: .semibold)).foregroundStyle(.secondary).monospacedDigit()
+          .font(.system(.caption, design: .rounded, weight: .semibold)).foregroundStyle(.secondary)
+          .monospacedDigit()
       }
       if isEmpty {
         HabitWidgetEmptyView(state: slots.first?.empty ?? .noHabits, snapshot: snapshot)
@@ -68,18 +79,27 @@ struct HabitWidgetConfiguredView: View {
         ForEach(Array(slots.enumerated()), id: \.offset) { _, slot in
           HStack(spacing: 9) {
             if let habit = slot.habit {
-              RoundedRectangle(cornerRadius: 2).fill(habit.tint).frame(width: 3, height: 25).widgetAccentable()
+              RoundedRectangle(cornerRadius: 2).fill(habit.tint).frame(width: 3, height: 25)
+                .widgetAccentable()
               VStack(alignment: .leading, spacing: 2) {
-                Text(habit.name).font(.system(.subheadline, design: .rounded, weight: .semibold)).lineLimit(1)
+                Text(habit.name).font(.system(.subheadline, design: .rounded, weight: .semibold))
+                  .lineLimit(1)
                 HabitWidgetRecordStatus(habit: habit, snapshot: snapshot, compact: true)
-              }.frame(maxWidth: .infinity, alignment: .leading)
+              }
+              .frame(maxWidth: .infinity, alignment: .leading)
               HabitWeekGrid(habit: habit, labels: false).frame(width: 89)
-              HabitWidgetConfiguredControls(habit: habit, snapshot: snapshot, source: slot.source,
-                hold: entry.holds[habit.id], compact: true)
+              HabitWidgetConfiguredControls(
+                habit: habit,
+                snapshot: snapshot,
+                source: slot.source,
+                hold: entry.holds[habit.id],
+                compact: true,
+              )
             } else {
               Color.clear.accessibilityHidden(true)
             }
-          }.frame(maxWidth: .infinity, maxHeight: .infinity)
+          }
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
       }
     }
@@ -128,8 +148,10 @@ private struct HabitWidgetConfiguredControls: View {
   let source: HabitWidgetSource
   let hold: HabitWidgetHold?
   let compact: Bool
-  @Environment(\.colorScheme) private var colorScheme
-  @Environment(\.layoutDirection) private var direction
+  @Environment(\.colorScheme)
+  private var colorScheme
+  @Environment(\.layoutDirection)
+  private var direction
 
   var body: some View {
     if habit.canComplete {
@@ -163,32 +185,55 @@ private struct HabitWidgetConfiguredControls: View {
     let title: String
     let icon: String
     switch action {
-    case .complete: title = snapshot.text(.complete); icon = "checkmark"
-    case .markIncomplete: title = snapshot.text(.incomplete); icon = "xmark"
-    case .undo: title = snapshot.text(.undo); icon = "arrow.uturn.backward"
-    case .next: title = snapshot.text(.next); icon = direction == .rightToLeft ? "chevron.left" : "chevron.right"
-    case .refresh: title = snapshot.text(.refresh); icon = "arrow.clockwise"
+    case .complete:
+      title = snapshot.text(.complete)
+      icon = "checkmark"
+    case .markIncomplete:
+      title = snapshot.text(.incomplete)
+      icon = "xmark"
+    case .undo:
+      title = snapshot.text(.undo)
+      icon = "arrow.uturn.backward"
+    case .next:
+      title = snapshot.text(.next)
+      icon = direction == .rightToLeft ? "chevron.left" : "chevron.right"
+    case .refresh:
+      title = snapshot.text(.refresh)
+      icon = "arrow.clockwise"
     }
-    return Button(intent: HabitWidgetActionIntent(habit: habit, day: snapshot.day,
-      action: action, source: source, holdIdentity: source == .automatic ? hold?.identity : nil)) {
+    return Button(
+      intent: HabitWidgetActionIntent(
+        habit: habit,
+        day: snapshot.day,
+        action: action,
+        source: source,
+        holdIdentity: source == .automatic ? hold?.identity : nil,
+      )
+    ) {
       HStack(spacing: 4) {
         Image(systemName: icon).font(.system(size: compact ? 12 : 10, weight: .bold))
-        if !compact { Text(title).font(.system(size: 11, weight: .semibold, design: .rounded)).lineLimit(1).minimumScaleFactor(0.7) }
+        if !compact {
+          Text(title).font(.system(size: 11, weight: .semibold, design: .rounded)).lineLimit(1)
+            .minimumScaleFactor(0.7)
+        }
       }
       .foregroundStyle(colorScheme == .dark ? Color.primary : habit.tint)
       .frame(maxWidth: compact ? nil : .infinity).frame(width: compact ? 28 : nil, height: 28)
-      .background(habit.tint.opacity(0.14), in: RoundedRectangle(cornerRadius: 9)).contentShape(Rectangle())
+      .background(habit.tint.opacity(0.14), in: RoundedRectangle(cornerRadius: 9))
+      .contentShape(
+        Rectangle()
+      )
     }
     .buttonStyle(.plain).accessibilityLabel("\(title): \(habit.name)")
-      .accessibilityValue(habit.recordStatusText(snapshot) ?? "")
-      .accessibilityHint(action == .next ? snapshot.text(.nextHint) : "")
-      .invalidatableContent()
+    .accessibilityValue(habit.recordStatusText(snapshot) ?? "")
+    .accessibilityHint(action == .next ? snapshot.text(.nextHint) : "")
+    .invalidatableContent()
   }
 }
 
-private extension HabitWidgetEmptyState {
+extension HabitWidgetEmptyState {
   /// Resolves the native message using the captured app language.
-  func message(_ snapshot: HabitWidgetSnapshot) -> String {
+  fileprivate func message(_ snapshot: HabitWidgetSnapshot) -> String {
     switch self {
     case .completed: return snapshot.text(.allDone)
     case .noPending: return snapshot.text(.noPending)

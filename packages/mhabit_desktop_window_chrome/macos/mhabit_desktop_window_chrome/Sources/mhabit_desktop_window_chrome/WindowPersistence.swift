@@ -65,9 +65,9 @@ public final class WindowPersistence: WindowPersistenceHostApi {
   private func observe(_ name: NSNotification.Name, action: @escaping (WindowPersistence) -> Void) {
     observers.append(
       NotificationCenter.default.addObserver(forName: name, object: window, queue: .main) {
-        [weak self] _ in
-        if let self { action(self) }
-      })
+        [weak self] _ in if let self { action(self) }
+      }
+    )
   }
 
   /// Runner calls this immediately before AppKit's zoom action changes frame.
@@ -83,8 +83,8 @@ public final class WindowPersistence: WindowPersistenceHostApi {
   }
 
   func flush() throws {
-    guard !name.isEmpty, !transitioning, let window, !window.isMiniaturized,
-      !window.isZoomed, !window.styleMask.contains(.fullScreen)
+    guard !name.isEmpty, !transitioning, let window, !window.isMiniaturized, !window.isZoomed,
+      !window.styleMask.contains(.fullScreen)
     else { return }
     // Save before enabling autosave: assigning the name reloads the frame.
     window.saveFrame(usingName: name)
@@ -100,7 +100,5 @@ public final class WindowPersistence: WindowPersistenceHostApi {
     name = ""
   }
 
-  deinit {
-    for observer in observers { NotificationCenter.default.removeObserver(observer) }
-  }
+  deinit { for observer in observers { NotificationCenter.default.removeObserver(observer) } }
 }
