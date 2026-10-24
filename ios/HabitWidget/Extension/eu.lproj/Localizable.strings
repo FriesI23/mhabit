@@ -1,1 +1,3 @@
 /* Widget text is maintained here. ARB mappings only fill missing keys. */
+HomeWidgetComplete = "Eginda";
+HomeWidgetIncomplete = "Egin gabe";

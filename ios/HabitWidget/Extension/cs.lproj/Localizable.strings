@@ -1,10 +1,10 @@
 /* Widget text is maintained here. ARB mappings only fill missing keys. */
 HomeWidgetAllDone = "DOKÁZALI JSTE TO";
-HomeWidgetComplete = "Hotovo";
+HomeWidgetComplete = "Splněno";
 HomeWidgetCompleted = "Dokončené";
 HomeWidgetSkipped = "Přeskočit";
 HomeWidgetToday = "Dnes";
 HomeWidgetUndo = "ZPĚT";
 HomeWidgetAchieved = "Dokončené";
 HomeWidgetNotAchieved = "Nedokončeno";
-HomeWidgetIncomplete = "zrušit dokončení";
+HomeWidgetIncomplete = "Nesplněno";

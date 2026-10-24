@@ -212,7 +212,7 @@ final class HabitWidgetSnapshotTests: XCTestCase {
     }
     let snapshot = try decode(data)
     let habit = snapshot.catalog[0]
-    XCTAssertEqual(habit.recordStatusText(snapshot), "Incomplete")
+    XCTAssertEqual(habit.recordStatusText(snapshot), "Missed")
     XCTAssertFalse(habit.canComplete)
     XCTAssertFalse(habit.canMarkIncomplete)
     let now = try XCTUnwrap(HabitWidgetSnapshot.parseDate("2026-10-17T04:00:00Z"))

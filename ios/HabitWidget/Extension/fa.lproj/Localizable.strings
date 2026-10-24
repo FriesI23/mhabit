@@ -5,4 +5,5 @@ HomeWidgetToday = "امروز";
 HomeWidgetUndo = "بازگشت";
 HomeWidgetAchieved = "به اتمام رسیده";
 HomeWidgetNotAchieved = "ناتکمیل";
-HomeWidgetIncomplete = "انجام نشده";
+HomeWidgetIncomplete = "انجام نشد";
+HomeWidgetComplete = "انجام شد";

@@ -34,11 +34,6 @@
             "key": "HomeWidgetNotAchieved"
         }
     },
-    "habitDetail_changeGoal_undoneChipText": {
-        "strings": {
-            "key": "HomeWidgetIncomplete"
-        }
-    },
     "batchCheckin_status_skip_text": {
         "strings": {
             "key": "HomeWidgetSkipped"

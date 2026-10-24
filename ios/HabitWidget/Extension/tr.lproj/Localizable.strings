@@ -7,4 +7,4 @@ HomeWidgetToday = "Bugün";
 HomeWidgetUndo = "GERİ AL";
 HomeWidgetAchieved = "Tamamlandı";
 HomeWidgetNotAchieved = "Tamamlanmadı";
-HomeWidgetIncomplete = "tamamlanmamış";
+HomeWidgetIncomplete = "Eksik";

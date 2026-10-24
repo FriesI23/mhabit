@@ -42,4 +42,4 @@ HomeWidgetUnavailable = "Привычка недоступна";
 HomeWidgetUndo = "UNDO";
 HomeWidgetAchieved = "Завершённые";
 HomeWidgetNotAchieved = "Незавершенно";
-HomeWidgetIncomplete = "не сделано";
+HomeWidgetIncomplete = "Не вышло";

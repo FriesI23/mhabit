@@ -20,9 +20,9 @@ cannot be checked in.
 
 ### Complete and Undo
 
-Tap **Done** to complete today's goal, **Incomplete** to record an ordinary habit
+Tap **Done** to complete today's goal, **Missed** to record an ordinary habit
 as incomplete, or **Undo** to remove today's check-in. Use the app for custom
-values. Negative habits show their goal status instead of Incomplete.
+values. Negative habits show their goal status instead of Missed.
 
 For automatic habits, tap **Next** after check-in to show another habit while
 keeping the record. There is no Undo countdown. Fixed habits keep Undo and do not

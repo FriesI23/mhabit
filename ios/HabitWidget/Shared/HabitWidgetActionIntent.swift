@@ -17,7 +17,7 @@ enum HabitWidgetAction: String, AppEnum {
     .undo: DisplayRepresentation(title: LocalizedStringResource("HomeWidgetMetadataUndo", defaultValue: "Undo")),
     .refresh: DisplayRepresentation(title: LocalizedStringResource("HomeWidgetMetadataRefresh", defaultValue: "Refresh")),
     .next: DisplayRepresentation(title: LocalizedStringResource("HomeWidgetMetadataNext", defaultValue: "Next")),
-    .markIncomplete: DisplayRepresentation(title: LocalizedStringResource("HomeWidgetMetadataMarkIncomplete", defaultValue: "Mark incomplete"))
+    .markIncomplete: DisplayRepresentation(title: LocalizedStringResource("HomeWidgetMetadataMarkIncomplete", defaultValue: "Mark as missed"))
   ]
 }
 
@@ -34,7 +34,7 @@ extension HabitWidgetSource: AppEnum {
 @available(iOS 17.0, *)
 struct HabitWidgetActionIntent: AppIntent {
   static var title: LocalizedStringResource = LocalizedStringResource("HomeWidgetMetadataUpdateHabit", defaultValue: "Update habit")
-  static var description = IntentDescription(LocalizedStringResource("HomeWidgetMetadataActionDescription", defaultValue: "Record today's habit as complete or incomplete, or undo its record."))
+  static var description = IntentDescription(LocalizedStringResource("HomeWidgetMetadataActionDescription", defaultValue: "Mark today's habit as done or missed, or undo its record."))
   static var openAppWhenRun = false
   static var isDiscoverable = false
 

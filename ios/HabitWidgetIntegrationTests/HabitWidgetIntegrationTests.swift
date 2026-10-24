@@ -98,6 +98,9 @@ final class HabitWidgetIntegrationTests: XCTestCase {
           from: Data(contentsOf: table), format: nil) as? [String: String])
         XCTAssertTrue(Set(values.keys).isSubset(of: metadata.union(runtime)), "\(language)")
         XCTAssertTrue(values.values.allSatisfy { !$0.isEmpty })
+        for key in ["HomeWidgetComplete", "HomeWidgetIncomplete"] {
+          XCTAssertNotNil(values[key], "Localize both check-in buttons: \(language), \(key)")
+        }
         if ["en", "ru", "zh-Hans", "zh-Hant"].contains(language) {
           let required = language == "ru" ? metadata.subtracting(["HomeWidgetMetadataMarkIncomplete"]) : metadata
           XCTAssertTrue(required.isSubset(of: Set(values.keys)), "Keep existing metadata translations: \(language)")
@@ -108,8 +111,8 @@ final class HabitWidgetIntegrationTests: XCTestCase {
           XCTAssertEqual(values["HomeWidgetUndo"], "UNDO")
           XCTAssertEqual(values["HomeWidgetMetadataComplete"], "Complete")
           XCTAssertEqual(values["HomeWidgetMetadataUndo"], "Undo")
-          XCTAssertEqual(values["HomeWidgetIncomplete"], "Incomplete")
-          XCTAssertEqual(values["HomeWidgetMetadataMarkIncomplete"], "Mark incomplete")
+          XCTAssertEqual(values["HomeWidgetIncomplete"], "Missed")
+          XCTAssertEqual(values["HomeWidgetMetadataMarkIncomplete"], "Mark as missed")
         }
         if ["zh-Hans", "zh-Hant"].contains(language) {
           XCTAssertEqual(values["HomeWidgetIncomplete"], "未完成")

@@ -287,7 +287,7 @@ enum HabitWidgetText: String, CaseIterable {
     case .undo: return "UNDO"
     case .allDone: return "YOU MADE IT"
     case .completed: return "Completed"
-    case .incomplete: return "Incomplete"
+    case .incomplete: return "Missed"
     case .unrecorded: return "Not recorded"
     case .notAchieved: return "Not achieved"
     case .achieved: return "Achieved"
