@@ -46,6 +46,9 @@ abstract interface class AppLoggerMananger implements AsyncInitialization {
   AppTextLogger get import;
   AppTextLogger get export;
   AppTextLogger get habit;
+
+  /// Logs home-screen widget execution and snapshot publication.
+  AppTextLogger get habitWidget;
   AppTextLogger get network;
   AppTextLogger get json;
   AppWidgetLogger get l10n;
@@ -231,6 +234,9 @@ class _AppLoggerManager implements AppLoggerMananger {
 
   @override
   AppTextLogger get habit => _tryGetAppTextLogger(LoggerType.habit);
+
+  @override
+  AppTextLogger get habitWidget => _tryGetAppTextLogger(LoggerType.habitWidget);
 
   @override
   AppTextLogger get network => _tryGetAppTextLogger(LoggerType.network);

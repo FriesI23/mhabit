@@ -1,0 +1,42 @@
+{
+    "calendarPicker_clip_today": {
+        "strings": {
+            "key": "HomeWidgetToday"
+        }
+    },
+    "habitDisplay_doneButton_label": {
+        "strings": {
+            "key": "HomeWidgetComplete"
+        }
+    },
+    "snackbar_undoText": {
+        "strings": {
+            "key": "HomeWidgetUndo"
+        }
+    },
+    "habitToday_image_desc": {
+        "strings": {
+            "key": "HomeWidgetAllDone"
+        }
+    },
+    "habitDisplay_statsMenu_completedTileText": {
+        "strings": {
+            "key": "HomeWidgetCompleted"
+        }
+    },
+    "habitDisplay_displayFilter_completed": {
+        "strings": {
+            "key": "HomeWidgetAchieved"
+        }
+    },
+    "batchCheckin_status_zero_text": {
+        "strings": {
+            "key": "HomeWidgetNotAchieved"
+        }
+    },
+    "batchCheckin_status_skip_text": {
+        "strings": {
+            "key": "HomeWidgetSkipped"
+        }
+    }
+}

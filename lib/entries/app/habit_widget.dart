@@ -3,11 +3,9 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../extensions/context_extensions.dart';
-import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/app_event.dart';
 import '../../providers/workflow/app_event.dart';
@@ -23,11 +21,12 @@ final class HabitWidgetPostInitBridge
   DateChangeNotifier? _dateChanges;
   AppEventSubscriptions? _eventSubs;
   AppLifecycleListener? _lifecycle;
-  Map<String, String>? _strings;
+  String? _locale;
   bool _publishing = false;
   bool _publishPending = false;
 
-  void sync(BuildContext context, {required L10n? l10n}) {
+  /// Updates subscriptions and the app language from the current scope.
+  void sync(BuildContext context, {required String? locale}) {
     final service = context.maybeRead<HabitWidgetService>();
     final events = context.maybeRead<AppEventBus>();
     final dateChanges = context.maybeRead<DateChangeNotifier>();
@@ -51,28 +50,20 @@ final class HabitWidgetPostInitBridge
       }
     }
 
-    final strings = l10n == null
-        ? null
-        : <String, String>{
-            'today': l10n.habitDisplay_tab_today_label,
-            'complete': l10n.habitDisplay_doneButton_label,
-            'undo': l10n.snackbar_undoText,
-            'empty': l10n.habitDisplay_emptyImage_text_01,
-            'allDone': l10n.habitToday_image_desc,
-            'habits': l10n.habitDisplay_tab_habits_label,
-            'locale': l10n.localeName,
-          };
-    final stringsChanged = !mapEquals(_strings, strings);
-    _strings = strings;
-    if (changed || stringsChanged) _publish();
+    final localeChanged = _locale != locale;
+    _locale = locale;
+    if (changed || localeChanged) _publish();
   }
 
+  /// Accepts events from the subscribed application event bus.
   @override
   bool shouldReceive(AppEvent event) => true;
 
+  /// Invalidates foreground caches after a native background operation.
   @override
   void changed() => _onExternalChange();
 
+  /// Requests publication for events that can change the display projection.
   @override
   void handleEvent(AppEvent event) => switch (event) {
     ReloadDataEvent() ||
@@ -82,6 +73,7 @@ final class HabitWidgetPostInitBridge
     GroupChangedEvent() => _publish(),
   };
 
+  /// Refreshes isolate-local caches before requesting a new projection.
   void _onExternalChange() {
     if (_service == null) return;
     final events = _events;
@@ -93,21 +85,23 @@ final class HabitWidgetPostInitBridge
     }
   }
 
+  /// Coalesces publication requests without overlapping publisher calls.
   void _publish() {
     if (_service == null) return;
     _publishPending = true;
     if (!_publishing) unawaited(_drainPublish());
   }
 
+  /// Drains pending refreshes and contains individual publication failures.
   Future<void> _drainPublish() async {
     _publishing = true;
     try {
       while (_publishPending && _service != null) {
         _publishPending = false;
         try {
-          await _service!.publishSnapshot(strings: _strings);
+          await _service!.publishSnapshot(locale: _locale);
         } catch (error, stackTrace) {
-          appLog.habit.warn(
+          appLog.habitWidget.warn(
             'HabitWidgetPostInitBridge.publish',
             error: error,
             stackTrace: stackTrace,
@@ -119,6 +113,7 @@ final class HabitWidgetPostInitBridge
     }
   }
 
+  /// Releases subscriptions associated with the previous app scope.
   void _detach() {
     _eventSubs?.cancelAll();
     _eventSubs = null;
@@ -128,6 +123,7 @@ final class HabitWidgetPostInitBridge
     if (_service != null) HabitWidgetForegroundApi.setUp(null);
   }
 
+  /// Releases subscriptions and prevents pending work from being rescheduled.
   void dispose() {
     _detach();
     _service = null;

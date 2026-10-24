@@ -49,25 +49,52 @@ existing architecture and tooling contracts.
   - `make init` or `make bootstrap`: initialize submodules, hooks, and Melos.
   - `make format`: format Dart code in the app and internal packages.
   - `make fix`: apply Dart fixes, then format.
-  - `make gen`: run normalization, icon generation, and build generation.
+  - `make gen`: normalize ARB, fill native strings, and generate icons and code.
   - `make verify-generated`: verify generated and normalized outputs are current.
-  - `make test`: run the root app and internal package tests.
-  - `make test-ci`: run those Dart/Flutter tests with machine-readable results.
+  - `make test`: run Dart/Flutter unit tests and, on macOS, iOS widget unit XCTest.
+  - `make test-ci`: run Dart/Flutter tests with machine-readable results.
+  - `make test-scripts`: run local development script tests with Poetry and pytest.
   - `make test-native`: run native tests for the current desktop host.
   - `make test-linux`, `make test-windows`, `make test-macos`: run the named
     platform's native tests on that platform (Linux needs a display or Xvfb).
-  - `make test-all`: run Dart/Flutter tests and current-host native tests.
+  - `make test-ios`: run isolated widget unit XCTest on an iOS simulator (macOS).
+  - `make test-ios-integration`: build app/extension and run widget integration
+    XCTest (macOS only).
+  - `make test-all`: run Python tooling and all current-host unit tests, adding
+    Windows/Linux native unit tests on those hosts; on macOS it does not build
+    the app.
+  - `make test-integration`: run current-host integration suites. On macOS this
+    runs macOS app-hosted tests and iOS widget integration checks serially. Other
+    hosts currently report that no integration suites are registered. Future
+    platform suites, including Android, use this aggregate entrypoint.
   - `make aio`: run `gen`, `fix`, and `verify-generated`.
-  - `make aio-full`: run `aio` plus `test-all`.
+  - `make aio-full`: run `aio` plus `test-all` (unit tests only).
+- Python tests use the optional Poetry `test` group under `scripts/python-scripts/`.
+  Install it with `poetry install --with test --no-root` from that directory.
+  CI keeps its explicit test entrypoints and does not run the Python tests.
 - Native test ownership stays with the platform implementation: Windows/Linux
   C++ tests live in `packages/mhabit_desktop_window_chrome/{windows,linux}/test`
   and run with CMake/CTest; macOS `RunnerTests` are app-hosted XCTest and run
-  through the Xcode scheme selected by `MACOS_TEST_FLAVOR` with a graphical login
+  through the Xcode scheme selected by `FLAVOR` with a graphical login
   session.
-  The default is `f_generic`; use `make test-macos MACOS_TEST_FLAVOR=f_dev` or
-  `MACOS_TEST_FLAVOR=f_store` to test another variant. The same override works
-  through `test-native` and `test-all`. CI explicitly tests `f_generic` to match the
+  The shared test flavor defaults to `FLAVOR=f_generic`; use
+  `make test-macos FLAVOR=f_dev` or `FLAVOR=f_store` to test another variant.
+  The same override works through `test-native` and `test-integration`.
+  `test-native` retains its desktop-host dispatch; its macOS suite is an
+  integration test. CI explicitly tests `f_generic` to match the
   macOS release build. They are not Melos Dart test suites.
+  iOS widget unit tests live in `ios/HabitWidgetTests/` with their own native
+  Xcode project, compiling production sources without Flutter or an app build.
+  `ios/HabitWidgetIntegrationTests/` owns component and built-artifact checks
+  against Runner and its extension; `FLAVOR` selects that app variant too.
+  Both iOS modes select an installed iPhone simulator; `IOS_TEST_DESTINATION`
+  accepts an explicit Xcode destination. Unit and integration results have
+  separate `ios-widget-unit` and `ios-widget-integration` log/bundle names.
+  Make owns both Xcode commands and integration-only Flutter preparation;
+  `scripts/python-scripts/bin/select_ios_simulator.py` only resolves the default
+  destination and runs through the same Poetry environment as the other scripts.
+  CI invokes its existing explicit test targets and does not invoke
+  `test-integration` or iOS integration.
 - Native test results go to `build/test-results/native/` by default
   (`NATIVE_TEST_RESULTS_DIR` overrides it): CTest JUnit XML on Windows/Linux,
   `.xcresult` and an Xcode log on macOS. CI runs all three platform suites.
@@ -87,11 +114,19 @@ existing architecture and tooling contracts.
   `lib/entries/app/habit_widget.dart` owns foreground refresh wiring. Native
   widget files live in `ios/HabitWidget/`:
   `App/` owns the Runner-only bridge, `Extension/` owns WidgetKit views and
-  resources, and `Shared/` owns intents and snapshot types compiled by both
-  targets. `pigeons/habit_widget.dart` owns the typed bridge contract; `make gen`
+  resources (also bundled in Runner for queries), and `Shared/` owns intents,
+  snapshot types, slot resolution and shared display holds compiled by both
+  targets. Native display mutations stay in the Runner queue; only Dart writes
+  habit records. `pigeons/habit_widget.dart` owns the typed bridge contract; `make gen`
   generates its Dart API and Runner-only Swift API. Keep each engine's messenger
   separate. Keep record mutations in the existing Dart workflow/storage owners;
   see `docs/wiki/Dev꞉-iOS-Widgets.md`.
+- Habit Widget is unreleased: snapshot and hold persistence accept only the
+  current v2 structure, with required catalog fields and explicit action sources.
+  Swift models declare supported wire versions with scoped raw-value Codable
+  enums; do not use open-ended version ranges. Add a decoding dispatch only when
+  another format is actually supported. Do not add compatibility defaults or
+  migrations for development-only formats.
 - `lib/entries/common/app_root_view.dart` owns the `MaterialApp` shell.
   Keep global app-level concerns such as locale, theme, navigator keys,
   localization delegates, and top-level builders there.
@@ -249,15 +284,17 @@ them; keep rows with independent actions separate from single-action controls.
   profile-backed theme handlers before adding new state.
 - Keep custom color behavior inside the existing theme model and generated color
   pipeline.
-- Localization is generated. Edit the source localization inputs, not the
+- Flutter localization is generated. Edit the source localization inputs, not the
   generated localization outputs.
 - Use the existing normalization and generation workflow when changing l10n:
   `make normalize-l10n`, then `make gen` or the narrower needed step.
-- Widget-only native strings are owned by
-  `ios/HabitWidget/Extension/*.lproj/Localizable.strings`.
-  Use Apple locale names (`zh-Hans` / `zh-Hant`) and preserve script and region
-  when matching the app's snapshot locale to native resources.
-  Shared app labels reach the widget through its localized snapshot.
+- Widget strings live in `ios/HabitWidget/Extension/*.lproj/Localizable.strings`
+  with bare PascalCase `HomeWidget*` keys. `make gen` fills missing entries through
+  `configs/l10n_strings_refs.json` without replacing existing translations.
+  For localization, snapshots carry only the locale. Preserve script and region
+  when matching Apple locale names (`zh-Hans` / `zh-Hant`).
+  Runtime text falls back from the selected language to `en.lproj`, then to
+  the exhaustive Swift `englishDefault` switch.
 
 ## Generated Code
 

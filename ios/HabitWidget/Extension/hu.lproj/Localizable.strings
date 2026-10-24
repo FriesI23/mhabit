@@ -1,0 +1,10 @@
+/* Widget text is maintained here. ARB mappings only fill missing keys. */
+HomeWidgetAllDone = "MEGCSINÁLTAD!";
+HomeWidgetComplete = "Megvan";
+HomeWidgetCompleted = "Teljesített";
+HomeWidgetSkipped = "Kihagyás";
+HomeWidgetToday = "Ma";
+HomeWidgetUndo = "VISSZA";
+HomeWidgetAchieved = "Teljesített";
+HomeWidgetNotAchieved = "Nem teljesített";
+HomeWidgetIncomplete = "Elmaradt";

@@ -1,81 +1,45 @@
 <!-- markdownlint-disable no-inline-html first-line-heading -->
 
-Table Habit provides small and medium Home Screen widgets on iOS 17 or later.
-The main app still supports iOS 15.
+Table Habit provides small, medium, and large Home Screen widgets on iOS 17 or
+later.
 
-## Add a Widget
+### Add a Widget
 
 1. Open Table Habit once and create or import your habits.
 2. Touch and hold an empty area of the Home Screen, then open the widget gallery.
-3. Find Table Habit, choose the small or medium size, and add it.
+3. Find Table Habit, choose the small, medium, or large size, and add it.
 
-The small widget shows the first active habit in stored order. The medium widget
-shows the first three. Habits whose start date is in the future are excluded.
-Each row includes the last seven days, including today.
+### Choose Habits
 
-## Complete and Undo
+Touch and hold the widget and choose **Edit Widget**. Small widgets show one
+habit, medium three, and large six.
 
-Tap the checkmark or **Done** button to complete today's configured goal without
-opening the app interface. Both widget sizes refresh after the change. A completed
-habit stays visible, and its button changes to **Undo** to remove today's check-in.
+Choose **Automatic** or a fixed habit. Fixed habits appear first and stay visible
+after check-in. Archived habits can be selected; habits that have not started
+cannot be checked in.
 
-Numeric habits are completed to their configured goal, including negative habits.
-Use the app to enter a custom value. A partially completed numeric habit can still
-be completed from the widget; the button then changes to Undo.
+### Complete and Undo
 
-The medium widget's counter includes all eligible active habits, including those
-beyond the three visible rows. A partial value does not count as a completed goal.
+Tap **Done** to complete today's goal, **Missed** to record an ordinary habit
+as incomplete, or **Undo** to remove today's check-in. Use the app for custom
+values. Negative habits show their goal status instead of Missed.
 
-## Refresh and Language
+For automatic habits, tap **Next** after check-in to show another habit while
+keeping the record. There is no Undo countdown. Fixed habits keep Undo and do not
+offer Next. Widgets on this device share Undo and Next updates.
 
-After midnight or a time-zone change, a stale widget offers **Refresh** to load
-the current day. Tapping an outdated check-in button refreshes the data instead
-of changing a different day's record or overwriting a newer check-in.
+For ordinary habits, zero-value records count as handled but incomplete. When no
+habits remain displayed, incomplete or skipped goals show **No pending habits**
+instead of a completion message.
 
-Widgets refresh when the app's data, language, or date changes. Common labels
-follow the app language; widget-specific labels support English, Russian,
-Simplified Chinese, and Traditional Chinese, with English as the fallback.
+### Refresh and Limitations
 
-## Current Limitations
+Tap **Refresh** after midnight or a time-zone change to load the current day.
+Widget labels follow the app language. Refreshes are scheduled by iOS and may
+be delayed.
 
-- Habits cannot be selected separately for each widget. Selection follows stored
-  habit order, and completing a habit does not automatically show the next one.
-- Edit habit names, goals, and custom check-in values in the app.
-- Skipped days cannot be completed or undone from the widget.
-- Widget changes use the existing WebDAV sync workflow when the app next runs it;
-  tapping a widget does not immediately start a WebDAV sync.
-
-## Examples
-
-These captures use the same three sample habits. The small widget shows
-**Read a little**, while the medium widget shows all three.
-
-### Before Completion
-
-No daily goal is complete (0/3). **Go for a walk** has partial progress, 10/30.
-
-![Small and medium widgets before completion, showing 0 of 3 goals][before]
-
-### After Completion
-
-Completing **Read a little** updates both sizes and changes the counter to 1/3.
-Today's square fills in, and the button becomes Undo.
-
-![Both widget sizes after completing Read a little, showing 1 of 3 goals][completed]
-
-### Dark Appearance
-
-Both sizes also support dark appearance. This example shows all three goals
-complete (3/3).
-
-![Small and medium widgets in dark appearance, showing 3 of 3 goals][dark]
-
-For build configuration, architecture, and verification, see
-[Developing iOS Widgets][developer-guide].
+For building and testing widgets, see [Developing iOS Widgets][developer-guide].
 
 <!-- refs -->
 
-[before]: images/ios-widgets/01-home-light-before.jpg
-[completed]: images/ios-widgets/02-home-light-completed.jpg
-[dark]: images/ios-widgets/03-home-dark.jpg
 [developer-guide]: ./Dev꞉-iOS-Widgets

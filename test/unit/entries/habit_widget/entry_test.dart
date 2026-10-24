@@ -40,15 +40,28 @@ Future<Object?> _sendNativeCall(
   return result.future;
 }
 
-Future<HabitWidgetResult> _perform(HabitWidgetRequest request) async {
+Future<HabitWidgetResponse> _performReply(HabitWidgetRequest request) async {
   final reply =
       await _sendNativeCall(_backgroundChannel, [request]) as List<Object?>;
   expect(reply, hasLength(1));
-  return reply.single! as HabitWidgetResult;
+  return reply.single! as HabitWidgetResponse;
 }
+
+Future<HabitWidgetResult> _perform(HabitWidgetRequest request) async =>
+    (await _performReply(request)).outcome;
+
+HabitWidgetActionResponse _receipt(HabitWidgetActionResult outcome) =>
+    outcome == HabitWidgetActionResult.applied
+    ? HabitWidgetActionResponse.applied(
+        recordVersion: 'committed-version',
+        committedAt: DateTime.utc(2026, 10, 17, 4),
+        snapshotPublished: true,
+      )
+    : HabitWidgetActionResponse.result(outcome, snapshotPublished: true);
 
 HabitWidgetRequest _completeRequest() => HabitWidgetRequest(
   operation: HabitWidgetOperation.complete,
+  source: HabitWidgetSelectionSource.automatic,
   habitId: 'habit-id',
   day: '2026-10-17',
   expectedRecord: 'none',
@@ -57,12 +70,40 @@ HabitWidgetRequest _completeRequest() => HabitWidgetRequest(
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  test(
+    'incomplete enum appends without renumbering and uses a normalized explicit URI',
+    () async {
+      expect(HabitWidgetOperation.complete.index, 0);
+      expect(HabitWidgetOperation.undo.index, 1);
+      expect(HabitWidgetOperation.refresh.index, 2);
+      expect(HabitWidgetOperation.markIncomplete.index, 3);
+      Uri? received;
+      final bridge = HabitWidgetBackgroundChannel((uri) async {
+        received = uri;
+        return _receipt(HabitWidgetActionResult.applied);
+      }, hostApi: _HostApi());
+      addTearDown(bridge.dispose);
+      await bridge.start();
+      final request = _completeRequest()
+        ..operation = HabitWidgetOperation.markIncomplete;
+      expect(await _perform(request), HabitWidgetResult.applied);
+      expect(received!.host, 'mark-incomplete');
+      final command = HabitWidgetCommand.tryParse(received!)!;
+      expect(command.action, HabitWidgetAction.markIncomplete);
+      expect(command.toUri(), received);
+      expect(
+        HabitWidgetCommand.tryParse(received!.replace(host: 'markIncomplete')),
+        isNull,
+      );
+    },
+  );
+
   test('native ready means the action handler is already installed', () async {
     final calls = <Uri>[];
     HabitWidgetResult? firstResult;
     final bridge = HabitWidgetBackgroundChannel((uri) async {
       calls.add(uri);
-      return HabitWidgetActionResult.applied;
+      return _receipt(HabitWidgetActionResult.applied);
     });
     final messenger =
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
@@ -87,7 +128,7 @@ void main() {
   });
 
   test('native success waits for the persistence action to finish', () async {
-    final committed = Completer<HabitWidgetActionResult>();
+    final committed = Completer<HabitWidgetActionResponse>();
     final bridge = HabitWidgetBackgroundChannel(
       (_) => committed.future,
       hostApi: _HostApi(),
@@ -102,7 +143,7 @@ void main() {
     await Future<void>.delayed(Duration.zero);
     expect(acknowledged, isFalse);
 
-    committed.complete(HabitWidgetActionResult.applied);
+    committed.complete(_receipt(HabitWidgetActionResult.applied));
     expect(await result, HabitWidgetResult.applied);
   });
 
@@ -121,6 +162,7 @@ void main() {
         HabitWidgetRequest(operation: HabitWidgetOperation.complete),
         _completeRequest()..day = '2026-02-30',
         _completeRequest()..habitId = '',
+        _completeRequest()..source = null,
         HabitWidgetRequest(
           operation: HabitWidgetOperation.refresh,
           habitId: 'unexpected',
@@ -141,7 +183,7 @@ void main() {
       final calls = <Uri>[];
       final bridge = HabitWidgetBackgroundChannel((uri) async {
         calls.add(uri);
-        return outcome;
+        return _receipt(outcome);
       }, hostApi: _HostApi());
       addTearDown(bridge.dispose);
       await bridge.start();
@@ -151,13 +193,22 @@ void main() {
         (HabitWidgetActionResult.unchanged, HabitWidgetResult.unchanged),
         (HabitWidgetActionResult.stale, HabitWidgetResult.stale),
         (HabitWidgetActionResult.invalid, HabitWidgetResult.invalid),
+        (HabitWidgetActionResult.failed, HabitWidgetResult.failed),
       ]) {
         outcome = pair.$1;
+        final reply = await _performReply(
+          HabitWidgetRequest(operation: HabitWidgetOperation.refresh),
+        );
+        expect(reply.outcome, pair.$2);
         expect(
-          await _perform(
-            HabitWidgetRequest(operation: HabitWidgetOperation.refresh),
-          ),
-          pair.$2,
+          reply.recordVersion,
+          pair.$1 == HabitWidgetActionResult.applied
+              ? 'committed-version'
+              : isNull,
+        );
+        expect(
+          reply.committedAt,
+          pair.$1 == HabitWidgetActionResult.applied ? isNotNull : isNull,
         );
       }
       expect(
@@ -176,6 +227,28 @@ void main() {
         await _sendNativeCall(_backgroundChannel, [_completeRequest()]),
         isNull,
       );
+    },
+  );
+  test(
+    'typed applied response carries committed facts despite failed publication',
+    () async {
+      final bridge = HabitWidgetBackgroundChannel(
+        (_) async => HabitWidgetActionResponse.applied(
+          recordVersion: 'exact-commit',
+          committedAt: DateTime.utc(2026, 10, 17, 4),
+          snapshotPublished: false,
+        ),
+        hostApi: _HostApi(),
+      );
+      addTearDown(bridge.dispose);
+      await bridge.start();
+      final reply = await _performReply(
+        _completeRequest()..source = HabitWidgetSelectionSource.fixed,
+      );
+      expect(reply.outcome, HabitWidgetResult.applied);
+      expect(reply.recordVersion, 'exact-commit');
+      expect(reply.committedAt, '2026-10-17T04:00:00.000Z');
+      expect(reply.snapshotPublished, isFalse);
     },
   );
 }

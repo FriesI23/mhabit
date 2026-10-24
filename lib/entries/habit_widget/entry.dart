@@ -16,8 +16,7 @@ import '../../storage/profile_provider.dart';
 import '../../utils/local_timezone.dart';
 import 'habit_widget_api.g.dart';
 
-/// Runs in the app's private container, on the dedicated native widget engine.
-/// Neither runApp nor the foreground app's sync workflow is started here.
+/// Initializes the dedicated background engine and installs its action channel.
 Future<void> runHabitWidgetBackground() async {
   await AppLoggerMananger().init();
   await AppInfo().init();
@@ -58,61 +57,91 @@ Future<void> runHabitWidgetBackground() async {
   }).start();
 }
 
-/// Acknowledges native intents only after their database operation completes.
+/// Adapts typed native requests to the serialized Dart workflow.
 final class HabitWidgetBackgroundChannel implements HabitWidgetBackgroundApi {
-  final Future<HabitWidgetActionResult> Function(Uri uri) _perform;
+  final Future<HabitWidgetActionResponse> Function(Uri uri) _perform;
   final HabitWidgetHostApi _hostApi;
 
+  /// Creates a channel using [hostApi] for the readiness handshake.
   HabitWidgetBackgroundChannel(this._perform, {HabitWidgetHostApi? hostApi})
     : _hostApi = hostApi ?? HabitWidgetHostApi();
 
+  /// Installs the request handler before acknowledging native readiness.
   Future<void> start() async {
     HabitWidgetBackgroundApi.setUp(this);
     await _hostApi.ready();
   }
 
+  /// Validates transport input and returns the completed workflow outcome.
   @override
-  Future<HabitWidgetResult> perform(HabitWidgetRequest request) async {
+  Future<HabitWidgetResponse> perform(HabitWidgetRequest request) async {
     final uri = _widgetRequestUri(request);
-    if (uri == null) return HabitWidgetResult.invalid;
+    if (uri == null) {
+      return HabitWidgetResponse(
+        outcome: HabitWidgetResult.invalid,
+        snapshotPublished: false,
+      );
+    }
     try {
-      return switch (await _perform(uri)) {
+      final response = await _perform(uri);
+      final outcome = switch (response.outcome) {
         HabitWidgetActionResult.applied => HabitWidgetResult.applied,
         HabitWidgetActionResult.unchanged => HabitWidgetResult.unchanged,
         HabitWidgetActionResult.stale => HabitWidgetResult.stale,
         HabitWidgetActionResult.invalid => HabitWidgetResult.invalid,
+        HabitWidgetActionResult.failed => HabitWidgetResult.failed,
       };
+      return HabitWidgetResponse(
+        outcome: outcome,
+        snapshotPublished: response.snapshotPublished,
+        recordVersion: response.recordVersion,
+        committedAt: response.committedAt?.toUtc().toIso8601String(),
+      );
     } catch (error, stackTrace) {
-      appLog.habit.error(
+      appLog.habitWidget.error(
         'HabitWidgetBackgroundChannel.perform',
         error: error,
         stackTrace: stackTrace,
       );
-      return HabitWidgetResult.failed;
+      return HabitWidgetResponse(
+        outcome: HabitWidgetResult.failed,
+        snapshotPublished: false,
+      );
     }
   }
 
+  /// Removes the background request handler from its messenger.
   void dispose() => HabitWidgetBackgroundApi.setUp(null);
 }
 
+/// Converts validated transport fields into the internal command format.
 Uri? _widgetRequestUri(HabitWidgetRequest request) {
   switch (request.operation) {
     case HabitWidgetOperation.refresh:
-      if (request.habitId != null ||
+      if (request.source != null ||
+          request.habitId != null ||
           request.day != null ||
           request.expectedRecord != null) {
         return null;
       }
-      return Uri(scheme: 'tablehabit-widget', host: 'refresh');
-    case HabitWidgetOperation.complete || HabitWidgetOperation.undo:
+      return Uri(scheme: 'tablehabit-widget', host: request.operation.uriHost);
+    case HabitWidgetOperation.complete ||
+        HabitWidgetOperation.undo ||
+        HabitWidgetOperation.markIncomplete:
       final habitId = request.habitId;
       final day = request.day;
       final expectedRecord = request.expectedRecord;
-      if (habitId == null || day == null || expectedRecord == null) return null;
+      if (habitId == null ||
+          day == null ||
+          expectedRecord == null ||
+          request.source == null) {
+        return null;
+      }
       final uri = Uri(
         scheme: 'tablehabit-widget',
-        host: request.operation.name,
+        host: request.operation.uriHost,
         queryParameters: {
+          'source': request.source!.name,
           'habitId': habitId,
           'day': day,
           'expectedRecord': expectedRecord,
@@ -120,4 +149,15 @@ Uri? _widgetRequestUri(HabitWidgetRequest request) {
       );
       return HabitWidgetCommand.tryParse(uri)?.toUri();
   }
+}
+
+/// Adapts wire operations to the domain's canonical internal URI hosts.
+extension on HabitWidgetOperation {
+  String get uriHost => switch (this) {
+    HabitWidgetOperation.complete => HabitWidgetAction.complete.uriHost,
+    HabitWidgetOperation.undo => HabitWidgetAction.undo.uriHost,
+    HabitWidgetOperation.markIncomplete =>
+      HabitWidgetAction.markIncomplete.uriHost,
+    HabitWidgetOperation.refresh => name,
+  };
 }

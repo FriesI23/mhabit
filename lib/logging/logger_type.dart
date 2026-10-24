@@ -46,6 +46,9 @@ enum LoggerType {
   /// Habit operation
   habit,
 
+  /// Home-screen widget execution and snapshot publication.
+  habitWidget,
+
   /// Network about
   network,
 

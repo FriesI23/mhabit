@@ -6,6 +6,12 @@
 
 - Feature: interactive iOS Home Screen widgets with seven-day progress,
   complete/undo actions, and refresh without opening the app (iOS 17+)
+- Feature: configure iOS widgets with automatic or fixed habits, including
+  archived habits; fixed habits appear first, with up to six habits in the large
+  size, shared completion display with manual Next, and a centered all-done state
+- Feature: mark ordinary habits as incomplete from iOS widgets, with shared
+  Undo/Next behavior and no return to the automatic list after Next; show explicit
+  record states for ordinary and negative habits, with native localized labels
 
 ## 1.27.15+204
 

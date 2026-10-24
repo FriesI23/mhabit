@@ -111,29 +111,139 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
-enum HabitWidgetOperation { complete, undo, refresh }
+/// Operations accepted by the background execution channel.
+enum HabitWidgetOperation {
+  /// Records today's habit at its domain-defined completion value.
+  complete,
+
+  /// Marks today's displayed record as deleted.
+  undo,
+
+  /// Rebuilds and publishes the snapshot without changing habit records.
+  refresh,
+
+  /// Records an ordinary habit as done with zero value (missed).
+  markIncomplete,
+}
 
 /// Transport outcomes; domain rules and persistence stay in the Dart workflow.
-enum HabitWidgetResult { applied, unchanged, stale, invalid, failed }
+enum HabitWidgetResult {
+  /// A record mutation committed, independently of snapshot publication success.
+  applied,
 
+  /// The request completed without a record mutation.
+  unchanged,
+
+  /// The displayed day, habit state, or record version no longer matches.
+  stale,
+
+  /// The request format or requested operation is unsupported.
+  invalid,
+
+  /// A persistence or execution error prevented a successful response.
+  failed,
+}
+
+/// Identifies how the displayed entity was selected.
+enum HabitWidgetSelectionSource {
+  /// Selected from active, started, non-skipped automatic candidates.
+  automatic,
+
+  /// Explicitly selected by the user; may refer to an archived habit.
+  fixed,
+}
+
+/// Transfers an execution outcome and any committed record identity.
+class HabitWidgetResponse {
+  HabitWidgetResponse({
+    required this.outcome,
+    required this.snapshotPublished,
+    this.recordVersion,
+    this.committedAt,
+  });
+
+  /// The outcome of the requested operation.
+  HabitWidgetResult outcome;
+
+  /// Whether publishing the resulting snapshot succeeded.
+  bool snapshotPublished;
+
+  /// The committed version; present only for an applied operation.
+  String? recordVersion;
+
+  /// UTC ISO-8601 acknowledgement time, sampled after the commit succeeded.
+  String? committedAt;
+
+  List<Object?> _toList() {
+    return <Object?>[outcome, snapshotPublished, recordVersion, committedAt];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static HabitWidgetResponse decode(Object result) {
+    result as List<Object?>;
+    return HabitWidgetResponse(
+      outcome: result[0]! as HabitWidgetResult,
+      snapshotPublished: result[1]! as bool,
+      recordVersion: result[2] as String?,
+      committedAt: result[3] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! HabitWidgetResponse || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(outcome, other.outcome) &&
+        _deepEquals(snapshotPublished, other.snapshotPublished) &&
+        _deepEquals(recordVersion, other.recordVersion) &&
+        _deepEquals(committedAt, other.committedAt);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'HabitWidgetResponse(outcome: $outcome, snapshotPublished: $snapshotPublished, recordVersion: $recordVersion, committedAt: $committedAt)';
+  }
+}
+
+/// Carries a native operation and the displayed state used to validate it.
 class HabitWidgetRequest {
   HabitWidgetRequest({
     required this.operation,
+    this.source,
     this.habitId,
     this.day,
     this.expectedRecord,
   });
 
+  /// The operation to execute.
   HabitWidgetOperation operation;
 
+  /// The selection mode, required for record operations.
+  HabitWidgetSelectionSource? source;
+
+  /// The stable entity identifier, required for record operations.
   String? habitId;
 
+  /// The displayed local calendar date in ISO-8601 date form.
   String? day;
 
+  /// The displayed record version used for compare-and-set validation.
   String? expectedRecord;
 
   List<Object?> _toList() {
-    return <Object?>[operation, habitId, day, expectedRecord];
+    return <Object?>[operation, source, habitId, day, expectedRecord];
   }
 
   Object encode() {
@@ -144,9 +254,10 @@ class HabitWidgetRequest {
     result as List<Object?>;
     return HabitWidgetRequest(
       operation: result[0]! as HabitWidgetOperation,
-      habitId: result[1] as String?,
-      day: result[2] as String?,
-      expectedRecord: result[3] as String?,
+      source: result[1] as HabitWidgetSelectionSource?,
+      habitId: result[2] as String?,
+      day: result[3] as String?,
+      expectedRecord: result[4] as String?,
     );
   }
 
@@ -160,6 +271,7 @@ class HabitWidgetRequest {
       return true;
     }
     return _deepEquals(operation, other.operation) &&
+        _deepEquals(source, other.source) &&
         _deepEquals(habitId, other.habitId) &&
         _deepEquals(day, other.day) &&
         _deepEquals(expectedRecord, other.expectedRecord);
@@ -171,7 +283,7 @@ class HabitWidgetRequest {
 
   @override
   String toString() {
-    return 'HabitWidgetRequest(operation: $operation, habitId: $habitId, day: $day, expectedRecord: $expectedRecord)';
+    return 'HabitWidgetRequest(operation: $operation, source: $source, habitId: $habitId, day: $day, expectedRecord: $expectedRecord)';
   }
 }
 
@@ -188,8 +300,14 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is HabitWidgetResult) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    } else if (value is HabitWidgetRequest) {
+    } else if (value is HabitWidgetSelectionSource) {
       buffer.putUint8(131);
+      writeValue(buffer, value.index);
+    } else if (value is HabitWidgetResponse) {
+      buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else if (value is HabitWidgetRequest) {
+      buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -206,6 +324,11 @@ class _PigeonCodec extends StandardMessageCodec {
         final value = readValue(buffer) as int?;
         return value == null ? null : HabitWidgetResult.values[value];
       case 131:
+        final value = readValue(buffer) as int?;
+        return value == null ? null : HabitWidgetSelectionSource.values[value];
+      case 132:
+        return HabitWidgetResponse.decode(readValue(buffer)!);
+      case 133:
         return HabitWidgetRequest.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -213,6 +336,7 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
+/// Reports readiness from the background engine to its native owner.
 class HabitWidgetHostApi {
   /// Constructor for [HabitWidgetHostApi]. The [binaryMessenger] named argument is
   /// available for dependency injection. If it is left null, the default
@@ -250,10 +374,50 @@ class HabitWidgetHostApi {
   }
 }
 
+/// Enqueues native display reconciliation; never waits behind its own action.
+class HabitWidgetDisplayHostApi {
+  /// Constructor for [HabitWidgetDisplayHostApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  HabitWidgetDisplayHostApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
+  final BinaryMessenger? pigeonVar_binaryMessenger;
+
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String pigeonVar_messageChannelSuffix;
+
+  /// Acknowledges enqueueing after a shared snapshot has been saved.
+  Future<void> published() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.mhabit.HabitWidgetDisplayHostApi.published$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+  }
+}
+
+/// Executes native requests on the background Dart engine.
 abstract class HabitWidgetBackgroundApi {
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
-  Future<HabitWidgetResult> perform(HabitWidgetRequest request);
+  /// Completes after persistence and the publication attempt finish.
+  Future<HabitWidgetResponse> perform(HabitWidgetRequest request);
 
   static void setUp(
     HabitWidgetBackgroundApi? api, {
@@ -276,7 +440,7 @@ abstract class HabitWidgetBackgroundApi {
           final List<Object?> args = message! as List<Object?>;
           final HabitWidgetRequest arg_request = args[0]! as HabitWidgetRequest;
           try {
-            final HabitWidgetResult output = await api.perform(arg_request);
+            final HabitWidgetResponse output = await api.perform(arg_request);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -291,6 +455,7 @@ abstract class HabitWidgetBackgroundApi {
   }
 }
 
+/// Notifies the foreground Dart engine that its cached state may be outdated.
 abstract class HabitWidgetForegroundApi {
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 

@@ -1,0 +1,9 @@
+/* Widget text is maintained here. ARB mappings only fill missing keys. */
+HomeWidgetComplete = "Fatto";
+HomeWidgetCompleted = "Completate";
+HomeWidgetSkipped = "Salta";
+HomeWidgetToday = "Oggi";
+HomeWidgetUndo = "ANNULLA";
+HomeWidgetAchieved = "Completate";
+HomeWidgetNotAchieved = "Incompleto";
+HomeWidgetIncomplete = "Mancato";

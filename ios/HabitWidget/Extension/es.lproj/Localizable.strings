@@ -1,0 +1,9 @@
+/* Widget text is maintained here. ARB mappings only fill missing keys. */
+HomeWidgetComplete = "Hecho";
+HomeWidgetCompleted = "Completados";
+HomeWidgetSkipped = "Omitir";
+HomeWidgetToday = "Hoy";
+HomeWidgetUndo = "DESHACER";
+HomeWidgetAchieved = "Completados";
+HomeWidgetNotAchieved = "Incompleto";
+HomeWidgetIncomplete = "Sin hacer";

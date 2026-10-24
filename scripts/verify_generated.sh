@@ -62,6 +62,8 @@ for output in "${pigeon_outputs[@]}"; do
 done
 
 bash "$SCRIPT_DIR/normalize_arb.sh"
+# Native translations remain hand-maintained: only check for missing references.
+bash "$SCRIPT_DIR/sync_native_l10n.sh" --check
 dart run melos run build-runner
 
 for output in "${pigeon_outputs[@]}"; do

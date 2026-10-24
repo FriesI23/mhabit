@@ -57,6 +57,9 @@ jobs:
           ${{ env._FN_GIT_CHECK_CHANGE }}
           git_check_changes "${{ github.workspace }}/scripts/normalize_arb.sh"
 
+      - name: Native strings references checking
+        run: bash scripts/sync_native_l10n.sh --check
+
       - name: Generated Files checking
         run: |
           ${{ env._FN_GIT_CHECK_CHANGE }}

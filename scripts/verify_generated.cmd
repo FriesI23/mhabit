@@ -68,6 +68,9 @@ if errorlevel 1 (
 
 call "%~dp0normalize_arb.cmd"
 if errorlevel 1 goto fail
+@rem Native translations remain hand-maintained: check without filling.
+call "%~dp0sync_native_l10n.cmd" --check
+if errorlevel 1 goto fail
 call dart run melos run build-runner
 if errorlevel 1 goto fail
 fc /b "%WORK_DIR%\before.dart" "packages\mhabit_desktop_window_chrome\lib\src\desktop_window_chrome_api.g.dart" >nul
