@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart'
@@ -10,6 +12,8 @@ import 'package:flutter/material.dart'
         Theme;
 
 import '../shell/navigation_shell_frame.dart';
+import '../window_control/occlusion_fab.dart';
+import '../window_control/occlusion_layout.dart';
 import 'cupertino_floating_surface.dart';
 
 const Object _defaultHeroTag = _CupertinoDefaultHeroTag();
@@ -92,9 +96,37 @@ class CupertinoNavigationPrimaryActionButton extends StatelessWidget {
   final double extent;
 
   /// Returns the Scaffold location aligned to the trailing floating surface.
-  static FloatingActionButtonLocation floatingLocationOf(
-    BuildContext context,
-  ) => CupertinoFloatingSurfaceGeometry.resolveOf(context).endFloatLocation;
+  static FloatingActionButtonLocation floatingLocationOf(BuildContext context) {
+    final fallbackGeometry = CupertinoFloatingSurfaceGeometry.resolveOf(
+      context,
+    );
+    final scope = AdaptiveOcclusionScope.maybeOf(context);
+    if (!(scope?.isCurrent(context) ?? false)) {
+      return fallbackGeometry.endFloatLocation;
+    }
+    final adaptedGeometry = CupertinoFloatingSurfaceGeometry.resolveOf(
+      context,
+      includeHorizontalSafeArea: false,
+    );
+    final gestures = MediaQuery.systemGestureInsetsOf(context);
+    return AdaptiveOcclusionFabLocation.resolveOf(
+      context,
+      fallbackLocation: fallbackGeometry.endFloatLocation,
+      adaptedLocation: adaptedGeometry.endFloatLocation,
+      minimumInsets: adaptedGeometry.horizontalPadding,
+      alignToSystemBar: true,
+      systemBarMinimumInsets: EdgeInsets.only(
+        left: math.max(
+          adaptedGeometry.minimumHorizontalPadding.left,
+          gestures.left,
+        ),
+        right: math.max(
+          adaptedGeometry.minimumHorizontalPadding.right,
+          gestures.right,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

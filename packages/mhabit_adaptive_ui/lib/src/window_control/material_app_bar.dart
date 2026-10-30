@@ -6,6 +6,8 @@ import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 import '../material/material_app_bar_background.dart';
 import '../shell/sidebar_adapter.dart';
 import 'interaction_region.dart';
+import 'occlusion_sliver_toolbar.dart';
+import 'occlusion_toolbar.dart';
 import 'toolbar_geometry.dart';
 
 /// A Material [AppBar] whose leading and action slots avoid window controls.
@@ -129,7 +131,10 @@ class WindowControlAppBar extends StatelessWidget
   );
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      AdaptiveOcclusionToolbar(child: Builder(builder: _buildAppBar));
+
+  Widget _buildAppBar(BuildContext context) {
     final title = this.title;
     final sidebarLeading = SidebarLeadingScope.maybeOf(context);
     final effectiveFlexibleSpace = _centeredSidebarAnchorFlexibleSpace(
@@ -447,7 +452,17 @@ class WindowControlSliverAppBar extends StatelessWidget {
   final _WindowControlSliverAppBarVariant _variant;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => AdaptiveSliverOcclusionToolbar(
+    height:
+        toolbarHeight ??
+        (_variant == _WindowControlSliverAppBarVariant.large
+            ? const SliverAppBar.large().toolbarHeight
+            : kToolbarHeight),
+    topOffset: primary ? MediaQuery.paddingOf(context).top : 0,
+    child: Builder(builder: _buildAppBar),
+  );
+
+  Widget _buildAppBar(BuildContext context) {
     final title = this.title;
     final sidebarLeading = SidebarLeadingScope.maybeOf(context);
     final effectiveTitle = title == null

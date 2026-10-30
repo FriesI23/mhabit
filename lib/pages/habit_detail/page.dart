@@ -1020,6 +1020,11 @@ class _PageState extends State<_Page>
     final barHeight = scope?.barHeight ?? 0.0;
     return ColorfulNavibar(
       child: Scaffold(
+        floatingActionButtonAnimator:
+            AdaptiveOcclusionLayout.floatingActionButtonAnimatorOf(context),
+        floatingActionButtonLocation: AdaptiveOcclusionFabLocation.resolveOf(
+          context,
+        ),
         body: CustomScrollView(
           slivers: [
             buildAppbar(context),

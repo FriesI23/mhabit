@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 
 import 'interaction_region.dart';
+import 'occlusion_sliver_toolbar.dart';
+import 'occlusion_toolbar.dart';
 import 'toolbar_geometry.dart';
 
 /// A [CupertinoNavigationBar] that pads only its leading and trailing controls.
@@ -135,7 +137,10 @@ class WindowControlCupertinoNavigationBar extends StatelessWidget
   ).shouldFullyObstruct(context);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      AdaptiveOcclusionToolbar(child: Builder(builder: _buildNavigationBar));
+
+  Widget _buildNavigationBar(BuildContext context) {
     final media = MediaQuery.of(context);
     final top = media.padding.top < toolbarTopInset
         ? toolbarTopInset
@@ -243,7 +248,15 @@ class WindowControlCupertinoSliverNavigationBar extends StatelessWidget {
   final EdgeInsetsDirectional windowControlEdgePadding;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => AdaptiveSliverOcclusionToolbar(
+    height: kMinInteractiveDimensionCupertino,
+    topOffset: MediaQuery.paddingOf(context).top < toolbarTopInset
+        ? toolbarTopInset
+        : MediaQuery.paddingOf(context).top,
+    child: Builder(builder: _buildNavigationBar),
+  );
+
+  Widget _buildNavigationBar(BuildContext context) {
     final leading = this.leading;
     final middle = this.middle;
     final trailing = this.trailing;

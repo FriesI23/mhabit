@@ -12,6 +12,7 @@ import '../shell/sidebar_adapter.dart';
 import '../shell/sidebar_collapse_memory.dart';
 import '../shell/sidebar_expansion_controller.dart';
 import '../window_control/interaction_region.dart';
+import '../window_control/occlusion_layout.dart';
 import '../window_control/window_control_layout.dart';
 import 'material_navigation_bar.dart';
 
@@ -341,11 +342,22 @@ class _MaterialNavigationBranch extends StatelessWidget {
     // that padding from the sibling branch so nested page SafeAreas do not
     // reserve it again, while keeping the opposite side available to content.
     final removeLeft = Directionality.of(context) == TextDirection.ltr;
-    return MediaQuery.removePadding(
+    final branch = MediaQuery.removePadding(
       context: context,
       removeLeft: removeLeft,
       removeRight: !removeLeft,
       child: child,
+    );
+    final declaration = OcclusionViewport.maybeOf(context);
+    if (declaration == null) return branch;
+    return LayoutBuilder(
+      builder: (context, constraints) => OcclusionViewport(
+        bounds: declaration.trailingPaneBounds(
+          constraints,
+          Directionality.of(context),
+        ),
+        child: branch,
+      ),
     );
   }
 }

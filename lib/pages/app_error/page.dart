@@ -99,6 +99,11 @@ class AppErrorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonAnimator:
+          AdaptiveOcclusionLayout.floatingActionButtonAnimatorOf(context),
+      floatingActionButtonLocation: AdaptiveOcclusionFabLocation.resolveOf(
+        context,
+      ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.copy),
         onPressed: () => onPressFAB(context),

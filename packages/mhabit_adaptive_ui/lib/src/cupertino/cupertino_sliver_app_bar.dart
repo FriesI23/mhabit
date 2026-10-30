@@ -2,11 +2,14 @@ import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Theme;
+import 'package:flutter/rendering.dart' show SliverConstraints;
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
 import '../breakpoints/window_size_class.dart';
 import '../shell/sidebar_adapter.dart';
 import '../window_control/cupertino_navigation_bar.dart';
+import '../window_control/occlusion_sliver_toolbar.dart';
+import '../window_control/occlusion_toolbar.dart';
 import '../window_control/toolbar_geometry.dart';
 import 'app_bar_apple_style.dart';
 import 'cupertino_neutral_button.dart';
@@ -204,7 +207,10 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
   final double toolbarTopInset;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      SliverLayoutBuilder(builder: _buildHeader);
+
+  Widget _buildHeader(BuildContext context, SliverConstraints constraints) {
     final topPadding = math.max(
       MediaQuery.paddingOf(context).top,
       toolbarTopInset,
@@ -237,17 +243,24 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
                 left: 0,
                 right: 0,
                 height: toolbarHeight,
-                child: SafeArea(
-                  top: false,
-                  bottom: false,
-                  child: _CupertinoToolbar(
-                    title: title,
-                    leading: leading,
-                    trailing: trailing,
-                    useSidebarToolbar: useSidebarToolbar,
-                    padding: padding,
-                    windowControlAvoidance: windowControlAvoidance,
-                    windowControlEdgePadding: windowControlEdgePadding,
+                child: AdaptiveOcclusionToolbar(
+                  bounds: constraints.occlusionToolbarBounds(
+                    context,
+                    height: toolbarHeight,
+                    topOffset: topPadding,
+                  ),
+                  child: SafeArea(
+                    top: false,
+                    bottom: false,
+                    child: _CupertinoToolbar(
+                      title: title,
+                      leading: leading,
+                      trailing: trailing,
+                      useSidebarToolbar: useSidebarToolbar,
+                      padding: padding,
+                      windowControlAvoidance: windowControlAvoidance,
+                      windowControlEdgePadding: windowControlEdgePadding,
+                    ),
                   ),
                 ),
               ),

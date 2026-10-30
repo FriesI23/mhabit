@@ -113,6 +113,7 @@ class _HabitsPageBodyState extends State<_HabitsPageBody> {
   }
 
   Widget? _buildFloatingActionButton(
+    BuildContext context,
     AdaptiveNavScope scope,
     HabitDisplayContextualChrome chrome,
     ValueChanged<HabitDBCell> onCreated,
@@ -163,6 +164,10 @@ class _HabitsPageBodyState extends State<_HabitsPageBody> {
             }
           },
           child: Scaffold(
+            floatingActionButtonAnimator:
+                AdaptiveOcclusionLayout.floatingActionButtonAnimatorOf(context),
+            floatingActionButtonLocation:
+                AdaptiveOcclusionFabLocation.resolveOf(context),
             extendBody: chrome.extendBody,
             resizeToAvoidBottomInset: false,
             body: HabitsTabPage(
@@ -171,6 +176,7 @@ class _HabitsPageBodyState extends State<_HabitsPageBody> {
               contextualChrome: chrome,
             ),
             floatingActionButton: _buildFloatingActionButton(
+              context,
               scope,
               chrome,
               _handleHabitCreated,

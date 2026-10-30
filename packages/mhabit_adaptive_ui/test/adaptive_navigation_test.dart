@@ -477,6 +477,9 @@ void _setSurfaceSize(WidgetTester tester, Size size) {
 const MethodChannel _windowControlChannel = MethodChannel(
   'ios_window_control_layout',
 );
+const MethodChannel _occlusionChangesChannel = MethodChannel(
+  'ios_window_control_layout/occlusion_changes',
+);
 
 Map<String, double> _windowInsets({
   double left = 0,
@@ -505,9 +508,12 @@ Map<String, double> _windowCornerRadii({
 void _mockWindowControlLayout() {
   debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(_occlusionChangesChannel, (_) async => null);
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
       .setMockMethodCallHandler(_windowControlChannel, (call) async {
-        return <String, Object>{
-          'schemaVersion': 5,
+        return <String, Object?>{
+          'schemaVersion': 6,
+          'occlusionGeometry': null,
           'isAvailable': true,
           'isPad': true,
           'isFullScreen': false,
@@ -529,6 +535,8 @@ void _mockWindowControlLayout() {
 
 void _resetWindowControlLayoutMock() {
   debugDefaultTargetPlatformOverride = null;
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(_occlusionChangesChannel, null);
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
       .setMockMethodCallHandler(_windowControlChannel, null);
 }
@@ -653,6 +661,8 @@ void main() {
         tester.view.viewPadding = const FakeViewPadding(left: 50, right: 30);
         _setSurfaceSize(tester, const Size(700, 800));
         final selected = <int>[];
+        NavigationShellForm? floatingForm;
+        WindowControlLayoutOwner? floatingOwner;
 
         await tester.pumpWidget(
           MaterialApp(
@@ -692,6 +702,16 @@ void main() {
               windowControlOwnerResolver: (_) =>
                   WindowControlLayoutOwner.sideNavigation,
               compactNavigationBuilder: (_, _) => const SizedBox.shrink(),
+              floatingActionButtonBuilder: (context, _) {
+                floatingForm = AdaptiveNavScope.maybeOf(context)?.form;
+                floatingOwner = AdaptiveWindowControlLayoutScope.maybeOf(
+                  context,
+                )?.owner;
+                return const SizedBox.square(
+                  key: ValueKey('custom-shell-fab'),
+                  dimension: 48,
+                );
+              },
               child: const Text('branch'),
             ),
           ),
@@ -709,6 +729,9 @@ void main() {
           const Size(64, 80),
         );
         expect(find.text('constrainedSide:sideNavigation'), findsOneWidget);
+        expect(floatingForm, NavigationShellForm.constrainedSide);
+        expect(floatingOwner, WindowControlLayoutOwner.sideNavigation);
+        expect(find.byKey(const ValueKey('custom-shell-fab')), findsOneWidget);
 
         await tester.tap(
           find.byKey(const ValueKey('custom-shell-destination')),

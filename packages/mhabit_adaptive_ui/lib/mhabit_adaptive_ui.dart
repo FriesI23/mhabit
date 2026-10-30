@@ -81,4 +81,7 @@ export 'src/shell/sidebar_adapter.dart' show CupertinoSidebarPresentationScope;
 export 'src/window_control/cupertino_navigation_bar.dart';
 export 'src/window_control/interaction_region.dart';
 export 'src/window_control/material_app_bar.dart';
+export 'src/window_control/occlusion_fab.dart'
+    show AdaptiveOcclusionFabLocation;
+export 'src/window_control/occlusion_layout.dart' show AdaptiveOcclusionLayout;
 export 'src/window_control/window_control_layout.dart';

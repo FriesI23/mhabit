@@ -8,6 +8,8 @@ import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 import '../adaptive/adaptive_app_bar_actions.dart';
 import '../shell/sidebar_adapter.dart';
 import '../window_control/interaction_region.dart';
+import '../window_control/occlusion_layout.dart';
+import '../window_control/occlusion_toolbar.dart';
 import '../window_control/toolbar_geometry.dart';
 import 'cupertino_focus_halo_clip.dart';
 import 'cupertino_neutral_button.dart';
@@ -19,9 +21,6 @@ typedef CupertinoSearchOverflowPressed =
     void Function(bool searchExpanded, VoidCallback openOverflowMenu);
 
 class CupertinoSearchToolbar<T extends Object> extends StatelessWidget {
-  static const double _minimumTitleExtent = 96.0;
-  static const double _titleHorizontalPadding = 20.0;
-
   final Widget title;
   final bool showTitle;
   final bool centerTitle;
@@ -75,6 +74,85 @@ class CupertinoSearchToolbar<T extends Object> extends StatelessWidget {
     required this.onOverflowPressed,
   });
 
+  @override
+  Widget build(BuildContext context) {
+    // Sidebar's fixed capsule is centered in the whole window. Its side
+    // regions consume projected padding; ordinary rows inset the whole row.
+    final insetWholeRow =
+        context.shouldProtectHorizontalSafeArea && sidebarLeading == null;
+    return SafeArea(
+      left: insetWholeRow,
+      top: false,
+      right: insetWholeRow,
+      bottom: false,
+      child: _CupertinoSearchToolbarLayout<T>(
+        title: title,
+        showTitle: showTitle,
+        centerTitle: centerTitle,
+        preferPersistentSearch: preferPersistentSearch,
+        sidebarLeading: sidebarLeading,
+        leading: leading,
+        manuallyExpanded: manuallyExpanded,
+        actions: _CupertinoSearchToolbarActionsSpec<T>(
+          collection: collection,
+          onInvoke: onInvoke,
+          iconBuilder: iconBuilder,
+          actionButtonBuilder: actionButtonBuilder,
+          menuBuilderForAction: menuBuilderForAction,
+          presentationForAction: presentationForAction,
+          onOverflowMenuOpened: onOverflowMenuOpened,
+          onOverflowMenuClosed: onOverflowMenuClosed,
+          onOverflowPressed: onOverflowPressed,
+        ),
+        search: _CupertinoSearchToolbarFieldSpec(
+          controller: controller,
+          focusNode: focusNode,
+          hintText: hintText,
+          maxWidth: maxSearchWidth,
+          onChanged: onChanged,
+          onSubmitted: onSubmitted,
+          onActivated: onSearchActivated,
+          onTapOutside: onTapOutside,
+        ),
+      ),
+    );
+  }
+}
+
+extension _CupertinoSearchToolbarOcclusion on BuildContext {
+  bool get shouldProtectHorizontalSafeArea {
+    final scope = AdaptiveOcclusionScope.maybeOf(this);
+    return AdaptiveOcclusionToolbar.isAdaptedOf(this) ||
+        (scope?.geometry?.hasVerticalSystemBar ?? false);
+  }
+}
+
+class _CupertinoSearchToolbarLayout<T extends Object> extends StatelessWidget {
+  const _CupertinoSearchToolbarLayout({
+    required this.title,
+    required this.showTitle,
+    required this.centerTitle,
+    required this.preferPersistentSearch,
+    required this.sidebarLeading,
+    required this.leading,
+    required this.manuallyExpanded,
+    required this.actions,
+    required this.search,
+  });
+
+  static const double _minimumTitleExtent = 96.0;
+  static const double _titleHorizontalPadding = 20.0;
+
+  final Widget title;
+  final bool showTitle;
+  final bool centerTitle;
+  final bool preferPersistentSearch;
+  final SidebarLeadingScope? sidebarLeading;
+  final Widget? leading;
+  final bool manuallyExpanded;
+  final _CupertinoSearchToolbarActionsSpec<T> actions;
+  final _CupertinoSearchToolbarFieldSpec search;
+
   double _measureTitleExtent(BuildContext context) {
     final title = this.title;
     if (title is! Text) return _minimumTitleExtent;
@@ -97,15 +175,45 @@ class CupertinoSearchToolbar<T extends Object> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final contentPadding = CupertinoToolbarPadding.resolveDirectional(context);
     final sidebarLeading = this.sidebarLeading;
-    final insets = WindowControlToolbarGeometry.resolve(
+    // Unknown transforms and navigation transitions retain the original safe
+    // area. A failed precise projection must not reduce protection to the
+    // ordinary phone-shaped window's small visual padding bonus.
+    final projectSideRegions =
+        sidebarLeading != null && context.shouldProtectHorizontalSafeArea;
+    final contentPadding = CupertinoToolbarPadding.resolveDirectional(
+      context,
+      // The full projected inset is consumed below; do not add its phone bonus.
+      contentPadding: projectSideRegions
+          ? cupertinoWindowControlEdgePadding
+          : null,
+    );
+    final geometry = WindowControlToolbarGeometry.resolve(
       context,
       avoidance: context.sidebarToolbarAvoidance(
         sidebarLeading: sidebarLeading,
       ),
       edgePadding: contentPadding,
-    ).cupertinoInsets;
+    );
+    final projectedPadding = projectSideRegions
+        ? MediaQuery.paddingOf(context)
+        : EdgeInsets.zero;
+    final direction = Directionality.of(context);
+    final projectedStart = direction == TextDirection.ltr
+        ? projectedPadding.left
+        : projectedPadding.right;
+    final projectedEnd = direction == TextDirection.ltr
+        ? projectedPadding.right
+        : projectedPadding.left;
+    final insets = projectSideRegions
+        ? EdgeInsetsDirectional.fromSTEB(
+            contentPadding.start +
+                math.max(geometry.avoidance.start, projectedStart),
+            geometry.cupertinoInsets.top,
+            contentPadding.end + math.max(geometry.avoidance.end, projectedEnd),
+            geometry.cupertinoInsets.bottom,
+          )
+        : geometry.cupertinoInsets;
     final preferredTitleExtent = _measureTitleExtent(context);
     final leadingRegion = _CupertinoSearchToolbarLeading(
       sidebarLeading: sidebarLeading,
@@ -115,27 +223,6 @@ class CupertinoSearchToolbar<T extends Object> extends StatelessWidget {
     final leadingWidth =
         (sidebarLeading?.reservedExtent ?? 0.0) +
         (leading == null ? 0.0 : _toolbarItemExtent);
-    final actions = _CupertinoSearchToolbarActionsSpec<T>(
-      collection: collection,
-      onInvoke: onInvoke,
-      iconBuilder: iconBuilder,
-      actionButtonBuilder: actionButtonBuilder,
-      menuBuilderForAction: menuBuilderForAction,
-      presentationForAction: presentationForAction,
-      onOverflowMenuOpened: onOverflowMenuOpened,
-      onOverflowMenuClosed: onOverflowMenuClosed,
-      onOverflowPressed: onOverflowPressed,
-    );
-    final search = _CupertinoSearchToolbarFieldSpec(
-      controller: controller,
-      focusNode: focusNode,
-      hintText: hintText,
-      maxWidth: maxSearchWidth,
-      onChanged: onChanged,
-      onSubmitted: onSubmitted,
-      onActivated: onSearchActivated,
-      onTapOutside: onTapOutside,
-    );
 
     return Padding(
       padding: EdgeInsets.only(top: insets.top, bottom: insets.bottom),

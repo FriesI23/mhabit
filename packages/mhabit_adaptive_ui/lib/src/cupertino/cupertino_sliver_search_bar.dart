@@ -3,12 +3,15 @@ import 'dart:math' as math;
 import 'package:adaptive_actions/cupertino.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Theme;
+import 'package:flutter/rendering.dart' show SliverConstraints;
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
 import '../adaptive/adaptive_app_bar_actions.dart';
 import '../breakpoints/window_size_class.dart';
 import '../shell/sidebar_adapter.dart';
 import '../window_control/cupertino_navigation_bar.dart';
+import '../window_control/occlusion_sliver_toolbar.dart';
+import '../window_control/occlusion_toolbar.dart';
 import 'cupertino_search_toolbar.dart';
 import 'cupertino_sidebar_navigation_bar_bottom.dart';
 import 'cupertino_toolbar_extensions.dart';
@@ -176,7 +179,10 @@ class _CupertinoSliverSearchBarState<T extends Object>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      SliverLayoutBuilder(builder: _buildHeader);
+
+  Widget _buildHeader(BuildContext context, SliverConstraints constraints) {
     final toolbarTopInset =
         widget.toolbarTopInset ??
         Theme.of(context).platform.defaultCupertinoToolbarTopInset;
@@ -228,37 +234,47 @@ class _CupertinoSliverSearchBarState<T extends Object>
                 left: 0,
                 right: 0,
                 height: toolbarHeight,
-                child: DefaultTextStyle(
-                  style: CupertinoTheme.of(context).textTheme.navTitleTextStyle,
-                  child: CupertinoSearchToolbar(
-                    title: widget.keyword.isEmpty
-                        ? widget.title
-                        : Text(widget.hintText ?? 'Search'),
-                    showTitle: sidebarLeading != null || !isLarge,
-                    centerTitle:
-                        sidebarLeading == null && !isCompact && !isLarge,
-                    preferPersistentSearch: isLarge,
-                    sidebarLeading: sidebarLeading,
-                    leading: widget.leading,
-                    collection: widget.collection,
-                    onInvoke: widget.onInvoke,
-                    iconBuilder: widget.actions?.iconBuilder,
-                    actionButtonBuilder: widget.actions?.actionButtonBuilder,
-                    menuBuilderForAction: widget.actions?.menuBuilderForAction,
-                    presentationForAction:
-                        widget.actions?.presentationForAction,
-                    manuallyExpanded: _expanded,
-                    controller: widget.controller,
-                    focusNode: widget.focusNode,
-                    hintText: widget.hintText,
-                    maxSearchWidth: widget.maxSearchWidth,
-                    onChanged: widget.onChanged,
-                    onSubmitted: widget.onSubmitted,
-                    onSearchActivated: _activateSearch,
-                    onTapOutside: widget.onTapOutside,
-                    onOverflowMenuOpened: _handleOverflowMenuOpened,
-                    onOverflowMenuClosed: _handleOverflowMenuClosed,
-                    onOverflowPressed: _handleOverflowPressed,
+                child: AdaptiveOcclusionToolbar(
+                  bounds: constraints.occlusionToolbarBounds(
+                    context,
+                    height: toolbarHeight,
+                    topOffset: topPadding,
+                  ),
+                  child: DefaultTextStyle(
+                    style: CupertinoTheme.of(
+                      context,
+                    ).textTheme.navTitleTextStyle,
+                    child: CupertinoSearchToolbar(
+                      title: widget.keyword.isEmpty
+                          ? widget.title
+                          : Text(widget.hintText ?? 'Search'),
+                      showTitle: sidebarLeading != null || !isLarge,
+                      centerTitle:
+                          sidebarLeading == null && !isCompact && !isLarge,
+                      preferPersistentSearch: isLarge,
+                      sidebarLeading: sidebarLeading,
+                      leading: widget.leading,
+                      collection: widget.collection,
+                      onInvoke: widget.onInvoke,
+                      iconBuilder: widget.actions?.iconBuilder,
+                      actionButtonBuilder: widget.actions?.actionButtonBuilder,
+                      menuBuilderForAction:
+                          widget.actions?.menuBuilderForAction,
+                      presentationForAction:
+                          widget.actions?.presentationForAction,
+                      manuallyExpanded: _expanded,
+                      controller: widget.controller,
+                      focusNode: widget.focusNode,
+                      hintText: widget.hintText,
+                      maxSearchWidth: widget.maxSearchWidth,
+                      onChanged: widget.onChanged,
+                      onSubmitted: widget.onSubmitted,
+                      onSearchActivated: _activateSearch,
+                      onTapOutside: widget.onTapOutside,
+                      onOverflowMenuOpened: _handleOverflowMenuOpened,
+                      onOverflowMenuClosed: _handleOverflowMenuClosed,
+                      onOverflowPressed: _handleOverflowPressed,
+                    ),
                   ),
                 ),
               ),

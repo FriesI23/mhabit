@@ -12,6 +12,7 @@ import '../shell/sidebar_adapter.dart';
 import '../shell/sidebar_collapse_memory.dart';
 import '../shell/sidebar_expansion_controller.dart';
 import '../window_control/interaction_region.dart';
+import '../window_control/occlusion_layout.dart';
 import '../window_control/window_control_layout.dart';
 import 'apple_sidebar_style.dart';
 import 'cupertino_adaptive_navigation_bar.dart';
@@ -258,7 +259,7 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
           collapsedBarEnabled: widget.collapsedSidebarEnabled,
           collapsedBarController: _collapsedBarController,
           toolbarGeometry: toolbarGeometry,
-          child: child,
+          child: _CupertinoNavigationBranch(child: child),
         );
         final sidebar = switch (widget.sidebarStyle) {
           AppleSidebarStyle.inset => CupertinoSidebar(
@@ -316,8 +317,8 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
             compact: state.form == NavigationShellForm.compact,
             routeVisible: widget.compactRouteVisible,
           ),
-      floatingActionButtonLocation:
-          CupertinoNavigationPrimaryActionButton.floatingLocationOf(context),
+      floatingActionButtonLocationBuilder:
+          CupertinoNavigationPrimaryActionButton.floatingLocationOf,
       child: CupertinoPageScaffoldBackgroundColor(
         color: scaffoldBackground,
         child: widget.child,
@@ -350,6 +351,29 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
               onDestinationSelected: state.onDestinationSelected,
             ),
           ),
+    );
+  }
+}
+
+class _CupertinoNavigationBranch extends StatelessWidget {
+  const _CupertinoNavigationBranch({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final declaration = OcclusionViewport.maybeOf(context);
+    if (declaration == null) return child;
+    // The Sidebar lays out its branch after consuming the logical-start span.
+    // Its current constraints describe that remaining region during animation.
+    return LayoutBuilder(
+      builder: (context, constraints) => OcclusionViewport(
+        bounds: declaration.trailingPaneBounds(
+          constraints,
+          Directionality.of(context),
+        ),
+        child: child,
+      ),
     );
   }
 }

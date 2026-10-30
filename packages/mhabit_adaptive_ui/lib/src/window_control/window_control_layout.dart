@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:ios_window_control_layout/ios_window_control_layout.dart';
 
+import 'occlusion_layout.dart';
+
 /// Chrome subtree that consumes platform window-control avoidance.
 enum WindowControlLayoutOwner {
   /// Page app bars consume the window-control region.
@@ -172,7 +174,18 @@ class AdaptiveWindowControlLayout extends StatelessWidget {
                 : null,
             usesRectangularDisplay: usesRectangularDisplay,
             owner: WindowControlLayoutOwner.appBar,
-            child: child,
+            child: AdaptiveOcclusionLayout(
+              geometry: layout.occlusionGeometry,
+              systemSafeArea: layout.baseSafeArea,
+              cornerRadii: layout.isAvailable
+                  ? layout.effectiveCornerRadii
+                  : null,
+              hasWindowControls: layout.hasWindowControlAvoidance,
+              child: OcclusionViewport(
+                bounds: layout.occlusionGeometry?.viewBounds,
+                child: child,
+              ),
+            ),
           );
         },
       ),

@@ -14,6 +14,7 @@ import '../window_control/window_control_layout.dart';
 final class CupertinoFloatingSurfaceGeometry {
   const CupertinoFloatingSurfaceGeometry._({
     required this.horizontalPadding,
+    required this.minimumHorizontalPadding,
     required this.floatingMargin,
   });
 
@@ -28,13 +29,22 @@ final class CupertinoFloatingSurfaceGeometry {
   /// Physical horizontal padding that avoids the lower display corners.
   final EdgeInsets horizontalPadding;
 
+  /// Minimum corner and visual clearance when UIKit provides a
+  /// native bar column. Ordinary floating surfaces use [horizontalPadding].
+  final EdgeInsets minimumHorizontalPadding;
+
   /// Distance between a floating surface and the physical bottom edge.
   final double floatingMargin;
 
   /// Resolves the floating geometry for the current window and safe area.
+  ///
+  /// [includeHorizontalSafeArea] is false only for a placement whose precise
+  /// occlusion consumer separately replaces the original horizontal insets.
+  /// Corner and visual margins, and the vertical geometry, remain unchanged.
   static CupertinoFloatingSurfaceGeometry resolveOf(
     BuildContext context, {
     double? floatingBottomMargin,
+    bool includeHorizontalSafeArea = true,
   }) {
     final viewPadding = MediaQuery.viewPaddingOf(context);
     final remainingPadding = MediaQuery.paddingOf(context);
@@ -62,10 +72,27 @@ final class CupertinoFloatingSurfaceGeometry {
             radii: cornerRadii,
             floatingMargin: floatingMargin,
           );
+    final (minimumLeft, minimumRight) = cornerRadii == null
+        ? (_minimumHorizontalMargin, _minimumHorizontalMargin)
+        : _reportedCornerHorizontalMargins(
+            radii: cornerRadii,
+            floatingMargin: floatingMargin,
+            minimumVisualMargin: _minimumHorizontalMargin,
+          );
     return CupertinoFloatingSurfaceGeometry._(
+      minimumHorizontalPadding: EdgeInsets.only(
+        left: minimumLeft,
+        right: minimumRight,
+      ),
       horizontalPadding: EdgeInsets.only(
-        left: math.max(leftMargin, remainingPadding.left),
-        right: math.max(rightMargin, remainingPadding.right),
+        left: math.max(
+          leftMargin,
+          includeHorizontalSafeArea ? remainingPadding.left : 0,
+        ),
+        right: math.max(
+          rightMargin,
+          includeHorizontalSafeArea ? remainingPadding.right : 0,
+        ),
       ),
       floatingMargin: floatingMargin,
     );
@@ -102,8 +129,11 @@ final class CupertinoFloatingSurfaceGeometry {
   static (double, double) _reportedCornerHorizontalMargins({
     required BorderRadius radii,
     required double floatingMargin,
+    double? minimumVisualMargin,
   }) {
-    final visualMargin = math.max(_minimumHorizontalMargin, floatingMargin);
+    final visualMargin =
+        minimumVisualMargin ??
+        math.max(_minimumHorizontalMargin, floatingMargin);
     return (
       math.max(
         visualMargin,
