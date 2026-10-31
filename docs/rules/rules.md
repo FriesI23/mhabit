@@ -255,8 +255,18 @@ existing architecture and tooling contracts.
   state space explicit.
 - Use records when they make multi-value selection or transfer clearer and stay
   local in scope.
-- Prefer same-file private helpers or private extensions for local pure logic
-  before introducing a new public abstraction.
+- Structure complete, multi-step layout resolution workflows as named
+  resolvers with a public interface, a `const factory`, and a private
+  implementation in the same file.
+  The public `resolve()` method orchestrates validation, fallbacks, and steps;
+  private steps inline their details or use local closures. Further private
+  calls require actual reuse or a specific structural need. Keep distinct
+  resolution phases explicit, while Flutter callbacks retain composition and
+  child layout duties. Do not create a separate resolver for each predicate or
+  formula; prefer existing geometry methods, record extensions, or member
+  predicates for those calculations.
+- For other local pure logic, prefer same-file private helpers or private
+  extensions before introducing a new public abstraction.
 - Avoid one-off generic helper layers when the real abstraction is still owned
   by a concrete model, codec, workflow, or page-local view model.
 

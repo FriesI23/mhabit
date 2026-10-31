@@ -181,6 +181,9 @@ class _CupertinoSliverSearchBarState<T extends Object>
   @override
   Widget build(BuildContext context) {
     final ambientMedia = MediaQuery.of(context);
+    final topToolbarLayoutOverride = SidebarTopToolbarLayoutOverrideResolver(
+      context: context,
+    ).resolve();
     final toolbarTopInset =
         widget.toolbarTopInset ??
         Theme.of(context).platform.defaultCupertinoToolbarTopInset;
@@ -192,9 +195,14 @@ class _CupertinoSliverSearchBarState<T extends Object>
       topOffset: math.max(ambientMedia.padding.top, toolbarTopInset),
       reclaimTopSafeArea: widget.pinned,
       minimumTopInset: toolbarTopInset,
+      topToolbarLayoutOverride: topToolbarLayoutOverride,
       child: SliverLayoutBuilder(
-        builder: (context, constraints) =>
-            _buildHeader(context, constraints, ambientMedia),
+        builder: (context, constraints) => _buildHeader(
+          context,
+          constraints,
+          ambientMedia,
+          topToolbarLayoutOverride,
+        ),
       ),
     );
   }
@@ -203,6 +211,7 @@ class _CupertinoSliverSearchBarState<T extends Object>
     BuildContext context,
     SliverConstraints constraints,
     MediaQueryData ambientMedia,
+    TopToolbarLayoutOverride? topToolbarLayoutOverride,
   ) {
     final toolbarTopInset =
         widget.toolbarTopInset ??
@@ -270,6 +279,7 @@ class _CupertinoSliverSearchBarState<T extends Object>
                       context,
                     ).textTheme.navTitleTextStyle,
                     child: CupertinoSearchToolbar(
+                      topToolbarLayoutOverride: topToolbarLayoutOverride,
                       title: widget.keyword.isEmpty
                           ? widget.title
                           : Text(widget.hintText ?? 'Search'),

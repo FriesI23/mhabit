@@ -11,6 +11,13 @@ typedef TopToolbarLayout = ({
   Rect bounds,
 });
 
+/// A shared toolbar layout override in native-view coordinates.
+/// A supplied override with a null layout explicitly rejects reclamation.
+typedef TopToolbarLayoutOverride = ({
+  TopToolbarLayout? layout,
+  Rect? viewportBounds,
+});
+
 /// Projects precise horizontal insets into an explicitly declared toolbar row.
 /// Unknown bounds retain the current Safe Area; body geometry is unchanged.
 /// Route paint transitions do not change this layout projection.
@@ -22,6 +29,7 @@ class AdaptiveOcclusionToolbar extends StatefulWidget {
     this.preserveHorizontalSafeArea = true,
     this.reclaimTopSafeArea = false,
     this.minimumTopInset = 0,
+    this.topToolbarLayoutOverride,
   });
 
   /// The declared layout row in native-view coordinates before route painting.
@@ -32,9 +40,12 @@ class AdaptiveOcclusionToolbar extends StatefulWidget {
   /// Floating bottom navigation uses its own protected band instead.
   final bool preserveHorizontalSafeArea;
 
-  /// Only a pinned top-row owner can release the status area's vertical inset.
+  /// Only a pinned top-row toolbar can release the status area's vertical inset.
   final bool reclaimTopSafeArea;
   final double minimumTopInset;
+
+  /// Null resolves independently; an override must contain valid geometry.
+  final TopToolbarLayoutOverride? topToolbarLayoutOverride;
 
   static bool isAdaptedOf(BuildContext context) =>
       context
@@ -140,23 +151,19 @@ class _AdaptiveOcclusionToolbarState extends State<AdaptiveOcclusionToolbar> {
     AdaptiveOcclusionScope scope,
     MediaQueryData media,
   ) {
-    final geometry = scope.geometry;
     final row = widget.bounds;
     final pane = OcclusionViewport.maybeOf(context)?.bounds;
-    if (!scope.allowTopToolbarReclamation ||
-        geometry == null ||
-        geometry.hasVerticalSystemBar ||
-        scope.hasWindowControls ||
-        scope.cornerRadii == null ||
-        media.viewInsets.top != 0 ||
+    if (!scope.canReclaimTopToolbar(topViewInset: media.viewInsets.top) ||
         row == null ||
         pane == null) {
       return null;
     }
+    final geometry = scope.geometry!;
     final view = View.of(context);
+    final viewSize = view.physicalSize / view.devicePixelRatio;
     return TopToolbarLayoutResolver(
       viewBounds: geometry.viewBounds,
-      viewSize: view.physicalSize / view.devicePixelRatio,
+      viewSize: viewSize,
       occlusions: geometry.activeOcclusionRegions,
       pane: pane,
       row: row,
@@ -165,6 +172,7 @@ class _AdaptiveOcclusionToolbarState extends State<AdaptiveOcclusionToolbar> {
       currentViewTopInset: media.viewPadding.top,
       minimumTopInset: widget.minimumTopInset,
       alignmentHeight: scope.topToolbarAlignmentHeight,
+      topToolbarLayoutOverride: widget.topToolbarLayoutOverride,
     ).resolve();
   }
 
@@ -216,6 +224,7 @@ abstract interface class TopToolbarLayoutResolver {
     required double currentViewTopInset,
     required double minimumTopInset,
     required double? alignmentHeight,
+    TopToolbarLayoutOverride? topToolbarLayoutOverride,
   }) = _TopToolbarLayoutResolver;
 
   /// Returns the local top inset, protected extent before bottom content, and
@@ -236,6 +245,7 @@ final class _TopToolbarLayoutResolver implements TopToolbarLayoutResolver {
     required this.currentViewTopInset,
     required this.minimumTopInset,
     required this.alignmentHeight,
+    this.topToolbarLayoutOverride,
   });
 
   // Native and Flutter coordinates can differ by floating-point noise.
@@ -252,15 +262,67 @@ final class _TopToolbarLayoutResolver implements TopToolbarLayoutResolver {
   final double currentViewTopInset;
   final double minimumTopInset;
   final double? alignmentHeight;
+  final TopToolbarLayoutOverride? topToolbarLayoutOverride;
 
   double get _originalTopInset => math.max(currentTopInset, minimumTopInset);
 
   @override
   TopToolbarLayout? resolve() {
-    if (!_hasUsableInputs || !_matchesDeclaredLayout()) return null;
+    if (!_hasUsableInputs) return null;
+    final topToolbarLayoutOverride = this.topToolbarLayoutOverride;
+    if (topToolbarLayoutOverride != null) {
+      final layout = topToolbarLayoutOverride.layout;
+      final viewportBounds = topToolbarLayoutOverride.viewportBounds;
+      if (layout == null ||
+          viewportBounds == null ||
+          !_matchesLayoutOverride(layout, viewportBounds)) {
+        return null;
+      }
+      return _resolveLayoutOverride(layout);
+    }
+    if (!_matchesDeclaredLayout()) return null;
     final statusBand = _resolveSupportedTopBand();
     if (statusBand == null) return null;
     return _resolveAlignedToolbar(statusBand);
+  }
+
+  bool _matchesLayoutOverride(TopToolbarLayout layout, Rect viewportBounds) {
+    final hasCurrentGeometry =
+        viewportBounds == viewBounds &&
+        layout.bounds.isFinite &&
+        !layout.bounds.isEmpty &&
+        layout.minimumExtent.isFinite &&
+        layout.topInset.isFinite &&
+        OcclusionInsetsResolver.matchesViewSize(viewBounds, viewSize) &&
+        viewSize.width < viewSize.height;
+    final containsPane =
+        (pane.top - viewportBounds.top).abs() <= _edgeTolerance &&
+        pane.left >= viewportBounds.left - _edgeTolerance &&
+        pane.right <= viewportBounds.right + _edgeTolerance &&
+        pane.bottom <= viewportBounds.bottom + _edgeTolerance;
+    final matchesDeclaredRow =
+        (row.left - pane.left).abs() <= _edgeTolerance &&
+        (row.right - pane.right).abs() <= _edgeTolerance &&
+        (row.top - pane.top - _originalTopInset).abs() <= _edgeTolerance &&
+        currentTopInset >= systemTopInset - _edgeTolerance;
+    return hasCurrentGeometry && containsPane && matchesDeclaredRow;
+  }
+
+  TopToolbarLayout? _resolveLayoutOverride(TopToolbarLayout layout) {
+    final extraTop = math.max(
+      0.0,
+      math.max(currentTopInset, currentViewTopInset) - systemTopInset,
+    );
+    final top = math.max(
+      math.max(minimumTopInset, extraTop),
+      layout.bounds.center.dy - pane.top - row.height / 2,
+    );
+    if (!top.isFinite || top >= _originalTopInset - _edgeTolerance) return null;
+    return (
+      topInset: top,
+      minimumExtent: math.max(layout.minimumExtent, top + row.height),
+      bounds: Rect.fromLTWH(row.left, pane.top + top, row.width, row.height),
+    );
   }
 
   bool get _hasUsableInputs {

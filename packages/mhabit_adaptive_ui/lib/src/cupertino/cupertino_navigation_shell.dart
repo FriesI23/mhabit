@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Theme;
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
@@ -13,12 +15,29 @@ import '../shell/sidebar_collapse_memory.dart';
 import '../shell/sidebar_expansion_controller.dart';
 import '../window_control/interaction_region.dart';
 import '../window_control/occlusion_layout.dart';
+import '../window_control/occlusion_toolbar.dart';
+import '../window_control/toolbar_geometry.dart';
 import '../window_control/window_control_layout.dart';
 import 'apple_sidebar_style.dart';
 import 'cupertino_adaptive_navigation_bar.dart';
 import 'cupertino_floating_surface.dart';
 import 'cupertino_navigation_primary_action.dart';
 import 'cupertino_neutral_button.dart';
+
+/// Resolves a candidate top-toolbar region for a declared full-view Sidebar.
+abstract interface class SidebarTopToolbarRegionResolver {
+  const factory SidebarTopToolbarRegionResolver({
+    required AdaptiveOcclusionScope? occlusionScope,
+    required Rect? viewportBounds,
+    required Size viewSize,
+    required BoxConstraints constraints,
+    required MediaQueryData media,
+    required CupertinoSidebarToolbarGeometry toolbarGeometry,
+    required bool collapsedBarEnabled,
+  }) = _SidebarTopToolbarRegionResolver;
+
+  CupertinoSidebarToolbarRegion? resolve();
+}
 
 /// Composes the Cupertino renderers around style-neutral shell mechanics.
 ///
@@ -216,95 +235,119 @@ class _CupertinoNavigationShellState extends State<CupertinoNavigationShell> {
       formResolver: _resolveForm,
       bodyBuilder: (context, form, onSelected, child) {
         if (form == NavigationShellForm.compact) return child;
-
-        final adapter = SidebarNavigationAdapter(
-          destinations: widget.destinations,
-          auxiliaryDestinations: widget.auxiliaryDestinations,
-          selectedIndex: widget.selectedIndex,
-          selectedAuxiliaryIndex: widget.selectedAuxiliaryIndex,
-          onDestinationSelected: onSelected,
-          onAuxiliaryDestinationSelected: widget.onAuxiliaryDestinationSelected,
-        );
-        final sidebarContent = CupertinoSidebarContentSafeArea(
-          child: CupertinoSidebarNavigation(
-            destinations: adapter.destinations,
-            selection: adapter.selection,
-            onSelectionChanged: adapter.select,
-            auxiliaryDestinations: adapter.auxiliaryDestinations,
-            itemStyle: switch (widget.sidebarStyle) {
-              AppleSidebarStyle.inset => null,
-              AppleSidebarStyle.edge => widget.sidebarItemStyle,
-            },
-          ),
-        );
-        // The fixed bar is a shell overlay, outside the page AppBar's targets.
-        final collapsedBar = AdaptiveWindowInteractionRegion(
-          child: CupertinoSidebarCollapsedBar(
-            key: const ValueKey('cupertino-sidebar-collapsed-bar'),
-            destinations: adapter.destinations,
-            selectedIndex: widget.selectedAuxiliaryIndex == null
-                ? widget.selectedIndex
-                : null,
-            onDestinationSelected: (index) =>
-                adapter.select(SidebarPrimarySelection(index)),
-            height: toolbarGeometry.collapsedBarHeight,
-            itemStyle: switch (widget.sidebarStyle) {
-              AppleSidebarStyle.inset => null,
-              AppleSidebarStyle.edge => widget.collapsedSidebarItemStyle,
-            },
-          ),
-        );
-        final branch = CupertinoSidebarPresentationScope(
-          controller: _controller,
-          collapsedBarEnabled: widget.collapsedSidebarEnabled,
-          collapsedBarController: _collapsedBarController,
-          toolbarGeometry: toolbarGeometry,
-          child: _CupertinoNavigationBranch(child: child),
-        );
-        final sidebar = switch (widget.sidebarStyle) {
-          AppleSidebarStyle.inset => CupertinoSidebar(
-            controller: _controller,
-            content: sidebarContent,
-            collapsedBar: widget.collapsedSidebarEnabled ? collapsedBar : null,
-            collapsedBarController: _collapsedBarController,
-            collapsedBarPlacement:
-                CupertinoSidebarCollapsedBarPlacement.fixedToolbar,
-            toolbarGeometry: toolbarGeometry,
-            extent: widget.sideNavigationExtent,
-            dragHandleBuilder: widget.dragHandleBuilder,
-            expandLabel: widget.expandNavigationLabel,
-            collapseLabel: widget.collapseNavigationLabel,
-            toggleButtonBuilder: (context, defaultBuilder) =>
-                AdaptiveWindowInteractionRegion(
-                  child: NeutralCupertinoButtonBuilder(builder: defaultBuilder),
-                ),
-            scaffoldBackgroundColor: scaffoldBackground,
-            child: branch,
-          ),
-          AppleSidebarStyle.edge => CupertinoSidebar.edge(
-            controller: _controller,
-            content: sidebarContent,
-            collapsedBar: widget.collapsedSidebarEnabled ? collapsedBar : null,
-            collapsedBarController: _collapsedBarController,
-            collapsedBarPlacement:
-                CupertinoSidebarCollapsedBarPlacement.fixedToolbar,
-            toolbarGeometry: toolbarGeometry,
-            extent: widget.sideNavigationExtent,
-            dragHandleBuilder: widget.dragHandleBuilder,
-            expandLabel: widget.expandNavigationLabel,
-            collapseLabel: widget.collapseNavigationLabel,
-            toggleButtonBuilder: (context, defaultBuilder) =>
-                AdaptiveWindowInteractionRegion(
-                  child: NeutralCupertinoButtonBuilder(builder: defaultBuilder),
-                ),
-            backgroundColor: widget.sidebarBackgroundColor,
-            scaffoldBackgroundColor: scaffoldBackground,
-            child: branch,
-          ),
-        };
-        return NavigationObstructionScope(
-          obstruction: context.sidebarNavigationObstruction,
-          child: sidebar,
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final view = View.of(context);
+            final toolbarRegion = SidebarTopToolbarRegionResolver(
+              occlusionScope: AdaptiveOcclusionScope.maybeOf(context),
+              viewportBounds: OcclusionViewport.maybeOf(context)?.bounds,
+              viewSize: view.physicalSize / view.devicePixelRatio,
+              constraints: constraints,
+              media: MediaQuery.of(context),
+              toolbarGeometry: toolbarGeometry,
+              collapsedBarEnabled: widget.collapsedSidebarEnabled,
+            ).resolve();
+            final adapter = SidebarNavigationAdapter(
+              destinations: widget.destinations,
+              auxiliaryDestinations: widget.auxiliaryDestinations,
+              selectedIndex: widget.selectedIndex,
+              selectedAuxiliaryIndex: widget.selectedAuxiliaryIndex,
+              onDestinationSelected: onSelected,
+              onAuxiliaryDestinationSelected:
+                  widget.onAuxiliaryDestinationSelected,
+            );
+            final sidebarContent = CupertinoSidebarContentSafeArea(
+              child: CupertinoSidebarNavigation(
+                destinations: adapter.destinations,
+                selection: adapter.selection,
+                onSelectionChanged: adapter.select,
+                auxiliaryDestinations: adapter.auxiliaryDestinations,
+                itemStyle: switch (widget.sidebarStyle) {
+                  AppleSidebarStyle.inset => null,
+                  AppleSidebarStyle.edge => widget.sidebarItemStyle,
+                },
+              ),
+            );
+            // The fixed bar is a shell overlay, outside the page AppBar's targets.
+            final collapsedBar = AdaptiveWindowInteractionRegion(
+              child: CupertinoSidebarCollapsedBar(
+                key: const ValueKey('cupertino-sidebar-collapsed-bar'),
+                destinations: adapter.destinations,
+                selectedIndex: widget.selectedAuxiliaryIndex == null
+                    ? widget.selectedIndex
+                    : null,
+                onDestinationSelected: (index) =>
+                    adapter.select(SidebarPrimarySelection(index)),
+                height: toolbarGeometry.collapsedBarHeight,
+                itemStyle: switch (widget.sidebarStyle) {
+                  AppleSidebarStyle.inset => null,
+                  AppleSidebarStyle.edge => widget.collapsedSidebarItemStyle,
+                },
+              ),
+            );
+            final branch = CupertinoSidebarPresentationScope(
+              controller: _controller,
+              collapsedBarEnabled: widget.collapsedSidebarEnabled,
+              collapsedBarController: _collapsedBarController,
+              toolbarGeometry: toolbarGeometry,
+              child: _CupertinoNavigationBranch(child: child),
+            );
+            final sidebar = switch (widget.sidebarStyle) {
+              AppleSidebarStyle.inset => CupertinoSidebar(
+                controller: _controller,
+                content: sidebarContent,
+                collapsedBar: widget.collapsedSidebarEnabled
+                    ? collapsedBar
+                    : null,
+                collapsedBarController: _collapsedBarController,
+                collapsedBarPlacement:
+                    CupertinoSidebarCollapsedBarPlacement.fixedToolbar,
+                toolbarGeometry: toolbarGeometry,
+                toolbarRegion: toolbarRegion,
+                extent: widget.sideNavigationExtent,
+                dragHandleBuilder: widget.dragHandleBuilder,
+                expandLabel: widget.expandNavigationLabel,
+                collapseLabel: widget.collapseNavigationLabel,
+                toggleButtonBuilder: (context, defaultBuilder) =>
+                    AdaptiveWindowInteractionRegion(
+                      child: NeutralCupertinoButtonBuilder(
+                        builder: defaultBuilder,
+                      ),
+                    ),
+                scaffoldBackgroundColor: scaffoldBackground,
+                child: branch,
+              ),
+              AppleSidebarStyle.edge => CupertinoSidebar.edge(
+                controller: _controller,
+                content: sidebarContent,
+                collapsedBar: widget.collapsedSidebarEnabled
+                    ? collapsedBar
+                    : null,
+                collapsedBarController: _collapsedBarController,
+                collapsedBarPlacement:
+                    CupertinoSidebarCollapsedBarPlacement.fixedToolbar,
+                toolbarGeometry: toolbarGeometry,
+                toolbarRegion: toolbarRegion,
+                extent: widget.sideNavigationExtent,
+                dragHandleBuilder: widget.dragHandleBuilder,
+                expandLabel: widget.expandNavigationLabel,
+                collapseLabel: widget.collapseNavigationLabel,
+                toggleButtonBuilder: (context, defaultBuilder) =>
+                    AdaptiveWindowInteractionRegion(
+                      child: NeutralCupertinoButtonBuilder(
+                        builder: defaultBuilder,
+                      ),
+                    ),
+                backgroundColor: widget.sidebarBackgroundColor,
+                scaffoldBackgroundColor: scaffoldBackground,
+                child: branch,
+              ),
+            };
+            return NavigationObstructionScope(
+              obstruction: context.sidebarNavigationObstruction,
+              child: sidebar,
+            );
+          },
         );
       },
       windowControlOwnerResolver: _resolveWindowControlOwner,
@@ -374,6 +417,127 @@ class _CupertinoNavigationBranch extends StatelessWidget {
         ),
         child: child,
       ),
+    );
+  }
+}
+
+final class _SidebarTopToolbarRegionResolver
+    implements SidebarTopToolbarRegionResolver {
+  const _SidebarTopToolbarRegionResolver({
+    required this.occlusionScope,
+    required this.viewportBounds,
+    required this.viewSize,
+    required this.constraints,
+    required this.media,
+    required this.toolbarGeometry,
+    required this.collapsedBarEnabled,
+  });
+
+  final AdaptiveOcclusionScope? occlusionScope;
+  final Rect? viewportBounds;
+  final Size viewSize;
+  final BoxConstraints constraints;
+  final MediaQueryData media;
+  final CupertinoSidebarToolbarGeometry toolbarGeometry;
+  final bool collapsedBarEnabled;
+
+  @override
+  CupertinoSidebarToolbarRegion? resolve() {
+    if (!_hasUsableEnvironment) return null;
+    final layout = _resolveTopLayout();
+    if (layout == null) return null;
+    final padding = _resolveHorizontalPadding(layout);
+    if (padding == null) return null;
+    return _resolveRegion(layout, padding);
+  }
+
+  bool get _hasUsableEnvironment {
+    final scope = occlusionScope;
+    final viewport = viewportBounds;
+    if (scope == null ||
+        !scope.canReclaimTopToolbar(topViewInset: media.viewInsets.top) ||
+        viewport == null) {
+      return false;
+    }
+    // Accepted host-local regions are later projected through the native view.
+    // Only a full-view host establishes that origin without extra measurement.
+    return viewport == scope.geometry!.viewBounds &&
+        constraints.hasBoundedWidth &&
+        constraints.hasBoundedHeight &&
+        OcclusionInsetsResolver.matchesViewSize(viewport, constraints.biggest);
+  }
+
+  TopToolbarLayout? _resolveTopLayout() {
+    final scope = occlusionScope!;
+    final geometry = scope.geometry!;
+    final viewport = viewportBounds!;
+    return TopToolbarLayoutResolver(
+      viewBounds: geometry.viewBounds,
+      viewSize: viewSize,
+      occlusions: geometry.activeOcclusionRegions,
+      pane: viewport,
+      row: Rect.fromLTWH(
+        viewport.left,
+        viewport.top + math.max(media.padding.top, toolbarGeometry.topInset),
+        viewport.width,
+        toolbarGeometry.contentHeight,
+      ),
+      systemTopInset: scope.systemSafeArea.top,
+      currentTopInset: media.padding.top,
+      currentViewTopInset: media.viewPadding.top,
+      minimumTopInset: toolbarGeometry.topInset,
+      alignmentHeight: scope.topToolbarAlignmentHeight,
+    ).resolve();
+  }
+
+  EdgeInsets? _resolveHorizontalPadding(TopToolbarLayout layout) {
+    final scope = occlusionScope!;
+    final geometry = scope.geometry!;
+    final minimumInsets = ToolbarSafeAreaCalculator(
+      viewBounds: geometry.viewBounds,
+      toolbarBounds: layout.bounds,
+      systemSafeArea: scope.systemSafeArea,
+      controlColumn: geometry.verticalBarLayoutFrame,
+    ).calculate();
+    return scope.horizontalInsets(
+      layout.bounds,
+      media.padding,
+      minimumInsets: minimumInsets,
+    );
+  }
+
+  CupertinoSidebarToolbarRegion? _resolveRegion(
+    TopToolbarLayout layout,
+    EdgeInsets padding,
+  ) {
+    final viewport = viewportBounds!;
+    final bounds = Rect.fromLTRB(
+      layout.bounds.left + padding.left,
+      layout.bounds.top,
+      layout.bounds.right - padding.right,
+      layout.bounds.bottom,
+    ).shift(-viewport.topLeft);
+    final sideReserve =
+        2.0 * kMinInteractiveDimensionCupertino +
+        math.max(
+          cupertinoWindowControlEdgePadding.start,
+          cupertinoWindowControlEdgePadding.end,
+        ) +
+        CupertinoSidebarToolbarRegions.defaultMiddleSpacing;
+    final center = viewport.width / 2;
+    final maximumWidth =
+        2.0 *
+        math.min(
+          center - bounds.left - sideReserve,
+          bounds.right - center - sideReserve,
+        );
+    if (collapsedBarEnabled && (!maximumWidth.isFinite || maximumWidth <= 0)) {
+      return null;
+    }
+    return CupertinoSidebarToolbarRegion(
+      bounds: bounds,
+      minimumExtent: layout.minimumExtent,
+      maxCollapsedBarWidth: collapsedBarEnabled ? maximumWidth : null,
     );
   }
 }

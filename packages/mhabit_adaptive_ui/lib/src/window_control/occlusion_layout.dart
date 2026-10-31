@@ -129,6 +129,18 @@ class AdaptiveOcclusionScope extends InheritedWidget {
   static AdaptiveOcclusionScope? maybeOf(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<AdaptiveOcclusionScope>();
 
+  /// Whether the current environment can reclaim a declared top-toolbar row.
+  /// The caller still validates the native view and its declared coordinates.
+  bool canReclaimTopToolbar({required double topViewInset}) {
+    final snapshot = geometry;
+    return allowTopToolbarReclamation &&
+        snapshot != null &&
+        !snapshot.hasVerticalSystemBar &&
+        !hasWindowControls &&
+        cornerRadii != null &&
+        topViewInset == 0;
+  }
+
   /// Ordinary phones and windowed iPads retain their existing safe areas.
   bool isCurrent(BuildContext context) {
     final snapshot = geometry;

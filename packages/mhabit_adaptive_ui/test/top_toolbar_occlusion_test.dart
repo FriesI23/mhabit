@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ios_window_control_layout/ios_window_control_layout.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/window_control/occlusion_layout.dart';
+import 'package:mhabit_adaptive_ui/src/window_control/occlusion_toolbar.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 import 'harness/adaptive_ui_theme.dart';
@@ -25,6 +26,12 @@ const _footerContent = ValueKey('top-toolbar-footer-content');
 const _page = ValueKey('top-toolbar-page');
 const _detailPage = ValueKey('top-toolbar-detail-page');
 const _detailBody = ValueKey('top-toolbar-detail-body');
+const _nativeView = Rect.fromLTWH(0, 0, 669, 951);
+const TopToolbarLayout _acceptedOverrideLayout = (
+  topInset: 28,
+  minimumExtent: 82,
+  bounds: Rect.fromLTWH(0, 28, 669, 44),
+);
 
 class _Readout {
   MediaQueryData? body;
@@ -372,7 +379,151 @@ const _fixedDetailKeys = [
   _detailBody,
 ];
 
+TopToolbarLayout? _resolveToolbar({
+  TopToolbarLayoutOverride? topToolbarLayoutOverride,
+  Rect viewBounds = _nativeView,
+  Size viewSize = _size,
+  List<Rect> occlusions = const [_status],
+  Rect? pane,
+  Rect? row,
+}) {
+  final viewport = pane ?? viewBounds;
+  return TopToolbarLayoutResolver(
+    viewBounds: viewBounds,
+    viewSize: viewSize,
+    occlusions: occlusions,
+    pane: viewport,
+    row:
+        row ??
+        Rect.fromLTWH(viewport.left, viewport.top + 82, viewport.width, 44),
+    systemTopInset: 82,
+    currentTopInset: 82,
+    currentViewTopInset: 82,
+    minimumTopInset: 0,
+    alignmentHeight: 64,
+    topToolbarLayoutOverride: topToolbarLayoutOverride,
+  ).resolve();
+}
+
 void main() {
+  group('TopToolbarLayoutResolver layout override contract', () {
+    test(
+      'a missing override resolves the current native geometry independently',
+      () {
+        expect(_resolveToolbar(), _acceptedOverrideLayout);
+        expect(_resolveToolbar(occlusions: const []), isNull);
+      },
+    );
+
+    test('an explicit override rejection cannot resolve independently', () {
+      expect(
+        _resolveToolbar(
+          topToolbarLayoutOverride: (layout: null, viewportBounds: _nativeView),
+        ),
+        isNull,
+      );
+    });
+
+    test(
+      'an accepted override aligns rows in a pane away from the status block',
+      () {
+        const pane = Rect.fromLTWH(0, 0, 420, 951);
+        expect(_resolveToolbar(pane: pane), isNull);
+        for (final (height, top) in [(44.0, 28.0), (64.0, 18.0)]) {
+          expect(
+            _resolveToolbar(
+              topToolbarLayoutOverride: (
+                layout: _acceptedOverrideLayout,
+                viewportBounds: _nativeView,
+              ),
+              pane: pane,
+              row: Rect.fromLTWH(0, 82, 420, height),
+            ),
+            (
+              topInset: top,
+              minimumExtent: 82.0,
+              bounds: Rect.fromLTWH(0, top, 420, height),
+            ),
+          );
+        }
+      },
+    );
+
+    test(
+      'a nonzero native origin preserves shared alignment and local extent',
+      () {
+        const origin = Offset(37, 19);
+        final view = _nativeView.shift(origin);
+        expect(
+          _resolveToolbar(
+            topToolbarLayoutOverride: (
+              layout: (
+                topInset: 28.0,
+                minimumExtent: 82.0,
+                bounds: _acceptedOverrideLayout.bounds.shift(origin),
+              ),
+              viewportBounds: view,
+            ),
+            viewBounds: view,
+            occlusions: [_status.shift(origin)],
+            pane: const Rect.fromLTWH(37, 19, 420, 951),
+          ),
+          (
+            topInset: 28.0,
+            minimumExtent: 82.0,
+            bounds: const Rect.fromLTWH(37, 47, 420, 44),
+          ),
+        );
+      },
+    );
+
+    for (final root in <String, Rect?>{
+      'missing': null,
+      'different size': const Rect.fromLTWH(0, 0, 668, 951),
+      'different origin': const Rect.fromLTWH(1, 0, 669, 951),
+    }.entries) {
+      test('an override with ${root.key} native root is rejected', () {
+        expect(
+          _resolveToolbar(
+            topToolbarLayoutOverride: (
+              layout: _acceptedOverrideLayout,
+              viewportBounds: root.value,
+            ),
+          ),
+          isNull,
+        );
+      });
+    }
+
+    test(
+      'an accepted override cannot keep geometry after the native view resizes',
+      () {
+        expect(
+          _resolveToolbar(
+            topToolbarLayoutOverride: (
+              layout: _acceptedOverrideLayout,
+              viewportBounds: _nativeView,
+            ),
+            viewSize: const Size(668, 951),
+          ),
+          isNull,
+        );
+      },
+    );
+
+    test('an override without usable row geometry is rejected', () {
+      expect(
+        _resolveToolbar(
+          topToolbarLayoutOverride: (
+            layout: (topInset: 28.0, minimumExtent: 82.0, bounds: Rect.zero),
+            viewportBounds: _nativeView,
+          ),
+        ),
+        isNull,
+      );
+    });
+  });
+
   for (final style in AdaptiveStyle.values) {
     for (final direction in TextDirection.values) {
       testWidgets(

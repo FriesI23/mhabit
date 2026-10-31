@@ -45,6 +45,7 @@ class CupertinoSearchToolbar<T extends Object> extends StatelessWidget {
   final VoidCallback? onOverflowMenuOpened;
   final VoidCallback? onOverflowMenuClosed;
   final CupertinoSearchOverflowPressed onOverflowPressed;
+  final TopToolbarLayoutOverride? topToolbarLayoutOverride;
 
   const CupertinoSearchToolbar({
     super.key,
@@ -72,6 +73,7 @@ class CupertinoSearchToolbar<T extends Object> extends StatelessWidget {
     this.onOverflowMenuOpened,
     this.onOverflowMenuClosed,
     required this.onOverflowPressed,
+    this.topToolbarLayoutOverride,
   });
 
   @override
@@ -80,6 +82,10 @@ class CupertinoSearchToolbar<T extends Object> extends StatelessWidget {
     // regions consume projected padding; ordinary rows inset the whole row.
     final insetWholeRow =
         context.shouldProtectHorizontalSafeArea && sidebarLeading == null;
+    final slotLayout = SidebarToolbarSlotLayoutResolver(
+      context: context,
+      topToolbarLayoutOverride: topToolbarLayoutOverride,
+    ).resolve();
     return SafeArea(
       left: insetWholeRow,
       top: false,
@@ -91,6 +97,7 @@ class CupertinoSearchToolbar<T extends Object> extends StatelessWidget {
         centerTitle: centerTitle,
         preferPersistentSearch: preferPersistentSearch,
         sidebarLeading: sidebarLeading,
+        slotLayout: slotLayout,
         leading: leading,
         manuallyExpanded: manuallyExpanded,
         actions: _CupertinoSearchToolbarActionsSpec<T>(
@@ -134,6 +141,7 @@ class _CupertinoSearchToolbarLayout<T extends Object> extends StatelessWidget {
     required this.centerTitle,
     required this.preferPersistentSearch,
     required this.sidebarLeading,
+    required this.slotLayout,
     required this.leading,
     required this.manuallyExpanded,
     required this.actions,
@@ -148,6 +156,7 @@ class _CupertinoSearchToolbarLayout<T extends Object> extends StatelessWidget {
   final bool centerTitle;
   final bool preferPersistentSearch;
   final SidebarLeadingScope? sidebarLeading;
+  final SidebarToolbarSlotLayout? slotLayout;
   final Widget? leading;
   final bool manuallyExpanded;
   final _CupertinoSearchToolbarActionsSpec<T> actions;
@@ -230,6 +239,7 @@ class _CupertinoSearchToolbarLayout<T extends Object> extends StatelessWidget {
         builder: (context, constraints) {
           if (sidebarLeading != null) {
             return _CupertinoSidebarSearchToolbar<T>(
+              slotLayout: slotLayout,
               title: title,
               preferPersistentSearch: preferPersistentSearch,
               manuallyExpanded: manuallyExpanded,
@@ -420,6 +430,7 @@ final class _CupertinoSearchToolbarMetricsLayoutState
 }
 
 class _CupertinoSidebarSearchToolbar<T extends Object> extends StatelessWidget {
+  final SidebarToolbarSlotLayout? slotLayout;
   final Widget title;
   final bool preferPersistentSearch;
   final bool manuallyExpanded;
@@ -429,6 +440,7 @@ class _CupertinoSidebarSearchToolbar<T extends Object> extends StatelessWidget {
   final _CupertinoSearchToolbarFieldSpec search;
 
   const _CupertinoSidebarSearchToolbar({
+    required this.slotLayout,
     required this.title,
     required this.preferPersistentSearch,
     required this.manuallyExpanded,
@@ -440,6 +452,7 @@ class _CupertinoSidebarSearchToolbar<T extends Object> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CupertinoSidebarToolbarRegions(
+    slotLayout: slotLayout,
     middleEnabled: !manuallyExpanded || preferPersistentSearch,
     start: Row(
       children: [
