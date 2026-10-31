@@ -12,6 +12,9 @@ import 'adaptive_modal_viewport.dart';
 /// Style and inherited themes are captured at the call site. The builder runs
 /// in the new route; page-local providers must be bridged explicitly. Actions
 /// can return a typed result using Navigator.pop with the builder's context.
+/// [anchorPoint] selects the nearest display-feature sub-screen; when omitted,
+/// Flutter uses the text direction's default. Content stays centered in that
+/// sub-screen, or in the whole window when there is no partition.
 Future<T?> showAdaptiveModalDialog<T>({
   required BuildContext context,
   required WidgetBuilder builder,
@@ -19,6 +22,7 @@ Future<T?> showAdaptiveModalDialog<T>({
   AdaptiveStyle? styleOverride,
   bool useRootNavigator = true,
   RouteSettings? routeSettings,
+  Offset? anchorPoint,
 }) {
   final style = styleOverride ?? AdaptiveStyle.of(context);
   final themes = InheritedTheme.capture(
@@ -45,6 +49,7 @@ Future<T?> showAdaptiveModalDialog<T>({
       barrierDismissible: barrierDismissible,
       useRootNavigator: useRootNavigator,
       routeSettings: routeSettings,
+      anchorPoint: anchorPoint,
     ),
     AdaptiveStyle.apple => showCupertinoDialog<T>(
       context: context,
@@ -52,6 +57,7 @@ Future<T?> showAdaptiveModalDialog<T>({
       barrierDismissible: barrierDismissible,
       useRootNavigator: useRootNavigator,
       routeSettings: routeSettings,
+      anchorPoint: anchorPoint,
     ),
   };
 }

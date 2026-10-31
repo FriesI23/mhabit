@@ -43,6 +43,7 @@ Future<bool?> showAdaptiveConfirmDialog({
     barrierDismissible: barrierDismissible,
     useRootNavigator: useRootNavigator,
     routeSettings: routeSettings,
+    anchorPoint: AdaptiveConfirmDialog.preferredAnchorPoint,
     builder: (_) => AdaptiveConfirmDialog(
       icon: icon,
       title: title,
@@ -58,6 +59,15 @@ Future<bool?> showAdaptiveConfirmDialog({
 
 /// Submits a choice once; business operations remain with the caller.
 class AdaptiveConfirmDialog extends StatefulWidget {
+  /// Selects the right or lower fold pane, independently of text direction.
+  /// Flutter clamps this point to the current window on each layout, so an
+  /// open confirmation follows rotation and returns to the whole window when
+  /// the partition disappears. Pass it to custom confirmation route entrypoints.
+  static const preferredAnchorPoint = Offset(
+    double.maxFinite,
+    double.maxFinite,
+  );
+
   const AdaptiveConfirmDialog({
     super.key,
     this.icon,

@@ -436,6 +436,7 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
     return showAdaptiveModalDialog<bool>(
       context: context,
       barrierDismissible: true,
+      anchorPoint: AdaptiveConfirmDialog.preferredAnchorPoint,
       builder: (context) => checklist.isEmptyDir
           ? const AppSyncWebDavNewServerConfirmDialog()
           : const AppSyncWebDavOldServerConfirmDialog(),

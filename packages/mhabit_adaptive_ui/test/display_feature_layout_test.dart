@@ -8,26 +8,29 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import 'harness/adaptive_ui_theme.dart';
 
-FoldableData _snapshot(HingeStatus status) => FoldableData(
-  capabilities: const FoldableCapabilities(
-    supportLevel: FoldableSupportLevel.available,
-    isFoldable: true,
-    hingeApiPresent: true,
-    regionApiPresent: true,
-    angleUnitVerified: true,
-    strategy: 'test',
-  ),
-  status: status,
-  angleDegrees: status == HingeStatus.partiallyOpen ? 90 : 180,
-  regions: const [
-    ReservedRegion(
-      kind: ReservedRegionKind.division,
-      bounds: Rect.fromLTWH(490, 0, 20, 800),
-      isActive: true,
-    ),
-  ],
-  displayFeatures: const [],
-);
+FoldableData _snapshot(HingeStatus status, {bool horizontal = false}) =>
+    FoldableData(
+      capabilities: const FoldableCapabilities(
+        supportLevel: FoldableSupportLevel.available,
+        isFoldable: true,
+        hingeApiPresent: true,
+        regionApiPresent: true,
+        angleUnitVerified: true,
+        strategy: 'test',
+      ),
+      status: status,
+      angleDegrees: status == HingeStatus.partiallyOpen ? 90 : 180,
+      regions: [
+        ReservedRegion(
+          kind: ReservedRegionKind.division,
+          bounds: horizontal
+              ? const Rect.fromLTWH(0, 390, 1000, 20)
+              : const Rect.fromLTWH(490, 0, 20, 800),
+          isActive: true,
+        ),
+      ],
+      displayFeatures: const [],
+    );
 
 class _FoldableSource extends FoldablePlatform {
   final eventsController = StreamController<FoldableData>.broadcast();
@@ -64,6 +67,7 @@ void main() {
     AdaptiveStyle style, {
     List<DisplayFeature> features = const [],
     bool adaptiveSheet = false,
+    Offset? anchorPoint,
   }) async {
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(1000, 800);
@@ -96,6 +100,7 @@ void main() {
                   : showAdaptiveModalDialog<void>(
                       context: context,
                       barrierDismissible: true,
+                      anchorPoint: anchorPoint,
                       builder: (_) => const AdaptiveDialog(
                         title: Text('Question'),
                         content: Text('Existing adaptive dialog'),
@@ -111,6 +116,39 @@ void main() {
   }
 
   for (final style in AdaptiveStyle.values) {
+    testWidgets(
+      'iOS $style trailing anchor follows fold direction and unfolding',
+      (tester) async {
+        source.initial = _snapshot(HingeStatus.partiallyOpen);
+        await mount(
+          tester,
+          style,
+          anchorPoint: const Offset(double.maxFinite, double.maxFinite),
+        );
+        await tester.tap(find.text('Open'));
+        await tester.pumpAndSettle();
+        final question = find.text('Question');
+        final element = tester.element(question);
+        expect(tester.getRect(question).left, greaterThanOrEqualTo(510));
+
+        source.initial = _snapshot(HingeStatus.partiallyOpen, horizontal: true);
+        source.eventsController.add(source.initial);
+        await tester.pumpAndSettle();
+        expect(tester.getRect(question).top, greaterThanOrEqualTo(410));
+        expect(tester.getCenter(question).dx, closeTo(500, 1));
+        expect(tester.element(question), same(element));
+
+        source.initial = _snapshot(HingeStatus.fullyOpen, horizontal: true);
+        source.eventsController.add(source.initial);
+        await tester.pumpAndSettle();
+        expect(tester.getCenter(question).dx, closeTo(500, 1));
+        expect(tester.getRect(question).top, lessThan(400));
+        expect(tester.element(question), same(element));
+        expect(tester.takeException(), isNull);
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.iOS),
+    );
+
     testWidgets(
       'iOS $style reuses the existing adaptive sheet route',
       (tester) async {

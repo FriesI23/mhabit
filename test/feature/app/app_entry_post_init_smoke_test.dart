@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -303,6 +304,10 @@ void main() {
         testWidgets('$platform sync confirmation empty=$emptyDir $choice', (
           tester,
         ) async {
+          tester.view.devicePixelRatio = 1;
+          tester.view.physicalSize = const Size(1100, 900);
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
           final appSync = _FakeAppSyncAccess();
           SharedPreferences.setMockInitialValues({
             'lastChangelogVersion': AppInfo().changelogVersion,
@@ -322,6 +327,18 @@ void main() {
               ],
               child: MaterialApp(
                 theme: ThemeData(platform: platform),
+                builder: (context, child) => MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    displayFeatures: const [
+                      DisplayFeature(
+                        bounds: Rect.fromLTWH(540, 0, 20, 900),
+                        type: DisplayFeatureType.hinge,
+                        state: DisplayFeatureState.postureHalfOpened,
+                      ),
+                    ],
+                  ),
+                  child: child!,
+                ),
                 localizationsDelegates: L10n.localizationsDelegates,
                 supportedLocales: L10n.supportedLocales,
                 home: const AppPostInit(child: Scaffold(body: Text('App'))),
@@ -342,6 +359,12 @@ void main() {
           await tester.pumpAndSettle();
           expect(adaptiveDialogFinder, findsOneWidget);
           final l10n = L10n.of(tester.element(adaptiveDialogFinder))!;
+          final title = find.text(
+            emptyDir
+                ? l10n.appSync_webdav_newServerConfirmDialog_titleText
+                : l10n.appSync_webdav_oldServerConfirmDialog_titleText,
+          );
+          expect(tester.getRect(title).left, greaterThanOrEqualTo(560));
           expect(
             find.text(
               emptyDir
