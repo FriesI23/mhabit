@@ -4,17 +4,27 @@ import 'package:flutter/material.dart';
 
 import 'occlusion_layout.dart';
 
+/// Aligned toolbar geometry and the protected extent before bottom content.
+typedef TopToolbarLayout = ({
+  double topInset,
+  double minimumExtent,
+  Rect bounds,
+});
+
 /// Projects precise horizontal insets into an explicitly declared toolbar row.
 /// Unknown bounds retain the current Safe Area; body geometry is unchanged.
+/// Route paint transitions do not change this layout projection.
 class AdaptiveOcclusionToolbar extends StatefulWidget {
   const AdaptiveOcclusionToolbar({
     super.key,
     this.bounds,
     required this.child,
     this.preserveHorizontalSafeArea = true,
+    this.reclaimTopSafeArea = false,
+    this.minimumTopInset = 0,
   });
 
-  /// The declared toolbar row in native-view coordinates.
+  /// The declared layout row in native-view coordinates before route painting.
   /// Omitting bounds retains the current conservative Safe Area.
   final Rect? bounds;
   final Widget child;
@@ -22,11 +32,26 @@ class AdaptiveOcclusionToolbar extends StatefulWidget {
   /// Floating bottom navigation uses its own protected band instead.
   final bool preserveHorizontalSafeArea;
 
+  /// Only a pinned top-row owner can release the status area's vertical inset.
+  final bool reclaimTopSafeArea;
+  final double minimumTopInset;
+
   static bool isAdaptedOf(BuildContext context) =>
       context
           .dependOnInheritedWidgetOfExactType<_ToolbarOcclusionConsumed>()
           ?.adapted ??
       false;
+
+  static bool isTopReclaimedOf(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<_ToolbarOcclusionConsumed>()
+          ?.topReclaimed ??
+      false;
+
+  /// Protected extent before an app bar's additional bottom content.
+  static double? minimumExtentOf(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<_ToolbarOcclusionConsumed>()
+      ?.minimumExtent;
 
   @override
   State<AdaptiveOcclusionToolbar> createState() =>
@@ -34,7 +59,6 @@ class AdaptiveOcclusionToolbar extends StatefulWidget {
 }
 
 class _AdaptiveOcclusionToolbarState extends State<AdaptiveOcclusionToolbar> {
-  late final _routeObserver = _OcclusionRouteObserver(_refresh);
   Object? _environmentView;
   bool _hasVerticalToolbarEnvironment = false;
 
@@ -51,51 +75,36 @@ class _AdaptiveOcclusionToolbarState extends State<AdaptiveOcclusionToolbar> {
     if (geometry != null) {
       _hasVerticalToolbarEnvironment = geometry.hasVerticalSystemBar;
     }
-    _routeObserver.update(
-      context,
-      enabled:
-          widget.bounds != null &&
-          !AdaptiveOcclusionToolbar.isAdaptedOf(context) &&
-          (scope?.isCurrent(context) ?? false),
-    );
-  }
-
-  @override
-  void didUpdateWidget(AdaptiveOcclusionToolbar oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if ((widget.bounds == null) != (oldWidget.bounds == null)) {
-      final scope = AdaptiveOcclusionScope.maybeOf(context);
-      _routeObserver.update(
-        context,
-        enabled:
-            widget.bounds != null &&
-            !AdaptiveOcclusionToolbar.isAdaptedOf(context) &&
-            (scope?.isCurrent(context) ?? false),
-      );
-    }
-  }
-
-  void _refresh() {
-    if (mounted) setState(() {});
-  }
-
-  @override
-  void dispose() {
-    _routeObserver.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final scope = AdaptiveOcclusionScope.maybeOf(context);
     final parentAdapted = AdaptiveOcclusionToolbar.isAdaptedOf(context);
-    final bounds = _canAdaptToolbar(scope, parentAdapted: parentAdapted)
-        ? widget.bounds
-        : null;
     final media = MediaQuery.of(context);
-    final projectedMedia = scope == null || bounds == null
+    final canAdapt = _canAdaptToolbar(scope, parentAdapted: parentAdapted);
+    final topLayout = canAdapt && widget.reclaimTopSafeArea
+        ? _resolveTopLayout(scope!, media)
+        : null;
+    final bounds = canAdapt
+        ? topLayout?.bounds ??
+              ((scope?.isCurrent(context) ?? false) ? widget.bounds : null)
+        : null;
+    final horizontalMedia = scope == null || bounds == null
         ? null
         : _projectHorizontalInsets(scope, bounds, media);
+    final projectedMedia = topLayout == null || horizontalMedia == null
+        ? horizontalMedia
+        : horizontalMedia.copyWith(
+            padding: horizontalMedia.padding.copyWith(top: topLayout.topInset),
+            viewPadding: horizontalMedia.viewPadding.copyWith(
+              top: math.max(
+                0,
+                media.viewPadding.top -
+                    (media.padding.top - topLayout.topInset),
+              ),
+            ),
+          );
     // An invalid snapshot stops precise reclamation immediately. A toolbar
     // already in a vertical-bar environment must still consume the current
     // system Safe Area, rather than temporarily use ordinary-phone spacing.
@@ -105,6 +114,12 @@ class _AdaptiveOcclusionToolbarState extends State<AdaptiveOcclusionToolbar> {
     return _ToolbarOcclusionConsumed(
       adapted:
           projectedMedia != null || preserveCurrentSafeArea || parentAdapted,
+      topReclaimed:
+          (topLayout != null && projectedMedia != null) ||
+          AdaptiveOcclusionToolbar.isTopReclaimedOf(context),
+      minimumExtent: topLayout != null && projectedMedia != null
+          ? topLayout.minimumExtent
+          : AdaptiveOcclusionToolbar.minimumExtentOf(context),
       child: MediaQuery(data: projectedMedia ?? media, child: widget.child),
     );
   }
@@ -112,18 +127,46 @@ class _AdaptiveOcclusionToolbarState extends State<AdaptiveOcclusionToolbar> {
   bool _canAdaptToolbar(
     AdaptiveOcclusionScope? scope, {
     required bool parentAdapted,
-  }) =>
-      scope != null &&
-      scope.isCurrent(context) &&
-      !parentAdapted &&
-      !context.occlusionRoutes.any(
-        // Hero preparation temporarily supplies completed animations offstage.
-        (route) =>
-            route.offstage ||
-            !route.isCurrent ||
-            (route.animation?.isAnimating ?? false) ||
-            (route.secondaryAnimation?.isAnimating ?? false),
-      );
+  }) {
+    bool hasToolbarEnvironment() =>
+        (scope?.isCurrent(context) ?? false) ||
+        (widget.reclaimTopSafeArea &&
+            (scope?.allowTopToolbarReclamation ?? false));
+
+    return scope != null && hasToolbarEnvironment() && !parentAdapted;
+  }
+
+  TopToolbarLayout? _resolveTopLayout(
+    AdaptiveOcclusionScope scope,
+    MediaQueryData media,
+  ) {
+    final geometry = scope.geometry;
+    final row = widget.bounds;
+    final pane = OcclusionViewport.maybeOf(context)?.bounds;
+    if (!scope.allowTopToolbarReclamation ||
+        geometry == null ||
+        geometry.hasVerticalSystemBar ||
+        scope.hasWindowControls ||
+        scope.cornerRadii == null ||
+        media.viewInsets.top != 0 ||
+        row == null ||
+        pane == null) {
+      return null;
+    }
+    final view = View.of(context);
+    return TopToolbarLayoutResolver(
+      viewBounds: geometry.viewBounds,
+      viewSize: view.physicalSize / view.devicePixelRatio,
+      occlusions: geometry.activeOcclusionRegions,
+      pane: pane,
+      row: row,
+      systemTopInset: scope.systemSafeArea.top,
+      currentTopInset: media.padding.top,
+      currentViewTopInset: media.viewPadding.top,
+      minimumTopInset: widget.minimumTopInset,
+      alignmentHeight: scope.topToolbarAlignmentHeight,
+    ).resolve();
+  }
 
   MediaQueryData? _projectHorizontalInsets(
     AdaptiveOcclusionScope scope,
@@ -156,6 +199,142 @@ class _AdaptiveOcclusionToolbarState extends State<AdaptiveOcclusionToolbar> {
         left: viewPadding.left,
         right: viewPadding.right,
       ),
+    );
+  }
+}
+
+/// Resolves one layout pass from supplied geometry without reading widgets.
+abstract interface class TopToolbarLayoutResolver {
+  const factory TopToolbarLayoutResolver({
+    required Rect viewBounds,
+    required Size viewSize,
+    required List<Rect> occlusions,
+    required Rect pane,
+    required Rect row,
+    required double systemTopInset,
+    required double currentTopInset,
+    required double currentViewTopInset,
+    required double minimumTopInset,
+    required double? alignmentHeight,
+  }) = _TopToolbarLayoutResolver;
+
+  /// Returns the local top inset, protected extent before bottom content, and
+  /// final row bounds in native-view layout coordinates.
+  /// Returns null when the declared row cannot reclaim the top status band.
+  TopToolbarLayout? resolve();
+}
+
+final class _TopToolbarLayoutResolver implements TopToolbarLayoutResolver {
+  const _TopToolbarLayoutResolver({
+    required this.viewBounds,
+    required this.viewSize,
+    required this.occlusions,
+    required this.pane,
+    required this.row,
+    required this.systemTopInset,
+    required this.currentTopInset,
+    required this.currentViewTopInset,
+    required this.minimumTopInset,
+    required this.alignmentHeight,
+  });
+
+  // Native and Flutter coordinates can differ by floating-point noise.
+  // View-size matching retains its separate half-point rounding tolerance.
+  static const double _edgeTolerance = 0.000001;
+
+  final Rect viewBounds;
+  final Size viewSize;
+  final List<Rect> occlusions;
+  final Rect pane;
+  final Rect row;
+  final double systemTopInset;
+  final double currentTopInset;
+  final double currentViewTopInset;
+  final double minimumTopInset;
+  final double? alignmentHeight;
+
+  double get _originalTopInset => math.max(currentTopInset, minimumTopInset);
+
+  @override
+  TopToolbarLayout? resolve() {
+    if (!_hasUsableInputs || !_matchesDeclaredLayout()) return null;
+    final statusBand = _resolveSupportedTopBand();
+    if (statusBand == null) return null;
+    return _resolveAlignedToolbar(statusBand);
+  }
+
+  bool get _hasUsableInputs {
+    final alignmentHeight = this.alignmentHeight;
+    return row.isFinite &&
+        !row.isEmpty &&
+        pane.isFinite &&
+        !pane.isEmpty &&
+        systemTopInset > 0 &&
+        minimumTopInset.isFinite &&
+        minimumTopInset >= 0 &&
+        (alignmentHeight == null ||
+            (alignmentHeight.isFinite && alignmentHeight > 0));
+  }
+
+  bool _matchesDeclaredLayout() =>
+      OcclusionInsetsResolver.matchesViewSize(viewBounds, viewSize) &&
+      viewSize.width < viewSize.height &&
+      (pane.top - viewBounds.top).abs() <= _edgeTolerance &&
+      (pane.right - viewBounds.right).abs() <= _edgeTolerance &&
+      pane.left >= viewBounds.left - _edgeTolerance &&
+      pane.bottom <= viewBounds.bottom + _edgeTolerance &&
+      (row.left - pane.left).abs() <= _edgeTolerance &&
+      (row.right - pane.right).abs() <= _edgeTolerance &&
+      (row.top - pane.top - _originalTopInset).abs() <= _edgeTolerance &&
+      currentTopInset >= systemTopInset - _edgeTolerance;
+
+  Rect? _resolveSupportedTopBand() {
+    // Find complete top-right blocks connected to the viewport's top edge.
+    var bottom = pane.top;
+    for (final region in occlusions) {
+      if (!region.overlaps(pane) || region.top > pane.top + _edgeTolerance) {
+        continue;
+      }
+      // Only a complete top-right block can replace the system top inset.
+      if (region.left < pane.center.dx ||
+          region.right < pane.right - _edgeTolerance ||
+          region.bottom > pane.bottom + _edgeTolerance) {
+        return null;
+      }
+      bottom = math.max(bottom, region.bottom);
+    }
+    if (bottom - pane.top < systemTopInset - _edgeTolerance) return null;
+
+    // Check the complete band for other occlusions that need not touch its top.
+    final band = Rect.fromLTRB(pane.left, pane.top, pane.right, bottom);
+    final hasConflict = occlusions.any(
+      (region) =>
+          region.overlaps(band) &&
+          (region.left < pane.center.dx ||
+              region.bottom > band.bottom + _edgeTolerance),
+    );
+    return hasConflict ? null : band;
+  }
+
+  TopToolbarLayout? _resolveAlignedToolbar(Rect statusBand) {
+    final extraTop = math.max(
+      0.0,
+      math.max(currentTopInset, currentViewTopInset) - systemTopInset,
+    );
+    final alignmentHeight = math.max(
+      row.height,
+      this.alignmentHeight ?? row.height,
+    );
+    final alignmentTop = math.max(0.0, statusBand.height - alignmentHeight);
+    final top = math.max(
+      math.max(minimumTopInset, extraTop),
+      alignmentTop + (alignmentHeight - row.height) / 2,
+    );
+    if (!top.isFinite || top >= _originalTopInset - _edgeTolerance) return null;
+    return (
+      topInset: top,
+      minimumExtent: math.max(alignmentTop + alignmentHeight, top + row.height),
+      bounds: Rect.fromLTWH(row.left, pane.top + top, row.width, row.height),
     );
   }
 }
@@ -246,76 +425,21 @@ final class _ToolbarSafeAreaCalculator implements ToolbarSafeAreaCalculator {
   }
 }
 
-extension _OcclusionContext on BuildContext {
-  Iterable<ModalRoute<dynamic>> get occlusionRoutes sync* {
-    var route = ModalRoute.of(this);
-    final visited = <ModalRoute<dynamic>>{};
-    while (route != null && visited.add(route)) {
-      yield route;
-      // A branch route can remain current while an ancestor navigator's route
-      // slides its entire subtree underneath Settings or another app flow.
-      final navigator = route.navigator;
-      route = navigator == null ? null : ModalRoute.of(navigator.context);
-    }
-  }
-}
-
-/// Rebuilds precise toolbar consumers when route transitions change status.
-class _OcclusionRouteObserver {
-  _OcclusionRouteObserver(this.onRefresh);
-
-  final VoidCallback onRefresh;
-  Set<Animation<double>> _animations = {};
-  bool _enabled = false;
-  bool _refreshScheduled = false;
-  bool _disposed = false;
-
-  void update(BuildContext context, {required bool enabled}) {
-    _enabled = enabled;
-    final animations = <Animation<double>>{
-      if (enabled)
-        for (final route in context.occlusionRoutes) ...[
-          ?route.animation,
-          ?route.secondaryAnimation,
-        ],
-    };
-    for (final animation in _animations.difference(animations)) {
-      animation.removeStatusListener(_routeChanged);
-    }
-    for (final animation in animations.difference(_animations)) {
-      animation.addStatusListener(_routeChanged);
-    }
-    _animations = animations;
-  }
-
-  void _routeChanged(AnimationStatus status) => _scheduleRefresh();
-
-  void _scheduleRefresh() {
-    if (!_enabled || _refreshScheduled) return;
-    _refreshScheduled = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _refreshScheduled = false;
-      if (!_disposed && _enabled) onRefresh();
-    });
-  }
-
-  void dispose() {
-    _disposed = true;
-    for (final animation in _animations) {
-      animation.removeStatusListener(_routeChanged);
-    }
-  }
-}
-
 class _ToolbarOcclusionConsumed extends InheritedWidget {
   const _ToolbarOcclusionConsumed({
     required this.adapted,
+    required this.topReclaimed,
+    required this.minimumExtent,
     required super.child,
   });
 
   final bool adapted;
+  final bool topReclaimed;
+  final double? minimumExtent;
 
   @override
   bool updateShouldNotify(_ToolbarOcclusionConsumed oldWidget) =>
-      adapted != oldWidget.adapted;
+      adapted != oldWidget.adapted ||
+      topReclaimed != oldWidget.topReclaimed ||
+      minimumExtent != oldWidget.minimumExtent;
 }

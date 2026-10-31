@@ -71,6 +71,10 @@ void main() {
     });
   });
 
+  test('Duo identification is false before initialization', () {
+    expect(AppInfo().isIPhoneDuo, isFalse);
+  });
+
   test('Apple system version is null before initialization', () {
     expect(AppInfo().appleSystemVersion, isNull);
   });
@@ -87,6 +91,9 @@ void main() {
       await AppInfo().init();
 
       expect(AppInfo().changelogVersion, '1.25.3+168');
+      if (!Platform.isIOS) {
+        expect(AppInfo().isIPhoneDuo, isFalse);
+      }
       if (Platform.isMacOS) {
         expect(
           AppInfo().appleSystemVersion,

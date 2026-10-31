@@ -4,7 +4,8 @@ import 'package:flutter/material.dart' show BuildContext, Color, Theme;
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 extension AppAdaptiveStyle on AdaptiveStyle {
-  static const double materialToolbarHeight = 64.0;
+  static const double toolbarAlignmentHeight = 64.0;
+  static const double materialToolbarHeight = toolbarAlignmentHeight;
   static const double appleToolbarHeight = kMinInteractiveDimensionCupertino;
 
   double get appToolbarHeight => switch (this) {

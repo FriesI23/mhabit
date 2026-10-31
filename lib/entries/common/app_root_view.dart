@@ -24,6 +24,8 @@ import 'package:provider/provider.dart';
 import '../../common/app_info.dart';
 import '../../common/consts.dart';
 import '../../common/global.dart';
+import '../../extensions/adaptive_style_extensions.dart';
+import '../../extensions/app_info_extensions.dart';
 import '../../extensions/desktop_window_chrome_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../models/app_desktop_bar_mode.dart';
@@ -100,6 +102,8 @@ class AppRootView extends StatelessWidget {
       builder: (_, chrome, child) => AdaptiveWindowControlLayout(
         platformLayout: chrome?.adaptiveLayout,
         usesRectangularDisplay: AppInfo().usesRectangularIPhoneDisplay,
+        allowTopToolbarReclamation: AppInfo().usesIPhoneDuoLayout,
+        topToolbarAlignmentHeight: AppAdaptiveStyle.toolbarAlignmentHeight,
         child: child!,
       ),
       child: _AppRootMaterialApp(
@@ -144,11 +148,16 @@ class _AppRootMaterialApp extends StatelessWidget {
 
   bool get _useRouter => routerConfig != null;
 
+  Breakpoints? _appWindowBreakpoints(Breakpoints? explicitBreakpoints) =>
+      explicitBreakpoints ??
+      (AppInfo().usesIPhoneDuoLayout ? appIPhoneDuoBreakpoints : null);
+
   Widget _builder(BuildContext context, Widget? child) {
     final adaptiveTheme = AppAdaptiveUiTheme.of(context);
     return AppAdaptiveUiTheme(
       data: adaptiveTheme.copyWith(
         style: adaptiveStyleOverride ?? adaptiveTheme.style,
+        breakpoints: _appWindowBreakpoints(adaptiveTheme.breakpoints),
       ),
       child: _AppWindowView(
         disableAnimations: disableAnimations,

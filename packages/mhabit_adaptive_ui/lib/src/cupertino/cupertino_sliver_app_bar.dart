@@ -207,18 +207,36 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
   final double toolbarTopInset;
 
   @override
-  Widget build(BuildContext context) =>
-      SliverLayoutBuilder(builder: _buildHeader);
+  Widget build(BuildContext context) {
+    final ambientMedia = MediaQuery.of(context);
+    return AdaptiveSliverOcclusionToolbar(
+      height: toolbarHeight,
+      topOffset: math.max(ambientMedia.padding.top, toolbarTopInset),
+      reclaimTopSafeArea: true,
+      minimumTopInset: toolbarTopInset,
+      child: SliverLayoutBuilder(
+        builder: (context, constraints) =>
+            _buildHeader(context, constraints, ambientMedia),
+      ),
+    );
+  }
 
-  Widget _buildHeader(BuildContext context, SliverConstraints constraints) {
+  Widget _buildHeader(
+    BuildContext context,
+    SliverConstraints constraints,
+    MediaQueryData ambientMedia,
+  ) {
     final topPadding = math.max(
       MediaQuery.paddingOf(context).top,
       toolbarTopInset,
     );
     final sidebarBottomExtent =
         sidebarNavigationBarBottom?.preferredSize.height ?? 0.0;
-    final extent =
-        topPadding + toolbarHeight + sidebarBottomExtent + bottomExtent;
+    final baseExtent = math.max(
+      topPadding + toolbarHeight + sidebarBottomExtent,
+      AdaptiveOcclusionToolbar.minimumExtentOf(context) ?? 0,
+    );
+    final extent = baseExtent + bottomExtent;
     return SliverPersistentHeader(
       pinned: true,
       delegate: _FixedCupertinoToolbarDelegate(
@@ -266,11 +284,11 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
               ),
               if (bottom case final bottom?)
                 Positioned(
-                  top: topPadding + toolbarHeight + sidebarBottomExtent,
+                  top: baseExtent,
                   left: 0,
                   right: 0,
                   height: bottomExtent,
-                  child: bottom,
+                  child: MediaQuery(data: ambientMedia, child: bottom),
                 ),
             ],
           ),

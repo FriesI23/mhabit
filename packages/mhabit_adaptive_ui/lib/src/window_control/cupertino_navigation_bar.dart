@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/cupertino.dart';
 
 import 'interaction_region.dart';
@@ -253,6 +255,8 @@ class WindowControlCupertinoSliverNavigationBar extends StatelessWidget {
     topOffset: MediaQuery.paddingOf(context).top < toolbarTopInset
         ? toolbarTopInset
         : MediaQuery.paddingOf(context).top,
+    reclaimTopSafeArea: true,
+    minimumTopInset: toolbarTopInset,
     child: Builder(builder: _buildNavigationBar),
   );
 
@@ -265,6 +269,16 @@ class WindowControlCupertinoSliverNavigationBar extends StatelessWidget {
     final top = media.padding.top < toolbarTopInset
         ? toolbarTopInset
         : media.padding.top;
+    final minimumExtent = AdaptiveOcclusionToolbar.minimumExtentOf(context);
+    final protectionHeight = minimumExtent == null
+        ? 0.0
+        : math.max(
+            0.0,
+            minimumExtent - top - kMinInteractiveDimensionCupertino,
+          );
+    final effectiveBottom = protectionHeight > 0
+        ? _bottomWithProtection(protectionHeight)
+        : bottom;
     return MediaQuery(
       data: media.copyWith(padding: media.padding.copyWith(top: top)),
       child: CupertinoSliverNavigationBar(
@@ -297,7 +311,26 @@ class WindowControlCupertinoSliverNavigationBar extends StatelessWidget {
           edgePadding: windowControlEdgePadding,
         ),
         stretch: stretch,
-        bottom: bottom,
+        bottom: effectiveBottom,
+        bottomMode: protectionHeight > 0
+            ? NavigationBarBottomMode.always
+            : null,
+      ),
+    );
+  }
+
+  PreferredSizeWidget _bottomWithProtection(double protectionHeight) {
+    final bottom = this.bottom;
+    return PreferredSize(
+      preferredSize: Size.fromHeight(
+        protectionHeight + (bottom?.preferredSize.height ?? 0),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(height: protectionHeight),
+          ?bottom,
+        ],
       ),
     );
   }

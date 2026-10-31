@@ -276,6 +276,11 @@ existing architecture and tooling contracts.
 - Use `WindowSize` for adaptive layout decisions. For local width constraints,
   use `WindowSize.fromLayoutConstraints` so viewport-height policy stays
   centralized instead of being reimplemented at call sites.
+- Device breakpoint constants belong in `lib/common/consts.dart`, with platform
+  policy in `lib/extensions/app_info_extensions.dart` and default resolution in
+  the owning root widget. The iOS Duo profile applies across design styles;
+  explicit breakpoint overrides retain precedence. Keep device identification
+  in `AppInfo`, not in renderers.
 
 App-bar action width budgets use `AppBarActionBudget` from
 `lib/widgets/app_bar_action_budget.dart`. Choose slots, candidate counts, or

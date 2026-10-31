@@ -129,12 +129,23 @@ class AdaptiveWindowControlLayout extends StatelessWidget {
   const AdaptiveWindowControlLayout({
     super.key,
     this.usesRectangularDisplay = false,
+    this.allowTopToolbarReclamation = false,
+    this.topToolbarAlignmentHeight,
     this.platformLayout,
     required this.child,
   });
 
   /// Whether the current display has rectangular physical corners.
   final bool usesRectangularDisplay;
+
+  /// Allows supported top toolbars to reclaim a native status-area band.
+  /// The app supplies this device policy independently of its design style.
+  /// Geometry consumers do not apply an additional target-platform check.
+  final bool allowTopToolbarReclamation;
+
+  /// Shared row used to align differently sized top-toolbar controls.
+  /// Null retains each toolbar's own height as the alignment reference.
+  final double? topToolbarAlignmentHeight;
 
   /// A non-null value bypasses the iOS plugin, even when its avoidance is empty.
   /// The owner publishes updates; null retains the existing iPadOS behavior.
@@ -176,6 +187,8 @@ class AdaptiveWindowControlLayout extends StatelessWidget {
             owner: WindowControlLayoutOwner.appBar,
             child: AdaptiveOcclusionLayout(
               geometry: layout.occlusionGeometry,
+              allowTopToolbarReclamation: allowTopToolbarReclamation,
+              topToolbarAlignmentHeight: topToolbarAlignmentHeight,
               systemSafeArea: layout.baseSafeArea,
               cornerRadii: layout.isAvailable
                   ? layout.effectiveCornerRadii

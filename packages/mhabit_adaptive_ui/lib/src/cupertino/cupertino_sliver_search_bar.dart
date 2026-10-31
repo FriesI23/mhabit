@@ -179,10 +179,31 @@ class _CupertinoSliverSearchBarState<T extends Object>
   }
 
   @override
-  Widget build(BuildContext context) =>
-      SliverLayoutBuilder(builder: _buildHeader);
+  Widget build(BuildContext context) {
+    final ambientMedia = MediaQuery.of(context);
+    final toolbarTopInset =
+        widget.toolbarTopInset ??
+        Theme.of(context).platform.defaultCupertinoToolbarTopInset;
+    final toolbarHeight = CupertinoSidebarPresentationScope.toolbarGeometryOf(
+      context,
+    ).contentHeight;
+    return AdaptiveSliverOcclusionToolbar(
+      height: toolbarHeight,
+      topOffset: math.max(ambientMedia.padding.top, toolbarTopInset),
+      reclaimTopSafeArea: widget.pinned,
+      minimumTopInset: toolbarTopInset,
+      child: SliverLayoutBuilder(
+        builder: (context, constraints) =>
+            _buildHeader(context, constraints, ambientMedia),
+      ),
+    );
+  }
 
-  Widget _buildHeader(BuildContext context, SliverConstraints constraints) {
+  Widget _buildHeader(
+    BuildContext context,
+    SliverConstraints constraints,
+    MediaQueryData ambientMedia,
+  ) {
     final toolbarTopInset =
         widget.toolbarTopInset ??
         Theme.of(context).platform.defaultCupertinoToolbarTopInset;
@@ -208,7 +229,11 @@ class _CupertinoSliverSearchBarState<T extends Object>
         ? toolbarHeight
         : toolbarHeight +
               (sidebarNavigationBarBottom?.preferredSize.height ?? 0);
-    final extent = topPadding + sidebarToolbarHeight + widget.bottomExtent;
+    final baseExtent = math.max(
+      topPadding + sidebarToolbarHeight,
+      AdaptiveOcclusionToolbar.minimumExtentOf(context) ?? 0,
+    );
+    final extent = baseExtent + widget.bottomExtent;
 
     return SliverPersistentHeader(
       key: const ValueKey('cupertino-sliver-search-bar'),
@@ -280,11 +305,11 @@ class _CupertinoSliverSearchBarState<T extends Object>
               ),
               if (widget.bottom case final bottom?)
                 Positioned(
-                  top: topPadding + sidebarToolbarHeight,
+                  top: baseExtent,
                   left: 0,
                   right: 0,
                   height: widget.bottomExtent,
-                  child: bottom,
+                  child: MediaQuery(data: ambientMedia, child: bottom),
                 ),
             ],
           ),

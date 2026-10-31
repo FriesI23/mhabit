@@ -44,11 +44,15 @@ class AdaptiveSliverOcclusionToolbar extends StatelessWidget {
     required this.child,
     this.height = kToolbarHeight,
     this.topOffset = 0,
+    this.reclaimTopSafeArea = false,
+    this.minimumTopInset = 0,
   });
 
   final Widget child;
   final double height;
   final double topOffset;
+  final bool reclaimTopSafeArea;
+  final double minimumTopInset;
 
   @override
   Widget build(BuildContext context) => SliverLayoutBuilder(
@@ -58,6 +62,8 @@ class AdaptiveSliverOcclusionToolbar extends StatelessWidget {
         height: height,
         topOffset: topOffset,
       ),
+      reclaimTopSafeArea: reclaimTopSafeArea,
+      minimumTopInset: minimumTopInset,
       child: child,
     ),
   );

@@ -467,11 +467,13 @@ void main() {
     },
   );
 
-  testWidgets('toolbar restores its local insets after a route transition', (
+  testWidgets('toolbar keeps declared local insets through route transitions', (
     tester,
   ) async {
     configure(tester);
     final navigator = GlobalKey<NavigatorState>();
+    final geometry = ValueNotifier<IosOcclusionGeometry?>(_geometry());
+    addTearDown(geometry.dispose);
     var padding = EdgeInsets.zero;
     final toolbar = Scaffold(
       body: Align(
@@ -491,7 +493,11 @@ void main() {
       ),
     );
     await tester.pumpWidget(
-      _host(navigator: navigator, child: const SizedBox.expand()),
+      _host(
+        navigator: navigator,
+        geometry: geometry,
+        child: const SizedBox.expand(),
+      ),
     );
     await tester.pumpAndSettle();
     final route = PageRouteBuilder<void>(
@@ -507,11 +513,23 @@ void main() {
     );
     navigator.currentState!.push<void>(route);
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
-    expect(route.animation!.isAnimating, isTrue);
-    expect(route.animation!.value, inExclusiveRange(0, 1));
-    expect(padding.right, _safe.right);
+    expect(padding.right, 26);
+    for (var frame = 0; frame < 24; frame++) {
+      await tester.pump(const Duration(milliseconds: 16));
+      expect(padding.right, 26);
+    }
     await tester.pumpAndSettle();
+    expect(padding.right, 26);
+    for (final invalid in <IosOcclusionGeometry?>[
+      null,
+      _geometry(size: const Size(800, 600)),
+    ]) {
+      geometry.value = invalid;
+      await tester.pump();
+      expect(padding.right, _safe.right);
+    }
+    geometry.value = _geometry();
+    await tester.pump();
     expect(padding.right, 26);
     expect(tester.takeException(), isNull);
   });

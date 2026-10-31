@@ -15,6 +15,8 @@ class AdaptiveOcclusionLayout extends StatefulWidget {
     required this.systemSafeArea,
     required this.cornerRadii,
     this.hasWindowControls = false,
+    this.allowTopToolbarReclamation = false,
+    this.topToolbarAlignmentHeight,
     required this.child,
   });
 
@@ -22,6 +24,12 @@ class AdaptiveOcclusionLayout extends StatefulWidget {
   final EdgeInsets systemSafeArea;
   final BorderRadius? cornerRadii;
   final bool hasWindowControls;
+
+  /// Explicitly opts into top-row reclamation on any platform.
+  /// The caller owns device policy; consumers still require usable geometry
+  /// and a trusted declaration of their layout bounds.
+  final bool allowTopToolbarReclamation;
+  final double? topToolbarAlignmentHeight;
   final Widget child;
 
   static FloatingActionButtonAnimator? floatingActionButtonAnimatorOf(
@@ -87,6 +95,8 @@ class _AdaptiveOcclusionLayoutState extends State<AdaptiveOcclusionLayout> {
     systemSafeArea: widget.systemSafeArea,
     cornerRadii: widget.cornerRadii,
     hasWindowControls: widget.hasWindowControls,
+    allowTopToolbarReclamation: widget.allowTopToolbarReclamation,
+    topToolbarAlignmentHeight: widget.topToolbarAlignmentHeight,
     suppressFabAnimation: _suppressFabAnimation,
     child: widget.child,
   );
@@ -101,6 +111,8 @@ class AdaptiveOcclusionScope extends InheritedWidget {
     required this.cornerRadii,
     this.hasWindowControls = false,
     this.suppressFabAnimation = false,
+    this.allowTopToolbarReclamation = false,
+    this.topToolbarAlignmentHeight,
     required super.child,
   });
 
@@ -109,6 +121,10 @@ class AdaptiveOcclusionScope extends InheritedWidget {
   final BorderRadius? cornerRadii;
   final bool hasWindowControls;
   final bool suppressFabAnimation;
+
+  /// See [AdaptiveOcclusionLayout.allowTopToolbarReclamation].
+  final bool allowTopToolbarReclamation;
+  final double? topToolbarAlignmentHeight;
 
   static AdaptiveOcclusionScope? maybeOf(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<AdaptiveOcclusionScope>();
@@ -152,6 +168,8 @@ class AdaptiveOcclusionScope extends InheritedWidget {
       systemSafeArea != oldWidget.systemSafeArea ||
       cornerRadii != oldWidget.cornerRadii ||
       hasWindowControls != oldWidget.hasWindowControls ||
+      allowTopToolbarReclamation != oldWidget.allowTopToolbarReclamation ||
+      topToolbarAlignmentHeight != oldWidget.topToolbarAlignmentHeight ||
       suppressFabAnimation != oldWidget.suppressFabAnimation;
 }
 
