@@ -20,8 +20,9 @@ Widget _app({
   required ValueNotifier<MediaQueryData> media,
   required VoidCallback Function(BuildContext) onOpen,
   bool material3 = true,
+  TargetPlatform? platform,
 }) => MaterialApp(
-  theme: ThemeData(useMaterial3: material3),
+  theme: ThemeData(useMaterial3: material3, platform: platform),
   builder: (context, child) => ValueListenableBuilder<MediaQueryData>(
     valueListenable: media,
     child: child,
@@ -350,4 +351,230 @@ void main() {
       },
     );
   }
+
+  testWidgets(
+    'time input keeps its editing state during keyboard fold rotation',
+    (tester) async {
+      _configureView(tester);
+      final media = ValueNotifier(
+        const MediaQueryData(
+          size: _window,
+          displayFeatures: [_verticalFold],
+          viewInsets: EdgeInsets.only(bottom: 220),
+          alwaysUse24HourFormat: true,
+        ),
+      );
+      addTearDown(media.dispose);
+      TimeOfDay? result;
+      var completions = 0;
+      await tester.pumpWidget(
+        _app(
+          media: media,
+          onOpen: (context) => () async {
+            result = await showTimePicker(
+              context: context,
+              initialTime: const TimeOfDay(hour: 15, minute: 25),
+              initialEntryMode: TimePickerEntryMode.input,
+              errorInvalidText: 'Invalid time',
+            );
+            completions++;
+          },
+        ),
+      );
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+      final fields = find.byType(EditableText);
+      await tester.enterText(fields.at(0), '99');
+      await tester.enterText(fields.at(1), '53');
+      await tester.showKeyboard(fields.at(0));
+      tester.testTextInput.updateEditingValue(
+        const TextEditingValue(
+          text: '99',
+          selection: TextSelection.collapsed(offset: 1),
+        ),
+      );
+      await tester.pump();
+      final dialogState = tester.state(find.byType(TimePickerDialog));
+      final hourState = tester.state(fields.at(0));
+      final hour = tester.widget<EditableText>(fields.at(0));
+      final minute = tester.widget<EditableText>(fields.at(1));
+      final hourValue = hour.controller.value;
+
+      for (final step in [
+        (
+          const Size(669, 951),
+          const [
+            DisplayFeature(
+              bounds: Rect.fromLTWH(0, 455.5, 669, 40),
+              type: DisplayFeatureType.fold,
+              state: DisplayFeatureState.postureHalfOpened,
+            ),
+          ],
+        ),
+        (_window, const [_verticalFold]),
+        (const Size(466, 678), const <DisplayFeature>[]),
+      ]) {
+        tester.view.physicalSize = step.$1;
+        media.value = media.value.copyWith(
+          size: step.$1,
+          displayFeatures: step.$2,
+        );
+        for (var frame = 0; frame < 16; frame++) {
+          await tester.pump(const Duration(milliseconds: 16));
+          expect(tester.takeException(), isNull);
+          expect(
+            tester.state(find.byType(TimePickerDialog)),
+            same(dialogState),
+          );
+          expect(tester.state(fields.at(0)), same(hourState));
+          final currentHour = tester.widget<EditableText>(fields.at(0));
+          expect(currentHour.controller, same(hour.controller));
+          expect(currentHour.controller.value, hourValue);
+          expect(currentHour.focusNode, same(hour.focusNode));
+          expect(currentHour.focusNode.hasFocus, isTrue);
+          expect(
+            tester.widget<EditableText>(fields.at(1)).controller,
+            same(minute.controller),
+          );
+          expect(minute.controller.text, '53');
+          expect(completions, 0);
+        }
+      }
+
+      await tester.ensureVisible(find.text('OK'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+      expect(find.text('Invalid time'), findsWidgets);
+      expect(hour.controller.text, '99');
+      expect(completions, 0);
+      await tester.enterText(fields.at(0), '08');
+      await tester.ensureVisible(find.text('OK'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+      expect(result, const TimeOfDay(hour: 8, minute: 53));
+      expect(completions, 1);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('time input scrolls within a short pane above the keyboard', (
+    tester,
+  ) async {
+    _configureView(tester);
+    final media = ValueNotifier(
+      const MediaQueryData(
+        size: _window,
+        displayFeatures: [_verticalFold],
+        viewInsets: EdgeInsets.only(bottom: 440),
+        alwaysUse24HourFormat: true,
+      ),
+    );
+    addTearDown(media.dispose);
+    MediaQueryData? builderMedia;
+    TimeOfDay? result;
+    await tester.pumpWidget(
+      _app(
+        media: media,
+        onOpen: (context) => () async {
+          result = await showTimePicker(
+            context: context,
+            initialTime: const TimeOfDay(hour: 15, minute: 25),
+            initialEntryMode: TimePickerEntryMode.inputOnly,
+            builder: (context, child) {
+              builderMedia = MediaQuery.of(context);
+              return Theme(
+                data: Theme.of(context).copyWith(
+                  timePickerTheme: const TimePickerThemeData(
+                    padding: EdgeInsets.all(32),
+                  ),
+                ),
+                child: child!,
+              );
+            },
+          );
+        },
+      ),
+    );
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(builderMedia!.size, const Size(455.5, 669));
+    expect(builderMedia!.viewInsets.bottom, 440);
+    expect(
+      TimePickerTheme.of(tester.element(find.byType(TimePickerDialog))).padding,
+      const EdgeInsets.all(32),
+    );
+    final fields = find.byType(EditableText);
+    await tester.enterText(fields.at(0), '08');
+    await tester.enterText(fields.at(1), '53');
+    await tester.ensureVisible(find.text('OK'));
+    await tester.pumpAndSettle();
+    final action = tester.getRect(find.text('OK'));
+    expect(action.top, greaterThanOrEqualTo(0));
+    expect(action.bottom, lessThanOrEqualTo(669 - 440));
+    expect(action.right, lessThanOrEqualTo(455.5));
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+    expect(result, const TimeOfDay(hour: 8, minute: 53));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'desktop time input stays usable in a short window without folds',
+    (tester) async {
+      _configureView(tester);
+      const window = Size(480, 240);
+      tester.view.physicalSize = window;
+      final media = ValueNotifier(
+        const MediaQueryData(size: window, alwaysUse24HourFormat: true),
+      );
+      addTearDown(media.dispose);
+      TimeOfDay? result;
+      var completions = 0;
+      await tester.pumpWidget(
+        _app(
+          media: media,
+          platform: TargetPlatform.macOS,
+          onOpen: (context) => () async {
+            result = await showTimePicker(
+              context: context,
+              initialTime: const TimeOfDay(hour: 15, minute: 25),
+              initialEntryMode: TimePickerEntryMode.inputOnly,
+            );
+            completions++;
+          },
+        ),
+      );
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+      final fields = find.byType(EditableText);
+      await tester.enterText(fields.at(0), '08');
+      await tester.enterText(fields.at(1), '53');
+      await tester.ensureVisible(find.text('OK'));
+      await tester.pumpAndSettle();
+      expect(tester.getRect(find.text('OK')).bottom, lessThanOrEqualTo(240));
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+      expect(result, const TimeOfDay(hour: 8, minute: 53));
+      expect(completions, 1);
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Cancel'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+      expect(result, isNull);
+      expect(completions, 2);
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+      await tester.tapAt(const Offset(10, 10));
+      await tester.pumpAndSettle();
+      expect(find.byType(TimePickerDialog), findsNothing);
+      expect(result, isNull);
+      expect(completions, 3);
+      expect(tester.takeException(), isNull);
+    },
+  );
 }

@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart' hide showDatePicker, showTimePicker;
 import 'package:flutter/material.dart' as material;
 
@@ -75,6 +77,7 @@ Future<DateTime?> showDatePicker({
 ///
 /// Parameters and results follow [material.showTimePicker]. The optional [builder]
 /// receives the local viewport rather than the whole window's MediaQuery.
+/// Content scrolls above the keyboard when the available pane is too short.
 Future<TimeOfDay?> showTimePicker({
   required BuildContext context,
   required TimeOfDay initialTime,
@@ -100,7 +103,10 @@ Future<TimeOfDay?> showTimePicker({
 }) => material.showTimePicker(
   context: context,
   initialTime: initialTime,
-  builder: _viewportBuilder(builder),
+  builder: _viewportBuilder((context, child) {
+    final picker = _TimePickerViewport(child: child ?? const SizedBox.shrink());
+    return builder?.call(context, picker) ?? picker;
+  }),
   barrierDismissible: barrierDismissible,
   barrierColor: barrierColor,
   barrierLabel: barrierLabel,
@@ -128,3 +134,54 @@ TransitionBuilder _viewportBuilder(TransitionBuilder? builder) =>
             builder?.call(context, child) ?? child ?? const SizedBox.shrink(),
       ),
     );
+
+class _TimePickerViewport extends StatelessWidget {
+  const _TimePickerViewport({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    // Consume the route-projected keyboard inset immediately. The SDK Dialog's
+    // inset animation can otherwise carry the old inset into a shorter pane.
+    padding: MediaQuery.viewInsetsOf(context),
+    child: MediaQuery.removeViewInsets(
+      context: context,
+      removeLeft: true,
+      removeTop: true,
+      removeRight: true,
+      removeBottom: true,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final padding =
+              TimePickerTheme.of(context).padding ??
+              (Theme.of(context).useMaterial3
+                  ? const EdgeInsets.all(24)
+                  : const EdgeInsets.fromLTRB(8, 18, 8, 8));
+          // The SDK requires a 216-high input container even when its computed
+          // maximum drops to 196. Include its themed padding and the dial's
+          // 24-per-side inset, since entry mode can change inside the dialog.
+          final minimumHeight = 216 + padding.vertical + 48;
+          final scrollBehavior = ScrollConfiguration.of(context);
+          return ScrollConfiguration(
+            // A viewport-wide desktop scrollbar would also absorb barrier taps.
+            behavior: scrollBehavior.copyWith(scrollbars: false),
+            child: SingleChildScrollView(
+              primary: false,
+              hitTestBehavior: HitTestBehavior.deferToChild,
+              child: ScrollConfiguration(
+                behavior: scrollBehavior,
+                child: SizedBox(
+                  height: constraints.hasBoundedHeight
+                      ? math.max(constraints.maxHeight, minimumHeight)
+                      : null,
+                  child: child,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    ),
+  );
+}
