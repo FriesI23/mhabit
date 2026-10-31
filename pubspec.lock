@@ -750,6 +750,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  foldable:
+    dependency: transitive
+    description:
+      name: foldable
+      sha256: c3f539ba3729716a5aacfcc4c3199d6ae0dee6e55f227d19ba25ef6fd96d804a
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.5"
   frontend_server_client:
     dependency: transitive
     description:

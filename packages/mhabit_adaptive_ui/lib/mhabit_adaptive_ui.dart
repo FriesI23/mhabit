@@ -37,6 +37,7 @@ export 'src/app_adaptive_ui_theme.dart'
     show AppAdaptiveUiTheme, AppAdaptiveUiThemeData;
 export 'src/breakpoints/breakpoints.dart';
 export 'src/breakpoints/device_context.dart';
+export 'src/breakpoints/display_feature_layout.dart';
 export 'src/breakpoints/window_size_class.dart';
 export 'src/cupertino/adaptive_cupertino_focus_decoration.dart';
 export 'src/cupertino/adaptive_cupertino_focus_halo.dart';

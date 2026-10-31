@@ -5,6 +5,7 @@ import '../adaptive_style.dart';
 import '../app_adaptive_ui_theme.dart';
 import '../cupertino/cupertino_adaptive_dialog.dart';
 import '../material/material_adaptive_dialog.dart';
+import 'adaptive_modal_viewport.dart';
 
 /// Opens a standard centered dialog, without sheet or drag behavior.
 ///
@@ -26,11 +27,13 @@ Future<T?> showAdaptiveModalDialog<T>({
   );
   final direction = Directionality.of(context);
   Widget buildContent(BuildContext context) => themes.wrap(
-    Directionality(
-      textDirection: direction,
-      child: AdaptiveComponentTheme(
-        style: style,
-        child: Builder(builder: builder),
+    AdaptiveModalViewport(
+      child: Directionality(
+        textDirection: direction,
+        child: AdaptiveComponentTheme(
+          style: style,
+          child: Builder(builder: builder),
+        ),
       ),
     ),
   );

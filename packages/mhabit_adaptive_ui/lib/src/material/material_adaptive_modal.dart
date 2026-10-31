@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../adaptive/adaptive_app_bar.dart';
 import '../adaptive/adaptive_modal_content.dart';
 import '../adaptive/adaptive_modal_layout.dart';
+import '../adaptive/adaptive_modal_viewport.dart';
 import '../adaptive/adaptive_sheet.dart';
 import '../adaptive/modal_sheet_drag_region.dart';
 import '../window_control/modal_app_bar_region.dart';
@@ -54,7 +55,7 @@ Future<T?> showMaterialAdaptiveModalRoute<T>({
             curve: Curves.easeOut,
             reverseCurve: Curves.easeIn,
           ),
-          child: child,
+          child: AdaptiveModalMediaQuery(isSheet: false, child: child),
         ),
         AdaptiveModalPresentation.sheet => SlideTransition(
           position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
@@ -65,10 +66,11 @@ Future<T?> showMaterialAdaptiveModalRoute<T>({
                   reverseCurve: Curves.easeInCubic,
                 ),
               ),
-          child: child,
+          child: AdaptiveModalMediaQuery(isSheet: true, child: child),
         ),
       },
-  pageBuilder: (context, _, _) => builder(context),
+  pageBuilder: (context, _, _) =>
+      AdaptiveModalViewport(child: Builder(builder: builder)),
 );
 
 /// Displays a fixed Material dialog above the current contents of the app.
@@ -103,14 +105,15 @@ Future<T?> showMaterialAdaptiveDialogRoute<T>({
   useRootNavigator: useRootNavigator,
   barrierDismissible: barrierDismissible,
   routeSettings: routeSettings,
-  builder: (context) =>
-      MaterialAdaptiveModalDialogSurface(child: builder(context)),
+  builder: (context) => AdaptiveModalViewport(
+    child: MaterialAdaptiveModalDialogSurface(child: Builder(builder: builder)),
+  ),
 );
 
 /// Displays a fixed Material modal bottom sheet.
 ///
 /// This delegates route creation, drag handling, and animation-controller
-/// ownership to [showModalBottomSheet]. The controller passed to [builder]
+/// ownership to [ModalBottomSheetRoute]. The controller passed to [builder]
 /// coordinates the sheet with its primary scrollable content.
 ///
 /// ```text
@@ -137,22 +140,74 @@ Future<T?> showMaterialAdaptiveSheetRoute<T>({
   required bool enableDrag,
   required bool showDragHandle,
   required RouteSettings? routeSettings,
-}) => showModalBottomSheet<T>(
-  context: context,
-  useRootNavigator: useRootNavigator,
-  isDismissible: barrierDismissible,
-  enableDrag: enableDrag,
-  isScrollControlled: true,
-  useSafeArea: false,
-  showDragHandle: showDragHandle,
-  backgroundColor: Theme.of(context).adaptiveModalBackgroundColor,
-  routeSettings: routeSettings,
-  builder: (context) => _MaterialAdaptiveSheetRouteContent(builder: builder),
-);
+}) {
+  final navigator = Navigator.of(context, rootNavigator: useRootNavigator);
+  final localizations = MaterialLocalizations.of(context);
+  return navigator.push<T>(
+    _MaterialAdaptiveSheetRoute<T>(
+      capturedThemes: InheritedTheme.capture(
+        from: context,
+        to: navigator.context,
+      ),
+      barrierLabel: localizations.scrimLabel,
+      barrierOnTapHint: localizations.scrimOnTapHint(
+        localizations.bottomSheetLabel,
+      ),
+      modalBarrierColor: Theme.of(context).bottomSheetTheme.modalBarrierColor,
+      isDismissible: barrierDismissible,
+      enableDrag: enableDrag,
+      isScrollControlled: true,
+      useSafeArea: false,
+      showDragHandle: showDragHandle,
+      backgroundColor: Theme.of(context).adaptiveModalBackgroundColor,
+      settings: routeSettings,
+      builder: (context) => AdaptiveModalViewport(
+        child: _MaterialAdaptiveSheetRouteContent(
+          maximumHeight: AdaptiveModalConstraints.maximumHeightOf(context),
+          builder: builder,
+        ),
+      ),
+    ),
+  );
+}
+
+class _MaterialAdaptiveSheetRoute<T> extends ModalBottomSheetRoute<T> {
+  _MaterialAdaptiveSheetRoute({
+    required super.builder,
+    required super.isScrollControlled,
+    super.capturedThemes,
+    super.barrierLabel,
+    super.barrierOnTapHint,
+    super.modalBarrierColor,
+    super.isDismissible,
+    super.enableDrag,
+    super.showDragHandle,
+    super.useSafeArea,
+    super.backgroundColor,
+    super.settings,
+  });
+
+  @override
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) => AdaptiveModalMediaQuery(
+    isSheet: true,
+    child: Builder(
+      builder: (context) =>
+          super.buildPage(context, animation, secondaryAnimation),
+    ),
+  );
+}
 
 class _MaterialAdaptiveSheetRouteContent extends StatefulWidget {
-  const _MaterialAdaptiveSheetRouteContent({required this.builder});
+  const _MaterialAdaptiveSheetRouteContent({
+    required this.maximumHeight,
+    required this.builder,
+  });
 
+  final double maximumHeight;
   final Widget Function(ScrollController controller) builder;
 
   @override
@@ -174,7 +229,7 @@ class _MaterialAdaptiveSheetRouteContentState
   Widget build(BuildContext context) => ModalWindowControlMotion(
     notifier: ModalRoute.of(context)?.animation ?? kAlwaysDismissedAnimation,
     child: SizedBox(
-      height: AdaptiveModalConstraints.maximumHeightOf(context),
+      height: widget.maximumHeight,
       child: widget.builder(_scrollController),
     ),
   );
@@ -397,10 +452,11 @@ class MaterialAdaptiveModal extends StatelessWidget {
               scrolledUnderElevation: 0,
               surfaceTintColor: Colors.transparent,
             ),
-            child: ModalWindowControlAppBarRegion(
-              child: MediaQuery.removePadding(
-                context: context,
-                removeTop: true,
+            // Project horizontal safe edges after removing the top inset.
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              child: ModalWindowControlAppBarRegion(
                 child: AdaptiveAppBar.material(
                   key: const ValueKey('adaptive-modal-app-bar'),
                   leading:

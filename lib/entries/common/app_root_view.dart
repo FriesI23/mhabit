@@ -162,7 +162,7 @@ class _AppRootMaterialApp extends StatelessWidget {
       child: _AppWindowView(
         disableAnimations: disableAnimations,
         textDirectionOverride: textDirectionOverride,
-        child: UnfocusOnTap(child: child),
+        child: AdaptiveDisplayFeatureLayout(child: UnfocusOnTap(child: child)),
       ),
     );
   }

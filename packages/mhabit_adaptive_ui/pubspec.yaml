@@ -14,6 +14,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_adaptive_sidebar: ^0.4.0
+  foldable: ^1.0.5
   ios_window_control_layout: ^0.6.0
   sliver_tools: ^0.2.9
 
