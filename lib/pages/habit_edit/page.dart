@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 

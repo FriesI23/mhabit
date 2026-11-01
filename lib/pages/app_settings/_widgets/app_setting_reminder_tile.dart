@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../l10n/localizations.dart';

@@ -19,6 +19,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show Icons;
 import 'package:flutter/widgets.dart' show LocalizationsDelegate;
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart'
+    show CustomBreakpoints;
 
 import '../l10n/localizations.dart';
 import '../models/app_reminder_config.dart';
@@ -72,6 +74,13 @@ const AppThemeType appDefaultThemeType = AppThemeType.followSystem;
 const int appCalendarBarMaxOccupyPrt = 70;
 const int appCalendarBarMinOccupyPrt = 20;
 const int appCalendarBarDefualtOccupyPrt = 50;
+
+/// Shared iPhone Duo layout tiers, independent of the selected visual style.
+const appIPhoneDuoBreakpoints = CustomBreakpoints(
+  // The repeated width bound skips the expanded tier.
+  width: [700, 906, 906],
+  height: [480, 900],
+);
 //#endregion
 
 //#region desktop-window

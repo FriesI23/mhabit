@@ -37,6 +37,7 @@ export 'src/app_adaptive_ui_theme.dart'
     show AppAdaptiveUiTheme, AppAdaptiveUiThemeData;
 export 'src/breakpoints/breakpoints.dart';
 export 'src/breakpoints/device_context.dart';
+export 'src/breakpoints/display_feature_layout.dart';
 export 'src/breakpoints/window_size_class.dart';
 export 'src/cupertino/adaptive_cupertino_focus_decoration.dart';
 export 'src/cupertino/adaptive_cupertino_focus_halo.dart';
@@ -81,4 +82,7 @@ export 'src/shell/sidebar_adapter.dart' show CupertinoSidebarPresentationScope;
 export 'src/window_control/cupertino_navigation_bar.dart';
 export 'src/window_control/interaction_region.dart';
 export 'src/window_control/material_app_bar.dart';
+export 'src/window_control/occlusion_fab.dart'
+    show AdaptiveOcclusionFabLocation;
+export 'src/window_control/occlusion_layout.dart' show AdaptiveOcclusionLayout;
 export 'src/window_control/window_control_layout.dart';

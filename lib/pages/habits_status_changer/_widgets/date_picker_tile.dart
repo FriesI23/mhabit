@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:intl/intl.dart';
+import 'package:mhabit_adaptive_ui/material.dart';
 
 import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';

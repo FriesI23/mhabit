@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
@@ -31,8 +32,10 @@ Future<DateTime?> showHabitDatePickerDialog({
   required DateTime date,
   required HabitColor color,
 }) async {
-  return showDialog<DateTime>(
+  return showAdaptiveModalDialog<DateTime>(
     context: context,
+    styleOverride: AdaptiveStyle.material,
+    barrierDismissible: true,
     builder: (context) => HabitDatePickerDialog(date, color),
   );
 }

@@ -24,6 +24,7 @@ Future<bool?> showAppSettingClearCacheDialog({
   return showAdaptiveModalDialog<bool>(
     context: context,
     barrierDismissible: true,
+    anchorPoint: AdaptiveConfirmDialog.preferredAnchorPoint,
     builder: (context) => const AppSettingClearCacheDialog(),
   );
 }

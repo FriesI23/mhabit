@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
 import '../adaptive/adaptive_navigation_destination.dart';
+import '../window_control/occlusion_layout.dart';
+import '../window_control/occlusion_toolbar.dart';
 import 'cupertino_floating_surface.dart';
 import 'cupertino_navigation_primary_action.dart';
 
@@ -175,21 +177,41 @@ class CupertinoAdaptiveNavigationBar extends StatelessWidget {
       floatingBottomMargin: floatingBottomMargin,
     );
 
+    final height = contentHeight + boundaryInsets.floatingMargin;
+    final viewport = OcclusionViewport.maybeOf(context)?.bounds;
+    final bounds = viewport != null && viewport.height >= height
+        ? Rect.fromLTWH(
+            viewport.left,
+            viewport.bottom - height,
+            viewport.width,
+            contentHeight,
+          )
+        : null;
+
     return SizedBox(
       key: const ValueKey('cupertino-adaptive-navigation-bar'),
-      height: contentHeight + boundaryInsets.floatingMargin,
-      child: Padding(
-        padding: boundaryInsets.horizontalPadding,
-        child: _NavigationBarLayout(
-          selectedIndex: selectedIndex,
-          onDestinationSelected: onDestinationSelected,
-          onExpandRequested: onExpandRequested,
-          destinations: destinations,
-          presentation: presentation,
-          primaryAction: primaryAction,
-          reservePrimaryActionSpace: reservePrimaryActionSpace,
-          expandedNavigationWidth: expandedNavigationWidth,
-          duration: duration,
+      height: height,
+      child: AdaptiveOcclusionToolbar(
+        bounds: bounds,
+        preserveHorizontalSafeArea: false,
+        child: Builder(
+          builder: (context) => Padding(
+            padding: CupertinoFloatingSurfaceGeometry.resolveOf(
+              context,
+              floatingBottomMargin: floatingBottomMargin,
+            ).horizontalPadding,
+            child: _NavigationBarLayout(
+              selectedIndex: selectedIndex,
+              onDestinationSelected: onDestinationSelected,
+              onExpandRequested: onExpandRequested,
+              destinations: destinations,
+              presentation: presentation,
+              primaryAction: primaryAction,
+              reservePrimaryActionSpace: reservePrimaryActionSpace,
+              expandedNavigationWidth: expandedNavigationWidth,
+              duration: duration,
+            ),
+          ),
         ),
       ),
     );

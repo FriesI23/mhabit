@@ -2,11 +2,14 @@ import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Theme;
+import 'package:flutter/rendering.dart' show SliverConstraints;
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
 import '../breakpoints/window_size_class.dart';
 import '../shell/sidebar_adapter.dart';
 import '../window_control/cupertino_navigation_bar.dart';
+import '../window_control/occlusion_sliver_toolbar.dart';
+import '../window_control/occlusion_toolbar.dart';
 import '../window_control/toolbar_geometry.dart';
 import 'app_bar_apple_style.dart';
 import 'cupertino_neutral_button.dart';
@@ -205,14 +208,46 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ambientMedia = MediaQuery.of(context);
+    final topToolbarLayoutOverride = SidebarTopToolbarLayoutOverrideResolver(
+      context: context,
+    ).resolve();
+    return AdaptiveSliverOcclusionToolbar(
+      height: toolbarHeight,
+      topOffset: math.max(ambientMedia.padding.top, toolbarTopInset),
+      reclaimTopSafeArea: true,
+      minimumTopInset: toolbarTopInset,
+      topToolbarLayoutOverride: topToolbarLayoutOverride,
+      child: SliverLayoutBuilder(
+        builder: (context, constraints) => _buildHeader(
+          context,
+          constraints,
+          ambientMedia,
+          topToolbarLayoutOverride,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(
+    BuildContext context,
+    SliverConstraints constraints,
+    MediaQueryData ambientMedia,
+    TopToolbarLayoutOverride? topToolbarLayoutOverride,
+  ) {
     final topPadding = math.max(
       MediaQuery.paddingOf(context).top,
       toolbarTopInset,
     );
     final sidebarBottomExtent =
         sidebarNavigationBarBottom?.preferredSize.height ?? 0.0;
-    final extent =
-        topPadding + toolbarHeight + sidebarBottomExtent + bottomExtent;
+    final baseExtent = math.max(
+      topPadding + toolbarHeight + sidebarBottomExtent,
+      AdaptiveOcclusionToolbar.minimumExtentOf(context) ?? 0,
+    );
+    final extent = baseExtent + bottomExtent;
+    final protectsSideRegions =
+        useSidebarToolbar && AdaptiveOcclusionToolbar.isTopReclaimedOf(context);
     return SliverPersistentHeader(
       pinned: true,
       delegate: _FixedCupertinoToolbarDelegate(
@@ -237,27 +272,38 @@ class _FixedCupertinoSliverAppBar extends StatelessWidget {
                 left: 0,
                 right: 0,
                 height: toolbarHeight,
-                child: SafeArea(
-                  top: false,
-                  bottom: false,
-                  child: _CupertinoToolbar(
-                    title: title,
-                    leading: leading,
-                    trailing: trailing,
-                    useSidebarToolbar: useSidebarToolbar,
-                    padding: padding,
-                    windowControlAvoidance: windowControlAvoidance,
-                    windowControlEdgePadding: windowControlEdgePadding,
+                child: AdaptiveOcclusionToolbar(
+                  bounds: constraints.occlusionToolbarBounds(
+                    context,
+                    height: toolbarHeight,
+                    topOffset: topPadding,
+                  ),
+                  child: SafeArea(
+                    left: !protectsSideRegions,
+                    top: false,
+                    right: !protectsSideRegions,
+                    bottom: false,
+                    child: _CupertinoToolbar(
+                      title: title,
+                      leading: leading,
+                      trailing: trailing,
+                      useSidebarToolbar: useSidebarToolbar,
+                      protectsSideRegions: protectsSideRegions,
+                      topToolbarLayoutOverride: topToolbarLayoutOverride,
+                      padding: padding,
+                      windowControlAvoidance: windowControlAvoidance,
+                      windowControlEdgePadding: windowControlEdgePadding,
+                    ),
                   ),
                 ),
               ),
               if (bottom case final bottom?)
                 Positioned(
-                  top: topPadding + toolbarHeight + sidebarBottomExtent,
+                  top: baseExtent,
                   left: 0,
                   right: 0,
                   height: bottomExtent,
-                  child: bottom,
+                  child: MediaQuery(data: ambientMedia, child: bottom),
                 ),
             ],
           ),
@@ -276,6 +322,8 @@ class _CupertinoToolbar extends StatelessWidget {
     required this.windowControlAvoidance,
     required this.windowControlEdgePadding,
     required this.useSidebarToolbar,
+    required this.protectsSideRegions,
+    required this.topToolbarLayoutOverride,
   });
 
   final Widget title;
@@ -285,6 +333,8 @@ class _CupertinoToolbar extends StatelessWidget {
   final EdgeInsets? windowControlAvoidance;
   final EdgeInsetsDirectional windowControlEdgePadding;
   final bool useSidebarToolbar;
+  final bool protectsSideRegions;
+  final TopToolbarLayoutOverride? topToolbarLayoutOverride;
 
   @override
   Widget build(BuildContext context) {
@@ -298,7 +348,14 @@ class _CupertinoToolbar extends StatelessWidget {
       avoidance: windowControlAvoidance,
       edgePadding: contentPadding,
     );
-    final insets = geometry.cupertinoInsets;
+    final projectedSafeArea = MediaQuery.paddingOf(context);
+    final textDirection = Directionality.of(context);
+    final insets = protectsSideRegions
+        ? geometry.cupertinoInsetsWithSafeArea(
+            safeArea: projectedSafeArea,
+            textDirection: textDirection,
+          )
+        : geometry.cupertinoInsets;
     final effectiveLeading = Padding(
       padding: EdgeInsetsDirectional.only(start: insets.start),
       child: leading ?? const SizedBox.shrink(),
@@ -313,6 +370,10 @@ class _CupertinoToolbar extends StatelessWidget {
         padding: EdgeInsets.only(top: insets.top, bottom: insets.bottom),
         child: useSidebarToolbar
             ? CupertinoSidebarToolbarLayout(
+                slotLayout: SidebarToolbarSlotLayoutResolver(
+                  context: context,
+                  topToolbarLayoutOverride: topToolbarLayoutOverride,
+                ).resolve(),
                 leading: effectiveLeading,
                 title: title,
                 trailing: effectiveTrailing,

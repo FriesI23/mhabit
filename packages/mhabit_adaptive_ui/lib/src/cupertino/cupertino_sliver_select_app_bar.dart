@@ -9,6 +9,7 @@ import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
 import '../adaptive/adaptive_app_bar_actions.dart';
 import '../breakpoints/window_size_class.dart';
 import '../shell/sidebar_adapter.dart';
+import '../window_control/occlusion_toolbar.dart';
 import 'app_bar_apple_style.dart';
 import 'cupertino_focus_halo_clip.dart';
 import 'cupertino_neutral_button.dart';
@@ -81,6 +82,9 @@ class CupertinoSliverSelectAppBar<T extends Object> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final compact = WindowSize.of(context).width == WindowSizeClass.compact;
+    final topToolbarLayoutOverride = SidebarTopToolbarLayoutOverrideResolver(
+      context: context,
+    ).resolve();
     return CupertinoSliverAppBar(
       toolbarTopInset: toolbarTopInset,
       key: const ValueKey('cupertino-sliver-select-app-bar'),
@@ -91,6 +95,7 @@ class CupertinoSliverSelectAppBar<T extends Object> extends StatelessWidget {
       wrapSidebarMiddle: false,
       title: _viewMode
           ? _CupertinoSelectEntryToolbar<T>(
+              topToolbarLayoutOverride: topToolbarLayoutOverride,
               title: title,
               collection: collection,
               onInvoke: onInvoke,
@@ -100,6 +105,7 @@ class CupertinoSliverSelectAppBar<T extends Object> extends StatelessWidget {
               presentationForAction: actions?.presentationForAction,
             )
           : _CupertinoSelectTopToolbar<T>(
+              topToolbarLayoutOverride: topToolbarLayoutOverride,
               compact: compact,
               title: title,
               selectAllLabel: selectAllLabel,
@@ -179,6 +185,7 @@ class CupertinoSelectBottomToolbar<T extends Object> extends StatelessWidget {
 
 class _CupertinoSelectTopToolbar<T extends Object> extends StatelessWidget {
   const _CupertinoSelectTopToolbar({
+    required this.topToolbarLayoutOverride,
     required this.compact,
     required this.title,
     required this.selectAllLabel,
@@ -193,6 +200,7 @@ class _CupertinoSelectTopToolbar<T extends Object> extends StatelessWidget {
     required this.presentationForAction,
   });
 
+  final TopToolbarLayoutOverride? topToolbarLayoutOverride;
   final bool compact;
   final Widget title;
   final String selectAllLabel;
@@ -214,6 +222,10 @@ class _CupertinoSelectTopToolbar<T extends Object> extends StatelessWidget {
         delegate: _SelectToolbarLayoutDelegate(
           textDirection: Directionality.of(context),
           sidebarVisibility: visibilityProgress,
+          slotLayout: SidebarToolbarSlotLayoutResolver(
+            context: context,
+            topToolbarLayoutOverride: topToolbarLayoutOverride,
+          ).resolve(),
         ),
         children: [
           LayoutId(
@@ -269,6 +281,7 @@ class _CupertinoSelectTopToolbar<T extends Object> extends StatelessWidget {
 
 class _CupertinoSelectEntryToolbar<T extends Object> extends StatelessWidget {
   const _CupertinoSelectEntryToolbar({
+    required this.topToolbarLayoutOverride,
     required this.title,
     required this.collection,
     required this.onInvoke,
@@ -278,6 +291,7 @@ class _CupertinoSelectEntryToolbar<T extends Object> extends StatelessWidget {
     required this.presentationForAction,
   });
 
+  final TopToolbarLayoutOverride? topToolbarLayoutOverride;
   final Widget title;
   final ActionCollection<T> collection;
   final AdaptiveAppBarActionCallback<T> onInvoke;
@@ -315,6 +329,10 @@ class _CupertinoSelectEntryToolbar<T extends Object> extends StatelessWidget {
         ),
       );
     }
+    final slotLayout = SidebarToolbarSlotLayoutResolver(
+      context: context,
+      topToolbarLayoutOverride: topToolbarLayoutOverride,
+    ).resolve();
     return CupertinoSidebarToolbarMiddleLayout(
       enabled: false,
       builder: (context, middle, visibilityProgress) => SizedBox.expand(
@@ -322,6 +340,7 @@ class _CupertinoSelectEntryToolbar<T extends Object> extends StatelessWidget {
           delegate: _SelectToolbarLayoutDelegate(
             textDirection: Directionality.of(context),
             sidebarVisibility: visibilityProgress,
+            slotLayout: slotLayout,
           ),
           children: [
             LayoutId(
@@ -365,12 +384,14 @@ class _SelectToolbarLayoutDelegate extends MultiChildLayoutDelegate {
   _SelectToolbarLayoutDelegate({
     required this.textDirection,
     required this.sidebarVisibility,
+    required this.slotLayout,
   });
 
   static const double spacing = 6.0;
 
   final TextDirection textDirection;
   final double sidebarVisibility;
+  final SidebarToolbarSlotLayout? slotLayout;
 
   @override
   void performLayout(Size size) {
@@ -387,6 +408,12 @@ class _SelectToolbarLayoutDelegate extends MultiChildLayoutDelegate {
       _SelectToolbarSlot.sidebar,
       looseConstraints,
     );
+    final sidebarCenter =
+        slotLayout?.centerFor(
+          layoutWidth: size.width,
+          visibility: sidebarVisibility,
+        ) ??
+        size.width / 2;
     positionChild(
       _SelectToolbarSlot.leading,
       Offset(
@@ -406,14 +433,14 @@ class _SelectToolbarLayoutDelegate extends MultiChildLayoutDelegate {
     positionChild(
       _SelectToolbarSlot.sidebar,
       Offset(
-        (size.width - sidebarSize.width) / 2,
+        sidebarCenter - sidebarSize.width / 2,
         (size.height - sidebarSize.height) / 2,
       ),
     );
 
     final excludedSidebarWidth = sidebarSize.width * sidebarVisibility;
     if (excludedSidebarWidth > 0) {
-      final sidebarStart = (size.width - excludedSidebarWidth) / 2;
+      final sidebarStart = sidebarCenter - excludedSidebarWidth / 2;
       final sidebarEnd = sidebarStart + excludedSidebarWidth;
       final titleStart = switch (textDirection) {
         TextDirection.ltr => leadingSize.width + spacing,
@@ -491,7 +518,8 @@ class _SelectToolbarLayoutDelegate extends MultiChildLayoutDelegate {
   @override
   bool shouldRelayout(_SelectToolbarLayoutDelegate oldDelegate) =>
       textDirection != oldDelegate.textDirection ||
-      sidebarVisibility != oldDelegate.sidebarVisibility;
+      sidebarVisibility != oldDelegate.sidebarVisibility ||
+      slotLayout != oldDelegate.slotLayout;
 }
 
 class _FixedTextAction extends StatelessWidget {

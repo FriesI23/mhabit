@@ -185,6 +185,11 @@ class _PageState extends State<_Page> with XShare {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonAnimator:
+          AdaptiveOcclusionLayout.floatingActionButtonAnimatorOf(context),
+      floatingActionButtonLocation: AdaptiveOcclusionFabLocation.resolveOf(
+        context,
+      ),
       floatingActionButton: switch (AdaptiveStyle.of(context)) {
         AdaptiveStyle.apple => null,
         AdaptiveStyle.material => Builder(

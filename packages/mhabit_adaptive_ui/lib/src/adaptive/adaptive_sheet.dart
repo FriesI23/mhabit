@@ -13,14 +13,18 @@ import 'adaptive_modal_content.dart';
 import 'adaptive_modal_layout.dart';
 import 'adaptive_modal_themes.dart';
 
-/// Shows content as a platform-styled sheet on compact windows and a dialog
-/// when both window axes reach the medium size class.
+/// Shows content as a platform-styled sheet on compact panes and a dialog
+/// when the selected pane width and window height reach the medium size class.
 ///
-/// Automatic presentation is resolved from the current window size while the
-/// route remains active. Resizing changes the platform surface without
+/// Side-by-side display regions use the framework's default leading pane.
+/// Top/bottom folds retain the window-based presentation policy.
+/// Automatic presentation is resolved while the route remains active.
+/// Resizing changes the platform surface without
 /// replacing the route or its content subtree. A [presentationOverride] keeps
 /// both the presentation and Flutter route type fixed for tests and developer
 /// tools.
+/// Sheets ignore folds that divide the window into top and bottom regions.
+/// Dialogs retain the framework's existing display-feature behavior.
 ///
 /// A [styleOverride] forces the route and content renderer to a specific style.
 /// It is intended as a migration escape hatch and for tests; regular callers
@@ -63,6 +67,8 @@ Future<T?> showAdaptiveSheet<T>({
         useRootNavigator: useRootNavigator,
         routeSettings: routeSettings,
         barrierLabel: barrierLabel,
+        presentationResolver: (context) =>
+            _resolvePresentation(breakpoints, context),
         builder: (_) => themes.wrap(
           _ResponsiveAdaptiveModalRoute(
             style: AdaptiveStyle.apple,
@@ -81,7 +87,7 @@ Future<T?> showAdaptiveSheet<T>({
         barrierLabel: barrierLabel,
         routeSettings: routeSettings,
         presentationResolver: (context) =>
-            _resolvePresentation(breakpoints, MediaQuery.sizeOf(context)),
+            _resolvePresentation(breakpoints, context),
         builder: (_) => themes.wrap(
           _ResponsiveAdaptiveModalRoute(
             style: AdaptiveStyle.material,
@@ -165,16 +171,36 @@ Future<T?> showAdaptiveSheet<T>({
 
 AdaptiveModalPresentation _resolvePresentation(
   Breakpoints breakpoints,
-  Size windowSize,
-) => switch (WindowSize.fromBreakpoints(breakpoints, windowSize).contains(
-  const WindowSize(
-    width: WindowSizeClass.medium,
-    height: WindowSizeClass.medium,
-  ),
-)) {
-  true => AdaptiveModalPresentation.dialog,
-  false => AdaptiveModalPresentation.sheet,
-};
+  BuildContext context,
+) {
+  // Read the route's unpartitioned data, before Sheet filtering or local sizing.
+  final navigatorContext = Navigator.of(context).context;
+  final media = MediaQuery.of(navigatorContext);
+  final window = Offset.zero & media.size;
+  final panes = DisplayFeatureSubScreen.subScreensInBounds(
+    window,
+    DisplayFeatureSubScreen.avoidBounds(media).where(
+      (bounds) => bounds.top <= window.top && bounds.bottom >= window.bottom,
+    ),
+  );
+  // Full-height partitions are ordered left to right by the framework.
+  final pane = panes.isEmpty
+      ? window
+      : switch (Directionality.of(navigatorContext)) {
+          TextDirection.ltr => panes.first,
+          TextDirection.rtl => panes.last,
+        };
+  final size = Size(pane.width, media.size.height);
+  return switch (WindowSize.fromBreakpoints(breakpoints, size).contains(
+    const WindowSize(
+      width: WindowSizeClass.medium,
+      height: WindowSizeClass.medium,
+    ),
+  )) {
+    true => AdaptiveModalPresentation.dialog,
+    false => AdaptiveModalPresentation.sheet,
+  };
+}
 
 /// Creates a platform-styled page route for navigation within an
 /// [AdaptiveModalNavigator].
@@ -254,7 +280,7 @@ class _ResponsiveAdaptiveModalRouteState
   Widget build(BuildContext context) {
     final presentation =
         widget.presentationOverride ??
-        _resolvePresentation(widget.breakpoints, MediaQuery.sizeOf(context));
+        _resolvePresentation(widget.breakpoints, context);
 
     final surface = switch (widget.style) {
       AdaptiveStyle.material => MaterialAdaptiveModalRouteSurface(
@@ -468,22 +494,26 @@ class _AdaptiveModalNavigatorState<T> extends State<AdaptiveModalNavigator<T>> {
     _dialogBounds = presentation == AdaptiveModalPresentation.dialog
         ? bounds
         : null;
-    return AnimatedSize(
-      duration: presentation == AdaptiveModalPresentation.dialog
-          ? const Duration(milliseconds: 200)
-          : Duration.zero,
-      curve: Curves.easeOutCubic,
-      child: ListenableBuilder(
-        listenable: _sizeRevision,
-        child: navigator,
-        builder: (context, child) => SizedBox.fromSize(
-          size: presentation == AdaptiveModalPresentation.sheet
-              ? Size.infinite
-              : bounds.constrain(_contentSize ?? bounds.biggest),
-          child: child,
-        ),
+    final viewport = ListenableBuilder(
+      listenable: _sizeRevision,
+      child: navigator,
+      builder: (context, child) => SizedBox.fromSize(
+        size: presentation == AdaptiveModalPresentation.sheet
+            ? Size.infinite
+            : bounds.constrain(_contentSize ?? bounds.biggest),
+        child: child,
       ),
     );
+    // Sheets fill their route without a size animation. Reusing AnimatedSize
+    // under tight constraints retains its previous dialog alignment offset.
+    // The Navigator key keeps its routes and content when this wrapper changes.
+    return presentation == AdaptiveModalPresentation.sheet
+        ? viewport
+        : AnimatedSize(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOutCubic,
+            child: viewport,
+          );
   }
 }
 

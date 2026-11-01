@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +8,8 @@ import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 import '../material/material_app_bar_background.dart';
 import '../shell/sidebar_adapter.dart';
 import 'interaction_region.dart';
+import 'occlusion_sliver_toolbar.dart';
+import 'occlusion_toolbar.dart';
 import 'toolbar_geometry.dart';
 
 /// A Material [AppBar] whose leading and action slots avoid window controls.
@@ -129,7 +133,10 @@ class WindowControlAppBar extends StatelessWidget
   );
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      AdaptiveOcclusionToolbar(child: Builder(builder: _buildAppBar));
+
+  Widget _buildAppBar(BuildContext context) {
     final title = this.title;
     final sidebarLeading = SidebarLeadingScope.maybeOf(context);
     final effectiveFlexibleSpace = _centeredSidebarAnchorFlexibleSpace(
@@ -448,7 +455,76 @@ class WindowControlSliverAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ambientMedia = MediaQuery.of(context);
+    return AdaptiveSliverOcclusionToolbar(
+      height:
+          toolbarHeight ??
+          (_variant == _WindowControlSliverAppBarVariant.large
+              ? const SliverAppBar.large().toolbarHeight
+              : kToolbarHeight),
+      topOffset: primary ? ambientMedia.padding.top : 0,
+      reclaimTopSafeArea: primary && pinned,
+      child: Builder(builder: (context) => _buildAppBar(context, ambientMedia)),
+    );
+  }
+
+  double? _effectiveCollapsedHeight(BuildContext context) {
+    final minimumExtent = AdaptiveOcclusionToolbar.minimumExtentOf(context);
+    if (!primary || !pinned || minimumExtent == null) {
+      return collapsedHeight;
+    }
+    final bottomHeight = bottom?.preferredSize.height ?? 0.0;
+    final surroundingHeight = MediaQuery.paddingOf(context).top + bottomHeight;
+    final actualToolbarHeight =
+        toolbarHeight ??
+        (_variant == _WindowControlSliverAppBarVariant.large
+            ? const SliverAppBar.large().toolbarHeight
+            : kToolbarHeight);
+    // Flutter's small-bar parameter excludes top/bottom; medium and large use
+    // a complete extent. Decode its defaults before applying the shared floor.
+    final parameterInsets = _variant == _WindowControlSliverAppBarVariant.small
+        ? surroundingHeight
+        : 0.0;
+    final originalExtent = collapsedHeight == null
+        ? surroundingHeight +
+              switch (_variant) {
+                _WindowControlSliverAppBarVariant.small =>
+                  floating && bottom != null ? 0.0 : actualToolbarHeight,
+                _WindowControlSliverAppBarVariant.medium =>
+                  const SliverAppBar.medium().toolbarHeight,
+                _WindowControlSliverAppBarVariant.large =>
+                  const SliverAppBar.large().toolbarHeight,
+              }
+        : collapsedHeight! + parameterInsets;
+    final protectedExtent = minimumExtent + bottomHeight;
+    if (originalExtent >= protectedExtent) return collapsedHeight;
+    // Every Flutter constructor also requires its parameter to reach the row.
+    return math.max(actualToolbarHeight, protectedExtent - parameterInsets);
+  }
+
+  Widget _buildAppBar(BuildContext context, MediaQueryData ambientMedia) {
     final title = this.title;
+    final bottom = this.bottom;
+    final media = MediaQuery.of(context);
+    final restoreBottomWidth =
+        bottom != null &&
+        bottom.preferredSize.height > 0 &&
+        AdaptiveOcclusionToolbar.isTopReclaimedOf(context);
+    final additionalSafeArea = restoreBottomWidth
+        ? EdgeInsets.only(
+            left: math.max(0, media.padding.left - ambientMedia.padding.left),
+            right: math.max(
+              0,
+              media.padding.right - ambientMedia.padding.right,
+            ),
+          )
+        : EdgeInsets.zero;
+    final effectiveBottom = restoreBottomWidth
+        ? PreferredSize(
+            preferredSize: bottom.preferredSize,
+            child: MediaQuery(data: ambientMedia, child: bottom),
+          )
+        : bottom;
     final sidebarLeading = SidebarLeadingScope.maybeOf(context);
     final effectiveTitle = title == null
         ? null
@@ -473,8 +549,9 @@ class WindowControlSliverAppBar extends StatelessWidget {
       leadingWidth: leadingWidth,
       avoidance: windowControlAvoidance,
       edgePadding: windowControlEdgePadding,
+      additionalSafeArea: additionalSafeArea,
     );
-    return switch (_variant) {
+    final bar = switch (_variant) {
       _WindowControlSliverAppBarVariant.small => SliverAppBar(
         leading: slots.leading,
         automaticallyImplyLeading: slots.automaticallyImplyLeading,
@@ -482,7 +559,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
         actions: slots.actions,
         automaticallyImplyActions: slots.automaticallyImplyActions,
         flexibleSpace: effectiveFlexibleSpace,
-        bottom: bottom,
+        bottom: effectiveBottom,
         elevation: elevation,
         scrolledUnderElevation: scrolledUnderElevation,
         shadowColor: shadowColor,
@@ -501,7 +578,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
         primary: primary,
         centerTitle: effectiveCenterTitle,
         titleSpacing: titleSpacing,
-        collapsedHeight: collapsedHeight,
+        collapsedHeight: _effectiveCollapsedHeight(context),
         expandedHeight: expandedHeight,
         floating: floating,
         pinned: pinned,
@@ -522,6 +599,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
         effectiveTitle,
         effectiveCenterTitle,
         effectiveFlexibleSpace,
+        effectiveBottom,
       ),
       _WindowControlSliverAppBarVariant.large => _buildLarge(
         context,
@@ -529,8 +607,24 @@ class WindowControlSliverAppBar extends StatelessWidget {
         effectiveTitle,
         effectiveCenterTitle,
         effectiveFlexibleSpace,
+        effectiveBottom,
       ),
     };
+    return restoreBottomWidth
+        ? MediaQuery(
+            data: media.copyWith(
+              padding: media.padding.copyWith(
+                left: ambientMedia.padding.left,
+                right: ambientMedia.padding.right,
+              ),
+              viewPadding: media.viewPadding.copyWith(
+                left: ambientMedia.viewPadding.left,
+                right: ambientMedia.viewPadding.right,
+              ),
+            ),
+            child: bar,
+          )
+        : bar;
   }
 
   Widget _buildMedium(
@@ -539,6 +633,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
     Widget? effectiveTitle,
     bool? effectiveCenterTitle,
     Widget? effectiveFlexibleSpace,
+    PreferredSizeWidget? effectiveBottom,
   ) => SliverAppBar.medium(
     leading: slots.leading,
     automaticallyImplyLeading: slots.automaticallyImplyLeading,
@@ -546,7 +641,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
     actions: slots.actions,
     automaticallyImplyActions: slots.automaticallyImplyActions,
     flexibleSpace: effectiveFlexibleSpace,
-    bottom: bottom,
+    bottom: effectiveBottom,
     elevation: elevation,
     scrolledUnderElevation: scrolledUnderElevation,
     shadowColor: shadowColor,
@@ -565,7 +660,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
     primary: primary,
     centerTitle: effectiveCenterTitle,
     titleSpacing: titleSpacing,
-    collapsedHeight: collapsedHeight,
+    collapsedHeight: _effectiveCollapsedHeight(context),
     expandedHeight: expandedHeight,
     floating: floating,
     pinned: pinned,
@@ -587,6 +682,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
     Widget? effectiveTitle,
     bool? effectiveCenterTitle,
     Widget? effectiveFlexibleSpace,
+    PreferredSizeWidget? effectiveBottom,
   ) {
     final toolbarHeight = this.toolbarHeight;
     if (toolbarHeight == null) {
@@ -597,7 +693,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
         actions: slots.actions,
         automaticallyImplyActions: slots.automaticallyImplyActions,
         flexibleSpace: effectiveFlexibleSpace,
-        bottom: bottom,
+        bottom: effectiveBottom,
         elevation: elevation,
         scrolledUnderElevation: scrolledUnderElevation,
         shadowColor: shadowColor,
@@ -616,7 +712,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
         primary: primary,
         centerTitle: effectiveCenterTitle,
         titleSpacing: titleSpacing,
-        collapsedHeight: collapsedHeight,
+        collapsedHeight: _effectiveCollapsedHeight(context),
         expandedHeight: expandedHeight,
         floating: floating,
         pinned: pinned,
@@ -638,7 +734,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
       actions: slots.actions,
       automaticallyImplyActions: slots.automaticallyImplyActions,
       flexibleSpace: effectiveFlexibleSpace,
-      bottom: bottom,
+      bottom: effectiveBottom,
       elevation: elevation,
       scrolledUnderElevation: scrolledUnderElevation,
       shadowColor: shadowColor,
@@ -657,7 +753,7 @@ class WindowControlSliverAppBar extends StatelessWidget {
       primary: primary,
       centerTitle: effectiveCenterTitle,
       titleSpacing: titleSpacing,
-      collapsedHeight: collapsedHeight,
+      collapsedHeight: _effectiveCollapsedHeight(context),
       expandedHeight: expandedHeight,
       floating: floating,
       pinned: pinned,
@@ -700,6 +796,7 @@ _MaterialToolbarSlots _resolveMaterialToolbarSlots(
   required double? leadingWidth,
   required EdgeInsets? avoidance,
   required EdgeInsetsDirectional edgePadding,
+  EdgeInsets additionalSafeArea = EdgeInsets.zero,
 }) {
   final sidebarLeading = SidebarLeadingScope.maybeOf(context);
   final effectiveEdgePadding = sidebarLeading == null
@@ -718,8 +815,17 @@ _MaterialToolbarSlots _resolveMaterialToolbarSlots(
     ),
     edgePadding: effectiveEdgePadding,
   );
-  final startInset = geometry.materialStartInset;
-  final endInset = geometry.materialEndInset;
+  final direction = Directionality.of(context);
+  final startInset =
+      geometry.materialStartInset +
+      (direction == TextDirection.ltr
+          ? additionalSafeArea.left
+          : additionalSafeArea.right);
+  final endInset =
+      geometry.materialEndInset +
+      (direction == TextDirection.ltr
+          ? additionalSafeArea.right
+          : additionalSafeArea.left);
   final scaffold = startInset > 0 || endInset > 0 || sidebarLeading != null
       ? Scaffold.maybeOf(context)
       : null;

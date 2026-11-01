@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/widgets.dart';
 
 import 'window_control_layout.dart';
@@ -78,4 +80,25 @@ final class WindowControlToolbarGeometry {
     edgePadding.end + avoidance.end,
     edgePadding.bottom,
   );
+
+  /// Cupertino insets with at least the physical horizontal Safe Area clearance.
+  ///
+  /// Takes the maximum of [safeArea] and window-control avoidance at each
+  /// physical edge, converts it using [textDirection], then adds visual
+  /// [edgePadding]. This avoids reserving overlapping protection twice.
+  EdgeInsetsDirectional cupertinoInsetsWithSafeArea({
+    required EdgeInsets safeArea,
+    required TextDirection textDirection,
+  }) {
+    final physicalAvoidance = avoidance.resolve(textDirection);
+    final left = math.max(physicalAvoidance.left, safeArea.left);
+    final right = math.max(physicalAvoidance.right, safeArea.right);
+    return cupertinoInsets.copyWith(
+      start:
+          edgePadding.start +
+          (textDirection == TextDirection.ltr ? left : right),
+      end:
+          edgePadding.end + (textDirection == TextDirection.ltr ? right : left),
+    );
+  }
 }

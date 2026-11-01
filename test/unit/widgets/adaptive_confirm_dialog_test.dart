@@ -12,10 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
+
 import 'package:flutter/cupertino.dart' show CupertinoCheckbox;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/l10n/localizations.dart';
+import 'package:mhabit/pages/app_settings/_widgets/app_setting_clear_cache.dart';
 import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
@@ -23,6 +26,190 @@ import '../../support/adaptive_dialog.dart';
 import '../../support/adaptive_ui_theme.dart';
 
 void main() {
+  for (final style in AdaptiveStyle.values) {
+    for (final direction in TextDirection.values) {
+      for (final clearCache in [false, true]) {
+        testWidgets(
+          '$style $direction clearCache=$clearCache confirmation follows right/lower pane',
+          (tester) async {
+            tester.view.devicePixelRatio = 1;
+            tester.view.physicalSize = const Size(1000, 800);
+            addTearDown(tester.view.resetPhysicalSize);
+            addTearDown(tester.view.resetDevicePixelRatio);
+            final features = ValueNotifier<List<DisplayFeature>>(const [
+              DisplayFeature(
+                bounds: Rect.fromLTWH(490, 0, 20, 800),
+                type: DisplayFeatureType.hinge,
+                state: DisplayFeatureState.postureHalfOpened,
+              ),
+            ]);
+            addTearDown(features.dispose);
+            await tester.pumpWidget(
+              MaterialApp(
+                theme: ThemeData(platform: TargetPlatform.android),
+                localizationsDelegates: L10n.localizationsDelegates,
+                supportedLocales: L10n.supportedLocales,
+                builder: (context, child) => ValueListenableBuilder(
+                  valueListenable: features,
+                  builder: (context, value, child) => MediaQuery(
+                    data: MediaQuery.of(
+                      context,
+                    ).copyWith(displayFeatures: value),
+                    child: Directionality(
+                      textDirection: direction,
+                      child: child!,
+                    ),
+                  ),
+                  child: TestAdaptiveUiTheme(
+                    update: (theme) => theme.copyWith(style: style),
+                    child: child!,
+                  ),
+                ),
+                home: const Scaffold(body: Text('Host')),
+              ),
+            );
+            final context = tester.element(find.text('Host'));
+            final skips = <bool>[];
+            final result = clearCache
+                ? showAppSettingClearCacheDialog(context: context)
+                : showAdaptiveConfirmDialog(
+                    context: context,
+                    title: const Text('Question'),
+                    onSkipConfirmed: skips.add,
+                  );
+            await tester.pumpAndSettle();
+            final dialog = find.byType(AdaptiveConfirmDialog);
+            final state = tester.state(dialog);
+            final title = find.text(
+              clearCache
+                  ? L10n.of(context)!.appSetting_clearCacheDialog_titleText
+                  : 'Question',
+            );
+            expect(tester.getRect(title).left, greaterThanOrEqualTo(510));
+            expect(tester.getRect(title).right, lessThanOrEqualTo(1000));
+            if (!clearCache && style == AdaptiveStyle.material) {
+              await tester.tap(find.byType(CheckboxListTile));
+              await tester.pump();
+            }
+
+            // Rotate while the same route remains open.
+            tester.view.physicalSize = const Size(800, 1000);
+            features.value = const [
+              DisplayFeature(
+                bounds: Rect.fromLTWH(0, 490, 800, 20),
+                type: DisplayFeatureType.fold,
+                state: DisplayFeatureState.postureHalfOpened,
+              ),
+            ];
+            await tester.pumpAndSettle();
+            expect(tester.getRect(title).top, greaterThanOrEqualTo(510));
+            expect(tester.getCenter(title).dx, closeTo(400, 1));
+            expect(tester.state(dialog), same(state));
+
+            // Growing the window must not leave the anchor in the upper pane.
+            tester.view.physicalSize = const Size(1600, 2400);
+            features.value = const [
+              DisplayFeature(
+                bounds: Rect.fromLTWH(0, 1190, 1600, 20),
+                type: DisplayFeatureType.fold,
+                state: DisplayFeatureState.postureHalfOpened,
+              ),
+            ];
+            await tester.pumpAndSettle();
+            expect(tester.getRect(title).top, greaterThanOrEqualTo(1210));
+            expect(tester.getCenter(title).dx, closeTo(800, 1));
+            expect(tester.state(dialog), same(state));
+
+            // Fully open fold with no obstruction returns to the full window.
+            tester.view.physicalSize = const Size(800, 1000);
+            features.value = const [
+              DisplayFeature(
+                bounds: Rect.fromLTWH(0, 500, 800, 0),
+                type: DisplayFeatureType.fold,
+                state: DisplayFeatureState.postureFlat,
+              ),
+            ];
+            await tester.pumpAndSettle();
+            expect(tester.getRect(title).top, lessThan(500));
+            expect(tester.getCenter(title).dx, closeTo(400, 1));
+            expect(tester.state(dialog), same(state));
+
+            // Switching to the cover display removes the fold partition.
+            tester.view.physicalSize = const Size(430, 932);
+            features.value = const [];
+            await tester.pumpAndSettle();
+            expect(tester.getRect(title).left, greaterThanOrEqualTo(0));
+            expect(tester.getRect(title).right, lessThanOrEqualTo(430));
+            expect(tester.getCenter(title).dx, closeTo(215, 1));
+            expect(tester.state(dialog), same(state));
+            if (!clearCache && style == AdaptiveStyle.material) {
+              expect(
+                tester
+                    .widget<CheckboxListTile>(find.byType(CheckboxListTile))
+                    .value,
+                isTrue,
+              );
+            }
+            adaptiveDialogActions(tester)
+                .firstWhere(
+                  (action) =>
+                      action.label ==
+                      (clearCache
+                          ? L10n.of(
+                              context,
+                            )!.appSetting_clearCacheDialog_confirmText
+                          : 'Confirm'),
+                )
+                .onPressed!();
+            await tester.pumpAndSettle();
+            expect(await result, isTrue);
+            if (!clearCache) {
+              expect(skips, [style == AdaptiveStyle.material]);
+            }
+
+            // Ordinary dialogs keep Flutter's direction-based default.
+            final ordinary = showAdaptiveModalDialog<void>(
+              context: context,
+              barrierDismissible: true,
+              builder: (_) => const AdaptiveDialog(title: Text('Ordinary')),
+            );
+            tester.view.physicalSize = const Size(1000, 800);
+            features.value = const [
+              DisplayFeature(
+                bounds: Rect.fromLTWH(490, 0, 20, 800),
+                type: DisplayFeatureType.hinge,
+                state: DisplayFeatureState.postureHalfOpened,
+              ),
+            ];
+            await tester.pumpAndSettle();
+            final ordinaryRect = tester.getRect(find.text('Ordinary'));
+            if (direction == TextDirection.ltr) {
+              expect(ordinaryRect.right, lessThanOrEqualTo(490));
+            } else {
+              expect(ordinaryRect.left, greaterThanOrEqualTo(510));
+            }
+            features.value = const [
+              DisplayFeature(
+                bounds: Rect.fromLTWH(0, 390, 1000, 20),
+                type: DisplayFeatureType.fold,
+                state: DisplayFeatureState.postureHalfOpened,
+              ),
+            ];
+            await tester.pumpAndSettle();
+            expect(
+              tester.getRect(find.text('Ordinary')).bottom,
+              lessThanOrEqualTo(390),
+            );
+            await tester.tapAt(const Offset(5, 5));
+            await tester.pumpAndSettle();
+            await ordinary;
+            expect(tester.takeException(), isNull);
+          },
+        );
+      }
+    }
+  }
+
   for (final style in AdaptiveStyle.values) {
     testWidgets('$style single submission and cancellation results', (
       tester,

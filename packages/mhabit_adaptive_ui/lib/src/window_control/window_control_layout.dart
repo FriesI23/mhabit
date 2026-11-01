@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:ios_window_control_layout/ios_window_control_layout.dart';
 
+import 'occlusion_layout.dart';
+
 /// Chrome subtree that consumes platform window-control avoidance.
 enum WindowControlLayoutOwner {
   /// Page app bars consume the window-control region.
@@ -32,27 +34,34 @@ class AdaptiveWindowTopSafeArea extends StatelessWidget {
   Widget build(BuildContext context) {
     // Windowed iPadOS chrome shares the traffic-light row. Applying vertical
     // adaptation globally would push that row below the window controls.
-    if (AdaptiveWindowControlLayoutScope.maybeOf(
+    final hasWindowControls =
+        AdaptiveWindowControlLayoutScope.maybeOf(
           context,
         )?.hasWindowControlAvoidance ==
-        true) {
-      return child;
-    }
-    final extraTop =
-        AdaptiveWindowControlLayoutScope.safeAreaGeometryOf(
-          context,
-        )?.verticalAvoidance.top ??
-        0.0;
-    if (extraTop <= 0) return child;
+        true;
+    final extraTop = hasWindowControls
+        ? 0.0
+        : AdaptiveWindowControlLayoutScope.safeAreaGeometryOf(
+                context,
+              )?.verticalAvoidance.top ??
+              0.0;
     final media = MediaQuery.of(context);
     final viewTop = media.viewPadding.top + extraTop;
+    // Keep the boundary installed while native geometry changes. This wraps
+    // Router at the app root; inserting it only for positive adaptation would
+    // remount navigation and discard active dialogs and in-memory route extra.
     return MediaQuery(
-      data: media.copyWith(
-        viewPadding: media.viewPadding.copyWith(top: viewTop),
-        padding: media.padding.copyWith(
-          top: math.max(media.padding.top, viewTop - media.viewInsets.top),
-        ),
-      ),
+      data: extraTop <= 0
+          ? media
+          : media.copyWith(
+              viewPadding: media.viewPadding.copyWith(top: viewTop),
+              padding: media.padding.copyWith(
+                top: math.max(
+                  media.padding.top,
+                  viewTop - media.viewInsets.top,
+                ),
+              ),
+            ),
       child: child,
     );
   }
@@ -127,12 +136,29 @@ class AdaptiveWindowControlLayout extends StatelessWidget {
   const AdaptiveWindowControlLayout({
     super.key,
     this.usesRectangularDisplay = false,
+    this.allowTopToolbarReclamation = false,
+    this.topToolbarAlignmentHeight,
     this.platformLayout,
     required this.child,
   });
 
   /// Whether the current display has rectangular physical corners.
   final bool usesRectangularDisplay;
+
+  /// Allows supported top toolbars to reclaim a native status-area band.
+  ///
+  /// The app supplies this device policy independently of its design style.
+  /// Geometry consumers do not apply an additional target-platform check.
+  /// Defaults to false; opting in still requires usable native geometry and
+  /// declared toolbar bounds.
+  final bool allowTopToolbarReclamation;
+
+  /// Shared row used to align differently sized top-toolbar controls.
+  ///
+  /// A supplied height must be finite and positive. Shorter toolbars are
+  /// centered within that row; taller toolbars retain their own height.
+  /// Null retains each toolbar's own height as the alignment reference.
+  final double? topToolbarAlignmentHeight;
 
   /// A non-null value bypasses the iOS plugin, even when its avoidance is empty.
   /// The owner publishes updates; null retains the existing iPadOS behavior.
@@ -172,7 +198,20 @@ class AdaptiveWindowControlLayout extends StatelessWidget {
                 : null,
             usesRectangularDisplay: usesRectangularDisplay,
             owner: WindowControlLayoutOwner.appBar,
-            child: child,
+            child: AdaptiveOcclusionLayout(
+              geometry: layout.occlusionGeometry,
+              allowTopToolbarReclamation: allowTopToolbarReclamation,
+              topToolbarAlignmentHeight: topToolbarAlignmentHeight,
+              systemSafeArea: layout.baseSafeArea,
+              cornerRadii: layout.isAvailable
+                  ? layout.effectiveCornerRadii
+                  : null,
+              hasWindowControls: layout.hasWindowControlAvoidance,
+              child: OcclusionViewport(
+                bounds: layout.occlusionGeometry?.viewBounds,
+                child: child,
+              ),
+            ),
           );
         },
       ),

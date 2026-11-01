@@ -255,10 +255,38 @@ existing architecture and tooling contracts.
   state space explicit.
 - Use records when they make multi-value selection or transfer clearer and stay
   local in scope.
-- Prefer same-file private helpers or private extensions for local pure logic
-  before introducing a new public abstraction.
+- Structure complete, multi-step layout resolution workflows as named
+  resolvers with a public interface, a `const factory`, and a private
+  implementation in the same file.
+  The public `resolve()` method orchestrates validation, fallbacks, and steps;
+  private steps inline their details or use local closures. Further private
+  calls require actual reuse or a specific structural need. Keep distinct
+  resolution phases explicit, while Flutter callbacks retain composition and
+  child layout duties. Do not create a separate resolver for each predicate or
+  formula; prefer existing geometry methods, record extensions, or member
+  predicates for those calculations.
+- For other local pure logic, prefer same-file private helpers or private
+  extensions before introducing a new public abstraction.
 - Avoid one-off generic helper layers when the real abstraction is still owned
   by a concrete model, codec, workflow, or page-local view model.
+
+## Comments And API Documentation
+
+- Use English comments consistent with nearby code. Follow Flutter/Dart style:
+  `///` Dartdoc for public API contracts and `//` for implementation rationale.
+- When adding or changing public APIs, constructors, fields, or record members,
+  document non-obvious contracts: constraints, defaults, `null` semantics,
+  results, fallbacks, and ownership or lifecycle requirements where relevant.
+  Avoid comments that only repeat a declaration's name or type.
+- Start Dartdoc with a concise summary, separate details into paragraphs, and
+  use `[symbol]` references for related APIs. Reference existing contracts
+  instead of copying upstream documentation or repeating inherited behavior.
+- For geometry, state units, coordinate space and origin, and physical versus
+  directional edges. Add a small fenced `text` ASCII diagram when it clarifies
+  bounds, insets, alignment, or transforms; keep it consistent with the code.
+- Explain invariants and reasons for platform workarounds near the implementation.
+  Keep comments synchronized with behavior; document only guarantees the code
+  actually enforces.
 
 ## Flutter Style
 
@@ -276,6 +304,11 @@ existing architecture and tooling contracts.
 - Use `WindowSize` for adaptive layout decisions. For local width constraints,
   use `WindowSize.fromLayoutConstraints` so viewport-height policy stays
   centralized instead of being reimplemented at call sites.
+- Device breakpoint constants belong in `lib/common/consts.dart`, with platform
+  policy in `lib/extensions/app_info_extensions.dart` and default resolution in
+  the owning root widget. The iOS Duo profile applies across design styles;
+  explicit breakpoint overrides retain precedence. Keep device identification
+  in `AppInfo`, not in renderers.
 
 App-bar action width budgets use `AppBarActionBudget` from
 `lib/widgets/app_bar_action_budget.dart`. Choose slots, candidate counts, or

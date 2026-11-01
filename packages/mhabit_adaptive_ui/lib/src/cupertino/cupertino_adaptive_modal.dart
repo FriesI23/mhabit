@@ -8,6 +8,7 @@ import 'package:flutter/material.dart' show MaterialLocalizations, Theme;
 import '../adaptive/adaptive_icon_button.dart';
 import '../adaptive/adaptive_modal_content.dart';
 import '../adaptive/adaptive_modal_layout.dart';
+import '../adaptive/adaptive_modal_viewport.dart';
 import '../adaptive/adaptive_sheet.dart';
 import '../adaptive/modal_sheet_drag_region.dart';
 import '../window_control/cupertino_navigation_bar.dart';
@@ -56,16 +57,24 @@ class CupertinoAdaptiveModalPageRoute<T> extends CupertinoPageRoute<T> {
 /// The returned future completes with the value passed to [Navigator.pop]
 /// when the modal is closed. Set [useRootNavigator] to false to push onto the
 /// nearest navigator instead of the root navigator.
+///
+/// [presentationResolver] reads the unpartitioned route environment to choose
+/// display-feature filtering. A sheet ignores top/bottom folds; a dialog keeps
+/// them. Null retains dialog filtering. The content builder owns the surface's
+/// presentation and must use the same policy as the resolver.
 Future<T?> showCupertinoAdaptiveModalRoute<T>({
   required BuildContext context,
   required WidgetBuilder builder,
   required bool useRootNavigator,
   required RouteSettings? routeSettings,
   required String barrierLabel,
+  AdaptiveModalPresentation Function(BuildContext context)?
+  presentationResolver,
 }) => Navigator.of(context, rootNavigator: useRootNavigator).push<T>(
   CupertinoAdaptiveModalRoute<T>(
     settings: routeSettings,
     barrierLabel: barrierLabel,
+    presentationResolver: presentationResolver,
     builder: builder,
   ),
 );
@@ -139,19 +148,39 @@ Future<T?> showCupertinoAdaptiveSheetRoute<T>({
     settings: routeSettings,
     enableDrag: enableDrag,
     showDragHandle: showDragHandle,
-    scrollableBuilder: (context, controller) =>
-        _CupertinoSheetBackground(child: builder(controller)),
+    scrollableBuilder: (context, controller) => AdaptiveModalMediaQuery(
+      isSheet: true,
+      child: DisplayFeatureSubScreen(
+        child: AdaptiveModalViewport(
+          child: _CupertinoSheetBackground(child: builder(controller)),
+        ),
+      ),
+    ),
   ),
 );
 
+/// A Cupertino popup route with display-feature selection and drag transitions.
+///
+/// The builder owns the modal surface. This route publishes the selected pane's
+/// size without replacing the content subtree when fold geometry changes.
 class CupertinoAdaptiveModalRoute<T> extends PopupRoute<T> {
+  /// Creates a route whose content and optional filtering policy are supplied
+  /// by the adaptive modal owner.
   CupertinoAdaptiveModalRoute({
     super.settings,
     required this.builder,
     required this.barrierLabel,
+    this.presentationResolver,
   });
 
+  /// Builds content beneath the selected pane's [MediaQuery].
   final WidgetBuilder builder;
+
+  /// Chooses fold filtering from the unpartitioned route environment.
+  ///
+  /// Sheet presentations ignore top/bottom partitions; null retains dialog
+  /// filtering. This does not choose the visual surface rendered by [builder].
+  final AdaptiveModalPresentation Function(BuildContext)? presentationResolver;
 
   @override
   final String barrierLabel;
@@ -236,7 +265,13 @@ class CupertinoAdaptiveModalRoute<T> extends PopupRoute<T> {
     BuildContext context,
     Animation<double> animation,
     Animation<double> secondaryAnimation,
-  ) => builder(context);
+  ) => AdaptiveModalMediaQuery(
+    isSheet:
+        presentationResolver?.call(context) == AdaptiveModalPresentation.sheet,
+    child: DisplayFeatureSubScreen(
+      child: AdaptiveModalViewport(child: Builder(builder: builder)),
+    ),
+  );
 
   @override
   Widget buildTransitions(

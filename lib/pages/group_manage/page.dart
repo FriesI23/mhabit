@@ -191,6 +191,11 @@ class _PageState extends State<_Page> {
   Widget build(BuildContext context) {
     final child = ColorfulNavibar(
       child: Scaffold(
+        floatingActionButtonAnimator:
+            AdaptiveOcclusionLayout.floatingActionButtonAnimatorOf(context),
+        floatingActionButtonLocation: AdaptiveOcclusionFabLocation.resolveOf(
+          context,
+        ),
         body: Selector<GroupManageViewModel, (bool, bool)>(
           selector: (context, vm) => (vm.hasLoad, vm.consumeForceReloadFlag()),
           shouldRebuild: (previous, next) => previous.$1 != next.$1 || next.$2,

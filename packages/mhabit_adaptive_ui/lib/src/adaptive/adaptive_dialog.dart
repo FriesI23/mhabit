@@ -5,12 +5,16 @@ import '../adaptive_style.dart';
 import '../app_adaptive_ui_theme.dart';
 import '../cupertino/cupertino_adaptive_dialog.dart';
 import '../material/material_adaptive_dialog.dart';
+import 'adaptive_modal_viewport.dart';
 
 /// Opens a standard centered dialog, without sheet or drag behavior.
 ///
 /// Style and inherited themes are captured at the call site. The builder runs
 /// in the new route; page-local providers must be bridged explicitly. Actions
 /// can return a typed result using Navigator.pop with the builder's context.
+/// [anchorPoint] selects the nearest display-feature sub-screen; when omitted,
+/// Flutter uses the text direction's default. Content stays centered in that
+/// sub-screen, or in the whole window when there is no partition.
 Future<T?> showAdaptiveModalDialog<T>({
   required BuildContext context,
   required WidgetBuilder builder,
@@ -18,6 +22,7 @@ Future<T?> showAdaptiveModalDialog<T>({
   AdaptiveStyle? styleOverride,
   bool useRootNavigator = true,
   RouteSettings? routeSettings,
+  Offset? anchorPoint,
 }) {
   final style = styleOverride ?? AdaptiveStyle.of(context);
   final themes = InheritedTheme.capture(
@@ -26,11 +31,13 @@ Future<T?> showAdaptiveModalDialog<T>({
   );
   final direction = Directionality.of(context);
   Widget buildContent(BuildContext context) => themes.wrap(
-    Directionality(
-      textDirection: direction,
-      child: AdaptiveComponentTheme(
-        style: style,
-        child: Builder(builder: builder),
+    AdaptiveModalViewport(
+      child: Directionality(
+        textDirection: direction,
+        child: AdaptiveComponentTheme(
+          style: style,
+          child: Builder(builder: builder),
+        ),
       ),
     ),
   );
@@ -42,6 +49,7 @@ Future<T?> showAdaptiveModalDialog<T>({
       barrierDismissible: barrierDismissible,
       useRootNavigator: useRootNavigator,
       routeSettings: routeSettings,
+      anchorPoint: anchorPoint,
     ),
     AdaptiveStyle.apple => showCupertinoDialog<T>(
       context: context,
@@ -49,6 +57,7 @@ Future<T?> showAdaptiveModalDialog<T>({
       barrierDismissible: barrierDismissible,
       useRootNavigator: useRootNavigator,
       routeSettings: routeSettings,
+      anchorPoint: anchorPoint,
     ),
   };
 }

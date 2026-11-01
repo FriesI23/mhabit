@@ -39,13 +39,14 @@ Map<String, double> _insets({
   'bottom': bottom,
 };
 
-Map<String, Object> _windowControlPayload({
+Map<String, Object?> _windowControlPayload({
   required bool hasHorizontalAvoidance,
   bool hasVerticalAvoidance = false,
   bool isPad = true,
   bool isFullScreen = false,
-}) => <String, Object>{
-  'schemaVersion': 5,
+}) => <String, Object?>{
+  'schemaVersion': 6,
+  'occlusionGeometry': null,
   'isAvailable': true,
   'isPad': isPad,
   'isFullScreen': isFullScreen,
@@ -64,6 +65,15 @@ Map<String, Object> _windowControlPayload({
 };
 
 void main() {
+  const events = MethodChannel('ios_window_control_layout/occlusion_changes');
+  setUp(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(events, (_) async => null);
+  });
+  tearDown(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(events, null);
+  });
   group('AppRootView', () {
     testWidgets('default constructor builds MaterialApp with home:', (
       tester,
@@ -564,8 +574,9 @@ void main() {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(_windowControlChannel, (_) async {
-            return <String, Object>{
-              'schemaVersion': 5,
+            return <String, Object?>{
+              'schemaVersion': 6,
+              'occlusionGeometry': null,
               'isAvailable': true,
               'isPad': true,
               'isFullScreen': false,

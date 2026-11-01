@@ -7,10 +7,78 @@ import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 import '../adaptive/adaptive_navigation_destination.dart' as app;
 import '../breakpoints/window_size_class.dart';
 import '../cupertino/cupertino_toolbar_extensions.dart';
+import '../window_control/occlusion_layout.dart';
+import '../window_control/occlusion_toolbar.dart';
 import '../window_control/window_control_layout.dart';
 
 typedef CupertinoSidebarToolbarMiddleBuilder =
     Widget Function(BuildContext context, Widget middle, double progress);
+
+/// Centers for a shared Sidebar slot, relative to the available toolbar region.
+///
+/// Coordinates and widths use logical pixels after side reservations. The
+/// visible capsule keeps the native window's center; once hidden, the slot
+/// switches to the center of the pane's remaining safe width.
+typedef SidebarToolbarSlotLayout = ({
+  /// The physical x coordinate used while the collapsed capsule is visible.
+  double centerX,
+
+  /// The physical x coordinate used when the capsule is fully hidden.
+  double emptyCenterX,
+
+  /// The toolbar width before symmetric layout padding is removed.
+  double availableWidth,
+});
+
+/// Projects a shared slot center into the toolbar's current layout width.
+extension SidebarToolbarSlotGeometry on SidebarToolbarSlotLayout {
+  /// Returns the slot center relative to a row of [layoutWidth].
+  ///
+  /// Positive [visibility] uses the visible-capsule center; zero uses the empty
+  /// center. This selects a center rather than interpolating between the two.
+  /// Any width removed from the available region is treated as symmetric
+  /// padding, so half of that difference is subtracted from the center.
+  double centerFor({required double layoutWidth, required double visibility}) {
+    final center = visibility > 0 ? centerX : emptyCenterX;
+    final layoutOffset = math.max(0.0, (availableWidth - layoutWidth) / 2);
+    return center - layoutOffset;
+  }
+}
+
+/// Converts the Sidebar's accepted region to a native-view layout override.
+///
+/// With no applicable Sidebar, the page resolves independently. A rejected
+/// Sidebar region explicitly blocks independent top-safe-area reclamation.
+abstract interface class SidebarTopToolbarLayoutOverrideResolver {
+  /// Creates a resolver reading the Sidebar and geometry enclosing [context].
+  const factory SidebarTopToolbarLayoutOverrideResolver({
+    required BuildContext context,
+  }) = _SidebarTopToolbarLayoutOverrideResolver;
+
+  /// Returns a shared override, or null to let the toolbar resolve independently.
+  ///
+  /// A non-null override with a null layout rejects reclamation, including when
+  /// the Sidebar's region or ownership cannot be validated.
+  TopToolbarLayoutOverride? resolve();
+}
+
+/// Resolves a toolbar slot only after its Sliver reclaims the shared top row.
+abstract interface class SidebarToolbarSlotLayoutResolver {
+  /// Creates a resolver for a toolbar beneath its occlusion boundary.
+  ///
+  /// [topToolbarLayoutOverride] supplies the accepted shared region and its
+  /// native root bounds; [context] supplies the pane and projected safe area.
+  const factory SidebarToolbarSlotLayoutResolver({
+    required BuildContext context,
+    required TopToolbarLayoutOverride? topToolbarLayoutOverride,
+  }) = _SidebarToolbarSlotLayoutResolver;
+
+  /// Returns local slot geometry after successful top-row reclamation.
+  ///
+  /// Returns null if the row has not been reclaimed or shared geometry is
+  /// unavailable. Callers then retain their ordinary centered layout.
+  SidebarToolbarSlotLayout? resolve();
+}
 
 /// The leading sidebar does not touch the window's opposite physical edge.
 /// Keep its local safe area from inheriting that edge's camera/status inset.
@@ -174,12 +242,16 @@ class CupertinoSidebarPresentationScope
 
 /// Lays out toolbar regions around a centered collapsed bar.
 class CupertinoSidebarToolbarRegions extends StatelessWidget {
+  /// The default gap on each side of the collapsed Sidebar capsule.
+  static const double defaultMiddleSpacing = 6.0;
+
   const CupertinoSidebarToolbarRegions({
     super.key,
     required this.start,
     required this.end,
-    this.middleSpacing = 6.0,
+    this.middleSpacing = defaultMiddleSpacing,
     this.middleEnabled = true,
+    this.slotLayout,
   });
 
   final Widget start;
@@ -187,34 +259,43 @@ class CupertinoSidebarToolbarRegions extends StatelessWidget {
   final double middleSpacing;
   final bool middleEnabled;
 
+  /// Shared slot centers, or null to center within this toolbar's own width.
+  ///
+  /// The logical start/end regions receive the space on either side of the
+  /// visible capsule; [middleSpacing] separates them from its reserved span.
+  final SidebarToolbarSlotLayout? slotLayout;
+
   @override
-  Widget build(BuildContext context) => CupertinoSidebarToolbarMiddleLayout(
-    enabled: middleEnabled,
-    builder: (context, middle, visibilityProgress) => CustomMultiChildLayout(
-      delegate: _CupertinoSidebarToolbarRegionsDelegate(
-        textDirection: Directionality.of(context),
-        middleSpacing: middleSpacing,
-        middleVisibility: visibilityProgress,
+  Widget build(BuildContext context) {
+    return CupertinoSidebarToolbarMiddleLayout(
+      enabled: middleEnabled,
+      builder: (context, middle, visibilityProgress) => CustomMultiChildLayout(
+        delegate: _CupertinoSidebarToolbarRegionsDelegate(
+          textDirection: Directionality.of(context),
+          middleSpacing: middleSpacing,
+          middleVisibility: visibilityProgress,
+          slotLayout: slotLayout,
+        ),
+        children: [
+          LayoutId(
+            id: _SidebarToolbarRegion.start,
+            child: KeyedSubtree(
+              key: const ValueKey('cupertino-sidebar-toolbar-start-region'),
+              child: start,
+            ),
+          ),
+          LayoutId(
+            id: _SidebarToolbarRegion.end,
+            child: KeyedSubtree(
+              key: const ValueKey('cupertino-sidebar-toolbar-end-region'),
+              child: end,
+            ),
+          ),
+          LayoutId(id: _SidebarToolbarRegion.middle, child: middle),
+        ],
       ),
-      children: [
-        LayoutId(
-          id: _SidebarToolbarRegion.start,
-          child: KeyedSubtree(
-            key: const ValueKey('cupertino-sidebar-toolbar-start-region'),
-            child: start,
-          ),
-        ),
-        LayoutId(
-          id: _SidebarToolbarRegion.end,
-          child: KeyedSubtree(
-            key: const ValueKey('cupertino-sidebar-toolbar-end-region'),
-            child: end,
-          ),
-        ),
-        LayoutId(id: _SidebarToolbarRegion.middle, child: middle),
-      ],
-    ),
-  );
+    );
+  }
 }
 
 enum _SidebarToolbarRegion { start, middle, end }
@@ -224,11 +305,13 @@ class _CupertinoSidebarToolbarRegionsDelegate extends MultiChildLayoutDelegate {
     required this.textDirection,
     required this.middleSpacing,
     required this.middleVisibility,
+    required this.slotLayout,
   });
 
   final TextDirection textDirection;
   final double middleSpacing;
   final double middleVisibility;
+  final SidebarToolbarSlotLayout? slotLayout;
 
   @override
   void performLayout(Size size) {
@@ -236,13 +319,41 @@ class _CupertinoSidebarToolbarRegionsDelegate extends MultiChildLayoutDelegate {
       _SidebarToolbarRegion.middle,
       BoxConstraints.loose(size),
     );
-    final middleLeft = (size.width - middleSize.width) / 2;
+    final center =
+        slotLayout?.centerFor(
+          layoutWidth: size.width,
+          visibility: middleVisibility,
+        ) ??
+        size.width / 2;
+    final middleLeft = center - middleSize.width / 2;
     final excludedMiddleWidth = middleSize.width * middleVisibility;
-    final sideExtent = ((size.width - excludedMiddleWidth) / 2 - middleSpacing)
-        .clamp(0.0, size.width);
-    final sideConstraints = BoxConstraints.tight(Size(sideExtent, size.height));
-    final startSize = layoutChild(_SidebarToolbarRegion.start, sideConstraints);
-    final endSize = layoutChild(_SidebarToolbarRegion.end, sideConstraints);
+    final leftExtent = (center - excludedMiddleWidth / 2 - middleSpacing).clamp(
+      0.0,
+      size.width,
+    );
+    final rightExtent =
+        (size.width - center - excludedMiddleWidth / 2 - middleSpacing).clamp(
+          0.0,
+          size.width,
+        );
+    final startSize = layoutChild(
+      _SidebarToolbarRegion.start,
+      BoxConstraints.tight(
+        Size(
+          textDirection == TextDirection.ltr ? leftExtent : rightExtent,
+          size.height,
+        ),
+      ),
+    );
+    final endSize = layoutChild(
+      _SidebarToolbarRegion.end,
+      BoxConstraints.tight(
+        Size(
+          textDirection == TextDirection.ltr ? rightExtent : leftExtent,
+          size.height,
+        ),
+      ),
+    );
     final startX = textDirection == TextDirection.ltr
         ? 0.0
         : size.width - startSize.width;
@@ -267,7 +378,8 @@ class _CupertinoSidebarToolbarRegionsDelegate extends MultiChildLayoutDelegate {
   bool shouldRelayout(_CupertinoSidebarToolbarRegionsDelegate oldDelegate) =>
       textDirection != oldDelegate.textDirection ||
       middleSpacing != oldDelegate.middleSpacing ||
-      middleVisibility != oldDelegate.middleVisibility;
+      middleVisibility != oldDelegate.middleVisibility ||
+      slotLayout != oldDelegate.slotLayout;
 }
 
 /// Lays out a title and actions around a centered collapsed bar.
@@ -280,6 +392,7 @@ class CupertinoSidebarToolbarLayout extends StatelessWidget {
     this.leading,
     this.trailing,
     this.middleSpacing = 6.0,
+    this.slotLayout,
   });
 
   final Widget title;
@@ -287,8 +400,12 @@ class CupertinoSidebarToolbarLayout extends StatelessWidget {
   final Widget? trailing;
   final double middleSpacing;
 
+  /// Shared slot centers, or null to center within this toolbar's own width.
+  final SidebarToolbarSlotLayout? slotLayout;
+
   @override
   Widget build(BuildContext context) => CupertinoSidebarToolbarRegions(
+    slotLayout: slotLayout,
     middleSpacing: middleSpacing,
     start: Row(
       children: [
@@ -405,6 +522,114 @@ extension SidebarWindowControlAdapter on BuildContext {
       math.max(appBarAvoidance.top, sidebarAvoidance.top),
       math.max(appBarAvoidance.right, sidebarAvoidance.right),
       math.max(appBarAvoidance.bottom, sidebarAvoidance.bottom),
+    );
+  }
+}
+
+final class _SidebarTopToolbarLayoutOverrideResolver
+    implements SidebarTopToolbarLayoutOverrideResolver {
+  const _SidebarTopToolbarLayoutOverrideResolver({required this.context});
+
+  final BuildContext context;
+
+  @override
+  TopToolbarLayoutOverride? resolve() {
+    final leading = SidebarLeadingScope.maybeOf(context);
+    final scope = AdaptiveOcclusionScope.maybeOf(context);
+    if (leading == null || scope?.allowTopToolbarReclamation != true) {
+      return null;
+    }
+    final viewportBounds = scope?.geometry?.viewBounds;
+    final region = leading.toolbarRegion;
+    // The shell proposes regions only for a declared full-view host. A foreign
+    // Sidebar cannot borrow the enclosing presentation's coordinate contract.
+    final presentation = CupertinoSidebarPresentationScope.maybeOf(context);
+    final host = context.findAncestorWidgetOfExactType<CupertinoSidebar>();
+    if (viewportBounds == null ||
+        region == null ||
+        !_matchesShellHost(presentation: presentation, host: host)) {
+      return (layout: null, viewportBounds: viewportBounds);
+    }
+    return (
+      layout: _projectAcceptedRegion(
+        region: region,
+        viewportBounds: viewportBounds,
+      ),
+      viewportBounds: viewportBounds,
+    );
+  }
+
+  bool _matchesShellHost({
+    required CupertinoSidebarPresentationScope? presentation,
+    required CupertinoSidebar? host,
+  }) =>
+      presentation != null &&
+      host != null &&
+      identical(host.controller, presentation.notifier);
+
+  TopToolbarLayout _projectAcceptedRegion({
+    required CupertinoSidebarToolbarRegion region,
+    required Rect viewportBounds,
+  }) => (
+    topInset: region.bounds.top,
+    minimumExtent: region.minimumExtent,
+    bounds: region.bounds.shift(viewportBounds.topLeft),
+  );
+}
+
+final class _SidebarToolbarSlotLayoutResolver
+    implements SidebarToolbarSlotLayoutResolver {
+  const _SidebarToolbarSlotLayoutResolver({
+    required this.context,
+    required this.topToolbarLayoutOverride,
+  });
+
+  final BuildContext context;
+  final TopToolbarLayoutOverride? topToolbarLayoutOverride;
+
+  @override
+  SidebarToolbarSlotLayout? resolve() {
+    // Only a successfully projected Sliver can use the accepted geometry.
+    if (!AdaptiveOcclusionToolbar.isTopReclaimedOf(context)) return null;
+    final paneBounds = OcclusionViewport.maybeOf(context)?.bounds;
+    final viewportBounds = topToolbarLayoutOverride?.viewportBounds;
+    final layout = topToolbarLayoutOverride?.layout;
+    if (layout == null || paneBounds == null || viewportBounds == null) {
+      return null;
+    }
+    return _resolveSlotLayout(
+      viewportBounds: viewportBounds,
+      paneBounds: paneBounds,
+      availableBounds: layout.bounds,
+      mediaPadding: MediaQuery.paddingOf(context),
+    );
+  }
+
+  SidebarToolbarSlotLayout _resolveSlotLayout({
+    required Rect viewportBounds,
+    required Rect paneBounds,
+    required Rect availableBounds,
+    required EdgeInsets mediaPadding,
+  }) {
+    final consumedLeft = math.max(
+      0.0,
+      availableBounds.left - paneBounds.left - mediaPadding.left,
+    );
+    final consumedRight = math.max(
+      0.0,
+      paneBounds.right - availableBounds.right - mediaPadding.right,
+    );
+    return (
+      centerX: viewportBounds.center.dx - paneBounds.left - consumedLeft,
+      // Once the capsule is hidden, share the pane's actual safe width.
+      // Its physical center can leave too little room beside a status inset.
+      emptyCenterX:
+          (math.max(paneBounds.left, availableBounds.left) +
+                  math.min(paneBounds.right, availableBounds.right)) /
+              2 -
+          paneBounds.left -
+          consumedLeft,
+      availableWidth: paneBounds.width - consumedLeft - consumedRight,
     );
   }
 }

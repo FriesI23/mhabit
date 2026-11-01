@@ -1,6 +1,10 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import '../breakpoints/window_size_class.dart';
 import '../window_control/material_app_bar.dart';
+import '../window_control/occlusion_sliver_toolbar.dart';
 import 'material_expandable_search_bar.dart';
 import 'material_sliver_search_bar_layout.dart';
 
@@ -77,10 +81,22 @@ class MaterialSliverSearchBar extends StatelessWidget {
   final bool pinned;
 
   @override
-  Widget build(BuildContext context) => SliverLayoutBuilder(
-    builder: (context, constraints) =>
-        _buildSliver(context, availableWidth: constraints.crossAxisExtent),
+  Widget build(BuildContext context) => AdaptiveSliverOcclusionToolbar(
+    height: style.toolbarHeight,
+    topOffset: MediaQuery.paddingOf(context).top,
+    reclaimTopSafeArea: pinned,
+    child: SliverLayoutBuilder(builder: _buildToolbar),
   );
+
+  Widget _buildToolbar(BuildContext context, SliverConstraints constraints) =>
+      _buildSliver(
+        context,
+        availableWidth: math.max(
+          0,
+          constraints.crossAxisExtent -
+              MediaQuery.paddingOf(context).horizontal,
+        ),
+      );
 
   Widget _buildSliver(BuildContext context, {required double availableWidth}) {
     final widthClass = WindowSize.of(context).width;

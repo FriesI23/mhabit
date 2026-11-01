@@ -1,6 +1,10 @@
+import 'dart:math' as math;
+
 import 'package:flutter/cupertino.dart';
 
 import 'interaction_region.dart';
+import 'occlusion_sliver_toolbar.dart';
+import 'occlusion_toolbar.dart';
 import 'toolbar_geometry.dart';
 
 /// A [CupertinoNavigationBar] that pads only its leading and trailing controls.
@@ -135,7 +139,10 @@ class WindowControlCupertinoNavigationBar extends StatelessWidget
   ).shouldFullyObstruct(context);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      AdaptiveOcclusionToolbar(child: Builder(builder: _buildNavigationBar));
+
+  Widget _buildNavigationBar(BuildContext context) {
     final media = MediaQuery.of(context);
     final top = media.padding.top < toolbarTopInset
         ? toolbarTopInset
@@ -243,7 +250,17 @@ class WindowControlCupertinoSliverNavigationBar extends StatelessWidget {
   final EdgeInsetsDirectional windowControlEdgePadding;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => AdaptiveSliverOcclusionToolbar(
+    height: kMinInteractiveDimensionCupertino,
+    topOffset: MediaQuery.paddingOf(context).top < toolbarTopInset
+        ? toolbarTopInset
+        : MediaQuery.paddingOf(context).top,
+    reclaimTopSafeArea: true,
+    minimumTopInset: toolbarTopInset,
+    child: Builder(builder: _buildNavigationBar),
+  );
+
+  Widget _buildNavigationBar(BuildContext context) {
     final leading = this.leading;
     final middle = this.middle;
     final trailing = this.trailing;
@@ -252,6 +269,16 @@ class WindowControlCupertinoSliverNavigationBar extends StatelessWidget {
     final top = media.padding.top < toolbarTopInset
         ? toolbarTopInset
         : media.padding.top;
+    final minimumExtent = AdaptiveOcclusionToolbar.minimumExtentOf(context);
+    final protectionHeight = minimumExtent == null
+        ? 0.0
+        : math.max(
+            0.0,
+            minimumExtent - top - kMinInteractiveDimensionCupertino,
+          );
+    final effectiveBottom = protectionHeight > 0
+        ? _bottomWithProtection(protectionHeight)
+        : bottom;
     return MediaQuery(
       data: media.copyWith(padding: media.padding.copyWith(top: top)),
       child: CupertinoSliverNavigationBar(
@@ -284,7 +311,26 @@ class WindowControlCupertinoSliverNavigationBar extends StatelessWidget {
           edgePadding: windowControlEdgePadding,
         ),
         stretch: stretch,
-        bottom: bottom,
+        bottom: effectiveBottom,
+        bottomMode: protectionHeight > 0
+            ? NavigationBarBottomMode.always
+            : null,
+      ),
+    );
+  }
+
+  PreferredSizeWidget _bottomWithProtection(double protectionHeight) {
+    final bottom = this.bottom;
+    return PreferredSize(
+      preferredSize: Size.fromHeight(
+        protectionHeight + (bottom?.preferredSize.height ?? 0),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(height: protectionHeight),
+          ?bottom,
+        ],
       ),
     );
   }

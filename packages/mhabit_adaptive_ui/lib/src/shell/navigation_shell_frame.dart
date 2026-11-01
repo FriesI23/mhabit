@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../breakpoints/window_size_class.dart';
+import '../window_control/occlusion_layout.dart';
 import '../window_control/window_control_layout.dart';
 import 'adaptive_nav_scope.dart';
 import 'adaptive_nav_visibility.dart';
@@ -82,6 +83,7 @@ class NavigationShellFrame extends StatefulWidget {
     this.floatingActionButtonBuilder,
     this.navigationSurfaceColorResolver,
     this.floatingActionButtonLocation,
+    this.floatingActionButtonLocationBuilder,
     this.switchDuration = navigationShellAnimationDuration,
   });
 
@@ -134,6 +136,14 @@ class NavigationShellFrame extends StatefulWidget {
 
   /// Scaffold placement used by [floatingActionButtonBuilder].
   final FloatingActionButtonLocation? floatingActionButtonLocation;
+
+  /// Resolves a placement with a context immediately above its Scaffold.
+  ///
+  /// When supplied, takes precedence over [floatingActionButtonLocation].
+  /// The context includes the shell's navigation and window-control
+  /// scopes, so geometry-dependent locations can subscribe to their changes.
+  final FloatingActionButtonLocation Function(BuildContext context)?
+  floatingActionButtonLocationBuilder;
 
   /// Duration used when switching compact navigation in or out.
   final Duration switchDuration;
@@ -235,37 +245,46 @@ class _NavigationShellFrameState extends State<NavigationShellFrame> {
         context,
         _form,
       ),
-      child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        extendBody: true,
-        resizeToAvoidBottomInset: false,
-        body: _NavigationScrollWishObserver(
-          onVisibilityChanged: _scrollWish.report,
-          policy: widget.scrollWishPolicy,
-          child: _NavigationShellBodyHost(
-            ambientPadding: padding,
-            ambientViewPadding: viewPadding,
-            form: _form,
-            bodyBuilder: widget.bodyBuilder,
-            onDestinationSelected: _onDestinationSelected,
-            child: widget.child,
+      child: Builder(
+        builder: (context) => Scaffold(
+          floatingActionButtonAnimator:
+              AdaptiveOcclusionLayout.floatingActionButtonAnimatorOf(context),
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          extendBody: true,
+          resizeToAvoidBottomInset: false,
+          body: _NavigationScrollWishObserver(
+            onVisibilityChanged: _scrollWish.report,
+            policy: widget.scrollWishPolicy,
+            child: _NavigationShellBodyHost(
+              ambientPadding: padding,
+              ambientViewPadding: viewPadding,
+              form: _form,
+              bodyBuilder: widget.bodyBuilder,
+              onDestinationSelected: _onDestinationSelected,
+              child: widget.child,
+            ),
           ),
-        ),
-        floatingActionButton: widget.floatingActionButtonBuilder?.call(
-          context,
-          chromeState,
-        ),
-        floatingActionButtonLocation: widget.floatingActionButtonLocation,
-        bottomNavigationBar: AnimatedSwitcher(
-          duration: widget.switchDuration,
-          switchInCurve: Curves.easeOut,
-          switchOutCurve: Curves.easeOut,
-          child: compact
-              ? KeyedSubtree(
-                  key: const ValueKey('bottom-bar'),
-                  child: widget.compactNavigationBuilder(context, chromeState),
-                )
-              : const SizedBox.shrink(key: ValueKey('bottom-bar-hidden')),
+          floatingActionButton: widget.floatingActionButtonBuilder?.call(
+            context,
+            chromeState,
+          ),
+          floatingActionButtonLocation:
+              widget.floatingActionButtonLocationBuilder?.call(context) ??
+              widget.floatingActionButtonLocation,
+          bottomNavigationBar: AnimatedSwitcher(
+            duration: widget.switchDuration,
+            switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeOut,
+            child: compact
+                ? KeyedSubtree(
+                    key: const ValueKey('bottom-bar'),
+                    child: widget.compactNavigationBuilder(
+                      context,
+                      chromeState,
+                    ),
+                  )
+                : const SizedBox.shrink(key: ValueKey('bottom-bar-hidden')),
+          ),
         ),
       ),
     );

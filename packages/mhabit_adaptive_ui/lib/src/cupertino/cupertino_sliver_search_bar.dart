@@ -3,12 +3,15 @@ import 'dart:math' as math;
 import 'package:adaptive_actions/cupertino.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Theme;
+import 'package:flutter/rendering.dart' show SliverConstraints;
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
 import '../adaptive/adaptive_app_bar_actions.dart';
 import '../breakpoints/window_size_class.dart';
 import '../shell/sidebar_adapter.dart';
 import '../window_control/cupertino_navigation_bar.dart';
+import '../window_control/occlusion_sliver_toolbar.dart';
+import '../window_control/occlusion_toolbar.dart';
 import 'cupertino_search_toolbar.dart';
 import 'cupertino_sidebar_navigation_bar_bottom.dart';
 import 'cupertino_toolbar_extensions.dart';
@@ -177,6 +180,39 @@ class _CupertinoSliverSearchBarState<T extends Object>
 
   @override
   Widget build(BuildContext context) {
+    final ambientMedia = MediaQuery.of(context);
+    final topToolbarLayoutOverride = SidebarTopToolbarLayoutOverrideResolver(
+      context: context,
+    ).resolve();
+    final toolbarTopInset =
+        widget.toolbarTopInset ??
+        Theme.of(context).platform.defaultCupertinoToolbarTopInset;
+    final toolbarHeight = CupertinoSidebarPresentationScope.toolbarGeometryOf(
+      context,
+    ).contentHeight;
+    return AdaptiveSliverOcclusionToolbar(
+      height: toolbarHeight,
+      topOffset: math.max(ambientMedia.padding.top, toolbarTopInset),
+      reclaimTopSafeArea: widget.pinned,
+      minimumTopInset: toolbarTopInset,
+      topToolbarLayoutOverride: topToolbarLayoutOverride,
+      child: SliverLayoutBuilder(
+        builder: (context, constraints) => _buildHeader(
+          context,
+          constraints,
+          ambientMedia,
+          topToolbarLayoutOverride,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(
+    BuildContext context,
+    SliverConstraints constraints,
+    MediaQueryData ambientMedia,
+    TopToolbarLayoutOverride? topToolbarLayoutOverride,
+  ) {
     final toolbarTopInset =
         widget.toolbarTopInset ??
         Theme.of(context).platform.defaultCupertinoToolbarTopInset;
@@ -202,7 +238,11 @@ class _CupertinoSliverSearchBarState<T extends Object>
         ? toolbarHeight
         : toolbarHeight +
               (sidebarNavigationBarBottom?.preferredSize.height ?? 0);
-    final extent = topPadding + sidebarToolbarHeight + widget.bottomExtent;
+    final baseExtent = math.max(
+      topPadding + sidebarToolbarHeight,
+      AdaptiveOcclusionToolbar.minimumExtentOf(context) ?? 0,
+    );
+    final extent = baseExtent + widget.bottomExtent;
 
     return SliverPersistentHeader(
       key: const ValueKey('cupertino-sliver-search-bar'),
@@ -228,47 +268,58 @@ class _CupertinoSliverSearchBarState<T extends Object>
                 left: 0,
                 right: 0,
                 height: toolbarHeight,
-                child: DefaultTextStyle(
-                  style: CupertinoTheme.of(context).textTheme.navTitleTextStyle,
-                  child: CupertinoSearchToolbar(
-                    title: widget.keyword.isEmpty
-                        ? widget.title
-                        : Text(widget.hintText ?? 'Search'),
-                    showTitle: sidebarLeading != null || !isLarge,
-                    centerTitle:
-                        sidebarLeading == null && !isCompact && !isLarge,
-                    preferPersistentSearch: isLarge,
-                    sidebarLeading: sidebarLeading,
-                    leading: widget.leading,
-                    collection: widget.collection,
-                    onInvoke: widget.onInvoke,
-                    iconBuilder: widget.actions?.iconBuilder,
-                    actionButtonBuilder: widget.actions?.actionButtonBuilder,
-                    menuBuilderForAction: widget.actions?.menuBuilderForAction,
-                    presentationForAction:
-                        widget.actions?.presentationForAction,
-                    manuallyExpanded: _expanded,
-                    controller: widget.controller,
-                    focusNode: widget.focusNode,
-                    hintText: widget.hintText,
-                    maxSearchWidth: widget.maxSearchWidth,
-                    onChanged: widget.onChanged,
-                    onSubmitted: widget.onSubmitted,
-                    onSearchActivated: _activateSearch,
-                    onTapOutside: widget.onTapOutside,
-                    onOverflowMenuOpened: _handleOverflowMenuOpened,
-                    onOverflowMenuClosed: _handleOverflowMenuClosed,
-                    onOverflowPressed: _handleOverflowPressed,
+                child: AdaptiveOcclusionToolbar(
+                  bounds: constraints.occlusionToolbarBounds(
+                    context,
+                    height: toolbarHeight,
+                    topOffset: topPadding,
+                  ),
+                  child: DefaultTextStyle(
+                    style: CupertinoTheme.of(
+                      context,
+                    ).textTheme.navTitleTextStyle,
+                    child: CupertinoSearchToolbar(
+                      topToolbarLayoutOverride: topToolbarLayoutOverride,
+                      title: widget.keyword.isEmpty
+                          ? widget.title
+                          : Text(widget.hintText ?? 'Search'),
+                      showTitle: sidebarLeading != null || !isLarge,
+                      centerTitle:
+                          sidebarLeading == null && !isCompact && !isLarge,
+                      preferPersistentSearch: isLarge,
+                      sidebarLeading: sidebarLeading,
+                      leading: widget.leading,
+                      collection: widget.collection,
+                      onInvoke: widget.onInvoke,
+                      iconBuilder: widget.actions?.iconBuilder,
+                      actionButtonBuilder: widget.actions?.actionButtonBuilder,
+                      menuBuilderForAction:
+                          widget.actions?.menuBuilderForAction,
+                      presentationForAction:
+                          widget.actions?.presentationForAction,
+                      manuallyExpanded: _expanded,
+                      controller: widget.controller,
+                      focusNode: widget.focusNode,
+                      hintText: widget.hintText,
+                      maxSearchWidth: widget.maxSearchWidth,
+                      onChanged: widget.onChanged,
+                      onSubmitted: widget.onSubmitted,
+                      onSearchActivated: _activateSearch,
+                      onTapOutside: widget.onTapOutside,
+                      onOverflowMenuOpened: _handleOverflowMenuOpened,
+                      onOverflowMenuClosed: _handleOverflowMenuClosed,
+                      onOverflowPressed: _handleOverflowPressed,
+                    ),
                   ),
                 ),
               ),
               if (widget.bottom case final bottom?)
                 Positioned(
-                  top: topPadding + sidebarToolbarHeight,
+                  top: baseExtent,
                   left: 0,
                   right: 0,
                   height: widget.bottomExtent,
-                  child: bottom,
+                  child: MediaQuery(data: ambientMedia, child: bottom),
                 ),
             ],
           ),

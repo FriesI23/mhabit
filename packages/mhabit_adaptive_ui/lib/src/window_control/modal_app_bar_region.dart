@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import 'occlusion_layout.dart';
 import 'window_control_layout.dart';
 
 /// Supplies an internal position-change signal for modal surfaces whose motion
@@ -192,52 +193,57 @@ class _ModalWindowControlAppBarRegionState
     final direction = parent == null
         ? TextDirection.ltr
         : Directionality.of(context);
-    final windowSize = media.size;
+    final view = View.of(context);
     return _ModalGeometryObserver(
       key: _regionKey,
       onGeometryInvalidated: _scheduleMeasurement,
-      child: SizedBox(
-        width: double.infinity,
-        child: ValueListenableBuilder<Rect?>(
-          valueListenable: _globalBounds,
-          child: widget.child,
-          builder: (context, bounds, child) {
-            // A centered dialog has already cleared part or all of the view's
-            // safe edges. Only the remaining overlap belongs to its toolbar.
-            final toolbar = MediaQuery(
-              data: media.copyWith(
-                padding: _remainingHorizontalInsets(
-                  insets: media.padding,
-                  bounds: bounds,
-                  windowWidth: windowSize.width,
+      child: OcclusionViewport(
+        child: SizedBox(
+          width: double.infinity,
+          child: ValueListenableBuilder<Rect?>(
+            valueListenable: _globalBounds,
+            child: widget.child,
+            builder: (context, bounds, child) {
+              // Bounds are global. Re-read view metrics when the pane moves,
+              // even if its local MediaQuery stays unchanged.
+              final windowSize = view.physicalSize / view.devicePixelRatio;
+              // A centered dialog has already cleared part or all of the view's
+              // safe edges. Only the remaining overlap belongs to its toolbar.
+              final toolbar = MediaQuery(
+                data: media.copyWith(
+                  padding: _remainingHorizontalInsets(
+                    insets: media.padding,
+                    bounds: bounds,
+                    windowWidth: windowSize.width,
+                  ),
+                  viewPadding: _remainingHorizontalInsets(
+                    insets: media.viewPadding,
+                    bounds: bounds,
+                    windowWidth: windowSize.width,
+                  ),
                 ),
-                viewPadding: _remainingHorizontalInsets(
-                  insets: media.viewPadding,
-                  bounds: bounds,
-                  windowWidth: windowSize.width,
-                ),
-              ),
-              child: child!,
-            );
-            if (parent == null) return toolbar;
-            final effectiveHorizontal = _intersectingHorizontalAvoidance(
-              bounds: bounds,
-              windowSize: windowSize,
-              horizontal: parent.appBarHorizontalAvoidanceFor(direction),
-              vertical: parent.verticalAvoidance,
-            );
-            return AdaptiveWindowControlLayoutScope(
-              hasWindowControlAvoidance: parent.hasWindowControlAvoidance,
-              horizontalAvoidance: effectiveHorizontal,
-              verticalAvoidance: parent.verticalAvoidance,
-              horizontalSafeAreaAvoidance: parent.horizontalSafeAreaAvoidance,
-              verticalSafeAreaAvoidance: parent.verticalSafeAreaAvoidance,
-              effectiveCornerRadii: parent.effectiveCornerRadii,
-              usesRectangularDisplay: parent.usesRectangularDisplay,
-              owner: WindowControlLayoutOwner.appBar,
-              child: toolbar,
-            );
-          },
+                child: child!,
+              );
+              if (parent == null) return toolbar;
+              final effectiveHorizontal = _intersectingHorizontalAvoidance(
+                bounds: bounds,
+                windowSize: windowSize,
+                horizontal: parent.appBarHorizontalAvoidanceFor(direction),
+                vertical: parent.verticalAvoidance,
+              );
+              return AdaptiveWindowControlLayoutScope(
+                hasWindowControlAvoidance: parent.hasWindowControlAvoidance,
+                horizontalAvoidance: effectiveHorizontal,
+                verticalAvoidance: parent.verticalAvoidance,
+                horizontalSafeAreaAvoidance: parent.horizontalSafeAreaAvoidance,
+                verticalSafeAreaAvoidance: parent.verticalSafeAreaAvoidance,
+                effectiveCornerRadii: parent.effectiveCornerRadii,
+                usesRectangularDisplay: parent.usesRectangularDisplay,
+                owner: WindowControlLayoutOwner.appBar,
+                child: toolbar,
+              );
+            },
+          ),
         ),
       ),
     );

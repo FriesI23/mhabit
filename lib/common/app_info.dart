@@ -98,6 +98,9 @@ class AppInfo implements AsyncInitialization {
       _iosMachineIdentifier != null &&
       isRectangularIPhoneMachineIdentifier(_iosMachineIdentifier!);
 
+  /// Whether the current device is a known iPhone Duo.
+  bool get isIPhoneDuo => _iosMachineIdentifier == 'iPhone19,4';
+
   @override
   Future<void> init() async {
     _appleSystemVersion = null;

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/foundation.dart' show mapEquals;
 import 'package:flutter/material.dart';
 import 'package:mhabit_proxy_annotation/proxy_annotation.dart';
 
@@ -66,5 +67,7 @@ class _MaterialLocalizatiosProxyDelegate
 
   @override
   bool shouldReload(_MaterialLocalizatiosProxyDelegate old) =>
-      base.shouldReload(old);
+      base.runtimeType != old.base.runtimeType ||
+      !mapEquals(overrides, old.overrides) ||
+      base.shouldReload(old.base);
 }
