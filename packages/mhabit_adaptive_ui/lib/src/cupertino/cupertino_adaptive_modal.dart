@@ -57,6 +57,11 @@ class CupertinoAdaptiveModalPageRoute<T> extends CupertinoPageRoute<T> {
 /// The returned future completes with the value passed to [Navigator.pop]
 /// when the modal is closed. Set [useRootNavigator] to false to push onto the
 /// nearest navigator instead of the root navigator.
+///
+/// [presentationResolver] reads the unpartitioned route environment to choose
+/// display-feature filtering. A sheet ignores top/bottom folds; a dialog keeps
+/// them. Null retains dialog filtering. The content builder owns the surface's
+/// presentation and must use the same policy as the resolver.
 Future<T?> showCupertinoAdaptiveModalRoute<T>({
   required BuildContext context,
   required WidgetBuilder builder,
@@ -154,7 +159,13 @@ Future<T?> showCupertinoAdaptiveSheetRoute<T>({
   ),
 );
 
+/// A Cupertino popup route with display-feature selection and drag transitions.
+///
+/// The builder owns the modal surface. This route publishes the selected pane's
+/// size without replacing the content subtree when fold geometry changes.
 class CupertinoAdaptiveModalRoute<T> extends PopupRoute<T> {
+  /// Creates a route whose content and optional filtering policy are supplied
+  /// by the adaptive modal owner.
   CupertinoAdaptiveModalRoute({
     super.settings,
     required this.builder,
@@ -162,7 +173,13 @@ class CupertinoAdaptiveModalRoute<T> extends PopupRoute<T> {
     this.presentationResolver,
   });
 
+  /// Builds content beneath the selected pane's [MediaQuery].
   final WidgetBuilder builder;
+
+  /// Chooses fold filtering from the unpartitioned route environment.
+  ///
+  /// Sheet presentations ignore top/bottom partitions; null retains dialog
+  /// filtering. This does not choose the visual surface rendered by [builder].
   final AdaptiveModalPresentation Function(BuildContext)? presentationResolver;
 
   @override

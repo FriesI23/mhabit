@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'occlusion_layout.dart';
 
 /// Places a floating action in its layout owner's declared viewport.
+///
 /// Only floating insets are adjusted.
+/// Use [resolveOf] immediately above the target [Scaffold] so the location
+/// captures that layout owner's scope and viewport declaration.
 class AdaptiveOcclusionFabLocation extends FloatingActionButtonLocation {
   AdaptiveOcclusionFabLocation._({
     required this.context,
@@ -15,23 +18,44 @@ class AdaptiveOcclusionFabLocation extends FloatingActionButtonLocation {
   }) : _scope = AdaptiveOcclusionScope.maybeOf(context),
        _viewportBounds = OcclusionViewport.maybeOf(context)?.bounds;
 
+  /// The context used to capture and validate the enclosing geometry scope.
   final BuildContext context;
+
+  /// The ordinary location used when precise placement cannot be resolved.
   final FloatingActionButtonLocation fallbackLocation;
+
+  /// Minimum physical left/right clearance for ordinary adapted placement.
+  ///
+  /// Insets are relative to the declared viewport. Top and bottom are ignored.
   final EdgeInsets minimumInsets;
+
+  /// The location used with projected horizontal insets.
+  ///
+  /// Null uses [fallbackLocation]. The fallback's vertical offset is retained
+  /// unless an obstruction requires moving the FAB upward.
   final FloatingActionButtonLocation? adaptedLocation;
 
   /// Aligns a matching physical trailing edge to UIKit's bar layout column.
+  ///
   /// Missing native geometry keeps the existing floating placement.
   final bool alignToSystemBar;
 
   /// Corner, gesture and visual protection for the optional aligned position.
+  ///
   /// The ordinary floating position continues to use [minimumInsets].
   final EdgeInsets systemBarMinimumInsets;
   final AdaptiveOcclusionScope? _scope;
   final Rect? _viewportBounds;
 
   /// Resolves placement from the enclosing window and declared viewport.
+  ///
   /// Retains [fallbackLocation] when native geometry is unavailable.
+  /// A returned adaptive location also falls back during layout if its viewport
+  /// is unknown or does not match the target Scaffold's size.
+  ///
+  /// [minimumInsets] protects ordinary adapted placement. When [alignToSystemBar]
+  /// is true, [systemBarMinimumInsets] protects the optional column-aligned
+  /// candidate instead. Both sets of insets use physical left/right edges.
   static FloatingActionButtonLocation resolveOf(
     BuildContext context, {
     FloatingActionButtonLocation fallbackLocation =
@@ -102,8 +126,30 @@ class AdaptiveOcclusionFabLocation extends FloatingActionButtonLocation {
 }
 
 /// Calculates placement inside the owner's declared viewport without measuring
-/// route paint offsets. Inputs belong to this layout pass; nothing is cached.
+/// route paint offsets.
+///
+/// Inputs belong to this layout pass; nothing is cached. Candidate bands span
+/// the viewport's width at the FAB's height. If a band cannot fit the action,
+/// the calculator tries bands immediately above native occlusions.
+///
+/// ```text
+/// native view
+/// +----------------------------------+
+/// | viewport                         |
+/// |                                  |
+/// | candidate band           +-----+ |
+/// |--------------------------| FAB |-| <- move above an obstruction if needed
+/// |                          +-----+ |
+/// |                          ####### | native occlusion
+/// +----------------------------------+
+/// ```
 abstract interface class OcclusionFabCalculator {
+  /// Creates a calculator for a current vertical-system-bar environment.
+  ///
+  /// [scope] must contain a usable native snapshot. [viewportBounds] uses
+  /// logical native-view coordinates and must match [scaffoldGeometry]'s size.
+  /// [floatingLocation] supplies horizontal placement using the projected
+  /// insets. Insets and column alignment follow [AdaptiveOcclusionFabLocation].
   const factory OcclusionFabCalculator({
     required AdaptiveOcclusionScope scope,
     required Rect viewportBounds,
@@ -114,6 +160,11 @@ abstract interface class OcclusionFabCalculator {
     required EdgeInsets systemBarMinimumInsets,
   }) = _OcclusionFabCalculator;
 
+  /// Returns a protected offset relative to the Scaffold's top-left corner.
+  ///
+  /// Starts at [fallbackOffset]'s vertical position and only moves upward when
+  /// needed, without crossing the Scaffold's content top. Returns
+  /// [fallbackOffset] if no protected position fits or the viewport mismatches.
   Offset calculate(Offset fallbackOffset);
 }
 

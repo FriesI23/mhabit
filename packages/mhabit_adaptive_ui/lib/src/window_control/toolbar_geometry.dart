@@ -82,6 +82,10 @@ final class WindowControlToolbarGeometry {
   );
 
   /// Cupertino insets with at least the physical horizontal Safe Area clearance.
+  ///
+  /// Takes the maximum of [safeArea] and window-control avoidance at each
+  /// physical edge, converts it using [textDirection], then adds visual
+  /// [edgePadding]. This avoids reserving overlapping protection twice.
   EdgeInsetsDirectional cupertinoInsetsWithSafeArea({
     required EdgeInsets safeArea,
     required TextDirection textDirection,

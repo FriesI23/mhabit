@@ -5,23 +5,38 @@ import 'package:flutter/material.dart';
 import 'occlusion_layout.dart';
 
 /// Aligned toolbar geometry and the protected extent before bottom content.
+///
+/// All distances are logical pixels. The insets and extents are measured from
+/// the pane's top edge; [Rect] bounds use native-view coordinates.
 typedef TopToolbarLayout = ({
+  /// The local distance from the pane's top to the toolbar's top.
   double topInset,
+
+  /// The minimum distance from the pane's top to additional bottom content.
   double minimumExtent,
+
+  /// The final toolbar row in logical native-view coordinates.
   Rect bounds,
 });
 
 /// A shared toolbar layout override in native-view coordinates.
+///
 /// A supplied override with a null layout explicitly rejects reclamation.
+/// This differs from omitting the override, which allows independent resolution.
 typedef TopToolbarLayoutOverride = ({
+  /// The accepted shared row, or null to reject top-safe-area reclamation.
   TopToolbarLayout? layout,
+
+  /// The native root bounds against which the shared row was accepted.
   Rect? viewportBounds,
 });
 
 /// Projects precise horizontal insets into an explicitly declared toolbar row.
+///
 /// Unknown bounds retain the current Safe Area; body geometry is unchanged.
 /// Route paint transitions do not change this layout projection.
 class AdaptiveOcclusionToolbar extends StatefulWidget {
+  /// Creates a toolbar-local boundary for safe-area projection.
   const AdaptiveOcclusionToolbar({
     super.key,
     this.bounds,
@@ -33,26 +48,44 @@ class AdaptiveOcclusionToolbar extends StatefulWidget {
   });
 
   /// The declared layout row in native-view coordinates before route painting.
+  ///
   /// Omitting bounds retains the current conservative Safe Area.
   final Rect? bounds;
+
+  /// The toolbar subtree that receives the projected [MediaQuery].
   final Widget child;
 
-  /// Floating bottom navigation uses its own protected band instead.
+  /// Whether to retain system horizontal clearance outside a usable bar column.
+  ///
+  /// Defaults to true. Floating bottom navigation sets this to false and uses
+  /// its own protected band; actual occlusions and corners still apply.
   final bool preserveHorizontalSafeArea;
 
-  /// Only a pinned top-row toolbar can release the status area's vertical inset.
+  /// Whether this pinned top-row toolbar may release the status-area top inset.
+  ///
+  /// Defaults to false. Reclamation also requires the enclosing scope's opt-in
+  /// and a valid declared row and viewport.
   final bool reclaimTopSafeArea;
+
+  /// The minimum local top spacing retained after reclamation.
+  ///
+  /// Must be finite and non-negative. Defaults to zero.
   final double minimumTopInset;
 
   /// Null resolves independently; an override must contain valid geometry.
   final TopToolbarLayoutOverride? topToolbarLayoutOverride;
 
+  /// Whether an ancestor owns horizontal safe-area handling for this toolbar.
+  ///
+  /// This includes conservative handling during a missing native snapshot;
+  /// true does not necessarily indicate that precise geometry was applied.
   static bool isAdaptedOf(BuildContext context) =>
       context
           .dependOnInheritedWidgetOfExactType<_ToolbarOcclusionConsumed>()
           ?.adapted ??
       false;
 
+  /// Whether an ancestor successfully reclaimed the top safe area.
   static bool isTopReclaimedOf(BuildContext context) =>
       context
           .dependOnInheritedWidgetOfExactType<_ToolbarOcclusionConsumed>()
@@ -60,6 +93,9 @@ class AdaptiveOcclusionToolbar extends StatefulWidget {
       false;
 
   /// Protected extent before an app bar's additional bottom content.
+  ///
+  /// Measured from the pane's top edge. Null means no ancestor has supplied a
+  /// reclaimed row; consumers then retain their ordinary extent calculation.
   static double? minimumExtentOf(BuildContext context) => context
       .dependOnInheritedWidgetOfExactType<_ToolbarOcclusionConsumed>()
       ?.minimumExtent;
@@ -212,7 +248,33 @@ class _AdaptiveOcclusionToolbarState extends State<AdaptiveOcclusionToolbar> {
 }
 
 /// Resolves one layout pass from supplied geometry without reading widgets.
+///
+/// Independent resolution supports portrait panes touching the native view's
+/// top and right edges, with a complete top-right status block. A shared
+/// override can align other panes to a row accepted by their layout owner.
+///
+/// ```text
+/// pane.top      +-------------------+----------+
+///               |                   | status   |
+/// topInset      | +---------------+ | block    |
+///               | | toolbar row   | |          |
+///               | +---------------+ +----------+
+/// minimumExtent +------------------------------+  bottom content starts here
+/// ```
+///
+/// The diagram shows local vertical distances; row bounds retain their
+/// position in native-view coordinates.
 abstract interface class TopToolbarLayoutResolver {
+  /// Creates a resolver for one declared row and its current safe-area data.
+  ///
+  /// [viewBounds], [pane], [row], and [occlusions] use logical native-view
+  /// coordinates. [viewSize] is the current Flutter view size for freshness
+  /// validation. [row] describes the original row before reclamation.
+  ///
+  /// [systemTopInset] is the view-wide system inset. [currentTopInset] and
+  /// [currentViewTopInset] are the consumer's current padding and view padding.
+  /// [minimumTopInset] is its non-negative local spacing floor.
+  /// [alignmentHeight] optionally supplies a shared positive row height.
   const factory TopToolbarLayoutResolver({
     required Rect viewBounds,
     required Size viewSize,
@@ -229,6 +291,7 @@ abstract interface class TopToolbarLayoutResolver {
 
   /// Returns the local top inset, protected extent before bottom content, and
   /// final row bounds in native-view layout coordinates.
+  ///
   /// Returns null when the declared row cannot reclaim the top status band.
   TopToolbarLayout? resolve();
 }
@@ -403,6 +466,11 @@ final class _TopToolbarLayoutResolver implements TopToolbarLayoutResolver {
 
 /// Keeps system clearance unless UIKit explicitly permits a control column.
 abstract interface class ToolbarSafeAreaCalculator {
+  /// Creates a calculator using logical native-view bounds.
+  ///
+  /// [systemSafeArea] describes the whole view. [controlColumn] is UIKit's
+  /// permitted control-layout region, not an occlusion. A missing or unusable
+  /// column retains system clearance where it intersects [toolbarBounds].
   const factory ToolbarSafeAreaCalculator({
     required Rect viewBounds,
     required Rect toolbarBounds,
@@ -410,6 +478,11 @@ abstract interface class ToolbarSafeAreaCalculator {
     required Rect? controlColumn,
   }) = _ToolbarSafeAreaCalculator;
 
+  /// Returns the minimum physical left/right insets relative to the toolbar.
+  ///
+  /// Only a column containing the full toolbar height can reduce clearance at
+  /// its physical edge. Top and bottom components are zero. Consumers add
+  /// actual occlusion, corner, and visual protection separately.
   EdgeInsets calculate();
 }
 

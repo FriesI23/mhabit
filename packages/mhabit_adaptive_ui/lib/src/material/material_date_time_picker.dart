@@ -10,6 +10,10 @@ import '../adaptive/adaptive_modal_viewport.dart';
 /// Date bounds, localization, entry modes and results follow [material.showDatePicker].
 /// An optional [builder] runs inside the viewport and can override inherited
 /// themes without repeating the display-feature layout.
+///
+/// [anchorPoint] follows the SDK's pane-selection policy. The route selects a
+/// pane first; the picker and [builder] then read that pane's constrained size
+/// from [MediaQuery]. Existing route-projected safe areas and insets are kept.
 Future<DateTime?> showDatePicker({
   required BuildContext context,
   DateTime? initialDate,
@@ -78,6 +82,11 @@ Future<DateTime?> showDatePicker({
 /// Parameters and results follow [material.showTimePicker]. The optional [builder]
 /// receives the local viewport rather than the whole window's MediaQuery.
 /// Content scrolls above the keyboard when the available pane is too short.
+///
+/// [anchorPoint] selects the pane before local sizing is applied. [orientation]
+/// still overrides the picker's orientation; otherwise the picker derives it
+/// from the local viewport. The optional [builder] receives the SDK dialog
+/// wrapped with keyboard avoidance and scrolling.
 Future<TimeOfDay?> showTimePicker({
   required BuildContext context,
   required TimeOfDay initialTime,

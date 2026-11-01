@@ -270,6 +270,24 @@ existing architecture and tooling contracts.
 - Avoid one-off generic helper layers when the real abstraction is still owned
   by a concrete model, codec, workflow, or page-local view model.
 
+## Comments And API Documentation
+
+- Use English comments consistent with nearby code. Follow Flutter/Dart style:
+  `///` Dartdoc for public API contracts and `//` for implementation rationale.
+- When adding or changing public APIs, constructors, fields, or record members,
+  document non-obvious contracts: constraints, defaults, `null` semantics,
+  results, fallbacks, and ownership or lifecycle requirements where relevant.
+  Avoid comments that only repeat a declaration's name or type.
+- Start Dartdoc with a concise summary, separate details into paragraphs, and
+  use `[symbol]` references for related APIs. Reference existing contracts
+  instead of copying upstream documentation or repeating inherited behavior.
+- For geometry, state units, coordinate space and origin, and physical versus
+  directional edges. Add a small fenced `text` ASCII diagram when it clarifies
+  bounds, insets, alignment, or transforms; keep it consistent with the code.
+- Explain invariants and reasons for platform workarounds near the implementation.
+  Keep comments synchronized with behavior; document only guarantees the code
+  actually enforces.
+
 ## Flutter Style
 
 - Keep widgets immutable when possible.

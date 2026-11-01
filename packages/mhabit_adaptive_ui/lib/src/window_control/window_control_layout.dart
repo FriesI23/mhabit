@@ -146,11 +146,17 @@ class AdaptiveWindowControlLayout extends StatelessWidget {
   final bool usesRectangularDisplay;
 
   /// Allows supported top toolbars to reclaim a native status-area band.
+  ///
   /// The app supplies this device policy independently of its design style.
   /// Geometry consumers do not apply an additional target-platform check.
+  /// Defaults to false; opting in still requires usable native geometry and
+  /// declared toolbar bounds.
   final bool allowTopToolbarReclamation;
 
   /// Shared row used to align differently sized top-toolbar controls.
+  ///
+  /// A supplied height must be finite and positive. Shorter toolbars are
+  /// centered within that row; taller toolbars retain their own height.
   /// Null retains each toolbar's own height as the alignment reference.
   final double? topToolbarAlignmentHeight;
 

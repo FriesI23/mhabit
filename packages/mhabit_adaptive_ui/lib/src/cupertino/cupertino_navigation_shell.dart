@@ -26,6 +26,15 @@ import 'cupertino_neutral_button.dart';
 
 /// Resolves a candidate top-toolbar region for a declared full-view Sidebar.
 abstract interface class SidebarTopToolbarRegionResolver {
+  /// Creates a resolver for the Sidebar host's current layout pass.
+  ///
+  /// [viewportBounds] uses logical native-view coordinates; [viewSize] is the
+  /// current Flutter view size. The host must fill those bounds according to
+  /// [constraints]. [media] supplies the host's current safe-area data and
+  /// [toolbarGeometry] supplies its row height and minimum top spacing.
+  ///
+  /// When [collapsedBarEnabled] is true, the accepted region must also leave
+  /// room for a centered capsule between the leading and trailing controls.
   const factory SidebarTopToolbarRegionResolver({
     required AdaptiveOcclusionScope? occlusionScope,
     required Rect? viewportBounds,
@@ -36,6 +45,11 @@ abstract interface class SidebarTopToolbarRegionResolver {
     required bool collapsedBarEnabled,
   }) = _SidebarTopToolbarRegionResolver;
 
+  /// Returns a protected region in Sidebar-host-local logical coordinates.
+  ///
+  /// The region carries the minimum vertical extent before body content.
+  /// Returns null when geometry, the full-view origin, or capsule clearance
+  /// cannot be established; the Sidebar then retains its ordinary safe area.
   CupertinoSidebarToolbarRegion? resolve();
 }
 

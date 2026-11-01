@@ -45,6 +45,11 @@ class CupertinoSearchToolbar<T extends Object> extends StatelessWidget {
   final VoidCallback? onOverflowMenuOpened;
   final VoidCallback? onOverflowMenuClosed;
   final CupertinoSearchOverflowPressed onOverflowPressed;
+
+  /// The shared Sidebar row used to align the collapsed capsule and side slots.
+  ///
+  /// Null uses the toolbar's ordinary slot layout. The override only supplies
+  /// shared slot geometry after an ancestor has reclaimed the top safe area.
   final TopToolbarLayoutOverride? topToolbarLayoutOverride;
 
   const CupertinoSearchToolbar({

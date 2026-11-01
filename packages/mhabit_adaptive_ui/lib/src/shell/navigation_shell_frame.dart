@@ -138,6 +138,10 @@ class NavigationShellFrame extends StatefulWidget {
   final FloatingActionButtonLocation? floatingActionButtonLocation;
 
   /// Resolves a placement with a context immediately above its Scaffold.
+  ///
+  /// When supplied, takes precedence over [floatingActionButtonLocation].
+  /// The context includes the shell's navigation and window-control
+  /// scopes, so geometry-dependent locations can subscribe to their changes.
   final FloatingActionButtonLocation Function(BuildContext context)?
   floatingActionButtonLocationBuilder;
 

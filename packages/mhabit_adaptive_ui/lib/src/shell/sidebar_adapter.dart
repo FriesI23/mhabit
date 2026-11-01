@@ -14,14 +14,30 @@ import '../window_control/window_control_layout.dart';
 typedef CupertinoSidebarToolbarMiddleBuilder =
     Widget Function(BuildContext context, Widget middle, double progress);
 
+/// Centers for a shared Sidebar slot, relative to the available toolbar region.
+///
+/// Coordinates and widths use logical pixels after side reservations. The
+/// visible capsule keeps the native window's center; once hidden, the slot
+/// switches to the center of the pane's remaining safe width.
 typedef SidebarToolbarSlotLayout = ({
+  /// The physical x coordinate used while the collapsed capsule is visible.
   double centerX,
+
+  /// The physical x coordinate used when the capsule is fully hidden.
   double emptyCenterX,
+
+  /// The toolbar width before symmetric layout padding is removed.
   double availableWidth,
 });
 
 /// Projects a shared slot center into the toolbar's current layout width.
 extension SidebarToolbarSlotGeometry on SidebarToolbarSlotLayout {
+  /// Returns the slot center relative to a row of [layoutWidth].
+  ///
+  /// Positive [visibility] uses the visible-capsule center; zero uses the empty
+  /// center. This selects a center rather than interpolating between the two.
+  /// Any width removed from the available region is treated as symmetric
+  /// padding, so half of that difference is subtracted from the center.
   double centerFor({required double layoutWidth, required double visibility}) {
     final center = visibility > 0 ? centerX : emptyCenterX;
     final layoutOffset = math.max(0.0, (availableWidth - layoutWidth) / 2);
@@ -30,22 +46,37 @@ extension SidebarToolbarSlotGeometry on SidebarToolbarSlotLayout {
 }
 
 /// Converts the Sidebar's accepted region to a native-view layout override.
-/// No Sidebar leaves the page independent; a rejected region blocks it.
+///
+/// With no applicable Sidebar, the page resolves independently. A rejected
+/// Sidebar region explicitly blocks independent top-safe-area reclamation.
 abstract interface class SidebarTopToolbarLayoutOverrideResolver {
+  /// Creates a resolver reading the Sidebar and geometry enclosing [context].
   const factory SidebarTopToolbarLayoutOverrideResolver({
     required BuildContext context,
   }) = _SidebarTopToolbarLayoutOverrideResolver;
 
+  /// Returns a shared override, or null to let the toolbar resolve independently.
+  ///
+  /// A non-null override with a null layout rejects reclamation, including when
+  /// the Sidebar's region or ownership cannot be validated.
   TopToolbarLayoutOverride? resolve();
 }
 
 /// Resolves a toolbar slot only after its Sliver reclaims the shared top row.
 abstract interface class SidebarToolbarSlotLayoutResolver {
+  /// Creates a resolver for a toolbar beneath its occlusion boundary.
+  ///
+  /// [topToolbarLayoutOverride] supplies the accepted shared region and its
+  /// native root bounds; [context] supplies the pane and projected safe area.
   const factory SidebarToolbarSlotLayoutResolver({
     required BuildContext context,
     required TopToolbarLayoutOverride? topToolbarLayoutOverride,
   }) = _SidebarToolbarSlotLayoutResolver;
 
+  /// Returns local slot geometry after successful top-row reclamation.
+  ///
+  /// Returns null if the row has not been reclaimed or shared geometry is
+  /// unavailable. Callers then retain their ordinary centered layout.
   SidebarToolbarSlotLayout? resolve();
 }
 
@@ -211,6 +242,7 @@ class CupertinoSidebarPresentationScope
 
 /// Lays out toolbar regions around a centered collapsed bar.
 class CupertinoSidebarToolbarRegions extends StatelessWidget {
+  /// The default gap on each side of the collapsed Sidebar capsule.
   static const double defaultMiddleSpacing = 6.0;
 
   const CupertinoSidebarToolbarRegions({
@@ -226,6 +258,11 @@ class CupertinoSidebarToolbarRegions extends StatelessWidget {
   final Widget end;
   final double middleSpacing;
   final bool middleEnabled;
+
+  /// Shared slot centers, or null to center within this toolbar's own width.
+  ///
+  /// The logical start/end regions receive the space on either side of the
+  /// visible capsule; [middleSpacing] separates them from its reserved span.
   final SidebarToolbarSlotLayout? slotLayout;
 
   @override
@@ -362,6 +399,8 @@ class CupertinoSidebarToolbarLayout extends StatelessWidget {
   final Widget? leading;
   final Widget? trailing;
   final double middleSpacing;
+
+  /// Shared slot centers, or null to center within this toolbar's own width.
   final SidebarToolbarSlotLayout? slotLayout;
 
   @override
