@@ -1,13 +1,11 @@
 name: Setup Xcode
-description: Select an installed stable Xcode 27.0 release.
+description: Select the latest installed stable Xcode 27.x release.
 
 inputs:
   xcode-version:
-    description: Stable Xcode version to select
+    description: Stable Xcode version or SemVer range to select
     required: false
-    # TODO: Restore major-version pinning (^27) after adapting and verifying
-    # the SDK-gated iPhone Duo behavior introduced in iOS 27.1.
-    default: "27.0"
+    default: "^27"
 
 runs:
   using: composite
