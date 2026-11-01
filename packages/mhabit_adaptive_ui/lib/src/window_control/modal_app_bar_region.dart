@@ -193,7 +193,7 @@ class _ModalWindowControlAppBarRegionState
     final direction = parent == null
         ? TextDirection.ltr
         : Directionality.of(context);
-    final windowSize = media.size;
+    final view = View.of(context);
     return _ModalGeometryObserver(
       key: _regionKey,
       onGeometryInvalidated: _scheduleMeasurement,
@@ -204,6 +204,9 @@ class _ModalWindowControlAppBarRegionState
             valueListenable: _globalBounds,
             child: widget.child,
             builder: (context, bounds, child) {
+              // Bounds are global. Re-read view metrics when the pane moves,
+              // even if its local MediaQuery stays unchanged.
+              final windowSize = view.physicalSize / view.devicePixelRatio;
               // A centered dialog has already cleared part or all of the view's
               // safe edges. Only the remaining overlap belongs to its toolbar.
               final toolbar = MediaQuery(
