@@ -1,4 +1,4 @@
-# Pre-Released: v1.27.16+205
+# Pre-Released: v1.27.17+206
 
 Table Habit now supports iOS Home Screen widgets! Thanks to
 [@IlyaPalochkin](https://github.com/IlyaPalochkin) for contributing the initial
@@ -18,10 +18,22 @@ interactive widgets (#680).
 - Mark ordinary habits incomplete with **Missed**, distinguish ordinary and
   negative habit record states, and display labels in the app language (#687)
 
+## 🐛 Fixes
+
+- Improve foldable-screen layouts: fit dialogs, sheets and date/time pickers to
+  the selected screen area, and place confirmations in the right or lower area
+  (#691)
+- Keep toolbars, sidebars, search and floating controls clear of window controls
+  (#691)
+- Preserve navigation state across safe-area changes and fix Material
+  localization reloads (#691)
+
 ## 🧹 Others
 
 - Standardize Swift formatting and add formatting checks to local and CI
   workflows (#688)
+- Update adaptive UI dependencies and select stable Xcode 27.x in CI (#691)
+- Refresh Apple build dependency locks
 - Update contributor credits
 
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.15+204...pre-v1.27.16+205)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.15+204...pre-v1.27.17+206)

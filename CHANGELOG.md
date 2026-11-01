@@ -2,6 +2,16 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.27.17+206-pre
+
+- Fix: improve foldable-screen layouts: fit dialogs, sheets and date/time pickers
+  to the selected screen area; place confirmations in the right or lower area
+  (#691)
+- Fix: keep toolbars, sidebars, search and floating controls clear of window
+  controls (#691)
+- Fix: preserve navigation when safe areas change (#691)
+- Fix: refresh localized labels correctly (#691)
+
 ## 1.27.16+205-pre
 
 - Feature: interactive Home Screen widgets with seven-day progress, check-in,
