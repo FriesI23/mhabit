@@ -2,25 +2,17 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.27.17+206-pre
+## 1.27.18+207
 
-- Fix: improve foldable-screen layouts: fit dialogs, sheets and date/time pickers
-  to the selected screen area; place confirmations in the right or lower area
+- Feature: Home Screen widgets: 7-day progress, check-in/undo/refresh (#680)
+- Feature: auto/fixed/archived habits, large: 6; shared check-in, manual Next,
+  empty states; mark ordinary habits missed; ordinary/negative states,
+  localized text (#687)
+- Fix: fit foldable dialogs/sheets/date/time pickers; confirmations right/lower
   (#691)
-- Fix: keep toolbars, sidebars, search and floating controls clear of window
-  controls (#691)
-- Fix: preserve navigation when safe areas change (#691)
-- Fix: refresh localized labels correctly (#691)
-
-## 1.27.16+205-pre
-
-- Feature: interactive Home Screen widgets with seven-day progress, check-in,
-  undo and refresh (#680)
-- Feature: automatic or fixed habits, including archived habits; up to six habits
-  in the large widget (#687)
-- Feature: shared check-in display, manual Next and empty-list messages (#687)
-- Feature: mark ordinary habits incomplete; clear ordinary/negative record states
-  and localized labels (#687)
+- Fix: toolbars/sidebars/search/floating controls clear of window controls
+  (#691)
+- Fix: keep navigation on safe-area changes; reload labels (#691)
 
 ## 1.27.15+204
 
