@@ -1,16 +1,9 @@
 {
   "ar": [
     "common_listSeparator",
-    "habitEdit_colorPicker_historySectionLabel",
     "habitEdit_colorPicker_customSectionLabel",
-    "habitEdit_colorPicker_cancel",
-    "habitEdit_colorPicker_tintToggleLabel",
-    "habitEdit_colorPicker_tintedLabel",
-    "habitEdit_colorPicker_untintedLabel",
     "habitEdit_colorPicker_tintToggleOnHint",
-    "habitEdit_colorPicker_tintToggleOffHint",
     "habitDisplay_selectedHabits_title",
-    "habitDisplay_statisticsAction_label",
     "habitDisplay_displayFilterAction_label",
     "habitDisplay_groupType_createDate",
     "habitDisplay_groupType_habitCount",
