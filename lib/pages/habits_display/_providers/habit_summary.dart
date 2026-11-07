@@ -517,11 +517,20 @@ class HabitSummaryViewModel extends ChangeNotifier
     resortData(listen: listen);
   }
 
+  void exitSearchModeIfEmpty({bool listen = true}) {
+    if (searchOptions.isEmpty) exitSearchMode(listen: listen);
+  }
+
   void _onSeachOptionsChanged(
     HabitDisplaySearchOptions newOptions, {
+    bool exitWhenEmpty = false,
     required bool listen,
   }) {
     final result = _searchController.updateOptions(newOptions);
+    if (exitWhenEmpty && _searchController.options.isEmpty) {
+      exitSearchModeIfEmpty(listen: listen);
+      return;
+    }
     if (!result) return;
     if (_searchController.options.isNotEmpty && !_searchController.enabled) {
       _searchController.enable();
@@ -529,27 +538,40 @@ class HabitSummaryViewModel extends ChangeNotifier
     resortData(listen: listen);
   }
 
-  void onSeachKeywordChanged(String text, {bool listen = true}) =>
-      _onSeachOptionsChanged(
-        _searchController.options.copyWith(keyword: text),
-        listen: listen,
-      );
+  void onSeachKeywordChanged(
+    String text, {
+    bool exitWhenEmpty = false,
+    bool listen = true,
+  }) => _onSeachOptionsChanged(
+    _searchController.options.copyWith(keyword: text),
+    exitWhenEmpty: exitWhenEmpty,
+    listen: listen,
+  );
 
-  void onSearchOngoingChanged(bool value, {bool listen = true}) =>
-      _onSeachOptionsChanged(
-        _searchController.options.copyWith(activated: value),
-        listen: listen,
-      );
+  void onSearchOngoingChanged(
+    bool value, {
+    bool exitWhenEmpty = false,
+    bool listen = true,
+  }) => _onSeachOptionsChanged(
+    _searchController.options.copyWith(activated: value),
+    exitWhenEmpty: exitWhenEmpty,
+    listen: listen,
+  );
 
-  void onSearchCompletedChanged(bool value, {bool listen = true}) =>
-      _onSeachOptionsChanged(
-        _searchController.options.copyWith(completed: value),
-        listen: listen,
-      );
+  void onSearchCompletedChanged(
+    bool value, {
+    bool exitWhenEmpty = false,
+    bool listen = true,
+  }) => _onSeachOptionsChanged(
+    _searchController.options.copyWith(completed: value),
+    exitWhenEmpty: exitWhenEmpty,
+    listen: listen,
+  );
 
   void onSearchHabitTypeChanged(
     HabitType type,
     bool value, {
+    bool exitWhenEmpty = false,
     bool listen = true,
   }) => _onSeachOptionsChanged(
     _searchController.options.copyWith(
@@ -557,18 +579,21 @@ class HabitSummaryViewModel extends ChangeNotifier
           ? {..._searchController.options.types, type}
           : ({..._searchController.options.types}..remove(type)),
     ),
+    exitWhenEmpty: exitWhenEmpty,
     listen: listen,
   );
 
-  void onClearSearchFilter({bool clearKeyboard = false, bool listen = true}) =>
-      _onSeachOptionsChanged(
-        clearKeyboard
-            ? const HabitDisplaySearchOptions.empty()
-            : HabitDisplaySearchOptions(
-                keyword: _searchController.options.keyword,
-              ),
-        listen: listen,
-      );
+  void onClearSearchFilter({
+    bool clearKeyboard = false,
+    bool exitWhenEmpty = false,
+    bool listen = true,
+  }) => _onSeachOptionsChanged(
+    clearKeyboard
+        ? const HabitDisplaySearchOptions.empty()
+        : HabitDisplaySearchOptions(keyword: _searchController.options.keyword),
+    exitWhenEmpty: exitWhenEmpty,
+    listen: listen,
+  );
 
   //#endregion
 
