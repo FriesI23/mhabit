@@ -1,0 +1,81 @@
+name: Bug report
+description: Report a problem with Table Habit.
+title: "[BUG] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please search [existing issues](https://github.com/FriesI23/mhabit/issues) before submitting.
+        See the [Project](https://github.com/users/FriesI23/projects/5) for planned work and the [latest release](https://github.com/FriesI23/mhabit/releases/latest) for updates.
+        The [Wiki](https://github.com/FriesI23/mhabit/wiki) may help with setup and usage.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the steps that trigger the problem. If it happens intermittently, describe when it occurs.
+      placeholder: |
+        1. Open ...
+        2. Tap ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen instead?
+    validations:
+      required: true
+  - type: input
+    id: app-version
+    attributes:
+      label: App version
+      description: Include the version and build number from Settings → About.
+      placeholder: "e.g. 1.27.18+207"
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      multiple: true
+      options:
+        - Android
+        - iOS / iPadOS
+        - macOS
+        - Windows
+        - Linux
+    validations:
+      required: true
+  - type: input
+    id: os-version
+    attributes:
+      label: OS version
+      description: Include the device model or Linux distribution when relevant.
+      placeholder: "e.g. Android 15 on Pixel 8, or Fedora 43"
+    validations:
+      required: true
+  - type: input
+    id: installation-source
+    attributes:
+      label: Installation source
+      placeholder: "e.g. Google Play, F-Droid, GitHub Releases, App Store, or Flathub"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Paste relevant logs, removing passwords and other private information.
+      render: text
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Screenshots and additional context
+      description: Attach screenshots or a screen recording, and add any other details that may help.
