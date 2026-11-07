@@ -27,17 +27,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/common/types.dart';
 import 'package:mhabit/extensions/adaptive_style_extensions.dart';
 import 'package:mhabit/l10n/localizations.dart';
+import 'package:mhabit/models/habit_color.dart';
+import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_form.dart';
+import 'package:mhabit/models/habit_freq.dart';
+import 'package:mhabit/models/habit_group.dart';
 import 'package:mhabit/models/habit_stat.dart';
+import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/widgets.dart';
 import 'package:mhabit/providers/app_ui/app_experimental_feature.dart';
+import 'package:mhabit/providers/workflow/group_manager.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
+
+import '../../../support/stub/habits_display_access.dart';
 
 Widget _searchBarHost(
   HabitSummaryViewModel vm, {
@@ -143,6 +152,60 @@ final class _SelectionHabitSummaryViewModel extends HabitSummaryViewModel {
 
   @override
   HabitSummarySelectedStatistic get selectStatistic => stat;
+}
+
+final class _SearchTestAccess extends StubHabitsDisplayAccess {
+  @override
+  Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
+    HabitSummaryDataCollection? initedCollection,
+    List<String>? habitsColmns,
+    List<HabitUUID>? habitUUIDs,
+  }) async {
+    final collection = initedCollection ?? HabitSummaryDataCollection();
+    for (final (index, status) in [
+      HabitStatus.activated,
+      HabitStatus.archived,
+    ].indexed) {
+      collection.addHabit(
+        HabitSummaryData(
+          id: index + 1,
+          uuid: status.name,
+          name: status.name,
+          type: HabitType.normal,
+          desc: '',
+          color: const HabitColor.builtIn(HabitColorType.cc1),
+          dailyGoal: 1,
+          targetDays: 30,
+          frequency: HabitFrequency.daily,
+          startDate: HabitDate.now().subtractDays(1),
+          status: status,
+          sortPostion: index + 1,
+          createTime: DateTime.now(),
+        ),
+        forceAdd: true,
+      );
+    }
+    return collection;
+  }
+}
+
+final class _SearchTestGroupManager extends GroupManager {
+  @override
+  Future<GroupCollection?> tryLoadGroupCollection() async =>
+      GroupCollection.fromDBQueryResult([]);
+}
+
+Future<HabitSummaryViewModel> _loadedSearchViewModel() async {
+  final vm = HabitSummaryViewModel()
+    ..attachAccess(_SearchTestAccess())
+    ..attachGroupManager(_SearchTestGroupManager())
+    ..updateSortOptions(
+      HabitDisplaySortType.manual,
+      HabitDisplaySortDirection.asc,
+    );
+  addTearDown(vm.dispose);
+  await vm.loadData();
+  return vm;
 }
 
 void main() {
@@ -1877,6 +1940,206 @@ void main() {
     expect(vm.isInSearchMode, isTrue);
   });
 
+  for (final platform in [TargetPlatform.iOS, TargetPlatform.macOS]) {
+    for (final (section, label, clearAll) in [
+      ('By Status', 'Ongoing', true),
+      ('By Status', 'Ongoing', false),
+      ('By Status', 'Completed', false),
+      ('Habit Type', 'Positive', false),
+      ('Habit Type', 'Negative', false),
+    ]) {
+      testWidgets(
+        'Apple empty filter search restores display filters: ${platform.name} $label clearAll=$clearAll',
+        (tester) async {
+          tester.view.physicalSize = platform == TargetPlatform.iOS
+              ? const Size(500, 800)
+              : const Size(1000, 700);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.reset);
+          final vm = await _loadedSearchViewModel();
+          List<String> visibleHabits() => vm.currentHabitList
+              .whereType<HabitSummaryDataSortCache>()
+              .map((habit) => habit.uuid)
+              .toList();
+          await tester.pumpWidget(_searchBarHost(vm, platform: platform));
+          expect(visibleHabits(), [HabitStatus.activated.name]);
+
+          await tester.tap(
+            find.byIcon(CupertinoIcons.line_horizontal_3_decrease_circle),
+          );
+          await tester.pumpAndSettle();
+          await tester.tap(find.text(section));
+          await tester.pumpAndSettle();
+          await tester.tap(find.text(label));
+          await tester.pumpAndSettle();
+          expect(vm.isInSearchMode, isTrue);
+          expect(vm.searchOptions.keyword, isEmpty);
+
+          await tester.tap(
+            find.byIcon(CupertinoIcons.line_horizontal_3_decrease_circle_fill),
+          );
+          await tester.pumpAndSettle();
+          if (!clearAll) {
+            await tester.tap(find.text(section));
+            await tester.pumpAndSettle();
+          }
+          await tester.tap(find.text(clearAll ? 'Clear Filters' : label).last);
+          await tester.pumpAndSettle();
+
+          expect(vm.searchOptions.isEmpty, isTrue);
+          expect(vm.isInSearchMode, isFalse);
+          expect(vm.canPop, isTrue);
+          expect(visibleHabits(), [HabitStatus.activated.name]);
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+  }
+
+  testWidgets('Apple empty filter search waits for focus loss', (tester) async {
+    final vm = _TestHabitSummaryViewModel();
+    addTearDown(vm.dispose);
+    await tester.pumpWidget(_searchBarHost(vm, platform: TargetPlatform.macOS));
+    await tester.tap(find.byKey(const ValueKey('activate-cupertino-search')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(CupertinoSearchTextField), 'alpha');
+    vm.onSearchOngoingChanged(true);
+    await tester.pump();
+    await tester.tap(
+      find.byKey(const ValueKey('clear-cupertino-search')).hitTestable(),
+    );
+    await tester.pump();
+    final field = tester.widget<CupertinoSearchTextField>(
+      find.byType(CupertinoSearchTextField),
+    );
+
+    tester
+        .widget<HabitDisplaySearchActions>(
+          find.byType(HabitDisplaySearchActions),
+        )
+        .config
+        .onClearFilterPressed();
+    await tester.pump();
+    expect(vm.searchOptions.isEmpty, isTrue);
+    expect(vm.isInSearchMode, isTrue);
+    expect(field.focusNode!.hasFocus, isTrue);
+
+    field.focusNode!.unfocus();
+    await tester.pumpAndSettle();
+    expect(vm.isInSearchMode, isFalse);
+    expect(find.byType(CupertinoSearchTextField), findsNothing);
+  });
+
+  testWidgets('Apple clearing text then collapsing exits empty search', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(500, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final vm = _TestHabitSummaryViewModel();
+    addTearDown(vm.dispose);
+    await tester.pumpWidget(_searchBarHost(vm, platform: TargetPlatform.iOS));
+    await tester.tap(find.byKey(const ValueKey('activate-cupertino-search')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(CupertinoSearchTextField), 'alpha');
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey('clear-cupertino-search')).hitTestable(),
+    );
+    await tester.pump();
+    expect(vm.isInSearchMode, isTrue);
+
+    await tester.tap(
+      find.byKey(const ValueKey('cupertino-search-overflow-expanded')),
+    );
+    await tester.pumpAndSettle();
+    expect(vm.isInSearchMode, isFalse);
+    expect(find.byType(CupertinoSearchTextField), findsNothing);
+  });
+
+  testWidgets('Apple removing one filter preserves remaining conditions', (
+    tester,
+  ) async {
+    final vm = _TestHabitSummaryViewModel()
+      ..onSearchOngoingChanged(true)
+      ..onSearchHabitTypeChanged(HabitType.normal, true);
+    addTearDown(vm.dispose);
+    await tester.pumpWidget(_searchBarHost(vm, platform: TargetPlatform.macOS));
+    await tester.tap(
+      find.byIcon(CupertinoIcons.line_horizontal_3_decrease_circle_fill),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('By Status'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Ongoing').last);
+    await tester.pumpAndSettle();
+    expect(vm.searchOptions.activated, isFalse);
+    expect(vm.searchOptions.types, {HabitType.normal});
+    expect(vm.isInSearchMode, isTrue);
+  });
+
+  for (final listen in [true, false]) {
+    test(
+      'search updates publish restored mode and list together: listen=$listen',
+      () async {
+        final vm = await _loadedSearchViewModel();
+        vm.onSearchOngoingChanged(true, listen: false);
+        await Future<void>.value();
+        final observed = <(bool, bool, List<String>)>[];
+        vm.addListener(
+          () => observed.add((
+            vm.isInSearchMode,
+            vm.searchOptions.isEmpty,
+            vm.currentHabitList
+                .whereType<HabitSummaryDataSortCache>()
+                .map((habit) => habit.uuid)
+                .toList(),
+          )),
+        );
+
+        vm.onClearSearchFilter(exitWhenEmpty: true, listen: listen);
+        expect(vm.isInSearchMode, isFalse);
+        await Future<void>.value();
+        if (!listen) {
+          expect(observed, isEmpty);
+          await vm.resortData();
+        }
+        expect(observed, hasLength(1));
+        expect(observed.single.$1, isFalse);
+        expect(observed.single.$2, isTrue);
+        expect(observed.single.$3, [HabitStatus.activated.name]);
+      },
+    );
+  }
+
+  testWidgets('Apple retained empty search survives immediate refocus', (
+    tester,
+  ) async {
+    final vm = _TestHabitSummaryViewModel();
+    addTearDown(vm.dispose);
+    await tester.pumpWidget(_searchBarHost(vm, platform: TargetPlatform.macOS));
+    await tester.tap(find.byKey(const ValueKey('activate-cupertino-search')));
+    await tester.pumpAndSettle();
+    final field = tester.widget<CupertinoSearchTextField>(
+      find.byType(CupertinoSearchTextField),
+    );
+    vm.onSearchOngoingChanged(true);
+    await tester.pump();
+    tester
+        .widget<HabitDisplaySearchActions>(
+          find.byType(HabitDisplaySearchActions),
+        )
+        .config
+        .onClearFilterPressed();
+    field.focusNode!.unfocus();
+    field.focusNode!.requestFocus();
+    await tester.pumpAndSettle();
+    expect(vm.searchOptions.isEmpty, isTrue);
+    expect(vm.isInSearchMode, isTrue);
+    expect(field.focusNode!.hasFocus, isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Apple has no Cancel and external exit clears search state', (
     tester,
   ) async {
@@ -2039,6 +2302,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(vm.searchOptions.keyword, 'kept');
     expect(vm.searchOptions.isFilterEmpty, isTrue);
+    expect(vm.isInSearchMode, isTrue);
   });
 
   testWidgets('macOS large exposes promoted filter actions directly', (

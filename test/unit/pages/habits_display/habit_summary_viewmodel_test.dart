@@ -20,6 +20,50 @@ import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
 import 'package:mhabit/providers/workflow/app_event.dart';
 
 void main() {
+  group('HabitSummaryViewModel:search mode', () {
+    test('empty search stays open unless its interaction has ended', () {
+      final vm = HabitSummaryViewModel();
+      addTearDown(vm.dispose);
+      vm.enterSearchMode();
+      vm.onClearSearchFilter();
+      expect(vm.isInSearchMode, isTrue);
+
+      vm.onClearSearchFilter(exitWhenEmpty: true);
+      expect(vm.isInSearchMode, isFalse);
+    });
+
+    test('finishing a search preserves remaining conditions', () {
+      final vm = HabitSummaryViewModel();
+      addTearDown(vm.dispose);
+      vm.onSeachKeywordChanged('kept');
+      vm.onSearchOngoingChanged(true);
+      vm.onClearSearchFilter(exitWhenEmpty: true);
+      vm.exitSearchModeIfEmpty();
+      expect(vm.isInSearchMode, isTrue);
+      expect(vm.searchOptions.keyword, 'kept');
+
+      vm.onSearchHabitTypeChanged(HabitType.normal, true);
+      vm.onSeachKeywordChanged('', exitWhenEmpty: true);
+      vm.exitSearchModeIfEmpty();
+      expect(vm.isInSearchMode, isTrue);
+      expect(vm.searchOptions.types, {HabitType.normal});
+
+      vm.onSearchHabitTypeChanged(HabitType.normal, false, exitWhenEmpty: true);
+      expect(vm.isInSearchMode, isFalse);
+    });
+
+    test('ending an empty interaction closes retained search', () {
+      final vm = HabitSummaryViewModel();
+      addTearDown(vm.dispose);
+      vm.onSeachKeywordChanged('editing');
+      vm.onSeachKeywordChanged('');
+      expect(vm.isInSearchMode, isTrue);
+
+      vm.exitSearchModeIfEmpty();
+      expect(vm.isInSearchMode, isFalse);
+    });
+  });
+
   group('HabitSummaryViewModel:selection notifications', () {
     test('entering edit mode publishes the initial selection atomically', () {
       final vm = HabitSummaryViewModel();

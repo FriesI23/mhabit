@@ -83,7 +83,7 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
     super.initState();
     _vm = context.read<HabitSummaryViewModel>()
       ..addListener(_onViewModelNotified);
-    _focusNode = FocusNode();
+    _focusNode = FocusNode()..addListener(_onSearchFocusChanged);
     _controller = RestorableTextEditingController.fromValue(
       TextEditingValue(text: _vm.searchOptions.keyword),
     );
@@ -106,6 +106,7 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
   void dispose() {
     _vm.removeListener(_onViewModelNotified);
     _controller.dispose();
+    _focusNode.removeListener(_onSearchFocusChanged);
     _focusNode.dispose();
     super.dispose();
   }
@@ -141,6 +142,15 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
 
   bool get _isViewModelMounted => mounted && _vm.mounted;
 
+  bool get _exitWhenEmpty =>
+      widget.style == AdaptiveStyle.apple && !_focusNode.hasFocus;
+
+  void _onSearchFocusChanged() {
+    if (_isViewModelMounted && _exitWhenEmpty) {
+      _vm.exitSearchModeIfEmpty();
+    }
+  }
+
   void _dismissSearch() {
     if (!_isViewModelMounted) return;
     _vm.exitSearchMode();
@@ -150,13 +160,17 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
 
   void _onTapOutside(PointerDownEvent event) {
     if (_focusNode.hasFocus) _focusNode.unfocus();
+    if (widget.style == AdaptiveStyle.apple) {
+      _onSearchFocusChanged();
+      return;
+    }
     if (_vm.searchOptions.isNotEmpty || !_changed) return;
     _dismissSearch();
   }
 
   void _onChanged(String text) {
     if (!_isViewModelMounted) return;
-    _vm.onSeachKeywordChanged(text);
+    _vm.onSeachKeywordChanged(text, exitWhenEmpty: _exitWhenEmpty);
     _changed = true;
   }
 
@@ -165,17 +179,26 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
   }
 
   void _onOngoingFilterChanged(bool? value) {
-    if (value != null) _vm.onSearchOngoingChanged(value);
+    if (!_isViewModelMounted || value == null) return;
+    _vm.onSearchOngoingChanged(value, exitWhenEmpty: _exitWhenEmpty);
   }
 
   void _onCompletedFilterChanged(bool? value) {
-    if (value != null) _vm.onSearchCompletedChanged(value);
+    if (!_isViewModelMounted || value == null) return;
+    _vm.onSearchCompletedChanged(value, exitWhenEmpty: _exitWhenEmpty);
   }
 
   void _onTypeFilterChanged((HabitType, bool?) value) {
     final (type, include) = value;
-    if (include == null || type == HabitType.unknown) return;
-    _vm.onSearchHabitTypeChanged(type, include);
+    if (!_isViewModelMounted || include == null || type == HabitType.unknown) {
+      return;
+    }
+    _vm.onSearchHabitTypeChanged(type, include, exitWhenEmpty: _exitWhenEmpty);
+  }
+
+  void _onClearFilterPressed() {
+    if (!_isViewModelMounted) return;
+    _vm.onClearSearchFilter(exitWhenEmpty: _exitWhenEmpty);
   }
 
   void _onMaterialSearchActivated() {
@@ -209,7 +232,7 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
           type,
           !_vm.searchOptions.types.contains(type),
         )),
-        onClearFilterPressed: _vm.onClearSearchFilter,
+        onClearFilterPressed: _onClearFilterPressed,
       ),
       filterOverflowOnly:
           widget.style == AdaptiveStyle.material || compactApple,
@@ -238,7 +261,7 @@ class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar>
         ongoingChanged: _onOngoingFilterChanged,
         completedChanged: _onCompletedFilterChanged,
         typeChanged: _onTypeFilterChanged,
-        onClearFilterPressed: _vm.onClearSearchFilter,
+        onClearFilterPressed: _onClearFilterPressed,
       ),
       style: MaterialSliverSearchBarStyle(
         floating: DeviceContext.of(context).platform.isMobileOperatingSystem,
