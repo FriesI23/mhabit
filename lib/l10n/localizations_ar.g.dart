@@ -27,7 +27,7 @@ class L10nAr extends L10n {
   String get habitEdit_colorPicker_title => 'اختر لوناً';
 
   @override
-  String get habitEdit_colorPicker_historySectionLabel => 'Recently used';
+  String get habitEdit_colorPicker_historySectionLabel => 'المُستخدمة حديثًا';
 
   @override
   String habitEdit_colorPicker_customSectionLabel(String tinted) {
@@ -40,16 +40,16 @@ class L10nAr extends L10n {
   }
 
   @override
-  String get habitEdit_colorPicker_cancel => 'Cancel';
+  String get habitEdit_colorPicker_cancel => 'ألغِ';
 
   @override
-  String get habitEdit_colorPicker_tintToggleLabel => 'Tint to theme';
+  String get habitEdit_colorPicker_tintToggleLabel => 'مطابقة اللون مع السّمة';
 
   @override
-  String get habitEdit_colorPicker_tintedLabel => 'Tinted';
+  String get habitEdit_colorPicker_tintedLabel => 'ملون';
 
   @override
-  String get habitEdit_colorPicker_untintedLabel => 'Not tinted';
+  String get habitEdit_colorPicker_untintedLabel => 'غير ملون';
 
   @override
   String get habitEdit_colorPicker_tintToggleOnHint =>
@@ -57,7 +57,7 @@ class L10nAr extends L10n {
 
   @override
   String get habitEdit_colorPicker_tintToggleOffHint =>
-      'Some colors may reduce text readability in light or dark theme.';
+      'بعض الألوان قد تُقلّل وضوح النص في الوضع الفاتح أو الداكن';
 
   @override
   String get habitEdit_habitTypeDialog_title => 'نوع العادة';
@@ -394,7 +394,7 @@ class L10nAr extends L10n {
       'العادات الأبرز: تغييرات آخر 30 يوم';
 
   @override
-  String get habitDisplay_statisticsAction_label => 'Statistics';
+  String get habitDisplay_statisticsAction_label => 'الإحصائيات';
 
   @override
   String get habitDisplay_displayFilterAction_label => 'Display Filter';
