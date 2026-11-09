@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## Unreleased
+
+- Fix: restore WebDAV sync with mixed authentication challenges, including
+  Fastmail (#690)
+
 ## 1.27.18+207
 
 - Feature: Home Screen widgets: 7-day progress, check-in/undo/refresh (#680)

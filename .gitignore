@@ -77,3 +77,6 @@ temp/
 *.pfx
 *.p12
 
+
+# Generated local WebDAV authentication test certificates
+/test/harness/webdav_server/authentication/tls/

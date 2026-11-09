@@ -1,0 +1,46 @@
+name: webdav-auth-regression
+
+x-webdav: &webdav
+  extends:
+    file: ../bytemark_webdav/compose.yml
+    service: webdav
+  container_name: !reset null
+  ports: !reset []
+  image: bytemark/webdav@sha256:21eed0df1238d17766080425f9ef46da2c1130e3e3aa9eaf36794d2a72e7c616
+  platform: linux/amd64
+  restart: "no"
+
+services:
+  basic:
+    <<: *webdav
+    environment:
+      AUTH_TYPE: Basic
+      REALM: WebDAV
+      USERNAME: admin
+      PASSWORD: regression-password
+    volumes: !override
+      - basic-data:/var/lib/dav
+  digest:
+    <<: *webdav
+    environment:
+      AUTH_TYPE: Digest
+      REALM: WebDAV
+      USERNAME: admin
+      PASSWORD: regression-password
+    volumes: !override
+      - digest-data:/var/lib/dav
+  gateway:
+    image: nginx:1.28-alpine@sha256:a8b39bd9cf0f83869a2162827a0caf6137ddf759d50a171451b335cecc87d236
+    restart: "no"
+    depends_on: [basic, digest]
+    ports:
+      - "127.0.0.1:${WEBDAV_BASIC_PORT:-18341}:443"
+      - "127.0.0.1:${WEBDAV_MIXED_PORT:-18342}:444"
+      - "127.0.0.1:${WEBDAV_DIGEST_PORT:-18343}:445"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./tls:/etc/nginx/tls:ro
+
+volumes:
+  basic-data:
+  digest-data:

@@ -110,36 +110,23 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
       httpClient.connectionTimeout =
           config.connectTimeout ?? defaultAppSyncConnectTimeout;
     }
-    final client = WebDavStdClient.withClient(httpClient);
-    if (config.username.isNotEmpty) {
-      int count = 0;
-      client.setAuthenticate((url, scheme, realm) async {
-        if (count++ >= 3) {
-          count = 0;
-          return false;
-        }
-        final baseUri = config.path.replace(
-          path: '',
-          query: null,
-          fragment: null,
-        );
-        if (scheme == "Digest") {
-          client.addCredentials(
-            baseUri,
-            realm ?? '',
-            HttpClientDigestCredentials(config.username, config.password),
-          );
-        } else {
-          client.addCredentials(
-            baseUri,
-            realm ?? '',
-            HttpClientBasicCredentials(config.username, config.password),
-          );
-        }
-        return true;
-      });
-    }
-    return client;
+    if (config.username.isEmpty) return WebDavStdClient.withClient(httpClient);
+    return WebDavStdClient.authenticated(
+      client: httpClient,
+      authentication: WebDavAuthenticationConfig(
+        scope: Uri(
+          scheme: config.path.scheme,
+          host: config.path.host,
+          port: config.path.hasPort ? config.path.port : null,
+          path: '/',
+        ),
+        probeUri: config.path,
+        username: config.username,
+        password: config.password,
+        // Preserve explicitly configured HTTP WebDAV servers.
+        allowInsecureBasic: config.path.scheme == 'http',
+      ),
+    );
   }
 
   @override
