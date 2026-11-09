@@ -28,13 +28,20 @@ import 'package:mhabit/storage/db_helper_provider.dart';
 import 'package:simple_webdav_client/client.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-// Run with the bytemark compose server:
+// Run with the bytemark compose server (the app's TLS auth fixture):
 // MHABIT_TEST_WEBDAV_URL=http://127.0.0.1/ CI=true .flutter/bin/flutter test \
-//   test_harness/webdav_sync_extras_live_test.dart
-Future<void> _createDir(WebDavStdClient client, Uri path) async {
-  final response = await (await client.dispatch(path).createDir()).close();
-  expect(response.response.statusCode, HttpStatus.created);
-  await response.parse();
+//   test/harness/webdav_server/webdav_sync_extras_live_test.dart
+// Set MHABIT_TEST_WEBDAV_CA to the fixture's tls/ca.pem for HTTPS.
+class _FixtureHttpOverrides extends HttpOverrides {
+  final SecurityContext context;
+
+  _FixtureHttpOverrides(String certificate)
+    : context = SecurityContext(withTrustedRoots: true)
+        ..setTrustedCertificates(certificate);
+
+  @override
+  HttpClient createHttpClient(SecurityContext? context) =>
+      super.createHttpClient(context ?? this.context);
 }
 
 Future<void> _writeJson(WebDavStdClient client, Uri path, Object data) async {
@@ -57,24 +64,43 @@ Future<Map<String, dynamic>> _readJson(WebDavStdClient client, Uri path) async {
   return jsonDecode(response.body!) as Map<String, dynamic>;
 }
 
-void main() {
+void main() => registerWebDavSyncExtrasLiveTest();
+
+void registerWebDavSyncExtrasLiveTest({
+  String? endpoint,
+  String? username,
+  String? password,
+  String? certificate,
+  String? testName,
+}) {
   TestWidgetsFlutterBinding.ensureInitialized();
-  final endpoint = Platform.environment['MHABIT_TEST_WEBDAV_URL'];
+  final serverEndpoint =
+      endpoint ?? Platform.environment['MHABIT_TEST_WEBDAV_URL'];
+  final serverCertificate =
+      certificate ?? Platform.environment['MHABIT_TEST_WEBDAV_CA'];
   test(
-    'live WebDAV sync preserves unknown Habit, Group and Record fields',
+    testName ??
+        'live WebDAV sync preserves unknown Habit, Group and Record fields',
     () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
       final previousHttpOverrides = HttpOverrides.current;
-      HttpOverrides.global = null;
+      HttpOverrides.global = serverCertificate == null
+          ? null
+          : _FixtureHttpOverrides(serverCertificate);
       final root = Uri.parse(
-        endpoint!,
+        serverEndpoint!,
       ).resolve('sync-extras-${DateTime.now().microsecondsSinceEpoch}/');
       final config = AppWebDavSyncServer.newServer(
         identity: 'sync-extras-live',
         path: root.toString(),
-        username: Platform.environment['MHABIT_TEST_WEBDAV_USER'] ?? 'admin',
+        username:
+            username ??
+            Platform.environment['MHABIT_TEST_WEBDAV_USER'] ??
+            'admin',
         password:
-            Platform.environment['MHABIT_TEST_WEBDAV_PASSWORD'] ?? '123456',
+            password ??
+            Platform.environment['MHABIT_TEST_WEBDAV_PASSWORD'] ??
+            '123456',
       );
       final client = WebDavAppSyncTask.buildWebDavClient(config);
       final paths = WebDavAppSyncPathBuilder(root);
@@ -87,8 +113,13 @@ void main() {
       Directory? dbDir;
 
       try {
-        await _createDir(client, paths.root);
-        await _createDir(client, paths.habitsDir);
+        // Exercise the actual first-sync path with a missing remote root.
+        final setup = await WebDavAppSyncConfigTask.build(
+          sessionId: 'live-config',
+          config: config,
+          overwriteClient: client,
+        ).run();
+        expect(setup.isSuccessed, isTrue, reason: '$setup');
 
         final record = WebDavSyncRecordData.fromJson({
           '_convert_type': 'record_',
@@ -256,9 +287,9 @@ void main() {
         }
       }
     },
-    skip: endpoint == null || endpoint.isEmpty
+    skip: serverEndpoint == null || serverEndpoint.isEmpty
         ? 'Set MHABIT_TEST_WEBDAV_URL to run against a WebDAV server.'
-        : false,
+        : null,
     timeout: const Timeout(Duration(minutes: 2)),
   );
 }
