@@ -30,7 +30,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 // Run with the bytemark compose server (the app's TLS auth fixture):
 // MHABIT_TEST_WEBDAV_URL=http://127.0.0.1/ CI=true .flutter/bin/flutter test \
-//   test_harness/webdav_sync_extras_live_test.dart
+//   test/harness/webdav_server/webdav_sync_extras_live_test.dart
 // Set MHABIT_TEST_WEBDAV_CA to the fixture's tls/ca.pem for HTTPS.
 class _FixtureHttpOverrides extends HttpOverrides {
   final SecurityContext context;

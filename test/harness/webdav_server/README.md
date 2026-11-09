@@ -9,14 +9,15 @@ from this app repository with Docker Desktop running and `openssl` available:
 ```sh
 .flutter/bin/flutter pub get
 MHABIT_TEST_WEBDAV_DOCKER=1 CI=true .flutter/bin/flutter test --no-pub \
-  test_harness/webdav_authentication_integration_test.dart
+  test/harness/webdav_server/webdav_authentication_integration_test.dart
 ```
 
 No setup script or manual container startup is required. The test group's
 `setUpAll` creates a test CA, starts Compose and waits for readiness;
 `tearDownAll` captures logs and removes that invocation's containers and volumes,
-including after test failures. Docker tests are opt-in and skipped without the
-flag. Forced termination of the test process can prevent teardown.
+including after test failures. The normal Flutter test suite discovers these
+tests, but Docker checks are skipped unless the flag is set. Forced termination
+of the test process can prevent teardown.
 Timed-out fixture commands are stopped before cleanup starts; each readiness
 attempt also bounds connection setup and response-body draining.
 

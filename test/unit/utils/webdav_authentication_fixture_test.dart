@@ -6,7 +6,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../../test_harness/webdav_authentication_fixture.dart';
+import '../../harness/webdav_server/webdav_authentication_fixture.dart';
 
 void main() {
   final dart = File(

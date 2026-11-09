@@ -118,9 +118,10 @@ existing architecture and tooling contracts.
 - When a task touches generated artifacts, prefer validating with `make gen` or
   `make verify-generated` instead of editing generated outputs directly.
 
-Optional WebDAV/Docker acceptance lives in `test_harness/`; the tests manage
-Compose startup, readiness and teardown. See `test_harness/README.md` for the
-opt-in command and evidence paths. Ordinary unit tests do not require Docker.
+Optional WebDAV/Docker acceptance lives in `test/harness/webdav_server/`; the
+tests manage Compose startup, readiness and teardown. See that directory's
+`README.md` for the opt-in command and evidence paths. Ordinary unit tests do
+not require Docker.
 
 ## Project Structure
 
