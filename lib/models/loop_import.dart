@@ -220,6 +220,7 @@ class LoopCsvImporter implements ThirdPartyImporter {
   /// Expects a ZIP archive with the Loop Habit Tracker CSV export structure:
   /// - `Habits.csv` at the root
   /// - `{position03d} {name}/Checkmarks.csv` per habit
+  /// - `{position03d}/Checkmarks.csv` when filename sanitization removes the name
   factory LoopCsvImporter.fromZipBytes(Uint8List bytes) {
     final archive = ZipDecoder().decodeBytes(bytes);
 
@@ -249,14 +250,17 @@ class LoopCsvImporter implements ThirdPartyImporter {
 
     final habits = _parseHabits(habitsText);
 
-    // 2. For each habit, locate its Checkmarks.csv by position prefix
+    // 2. Match the position directory, including names sanitized to empty by Loop.
     final recordsByHabit = <List<LoopRecordData>>[];
     for (final habit in habits) {
-      final dirPrefix = '${habit.position.toString().padLeft(3, '0')} ';
+      final position = habit.position.toString().padLeft(3, '0');
+      final recordPath = RegExp(
+        '^$position'
+        r'(?: [^/]+)?/Checkmarks\.csv$',
+      );
       ArchiveFile? found;
       for (final f in archive.files) {
-        if (f.name.startsWith(dirPrefix) &&
-            f.name.endsWith('/Checkmarks.csv')) {
+        if (recordPath.hasMatch(f.name)) {
           found = f;
           break;
         }
@@ -439,6 +443,7 @@ class LoopCsvImporter implements ThirdPartyImporter {
         RecordExportDataKey.recordDate: _dateToEpochDay(r.date),
         RecordExportDataKey.recordType: entry.recordType,
         RecordExportDataKey.recordValue: entry.recordValue,
+        if (r.notes.isNotEmpty) RecordExportDataKey.reason: r.notes,
       });
     }
     return result;

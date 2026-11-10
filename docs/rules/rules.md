@@ -123,6 +123,18 @@ tests manage Compose startup, readiness and teardown. See that directory's
 `README.md` for the opt-in command and evidence paths. Ordinary unit tests do
 not require Docker.
 
+### Pull Requests
+
+- Start PR descriptions from `.github/PULL_REQUEST_TEMPLATE.md`, or the applicable
+  specialized template under `.github/PULL_REQUEST_TEMPLATE/`. Preserve its
+  sections and checklist, and keep the description concise and user-facing.
+- Record checks actually run and their results, including any unverified scope.
+  Check only applicable checklist items. Use `Fixes` or `Closes` only for fully
+  resolved issues; use `Related to` for partial or related work.
+- Reuse existing repository labels. After creation, query the PR back to verify
+  its base, head, description, labels, and issue references against the intended
+  change.
+
 ## Project Structure
 
 - `lib/main.dart` owns startup ordering. Keep binding, logging, app info,

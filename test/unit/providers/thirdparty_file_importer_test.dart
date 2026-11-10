@@ -18,10 +18,46 @@ import 'package:archive/archive.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/exceptions.dart';
+import 'package:mhabit/models/habit_export.dart';
 import 'package:mhabit/models/thirdparty_import.dart';
 import 'package:mhabit/providers/workflow/thirdparty_file_importer.dart';
 
+import '../../support/loop_csv_sample.dart';
+
 void main() {
+  test(
+    'real Loop export retains nameless-directory history and notes',
+    () async {
+      final owner = ThirdPartyImportOwner();
+      addTearDown(owner.dispose);
+      final result = await owner.parseThirdPartyFile(
+        ThirdPartyProvider.loopHabitTracker,
+        loadLoopRealZip(),
+      );
+      final habits = {
+        for (final habit in result.map(HabitExportData.fromJson))
+          habit.name: habit,
+      };
+      expect(habits, hasLength(6));
+      final chinese = habits['阅读']!;
+      expect(chinese.desc, '[From: Loop Habit Tracker] 639 Chinese boolean');
+      expect(chinese.getRecordDBCells().map((record) => record.reason), [
+        '639 完成 Читать',
+        '639 跳过 Пропуск',
+      ]);
+      final habit = habits['Читать']!;
+      expect(habit.dailyGoal, 2);
+      expect(habit.dailyGoalUnit, 'pages');
+      final record = habit.getRecordDBCells().single;
+      expect(record.recordValue, 3.5);
+      expect(record.reason, '639 数值 заметка');
+      expect(
+        habits['Read639']!.getRecordDBCells().single.reason,
+        '639 English 完成',
+      );
+    },
+  );
+
   group('ThirdPartyImportOwner.loadHabitsData', () {
     const provider = ThirdPartyProvider.loopHabitTracker;
 

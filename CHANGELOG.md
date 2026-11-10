@@ -4,6 +4,8 @@
 
 ## Unreleased
 
+- Fix: preserve Loop import history for habits with non-Latin names and retain
+  record notes (#639)
 - Fix: restore WebDAV sync with mixed authentication challenges, including
   Fastmail (#690)
 

@@ -22,6 +22,13 @@ import 'package:archive/archive.dart';
 /// The ZIP is stored at `test/support/loop_habits_csv_v2.3.1.zip` and is
 /// loaded in-memory at test time — it is never unpacked in the source tree.
 ///
+/// Exported unchanged through Loop v2.3.1 on Android on 2026-11-10. Contains
+/// six habits and twelve raw records (nine after import filtering), including
+/// the original three English habits and the Issue #639 acceptance cases:
+/// `阅读` (completion and skip), `Читать` (3.5 pages, target 2), and `Read639`
+/// (English control), with Chinese/Russian record notes. Loop removes the
+/// Chinese/Russian names from directory names, leaving only `004/` and `005/`.
+///
 /// ⚠️ Test-only helper (blocking I/O). Do not use in production code or
 /// from the UI isolate.
 Uint8List loadLoopRealZip() =>
