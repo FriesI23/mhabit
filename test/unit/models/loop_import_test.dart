@@ -27,6 +27,150 @@ import 'package:test/test.dart';
 import '../../support/loop_csv_sample.dart';
 
 void main() {
+  group('Loop CSV import data preservation', () {
+    const header =
+        'Position,Name,Type,Question,Description,'
+        'FrequencyNumerator,FrequencyDenominator,Color,Unit,'
+        'Target Type,Target Value,Archived?\n';
+
+    for (final name in ['阅读', 'Читать', '✨']) {
+      test('imports history for sanitized name $name', () {
+        final importer = LoopCsvImporter.fromZipBytes(
+          _buildLoopZip({
+            'Habits.csv':
+                '$header'
+                '001,$name,YES_NO,,,1,1,#FF8F00,,,,false\n',
+            '001/Checkmarks.csv':
+                'Date,Value,Notes\n2025-01-25,YES_MANUAL,完成\n'
+                '2025-01-23,SKIP,休息\n',
+          }),
+        );
+        expect(importer.habits.single.name, name);
+        expect(importer.totalRecordCount, 2);
+        final data = HabitExportData.fromJson(importer.toExportJson().single);
+        expect(data.startDate, HabitDate(2025, 1, 23).epochDay);
+        final records = data.getRecordDBCells().toList();
+        expect(records.map((record) => record.recordDate), [
+          HabitDate(2025, 1, 25).epochDay,
+          HabitDate(2025, 1, 23).epochDay,
+        ]);
+        expect(records.map((record) => record.recordType), [1, 2]);
+        expect(records.map((record) => record.recordValue), [1, 0]);
+      });
+    }
+
+    test('keeps seven raw records with mixed or nameless directories', () {
+      for (final directories in [
+        ['001', '002', '003'],
+        ['001', '002 Run', '003 Wake up early'],
+        ['001 Meditate', '002 Run', '003 早起Wake'],
+      ]) {
+        final files = <String, String>{};
+        for (final file
+            in ZipDecoder().decodeBytes(buildLoopSampleZip()).files) {
+          final parts = file.name.split('/');
+          final name = parts.length == 2
+              ? '${directories[int.parse(parts.first.substring(0, 3)) - 1]}/${parts.last}'
+              : file.name;
+          files[name] = utf8.decode(file.content);
+        }
+        final importer = LoopCsvImporter.fromZipBytes(_buildLoopZip(files));
+        expect(importer.habitCount, 3);
+        expect(importer.totalRecordCount, 7);
+        expect(importer.recordsByHabit.map((records) => records.length), [
+          3,
+          3,
+          1,
+        ]);
+        final data = importer
+            .toExportJson()
+            .map(HabitExportData.fromJson)
+            .toList();
+        expect(data.map((habit) => habit.records.length), [2, 3, 1]);
+        expect(data[1].getRecordDBCells().map((record) => record.recordValue), [
+          2,
+          3,
+          0,
+        ]);
+      }
+    });
+
+    test('ignores adjacent numbers, aggregate and nested record files', () {
+      const checkmarks = 'Date,Value,Notes\n2025-01-25,YES_MANUAL,wrong\n';
+      final importer = LoopCsvImporter.fromZipBytes(
+        _buildLoopZip({
+          'Habits.csv':
+              '$header'
+              '001,Meditate,YES_NO,,,1,1,#FF8F00,,,,false\n',
+          '0010 Other/Checkmarks.csv': checkmarks,
+          '001 Other/nested/Checkmarks.csv': checkmarks,
+          '001/nested/Checkmarks.csv': checkmarks,
+          'outer/001 Meditate/Checkmarks.csv': checkmarks,
+          'Checkmarks.csv': checkmarks,
+        }),
+      );
+      expect(importer.habitCount, 1);
+      expect(importer.totalRecordCount, 0);
+    });
+
+    test('supports positions with more than three digits', () {
+      final importer = LoopCsvImporter.fromZipBytes(
+        _buildLoopZip({
+          'Habits.csv':
+              '$header'
+              '1000,Read,YES_NO,,,1,1,#FF8F00,,,,false\n',
+          '1000/Checkmarks.csv': 'Date,Value,Notes\n2025-01-25,YES_MANUAL,\n',
+        }),
+      );
+      expect(importer.totalRecordCount, 1);
+    });
+
+    test(
+      'preserves completion, numerical and skip notes through DB models',
+      () {
+        final importer = LoopCsvImporter.fromZipBytes(buildLoopSampleZip());
+        final json = importer.toExportJson();
+        final records = json
+            .map(HabitExportData.fromJson)
+            .map((habit) => habit.getRecordDBCells().toList())
+            .toList();
+        expect(records[0].map((record) => record.reason), [
+          'Did great!',
+          'Sick',
+        ]);
+        expect(records[1].map((record) => record.reason), [
+          null,
+          'Good run',
+          null,
+        ]);
+        final numerical = json[1][HabitExportDataKey.records] as List;
+        expect(
+          numerical.first.containsKey(RecordExportDataKey.reason),
+          isFalse,
+        );
+      },
+    );
+
+    test('preserves Unicode, newlines and whitespace in notes', () {
+      const notes = '  阅读 Читать\n第二行  ';
+      final importer = LoopCsvImporter.fromZipBytes(
+        _buildLoopZip({
+          'Habits.csv':
+              '$header'
+              '001,Read,YES_NO,,,1,1,#FF8F00,,,,false\n',
+          '001 Read/Checkmarks.csv':
+              'Date,Value,Notes\n2025-01-25,YES_MANUAL,"$notes"\n'
+              '2025-01-24,SKIP,   \n',
+        }),
+      );
+      final data = HabitExportData.fromJson(importer.toExportJson().single);
+      expect(data.getRecordDBCells().map((record) => record.reason), [
+        notes,
+        '   ',
+      ]);
+    });
+  });
+
   group('LoopCsvImporter.fromZipBytes', () {
     late LoopCsvImporter importer;
 
@@ -124,11 +268,11 @@ void main() {
     });
 
     test('habitCount matches real data', () {
-      expect(importer.habitCount, 3);
+      expect(importer.habitCount, 6);
     });
 
     test('totalRecordCount matches real data', () {
-      expect(importer.totalRecordCount, 7);
+      expect(importer.totalRecordCount, 12);
     });
 
     test('recordsByHabit length matches habits length', () {
@@ -179,7 +323,7 @@ void main() {
 
     test('records for bool habit have correct types', () {
       final records = importer.recordsByHabit[2]; // 003 bool habit
-      expect(records.length, 4);
+      expect(records.length, 5);
       for (final r in records) {
         expect(r.date, matches(RegExp(r'^\d{4}-\d{2}-\d{2}$')));
         // YES_NO habits only have YES_MANUAL, NO, SKIP, or UNKNOWN
@@ -188,6 +332,61 @@ void main() {
           anyOf('YES_MANUAL', 'NO', 'SKIP', 'UNKNOWN', 'YES_AUTO'),
         );
       }
+    });
+
+    test(
+      'nameless Chinese directory preserves completion and skip records',
+      () {
+        expect(importer.habits[3].name, '阅读');
+        expect(importer.recordsByHabit[3].map((record) => record.valueStr), [
+          'YES_MANUAL',
+          'SKIP',
+        ]);
+        final habit = HabitExportData.fromJson(importer.toExportJson()[3]);
+        expect(habit.startDate, HabitDate(2026, 11, 9).epochDay);
+        final records = habit.getRecordDBCells().toList();
+        expect(records.map((record) => record.recordDate), [
+          HabitDate(2026, 11, 10).epochDay,
+          HabitDate(2026, 11, 9).epochDay,
+        ]);
+        expect(records.map((record) => record.recordType), [1, 2]);
+        expect(records.map((record) => record.recordValue), [1, 0]);
+        expect(records.map((record) => record.reason), [
+          '639 完成 Читать',
+          '639 跳过 Пропуск',
+        ]);
+      },
+    );
+
+    test('nameless Russian directory preserves value, target and notes', () {
+      expect(importer.habits[4].name, 'Читать');
+      expect(importer.recordsByHabit[4].single.valueStr, '3500');
+      final habit = HabitExportData.fromJson(importer.toExportJson()[4]);
+      expect(habit.dailyGoal, 2);
+      expect(habit.dailyGoalUnit, 'pages');
+      expect(habit.freqType, HabitFrequencyType.custom.dbCode);
+      expect(jsonDecode(habit.freqCustom!), [1, 1]);
+      final record = habit.getRecordDBCells().single;
+      expect(record.recordDate, HabitDate(2026, 11, 10).epochDay);
+      expect(record.recordType, 1);
+      expect(record.recordValue, 3.5);
+      expect(record.reason, '639 数值 заметка');
+    });
+
+    test('English records and notes remain intact after filtering', () {
+      final habits = importer
+          .toExportJson()
+          .map(HabitExportData.fromJson)
+          .toList();
+      expect(habits.map((habit) => habit.records.length), [0, 3, 2, 2, 1, 1]);
+      expect(habits[1].getRecordDBCells().last.reason, 'hi');
+      expect(habits[2].getRecordDBCells().last.reason, 'yes');
+      expect(habits[5].name, 'Read639');
+      final record = habits[5].getRecordDBCells().single;
+      expect(record.recordDate, HabitDate(2026, 11, 10).epochDay);
+      expect(record.recordType, 1);
+      expect(record.recordValue, 1);
+      expect(record.reason, '639 English 完成');
     });
   });
 
@@ -590,4 +789,13 @@ void main() {
   });
 
   //#endregion
+}
+
+Uint8List _buildLoopZip(Map<String, String> files) {
+  final archive = Archive();
+  for (final entry in files.entries) {
+    final bytes = utf8.encode(entry.value);
+    archive.addFile(ArchiveFile(entry.key, bytes.length, bytes));
+  }
+  return Uint8List.fromList(ZipEncoder().encode(archive));
 }
