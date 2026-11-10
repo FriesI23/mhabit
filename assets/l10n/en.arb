@@ -2014,5 +2014,28 @@
         }
     },
     "habitDisplay_groupModifyConfirm_previewTitle": "Preview",
-    "@habitDisplay_groupModifyConfirm_previewTitle": {}
+    "@habitDisplay_groupModifyConfirm_previewTitle": {},
+    "appSupport_title": "Support Table Habit",
+    "@appSupport_title": {},
+    "appSupport_message": "Your support helps improve Table Habit and reach more people.",
+    "@appSupport_message": {
+        "description": "Shared support message for all distribution channels. Keep this text independent of the destination platform."
+    },
+    "appSupport_open": "Go to {platform}",
+    "@appSupport_open": {
+        "description": "Opens the support destination for the current distribution channel.",
+        "placeholders": {
+            "platform": {
+                "type": "String",
+                "description": "Display name of the destination, such as GitHub or Google Play.",
+                "example": "GitHub"
+            }
+        }
+    },
+    "appSupport_later": "Remind me later",
+    "@appSupport_later": {},
+    "appSupport_never": "Don't remind me again",
+    "@appSupport_never": {},
+    "appSupport_linkFailed": "Unable to open the link. Please try again.",
+    "@appSupport_linkFailed": {}
 }

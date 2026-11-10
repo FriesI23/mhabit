@@ -48,6 +48,7 @@ import 'package:mhabit/providers/app_ui/habit_op_config.dart';
 import 'package:mhabit/providers/app_ui/habits_record_scroll_behavior.dart';
 import 'package:mhabit/providers/support/global.dart';
 import 'package:mhabit/providers/workflow/app_reminder.dart';
+import 'package:mhabit/providers/workflow/app_support.dart';
 import 'package:mhabit/providers/workflow/app_sync.dart';
 import 'package:mhabit/providers/workflow/group_manager.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
@@ -61,6 +62,10 @@ import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
+
+import '../../support/stub/about_info.dart';
 
 class _ExportAccess implements HabitExportAccess, GroupExportAccess {
   int habitLoads = 0;
@@ -216,6 +221,14 @@ void main() {
       tester,
     ) async {
       final profile = await _loadProfile();
+      final previousPreferences = SharedPreferencesAsyncPlatform.instance;
+      SharedPreferencesAsyncPlatform.instance =
+          InMemorySharedPreferencesAsync.empty();
+      addTearDown(
+        () => SharedPreferencesAsyncPlatform.instance = previousPreferences,
+      );
+      final support = AppSupportOwner(loadInfo: () async => stubAboutInfo());
+      addTearDown(support.dispose);
       final dbHelper = DBHelperViewModel();
       final syncAccess = _FakeAppSyncAccess();
 
@@ -296,6 +309,7 @@ void main() {
       await tester.pumpWidget(
         MultiProvider(
           providers: [
+            ChangeNotifierProvider<AppSupportOwner>.value(value: support),
             Provider<HabitExportAccess>.value(value: exportAccess),
             Provider<GroupExportAccess>.value(value: exportAccess),
             ChangeNotifierProvider<ProfileViewModel>.value(value: profile),
@@ -783,6 +797,46 @@ void main() {
             .isInDevelopMode,
         isTrue,
       );
+      final resetSupport = find.byKey(
+        const ValueKey('developer-reset-app-support'),
+      );
+      await tester.ensureVisible(resetSupport);
+      await tester.pumpAndSettle();
+      await tester.tap(resetSupport);
+      await tester.pumpAndSettle();
+      expect(find.byType(AdaptiveDialog), findsNothing);
+      final preferences = SharedPreferencesAsync();
+      expect(await preferences.getInt('appSupport_launches'), 9);
+      expect(await preferences.getBool('appSupport_doNotOpenAgain'), isFalse);
+      final armed = await preferences.getAll();
+      await tester.tap(find.byType(SnackBarAction));
+      await tester.pumpAndSettle();
+      final showSupport = find.byKey(
+        const ValueKey('developer-show-app-support'),
+      );
+      for (var i = 0; i < 2; i++) {
+        await tester.ensureVisible(showSupport);
+        await tester.pumpAndSettle();
+        await tester.tap(showSupport);
+        await tester.pumpAndSettle();
+        expect(find.byType(AdaptiveDialog), findsOneWidget);
+        final developerControls = tester.widget<AppSettingDevelopSubGroup>(
+          find.byType(AppSettingDevelopSubGroup),
+        );
+        expect(developerControls.appSupportBusy, isTrue);
+        final dialogL10n = L10n.of(
+          tester.element(find.byType(AdaptiveDialog)),
+        )!;
+        await tester.tap(
+          find.text(
+            i == 0 ? dialogL10n.appSupport_later : dialogL10n.appSupport_never,
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byType(AdaptiveDialog), findsNothing);
+        expect(support.developerActionInProgress, isFalse);
+        expect(await preferences.getAll(), armed);
+      }
       await Scrollable.ensureVisible(
         tester.element(developmentTile),
         alignment: 0.5,

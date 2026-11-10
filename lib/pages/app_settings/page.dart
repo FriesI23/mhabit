@@ -52,6 +52,7 @@ import '../../providers/app_ui/habits_record_scroll_behavior.dart';
 import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_reminder.dart';
 import '../../providers/workflow/app_settings.dart';
+import '../../providers/workflow/app_support.dart';
 import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/group_manager.dart';
 import '../../providers/workflow/habits_file_exporter.dart';
@@ -105,6 +106,7 @@ class _Page extends StatefulWidget {
 
 class _PageState extends State<_Page> with XShare {
   final ScrollController _scrollController = ScrollController();
+  AppSupportDialogController? _supportPreview;
 
   /// Whether the current platform supports opening the system language
   /// settings screen.
@@ -130,6 +132,7 @@ class _PageState extends State<_Page> with XShare {
   @override
   void dispose() {
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    _supportPreview?.abort();
     _scrollController.dispose();
     super.dispose();
   }
@@ -440,6 +443,61 @@ class _PageState extends State<_Page> with XShare {
       ),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void _supportFeedback(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(buildSnackBarWithDismiss(context, content: Text(message)));
+  }
+
+  Future<void> _resetSupportPrompt() async {
+    if (!mounted || !context.read<AppDeveloperViewModel>().isInDevelopMode) {
+      return;
+    }
+    final support = context.read<AppSupportOwner>();
+    if (support.developerActionInProgress) return;
+    final saved = await support.resetForNextLaunch();
+    if (!mounted) return;
+    _supportFeedback(
+      saved
+          ? 'Support prompt reset. Restart the app to test automatic prompting.'
+          : 'Could not reset the support prompt. Check logs and retry.',
+    );
+  }
+
+  Future<void> _showSupportPrompt() async {
+    if (!mounted || !context.read<AppDeveloperViewModel>().isInDevelopMode) {
+      return;
+    }
+    final support = context.read<AppSupportOwner>();
+    if (support.developerActionInProgress) return;
+    final shown = await support.previewPrompt(
+      canPresent: () =>
+          mounted &&
+          context.read<AppDeveloperViewModel>().isInDevelopMode &&
+          ModalRoute.of(context)?.isCurrent == true &&
+          !Navigator.of(context, rootNavigator: true).canPop(),
+      showPrompt: (target) async {
+        final dialog = AppSupportDialogController();
+        _supportPreview = dialog;
+        try {
+          return await showAppSupportDialog(
+            context: context,
+            target: target,
+            controller: dialog,
+          );
+        } finally {
+          _supportPreview = null;
+          dialog.dispose();
+        }
+      },
+    );
+    if (mounted && !shown) {
+      _supportFeedback(
+        'Could not show the support prompt. Check logs and retry.',
+      );
+    }
   }
 
   void _onDevelopModeSwitchTilePressed(bool value) async {
@@ -937,22 +995,25 @@ class _PageState extends State<_Page> with XShare {
     );
 
     Widget buildDevelopSubGroup(BuildContext context) =>
-        Selector<
+        Selector2<
           AppDeveloperViewModel,
+          AppSupportOwner,
           (
             bool,
             bool,
             AppAdaptiveStyleMode,
             TextDirection?,
             AppAppleSidebarStyleMode,
+            bool,
           )
         >(
-          selector: (context, vm) => (
+          selector: (context, vm, support) => (
             vm.isInDevelopMode,
             vm.displayDebugMenu,
             vm.adaptiveStyleMode,
             vm.textDirectionOverride,
             vm.appleSidebarStyleMode,
+            support.developerActionInProgress,
           ),
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) {
@@ -962,6 +1023,7 @@ class _PageState extends State<_Page> with XShare {
               adaptiveStyleMode,
               textDirectionOverride,
               appleSidebarStyleMode,
+              appSupportBusy,
             ) = value;
             return AppSettingDevelopSubGroup(
               isInDevelopMode: isInDevelopMode,
@@ -975,6 +1037,9 @@ class _PageState extends State<_Page> with XShare {
               onAppleSidebarStyleModeChanged: _onAppleSidebarStyleModeChanged,
               onExportDBTilePressed: _onExportDBTilePressed,
               onClearDBTilePressed: _onClearDBTilePressed,
+              appSupportBusy: appSupportBusy,
+              onResetAppSupportPressed: _resetSupportPrompt,
+              onShowAppSupportPressed: _showSupportPrompt,
             );
           },
         );

@@ -31,6 +31,9 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
   final ValueChanged<TextDirection?>? onTextDirectionOverrideChanged;
   final void Function(BuildContext context)? onExportDBTilePressed;
   final void Function(BuildContext context)? onClearDBTilePressed;
+  final bool appSupportBusy;
+  final VoidCallback? onResetAppSupportPressed;
+  final VoidCallback? onShowAppSupportPressed;
 
   const AppSettingDevelopSubGroup({
     super.key,
@@ -45,6 +48,9 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
     this.onTextDirectionOverrideChanged,
     this.onExportDBTilePressed,
     this.onClearDBTilePressed,
+    this.appSupportBusy = false,
+    this.onResetAppSupportPressed,
+    this.onShowAppSupportPressed,
   });
 
   @override
@@ -121,6 +127,22 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
                 ? null
                 : () => onClearDBTilePressed!(context),
           ),
+        ),
+        AdaptiveListTile(
+          key: const ValueKey('developer-reset-app-support'),
+          title: const Text('Reset support prompt for next launch'),
+          subtitle: const Text(
+            'Clears dismissal and cooldown. Startup checks still apply.',
+          ),
+          onTap: appSupportBusy ? null : onResetAppSupportPressed,
+        ),
+        AdaptiveListTile(
+          key: const ValueKey('developer-show-app-support'),
+          title: const Text('Show support prompt now'),
+          subtitle: const Text(
+            'Preview only; does not change reminder history.',
+          ),
+          onTap: appSupportBusy ? null : onShowAppSupportPressed,
         ),
       ],
     ),

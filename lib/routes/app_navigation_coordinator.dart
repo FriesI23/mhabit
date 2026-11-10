@@ -152,6 +152,7 @@ class AppNavigationCoordinator extends ChangeNotifier {
   StatefulNavigationShell? _navigationShell;
   int _selectedIndex;
   String? _appFlowTopRouteName;
+  String? _selectedBranchTopRouteName;
   bool _compactRouteVisible = true;
   bool _destinationSwitchInProgress = false;
   bool _notificationScheduled = false;
@@ -162,6 +163,21 @@ class AppNavigationCoordinator extends ChangeNotifier {
 
   /// Index of the currently selected primary branch.
   int get selectedIndex => _selectedIndex;
+
+  /// Whether [branch]'s actual root is visible with no app flow above it.
+  ///
+  /// Stack depth alone is insufficient: a replacement can put a detail page
+  /// at depth one while retaining the selected branch.
+  bool isAtPrimaryBranchRoot(AppNavigationBranch branch) {
+    final observer = _branchObserverAt(branch.navigationIndex);
+    return !_disposed &&
+        !_destinationSwitchInProgress &&
+        _selectedIndex == branch.navigationIndex &&
+        appFlowObserver.depth == 1 &&
+        appShellFlowVisibilityPolicy(appFlowObserver.routeNameStack) &&
+        observer?.depth == 1 &&
+        observer?.topRouteName == branch.rootRouteName;
+  }
 
   /// Name of the route currently presented by the app-flow navigator.
   String? get appFlowTopRouteName => _appFlowTopRouteName;
@@ -327,14 +343,17 @@ class AppNavigationCoordinator extends ChangeNotifier {
         _navigationShell?.currentIndex ??
         _selectedIndex;
     final nextAppFlowTopRouteName = appFlowObserver.topRouteName;
+    final nextBranchTopRouteName = _branchObserverAt(nextIndex)?.topRouteName;
     _selectedIndex = nextIndex;
     final nextVisible = _routeVisibilityAt(nextIndex);
     if (nextIndex == previousIndex &&
         nextAppFlowTopRouteName == _appFlowTopRouteName &&
+        nextBranchTopRouteName == _selectedBranchTopRouteName &&
         nextVisible == _compactRouteVisible) {
       return;
     }
     _appFlowTopRouteName = nextAppFlowTopRouteName;
+    _selectedBranchTopRouteName = nextBranchTopRouteName;
     _compactRouteVisible = nextVisible;
     if (!scheduleNotification) {
       notifyListeners();

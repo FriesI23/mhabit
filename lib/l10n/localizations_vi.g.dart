@@ -2340,4 +2340,26 @@ class L10nVi extends L10n {
 
   @override
   String get habitDisplay_groupModifyConfirm_previewTitle => 'Preview';
+
+  @override
+  String get appSupport_title => 'Support Table Habit';
+
+  @override
+  String get appSupport_message =>
+      'Your support helps improve Table Habit and reach more people.';
+
+  @override
+  String appSupport_open(String platform) {
+    return 'Go to $platform';
+  }
+
+  @override
+  String get appSupport_later => 'Remind me later';
+
+  @override
+  String get appSupport_never => 'Don\'t remind me again';
+
+  @override
+  String get appSupport_linkFailed =>
+      'Unable to open the link. Please try again.';
 }

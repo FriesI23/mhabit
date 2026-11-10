@@ -25,11 +25,11 @@ import '../../models/app_entry.dart';
 import '../../providers/app_ui/app_launch_entry.dart';
 import '../../routes/app_navigation_branch.dart';
 import '../../routes/app_navigation_coordinator.dart';
-import '../../routes/app_navigation_scroll_controller.dart';
 import '../../widgets/_widgets/app_window_title_bar_binding.dart';
 import '../../widgets/widgets.dart';
 import 'navigation_chrome.dart';
 import 'navigation_destination.dart';
+import 'providers.dart';
 
 /// [AdaptiveNavigationShell] wired up for the app: localized destinations,
 /// app navigation-bar styling, launch-entry persistence on branch switches,
@@ -43,6 +43,7 @@ class AppNavigationShell extends StatelessWidget {
     this.auxiliaryChromeBuilder,
     this.appleSidebarStyleMode = AppAppleSidebarStyleMode.automatic,
     this.appleCollapsedSidebarEnabled = true,
+    this.startupBuilder,
   });
 
   final AppNavigationCoordinator coordinator;
@@ -59,17 +60,14 @@ class AppNavigationShell extends StatelessWidget {
   /// route or business meaning.
   final AppNavigationAuxiliaryChromeBuilder? auxiliaryChromeBuilder;
 
+  /// Wraps the whole shell below navigation providers for entry-owned startup work.
+  final TransitionBuilder? startupBuilder;
+
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<AppNavigationCoordinator>.value(
-          value: coordinator,
-        ),
-        Provider<AppNavigationScrollController>.value(
-          value: coordinator.scrollController,
-        ),
-      ],
+    return AppNavigationProviders(
+      coordinator: coordinator,
+      builder: startupBuilder,
       child: NavigatorPopHandler<Object?>(
         onPopWithResult: (result) {
           final navigator = coordinator.appChromeNavigatorKey.currentState;

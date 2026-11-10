@@ -12,30 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
-import '../../common/consts.dart';
 import '../../providers/support/about_info.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   const PageProviders({super.key, super.child});
 
-  Future<AboutInfo> loadAboutInfoData() async {
-    final String rawJson = await rootBundle.loadString(aboutInfoFilePath);
-    final Map<String, Object?> data = jsonDecode(rawJson);
-    return AboutInfo.fromJson(data);
-  }
-
   @override
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
     providers: [
       FutureProvider<AboutInfo>(
-        create: (_) async => loadAboutInfoData(),
+        create: (_) => loadAboutInfo(),
         initialData: const AboutInfo.empty(),
       ),
     ],

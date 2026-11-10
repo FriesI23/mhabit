@@ -12,7 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:convert';
+
+import 'package:flutter/services.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import '../../common/consts.dart';
 
 part 'about_info.g.dart';
 
@@ -56,4 +61,11 @@ class AboutInfo {
 
   factory AboutInfo.fromJson(Map<String, dynamic> json) =>
       _$AboutInfoFromJson(json);
+}
+
+/// Loads the shared project configuration from the app's asset bundle.
+Future<AboutInfo> loadAboutInfo({AssetBundle? bundle}) async {
+  final raw = await (bundle ?? rootBundle).loadString(aboutInfoFilePath);
+  final Map<String, dynamic> data = jsonDecode(raw);
+  return AboutInfo.fromJson(data);
 }

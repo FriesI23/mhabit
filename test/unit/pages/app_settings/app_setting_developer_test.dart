@@ -28,6 +28,9 @@ void main() {
       var sidebarModeCalls = 0;
       var exportCalls = 0;
       var clearCalls = 0;
+      var supportResets = 0;
+      var supportShows = 0;
+      var supportBusy = false;
       late StateSetter update;
       await tester.pumpWidget(
         MaterialApp(
@@ -55,6 +58,9 @@ void main() {
                       textDirection: direction ?? TextDirection.ltr,
                       child: AppSettingDevelopSubGroup(
                         isInDevelopMode: active,
+                        appSupportBusy: supportBusy,
+                        onResetAppSupportPressed: () => supportResets++,
+                        onShowAppSupportPressed: () => supportShows++,
                         isDisplayDebugMenuSelect: debug,
                         adaptiveStyleMode: mode,
                         appleSidebarStyleMode: sidebarMode,
@@ -106,7 +112,7 @@ void main() {
             )
             .children
             .length,
-        platform == TargetPlatform.android ? 5 : 6,
+        platform == TargetPlatform.android ? 7 : 8,
       );
       await tester.tap(
         find.byType(
@@ -151,6 +157,25 @@ void main() {
       await tester.tap(find.text('Clear DataBase'));
       expect(exportCalls, 1);
       expect(clearCalls, 1);
+      for (final key in [
+        'developer-reset-app-support',
+        'developer-show-app-support',
+      ]) {
+        final tile = find.byKey(ValueKey(key));
+        await tester.ensureVisible(tile);
+        await tester.tap(tile);
+      }
+      expect(supportResets, 1);
+      expect(supportShows, 1);
+      update(() => supportBusy = true);
+      await tester.pumpAndSettle();
+      for (final key in [
+        'developer-reset-app-support',
+        'developer-show-app-support',
+      ]) {
+        final tile = find.byKey(ValueKey(key));
+        expect(tester.widget<AdaptiveListTile>(tile).onTap, isNull);
+      }
       update(() => active = false);
       await tester.pumpAndSettle();
       expect(find.text('Show debug menu').hitTestable(), findsNothing);

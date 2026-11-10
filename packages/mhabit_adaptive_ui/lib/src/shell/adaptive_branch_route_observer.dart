@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 /// Attach one instance to each nested branch navigator whose stack needs to
 /// be observed. The app layer can combine these snapshots with its own route
 /// policy before passing presentation state to adaptive navigation chrome.
+/// Forwarded events from other navigators do not belong to this stack.
 class AdaptiveBranchRouteObserver extends NavigatorObserver {
   final List<Route<dynamic>> _stack = [];
   String? _topRouteName;
@@ -25,8 +26,14 @@ class AdaptiveBranchRouteObserver extends NavigatorObserver {
   /// Called when [depth] or [topRouteName] change.
   VoidCallback? onStackChanged;
 
+  bool _observes(Route<dynamic>? route) =>
+      navigator == null ||
+      route?.navigator == navigator ||
+      _stack.contains(route);
+
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    if (!_observes(route)) return;
     _stack.add(route);
     _topRouteName = route.settings.name;
     onStackChanged?.call();
@@ -34,6 +41,7 @@ class AdaptiveBranchRouteObserver extends NavigatorObserver {
 
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    if (!_observes(route)) return;
     if (_stack.isNotEmpty && identical(_stack.last, route)) {
       _stack.removeLast();
     }
@@ -43,6 +51,7 @@ class AdaptiveBranchRouteObserver extends NavigatorObserver {
 
   @override
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    if (!_observes(newRoute) && !_stack.contains(oldRoute)) return;
     if (oldRoute != null) {
       final index = _stack.lastIndexWhere((r) => identical(r, oldRoute));
       if (index >= 0) {
@@ -59,6 +68,7 @@ class AdaptiveBranchRouteObserver extends NavigatorObserver {
 
   @override
   void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    if (!_observes(route)) return;
     // didPop already removed a popped route, so removeWhere only matters
     // for removals below the top (e.g. page replacement).
     _stack.removeWhere((r) => identical(r, route));

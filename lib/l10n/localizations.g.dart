@@ -3668,6 +3668,42 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Preview'**
   String get habitDisplay_groupModifyConfirm_previewTitle;
+
+  /// No description provided for @appSupport_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Support Table Habit'**
+  String get appSupport_title;
+
+  /// Shared support message for all distribution channels. Keep this text independent of the destination platform.
+  ///
+  /// In en, this message translates to:
+  /// **'Your support helps improve Table Habit and reach more people.'**
+  String get appSupport_message;
+
+  /// Opens the support destination for the current distribution channel.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to {platform}'**
+  String appSupport_open(String platform);
+
+  /// No description provided for @appSupport_later.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me later'**
+  String get appSupport_later;
+
+  /// No description provided for @appSupport_never.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t remind me again'**
+  String get appSupport_never;
+
+  /// No description provided for @appSupport_linkFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to open the link. Please try again.'**
+  String get appSupport_linkFailed;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {
