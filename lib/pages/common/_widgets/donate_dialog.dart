@@ -21,22 +21,55 @@ import 'package:simple_icons/simple_icons.dart';
 import '../../../common/enums.dart';
 import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
+import '../../../providers/support/about_info.dart';
 import '../../../widgets/helpers.dart';
 import '../../../widgets/widgets.dart';
 
 enum DonateDialogResult { noAction, copied, donated }
 
+/// Donation destinations and availability shared by all donation entry points.
+class DonateConfig {
+  const DonateConfig({
+    required this.info,
+    this.alipayQRCodePath = 'assets/images/donate-alipay.jpg',
+    this.wechatPayQRCodePath = 'assets/images/donate-wechatpay.png',
+  });
+
+  final AboutInfo info;
+  final String alipayQRCodePath;
+  final String wechatPayQRCodePath;
+
+  Set<DonateWay> configuredWays(String value) => value
+      .split(',')
+      .map(DonateWay.getDonateWayByName)
+      .whereType<DonateWay>()
+      .toSet();
+
+  bool hasAvailableMethod(String configured) =>
+      configuredWays(configured).any(isAvailable);
+
+  bool isAvailable(DonateWay way) => switch (way) {
+    DonateWay.buyMeACoffee => info.donateBuyMeACoffeeToken.isNotEmpty,
+    DonateWay.paypal => info.donatePaypalToken.isNotEmpty,
+    DonateWay.alipay => alipayQRCodePath.isNotEmpty,
+    DonateWay.wechatPay => wechatPayQRCodePath.isNotEmpty,
+    DonateWay.cryptoCurrencyAll => CryptoDonateButtonType.values.any(
+      (type) => cryptoAddress(type).isNotEmpty,
+    ),
+  };
+
+  String cryptoAddress(CryptoDonateButtonType type) => switch (type) {
+    CryptoDonateButtonType.btc => info.donateCryptoBTCAddr,
+    CryptoDonateButtonType.eth => info.donateCryptoETHAddr,
+    CryptoDonateButtonType.bnb => info.donateCryptoBNBAddr,
+    CryptoDonateButtonType.avax => info.donateCryptoAVAXAddr,
+    CryptoDonateButtonType.ftm => info.donateCryptoFTMAddr,
+  };
+}
+
 Future<DonateDialogResult?> showDonateDialog(
   BuildContext context, {
-  String donateBuyMeACoffeeToken = '',
-  String donatePaypalToken = '',
-  String btcAddress = '',
-  String ethAddress = '',
-  String bnbAddress = '',
-  String avaxAddress = '',
-  String ftmAddress = '',
-  String alipayQRCodePath = 'assets/images/donate-alipay.jpg',
-  String wechatPayQRCodePath = 'assets/images/donate-wechatpay.png',
+  required DonateConfig config,
 }) async {
   final l10n = L10n.of(context);
   return showAdaptiveSheet<DonateDialogResult>(
@@ -45,44 +78,15 @@ Future<DonateDialogResult?> showDonateDialog(
       title: l10n != null ? Text(l10n.appAbout_donateTile_titleText) : null,
       automaticallyImplyCloseButton: false,
       size: const AdaptiveModalSize.constrained(minWidth: 800, maxWidth: 800),
-      body: DonateContent(
-        donateBuyMeACoffeeToken: donateBuyMeACoffeeToken,
-        donatePaypalToken: donatePaypalToken,
-        btcAddress: btcAddress,
-        ethAddress: ethAddress,
-        bnbAddress: bnbAddress,
-        avaxAddress: avaxAddress,
-        ftmAddress: ftmAddress,
-        alipayQRCodePath: alipayQRCodePath,
-        wechatPayQRCodePath: wechatPayQRCodePath,
-      ),
+      body: DonateContent(config: config),
     ),
   );
 }
 
 class DonateContent extends StatefulWidget {
-  final String donateBuyMeACoffeeToken;
-  final String donatePaypalToken;
-  final String btcAddress;
-  final String ethAddress;
-  final String bnbAddress;
-  final String avaxAddress;
-  final String ftmAddress;
-  final String alipayQRCodePath;
-  final String wechatPayQRCodePath;
+  const DonateContent({super.key, required this.config});
 
-  const DonateContent({
-    super.key,
-    required this.donateBuyMeACoffeeToken,
-    required this.donatePaypalToken,
-    required this.btcAddress,
-    required this.ethAddress,
-    required this.bnbAddress,
-    required this.avaxAddress,
-    required this.ftmAddress,
-    required this.alipayQRCodePath,
-    required this.wechatPayQRCodePath,
-  });
+  final DonateConfig config;
 
   @override
   State<DonateContent> createState() => _DonateContentState();
@@ -108,7 +112,9 @@ class _DonateContentState extends State<DonateContent> {
   }
 
   void _onCopyCryptoAddressToClipboard(CryptoDonateButtonType t) async {
-    await Clipboard.setData(ClipboardData(text: getCryptoAddress(t)));
+    await Clipboard.setData(
+      ClipboardData(text: widget.config.cryptoAddress(t)),
+    );
     if (!mounted) return;
     final l10n = L10n.of(context);
     if (l10n == null) return;
@@ -121,21 +127,6 @@ class _DonateContentState extends State<DonateContent> {
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
     Navigator.of(context).pop(DonateDialogResult.copied);
-  }
-
-  String getCryptoAddress(CryptoDonateButtonType t) {
-    switch (t) {
-      case CryptoDonateButtonType.btc:
-        return widget.btcAddress;
-      case CryptoDonateButtonType.eth:
-        return widget.ethAddress;
-      case CryptoDonateButtonType.bnb:
-        return widget.bnbAddress;
-      case CryptoDonateButtonType.avax:
-        return widget.avaxAddress;
-      case CryptoDonateButtonType.ftm:
-        return widget.ftmAddress;
-    }
   }
 
   String getCryptoLabel(CryptoDonateButtonType t, [L10n? l10n]) {
@@ -157,14 +148,10 @@ class _DonateContentState extends State<DonateContent> {
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
 
-    final donateWays = <DonateWay>{};
-    if (l10n != null) {
-      for (var name in l10n.appAbout_donateTile_ways.split(',')) {
-        final way = DonateWay.getDonateWayByName(name);
-        if (way == null) continue;
-        donateWays.add(way);
-      }
-    }
+    final config = widget.config;
+    final donateWays = config.configuredWays(
+      l10n?.appAbout_donateTile_ways ?? '',
+    );
 
     Widget buildBuyMeACoffeeList() => Column(
       mainAxisSize: MainAxisSize.min,
@@ -172,12 +159,12 @@ class _DonateContentState extends State<DonateContent> {
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 320),
           child: _DonateBrandButton(
-            onPressed: widget.donateBuyMeACoffeeToken.isEmpty
+            onPressed: !config.isAvailable(DonateWay.buyMeACoffee)
                 ? null
                 : () => _openDonation(
                     DonateWay.buyMeACoffee,
                     'https://www.buymeacoffee.com/'
-                    '${widget.donateBuyMeACoffeeToken}',
+                    '${config.info.donateBuyMeACoffeeToken}',
                   ),
             minimumSize: const Size(200, 42),
             backgroundColor: const Color(0xffffdd00),
@@ -196,12 +183,12 @@ class _DonateContentState extends State<DonateContent> {
       mainAxisSize: MainAxisSize.min,
       children: [
         _DonateBrandButton(
-          onPressed: widget.donatePaypalToken.isEmpty
+          onPressed: !config.isAvailable(DonateWay.paypal)
               ? null
               : () => _openDonation(
                   DonateWay.paypal,
                   'https://www.paypal.com/donate?hosted_button_id='
-                  '${widget.donatePaypalToken}',
+                  '${config.info.donatePaypalToken}',
                 ),
           backgroundColor: Colors.blue[600]!,
           icon: const Icon(SimpleIcons.paypal),
@@ -220,7 +207,7 @@ class _DonateContentState extends State<DonateContent> {
             CryptoDonateButtonType.values.length,
             (index) {
               final t = CryptoDonateButtonType.values[index];
-              final addr = getCryptoAddress(t);
+              final addr = widget.config.cryptoAddress(t);
               return Tooltip(
                 triggerMode: TooltipTriggerMode.longPress,
                 message: getCryptoLabel(t, l10n),
@@ -239,8 +226,12 @@ class _DonateContentState extends State<DonateContent> {
     );
 
     Widget buildQRSection() {
-      final hasAlipay = donateWays.contains(DonateWay.alipay);
-      final hasWechat = donateWays.contains(DonateWay.wechatPay);
+      final hasAlipay =
+          donateWays.contains(DonateWay.alipay) &&
+          config.isAvailable(DonateWay.alipay);
+      final hasWechat =
+          donateWays.contains(DonateWay.wechatPay) &&
+          config.isAvailable(DonateWay.wechatPay);
       if (!hasAlipay && !hasWechat) return const SizedBox.shrink();
 
       return WindowSizeClassLayoutBuilder(
@@ -253,8 +244,8 @@ class _DonateContentState extends State<DonateContent> {
 
           Widget qrImage(String path) =>
               Image.asset(path, height: qrHeight, fit: BoxFit.contain);
-          Widget alipayQR() => qrImage(widget.alipayQRCodePath);
-          Widget wechatQR() => qrImage(widget.wechatPayQRCodePath);
+          Widget alipayQR() => qrImage(config.alipayQRCodePath);
+          Widget wechatQR() => qrImage(config.wechatPayQRCodePath);
 
           if (wide) {
             return _DonateSection(
@@ -304,7 +295,7 @@ class _DonateContentState extends State<DonateContent> {
             child: buildBuyMeACoffeeList(),
           ),
         if (donateWays.contains(DonateWay.paypal) &&
-            widget.donatePaypalToken.isNotEmpty)
+            config.isAvailable(DonateWay.paypal))
           _DonateSection(
             title: l10n?.donateWay_paypal,
             child: buildPaypalList(),

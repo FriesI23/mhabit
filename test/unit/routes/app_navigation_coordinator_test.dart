@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/providers/support/commons.dart';
 import 'package:mhabit/routes/app_navigation_branch.dart';
 import 'package:mhabit/routes/app_navigation_coordinator.dart';
 import 'package:mhabit/routes/app_router.dart';
@@ -14,6 +15,43 @@ Route<void> _route(String? name) => MaterialPageRoute<void>(
 );
 
 void main() {
+  test('disposal ignores queued and late route updates', () async {
+    final branches = [
+      AdaptiveBranchRouteObserver(),
+      AdaptiveBranchRouteObserver(),
+    ];
+    final flow = AdaptiveBranchRouteObserver();
+    final navigation = AppNavigationCoordinator(
+      branchObservers: branches,
+      appFlowObserver: flow,
+      appChromeNavigatorKey: GlobalKey<NavigatorState>(),
+      initialIndex: 0,
+    );
+    final ProviderMounted lifetime = navigation;
+    expect(lifetime.mounted, isTrue);
+    var notifications = 0;
+    navigation.addListener(() => notifications++);
+    flow.didPush(_route(null), null);
+    branches.first.didPush(_route(AppRoute.habits.name), null);
+    final lateUpdate = flow.onStackChanged!;
+    navigation.dispose();
+    navigation.dispose();
+    expect(lifetime.mounted, isFalse);
+    expect(flow.onStackChanged, isNull);
+    expect(branches.first.onStackChanged, isNull);
+    flow.didPush(_route(AppRoute.settings.name), null);
+    lateUpdate();
+    await pumpEventQueue();
+    expect(navigation.appFlowTopRouteName, isNull);
+    expect(notifications, 0);
+    expect(
+      navigation.isAtPrimaryBranchRoot(AppNavigationBranch.habits),
+      isFalse,
+    );
+    await navigation.selectBranch(1);
+    expect(navigation.selectedIndex, 0);
+  });
+
   test('same-depth replacements notify root availability changes', () async {
     final branches = [
       AdaptiveBranchRouteObserver(),

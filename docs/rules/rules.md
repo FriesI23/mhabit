@@ -17,6 +17,10 @@ existing architecture and tooling contracts.
   architectural style when an established local pattern already exists.
 - Reuse existing dependencies and abstractions before proposing a new package,
   new state-management layer, or new helper surface.
+- Before implementing shared behavior, inspect the owning module and nearby
+  providers for existing contracts, lifecycle hooks, mixins, and SDK components.
+  Reuse the smallest matching capability; verify behavior and maintenance status
+  before introducing a package to replace local code.
 - When the request touches generated, localized, or build-managed files,
   explain which source file or generation command actually owns the result.
 
@@ -207,8 +211,25 @@ not require Docker.
 - When an access interface is backed by a `Listenable` implementation, expose it
   through `ListenableProxyProvider` or `ListenableProvider`, not plain
   `ProxyProvider`.
-- Prefer `context.select(...)` or other narrow reads over broad rebuild wiring
-  when a widget only needs a small piece of state.
+- Use `context.read<T>()` for one-time access and actions, and
+  `context.watch<T>()` or `context.select(...)` for reactive dependencies. Prefer
+  `select` when only part of a value affects rendering. Use the existing
+  `context.maybeRead<T>()` extension for optional dependencies; keep raw
+  `Provider.of` calls inside the context extensions that implement such wrappers.
+- When `context.select` or `context.watch` is used only to register a dependency,
+  call it as a statement; do not assign the unused result to `_` or a dummy local.
+- Implement existing lifecycle contracts when the role needs them:
+  `AsyncInitialization` (`lib/common/async.dart`) for `init()`, and
+  `ProviderMounted` (`lib/providers/support/commons.dart`) for owners or local
+  notifiers that must reject work after disposal. Keep one lifetime flag,
+  invalidate it before cleanup, and guard asynchronous publication with
+  `mounted`. Initialization success, completion, and disposal are distinct states.
+- Match nearby initialization and dependency-attachment patterns. Share an
+  in-flight initialization when it must run once, preserve its failure/retry
+  contract, and rebind listeners by dependency identity with matching cleanup.
+  Reuse `ProfileHandlerLoadedMixin` or `DBHelperLoadedMixin` when the owner
+  actually uses those dependencies; do not add unused mixins or parallel
+  lifecycle interfaces merely for structural similarity.
 - App-scoped UI preferences are typically profile-backed view models under
   `lib/providers/app_ui/`.
 - Workflow-side mutable behavior belongs under `lib/providers/workflow/`.
@@ -268,6 +289,9 @@ not require Docker.
   - `const` constructors and declarations when possible;
   - avoiding unnecessary lambdas and closure parameter types.
 - Write concise, technical Dart that stays readable.
+- Use descriptive local and parameter names. Avoid keywords and syntax modifier
+  names such as `async`, `sync`, `await`, and `yield`, even where the language
+  permits them; prefer role-specific names such as `syncSettings`.
 - Prefer exhaustive `switch` statements or switch expressions when they make the
   state space explicit.
 - Use records when they make multi-value selection or transfer clearer and stay
@@ -311,6 +335,19 @@ not require Docker.
 - Use small, composable widgets and view models, but do not split code just to
   satisfy an arbitrary size rule.
 - Keep heavy work, persistence, and workflow coordination out of `build()`.
+- Drive business transitions through owner commands, initialization completion,
+  dependency listeners, and action results. Bind widget-owned dependencies in
+  the appropriate lifecycle methods; rendering should consume their state.
+- Avoid `addPostFrameCallback` and `endOfFrame` as fixes for business ordering,
+  missing readiness state, or notifications/navigation started during `build()`.
+  Do not disguise the same workaround with a microtask, zero-duration delay, or
+  timer. Use the event that establishes the actual precondition; for example,
+  await a route's `completed` future when work requires its exit to finish.
+- Use frame callbacks only for a real completed-layout/paint dependency or a
+  framework phase restriction that existing lifecycle events cannot satisfy.
+  Keep them local, one-shot or coalesced, and safe after disposal; explain the
+  exact constraint beside the callback and cover the ordering with regression
+  tests. A frame boundary alone does not establish business readiness.
 - Keep app-shell concerns in the entry layer and page-specific logic in the page
   family.
 - Prefer existing theme, localization, and navigation setup instead of

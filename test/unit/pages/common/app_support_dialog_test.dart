@@ -4,123 +4,56 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart'
-    show CupertinoAlertDialog, CupertinoDialogAction;
+    show CupertinoAlertDialog, CupertinoButton, CupertinoDialogAction;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/common/widgets.dart';
+import 'package:mhabit/providers/support/about_info.dart';
 import 'package:mhabit/providers/workflow/app_support.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../support/adaptive_ui_theme.dart';
+import '../../../support/stub/about_info.dart';
 
 void main() {
-  testWidgets(
-    'host invalidation removes only the prompt route without a user result',
-    (tester) async {
-      final controller = AppSupportDialogController();
-      addTearDown(controller.dispose);
-      late BuildContext context;
-      await tester.pumpWidget(
-        MaterialApp(
-          localizationsDelegates: L10n.localizationsDelegates,
-          supportedLocales: L10n.supportedLocales,
-          home: Builder(
-            builder: (value) {
-              context = value;
-              return const Scaffold();
-            },
-          ),
-        ),
-      );
-      final result = showAppSupportDialog(
-        context: context,
-        target: Uri.parse('https://github.com/FriesI23/mhabit'),
-        controller: controller,
-      );
-      await tester.pumpAndSettle();
-      controller.abort();
-      await tester.pumpAndSettle();
-      expect(find.byType(AdaptiveDialog), findsNothing);
-      expect(await result, AppSupportPromptResult.aborted);
-      expect(tester.takeException(), isNull);
-    },
-  );
-  for (final copy in [
-    (
-      const Locale('en'),
-      'Support Table Habit',
-      'Your support helps improve Table Habit and reach more people.',
-      'Go to Google Play',
-    ),
-    (
-      const Locale('zh'),
-      '支持 Table Habit',
-      '你的支持能帮助 Table Habit 持续改进，让更多人发现它。',
-      '前往 Google Play',
-    ),
-    (
-      const Locale('de'),
-      'Support Table Habit',
-      'Your support helps improve Table Habit and reach more people.',
-      'Go to Google Play',
-    ),
-  ]) {
-    testWidgets('shared copy and parameterized destination for ${copy.$1}', (
-      tester,
-    ) async {
-      late BuildContext context;
-      await tester.pumpWidget(
-        MaterialApp(
-          locale: copy.$1,
-          localizationsDelegates: L10n.localizationsDelegates,
-          supportedLocales: L10n.supportedLocales,
-          home: Builder(
-            builder: (value) {
-              context = value;
-              return const Scaffold();
-            },
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      final target = Uri.parse('https://example.com/support');
-      Uri? opened;
-      final result = showAppSupportDialog(
-        context: context,
-        target: target,
-        platformName: 'Google Play',
-        openUrl: (uri) async {
-          opened = uri;
-          return true;
-        },
-      );
-      await tester.pumpAndSettle();
-      expect(find.text(copy.$2), findsOneWidget);
-      expect(find.text(copy.$3), findsOneWidget);
-      expect(find.text(copy.$4), findsOneWidget);
-      expect(find.text('Go to GitHub'), findsNothing);
-      await tester.tap(find.text(copy.$4));
-      await tester.pumpAndSettle();
-      expect(opened, target);
-      expect(await result, AppSupportPromptResult.githubOpened);
-    });
-  }
+  testWidgets('aborting an unused dialog controller schedules no frame', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpAndSettle();
+    final controller = AppSupportDialogController();
+    controller.abort();
+    expect(tester.binding.hasScheduledFrame, isFalse);
+    expect(tester.takeException(), isNull);
+  });
+
   for (final style in AdaptiveStyle.values) {
     for (final brightness in Brightness.values) {
       group('$style $brightness', () {
         late BuildContext context;
         late GlobalKey<NavigatorState> navigator;
-        Future<void> mount(WidgetTester tester) async {
+        Future<void> mount(
+          WidgetTester tester, {
+          Locale locale = const Locale('en'),
+          double scale = 1,
+        }) async {
           navigator = GlobalKey<NavigatorState>();
           await tester.pumpWidget(
             MaterialApp(
               navigatorKey: navigator,
               theme: ThemeData(brightness: brightness),
+              locale: locale,
               localizationsDelegates: L10n.localizationsDelegates,
               supportedLocales: L10n.supportedLocales,
-              locale: const Locale('en'),
+              builder: (context, child) => MediaQuery(
+                data: MediaQuery.of(context).copyWith(
+                  disableAnimations: true,
+                  textScaler: TextScaler.linear(scale),
+                ),
+                child: child!,
+              ),
               home: TestAdaptiveUiTheme(
                 update: (theme) => theme.copyWith(style: style),
                 child: Builder(
@@ -132,145 +65,144 @@ void main() {
               ),
             ),
           );
+          await tester.pumpAndSettle();
         }
 
-        Future<AppSupportPromptResult> open(
-          Future<bool> Function(Uri) action,
-        ) => showAppSupportDialog(
+        Future<AppSupportPromptResult> open({
+          Future<bool> Function(Uri)? action,
+          AppSupportDialogController? controller,
+          AboutInfo? info,
+          Future<void> Function(AboutInfo)? donation,
+        }) => showAppSupportDialog(
           context: context,
-          target: Uri.parse('https://github.com/FriesI23/mhabit'),
-          openUrl: action,
+          info:
+              info ??
+              stubAboutInfo(
+                sourceCodeUrl: 'https://github.com/FriesI23/mhabit',
+              ),
+          openUrl: action ?? (_) async => true,
+          controller: controller,
+          showDonation: donation,
+          hideDonate: donation == null,
         );
 
-        testWidgets(
-          'desktop keyboard chooses bottom actions in a fixed dialog',
-          (tester) async {
-            tester.view.physicalSize = const Size(1280, 800);
-            tester.view.devicePixelRatio = 1;
-            addTearDown(tester.view.resetPhysicalSize);
-            addTearDown(tester.view.resetDevicePixelRatio);
-            await mount(tester);
-            for (var index = 0; index < 3; index++) {
-              final result = open((_) async => true);
-              await tester.pumpAndSettle();
-              expect(
-                find.byType(
-                  style == AdaptiveStyle.apple
-                      ? CupertinoAlertDialog
-                      : AlertDialog,
-                ),
-                findsOneWidget,
-              );
-              expect(find.byType(BottomSheet), findsNothing);
-              expect(find.byType(CloseButton), findsNothing);
-              for (var tab = 0; tab <= index; tab++) {
-                await tester.sendKeyEvent(LogicalKeyboardKey.tab);
-                await tester.pump();
-              }
-              await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-              await tester.pumpAndSettle();
-              expect(find.byType(AdaptiveDialog), findsNothing);
-              expect(
-                await result,
-                [
-                  AppSupportPromptResult.never,
-                  AppSupportPromptResult.later,
-                  AppSupportPromptResult.githubOpened,
-                ][index],
-              );
-            }
-          },
-        );
-
-        testWidgets('never uses destructive appearance', (tester) async {
-          await mount(tester);
-          final result = open((_) async => true);
-          await tester.pumpAndSettle();
-          final dialog = tester.widget<AdaptiveDialog>(
-            find.byType(AdaptiveDialog),
-          );
-          expect(dialog.actions.first.isDestructiveAction, isTrue);
-          expect(
-            dialog.actions
-                .skip(1)
-                .every((action) => !action.isDestructiveAction),
-            isTrue,
-          );
-          if (style == AdaptiveStyle.apple) {
-            expect(
-              tester
-                  .widget<CupertinoDialogAction>(
-                    find.widgetWithText(
-                      CupertinoDialogAction,
-                      "Don't remind me again",
-                    ),
-                  )
-                  .isDestructiveAction,
-              isTrue,
-            );
-          } else {
-            final button = tester.widget<TextButton>(
-              find.widgetWithText(TextButton, "Don't remind me again"),
-            );
-            final color = Theme.of(
-              tester.element(find.byType(AdaptiveDialog)),
-            ).colorScheme.error;
-            expect(button.style!.foregroundColor!.resolve({}), color);
-          }
-          await tester.tap(find.text("Don't remind me again"));
-          await tester.pumpAndSettle();
-          expect(await result, AppSupportPromptResult.never);
-        });
-
-        testWidgets('three actions return distinct results', (tester) async {
-          await mount(tester);
-          for (final pair in [
-            ('Remind me later', AppSupportPromptResult.later),
-            ("Don't remind me again", AppSupportPromptResult.never),
-            ('Go to GitHub', AppSupportPromptResult.githubOpened),
-          ]) {
-            final result = open((_) async => true);
-            await tester.pumpAndSettle();
-            await tester.tap(find.text(pair.$1));
-            await tester.pumpAndSettle();
-            expect(await result, pair.$2);
-          }
-        });
-
-        testWidgets('false and exception keep dialog open for retry', (
+        testWidgets('Tab and Enter activate the card support action', (
           tester,
         ) async {
           await mount(tester);
-          var attempts = 0;
-          final result = open((_) async {
-            attempts++;
-            if (attempts == 1) return false;
-            if (attempts == 2) throw StateError('launcher unavailable');
-            return true;
-          });
+          final result = open();
           await tester.pumpAndSettle();
-          for (var i = 0; i < 2; i++) {
-            await tester.tap(find.text('Go to GitHub'));
-            await tester.pumpAndSettle();
-            expect(
-              find.text('Unable to open the link. Please try again.'),
-              findsOneWidget,
-            );
-          }
-          await tester.tap(find.text('Go to GitHub'));
+          expect(
+            tester
+                .widget<AppSupportCarousel>(find.byType(AppSupportCarousel))
+                .animateStars,
+            isTrue,
+          );
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          await tester.pump();
+          await tester.sendKeyEvent(LogicalKeyboardKey.enter);
           await tester.pumpAndSettle();
-          expect(await result, AppSupportPromptResult.githubOpened);
-          expect(attempts, 3);
+          expect(await result, AppSupportPromptResult.supportOpened);
         });
 
-        for (final close in ['barrier', 'back', 'escape', 'remove']) {
-          testWidgets('$close distinguishes dismiss from removal', (
+        testWidgets('business action closes before launching and runs once', (
+          tester,
+        ) async {
+          await mount(tester);
+          final pending = Completer<bool>();
+          var calls = 0;
+          var closedBeforeOpen = false;
+          final result = open(
+            action: (_) {
+              calls++;
+              closedBeforeOpen = find.byType(AdaptiveDialog).evaluate().isEmpty;
+              return pending.future;
+            },
+          );
+          await tester.pumpAndSettle();
+          expect(
+            find.byType(
+              style == AdaptiveStyle.apple ? CupertinoAlertDialog : AlertDialog,
+            ),
+            findsOneWidget,
+          );
+          expect(find.byType(BottomSheet), findsNothing);
+          expect(find.byType(CloseButton), findsNothing);
+          await tester.tap(find.text('Go to GitHub'));
+          await tester.pumpAndSettle();
+          expect(find.byType(AdaptiveDialog), findsNothing);
+          expect(calls, 1);
+          expect(closedBeforeOpen, isTrue);
+          pending.complete(true);
+          await tester.pumpAndSettle();
+          expect(await result, AppSupportPromptResult.supportOpened);
+        });
+
+        for (final failsWithException in [false, true]) {
+          testWidgets(
+            'closed dialog reports link failure ($failsWithException)',
+            (tester) async {
+              await mount(tester);
+              final result = open(
+                action: (_) async {
+                  if (failsWithException) throw StateError('launcher failed');
+                  return false;
+                },
+              );
+              await tester.pumpAndSettle();
+              await tester.tap(find.text('Go to GitHub'));
+              await tester.pumpAndSettle();
+              expect(await result, AppSupportPromptResult.actionFailed);
+              expect(find.byType(AdaptiveDialog), findsNothing);
+              expect(
+                find.text('Unable to open the link. Please try again.'),
+                findsOneWidget,
+              );
+            },
+          );
+        }
+
+        for (final close in [
+          'never',
+          'later',
+          'barrier',
+          'back',
+          'escape',
+          'remove',
+          'abort',
+          'earlyAbort',
+        ]) {
+          testWidgets('$close returns the correct reminder outcome', (
             tester,
           ) async {
             await mount(tester);
-            final result = open((_) async => true);
+            final controller = AppSupportDialogController();
+            addTearDown(controller.abort);
+            final result = open(controller: controller);
+            if (close == 'earlyAbort') controller.abort();
             await tester.pumpAndSettle();
             switch (close) {
+              case 'never':
+                final dialog = tester.widget<AdaptiveDialog>(
+                  find.byType(AdaptiveDialog),
+                );
+                expect(dialog.actions.first.isDestructiveAction, isTrue);
+                if (style == AdaptiveStyle.apple) {
+                  expect(
+                    tester
+                        .widget<CupertinoDialogAction>(
+                          find.widgetWithText(
+                            CupertinoDialogAction,
+                            "Don't remind me again",
+                          ),
+                        )
+                        .isDestructiveAction,
+                    isTrue,
+                  );
+                }
+                await tester.tap(find.text("Don't remind me again"));
+              case 'later':
+                await tester.tap(find.text('Remind me later'));
               case 'barrier':
                 await tester.tapAt(const Offset(4, 4));
               case 'back':
@@ -278,65 +210,116 @@ void main() {
               case 'escape':
                 await tester.sendKeyEvent(LogicalKeyboardKey.escape);
               case 'remove':
-                final route = ModalRoute.of(
-                  tester.element(find.byType(AdaptiveDialog)),
-                )!;
-                navigator.currentState!.removeRoute(route);
+                navigator.currentState!.removeRoute(
+                  ModalRoute.of(tester.element(find.byType(AdaptiveDialog)))!,
+                );
+              case 'abort':
+                controller.abort();
+              case 'earlyAbort':
+                break;
             }
             await tester.pumpAndSettle();
-            expect(
-              await result,
-              close == 'remove'
-                  ? AppSupportPromptResult.aborted
-                  : AppSupportPromptResult.later,
-            );
+            expect(await result, switch (close) {
+              'never' => AppSupportPromptResult.never,
+              'remove' ||
+              'abort' ||
+              'earlyAbort' => AppSupportPromptResult.aborted,
+              _ => AppSupportPromptResult.later,
+            });
           });
         }
 
-        testWidgets('double click and late completion after dismiss', (
-          tester,
-        ) async {
-          await mount(tester);
-          final pending = Completer<bool>();
-          var calls = 0;
-          final result = open((_) {
-            calls++;
-            return pending.future;
-          });
-          await tester.pumpAndSettle();
-          await tester.tap(find.text('Go to GitHub'));
-          await tester.pump();
-          await tester.tap(find.text('Go to GitHub'));
-          await tester.pump();
-          expect(calls, 1);
-          final dialog = tester.widget<AdaptiveDialog>(
-            find.byType(AdaptiveDialog),
-          );
-          expect(dialog.actions.every((action) => !action.enabled), isTrue);
-          await navigator.currentState!.maybePop();
-          await tester.pumpAndSettle();
-          expect(await result, AppSupportPromptResult.later);
-          pending.complete(true);
-          await tester.pumpAndSettle();
-          expect(tester.takeException(), isNull);
-        });
+        testWidgets(
+          'invalidation after selection drops late successful result',
+          (tester) async {
+            await mount(tester);
+            final controller = AppSupportDialogController();
+            addTearDown(controller.abort);
+            final pending = Completer<bool>();
+            final result = open(
+              controller: controller,
+              action: (_) => pending.future,
+            );
+            await tester.pumpAndSettle();
+            await tester.tap(find.text('Go to GitHub'));
+            await tester.pumpAndSettle();
+            controller.abort();
+            pending.complete(true);
+            await tester.pumpAndSettle();
+            expect(await result, AppSupportPromptResult.aborted);
+            expect(tester.takeException(), isNull);
+          },
+        );
 
-        testWidgets('small window remains operable', (tester) async {
-          tester.view.physicalSize = const Size(320, 480);
-          tester.view.devicePixelRatio = 1;
-          addTearDown(tester.view.resetPhysicalSize);
-          addTearDown(tester.view.resetDevicePixelRatio);
-          await mount(tester);
-          final result = open((_) async => true);
-          await tester.pumpAndSettle();
-          expect(tester.takeException(), isNull);
-          expect(find.byType(BottomSheet), findsNothing);
-          expect(find.byType(CloseButton), findsNothing);
-          await tester.ensureVisible(find.text('Go to GitHub'));
-          await tester.tap(find.text('Go to GitHub'));
-          await tester.pumpAndSettle();
-          expect(await result, AppSupportPromptResult.githubOpened);
-        });
+        testWidgets(
+          'auxiliary link and donation close before execution without rate',
+          (tester) async {
+            await mount(tester);
+            final info = stubAboutInfo();
+            final result = open(info: info);
+            await tester.pumpAndSettle();
+            await tester.drag(find.byType(PageView), const Offset(-500, 0));
+            await tester.pumpAndSettle();
+            await tester.tap(find.text('Source code'));
+            await tester.pumpAndSettle();
+            expect(await result, AppSupportPromptResult.auxiliaryAction);
+            var donated = false;
+            var closedBeforeDonation = false;
+            final second = open(
+              info: info,
+              donation: (_) async {
+                closedBeforeDonation = find
+                    .byType(AdaptiveDialog)
+                    .evaluate()
+                    .isEmpty;
+                donated = true;
+              },
+            );
+            await tester.pumpAndSettle();
+            // Existing QR donation methods make a donation card available.
+            await tester.drag(find.byType(PageView), const Offset(-500, 0));
+            await tester.pumpAndSettle();
+            await tester.drag(find.byType(PageView), const Offset(-500, 0));
+            await tester.pumpAndSettle();
+            await tester.tap(
+              find.widgetWithText(
+                style == AdaptiveStyle.apple ? CupertinoButton : TextButton,
+                'Donate',
+              ),
+            );
+            await tester.pumpAndSettle();
+            expect(await second, AppSupportPromptResult.auxiliaryAction);
+            expect(donated, isTrue);
+            expect(closedBeforeDonation, isTrue);
+          },
+        );
+
+        for (final locale in [
+          const Locale('en'),
+          const Locale('zh'),
+          const Locale('de'),
+        ]) {
+          testWidgets('narrow window, large text and localized copy $locale', (
+            tester,
+          ) async {
+            tester.view.physicalSize = const Size(320, 480);
+            tester.view.devicePixelRatio = 1;
+            addTearDown(tester.view.resetPhysicalSize);
+            addTearDown(tester.view.resetDevicePixelRatio);
+            await mount(tester, locale: locale, scale: 2);
+            final result = open();
+            await tester.pumpAndSettle();
+            expect(tester.takeException(), isNull);
+            final label = locale.languageCode == 'zh'
+                ? '前往 GitHub'
+                : 'Go to GitHub';
+            await tester.ensureVisible(find.text(label));
+            await tester.pumpAndSettle();
+            await tester.tap(find.text(label));
+            await tester.pumpAndSettle();
+            expect(await result, AppSupportPromptResult.supportOpened);
+          });
+        }
       });
     }
   }

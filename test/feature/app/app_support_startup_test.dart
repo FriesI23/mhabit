@@ -18,6 +18,11 @@ import 'package:rate_my_app/rate_my_app.dart';
 import '../../support/stub/about_info.dart';
 
 class _Reminder extends RateMyApp {
+  _Reminder() {
+    for (final condition in conditions.whereType<ResetableCondition>()) {
+      condition.reset();
+    }
+  }
   final ready = Completer<void>();
   int starts = 0;
   final events = <RateMyAppEventType>[];
@@ -67,7 +72,7 @@ void main() {
         child: AppSupportPrompt(
           key: key,
           canPresent: (_) => true,
-          showPrompt: ({required context, required target, controller}) async {
+          showPrompt: ({required context, required info, controller}) async {
             prompts++;
             return AppSupportPromptResult.later;
           },
@@ -99,7 +104,7 @@ void main() {
         loadInfo: () async => stubAboutInfo(),
       );
       addTearDown(owner.dispose);
-      await owner.initialize();
+      await owner.init();
       var prompts = 0;
       await tester.pumpWidget(
         MaterialApp(
@@ -108,7 +113,7 @@ void main() {
             child: AppSupportPrompt(
               canPresent: (_) => true,
               showPrompt:
-                  ({required context, required target, controller}) async {
+                  ({required context, required info, controller}) async {
                     prompts++;
                     return AppSupportPromptResult.later;
                   },
@@ -166,7 +171,7 @@ void main() {
             child: AppSupportPrompt(
               canPresent: (_) => routes.depth == 1,
               showPrompt:
-                  ({required context, required target, controller}) async {
+                  ({required context, required info, controller}) async {
                     prompts++;
                     return AppSupportPromptResult.never;
                   },
@@ -230,7 +235,7 @@ void main() {
             child: AppSupportPrompt(
               canPresent: (_) => safe,
               showPrompt:
-                  ({required context, required target, controller}) async {
+                  ({required context, required info, controller}) async {
                     prompts++;
                     return AppSupportPromptResult.later;
                   },
@@ -277,7 +282,7 @@ void main() {
                   canPresent: (context) =>
                       context.read<_PresentationSafety>().safe,
                   showPrompt:
-                      ({required context, required target, controller}) async {
+                      ({required context, required info, controller}) async {
                         prompts++;
                         return AppSupportPromptResult.later;
                       },
@@ -316,7 +321,7 @@ void main() {
             home: AppSupportPrompt(
               canPresent: (_) => attached,
               showPrompt:
-                  ({required context, required target, controller}) async {
+                  ({required context, required info, controller}) async {
                     prompts++;
                     return AppSupportPromptResult.later;
                   },
@@ -354,6 +359,10 @@ void main() {
           value: owner,
           child: MaterialApp(
             navigatorKey: navigator,
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(disableAnimations: true),
+              child: child!,
+            ),
             localizationsDelegates: L10n.localizationsDelegates,
             supportedLocales: L10n.supportedLocales,
             home: StatefulBuilder(
@@ -363,10 +372,10 @@ void main() {
                     ? AppSupportPrompt(
                         canPresent: (_) => true,
                         showPrompt:
-                            ({required context, required target, controller}) =>
+                            ({required context, required info, controller}) =>
                                 showAppSupportDialog(
                                   context: context,
-                                  target: target,
+                                  info: info,
                                   controller: controller,
                                   openUrl: (_) => pending.future,
                                 ),
@@ -412,7 +421,7 @@ void main() {
           ),
           child: AppSupportPrompt(
             canPresent: (_) => true,
-            showPrompt: ({required context, required target, controller}) =>
+            showPrompt: ({required context, required info, controller}) =>
                 result.future,
             child: const Scaffold(),
           ),

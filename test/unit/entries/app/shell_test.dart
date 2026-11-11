@@ -3105,7 +3105,7 @@ void main() {
       before.dispose();
       final owner = AppSupportOwner(loadInfo: () async => stubAboutInfo());
       addTearDown(owner.dispose);
-      await owner.initialize();
+      await owner.init();
       final root = AdaptiveBranchRouteObserver();
       root.onStackChanged = () {
         if (root.depth > 1) owner.skipPrompt();
@@ -3130,12 +3130,11 @@ void main() {
                   router.currentRouteName == branch.rootRouteName &&
                   navigation.isAtPrimaryBranchRoot(branch);
             },
-            showPrompt:
-                ({required context, required target, controller}) async {
-                  prompts++;
-                  shellContext = context;
-                  return AppSupportPromptResult.later;
-                },
+            showPrompt: ({required context, required info, controller}) async {
+              prompts++;
+              shellContext = context;
+              return AppSupportPromptResult.later;
+            },
             child: child!,
           ),
         ),

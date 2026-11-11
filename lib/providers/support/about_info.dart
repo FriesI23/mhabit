@@ -34,6 +34,22 @@ class AboutInfo {
   final String donateCryptoAVAXAddr;
   final String donateCryptoFTMAddr;
 
+  /// Project HTTP(S) destination, or null for invalid URLs or embedded credentials.
+  Uri? get sourceCodeUri => _webUri(sourceCodeUrl);
+
+  /// Issue destination, with the same validation as [sourceCodeUri].
+  Uri? get issueTrackerUri => _webUri(issueTrackerUrl);
+
+  static Uri? _webUri(String value) {
+    final uri = Uri.tryParse(value);
+    return uri != null &&
+            (uri.scheme == 'https' || uri.scheme == 'http') &&
+            uri.host.isNotEmpty &&
+            uri.userInfo.isEmpty
+        ? uri
+        : null;
+  }
+
   const AboutInfo({
     required this.sourceCodeUrl,
     required this.issueTrackerUrl,

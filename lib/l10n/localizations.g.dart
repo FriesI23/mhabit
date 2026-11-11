@@ -3704,6 +3704,30 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Unable to open the link. Please try again.'**
   String get appSupport_linkFailed;
+
+  /// No description provided for @appSupport_participateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contribute to Table Habit'**
+  String get appSupport_participateTitle;
+
+  /// No description provided for @appSupport_participateMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore the source code, contribute, or share issues and ideas.'**
+  String get appSupport_participateMessage;
+
+  /// No description provided for @appSupport_page.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {page} of {count}'**
+  String appSupport_page(int page, int count);
+
+  /// No description provided for @appSupport_saveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The reminder could not be saved. Please try again.'**
+  String get appSupport_saveFailed;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

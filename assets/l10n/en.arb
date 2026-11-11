@@ -2037,5 +2037,22 @@
     "appSupport_never": "Don't remind me again",
     "@appSupport_never": {},
     "appSupport_linkFailed": "Unable to open the link. Please try again.",
-    "@appSupport_linkFailed": {}
+    "@appSupport_linkFailed": {},
+    "appSupport_participateTitle": "Contribute to Table Habit",
+    "@appSupport_participateTitle": {},
+    "appSupport_participateMessage": "Explore the source code, contribute, or share issues and ideas.",
+    "@appSupport_participateMessage": {},
+    "appSupport_page": "Page {page} of {count}",
+    "@appSupport_page": {
+        "placeholders": {
+            "page": {
+                "type": "int"
+            },
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "appSupport_saveFailed": "The reminder could not be saved. Please try again.",
+    "@appSupport_saveFailed": {}
 }

@@ -5,9 +5,10 @@ import 'package:mhabit/providers/support/about_info.dart';
 
 AboutInfo stubAboutInfo({
   String sourceCodeUrl = 'https://example.com/project',
+  String issueTrackerUrl = '',
 }) => AboutInfo(
   sourceCodeUrl: sourceCodeUrl,
-  issueTrackerUrl: '',
+  issueTrackerUrl: issueTrackerUrl,
   contactEmail: '',
   donateBuyMeACoffeeToken: '',
   donatePaypalToken: '',

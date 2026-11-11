@@ -478,18 +478,17 @@ class _PageState extends State<_Page> with XShare {
           context.read<AppDeveloperViewModel>().isInDevelopMode &&
           ModalRoute.of(context)?.isCurrent == true &&
           !Navigator.of(context, rootNavigator: true).canPop(),
-      showPrompt: (target) async {
+      showPrompt: (info) async {
         final dialog = AppSupportDialogController();
         _supportPreview = dialog;
         try {
           return await showAppSupportDialog(
             context: context,
-            target: target,
+            info: info,
             controller: dialog,
           );
         } finally {
           _supportPreview = null;
-          dialog.dispose();
         }
       },
     );
@@ -1092,6 +1091,7 @@ class _PageState extends State<_Page> with XShare {
                   buildReminderSubGroup(context),
                   buildBackupAndRestoreSubGroup(context),
                   buildOthersSubGroup(context),
+                  const AppSettingSupportSection(),
                   buildDevelopSubGroup(context),
                   buildChinaIPC(context),
                 ],

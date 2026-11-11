@@ -348,34 +348,37 @@ void main() {
           ],
           child: MaterialApp.router(
             routerConfig: router,
-            builder: (context, child) => ValueListenableBuilder<TextDirection?>(
-              valueListenable: shellDirection,
-              builder: (context, direction, _) {
-                if (direction == null) return child!;
-                return Overlay.wrap(
-                  child: Directionality(
-                    textDirection: direction,
-                    child: AdaptiveNavigationShell(
-                      selectedIndex: 0,
-                      selectedAuxiliaryIndex: 0,
-                      compactRouteVisible: false,
-                      destinations: [
-                        AppNavigationDestinations.habits(label: 'Habits'),
-                        AppNavigationDestinations.today(label: 'Today'),
-                      ],
-                      auxiliaryDestinations: [
-                        AppNavigationDestinations.settings(label: 'Settings'),
-                      ],
-                      onDestinationSelected: (_) {},
-                      onAuxiliaryDestinationSelected: (_) {},
-                      appleCollapsedSidebarEnabled: context
-                          .watch<AppAppleCollapsedSidebarViewModel>()
-                          .enabled,
-                      child: child!,
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(disableAnimations: true),
+              child: ValueListenableBuilder<TextDirection?>(
+                valueListenable: shellDirection,
+                builder: (context, direction, _) {
+                  if (direction == null) return child!;
+                  return Overlay.wrap(
+                    child: Directionality(
+                      textDirection: direction,
+                      child: AdaptiveNavigationShell(
+                        selectedIndex: 0,
+                        selectedAuxiliaryIndex: 0,
+                        compactRouteVisible: false,
+                        destinations: [
+                          AppNavigationDestinations.habits(label: 'Habits'),
+                          AppNavigationDestinations.today(label: 'Today'),
+                        ],
+                        auxiliaryDestinations: [
+                          AppNavigationDestinations.settings(label: 'Settings'),
+                        ],
+                        onDestinationSelected: (_) {},
+                        onAuxiliaryDestinationSelected: (_) {},
+                        appleCollapsedSidebarEnabled: context
+                            .watch<AppAppleCollapsedSidebarViewModel>()
+                            .enabled,
+                        child: child!,
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
             theme: ThemeData(platform: platform),
             localizationsDelegates: L10n.localizationsDelegates,
@@ -482,10 +485,12 @@ void main() {
       await tester.scrollUntilVisible(
         groups,
         100,
-        scrollable: find.descendant(
-          of: find.byType(CustomScrollView),
-          matching: find.byType(Scrollable),
-        ),
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       final groupTile = find.descendant(
         of: groups,
@@ -507,10 +512,12 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
       final groupScroll = tester
           .state<ScrollableState>(
-            find.descendant(
-              of: find.byType(CustomScrollView),
-              matching: find.byType(Scrollable),
-            ),
+            find
+                .descendant(
+                  of: find.byType(CustomScrollView),
+                  matching: find.byType(Scrollable),
+                )
+                .first,
           )
           .position;
       final groupOffset = groupScroll.pixels;
@@ -537,10 +544,12 @@ void main() {
       await tester.scrollUntilVisible(
         compact,
         150,
-        scrollable: find.descendant(
-          of: find.byType(CustomScrollView),
-          matching: find.byType(Scrollable),
-        ),
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       await tester.pumpAndSettle();
       await tester.tap(compact);
@@ -565,10 +574,12 @@ void main() {
       await tester.scrollUntilVisible(
         languageTile,
         200,
-        scrollable: find.descendant(
-          of: find.byType(CustomScrollView),
-          matching: find.byType(Scrollable),
-        ),
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       await tester.pumpAndSettle();
       expect(
@@ -631,10 +642,12 @@ void main() {
       await tester.scrollUntilVisible(
         calendarByPage,
         150,
-        scrollable: find.descendant(
-          of: find.byType(CustomScrollView),
-          matching: find.byType(Scrollable),
-        ),
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       await tester.pumpAndSettle();
       expect(tester.widget<AdaptiveListSection>(operation).children.length, 3);
@@ -664,10 +677,12 @@ void main() {
       await tester.scrollUntilVisible(
         reminderTile,
         150,
-        scrollable: find.descendant(
-          of: find.byType(CustomScrollView),
-          matching: find.byType(Scrollable),
-        ),
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       await Scrollable.ensureVisible(
         tester.element(reminderTile),
@@ -700,10 +715,12 @@ void main() {
       await tester.scrollUntilVisible(
         backup,
         150,
-        scrollable: find.descendant(
-          of: find.byType(CustomScrollView),
-          matching: find.byType(Scrollable),
-        ),
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       await tester.pumpAndSettle();
       final backupTiles = find.descendant(
@@ -746,10 +763,12 @@ void main() {
       await tester.scrollUntilVisible(
         others,
         150,
-        scrollable: find.descendant(
-          of: find.byType(CustomScrollView),
-          matching: find.byType(Scrollable),
-        ),
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       await tester.pumpAndSettle();
       expect(tester.widget<AdaptiveListSection>(others).children, hasLength(5));
@@ -784,10 +803,12 @@ void main() {
       await tester.scrollUntilVisible(
         find.byType(AppSettingDevelopSubGroup),
         100,
-        scrollable: find.descendant(
-          of: find.byType(CustomScrollView),
-          matching: find.byType(Scrollable),
-        ),
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       expect(
         tester
@@ -815,7 +836,16 @@ void main() {
         const ValueKey('developer-show-app-support'),
       );
       for (var i = 0; i < 2; i++) {
-        await tester.ensureVisible(showSupport);
+        await tester.scrollUntilVisible(
+          showSupport.hitTestable(),
+          100,
+          scrollable: find
+              .descendant(
+                of: find.byType(CustomScrollView),
+                matching: find.byType(Scrollable),
+              )
+              .first,
+        );
         await tester.pumpAndSettle();
         await tester.tap(showSupport);
         await tester.pumpAndSettle();
@@ -837,9 +867,15 @@ void main() {
         expect(support.developerActionInProgress, isFalse);
         expect(await preferences.getAll(), armed);
       }
-      await Scrollable.ensureVisible(
-        tester.element(developmentTile),
-        alignment: 0.5,
+      await tester.scrollUntilVisible(
+        developmentTile.hitTestable(),
+        -100,
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       await tester.pumpAndSettle();
       await tester.tap(
@@ -884,10 +920,12 @@ void main() {
         await tester.pumpAndSettle();
         final position = tester
             .state<ScrollableState>(
-              find.descendant(
-                of: find.byType(CustomScrollView),
-                matching: find.byType(Scrollable),
-              ),
+              find
+                  .descendant(
+                    of: find.byType(CustomScrollView),
+                    matching: find.byType(Scrollable),
+                  )
+                  .first,
             )
             .position;
         final before = position.pixels;
@@ -910,10 +948,12 @@ void main() {
       await tester.drag(find.byType(CustomScrollView), const Offset(0, -500));
       await tester.pumpAndSettle();
       final scrollable = tester.state<ScrollableState>(
-        find.descendant(
-          of: find.byType(CustomScrollView),
-          matching: find.byType(Scrollable),
-        ),
+        find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       final offsetBeforePush = scrollable.position.pixels;
       expect(offsetBeforePush, greaterThan(0));

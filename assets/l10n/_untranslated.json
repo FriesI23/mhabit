@@ -103,7 +103,11 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ],
 
   "cs": [
@@ -129,7 +133,11 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ],
 
   "de": [
@@ -363,7 +371,11 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ],
 
   "es": [
@@ -523,7 +535,11 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ],
 
   "eu": [
@@ -1108,7 +1124,11 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ],
 
   "fa": [
@@ -1362,7 +1382,11 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ],
 
   "fr": [
@@ -1559,7 +1583,11 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ],
 
   "he": [
@@ -1575,7 +1603,11 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ],
 
   "hu": [
@@ -1689,7 +1721,11 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ],
 
   "it": [
@@ -1907,7 +1943,11 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ],
 
   "ja": [
@@ -2037,7 +2077,11 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ],
 
   "nb": [
@@ -2620,7 +2664,11 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ],
 
   "nl": [
@@ -3210,7 +3258,11 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ],
 
   "pl": [
@@ -3344,7 +3396,11 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ],
 
   "pt": [
@@ -3611,7 +3667,11 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ],
 
   "ru": [
@@ -3744,7 +3804,11 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ],
 
   "tr": [
@@ -3857,7 +3921,11 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ],
 
   "uk": [
@@ -3920,7 +3988,11 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ],
 
   "vi": [
@@ -4034,7 +4106,11 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ],
 
   "zh_Hant": [
@@ -4124,6 +4200,10 @@
     "appSupport_open",
     "appSupport_later",
     "appSupport_never",
-    "appSupport_linkFailed"
+    "appSupport_linkFailed",
+    "appSupport_participateTitle",
+    "appSupport_participateMessage",
+    "appSupport_page",
+    "appSupport_saveFailed"
   ]
 }

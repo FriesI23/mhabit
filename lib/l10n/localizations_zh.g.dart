@@ -2195,6 +2195,20 @@ class L10nZh extends L10n {
 
   @override
   String get appSupport_linkFailed => '无法打开链接，请重试。';
+
+  @override
+  String get appSupport_participateTitle => '参与项目';
+
+  @override
+  String get appSupport_participateMessage => '查看源码、参与开发，或反馈问题与建议。';
+
+  @override
+  String appSupport_page(int page, int count) {
+    return '第 $page 张，共 $count 张';
+  }
+
+  @override
+  String get appSupport_saveFailed => '无法保存提醒状态，请重试。';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).

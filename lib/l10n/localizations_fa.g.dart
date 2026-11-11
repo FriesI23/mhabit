@@ -2335,4 +2335,20 @@ class L10nFa extends L10n {
   @override
   String get appSupport_linkFailed =>
       'Unable to open the link. Please try again.';
+
+  @override
+  String get appSupport_participateTitle => 'Contribute to Table Habit';
+
+  @override
+  String get appSupport_participateMessage =>
+      'Explore the source code, contribute, or share issues and ideas.';
+
+  @override
+  String appSupport_page(int page, int count) {
+    return 'Page $page of $count';
+  }
+
+  @override
+  String get appSupport_saveFailed =>
+      'The reminder could not be saved. Please try again.';
 }

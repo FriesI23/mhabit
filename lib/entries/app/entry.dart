@@ -31,6 +31,7 @@ import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/app_apple_sidebar_style_mode.dart';
 import '../../models/app_entry.dart';
+import '../../models/app_sync_server.dart';
 import '../../models/app_sync_tasks.dart';
 import '../../models/app_theme_color.dart';
 import '../../models/habit_date.dart';
@@ -414,17 +415,17 @@ class _AppStartup extends StatelessWidget {
   final Widget child;
 
   bool _canPresent(BuildContext context) {
-    final sync = context.read<AppSyncSettingsAccess>();
-    final status = context.read<AppSyncStatusSource>().syncStatus;
+    final syncSettings = context.read<AppSyncSettingsAccess>();
+    final syncStatus = context.read<AppSyncStatusSource>().syncStatus;
     return rootRoutes.depth == 1 &&
         router.currentRouteName == initialBranch.rootRouteName &&
         context.read<AppNavigationCoordinator>().isAtPrimaryBranchRoot(
           initialBranch,
         ) &&
         context.read<AppSupportOwner>().canPromptWithSync(
-          enabled: sync.enabled,
-          server: sync.serverConfig,
-          processing: status?.isProcessing ?? false,
+          enabled: syncSettings.enabled,
+          server: syncSettings.serverConfig,
+          processing: syncStatus?.isProcessing ?? false,
         ) &&
         !ChangelogBanner.of(context).controller.isShowing;
   }
@@ -432,11 +433,23 @@ class _AppStartup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Subscribe for cancellation; asynchronous checks read live state above.
-    final _ = context.select<AppNavigationCoordinator, bool>(
+    context.select<AppNavigationCoordinator, bool>(
       (navigation) => navigation.isAtPrimaryBranchRoot(initialBranch),
     );
-    return AppSupportPrompt(
-      canPresent: _canPresent,
+    context
+        .select<AppSyncSettingsAccess, ({bool enabled, AppSyncServer? server})>(
+          (syncSettings) => (
+            enabled: syncSettings.enabled,
+            server: syncSettings.serverConfig,
+          ),
+        );
+    context.select<AppSyncStatusSource, bool>(
+      (statusSource) => statusSource.syncStatus?.isProcessing ?? false,
+    );
+    return ListenableBuilder(
+      listenable: ChangelogBanner.of(context).controller,
+      builder: (context, child) =>
+          AppSupportPrompt(canPresent: _canPresent, child: child!),
       child: AppPostInit(child: child),
     );
   }
@@ -502,6 +515,7 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _syncL10n(L10n.of(context));
+    if (!_didHandlePostInit) _handlePostInit(context);
   }
 
   @override
@@ -546,10 +560,7 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
   }
 
   @override
-  Widget buildWithChild(BuildContext context, Widget? child) {
-    if (!_didHandlePostInit) _handlePostInit(context);
-    return child!;
-  }
+  Widget buildWithChild(BuildContext context, Widget? child) => child!;
 }
 
 final class _AppSyncPostInitBridge {

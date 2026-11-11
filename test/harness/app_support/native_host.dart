@@ -5,7 +5,6 @@
 // exercises real preferences and production dialogs across process restarts.
 // Reminder keys and probe metadata are temporary; original values are restored
 // on completion or failure. It does not open a browser or access habit data.
-import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -13,6 +12,7 @@ import 'package:mhabit/common/flavor.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/logging/logger_manager.dart';
 import 'package:mhabit/pages/common/widgets.dart';
+import 'package:mhabit/providers/support/about_info.dart';
 import 'package:mhabit/providers/workflow/app_support.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
@@ -36,6 +36,25 @@ AdaptiveDialog? _dialog() {
   return found;
 }
 
+AppSupportCarousel? _carousel() {
+  AppSupportCarousel? found;
+  void visit(Element element) {
+    if (element.widget case final AppSupportCarousel carousel) found = carousel;
+    element.visitChildren(visit);
+  }
+
+  WidgetsBinding.instance.rootElement?.visitChildren(visit);
+  return found;
+}
+
+Future<void> _waitForDialog() async {
+  for (var i = 0; i < 200 && _dialog() == null; i++) {
+    await Future<void>.delayed(const Duration(milliseconds: 16));
+    await _frame();
+  }
+  _require(_dialog() != null, 'dialog visible');
+}
+
 Future<void> _frame() => WidgetsBinding.instance.endOfFrame;
 
 Future<void> main() async {
@@ -51,27 +70,22 @@ Future<void> main() async {
     chrome = DesktopWindowChrome();
     await chrome.initialize();
   }
-  final ready = Completer<BuildContext>();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
   runApp(
     MaterialApp(
       locale: const Locale('en'),
       localizationsDelegates: L10n.localizationsDelegates,
       supportedLocales: L10n.supportedLocales,
-      home: Builder(
-        builder: (context) {
-          if (!ready.isCompleted) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (!ready.isCompleted) ready.complete(context);
-            });
-          }
-          return const Scaffold(
-            body: Center(child: Text('App support native verification')),
-          );
-        },
+      home: Scaffold(
+        key: scaffoldKey,
+        body: const Center(child: Text('App support native verification')),
       ),
     ),
   );
-  final context = await ready.future;
+  // The verification driver starts UI operations after the scaffold is mounted.
+  await WidgetsBinding.instance.endOfFrame;
+  final context = scaffoldKey.currentContext!;
+  final info = await loadAboutInfo();
   await chrome?.show();
   final preferences = SharedPreferencesAsync();
   final fixture = AppSupportNativePreferences(preferences);
@@ -80,7 +94,7 @@ Future<void> main() async {
     if (stage == null) {
       await fixture.begin();
       final first = AppSupportOwner();
-      _require(await first.initialize(), 'fresh init');
+      _require(await first.init(), 'fresh init');
       _require(!first.claimPrompt(canPresent: true), 'fresh must not prompt');
       await preferences.setInt(
         'appSupport_minimumDate',
@@ -88,26 +102,35 @@ Future<void> main() async {
       );
       await preferences.setInt('appSupport_launches', 9);
       final owner = AppSupportOwner();
-      _require(await owner.initialize(), 'eligible init');
+      _require(await owner.init(), 'eligible init');
       _require(owner.claimPrompt(canPresent: true), 'eligible must prompt');
       var attempts = 0;
-      if (!context.mounted) throw StateError('host disposed');
-      final prompt = showAppSupportDialog(
-        context: context,
-        target: Uri.parse('https://github.com/FriesI23/mhabit'),
-        openUrl: (_) async {
-          attempts++;
-          if (attempts == 2) throw StateError('expected launcher failure');
-          return false;
-        },
-      );
-      await _frame();
-      _require(_dialog() != null, 'dialog visible');
       for (var i = 0; i < 2; i++) {
-        _dialog()!.actions.last.onPressed!();
-        await _frame();
+        if (!context.mounted) throw StateError('host disposed');
+        final failure = showAppSupportDialog(
+          context: context,
+          info: info,
+          openUrl: (_) async {
+            attempts++;
+            _require(_dialog() == null, 'dialog closes before external action');
+            if (attempts == 2) throw StateError('expected launcher failure');
+            return false;
+          },
+        );
+        await _waitForDialog();
+        _carousel()!.onSelected(AppSupportAction.support);
+        _require(
+          await failure == AppSupportPromptResult.actionFailed,
+          'failed action',
+        );
       }
-      _require(attempts == 2 && _dialog() != null, 'retry keeps dialog');
+      _require(
+        attempts == 2 && _dialog() == null,
+        'failures leave dialog closed',
+      );
+      if (!context.mounted) throw StateError('host disposed');
+      final prompt = showAppSupportDialog(context: context, info: info);
+      await _waitForDialog();
       debugPrint('SUPPORT_PROBE_DIALOG_READY ${Platform.operatingSystem}');
       await Future<void>.delayed(const Duration(seconds: 3));
       _dialog()!.actions[1].onPressed!();
@@ -118,7 +141,7 @@ Future<void> main() async {
       );
     } else if (stage == AppSupportNativeStage.later) {
       final restored = AppSupportOwner();
-      _require(await restored.initialize(), 'later restart init');
+      _require(await restored.init(), 'later restart init');
       _require(!restored.claimPrompt(canPresent: true), 'later restored');
       _require(
         await preferences.getInt('appSupport_launches') == 1,
@@ -130,15 +153,11 @@ Future<void> main() async {
       );
       await preferences.setInt('appSupport_launches', 9);
       final owner = AppSupportOwner();
-      _require(await owner.initialize(), 'second eligible init');
+      _require(await owner.init(), 'second eligible init');
       _require(owner.claimPrompt(canPresent: true), 'second eligible prompt');
       if (!context.mounted) throw StateError('host disposed');
-      final prompt = showAppSupportDialog(
-        context: context,
-        target: Uri.parse('https://github.com/FriesI23/mhabit'),
-      );
-      await _frame();
-      _require(_dialog() != null, 'second dialog visible');
+      final prompt = showAppSupportDialog(context: context, info: info);
+      await _waitForDialog();
       _dialog()!.actions.first.onPressed!();
       _require(await owner.consume(await prompt), 'never saved');
       await fixture.saveStage(AppSupportNativeStage.never);
@@ -148,7 +167,7 @@ Future<void> main() async {
     } else {
       _require(stage == AppSupportNativeStage.never, 'known probe stage');
       final restored = AppSupportOwner();
-      _require(await restored.initialize(), 'never restart init');
+      _require(await restored.init(), 'never restart init');
       _require(!restored.claimPrompt(canPresent: true), 'never restored');
       await fixture.restore();
       debugPrint(

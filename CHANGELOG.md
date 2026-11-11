@@ -4,7 +4,8 @@
 
 ## Unreleased
 
-- Feature: optional GitHub support reminder with later and permanent dismissal
+- Feature: shared support cards with amber stars, automatic paging, clickable dots and
+  a dedicated Settings card; optional reminders retain later/permanent dismissal
 
 - Fix: preserve Loop import history for habits with non-Latin names and retain
   record notes (#639)

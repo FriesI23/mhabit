@@ -6,8 +6,10 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/common/async.dart';
 import 'package:mhabit/models/app_sync_server.dart';
 import 'package:mhabit/providers/support/about_info.dart';
+import 'package:mhabit/providers/support/commons.dart';
 import 'package:mhabit/providers/workflow/app_support.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
@@ -16,6 +18,11 @@ import 'package:shared_preferences_platform_interface/shared_preferences_async_p
 import '../../../support/stub/about_info.dart';
 
 class _Reminder extends RateMyApp {
+  _Reminder() {
+    for (final condition in conditions.whereType<ResetableCondition>()) {
+      condition.reset();
+    }
+  }
   final ready = Completer<void>();
   int starts = 0;
   bool eligible = true;
@@ -47,21 +54,117 @@ final class _FailingPreferences extends InMemorySharedPreferencesAsync {
   ) => Future.error(StateError('write failed'));
 }
 
+final class _ToggleBoolPreferences extends InMemorySharedPreferencesAsync {
+  _ToggleBoolPreferences() : super.empty();
+  bool failWrites = false;
+  @override
+  Future<bool> setBool(
+    String key,
+    bool value,
+    SharedPreferencesOptions options,
+  ) {
+    if (failWrites) return Future.error(StateError('write failed'));
+    return super.setBool(key, value, options);
+  }
+}
+
 void main() {
+  test(
+    'explicit support persists after an automatic later and restores folded state',
+    () async {
+      SharedPreferencesAsyncPlatform.instance =
+          InMemorySharedPreferencesAsync.empty();
+      final owner = AppSupportOwner();
+      addTearDown(owner.dispose);
+      await owner.init();
+      expect(await owner.consume(AppSupportPromptResult.later), isTrue);
+      expect(owner.reminderClosed, isFalse);
+      expect(await owner.recordSupportOpened(), isTrue);
+      expect(owner.reminderClosed, isTrue);
+      final restored = AppSupportOwner();
+      addTearDown(restored.dispose);
+      await restored.init();
+      expect(restored.reminderClosed, isTrue);
+      expect(restored.claimPrompt(canPresent: true), isFalse);
+      expect(await restored.resetForNextLaunch(), isTrue);
+      expect(restored.reminderClosed, isFalse);
+    },
+  );
+
+  test(
+    'failed event save does not publish closure and explicit action can retry',
+    () async {
+      final preferences = _ToggleBoolPreferences();
+      SharedPreferencesAsyncPlatform.instance = preferences;
+      final owner = AppSupportOwner();
+      addTearDown(owner.dispose);
+      await owner.init();
+      preferences.failWrites = true;
+      expect(await owner.recordSupportOpened(), isFalse);
+      expect(owner.reminderClosed, isFalse);
+      preferences.failWrites = false;
+      expect(await owner.recordSupportOpened(), isTrue);
+      expect(owner.reminderClosed, isTrue);
+      expect(
+        await SharedPreferencesAsync().getBool('appSupport_doNotOpenAgain'),
+        isTrue,
+      );
+    },
+  );
+
+  test(
+    'auxiliary and failed actions leave the reminder event guard untouched',
+    () async {
+      final reminder = _Reminder()..ready.complete();
+      final owner = AppSupportOwner(reminder: reminder);
+      addTearDown(owner.dispose);
+      await owner.init();
+      expect(
+        await owner.consume(AppSupportPromptResult.auxiliaryAction),
+        isFalse,
+      );
+      expect(await owner.consume(AppSupportPromptResult.actionFailed), isFalse);
+      expect(reminder.events, isEmpty);
+      expect(await owner.consume(AppSupportPromptResult.later), isTrue);
+      expect(reminder.events, [RateMyAppEventType.laterButtonPressed]);
+    },
+  );
+
   test(
     'owner disposal during initialization cannot notify or consume later',
     () async {
       final reminder = _Reminder();
       final owner = AppSupportOwner(reminder: reminder);
-      final result = owner.initialize();
+      final ProviderMounted lifetime = owner;
+      var notifications = 0;
+      owner.addListener(() => notifications++);
+      final result = owner.init();
+      expect(lifetime.mounted, isTrue);
       owner.dispose();
+      expect(lifetime.mounted, isFalse);
       reminder.ready.complete();
       expect(await result, isFalse);
       expect(owner.initialized, isFalse);
       expect(await owner.consume(AppSupportPromptResult.later), isFalse);
       expect(reminder.events, isEmpty);
+      expect(notifications, 0);
     },
   );
+
+  test('disposed owner rejects initialization before storage access', () async {
+    final reminder = _Reminder();
+    final owner = AppSupportOwner(reminder: reminder);
+    final AsyncInitialization initialization = owner;
+    owner.dispose();
+    owner.dispose();
+    final first = initialization.init();
+    expect(identical(first, initialization.init()), isTrue);
+    expect(await first, isFalse);
+    expect(reminder.starts, 0);
+    expect(await owner.recordSupportOpened(), isFalse);
+    expect(await owner.resetForNextLaunch(), isFalse);
+    expect(reminder.events, isEmpty);
+  });
 
   test('preview accepts only configured http(s) destinations', () async {
     for (final value in [
@@ -83,9 +186,9 @@ void main() {
       var presentations = 0;
       final shown = await owner.previewPrompt(
         canPresent: () => true,
-        showPrompt: (target) async {
+        showPrompt: (info) async {
           presentations++;
-          expect(target.toString(), value);
+          expect(info.sourceCodeUrl, value);
           return AppSupportPromptResult.later;
         },
       );
@@ -138,9 +241,9 @@ void main() {
           return stubAboutInfo();
         },
       );
-      Future<AppSupportPromptResult> present(Uri target) {
+      Future<AppSupportPromptResult> present(AboutInfo info) {
         presentations++;
-        expect(target, Uri.parse('https://example.com/project'));
+        expect(info.sourceCodeUrl, 'https://example.com/project');
         return result.future;
       }
 
@@ -160,7 +263,7 @@ void main() {
       expect(loads, 1);
       expect(presentations, 1);
       expect(reminder.events, isEmpty);
-      result.complete(AppSupportPromptResult.githubOpened);
+      result.complete(AppSupportPromptResult.supportOpened);
       await first;
       await owner.checkPrompt(canPresent: () => true, showPrompt: present);
       expect(reminder.events, [RateMyAppEventType.rateButtonPressed]);
@@ -249,8 +352,9 @@ void main() {
     () async {
       final reminder = _Reminder();
       final owner = AppSupportOwner(reminder: reminder);
-      final first = owner.initialize();
-      expect(identical(first, owner.initialize()), isTrue);
+      final AsyncInitialization initialization = owner;
+      final first = initialization.init();
+      expect(identical(first, owner.init()), isTrue);
       expect(reminder.starts, 1);
       reminder.ready.complete();
       expect(await first, isTrue);
@@ -262,10 +366,10 @@ void main() {
   test('initialization failure is cached without a retry', () async {
     final reminder = _Reminder();
     final owner = AppSupportOwner(reminder: reminder);
-    final initialized = owner.initialize();
+    final initialized = owner.init();
     reminder.ready.completeError(StateError('read failed'));
     expect(await initialized, isFalse);
-    expect(await owner.initialize(), isFalse);
+    expect(await owner.init(), isFalse);
     expect(reminder.starts, 1);
     expect(owner.claimPrompt(canPresent: true), isFalse);
   });
@@ -273,7 +377,7 @@ void main() {
   for (final blocked in [true, false]) {
     test('startup conflict is final blocked=$blocked', () async {
       final owner = AppSupportOwner();
-      await owner.initialize();
+      await owner.init();
       if (blocked) owner.skipPrompt();
       expect(owner.claimPrompt(canPresent: blocked), isFalse);
       expect(owner.claimPrompt(canPresent: true), isFalse);
@@ -292,7 +396,7 @@ void main() {
       () async {
         debugDefaultTargetPlatformOverride = platform;
         final owner = AppSupportOwner();
-        expect(await owner.initialize(), isTrue);
+        expect(await owner.init(), isTrue);
         expect(
           await SharedPreferencesAsync().getInt('appSupport_launches'),
           10,
@@ -300,7 +404,7 @@ void main() {
         expect(owner.claimPrompt(canPresent: true), isTrue);
         expect(await owner.consume(AppSupportPromptResult.never), isTrue);
         final restored = AppSupportOwner();
-        expect(await restored.initialize(), isTrue);
+        expect(await restored.init(), isTrue);
         expect(restored.claimPrompt(canPresent: true), isFalse);
         expect(await SharedPreferencesAsync().getString('unrelated'), 'keep');
       },
@@ -312,7 +416,7 @@ void main() {
     () async {
       final owner = AppSupportOwner();
       addTearDown(owner.dispose);
-      await owner.initialize();
+      await owner.init();
       await owner.consume(AppSupportPromptResult.never);
       expect(await owner.resetForNextLaunch(), isTrue);
       final prefs = SharedPreferencesAsync();
@@ -326,7 +430,7 @@ void main() {
       expect(owner.claimPrompt(canPresent: true), isFalse);
       final next = AppSupportOwner();
       addTearDown(next.dispose);
-      await next.initialize();
+      await next.init();
       expect(next.claimPrompt(canPresent: true), isTrue);
     },
   );
@@ -336,12 +440,12 @@ void main() {
     () async {
       final owner = AppSupportOwner();
       addTearDown(owner.dispose);
-      await owner.initialize();
+      await owner.init();
       await owner.consume(AppSupportPromptResult.later);
       expect(await owner.resetForNextLaunch(), isTrue);
       final next = AppSupportOwner();
       addTearDown(next.dispose);
-      await next.initialize();
+      await next.init();
       expect(next.claimPrompt(canPresent: true), isTrue);
       SharedPreferencesAsyncPlatform.instance = _FailingPreferences();
       expect(await owner.resetForNextLaunch(), isFalse);
@@ -365,7 +469,7 @@ void main() {
         expect(
           await owner.previewPrompt(
             canPresent: () => true,
-            showPrompt: (target) async {
+            showPrompt: (info) async {
               shows++;
               return result;
             },
@@ -373,12 +477,37 @@ void main() {
           result != AppSupportPromptResult.aborted,
         );
       }
-      expect(shows, 4);
+      expect(shows, AppSupportPromptResult.values.length);
       expect(reminder.starts, 0);
       expect(reminder.events, isEmpty);
       expect(await prefs.getAll(), before);
-      await owner.initialize();
+      await owner.init();
       expect(owner.claimPrompt(canPresent: true), isFalse);
+    },
+  );
+
+  test(
+    'owner disposal invalidates an in-flight developer preview result',
+    () async {
+      final started = Completer<void>();
+      final result = Completer<AppSupportPromptResult>();
+      final owner = AppSupportOwner(loadInfo: () async => stubAboutInfo());
+      final before = await SharedPreferencesAsync().getAll();
+      var notifications = 0;
+      owner.addListener(() => notifications++);
+      final preview = owner.previewPrompt(
+        canPresent: () => true,
+        showPrompt: (_) {
+          started.complete();
+          return result.future;
+        },
+      );
+      await started.future;
+      owner.dispose();
+      result.complete(AppSupportPromptResult.later);
+      expect(await preview, isFalse);
+      expect(notifications, 1);
+      expect(await SharedPreferencesAsync().getAll(), before);
     },
   );
 
@@ -441,7 +570,7 @@ void main() {
     SharedPreferencesAsyncPlatform.instance =
         InMemorySharedPreferencesAsync.empty();
     final owner = AppSupportOwner();
-    expect(await owner.initialize(), isTrue);
+    expect(await owner.init(), isTrue);
     expect(owner.claimPrompt(canPresent: true), isFalse);
     expect(await SharedPreferencesAsync().getInt('appSupport_launches'), 1);
   });
@@ -450,7 +579,7 @@ void main() {
     'later survives a new owner with package date and count semantics',
     () async {
       final owner = AppSupportOwner();
-      await owner.initialize();
+      await owner.init();
       final before = DateTime.now().add(const Duration(days: 7));
       expect(await owner.consume(AppSupportPromptResult.later), isTrue);
       final after = DateTime.now().add(const Duration(days: 7));
@@ -466,18 +595,18 @@ void main() {
       );
       expect(await SharedPreferencesAsync().getInt('appSupport_launches'), 0);
       final restored = AppSupportOwner();
-      await restored.initialize();
+      await restored.init();
       expect(restored.claimPrompt(canPresent: true), isFalse);
     },
   );
 
   for (final result in [
-    AppSupportPromptResult.githubOpened,
+    AppSupportPromptResult.supportOpened,
     AppSupportPromptResult.never,
   ]) {
     test('$result persists permanent dismissal', () async {
       final owner = AppSupportOwner();
-      await owner.initialize();
+      await owner.init();
       await owner.consume(result);
       expect(
         await SharedPreferencesAsync().getBool('appSupport_doNotOpenAgain'),
@@ -490,7 +619,7 @@ void main() {
     final reminder = _Reminder()..failSave = true;
     final owner = AppSupportOwner(reminder: reminder);
     reminder.ready.complete();
-    await owner.initialize();
+    await owner.init();
     expect(await owner.consume(AppSupportPromptResult.aborted), isFalse);
     expect(reminder.events, isEmpty);
     expect(await owner.consume(AppSupportPromptResult.later), isFalse);
@@ -501,7 +630,7 @@ void main() {
   test('real async storage write failure skips startup', () async {
     SharedPreferencesAsyncPlatform.instance = _FailingPreferences();
     final owner = AppSupportOwner();
-    expect(await owner.initialize(), isFalse);
+    expect(await owner.init(), isFalse);
     expect(owner.claimPrompt(canPresent: true), isFalse);
   });
 }

@@ -1592,5 +1592,19 @@
     },
     "appSupport_later": "稍后提醒",
     "appSupport_never": "不再提醒",
-    "appSupport_linkFailed": "无法打开链接，请重试。"
+    "appSupport_linkFailed": "无法打开链接，请重试。",
+    "appSupport_participateTitle": "参与项目",
+    "appSupport_participateMessage": "查看源码、参与开发，或反馈问题与建议。",
+    "appSupport_page": "第 {page} 张，共 {count} 张",
+    "@appSupport_page": {
+        "placeholders": {
+            "page": {
+                "type": "int"
+            },
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "appSupport_saveFailed": "无法保存提醒状态，请重试。"
 }
