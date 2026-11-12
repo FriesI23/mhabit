@@ -200,7 +200,6 @@ dependencies:
       url: https://github.com/FriesI23/data_saver.git
       ref: flutter-344-spm
   app_settings: ^9.0.0
-  rate_my_app: ^2.4.2
   native_natural_sort: ^0.1.4
 
   # Fonts and Icons

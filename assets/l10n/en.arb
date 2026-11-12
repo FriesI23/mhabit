@@ -2025,12 +2025,30 @@
     "@appSupport_starOnGitHub": {
         "description": "Short button label that opens the GitHub repository for the user to manually click Star. Opening the link does not automatically star the repository."
     },
+    "appSupport_rateOnGooglePlay": "Rate on Google Play",
+    "@appSupport_rateOnGooglePlay": {
+        "description": "Support button that opens the published app's Google Play page so the user can leave a review."
+    },
+    "appSupport_rateOnAppStore": "Rate on the App Store",
+    "@appSupport_rateOnAppStore": {
+        "description": "Support button that opens the App Store write-review page on iOS and macOS."
+    },
+    "appSupport_openOnMicrosoftStore": "Rate on Microsoft Store",
+    "@appSupport_openOnMicrosoftStore": {
+        "description": "Support button that opens the published app's Microsoft Store rating and review page."
+    },
+    "appSupport_favoriteOnFlathub": "Favorite on Flathub",
+    "@appSupport_favoriteOnFlathub": {
+        "description": "Support button that opens the app's Flathub page so the user can sign in and add it to favorites. Opening the page does not add a favorite automatically."
+    },
     "appSupport_later": "Remind me later",
     "@appSupport_later": {},
     "appSupport_never": "Don't remind me again",
     "@appSupport_never": {},
-    "appSupport_linkFailed": "Unable to open the link. Please try again.",
-    "@appSupport_linkFailed": {},
+    "appSupport_linkFailed": "Unable to complete this action. Please try again.",
+    "@appSupport_linkFailed": {
+        "description": "Failure message shared by project and store links."
+    },
     "appSupport_participateTitle": "Contribute to Table Habit",
     "@appSupport_participateTitle": {},
     "appSupport_participateMessage": "Explore the source code, contribute, or share issues and ideas.",

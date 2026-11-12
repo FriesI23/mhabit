@@ -13,29 +13,61 @@ import 'package:mhabit/providers/support/about_info.dart';
 import 'package:mhabit/providers/workflow/app_support.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
-import 'package:rate_my_app/rate_my_app.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
 
 import '../../support/stub/about_info.dart';
 
-class _Reminder extends RateMyApp {
-  _Reminder() {
-    for (final condition in conditions.whereType<ResetableCondition>()) {
-      condition.reset();
-    }
-  }
+final _now = DateTime.utc(2026, 11, 12);
+final _initialDate = DateTime.utc(2000).millisecondsSinceEpoch;
+
+Map<String, Object> _initializedValues() => {
+  'appSupport_minimumDate': _initialDate,
+  'appSupport_launches': 10,
+  'appSupport_doNotOpenAgain': false,
+};
+
+Map<String, Object> _laterValues() => {
+  'appSupport_minimumDate': _now
+      .add(const Duration(days: 7))
+      .millisecondsSinceEpoch,
+  'appSupport_launches': 0,
+  'appSupport_doNotOpenAgain': false,
+};
+
+final class _Preferences extends InMemorySharedPreferencesAsync {
+  _Preferences()
+    : super.withData({
+        'appSupport_minimumDate': _initialDate,
+        'appSupport_launches': 9,
+        'appSupport_doNotOpenAgain': false,
+      });
+
   final ready = Completer<void>();
   int starts = 0;
-  final events = <RateMyAppEventType>[];
-  @override
-  Future<void> init() {
-    starts++;
-    return ready.future;
-  }
 
   @override
-  bool get shouldOpenDialog => true;
-  @override
-  Future<void> callEvent(RateMyAppEventType event) async => events.add(event);
+  Future<Map<String, Object>> getPreferences(
+    GetPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) async {
+    starts++;
+    await ready.future;
+    return super.getPreferences(parameters, options);
+  }
+
+  Future<Map<String, Object>> get saved => super.getPreferences(
+    const GetPreferencesParameters(filter: PreferencesFilters()),
+    const SharedPreferencesOptions(),
+  );
+}
+
+_Preferences _preferences() {
+  final preferences = _Preferences();
+  SharedPreferencesAsyncPlatform.instance = preferences;
+  return preferences;
 }
 
 class _PresentationSafety extends ChangeNotifier {
@@ -52,6 +84,9 @@ class _PresentationSafety extends ChangeNotifier {
 }
 
 void main() {
+  late SharedPreferencesAsyncPlatform? previousPreferences;
+  setUp(() => previousPreferences = SharedPreferencesAsyncPlatform.instance);
+  tearDown(() => SharedPreferencesAsyncPlatform.instance = previousPreferences);
   setUp(
     () => TestWidgetsFlutterBinding.ensureInitialized()
         .handleAppLifecycleStateChanged(AppLifecycleState.resumed),
@@ -60,11 +95,13 @@ void main() {
   testWidgets('one foreground startup across rebuild, remount and resume', (
     tester,
   ) async {
-    final reminder = _Reminder();
+    final preferences = _preferences();
     final owner = AppSupportOwner(
-      reminder: reminder,
+      preferences: SharedPreferencesAsync(),
+      now: () => _now,
       loadInfo: () async => stubAboutInfo(),
     );
+    addTearDown(owner.dispose);
     var prompts = 0;
     Widget app({Key? key}) => MaterialApp(
       home: ChangeNotifierProvider<AppSupportOwner>.value(
@@ -81,26 +118,27 @@ void main() {
       ),
     );
     await tester.pumpWidget(app());
-    reminder.ready.complete();
+    preferences.ready.complete();
     await tester.pumpAndSettle();
     expect(prompts, 1);
-    expect(reminder.events, [RateMyAppEventType.laterButtonPressed]);
+    expect(await preferences.saved, _laterValues());
     await tester.pumpWidget(app());
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
     await tester.pumpWidget(app(key: const ValueKey('remounted')));
     await tester.pumpAndSettle();
     expect(prompts, 1);
-    expect(reminder.starts, 1);
+    expect(preferences.starts, 1);
   });
 
   testWidgets(
     'cold startup waits for first foreground activation without losing the prompt',
     (tester) async {
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
-      final reminder = _Reminder()..ready.complete();
+      final preferences = _preferences()..ready.complete();
       final owner = AppSupportOwner(
-        reminder: reminder,
+        preferences: SharedPreferencesAsync(),
+        now: () => _now,
         loadInfo: () async => stubAboutInfo(),
       );
       addTearDown(owner.dispose);
@@ -124,11 +162,11 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(prompts, 0);
-      expect(reminder.events, isEmpty);
+      expect(await preferences.saved, _initializedValues());
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
       await tester.pumpAndSettle();
       expect(prompts, 1);
-      expect(reminder.events, [RateMyAppEventType.laterButtonPressed]);
+      expect(await preferences.saved, _laterValues());
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
       await tester.pumpAndSettle();
@@ -150,15 +188,17 @@ void main() {
     testWidgets('$conflict skips without consuming and never catches up', (
       tester,
     ) async {
-      final reminder = _Reminder();
+      final preferences = _preferences();
       final owner = AppSupportOwner(
-        reminder: reminder,
+        preferences: SharedPreferencesAsync(),
+        now: () => _now,
         loadInfo: () async {
           if (conflict == 'config-error') throw StateError('asset failed');
           if (conflict == 'invalid-url') return const AboutInfo.empty();
           return stubAboutInfo();
         },
       );
+      addTearDown(owner.dispose);
       var prompts = 0;
       final navigator = GlobalKey<NavigatorState>();
       final routes = AdaptiveBranchRouteObserver();
@@ -207,21 +247,21 @@ void main() {
         case 'invalid-url' || 'config-error':
           break;
       }
-      reminder.ready.complete();
+      preferences.ready.complete();
       await tester.pumpAndSettle();
       if (conflict == 'route') navigator.currentState!.pop();
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
       await tester.pumpAndSettle();
       expect(prompts, 0);
-      expect(reminder.events, isEmpty);
-      expect(reminder.starts, 1);
+      expect(await preferences.saved, _initializedValues());
+      expect(preferences.starts, 1);
     });
   }
 
   testWidgets(
     'state changes while config loads are checked before presentation',
     (tester) async {
-      final reminder = _Reminder()..ready.complete();
+      final preferences = _preferences()..ready.complete();
       final info = Completer<AboutInfo>();
       var safe = true;
       var prompts = 0;
@@ -229,7 +269,8 @@ void main() {
         MaterialApp(
           home: ChangeNotifierProvider<AppSupportOwner>(
             create: (_) => AppSupportOwner(
-              reminder: reminder,
+              preferences: SharedPreferencesAsync(),
+              now: () => _now,
               loadInfo: () => info.future,
             ),
             child: AppSupportPrompt(
@@ -249,14 +290,14 @@ void main() {
       info.complete(stubAboutInfo());
       await tester.pumpAndSettle();
       expect(prompts, 0);
-      expect(reminder.events, isEmpty);
+      expect(await preferences.saved, _initializedValues());
     },
   );
 
   testWidgets(
     'Provider safety changes cancel even when restored before configuration completes',
     (tester) async {
-      final reminder = _Reminder()..ready.complete();
+      final preferences = _preferences()..ready.complete();
       final info = Completer<AboutInfo>();
       final safety = _PresentationSafety();
       addTearDown(safety.dispose);
@@ -266,7 +307,8 @@ void main() {
           providers: [
             ChangeNotifierProvider(
               create: (_) => AppSupportOwner(
-                reminder: reminder,
+                preferences: SharedPreferencesAsync(),
+                now: () => _now,
                 loadInfo: () => info.future,
               ),
             ),
@@ -275,7 +317,7 @@ void main() {
           child: MaterialApp(
             home: Builder(
               builder: (context) {
-                final _ = context.select<_PresentationSafety, bool>(
+                context.select<_PresentationSafety, bool>(
                   (value) => value.safe,
                 );
                 return AppSupportPrompt(
@@ -301,20 +343,21 @@ void main() {
       info.complete(stubAboutInfo());
       await tester.pumpAndSettle();
       expect(prompts, 0);
-      expect(reminder.events, isEmpty);
+      expect(await preferences.saved, _initializedValues());
     },
   );
 
   testWidgets(
     'initial navigator attachment can finish during the first frame',
     (tester) async {
-      final reminder = _Reminder()..ready.complete();
+      final preferences = _preferences()..ready.complete();
       var attached = false;
       var prompts = 0;
       await tester.pumpWidget(
         ChangeNotifierProvider(
           create: (_) => AppSupportOwner(
-            reminder: reminder,
+            preferences: SharedPreferencesAsync(),
+            now: () => _now,
             loadInfo: () async => stubAboutInfo(),
           ),
           child: MaterialApp(
@@ -337,17 +380,18 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(prompts, 1);
-      expect(reminder.events, [RateMyAppEventType.laterButtonPressed]);
+      expect(await preferences.saved, _laterValues());
     },
   );
 
   testWidgets(
     'disposing a real prompt host removes only its dialog and ignores a late link',
     (tester) async {
-      final reminder = _Reminder()..ready.complete();
+      final preferences = _preferences()..ready.complete();
       final pending = Completer<bool>();
       final owner = AppSupportOwner(
-        reminder: reminder,
+        preferences: SharedPreferencesAsync(),
+        now: () => _now,
         loadInfo: () async => stubAboutInfo(),
       );
       addTearDown(owner.dispose);
@@ -402,7 +446,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Other route'), findsOneWidget);
       expect(find.byType(AdaptiveDialog, skipOffstage: false), findsNothing);
-      expect(reminder.events, isEmpty);
+      expect(await preferences.saved, _initializedValues());
       expect(tester.takeException(), isNull);
     },
   );
@@ -410,13 +454,14 @@ void main() {
   testWidgets('host destruction discards an unfinished interaction', (
     tester,
   ) async {
-    final reminder = _Reminder()..ready.complete();
+    final preferences = _preferences()..ready.complete();
     final result = Completer<AppSupportPromptResult>();
     await tester.pumpWidget(
       MaterialApp(
         home: ChangeNotifierProvider<AppSupportOwner>(
           create: (_) => AppSupportOwner(
-            reminder: reminder,
+            preferences: SharedPreferencesAsync(),
+            now: () => _now,
             loadInfo: () async => stubAboutInfo(),
           ),
           child: AppSupportPrompt(
@@ -432,6 +477,6 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     result.complete(AppSupportPromptResult.later);
     await tester.pumpAndSettle();
-    expect(reminder.events, isEmpty);
+    expect(await preferences.saved, _initializedValues());
   });
 }

@@ -6,13 +6,15 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart' show CupertinoButton;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/common/distribution.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/app_settings/widgets.dart';
+import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/providers/support/about_info.dart';
 import 'package:mhabit/providers/workflow/app_support.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
-import 'package:rate_my_app/rate_my_app.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 
@@ -31,28 +33,23 @@ const _info = AboutInfo(
   donateCryptoFTMAddr: '',
 );
 
-class _PendingReminder extends RateMyApp {
-  _PendingReminder() {
-    for (final condition in conditions.whereType<ResetableCondition>()) {
-      condition.reset();
-    }
-  }
-  final ready = Completer<void>();
+class _PendingPreferences extends SharedPreferencesAsync {
+  final ready = Completer<Map<String, Object?>>();
   @override
-  Future<void> init() => ready.future;
+  Future<Map<String, Object?>> getAll({Set<String>? allowList}) => ready.future;
 }
 
-class _FailingSaveReminder extends RateMyApp {
-  _FailingSaveReminder() : super(preferencesPrefix: 'appSupport_');
+class _FailingSavePreferences extends SharedPreferencesAsync {
+  _FailingSavePreferences(this._shouldFail);
 
-  bool failSave = true;
+  final bool Function() _shouldFail;
 
   @override
-  Future<void> callEvent(RateMyAppEventType event) async {
-    if (failSave && event == RateMyAppEventType.rateButtonPressed) {
+  Future<void> setBool(String key, bool value) async {
+    if (_shouldFail() && key == 'appSupport_doNotOpenAgain') {
       throw StateError('save failed');
     }
-    await super.callEvent(event);
+    await super.setBool(key, value);
   }
 }
 
@@ -68,9 +65,11 @@ void main() {
     WidgetTester tester,
     Widget child, {
     AdaptiveStyle style = AdaptiveStyle.material,
+    GlobalKey<NavigatorState>? navigatorKey,
   }) async {
     await tester.pumpWidget(
       MaterialApp(
+        navigatorKey: navigatorKey,
         localizationsDelegates: L10n.localizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         builder: (context, child) => MediaQuery(
@@ -87,12 +86,274 @@ void main() {
     await tester.pump();
   }
 
+  Finder action(AppSupportAction value) =>
+      find.byKey(ValueKey('app-support-action-${value.name}'));
+
+  void expectActionEnabled(WidgetTester tester, AppSupportAction value) {
+    final button = tester.widget(action(value));
+    expect(switch (button) {
+      FilledButton(:final onPressed) => onPressed,
+      CupertinoButton(:final onPressed) => onPressed,
+      _ => throw StateError('Unexpected support action button: $button'),
+    }, isNotNull);
+  }
+
+  for (final platform in TargetPlatform.values) {
+    for (final distribution in AppDistribution.values) {
+      testWidgets(
+        'Settings keeps GitHub and routes $distribution links on $platform',
+        (tester) async {
+          final owner = AppSupportOwner()..setDistribution(distribution);
+          addTearDown(owner.dispose);
+          await owner.init();
+          final opened = <Uri>[];
+          await mount(
+            tester,
+            ChangeNotifierProvider.value(
+              value: owner,
+              child: SingleChildScrollView(
+                child: AppSettingSupportSection(
+                  loadInfo: () async => _info,
+                  hideDonate: true,
+                  openUrl: (uri) async {
+                    opened.add(uri);
+                    return true;
+                  },
+                ),
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
+          final target = owner.supportAction;
+          for (final store in [
+            AppSupportAction.googlePlay,
+            AppSupportAction.appStore,
+            AppSupportAction.microsoftStore,
+            AppSupportAction.flathub,
+          ]) {
+            expect(
+              action(store).hitTestable(),
+              target == store ? findsOneWidget : findsNothing,
+            );
+          }
+          if (distribution == AppDistribution.fdroid) {
+            expect(target, AppSupportAction.support);
+            expect(find.text('Open F-Droid'), findsNothing);
+          }
+          if (distribution == AppDistribution.flathub) {
+            expect(
+              find.text('Favorite on Flathub').hitTestable(),
+              findsOneWidget,
+            );
+            expect(find.text('Open Flathub'), findsNothing);
+          }
+          if (target != AppSupportAction.support) {
+            await tester.tap(action(target));
+            await tester.pumpAndSettle();
+            expect(opened, [target.destination(_info)]);
+            expect(owner.reminderClosed, isFalse);
+            expect(
+              await SharedPreferencesAsync().getBool(
+                'appSupport_doNotOpenAgain',
+              ),
+              isFalse,
+            );
+            expect(
+              await SharedPreferencesAsync().getInt('appSupport_launches'),
+              -9,
+            );
+            expect(action(target).hitTestable(), findsOneWidget);
+          }
+          await tester.tap(action(AppSupportAction.support));
+          await tester.pumpAndSettle();
+          expect(opened.last, Uri.parse(_info.sourceCodeUrl));
+          expect(owner.reminderClosed, isTrue);
+          expect(
+            await SharedPreferencesAsync().getBool('appSupport_doNotOpenAgain'),
+            isTrue,
+          );
+          expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
+          expect(tester.takeException(), isNull);
+        },
+        variant: TargetPlatformVariant.only(platform),
+      );
+    }
+  }
+
+  for (final style in AdaptiveStyle.values) {
+    testWidgets(
+      '$style mounted Settings follows channel changes without saving',
+      (tester) async {
+        final owner = AppSupportOwner()
+          ..setDistribution(AppDistribution.github);
+        addTearDown(owner.dispose);
+        await owner.init();
+        final before = await SharedPreferencesAsync().getAll();
+        var loads = 0;
+        await mount(
+          tester,
+          ChangeNotifierProvider.value(
+            value: owner,
+            child: SingleChildScrollView(
+              child: AppSettingSupportSection(
+                loadInfo: () async {
+                  loads++;
+                  return _info;
+                },
+                hideDonate: true,
+              ),
+            ),
+          ),
+          style: style,
+        );
+        await tester.pumpAndSettle();
+        final section = tester.element(find.byType(AppSettingSupportSection));
+        for (final distribution in AppDistribution.values) {
+          owner.setDistribution(distribution);
+          await tester.pumpAndSettle();
+          expect(
+            action(AppSupportAction.support).hitTestable(),
+            findsOneWidget,
+          );
+          if (owner.supportAction != AppSupportAction.support) {
+            expect(action(owner.supportAction).hitTestable(), findsOneWidget);
+          }
+          expect(
+            tester.element(find.byType(AppSettingSupportSection)),
+            section,
+          );
+          expect(await SharedPreferencesAsync().getAll(), before);
+        }
+        expect(loads, 1);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    for (final failsWithException in [false, true]) {
+      testWidgets(
+        '$style failed store link can retry and saves only after opening ($failsWithException)',
+        (tester) async {
+          final owner = AppSupportOwner()
+            ..setDistribution(AppDistribution.appStore);
+          addTearDown(owner.dispose);
+          await owner.init();
+          final before = await SharedPreferencesAsync().getAll();
+          var calls = 0;
+          await mount(
+            tester,
+            ChangeNotifierProvider.value(
+              value: owner,
+              child: SingleChildScrollView(
+                child: AppSettingSupportSection(
+                  loadInfo: () async => _info,
+                  hideDonate: true,
+                  openUrl: (_) async {
+                    if (++calls == 1) {
+                      if (failsWithException) throw StateError('launch failed');
+                      return false;
+                    }
+                    return true;
+                  },
+                ),
+              ),
+            ),
+            style: style,
+          );
+          await tester.pumpAndSettle();
+          await tester.tap(action(AppSupportAction.appStore));
+          await tester.pumpAndSettle();
+          expect(
+            find.text('Unable to complete this action. Please try again.'),
+            findsOneWidget,
+          );
+          expect(await SharedPreferencesAsync().getAll(), before);
+          expect(
+            action(AppSupportAction.support).hitTestable(),
+            findsOneWidget,
+          );
+          await tester.tap(action(AppSupportAction.appStore));
+          await tester.pumpAndSettle();
+          expect(calls, 2);
+          expect(
+            find.text('Unable to complete this action. Please try again.'),
+            findsNothing,
+          );
+          expect(owner.reminderClosed, isFalse);
+          expect(
+            await SharedPreferencesAsync().getInt('appSupport_launches'),
+            -9,
+          );
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+
+    testWidgets(
+      '$style pending store link permits independent clicks and preserves dismissal',
+      (tester) async {
+        final owner = AppSupportOwner()
+          ..setDistribution(AppDistribution.googlePlay);
+        addTearDown(owner.dispose);
+        await owner.init();
+        final before = await SharedPreferencesAsync().getAll();
+        final pending = Completer<bool>();
+        var calls = 0;
+        await mount(
+          tester,
+          ChangeNotifierProvider.value(
+            value: owner,
+            child: SingleChildScrollView(
+              child: AppSettingSupportSection(
+                loadInfo: () async => _info,
+                hideDonate: true,
+                openUrl: (_) {
+                  calls++;
+                  return calls == 1 ? pending.future : Future.value(true);
+                },
+              ),
+            ),
+          ),
+          style: style,
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(action(AppSupportAction.googlePlay));
+        await tester.pumpAndSettle();
+        expectActionEnabled(tester, AppSupportAction.googlePlay);
+        expectActionEnabled(tester, AppSupportAction.support);
+        expect(await SharedPreferencesAsync().getAll(), before);
+        await tester.tap(action(AppSupportAction.googlePlay));
+        await tester.tap(action(AppSupportAction.support));
+        await tester.pumpAndSettle();
+        expect(calls, 3);
+        expect(owner.reminderClosed, isTrue);
+        expect(
+          await SharedPreferencesAsync().getInt('appSupport_launches'),
+          -9,
+        );
+        pending.complete(true);
+        await tester.pumpAndSettle();
+        expect(calls, 3);
+        expect(owner.reminderClosed, isTrue);
+        expect(
+          await SharedPreferencesAsync().getBool('appSupport_doNotOpenAgain'),
+          isTrue,
+        );
+        expect(
+          await SharedPreferencesAsync().getInt('appSupport_launches'),
+          -19,
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
   for (final fail in [false, true]) {
     testWidgets(
       'Settings card waits for initialization completion (failure=$fail)',
       (tester) async {
-        final reminder = _PendingReminder();
-        final owner = AppSupportOwner(reminder: reminder);
+        final preferences = _PendingPreferences();
+        final owner = AppSupportOwner(preferences: preferences);
         addTearDown(owner.dispose);
         await mount(
           tester,
@@ -111,9 +372,9 @@ void main() {
         expect(find.byType(PageView), findsNothing);
         final initialization = owner.init();
         if (fail) {
-          reminder.ready.completeError(StateError('initialization failed'));
+          preferences.ready.completeError(StateError('initialization failed'));
         } else {
-          reminder.ready.complete();
+          preferences.ready.complete({});
         }
         expect(await initialization, !fail);
         await tester.pumpAndSettle();
@@ -136,8 +397,8 @@ void main() {
   testWidgets(
     'configuration failure is handled while initialization is pending',
     (tester) async {
-      final reminder = _PendingReminder();
-      final owner = AppSupportOwner(reminder: reminder);
+      final preferences = _PendingPreferences();
+      final owner = AppSupportOwner(preferences: preferences);
       addTearDown(owner.dispose);
       await mount(
         tester,
@@ -152,7 +413,7 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(find.byKey(const ValueKey('settings-support')), findsNothing);
       final initialization = owner.init();
-      reminder.ready.complete();
+      preferences.ready.complete({});
       await initialization;
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
@@ -238,6 +499,61 @@ void main() {
   }
 
   for (final style in AdaptiveStyle.values) {
+    testWidgets(
+      'donation modal blocks enabled Settings actions until dismissed $style',
+      (tester) async {
+        final owner = AppSupportOwner();
+        addTearDown(owner.dispose);
+        await owner.init();
+        final before = await SharedPreferencesAsync().getAll();
+        var donations = 0;
+        await mount(
+          tester,
+          ChangeNotifierProvider.value(
+            value: owner,
+            child: SingleChildScrollView(
+              child: AppSettingSupportSection(
+                loadInfo: () async => _info,
+                hideDonate: false,
+                showDonation: (info) async {
+                  donations++;
+                  await showDonateDialog(
+                    tester.element(find.byType(AppSettingSupportSection)),
+                    config: DonateConfig(info: info),
+                  );
+                },
+              ),
+            ),
+          ),
+          style: style,
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('app-support-page-1')));
+        await tester.pumpAndSettle();
+        await tester.tap(action(AppSupportAction.donate));
+        await tester.pumpAndSettle();
+        expect(find.byType(DonateContent), findsOneWidget);
+        expect(donations, 1);
+        expectActionEnabled(tester, AppSupportAction.donate);
+        expect(action(AppSupportAction.donate).hitTestable(), findsNothing);
+        // The sheet's barrier receives background taps without re-opening it.
+        await tester.tapAt(const Offset(8, 8));
+        await tester.pumpAndSettle();
+        expect(find.byType(DonateContent), findsNothing);
+        expect(donations, 1);
+        expect(action(AppSupportAction.donate).hitTestable(), findsOneWidget);
+        await tester.tap(action(AppSupportAction.donate));
+        await tester.pumpAndSettle();
+        expect(find.byType(DonateContent), findsOneWidget);
+        expect(donations, 2);
+        await tester.tapAt(const Offset(8, 8));
+        await tester.pumpAndSettle();
+        expect(find.byType(DonateContent), findsNothing);
+        expect(await SharedPreferencesAsync().getAll(), before);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
     for (final width in [320.0, 1000.0]) {
       testWidgets('Settings card fits and centers at width $width $style', (
         tester,
@@ -246,7 +562,8 @@ void main() {
         tester.view.physicalSize = Size(width, 900);
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
-        final owner = AppSupportOwner();
+        final owner = AppSupportOwner()
+          ..setDistribution(AppDistribution.appStore);
         addTearDown(owner.dispose);
         await owner.init();
         await mount(
@@ -273,6 +590,7 @@ void main() {
         expect(pages.right, lessThan(section.right));
         expect(pages.center.dx, section.center.dx);
         expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
+        expect(action(AppSupportAction.appStore).hitTestable(), findsOneWidget);
         expect(tester.takeException(), isNull);
       });
     }
@@ -457,7 +775,7 @@ void main() {
         await tester.tap(find.text('Star on GitHub'));
         await tester.pump();
         await tester.tap(find.text('Star on GitHub'));
-        expect(calls, 1);
+        expect(calls, 2);
         action.complete(true);
         await tester.pumpAndSettle();
         expect(
@@ -481,10 +799,12 @@ void main() {
     testWidgets(
       'save failure keeps the Settings card visible and retryable $style',
       (tester) async {
-        final reminder = _FailingSaveReminder();
-        final owner = AppSupportOwner(reminder: reminder);
+        var failSave = false;
+        final preferences = _FailingSavePreferences(() => failSave);
+        final owner = AppSupportOwner(preferences: preferences);
         addTearDown(owner.dispose);
         expect(await owner.init(), isTrue);
+        failSave = true;
         await mount(
           tester,
           ChangeNotifierProvider.value(
@@ -508,7 +828,7 @@ void main() {
         expect(find.text(l10n.appSupport_saveFailed), findsOneWidget);
         expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
         expect(owner.reminderClosed, isFalse);
-        reminder.failSave = false;
+        failSave = false;
         await tester.tap(find.text('Star on GitHub'));
         await tester.pumpAndSettle();
         expect(find.text(l10n.appSupport_saveFailed), findsNothing);
@@ -547,7 +867,7 @@ void main() {
           await tester.tap(find.text('Star on GitHub'));
           await tester.pumpAndSettle();
           expect(
-            find.text('Unable to open the link. Please try again.'),
+            find.text('Unable to complete this action. Please try again.'),
             findsOneWidget,
           );
         }

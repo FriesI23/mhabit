@@ -13,7 +13,9 @@ import '../../../providers/support/commons.dart';
 import '../../../providers/workflow/app_support.dart';
 import '../../common/widgets.dart';
 
-/// Persistent Settings card; only explicit successful support records rate.
+/// Persistent Settings card with explicit support actions.
+///
+/// GitHub success closes reminders; store links save only their cooldown.
 ///
 /// Observes an existing [AppSupportOwner] without initializing it or checking
 /// startup eligibility. The card remains visible after reminder preferences
@@ -72,6 +74,9 @@ class _AppSettingSupportSectionState extends State<AppSettingSupportSection> {
     final content = AppSupportContent(
       info: snapshot.requireData,
       hideDonate: widget.hideDonate ?? AppInfo().shouldHideDonate(),
+      supportAction: context.select<AppSupportOwner, AppSupportAction>(
+        (owner) => owner.supportAction,
+      ),
     );
     final l10n = L10n.of(context)!;
     if (!content.hasCards(l10n.appAbout_donateTile_ways)) {
@@ -135,12 +140,7 @@ class _AppSettingSupportContent extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            AppSupportCarousel(
-              content: content,
-              active: !actions.busy,
-              enabled: !actions.busy,
-              onSelected: onSelected,
-            ),
+            AppSupportCarousel(content: content, onSelected: onSelected),
             if (errorText != null)
               Semantics(liveRegion: true, child: Text(errorText)),
           ],
@@ -156,14 +156,18 @@ enum _AppSettingSupportFailure { open, save }
 class _AppSettingSupportController extends ChangeNotifier
     implements ProviderMounted {
   bool _mounted = true;
-  bool _busy = false;
   _AppSettingSupportFailure? _failure;
 
   @override
   bool get mounted => _mounted;
 
-  bool get busy => _busy;
   _AppSettingSupportFailure? get failure => _failure;
+
+  void _setFailure(_AppSettingSupportFailure? value) {
+    if (_failure == value) return;
+    _failure = value;
+    if (mounted) notifyListeners();
+  }
 
   Future<void> select({
     required AppSupportAction action,
@@ -172,28 +176,22 @@ class _AppSettingSupportController extends ChangeNotifier
     required Future<bool> Function(Uri) openUrl,
     required Future<void> Function(AboutInfo) showDonation,
   }) async {
-    if (_busy || !mounted || !owner.mounted) return;
-    _busy = true;
-    _failure = null;
-    notifyListeners();
-    try {
-      final result = await action.execute(
-        info: info,
-        openUrl: openUrl,
-        showDonation: showDonation,
-        isAlive: () => mounted && owner.mounted,
-      );
+    if (!mounted || !owner.mounted) return;
+    _setFailure(null);
+    final result = await action.execute(
+      info: info,
+      openUrl: openUrl,
+      showDonation: showDonation,
+      isAlive: () => mounted && owner.mounted,
+    );
+    if (!mounted || !owner.mounted) return;
+    if (result == AppSupportPromptResult.supportOpened ||
+        result == AppSupportPromptResult.storeOpened) {
+      final saved = await owner.recordSupportOpened(result);
       if (!mounted || !owner.mounted) return;
-      if (result == AppSupportPromptResult.supportOpened) {
-        final saved = await owner.recordSupportOpened();
-        if (!mounted || !owner.mounted) return;
-        if (!saved) _failure = _AppSettingSupportFailure.save;
-      } else if (result == AppSupportPromptResult.actionFailed) {
-        _failure = _AppSettingSupportFailure.open;
-      }
-    } finally {
-      _busy = false;
-      if (mounted) notifyListeners();
+      if (!saved) _setFailure(_AppSettingSupportFailure.save);
+    } else if (result == AppSupportPromptResult.actionFailed) {
+      _setFailure(_AppSettingSupportFailure.open);
     }
   }
 

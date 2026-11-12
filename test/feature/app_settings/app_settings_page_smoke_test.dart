@@ -871,14 +871,36 @@ void main() {
         final developerControls = tester.widget<AppSettingDevelopSubGroup>(
           find.byType(AppSettingDevelopSubGroup),
         );
-        expect(developerControls.appSupportBusy, isTrue);
+        expect(support.developerActionInProgress, isTrue);
+        expect(developerControls.onAppSupportDistributionChanged, isNotNull);
+        expect(developerControls.onResetAppSupportPressed, isNotNull);
+        expect(developerControls.onShowAppSupportPressed, isNotNull);
+        expect(
+          tester
+              .widget<AdaptiveChoiceListTile<AppDistribution>>(
+                find.byType(AdaptiveChoiceListTile<AppDistribution>),
+              )
+              .onChanged,
+          isNotNull,
+        );
+        for (final control in [resetSupport, showSupport]) {
+          expect(tester.widget<AdaptiveListTile>(control).onTap, isNotNull);
+          expect(control.hitTestable(), findsNothing);
+        }
         final dialogL10n = L10n.of(
           tester.element(find.byType(AdaptiveDialog)),
         )!;
+        // Developer selections preview their channel independently of theme.
+        final target = support.supportAction;
+        final label = switch (target) {
+          AppSupportAction.googlePlay => dialogL10n.appSupport_rateOnGooglePlay,
+          AppSupportAction.appStore => dialogL10n.appSupport_rateOnAppStore,
+          _ => dialogL10n.appSupport_starOnGitHub,
+        };
         final supportAction = find.ancestor(
           of: find.descendant(
             of: find.byType(AdaptiveDialog),
-            matching: find.text(dialogL10n.appSupport_starOnGitHub),
+            matching: find.text(label),
           ),
           matching: find.byWidgetPredicate(
             (widget) => platform == TargetPlatform.android
@@ -887,18 +909,25 @@ void main() {
           ),
         );
         expect(supportAction, findsOneWidget);
+        final githubAction = find.descendant(
+          of: find.byType(AdaptiveDialog),
+          matching: find.byKey(const ValueKey('app-support-action-support')),
+        );
+        expect(githubAction, findsOneWidget);
         expect(
           find.descendant(
-            of: supportAction,
+            of: githubAction,
             matching: find.byIcon(Icons.star_rounded),
           ),
           findsOneWidget,
         );
-        await tester.tap(
-          find.text(
-            i == 0 ? dialogL10n.appSupport_later : dialogL10n.appSupport_never,
-          ),
+        final dismissAction = find.text(
+          i == 0 ? dialogL10n.appSupport_later : dialogL10n.appSupport_never,
         );
+        await tester.ensureVisible(dismissAction);
+        await tester.pumpAndSettle();
+        expect(dismissAction.hitTestable(), findsOneWidget);
+        await tester.tap(dismissAction);
         await tester.pumpAndSettle();
         expect(find.byType(AdaptiveDialog), findsNothing);
         expect(support.developerActionInProgress, isFalse);

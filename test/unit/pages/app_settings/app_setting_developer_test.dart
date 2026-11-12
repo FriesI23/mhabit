@@ -31,7 +31,6 @@ void main() {
       var clearCalls = 0;
       var supportResets = 0;
       var supportShows = 0;
-      var supportBusy = false;
       var supportDistribution = AppDistribution.github;
       var supportDistributionCalls = 0;
       late StateSetter update;
@@ -61,7 +60,6 @@ void main() {
                       textDirection: direction ?? TextDirection.ltr,
                       child: AppSettingDevelopSubGroup(
                         isInDevelopMode: active,
-                        appSupportBusy: supportBusy,
                         appSupportDistribution: supportDistribution,
                         onAppSupportDistributionChanged: enabled
                             ? (value) => setState(() {
@@ -182,7 +180,7 @@ void main() {
       }
       expect(supportResets, 1);
       expect(supportShows, 1);
-      update(() => supportBusy = true);
+      update(() => enabled = true);
       await tester.pumpAndSettle();
       expect(
         tester
@@ -192,15 +190,18 @@ void main() {
               ),
             )
             .onChanged,
-        isNull,
+        isNotNull,
       );
       for (final key in [
         'developer-reset-app-support',
         'developer-show-app-support',
       ]) {
         final tile = find.byKey(ValueKey(key));
-        expect(tester.widget<AdaptiveListTile>(tile).onTap, isNull);
+        expect(tester.widget<AdaptiveListTile>(tile).onTap, isNotNull);
+        await tester.tap(tile);
       }
+      expect(supportResets, 2);
+      expect(supportShows, 2);
       update(() => active = false);
       await tester.pumpAndSettle();
       expect(find.text('Show debug menu').hitTestable(), findsNothing);

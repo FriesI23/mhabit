@@ -4,6 +4,11 @@
 
 ## Unreleased
 
+- Feature: show donation entries on every platform and distribution
+- Feature: support cards keep GitHub Star and add rating links for Google Play,
+  App Store and Microsoft Store, or a Flathub favorites link
+- Fix: refresh support cards and open previews when the support channel changes
+- Fix: keep background support controls visually enabled while a dialog is open
 - Feature: shared support cards with animated star and coffee headers, code icons,
   filled icon buttons, automatic paging and clickable dots; Settings centers the
   width-limited card, and optional reminders retain later/permanent dismissal

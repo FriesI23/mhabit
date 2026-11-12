@@ -2348,6 +2348,18 @@ class L10nIt extends L10n {
   String get appSupport_starOnGitHub => 'Star on GitHub';
 
   @override
+  String get appSupport_rateOnGooglePlay => 'Rate on Google Play';
+
+  @override
+  String get appSupport_rateOnAppStore => 'Rate on the App Store';
+
+  @override
+  String get appSupport_openOnMicrosoftStore => 'Rate on Microsoft Store';
+
+  @override
+  String get appSupport_favoriteOnFlathub => 'Favorite on Flathub';
+
+  @override
   String get appSupport_later => 'Remind me later';
 
   @override
@@ -2355,7 +2367,7 @@ class L10nIt extends L10n {
 
   @override
   String get appSupport_linkFailed =>
-      'Unable to open the link. Please try again.';
+      'Unable to complete this action. Please try again.';
 
   @override
   String get appSupport_participateTitle => 'Contribute to Table Habit';

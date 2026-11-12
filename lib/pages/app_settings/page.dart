@@ -1011,7 +1011,6 @@ class _PageState extends State<_Page> with XShare {
             AppAdaptiveStyleMode,
             TextDirection?,
             AppAppleSidebarStyleMode,
-            bool,
             AppDistribution,
           )
         >(
@@ -1021,7 +1020,6 @@ class _PageState extends State<_Page> with XShare {
             vm.adaptiveStyleMode,
             vm.textDirectionOverride,
             vm.appleSidebarStyleMode,
-            support.developerActionInProgress,
             support.distribution,
           ),
           shouldRebuild: (previous, next) => previous != next,
@@ -1032,7 +1030,6 @@ class _PageState extends State<_Page> with XShare {
               adaptiveStyleMode,
               textDirectionOverride,
               appleSidebarStyleMode,
-              appSupportBusy,
               appSupportDistribution,
             ) = value;
             return AppSettingDevelopSubGroup(
@@ -1047,7 +1044,6 @@ class _PageState extends State<_Page> with XShare {
               onAppleSidebarStyleModeChanged: _onAppleSidebarStyleModeChanged,
               onExportDBTilePressed: _onExportDBTilePressed,
               onClearDBTilePressed: _onClearDBTilePressed,
-              appSupportBusy: appSupportBusy,
               appSupportDistribution: appSupportDistribution,
               onAppSupportDistributionChanged: _onAppSupportDistributionChanged,
               onResetAppSupportPressed: _resetSupportPrompt,

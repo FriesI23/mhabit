@@ -124,7 +124,15 @@ existing architecture and tooling contracts.
 - Resolve `APP_DISTRIBUTION` in `lib/common/distribution.dart`, using GitHub for
   missing, empty, or unknown values. Keep channels independent of platform and
   flavor. `AppSupportOwner` owns runtime channel changes in memory.
-  Check platform support at store SDK calls. See
+  Keep support channel routing and store links in `lib/models/app_support.dart`.
+  Shared cards retain GitHub and add a channel action only for stores with user
+  reviews or public favorites, independently of the host platform. Download
+  statistics alone do not qualify. Developer selections refresh cards and
+  existing dialogs through the same owner in the current process.
+  `AppSupportOwner` manages reminder history with `SharedPreferencesAsync`,
+  preserving the existing `appSupport_` keys and reminder thresholds. Execute
+  project and store links through the shared URL launcher; opening a store page
+  does not establish that a review was submitted. See
   [Release channels](../wiki/Dev꞉-Build-From-Source.md#release-channels) for build usage.
 
 Optional WebDAV/Docker acceptance lives in `test/harness/webdav_server/`; the

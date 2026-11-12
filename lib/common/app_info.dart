@@ -23,7 +23,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../utils/app_path_provider.dart';
 import 'async.dart';
-import 'consts.dart';
 import 'distribution.dart';
 import 'flavor.dart';
 
@@ -153,7 +152,7 @@ class AppInfo implements AsyncInitialization {
     return Platform.isAndroid && _androidBuildVersion!.sdkInt >= 34;
   }
 
-  bool shouldHideDonate() => appFlavor == appFlaborStore && Platform.isIOS;
+  bool shouldHideDonate() => false;
 
   Future<String> generateAppDebugInfo() => _AppDebugInfoBuilder().build();
 }

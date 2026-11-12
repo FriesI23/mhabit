@@ -3,7 +3,7 @@
 
 // Interactive native smoke host. Only f_dev installs are accepted. Reminder
 // conditions are in memory: this host never writes preferences or habit data,
-// launches a browser, or invokes a real payment action.
+// launches a browser, requests native reviews, or invokes a real payment action.
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -18,27 +18,31 @@ import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:rate_my_app/rate_my_app.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'native_preferences.dart';
 
-class _MemoryReminder extends RateMyApp {
-  @override
-  Future<void> init() async {
-    for (final condition in conditions.whereType<ResetableCondition>()) {
-      condition.reset();
-    }
-  }
+class _MemoryPreferences extends SharedPreferencesAsync {
+  final _values = <String, Object>{};
 
   @override
-  Future<void> save() async {}
+  Future<Map<String, Object?>> getAll({Set<String>? allowList}) async => {
+    for (final entry in _values.entries)
+      if (allowList == null || allowList.contains(entry.key))
+        entry.key: entry.value,
+  };
 
   @override
-  Future<void> callEvent(RateMyAppEventType event) async {
-    for (final condition in conditions) {
-      condition.onEventOccurred(event);
-    }
-  }
+  Future<int?> getInt(String key) async => _values[key] as int?;
+
+  @override
+  Future<bool?> getBool(String key) async => _values[key] as bool?;
+
+  @override
+  Future<void> setInt(String key, int value) async => _values[key] = value;
+
+  @override
+  Future<void> setBool(String key, bool value) async => _values[key] = value;
 }
 
 Future<void> main() async {
@@ -57,7 +61,7 @@ Future<void> main() async {
   runApp(
     ChangeNotifierProvider(
       lazy: false,
-      create: (_) => AppSupportOwner(reminder: _MemoryReminder())..init(),
+      create: (_) => AppSupportOwner(preferences: _MemoryPreferences())..init(),
       child: const _Host(),
     ),
   );
@@ -103,8 +107,9 @@ class _HostState extends State<_Host> {
       },
     );
     if (!context.mounted) return;
-    if (result == AppSupportPromptResult.supportOpened) {
-      await owner.recordSupportOpened();
+    if (result == AppSupportPromptResult.supportOpened ||
+        result == AppSupportPromptResult.storeOpened) {
+      await owner.recordSupportOpened(result);
     } else if (result == AppSupportPromptResult.never) {
       await owner.consume(result);
     }

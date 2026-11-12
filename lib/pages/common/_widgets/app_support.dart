@@ -15,7 +15,9 @@ import 'package:provider/provider.dart';
 import 'package:simple_icons/simple_icons.dart';
 
 import '../../../common/app_info.dart';
+import '../../../common/distribution.dart';
 import '../../../common/utils.dart';
+import '../../../extensions/context_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../providers/support/about_info.dart';
 import '../../../providers/workflow/app_support.dart';
@@ -27,13 +29,19 @@ import 'donate_dialog.dart';
 /// [AboutInfo] validates link targets; [DonateConfig] owns donation methods.
 /// An empty list hides the carousel; one card needs no pagination or autoplay.
 class AppSupportContent {
-  const AppSupportContent({required this.info, this.hideDonate = false});
+  const AppSupportContent({
+    required this.info,
+    this.hideDonate = false,
+    this.supportAction = AppSupportAction.support,
+  });
 
   final AboutInfo info;
   final bool hideDonate;
+  final AppSupportAction supportAction;
 
   List<_AppSupportCardKind> _cards(String donationWays) => [
-    if (info.sourceCodeUri != null) _AppSupportCardKind.support,
+    if (info.sourceCodeUri != null || supportAction.isStore)
+      _AppSupportCardKind.support,
     if (!hideDonate &&
         DonateConfig(info: info).hasAvailableMethod(donationWays))
       _AppSupportCardKind.donate,
@@ -52,13 +60,13 @@ class AppSupportContent {
 
 /// Shows shared cards, then executes a selection after the dialog leaves.
 ///
-/// This function never consumes reminder events. Normal dismissals count as
-/// later; removal, host invalidation and late results count as aborted. The
-/// caller's context must remain mounted throughout the operation. A supplied
+/// The caller consumes link and dismissal results. Normal dismissals count as
+/// later; removal, host
+/// invalidation and late results count as aborted. The caller's context must
+/// remain mounted throughout the operation. A supplied
 /// [controller] is single-use; its host must abort it on destruction.
 ///
-/// The caller decides whether to persist the result, allowing previews to use
-/// the same interaction without changing reminder history.
+/// Previews reuse the same interaction without changing reminder history.
 Future<AppSupportPromptResult> showAppSupportDialog({
   required BuildContext context,
   required AboutInfo info,
@@ -72,15 +80,31 @@ Future<AppSupportPromptResult> showAppSupportDialog({
     if (state._finished || !context.mounted) {
       return AppSupportPromptResult.aborted;
     }
+    final owner = context.maybeRead<AppSupportOwner>();
     final content = AppSupportContent(
       info: info,
       hideDonate: hideDonate ?? AppInfo().shouldHideDonate(),
+      supportAction:
+          owner?.supportAction ??
+          AppSupportAction.supportFor(distribution: defaultAppDistribution),
     );
     final result = await showAdaptiveModalDialog<AppSupportPromptResult>(
       context: context,
       barrierDismissible: true,
       routeSettings: const RouteSettings(name: 'app-support'),
-      builder: (_) => _AppSupportDialog(content: content, controller: state),
+      builder: (_) => owner == null
+          ? _AppSupportDialog(content: content, controller: state)
+          : ListenableBuilder(
+              listenable: owner,
+              builder: (_, _) => _AppSupportDialog(
+                content: AppSupportContent(
+                  info: info,
+                  hideDonate: content.hideDonate,
+                  supportAction: owner.supportAction,
+                ),
+                controller: state,
+              ),
+            ),
     );
     // The pop future completes before the reverse transition. In particular,
     // a donation sheet must not be pushed over the outgoing dialog route.
@@ -368,7 +392,6 @@ class AppSupportCarousel extends StatefulWidget {
     required this.content,
     required this.onSelected,
     this.active = true,
-    this.enabled = true,
   });
 
   final AppSupportContent content;
@@ -376,11 +399,8 @@ class AppSupportCarousel extends StatefulWidget {
   /// Reports a business selection; paging never invokes this callback.
   final ValueChanged<AppSupportAction> onSelected;
 
-  /// Whether the host permits playback, such as while no action is pending.
+  /// Whether the host permits playback.
   final bool active;
-
-  /// Enables business and pagination buttons; independent of playback [active].
-  final bool enabled;
 
   @override
   State<AppSupportCarousel> createState() => _AppSupportCarouselState();
@@ -728,14 +748,14 @@ class _AppSupportCarouselState extends State<AppSupportCarousel>
                     index: _index,
                     reduced: _reduced,
                     onPageChanged: _onPageChanged,
-                    onSelected: widget.enabled ? widget.onSelected : null,
+                    onSelected: widget.onSelected,
                   ),
                 ),
                 if (_cards.length > 1)
                   _AppSupportPagination(
                     count: _cards.length,
                     index: _index,
-                    onSelected: widget.enabled ? _goTo : null,
+                    onSelected: _goTo,
                   ),
               ],
             ),
@@ -873,40 +893,6 @@ class _AppSupportCard extends StatelessWidget {
   final bool measuring;
   final ValueChanged<AppSupportAction>? onSelected;
 
-  Widget _buildActionButton(
-    BuildContext context,
-    AppSupportAction action,
-    String label,
-  ) {
-    final callback = onSelected == null ? null : () => onSelected!(action);
-    final icon = Icon(switch (action) {
-      AppSupportAction.support => Icons.star_rounded,
-      AppSupportAction.donate => SimpleIcons.buymeacoffee,
-      AppSupportAction.sourceCode => Icons.code_rounded,
-      AppSupportAction.feedback => Icons.bug_report_outlined,
-    }, size: 16);
-    final text = Text(label, textAlign: TextAlign.center);
-    return AdaptiveStyle.of(context) == AdaptiveStyle.apple
-        ? CupertinoButton.tinted(
-            onPressed: callback,
-            minimumSize: const Size(0, 44),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                icon,
-                const SizedBox(width: 8),
-                Flexible(child: text),
-              ],
-            ),
-          )
-        : FilledButton.tonalIcon(
-            onPressed: callback,
-            style: FilledButton.styleFrom(minimumSize: const Size(0, 44)),
-            icon: icon,
-            label: text,
-          );
-  }
-
   Widget _buildHero(BuildContext context) {
     if (measuring) return const SizedBox(height: 44);
     return ExcludeSemantics(
@@ -934,31 +920,33 @@ class _AppSupportCard extends StatelessWidget {
     final l10n = L10n.of(context)!;
     return switch (kind) {
       _AppSupportCardKind.support => [
-        _buildActionButton(
-          context,
-          AppSupportAction.support,
-          l10n.appSupport_starOnGitHub,
-        ),
+        if (content.info.sourceCodeUri != null)
+          _GitHubSupportButton(onSelected: onSelected),
+        if (content.supportAction.isStore)
+          _StoreSupportButton(
+            action: content.supportAction,
+            onSelected: onSelected,
+          ),
       ],
       _AppSupportCardKind.participate => [
         if (content.info.sourceCodeUri != null)
-          _buildActionButton(
-            context,
-            AppSupportAction.sourceCode,
-            l10n.appAbout_sourceCodeTile_titleText,
+          _AppSupportActionButton(
+            action: AppSupportAction.sourceCode,
+            label: l10n.appAbout_sourceCodeTile_titleText,
+            onSelected: onSelected,
           ),
         if (content.info.issueTrackerUri != null)
-          _buildActionButton(
-            context,
-            AppSupportAction.feedback,
-            l10n.appAbout_issueTrackerTile_titleText,
+          _AppSupportActionButton(
+            action: AppSupportAction.feedback,
+            label: l10n.appAbout_issueTrackerTile_titleText,
+            onSelected: onSelected,
           ),
       ],
       _AppSupportCardKind.donate => [
-        _buildActionButton(
-          context,
-          AppSupportAction.donate,
-          l10n.appAbout_donateTile_titleText,
+        _AppSupportActionButton(
+          action: AppSupportAction.donate,
+          label: l10n.appAbout_donateTile_titleText,
+          onSelected: onSelected,
         ),
       ],
     };
@@ -1010,6 +998,93 @@ class _AppSupportCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// Each support destination owns its action and localized label.
+class _GitHubSupportButton extends StatelessWidget {
+  const _GitHubSupportButton({required this.onSelected});
+
+  final ValueChanged<AppSupportAction>? onSelected;
+
+  @override
+  Widget build(BuildContext context) => _AppSupportActionButton(
+    action: AppSupportAction.support,
+    label: L10n.of(context)!.appSupport_starOnGitHub,
+    onSelected: onSelected,
+  );
+}
+
+class _StoreSupportButton extends StatelessWidget {
+  const _StoreSupportButton({required this.action, required this.onSelected});
+
+  final AppSupportAction action;
+  final ValueChanged<AppSupportAction>? onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context)!;
+    final label = switch (action) {
+      AppSupportAction.googlePlay => l10n.appSupport_rateOnGooglePlay,
+      AppSupportAction.appStore => l10n.appSupport_rateOnAppStore,
+      AppSupportAction.microsoftStore => l10n.appSupport_openOnMicrosoftStore,
+      AppSupportAction.flathub => l10n.appSupport_favoriteOnFlathub,
+      _ => throw StateError('Expected a store support action'),
+    };
+    return _AppSupportActionButton(
+      action: action,
+      label: label,
+      onSelected: onSelected,
+    );
+  }
+}
+
+class _AppSupportActionButton extends StatelessWidget {
+  const _AppSupportActionButton({
+    required this.action,
+    required this.label,
+    required this.onSelected,
+  });
+
+  final AppSupportAction action;
+  final String label;
+  final ValueChanged<AppSupportAction>? onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final callback = onSelected == null ? null : () => onSelected!(action);
+    final icon = Icon(switch (action) {
+      AppSupportAction.support => Icons.star_rounded,
+      AppSupportAction.googlePlay => SimpleIcons.googleplay,
+      AppSupportAction.appStore => SimpleIcons.appstore,
+      AppSupportAction.microsoftStore => Icons.storefront_outlined,
+      AppSupportAction.flathub => SimpleIcons.flathub,
+      AppSupportAction.donate => SimpleIcons.buymeacoffee,
+      AppSupportAction.sourceCode => Icons.code_rounded,
+      AppSupportAction.feedback => Icons.bug_report_outlined,
+    }, size: 16);
+    final text = Text(label, textAlign: TextAlign.center);
+    return AdaptiveStyle.of(context) == AdaptiveStyle.apple
+        ? CupertinoButton.tinted(
+            key: ValueKey('app-support-action-${action.name}'),
+            onPressed: callback,
+            minimumSize: const Size(0, 44),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                icon,
+                const SizedBox(width: 8),
+                Flexible(child: text),
+              ],
+            ),
+          )
+        : FilledButton.tonalIcon(
+            key: ValueKey('app-support-action-${action.name}'),
+            onPressed: callback,
+            style: FilledButton.styleFrom(minimumSize: const Size(0, 44)),
+            icon: icon,
+            label: text,
+          );
   }
 }
 

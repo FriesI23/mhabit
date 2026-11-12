@@ -3687,6 +3687,30 @@ abstract class L10n {
   /// **'Star on GitHub'**
   String get appSupport_starOnGitHub;
 
+  /// Support button that opens the published app's Google Play page so the user can leave a review.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate on Google Play'**
+  String get appSupport_rateOnGooglePlay;
+
+  /// Support button that opens the App Store write-review page on iOS and macOS.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate on the App Store'**
+  String get appSupport_rateOnAppStore;
+
+  /// Support button that opens the published app's Microsoft Store rating and review page.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate on Microsoft Store'**
+  String get appSupport_openOnMicrosoftStore;
+
+  /// Support button that opens the app's Flathub page so the user can sign in and add it to favorites. Opening the page does not add a favorite automatically.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite on Flathub'**
+  String get appSupport_favoriteOnFlathub;
+
   /// No description provided for @appSupport_later.
   ///
   /// In en, this message translates to:
@@ -3699,10 +3723,10 @@ abstract class L10n {
   /// **'Don\'t remind me again'**
   String get appSupport_never;
 
-  /// No description provided for @appSupport_linkFailed.
+  /// Failure message shared by project and store links.
   ///
   /// In en, this message translates to:
-  /// **'Unable to open the link. Please try again.'**
+  /// **'Unable to complete this action. Please try again.'**
   String get appSupport_linkFailed;
 
   /// No description provided for @appSupport_participateTitle.

@@ -2186,13 +2186,25 @@ class L10nZh extends L10n {
   String get appSupport_starOnGitHub => 'GitHub Star';
 
   @override
+  String get appSupport_rateOnGooglePlay => '前往 Google Play 评价';
+
+  @override
+  String get appSupport_rateOnAppStore => '前往 App Store 评价';
+
+  @override
+  String get appSupport_openOnMicrosoftStore => '前往 Microsoft Store 评价';
+
+  @override
+  String get appSupport_favoriteOnFlathub => '在 Flathub 收藏';
+
+  @override
   String get appSupport_later => '稍后提醒';
 
   @override
   String get appSupport_never => '不再提醒';
 
   @override
-  String get appSupport_linkFailed => '无法打开链接，请重试。';
+  String get appSupport_linkFailed => '操作未能完成，请重试。';
 
   @override
   String get appSupport_participateTitle => '参与项目';

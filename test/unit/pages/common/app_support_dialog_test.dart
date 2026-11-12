@@ -8,16 +8,275 @@ import 'package:flutter/cupertino.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/common/distribution.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/providers/support/about_info.dart';
 import 'package:mhabit/providers/workflow/app_support.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 
 import '../../../support/adaptive_ui_theme.dart';
 import '../../../support/stub/about_info.dart';
 
 void main() {
+  Future<BuildContext> mountOwner(
+    WidgetTester tester,
+    AppSupportOwner owner, {
+    AdaptiveStyle style = AdaptiveStyle.material,
+    double scale = 1,
+  }) async {
+    late BuildContext caller;
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: L10n.localizationsDelegates,
+        supportedLocales: L10n.supportedLocales,
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            disableAnimations: true,
+            textScaler: TextScaler.linear(scale),
+          ),
+          child: child!,
+        ),
+        home: ChangeNotifierProvider.value(
+          value: owner,
+          child: TestAdaptiveUiTheme(
+            update: (theme) => theme.copyWith(style: style),
+            child: Builder(
+              builder: (context) {
+                caller = context;
+                return const Scaffold();
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    return caller;
+  }
+
+  Finder action(AppSupportAction value) =>
+      find.byKey(ValueKey('app-support-action-${value.name}'));
+
+  for (final style in AdaptiveStyle.values) {
+    for (final storeSelection in [false, true]) {
+      testWidgets(
+        '$style open preview keeps GitHub and follows every channel before store=$storeSelection',
+        (tester) async {
+          final previous = SharedPreferencesAsyncPlatform.instance;
+          SharedPreferencesAsyncPlatform.instance =
+              InMemorySharedPreferencesAsync.empty();
+          addTearDown(() => SharedPreferencesAsyncPlatform.instance = previous);
+          final owner = AppSupportOwner(loadInfo: () async => stubAboutInfo())
+            ..setDistribution(AppDistribution.github);
+          addTearDown(owner.dispose);
+          final controller = AppSupportDialogController();
+          addTearDown(controller.abort);
+          final caller = await mountOwner(tester, owner, style: style);
+          final before = await SharedPreferencesAsync().getAll();
+          final destinations = <Uri>[];
+          AppSupportPromptResult? result;
+          final preview = owner.previewPrompt(
+            canPresent: () => true,
+            showPrompt: (info) async {
+              result = await showAppSupportDialog(
+                context: caller,
+                info: info,
+                controller: controller,
+                hideDonate: true,
+                openUrl: (uri) async {
+                  destinations.add(uri);
+                  return true;
+                },
+              );
+              return result!;
+            },
+          );
+          await tester.pumpAndSettle();
+          final dialog = tester.element(find.byType(AdaptiveDialog));
+          for (final distribution in AppDistribution.values) {
+            owner.setDistribution(distribution);
+            await tester.pumpAndSettle();
+            final target = owner.supportAction;
+            expect(
+              action(AppSupportAction.support).hitTestable(),
+              findsOneWidget,
+            );
+            for (final store in [
+              AppSupportAction.googlePlay,
+              AppSupportAction.appStore,
+              AppSupportAction.microsoftStore,
+              AppSupportAction.flathub,
+            ]) {
+              expect(
+                action(store).hitTestable(),
+                store == target ? findsOneWidget : findsNothing,
+              );
+            }
+            if (distribution == AppDistribution.fdroid) {
+              expect(target, AppSupportAction.support);
+              expect(find.text('Open F-Droid'), findsNothing);
+            }
+            if (distribution == AppDistribution.flathub) {
+              expect(
+                find.text('Favorite on Flathub').hitTestable(),
+                findsOneWidget,
+              );
+              expect(find.text('Open Flathub'), findsNothing);
+            }
+            expect(tester.element(find.byType(AdaptiveDialog)), dialog);
+            expect(await SharedPreferencesAsync().getAll(), before);
+          }
+          owner.setDistribution(AppDistribution.appStore);
+          await tester.pumpAndSettle();
+          final selected = storeSelection
+              ? AppSupportAction.appStore
+              : AppSupportAction.support;
+          await tester.tap(action(selected));
+          await tester.pumpAndSettle();
+          expect(await preview, isTrue);
+          expect(
+            result,
+            storeSelection
+                ? AppSupportPromptResult.storeOpened
+                : AppSupportPromptResult.supportOpened,
+          );
+          expect(destinations, [selected.destination(stubAboutInfo())]);
+          expect(owner.initializationComplete, isFalse);
+          expect(await SharedPreferencesAsync().getAll(), before);
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+
+    for (final outcome in ['opened', 'false', 'exception']) {
+      testWidgets(
+        '$style store preview closes before link $outcome and never saves history',
+        (tester) async {
+          final previous = SharedPreferencesAsyncPlatform.instance;
+          SharedPreferencesAsyncPlatform.instance =
+              InMemorySharedPreferencesAsync.empty();
+          addTearDown(() => SharedPreferencesAsyncPlatform.instance = previous);
+          final owner = AppSupportOwner(loadInfo: () async => stubAboutInfo())
+            ..setDistribution(AppDistribution.googlePlay);
+          addTearDown(owner.dispose);
+          final caller = await mountOwner(tester, owner, style: style);
+          final before = await SharedPreferencesAsync().getAll();
+          final destinations = <Uri>[];
+          var closedBeforeOpen = false;
+          AppSupportPromptResult? result;
+          final preview = owner.previewPrompt(
+            canPresent: () => true,
+            showPrompt: (info) async {
+              result = await showAppSupportDialog(
+                context: caller,
+                info: info,
+                hideDonate: true,
+                openUrl: (target) async {
+                  closedBeforeOpen = find
+                      .byType(AdaptiveDialog)
+                      .evaluate()
+                      .isEmpty;
+                  destinations.add(target);
+                  if (outcome == 'exception') throw StateError('launch failed');
+                  return outcome == 'opened';
+                },
+              );
+              return result!;
+            },
+          );
+          await tester.pumpAndSettle();
+          expect(
+            action(AppSupportAction.support).hitTestable(),
+            findsOneWidget,
+          );
+          await tester.tap(action(AppSupportAction.googlePlay));
+          await tester.pumpAndSettle();
+          expect(await preview, isTrue);
+          expect(closedBeforeOpen, isTrue);
+          expect(destinations, [
+            AppSupportAction.googlePlay.destination(stubAboutInfo()),
+          ]);
+          expect(
+            result,
+            outcome == 'opened'
+                ? AppSupportPromptResult.storeOpened
+                : AppSupportPromptResult.actionFailed,
+          );
+          expect(
+            find.text(L10n.of(caller)!.appSupport_linkFailed),
+            outcome == 'opened' ? findsNothing : findsOneWidget,
+          );
+          expect(await SharedPreferencesAsync().getAll(), before);
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+
+    testWidgets(
+      '$style two support actions remain reachable in a narrow large-text dialog',
+      (tester) async {
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = const Size(320, 900);
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final previous = SharedPreferencesAsyncPlatform.instance;
+        SharedPreferencesAsyncPlatform.instance =
+            InMemorySharedPreferencesAsync.empty();
+        addTearDown(() => SharedPreferencesAsyncPlatform.instance = previous);
+        final owner = AppSupportOwner()
+          ..setDistribution(AppDistribution.microsoftStore);
+        addTearDown(owner.dispose);
+        final caller = await mountOwner(
+          tester,
+          owner,
+          style: style,
+          scale: 1.8,
+        );
+        for (final target in [
+          AppSupportAction.support,
+          AppSupportAction.microsoftStore,
+        ]) {
+          final controller = AppSupportDialogController();
+          addTearDown(controller.abort);
+          final opened = <Uri>[];
+          final result = showAppSupportDialog(
+            context: caller,
+            info: stubAboutInfo(),
+            controller: controller,
+            hideDonate: true,
+            openUrl: (uri) async {
+              opened.add(uri);
+              return true;
+            },
+          );
+          await tester.pumpAndSettle();
+          await tester.ensureVisible(action(target));
+          await tester.pumpAndSettle();
+          expect(action(target).hitTestable(), findsOneWidget);
+          final viewport = tester.getRect(find.byType(AppSupportCarousel));
+          final rect = tester.getRect(action(target));
+          expect(rect.left, greaterThanOrEqualTo(viewport.left));
+          expect(rect.right, lessThanOrEqualTo(viewport.right));
+          await tester.tap(action(target));
+          await tester.pumpAndSettle();
+          expect(
+            await result,
+            target == AppSupportAction.support
+                ? AppSupportPromptResult.supportOpened
+                : AppSupportPromptResult.storeOpened,
+          );
+          expect(opened, [target.destination(stubAboutInfo())]);
+        }
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
   testWidgets('aborting an unused dialog controller schedules no frame', (
     tester,
   ) async {
@@ -150,7 +409,7 @@ void main() {
               expect(await result, AppSupportPromptResult.actionFailed);
               expect(find.byType(AdaptiveDialog), findsNothing);
               expect(
-                find.text('Unable to open the link. Please try again.'),
+                find.text('Unable to complete this action. Please try again.'),
                 findsOneWidget,
               );
             },

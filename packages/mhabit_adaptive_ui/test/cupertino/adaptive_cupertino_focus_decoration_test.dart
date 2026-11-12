@@ -52,9 +52,10 @@ void main() {
               child: child!,
             ),
             child: GestureDetector(
+              key: childKey,
               behavior: HitTestBehavior.opaque,
               onTap: () => taps++,
-              child: const SizedBox(key: childKey, width: 80, height: 40),
+              child: const SizedBox(width: 80, height: 40),
             ),
           ),
         ),

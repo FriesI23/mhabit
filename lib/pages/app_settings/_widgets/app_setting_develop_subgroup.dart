@@ -32,7 +32,6 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
   final ValueChanged<TextDirection?>? onTextDirectionOverrideChanged;
   final void Function(BuildContext context)? onExportDBTilePressed;
   final void Function(BuildContext context)? onClearDBTilePressed;
-  final bool appSupportBusy;
   final AppDistribution appSupportDistribution;
   final ValueChanged<AppDistribution>? onAppSupportDistributionChanged;
   final VoidCallback? onResetAppSupportPressed;
@@ -51,7 +50,6 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
     this.onTextDirectionOverrideChanged,
     this.onExportDBTilePressed,
     this.onClearDBTilePressed,
-    this.appSupportBusy = false,
     this.appSupportDistribution = AppDistribution.github,
     this.onAppSupportDistributionChanged,
     this.onResetAppSupportPressed,
@@ -146,7 +144,7 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
             AppDistribution.flathub: 'Flathub',
             AppDistribution.custom: 'Custom',
           },
-          onChanged: appSupportBusy ? null : onAppSupportDistributionChanged,
+          onChanged: onAppSupportDistributionChanged,
         ),
         AdaptiveListTile(
           key: const ValueKey('developer-reset-app-support'),
@@ -154,7 +152,7 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
           subtitle: const Text(
             'Clears dismissal and cooldown. Startup checks still apply.',
           ),
-          onTap: appSupportBusy ? null : onResetAppSupportPressed,
+          onTap: onResetAppSupportPressed,
         ),
         AdaptiveListTile(
           key: const ValueKey('developer-show-app-support'),
@@ -162,7 +160,7 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
           subtitle: const Text(
             'Preview only; does not change reminder history.',
           ),
-          onTap: appSupportBusy ? null : onShowAppSupportPressed,
+          onTap: onShowAppSupportPressed,
         ),
       ],
     ),
