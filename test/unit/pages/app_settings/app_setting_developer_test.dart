@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/common/distribution.dart';
 import 'package:mhabit/models/app_adaptive_style_mode.dart';
 import 'package:mhabit/models/app_apple_sidebar_style_mode.dart';
 import 'package:mhabit/pages/app_settings/widgets.dart';
@@ -31,6 +32,8 @@ void main() {
       var supportResets = 0;
       var supportShows = 0;
       var supportBusy = false;
+      var supportDistribution = AppDistribution.github;
+      var supportDistributionCalls = 0;
       late StateSetter update;
       await tester.pumpWidget(
         MaterialApp(
@@ -59,6 +62,13 @@ void main() {
                       child: AppSettingDevelopSubGroup(
                         isInDevelopMode: active,
                         appSupportBusy: supportBusy,
+                        appSupportDistribution: supportDistribution,
+                        onAppSupportDistributionChanged: enabled
+                            ? (value) => setState(() {
+                                supportDistribution = value;
+                                supportDistributionCalls++;
+                              })
+                            : null,
                         onResetAppSupportPressed: () => supportResets++,
                         onShowAppSupportPressed: () => supportShows++,
                         isDisplayDebugMenuSelect: debug,
@@ -112,7 +122,7 @@ void main() {
             )
             .children
             .length,
-        platform == TargetPlatform.android ? 7 : 8,
+        platform == TargetPlatform.android ? 8 : 9,
       );
       await tester.tap(
         find.byType(
@@ -132,7 +142,7 @@ void main() {
       await select('developer-ui-style-control', 'Apple');
       expect(mode, AppAdaptiveStyleMode.apple);
       expect(modeCalls, 1);
-      expect(find.byType(CupertinoMenuAnchor), findsNWidgets(3));
+      expect(find.byType(CupertinoMenuAnchor), findsNWidgets(4));
       await select('developer-apple-sidebar-style-control', 'OS 27');
       expect(sidebarMode, AppAppleSidebarStyleMode.os27);
       expect(sidebarModeCalls, 1);
@@ -147,6 +157,11 @@ void main() {
       await select('developer-text-direction-control', 'Auto');
       expect(direction, isNull);
       expect(directionCalls, 2);
+      await select('developer-app-support-channel-control', 'Google Play');
+      expect(supportDistribution, AppDistribution.googlePlay);
+      await select('developer-app-support-channel-control', 'Default (GitHub)');
+      expect(supportDistribution, AppDistribution.github);
+      expect(supportDistributionCalls, 2);
       await tester.tap(find.text('Export DataBase'));
       await tester.tap(find.text('Clear DataBase'));
       expect(exportCalls, 1);
@@ -169,6 +184,16 @@ void main() {
       expect(supportShows, 1);
       update(() => supportBusy = true);
       await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<AdaptiveChoiceListTile<AppDistribution>>(
+              find.byWidgetPredicate(
+                (widget) => widget is AdaptiveChoiceListTile<AppDistribution>,
+              ),
+            )
+            .onChanged,
+        isNull,
+      );
       for (final key in [
         'developer-reset-app-support',
         'developer-show-app-support',

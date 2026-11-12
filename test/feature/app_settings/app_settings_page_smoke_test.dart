@@ -23,6 +23,7 @@ import 'package:flutter/cupertino.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mhabit/common/distribution.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/entries/app/navigation_destination.dart';
 import 'package:mhabit/l10n/localizations.dart';
@@ -836,6 +837,22 @@ void main() {
         const ValueKey('developer-show-app-support'),
       );
       for (var i = 0; i < 2; i++) {
+        final channelControl = find.byKey(
+          const ValueKey('developer-app-support-channel-control'),
+        );
+        await Scrollable.ensureVisible(
+          tester.element(channelControl),
+          alignment: 0.5,
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(channelControl);
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(i == 0 ? 'Google Play' : 'App Store').last);
+        await tester.pumpAndSettle();
+        final selectedDistribution = i == 0
+            ? AppDistribution.googlePlay
+            : AppDistribution.appStore;
+        expect(support.distribution, selectedDistribution);
         await tester.scrollUntilVisible(
           showSupport.hitTestable(),
           100,

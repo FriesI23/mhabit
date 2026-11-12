@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/async.dart';
+import 'package:mhabit/common/distribution.dart';
 import 'package:mhabit/models/app_sync_server.dart';
 import 'package:mhabit/providers/support/about_info.dart';
 import 'package:mhabit/providers/support/commons.dart';
@@ -69,6 +70,40 @@ final class _ToggleBoolPreferences extends InMemorySharedPreferencesAsync {
 }
 
 void main() {
+  test(
+    'runtime channel changes notify once and preserve reminder data',
+    () async {
+      final owner = AppSupportOwner();
+      addTearDown(owner.dispose);
+      final before = await SharedPreferencesAsync().getAll();
+      var notifications = 0;
+      owner.addListener(() => notifications++);
+      expect(owner.distribution, defaultAppDistribution);
+
+      final selected = owner.distribution == AppDistribution.googlePlay
+          ? AppDistribution.appStore
+          : AppDistribution.googlePlay;
+      owner.setDistribution(selected);
+      owner.setDistribution(selected);
+
+      expect(owner.distribution, selected);
+      expect(notifications, 1);
+      expect(await SharedPreferencesAsync().getAll(), before);
+    },
+  );
+
+  test('a new support owner restores the compiled channel', () {
+    final owner = AppSupportOwner();
+    owner.setDistribution(AppDistribution.custom);
+    owner.dispose();
+    owner.setDistribution(AppDistribution.github);
+    expect(owner.distribution, AppDistribution.custom);
+
+    final restored = AppSupportOwner();
+    addTearDown(restored.dispose);
+    expect(restored.distribution, defaultAppDistribution);
+  });
+
   test(
     'explicit support persists after an automatic later and restores folded state',
     () async {

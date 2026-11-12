@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 
 import '../../common/async.dart';
+import '../../common/distribution.dart';
 import '../../logging/helper.dart';
 import '../../models/app_sync_server.dart';
 import '../support/about_info.dart';
@@ -94,6 +95,7 @@ class AppSupportOwner extends ChangeNotifier
 
   final RateMyApp _reminder;
   final Future<AboutInfo> Function() _loadInfo;
+  AppDistribution _distribution = defaultAppDistribution;
   Future<bool>? _initialization;
   Future<void>? _promptCheck;
   bool _initialized = false;
@@ -117,6 +119,15 @@ class AppSupportOwner extends ChangeNotifier
 
   /// Last reliably saved package state; rate and never share this condition.
   bool get reminderClosed => _reminderClosed;
+
+  /// The current process's support channel, initialized from the build value.
+  AppDistribution get distribution => _distribution;
+
+  void setDistribution(AppDistribution value) {
+    if (!mounted || _distribution == value) return;
+    _distribution = value;
+    notifyListeners();
+  }
 
   bool _readClosed() => _reminder.conditions
       .whereType<DoNotOpenAgainCondition>()

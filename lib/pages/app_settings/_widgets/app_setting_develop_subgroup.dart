@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
+import '../../../common/distribution.dart';
 import '../../../models/app_adaptive_style_mode.dart';
 import '../../../models/app_apple_sidebar_style_mode.dart';
 import '../../../widgets/widgets.dart';
@@ -32,6 +33,8 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
   final void Function(BuildContext context)? onExportDBTilePressed;
   final void Function(BuildContext context)? onClearDBTilePressed;
   final bool appSupportBusy;
+  final AppDistribution appSupportDistribution;
+  final ValueChanged<AppDistribution>? onAppSupportDistributionChanged;
   final VoidCallback? onResetAppSupportPressed;
   final VoidCallback? onShowAppSupportPressed;
 
@@ -49,6 +52,8 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
     this.onExportDBTilePressed,
     this.onClearDBTilePressed,
     this.appSupportBusy = false,
+    this.appSupportDistribution = AppDistribution.github,
+    this.onAppSupportDistributionChanged,
     this.onResetAppSupportPressed,
     this.onShowAppSupportPressed,
   });
@@ -127,6 +132,21 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
                 ? null
                 : () => onClearDBTilePressed!(context),
           ),
+        ),
+        _DeveloperChoiceTile<AppDistribution>(
+          title: 'Support channel',
+          controlKey: const ValueKey('developer-app-support-channel-control'),
+          value: appSupportDistribution,
+          labels: const {
+            AppDistribution.github: 'Default (GitHub)',
+            AppDistribution.googlePlay: 'Google Play',
+            AppDistribution.appStore: 'App Store',
+            AppDistribution.microsoftStore: 'Microsoft Store',
+            AppDistribution.fdroid: 'F-Droid',
+            AppDistribution.flathub: 'Flathub',
+            AppDistribution.custom: 'Custom',
+          },
+          onChanged: appSupportBusy ? null : onAppSupportDistributionChanged,
         ),
         AdaptiveListTile(
           key: const ValueKey('developer-reset-app-support'),

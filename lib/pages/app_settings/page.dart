@@ -24,6 +24,7 @@ import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 
 import '../../common/consts.dart';
+import '../../common/distribution.dart';
 import '../../common/enums.dart';
 import '../../common/exceptions.dart';
 import '../../common/flavor.dart';
@@ -524,6 +525,13 @@ class _PageState extends State<_Page> with XShare {
     context.read<AppDeveloperViewModel>().setAppleSidebarStyleMode(value);
   }
 
+  void _onAppSupportDistributionChanged(AppDistribution value) {
+    if (!mounted || !context.read<AppDeveloperViewModel>().isInDevelopMode) {
+      return;
+    }
+    context.read<AppSupportOwner>().setDistribution(value);
+  }
+
   void _onExportDBTilePressed(BuildContext context) async {
     if (!context.mounted) return;
     final dbPath = path.join(
@@ -1004,6 +1012,7 @@ class _PageState extends State<_Page> with XShare {
             TextDirection?,
             AppAppleSidebarStyleMode,
             bool,
+            AppDistribution,
           )
         >(
           selector: (context, vm, support) => (
@@ -1013,6 +1022,7 @@ class _PageState extends State<_Page> with XShare {
             vm.textDirectionOverride,
             vm.appleSidebarStyleMode,
             support.developerActionInProgress,
+            support.distribution,
           ),
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) {
@@ -1023,6 +1033,7 @@ class _PageState extends State<_Page> with XShare {
               textDirectionOverride,
               appleSidebarStyleMode,
               appSupportBusy,
+              appSupportDistribution,
             ) = value;
             return AppSettingDevelopSubGroup(
               isInDevelopMode: isInDevelopMode,
@@ -1037,6 +1048,8 @@ class _PageState extends State<_Page> with XShare {
               onExportDBTilePressed: _onExportDBTilePressed,
               onClearDBTilePressed: _onClearDBTilePressed,
               appSupportBusy: appSupportBusy,
+              appSupportDistribution: appSupportDistribution,
+              onAppSupportDistributionChanged: _onAppSupportDistributionChanged,
               onResetAppSupportPressed: _resetSupportPrompt,
               onShowAppSupportPressed: _showSupportPrompt,
             );

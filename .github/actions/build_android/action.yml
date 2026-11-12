@@ -68,7 +68,7 @@ runs:
       env:
         OUTPUT_PATH: build/app/outputs/bundle/release/app-release.aab
       run: |
-        flutter build appbundle --release --flavor f_generic
+        flutter build appbundle --release --flavor f_generic --dart-define=APP_DISTRIBUTION=google_play
         mkdir -p build/app/outputs/bundle/release
         cp build/app/outputs/bundle/f_genericRelease/app-f_generic-release.aab \
           $OUTPUT_PATH

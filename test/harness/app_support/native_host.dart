@@ -8,6 +8,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:mhabit/common/distribution.dart';
 import 'package:mhabit/common/flavor.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/logging/logger_manager.dart';
@@ -64,6 +65,10 @@ Future<void> main() async {
   AppSupportNativePreferences.requireDevelopmentInstall(
     flavor: appFlavor,
     packageName: package.packageName,
+  );
+  debugPrint(
+    'SUPPORT_PROBE_DISTRIBUTION ${Platform.operatingSystem} '
+    'flavor=$appFlavor system=$systemAppDistribution default=${defaultAppDistribution.value}',
   );
   DesktopWindowChrome? chrome;
   if (Platform.isMacOS) {

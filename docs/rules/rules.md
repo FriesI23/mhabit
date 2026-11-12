@@ -121,6 +121,11 @@ existing architecture and tooling contracts.
   commands. Do not replace them with a new custom workflow.
 - When a task touches generated artifacts, prefer validating with `make gen` or
   `make verify-generated` instead of editing generated outputs directly.
+- Resolve `APP_DISTRIBUTION` in `lib/common/distribution.dart`, using GitHub for
+  missing, empty, or unknown values. Keep channels independent of platform and
+  flavor. `AppSupportOwner` owns runtime channel changes in memory.
+  Check platform support at store SDK calls. See
+  [Release channels](../wiki/Dev꞉-Build-From-Source.md#release-channels) for build usage.
 
 Optional WebDAV/Docker acceptance lives in `test/harness/webdav_server/`; the
 tests manage Compose startup, readiness and teardown. See that directory's

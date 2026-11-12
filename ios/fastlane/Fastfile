@@ -38,7 +38,10 @@ platform :ios do
   desc "Build Flutter app for a specified flavor (default: f_generic)"
   lane :build do |options|
     flavor = options[:flavor] || "f_generic"
-    sh "../../.flutter/bin/flutter build ios --flavor #{flavor} --config-only"
+    arguments = ["../../.flutter/bin/flutter", "build", "ios", "--flavor", flavor, "--config-only"]
+    distribution = options[:distribution].to_s
+    arguments << "--dart-define=APP_DISTRIBUTION=#{distribution}" unless distribution.empty?
+    sh(*arguments)
   end
 
   desc "Push a new release build to the App Store"
@@ -98,7 +101,7 @@ platform :ios do
         # existing cert/profile from the match storage into the local keychain.
         match(type: "appstore", readonly: true, app_identifier: signing_targets.values)
       end
-      build(flavor: flavor)
+      build(flavor: flavor, distribution: "app_store")
       build_ios_app(
         workspace: "Runner.xcworkspace",
         scheme: flavor,

@@ -18,6 +18,15 @@ eligible startup, false/exception link failures (each closes its dialog), later 
 and permanent dismissal, then permanent restoration and cleanup. Each stage
 prints `SUPPORT_PROBE_PASS`; a failure prints `SUPPORT_PROBE_FAILED`.
 
+Each launch also prints `SUPPORT_PROBE_DISTRIBUTION` with the actual operating
+system, flavor, build-provided channel string, and resolved default channel.
+To verify channel changes
+preserve preferences, rebuild the same development app between stages with
+different `--dart-define=APP_DISTRIBUTION=...` values. For example, on macOS use
+`github`, then `app_store`, then `google_play`: the last parsed default channel is
+`google_play` on macOS too. This development host verifies
+compiled identity and persistence, not store signing or publication.
+
 Original reminder keys are saved before any test mutation. Completed and failed
 runs restore them and remove probe metadata. If a process is interrupted, the
 next run either continues its saved stage or recovers an unfinished first-run

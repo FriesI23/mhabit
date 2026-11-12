@@ -24,6 +24,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../utils/app_path_provider.dart';
 import 'async.dart';
 import 'consts.dart';
+import 'distribution.dart';
 import 'flavor.dart';
 
 enum LinuxPlatformArchitecture { x86_64, aarch64 }
@@ -232,6 +233,12 @@ final class _AppDebugInfoBuilder {
       "release=$kReleaseMode | isWeb=$kIsWeb",
     );
     buffer.writeln("    TargetPlatform: $defaultTargetPlatform");
+    buffer.writeln("    OperatingSystem: ${Platform.operatingSystem}");
+    buffer.writeln("    Flavor: $appFlavor");
+    buffer.writeln("    SystemAppDistribution: $systemAppDistribution");
+    buffer.writeln(
+      "    DefaultAppDistribution: ${defaultAppDistribution.value}",
+    );
     buffer.writeln("├─ Package Info Ended ────────────────────────────────");
     buffer.writeln("│");
     buffer.writeln("├─ Path Info: ────────────────────────────────────────");

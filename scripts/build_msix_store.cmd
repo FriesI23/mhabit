@@ -32,5 +32,6 @@ dart run msix:create ^
   --toast-activator-clsid "b945836b-7d0d-4c60-b3fa-df184e2a9893" ^
   --toast-activator-display-name "Table Habit" ^
   --architecture "x64" ^
+  --windows-build-args "--dart-define=APP_DISTRIBUTION=microsoft_store --dart-define=APP_FLAVOR_WIN=f_store" ^
   --output-name "mhabit_%VERSION%_x64_store"
 )
