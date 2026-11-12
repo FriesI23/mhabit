@@ -15,63 +15,77 @@ import '../support/commons.dart';
 
 export '../../models/app_support.dart' show AppSupportAction;
 
-/// A completed interaction, distinct from a route being removed or destroyed.
+/// The outcome of a support dialog or a Settings support action.
 ///
-/// Store links update the cooldown; GitHub support and never close reminders.
+/// [AppSupportOwner] records reminder changes for completed interactions.
 /// Opening a destination does not establish that a review was submitted.
-enum AppSupportPromptResult {
-  supportOpened,
+enum AppSupportResult {
+  /// The GitHub Star link opened. Saving this result stops future reminders.
+  githubOpened,
+
+  /// A store review or favorite page opened. Saving this restarts cooldown.
   storeOpened,
-  later,
-  never,
-  auxiliaryAction,
+
+  /// The user deferred or dismissed the dialog. Saving this restarts cooldown.
+  remindLater,
+
+  /// The user chose to permanently stop automatic reminders.
+  stopReminding,
+
+  /// Source, feedback or the donation dialog opened. History is unchanged.
+  otherActionCompleted,
+
+  /// A link or donation action failed. History is unchanged.
   actionFailed,
-  aborted,
+
+  /// The host was removed or the interaction cancelled. History is unchanged.
+  cancelled,
 }
 
-/// Executes a resolved selection; channel routing lives in the action model.
-extension AppSupportActionExecution on AppSupportAction {
-  Uri? destination(AboutInfo info) => isStore
+/// Opens support links and donation options chosen from a support card.
+extension AppSupportActionNavigation on AppSupportAction {
+  /// Resolves the project or store URL. The host presents donation options.
+  Uri? resolveUrl(AboutInfo info) => isStore
       ? storeUri
       : switch (this) {
-          AppSupportAction.support ||
+          AppSupportAction.githubStar ||
           AppSupportAction.sourceCode => info.sourceCodeUri,
           AppSupportAction.feedback => info.issueTrackerUri,
           _ => null,
         };
 
-  /// Executes this action while the caller owns the host lifetime.
-  Future<AppSupportPromptResult> execute({
+  /// Opens a link or donation dialog while [isHostActive] remains true.
+  Future<AppSupportResult> openDestination({
     required AboutInfo info,
     required Future<bool> Function(Uri) openUrl,
     required Future<void> Function(AboutInfo) showDonation,
-    required bool Function() isAlive,
+    required bool Function() isHostActive,
   }) async {
-    if (!isAlive()) return AppSupportPromptResult.aborted;
+    if (!isHostActive()) return AppSupportResult.cancelled;
     try {
       if (this == AppSupportAction.donate) {
         await showDonation(info);
-        return isAlive()
-            ? AppSupportPromptResult.auxiliaryAction
-            : AppSupportPromptResult.aborted;
+        return isHostActive()
+            ? AppSupportResult.otherActionCompleted
+            : AppSupportResult.cancelled;
       }
-      final target = destination(info);
+      final target = resolveUrl(info);
       final opened = target != null && await openUrl(target);
-      if (!isAlive()) return AppSupportPromptResult.aborted;
-      if (!opened) return AppSupportPromptResult.actionFailed;
-      if (isStore) return AppSupportPromptResult.storeOpened;
-      return this == AppSupportAction.support
-          ? AppSupportPromptResult.supportOpened
-          : AppSupportPromptResult.auxiliaryAction;
+      if (!isHostActive()) return AppSupportResult.cancelled;
+      if (!opened) return AppSupportResult.actionFailed;
+      if (isStore) return AppSupportResult.storeOpened;
+      return this == AppSupportAction.githubStar
+          ? AppSupportResult.githubOpened
+          : AppSupportResult.otherActionCompleted;
     } catch (error, stackTrace) {
       appLog.load.warn(
-        'AppSupportAction.execute',
+        'AppSupportAction.openDestination',
         error: error,
         stackTrace: stackTrace,
       );
-      return isAlive()
-          ? AppSupportPromptResult.actionFailed
-          : AppSupportPromptResult.aborted;
+      return isHostActive()
+          ? AppSupportResult.actionFailed
+          : AppSupportResult.cancelled;
     }
   }
 }
@@ -80,7 +94,7 @@ extension AppSupportActionExecution on AppSupportAction {
 ///
 /// Preserves the existing reminder dates, launch counts and dismissal keys.
 /// Serializes event writes and Reset, publishes reliably saved state,
-/// and keeps explicit Settings support separate from the startup prompt guard.
+/// and keeps explicit Settings support separate from the automatic reminder guard.
 class AppSupportOwner extends ChangeNotifier
     implements AsyncInitialization, ProviderMounted {
   AppSupportOwner({
@@ -93,26 +107,26 @@ class AppSupportOwner extends ChangeNotifier
   static const _minimumDateKey = 'appSupport_minimumDate';
   static const _launchesKey = 'appSupport_launches';
   static const _closedKey = 'appSupport_doNotOpenAgain';
-  static const _days = Duration(days: 7);
-  static const _launchThreshold = 10;
+  static const _reminderDelay = Duration(days: 7);
+  static const _requiredLaunches = 10;
 
   SharedPreferencesAsync? _preferences;
   final DateTime Function() _now;
   final Future<AboutInfo> Function() _loadInfo;
   AppDistribution _distribution = defaultAppDistribution;
-  DateTime? _minimumDate;
-  int _launches = 0;
+  DateTime? _nextReminderDate;
+  int _launchCount = 0;
   Future<bool>? _initialization;
-  Future<void>? _promptCheck;
+  Future<void>? _reminderCheck;
   bool _initialized = false;
-  bool _checked = false;
-  bool _blocked = false;
-  bool _consumed = false;
+  bool _reminderEligibilityChecked = false;
+  bool _reminderSkipped = false;
+  bool _reminderSaveAttempted = false;
   bool _mounted = true;
   bool _developerActionInProgress = false;
   bool _initializationComplete = false;
   bool _reminderClosed = false;
-  Future<void> _writes = Future.value();
+  Future<void> _pendingPreferenceWrites = Future.value();
 
   SharedPreferencesAsync get _storage =>
       _preferences ??= SharedPreferencesAsync();
@@ -132,8 +146,8 @@ class AppSupportOwner extends ChangeNotifier
   /// The current process's support channel, initialized from the build value.
   AppDistribution get distribution => _distribution;
 
-  AppSupportAction get supportAction =>
-      AppSupportAction.supportFor(distribution: distribution);
+  AppSupportAction get channelAction =>
+      AppSupportAction.forDistribution(distribution: distribution);
 
   void setDistribution(AppDistribution value) {
     if (!mounted || _distribution == value) return;
@@ -141,51 +155,60 @@ class AppSupportOwner extends ChangeNotifier
     notifyListeners();
   }
 
-  Future<bool> _serialize(Future<bool> Function() action) {
-    final result = _writes.then<bool>((_) => !mounted ? false : action());
-    _writes = result.then<void>((_) {}, onError: (Object _, StackTrace _) {});
+  Future<bool> _queuePreferenceWrite(Future<bool> Function() action) {
+    final result = _pendingPreferenceWrites.then<bool>(
+      (_) => !mounted ? false : action(),
+    );
+    _pendingPreferenceWrites = result.then<void>(
+      (_) {},
+      onError: (Object _, StackTrace _) {},
+    );
     return result;
   }
 
   /// Whether a developer reset or preview is already running.
   bool get developerActionInProgress => _developerActionInProgress;
 
-  /// Whether this session can prompt given the current synchronization state.
+  /// Whether this session can show a reminder given the current synchronization state.
   ///
   /// Unconfirmed WebDAV setup may still open its own dialog asynchronously.
-  /// Reminder eligibility is checked separately by [claimPrompt].
-  bool canPromptWithSync({
+  /// Reminder timing is checked separately by [checkReminderEligibility].
+  bool canShowReminderWithSync({
     required bool enabled,
     required AppSyncServer? server,
     required bool processing,
   }) =>
       mounted &&
-      !_blocked &&
+      !_reminderSkipped &&
       !processing &&
       !(enabled && server is AppWebDavSyncServer && !server.configed);
 
-  Future<AboutInfo?> _loadPromptInfo() async {
+  Future<AboutInfo?> _loadDialogInfo() async {
     final info = await _loadInfo();
-    if (info.sourceCodeUri == null && supportAction.destination(info) == null) {
+    if (info.sourceCodeUri == null && channelAction.resolveUrl(info) == null) {
       appLog.load.info('AppSupportOwner.invalidTarget');
       return null;
     }
     return info;
   }
 
-  /// Arms the next full launch without prompting in this session.
-  Future<bool> resetForNextLaunch() async {
+  /// Clears dismissal and cooldown so the next launch can show the reminder.
+  Future<bool> resetReminderForNextLaunch() async {
     if (!mounted || _developerActionInProgress) return false;
     _developerActionInProgress = true;
-    skipPrompt();
+    skipReminderForSession();
     try {
       if (!await init() || !mounted) return false;
-      return await _serialize(
-        () => _persist(DateTime.utc(1970), _launchThreshold - 1, false),
+      return await _queuePreferenceWrite(
+        () => _saveReminderHistory(
+          DateTime.utc(1970),
+          _requiredLaunches - 1,
+          false,
+        ),
       );
     } catch (error, stackTrace) {
       appLog.load.warn(
-        'AppSupportOwner.resetForNextLaunch',
+        'AppSupportOwner.resetReminderForNextLaunch',
         error: error,
         stackTrace: stackTrace,
       );
@@ -195,22 +218,23 @@ class AppSupportOwner extends ChangeNotifier
     }
   }
 
-  /// Previews the production dialog without initializing or changing history.
-  Future<bool> previewPrompt({
-    required bool Function() canPresent,
-    required Future<AppSupportPromptResult> Function(AboutInfo info) showPrompt,
+  /// Shows the production dialog for Developer preview, preserving history.
+  Future<bool> previewDialog({
+    required bool Function() canShowDialog,
+    required Future<AppSupportResult> Function(AboutInfo info)
+    showSupportDialog,
   }) async {
     if (!mounted || _developerActionInProgress) return false;
     _developerActionInProgress = true;
-    skipPrompt();
+    skipReminderForSession();
     try {
-      final info = await _loadPromptInfo();
-      if (!mounted || info == null || !canPresent()) return false;
-      final result = await showPrompt(info);
-      return mounted && result != AppSupportPromptResult.aborted;
+      final info = await _loadDialogInfo();
+      if (!mounted || info == null || !canShowDialog()) return false;
+      final result = await showSupportDialog(info);
+      return mounted && result != AppSupportResult.cancelled;
     } catch (error, stackTrace) {
       appLog.load.warn(
-        'AppSupportOwner.previewPrompt',
+        'AppSupportOwner.previewDialog',
         error: error,
         stackTrace: stackTrace,
       );
@@ -233,11 +257,13 @@ class AppSupportOwner extends ChangeNotifier
       if (!mounted) return false;
       final storedDate = values[_minimumDateKey] as int?;
       final minimumDate = storedDate == null
-          ? _now().add(_days)
+          ? _now().add(_reminderDelay)
           : DateTime.fromMillisecondsSinceEpoch(storedDate, isUtc: true);
       final launches = (values[_launchesKey] as int? ?? 0) + 1;
       final closed = values[_closedKey] as bool? ?? false;
-      if (!await _persist(minimumDate, launches, closed)) return false;
+      if (!await _saveReminderHistory(minimumDate, launches, closed)) {
+        return false;
+      }
       if (!mounted) return false;
       _initialized = true;
       return true;
@@ -254,125 +280,141 @@ class AppSupportOwner extends ChangeNotifier
     }
   }
 
-  /// Cancels automatic prompting for this foreground session without saving a preference.
-  void skipPrompt() => _blocked = true;
+  /// Skips the automatic reminder for this foreground session.
+  ///
+  /// This changes only the current session's state, without saving preferences.
+  void skipReminderForSession() => _reminderSkipped = true;
 
-  /// Checks once, loading project configuration only for an eligible session.
+  /// Shows the automatic reminder once when timing and UI safety permit it.
   ///
   /// UI supplies live route/lifecycle checks and presentation. Eligibility is
   /// checked before I/O; safety is checked again after the asynchronous load.
-  Future<void> checkPrompt({
-    required bool Function() canPresent,
-    required Future<AppSupportPromptResult> Function(AboutInfo info) showPrompt,
-    VoidCallback? onSaveFailed,
-  }) => _promptCheck ??= _checkPrompt(canPresent, showPrompt, onSaveFailed);
+  Future<void> showReminderIfEligible({
+    required bool Function() canShowDialog,
+    required Future<AppSupportResult> Function(AboutInfo info)
+    showSupportDialog,
+    VoidCallback? onReminderSaveFailed,
+  }) => _reminderCheck ??= _showReminderIfEligible(
+    canShowDialog,
+    showSupportDialog,
+    onReminderSaveFailed,
+  );
 
-  Future<void> _checkPrompt(
-    bool Function() canPresent,
-    Future<AppSupportPromptResult> Function(AboutInfo info) showPrompt,
-    VoidCallback? onSaveFailed,
+  Future<void> _showReminderIfEligible(
+    bool Function() canShowDialog,
+    Future<AppSupportResult> Function(AboutInfo info) showSupportDialog,
+    VoidCallback? onReminderSaveFailed,
   ) async {
     try {
       if (!await init()) return;
-      if (!claimPrompt(canPresent: canPresent())) return;
-      final info = await _loadPromptInfo();
+      if (!checkReminderEligibility(canShowDialog: canShowDialog())) return;
+      final info = await _loadDialogInfo();
       if (info == null) return;
-      if (_blocked || !canPresent()) return;
-      final result = await showPrompt(info);
-      final saved = await consume(result);
+      if (_reminderSkipped || !canShowDialog()) return;
+      final result = await showSupportDialog(info);
+      final saved = await recordReminderResult(result);
       if (mounted &&
           !saved &&
-          (result == AppSupportPromptResult.supportOpened ||
-              result == AppSupportPromptResult.storeOpened ||
-              result == AppSupportPromptResult.later ||
-              result == AppSupportPromptResult.never)) {
-        onSaveFailed?.call();
+          (result == AppSupportResult.githubOpened ||
+              result == AppSupportResult.storeOpened ||
+              result == AppSupportResult.remindLater ||
+              result == AppSupportResult.stopReminding)) {
+        onReminderSaveFailed?.call();
       }
     } catch (error, stackTrace) {
       appLog.load.warn(
-        'AppSupportOwner.checkPrompt',
+        'AppSupportOwner.showReminderIfEligible',
         error: error,
         stackTrace: stackTrace,
       );
     }
   }
 
-  /// Claims the only automatic opportunity, even when eligibility or safety fails.
-  bool claimPrompt({required bool canPresent}) {
-    if (_checked) return false;
-    _checked = true;
-    return !_blocked &&
-        canPresent &&
+  /// Checks reminder eligibility and marks this session's check as complete.
+  ///
+  /// Later calls return false, including when the first check was ineligible.
+  bool checkReminderEligibility({required bool canShowDialog}) {
+    if (_reminderEligibilityChecked) return false;
+    _reminderEligibilityChecked = true;
+    return !_reminderSkipped &&
+        canShowDialog &&
         _initialized &&
         !_reminderClosed &&
-        _launches >= _launchThreshold &&
-        _now().isAfter(_minimumDate!);
+        _launchCount >= _requiredLaunches &&
+        _now().isAfter(_nextReminderDate!);
   }
 
-  /// Persists one automatic result. A failed save is not retried automatically.
-  Future<bool> consume(AppSupportPromptResult result) async {
-    if (!mounted || !_initialized || _consumed) return false;
-    if (!_isReminderResult(result)) return false;
-    _consumed = true;
-    return _saveResult(result);
+  /// Saves the automatic reminder's result at most once per session.
+  ///
+  /// A failed save counts as the session's attempt and is not retried here.
+  Future<bool> recordReminderResult(AppSupportResult result) async {
+    if (!mounted || !_initialized || _reminderSaveAttempted) return false;
+    if (!_changesReminderHistory(result)) return false;
+    _reminderSaveAttempted = true;
+    return _saveReminderResult(result);
   }
 
-  /// Records a Settings link action independently of the startup result guard.
-  Future<bool> recordSupportOpened([
-    AppSupportPromptResult result = AppSupportPromptResult.supportOpened,
+  /// Saves a Settings GitHub or store result, skipping this session's reminder.
+  ///
+  /// Each explicit Settings action can save its result independently.
+  Future<bool> recordSettingsSupportResult([
+    AppSupportResult result = AppSupportResult.githubOpened,
   ]) async {
-    skipPrompt();
+    skipReminderForSession();
     if (!mounted || !_initialized) return false;
-    if (result != AppSupportPromptResult.supportOpened &&
-        result != AppSupportPromptResult.storeOpened) {
+    if (result != AppSupportResult.githubOpened &&
+        result != AppSupportResult.storeOpened) {
       return false;
     }
-    return _saveResult(result);
+    return _saveReminderResult(result);
   }
 
-  bool _isReminderResult(AppSupportPromptResult result) =>
-      result == AppSupportPromptResult.supportOpened ||
-      result == AppSupportPromptResult.storeOpened ||
-      result == AppSupportPromptResult.later ||
-      result == AppSupportPromptResult.never;
+  bool _changesReminderHistory(AppSupportResult result) =>
+      result == AppSupportResult.githubOpened ||
+      result == AppSupportResult.storeOpened ||
+      result == AppSupportResult.remindLater ||
+      result == AppSupportResult.stopReminding;
 
-  Future<bool> _saveResult(AppSupportPromptResult result) => _serialize(
-    () async {
-      try {
-        if (_reminderClosed && result == AppSupportPromptResult.supportOpened) {
-          return true;
+  Future<bool> _saveReminderResult(AppSupportResult result) =>
+      _queuePreferenceWrite(() async {
+        try {
+          if (_reminderClosed && result == AppSupportResult.githubOpened) {
+            return true;
+          }
+          final restartCooldown =
+              result == AppSupportResult.storeOpened ||
+              result == AppSupportResult.remindLater;
+          return await _saveReminderHistory(
+            restartCooldown ? _now().add(_reminderDelay) : _nextReminderDate!,
+            restartCooldown ? _launchCount - _requiredLaunches : _launchCount,
+            _reminderClosed ||
+                result == AppSupportResult.githubOpened ||
+                result == AppSupportResult.stopReminding,
+          );
+        } catch (error, stackTrace) {
+          appLog.load.warn(
+            'AppSupportOwner.saveReminderResult',
+            error: error,
+            stackTrace: stackTrace,
+          );
+          return false;
         }
-        final cooldown =
-            result == AppSupportPromptResult.storeOpened ||
-            result == AppSupportPromptResult.later;
-        return await _persist(
-          cooldown ? _now().add(_days) : _minimumDate!,
-          cooldown ? _launches - _launchThreshold : _launches,
-          _reminderClosed ||
-              result == AppSupportPromptResult.supportOpened ||
-              result == AppSupportPromptResult.never,
-        );
-      } catch (error, stackTrace) {
-        appLog.load.warn(
-          'AppSupportOwner.consume',
-          error: error,
-          stackTrace: stackTrace,
-        );
-        return false;
-      }
-    },
-  );
+      });
 
   /// Publishes state only after all three legacy keys have been saved.
-  Future<bool> _persist(DateTime minimumDate, int launches, bool closed) async {
+  Future<bool> _saveReminderHistory(
+    DateTime minimumDate,
+    int launches,
+    bool closed,
+  ) async {
     await _storage.setInt(_minimumDateKey, minimumDate.millisecondsSinceEpoch);
     if (!mounted) return false;
     await _storage.setInt(_launchesKey, launches);
     if (!mounted) return false;
     await _storage.setBool(_closedKey, closed);
     if (!mounted) return false;
-    _minimumDate = minimumDate;
-    _launches = launches;
+    _nextReminderDate = minimumDate;
+    _launchCount = launches;
     _reminderClosed = closed;
     if (_initialized) notifyListeners();
     return true;
@@ -382,7 +424,7 @@ class AppSupportOwner extends ChangeNotifier
   void dispose() {
     if (!mounted) return;
     _mounted = false;
-    skipPrompt();
+    skipReminderForSession();
     super.dispose();
   }
 }

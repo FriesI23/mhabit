@@ -133,7 +133,7 @@ class _PageState extends State<_Page> with XShare {
   @override
   void dispose() {
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
-    _supportPreview?.abort();
+    _supportPreview?.cancel();
     _scrollController.dispose();
     super.dispose();
   }
@@ -446,40 +446,40 @@ class _PageState extends State<_Page> with XShare {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  void _supportFeedback(String message) {
+  void _showSupportMessage(String message) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(buildSnackBarWithDismiss(context, content: Text(message)));
   }
 
-  Future<void> _resetSupportPrompt() async {
+  Future<void> _resetSupportReminder() async {
     if (!mounted || !context.read<AppDeveloperViewModel>().isInDevelopMode) {
       return;
     }
     final support = context.read<AppSupportOwner>();
     if (support.developerActionInProgress) return;
-    final saved = await support.resetForNextLaunch();
+    final saved = await support.resetReminderForNextLaunch();
     if (!mounted) return;
-    _supportFeedback(
+    _showSupportMessage(
       saved
-          ? 'Support prompt reset. Restart the app to test automatic prompting.'
-          : 'Could not reset the support prompt. Check logs and retry.',
+          ? 'Support reminder reset. Restart the app to test the automatic dialog.'
+          : 'Could not reset the support reminder. Check logs and retry.',
     );
   }
 
-  Future<void> _showSupportPrompt() async {
+  Future<void> _previewSupportDialog() async {
     if (!mounted || !context.read<AppDeveloperViewModel>().isInDevelopMode) {
       return;
     }
     final support = context.read<AppSupportOwner>();
     if (support.developerActionInProgress) return;
-    final shown = await support.previewPrompt(
-      canPresent: () =>
+    final shown = await support.previewDialog(
+      canShowDialog: () =>
           mounted &&
           context.read<AppDeveloperViewModel>().isInDevelopMode &&
           ModalRoute.of(context)?.isCurrent == true &&
           !Navigator.of(context, rootNavigator: true).canPop(),
-      showPrompt: (info) async {
+      showSupportDialog: (info) async {
         final dialog = AppSupportDialogController();
         _supportPreview = dialog;
         try {
@@ -494,8 +494,8 @@ class _PageState extends State<_Page> with XShare {
       },
     );
     if (mounted && !shown) {
-      _supportFeedback(
-        'Could not show the support prompt. Check logs and retry.',
+      _showSupportMessage(
+        'Could not show the support dialog. Check logs and retry.',
       );
     }
   }
@@ -1046,8 +1046,8 @@ class _PageState extends State<_Page> with XShare {
               onClearDBTilePressed: _onClearDBTilePressed,
               appSupportDistribution: appSupportDistribution,
               onAppSupportDistributionChanged: _onAppSupportDistributionChanged,
-              onResetAppSupportPressed: _resetSupportPrompt,
-              onShowAppSupportPressed: _showSupportPrompt,
+              onResetSupportReminderPressed: _resetSupportReminder,
+              onPreviewAppSupportPressed: _previewSupportDialog,
             );
           },
         );

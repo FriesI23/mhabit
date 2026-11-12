@@ -538,6 +538,41 @@ void main() {
     );
   }
 
+  testWidgets(
+    'removing cards during a drag allows autoplay after reattachment',
+    (tester) async {
+      final content = ValueNotifier(const AppSupportContent(info: _info));
+      addTearDown(content.dispose);
+      await mount(
+        tester,
+        ValueListenableBuilder<AppSupportContent>(
+          valueListenable: content,
+          builder: (_, value, _) => carousel(content: value),
+        ),
+        reduced: false,
+      );
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.byType(PageView)),
+      );
+      await gesture.moveBy(const Offset(-100, 0));
+      await tester.pump();
+      content.value = const AppSupportContent(
+        info: AboutInfo.empty(),
+        hideDonate: true,
+      );
+      await tester.pump();
+      await gesture.up();
+      content.value = const AppSupportContent(info: _info);
+      await tester.pump();
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 4));
+      await finishMotion(tester);
+      expect(page(tester), 1);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
   for (final last in [false, true]) {
     testWidgets(
       'reduced-motion elastic overscroll returns to bounds (last=$last)',

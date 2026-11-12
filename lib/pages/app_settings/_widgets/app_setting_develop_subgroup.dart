@@ -34,8 +34,8 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
   final void Function(BuildContext context)? onClearDBTilePressed;
   final AppDistribution appSupportDistribution;
   final ValueChanged<AppDistribution>? onAppSupportDistributionChanged;
-  final VoidCallback? onResetAppSupportPressed;
-  final VoidCallback? onShowAppSupportPressed;
+  final VoidCallback? onResetSupportReminderPressed;
+  final VoidCallback? onPreviewAppSupportPressed;
 
   const AppSettingDevelopSubGroup({
     super.key,
@@ -52,8 +52,8 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
     this.onClearDBTilePressed,
     this.appSupportDistribution = AppDistribution.github,
     this.onAppSupportDistributionChanged,
-    this.onResetAppSupportPressed,
-    this.onShowAppSupportPressed,
+    this.onResetSupportReminderPressed,
+    this.onPreviewAppSupportPressed,
   });
 
   @override
@@ -148,19 +148,19 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
         ),
         AdaptiveListTile(
           key: const ValueKey('developer-reset-app-support'),
-          title: const Text('Reset support prompt for next launch'),
+          title: const Text('Reset support reminder for next launch'),
           subtitle: const Text(
             'Clears dismissal and cooldown. Startup checks still apply.',
           ),
-          onTap: onResetAppSupportPressed,
+          onTap: onResetSupportReminderPressed,
         ),
         AdaptiveListTile(
           key: const ValueKey('developer-show-app-support'),
-          title: const Text('Show support prompt now'),
+          title: const Text('Show support dialog now'),
           subtitle: const Text(
             'Preview only; does not change reminder history.',
           ),
-          onTap: onShowAppSupportPressed,
+          onTap: onPreviewAppSupportPressed,
         ),
       ],
     ),

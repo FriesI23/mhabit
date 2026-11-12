@@ -75,14 +75,14 @@ void main() {
             ..setDistribution(AppDistribution.github);
           addTearDown(owner.dispose);
           final controller = AppSupportDialogController();
-          addTearDown(controller.abort);
+          addTearDown(controller.cancel);
           final caller = await mountOwner(tester, owner, style: style);
           final before = await SharedPreferencesAsync().getAll();
           final destinations = <Uri>[];
-          AppSupportPromptResult? result;
-          final preview = owner.previewPrompt(
-            canPresent: () => true,
-            showPrompt: (info) async {
+          AppSupportResult? result;
+          final preview = owner.previewDialog(
+            canShowDialog: () => true,
+            showSupportDialog: (info) async {
               result = await showAppSupportDialog(
                 context: caller,
                 info: info,
@@ -101,9 +101,9 @@ void main() {
           for (final distribution in AppDistribution.values) {
             owner.setDistribution(distribution);
             await tester.pumpAndSettle();
-            final target = owner.supportAction;
+            final target = owner.channelAction;
             expect(
-              action(AppSupportAction.support).hitTestable(),
+              action(AppSupportAction.githubStar).hitTestable(),
               findsOneWidget,
             );
             for (final store in [
@@ -118,7 +118,7 @@ void main() {
               );
             }
             if (distribution == AppDistribution.fdroid) {
-              expect(target, AppSupportAction.support);
+              expect(target, AppSupportAction.githubStar);
               expect(find.text('Open F-Droid'), findsNothing);
             }
             if (distribution == AppDistribution.flathub) {
@@ -135,17 +135,17 @@ void main() {
           await tester.pumpAndSettle();
           final selected = storeSelection
               ? AppSupportAction.appStore
-              : AppSupportAction.support;
+              : AppSupportAction.githubStar;
           await tester.tap(action(selected));
           await tester.pumpAndSettle();
           expect(await preview, isTrue);
           expect(
             result,
             storeSelection
-                ? AppSupportPromptResult.storeOpened
-                : AppSupportPromptResult.supportOpened,
+                ? AppSupportResult.storeOpened
+                : AppSupportResult.githubOpened,
           );
-          expect(destinations, [selected.destination(stubAboutInfo())]);
+          expect(destinations, [selected.resolveUrl(stubAboutInfo())]);
           expect(owner.initializationComplete, isFalse);
           expect(await SharedPreferencesAsync().getAll(), before);
           expect(tester.takeException(), isNull);
@@ -168,10 +168,10 @@ void main() {
           final before = await SharedPreferencesAsync().getAll();
           final destinations = <Uri>[];
           var closedBeforeOpen = false;
-          AppSupportPromptResult? result;
-          final preview = owner.previewPrompt(
-            canPresent: () => true,
-            showPrompt: (info) async {
+          AppSupportResult? result;
+          final preview = owner.previewDialog(
+            canShowDialog: () => true,
+            showSupportDialog: (info) async {
               result = await showAppSupportDialog(
                 context: caller,
                 info: info,
@@ -191,7 +191,7 @@ void main() {
           );
           await tester.pumpAndSettle();
           expect(
-            action(AppSupportAction.support).hitTestable(),
+            action(AppSupportAction.githubStar).hitTestable(),
             findsOneWidget,
           );
           await tester.tap(action(AppSupportAction.googlePlay));
@@ -199,13 +199,13 @@ void main() {
           expect(await preview, isTrue);
           expect(closedBeforeOpen, isTrue);
           expect(destinations, [
-            AppSupportAction.googlePlay.destination(stubAboutInfo()),
+            AppSupportAction.googlePlay.resolveUrl(stubAboutInfo()),
           ]);
           expect(
             result,
             outcome == 'opened'
-                ? AppSupportPromptResult.storeOpened
-                : AppSupportPromptResult.actionFailed,
+                ? AppSupportResult.storeOpened
+                : AppSupportResult.actionFailed,
           );
           expect(
             find.text(L10n.of(caller)!.appSupport_linkFailed),
@@ -238,11 +238,11 @@ void main() {
           scale: 1.8,
         );
         for (final target in [
-          AppSupportAction.support,
+          AppSupportAction.githubStar,
           AppSupportAction.microsoftStore,
         ]) {
           final controller = AppSupportDialogController();
-          addTearDown(controller.abort);
+          addTearDown(controller.cancel);
           final opened = <Uri>[];
           final result = showAppSupportDialog(
             context: caller,
@@ -266,11 +266,11 @@ void main() {
           await tester.pumpAndSettle();
           expect(
             await result,
-            target == AppSupportAction.support
-                ? AppSupportPromptResult.supportOpened
-                : AppSupportPromptResult.storeOpened,
+            target == AppSupportAction.githubStar
+                ? AppSupportResult.githubOpened
+                : AppSupportResult.storeOpened,
           );
-          expect(opened, [target.destination(stubAboutInfo())]);
+          expect(opened, [target.resolveUrl(stubAboutInfo())]);
         }
         expect(tester.takeException(), isNull);
       },
@@ -283,7 +283,7 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     await tester.pumpAndSettle();
     final controller = AppSupportDialogController();
-    controller.abort();
+    controller.cancel();
     expect(tester.binding.hasScheduledFrame, isFalse);
     expect(tester.takeException(), isNull);
   });
@@ -327,7 +327,7 @@ void main() {
           await tester.pumpAndSettle();
         }
 
-        Future<AppSupportPromptResult> open({
+        Future<AppSupportResult> open({
           Future<bool> Function(Uri)? action,
           AppSupportDialogController? controller,
           AboutInfo? info,
@@ -356,7 +356,7 @@ void main() {
           await tester.pump();
           await tester.sendKeyEvent(LogicalKeyboardKey.enter);
           await tester.pumpAndSettle();
-          expect(await result, AppSupportPromptResult.supportOpened);
+          expect(await result, AppSupportResult.githubOpened);
         });
 
         testWidgets('business action closes before launching and runs once', (
@@ -389,7 +389,7 @@ void main() {
           expect(closedBeforeOpen, isTrue);
           pending.complete(true);
           await tester.pumpAndSettle();
-          expect(await result, AppSupportPromptResult.supportOpened);
+          expect(await result, AppSupportResult.githubOpened);
         });
 
         for (final failsWithException in [false, true]) {
@@ -406,7 +406,7 @@ void main() {
               await tester.pumpAndSettle();
               await tester.tap(find.text('Star on GitHub'));
               await tester.pumpAndSettle();
-              expect(await result, AppSupportPromptResult.actionFailed);
+              expect(await result, AppSupportResult.actionFailed);
               expect(find.byType(AdaptiveDialog), findsNothing);
               expect(
                 find.text('Unable to complete this action. Please try again.'),
@@ -431,9 +431,9 @@ void main() {
           ) async {
             await mount(tester);
             final controller = AppSupportDialogController();
-            addTearDown(controller.abort);
+            addTearDown(controller.cancel);
             final result = open(controller: controller);
-            if (close == 'earlyAbort') controller.abort();
+            if (close == 'earlyAbort') controller.cancel();
             await tester.pumpAndSettle();
             switch (close) {
               case 'never':
@@ -468,17 +468,15 @@ void main() {
                   ModalRoute.of(tester.element(find.byType(AdaptiveDialog)))!,
                 );
               case 'abort':
-                controller.abort();
+                controller.cancel();
               case 'earlyAbort':
                 break;
             }
             await tester.pumpAndSettle();
             expect(await result, switch (close) {
-              'never' => AppSupportPromptResult.never,
-              'remove' ||
-              'abort' ||
-              'earlyAbort' => AppSupportPromptResult.aborted,
-              _ => AppSupportPromptResult.later,
+              'never' => AppSupportResult.stopReminding,
+              'remove' || 'abort' || 'earlyAbort' => AppSupportResult.cancelled,
+              _ => AppSupportResult.remindLater,
             });
           });
         }
@@ -488,7 +486,7 @@ void main() {
           (tester) async {
             await mount(tester);
             final controller = AppSupportDialogController();
-            addTearDown(controller.abort);
+            addTearDown(controller.cancel);
             final pending = Completer<bool>();
             final result = open(
               controller: controller,
@@ -497,10 +495,10 @@ void main() {
             await tester.pumpAndSettle();
             await tester.tap(find.text('Star on GitHub'));
             await tester.pumpAndSettle();
-            controller.abort();
+            controller.cancel();
             pending.complete(true);
             await tester.pumpAndSettle();
-            expect(await result, AppSupportPromptResult.aborted);
+            expect(await result, AppSupportResult.cancelled);
             expect(tester.takeException(), isNull);
           },
         );
@@ -516,8 +514,8 @@ void main() {
             await tester.pumpAndSettle();
             await tester.tap(find.text('Source code'));
             await tester.pumpAndSettle();
-            expect(await result, AppSupportPromptResult.auxiliaryAction);
-            var donated = false;
+            expect(await result, AppSupportResult.otherActionCompleted);
+            var donationShown = false;
             var closedBeforeDonation = false;
             final second = open(
               info: info,
@@ -526,7 +524,7 @@ void main() {
                     .byType(AdaptiveDialog)
                     .evaluate()
                     .isEmpty;
-                donated = true;
+                donationShown = true;
               },
             );
             await tester.pumpAndSettle();
@@ -540,8 +538,8 @@ void main() {
               ),
             );
             await tester.pumpAndSettle();
-            expect(await second, AppSupportPromptResult.auxiliaryAction);
-            expect(donated, isTrue);
+            expect(await second, AppSupportResult.otherActionCompleted);
+            expect(donationShown, isTrue);
             expect(closedBeforeDonation, isTrue);
           },
         );
@@ -569,7 +567,7 @@ void main() {
             await tester.pumpAndSettle();
             await tester.tap(find.text(label));
             await tester.pumpAndSettle();
-            expect(await result, AppSupportPromptResult.supportOpened);
+            expect(await result, AppSupportResult.githubOpened);
           });
         }
       });

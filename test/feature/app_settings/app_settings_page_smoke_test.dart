@@ -873,8 +873,8 @@ void main() {
         );
         expect(support.developerActionInProgress, isTrue);
         expect(developerControls.onAppSupportDistributionChanged, isNotNull);
-        expect(developerControls.onResetAppSupportPressed, isNotNull);
-        expect(developerControls.onShowAppSupportPressed, isNotNull);
+        expect(developerControls.onResetSupportReminderPressed, isNotNull);
+        expect(developerControls.onPreviewAppSupportPressed, isNotNull);
         expect(
           tester
               .widget<AdaptiveChoiceListTile<AppDistribution>>(
@@ -891,13 +891,13 @@ void main() {
           tester.element(find.byType(AdaptiveDialog)),
         )!;
         // Developer selections preview their channel independently of theme.
-        final target = support.supportAction;
+        final target = support.channelAction;
         final label = switch (target) {
           AppSupportAction.googlePlay => dialogL10n.appSupport_rateOnGooglePlay,
           AppSupportAction.appStore => dialogL10n.appSupport_rateOnAppStore,
           _ => dialogL10n.appSupport_starOnGitHub,
         };
-        final supportAction = find.ancestor(
+        final channelAction = find.ancestor(
           of: find.descendant(
             of: find.byType(AdaptiveDialog),
             matching: find.text(label),
@@ -908,10 +908,10 @@ void main() {
                 : widget is CupertinoButton,
           ),
         );
-        expect(supportAction, findsOneWidget);
+        expect(channelAction, findsOneWidget);
         final githubAction = find.descendant(
           of: find.byType(AdaptiveDialog),
-          matching: find.byKey(const ValueKey('app-support-action-support')),
+          matching: find.byKey(const ValueKey('app-support-action-githubStar')),
         );
         expect(githubAction, findsOneWidget);
         expect(

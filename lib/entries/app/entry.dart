@@ -172,7 +172,7 @@ class _AppEntryState extends State<_AppEntry> {
     };
     final support = context.read<AppSupportOwner>();
     _supportRoutes.onStackChanged = () {
-      if (_supportRoutes.depth > 1) support.skipPrompt();
+      if (_supportRoutes.depth > 1) support.skipReminderForSession();
     };
     _navigationChromeController = AppNavigationChromeController();
     _habitDisplayNavigationChrome = HabitDisplayNavigationChrome(
@@ -414,7 +414,7 @@ class _AppStartup extends StatelessWidget {
   final GoRouter router;
   final Widget child;
 
-  bool _canPresent(BuildContext context) {
+  bool _canShowSupportDialog(BuildContext context) {
     final syncSettings = context.read<AppSyncSettingsAccess>();
     final syncStatus = context.read<AppSyncStatusSource>().syncStatus;
     return rootRoutes.depth == 1 &&
@@ -422,7 +422,7 @@ class _AppStartup extends StatelessWidget {
         context.read<AppNavigationCoordinator>().isAtPrimaryBranchRoot(
           initialBranch,
         ) &&
-        context.read<AppSupportOwner>().canPromptWithSync(
+        context.read<AppSupportOwner>().canShowReminderWithSync(
           enabled: syncSettings.enabled,
           server: syncSettings.serverConfig,
           processing: syncStatus?.isProcessing ?? false,
@@ -448,8 +448,10 @@ class _AppStartup extends StatelessWidget {
     );
     return ListenableBuilder(
       listenable: ChangelogBanner.of(context).controller,
-      builder: (context, child) =>
-          AppSupportPrompt(canPresent: _canPresent, child: child!),
+      builder: (context, child) => AppSupportReminder(
+        canShowDialog: _canShowSupportDialog,
+        child: child!,
+      ),
       child: AppPostInit(child: child),
     );
   }
@@ -500,7 +502,7 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
   Future<bool> _onWebDavAppSyncUserConfirmNeedCheck(
     WebDavConfigTaskChecklist checklist,
   ) {
-    context.maybeRead<AppSupportOwner>()?.skipPrompt();
+    context.maybeRead<AppSupportOwner>()?.skipReminderForSession();
     return showAdaptiveModalDialog<bool>(
       context: context,
       barrierDismissible: true,
@@ -550,7 +552,7 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
     final lastVersion = handler?.get();
 
     if (lastVersion != currentVersion) {
-      context.maybeRead<AppSupportOwner>()?.skipPrompt();
+      context.maybeRead<AppSupportOwner>()?.skipReminderForSession();
       handler?.set(currentVersion);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;

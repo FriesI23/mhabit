@@ -67,8 +67,8 @@ void main() {
                                 supportDistributionCalls++;
                               })
                             : null,
-                        onResetAppSupportPressed: () => supportResets++,
-                        onShowAppSupportPressed: () => supportShows++,
+                        onResetSupportReminderPressed: () => supportResets++,
+                        onPreviewAppSupportPressed: () => supportShows++,
                         isDisplayDebugMenuSelect: debug,
                         adaptiveStyleMode: mode,
                         appleSidebarStyleMode: sidebarMode,

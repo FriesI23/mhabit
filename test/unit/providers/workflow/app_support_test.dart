@@ -133,9 +133,9 @@ void main() {
     final owner = createOwner(loadInfo: () async => const AboutInfo.empty())
       ..setDistribution(AppDistribution.appStore);
     expect(
-      await owner.previewPrompt(
-        canPresent: () => true,
-        showPrompt: (_) async => AppSupportPromptResult.storeOpened,
+      await owner.previewDialog(
+        canShowDialog: () => true,
+        showSupportDialog: (_) async => AppSupportResult.storeOpened,
       ),
       isTrue,
     );
@@ -157,8 +157,8 @@ void main() {
       preferences.pendingRead!.complete();
       expect(await first, isTrue);
       expect(await SharedPreferencesAsync().getInt('appSupport_launches'), 10);
-      expect(owner.claimPrompt(canPresent: true), isTrue);
-      expect(owner.claimPrompt(canPresent: true), isFalse);
+      expect(owner.checkReminderEligibility(canShowDialog: true), isTrue);
+      expect(owner.checkReminderEligibility(canShowDialog: true), isFalse);
     },
   );
 
@@ -173,7 +173,7 @@ void main() {
       expect(preferences.writes, 0);
       expect(owner.initializationComplete, isTrue);
       expect(owner.initialized, isFalse);
-      expect(owner.claimPrompt(canPresent: true), isFalse);
+      expect(owner.checkReminderEligibility(canShowDialog: true), isFalse);
     },
   );
 
@@ -210,7 +210,10 @@ void main() {
       expect(owner.initialized, isFalse);
       expect(preferences.writes, 0);
       expect(notifications, 0);
-      expect(await owner.consume(AppSupportPromptResult.later), isFalse);
+      expect(
+        await owner.recordReminderResult(AppSupportResult.remindLater),
+        isFalse,
+      );
     },
   );
 
@@ -222,8 +225,8 @@ void main() {
     final first = initialization.init();
     expect(identical(first, initialization.init()), isTrue);
     expect(await first, isFalse);
-    expect(await owner.recordSupportOpened(), isFalse);
-    expect(await owner.resetForNextLaunch(), isFalse);
+    expect(await owner.recordSettingsSupportResult(), isFalse);
+    expect(await owner.resetReminderForNextLaunch(), isFalse);
     expect(preferences.reads, 0);
     expect(preferences.writes, 0);
   });
@@ -234,7 +237,7 @@ void main() {
         InMemorySharedPreferencesAsync.empty();
     final owner = createOwner(storage: storage);
     expect(await owner.init(), isTrue);
-    expect(owner.claimPrompt(canPresent: true), isTrue);
+    expect(owner.checkReminderEligibility(canShowDialog: true), isTrue);
     expect(preferences.reads, 1);
     expect(await SharedPreferencesAsync().getAll(), isEmpty);
   });
@@ -260,11 +263,11 @@ void main() {
             value == 'http://example.com/project';
         var presentations = 0;
         expect(
-          await owner.previewPrompt(
-            canPresent: () => true,
-            showPrompt: (_) async {
+          await owner.previewDialog(
+            canShowDialog: () => true,
+            showSupportDialog: (_) async {
               presentations++;
-              return AppSupportPromptResult.later;
+              return AppSupportResult.remindLater;
             },
           ),
           valid,
@@ -291,12 +294,12 @@ void main() {
           return stubAboutInfo();
         },
       );
-      if (skip == 'blocked') owner.skipPrompt();
-      await owner.checkPrompt(
-        canPresent: () => skip != 'unsafe',
-        showPrompt: (_) async {
+      if (skip == 'blocked') owner.skipReminderForSession();
+      await owner.showReminderIfEligible(
+        canShowDialog: () => skip != 'unsafe',
+        showSupportDialog: (_) async {
           presentations++;
-          return AppSupportPromptResult.aborted;
+          return AppSupportResult.cancelled;
         },
       );
       expect(loads, 0);
@@ -309,23 +312,29 @@ void main() {
     () async {
       var loads = 0;
       var presentations = 0;
-      final ready = Completer<AppSupportPromptResult>();
+      final ready = Completer<AppSupportResult>();
       final owner = createOwner(
         loadInfo: () async {
           loads++;
           return stubAboutInfo();
         },
       );
-      Future<AppSupportPromptResult> show(AboutInfo _) {
+      Future<AppSupportResult> show(AboutInfo _) {
         presentations++;
         return ready.future;
       }
 
-      final first = owner.checkPrompt(canPresent: () => true, showPrompt: show);
+      final first = owner.showReminderIfEligible(
+        canShowDialog: () => true,
+        showSupportDialog: show,
+      );
       expect(
         identical(
           first,
-          owner.checkPrompt(canPresent: () => true, showPrompt: show),
+          owner.showReminderIfEligible(
+            canShowDialog: () => true,
+            showSupportDialog: show,
+          ),
         ),
         isTrue,
       );
@@ -333,9 +342,12 @@ void main() {
       expect(loads, 1);
       expect(presentations, 1);
       expect(owner.reminderClosed, isFalse);
-      ready.complete(AppSupportPromptResult.supportOpened);
+      ready.complete(AppSupportResult.githubOpened);
       await first;
-      await owner.checkPrompt(canPresent: () => true, showPrompt: show);
+      await owner.showReminderIfEligible(
+        canShowDialog: () => true,
+        showSupportDialog: show,
+      );
       expect(owner.reminderClosed, isTrue);
       expect(presentations, 1);
     },
@@ -349,15 +361,15 @@ void main() {
         var safe = true;
         var presentations = 0;
         final owner = createOwner(loadInfo: () => info.future);
-        final check = owner.checkPrompt(
-          canPresent: () => safe,
-          showPrompt: (_) async {
+        final check = owner.showReminderIfEligible(
+          canShowDialog: () => safe,
+          showSupportDialog: (_) async {
             presentations++;
-            return AppSupportPromptResult.never;
+            return AppSupportResult.stopReminding;
           },
         );
         await pumpEventQueue();
-        if (interruption == 'blocked') owner.skipPrompt();
+        if (interruption == 'blocked') owner.skipReminderForSession();
         if (interruption == 'unsafe') safe = false;
         if (interruption == 'disposed') owner.dispose();
         info.complete(stubAboutInfo());
@@ -378,11 +390,15 @@ void main() {
       path: 'https://example.com',
     );
     expect(
-      owner.canPromptWithSync(enabled: true, server: server, processing: false),
+      owner.canShowReminderWithSync(
+        enabled: true,
+        server: server,
+        processing: false,
+      ),
       isFalse,
     );
     expect(
-      owner.canPromptWithSync(
+      owner.canShowReminderWithSync(
         enabled: false,
         server: server,
         processing: false,
@@ -390,7 +406,7 @@ void main() {
       isTrue,
     );
     expect(
-      owner.canPromptWithSync(
+      owner.canShowReminderWithSync(
         enabled: true,
         server: server.copyWith(configed: true),
         processing: false,
@@ -398,17 +414,29 @@ void main() {
       isTrue,
     );
     expect(
-      owner.canPromptWithSync(enabled: false, server: null, processing: true),
+      owner.canShowReminderWithSync(
+        enabled: false,
+        server: null,
+        processing: true,
+      ),
       isFalse,
     );
-    owner.skipPrompt();
+    owner.skipReminderForSession();
     expect(
-      owner.canPromptWithSync(enabled: false, server: null, processing: false),
+      owner.canShowReminderWithSync(
+        enabled: false,
+        server: null,
+        processing: false,
+      ),
       isFalse,
     );
     owner.dispose();
     expect(
-      owner.canPromptWithSync(enabled: false, server: null, processing: false),
+      owner.canShowReminderWithSync(
+        enabled: false,
+        server: null,
+        processing: false,
+      ),
       isFalse,
     );
   });
@@ -419,9 +447,9 @@ void main() {
       () async {
         final owner = createOwner();
         await owner.init();
-        if (blocked) owner.skipPrompt();
-        expect(owner.claimPrompt(canPresent: blocked), isFalse);
-        expect(owner.claimPrompt(canPresent: true), isFalse);
+        if (blocked) owner.skipReminderForSession();
+        expect(owner.checkReminderEligibility(canShowDialog: blocked), isFalse);
+        expect(owner.checkReminderEligibility(canShowDialog: true), isFalse);
       },
     );
   }
@@ -431,30 +459,30 @@ void main() {
     () async {
       final owner = createOwner();
       await owner.init();
-      await owner.consume(AppSupportPromptResult.never);
-      expect(await owner.resetForNextLaunch(), isTrue);
+      await owner.recordReminderResult(AppSupportResult.stopReminding);
+      expect(await owner.resetReminderForNextLaunch(), isTrue);
       final storage = SharedPreferencesAsync();
       expect(await storage.getBool('appSupport_doNotOpenAgain'), isFalse);
       expect(await storage.getInt('appSupport_launches'), 9);
       expect(await storage.getInt('appSupport_minimumDate'), 0);
       expect(await storage.getString('unrelated'), 'keep');
-      expect(owner.claimPrompt(canPresent: true), isFalse);
+      expect(owner.checkReminderEligibility(canShowDialog: true), isFalse);
       final next = createOwner();
       await next.init();
-      expect(next.claimPrompt(canPresent: true), isTrue);
+      expect(next.checkReminderEligibility(canShowDialog: true), isTrue);
     },
   );
 
   test('reset can bypass cooldown and reports a failed write', () async {
     final owner = createOwner();
     await owner.init();
-    await owner.consume(AppSupportPromptResult.later);
-    expect(await owner.resetForNextLaunch(), isTrue);
+    await owner.recordReminderResult(AppSupportResult.remindLater);
+    expect(await owner.resetReminderForNextLaunch(), isTrue);
     final next = createOwner();
     await next.init();
-    expect(next.claimPrompt(canPresent: true), isTrue);
+    expect(next.checkReminderEligibility(canShowDialog: true), isTrue);
     preferences.failWrites = true;
-    expect(await owner.resetForNextLaunch(), isFalse);
+    expect(await owner.resetReminderForNextLaunch(), isFalse);
     expect(owner.developerActionInProgress, isFalse);
   });
 
@@ -465,9 +493,9 @@ void main() {
       await owner.init();
       preferences.pendingWrite = Completer<void>();
       preferences.writeStarted = Completer<void>();
-      final close = owner.recordSupportOpened();
+      final close = owner.recordSettingsSupportResult();
       await preferences.writeStarted!.future;
-      final reset = owner.resetForNextLaunch();
+      final reset = owner.resetReminderForNextLaunch();
       expect(owner.developerActionInProgress, isTrue);
       preferences.pendingWrite!.complete();
       expect(await close, isTrue);
@@ -484,36 +512,36 @@ void main() {
       final before = await SharedPreferencesAsync().getAll();
       final reads = preferences.reads;
       var shows = 0;
-      for (final result in AppSupportPromptResult.values) {
+      for (final result in AppSupportResult.values) {
         expect(
-          await owner.previewPrompt(
-            canPresent: () => true,
-            showPrompt: (_) async {
+          await owner.previewDialog(
+            canShowDialog: () => true,
+            showSupportDialog: (_) async {
               shows++;
               return result;
             },
           ),
-          result != AppSupportPromptResult.aborted,
+          result != AppSupportResult.cancelled,
         );
       }
-      expect(shows, AppSupportPromptResult.values.length);
+      expect(shows, AppSupportResult.values.length);
       expect(preferences.reads, reads);
       expect(preferences.writes, 0);
       expect(await SharedPreferencesAsync().getAll(), before);
       await owner.init();
-      expect(owner.claimPrompt(canPresent: true), isFalse);
+      expect(owner.checkReminderEligibility(canShowDialog: true), isFalse);
     },
   );
 
   test('pending preview blocks duplicates and reset without writes', () async {
-    final ready = Completer<AppSupportPromptResult>();
+    final ready = Completer<AppSupportResult>();
     final owner = createOwner();
     var shows = 0;
     var notifications = 0;
     owner.addListener(() => notifications++);
-    final preview = owner.previewPrompt(
-      canPresent: () => true,
-      showPrompt: (_) {
+    final preview = owner.previewDialog(
+      canShowDialog: () => true,
+      showSupportDialog: (_) {
         shows++;
         return ready.future;
       },
@@ -522,17 +550,17 @@ void main() {
     expect(owner.developerActionInProgress, isTrue);
     expect(notifications, 0);
     expect(
-      await owner.previewPrompt(
-        canPresent: () => true,
-        showPrompt: (_) async => AppSupportPromptResult.later,
+      await owner.previewDialog(
+        canShowDialog: () => true,
+        showSupportDialog: (_) async => AppSupportResult.remindLater,
       ),
       isFalse,
     );
-    expect(await owner.resetForNextLaunch(), isFalse);
+    expect(await owner.resetReminderForNextLaunch(), isFalse);
     expect(shows, 1);
     expect(preferences.writes, 0);
     expect(notifications, 0);
-    ready.complete(AppSupportPromptResult.later);
+    ready.complete(AppSupportResult.remindLater);
     expect(await preview, isTrue);
     expect(owner.developerActionInProgress, isFalse);
     expect(notifications, 0);
@@ -542,20 +570,20 @@ void main() {
     'disposal invalidates an in-flight preview without late notification',
     () async {
       final started = Completer<void>();
-      final ready = Completer<AppSupportPromptResult>();
+      final ready = Completer<AppSupportResult>();
       final owner = createOwner();
       var notifications = 0;
       owner.addListener(() => notifications++);
-      final preview = owner.previewPrompt(
-        canPresent: () => true,
-        showPrompt: (_) {
+      final preview = owner.previewDialog(
+        canShowDialog: () => true,
+        showSupportDialog: (_) {
           started.complete();
           return ready.future;
         },
       );
       await started.future;
       owner.dispose();
-      ready.complete(AppSupportPromptResult.later);
+      ready.complete(AppSupportResult.remindLater);
       expect(await preview, isFalse);
       expect(notifications, 0);
       expect(preferences.writes, 0);
@@ -568,11 +596,11 @@ void main() {
       final owner = createOwner(loadInfo: () => info.future)
         ..setDistribution(AppDistribution.github);
       var presentations = 0;
-      final preview = owner.previewPrompt(
-        canPresent: () => conflict != 'unsafe',
-        showPrompt: (_) async {
+      final preview = owner.previewDialog(
+        canShowDialog: () => conflict != 'unsafe',
+        showSupportDialog: (_) async {
           presentations++;
-          return AppSupportPromptResult.later;
+          return AppSupportResult.remindLater;
         },
       );
       if (conflict == 'disposed') owner.dispose();
@@ -590,10 +618,10 @@ void main() {
   }
 
   for (final result in [
-    AppSupportPromptResult.supportOpened,
-    AppSupportPromptResult.storeOpened,
-    AppSupportPromptResult.later,
-    AppSupportPromptResult.never,
+    AppSupportResult.githubOpened,
+    AppSupportResult.storeOpened,
+    AppSupportResult.remindLater,
+    AppSupportResult.stopReminding,
   ]) {
     test(
       'startup reports persistence failure for $result exactly once',
@@ -601,22 +629,22 @@ void main() {
         final owner = createOwner();
         var failures = 0;
         var shows = 0;
-        await owner.checkPrompt(
-          canPresent: () => true,
-          showPrompt: (_) async {
+        await owner.showReminderIfEligible(
+          canShowDialog: () => true,
+          showSupportDialog: (_) async {
             shows++;
             preferences.failWrites = true;
             return result;
           },
-          onSaveFailed: () => failures++,
+          onReminderSaveFailed: () => failures++,
         );
-        await owner.checkPrompt(
-          canPresent: () => true,
-          showPrompt: (_) async {
+        await owner.showReminderIfEligible(
+          canShowDialog: () => true,
+          showSupportDialog: (_) async {
             shows++;
             return result;
           },
-          onSaveFailed: () => failures++,
+          onReminderSaveFailed: () => failures++,
         );
         expect(shows, 1);
         expect(failures, 1);

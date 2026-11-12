@@ -125,7 +125,7 @@ void main() {
           );
           await tester.pumpAndSettle();
           expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
-          final target = owner.supportAction;
+          final target = owner.channelAction;
           for (final store in [
             AppSupportAction.googlePlay,
             AppSupportAction.appStore,
@@ -138,7 +138,7 @@ void main() {
             );
           }
           if (distribution == AppDistribution.fdroid) {
-            expect(target, AppSupportAction.support);
+            expect(target, AppSupportAction.githubStar);
             expect(find.text('Open F-Droid'), findsNothing);
           }
           if (distribution == AppDistribution.flathub) {
@@ -148,10 +148,10 @@ void main() {
             );
             expect(find.text('Open Flathub'), findsNothing);
           }
-          if (target != AppSupportAction.support) {
+          if (target != AppSupportAction.githubStar) {
             await tester.tap(action(target));
             await tester.pumpAndSettle();
-            expect(opened, [target.destination(_info)]);
+            expect(opened, [target.resolveUrl(_info)]);
             expect(owner.reminderClosed, isFalse);
             expect(
               await SharedPreferencesAsync().getBool(
@@ -165,7 +165,7 @@ void main() {
             );
             expect(action(target).hitTestable(), findsOneWidget);
           }
-          await tester.tap(action(AppSupportAction.support));
+          await tester.tap(action(AppSupportAction.githubStar));
           await tester.pumpAndSettle();
           expect(opened.last, Uri.parse(_info.sourceCodeUrl));
           expect(owner.reminderClosed, isTrue);
@@ -213,11 +213,11 @@ void main() {
           owner.setDistribution(distribution);
           await tester.pumpAndSettle();
           expect(
-            action(AppSupportAction.support).hitTestable(),
+            action(AppSupportAction.githubStar).hitTestable(),
             findsOneWidget,
           );
-          if (owner.supportAction != AppSupportAction.support) {
-            expect(action(owner.supportAction).hitTestable(), findsOneWidget);
+          if (owner.channelAction != AppSupportAction.githubStar) {
+            expect(action(owner.channelAction).hitTestable(), findsOneWidget);
           }
           expect(
             tester.element(find.byType(AppSettingSupportSection)),
@@ -269,7 +269,7 @@ void main() {
           );
           expect(await SharedPreferencesAsync().getAll(), before);
           expect(
-            action(AppSupportAction.support).hitTestable(),
+            action(AppSupportAction.githubStar).hitTestable(),
             findsOneWidget,
           );
           await tester.tap(action(AppSupportAction.appStore));
@@ -320,10 +320,10 @@ void main() {
         await tester.tap(action(AppSupportAction.googlePlay));
         await tester.pumpAndSettle();
         expectActionEnabled(tester, AppSupportAction.googlePlay);
-        expectActionEnabled(tester, AppSupportAction.support);
+        expectActionEnabled(tester, AppSupportAction.githubStar);
         expect(await SharedPreferencesAsync().getAll(), before);
         await tester.tap(action(AppSupportAction.googlePlay));
-        await tester.tap(action(AppSupportAction.support));
+        await tester.tap(action(AppSupportAction.githubStar));
         await tester.pumpAndSettle();
         expect(calls, 3);
         expect(owner.reminderClosed, isTrue);
@@ -678,7 +678,7 @@ void main() {
         final owner = AppSupportOwner();
         addTearDown(owner.dispose);
         await owner.init();
-        await owner.recordSupportOpened();
+        await owner.recordSettingsSupportResult();
         await mount(
           tester,
           ChangeNotifierProvider.value(
@@ -694,10 +694,13 @@ void main() {
         );
         await tester.pumpAndSettle();
         expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
-        expect(await owner.resetForNextLaunch(), isTrue);
+        expect(await owner.resetReminderForNextLaunch(), isTrue);
         await tester.pumpAndSettle();
         expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
-        expect(await owner.consume(AppSupportPromptResult.never), isTrue);
+        expect(
+          await owner.recordReminderResult(AppSupportResult.stopReminding),
+          isTrue,
+        );
         await tester.pumpAndSettle();
         expect(owner.reminderClosed, isTrue);
         expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
@@ -714,7 +717,7 @@ void main() {
         addTearDown(second.dispose);
         await first.init();
         await second.init();
-        await first.recordSupportOpened();
+        await first.recordSettingsSupportResult();
         final current = ValueNotifier(first);
         addTearDown(current.dispose);
         final section = SingleChildScrollView(
@@ -737,7 +740,7 @@ void main() {
         expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
         current.value = second;
         await tester.pumpAndSettle();
-        await first.resetForNextLaunch();
+        await first.resetReminderForNextLaunch();
         await tester.pumpAndSettle();
         await tester.tap(find.text('Star on GitHub'));
         await tester.pumpAndSettle();
@@ -838,7 +841,7 @@ void main() {
     );
 
     testWidgets(
-      'Settings failure retries and auxiliary actions do not consume reminders $style',
+      'Settings failure retries and other actions preserve reminder history $style',
       (tester) async {
         final owner = AppSupportOwner();
         addTearDown(owner.dispose);

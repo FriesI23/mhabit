@@ -56,15 +56,16 @@ class _AppSettingSupportSectionState extends State<AppSettingSupportSection> {
     super.dispose();
   }
 
-  Future<void> _select(AppSupportAction action, AppSupportContent content) =>
-      _actions.select(
-        action: action,
-        info: content.info,
-        owner: context.read<AppSupportOwner>(),
-        openUrl: widget.openUrl,
-        showDonation:
-            widget.showDonation ?? (_) => content.showDonation(context),
-      );
+  Future<void> _openSelectedAction(
+    AppSupportAction action,
+    AppSupportContent content,
+  ) => _actions.openAction(
+    action: action,
+    info: content.info,
+    owner: context.read<AppSupportOwner>(),
+    openUrl: widget.openUrl,
+    showDonation: widget.showDonation ?? (_) => content.showDonation(context),
+  );
 
   Widget _buildSection(
     BuildContext context,
@@ -74,8 +75,8 @@ class _AppSettingSupportSectionState extends State<AppSettingSupportSection> {
     final content = AppSupportContent(
       info: snapshot.requireData,
       hideDonate: widget.hideDonate ?? AppInfo().shouldHideDonate(),
-      supportAction: context.select<AppSupportOwner, AppSupportAction>(
-        (owner) => owner.supportAction,
+      channelAction: context.select<AppSupportOwner, AppSupportAction>(
+        (owner) => owner.channelAction,
       ),
     );
     final l10n = L10n.of(context)!;
@@ -93,7 +94,7 @@ class _AppSettingSupportSectionState extends State<AppSettingSupportSection> {
             _AppSettingSupportContent(
               content: content,
               actions: _actions,
-              onSelected: (action) => _select(action, content),
+              onSelected: (action) => _openSelectedAction(action, content),
             ),
           ],
         ),
@@ -131,8 +132,9 @@ class _AppSettingSupportContent extends StatelessWidget {
     builder: (context, _) {
       final l10n = L10n.of(context)!;
       final errorText = switch (actions.failure) {
-        _AppSettingSupportFailure.open => l10n.appSupport_linkFailed,
-        _AppSettingSupportFailure.save => l10n.appSupport_saveFailed,
+        _AppSettingSupportFailure.openDestination => l10n.appSupport_linkFailed,
+        _AppSettingSupportFailure.saveReminderHistory =>
+          l10n.appSupport_saveFailed,
         null => null,
       };
       return Padding(
@@ -150,7 +152,13 @@ class _AppSettingSupportContent extends StatelessWidget {
   );
 }
 
-enum _AppSettingSupportFailure { open, save }
+enum _AppSettingSupportFailure {
+  /// The selected link or donation dialog could not be opened.
+  openDestination,
+
+  /// The action opened, but its reminder preferences could not be saved.
+  saveReminderHistory,
+}
 
 /// Settings action state; the widget owns presentation only.
 class _AppSettingSupportController extends ChangeNotifier
@@ -169,7 +177,7 @@ class _AppSettingSupportController extends ChangeNotifier
     if (mounted) notifyListeners();
   }
 
-  Future<void> select({
+  Future<void> openAction({
     required AppSupportAction action,
     required AboutInfo info,
     required AppSupportOwner owner,
@@ -178,20 +186,20 @@ class _AppSettingSupportController extends ChangeNotifier
   }) async {
     if (!mounted || !owner.mounted) return;
     _setFailure(null);
-    final result = await action.execute(
+    final result = await action.openDestination(
       info: info,
       openUrl: openUrl,
       showDonation: showDonation,
-      isAlive: () => mounted && owner.mounted,
+      isHostActive: () => mounted && owner.mounted,
     );
     if (!mounted || !owner.mounted) return;
-    if (result == AppSupportPromptResult.supportOpened ||
-        result == AppSupportPromptResult.storeOpened) {
-      final saved = await owner.recordSupportOpened(result);
+    if (result == AppSupportResult.githubOpened ||
+        result == AppSupportResult.storeOpened) {
+      final saved = await owner.recordSettingsSupportResult(result);
       if (!mounted || !owner.mounted) return;
-      if (!saved) _setFailure(_AppSettingSupportFailure.save);
-    } else if (result == AppSupportPromptResult.actionFailed) {
-      _setFailure(_AppSettingSupportFailure.open);
+      if (!saved) _setFailure(_AppSettingSupportFailure.saveReminderHistory);
+    } else if (result == AppSupportResult.actionFailed) {
+      _setFailure(_AppSettingSupportFailure.openDestination);
     }
   }
 

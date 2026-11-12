@@ -93,7 +93,7 @@ class _HostState extends State<_Host> {
     return !_fail;
   }
 
-  Future<void> _prompt(BuildContext context) async {
+  Future<void> _showSupportDialog(BuildContext context) async {
     final owner = context.read<AppSupportOwner>();
     final info = await loadAboutInfo();
     if (!context.mounted) return;
@@ -107,11 +107,11 @@ class _HostState extends State<_Host> {
       },
     );
     if (!context.mounted) return;
-    if (result == AppSupportPromptResult.supportOpened ||
-        result == AppSupportPromptResult.storeOpened) {
-      await owner.recordSupportOpened(result);
-    } else if (result == AppSupportPromptResult.never) {
-      await owner.consume(result);
+    if (result == AppSupportResult.githubOpened ||
+        result == AppSupportResult.storeOpened) {
+      await owner.recordSettingsSupportResult(result);
+    } else if (result == AppSupportResult.stopReminding) {
+      await owner.recordReminderResult(result);
     }
     debugPrint('SUPPORT_CAROUSEL_DIALOG_RESULT ${result.name}');
   }
@@ -138,14 +138,14 @@ class _HostState extends State<_Host> {
                   spacing: 12,
                   children: [
                     TextButton(
-                      onPressed: () => _prompt(context),
+                      onPressed: () => _showSupportDialog(context),
                       child: const Text('Show dialog'),
                     ),
                     TextButton(
                       onPressed: () async {
                         await context
                             .read<AppSupportOwner>()
-                            .resetForNextLaunch();
+                            .resetReminderForNextLaunch();
                       },
                       child: const Text('Reset'),
                     ),

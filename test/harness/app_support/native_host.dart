@@ -100,7 +100,10 @@ Future<void> main() async {
       await fixture.begin();
       final first = AppSupportOwner();
       _require(await first.init(), 'fresh init');
-      _require(!first.claimPrompt(canPresent: true), 'fresh must not prompt');
+      _require(
+        !first.checkReminderEligibility(canShowDialog: true),
+        'fresh must not show a reminder',
+      );
       await preferences.setInt(
         'appSupport_minimumDate',
         DateTime.utc(2000).millisecondsSinceEpoch,
@@ -108,7 +111,10 @@ Future<void> main() async {
       await preferences.setInt('appSupport_launches', 9);
       final owner = AppSupportOwner();
       _require(await owner.init(), 'eligible init');
-      _require(owner.claimPrompt(canPresent: true), 'eligible must prompt');
+      _require(
+        owner.checkReminderEligibility(canShowDialog: true),
+        'eligible must show a reminder',
+      );
       var attempts = 0;
       for (var i = 0; i < 2; i++) {
         if (!context.mounted) throw StateError('host disposed');
@@ -123,9 +129,9 @@ Future<void> main() async {
           },
         );
         await _waitForDialog();
-        _carousel()!.onSelected(AppSupportAction.support);
+        _carousel()!.onSelected(AppSupportAction.githubStar);
         _require(
-          await failure == AppSupportPromptResult.actionFailed,
+          await failure == AppSupportResult.actionFailed,
           'failed action',
         );
       }
@@ -134,12 +140,15 @@ Future<void> main() async {
         'failures leave dialog closed',
       );
       if (!context.mounted) throw StateError('host disposed');
-      final prompt = showAppSupportDialog(context: context, info: info);
+      final dialogResult = showAppSupportDialog(context: context, info: info);
       await _waitForDialog();
       debugPrint('SUPPORT_PROBE_DIALOG_READY ${Platform.operatingSystem}');
       await Future<void>.delayed(const Duration(seconds: 3));
       _dialog()!.actions[1].onPressed!();
-      _require(await owner.consume(await prompt), 'later saved');
+      _require(
+        await owner.recordReminderResult(await dialogResult),
+        'later saved',
+      );
       await fixture.saveStage(AppSupportNativeStage.later);
       debugPrint(
         'SUPPORT_PROBE_PASS first-and-later ${Platform.operatingSystem}',
@@ -147,7 +156,10 @@ Future<void> main() async {
     } else if (stage == AppSupportNativeStage.later) {
       final restored = AppSupportOwner();
       _require(await restored.init(), 'later restart init');
-      _require(!restored.claimPrompt(canPresent: true), 'later restored');
+      _require(
+        !restored.checkReminderEligibility(canShowDialog: true),
+        'later restored',
+      );
       _require(
         await preferences.getInt('appSupport_launches') == 1,
         'later count restored',
@@ -159,12 +171,18 @@ Future<void> main() async {
       await preferences.setInt('appSupport_launches', 9);
       final owner = AppSupportOwner();
       _require(await owner.init(), 'second eligible init');
-      _require(owner.claimPrompt(canPresent: true), 'second eligible prompt');
+      _require(
+        owner.checkReminderEligibility(canShowDialog: true),
+        'second eligible reminder',
+      );
       if (!context.mounted) throw StateError('host disposed');
-      final prompt = showAppSupportDialog(context: context, info: info);
+      final dialogResult = showAppSupportDialog(context: context, info: info);
       await _waitForDialog();
       _dialog()!.actions.first.onPressed!();
-      _require(await owner.consume(await prompt), 'never saved');
+      _require(
+        await owner.recordReminderResult(await dialogResult),
+        'never saved',
+      );
       await fixture.saveStage(AppSupportNativeStage.never);
       debugPrint(
         'SUPPORT_PROBE_PASS later-restart-and-never ${Platform.operatingSystem}',
@@ -173,7 +191,10 @@ Future<void> main() async {
       _require(stage == AppSupportNativeStage.never, 'known probe stage');
       final restored = AppSupportOwner();
       _require(await restored.init(), 'never restart init');
-      _require(!restored.claimPrompt(canPresent: true), 'never restored');
+      _require(
+        !restored.checkReminderEligibility(canShowDialog: true),
+        'never restored',
+      );
       await fixture.restore();
       debugPrint(
         'SUPPORT_PROBE_PASS never-restart-and-restored ${Platform.operatingSystem}',

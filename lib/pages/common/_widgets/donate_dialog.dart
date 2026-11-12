@@ -25,7 +25,16 @@ import '../../../providers/support/about_info.dart';
 import '../../../widgets/helpers.dart';
 import '../../../widgets/widgets.dart';
 
-enum DonateDialogResult { noAction, copied, donated }
+enum DonateDialogResult {
+  /// No donation link or wallet address was selected.
+  noAction,
+
+  /// A cryptocurrency wallet address was copied to the clipboard.
+  addressCopied,
+
+  /// An external donation link was selected, including when launching failed.
+  linkSelected,
+}
 
 /// Donation destinations and availability shared by all donation entry points.
 class DonateConfig {
@@ -93,22 +102,14 @@ class DonateContent extends StatefulWidget {
 }
 
 class _DonateContentState extends State<DonateContent> {
-  Future<bool> _onLaunchExternalUrl(String urlString) async {
-    return launchExternalUrl(Uri.parse(urlString));
-  }
-
-  void _onDonation(DonateWay dw) {
-    if (!mounted) return;
-    Navigator.of(context).pop(DonateDialogResult.donated);
-  }
-
-  Future<void> _openDonation(DonateWay donateWay, String url) async {
+  Future<void> _openDonationLink(String url) async {
     try {
-      await _onLaunchExternalUrl(url);
+      await launchExternalUrl(Uri.parse(url));
     } catch (error) {
       debugPrint('Failed to open donation URL: $error');
     }
-    _onDonation(donateWay);
+    if (!mounted) return;
+    Navigator.of(context).pop(DonateDialogResult.linkSelected);
   }
 
   void _onCopyCryptoAddressToClipboard(CryptoDonateButtonType t) async {
@@ -126,7 +127,7 @@ class _DonateContentState extends State<DonateContent> {
       ),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    Navigator.of(context).pop(DonateDialogResult.copied);
+    Navigator.of(context).pop(DonateDialogResult.addressCopied);
   }
 
   String getCryptoLabel(CryptoDonateButtonType t, [L10n? l10n]) {
@@ -161,8 +162,7 @@ class _DonateContentState extends State<DonateContent> {
           child: _DonateBrandButton(
             onPressed: !config.isAvailable(DonateWay.buyMeACoffee)
                 ? null
-                : () => _openDonation(
-                    DonateWay.buyMeACoffee,
+                : () => _openDonationLink(
                     'https://www.buymeacoffee.com/'
                     '${config.info.donateBuyMeACoffeeToken}',
                   ),
@@ -185,8 +185,7 @@ class _DonateContentState extends State<DonateContent> {
         _DonateBrandButton(
           onPressed: !config.isAvailable(DonateWay.paypal)
               ? null
-              : () => _openDonation(
-                  DonateWay.paypal,
+              : () => _openDonationLink(
                   'https://www.paypal.com/donate?hosted_button_id='
                   '${config.info.donatePaypalToken}',
                 ),

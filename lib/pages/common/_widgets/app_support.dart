@@ -32,15 +32,15 @@ class AppSupportContent {
   const AppSupportContent({
     required this.info,
     this.hideDonate = false,
-    this.supportAction = AppSupportAction.support,
+    this.channelAction = AppSupportAction.githubStar,
   });
 
   final AboutInfo info;
   final bool hideDonate;
-  final AppSupportAction supportAction;
+  final AppSupportAction channelAction;
 
   List<_AppSupportCardKind> _cards(String donationWays) => [
-    if (info.sourceCodeUri != null || supportAction.isStore)
+    if (info.sourceCodeUri != null || channelAction.isStore)
       _AppSupportCardKind.support,
     if (!hideDonate &&
         DonateConfig(info: info).hasAvailableMethod(donationWays))
@@ -60,14 +60,14 @@ class AppSupportContent {
 
 /// Shows shared cards, then executes a selection after the dialog leaves.
 ///
-/// The caller consumes link and dismissal results. Normal dismissals count as
-/// later; removal, host
-/// invalidation and late results count as aborted. The caller's context must
-/// remain mounted throughout the operation. A supplied
-/// [controller] is single-use; its host must abort it on destruction.
+/// The caller records link and dismissal results. Normal dismissals return
+/// [AppSupportResult.remindLater]. Removal, host invalidation and late results
+/// return [AppSupportResult.cancelled]. The caller's context must remain mounted
+/// throughout the operation. A supplied [controller] is single-use and its host
+/// must cancel it on destruction.
 ///
 /// Previews reuse the same interaction without changing reminder history.
-Future<AppSupportPromptResult> showAppSupportDialog({
+Future<AppSupportResult> showAppSupportDialog({
   required BuildContext context,
   required AboutInfo info,
   Future<bool> Function(Uri)? openUrl,
@@ -78,17 +78,19 @@ Future<AppSupportPromptResult> showAppSupportDialog({
   final state = controller ?? AppSupportDialogController();
   try {
     if (state._finished || !context.mounted) {
-      return AppSupportPromptResult.aborted;
+      return AppSupportResult.cancelled;
     }
     final owner = context.maybeRead<AppSupportOwner>();
     final content = AppSupportContent(
       info: info,
       hideDonate: hideDonate ?? AppInfo().shouldHideDonate(),
-      supportAction:
-          owner?.supportAction ??
-          AppSupportAction.supportFor(distribution: defaultAppDistribution),
+      channelAction:
+          owner?.channelAction ??
+          AppSupportAction.forDistribution(
+            distribution: defaultAppDistribution,
+          ),
     );
-    final result = await showAdaptiveModalDialog<AppSupportPromptResult>(
+    final result = await showAdaptiveModalDialog<AppSupportResult>(
       context: context,
       barrierDismissible: true,
       routeSettings: const RouteSettings(name: 'app-support'),
@@ -100,7 +102,7 @@ Future<AppSupportPromptResult> showAppSupportDialog({
                 content: AppSupportContent(
                   info: info,
                   hideDonate: content.hideDonate,
-                  supportAction: owner.supportAction,
+                  channelAction: owner.channelAction,
                 ),
                 controller: state,
               ),
@@ -109,23 +111,23 @@ Future<AppSupportPromptResult> showAppSupportDialog({
     // The pop future completes before the reverse transition. In particular,
     // a donation sheet must not be pushed over the outgoing dialog route.
     await state._route?.completed;
-    if (state._aborted || !context.mounted) {
-      return AppSupportPromptResult.aborted;
+    if (state._cancelled || !context.mounted) {
+      return AppSupportResult.cancelled;
     }
-    final selection = state._selection;
+    final selection = state._selectedAction;
     if (selection == null) {
       return result ??
           (state._popped
-              ? AppSupportPromptResult.later
-              : AppSupportPromptResult.aborted);
+              ? AppSupportResult.remindLater
+              : AppSupportResult.cancelled);
     }
-    final outcome = await selection.execute(
+    final outcome = await selection.openDestination(
       info: info,
       openUrl: openUrl ?? launchExternalUrl,
       showDonation: showDonation ?? (_) => content.showDonation(context),
-      isAlive: () => context.mounted && !state._aborted,
+      isHostActive: () => context.mounted && !state._cancelled,
     );
-    if (outcome == AppSupportPromptResult.actionFailed && context.mounted) {
+    if (outcome == AppSupportResult.actionFailed && context.mounted) {
       ScaffoldMessenger.maybeOf(context)?.showSnackBar(
         SnackBar(content: Text(L10n.of(context)!.appSupport_linkFailed)),
       );
@@ -143,29 +145,29 @@ Future<AppSupportPromptResult> showAppSupportDialog({
 class AppSupportDialogController {
   bool _popped = false;
   bool _finished = false;
-  bool _aborted = false;
+  bool _cancelled = false;
   bool _removalScheduled = false;
-  AppSupportAction? _selection;
-  ModalRoute<AppSupportPromptResult>? _route;
+  AppSupportAction? _selectedAction;
+  ModalRoute<AppSupportResult>? _route;
 
   /// Removes only this route and invalidates any operation still in flight.
-  void abort() {
+  void cancel() {
     if (_finished) return;
-    _aborted = true;
+    _cancelled = true;
     _finished = true;
     _removeRouteAfterFrame();
   }
 
-  void _attachRoute(ModalRoute<AppSupportPromptResult>? route) {
+  void _attachRoute(ModalRoute<AppSupportResult>? route) {
     _route = route;
-    // An abort can arrive after push but before the dialog's first build.
-    if (_aborted) _removeRouteAfterFrame();
+    // Cancellation can arrive after push but before the dialog's first build.
+    if (_cancelled) _removeRouteAfterFrame();
   }
 
   void _removeRouteAfterFrame() {
     if (_route?.isActive != true || _removalScheduled) return;
     _removalScheduled = true;
-    // Hosts may abort from dispose while the Navigator is finalizing a route.
+    // Hosts may cancel from dispose while the Navigator is finalizing a route.
     // Cancellation is immediate; only removing an active overlay is deferred.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _removalScheduled = false;
@@ -174,20 +176,20 @@ class AppSupportDialogController {
       if (route != null && route.isActive && navigator?.mounted == true) {
         navigator!.removeRoute(route);
       }
-    }, debugLabel: 'AppSupportDialog.abort');
+    }, debugLabel: 'AppSupportDialog.cancel');
     WidgetsBinding.instance.scheduleFrame();
   }
 
-  void _finish(AppSupportPromptResult result) {
+  void _closeDialog([AppSupportResult? result]) {
     if (_finished || _popped || _route?.isCurrent != true) return;
     _popped = true;
     _route?.navigator?.pop(result);
   }
 
-  void _select(AppSupportAction action) {
+  void _selectAction(AppSupportAction action) {
     if (_finished || _popped || _route?.isCurrent != true) return;
-    _selection = action;
-    _finish(AppSupportPromptResult.auxiliaryAction);
+    _selectedAction = action;
+    _closeDialog();
   }
 }
 
@@ -199,9 +201,9 @@ class _AppSupportDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    controller._attachRoute(ModalRoute.of<AppSupportPromptResult>(context));
+    controller._attachRoute(ModalRoute.of<AppSupportResult>(context));
     final l10n = L10n.of(context)!;
-    return PopScope<AppSupportPromptResult>(
+    return PopScope<AppSupportResult>(
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) controller._popped = true;
       },
@@ -210,18 +212,20 @@ class _AppSupportDialog extends StatelessWidget {
           width: 320,
           child: AppSupportCarousel(
             content: content,
-            onSelected: controller._select,
+            onSelected: controller._selectAction,
           ),
         ),
         actions: [
           AdaptiveDialogAction(
             label: l10n.appSupport_never,
             isDestructiveAction: true,
-            onPressed: () => controller._finish(AppSupportPromptResult.never),
+            onPressed: () =>
+                controller._closeDialog(AppSupportResult.stopReminding),
           ),
           AdaptiveDialogAction(
             label: l10n.appSupport_later,
-            onPressed: () => controller._finish(AppSupportPromptResult.later),
+            onPressed: () =>
+                controller._closeDialog(AppSupportResult.remindLater),
           ),
         ],
       ),
@@ -229,42 +233,42 @@ class _AppSupportDialog extends StatelessWidget {
   }
 }
 
-/// Hosts an automatic support prompt at a caller-selected location.
+/// Hosts an automatic support reminder at a caller-selected location.
 ///
 /// The owner holds eligibility and the once-per-session guard. The caller
 /// provides [AppSupportOwner] with ChangeNotifierProvider, chooses when to mount
 /// this widget and supplies live presentation safety.
 /// This startup host is separate from Settings, which only observes the owner
 /// and executes explicit selections without checking startup eligibility.
-class AppSupportPrompt extends StatefulWidget {
-  const AppSupportPrompt({
+class AppSupportReminder extends StatefulWidget {
+  const AppSupportReminder({
     super.key,
-    required this.canPresent,
+    required this.canShowDialog,
     required this.child,
-    this.showPrompt = showAppSupportDialog,
+    this.showSupportDialog = showAppSupportDialog,
   });
 
   /// Reads current UI safety, including immediately after asynchronous work.
   /// Callers subscribe to reactive dependencies with Provider so changes also
   /// rebuild this host and permanently cancel this startup's opportunity.
-  final bool Function(BuildContext context) canPresent;
+  final bool Function(BuildContext context) canShowDialog;
   final Widget child;
-  final Future<AppSupportPromptResult> Function({
+  final Future<AppSupportResult> Function({
     required BuildContext context,
     required AboutInfo info,
     AppSupportDialogController? controller,
   })
-  showPrompt;
+  showSupportDialog;
 
   @override
-  State<AppSupportPrompt> createState() => _AppSupportPromptState();
+  State<AppSupportReminder> createState() => _AppSupportReminderState();
 }
 
-class _AppSupportPromptState extends State<AppSupportPrompt> {
+class _AppSupportReminderState extends State<AppSupportReminder> {
   late final AppSupportOwner _owner;
   late final AppLifecycleListener _lifecycle;
   final _dialog = AppSupportDialogController();
-  bool _checkStarted = false;
+  bool _reminderCheckStarted = false;
   bool _firstFrameComplete = false;
   late bool _hasEnteredForeground;
 
@@ -279,89 +283,91 @@ class _AppSupportPromptState extends State<AppSupportPrompt> {
         if (state == AppLifecycleState.resumed) {
           if (!_hasEnteredForeground) {
             _hasEnteredForeground = true;
-            _tryCheck();
+            _tryShowReminder();
           }
         } else if (_hasEnteredForeground) {
-          _owner.skipPrompt();
+          _owner.skipReminderForSession();
         }
       },
     );
     HardwareKeyboard.instance.addHandler(_onKey);
-    _owner.addListener(_tryCheck);
+    _owner.addListener(_tryShowReminder);
     _owner.init();
     // Descendant Navigators and AppPostInit must attach before presentation.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _firstFrameComplete = true;
-      _tryCheck();
-    }, debugLabel: 'AppSupportPrompt.ready');
+      _tryShowReminder();
+    }, debugLabel: 'AppSupportReminder.ready');
   }
 
   bool _onKey(KeyEvent event) {
-    if (event is KeyDownEvent || event is KeyRepeatEvent) _owner.skipPrompt();
+    if (event is KeyDownEvent || event is KeyRepeatEvent) {
+      _owner.skipReminderForSession();
+    }
     return false;
   }
 
-  void _tryCheck() {
+  void _tryShowReminder() {
     if (!mounted ||
         !_firstFrameComplete ||
         !_owner.initialized ||
         !_hasEnteredForeground ||
-        _checkStarted ||
+        _reminderCheckStarted ||
         WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
       return;
     }
-    _checkStarted = true;
-    unawaited(_check());
+    _reminderCheckStarted = true;
+    unawaited(_showReminderIfEligible());
   }
 
-  void _cancelIfUnsafe() {
+  void _skipReminderIfUnsafe() {
     if (_firstFrameComplete &&
         _hasEnteredForeground &&
-        !widget.canPresent(context)) {
-      _owner.skipPrompt();
+        !widget.canShowDialog(context)) {
+      _owner.skipReminderForSession();
     }
   }
 
   @override
-  void didUpdateWidget(AppSupportPrompt oldWidget) {
+  void didUpdateWidget(AppSupportReminder oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _cancelIfUnsafe();
+    _skipReminderIfUnsafe();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _cancelIfUnsafe();
+    _skipReminderIfUnsafe();
   }
 
-  Future<void> _check() => _owner.checkPrompt(
-    canPresent: () =>
+  Future<void> _showReminderIfEligible() => _owner.showReminderIfEligible(
+    canShowDialog: () =>
         mounted &&
         WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed &&
-        widget.canPresent(context),
-    onSaveFailed: () {
+        widget.canShowDialog(context),
+    onReminderSaveFailed: () {
       if (!mounted) return;
       ScaffoldMessenger.maybeOf(context)?.showSnackBar(
         SnackBar(content: Text(L10n.of(context)!.appSupport_saveFailed)),
       );
     },
-    showPrompt: (info) async {
-      if (!mounted) return AppSupportPromptResult.aborted;
-      final result = await widget.showPrompt(
+    showSupportDialog: (info) async {
+      if (!mounted) return AppSupportResult.cancelled;
+      final result = await widget.showSupportDialog(
         context: context,
         info: info,
         controller: _dialog,
       );
-      return mounted ? result : AppSupportPromptResult.aborted;
+      return mounted ? result : AppSupportResult.cancelled;
     },
   );
 
   @override
   void dispose() {
-    _owner.removeListener(_tryCheck);
-    _owner.skipPrompt();
-    _dialog.abort();
+    _owner.removeListener(_tryShowReminder);
+    _owner.skipReminderForSession();
+    _dialog.cancel();
     _lifecycle.dispose();
     HardwareKeyboard.instance.removeHandler(_onKey);
     super.dispose();
@@ -369,8 +375,8 @@ class _AppSupportPromptState extends State<AppSupportPrompt> {
 
   @override
   Widget build(BuildContext context) => Listener(
-    onPointerDown: (_) => _owner.skipPrompt(),
-    onPointerSignal: (_) => _owner.skipPrompt(),
+    onPointerDown: (_) => _owner.skipReminderForSession(),
+    onPointerSignal: (_) => _owner.skipReminderForSession(),
     child: widget.child,
   );
 }
@@ -411,19 +417,15 @@ class _AppSupportCarouselState extends State<AppSupportCarousel>
   late final AnimationController _stars;
   final _heroPlayback = ValueNotifier<_AppSupportCardKind?>(null);
   // Paging belongs to this instance rather than its ancestor's PageStorage.
-  late final _pages = PageController(
-    keepPage: false,
-    onAttach: _attachPagePosition,
-    onDetach: _detachPagePosition,
-  );
+  final _pages = PageController(keepPage: false);
   final _focus = FocusNode();
   late final AppLifecycleListener _lifecycle;
-  Timer? _timer;
+  Timer? _autoplayTimer;
   List<_AppSupportCardKind> _cards = const [];
   String _donationWays = '';
   bool _inViewport = false;
   bool _viewportCheckScheduled = false;
-  bool _dragging = false;
+  bool _pageScrolling = false;
   bool _correctingPage = false;
   bool _playing = false;
   final _pointers = <int>{};
@@ -435,7 +437,6 @@ class _AppSupportCarouselState extends State<AppSupportCarousel>
   int _index = 0;
   ScrollPosition? _scrollPosition;
   final _routes = <ModalRoute<dynamic>>[];
-  final _routeAnimations = <Animation<double>>[];
 
   @override
   void initState() {
@@ -453,7 +454,6 @@ class _AppSupportCarouselState extends State<AppSupportCarousel>
         _updatePlayback();
       },
     );
-    _focus.addListener(_resetTimer);
   }
 
   @override
@@ -471,21 +471,13 @@ class _AppSupportCarouselState extends State<AppSupportCarousel>
       _scrollPosition = position;
       position?.addListener(_scheduleViewportCheck);
     }
-    for (final animation in _routeAnimations) {
-      animation.removeListener(_updatePlayback);
-    }
-    _routeAnimations.clear();
     _routes.clear();
+    // ModalRoute.of registers inherited dependencies for each Navigator, so a
+    // covering route updates playback without listening to route animations.
     var route = ModalRoute.of(context);
     final visited = <NavigatorState>{};
     while (route != null) {
       _routes.add(route);
-      for (final animation in [route.animation, route.secondaryAnimation]) {
-        if (animation != null) {
-          _routeAnimations.add(animation);
-          animation.addListener(_updatePlayback);
-        }
-      }
       final navigator = route.navigator;
       if (navigator == null || !visited.add(navigator)) break;
       route = ModalRoute.of(navigator.context);
@@ -509,6 +501,11 @@ class _AppSupportCarouselState extends State<AppSupportCarousel>
     if (listEquals(cards, _cards)) return false;
     _cards = cards;
     _index = _index.clamp(0, math.max(0, cards.length - 1));
+    if (cards.isEmpty) {
+      // Removing PageView during a drag has no final scroll notification.
+      _pageScrolling = false;
+      _pointers.clear();
+    }
     // PageView corrects its scroll bounds when the children change. A fresh
     // position starts at initialPage, so neither case needs a delayed jump.
     return true;
@@ -554,14 +551,14 @@ class _AppSupportCarouselState extends State<AppSupportCarousel>
       _visible &&
       !_reduced &&
       !_accessibleNavigation &&
-      !_dragging &&
+      !_pageScrolling &&
       _pointers.isEmpty &&
       _cards.length > 1 &&
       _pages.hasClients;
 
   void _updatePlayback() {
     if (!mounted) return;
-    final hero = _visible && !_reduced && !_dragging && _cards.isNotEmpty
+    final hero = _visible && !_reduced && !_pageScrolling && _cards.isNotEmpty
         ? _cards[_index]
         : null;
     // Lifecycle and geometry listeners need to update the images too, without
@@ -577,43 +574,37 @@ class _AppSupportCarouselState extends State<AppSupportCarousel>
     final playing = _canPlay;
     if (_playing == playing) return;
     _playing = playing;
-    _resetTimer();
+    _restartAutoplayTimer();
   }
 
-  void _resetTimer() {
-    _timer?.cancel();
-    _timer = null;
+  void _restartAutoplayTimer() {
+    _autoplayTimer?.cancel();
+    _autoplayTimer = null;
     if (!mounted || !_canPlay) return;
     // A one-shot timer gives every settled page a complete idle interval;
     // a periodic timer could fire immediately after a user's drag finishes.
-    _timer = Timer(const Duration(seconds: 4), () {
-      _timer = null;
-      if (mounted && _canPlay) unawaited(_goTo((_index + 1) % _cards.length));
+    _autoplayTimer = Timer(const Duration(seconds: 4), () {
+      _autoplayTimer = null;
+      if (mounted && _canPlay) {
+        unawaited(_showPage((_index + 1) % _cards.length));
+      }
     });
   }
 
-  void _attachPagePosition(ScrollPosition position) {
-    position.isScrollingNotifier.addListener(_onPageScrolling);
-    _dragging = position.isScrollingNotifier.value;
-    _updatePlayback();
-  }
-
-  void _detachPagePosition(ScrollPosition position) {
-    position.isScrollingNotifier.removeListener(_onPageScrolling);
-    _dragging = false;
-    _updatePlayback();
-  }
-
-  void _onPageScrolling() {
-    if (!mounted || !_pages.hasClients || _correctingPage) return;
-    _dragging = _pages.position.isScrollingNotifier.value;
-    if (!_dragging) _alignReducedMotionPage();
-    _updatePlayback();
+  bool _onPageScroll(ScrollNotification notification) {
+    if (notification.depth != 0 || _correctingPage) return false;
+    if (notification is ScrollStartNotification ||
+        notification is ScrollEndNotification) {
+      _pageScrolling = notification is ScrollStartNotification;
+      if (!_pageScrolling) _alignReducedMotionPage();
+      _updatePlayback();
+    }
+    return false;
   }
 
   void _alignReducedMotionPage() {
     if (!_reduced ||
-        _dragging ||
+        _pageScrolling ||
         _correctingPage ||
         _cards.isEmpty ||
         !_pages.hasClients) {
@@ -654,9 +645,9 @@ class _AppSupportCarouselState extends State<AppSupportCarousel>
     return false;
   }
 
-  Future<void> _goTo(int page) async {
+  Future<void> _showPage(int page) async {
     if (!_pages.hasClients || _cards.isEmpty) return;
-    _timer?.cancel();
+    _autoplayTimer?.cancel();
     if (_reduced) {
       _pages.jumpToPage(page);
     } else {
@@ -666,42 +657,29 @@ class _AppSupportCarouselState extends State<AppSupportCarousel>
         curve: Curves.easeInOut,
       );
     }
-    if (mounted) _resetTimer();
+    if (mounted) _restartAutoplayTimer();
   }
 
   @override
   void dispose() {
     _scrollPosition?.removeListener(_scheduleViewportCheck);
-    for (final animation in _routeAnimations) {
-      animation.removeListener(_updatePlayback);
-    }
     _lifecycle.dispose();
     _focus.dispose();
     _pages.dispose();
     _heroPlayback.dispose();
     _stars.dispose();
-    _timer?.cancel();
+    _autoplayTimer?.cancel();
     super.dispose();
   }
 
-  KeyEventResult _onKeyEvent(FocusNode _, KeyEvent event) {
-    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
-      return KeyEventResult.ignored;
-    }
-    _resetTimer();
-    if (_cards.length < 2) return KeyEventResult.ignored;
-    final delta = event.logicalKey == LogicalKeyboardKey.arrowRight
-        ? 1
-        : event.logicalKey == LogicalKeyboardKey.arrowLeft
-        ? -1
-        : 0;
-    if (delta == 0) return KeyEventResult.ignored;
+  void _movePage(int delta) {
+    _restartAutoplayTimer();
+    if (_cards.length < 2) return;
     final direction = Directionality.of(context) == TextDirection.rtl ? -1 : 1;
     _focus.requestFocus();
     unawaited(
-      _goTo((_index + delta * direction + _cards.length) % _cards.length),
+      _showPage((_index + delta * direction + _cards.length) % _cards.length),
     );
-    return KeyEventResult.handled;
   }
 
   void _onPointerDown(PointerDownEvent event) {
@@ -725,39 +703,58 @@ class _AppSupportCarouselState extends State<AppSupportCarousel>
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: _onSizeChanged,
       child: SizeChangedLayoutNotifier(
-        child: Focus(
-          focusNode: _focus,
-          skipTraversal: true,
-          onKeyEvent: _onKeyEvent,
-          child: Listener(
-            onPointerDown: _onPointerDown,
-            onPointerUp: _onPointerEnd,
-            onPointerCancel: _onPointerEnd,
-            onPointerSignal: (_) => _resetTimer(),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                NotificationListener<ScrollMetricsNotification>(
-                  onNotification: _onPageMetrics,
-                  child: _AppSupportPages(
-                    controller: _pages,
-                    cards: _cards,
-                    content: widget.content,
-                    starAnimation: _stars,
-                    heroPlayback: _heroPlayback,
-                    index: _index,
-                    reduced: _reduced,
-                    onPageChanged: _onPageChanged,
-                    onSelected: widget.onSelected,
+        child: CallbackShortcuts(
+          bindings: {
+            const SingleActivator(LogicalKeyboardKey.arrowRight): () =>
+                _movePage(1),
+            const SingleActivator(LogicalKeyboardKey.arrowLeft): () =>
+                _movePage(-1),
+          },
+          child: Focus(
+            focusNode: _focus,
+            skipTraversal: true,
+            onFocusChange: (_) => _restartAutoplayTimer(),
+            onKeyEvent: (_, event) {
+              if (event is KeyDownEvent || event is KeyRepeatEvent) {
+                _restartAutoplayTimer();
+              }
+              return KeyEventResult.ignored;
+            },
+            // Observe presses on child buttons without competing with their
+            // tap recognizers or PageView's horizontal drag recognizer.
+            child: Listener(
+              onPointerDown: _onPointerDown,
+              onPointerUp: _onPointerEnd,
+              onPointerCancel: _onPointerEnd,
+              onPointerSignal: (_) => _restartAutoplayTimer(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  NotificationListener<ScrollMetricsNotification>(
+                    onNotification: _onPageMetrics,
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: _onPageScroll,
+                      child: _AppSupportPages(
+                        controller: _pages,
+                        cards: _cards,
+                        content: widget.content,
+                        starAnimation: _stars,
+                        heroPlayback: _heroPlayback,
+                        index: _index,
+                        reduced: _reduced,
+                        onPageChanged: _onPageChanged,
+                        onSelected: widget.onSelected,
+                      ),
+                    ),
                   ),
-                ),
-                if (_cards.length > 1)
-                  _AppSupportPagination(
-                    count: _cards.length,
-                    index: _index,
-                    onSelected: _goTo,
-                  ),
-              ],
+                  if (_cards.length > 1)
+                    _AppSupportPagination(
+                      count: _cards.length,
+                      index: _index,
+                      onSelected: _showPage,
+                    ),
+                ],
+              ),
             ),
           ),
         ),
@@ -922,9 +919,9 @@ class _AppSupportCard extends StatelessWidget {
       _AppSupportCardKind.support => [
         if (content.info.sourceCodeUri != null)
           _GitHubSupportButton(onSelected: onSelected),
-        if (content.supportAction.isStore)
+        if (content.channelAction.isStore)
           _StoreSupportButton(
-            action: content.supportAction,
+            action: content.channelAction,
             onSelected: onSelected,
           ),
       ],
@@ -1009,7 +1006,7 @@ class _GitHubSupportButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _AppSupportActionButton(
-    action: AppSupportAction.support,
+    action: AppSupportAction.githubStar,
     label: L10n.of(context)!.appSupport_starOnGitHub,
     onSelected: onSelected,
   );
@@ -1054,7 +1051,7 @@ class _AppSupportActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final callback = onSelected == null ? null : () => onSelected!(action);
     final icon = Icon(switch (action) {
-      AppSupportAction.support => Icons.star_rounded,
+      AppSupportAction.githubStar => Icons.star_rounded,
       AppSupportAction.googlePlay => SimpleIcons.googleplay,
       AppSupportAction.appStore => SimpleIcons.appstore,
       AppSupportAction.microsoftStore => Icons.storefront_outlined,
@@ -1226,4 +1223,13 @@ class _AppSupportPageScrollPhysics extends PageScrollPhysics {
   ) => null;
 }
 
-enum _AppSupportCardKind { support, donate, participate }
+enum _AppSupportCardKind {
+  /// GitHub Star and the current channel's store review or favorite link.
+  support,
+
+  /// Available donation methods.
+  donate,
+
+  /// Source code and feedback links.
+  participate,
+}

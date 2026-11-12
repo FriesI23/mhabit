@@ -343,11 +343,13 @@ void main() {
             .arguments,
         {'text': _address},
       );
-      expect(result, DonateDialogResult.copied);
+      expect(result, DonateDialogResult.addressCopied);
       expect(find.byType(DonateContent), findsNothing);
       expect(tester.takeException(), isNull);
     });
-    testWidgets('Donate external link returns donated $style', (tester) async {
+    testWidgets('Donate external link returns linkSelected $style', (
+      tester,
+    ) async {
       final calls = <MethodCall>[];
       const channel = MethodChannel('plugins.flutter.io/url_launcher');
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (
@@ -379,7 +381,7 @@ void main() {
         calls.single.arguments['url'],
         'https://www.paypal.com/donate?hosted_button_id=paypal-token',
       );
-      expect(result, DonateDialogResult.donated);
+      expect(result, DonateDialogResult.linkSelected);
       expect(find.byType(DonateContent), findsNothing);
       expect(tester.takeException(), isNull);
     });

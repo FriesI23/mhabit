@@ -7,16 +7,19 @@ import 'package:mhabit/models/app_support.dart';
 
 void main() {
   for (final (distribution, target) in [
-    (AppDistribution.github, AppSupportAction.support),
+    (AppDistribution.github, AppSupportAction.githubStar),
     (AppDistribution.googlePlay, AppSupportAction.googlePlay),
     (AppDistribution.appStore, AppSupportAction.appStore),
     (AppDistribution.microsoftStore, AppSupportAction.microsoftStore),
-    (AppDistribution.fdroid, AppSupportAction.support),
+    (AppDistribution.fdroid, AppSupportAction.githubStar),
     (AppDistribution.flathub, AppSupportAction.flathub),
-    (AppDistribution.custom, AppSupportAction.support),
+    (AppDistribution.custom, AppSupportAction.githubStar),
   ]) {
     test('$distribution selects its additional support destination', () {
-      expect(AppSupportAction.supportFor(distribution: distribution), target);
+      expect(
+        AppSupportAction.forDistribution(distribution: distribution),
+        target,
+      );
       if (distribution == AppDistribution.fdroid) {
         expect(target.isStore, isFalse);
         expect(target.storeUri, isNull);
@@ -66,7 +69,7 @@ void main() {
 
   test('project and donation actions do not contain store destinations', () {
     for (final target in [
-      AppSupportAction.support,
+      AppSupportAction.githubStar,
       AppSupportAction.sourceCode,
       AppSupportAction.feedback,
       AppSupportAction.donate,

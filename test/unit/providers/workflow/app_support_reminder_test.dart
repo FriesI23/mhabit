@@ -80,7 +80,7 @@ void main() {
           InMemorySharedPreferencesAsync.empty();
       final owner = createOwner();
       expect(await owner.init(), isTrue);
-      expect(owner.claimPrompt(canPresent: true), isFalse);
+      expect(owner.checkReminderEligibility(canShowDialog: true), isFalse);
       expect(await SharedPreferencesAsync().getAll(), {
         _dateKey: _today.add(const Duration(days: 7)).millisecondsSinceEpoch,
         _launchesKey: 1,
@@ -111,7 +111,7 @@ void main() {
             });
         final owner = createOwner();
         expect(await owner.init(), isTrue);
-        expect(owner.claimPrompt(canPresent: true), eligible);
+        expect(owner.checkReminderEligibility(canShowDialog: true), eligible);
         expect(await SharedPreferencesAsync().getAll(), {
           _dateKey: date.millisecondsSinceEpoch,
           _launchesKey: launches + 1,
@@ -123,15 +123,15 @@ void main() {
   }
 
   for (final result in [
-    AppSupportPromptResult.later,
-    AppSupportPromptResult.storeOpened,
+    AppSupportResult.remindLater,
+    AppSupportResult.storeOpened,
   ]) {
     test(
       '$result preserves legacy seven-day and ten-launch cooldown across owners',
       () async {
         final owner = createOwner();
         await owner.init();
-        expect(await owner.consume(result), isTrue);
+        expect(await owner.recordReminderResult(result), isTrue);
         expect(owner.reminderClosed, isFalse);
         expect(await SharedPreferencesAsync().getAll(), {
           _dateKey: _today.add(const Duration(days: 7)).millisecondsSinceEpoch,
@@ -143,25 +143,25 @@ void main() {
           now: () => _today.add(const Duration(days: 8)),
         );
         await next.init();
-        expect(next.claimPrompt(canPresent: true), isFalse);
+        expect(next.checkReminderEligibility(canShowDialog: true), isFalse);
         expect(await SharedPreferencesAsync().getInt(_launchesKey), 1);
       },
     );
   }
 
   for (final result in [
-    AppSupportPromptResult.supportOpened,
-    AppSupportPromptResult.never,
+    AppSupportResult.githubOpened,
+    AppSupportResult.stopReminding,
   ]) {
     test('$result preserves permanent dismissal across owners', () async {
       final owner = createOwner();
       await owner.init();
-      expect(await owner.consume(result), isTrue);
+      expect(await owner.recordReminderResult(result), isTrue);
       expect(owner.reminderClosed, isTrue);
       final next = createOwner();
       await next.init();
       expect(next.reminderClosed, isTrue);
-      expect(next.claimPrompt(canPresent: true), isFalse);
+      expect(next.checkReminderEligibility(canShowDialog: true), isFalse);
       expect(await SharedPreferencesAsync().getString('unrelated'), 'keep');
     });
   }
@@ -178,7 +178,7 @@ void main() {
       final owner = createOwner();
       await owner.init();
       expect(
-        await owner.recordSupportOpened(AppSupportPromptResult.storeOpened),
+        await owner.recordSettingsSupportResult(AppSupportResult.storeOpened),
         isTrue,
       );
       expect(owner.reminderClosed, isTrue);
@@ -195,29 +195,38 @@ void main() {
     () async {
       final owner = createOwner();
       await owner.init();
-      expect(await owner.consume(AppSupportPromptResult.later), isTrue);
-      expect(await owner.recordSupportOpened(), isTrue);
+      expect(
+        await owner.recordReminderResult(AppSupportResult.remindLater),
+        isTrue,
+      );
+      expect(await owner.recordSettingsSupportResult(), isTrue);
       expect(owner.reminderClosed, isTrue);
       expect(await SharedPreferencesAsync().getInt(_launchesKey), 0);
     },
   );
 
   test(
-    'auxiliary, failure, and aborted results do not consume the one-event guard',
+    'other actions, failures and cancellation allow a later reminder save',
     () async {
       final owner = createOwner();
       await owner.init();
       final before = await SharedPreferencesAsync().getAll();
       for (final result in [
-        AppSupportPromptResult.auxiliaryAction,
-        AppSupportPromptResult.actionFailed,
-        AppSupportPromptResult.aborted,
+        AppSupportResult.otherActionCompleted,
+        AppSupportResult.actionFailed,
+        AppSupportResult.cancelled,
       ]) {
-        expect(await owner.consume(result), isFalse);
+        expect(await owner.recordReminderResult(result), isFalse);
       }
       expect(await SharedPreferencesAsync().getAll(), before);
-      expect(await owner.consume(AppSupportPromptResult.later), isTrue);
-      expect(await owner.consume(AppSupportPromptResult.never), isFalse);
+      expect(
+        await owner.recordReminderResult(AppSupportResult.remindLater),
+        isTrue,
+      );
+      expect(
+        await owner.recordReminderResult(AppSupportResult.stopReminding),
+        isFalse,
+      );
     },
   );
 
@@ -231,9 +240,15 @@ void main() {
     final owner = createOwner();
     await owner.init();
     preferences.failWrites = true;
-    expect(await owner.consume(AppSupportPromptResult.later), isFalse);
+    expect(
+      await owner.recordReminderResult(AppSupportResult.remindLater),
+      isFalse,
+    );
     preferences.failWrites = false;
-    expect(await owner.consume(AppSupportPromptResult.never), isFalse);
+    expect(
+      await owner.recordReminderResult(AppSupportResult.stopReminding),
+      isFalse,
+    );
     expect(owner.reminderClosed, isFalse);
     expect(await SharedPreferencesAsync().getInt(_launchesKey), 10);
   });
@@ -250,11 +265,11 @@ void main() {
       final owner = createOwner();
       await owner.init();
       preferences.failBooleanWrites = true;
-      expect(await owner.recordSupportOpened(), isFalse);
+      expect(await owner.recordSettingsSupportResult(), isFalse);
       expect(owner.reminderClosed, isFalse);
       expect(await SharedPreferencesAsync().getBool(_closedKey), isFalse);
       preferences.failBooleanWrites = false;
-      expect(await owner.recordSupportOpened(), isTrue);
+      expect(await owner.recordSettingsSupportResult(), isTrue);
       expect(owner.reminderClosed, isTrue);
       expect(await SharedPreferencesAsync().getBool(_closedKey), isTrue);
     },
@@ -273,12 +288,12 @@ void main() {
       await owner.init();
       preferences.pendingWrite = Completer<void>();
       preferences.writeStarted = Completer<void>();
-      final first = owner.recordSupportOpened(
-        AppSupportPromptResult.storeOpened,
+      final first = owner.recordSettingsSupportResult(
+        AppSupportResult.storeOpened,
       );
       await preferences.writeStarted!.future;
-      final second = owner.recordSupportOpened(
-        AppSupportPromptResult.storeOpened,
+      final second = owner.recordSettingsSupportResult(
+        AppSupportResult.storeOpened,
       );
       preferences.pendingWrite!.complete();
       expect(await first, isTrue);
@@ -303,7 +318,7 @@ void main() {
       preferences.writeStarted = Completer<void>();
       var notifications = 0;
       owner.addListener(() => notifications++);
-      final save = owner.recordSupportOpened();
+      final save = owner.recordSettingsSupportResult();
       await preferences.writeStarted!.future;
       owner.dispose();
       preferences.pendingWrite!.complete();
@@ -322,7 +337,7 @@ void main() {
       final owner = createOwner();
       expect(await owner.init(), isFalse);
       expect(owner.initialized, isFalse);
-      expect(owner.claimPrompt(canPresent: true), isFalse);
+      expect(owner.checkReminderEligibility(canShowDialog: true), isFalse);
     },
   );
 }

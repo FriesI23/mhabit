@@ -3101,14 +3101,14 @@ void main() {
           InMemorySharedPreferencesAsync.empty();
       addTearDown(() => SharedPreferencesAsyncPlatform.instance = previous);
       final before = AppSupportOwner();
-      await before.resetForNextLaunch();
+      await before.resetReminderForNextLaunch();
       before.dispose();
       final owner = AppSupportOwner(loadInfo: () async => stubAboutInfo());
       addTearDown(owner.dispose);
       await owner.init();
       final root = AdaptiveBranchRouteObserver();
       root.onStackChanged = () {
-        if (root.depth > 1) owner.skipPrompt();
+        if (root.depth > 1) owner.skipReminderForSession();
       };
       var prompts = 0;
       final checks = <String>[];
@@ -3120,8 +3120,8 @@ void main() {
         rootObservers: [root],
         startupBuilder: (context, child) => ChangeNotifierProvider.value(
           value: owner,
-          child: AppSupportPrompt(
-            canPresent: (context) {
+          child: AppSupportReminder(
+            canShowDialog: (context) {
               final navigation = context.read<AppNavigationCoordinator>();
               checks.add(
                 'root=${root.depth}, flow=${navigation.appFlowObserver.depth}, branch=${navigation.branchObservers[branch.navigationIndex].routeNameStack}, route=${router.currentRouteName}',
@@ -3130,11 +3130,12 @@ void main() {
                   router.currentRouteName == branch.rootRouteName &&
                   navigation.isAtPrimaryBranchRoot(branch);
             },
-            showPrompt: ({required context, required info, controller}) async {
-              prompts++;
-              shellContext = context;
-              return AppSupportPromptResult.later;
-            },
+            showSupportDialog:
+                ({required context, required info, controller}) async {
+                  prompts++;
+                  shellContext = context;
+                  return AppSupportResult.remindLater;
+                },
             child: child!,
           ),
         ),

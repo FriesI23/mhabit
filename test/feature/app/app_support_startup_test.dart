@@ -106,13 +106,14 @@ void main() {
     Widget app({Key? key}) => MaterialApp(
       home: ChangeNotifierProvider<AppSupportOwner>.value(
         value: owner,
-        child: AppSupportPrompt(
+        child: AppSupportReminder(
           key: key,
-          canPresent: (_) => true,
-          showPrompt: ({required context, required info, controller}) async {
-            prompts++;
-            return AppSupportPromptResult.later;
-          },
+          canShowDialog: (_) => true,
+          showSupportDialog:
+              ({required context, required info, controller}) async {
+                prompts++;
+                return AppSupportResult.remindLater;
+              },
           child: const Scaffold(),
         ),
       ),
@@ -148,12 +149,12 @@ void main() {
         MaterialApp(
           home: ChangeNotifierProvider.value(
             value: owner,
-            child: AppSupportPrompt(
-              canPresent: (_) => true,
-              showPrompt:
+            child: AppSupportReminder(
+              canShowDialog: (_) => true,
+              showSupportDialog:
                   ({required context, required info, controller}) async {
                     prompts++;
-                    return AppSupportPromptResult.later;
+                    return AppSupportResult.remindLater;
                   },
               child: const Scaffold(),
             ),
@@ -208,12 +209,12 @@ void main() {
           navigatorObservers: [routes],
           home: ChangeNotifierProvider<AppSupportOwner>.value(
             value: owner,
-            child: AppSupportPrompt(
-              canPresent: (_) => routes.depth == 1,
-              showPrompt:
+            child: AppSupportReminder(
+              canShowDialog: (_) => routes.depth == 1,
+              showSupportDialog:
                   ({required context, required info, controller}) async {
                     prompts++;
-                    return AppSupportPromptResult.never;
+                    return AppSupportResult.stopReminding;
                   },
               child: const Scaffold(body: SizedBox.expand()),
             ),
@@ -222,7 +223,7 @@ void main() {
       );
       switch (conflict) {
         case 'changelog':
-          owner.skipPrompt();
+          owner.skipReminderForSession();
         case 'pointer':
           await tester.tapAt(const Offset(100, 100));
         case 'scroll':
@@ -273,12 +274,12 @@ void main() {
               now: () => _now,
               loadInfo: () => info.future,
             ),
-            child: AppSupportPrompt(
-              canPresent: (_) => safe,
-              showPrompt:
+            child: AppSupportReminder(
+              canShowDialog: (_) => safe,
+              showSupportDialog:
                   ({required context, required info, controller}) async {
                     prompts++;
-                    return AppSupportPromptResult.later;
+                    return AppSupportResult.remindLater;
                   },
               child: const Scaffold(),
             ),
@@ -320,13 +321,13 @@ void main() {
                 context.select<_PresentationSafety, bool>(
                   (value) => value.safe,
                 );
-                return AppSupportPrompt(
-                  canPresent: (context) =>
+                return AppSupportReminder(
+                  canShowDialog: (context) =>
                       context.read<_PresentationSafety>().safe,
-                  showPrompt:
+                  showSupportDialog:
                       ({required context, required info, controller}) async {
                         prompts++;
-                        return AppSupportPromptResult.later;
+                        return AppSupportResult.remindLater;
                       },
                   child: const Scaffold(),
                 );
@@ -361,12 +362,12 @@ void main() {
             loadInfo: () async => stubAboutInfo(),
           ),
           child: MaterialApp(
-            home: AppSupportPrompt(
-              canPresent: (_) => attached,
-              showPrompt:
+            home: AppSupportReminder(
+              canShowDialog: (_) => attached,
+              showSupportDialog:
                   ({required context, required info, controller}) async {
                     prompts++;
-                    return AppSupportPromptResult.later;
+                    return AppSupportResult.remindLater;
                   },
               child: Builder(
                 builder: (_) {
@@ -413,9 +414,9 @@ void main() {
               builder: (context, setState) {
                 updateHost = setState;
                 return mountedHost
-                    ? AppSupportPrompt(
-                        canPresent: (_) => true,
-                        showPrompt:
+                    ? AppSupportReminder(
+                        canShowDialog: (_) => true,
+                        showSupportDialog:
                             ({required context, required info, controller}) =>
                                 showAppSupportDialog(
                                   context: context,
@@ -455,7 +456,7 @@ void main() {
     tester,
   ) async {
     final preferences = _preferences()..ready.complete();
-    final result = Completer<AppSupportPromptResult>();
+    final result = Completer<AppSupportResult>();
     await tester.pumpWidget(
       MaterialApp(
         home: ChangeNotifierProvider<AppSupportOwner>(
@@ -464,10 +465,11 @@ void main() {
             now: () => _now,
             loadInfo: () async => stubAboutInfo(),
           ),
-          child: AppSupportPrompt(
-            canPresent: (_) => true,
-            showPrompt: ({required context, required info, controller}) =>
-                result.future,
+          child: AppSupportReminder(
+            canShowDialog: (_) => true,
+            showSupportDialog:
+                ({required context, required info, controller}) =>
+                    result.future,
             child: const Scaffold(),
           ),
         ),
@@ -475,7 +477,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     await tester.pumpWidget(const SizedBox());
-    result.complete(AppSupportPromptResult.later);
+    result.complete(AppSupportResult.remindLater);
     await tester.pumpAndSettle();
     expect(await preferences.saved, _initializedValues());
   });
