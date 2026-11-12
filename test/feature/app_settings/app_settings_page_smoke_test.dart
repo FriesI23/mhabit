@@ -57,6 +57,7 @@ import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/routes/app_router.dart';
 import 'package:mhabit/storage/db_helper_provider.dart';
 import 'package:mhabit/storage/profile/handlers/app_language.dart';
+import 'package:mhabit/storage/profile/handlers/app_support.dart';
 import 'package:mhabit/storage/profile/handlers/display_calendar_scroll_mode.dart';
 import 'package:mhabit/storage/profile/handlers/habit_grouping.dart';
 import 'package:mhabit/storage/profile_provider.dart';
@@ -64,10 +65,9 @@ import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
-import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 
 import '../../support/stub/about_info.dart';
+import '../../support/stub/shared_preferences.dart';
 
 class _ExportAccess implements HabitExportAccess, GroupExportAccess {
   int habitLoads = 0;
@@ -157,6 +157,7 @@ Future<ProfileViewModel> _loadProfile() async {
   SharedPreferences.setMockInitialValues({});
   final profile = ProfileViewModel([
     AppLanguageProfileHanlder.new,
+    AppSupportReminderProfileHandler.new,
     HabitGroupingExperimentalFeature.new,
     DisplayCalendarScrollModeProfileHandler.new,
   ]);
@@ -223,13 +224,13 @@ void main() {
       tester,
     ) async {
       final profile = await _loadProfile();
-      final previousPreferences = SharedPreferencesAsyncPlatform.instance;
-      SharedPreferencesAsyncPlatform.instance =
-          InMemorySharedPreferencesAsync.empty();
-      addTearDown(
-        () => SharedPreferencesAsyncPlatform.instance = previousPreferences,
+      final previousPreferences = PreferencesTestStore.instance;
+      PreferencesTestStore.instance = InMemoryPreferencesStore.empty();
+      addTearDown(() => PreferencesTestStore.instance = previousPreferences);
+      final support = AppSupportOwner(
+        profile: profile,
+        loadInfo: () async => stubAboutInfo(),
       );
-      final support = AppSupportOwner(loadInfo: () async => stubAboutInfo());
       addTearDown(support.dispose);
       final dbHelper = DBHelperViewModel();
       final syncAccess = _FakeAppSyncAccess();
@@ -828,10 +829,10 @@ void main() {
       await tester.tap(resetSupport);
       await tester.pumpAndSettle();
       expect(find.byType(AdaptiveDialog), findsNothing);
-      final preferences = SharedPreferencesAsync();
-      expect(await preferences.getInt('appSupport_launches'), 9);
-      expect(await preferences.getBool('appSupport_doNotOpenAgain'), isFalse);
-      final armed = await preferences.getAll();
+      final preferences = (await SharedPreferences.getInstance());
+      expect(preferences.reminderInt('appSupport_launches'), 9);
+      expect(preferences.reminderBool('appSupport_doNotOpenAgain'), isFalse);
+      final armed = preferences.getAll();
       await tester.tap(find.byType(SnackBarAction));
       await tester.pumpAndSettle();
       final showSupport = find.byKey(
@@ -931,7 +932,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.byType(AdaptiveDialog), findsNothing);
         expect(support.developerActionInProgress, isFalse);
-        expect(await preferences.getAll(), armed);
+        expect(preferences.getAll(), armed);
       }
       await tester.scrollUntilVisible(
         developmentTile.hitTestable(),

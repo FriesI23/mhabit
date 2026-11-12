@@ -14,11 +14,11 @@ import 'package:mhabit/providers/workflow/app_support.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
-import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
-import 'package:shared_preferences_platform_interface/types.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 
 import '../../support/stub/about_info.dart';
+
+import '../../support/stub/shared_preferences.dart';
 
 final _now = DateTime.utc(2026, 11, 12);
 final _initialDate = DateTime.utc(2000).millisecondsSinceEpoch;
@@ -37,7 +37,7 @@ Map<String, Object> _laterValues() => {
   'appSupport_doNotOpenAgain': false,
 };
 
-final class _Preferences extends InMemorySharedPreferencesAsync {
+final class _Preferences extends InMemoryPreferencesStore {
   _Preferences()
     : super.withData({
         'appSupport_minimumDate': _initialDate,
@@ -49,24 +49,16 @@ final class _Preferences extends InMemorySharedPreferencesAsync {
   int starts = 0;
 
   @override
-  Future<Map<String, Object>> getPreferences(
-    GetPreferencesParameters parameters,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<Map<String, Object>> getAll() async {
     starts++;
     await ready.future;
-    return super.getPreferences(parameters, options);
+    return super.getAll();
   }
-
-  Future<Map<String, Object>> get saved => super.getPreferences(
-    const GetPreferencesParameters(filter: PreferencesFilters()),
-    const SharedPreferencesOptions(),
-  );
 }
 
 _Preferences _preferences() {
   final preferences = _Preferences();
-  SharedPreferencesAsyncPlatform.instance = preferences;
+  PreferencesTestStore.instance = preferences;
   return preferences;
 }
 
@@ -84,9 +76,9 @@ class _PresentationSafety extends ChangeNotifier {
 }
 
 void main() {
-  late SharedPreferencesAsyncPlatform? previousPreferences;
-  setUp(() => previousPreferences = SharedPreferencesAsyncPlatform.instance);
-  tearDown(() => SharedPreferencesAsyncPlatform.instance = previousPreferences);
+  late SharedPreferencesStorePlatform previousPreferences;
+  setUp(() => previousPreferences = PreferencesTestStore.instance);
+  tearDown(() => PreferencesTestStore.instance = previousPreferences);
   setUp(
     () => TestWidgetsFlutterBinding.ensureInitialized()
         .handleAppLifecycleStateChanged(AppLifecycleState.resumed),
@@ -96,8 +88,8 @@ void main() {
     tester,
   ) async {
     final preferences = _preferences();
-    final owner = AppSupportOwner(
-      preferences: SharedPreferencesAsync(),
+    final owner = createTestAppSupportOwner(
+      loadPreferences: SharedPreferences.getInstance,
       now: () => _now,
       loadInfo: () async => stubAboutInfo(),
     );
@@ -137,8 +129,8 @@ void main() {
     (tester) async {
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
       final preferences = _preferences()..ready.complete();
-      final owner = AppSupportOwner(
-        preferences: SharedPreferencesAsync(),
+      final owner = createTestAppSupportOwner(
+        loadPreferences: SharedPreferences.getInstance,
         now: () => _now,
         loadInfo: () async => stubAboutInfo(),
       );
@@ -190,8 +182,8 @@ void main() {
       tester,
     ) async {
       final preferences = _preferences();
-      final owner = AppSupportOwner(
-        preferences: SharedPreferencesAsync(),
+      final owner = createTestAppSupportOwner(
+        loadPreferences: SharedPreferences.getInstance,
         now: () => _now,
         loadInfo: () async {
           if (conflict == 'config-error') throw StateError('asset failed');
@@ -269,8 +261,8 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: ChangeNotifierProvider<AppSupportOwner>(
-            create: (_) => AppSupportOwner(
-              preferences: SharedPreferencesAsync(),
+            create: (_) => createTestAppSupportOwner(
+              loadPreferences: SharedPreferences.getInstance,
               now: () => _now,
               loadInfo: () => info.future,
             ),
@@ -307,8 +299,8 @@ void main() {
         MultiProvider(
           providers: [
             ChangeNotifierProvider(
-              create: (_) => AppSupportOwner(
-                preferences: SharedPreferencesAsync(),
+              create: (_) => createTestAppSupportOwner(
+                loadPreferences: SharedPreferences.getInstance,
                 now: () => _now,
                 loadInfo: () => info.future,
               ),
@@ -356,8 +348,8 @@ void main() {
       var prompts = 0;
       await tester.pumpWidget(
         ChangeNotifierProvider(
-          create: (_) => AppSupportOwner(
-            preferences: SharedPreferencesAsync(),
+          create: (_) => createTestAppSupportOwner(
+            loadPreferences: SharedPreferences.getInstance,
             now: () => _now,
             loadInfo: () async => stubAboutInfo(),
           ),
@@ -390,8 +382,8 @@ void main() {
     (tester) async {
       final preferences = _preferences()..ready.complete();
       final pending = Completer<bool>();
-      final owner = AppSupportOwner(
-        preferences: SharedPreferencesAsync(),
+      final owner = createTestAppSupportOwner(
+        loadPreferences: SharedPreferences.getInstance,
         now: () => _now,
         loadInfo: () async => stubAboutInfo(),
       );
@@ -460,8 +452,8 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: ChangeNotifierProvider<AppSupportOwner>(
-          create: (_) => AppSupportOwner(
-            preferences: SharedPreferencesAsync(),
+          create: (_) => createTestAppSupportOwner(
+            loadPreferences: SharedPreferences.getInstance,
             now: () => _now,
             loadInfo: () async => stubAboutInfo(),
           ),

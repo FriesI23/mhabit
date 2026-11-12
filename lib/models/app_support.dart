@@ -57,3 +57,10 @@ enum AppSupportAction {
   /// System-handled store link, or null for project and donation actions.
   Uri? get storeUri => _storeUrl == null ? null : Uri.parse(_storeUrl);
 }
+
+/// Reminder timing and dismissal saved together in the user's profile.
+typedef AppSupportReminderHistory = ({
+  DateTime minimumDate,
+  int launches,
+  bool closed,
+});

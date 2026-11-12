@@ -195,9 +195,12 @@ class AppProviders extends SingleChildStatelessWidget {
   ];
 
   Iterable<SingleChildWidget> _buildRootAdjacentSupportProviders() => [
-    ChangeNotifierProvider<AppSupportOwner>(
+    ViewModelProxyProvider<ProfileViewModel, AppSupportOwner>(
       lazy: false,
-      create: (_) => AppSupportOwner()..init(),
+      create: (_) => AppSupportOwner(),
+      update: (context, profile, previous) => previous
+        ..updateProfile(profile)
+        ..init(),
     ),
     ViewModelProxyProvider2<Global, ProfileViewModel, AppDeveloperViewModel>(
       create: (context) => AppDeveloperViewModel(

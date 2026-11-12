@@ -15,6 +15,8 @@ import 'package:mhabit/logging/logger_manager.dart';
 import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/providers/support/about_info.dart';
 import 'package:mhabit/providers/workflow/app_support.dart';
+import 'package:mhabit/storage/profile/handlers.dart';
+import 'package:mhabit/storage/profile_provider.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -92,24 +94,30 @@ Future<void> main() async {
   final context = scaffoldKey.currentContext!;
   final info = await loadAboutInfo();
   await chrome?.show();
-  final preferences = SharedPreferencesAsync();
+  final preferences = (await SharedPreferences.getInstance());
   final fixture = AppSupportNativePreferences(preferences);
+  final profile = ProfileViewModel([AppSupportReminderProfileHandler.new]);
+  await profile.init();
+  final reminder = profile.getHandler<AppSupportReminderProfileHandler>()!;
   try {
     final stage = await fixture.readStage();
     if (stage == null) {
       await fixture.begin();
-      final first = AppSupportOwner();
+      final first = AppSupportOwner(profile: profile);
       _require(await first.init(), 'fresh init');
       _require(
         !first.checkReminderEligibility(canShowDialog: true),
         'fresh must not show a reminder',
       );
-      await preferences.setInt(
-        'appSupport_minimumDate',
-        DateTime.utc(2000).millisecondsSinceEpoch,
+      _require(
+        await reminder.set((
+          minimumDate: DateTime.utc(2000),
+          launches: 9,
+          closed: false,
+        )),
+        'eligible fixture saved',
       );
-      await preferences.setInt('appSupport_launches', 9);
-      final owner = AppSupportOwner();
+      final owner = AppSupportOwner(profile: profile);
       _require(await owner.init(), 'eligible init');
       _require(
         owner.checkReminderEligibility(canShowDialog: true),
@@ -154,22 +162,22 @@ Future<void> main() async {
         'SUPPORT_PROBE_PASS first-and-later ${Platform.operatingSystem}',
       );
     } else if (stage == AppSupportNativeStage.later) {
-      final restored = AppSupportOwner();
+      final restored = AppSupportOwner(profile: profile);
       _require(await restored.init(), 'later restart init');
       _require(
         !restored.checkReminderEligibility(canShowDialog: true),
         'later restored',
       );
+      _require(reminder.get()?.launches == 1, 'later count restored');
       _require(
-        await preferences.getInt('appSupport_launches') == 1,
-        'later count restored',
+        await reminder.set((
+          minimumDate: DateTime.utc(2000),
+          launches: 9,
+          closed: false,
+        )),
+        'second eligible fixture saved',
       );
-      await preferences.setInt(
-        'appSupport_minimumDate',
-        DateTime.utc(2000).millisecondsSinceEpoch,
-      );
-      await preferences.setInt('appSupport_launches', 9);
-      final owner = AppSupportOwner();
+      final owner = AppSupportOwner(profile: profile);
       _require(await owner.init(), 'second eligible init');
       _require(
         owner.checkReminderEligibility(canShowDialog: true),
@@ -189,7 +197,7 @@ Future<void> main() async {
       );
     } else {
       _require(stage == AppSupportNativeStage.never, 'known probe stage');
-      final restored = AppSupportOwner();
+      final restored = AppSupportOwner(profile: profile);
       _require(await restored.init(), 'never restart init');
       _require(
         !restored.checkReminderEligibility(canShowDialog: true),

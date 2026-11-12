@@ -129,8 +129,10 @@ existing architecture and tooling contracts.
   reviews or public favorites, independently of the host platform. Download
   statistics alone do not qualify. Developer selections refresh cards and
   existing dialogs through the same owner in the current process.
-  `AppSupportOwner` manages reminder history with `SharedPreferencesAsync`,
-  preserving the existing `appSupport_` keys and reminder thresholds. Execute
+  `AppSupportOwner` uses `ProfileHandlerLoadedMixin` and the registered
+  `AppSupportReminderProfileHandler` to save reminder history as one typed value.
+  Keep reminder thresholds in the owner and serialization in the profile handler.
+  Execute
   project and store links through the shared URL launcher; opening a store page
   does not establish that a review was submitted. See
   [Release channels](../wiki/Dev꞉-Build-From-Source.md#release-channels) for build usage.

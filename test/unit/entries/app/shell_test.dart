@@ -40,10 +40,10 @@ import 'package:mhabit/theme/color.dart';
 import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
-import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 
 import '../../../support/stub/about_info.dart';
+
+import '../../../support/stub/shared_preferences.dart';
 
 class _RecordingLaunchEntryViewModel extends AppLaunchEntryViewModel {
   final List<AppEntrys> entries = [];
@@ -3096,14 +3096,15 @@ void main() {
       tester,
     ) async {
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
-      final previous = SharedPreferencesAsyncPlatform.instance;
-      SharedPreferencesAsyncPlatform.instance =
-          InMemorySharedPreferencesAsync.empty();
-      addTearDown(() => SharedPreferencesAsyncPlatform.instance = previous);
-      final before = AppSupportOwner();
+      final previous = PreferencesTestStore.instance;
+      PreferencesTestStore.instance = InMemoryPreferencesStore.empty();
+      addTearDown(() => PreferencesTestStore.instance = previous);
+      final before = createTestAppSupportOwner();
       await before.resetReminderForNextLaunch();
       before.dispose();
-      final owner = AppSupportOwner(loadInfo: () async => stubAboutInfo());
+      final owner = createTestAppSupportOwner(
+        loadInfo: () async => stubAboutInfo(),
+      );
       addTearDown(owner.dispose);
       await owner.init();
       final root = AdaptiveBranchRouteObserver();

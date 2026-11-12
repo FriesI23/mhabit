@@ -20,29 +20,23 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../support/stub/shared_preferences.dart';
 import 'native_preferences.dart';
 
-class _MemoryPreferences extends SharedPreferencesAsync {
+class _MemoryPreferences implements SharedPreferences {
   final _values = <String, Object>{};
 
   @override
-  Future<Map<String, Object?>> getAll({Set<String>? allowList}) async => {
-    for (final entry in _values.entries)
-      if (allowList == null || allowList.contains(entry.key))
-        entry.key: entry.value,
-  };
+  String? getString(String key) => _values[key] as String?;
 
   @override
-  Future<int?> getInt(String key) async => _values[key] as int?;
+  Future<bool> setString(String key, String value) async {
+    _values[key] = value;
+    return true;
+  }
 
   @override
-  Future<bool?> getBool(String key) async => _values[key] as bool?;
-
-  @override
-  Future<void> setInt(String key, int value) async => _values[key] = value;
-
-  @override
-  Future<void> setBool(String key, bool value) async => _values[key] = value;
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 Future<void> main() async {
@@ -61,7 +55,9 @@ Future<void> main() async {
   runApp(
     ChangeNotifierProvider(
       lazy: false,
-      create: (_) => AppSupportOwner(preferences: _MemoryPreferences())..init(),
+      create: (_) => createTestAppSupportOwner(
+        loadPreferences: () async => _MemoryPreferences(),
+      )..init(),
       child: const _Host(),
     ),
   );

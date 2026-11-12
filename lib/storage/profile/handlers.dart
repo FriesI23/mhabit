@@ -20,6 +20,7 @@ export 'handlers/app_last_changelog_version.dart';
 export 'handlers/app_launch_entry.dart';
 export 'handlers/app_notify_config.dart';
 export 'handlers/app_reminder.dart';
+export 'handlers/app_support.dart';
 export 'handlers/app_sync.dart';
 export 'handlers/app_theme_color.dart';
 export 'handlers/app_theme_main_color.dart';

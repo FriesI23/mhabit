@@ -6,15 +6,15 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/providers/workflow/app_support.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
-import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
+
+import '../../../support/stub/shared_preferences.dart';
 
 final _today = DateTime.utc(2026, 11, 12);
 const _dateKey = 'appSupport_minimumDate';
 const _launchesKey = 'appSupport_launches';
 const _closedKey = 'appSupport_doNotOpenAgain';
 
-final class _ControlledPreferences extends InMemorySharedPreferencesAsync {
+final class _ControlledPreferences extends InMemoryPreferencesStore {
   _ControlledPreferences(super.values) : super.withData();
 
   bool failWrites = false;
@@ -31,24 +31,12 @@ final class _ControlledPreferences extends InMemorySharedPreferencesAsync {
   }
 
   @override
-  Future<bool> setInt(
-    String key,
-    int value,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<bool> setValue(String type, String key, Object value) async {
     await _beforeWrite();
-    return super.setInt(key, value, options);
-  }
-
-  @override
-  Future<bool> setBool(
-    String key,
-    bool value,
-    SharedPreferencesOptions options,
-  ) async {
-    await _beforeWrite();
-    if (failBooleanWrites) throw StateError('boolean write failed');
-    return super.setBool(key, value, options);
+    if (key == 'flutter.appSupportReminder' && failBooleanWrites) {
+      throw StateError('boolean write failed');
+    }
+    return super.setValue(type, key, value);
   }
 }
 
@@ -56,32 +44,47 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
-    final previous = SharedPreferencesAsyncPlatform.instance;
-    SharedPreferencesAsyncPlatform.instance =
-        InMemorySharedPreferencesAsync.withData({
-          _dateKey: DateTime.utc(2000).millisecondsSinceEpoch,
-          _launchesKey: 9,
-          _closedKey: false,
-          'unrelated': 'keep',
-        });
-    addTearDown(() => SharedPreferencesAsyncPlatform.instance = previous);
+    final previous = PreferencesTestStore.instance;
+    PreferencesTestStore.instance = InMemoryPreferencesStore.withData({
+      _dateKey: DateTime.utc(2000).millisecondsSinceEpoch,
+      _launchesKey: 9,
+      _closedKey: false,
+      'unrelated': 'keep',
+    });
+    addTearDown(() => PreferencesTestStore.instance = previous);
   });
 
   AppSupportOwner createOwner({DateTime Function()? now}) {
-    final owner = AppSupportOwner(now: now ?? () => _today);
+    final owner = createTestAppSupportOwner(now: now ?? () => _today);
     addTearDown(owner.dispose);
     return owner;
   }
 
   test(
+    'profile and reminder writes preserve each other across reload',
+    () async {
+      final profile = await SharedPreferences.getInstance();
+      final owner = createOwner();
+      expect(await owner.init(), isTrue);
+      await profile.setInt('themeType', 2);
+      expect(await owner.recordSettingsSupportResult(), isTrue);
+      await profile.setString('windowState', 'updated');
+      await profile.reload();
+      expect(profile.getInt('themeType'), 2);
+      expect(profile.getString('windowState'), 'updated');
+      expect(profile.reminderBool(_closedKey), isTrue);
+      expect(profile.getString('unrelated'), 'keep');
+    },
+  );
+
+  test(
     'first install creates only the existing reminder keys and waits seven days',
     () async {
-      SharedPreferencesAsyncPlatform.instance =
-          InMemorySharedPreferencesAsync.empty();
+      PreferencesTestStore.instance = InMemoryPreferencesStore.empty();
       final owner = createOwner();
       expect(await owner.init(), isTrue);
       expect(owner.checkReminderEligibility(canShowDialog: true), isFalse);
-      expect(await SharedPreferencesAsync().getAll(), {
+      expect((await SharedPreferences.getInstance()).getAll(), {
         _dateKey: _today.add(const Duration(days: 7)).millisecondsSinceEpoch,
         _launchesKey: 1,
         _closedKey: false,
@@ -102,17 +105,16 @@ void main() {
       'legacy eligibility date=$days launches=$launches closed=$closed',
       () async {
         final date = _today.add(Duration(days: days));
-        SharedPreferencesAsyncPlatform.instance =
-            InMemorySharedPreferencesAsync.withData({
-              _dateKey: date.millisecondsSinceEpoch,
-              _launchesKey: launches,
-              _closedKey: closed,
-              'unrelated': 'keep',
-            });
+        PreferencesTestStore.instance = InMemoryPreferencesStore.withData({
+          _dateKey: date.millisecondsSinceEpoch,
+          _launchesKey: launches,
+          _closedKey: closed,
+          'unrelated': 'keep',
+        });
         final owner = createOwner();
         expect(await owner.init(), isTrue);
         expect(owner.checkReminderEligibility(canShowDialog: true), eligible);
-        expect(await SharedPreferencesAsync().getAll(), {
+        expect((await SharedPreferences.getInstance()).getAll(), {
           _dateKey: date.millisecondsSinceEpoch,
           _launchesKey: launches + 1,
           _closedKey: closed,
@@ -133,7 +135,7 @@ void main() {
         await owner.init();
         expect(await owner.recordReminderResult(result), isTrue);
         expect(owner.reminderClosed, isFalse);
-        expect(await SharedPreferencesAsync().getAll(), {
+        expect((await SharedPreferences.getInstance()).getAll(), {
           _dateKey: _today.add(const Duration(days: 7)).millisecondsSinceEpoch,
           _launchesKey: 0,
           _closedKey: false,
@@ -144,7 +146,10 @@ void main() {
         );
         await next.init();
         expect(next.checkReminderEligibility(canShowDialog: true), isFalse);
-        expect(await SharedPreferencesAsync().getInt(_launchesKey), 1);
+        expect(
+          (await SharedPreferences.getInstance()).reminderInt(_launchesKey),
+          1,
+        );
       },
     );
   }
@@ -162,19 +167,21 @@ void main() {
       await next.init();
       expect(next.reminderClosed, isTrue);
       expect(next.checkReminderEligibility(canShowDialog: true), isFalse);
-      expect(await SharedPreferencesAsync().getString('unrelated'), 'keep');
+      expect(
+        (await SharedPreferences.getInstance()).getString('unrelated'),
+        'keep',
+      );
     });
   }
 
   test(
     'store links retain an existing permanent dismissal while saving cooldown',
     () async {
-      SharedPreferencesAsyncPlatform.instance =
-          InMemorySharedPreferencesAsync.withData({
-            _dateKey: DateTime.utc(2000).millisecondsSinceEpoch,
-            _launchesKey: -20,
-            _closedKey: true,
-          });
+      PreferencesTestStore.instance = InMemoryPreferencesStore.withData({
+        _dateKey: DateTime.utc(2000).millisecondsSinceEpoch,
+        _launchesKey: -20,
+        _closedKey: true,
+      });
       final owner = createOwner();
       await owner.init();
       expect(
@@ -182,7 +189,7 @@ void main() {
         isTrue,
       );
       expect(owner.reminderClosed, isTrue);
-      expect(await SharedPreferencesAsync().getAll(), {
+      expect((await SharedPreferences.getInstance()).getAll(), {
         _dateKey: _today.add(const Duration(days: 7)).millisecondsSinceEpoch,
         _launchesKey: -29,
         _closedKey: true,
@@ -201,7 +208,10 @@ void main() {
       );
       expect(await owner.recordSettingsSupportResult(), isTrue);
       expect(owner.reminderClosed, isTrue);
-      expect(await SharedPreferencesAsync().getInt(_launchesKey), 0);
+      expect(
+        (await SharedPreferences.getInstance()).reminderInt(_launchesKey),
+        0,
+      );
     },
   );
 
@@ -210,7 +220,7 @@ void main() {
     () async {
       final owner = createOwner();
       await owner.init();
-      final before = await SharedPreferencesAsync().getAll();
+      final before = (await SharedPreferences.getInstance()).getAll();
       for (final result in [
         AppSupportResult.otherActionCompleted,
         AppSupportResult.actionFailed,
@@ -218,7 +228,7 @@ void main() {
       ]) {
         expect(await owner.recordReminderResult(result), isFalse);
       }
-      expect(await SharedPreferencesAsync().getAll(), before);
+      expect((await SharedPreferences.getInstance()).getAll(), before);
       expect(
         await owner.recordReminderResult(AppSupportResult.remindLater),
         isTrue,
@@ -236,7 +246,7 @@ void main() {
       _launchesKey: 9,
       _closedKey: false,
     });
-    SharedPreferencesAsyncPlatform.instance = preferences;
+    PreferencesTestStore.instance = preferences;
     final owner = createOwner();
     await owner.init();
     preferences.failWrites = true;
@@ -250,7 +260,7 @@ void main() {
       isFalse,
     );
     expect(owner.reminderClosed, isFalse);
-    expect(await SharedPreferencesAsync().getInt(_launchesKey), 10);
+    expect((await preferences.saved)[_launchesKey], 10);
   });
 
   test(
@@ -261,17 +271,20 @@ void main() {
         _launchesKey: 9,
         _closedKey: false,
       });
-      SharedPreferencesAsyncPlatform.instance = preferences;
+      PreferencesTestStore.instance = preferences;
       final owner = createOwner();
       await owner.init();
       preferences.failBooleanWrites = true;
       expect(await owner.recordSettingsSupportResult(), isFalse);
       expect(owner.reminderClosed, isFalse);
-      expect(await SharedPreferencesAsync().getBool(_closedKey), isFalse);
+      expect((await preferences.saved)[_closedKey], isFalse);
       preferences.failBooleanWrites = false;
       expect(await owner.recordSettingsSupportResult(), isTrue);
       expect(owner.reminderClosed, isTrue);
-      expect(await SharedPreferencesAsync().getBool(_closedKey), isTrue);
+      expect(
+        (await SharedPreferences.getInstance()).reminderBool(_closedKey),
+        isTrue,
+      );
     },
   );
 
@@ -283,7 +296,7 @@ void main() {
         _launchesKey: 9,
         _closedKey: false,
       });
-      SharedPreferencesAsyncPlatform.instance = preferences;
+      PreferencesTestStore.instance = preferences;
       final owner = createOwner();
       await owner.init();
       preferences.pendingWrite = Completer<void>();
@@ -298,20 +311,23 @@ void main() {
       preferences.pendingWrite!.complete();
       expect(await first, isTrue);
       expect(await second, isTrue);
-      expect(await SharedPreferencesAsync().getInt(_launchesKey), -10);
+      expect(
+        (await SharedPreferences.getInstance()).reminderInt(_launchesKey),
+        -10,
+      );
       expect(owner.reminderClosed, isFalse);
     },
   );
 
   test(
-    'disposal during a save prevents later publication and remaining writes',
+    'disposal during an in-flight history save prevents publication',
     () async {
       final preferences = _ControlledPreferences({
         _dateKey: DateTime.utc(2000).millisecondsSinceEpoch,
         _launchesKey: 9,
         _closedKey: false,
       });
-      SharedPreferencesAsyncPlatform.instance = preferences;
+      PreferencesTestStore.instance = preferences;
       final owner = createOwner();
       await owner.init();
       preferences.pendingWrite = Completer<void>();
@@ -325,19 +341,16 @@ void main() {
       expect(await save, isFalse);
       expect(owner.reminderClosed, isFalse);
       expect(notifications, 0);
-      expect(await SharedPreferencesAsync().getBool(_closedKey), isFalse);
+      expect((await preferences.saved)[_closedKey], isTrue);
     },
   );
 
-  test(
-    'a real async storage initialization write failure skips prompting',
-    () async {
-      final preferences = _ControlledPreferences({})..failWrites = true;
-      SharedPreferencesAsyncPlatform.instance = preferences;
-      final owner = createOwner();
-      expect(await owner.init(), isFalse);
-      expect(owner.initialized, isFalse);
-      expect(owner.checkReminderEligibility(canShowDialog: true), isFalse);
-    },
-  );
+  test('a storage initialization write failure skips prompting', () async {
+    final preferences = _ControlledPreferences({})..failWrites = true;
+    PreferencesTestStore.instance = preferences;
+    final owner = createOwner();
+    expect(await owner.init(), isFalse);
+    expect(owner.initialized, isFalse);
+    expect(owner.checkReminderEligibility(canShowDialog: true), isFalse);
+  });
 }

@@ -15,10 +15,10 @@ import 'package:mhabit/providers/workflow/app_support.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
-import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 
 import '../../../support/adaptive_ui_theme.dart';
+
+import '../../../support/stub/shared_preferences.dart';
 
 const _info = AboutInfo(
   sourceCodeUrl: 'https://example.com/project',
@@ -33,30 +33,27 @@ const _info = AboutInfo(
   donateCryptoFTMAddr: '',
 );
 
-class _PendingPreferences extends SharedPreferencesAsync {
-  final ready = Completer<Map<String, Object?>>();
-  @override
-  Future<Map<String, Object?>> getAll({Set<String>? allowList}) => ready.future;
+class _PendingPreferences {
+  final ready = Completer<SharedPreferences>();
 }
 
-class _FailingSavePreferences extends SharedPreferencesAsync {
-  _FailingSavePreferences(this._shouldFail);
+class _FailingSavePreferences extends InMemoryPreferencesStore {
+  _FailingSavePreferences(this._shouldFail) : super.empty();
 
   final bool Function() _shouldFail;
 
   @override
-  Future<void> setBool(String key, bool value) async {
-    if (_shouldFail() && key == 'appSupport_doNotOpenAgain') {
-      throw StateError('save failed');
+  Future<bool> setValue(String type, String key, Object value) async {
+    if (_shouldFail() && key == 'flutter.appSupportReminder') {
+      return false;
     }
-    await super.setBool(key, value);
+    return super.setValue(type, key, value);
   }
 }
 
 void main() {
   setUp(() {
-    SharedPreferencesAsyncPlatform.instance =
-        InMemorySharedPreferencesAsync.empty();
+    PreferencesTestStore.instance = InMemoryPreferencesStore.empty();
     TestWidgetsFlutterBinding.ensureInitialized()
         .handleAppLifecycleStateChanged(AppLifecycleState.resumed);
   });
@@ -103,7 +100,8 @@ void main() {
       testWidgets(
         'Settings keeps GitHub and routes $distribution links on $platform',
         (tester) async {
-          final owner = AppSupportOwner()..setDistribution(distribution);
+          final owner = createTestAppSupportOwner()
+            ..setDistribution(distribution);
           addTearDown(owner.dispose);
           await owner.init();
           final opened = <Uri>[];
@@ -154,13 +152,15 @@ void main() {
             expect(opened, [target.resolveUrl(_info)]);
             expect(owner.reminderClosed, isFalse);
             expect(
-              await SharedPreferencesAsync().getBool(
+              (await SharedPreferences.getInstance()).reminderBool(
                 'appSupport_doNotOpenAgain',
               ),
               isFalse,
             );
             expect(
-              await SharedPreferencesAsync().getInt('appSupport_launches'),
+              (await SharedPreferences.getInstance()).reminderInt(
+                'appSupport_launches',
+              ),
               -9,
             );
             expect(action(target).hitTestable(), findsOneWidget);
@@ -170,7 +170,9 @@ void main() {
           expect(opened.last, Uri.parse(_info.sourceCodeUrl));
           expect(owner.reminderClosed, isTrue);
           expect(
-            await SharedPreferencesAsync().getBool('appSupport_doNotOpenAgain'),
+            (await SharedPreferences.getInstance()).reminderBool(
+              'appSupport_doNotOpenAgain',
+            ),
             isTrue,
           );
           expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
@@ -185,11 +187,11 @@ void main() {
     testWidgets(
       '$style mounted Settings follows channel changes without saving',
       (tester) async {
-        final owner = AppSupportOwner()
+        final owner = createTestAppSupportOwner()
           ..setDistribution(AppDistribution.github);
         addTearDown(owner.dispose);
         await owner.init();
-        final before = await SharedPreferencesAsync().getAll();
+        final before = (await SharedPreferences.getInstance()).getAll();
         var loads = 0;
         await mount(
           tester,
@@ -223,7 +225,7 @@ void main() {
             tester.element(find.byType(AppSettingSupportSection)),
             section,
           );
-          expect(await SharedPreferencesAsync().getAll(), before);
+          expect((await SharedPreferences.getInstance()).getAll(), before);
         }
         expect(loads, 1);
         expect(tester.takeException(), isNull);
@@ -234,11 +236,11 @@ void main() {
       testWidgets(
         '$style failed store link can retry and saves only after opening ($failsWithException)',
         (tester) async {
-          final owner = AppSupportOwner()
+          final owner = createTestAppSupportOwner()
             ..setDistribution(AppDistribution.appStore);
           addTearDown(owner.dispose);
           await owner.init();
-          final before = await SharedPreferencesAsync().getAll();
+          final before = (await SharedPreferences.getInstance()).getAll();
           var calls = 0;
           await mount(
             tester,
@@ -267,7 +269,7 @@ void main() {
             find.text('Unable to complete this action. Please try again.'),
             findsOneWidget,
           );
-          expect(await SharedPreferencesAsync().getAll(), before);
+          expect((await SharedPreferences.getInstance()).getAll(), before);
           expect(
             action(AppSupportAction.githubStar).hitTestable(),
             findsOneWidget,
@@ -281,7 +283,9 @@ void main() {
           );
           expect(owner.reminderClosed, isFalse);
           expect(
-            await SharedPreferencesAsync().getInt('appSupport_launches'),
+            (await SharedPreferences.getInstance()).reminderInt(
+              'appSupport_launches',
+            ),
             -9,
           );
           expect(tester.takeException(), isNull);
@@ -292,11 +296,11 @@ void main() {
     testWidgets(
       '$style pending store link permits independent clicks and preserves dismissal',
       (tester) async {
-        final owner = AppSupportOwner()
+        final owner = createTestAppSupportOwner()
           ..setDistribution(AppDistribution.googlePlay);
         addTearDown(owner.dispose);
         await owner.init();
-        final before = await SharedPreferencesAsync().getAll();
+        final before = (await SharedPreferences.getInstance()).getAll();
         final pending = Completer<bool>();
         var calls = 0;
         await mount(
@@ -321,14 +325,16 @@ void main() {
         await tester.pumpAndSettle();
         expectActionEnabled(tester, AppSupportAction.googlePlay);
         expectActionEnabled(tester, AppSupportAction.githubStar);
-        expect(await SharedPreferencesAsync().getAll(), before);
+        expect((await SharedPreferences.getInstance()).getAll(), before);
         await tester.tap(action(AppSupportAction.googlePlay));
         await tester.tap(action(AppSupportAction.githubStar));
         await tester.pumpAndSettle();
         expect(calls, 3);
         expect(owner.reminderClosed, isTrue);
         expect(
-          await SharedPreferencesAsync().getInt('appSupport_launches'),
+          (await SharedPreferences.getInstance()).reminderInt(
+            'appSupport_launches',
+          ),
           -9,
         );
         pending.complete(true);
@@ -336,11 +342,15 @@ void main() {
         expect(calls, 3);
         expect(owner.reminderClosed, isTrue);
         expect(
-          await SharedPreferencesAsync().getBool('appSupport_doNotOpenAgain'),
+          (await SharedPreferences.getInstance()).reminderBool(
+            'appSupport_doNotOpenAgain',
+          ),
           isTrue,
         );
         expect(
-          await SharedPreferencesAsync().getInt('appSupport_launches'),
+          (await SharedPreferences.getInstance()).reminderInt(
+            'appSupport_launches',
+          ),
           -19,
         );
         expect(tester.takeException(), isNull);
@@ -353,7 +363,9 @@ void main() {
       'Settings card waits for initialization completion (failure=$fail)',
       (tester) async {
         final preferences = _PendingPreferences();
-        final owner = AppSupportOwner(preferences: preferences);
+        final owner = createTestAppSupportOwner(
+          loadPreferences: () => preferences.ready.future,
+        );
         addTearDown(owner.dispose);
         await mount(
           tester,
@@ -374,7 +386,7 @@ void main() {
         if (fail) {
           preferences.ready.completeError(StateError('initialization failed'));
         } else {
-          preferences.ready.complete({});
+          preferences.ready.complete(await SharedPreferences.getInstance());
         }
         expect(await initialization, !fail);
         await tester.pumpAndSettle();
@@ -398,7 +410,9 @@ void main() {
     'configuration failure is handled while initialization is pending',
     (tester) async {
       final preferences = _PendingPreferences();
-      final owner = AppSupportOwner(preferences: preferences);
+      final owner = createTestAppSupportOwner(
+        loadPreferences: () => preferences.ready.future,
+      );
       addTearDown(owner.dispose);
       await mount(
         tester,
@@ -413,7 +427,7 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(find.byKey(const ValueKey('settings-support')), findsNothing);
       final initialization = owner.init();
-      preferences.ready.complete({});
+      preferences.ready.complete(await SharedPreferences.getInstance());
       await initialization;
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
@@ -424,7 +438,7 @@ void main() {
   testWidgets('Settings disposal ignores a late success without saving rate', (
     tester,
   ) async {
-    final owner = AppSupportOwner();
+    final owner = createTestAppSupportOwner();
     addTearDown(owner.dispose);
     await owner.init();
     final pending = Completer<bool>();
@@ -449,7 +463,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(owner.reminderClosed, isFalse);
     expect(
-      await SharedPreferencesAsync().getBool('appSupport_doNotOpenAgain'),
+      (await SharedPreferences.getInstance()).reminderBool(
+        'appSupport_doNotOpenAgain',
+      ),
       isFalse,
     );
   });
@@ -458,7 +474,7 @@ void main() {
     testWidgets('disposed owner ignores a late link result (fails=$fails)', (
       tester,
     ) async {
-      final owner = AppSupportOwner();
+      final owner = createTestAppSupportOwner();
       addTearDown(owner.dispose);
       await owner.init();
       final pending = Completer<bool>();
@@ -491,7 +507,9 @@ void main() {
       expect(find.text(l10n.appSupport_linkFailed), findsNothing);
       expect(find.text(l10n.appSupport_saveFailed), findsNothing);
       expect(
-        await SharedPreferencesAsync().getBool('appSupport_doNotOpenAgain'),
+        (await SharedPreferences.getInstance()).reminderBool(
+          'appSupport_doNotOpenAgain',
+        ),
         isFalse,
       );
       expect(tester.takeException(), isNull);
@@ -502,10 +520,10 @@ void main() {
     testWidgets(
       'donation modal blocks enabled Settings actions until dismissed $style',
       (tester) async {
-        final owner = AppSupportOwner();
+        final owner = createTestAppSupportOwner();
         addTearDown(owner.dispose);
         await owner.init();
-        final before = await SharedPreferencesAsync().getAll();
+        final before = (await SharedPreferences.getInstance()).getAll();
         var donations = 0;
         await mount(
           tester,
@@ -549,7 +567,7 @@ void main() {
         await tester.tapAt(const Offset(8, 8));
         await tester.pumpAndSettle();
         expect(find.byType(DonateContent), findsNothing);
-        expect(await SharedPreferencesAsync().getAll(), before);
+        expect((await SharedPreferences.getInstance()).getAll(), before);
         expect(tester.takeException(), isNull);
       },
     );
@@ -562,7 +580,7 @@ void main() {
         tester.view.physicalSize = Size(width, 900);
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
-        final owner = AppSupportOwner()
+        final owner = createTestAppSupportOwner()
           ..setDistribution(AppDistribution.appStore);
         addTearDown(owner.dispose);
         await owner.init();
@@ -598,7 +616,7 @@ void main() {
     testWidgets('Settings card order and filled actions are shared $style', (
       tester,
     ) async {
-      final owner = AppSupportOwner();
+      final owner = createTestAppSupportOwner();
       addTearDown(owner.dispose);
       await owner.init();
       final opened = <Uri>[];
@@ -675,7 +693,7 @@ void main() {
     testWidgets(
       'reminder dismissal and Reset keep the Settings card visible $style',
       (tester) async {
-        final owner = AppSupportOwner();
+        final owner = createTestAppSupportOwner();
         addTearDown(owner.dispose);
         await owner.init();
         await owner.recordSettingsSupportResult();
@@ -711,8 +729,8 @@ void main() {
     testWidgets(
       'Settings actions use the current owner after replacement $style',
       (tester) async {
-        final first = AppSupportOwner();
-        final second = AppSupportOwner();
+        final first = createTestAppSupportOwner();
+        final second = createTestAppSupportOwner();
         addTearDown(first.dispose);
         addTearDown(second.dispose);
         await first.init();
@@ -754,7 +772,7 @@ void main() {
     testWidgets(
       'Settings success persists and the card stays visible after restart $style',
       (tester) async {
-        final owner = AppSupportOwner();
+        final owner = createTestAppSupportOwner();
         addTearDown(owner.dispose);
         await owner.init();
         final action = Completer<bool>();
@@ -782,13 +800,15 @@ void main() {
         action.complete(true);
         await tester.pumpAndSettle();
         expect(
-          await SharedPreferencesAsync().getBool('appSupport_doNotOpenAgain'),
+          (await SharedPreferences.getInstance()).reminderBool(
+            'appSupport_doNotOpenAgain',
+          ),
           isTrue,
         );
         expect(owner.reminderClosed, isTrue);
         expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
         await tester.pumpWidget(const SizedBox());
-        final restored = AppSupportOwner();
+        final restored = createTestAppSupportOwner();
         addTearDown(restored.dispose);
         await restored.init();
         await mount(tester, section(restored), style: style);
@@ -804,7 +824,8 @@ void main() {
       (tester) async {
         var failSave = false;
         final preferences = _FailingSavePreferences(() => failSave);
-        final owner = AppSupportOwner(preferences: preferences);
+        PreferencesTestStore.instance = preferences;
+        final owner = createTestAppSupportOwner();
         addTearDown(owner.dispose);
         expect(await owner.init(), isTrue);
         failSave = true;
@@ -843,7 +864,7 @@ void main() {
     testWidgets(
       'Settings failure retries and other actions preserve reminder history $style',
       (tester) async {
-        final owner = AppSupportOwner();
+        final owner = createTestAppSupportOwner();
         addTearDown(owner.dispose);
         await owner.init();
         var calls = 0;
@@ -881,7 +902,9 @@ void main() {
         expect(calls, 3);
         expect(owner.reminderClosed, isFalse);
         expect(
-          await SharedPreferencesAsync().getBool('appSupport_doNotOpenAgain'),
+          (await SharedPreferences.getInstance()).reminderBool(
+            'appSupport_doNotOpenAgain',
+          ),
           isFalse,
         );
       },

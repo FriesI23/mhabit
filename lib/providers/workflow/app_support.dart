@@ -2,13 +2,14 @@
 // Licensed under the Apache License, Version 2.0.
 
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../common/async.dart';
 import '../../common/distribution.dart';
 import '../../logging/helper.dart';
 import '../../models/app_support.dart';
 import '../../models/app_sync_server.dart';
+import '../../storage/profile/handlers.dart';
+import '../../storage/profile_provider.dart';
 import '../../utils/app_clock.dart';
 import '../support/about_info.dart';
 import '../support/commons.dart';
@@ -92,25 +93,25 @@ extension AppSupportActionNavigation on AppSupportAction {
 
 /// Owns the reminder for one foreground app lifetime, independently of routes.
 ///
-/// Preserves the existing reminder dates, launch counts and dismissal keys.
+/// Stores reminder dates, launch counts and dismissal in the profile preferences.
 /// Serializes event writes and Reset, publishes reliably saved state,
 /// and keeps explicit Settings support separate from the automatic reminder guard.
 class AppSupportOwner extends ChangeNotifier
+    with ProfileHandlerLoadedMixin
     implements AsyncInitialization, ProviderMounted {
   AppSupportOwner({
-    this._preferences,
+    ProfileViewModel? profile,
     DateTime Function()? now,
     Future<AboutInfo> Function()? loadInfo,
   }) : _now = now ?? AppClock().now,
-       _loadInfo = loadInfo ?? loadAboutInfo;
+       _loadInfo = loadInfo ?? loadAboutInfo {
+    if (profile != null) updateProfile(profile);
+  }
 
-  static const _minimumDateKey = 'appSupport_minimumDate';
-  static const _launchesKey = 'appSupport_launches';
-  static const _closedKey = 'appSupport_doNotOpenAgain';
   static const _reminderDelay = Duration(days: 7);
   static const _requiredLaunches = 10;
 
-  SharedPreferencesAsync? _preferences;
+  AppSupportReminderProfileHandler? _reminder;
   final DateTime Function() _now;
   final Future<AboutInfo> Function() _loadInfo;
   AppDistribution _distribution = defaultAppDistribution;
@@ -128,8 +129,11 @@ class AppSupportOwner extends ChangeNotifier
   bool _reminderClosed = false;
   Future<void> _pendingPreferenceWrites = Future.value();
 
-  SharedPreferencesAsync get _storage =>
-      _preferences ??= SharedPreferencesAsync();
+  @override
+  void updateProfile(ProfileViewModel newProfile) {
+    super.updateProfile(newProfile);
+    _reminder = newProfile.getHandler<AppSupportReminderProfileHandler>();
+  }
 
   @override
   bool get mounted => _mounted;
@@ -251,16 +255,13 @@ class AppSupportOwner extends ChangeNotifier
   Future<bool> _init() async {
     if (!mounted) return false;
     try {
-      final values = await _storage.getAll(
-        allowList: {_minimumDateKey, _launchesKey, _closedKey},
-      );
-      if (!mounted) return false;
-      final storedDate = values[_minimumDateKey] as int?;
-      final minimumDate = storedDate == null
-          ? _now().add(_reminderDelay)
-          : DateTime.fromMillisecondsSinceEpoch(storedDate, isUtc: true);
-      final launches = (values[_launchesKey] as int? ?? 0) + 1;
-      final closed = values[_closedKey] as bool? ?? false;
+      if (!await profile.init() || !mounted) return false;
+      _reminder = profile.getHandler<AppSupportReminderProfileHandler>();
+      if (_reminder == null) return false;
+      final history = _reminder!.get();
+      final minimumDate = history?.minimumDate ?? _now().add(_reminderDelay);
+      final launches = (history?.launches ?? 0) + 1;
+      final closed = history?.closed ?? false;
       if (!await _saveReminderHistory(minimumDate, launches, closed)) {
         return false;
       }
@@ -401,18 +402,18 @@ class AppSupportOwner extends ChangeNotifier
         }
       });
 
-  /// Publishes state only after all three legacy keys have been saved.
+  /// Publishes state only after the complete reminder history has been saved.
   Future<bool> _saveReminderHistory(
     DateTime minimumDate,
     int launches,
     bool closed,
   ) async {
-    await _storage.setInt(_minimumDateKey, minimumDate.millisecondsSinceEpoch);
-    if (!mounted) return false;
-    await _storage.setInt(_launchesKey, launches);
-    if (!mounted) return false;
-    await _storage.setBool(_closedKey, closed);
-    if (!mounted) return false;
+    final saved = await _reminder!.set((
+      minimumDate: minimumDate,
+      launches: launches,
+      closed: closed,
+    ));
+    if (!saved || !mounted) return false;
     _nextReminderDate = minimumDate;
     _launchCount = launches;
     _reminderClosed = closed;

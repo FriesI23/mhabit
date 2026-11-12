@@ -11,12 +11,8 @@ enum AppSupportNativeStage { later, never }
 class AppSupportNativePreferences {
   AppSupportNativePreferences(this.preferences);
 
-  final SharedPreferencesAsync preferences;
-  static const reminderKeys = {
-    'appSupport_minimumDate',
-    'appSupport_launches',
-    'appSupport_doNotOpenAgain',
-  };
+  final SharedPreferences preferences;
+  static const reminderKeys = {'appSupportReminder'};
   static const _stageKey = 'appSupportProbe_stage';
   static const _snapshotKey = 'appSupportProbe_snapshot';
 
@@ -33,49 +29,69 @@ class AppSupportNativePreferences {
   }
 
   Future<AppSupportNativeStage?> readStage() async {
-    final value = await preferences.getString(_stageKey);
+    await preferences.reload();
+    final value = preferences.getString(_stageKey);
     return value == null ? null : AppSupportNativeStage.values.byName(value);
   }
 
+  /// Saves progress, throwing if the stage could not be persisted.
   Future<void> saveStage(AppSupportNativeStage stage) =>
-      preferences.setString(_stageKey, stage.name);
+      _requireSaved(_stageKey, preferences.setString(_stageKey, stage.name));
+
+  Future<void> _requireSaved(String key, Future<bool> operation) async {
+    if (!await operation) {
+      throw StateError('Could not persist probe preference "$key"');
+    }
+  }
 
   /// Recovers an interrupted first run before taking a new snapshot.
   Future<void> begin() async {
     await restore();
-    await preferences.setString(
+    await _requireSaved(
       _snapshotKey,
-      jsonEncode(await preferences.getAll(allowList: reminderKeys)),
+      preferences.setString(
+        _snapshotKey,
+        jsonEncode({
+          for (final key in reminderKeys)
+            if (preferences.containsKey(key)) key: preferences.get(key),
+        }),
+      ),
     );
-    await preferences.clear(allowList: reminderKeys);
+    for (final key in reminderKeys) {
+      await _requireSaved(key, preferences.remove(key));
+    }
   }
 
   /// Leaves the snapshot in place if restoring a value fails, allowing retry.
   Future<void> restore() async {
-    final raw = await preferences.getString(_snapshotKey);
+    // Failed writes and removals already changed the Dart cache. A retry must
+    // read the persisted snapshot before attempting recovery again.
+    await preferences.reload();
+    final raw = preferences.getString(_snapshotKey);
     if (raw != null) {
       final Map<String, dynamic> snapshot = jsonDecode(raw);
-      await preferences.clear(allowList: reminderKeys);
+      for (final key in reminderKeys) {
+        await _requireSaved(key, preferences.remove(key));
+      }
       for (final entry in snapshot.entries) {
         if (!reminderKeys.contains(entry.key)) {
           throw StateError('Unknown probe key');
         }
-        switch (entry.value) {
-          case final bool value:
-            await preferences.setBool(entry.key, value);
-          case final int value:
-            await preferences.setInt(entry.key, value);
-          case final double value:
-            await preferences.setDouble(entry.key, value);
-          case final String value:
-            await preferences.setString(entry.key, value);
-          case final List<dynamic> value:
-            await preferences.setStringList(entry.key, value.cast<String>());
-          default:
-            throw StateError('Unsupported saved preference');
-        }
+        final saved = switch (entry.value) {
+          final bool value => preferences.setBool(entry.key, value),
+          final int value => preferences.setInt(entry.key, value),
+          final double value => preferences.setDouble(entry.key, value),
+          final String value => preferences.setString(entry.key, value),
+          final List<dynamic> value => preferences.setStringList(
+            entry.key,
+            value.cast<String>(),
+          ),
+          _ => throw StateError('Unsupported saved preference'),
+        };
+        await _requireSaved(entry.key, saved);
       }
     }
-    await preferences.clear(allowList: {_stageKey, _snapshotKey});
+    await _requireSaved(_stageKey, preferences.remove(_stageKey));
+    await _requireSaved(_snapshotKey, preferences.remove(_snapshotKey));
   }
 }

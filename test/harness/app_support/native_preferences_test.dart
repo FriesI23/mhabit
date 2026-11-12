@@ -2,45 +2,58 @@
 // Licensed under the Apache License, Version 2.0.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/storage/profile/handlers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
-import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 
+import '../../support/stub/shared_preferences.dart';
 import 'native_preferences.dart';
 
-final class _Preferences extends InMemorySharedPreferencesAsync {
+final class _Preferences extends InMemoryPreferencesStore {
   _Preferences(super.data) : super.withData();
-  bool failNextInt = false;
+  String? failNextSet;
+  String? failNextRemove;
+  bool throwOnFailure = false;
+
+  bool _fail() {
+    if (throwOnFailure) throw StateError('interrupted preference update');
+    return false;
+  }
 
   @override
-  Future<bool> setInt(
-    String key,
-    int value,
-    SharedPreferencesOptions options,
-  ) async {
-    if (failNextInt) {
-      failNextInt = false;
-      throw StateError('interrupted restore');
+  Future<bool> setValue(String type, String key, Object value) async {
+    if (key == failNextSet) {
+      failNextSet = null;
+      return _fail();
     }
-    return super.setInt(key, value, options);
+    return super.setValue(type, key, value);
+  }
+
+  @override
+  Future<bool> remove(String key) async {
+    if (key == failNextRemove) {
+      failNextRemove = null;
+      return _fail();
+    }
+    return super.remove(key);
   }
 }
 
 void main() {
   const original = <String, Object>{
+    'appSupport_minimumDate': 0,
     'appSupport_launches': 42,
     'appSupport_doNotOpenAgain': true,
     'unrelated': 'keep',
   };
   late _Preferences backend;
-  late SharedPreferencesAsync preferences;
+  late SharedPreferences preferences;
   late AppSupportNativePreferences fixture;
-  setUp(() {
-    final previous = SharedPreferencesAsyncPlatform.instance;
-    addTearDown(() => SharedPreferencesAsyncPlatform.instance = previous);
+  setUp(() async {
+    final previous = PreferencesTestStore.instance;
+    addTearDown(() => PreferencesTestStore.instance = previous);
     backend = _Preferences(original);
-    SharedPreferencesAsyncPlatform.instance = backend;
-    preferences = SharedPreferencesAsync();
+    PreferencesTestStore.instance = backend;
+    preferences = (await SharedPreferences.getInstance());
     fixture = AppSupportNativePreferences(preferences);
   });
 
@@ -68,14 +81,21 @@ void main() {
     'three-run fixture restores original values and removes its metadata',
     () async {
       await fixture.begin();
-      expect(await preferences.getInt('appSupport_launches'), isNull);
-      await preferences.setInt('appSupport_launches', 10);
+      expect(
+        AppSupportReminderProfileHandler(preferences).get()?.launches,
+        isNull,
+      );
+      await AppSupportReminderProfileHandler(
+        preferences,
+      ).set((minimumDate: DateTime.utc(1970), launches: 10, closed: false));
       await fixture.saveStage(AppSupportNativeStage.later);
-      final nextProcess = AppSupportNativePreferences(SharedPreferencesAsync());
+      final nextProcess = AppSupportNativePreferences(
+        (await SharedPreferences.getInstance()),
+      );
       expect(await nextProcess.readStage(), AppSupportNativeStage.later);
       await nextProcess.saveStage(AppSupportNativeStage.never);
       await nextProcess.restore();
-      expect(await preferences.getAll(), original);
+      expect(preferences.getAll(), original);
     },
   );
 
@@ -83,19 +103,95 @@ void main() {
     'interrupted first run cannot overwrite the original snapshot',
     () async {
       await fixture.begin();
-      await preferences.setInt('appSupport_launches', 99);
+      await AppSupportReminderProfileHandler(
+        preferences,
+      ).set((minimumDate: DateTime.utc(1970), launches: 99, closed: false));
       expect(await fixture.readStage(), isNull);
       await fixture.begin();
       await fixture.restore();
-      expect(await preferences.getAll(), original);
+      expect(preferences.getAll(), original);
     },
   );
 
-  test('failed restoration retains a recoverable original snapshot', () async {
-    await fixture.begin();
-    backend.failNextInt = true;
-    await expectLater(fixture.restore(), throwsStateError);
-    await fixture.restore();
-    expect(await preferences.getAll(), original);
-  });
+  for (final failure in ['false', 'exception']) {
+    test('snapshot write $failure preserves original preferences', () async {
+      backend
+        ..failNextSet = 'flutter.appSupportProbe_snapshot'
+        ..throwOnFailure = failure == 'exception';
+      await expectLater(fixture.begin(), throwsStateError);
+      expect(await backend.saved, original);
+      await fixture.restore();
+      expect(await backend.saved, original);
+    });
+
+    test('initial removal $failure retains the recovery snapshot', () async {
+      backend
+        ..failNextRemove = 'flutter.appSupportReminder'
+        ..throwOnFailure = failure == 'exception';
+      await expectLater(fixture.begin(), throwsStateError);
+      expect(
+        await backend.saved,
+        containsPair('appSupportProbe_snapshot', isA<String>()),
+      );
+      await fixture.restore();
+      expect(await backend.saved, original);
+    });
+
+    test('stage write $failure cannot publish cached progress', () async {
+      await fixture.begin();
+      backend
+        ..failNextSet = 'flutter.appSupportProbe_stage'
+        ..throwOnFailure = failure == 'exception';
+      await expectLater(
+        fixture.saveStage(AppSupportNativeStage.later),
+        throwsStateError,
+      );
+      expect(await fixture.readStage(), isNull);
+      await fixture.restore();
+      expect(await backend.saved, original);
+    });
+
+    for (final (operation, key) in [
+      ('remove', 'flutter.appSupportReminder'),
+      ('set', 'flutter.appSupportReminder'),
+      ('remove', 'flutter.appSupportProbe_stage'),
+      ('remove', 'flutter.appSupportProbe_snapshot'),
+    ]) {
+      test('restore $operation $key $failure remains recoverable', () async {
+        await fixture.begin();
+        await AppSupportReminderProfileHandler(
+          preferences,
+        ).set((minimumDate: DateTime.utc(1970), launches: 99, closed: false));
+        await fixture.saveStage(AppSupportNativeStage.later);
+        backend.throwOnFailure = failure == 'exception';
+        if (operation == 'set') {
+          backend.failNextSet = key;
+        } else {
+          backend.failNextRemove = key;
+        }
+        await expectLater(fixture.restore(), throwsStateError);
+        expect(
+          await backend.saved,
+          containsPair('appSupportProbe_snapshot', isA<String>()),
+        );
+        // Retry with the same SharedPreferences cache after the failed update.
+        await fixture.restore();
+        expect(await backend.saved, original);
+      });
+    }
+
+    test('restart recovers a pending snapshot after write $failure', () async {
+      await fixture.begin();
+      backend
+        ..failNextSet = 'flutter.appSupportReminder'
+        ..throwOnFailure = failure == 'exception';
+      await expectLater(fixture.restore(), throwsStateError);
+      SharedPreferences.resetStatic();
+      final restarted = AppSupportNativePreferences(
+        await SharedPreferences.getInstance(),
+      );
+      await restarted.restore();
+      expect(await backend.saved, original);
+    });
+  }
 }

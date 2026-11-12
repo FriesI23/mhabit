@@ -16,11 +16,11 @@ import 'package:mhabit/providers/workflow/app_support.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
-import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 
 import '../../../support/adaptive_ui_theme.dart';
 import '../../../support/stub/about_info.dart';
+
+import '../../../support/stub/shared_preferences.dart';
 
 void main() {
   Future<BuildContext> mountOwner(
@@ -67,17 +67,17 @@ void main() {
       testWidgets(
         '$style open preview keeps GitHub and follows every channel before store=$storeSelection',
         (tester) async {
-          final previous = SharedPreferencesAsyncPlatform.instance;
-          SharedPreferencesAsyncPlatform.instance =
-              InMemorySharedPreferencesAsync.empty();
-          addTearDown(() => SharedPreferencesAsyncPlatform.instance = previous);
-          final owner = AppSupportOwner(loadInfo: () async => stubAboutInfo())
-            ..setDistribution(AppDistribution.github);
+          final previous = PreferencesTestStore.instance;
+          PreferencesTestStore.instance = InMemoryPreferencesStore.empty();
+          addTearDown(() => PreferencesTestStore.instance = previous);
+          final owner = createTestAppSupportOwner(
+            loadInfo: () async => stubAboutInfo(),
+          )..setDistribution(AppDistribution.github);
           addTearDown(owner.dispose);
           final controller = AppSupportDialogController();
           addTearDown(controller.cancel);
           final caller = await mountOwner(tester, owner, style: style);
-          final before = await SharedPreferencesAsync().getAll();
+          final before = (await SharedPreferences.getInstance()).getAll();
           final destinations = <Uri>[];
           AppSupportResult? result;
           final preview = owner.previewDialog(
@@ -129,7 +129,7 @@ void main() {
               expect(find.text('Open Flathub'), findsNothing);
             }
             expect(tester.element(find.byType(AdaptiveDialog)), dialog);
-            expect(await SharedPreferencesAsync().getAll(), before);
+            expect((await SharedPreferences.getInstance()).getAll(), before);
           }
           owner.setDistribution(AppDistribution.appStore);
           await tester.pumpAndSettle();
@@ -147,7 +147,7 @@ void main() {
           );
           expect(destinations, [selected.resolveUrl(stubAboutInfo())]);
           expect(owner.initializationComplete, isFalse);
-          expect(await SharedPreferencesAsync().getAll(), before);
+          expect((await SharedPreferences.getInstance()).getAll(), before);
           expect(tester.takeException(), isNull);
         },
       );
@@ -157,15 +157,15 @@ void main() {
       testWidgets(
         '$style store preview closes before link $outcome and never saves history',
         (tester) async {
-          final previous = SharedPreferencesAsyncPlatform.instance;
-          SharedPreferencesAsyncPlatform.instance =
-              InMemorySharedPreferencesAsync.empty();
-          addTearDown(() => SharedPreferencesAsyncPlatform.instance = previous);
-          final owner = AppSupportOwner(loadInfo: () async => stubAboutInfo())
-            ..setDistribution(AppDistribution.googlePlay);
+          final previous = PreferencesTestStore.instance;
+          PreferencesTestStore.instance = InMemoryPreferencesStore.empty();
+          addTearDown(() => PreferencesTestStore.instance = previous);
+          final owner = createTestAppSupportOwner(
+            loadInfo: () async => stubAboutInfo(),
+          )..setDistribution(AppDistribution.googlePlay);
           addTearDown(owner.dispose);
           final caller = await mountOwner(tester, owner, style: style);
-          final before = await SharedPreferencesAsync().getAll();
+          final before = (await SharedPreferences.getInstance()).getAll();
           final destinations = <Uri>[];
           var closedBeforeOpen = false;
           AppSupportResult? result;
@@ -211,7 +211,7 @@ void main() {
             find.text(L10n.of(caller)!.appSupport_linkFailed),
             outcome == 'opened' ? findsNothing : findsOneWidget,
           );
-          expect(await SharedPreferencesAsync().getAll(), before);
+          expect((await SharedPreferences.getInstance()).getAll(), before);
           expect(tester.takeException(), isNull);
         },
       );
@@ -224,11 +224,10 @@ void main() {
         tester.view.physicalSize = const Size(320, 900);
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
-        final previous = SharedPreferencesAsyncPlatform.instance;
-        SharedPreferencesAsyncPlatform.instance =
-            InMemorySharedPreferencesAsync.empty();
-        addTearDown(() => SharedPreferencesAsyncPlatform.instance = previous);
-        final owner = AppSupportOwner()
+        final previous = PreferencesTestStore.instance;
+        PreferencesTestStore.instance = InMemoryPreferencesStore.empty();
+        addTearDown(() => PreferencesTestStore.instance = previous);
+        final owner = createTestAppSupportOwner()
           ..setDistribution(AppDistribution.microsoftStore);
         addTearDown(owner.dispose);
         final caller = await mountOwner(
