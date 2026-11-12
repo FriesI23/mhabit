@@ -2021,16 +2021,9 @@
     "@appSupport_message": {
         "description": "Shared support message for all distribution channels. Keep this text independent of the destination platform."
     },
-    "appSupport_open": "Go to {platform}",
-    "@appSupport_open": {
-        "description": "Opens the support destination for the current distribution channel.",
-        "placeholders": {
-            "platform": {
-                "type": "String",
-                "description": "Display name of the destination, such as GitHub or Google Play.",
-                "example": "GitHub"
-            }
-        }
+    "appSupport_starOnGitHub": "Star on GitHub",
+    "@appSupport_starOnGitHub": {
+        "description": "Short button label that opens the GitHub repository for the user to manually click Star. Opening the link does not automatically star the repository."
     },
     "appSupport_later": "Remind me later",
     "@appSupport_later": {},

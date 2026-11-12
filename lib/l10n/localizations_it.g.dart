@@ -2345,9 +2345,7 @@ class L10nIt extends L10n {
       'Your support helps improve Table Habit and reach more people.';
 
   @override
-  String appSupport_open(String platform) {
-    return 'Go to $platform';
-  }
+  String get appSupport_starOnGitHub => 'Star on GitHub';
 
   @override
   String get appSupport_later => 'Remind me later';

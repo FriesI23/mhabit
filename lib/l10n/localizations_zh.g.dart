@@ -2183,9 +2183,7 @@ class L10nZh extends L10n {
   String get appSupport_message => '你的支持能帮助 Table Habit 持续改进，让更多人发现它。';
 
   @override
-  String appSupport_open(String platform) {
-    return '前往 $platform';
-  }
+  String get appSupport_starOnGitHub => 'GitHub Star';
 
   @override
   String get appSupport_later => '稍后提醒';

@@ -48,6 +48,10 @@ class $AssetsIconsGen {
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// File path: assets/images/app-support-coffee.gif
+  AssetGenImage get appSupportCoffee =>
+      const AssetGenImage('assets/images/app-support-coffee.gif');
+
   /// File path: assets/images/donate-alipay.jpg
   AssetGenImage get donateAlipay =>
       const AssetGenImage('assets/images/donate-alipay.jpg');
@@ -78,6 +82,7 @@ class $AssetsImagesGen {
 
   /// List of all assets
   List<dynamic> get values => [
+    appSupportCoffee,
     donateAlipay,
     donateWechatpay,
     emptyHabits,

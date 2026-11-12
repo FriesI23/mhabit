@@ -52,10 +52,15 @@ opens a browser, or starts a payment flow.
 
 Use the controls to switch design style, theme, language, reduced motion and
 simulated launch failure. Check automatic paging, swipe timer reset, the Settings
-card, background/resume and dialog dismissal before actions. Dialog stars should rise and fall
-in two overlapping waves, return to a straight row and stay still when paging
-away and back; opening a new dialog starts a fresh sequence. Settings stars stay
-static. The host logs
+card, background/resume and dialog dismissal before actions. Settings and dialog
+cards show a top hero followed by the title, message and filled icon actions, in
+support, donation and contribution order. The Settings card surface stays
+centered at a maximum width of 500 logical pixels. Stars rise and fall in two
+overlapping waves, then return to a straight row; coffee plays a single finite
+sequence. Leaving the current card pauses its hero, returning continues it and
+completed sequences stay still. The four-second paging interval is unchanged,
+so coffee can finish on its next visit. Reduced motion holds the heroes still.
+Opening a new dialog starts independent sequences. The host logs
 `SUPPORT_CAROUSEL_HOST_READY`, selected actions and dialog outcomes. Its mock
 launcher and donation callback do not prove real browser/payment integration.
 After inspection, rebuild and reinstall the normal `lib/main.dart` target.

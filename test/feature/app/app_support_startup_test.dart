@@ -388,7 +388,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Go to GitHub'));
+      await tester.tap(find.text('Star on GitHub'));
       await tester.pump();
       navigator.currentState!.push(
         MaterialPageRoute<void>(

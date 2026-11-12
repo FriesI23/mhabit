@@ -3681,11 +3681,11 @@ abstract class L10n {
   /// **'Your support helps improve Table Habit and reach more people.'**
   String get appSupport_message;
 
-  /// Opens the support destination for the current distribution channel.
+  /// Short button label that opens the GitHub repository for the user to manually click Star. Opening the link does not automatically star the repository.
   ///
   /// In en, this message translates to:
-  /// **'Go to {platform}'**
-  String appSupport_open(String platform);
+  /// **'Star on GitHub'**
+  String get appSupport_starOnGitHub;
 
   /// No description provided for @appSupport_later.
   ///

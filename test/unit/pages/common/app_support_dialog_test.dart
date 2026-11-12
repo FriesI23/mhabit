@@ -92,12 +92,7 @@ void main() {
           await mount(tester);
           final result = open();
           await tester.pumpAndSettle();
-          expect(
-            tester
-                .widget<AppSupportCarousel>(find.byType(AppSupportCarousel))
-                .animateStars,
-            isTrue,
-          );
+          expect(find.byType(AppSupportCarousel), findsOneWidget);
           await tester.sendKeyEvent(LogicalKeyboardKey.tab);
           await tester.pump();
           await tester.sendKeyEvent(LogicalKeyboardKey.enter);
@@ -128,7 +123,7 @@ void main() {
           );
           expect(find.byType(BottomSheet), findsNothing);
           expect(find.byType(CloseButton), findsNothing);
-          await tester.tap(find.text('Go to GitHub'));
+          await tester.tap(find.text('Star on GitHub'));
           await tester.pumpAndSettle();
           expect(find.byType(AdaptiveDialog), findsNothing);
           expect(calls, 1);
@@ -150,7 +145,7 @@ void main() {
                 },
               );
               await tester.pumpAndSettle();
-              await tester.tap(find.text('Go to GitHub'));
+              await tester.tap(find.text('Star on GitHub'));
               await tester.pumpAndSettle();
               expect(await result, AppSupportPromptResult.actionFailed);
               expect(find.byType(AdaptiveDialog), findsNothing);
@@ -241,7 +236,7 @@ void main() {
               action: (_) => pending.future,
             );
             await tester.pumpAndSettle();
-            await tester.tap(find.text('Go to GitHub'));
+            await tester.tap(find.text('Star on GitHub'));
             await tester.pumpAndSettle();
             controller.abort();
             pending.complete(true);
@@ -276,14 +271,12 @@ void main() {
               },
             );
             await tester.pumpAndSettle();
-            // Existing QR donation methods make a donation card available.
-            await tester.drag(find.byType(PageView), const Offset(-500, 0));
-            await tester.pumpAndSettle();
-            await tester.drag(find.byType(PageView), const Offset(-500, 0));
+            // Existing QR donation methods make page one the donation card.
+            await tester.tap(find.byKey(const ValueKey('app-support-page-1')));
             await tester.pumpAndSettle();
             await tester.tap(
               find.widgetWithText(
-                style == AdaptiveStyle.apple ? CupertinoButton : TextButton,
+                style == AdaptiveStyle.apple ? CupertinoButton : FilledButton,
                 'Donate',
               ),
             );
@@ -311,8 +304,8 @@ void main() {
             await tester.pumpAndSettle();
             expect(tester.takeException(), isNull);
             final label = locale.languageCode == 'zh'
-                ? '前往 GitHub'
-                : 'Go to GitHub';
+                ? 'GitHub Star'
+                : 'Star on GitHub';
             await tester.ensureVisible(find.text(label));
             await tester.pumpAndSettle();
             await tester.tap(find.text(label));

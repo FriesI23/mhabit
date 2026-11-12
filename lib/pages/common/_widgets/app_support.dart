@@ -6,28 +6,24 @@ import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart' show CupertinoButton;
 import 'package:flutter/foundation.dart'
-    show listEquals, precisionErrorTolerance;
+    show ValueListenable, listEquals, precisionErrorTolerance;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_icons/simple_icons.dart';
 
 import '../../../common/app_info.dart';
 import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
 import '../../../providers/support/about_info.dart';
 import '../../../providers/workflow/app_support.dart';
+import '../../../widgets/widgets.dart';
 import 'donate_dialog.dart';
 
 /// Display configuration shared by the dialog and Settings cards.
 ///
-/// Figure 1. Filtered page order (omitted pages leave no empty slots):
-/// ```text
-/// Support -> Participate -> Donate
-/// source     source or      visible and at least one
-/// URI        feedback URI   available DonateConfig method
-/// ```
 /// [AboutInfo] validates link targets; [DonateConfig] owns donation methods.
 /// An empty list hides the carousel; one card needs no pagination or autoplay.
 class AppSupportContent {
@@ -38,11 +34,11 @@ class AppSupportContent {
 
   List<_AppSupportCardKind> _cards(String donationWays) => [
     if (info.sourceCodeUri != null) _AppSupportCardKind.support,
-    if (info.sourceCodeUri != null || info.issueTrackerUri != null)
-      _AppSupportCardKind.participate,
     if (!hideDonate &&
         DonateConfig(info: info).hasAvailableMethod(donationWays))
       _AppSupportCardKind.donate,
+    if (info.sourceCodeUri != null || info.issueTrackerUri != null)
+      _AppSupportCardKind.participate,
   ];
 
   /// Whether a host has any configured cards to display.
@@ -61,12 +57,6 @@ class AppSupportContent {
 /// caller's context must remain mounted throughout the operation. A supplied
 /// [controller] is single-use; its host must abort it on destruction.
 ///
-/// Figure 2. Dialog closure and action completion are separate milestones:
-/// ```text
-/// business selection -> pop -> route.completed -> execute -> result
-/// ordinary dismissal -> later
-/// host invalidation  -> aborted (including an action's late result)
-/// ```
 /// The caller decides whether to persist the result, allowing previews to use
 /// the same interaction without changing reminder history.
 Future<AppSupportPromptResult> showAppSupportDialog({
@@ -196,7 +186,6 @@ class _AppSupportDialog extends StatelessWidget {
           width: 320,
           child: AppSupportCarousel(
             content: content,
-            animateStars: true,
             onSelected: controller._select,
           ),
         ),
@@ -364,15 +353,6 @@ class _AppSupportPromptState extends State<AppSupportPrompt> {
 
 /// Shared rendering and local playback. Business actions belong to the host.
 ///
-/// Figure 3. One current card, with optional clickable pagination:
-/// ```text
-/// +---------------------------+
-/// | Title / message           |
-/// | *  *  *  *  * (Support)   |
-/// | Business action button(s) |
-/// +---------------------------+
-///          o  (o)  o
-/// ```
 /// Each instance owns its page controller, finite star animation and one-shot
 /// timer. Visibility combines [active], app lifecycle, ancestor Navigator routes,
 /// [TickerMode] and viewport intersection. Hidden instances cancel their timer;
@@ -380,6 +360,8 @@ class _AppSupportPromptState extends State<AppSupportPrompt> {
 /// Pointer activity and scrolling suspend autoplay until the page settles.
 /// Keyboard input resets the interval; retaining focus or hovering does not
 /// pause it. Accessible navigation and reduced motion disable autoplay.
+/// Decorative animations run once per instance, only on their current visible
+/// page. Leaving the page pauses progress; returning does not restart it.
 class AppSupportCarousel extends StatefulWidget {
   const AppSupportCarousel({
     super.key,
@@ -387,7 +369,6 @@ class AppSupportCarousel extends StatefulWidget {
     required this.onSelected,
     this.active = true,
     this.enabled = true,
-    this.animateStars = false,
   });
 
   final AppSupportContent content;
@@ -401,11 +382,6 @@ class AppSupportCarousel extends StatefulWidget {
   /// Enables business and pagination buttons; independent of playback [active].
   final bool enabled;
 
-  /// Runs two overlapping star waves once during this carousel instance.
-  /// Dialogs opt in; Settings keeps the stars static. Page changes do not replay
-  /// the sequence, and reduced motion leaves all five stars at their baseline.
-  final bool animateStars;
-
   @override
   State<AppSupportCarousel> createState() => _AppSupportCarouselState();
 }
@@ -413,6 +389,7 @@ class AppSupportCarousel extends StatefulWidget {
 class _AppSupportCarouselState extends State<AppSupportCarousel>
     with SingleTickerProviderStateMixin {
   late final AnimationController _stars;
+  final _heroPlayback = ValueNotifier<_AppSupportCardKind?>(null);
   // Paging belongs to this instance rather than its ancestor's PageStorage.
   late final _pages = PageController(
     keepPage: false,
@@ -564,11 +541,15 @@ class _AppSupportCarouselState extends State<AppSupportCarousel>
 
   void _updatePlayback() {
     if (!mounted) return;
+    final hero = _visible && !_reduced && !_dragging && _cards.isNotEmpty
+        ? _cards[_index]
+        : null;
+    // Lifecycle and geometry listeners need to update the images too, without
+    // rebuilding the whole carousel or relying on Timer/TickerMode alone.
+    _heroPlayback.value = hero;
     if (_reduced) {
       if (_stars.value != 1) _stars.value = 1;
-    } else if (widget.animateStars &&
-        _visible &&
-        _cards.contains(_AppSupportCardKind.support)) {
+    } else if (hero == _AppSupportCardKind.support) {
       if (!_stars.isAnimating && !_stars.isCompleted) _stars.forward();
     } else if (_stars.isAnimating) {
       _stars.stop();
@@ -677,6 +658,7 @@ class _AppSupportCarouselState extends State<AppSupportCarousel>
     _lifecycle.dispose();
     _focus.dispose();
     _pages.dispose();
+    _heroPlayback.dispose();
     _stars.dispose();
     _timer?.cancel();
     super.dispose();
@@ -712,7 +694,10 @@ class _AppSupportCarouselState extends State<AppSupportCarousel>
     _updatePlayback();
   }
 
-  void _onPageChanged(int index) => setState(() => _index = index);
+  void _onPageChanged(int index) {
+    setState(() => _index = index);
+    _updatePlayback();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -739,6 +724,7 @@ class _AppSupportCarouselState extends State<AppSupportCarousel>
                     cards: _cards,
                     content: widget.content,
                     starAnimation: _stars,
+                    heroPlayback: _heroPlayback,
                     index: _index,
                     reduced: _reduced,
                     onPageChanged: _onPageChanged,
@@ -760,24 +746,15 @@ class _AppSupportCarouselState extends State<AppSupportCarousel>
   }
 }
 
-/// Stable content layout; playback and host lifetime belong to the carousel.
-///
-/// Figure 4. SDK layout composition determines height without a measurement loop:
-/// ```text
-/// Stack
-/// +-- IndexedStack(index: null)    tallest natural card; not painted
-/// +-- Positioned.fill(PageView)   interactive pages in that fixed space
-/// ```
-/// Measuring copies have static stars and disabled callbacks. Constraints,
-/// localization and text scaling naturally relayout the stack; page changes
-/// keep its height stable. Only the current real page contributes focus and
-/// semantics.
+/// Measures static cards to keep page height stable without a measurement loop.
+/// Only the current real page contributes focus and semantics.
 class _AppSupportPages extends StatelessWidget {
   const _AppSupportPages({
     required this.controller,
     required this.cards,
     required this.content,
     required this.starAnimation,
+    required this.heroPlayback,
     required this.index,
     required this.reduced,
     required this.onPageChanged,
@@ -788,6 +765,7 @@ class _AppSupportPages extends StatelessWidget {
   final List<_AppSupportCardKind> cards;
   final AppSupportContent content;
   final Animation<double> starAnimation;
+  final ValueListenable<_AppSupportCardKind?> heroPlayback;
   final int index;
   final bool reduced;
   final ValueChanged<int> onPageChanged;
@@ -815,8 +793,17 @@ class _AppSupportPages extends StatelessWidget {
   );
 
   Widget _buildPage(int page) => ExcludeFocus(
+    key: ValueKey(cards[page]),
     excluding: page != index,
-    child: ExcludeSemantics(excluding: page != index, child: _buildCard(page)),
+    child: ExcludeSemantics(
+      excluding: page != index,
+      child: ValueListenableBuilder<_AppSupportCardKind?>(
+        valueListenable: heroPlayback,
+        builder: (context, playing, child) =>
+            TickerMode(enabled: playing == cards[page], child: child!),
+        child: _buildCard(page),
+      ),
+    ),
   );
 
   @override
@@ -892,15 +879,55 @@ class _AppSupportCard extends StatelessWidget {
     String label,
   ) {
     final callback = onSelected == null ? null : () => onSelected!(action);
+    final icon = Icon(switch (action) {
+      AppSupportAction.support => Icons.star_rounded,
+      AppSupportAction.donate => SimpleIcons.buymeacoffee,
+      AppSupportAction.sourceCode => Icons.code_rounded,
+      AppSupportAction.feedback => Icons.bug_report_outlined,
+    }, size: 16);
+    final text = Text(label, textAlign: TextAlign.center);
     return AdaptiveStyle.of(context) == AdaptiveStyle.apple
-        ? CupertinoButton(
+        ? CupertinoButton.tinted(
             onPressed: callback,
-            child: Text(label, textAlign: TextAlign.center),
+            minimumSize: const Size(0, 44),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                icon,
+                const SizedBox(width: 8),
+                Flexible(child: text),
+              ],
+            ),
           )
-        : TextButton(
+        : FilledButton.tonalIcon(
             onPressed: callback,
-            child: Text(label, textAlign: TextAlign.center),
+            style: FilledButton.styleFrom(minimumSize: const Size(0, 44)),
+            icon: icon,
+            label: text,
           );
+  }
+
+  Widget _buildHero(BuildContext context) {
+    if (measuring) return const SizedBox(height: 44);
+    return ExcludeSemantics(
+      child: SizedBox(
+        key: ValueKey('app-support-hero-${kind.name}'),
+        height: 44,
+        child: Center(
+          child: switch (kind) {
+            _AppSupportCardKind.support => _AppSupportStars(
+              animation: starAnimation,
+            ),
+            _AppSupportCardKind.donate => const BuyMeACoffeeIcon(),
+            _AppSupportCardKind.participate => Icon(
+              Icons.code_rounded,
+              size: 40,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          },
+        ),
+      ),
+    );
   }
 
   List<Widget> _buildActions(BuildContext context) {
@@ -910,7 +937,7 @@ class _AppSupportCard extends StatelessWidget {
         _buildActionButton(
           context,
           AppSupportAction.support,
-          l10n.appSupport_open('GitHub'),
+          l10n.appSupport_starOnGitHub,
         ),
       ],
       _AppSupportCardKind.participate => [
@@ -960,6 +987,8 @@ class _AppSupportCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            _buildHero(context),
+            const SizedBox(height: 10),
             Semantics(
               header: true,
               child: Text(
@@ -968,14 +997,15 @@ class _AppSupportCard extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 6),
             Text(message, textAlign: TextAlign.center),
             const SizedBox(height: 12),
-            if (kind == _AppSupportCardKind.support)
-              measuring
-                  ? const SizedBox(height: 44)
-                  : _AppSupportStars(animation: starAnimation),
-            ..._buildActions(context),
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 8,
+              runSpacing: 8,
+              children: _buildActions(context),
+            ),
           ],
         ),
       ),
@@ -988,17 +1018,6 @@ class _AppSupportCard extends StatelessWidget {
 // Copyright (c) 2025 Biplob Kumar Sutradhar; MIT, see LICENSE_THIRDPARTY.md.
 /// Decorative stars driven by the carousel's single finite animation.
 ///
-/// Figure 5. Overlapping bounce intervals form a wave, then repeat once:
-/// ```text
-/// time ->
-/// star 1  /\____
-/// star 2   /\___
-/// star 3    /\__
-/// star 4     /\_
-/// star 5      /\
-///         wave 1 | wave 2 | baseline
-/// ```
-/// Each bounce lasts 720 ms, with a 120 ms stagger: two 1.2-second waves.
 /// The parent pauses/resumes progress on visibility changes without resetting
 /// it. Stars expose neither a rating value nor accessibility actions.
 class _AppSupportStars extends StatelessWidget {
@@ -1132,4 +1151,4 @@ class _AppSupportPageScrollPhysics extends PageScrollPhysics {
   ) => null;
 }
 
-enum _AppSupportCardKind { support, participate, donate }
+enum _AppSupportCardKind { support, donate, participate }

@@ -4,8 +4,9 @@
 
 ## Unreleased
 
-- Feature: shared support cards with amber stars, automatic paging, clickable dots and
-  a dedicated Settings card; optional reminders retain later/permanent dismissal
+- Feature: shared support cards with animated star and coffee headers, code icons,
+  filled icon buttons, automatic paging and clickable dots; Settings centers the
+  width-limited card, and optional reminders retain later/permanent dismissal
 
 - Fix: preserve Loop import history for habits with non-Latin names and retain
   record notes (#639)

@@ -16,6 +16,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart'
     show
+        CupertinoButton,
         CupertinoDatePicker,
         CupertinoIcons,
         CupertinoListTile,
@@ -874,6 +875,25 @@ void main() {
         final dialogL10n = L10n.of(
           tester.element(find.byType(AdaptiveDialog)),
         )!;
+        final supportAction = find.ancestor(
+          of: find.descendant(
+            of: find.byType(AdaptiveDialog),
+            matching: find.text(dialogL10n.appSupport_starOnGitHub),
+          ),
+          matching: find.byWidgetPredicate(
+            (widget) => platform == TargetPlatform.android
+                ? widget is FilledButton
+                : widget is CupertinoButton,
+          ),
+        );
+        expect(supportAction, findsOneWidget);
+        expect(
+          find.descendant(
+            of: supportAction,
+            matching: find.byIcon(Icons.star_rounded),
+          ),
+          findsOneWidget,
+        );
         await tester.tap(
           find.text(
             i == 0 ? dialogL10n.appSupport_later : dialogL10n.appSupport_never,

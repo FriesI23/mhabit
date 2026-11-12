@@ -77,15 +77,22 @@ class _AppSettingSupportSectionState extends State<AppSettingSupportSection> {
     if (!content.hasCards(l10n.appAbout_donateTile_ways)) {
       return const SizedBox.shrink();
     }
-    return AdaptiveListSection(
-      key: const ValueKey('settings-support'),
-      children: [
-        _AppSettingSupportContent(
-          content: content,
-          actions: _actions,
-          onSelected: (action) => _select(action, content),
+    return Align(
+      alignment: Alignment.topCenter,
+      heightFactor: 1,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 500),
+        child: AdaptiveListSection(
+          key: const ValueKey('settings-support'),
+          children: [
+            _AppSettingSupportContent(
+              content: content,
+              actions: _actions,
+              onSelected: (action) => _select(action, content),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 

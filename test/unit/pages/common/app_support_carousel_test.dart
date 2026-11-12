@@ -1,14 +1,16 @@
 // Copyright 2026 Fries_I23
 // Licensed under the Apache License, Version 2.0.
 
-import 'dart:ui' show Tristate;
+import 'dart:ui' show SemanticsAction, Tristate;
 
+import 'package:flutter/cupertino.dart' show CupertinoButton;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/providers/support/about_info.dart';
+import 'package:mhabit/widgets/widgets.dart' show BuyMeACoffeeIcon;
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../support/adaptive_ui_theme.dart';
@@ -58,6 +60,8 @@ void main() {
     AdaptiveStyle style = AdaptiveStyle.material,
     GlobalKey<NavigatorState>? navigator,
     TextDirection direction = TextDirection.ltr,
+    Locale locale = const Locale('en'),
+    double scale = 1,
   }) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -68,10 +72,12 @@ void main() {
         ),
         localizationsDelegates: L10n.localizationsDelegates,
         supportedLocales: L10n.supportedLocales,
+        locale: locale,
         builder: (context, child) => MediaQuery(
           data: MediaQuery.of(context).copyWith(
             disableAnimations: reduced,
             accessibleNavigation: accessible,
+            textScaler: TextScaler.linear(scale),
           ),
           child: Directionality(textDirection: direction, child: child!),
         ),
@@ -88,14 +94,12 @@ void main() {
   Widget carousel({
     AppSupportContent content = const AppSupportContent(info: _info),
     bool active = true,
-    bool animateStars = false,
   }) => Center(
     child: SizedBox(
       width: 320,
       child: AppSupportCarousel(
         content: content,
         active: active,
-        animateStars: animateStars,
         onSelected: (_) {},
       ),
     ),
@@ -107,6 +111,36 @@ void main() {
     await tester.pump();
   }
 
+  Future<void> advanceImages(WidgetTester tester, int frames) async {
+    for (var frame = 0; frame < frames; frame++) {
+      // Engine codec futures resolve outside the widget test's fake clock.
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 1)),
+      );
+      await tester.pump(const Duration(milliseconds: 60));
+    }
+  }
+
+  Finder coffeeImage({Finder? host}) {
+    final coffee = find.byType(BuyMeACoffeeIcon, skipOffstage: false);
+    return find.descendant(
+      of: host == null
+          ? coffee
+          : find.descendant(of: host, matching: coffee, skipOffstage: false),
+      matching: find.byType(Image, skipOffstage: false),
+      skipOffstage: false,
+    );
+  }
+
+  RawImage coffeeFrame(WidgetTester tester, {Finder? host}) =>
+      tester.widget<RawImage>(
+        find.descendant(
+          of: coffeeImage(host: host),
+          matching: find.byType(RawImage, skipOffstage: false),
+          skipOffstage: false,
+        ),
+      );
+
   List<double> starOffsets(WidgetTester tester) => [
     for (var i = 0; i < 5; i++)
       tester
@@ -114,6 +148,296 @@ void main() {
           .transform
           .storage[13],
   ];
+
+  for (final style in AdaptiveStyle.values) {
+    for (final locale in [const Locale('en'), const Locale('zh')]) {
+      testWidgets(
+        'hero, card order and icon actions at large text $style $locale',
+        (tester) async {
+          await mount(
+            tester,
+            SingleChildScrollView(child: carousel()),
+            style: style,
+            locale: locale,
+            scale: 2,
+          );
+          final l10n = L10n.of(
+            tester.element(find.byType(AppSupportCarousel)),
+          )!;
+          final controller = tester
+              .widget<PageView>(find.byType(PageView))
+              .controller!;
+          final buttonType = style == AdaptiveStyle.apple
+              ? CupertinoButton
+              : FilledButton;
+          final pages = [
+            ('support', l10n.appSupport_title, [l10n.appSupport_starOnGitHub]),
+            (
+              'donate',
+              l10n.appAbout_donateTile_titleText,
+              [l10n.appAbout_donateTile_titleText],
+            ),
+            (
+              'participate',
+              l10n.appSupport_participateTitle,
+              [
+                l10n.appAbout_sourceCodeTile_titleText,
+                l10n.appAbout_issueTrackerTile_titleText,
+              ],
+            ),
+          ];
+          for (var index = 0; index < pages.length; index++) {
+            controller.jumpToPage(index);
+            await tester.pumpAndSettle();
+            final (kind, title, labels) = pages[index];
+            final hero = find.byKey(ValueKey('app-support-hero-$kind'));
+            expect(hero, findsOneWidget);
+            expect(tester.getSize(hero).height, 44);
+            expect(
+              tester.getBottomLeft(hero).dy,
+              lessThan(tester.getTopLeft(find.text(title).first).dy),
+            );
+            final bounds = tester.getRect(find.byType(PageView));
+            for (final label in labels) {
+              final button = find.widgetWithText(buttonType, label);
+              expect(button, findsOneWidget);
+              await tester.ensureVisible(button);
+              await tester.pumpAndSettle();
+              expect(
+                find.descendant(of: button, matching: find.byType(Icon)),
+                findsOneWidget,
+              );
+              if (kind == 'support') {
+                expect(
+                  find.descendant(
+                    of: button,
+                    matching: find.byIcon(Icons.star_rounded),
+                  ),
+                  findsOneWidget,
+                );
+              }
+              final rect = tester.getRect(button);
+              expect(rect.height, greaterThanOrEqualTo(44));
+              expect(rect.left, greaterThanOrEqualTo(bounds.left));
+              expect(rect.right, lessThanOrEqualTo(bounds.right));
+            }
+            expect(tester.takeException(), isNull);
+          }
+          await tester.pumpWidget(const SizedBox());
+        },
+      );
+    }
+  }
+
+  testWidgets('coffee streams are independent and survive leaving their page', (
+    tester,
+  ) async {
+    await mount(
+      tester,
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          KeyedSubtree(key: const ValueKey('first'), child: carousel()),
+          KeyedSubtree(key: const ValueKey('second'), child: carousel()),
+        ],
+      ),
+      reduced: false,
+      accessible: true,
+    );
+    final first = find.byKey(const ValueKey('first'));
+    final second = find.byKey(const ValueKey('second'));
+    PageController controller(Finder host) => tester
+        .widget<PageView>(
+          find.descendant(of: host, matching: find.byType(PageView)),
+        )
+        .controller!;
+    controller(first).jumpToPage(1);
+    await tester.pump();
+    await advanceImages(tester, 12);
+    final firstProvider =
+        tester.widget<Image>(coffeeImage(host: first)).image as MemoryImage;
+    expect(coffeeFrame(tester, host: first).image, isNotNull);
+    controller(first).jumpToPage(2);
+    controller(second).jumpToPage(1);
+    await tester.pump();
+    await advanceImages(tester, 4);
+    final paused = coffeeFrame(tester, host: first).image;
+    final secondProvider =
+        tester.widget<Image>(coffeeImage(host: second)).image as MemoryImage;
+    expect(identical(firstProvider.bytes, secondProvider.bytes), isFalse);
+    await advanceImages(tester, 8);
+    expect(coffeeFrame(tester, host: first).image, same(paused));
+    controller(first).jumpToPage(1);
+    await tester.pump();
+    await advanceImages(tester, 4);
+    expect(
+      tester.widget<Image>(coffeeImage(host: first)).image,
+      same(firstProvider),
+    );
+    expect(coffeeFrame(tester, host: first).image, isNot(same(paused)));
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(seconds: 10));
+    expect(tester.takeException(), isNull);
+    expect(
+      tester.binding.imageCache.statusForKey(firstProvider).untracked,
+      isTrue,
+    );
+    expect(
+      tester.binding.imageCache.statusForKey(secondProvider).untracked,
+      isTrue,
+    );
+  });
+
+  testWidgets('coffee finishes once, survives rebuild and clears its cache', (
+    tester,
+  ) async {
+    final revision = ValueNotifier(0);
+    addTearDown(revision.dispose);
+    await mount(
+      tester,
+      ValueListenableBuilder<int>(
+        valueListenable: revision,
+        builder: (_, value, _) => carousel(
+          content: AppSupportContent(info: stubAboutInfo(sourceCodeUrl: '')),
+        ),
+      ),
+      reduced: false,
+    );
+    await advanceImages(tester, 120);
+    final provider = tester.widget<Image>(coffeeImage()).image;
+    final finished = coffeeFrame(tester).image;
+    expect(finished, isNotNull);
+    await advanceImages(tester, 10);
+    expect(coffeeFrame(tester).image, same(finished));
+    revision.value++;
+    await tester.pump();
+    await advanceImages(tester, 4);
+    expect(tester.widget<Image>(coffeeImage()).image, same(provider));
+    expect(coffeeFrame(tester).image, same(finished));
+    await tester.pumpWidget(const SizedBox());
+    expect(tester.binding.imageCache.statusForKey(provider).untracked, isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('reduced motion holds the first coffee frame', (tester) async {
+    await mount(
+      tester,
+      carousel(
+        content: AppSupportContent(info: stubAboutInfo(sourceCodeUrl: '')),
+      ),
+    );
+    await advanceImages(tester, 4);
+    final frame = coffeeFrame(tester).image;
+    expect(frame, isNotNull);
+    await advanceImages(tester, 10);
+    expect(coffeeFrame(tester).image, same(frame));
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  for (final mode in [
+    'background',
+    'modal',
+    'branch',
+    'offscreen',
+    'inactive',
+  ]) {
+    testWidgets('$mode pauses coffee and resumes its existing stream', (
+      tester,
+    ) async {
+      final active = ValueNotifier(true);
+      final scroll = ScrollController();
+      final navigator = GlobalKey<NavigatorState>();
+      addTearDown(active.dispose);
+      addTearDown(scroll.dispose);
+      await mount(
+        tester,
+        ValueListenableBuilder<bool>(
+          valueListenable: active,
+          builder: (_, enabled, _) => TickerMode(
+            enabled: mode == 'branch' ? enabled : true,
+            child: SingleChildScrollView(
+              controller: scroll,
+              child: Column(
+                children: [
+                  carousel(
+                    content: AppSupportContent(
+                      info: stubAboutInfo(sourceCodeUrl: ''),
+                    ),
+                    active: mode == 'inactive' ? enabled : true,
+                  ),
+                  const SizedBox(height: 1600),
+                ],
+              ),
+            ),
+          ),
+        ),
+        reduced: false,
+        navigator: navigator,
+      );
+      await advanceImages(tester, 8);
+      final provider = tester.widget<Image>(coffeeImage()).image;
+      Future<void>? modal;
+      switch (mode) {
+        case 'background':
+          tester.binding.handleAppLifecycleStateChanged(
+            AppLifecycleState.inactive,
+          );
+        case 'modal':
+          modal = showDialog<void>(
+            context: navigator.currentContext!,
+            builder: (_) => const AlertDialog(content: Text('overlay')),
+          );
+        case 'branch' || 'inactive':
+          active.value = false;
+        case 'offscreen':
+          scroll.jumpTo(1000);
+      }
+      await tester.pump();
+      await advanceImages(tester, 4);
+      final paused = coffeeFrame(tester).image;
+      expect(paused, isNotNull);
+      await advanceImages(tester, 8);
+      expect(coffeeFrame(tester).image, same(paused));
+      switch (mode) {
+        case 'background':
+          tester.binding.handleAppLifecycleStateChanged(
+            AppLifecycleState.resumed,
+          );
+        case 'modal':
+          navigator.currentState!.pop();
+        case 'branch' || 'inactive':
+          active.value = true;
+        case 'offscreen':
+          scroll.jumpTo(0);
+      }
+      await tester.pump();
+      await advanceImages(tester, 8);
+      if (modal != null) await modal;
+      expect(tester.widget<Image>(coffeeImage()).image, same(provider));
+      expect(coffeeFrame(tester).image, isNot(same(paused)));
+      await tester.pumpWidget(const SizedBox());
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets(
+    'coffee asset failures use the static icon without layout errors',
+    (tester) async {
+      await mount(
+        tester,
+        DefaultAssetBundle(
+          bundle: _MissingCoffeeAssetBundle(),
+          child: carousel(
+            content: AppSupportContent(info: stubAboutInfo(sourceCodeUrl: '')),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byIcon(Icons.coffee_rounded), findsOneWidget);
+      expect(coffeeImage(), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('unrelated rebuild preserves the remaining idle interval', (
     tester,
@@ -146,7 +470,7 @@ void main() {
         tester,
         ValueListenableBuilder<bool>(
           valueListenable: reduced,
-          child: carousel(animateStars: true),
+          child: carousel(),
           builder: (context, value, child) => MediaQuery(
             data: MediaQuery.of(context).copyWith(disableAnimations: value),
             child: child!,
@@ -304,12 +628,7 @@ void main() {
   testWidgets(
     'stars overlap as two travelling waves, then settle without more ticks',
     (tester) async {
-      await mount(
-        tester,
-        carousel(animateStars: true),
-        reduced: false,
-        accessible: true,
-      );
+      await mount(tester, carousel(), reduced: false, accessible: true);
       for (var wave = 0; wave < 2; wave++) {
         await tester.pump(const Duration(milliseconds: 120));
         expect(starOffsets(tester).first, lessThan(0));
@@ -340,20 +659,16 @@ void main() {
   testWidgets('page changes do not replay stars, new instance does', (
     tester,
   ) async {
-    await mount(
-      tester,
-      carousel(animateStars: true),
-      reduced: false,
-      accessible: true,
-    );
+    await mount(tester, carousel(), reduced: false, accessible: true);
     await tester.pump(const Duration(milliseconds: 180));
     final pages = tester.widget<PageView>(find.byType(PageView)).controller!;
     pages.jumpToPage(1);
     await tester.pump(const Duration(milliseconds: 360));
     pages.jumpToPage(0);
     await tester.pump();
+    // Leaving the current card pauses the unfinished wave.
     expect(starOffsets(tester)[0], closeTo(-4, 0.01));
-    expect(starOffsets(tester)[2], lessThan(starOffsets(tester)[0]));
+    expect(starOffsets(tester).skip(2), everyElement(0));
     await tester.pump(const Duration(seconds: 4));
     for (final index in [1, 0]) {
       await tester.tap(find.byKey(ValueKey('app-support-page-$index')));
@@ -364,12 +679,7 @@ void main() {
     expect(starOffsets(tester), everyElement(0));
     expect(tester.hasRunningAnimations, isFalse);
     await tester.pumpWidget(const SizedBox.shrink());
-    await mount(
-      tester,
-      carousel(animateStars: true),
-      reduced: false,
-      accessible: true,
-    );
+    await mount(tester, carousel(), reduced: false, accessible: true);
     await tester.pump(const Duration(milliseconds: 180));
     expect(starOffsets(tester).first, closeTo(-4, 0.01));
     await tester.pumpWidget(const SizedBox.shrink());
@@ -377,12 +687,8 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('static host and reduced motion never bounce', (tester) async {
-    await mount(tester, carousel(), reduced: false, accessible: true);
-    await tester.pump(const Duration(milliseconds: 180));
-    expect(starOffsets(tester), everyElement(0));
-    expect(tester.hasRunningAnimations, isFalse);
-    await mount(tester, carousel(animateStars: true));
+  testWidgets('reduced motion never bounces', (tester) async {
+    await mount(tester, carousel());
     await tester.pump(const Duration(milliseconds: 180));
     expect(starOffsets(tester), everyElement(0));
     expect(tester.hasRunningAnimations, isFalse);
@@ -456,7 +762,12 @@ void main() {
       (tester) async {
         await mount(tester, carousel(), brightness: brightness);
         final stars = tester
-            .widgetList<Icon>(find.byIcon(Icons.star_rounded))
+            .widgetList<Icon>(
+              find.descendant(
+                of: find.byKey(const ValueKey('app-support-hero-support')),
+                matching: find.byIcon(Icons.star_rounded),
+              ),
+            )
             .toList();
         expect(stars, hasLength(5));
         expect(
@@ -675,16 +986,38 @@ void main() {
       (tester) async {
         final semantics = tester.ensureSemantics();
         await mount(tester, carousel(), style: style);
-        expect(find.bySemanticsLabel('Go to GitHub'), findsOneWidget);
+        expect(find.bySemanticsLabel('Star on GitHub'), findsOneWidget);
         await tester.sendKeyEvent(LogicalKeyboardKey.tab);
         await tester.pump();
         await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
         await tester.pumpAndSettle();
         expect(page(tester), 1);
         expect(find.bySemanticsLabel('Page 2 of 3'), findsOneWidget);
+        final donation = find.widgetWithText(
+          style == AdaptiveStyle.apple ? CupertinoButton : FilledButton,
+          'Donate',
+        );
+        expect(donation, findsOneWidget);
+        final semanticButton = find.descendant(
+          of: donation,
+          matching: find.byWidgetPredicate(
+            (widget) => widget is Semantics && widget.properties.button == true,
+          ),
+        );
+        expect(semanticButton, findsOneWidget);
+        final data = tester.getSemantics(semanticButton).getSemanticsData();
+        expect(data.label, 'Donate');
+        expect(data.flagsCollection.isButton, isTrue);
+        expect(data.hasAction(SemanticsAction.tap), isTrue);
+        expect(find.bySemanticsLabel('Source code'), findsNothing);
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+        await tester.pumpAndSettle();
+        expect(page(tester), 2);
         expect(find.bySemanticsLabel('Source code'), findsOneWidget);
         expect(find.bySemanticsLabel('Issue tracker'), findsOneWidget);
-        expect(find.bySemanticsLabel('Go to GitHub'), findsNothing);
+        expect(find.bySemanticsLabel('Star on GitHub'), findsNothing);
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+        await tester.pumpAndSettle();
         await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
         await tester.pumpAndSettle();
         expect(page(tester), 0);
@@ -700,4 +1033,11 @@ void main() {
       },
     );
   }
+}
+
+class _MissingCoffeeAssetBundle extends CachingAssetBundle {
+  @override
+  Future<ByteData> load(String key) => key.endsWith('app-support-coffee.gif')
+      ? Future.error(StateError('coffee asset unavailable'))
+      : rootBundle.load(key);
 }

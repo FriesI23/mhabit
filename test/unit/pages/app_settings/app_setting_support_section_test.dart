@@ -3,6 +3,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart' show CupertinoButton;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/l10n/localizations.dart';
@@ -116,7 +117,7 @@ void main() {
         }
         expect(await initialization, !fail);
         await tester.pumpAndSettle();
-        expect(find.text('Go to GitHub').hitTestable(), findsOneWidget);
+        expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
         expect(find.byType(AdaptiveExpansionTile), findsNothing);
         expect(find.text('Support Table Habit'), findsOneWidget);
         expect(
@@ -180,7 +181,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Go to GitHub'));
+    await tester.tap(find.text('Star on GitHub'));
     await tester.pump();
     await tester.pumpWidget(const SizedBox());
     pending.complete(true);
@@ -217,7 +218,7 @@ void main() {
       final l10n = L10n.of(
         tester.element(find.byType(AppSettingSupportSection)),
       )!;
-      await tester.tap(find.text('Go to GitHub'));
+      await tester.tap(find.text('Star on GitHub'));
       await tester.pump();
       owner.dispose();
       if (fails) {
@@ -237,6 +238,122 @@ void main() {
   }
 
   for (final style in AdaptiveStyle.values) {
+    for (final width in [320.0, 1000.0]) {
+      testWidgets('Settings card fits and centers at width $width $style', (
+        tester,
+      ) async {
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = Size(width, 900);
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final owner = AppSupportOwner();
+        addTearDown(owner.dispose);
+        await owner.init();
+        await mount(
+          tester,
+          ChangeNotifierProvider.value(
+            value: owner,
+            child: SingleChildScrollView(
+              child: AppSettingSupportSection(
+                loadInfo: () async => _info,
+                hideDonate: true,
+              ),
+            ),
+          ),
+          style: style,
+        );
+        await tester.pumpAndSettle();
+        final section = tester.getRect(
+          find.byKey(const ValueKey('settings-support')),
+        );
+        final pages = tester.getRect(find.byType(PageView));
+        expect(section.width, width > 500 ? 500 : width);
+        expect(section.center.dx, width / 2);
+        expect(pages.left, greaterThan(section.left));
+        expect(pages.right, lessThan(section.right));
+        expect(pages.center.dx, section.center.dx);
+        expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
+
+    testWidgets('Settings card order and filled actions are shared $style', (
+      tester,
+    ) async {
+      final owner = AppSupportOwner();
+      addTearDown(owner.dispose);
+      await owner.init();
+      final opened = <Uri>[];
+      var donations = 0;
+      await mount(
+        tester,
+        ChangeNotifierProvider.value(
+          value: owner,
+          child: SingleChildScrollView(
+            child: AppSettingSupportSection(
+              loadInfo: () async => _info,
+              hideDonate: false,
+              openUrl: (uri) async {
+                opened.add(uri);
+                return true;
+              },
+              showDonation: (_) async {
+                donations++;
+              },
+            ),
+          ),
+        ),
+        style: style,
+      );
+      await tester.pumpAndSettle();
+      final l10n = L10n.of(
+        tester.element(find.byType(AppSettingSupportSection)),
+      )!;
+      Finder action(String label) => find.ancestor(
+        of: find.text(label),
+        matching: find.byWidgetPredicate(
+          (widget) => style == AdaptiveStyle.material
+              ? widget is FilledButton
+              : widget is CupertinoButton,
+        ),
+      );
+      expect(action(l10n.appSupport_starOnGitHub), findsOneWidget);
+      expect(
+        find.descendant(
+          of: action(l10n.appSupport_starOnGitHub),
+          matching: find.byIcon(Icons.star_rounded),
+        ),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('app-support-page-1')));
+      await tester.pumpAndSettle();
+      expect(action(l10n.appAbout_donateTile_titleText), findsOneWidget);
+      await tester.tap(action(l10n.appAbout_donateTile_titleText));
+      await tester.pumpAndSettle();
+      expect(donations, 1);
+      await tester.tap(find.byKey(const ValueKey('app-support-page-2')));
+      await tester.pumpAndSettle();
+      expect(find.text(l10n.appSupport_participateTitle), findsOneWidget);
+      for (final label in [
+        l10n.appAbout_sourceCodeTile_titleText,
+        l10n.appAbout_issueTrackerTile_titleText,
+      ]) {
+        expect(action(label), findsOneWidget);
+        expect(
+          find.descendant(of: action(label), matching: find.byType(Icon)),
+          findsOneWidget,
+        );
+        await tester.tap(action(label));
+        await tester.pumpAndSettle();
+      }
+      expect(opened, [
+        Uri.parse(_info.sourceCodeUrl),
+        Uri.parse(_info.issueTrackerUrl),
+      ]);
+      expect(owner.reminderClosed, isFalse);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets(
       'reminder dismissal and Reset keep the Settings card visible $style',
       (tester) async {
@@ -258,14 +375,14 @@ void main() {
           style: style,
         );
         await tester.pumpAndSettle();
-        expect(find.text('Go to GitHub').hitTestable(), findsOneWidget);
+        expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
         expect(await owner.resetForNextLaunch(), isTrue);
         await tester.pumpAndSettle();
-        expect(find.text('Go to GitHub').hitTestable(), findsOneWidget);
+        expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
         expect(await owner.consume(AppSupportPromptResult.never), isTrue);
         await tester.pumpAndSettle();
         expect(owner.reminderClosed, isTrue);
-        expect(find.text('Go to GitHub').hitTestable(), findsOneWidget);
+        expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
         expect(find.byType(AdaptiveExpansionTile), findsNothing);
       },
     );
@@ -299,16 +416,16 @@ void main() {
           style: style,
         );
         await tester.pumpAndSettle();
-        expect(find.text('Go to GitHub').hitTestable(), findsOneWidget);
+        expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
         current.value = second;
         await tester.pumpAndSettle();
         await first.resetForNextLaunch();
         await tester.pumpAndSettle();
-        await tester.tap(find.text('Go to GitHub'));
+        await tester.tap(find.text('Star on GitHub'));
         await tester.pumpAndSettle();
         expect(second.reminderClosed, isTrue);
         expect(first.reminderClosed, isFalse);
-        expect(find.text('Go to GitHub').hitTestable(), findsOneWidget);
+        expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
         expect(tester.takeException(), isNull);
       },
     );
@@ -336,10 +453,10 @@ void main() {
         );
         await mount(tester, section(owner), style: style);
         await tester.pumpAndSettle();
-        expect(find.text('Go to GitHub').hitTestable(), findsOneWidget);
-        await tester.tap(find.text('Go to GitHub'));
+        expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
+        await tester.tap(find.text('Star on GitHub'));
         await tester.pump();
-        await tester.tap(find.text('Go to GitHub'));
+        await tester.tap(find.text('Star on GitHub'));
         expect(calls, 1);
         action.complete(true);
         await tester.pumpAndSettle();
@@ -348,14 +465,14 @@ void main() {
           isTrue,
         );
         expect(owner.reminderClosed, isTrue);
-        expect(find.text('Go to GitHub').hitTestable(), findsOneWidget);
+        expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
         await tester.pumpWidget(const SizedBox());
         final restored = AppSupportOwner();
         addTearDown(restored.dispose);
         await restored.init();
         await mount(tester, section(restored), style: style);
         await tester.pumpAndSettle();
-        expect(find.text('Go to GitHub').hitTestable(), findsOneWidget);
+        expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
         expect(find.byType(AdaptiveExpansionTile), findsNothing);
         expect(find.text('Support Table Habit').hitTestable(), findsOneWidget);
       },
@@ -386,16 +503,16 @@ void main() {
         final l10n = L10n.of(
           tester.element(find.byType(AppSettingSupportSection)),
         )!;
-        await tester.tap(find.text('Go to GitHub'));
+        await tester.tap(find.text('Star on GitHub'));
         await tester.pumpAndSettle();
         expect(find.text(l10n.appSupport_saveFailed), findsOneWidget);
-        expect(find.text('Go to GitHub').hitTestable(), findsOneWidget);
+        expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
         expect(owner.reminderClosed, isFalse);
         reminder.failSave = false;
-        await tester.tap(find.text('Go to GitHub'));
+        await tester.tap(find.text('Star on GitHub'));
         await tester.pumpAndSettle();
         expect(find.text(l10n.appSupport_saveFailed), findsNothing);
-        expect(find.text('Go to GitHub').hitTestable(), findsOneWidget);
+        expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
         expect(owner.reminderClosed, isTrue);
       },
     );
@@ -427,7 +544,7 @@ void main() {
         );
         await tester.pumpAndSettle();
         for (var i = 0; i < 2; i++) {
-          await tester.tap(find.text('Go to GitHub'));
+          await tester.tap(find.text('Star on GitHub'));
           await tester.pumpAndSettle();
           expect(
             find.text('Unable to open the link. Please try again.'),
