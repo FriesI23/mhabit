@@ -14,6 +14,7 @@
 
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/app_info.dart';
@@ -28,6 +29,12 @@ void main() {
   );
 
   setUpAll(() {
+    // Flutter tests do not register Dart-only desktop plugin implementations.
+    if (Platform.isLinux) {
+      DeviceInfoPlusLinuxPlugin.registerWith();
+    } else if (Platform.isWindows) {
+      DeviceInfoPlusWindowsPlugin.registerWith();
+    }
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(deviceInfoChannel, (call) async {
           expect(call.method, 'getDeviceInfo');
