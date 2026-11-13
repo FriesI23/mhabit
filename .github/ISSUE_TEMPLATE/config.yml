@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Project roadmap
+    url: https://github.com/users/FriesI23/projects/5
+    about: View planned work, priorities, and progress.
+  - name: Contribute translations on Weblate
+    url: https://hosted.weblate.org/engage/mhabit/
+    about: Help translate Table Habit into your language.

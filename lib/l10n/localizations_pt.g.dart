@@ -508,15 +508,17 @@ class L10nPt extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       remainingGroupCount,
       locale: localeName,
-      other: ' and $remainingGroupCount more groups',
-      one: ' and 1 more group',
+      other:
+          ' and $remainingGroupCount more groups ($totalGroupCount groups in total)',
+      one: ' and 1 more group ($totalGroupCount groups in total)',
       zero: '',
     );
     String _temp1 = intl.Intl.pluralLogic(
       remainingGroupCount,
       locale: localeName,
-      other: ' and $remainingGroupCount more groups',
-      one: ' and 1 more group',
+      other:
+          ' and $remainingGroupCount more groups ($totalGroupCount groups in total)',
+      one: ' and 1 more group ($totalGroupCount groups in total)',
       zero: '',
     );
     String _temp2 = intl.Intl.pluralLogic(
@@ -2329,4 +2331,74 @@ class L10nPt extends L10n {
 
   @override
   String get habitDisplay_groupModifyConfirm_previewTitle => 'Preview';
+
+  @override
+  String get appSupport_title => 'Support Table Habit';
+
+  @override
+  String get appSupport_message =>
+      'Your support helps improve Table Habit and reach more people.';
+
+  @override
+  String get appSupport_starOnGitHub => 'Star on GitHub';
+
+  @override
+  String get appSupport_rateOnGooglePlay => 'Rate on Google Play';
+
+  @override
+  String get appSupport_rateOnAppStore => 'Rate on the App Store';
+
+  @override
+  String get appSupport_openOnMicrosoftStore => 'Rate on Microsoft Store';
+
+  @override
+  String get appSupport_favoriteOnFlathub => 'Favorite on Flathub';
+
+  @override
+  String get appSupport_later => 'Remind me later';
+
+  @override
+  String get appSupport_never => 'Don\'t remind me again';
+
+  @override
+  String get appSupport_linkFailed =>
+      'Unable to complete this action. Please try again.';
+
+  @override
+  String get appSupport_participateTitle => 'Contribute to Table Habit';
+
+  @override
+  String get appSupport_participateMessage =>
+      'Explore the source code, contribute, or share issues and ideas.';
+
+  @override
+  String appSupport_page(int page, int count) {
+    return 'Page $page of $count';
+  }
+
+  @override
+  String get appSupport_saveFailed =>
+      'The reminder could not be saved. Please try again.';
+
+  @override
+  String get appSetting_uiStyle_titleText => 'UI style';
+
+  @override
+  String get appSetting_uiStyle_automatic => 'Automático';
+
+  @override
+  String get appSetting_uiStyle_material => 'Material';
+
+  @override
+  String get appSetting_uiStyle_apple => 'Apple';
+
+  @override
+  String get appSetting_appleSidebarStyle_titleText =>
+      'Apple Sidebar appearance';
+
+  @override
+  String get appSetting_appleSidebarStyle_inset => 'Inset';
+
+  @override
+  String get appSetting_appleSidebarStyle_edge => 'Edge';
 }

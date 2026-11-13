@@ -14,33 +14,14 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' show TextDirection;
-import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
-import '../../models/app_adaptive_style_mode.dart';
-import '../../models/app_apple_sidebar_style_mode.dart';
-import '../../storage/profile/handlers.dart';
-import '../../storage/profile_provider.dart';
 import '../support/global.dart';
 
-class AppDeveloperViewModel extends ChangeNotifier
-    with GlobalLoadedMixin, ProfileHandlerLoadedMixin {
-  AdaptiveStyleOverrideProfileHandler? _adaptiveStyleOverride;
+class AppDeveloperViewModel extends ChangeNotifier with GlobalLoadedMixin {
   TextDirection? _textDirectionOverride;
-  AppAppleSidebarStyleMode _appleSidebarStyleMode =
-      AppAppleSidebarStyleMode.automatic;
 
-  AppDeveloperViewModel({required Global global, ProfileViewModel? profile}) {
+  AppDeveloperViewModel({required Global global}) {
     updateGlobal(global);
-    if (profile != null) updateProfile(profile);
-  }
-
-  @override
-  void updateProfile(ProfileViewModel newProfile) {
-    final previousMode = adaptiveStyleMode;
-    super.updateProfile(newProfile);
-    _adaptiveStyleOverride = newProfile
-        .getHandler<AdaptiveStyleOverrideProfileHandler>();
-    if (adaptiveStyleMode != previousMode) notifyListeners();
   }
 
   bool get isInDevelopMode => g.isInDevelopMode;
@@ -63,34 +44,11 @@ class AppDeveloperViewModel extends ChangeNotifier
 
   bool get showDebugMenuOnDisplayView => isInDevelopMode && displayDebugMenu;
 
-  AppAdaptiveStyleMode get adaptiveStyleMode =>
-      _adaptiveStyleOverride?.get() ?? AppAdaptiveStyleMode.automatic;
-
-  AdaptiveStyle? get adaptiveStyleOverride => switch (adaptiveStyleMode) {
-    AppAdaptiveStyleMode.automatic => null,
-    AppAdaptiveStyleMode.material => AdaptiveStyle.material,
-    AppAdaptiveStyleMode.apple => AdaptiveStyle.apple,
-  };
-
   TextDirection? get textDirectionOverride => _textDirectionOverride;
-
-  AppAppleSidebarStyleMode get appleSidebarStyleMode => _appleSidebarStyleMode;
-
-  Future<void> setAdaptiveStyleMode(AppAdaptiveStyleMode mode) async {
-    if (adaptiveStyleMode == mode) return;
-    await _adaptiveStyleOverride?.set(mode);
-    notifyListeners();
-  }
 
   void setTextDirectionOverride(TextDirection? textDirection) {
     if (_textDirectionOverride == textDirection) return;
     _textDirectionOverride = textDirection;
-    notifyListeners();
-  }
-
-  void setAppleSidebarStyleMode(AppAppleSidebarStyleMode mode) {
-    if (_appleSidebarStyleMode == mode) return;
-    _appleSidebarStyleMode = mode;
     notifyListeners();
   }
 }

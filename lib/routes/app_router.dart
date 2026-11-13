@@ -366,11 +366,15 @@ class AppRouterBuilder with _AppRouteAdder {
     );
   }
 
-  GoRouter build({AppRoute? home}) {
+  /// Keeps current-route tracking while attaching additional root observers.
+  GoRouter build({
+    AppRoute? home,
+    List<NavigatorObserver> observers = const [],
+  }) {
     return GoRouter(
       initialLocation: home != null ? _pathFor(home) : null,
       navigatorKey: navigatorKey,
-      observers: [currentRouteObserver],
+      observers: [currentRouteObserver, ...observers],
       routes: _routes,
     );
   }

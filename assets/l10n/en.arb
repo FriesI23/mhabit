@@ -446,7 +446,7 @@
     },
     "habitDisplay_groupModifyConfirm_bodyRemoveGroup": "Habits will have their group removed",
     "@habitDisplay_groupModifyConfirm_bodyRemoveGroup": {},
-    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {{count} habit will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group} other{ and {remainingGroupCount} more groups}} to \"{toGroup}\"} other {{count} habits will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group} other{ and {remainingGroupCount} more groups}} to \"{toGroup}\"}}",
+    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {{count} habit will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group ({totalGroupCount} groups in total)} other{ and {remainingGroupCount} more groups ({totalGroupCount} groups in total)}} to \"{toGroup}\"} other {{count} habits will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group ({totalGroupCount} groups in total)} other{ and {remainingGroupCount} more groups ({totalGroupCount} groups in total)}} to \"{toGroup}\"}}",
     "@habitDisplay_groupModifyConfirm_bodyChangeStat": {
         "placeholders": {
             "count": {
@@ -2014,5 +2014,70 @@
         }
     },
     "habitDisplay_groupModifyConfirm_previewTitle": "Preview",
-    "@habitDisplay_groupModifyConfirm_previewTitle": {}
+    "@habitDisplay_groupModifyConfirm_previewTitle": {},
+    "appSupport_title": "Support Table Habit",
+    "@appSupport_title": {},
+    "appSupport_message": "Your support helps improve Table Habit and reach more people.",
+    "@appSupport_message": {
+        "description": "Shared support message for all distribution channels. Keep this text independent of the destination platform."
+    },
+    "appSupport_starOnGitHub": "Star on GitHub",
+    "@appSupport_starOnGitHub": {
+        "description": "Short button label that opens the GitHub repository for the user to manually click Star. Opening the link does not automatically star the repository."
+    },
+    "appSupport_rateOnGooglePlay": "Rate on Google Play",
+    "@appSupport_rateOnGooglePlay": {
+        "description": "Support button that opens the published app's Google Play page so the user can leave a review."
+    },
+    "appSupport_rateOnAppStore": "Rate on the App Store",
+    "@appSupport_rateOnAppStore": {
+        "description": "Support button that opens the App Store write-review page on iOS and macOS."
+    },
+    "appSupport_openOnMicrosoftStore": "Rate on Microsoft Store",
+    "@appSupport_openOnMicrosoftStore": {
+        "description": "Support button that opens the published app's Microsoft Store rating and review page."
+    },
+    "appSupport_favoriteOnFlathub": "Favorite on Flathub",
+    "@appSupport_favoriteOnFlathub": {
+        "description": "Support button that opens the app's Flathub page so the user can sign in and add it to favorites. Opening the page does not add a favorite automatically."
+    },
+    "appSupport_later": "Remind me later",
+    "@appSupport_later": {},
+    "appSupport_never": "Don't remind me again",
+    "@appSupport_never": {},
+    "appSupport_linkFailed": "Unable to complete this action. Please try again.",
+    "@appSupport_linkFailed": {
+        "description": "Failure message shared by project and store links."
+    },
+    "appSupport_participateTitle": "Contribute to Table Habit",
+    "@appSupport_participateTitle": {},
+    "appSupport_participateMessage": "Explore the source code, contribute, or share issues and ideas.",
+    "@appSupport_participateMessage": {},
+    "appSupport_page": "Page {page} of {count}",
+    "@appSupport_page": {
+        "placeholders": {
+            "page": {
+                "type": "int"
+            },
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "appSupport_saveFailed": "The reminder could not be saved. Please try again.",
+    "@appSupport_saveFailed": {},
+    "appSetting_uiStyle_titleText": "UI style",
+    "@appSetting_uiStyle_titleText": {},
+    "appSetting_uiStyle_automatic": "Automatic",
+    "@appSetting_uiStyle_automatic": {},
+    "appSetting_uiStyle_material": "Material",
+    "@appSetting_uiStyle_material": {},
+    "appSetting_uiStyle_apple": "Apple",
+    "@appSetting_uiStyle_apple": {},
+    "appSetting_appleSidebarStyle_titleText": "Apple Sidebar appearance",
+    "@appSetting_appleSidebarStyle_titleText": {},
+    "appSetting_appleSidebarStyle_inset": "Inset",
+    "@appSetting_appleSidebarStyle_inset": {},
+    "appSetting_appleSidebarStyle_edge": "Edge",
+    "@appSetting_appleSidebarStyle_edge": {}
 }

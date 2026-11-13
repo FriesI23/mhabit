@@ -9,6 +9,23 @@ multiple versions on your local machine, or simply use this submodule to build i
 Generally, you can build the app with `flutter build` (default: `--release`),
 or run it directly using `flutter run` (default: `--debug`).
 
+### Release channels
+
+Set `APP_DISTRIBUTION` at compile time to choose the intended release channel,
+independently of platform and flavor. Missing, empty, or unknown values default
+to `github`.
+
+```shell
+flutter build appbundle --flavor f_generic --dart-define=APP_DISTRIBUTION=google_play
+```
+
+Supported values are `github`, `google_play`, `app_store`, `microsoft_store`,
+`fdroid`, `flathub`, and `custom`.
+
+Use **Settings → Developer → Support channel** to change the channel for the
+current process, then **Show support prompt now** to preview it. Restarting
+restores the build default.
+
 ### Formatting Swift
 
 On macOS, use the same Xcode toolchain as CI (Swift 6.1+) and run from the

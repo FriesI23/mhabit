@@ -14,9 +14,9 @@
 
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
-/// Developer-only selection of the Apple Sidebar generation.
+/// Preferred Apple Sidebar appearance.
 enum AppAppleSidebarStyleMode {
-  /// Resolve from the current iOS, iPadOS, or macOS version.
+  /// Resolve from the Apple system version; use inset on other platforms.
   automatic,
 
   /// Force the Apple OS 26-era inset treatment.

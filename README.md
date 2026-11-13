@@ -136,6 +136,13 @@ Linux — **no ads, no account required**. See the translation badge above for s
 - **🌍 Truly Global:** Community-driven translations via Weblate with full RTL support (Arabic, Hebrew, Persian). 18+ languages and growing.
 - **🖥️ Cross-Platform:** Android, iOS, macOS, Windows, Linux. Available on Google Play, App Store, F-Droid, Flathub, and Microsoft Store.
 
+### iOS widgets
+
+iOS Home Screen widgets now support progress tracking and check-ins in the
+beta. See the [widget guide][ios-widgets-guide]. Thanks to
+[@IlyaPalochkin](https://github.com/IlyaPalochkin) for the initial widget
+contribution!
+
 ## Installation
 
 ### Quick Install (CLI)
@@ -188,38 +195,24 @@ the `weblate-translation` branch.
 
 ## Roadmap
 
-| Status | Feature                       | Notes                                              |
-| :----: | ----------------------------- | -------------------------------------------------- |
-|   ✅   | **Custom Colors**             | Per-habit swatches + color picker ([v1.25.1+164])  |
-|   ✅   | **Loop Habit Tracker Import** | CSV import from Loop Habit Tracker ([v1.25.7+172]) |
-|   ✅   | **Habit Groups**              | Drag-and-drop reorder, collapsible ([v1.26.1+174]) |
-|   🟨   | **Android Widget**            | In progress                                        |
-|   ✅   | **iOS Widget**                | Home Screen widgets ([pre-v1.27.16+205])           |
-|   ⬜   | **More Sync Backends**        | Beyond WebDAV — planned                            |
-
-iOS Home Screen widgets now support progress tracking and check-ins in the
-beta. See the [widget guide][ios-widgets-guide]. Thanks to
-[@IlyaPalochkin](https://github.com/IlyaPalochkin) for the initial widget
-contribution!
-
-[ios-widgets-guide]: https://github.com/FriesI23/mhabit/wiki/Feature%EA%9E%89-iOS-Widgets
-[v1.25.1+164]: https://github.com/FriesI23/mhabit/releases/tag/v1.25.1+164
-[v1.25.7+172]: https://github.com/FriesI23/mhabit/releases/tag/v1.25.7+172
-[v1.26.1+174]: https://github.com/FriesI23/mhabit/releases/tag/v1.26.1+174
-[pre-v1.27.16+205]: https://github.com/FriesI23/mhabit/releases/tag/pre-v1.27.16+205
+Follow the [Table Habit Project][github-project] for planned work, priorities,
+and progress. To report a bug or suggest an improvement, use the
+[Issue forms][github-new-issue] and check [existing issues][github-issues] first.
 
 ## Contributing
 
 Contributions make open source great! Here's how you can help:
 
+- **Planning**: Browse the [Project][github-project] for priorities and progress.
 - **Code**: Pick an [open issue][github-issues], follow the
   [Flutter style guide][flutter-style-guide],
-  and open a PR.
+  and [open a pull request][github-new-pr].
 - **Documentation**: Wiki pages live in `docs/wiki/` — edit them and open a
   PR. CI auto-syncs to the [GitHub Wiki][github-wiki].
 - **Translations**: Join [Weblate][weblate-engage]
   or edit `.arb` files in `lib/l10n/`.
-- **Bug Reports**: Open a [GitHub Issue][github-issues].
+- **Bugs and Ideas**: Search [existing issues][github-issues], then use the
+  [Issue forms][github-new-issue].
 
 <details>
 <summary>Development Quickstart</summary>
@@ -279,9 +272,26 @@ supporting its development:
   </a>
 </p>
 
+<!-- friesi23-projects:start -->
+
+## More projects
+
+| Project                                                                                                                                                                                   | Description                                                                 |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| ![Flutter Package](https://img.shields.io/badge/-02569B?style=flat-square&logo=flutter&logoColor=white) [Simple Heatmap Calendar](https://github.com/FriesI23/simple_heatmap_calendar)    | Customizable Flutter heatmap calendar with internationalization support.    |
+| ![Dart Package](https://img.shields.io/badge/-0175C2?style=flat-square&logo=dart&logoColor=white) [Simple WebDAV Client](https://github.com/FriesI23/simple_webdav_client)                | Dart WebDAV client for file operations, properties, and resource locks.     |
+| ![Flutter Package](https://img.shields.io/badge/-02569B?style=flat-square&logo=flutter&logoColor=white) [Adaptive Actions](https://github.com/FriesI23/adaptive_actions)                  | Adaptive Flutter action bars and overflow menus for Material and Cupertino. |
+| ![Flutter Package](https://img.shields.io/badge/-02569B?style=flat-square&logo=flutter&logoColor=white) [Flutter Adaptive Sidebar](https://github.com/FriesI23/flutter_adaptive_sidebar)  | Material and Cupertino sidebars for Flutter with a shared controller.       |
+| ![Flutter Plugin](https://img.shields.io/badge/-02569B?style=flat-square&logo=flutter&logoColor=white) [iOS Window Control Layout](https://github.com/FriesI23/ios_window_control_layout) | Keep Flutter layouts clear of iPadOS window controls.                       |
+| ![Flutter Plugin](https://img.shields.io/badge/-02569B?style=flat-square&logo=flutter&logoColor=white) [Native Natural Sort](https://github.com/FriesI23/native_natural_sort)             | Locale-aware natural sorting for Flutter using native platform engines.     |
+| ![Dart Package](https://img.shields.io/badge/-0175C2?style=flat-square&logo=dart&logoColor=white) [Dart Transmission RPC](https://github.com/FriesI23/dart_transmission_rpc)              | Dart client for the Transmission RPC API.                                   |
+| ![Dart Package](https://img.shields.io/badge/-0175C2?style=flat-square&logo=dart&logoColor=white) [Win2IANA TimeZone Converter](https://github.com/FriesI23/win2iana_tz_converter)        | Dart utilities for converting Windows and IANA time zone identifiers.       |
+
+<!-- friesi23-projects:end -->
+
 ## License
 
-```
+```text
 Copyright 2023-2026 Fries_I23
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -309,6 +319,10 @@ limitations under the License.
 [ios-testflight-pre-release]: https://testflight.apple.com/join/aJ5PWqaR
 [wiki-installation]: https://github.com/FriesI23/mhabit/wiki/Installation
 [github-issues]: https://github.com/FriesI23/mhabit/issues
+[github-project]: https://github.com/users/FriesI23/projects/5
+[github-new-issue]: https://github.com/FriesI23/mhabit/issues/new/choose
+[github-new-pr]: https://github.com/FriesI23/mhabit/compare
+[ios-widgets-guide]: https://github.com/FriesI23/mhabit/wiki/Feature%EA%9E%89-iOS-Widgets
 [flutter-style-guide]: https://github.com/flutter/flutter/blob/master/docs/contributing/Style-guide-for-Flutter-repo.md
 [github-wiki]: https://github.com/FriesI23/mhabit/wiki
 [weblate-engage]: https://hosted.weblate.org/engage/mhabit/

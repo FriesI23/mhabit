@@ -46,16 +46,7 @@ class _Page extends StatefulWidget {
 class _PageState extends State<_Page> {
   void _onDonateTilePressed() async {
     final aboutInfo = context.read<AboutInfo>();
-    showDonateDialog(
-      context,
-      donateBuyMeACoffeeToken: aboutInfo.donateBuyMeACoffeeToken,
-      donatePaypalToken: aboutInfo.donatePaypalToken,
-      btcAddress: aboutInfo.donateCryptoBTCAddr,
-      ethAddress: aboutInfo.donateCryptoETHAddr,
-      bnbAddress: aboutInfo.donateCryptoBNBAddr,
-      avaxAddress: aboutInfo.donateCryptoAVAXAddr,
-      ftmAddress: aboutInfo.donateCryptoFTMAddr,
-    );
+    showDonateDialog(context, config: DonateConfig(info: aboutInfo));
   }
 
   @override

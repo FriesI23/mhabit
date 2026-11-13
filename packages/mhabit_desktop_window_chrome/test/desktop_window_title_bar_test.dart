@@ -69,6 +69,9 @@ void main() {
           if (call.method == 'setMinimumSize') {
             minimum = call.arguments as Map<Object?, Object?>;
           }
+          if (call.method == 'isVisible' || call.method == 'isFocused') {
+            return false;
+          }
           return null;
         });
         binding.defaultBinaryMessenger.setMockMessageHandler(
@@ -110,6 +113,166 @@ void main() {
         expect(resets, 1);
       },
     );
+  }
+
+  group('Windows native foreground', () {
+    const windowChannel = MethodChannel('window_manager');
+    const foregroundChannel =
+        'dev.flutter.pigeon.mhabit_desktop_window_chrome.'
+        'DesktopTitleBarFlutterApi.foregroundChanged';
+    late DesktopWindowTitleBar owner;
+    late bool visible;
+    late bool focused;
+    (bool, bool)? shownState;
+    String? failedQuery;
+    Completer<bool>? pendingFocus;
+    Completer<void>? focusStarted;
+    late List<String> calls;
+
+    Future<Object?> emit(bool foreground) async {
+      final response = Completer<Object?>();
+      await binding.defaultBinaryMessenger.handlePlatformMessage(
+        foregroundChannel,
+        const StandardMessageCodec().encodeMessage([foreground]),
+        (reply) => response.complete(
+          const StandardMessageCodec().decodeMessage(reply),
+        ),
+      );
+      return response.future;
+    }
+
+    setUp(() {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      visible = false;
+      focused = false;
+      shownState = null;
+      failedQuery = null;
+      pendingFocus = null;
+      focusStarted = null;
+      calls = [];
+      binding.defaultBinaryMessenger.setMockMethodCallHandler(windowChannel, (
+        call,
+      ) async {
+        calls.add(call.method);
+        if (call.method == failedQuery) {
+          throw PlatformException(code: 'query-failed');
+        }
+        switch (call.method) {
+          case 'isVisible':
+            return visible;
+          case 'isFocused':
+            if (focusStarted case final started? when !started.isCompleted) {
+              started.complete();
+            }
+            return pendingFocus == null ? focused : pendingFocus!.future;
+          case 'isMinimized':
+            return false;
+          case 'focus':
+            if (shownState case final state?) {
+              (visible, focused) = state;
+            }
+        }
+        return null;
+      });
+      owner = DesktopWindowTitleBar(api: _Api());
+    });
+
+    tearDown(() async {
+      if (pendingFocus case final pending? when !pending.isCompleted) {
+        pending.complete(false);
+      }
+      await owner.dispose();
+      binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        windowChannel,
+        null,
+      );
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    for (final state in [(true, true), (true, false), (false, true)]) {
+      test('initial snapshot requires visible and focused: $state', () async {
+        (visible, focused) = state;
+        expect(owner.foreground!.value, isFalse);
+        await owner.initialize();
+        expect(owner.foreground!.value, state.$1 && state.$2);
+      });
+
+      test('show samples actual state after native ACK: $state', () async {
+        await owner.initialize();
+        shownState = state;
+        calls.clear();
+        await owner.show();
+        expect(owner.foreground!.value, state.$1 && state.$2);
+        expect(calls, contains('isVisible'));
+        if (state.$1) expect(calls, contains('isFocused'));
+      });
+    }
+
+    test('native callbacks publish actual state without resampling', () async {
+      await owner.initialize();
+      final callsBeforeCallback = calls.length;
+      expect(await emit(true), isEmpty);
+      expect(owner.foreground!.value, isTrue);
+      expect(await emit(false), isEmpty);
+      expect(owner.foreground!.value, isFalse);
+      expect(calls.length, callsBeforeCallback);
+    });
+
+    for (final foreground in [true, false]) {
+      test('native callback rejects a stale snapshot: $foreground', () async {
+        visible = true;
+        pendingFocus = Completer<bool>();
+        focusStarted = Completer<void>();
+        final initialized = owner.initialize();
+        await focusStarted!.future;
+        expect(await emit(foreground), isEmpty);
+        expect(owner.foreground!.value, foreground);
+        pendingFocus!.complete(!foreground);
+        await initialized;
+        expect(owner.foreground!.value, foreground);
+      });
+    }
+
+    for (final method in ['isVisible', 'isFocused']) {
+      test('$method errors remain conservatively unfocused', () async {
+        visible = true;
+        focused = true;
+        failedQuery = method;
+        await owner.initialize();
+        expect(owner.foreground!.value, isFalse);
+        await emit(true);
+        expect(owner.foreground!.value, isTrue);
+      });
+    }
+
+    test(
+      'dispose unbinds callbacks and rejects an in-flight snapshot',
+      () async {
+        visible = true;
+        pendingFocus = Completer<bool>();
+        focusStarted = Completer<void>();
+        final initialized = owner.initialize();
+        await focusStarted!.future;
+        final foreground = owner.foreground!;
+        await owner.dispose();
+        expect(await emit(true), isNull);
+        owner.foregroundChanged(true);
+        pendingFocus!.complete(true);
+        await initialized;
+        expect(foreground.value, isFalse);
+      },
+    );
+  });
+
+  for (final platform in [TargetPlatform.linux, TargetPlatform.macOS]) {
+    test('$platform exposes no Windows foreground source', () async {
+      debugDefaultTargetPlatformOverride = platform;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      final owner = DesktopWindowTitleBar(api: _Api());
+      expect(owner.foreground, isNull);
+      await owner.initialize();
+      await owner.dispose();
+    });
   }
 
   test(

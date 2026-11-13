@@ -1,4 +1,4 @@
-# Pre-Released: v1.27.17+206
+# Released: v1.27.18+207
 
 Table Habit now supports iOS Home Screen widgets! Thanks to
 [@IlyaPalochkin](https://github.com/IlyaPalochkin) for contributing the initial
@@ -36,4 +36,4 @@ interactive widgets (#680).
 - Refresh Apple build dependency locks
 - Update contributor credits
 
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.15+204...pre-v1.27.17+206)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.15+204...v1.27.18+207)

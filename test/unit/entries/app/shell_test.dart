@@ -11,13 +11,16 @@ import 'package:go_router/go_router.dart';
 import 'package:mhabit/entries/app/navigation_chrome.dart';
 import 'package:mhabit/entries/app/navigation_destination.dart';
 import 'package:mhabit/entries/app/shell.dart';
+import 'package:mhabit/entries/common/app_root_view.dart';
 import 'package:mhabit/l10n/localizations.dart';
+import 'package:mhabit/models/app_adaptive_style_mode.dart';
 import 'package:mhabit/models/app_apple_sidebar_style_mode.dart';
 import 'package:mhabit/models/app_entry.dart';
 import 'package:mhabit/models/app_theme_color.dart';
 import 'package:mhabit/pages/app_debugger/_widgets/debugger_app_bar.dart';
 import 'package:mhabit/pages/app_debugger/page.dart'
     show onDebuggerNotificationTapped;
+import 'package:mhabit/pages/app_settings/widgets.dart';
 import 'package:mhabit/pages/common/navigation_scroll_to_top.dart';
 import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/pages/group_manage/_providers/group_manage.dart';
@@ -28,6 +31,7 @@ import 'package:mhabit/pages/habit_detail/_widgets/habit_detail_appbar_actions.d
 import 'package:mhabit/pages/habits_display/navigation_chrome.dart';
 import 'package:mhabit/providers/app_ui/app_launch_entry.dart';
 import 'package:mhabit/providers/app_ui/app_theme.dart';
+import 'package:mhabit/providers/workflow/app_support.dart';
 import 'package:mhabit/routes/app_flow_page.dart';
 import 'package:mhabit/routes/app_material_page.dart';
 import 'package:mhabit/routes/app_navigation_branch.dart';
@@ -35,10 +39,16 @@ import 'package:mhabit/routes/app_navigation_coordinator.dart';
 import 'package:mhabit/routes/app_navigation_scroll_controller.dart';
 import 'package:mhabit/routes/app_router.dart';
 import 'package:mhabit/routes/navigator_helpers.dart';
+import 'package:mhabit/storage/profile/handlers.dart';
+import 'package:mhabit/storage/profile_provider.dart';
 import 'package:mhabit/theme/color.dart';
 import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../support/stub/about_info.dart';
+import '../../../support/stub/shared_preferences.dart';
 
 class _RecordingLaunchEntryViewModel extends AppLaunchEntryViewModel {
   final List<AppEntrys> entries = [];
@@ -341,6 +351,8 @@ GoRouter _buildRouter(
   Widget settingsPage = const _StubPage('settings page'),
   Widget? groupManagePage,
   Widget debuggerPage = const _StubPage('debugger page'),
+  TransitionBuilder? startupBuilder,
+  List<NavigatorObserver> rootObservers = const [],
 }) {
   final branchObservers = [...observers];
   final branches = [
@@ -431,6 +443,7 @@ GoRouter _buildRouter(
           Provider<HabitDisplayNavigationChrome>.value(
             value: habitChrome,
             child: AppNavigationShell(
+              startupBuilder: startupBuilder,
               coordinator: coordinator,
               chromeController: chromeController,
               auxiliaryChromeBuilder: (context) => [
@@ -453,7 +466,7 @@ GoRouter _buildRouter(
         return navigationShell;
       },
     );
-  return routerBuilder.build(home: home);
+  return routerBuilder.build(home: home, observers: rootObservers);
 }
 
 Future<void> _tapBranch(WidgetTester tester, int index) async {
@@ -3083,6 +3096,120 @@ void main() {
     },
   );
 
+  for (final branch in AppNavigationBranch.values) {
+    testWidgets('reset then cold start prompts on real nested $branch root', (
+      tester,
+    ) async {
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      final previous = PreferencesTestStore.instance;
+      PreferencesTestStore.instance = InMemoryPreferencesStore.empty();
+      addTearDown(() => PreferencesTestStore.instance = previous);
+      final before = createTestAppSupportOwner();
+      await before.resetReminderForNextLaunch();
+      before.dispose();
+      final owner = createTestAppSupportOwner(
+        loadInfo: () async => stubAboutInfo(),
+      );
+      addTearDown(owner.dispose);
+      await owner.init();
+      final root = AdaptiveBranchRouteObserver();
+      root.onStackChanged = () {
+        if (root.depth > 1) owner.skipReminderForSession();
+      };
+      var prompts = 0;
+      final checks = <String>[];
+      late BuildContext shellContext;
+      late GoRouter router;
+      router = _buildRouter(
+        [AdaptiveBranchRouteObserver(), AdaptiveBranchRouteObserver()],
+        home: branch.rootRoute,
+        rootObservers: [root],
+        startupBuilder: (context, child) => ChangeNotifierProvider.value(
+          value: owner,
+          child: AppSupportReminder(
+            canShowDialog: (context) {
+              final navigation = context.read<AppNavigationCoordinator>();
+              checks.add(
+                'root=${root.depth}, flow=${navigation.appFlowObserver.depth}, branch=${navigation.branchObservers[branch.navigationIndex].routeNameStack}, route=${router.currentRouteName}',
+              );
+              return root.depth == 1 &&
+                  router.currentRouteName == branch.rootRouteName &&
+                  navigation.isAtPrimaryBranchRoot(branch);
+            },
+            showSupportDialog:
+                ({required context, required info, controller}) async {
+                  prompts++;
+                  shellContext = context;
+                  return AppSupportResult.remindLater;
+                },
+            child: child!,
+          ),
+        ),
+      );
+      addTearDown(router.dispose);
+      await _pumpApp(
+        tester,
+        router: router,
+        launchEntry: _RecordingLaunchEntryViewModel(),
+      );
+      await tester.pumpAndSettle();
+      expect(prompts, 1, reason: checks.join(' / '));
+      expect(root.depth, 1);
+      final modal = showAdaptiveModalDialog<void>(
+        context: shellContext,
+        barrierDismissible: true,
+        builder: (_) => const AdaptiveDialog(title: Text('Root modal')),
+      );
+      await tester.pumpAndSettle();
+      expect(root.depth, 2);
+      Navigator.of(shellContext, rootNavigator: true).pop();
+      await modal;
+      await tester.pumpAndSettle();
+      expect(root.depth, 1);
+      router.push('/settings');
+      await tester.pumpAndSettle();
+      expect(root.depth, 1);
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(root.depth, 1);
+    });
+  }
+
+  testWidgets(
+    'startup wrapper shares shell navigation providers and captures navigation input',
+    (tester) async {
+      _setSurface(tester, const Size(700, 600));
+      final observers = [
+        AdaptiveBranchRouteObserver(),
+        AdaptiveBranchRouteObserver(),
+      ];
+      AppNavigationCoordinator? navigation;
+      var pointerEvents = 0;
+      final router = _buildRouter(
+        observers,
+        startupBuilder: (context, child) {
+          navigation = context.read<AppNavigationCoordinator>();
+          expect(
+            context.read<AppNavigationScrollController>(),
+            same(navigation!.scrollController),
+          );
+          return Listener(onPointerDown: (_) => pointerEvents++, child: child);
+        },
+      );
+      addTearDown(router.dispose);
+      await _pumpApp(
+        tester,
+        router: router,
+        launchEntry: _RecordingLaunchEntryViewModel(),
+      );
+      expect(navigation, isNotNull);
+      await tester.tap(find.byIcon(Icons.settings_outlined));
+      await tester.pumpAndSettle();
+      expect(pointerEvents, 1);
+      expect(find.text('settings page'), findsOneWidget);
+    },
+  );
+
   testWidgets('Settings auxiliary selection respects app flow veto', (
     tester,
   ) async {
@@ -3107,4 +3234,139 @@ void main() {
     expect(find.text('edit page'), findsOneWidget);
     expect(find.text('settings page'), findsNothing);
   });
+  testWidgets(
+    'UI style changes retain settings routes and the selected branch',
+    (tester) async {
+      tester.view.physicalSize = const Size(1200, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      SharedPreferences.setMockInitialValues({});
+      final profile = ProfileViewModel([
+        AdaptiveStyleOverrideProfileHandler.new,
+        AppleSidebarStyleModeProfileHandler.new,
+      ]);
+      await profile.init();
+      final theme = AppThemeViewModel()..updateProfile(profile);
+      final coordinator = _MutableNavigationCoordinator(initialIndex: 1);
+      final chrome = AppNavigationChromeController();
+      final launchEntry = _RecordingLaunchEntryViewModel();
+      addTearDown(profile.dispose);
+      addTearDown(theme.dispose);
+      addTearDown(coordinator.dispose);
+      addTearDown(chrome.dispose);
+      addTearDown(launchEntry.dispose);
+      final router = GoRouter(
+        initialLocation: '/settings',
+        routes: [
+          ShellRoute(
+            builder: (context, state, child) => AppNavigationShell(
+              coordinator: coordinator,
+              chromeController: chrome,
+              appleSidebarStyleMode: context
+                  .select<AppThemeViewModel, AppAppleSidebarStyleMode>(
+                    (vm) => vm.appleSidebarStyleMode,
+                  ),
+              child: child,
+            ),
+            routes: [
+              GoRoute(
+                path: '/settings',
+                builder: (context, state) => const Scaffold(
+                  body: SingleChildScrollView(
+                    child: AdaptiveListSection(
+                      key: ValueKey('style-settings-page'),
+                      children: [
+                        AppSettingUiStyleTile(),
+                        AppSettingAppleSidebarStyleTile(),
+                      ],
+                    ),
+                  ),
+                ),
+                routes: [
+                  GoRoute(
+                    path: 'detail',
+                    builder: (context, state) =>
+                        const _StubPage('settings-detail'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<AppThemeViewModel>.value(value: theme),
+            ChangeNotifierProvider<AppLaunchEntryViewModel>.value(
+              value: launchEntry,
+            ),
+          ],
+          child: Consumer<AppThemeViewModel>(
+            builder: (context, theme, _) => AppRootView.router(
+              themeMode: ThemeMode.light,
+              adaptiveStyleOverride: theme.adaptiveStyleOverride,
+              config: router,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final settings = tester.element(
+        find.byKey(const ValueKey('style-settings-page')),
+      );
+      final uiControl = find.byKey(const ValueKey('settings-ui-style-control'));
+      await tester.tap(uiControl);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Apple').last);
+      await tester.pumpAndSettle();
+      expect(theme.adaptiveStyleOverride, AdaptiveStyle.apple);
+      expect(AdaptiveStyle.of(settings), AdaptiveStyle.apple);
+      expect(
+        tester.element(find.byKey(const ValueKey('style-settings-page'))),
+        same(settings),
+      );
+      final sidebarControl = find.byKey(
+        const ValueKey('settings-apple-sidebar-style-control'),
+      );
+      await tester.tap(sidebarControl);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Edge').last);
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<AdaptiveNavigationShell>(
+              find.byType(AdaptiveNavigationShell),
+            )
+            .appleSidebarStyle,
+        AppleSidebarStyle.edge,
+      );
+      unawaited(router.push<void>('/settings/detail'));
+      await tester.pumpAndSettle();
+      final detail = tester.element(find.text('settings-detail'));
+      await theme.setAdaptiveStyleMode(AppAdaptiveStyleMode.material);
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, '/settings/detail');
+      expect(tester.element(find.text('settings-detail')), same(detail));
+      expect(coordinator.selectedIndex, 1);
+      expect(launchEntry.entries, isEmpty);
+      expect(theme.appleSidebarStyleMode, AppAppleSidebarStyleMode.os27);
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(
+        tester.element(find.byKey(const ValueKey('style-settings-page'))),
+        same(settings),
+      );
+      expect(router.state.uri.path, '/settings');
+      expect(tester.takeException(), isNull);
+    },
+    variant: const TargetPlatformVariant({
+      TargetPlatform.android,
+      TargetPlatform.windows,
+      TargetPlatform.linux,
+      TargetPlatform.iOS,
+      TargetPlatform.macOS,
+    }),
+  );
 }

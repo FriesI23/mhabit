@@ -1,0 +1,34 @@
+name: Feature request
+description: Suggest an improvement to Table Habit.
+title: "[FEATURE] "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please search [existing issues](https://github.com/FriesI23/mhabit/issues) and check the [Project](https://github.com/users/FriesI23/projects/5) before submitting.
+        See the [Wiki](https://github.com/FriesI23/mhabit/wiki) for existing features and usage guides.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What are you trying to do, and what is missing or difficult today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed solution
+      description: Describe the behavior you would like and how it would help.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe any workarounds or other approaches you have considered.
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: References and additional context
+      description: Add links, examples, screenshots, or mockups that explain the idea.

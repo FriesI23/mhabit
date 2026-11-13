@@ -12,7 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:convert';
+
+import 'package:flutter/services.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import '../../common/consts.dart';
 
 part 'about_info.g.dart';
 
@@ -28,6 +33,22 @@ class AboutInfo {
   final String donateCryptoBNBAddr;
   final String donateCryptoAVAXAddr;
   final String donateCryptoFTMAddr;
+
+  /// Project HTTP(S) destination, or null for invalid URLs or embedded credentials.
+  Uri? get sourceCodeUri => _webUri(sourceCodeUrl);
+
+  /// Issue destination, with the same validation as [sourceCodeUri].
+  Uri? get issueTrackerUri => _webUri(issueTrackerUrl);
+
+  static Uri? _webUri(String value) {
+    final uri = Uri.tryParse(value);
+    return uri != null &&
+            (uri.scheme == 'https' || uri.scheme == 'http') &&
+            uri.host.isNotEmpty &&
+            uri.userInfo.isEmpty
+        ? uri
+        : null;
+  }
 
   const AboutInfo({
     required this.sourceCodeUrl,
@@ -56,4 +77,11 @@ class AboutInfo {
 
   factory AboutInfo.fromJson(Map<String, dynamic> json) =>
       _$AboutInfoFromJson(json);
+}
+
+/// Loads the shared project configuration from the app's asset bundle.
+Future<AboutInfo> loadAboutInfo({AssetBundle? bundle}) async {
+  final raw = await (bundle ?? rootBundle).loadString(aboutInfoFilePath);
+  final Map<String, dynamic> data = jsonDecode(raw);
+  return AboutInfo.fromJson(data);
 }

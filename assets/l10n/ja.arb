@@ -1118,5 +1118,6 @@
     "habitDisplay_groupType_manual": "自分の順序",
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
-    }
+    },
+    "appSetting_uiStyle_automatic": "自動"
 }

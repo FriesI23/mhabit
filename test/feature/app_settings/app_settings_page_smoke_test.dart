@@ -16,22 +16,30 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart'
     show
+        CupertinoButton,
         CupertinoDatePicker,
         CupertinoIcons,
         CupertinoListTile,
         CupertinoSwitch;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mhabit/common/consts.dart';
+import 'package:mhabit/common/distribution.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/entries/app/navigation_destination.dart';
 import 'package:mhabit/l10n/localizations.dart';
+import 'package:mhabit/models/app_adaptive_style_mode.dart';
+import 'package:mhabit/models/app_apple_sidebar_style_mode.dart';
 import 'package:mhabit/models/app_sync_tasks.dart';
 import 'package:mhabit/models/group_export.dart';
 import 'package:mhabit/models/habit_export.dart';
 import 'package:mhabit/pages/app_settings/_widgets/app_language_changer.dart';
 import 'package:mhabit/pages/app_settings/_widgets/app_setting_develop_subgroup.dart';
 import 'package:mhabit/pages/app_settings/_widgets/app_setting_reminder_tile.dart';
+import 'package:mhabit/pages/app_settings/_widgets/app_setting_support_section.dart';
 import 'package:mhabit/pages/app_settings/_widgets/app_setting_sync_failed_tile.dart';
 import 'package:mhabit/pages/app_settings/page.dart';
 import 'package:mhabit/pages/common/_widgets/exporter_confirm_dialog.dart';
@@ -46,21 +54,39 @@ import 'package:mhabit/providers/app_ui/app_theme.dart';
 import 'package:mhabit/providers/app_ui/group_expand_timer_config.dart';
 import 'package:mhabit/providers/app_ui/habit_op_config.dart';
 import 'package:mhabit/providers/app_ui/habits_record_scroll_behavior.dart';
+import 'package:mhabit/providers/support/about_info.dart';
 import 'package:mhabit/providers/support/global.dart';
 import 'package:mhabit/providers/workflow/app_reminder.dart';
+import 'package:mhabit/providers/workflow/app_support.dart';
 import 'package:mhabit/providers/workflow/app_sync.dart';
 import 'package:mhabit/providers/workflow/group_manager.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/routes/app_router.dart';
 import 'package:mhabit/storage/db_helper_provider.dart';
+import 'package:mhabit/storage/profile/handlers/adaptive_style_override.dart';
 import 'package:mhabit/storage/profile/handlers/app_language.dart';
+import 'package:mhabit/storage/profile/handlers/app_support.dart';
+import 'package:mhabit/storage/profile/handlers/apple_sidebar_style_mode.dart';
 import 'package:mhabit/storage/profile/handlers/display_calendar_scroll_mode.dart';
 import 'package:mhabit/storage/profile/handlers/habit_grouping.dart';
 import 'package:mhabit/storage/profile_provider.dart';
+import 'package:mhabit/widgets/provider.dart';
 import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../support/stub/about_info.dart';
+import '../../support/stub/shared_preferences.dart';
+
+class _Notifications extends AndroidFlutterLocalNotificationsPlugin {
+  int cancelCalls = 0;
+
+  @override
+  Future<void> cancel({required int id, String? tag}) async {
+    cancelCalls++;
+  }
+}
 
 class _ExportAccess implements HabitExportAccess, GroupExportAccess {
   int habitLoads = 0;
@@ -150,8 +176,11 @@ Future<ProfileViewModel> _loadProfile() async {
   SharedPreferences.setMockInitialValues({});
   final profile = ProfileViewModel([
     AppLanguageProfileHanlder.new,
+    AppSupportReminderProfileHandler.new,
     HabitGroupingExperimentalFeature.new,
     DisplayCalendarScrollModeProfileHandler.new,
+    AdaptiveStyleOverrideProfileHandler.new,
+    AppleSidebarStyleModeProfileHandler.new,
   ]);
   await profile.init();
   return profile;
@@ -209,13 +238,27 @@ void main() {
 
   for (final platform in [
     TargetPlatform.android,
+    TargetPlatform.windows,
+    TargetPlatform.linux,
     TargetPlatform.iOS,
     TargetPlatform.macOS,
   ]) {
-    testWidgets('AppSettingPage language and scroll flow on $platform', (
-      tester,
-    ) async {
+    final testName = 'AppSettingPage language and scroll flow on $platform';
+    testWidgets(testName, (tester) async {
+      final applePlatform =
+          platform == TargetPlatform.iOS || platform == TargetPlatform.macOS;
+      final previousPreferences = PreferencesTestStore.instance;
+      addTearDown(() => PreferencesTestStore.instance = previousPreferences);
       final profile = await _loadProfile();
+      // Cached asset futures must not retain the preceding widget-test clock.
+      rootBundle.evict(aboutInfoFilePath);
+      final support = AppSupportOwner(
+        profile: profile,
+        loadInfo: () async => stubAboutInfo(),
+      );
+      addTearDown(support.dispose);
+      final notifications = _Notifications();
+      FlutterLocalNotificationsPlatform.instance = notifications;
       final dbHelper = DBHelperViewModel();
       final syncAccess = _FakeAppSyncAccess();
 
@@ -299,6 +342,13 @@ void main() {
             Provider<HabitExportAccess>.value(value: exportAccess),
             Provider<GroupExportAccess>.value(value: exportAccess),
             ChangeNotifierProvider<ProfileViewModel>.value(value: profile),
+            ViewModelProxyProvider<ProfileViewModel, AppSupportOwner>(
+              lazy: false,
+              create: (_) => support,
+              update: (context, profile, previous) => previous
+                ..updateProfile(profile)
+                ..init(),
+            ),
             ChangeNotifierProvider<DBHelperViewModel>.value(value: dbHelper),
             ChangeNotifierProvider<AppCustomDateYmdHmsConfigViewModel>.value(
               value: customDate,
@@ -334,34 +384,48 @@ void main() {
           ],
           child: MaterialApp.router(
             routerConfig: router,
-            builder: (context, child) => ValueListenableBuilder<TextDirection?>(
-              valueListenable: shellDirection,
-              builder: (context, direction, _) {
-                if (direction == null) return child!;
-                return Overlay.wrap(
-                  child: Directionality(
-                    textDirection: direction,
-                    child: AdaptiveNavigationShell(
-                      selectedIndex: 0,
-                      selectedAuxiliaryIndex: 0,
-                      compactRouteVisible: false,
-                      destinations: [
-                        AppNavigationDestinations.habits(label: 'Habits'),
-                        AppNavigationDestinations.today(label: 'Today'),
-                      ],
-                      auxiliaryDestinations: [
-                        AppNavigationDestinations.settings(label: 'Settings'),
-                      ],
-                      onDestinationSelected: (_) {},
-                      onAuxiliaryDestinationSelected: (_) {},
-                      appleCollapsedSidebarEnabled: context
-                          .watch<AppAppleCollapsedSidebarViewModel>()
-                          .enabled,
-                      child: child!,
-                    ),
+            builder: (context, child) => Consumer<AppThemeViewModel>(
+              builder: (context, theme, _) => AppAdaptiveUiTheme(
+                data: AppAdaptiveUiTheme.of(
+                  context,
+                ).copyWith(style: theme.adaptiveStyleOverride),
+                child: MediaQuery(
+                  data: MediaQuery.of(
+                    context,
+                  ).copyWith(disableAnimations: true),
+                  child: ValueListenableBuilder<TextDirection?>(
+                    valueListenable: shellDirection,
+                    builder: (context, direction, _) {
+                      if (direction == null) return child!;
+                      return Overlay.wrap(
+                        child: Directionality(
+                          textDirection: direction,
+                          child: AdaptiveNavigationShell(
+                            selectedIndex: 0,
+                            selectedAuxiliaryIndex: 0,
+                            compactRouteVisible: false,
+                            destinations: [
+                              AppNavigationDestinations.habits(label: 'Habits'),
+                              AppNavigationDestinations.today(label: 'Today'),
+                            ],
+                            auxiliaryDestinations: [
+                              AppNavigationDestinations.settings(
+                                label: 'Settings',
+                              ),
+                            ],
+                            onDestinationSelected: (_) {},
+                            onAuxiliaryDestinationSelected: (_) {},
+                            appleCollapsedSidebarEnabled: context
+                                .watch<AppAppleCollapsedSidebarViewModel>()
+                                .enabled,
+                            child: child!,
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
+                ),
+              ),
             ),
             theme: ThemeData(platform: platform),
             localizationsDelegates: L10n.localizationsDelegates,
@@ -374,14 +438,56 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(find.text('Settings'), findsOneWidget);
       expect(find.byType(AdaptiveSliverAppBar), findsOneWidget);
-      if (platform == TargetPlatform.android) {
+      if (!applePlatform) {
         expect(find.byType(WindowControlSliverAppBar), findsOneWidget);
       }
       expect(find.byType(CustomScrollView), findsOneWidget);
+      final uiControl = find.byKey(const ValueKey('settings-ui-style-control'));
+      final sidebarControl = find.byKey(
+        const ValueKey('settings-apple-sidebar-style-control'),
+      );
+      final display = find.byKey(const ValueKey('settings-display'));
+      expect(
+        tester.widget<AdaptiveListSection>(display).children.first,
+        isA<WindowSizeClassLayoutBuilder>(),
+      );
+      Future<void> chooseStyle(String label) async {
+        await Scrollable.ensureVisible(
+          tester.element(uiControl),
+          alignment: 0.5,
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(uiControl);
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(label).last);
+        await tester.pumpAndSettle();
+        expect(router.routeInformationProvider.value.uri.path, '/');
+        expect(developer.isInDevelopMode, isFalse);
+        expect(tester.takeException(), isNull);
+      }
+
+      expect(theme.appleSidebarStyleMode, AppAppleSidebarStyleMode.automatic);
+      await chooseStyle('Apple');
+      expect(sidebarControl, findsOneWidget);
+      await Scrollable.ensureVisible(
+        tester.element(sidebarControl),
+        alignment: 0.5,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(sidebarControl);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Edge').last);
+      await tester.pumpAndSettle();
+      expect(theme.appleSidebarStyleMode, AppAppleSidebarStyleMode.os27);
+      await chooseStyle('Material');
+      expect(sidebarControl, findsNothing);
+      await chooseStyle('Automatic');
+      expect(theme.adaptiveStyleMode, AppAdaptiveStyleMode.automatic);
+
       final collapsedSidebarTile = find.byKey(
         const ValueKey('settings-apple-collapsed-sidebar'),
       );
-      if (platform == TargetPlatform.android) {
+      if (!applePlatform) {
         expect(collapsedSidebarTile, findsNothing);
       } else {
         expect(collapsedSidebarTile, findsOneWidget);
@@ -405,14 +511,14 @@ void main() {
         await tester.pump();
         expect(collapsedSidebar.changes, 1);
         expect(collapsedSidebar.value, platform != TargetPlatform.iOS);
-        await tester.drag(find.byType(CustomScrollView), const Offset(0, 1000));
-        await tester.pumpAndSettle();
       }
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, 1000));
+      await tester.pumpAndSettle();
       final adaptiveAppBar = tester.widget<AdaptiveSliverAppBar>(
         find.byType(AdaptiveSliverAppBar),
       );
       expect(adaptiveAppBar.automaticallyImplyLeading, isFalse);
-      if (platform == TargetPlatform.android) {
+      if (!applePlatform) {
         final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
         expect(appBar.automaticallyImplyLeading, isFalse);
         expect(appBar.leading, isA<AdaptiveBackButton>());
@@ -468,10 +574,12 @@ void main() {
       await tester.scrollUntilVisible(
         groups,
         100,
-        scrollable: find.descendant(
-          of: find.byType(CustomScrollView),
-          matching: find.byType(Scrollable),
-        ),
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       final groupTile = find.descendant(
         of: groups,
@@ -482,7 +590,7 @@ void main() {
         find.descendant(
           of: groupTile,
           matching: find.byIcon(
-            platform == TargetPlatform.android
+            !applePlatform
                 ? Icons.chevron_right
                 : CupertinoIcons.chevron_forward,
           ),
@@ -493,10 +601,12 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
       final groupScroll = tester
           .state<ScrollableState>(
-            find.descendant(
-              of: find.byType(CustomScrollView),
-              matching: find.byType(Scrollable),
-            ),
+            find
+                .descendant(
+                  of: find.byType(CustomScrollView),
+                  matching: find.byType(Scrollable),
+                )
+                .first,
           )
           .position;
       final groupOffset = groupScroll.pixels;
@@ -516,17 +626,17 @@ void main() {
 
       final compact = find.descendant(
         of: find.byKey(const ValueKey('settings-compact-ui')),
-        matching: find.byType(
-          platform == TargetPlatform.android ? Switch : CupertinoSwitch,
-        ),
+        matching: find.byType(!applePlatform ? Switch : CupertinoSwitch),
       );
       await tester.scrollUntilVisible(
         compact,
         150,
-        scrollable: find.descendant(
-          of: find.byType(CustomScrollView),
-          matching: find.byType(Scrollable),
-        ),
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       await tester.pumpAndSettle();
       await tester.tap(compact);
@@ -551,22 +661,22 @@ void main() {
       await tester.scrollUntilVisible(
         languageTile,
         200,
-        scrollable: find.descendant(
-          of: find.byType(CustomScrollView),
-          matching: find.byType(Scrollable),
-        ),
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       await tester.pumpAndSettle();
       expect(
         find.descendant(
           of: languageTile,
-          matching: find.byType(
-            platform == TargetPlatform.android ? ListTile : CupertinoListTile,
-          ),
+          matching: find.byType(!applePlatform ? ListTile : CupertinoListTile),
         ),
         findsOneWidget,
       );
-      if (platform != TargetPlatform.android) {
+      if (applePlatform) {
         expect(
           find.ancestor(
             of: languageTile,
@@ -617,10 +727,12 @@ void main() {
       await tester.scrollUntilVisible(
         calendarByPage,
         150,
-        scrollable: find.descendant(
-          of: find.byType(CustomScrollView),
-          matching: find.byType(Scrollable),
-        ),
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       await tester.pumpAndSettle();
       expect(tester.widget<AdaptiveListSection>(operation).children.length, 3);
@@ -628,9 +740,7 @@ void main() {
       await tester.tap(
         find.descendant(
           of: calendarByPage,
-          matching: find.byType(
-            platform == TargetPlatform.android ? Switch : CupertinoSwitch,
-          ),
+          matching: find.byType(!applePlatform ? Switch : CupertinoSwitch),
         ),
       );
       await tester.pumpAndSettle();
@@ -650,10 +760,12 @@ void main() {
       await tester.scrollUntilVisible(
         reminderTile,
         150,
-        scrollable: find.descendant(
-          of: find.byType(CustomScrollView),
-          matching: find.byType(Scrollable),
-        ),
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       await Scrollable.ensureVisible(
         tester.element(reminderTile),
@@ -673,9 +785,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       final timePicker = find.byType(
-        platform == TargetPlatform.android
-            ? TimePickerDialog
-            : CupertinoDatePicker,
+        !applePlatform ? TimePickerDialog : CupertinoDatePicker,
       );
       expect(timePicker, findsOneWidget);
       Navigator.of(tester.element(timePicker)).pop();
@@ -686,10 +796,12 @@ void main() {
       await tester.scrollUntilVisible(
         backup,
         150,
-        scrollable: find.descendant(
-          of: find.byType(CustomScrollView),
-          matching: find.byType(Scrollable),
-        ),
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       await tester.pumpAndSettle();
       final backupTiles = find.descendant(
@@ -700,8 +812,7 @@ void main() {
       for (final tile in tester.widgetList<AdaptiveListTile>(backupTiles)) {
         expect(tile.trailing, isNull);
       }
-      // Cancellation must stop before any export/import/reset workflow owner.
-      // Those execution providers are deliberately absent from this fixture.
+      // Cancellation must stop before executing any export/import/reset workflow.
       for (final index in [0, 2, 3]) {
         final tile = backupTiles.at(index);
         await Scrollable.ensureVisible(tester.element(tile), alignment: 0.5);
@@ -732,10 +843,12 @@ void main() {
       await tester.scrollUntilVisible(
         others,
         150,
-        scrollable: find.descendant(
-          of: find.byType(CustomScrollView),
-          matching: find.byType(Scrollable),
-        ),
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       await tester.pumpAndSettle();
       expect(tester.widget<AdaptiveListSection>(others).children, hasLength(5));
@@ -744,7 +857,7 @@ void main() {
           of: others,
           matching: find.byIcon(CupertinoIcons.chevron_forward),
         ),
-        platform == TargetPlatform.android ? findsNothing : findsNWidgets(3),
+        !applePlatform ? findsNothing : findsNWidgets(3),
       );
       final developmentTile = find.descendant(
         of: others,
@@ -758,9 +871,7 @@ void main() {
       await tester.tap(
         find.descendant(
           of: developmentTile,
-          matching: find.byType(
-            platform == TargetPlatform.android ? Switch : CupertinoSwitch,
-          ),
+          matching: find.byType(!applePlatform ? Switch : CupertinoSwitch),
         ),
       );
       await tester.pumpAndSettle();
@@ -770,10 +881,12 @@ void main() {
       await tester.scrollUntilVisible(
         find.byType(AppSettingDevelopSubGroup),
         100,
-        scrollable: find.descendant(
-          of: find.byType(CustomScrollView),
-          matching: find.byType(Scrollable),
-        ),
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       expect(
         tester
@@ -783,9 +896,142 @@ void main() {
             .isInDevelopMode,
         isTrue,
       );
+      final resetSupport = find.byKey(
+        const ValueKey('developer-reset-app-support'),
+      );
+      await tester.scrollUntilVisible(
+        resetSupport.hitTestable(),
+        100,
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
       await Scrollable.ensureVisible(
-        tester.element(developmentTile),
+        tester.element(resetSupport),
         alignment: 0.5,
+      );
+      await tester.pumpAndSettle();
+      expect(resetSupport.hitTestable(), findsOneWidget);
+      await tester.tap(resetSupport.hitTestable());
+      await tester.pumpAndSettle();
+      expect(find.byType(AdaptiveDialog), findsNothing);
+      final preferences = (await SharedPreferences.getInstance());
+      expect(preferences.reminderInt('appSupport_launches'), 9);
+      expect(preferences.reminderBool('appSupport_doNotOpenAgain'), isFalse);
+      final armed = preferences.getAll();
+      await tester.tap(find.byType(SnackBarAction));
+      await tester.pumpAndSettle();
+      final showSupport = find.byKey(
+        const ValueKey('developer-show-app-support'),
+      );
+      for (var i = 0; i < 2; i++) {
+        final channelControl = find.byKey(
+          const ValueKey('developer-app-support-channel-control'),
+        );
+        await Scrollable.ensureVisible(
+          tester.element(channelControl),
+          alignment: 0.5,
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(channelControl);
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(i == 0 ? 'Google Play' : 'App Store').last);
+        await tester.pumpAndSettle();
+        final selectedDistribution = i == 0
+            ? AppDistribution.googlePlay
+            : AppDistribution.appStore;
+        expect(support.distribution, selectedDistribution);
+        await tester.scrollUntilVisible(
+          showSupport.hitTestable(),
+          100,
+          scrollable: find
+              .descendant(
+                of: find.byType(CustomScrollView),
+                matching: find.byType(Scrollable),
+              )
+              .first,
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(showSupport);
+        await tester.pumpAndSettle();
+        expect(find.byType(AdaptiveDialog), findsOneWidget);
+        final developerControls = tester.widget<AppSettingDevelopSubGroup>(
+          find.byType(AppSettingDevelopSubGroup),
+        );
+        expect(support.developerActionInProgress, isTrue);
+        expect(developerControls.onAppSupportDistributionChanged, isNotNull);
+        expect(developerControls.onResetSupportReminderPressed, isNotNull);
+        expect(developerControls.onPreviewAppSupportPressed, isNotNull);
+        expect(
+          tester
+              .widget<AdaptiveChoiceListTile<AppDistribution>>(
+                find.byType(AdaptiveChoiceListTile<AppDistribution>),
+              )
+              .onChanged,
+          isNotNull,
+        );
+        for (final control in [resetSupport, showSupport]) {
+          expect(tester.widget<AdaptiveListTile>(control).onTap, isNotNull);
+          expect(control.hitTestable(), findsNothing);
+        }
+        final dialogL10n = L10n.of(
+          tester.element(find.byType(AdaptiveDialog)),
+        )!;
+        // Developer selections preview their channel independently of theme.
+        final target = support.channelAction;
+        final label = switch (target) {
+          AppSupportAction.googlePlay => dialogL10n.appSupport_rateOnGooglePlay,
+          AppSupportAction.appStore => dialogL10n.appSupport_rateOnAppStore,
+          _ => dialogL10n.appSupport_starOnGitHub,
+        };
+        final channelAction = find.ancestor(
+          of: find.descendant(
+            of: find.byType(AdaptiveDialog),
+            matching: find.text(label),
+          ),
+          matching: find.byWidgetPredicate(
+            (widget) => !applePlatform
+                ? widget is FilledButton
+                : widget is CupertinoButton,
+          ),
+        );
+        expect(channelAction, findsOneWidget);
+        final githubAction = find.descendant(
+          of: find.byType(AdaptiveDialog),
+          matching: find.byKey(const ValueKey('app-support-action-githubStar')),
+        );
+        expect(githubAction, findsOneWidget);
+        expect(
+          find.descendant(
+            of: githubAction,
+            matching: find.byIcon(Icons.star_rounded),
+          ),
+          findsOneWidget,
+        );
+        final dismissAction = find.text(
+          i == 0 ? dialogL10n.appSupport_later : dialogL10n.appSupport_never,
+        );
+        await tester.ensureVisible(dismissAction);
+        await tester.pumpAndSettle();
+        expect(dismissAction.hitTestable(), findsOneWidget);
+        await tester.tap(dismissAction);
+        await tester.pumpAndSettle();
+        expect(find.byType(AdaptiveDialog), findsNothing);
+        expect(support.developerActionInProgress, isFalse);
+        expect(preferences.getAll(), armed);
+      }
+      await tester.scrollUntilVisible(
+        developmentTile.hitTestable(),
+        -100,
+        scrollable: find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       await tester.pumpAndSettle();
       await tester.tap(
@@ -830,10 +1076,12 @@ void main() {
         await tester.pumpAndSettle();
         final position = tester
             .state<ScrollableState>(
-              find.descendant(
-                of: find.byType(CustomScrollView),
-                matching: find.byType(Scrollable),
-              ),
+              find
+                  .descendant(
+                    of: find.byType(CustomScrollView),
+                    matching: find.byType(Scrollable),
+                  )
+                  .first,
             )
             .position;
         final before = position.pixels;
@@ -856,10 +1104,12 @@ void main() {
       await tester.drag(find.byType(CustomScrollView), const Offset(0, -500));
       await tester.pumpAndSettle();
       final scrollable = tester.state<ScrollableState>(
-        find.descendant(
-          of: find.byType(CustomScrollView),
-          matching: find.byType(Scrollable),
-        ),
+        find
+            .descendant(
+              of: find.byType(CustomScrollView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       final offsetBeforePush = scrollable.position.pixels;
       expect(offsetBeforePush, greaterThan(0));
@@ -917,8 +1167,8 @@ void main() {
           await collapsedSidebar.setEnabled(enabled);
           await tester.pumpAndSettle();
           expect(settingsScroll.offset, offsetBeforeSwitch);
-          expectBack(platform != TargetPlatform.android && !enabled);
-          if (platform != TargetPlatform.android) {
+          expectBack(applePlatform && !enabled);
+          if (applePlatform) {
             final toggle = find.byKey(
               const ValueKey('cupertino-sidebar-toggle'),
             );
@@ -955,12 +1205,12 @@ void main() {
         expectBack(true);
         tester.view.physicalSize = const Size(700, 900);
         await tester.pumpAndSettle();
-        expectBack(platform != TargetPlatform.android);
+        expectBack(applePlatform);
         tester.view.physicalSize = const Size(1200, 900);
         await tester.pumpAndSettle();
         // Explicit collapse survives wider windows, including on Settings.
-        expectBack(platform != TargetPlatform.android);
-        if (platform != TargetPlatform.android) {
+        expectBack(applePlatform);
+        if (applePlatform) {
           final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
           await tester.tap(toggle);
           await tester.pumpAndSettle();
@@ -978,8 +1228,117 @@ void main() {
         }
         tester.view.physicalSize = const Size(700, 900);
         await tester.pumpAndSettle();
-        expectBack(platform != TargetPlatform.android);
+        expectBack(applePlatform);
       }
+
+      // Exercise ordinary Reset configs through the page and production proxy
+      // wiring, then keep using the same mounted support host.
+      shellDirection.value = TextDirection.ltr;
+      tester.view.physicalSize = const Size(700, 1800);
+      support.setDistribution(AppDistribution.github);
+      await tester.pumpAndSettle();
+      final openedSupportUrls = <String>[];
+      const urlLauncher = MethodChannel('plugins.flutter.io/url_launcher');
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        urlLauncher,
+        (call) async {
+          expect(call.method, 'launch');
+          openedSupportUrls.add((call.arguments as Map)['url'] as String);
+          return true;
+        },
+      );
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          urlLauncher,
+          null,
+        ),
+      );
+      final settingsScrollable = find
+          .descendant(of: settingsView, matching: find.byType(Scrollable))
+          .first;
+      final supportWidget = find.byType(
+        AppSettingSupportSection,
+        skipOffstage: false,
+      );
+      await tester.scrollUntilVisible(
+        supportWidget,
+        150,
+        scrollable: settingsScrollable,
+      );
+      // The lazy section starts real asset I/O when it mounts. Await that
+      // future outside the fake clock before locating its actionable content.
+      final info = tester.widget<FutureBuilder<AboutInfo>>(
+        find.descendant(
+          of: supportWidget,
+          matching: find.byWidgetPredicate(
+            (widget) => widget is FutureBuilder<AboutInfo>,
+            skipOffstage: false,
+          ),
+          skipOffstage: false,
+        ),
+      );
+      await tester.runAsync(
+        () => info.future!.timeout(const Duration(seconds: 5)),
+      );
+      await tester.pumpAndSettle();
+      final supportSection = find.byKey(const ValueKey('settings-support'));
+      final github = find.byKey(
+        const ValueKey('app-support-action-githubStar'),
+      );
+      await tester.scrollUntilVisible(
+        github.hitTestable(),
+        150,
+        scrollable: settingsScrollable,
+      );
+      await tester.pumpAndSettle();
+      final supportHost = tester.element(supportSection);
+      await tester.ensureVisible(github);
+      await tester.pumpAndSettle();
+      await tester.tap(github);
+      await tester.pumpAndSettle();
+      final previousHandler = profile
+          .getHandler<AppSupportReminderProfileHandler>()!;
+      expect(previousHandler.get()!.closed, isTrue);
+      expect(openedSupportUrls, ['https://github.com/FriesI23/mhabit']);
+      await preferences.setString('reset-support-marker', 'remove');
+      final initialization = support.init();
+      final resetConfig = find
+          .descendant(of: backup, matching: find.byType(AdaptiveListTile))
+          .at(3);
+      await tester.ensureVisible(resetConfig);
+      await tester.pumpAndSettle();
+      final resetL10n = L10n.of(tester.element(resetConfig))!;
+      await tester.tap(resetConfig);
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find
+            .text(resetL10n.appSetting_resetConfigDialog_confirmText)
+            .hitTestable(),
+      );
+      await tester.pumpAndSettle();
+      final resetHandler = profile
+          .getHandler<AppSupportReminderProfileHandler>()!;
+      expect(resetHandler, isNot(same(previousHandler)));
+      expect(resetHandler.get(), isNull);
+      expect(notifications.cancelCalls, 1);
+      expect(preferences.getString('reset-support-marker'), isNull);
+      expect(identical(support.init(), initialization), isTrue);
+      expect(support.inited, isTrue);
+      expect(support.reminderClosed, isFalse);
+      expect(tester.element(find.byType(AppSettingPage)), same(page));
+      expect(tester.element(supportSection), same(supportHost));
+      expect(supportHost.read<AppSupportOwner>(), same(support));
+      await tester.ensureVisible(github);
+      await tester.pumpAndSettle();
+      await tester.tap(github);
+      await tester.pumpAndSettle();
+      expect(resetHandler.get()!.closed, isTrue);
+      expect(resetHandler.get()!.launches, 0);
+      expect(openedSupportUrls, [
+        'https://github.com/FriesI23/mhabit',
+        'https://github.com/FriesI23/mhabit',
+      ]);
+      expect(tester.takeException(), isNull);
 
       for (final source in ['habits', 'today', 'detail']) {
         router.go('/source/$source');
@@ -987,7 +1346,7 @@ void main() {
         unawaited(router.push<void>('/'));
         await tester.pumpAndSettle();
         // Apple exercises the missing medium Back; Material uses compact.
-        if (platform == TargetPlatform.android) {
+        if (!applePlatform) {
           tester.view.physicalSize = const Size(400, 900);
         }
         await tester.pumpAndSettle();
@@ -997,6 +1356,6 @@ void main() {
         tester.view.physicalSize = const Size(700, 900);
         await tester.pumpAndSettle();
       }
-    });
+    }, variant: TargetPlatformVariant({platform}));
   }
 }

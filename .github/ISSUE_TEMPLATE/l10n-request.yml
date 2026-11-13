@@ -1,0 +1,39 @@
+name: Language / translation request
+description: Request a language or report a translation issue.
+title: "[L10N] "
+labels: [l10n]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please search [existing issues](https://github.com/FriesI23/mhabit/issues) and check the [Project](https://github.com/users/FriesI23/projects/5) before submitting.
+        Translations are managed on [Weblate](https://hosted.weblate.org/projects/mhabit/).
+        You can contribute there, or submit a PR with updated `.arb` files against the `weblate-translation` branch.
+  - type: dropdown
+    id: request-type
+    attributes:
+      label: Request type
+      options:
+        - New language support
+        - Incorrect or missing translation
+    validations:
+      required: true
+  - type: input
+    id: language
+    attributes:
+      label: Language and locale
+      placeholder: "e.g. Vietnamese (vi)"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: For a translation issue, include where the text appears, the current wording, and your suggested correction.
+    validations:
+      required: true
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Screenshots and additional context
+      description: Attach screenshots or add details about the request or your planned contribution.

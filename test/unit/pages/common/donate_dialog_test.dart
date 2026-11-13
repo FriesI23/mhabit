@@ -16,14 +16,96 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/common/enums.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/common/_widgets/donate_dialog.dart';
+import 'package:mhabit/providers/support/about_info.dart';
 import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../support/adaptive_ui_theme.dart';
 
 void main() {
+  test('DonateConfig filters unknown and duplicate configured ways', () {
+    const config = DonateConfig(info: AboutInfo.empty());
+    expect(config.configuredWays('@unknown,@paypal,@paypal'), {
+      DonateWay.paypal,
+    });
+    expect(config.hasAvailableMethod('@unknown'), isFalse);
+    expect(config.hasAvailableMethod(''), isFalse);
+  });
+
+  for (final way in [DonateWay.buyMeACoffee, DonateWay.paypal]) {
+    test('DonateConfig requires a token for $way', () {
+      const empty = DonateConfig(info: AboutInfo.empty());
+      const populated = DonateConfig(info: _fullInfo);
+      expect(empty.isAvailable(way), isFalse);
+      expect(empty.hasAvailableMethod('@${way.name}'), isFalse);
+      expect(populated.isAvailable(way), isTrue);
+      expect(populated.hasAvailableMethod('@${way.name}'), isTrue);
+    });
+  }
+
+  test(
+    'DonateConfig shares the same crypto destinations with availability',
+    () {
+      const populated = DonateConfig(info: _fullInfo);
+      expect(
+        {
+          for (final type in CryptoDonateButtonType.values)
+            type: populated.cryptoAddress(type),
+        },
+        {
+          CryptoDonateButtonType.btc: 'btc-address',
+          CryptoDonateButtonType.eth: 'eth-address',
+          CryptoDonateButtonType.bnb: 'bnb-address',
+          CryptoDonateButtonType.avax: 'avax-address',
+          CryptoDonateButtonType.ftm: 'ftm-address',
+        },
+      );
+      expect(populated.hasAvailableMethod('@cryptoCurrencyAll'), isTrue);
+      const empty = DonateConfig(info: AboutInfo.empty());
+      expect(empty.hasAvailableMethod('@cryptoCurrencyAll'), isFalse);
+      for (final type in CryptoDonateButtonType.values) {
+        expect(empty.cryptoAddress(type), isEmpty);
+      }
+    },
+  );
+
+  test(
+    'DonateConfig only enables configured QR methods with an asset path',
+    () {
+      const defaults = DonateConfig(info: AboutInfo.empty());
+      const missing = DonateConfig(
+        info: AboutInfo.empty(),
+        alipayQRCodePath: '',
+        wechatPayQRCodePath: '',
+      );
+      for (final way in [DonateWay.alipay, DonateWay.wechatPay]) {
+        expect(defaults.hasAvailableMethod('@${way.name}'), isTrue);
+        expect(missing.isAvailable(way), isFalse);
+      }
+      expect(defaults.hasAvailableMethod('@paypal'), isFalse);
+    },
+  );
+
+  test(
+    'DonateConfig reports no available methods for entirely empty configuration',
+    () {
+      const config = DonateConfig(
+        info: AboutInfo.empty(),
+        alipayQRCodePath: '',
+        wechatPayQRCodePath: '',
+      );
+      expect(
+        config.hasAvailableMethod(
+          DonateWay.values.map((way) => '@${way.name}').join(','),
+        ),
+        isFalse,
+      );
+    },
+  );
+
   for (final brightness in Brightness.values) {
     testWidgets('Crypto icon contrast and disabled Apple color $brightness', (
       tester,
@@ -261,11 +343,13 @@ void main() {
             .arguments,
         {'text': _address},
       );
-      expect(result, DonateDialogResult.copied);
+      expect(result, DonateDialogResult.addressCopied);
       expect(find.byType(DonateContent), findsNothing);
       expect(tester.takeException(), isNull);
     });
-    testWidgets('Donate external link returns donated $style', (tester) async {
+    testWidgets('Donate external link returns linkSelected $style', (
+      tester,
+    ) async {
       final calls = <MethodCall>[];
       const channel = MethodChannel('plugins.flutter.io/url_launcher');
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (
@@ -286,6 +370,8 @@ void main() {
       );
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
+      expect(calls, isEmpty);
+      expect(result, isNull);
       final paypal = find.text('Donate with Paypal');
       await Scrollable.ensureVisible(tester.element(paypal), alignment: 0.5);
       await tester.pumpAndSettle();
@@ -295,7 +381,7 @@ void main() {
         calls.single.arguments['url'],
         'https://www.paypal.com/donate?hosted_button_id=paypal-token',
       );
-      expect(result, DonateDialogResult.donated);
+      expect(result, DonateDialogResult.linkSelected);
       expect(find.byType(DonateContent), findsNothing);
       expect(tester.takeException(), isNull);
     });
@@ -326,9 +412,20 @@ Widget _host(
           onPressed: () async {
             final result = await showDonateDialog(
               context,
-              donateBuyMeACoffeeToken: emptyTokens ? '' : 'coffee-token',
-              donatePaypalToken: emptyTokens ? '' : 'paypal-token',
-              btcAddress: _address,
+              config: DonateConfig(
+                info: AboutInfo(
+                  sourceCodeUrl: '',
+                  issueTrackerUrl: '',
+                  contactEmail: '',
+                  donateBuyMeACoffeeToken: emptyTokens ? '' : 'coffee-token',
+                  donatePaypalToken: emptyTokens ? '' : 'paypal-token',
+                  donateCryptoBTCAddr: _address,
+                  donateCryptoETHAddr: '',
+                  donateCryptoBNBAddr: '',
+                  donateCryptoAVAXAddr: '',
+                  donateCryptoFTMAddr: '',
+                ),
+              ),
             );
             onResult?.call(result);
           },
@@ -337,4 +434,17 @@ Widget _host(
       ),
     ),
   ),
+);
+
+const _fullInfo = AboutInfo(
+  sourceCodeUrl: '',
+  issueTrackerUrl: '',
+  contactEmail: '',
+  donateBuyMeACoffeeToken: 'coffee-token',
+  donatePaypalToken: 'paypal-token',
+  donateCryptoBTCAddr: 'btc-address',
+  donateCryptoETHAddr: 'eth-address',
+  donateCryptoBNBAddr: 'bnb-address',
+  donateCryptoAVAXAddr: 'avax-address',
+  donateCryptoFTMAddr: 'ftm-address',
 );

@@ -2,25 +2,37 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.27.17+206-pre
+## Unreleased
 
-- Fix: improve foldable-screen layouts: fit dialogs, sheets and date/time pickers
-  to the selected screen area; place confirmations in the right or lower area
+- Feature: choose and remember UI style and Apple Sidebar appearance in Display
+  settings
+- Fix: preserve FAB Hero transitions after switching UI styles and returning to
+  habit pages
+- Feature: show donation entries on every platform and distribution
+- Feature: support cards keep GitHub Star and add rating links for Google Play,
+  App Store and Microsoft Store, or a Flathub favorites link
+- Fix: refresh support cards and open previews when the support channel changes
+- Fix: keep background support controls visually enabled while a dialog is open
+- Feature: shared support cards with animated star and coffee headers, code icons,
+  filled icon buttons, automatic paging and clickable dots; Settings centers the
+  width-limited card, and optional reminders retain later/permanent dismissal
+
+- Fix: preserve Loop import history for habits with non-Latin names and retain
+  record notes (#639)
+- Fix: restore WebDAV sync with mixed authentication challenges, including
+  Fastmail (#690)
+
+## 1.27.18+207
+
+- Feature: Home Screen widgets: 7-day progress, check-in/undo/refresh (#680)
+- Feature: auto/fixed/archived habits, large: 6; shared check-in, manual Next,
+  empty states; mark ordinary habits missed; ordinary/negative states,
+  localized text (#687)
+- Fix: fit foldable dialogs/sheets/date/time pickers; confirmations right/lower
   (#691)
-- Fix: keep toolbars, sidebars, search and floating controls clear of window
-  controls (#691)
-- Fix: preserve navigation when safe areas change (#691)
-- Fix: refresh localized labels correctly (#691)
-
-## 1.27.16+205-pre
-
-- Feature: interactive Home Screen widgets with seven-day progress, check-in,
-  undo and refresh (#680)
-- Feature: automatic or fixed habits, including archived habits; up to six habits
-  in the large widget (#687)
-- Feature: shared check-in display, manual Next and empty-list messages (#687)
-- Feature: mark ordinary habits incomplete; clear ordinary/negative record states
-  and localized labels (#687)
+- Fix: toolbars/sidebars/search/floating controls clear of window controls
+  (#691)
+- Fix: keep navigation on safe-area changes; reload labels (#691)
 
 ## 1.27.15+204
 

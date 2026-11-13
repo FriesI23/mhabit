@@ -499,3 +499,112 @@ void mhabit_desktop_title_bar_host_api_clear_method_handlers(FlBinaryMessenger* 
   g_autoptr(FlBasicMessageChannel) reset_channel = fl_basic_message_channel_new(messenger, reset_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(reset_channel, nullptr, nullptr, nullptr);
 }
+
+struct _MhabitDesktopTitleBarFlutterApi {
+  GObject parent_instance;
+
+  FlBinaryMessenger* messenger;
+  gchar *suffix;
+};
+
+G_DEFINE_TYPE(MhabitDesktopTitleBarFlutterApi, mhabit_desktop_title_bar_flutter_api, G_TYPE_OBJECT)
+
+static void mhabit_desktop_title_bar_flutter_api_dispose(GObject* object) {
+  MhabitDesktopTitleBarFlutterApi* self = MHABIT_DESKTOP_TITLE_BAR_FLUTTER_API(object);
+  g_clear_object(&self->messenger);
+  g_clear_pointer(&self->suffix, g_free);
+  G_OBJECT_CLASS(mhabit_desktop_title_bar_flutter_api_parent_class)->dispose(object);
+}
+
+static void mhabit_desktop_title_bar_flutter_api_init(MhabitDesktopTitleBarFlutterApi* self) {
+}
+
+static void mhabit_desktop_title_bar_flutter_api_class_init(MhabitDesktopTitleBarFlutterApiClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose = mhabit_desktop_title_bar_flutter_api_dispose;
+}
+
+MhabitDesktopTitleBarFlutterApi* mhabit_desktop_title_bar_flutter_api_new(FlBinaryMessenger* messenger, const gchar* suffix) {
+  MhabitDesktopTitleBarFlutterApi* self = MHABIT_DESKTOP_TITLE_BAR_FLUTTER_API(g_object_new(mhabit_desktop_title_bar_flutter_api_get_type(), nullptr));
+  self->messenger = FL_BINARY_MESSENGER(g_object_ref(messenger));
+  self->suffix = suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");
+  return self;
+}
+
+struct _MhabitDesktopTitleBarFlutterApiForegroundChangedResponse {
+  GObject parent_instance;
+
+  FlValue* error;
+};
+
+G_DEFINE_TYPE(MhabitDesktopTitleBarFlutterApiForegroundChangedResponse, mhabit_desktop_title_bar_flutter_api_foreground_changed_response, G_TYPE_OBJECT)
+
+static void mhabit_desktop_title_bar_flutter_api_foreground_changed_response_dispose(GObject* object) {
+  MhabitDesktopTitleBarFlutterApiForegroundChangedResponse* self = MHABIT_DESKTOP_TITLE_BAR_FLUTTER_API_FOREGROUND_CHANGED_RESPONSE(object);
+  g_clear_pointer(&self->error, fl_value_unref);
+  G_OBJECT_CLASS(mhabit_desktop_title_bar_flutter_api_foreground_changed_response_parent_class)->dispose(object);
+}
+
+static void mhabit_desktop_title_bar_flutter_api_foreground_changed_response_init(MhabitDesktopTitleBarFlutterApiForegroundChangedResponse* self) {
+}
+
+static void mhabit_desktop_title_bar_flutter_api_foreground_changed_response_class_init(MhabitDesktopTitleBarFlutterApiForegroundChangedResponseClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose = mhabit_desktop_title_bar_flutter_api_foreground_changed_response_dispose;
+}
+
+static MhabitDesktopTitleBarFlutterApiForegroundChangedResponse* mhabit_desktop_title_bar_flutter_api_foreground_changed_response_new(FlValue* response) {
+  MhabitDesktopTitleBarFlutterApiForegroundChangedResponse* self = MHABIT_DESKTOP_TITLE_BAR_FLUTTER_API_FOREGROUND_CHANGED_RESPONSE(g_object_new(mhabit_desktop_title_bar_flutter_api_foreground_changed_response_get_type(), nullptr));
+  if (fl_value_get_length(response) > 1) {
+    self->error = fl_value_ref(response);
+  }
+  return self;
+}
+
+gboolean mhabit_desktop_title_bar_flutter_api_foreground_changed_response_is_error(MhabitDesktopTitleBarFlutterApiForegroundChangedResponse* self) {
+  g_return_val_if_fail(MHABIT_IS_DESKTOP_TITLE_BAR_FLUTTER_API_FOREGROUND_CHANGED_RESPONSE(self), FALSE);
+  return self->error != nullptr;
+}
+
+const gchar* mhabit_desktop_title_bar_flutter_api_foreground_changed_response_get_error_code(MhabitDesktopTitleBarFlutterApiForegroundChangedResponse* self) {
+  g_return_val_if_fail(MHABIT_IS_DESKTOP_TITLE_BAR_FLUTTER_API_FOREGROUND_CHANGED_RESPONSE(self), nullptr);
+  g_assert(mhabit_desktop_title_bar_flutter_api_foreground_changed_response_is_error(self));
+  return fl_value_get_string(fl_value_get_list_value(self->error, 0));
+}
+
+const gchar* mhabit_desktop_title_bar_flutter_api_foreground_changed_response_get_error_message(MhabitDesktopTitleBarFlutterApiForegroundChangedResponse* self) {
+  g_return_val_if_fail(MHABIT_IS_DESKTOP_TITLE_BAR_FLUTTER_API_FOREGROUND_CHANGED_RESPONSE(self), nullptr);
+  g_assert(mhabit_desktop_title_bar_flutter_api_foreground_changed_response_is_error(self));
+  return fl_value_get_string(fl_value_get_list_value(self->error, 1));
+}
+
+FlValue* mhabit_desktop_title_bar_flutter_api_foreground_changed_response_get_error_details(MhabitDesktopTitleBarFlutterApiForegroundChangedResponse* self) {
+  g_return_val_if_fail(MHABIT_IS_DESKTOP_TITLE_BAR_FLUTTER_API_FOREGROUND_CHANGED_RESPONSE(self), nullptr);
+  g_assert(mhabit_desktop_title_bar_flutter_api_foreground_changed_response_is_error(self));
+  return fl_value_get_list_value(self->error, 2);
+}
+
+static void mhabit_desktop_title_bar_flutter_api_foreground_changed_cb(GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
+}
+
+void mhabit_desktop_title_bar_flutter_api_foreground_changed(MhabitDesktopTitleBarFlutterApi* self, gboolean foreground, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer user_data) {
+  g_autoptr(FlValue) args = fl_value_new_list();
+  fl_value_append_take(args, fl_value_new_bool(foreground));
+  g_autofree gchar* channel_name = g_strdup_printf("dev.flutter.pigeon.mhabit_desktop_window_chrome.DesktopTitleBarFlutterApi.foregroundChanged%s", self->suffix);
+  g_autoptr(MhabitMessageCodec) codec = mhabit_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(channel, args, cancellable, mhabit_desktop_title_bar_flutter_api_foreground_changed_cb, task);
+}
+
+MhabitDesktopTitleBarFlutterApiForegroundChangedResponse* mhabit_desktop_title_bar_flutter_api_foreground_changed_finish(MhabitDesktopTitleBarFlutterApi* self, GAsyncResult* result, GError** error) {
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel = FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response = fl_basic_message_channel_send_finish(channel, r, error);
+  if (response == nullptr) { 
+    return nullptr;
+  }
+  return mhabit_desktop_title_bar_flutter_api_foreground_changed_response_new(response);
+}

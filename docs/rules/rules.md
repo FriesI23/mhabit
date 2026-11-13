@@ -17,6 +17,10 @@ existing architecture and tooling contracts.
   architectural style when an established local pattern already exists.
 - Reuse existing dependencies and abstractions before proposing a new package,
   new state-management layer, or new helper surface.
+- Before implementing shared behavior, inspect the owning module and nearby
+  providers for existing contracts, lifecycle hooks, mixins, and SDK components.
+  Reuse the smallest matching capability; verify behavior and maintenance status
+  before introducing a package to replace local code.
 - When the request touches generated, localized, or build-managed files,
   explain which source file or generation command actually owns the result.
 
@@ -117,6 +121,38 @@ existing architecture and tooling contracts.
   commands. Do not replace them with a new custom workflow.
 - When a task touches generated artifacts, prefer validating with `make gen` or
   `make verify-generated` instead of editing generated outputs directly.
+- Resolve `APP_DISTRIBUTION` in `lib/common/distribution.dart`, using GitHub for
+  missing, empty, or unknown values. Keep channels independent of platform and
+  flavor. `AppSupportOwner` owns runtime channel changes in memory.
+  Keep support channel routing and store links in `lib/models/app_support.dart`.
+  Shared cards retain GitHub and add a channel action only for stores with user
+  reviews or public favorites, independently of the host platform. Download
+  statistics alone do not qualify. Developer selections refresh cards and
+  existing dialogs through the same owner in the current process.
+  `AppSupportOwner` uses `ProfileHandlerLoadedMixin` and the registered
+  `AppSupportReminderProfileHandler` to save reminder history as one typed value.
+  Keep reminder thresholds in the owner and serialization in the profile handler.
+  Execute
+  project and store links through the shared URL launcher; opening a store page
+  does not establish that a review was submitted. See
+  [Release channels](../wiki/Dev꞉-Build-From-Source.md#release-channels) for build usage.
+
+Optional WebDAV/Docker acceptance lives in `test/harness/webdav_server/`; the
+tests manage Compose startup, readiness and teardown. See that directory's
+`README.md` for the opt-in command and evidence paths. Ordinary unit tests do
+not require Docker.
+
+### Pull Requests
+
+- Start PR descriptions from `.github/PULL_REQUEST_TEMPLATE.md`, or the applicable
+  specialized template under `.github/PULL_REQUEST_TEMPLATE/`. Preserve its
+  sections and checklist, and keep the description concise and user-facing.
+- Record checks actually run and their results, including any unverified scope.
+  Check only applicable checklist items. Use `Fixes` or `Closes` only for fully
+  resolved issues; use `Related to` for partial or related work.
+- Reuse existing repository labels. After creation, query the PR back to verify
+  its base, head, description, labels, and issue references against the intended
+  change.
 
 ## Project Structure
 
@@ -190,8 +226,25 @@ existing architecture and tooling contracts.
 - When an access interface is backed by a `Listenable` implementation, expose it
   through `ListenableProxyProvider` or `ListenableProvider`, not plain
   `ProxyProvider`.
-- Prefer `context.select(...)` or other narrow reads over broad rebuild wiring
-  when a widget only needs a small piece of state.
+- Use `context.read<T>()` for one-time access and actions, and
+  `context.watch<T>()` or `context.select(...)` for reactive dependencies. Prefer
+  `select` when only part of a value affects rendering. Use the existing
+  `context.maybeRead<T>()` extension for optional dependencies; keep raw
+  `Provider.of` calls inside the context extensions that implement such wrappers.
+- When `context.select` or `context.watch` is used only to register a dependency,
+  call it as a statement; do not assign the unused result to `_` or a dummy local.
+- Implement existing lifecycle contracts when the role needs them:
+  `AsyncInitialization` (`lib/common/async.dart`) for `init()`, and
+  `ProviderMounted` (`lib/providers/support/commons.dart`) for owners or local
+  notifiers that must reject work after disposal. Keep one lifetime flag,
+  invalidate it before cleanup, and guard asynchronous publication with
+  `mounted`. Initialization success, completion, and disposal are distinct states.
+- Match nearby initialization and dependency-attachment patterns. Share an
+  in-flight initialization when it must run once, preserve its failure/retry
+  contract, and rebind listeners by dependency identity with matching cleanup.
+  Reuse `ProfileHandlerLoadedMixin` or `DBHelperLoadedMixin` when the owner
+  actually uses those dependencies; do not add unused mixins or parallel
+  lifecycle interfaces merely for structural similarity.
 - App-scoped UI preferences are typically profile-backed view models under
   `lib/providers/app_ui/`.
 - Workflow-side mutable behavior belongs under `lib/providers/workflow/`.
@@ -251,6 +304,9 @@ existing architecture and tooling contracts.
   - `const` constructors and declarations when possible;
   - avoiding unnecessary lambdas and closure parameter types.
 - Write concise, technical Dart that stays readable.
+- Use descriptive local and parameter names. Avoid keywords and syntax modifier
+  names such as `async`, `sync`, `await`, and `yield`, even where the language
+  permits them; prefer role-specific names such as `syncSettings`.
 - Prefer exhaustive `switch` statements or switch expressions when they make the
   state space explicit.
 - Use records when they make multi-value selection or transfer clearer and stay
@@ -294,6 +350,19 @@ existing architecture and tooling contracts.
 - Use small, composable widgets and view models, but do not split code just to
   satisfy an arbitrary size rule.
 - Keep heavy work, persistence, and workflow coordination out of `build()`.
+- Drive business transitions through owner commands, initialization completion,
+  dependency listeners, and action results. Bind widget-owned dependencies in
+  the appropriate lifecycle methods; rendering should consume their state.
+- Avoid `addPostFrameCallback` and `endOfFrame` as fixes for business ordering,
+  missing readiness state, or notifications/navigation started during `build()`.
+  Do not disguise the same workaround with a microtask, zero-duration delay, or
+  timer. Use the event that establishes the actual precondition; for example,
+  await a route's `completed` future when work requires its exit to finish.
+- Use frame callbacks only for a real completed-layout/paint dependency or a
+  framework phase restriction that existing lifecycle events cannot satisfy.
+  Keep them local, one-shot or coalesced, and safe after disposal; explain the
+  exact constraint beside the callback and cover the ordering with regression
+  tests. A frame boundary alone does not establish business readiness.
 - Keep app-shell concerns in the entry layer and page-specific logic in the page
   family.
 - Prefer existing theme, localization, and navigation setup instead of
@@ -328,6 +397,10 @@ them; keep rows with independent actions separate from single-action controls.
 ## Theme And Localization
 
 - Theme setup is owned by app entry and theme-related view models.
+- `AppThemeViewModel` owns the persisted UI style and Apple Sidebar appearance.
+  UI style is a regular display setting on every platform. Sidebar appearance is
+  shown in display settings whenever `AdaptiveStyle.of(context)` resolves to
+  Apple, on every platform, and defaults to automatic.
 - If a change affects theme behavior, check both the app entry wiring and the
   profile-backed theme handlers before adding new state.
 - Keep custom color behavior inside the existing theme model and generated color

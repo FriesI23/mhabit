@@ -487,12 +487,7 @@
     "appSetting_firstDayOfWeekDialog_defaultText": " (par défaut)",
     "appSetting_changeLanguage_followSystem_text": "Langue par défaut du système",
     "@appSetting_changeLanguage_followSystem_text": {
-        "placeholders": {
-            "localeName": {
-                "type": "String",
-                "example": "English"
-            }
-        }
+        "description": "Language option that follows the system language."
     },
     "appSetting_changeLanguage_followSystem_noLocale_text": "Langue du système",
     "appSetting_changeLanguageTile_titleText": "Langue",
@@ -874,5 +869,6 @@
     "habitDisplay_groupType_manual": "Ordre personnel",
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
-    }
+    },
+    "appSetting_uiStyle_automatic": "Auto"
 }

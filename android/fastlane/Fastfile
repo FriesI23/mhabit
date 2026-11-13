@@ -44,7 +44,9 @@ platform :android do
   desc "Build Flutter appbundle for a specified flavor (default: f_generic)"
   lane :build do |options|
     flavor = options[:flavor] || "f_generic"
-    sh "../../.flutter/bin/flutter build appbundle --flavor #{flavor}"
+    distribution = options[:distribution] || "google_play"
+    sh "../../.flutter/bin/flutter", "build", "appbundle", "--flavor", flavor,
+       "--dart-define=APP_DISTRIBUTION=#{distribution}"
   end
 
   desc "Update Information to Google Play Store"
@@ -121,7 +123,7 @@ platform :android do
       FastlaneCore::UI.message("Skipping clean because the existing AAB will be reused")
     end
 
-    build(flavor: flavor) if should_build
+    build(flavor: flavor, distribution: "google_play") if should_build
 
     if dry_run
       DeployLaneHelper.report_dry_run_skip(

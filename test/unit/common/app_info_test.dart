@@ -14,9 +14,11 @@
 
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/app_info.dart';
+import 'package:mhabit/common/distribution.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -27,6 +29,12 @@ void main() {
   );
 
   setUpAll(() {
+    // Flutter tests do not register Dart-only desktop plugin implementations.
+    if (Platform.isLinux) {
+      DeviceInfoPlusLinuxPlugin.registerWith();
+    } else if (Platform.isWindows) {
+      DeviceInfoPlusWindowsPlugin.registerWith();
+    }
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(deviceInfoChannel, (call) async {
           expect(call.method, 'getDeviceInfo');
@@ -78,6 +86,28 @@ void main() {
   test('Apple system version is null before initialization', () {
     expect(AppInfo().appleSystemVersion, isNull);
   });
+
+  test(
+    'debug info distinguishes the system, flavor, and release channel',
+    () async {
+      PackageInfo.setMockInitialValues(
+        appName: 'mhabit',
+        packageName: 'com.example.mhabit',
+        version: '1.26.14',
+        buildNumber: '187',
+        buildSignature: '',
+      );
+
+      final info = await AppInfo().generateAppDebugInfo();
+      expect(info, contains('OperatingSystem: ${Platform.operatingSystem}'));
+      expect(info, contains('Flavor: '));
+      expect(info, contains('SystemAppDistribution: $systemAppDistribution'));
+      expect(
+        info,
+        contains('DefaultAppDistribution: ${defaultAppDistribution.value}'),
+      );
+    },
+  );
 
   group('AppInfo.changelogVersion', () {
     test('returns "version+buildNumber" format after init', () async {

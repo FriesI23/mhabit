@@ -19,6 +19,7 @@ export '_widgets/animated_reorderable_list.dart';
 export '_widgets/app_ui_layout_builder.dart';
 export '_widgets/app_window_interaction_binding.dart';
 export '_widgets/beta_badge.dart';
+export '_widgets/buy_me_a_coffee_icon.dart';
 export '_widgets/changelog_banner.dart';
 export '_widgets/chip_list.dart';
 export '_widgets/color_display_chip.dart';

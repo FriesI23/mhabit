@@ -5,6 +5,7 @@
 #include "desktop_title_bar.g.h"
 #include "include/mhabit_desktop_window_chrome/desktop_window_chrome_plugin_c_api.h"
 #include "native_title_bar.h"
+#include "native_window_foreground.h"
 #include "native_window_persistence.h"
 #include "window_persistence.g.h"
 
@@ -20,15 +21,30 @@ class DesktopWindowChromePlugin
   /// Registers Pigeon channels and a non-consuming window-message delegate.
   /// Borrows registrar; the top-level HWND is resolved lazily after attachment.
   explicit DesktopWindowChromePlugin(flutter::PluginRegistrarWindows* registrar)
-      : registrar_(registrar), title_bar_(nullptr) {
+      : registrar_(registrar), title_bar_(nullptr),
+        flutter_api_(registrar->messenger()) {
     DesktopTitleBarHostApi::SetUp(registrar_->messenger(), this);
     mhabit_window_persistence::WindowPersistenceHostApi::SetUp(
         registrar_->messenger(), this);
     mhabit_window_persistence::WindowsWindowPersistenceHostApi::SetUp(
         registrar_->messenger(), this);
     delegate_id_ = registrar_->RegisterTopLevelWindowProcDelegate(
-        [this](HWND, UINT message, WPARAM, LPARAM) -> std::optional<LRESULT> {
+        [this](HWND window, UINT message, WPARAM wparam,
+               LPARAM) -> std::optional<LRESULT> {
           persistence_.OnMessage(message);
+          if (const auto view = registrar_->GetView()) {
+            if (window == GetAncestor(view->GetNativeWindow(), GA_ROOT)) {
+              foreground_window_ = window;
+            }
+          }
+          // Keep the HWND for destruction, after its child view is gone.
+          if (window == foreground_window_) {
+            if (const auto foreground =
+                    foreground_.OnMessage(window, message, wparam)) {
+              flutter_api_.ForegroundChanged(
+                  *foreground, []() {}, [](const FlutterError&) {});
+            }
+          }
           if (message == WM_SETTINGCHANGE || message == WM_THEMECHANGED ||
               message == WM_DWMCOLORIZATIONCOLORCHANGED) {
             title_bar_.Refresh();
@@ -107,7 +123,10 @@ class DesktopWindowChromePlugin
  private:
   flutter::PluginRegistrarWindows* registrar_;
   NativeTitleBar title_bar_;
+  NativeWindowForeground foreground_;
+  HWND foreground_window_ = nullptr;
   NativeWindowPersistence persistence_;
+  DesktopTitleBarFlutterApi flutter_api_;
   int delegate_id_;
 };
 }  // namespace mhabit_desktop_window_chrome

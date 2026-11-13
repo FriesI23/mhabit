@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/entries/app_error/entry.dart';
 import 'package:mhabit/entries/common/app_root_view.dart';
@@ -45,6 +46,23 @@ class _SurfaceAccess implements AppWindowNavigationSurfaceAccess {
 }
 
 void main() {
+  final binding = TestWidgetsFlutterBinding.ensureInitialized();
+  const windowChannel = MethodChannel('window_manager');
+  setUp(() {
+    binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      windowChannel,
+      (call) async => call.method == 'isVisible' || call.method == 'isFocused'
+          ? false
+          : null,
+    );
+  });
+  tearDown(() {
+    binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      windowChannel,
+      null,
+    );
+  });
+
   testWidgets(
     'native title follows localized app name without duplicate submissions',
     (tester) async {

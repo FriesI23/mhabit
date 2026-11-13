@@ -360,10 +360,6 @@
             "remainingGroupCount": {
                 "type": "int",
                 "description": "Number of omitted source group names; zero means the list is complete"
-            },
-            "totalGroupCount": {
-                "type": "int",
-                "description": "Total number of source groups, including displayed and omitted groups"
             }
         }
     },
@@ -1542,5 +1538,6 @@
             }
         }
     },
-    "habitDisplay_groupModifyConfirm_previewTitle": "תצוגה מקדימה"
+    "habitDisplay_groupModifyConfirm_previewTitle": "תצוגה מקדימה",
+    "appSetting_uiStyle_automatic": "אוטומטי"
 }
