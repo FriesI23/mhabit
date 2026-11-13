@@ -90,27 +90,33 @@ Future<AppSupportResult> showAppSupportDialog({
             distribution: defaultAppDistribution,
           ),
     );
-    final result = await showAdaptiveModalDialog<AppSupportResult>(
-      context: context,
-      barrierDismissible: true,
-      routeSettings: const RouteSettings(name: 'app-support'),
-      builder: (_) => owner == null
-          ? _AppSupportDialog(content: content, controller: state)
-          : ListenableBuilder(
-              listenable: owner,
-              builder: (_, _) => _AppSupportDialog(
-                content: AppSupportContent(
-                  info: info,
-                  hideDonate: content.hideDonate,
-                  channelAction: owner.channelAction,
+    final AppSupportResult? result;
+    state._beginRoute();
+    try {
+      result = await showAdaptiveModalDialog<AppSupportResult>(
+        context: context,
+        barrierDismissible: true,
+        routeSettings: const RouteSettings(name: 'app-support'),
+        builder: (_) => owner == null
+            ? _AppSupportDialog(content: content, controller: state)
+            : ListenableBuilder(
+                listenable: owner,
+                builder: (_, _) => _AppSupportDialog(
+                  content: AppSupportContent(
+                    info: info,
+                    hideDonate: content.hideDonate,
+                    channelAction: owner.channelAction,
+                  ),
+                  controller: state,
                 ),
-                controller: state,
               ),
-            ),
-    );
-    // The pop future completes before the reverse transition. In particular,
-    // a donation sheet must not be pushed over the outgoing dialog route.
-    await state._route?.completed;
+      );
+      // The pop future completes before the reverse transition. In particular,
+      // a donation sheet must not be pushed over the outgoing dialog route.
+      await state._route?.completed;
+    } finally {
+      state._completeRoute();
+    }
     if (state._cancelled || !context.mounted) {
       return AppSupportResult.cancelled;
     }
@@ -149,6 +155,7 @@ class AppSupportDialogController {
   bool _removalScheduled = false;
   AppSupportAction? _selectedAction;
   ModalRoute<AppSupportResult>? _route;
+  Completer<void>? _routeCompletion;
 
   /// Removes only this route and invalidates any operation still in flight.
   void cancel() {
@@ -156,6 +163,23 @@ class AppSupportDialogController {
     _cancelled = true;
     _finished = true;
     _removeRouteAfterFrame();
+  }
+
+  /// Cancels the interaction and waits until its dialog route has left.
+  ///
+  /// Includes a pushed route that has not built yet and an outgoing transition.
+  /// Does not wait for an external link or donation operation after route removal.
+  /// Cancelling before presentation completes immediately without scheduling a frame.
+  Future<void> cancelAndWait() {
+    cancel();
+    return _routeCompletion?.future ?? Future.value();
+  }
+
+  void _beginRoute() => _routeCompletion ??= Completer<void>();
+
+  void _completeRoute() {
+    final completion = _routeCompletion;
+    if (completion != null && !completion.isCompleted) completion.complete();
   }
 
   void _attachRoute(ModalRoute<AppSupportResult>? route) {
@@ -374,11 +398,16 @@ class _AppSupportReminderState extends State<AppSupportReminder> {
   }
 
   @override
-  Widget build(BuildContext context) => Listener(
-    onPointerDown: (_) => _owner.skipReminderForSession(),
-    onPointerSignal: (_) => _owner.skipReminderForSession(),
-    child: widget.child,
-  );
+  // Let startup sync confirmations dismiss this automatic reminder first.
+  Widget build(BuildContext context) =>
+      Provider<AppSupportDialogController>.value(
+        value: _dialog,
+        child: Listener(
+          onPointerDown: (_) => _owner.skipReminderForSession(),
+          onPointerSignal: (_) => _owner.skipReminderForSession(),
+          child: widget.child,
+        ),
+      );
 }
 
 /// Shared rendering and local playback. Business actions belong to the host.

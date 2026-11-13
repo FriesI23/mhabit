@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
 import 'package:flutter/foundation.dart';
@@ -23,8 +24,10 @@ import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/models/habit_reminder.dart';
 import 'package:mhabit/models/habit_summary.dart';
+import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/providers/app_ui/app_debugger.dart';
 import 'package:mhabit/providers/workflow/app_reminder.dart';
+import 'package:mhabit/providers/workflow/app_support.dart';
 import 'package:mhabit/providers/workflow/app_sync.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/reminders/notification_channel.dart';
@@ -39,6 +42,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../support/adaptive_dialog.dart';
+import '../../support/stub/about_info.dart';
 
 Future<void> _initAppInfo() async {
   PackageInfo.setMockInitialValues(
@@ -161,6 +165,7 @@ final class _FakeNotificationService implements NotificationService {
 final class _FakeAppSyncAccess extends ChangeNotifier
     implements AppSyncSettingsAccess, AppSyncWorkflowAccess {
   final confirmations = StreamController<AppSyncNeedConfirmEvent>.broadcast();
+  AppSyncServer? server;
 
   @override
   void dispose() {
@@ -178,7 +183,7 @@ final class _FakeAppSyncAccess extends ChangeNotifier
   AppSyncFetchInterval get fetchInterval => AppSyncFetchInterval.values.first;
 
   @override
-  AppSyncServer? get serverConfig => null;
+  AppSyncServer? get serverConfig => server;
 
   @override
   AppSyncStatusSnapshot? get syncStatus => null;
@@ -233,6 +238,47 @@ final class _FakeAppSyncAccess extends ChangeNotifier
 
   @override
   Future<void> startSync({Duration? initWait}) async {}
+}
+
+final class _SupportSyncRouteObserver extends NavigatorObserver {
+  final events = <String>[];
+  ModalRoute<dynamic>? _supportRoute;
+  bool supportOverlayMountedWhenSyncPushed = false;
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    if (route.settings.name == 'app-support') {
+      _supportRoute = route as ModalRoute<dynamic>;
+      events.add('support.push');
+    } else if (route is PopupRoute<dynamic>) {
+      supportOverlayMountedWhenSyncPushed =
+          _supportRoute?.overlayEntries.any((entry) => entry.mounted) ?? false;
+      events.add('sync.push');
+    }
+  }
+
+  void _recordSupportRemoval(Route<dynamic> route) {
+    if (route.settings.name == 'app-support') events.add('support.leave');
+  }
+
+  @override
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+      _recordSupportRemoval(route);
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+      _recordSupportRemoval(route);
+}
+
+final class _PendingSupportCancellation extends AppSupportDialogController {
+  final started = Completer<void>();
+  final closed = Completer<void>();
+
+  @override
+  Future<void> cancelAndWait() {
+    started.complete();
+    return closed.future;
+  }
 }
 
 final class _TrackingStartupHabitsAccess extends HabitsManager {
@@ -293,6 +339,179 @@ HabitSummaryData _buildStartupHabitSummaryData({
 
 void main() {
   setUpAll(_initAppInfo);
+
+  for (final emptyDir in [true, false]) {
+    testWidgets(
+      'macOS idle unconfirmed sync permits support then replaces it for confirmation empty=$emptyDir',
+      (tester) async {
+        tester.binding.handleAppLifecycleStateChanged(
+          AppLifecycleState.resumed,
+        );
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = const Size(1100, 900);
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        SharedPreferences.setMockInitialValues({
+          'lastChangelogVersion': AppInfo().changelogVersion,
+          'appSupportReminder': jsonEncode({
+            'minimumDate': 0,
+            'launches': 9,
+            'closed': false,
+          }),
+        });
+        final profile = ProfileViewModel([
+          AppLastChangelogVersionProfileHandler.new,
+          AppSupportReminderProfileHandler.new,
+        ]);
+        addTearDown(profile.dispose);
+        expect(await profile.init(), isTrue);
+        final support = AppSupportOwner(
+          profile: profile,
+          now: () => DateTime.utc(2026, 11, 13),
+          loadInfo: () async => stubAboutInfo(),
+        );
+        addTearDown(support.dispose);
+        final appSync = _FakeAppSyncAccess()
+          ..server = AppWebDavSyncServer.newServer(
+            identity: 'unconfirmed',
+            path: 'https://example.com',
+          );
+        addTearDown(appSync.dispose);
+        final routes = _SupportSyncRouteObserver();
+        Widget app({Key? reminderKey}) => MultiProvider(
+          providers: [
+            ChangeNotifierProvider<ProfileViewModel>.value(value: profile),
+            ChangeNotifierProvider<AppSupportOwner>.value(value: support),
+            ListenableProvider<AppSyncSettingsAccess>.value(value: appSync),
+            ListenableProvider<AppSyncWorkflowAccess>.value(value: appSync),
+          ],
+          child: MaterialApp(
+            theme: ThemeData(platform: TargetPlatform.macOS),
+            navigatorObservers: [routes],
+            localizationsDelegates: L10n.localizationsDelegates,
+            supportedLocales: L10n.supportedLocales,
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(disableAnimations: true),
+              child: child!,
+            ),
+            home: AppSupportReminder(
+              key: reminderKey,
+              canShowDialog: (_) => support.canShowReminderWithSync(
+                processing: appSync.syncStatus?.isProcessing ?? false,
+              ),
+              child: const AppPostInit(child: Scaffold(body: Text('App'))),
+            ),
+          ),
+        );
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        expect(appSync.enabled, isTrue);
+        expect(
+          (appSync.serverConfig! as AppWebDavSyncServer).configed,
+          isFalse,
+        );
+        expect(find.byType(AppSupportCarousel), findsOneWidget);
+        expect(routes.events, ['support.push']);
+        final preferences = await SharedPreferences.getInstance();
+        final startupHistory = preferences.getString('appSupportReminder');
+
+        final event = AppSyncNeedConfirmEvent(
+          WebDavConfigTaskChecklist.dirChecker(
+            needCreateHabitsDir: emptyDir,
+            needCreateWarningFile: emptyDir,
+          ),
+        );
+        appSync.confirmations.add(event);
+        await tester.pumpAndSettle();
+        expect(routes.events, ['support.push', 'support.leave', 'sync.push']);
+        expect(routes.supportOverlayMountedWhenSyncPushed, isFalse);
+        expect(
+          find.byType(AppSupportCarousel, skipOffstage: false),
+          findsNothing,
+        );
+        expect(adaptiveDialogFinder, findsOneWidget);
+        final l10n = L10n.of(tester.element(adaptiveDialogFinder))!;
+        expect(
+          find.text(
+            emptyDir
+                ? l10n.appSync_webdav_newServerConfirmDialog_titleText
+                : l10n.appSync_webdav_oldServerConfirmDialog_titleText,
+          ),
+          findsOneWidget,
+        );
+        expect(preferences.getString('appSupportReminder'), startupHistory);
+        adaptiveDialogActions(tester).first.onPressed!();
+        await tester.pumpAndSettle();
+        expect(await event.future, isFalse);
+        expect(preferences.getString('appSupportReminder'), startupHistory);
+        expect(support.reminderClosed, isFalse);
+
+        await tester.pumpWidget(app(reminderKey: const ValueKey('remounted')));
+        await tester.pumpAndSettle();
+        expect(routes.events, ['support.push', 'support.leave', 'sync.push']);
+        expect(adaptiveDialogFinder, findsNothing);
+        expect(preferences.getString('appSupportReminder'), startupHistory);
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox());
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.macOS),
+    );
+  }
+
+  testWidgets(
+    'unmount while support cancellation is pending rejects sync confirmation',
+    (tester) async {
+      SharedPreferences.setMockInitialValues({
+        'lastChangelogVersion': AppInfo().changelogVersion,
+      });
+      final profile = ProfileViewModel([
+        AppLastChangelogVersionProfileHandler.new,
+      ]);
+      addTearDown(profile.dispose);
+      expect(await profile.init(), isTrue);
+      final appSync = _FakeAppSyncAccess();
+      addTearDown(appSync.dispose);
+      final cancellation = _PendingSupportCancellation();
+      final routes = _SupportSyncRouteObserver();
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<ProfileViewModel>.value(value: profile),
+            ListenableProvider<AppSyncSettingsAccess>.value(value: appSync),
+            ListenableProvider<AppSyncWorkflowAccess>.value(value: appSync),
+            Provider<AppSupportDialogController>.value(value: cancellation),
+          ],
+          child: MaterialApp(
+            navigatorObservers: [routes],
+            localizationsDelegates: L10n.localizationsDelegates,
+            supportedLocales: L10n.supportedLocales,
+            home: const AppPostInit(child: Scaffold(body: Text('App'))),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final event = AppSyncNeedConfirmEvent(
+        WebDavConfigTaskChecklist.dirChecker(
+          needCreateHabitsDir: true,
+          needCreateWarningFile: true,
+        ),
+      );
+      final results = <bool>[];
+      event.future.then(results.add);
+      appSync.confirmations.add(event);
+      await tester.pump();
+      expect(cancellation.started.isCompleted, isTrue);
+      expect(routes.events, isEmpty);
+      await tester.pumpWidget(const SizedBox());
+
+      cancellation.closed.complete();
+      await tester.pumpAndSettle();
+      expect(results, [false]);
+      expect(routes.events, isEmpty);
+      expect(tester.takeException(), isNull);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.macOS),
+  );
 
   for (final platform in [
     TargetPlatform.android,

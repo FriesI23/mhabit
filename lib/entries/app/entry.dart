@@ -31,7 +31,6 @@ import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/app_apple_sidebar_style_mode.dart';
 import '../../models/app_entry.dart';
-import '../../models/app_sync_server.dart';
 import '../../models/app_sync_tasks.dart';
 import '../../models/app_theme_color.dart';
 import '../../models/habit_date.dart';
@@ -416,7 +415,6 @@ class _AppStartup extends StatelessWidget {
   final Widget child;
 
   bool _canShowSupportDialog(BuildContext context) {
-    final syncSettings = context.read<AppSyncSettingsAccess>();
     final syncStatus = context.read<AppSyncStatusSource>().syncStatus;
     return rootRoutes.depth == 1 &&
         router.currentRouteName == initialBranch.rootRouteName &&
@@ -424,8 +422,6 @@ class _AppStartup extends StatelessWidget {
           initialBranch,
         ) &&
         context.read<AppSupportOwner>().canShowReminderWithSync(
-          enabled: syncSettings.enabled,
-          server: syncSettings.serverConfig,
           processing: syncStatus?.isProcessing ?? false,
         ) &&
         !ChangelogBanner.of(context).controller.isShowing;
@@ -437,13 +433,6 @@ class _AppStartup extends StatelessWidget {
     context.select<AppNavigationCoordinator, bool>(
       (navigation) => navigation.isAtPrimaryBranchRoot(initialBranch),
     );
-    context
-        .select<AppSyncSettingsAccess, ({bool enabled, AppSyncServer? server})>(
-          (syncSettings) => (
-            enabled: syncSettings.enabled,
-            server: syncSettings.serverConfig,
-          ),
-        );
     context.select<AppSyncStatusSource, bool>(
       (statusSource) => statusSource.syncStatus?.isProcessing ?? false,
     );
@@ -502,8 +491,10 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
 
   Future<bool> _onWebDavAppSyncUserConfirmNeedCheck(
     WebDavConfigTaskChecklist checklist,
-  ) {
+  ) async {
     context.maybeRead<AppSupportOwner>()?.skipReminderForSession();
+    await context.maybeRead<AppSupportDialogController>()?.cancelAndWait();
+    if (!mounted) return false;
     return showAdaptiveModalDialog<bool>(
       context: context,
       barrierDismissible: true,
