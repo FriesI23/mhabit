@@ -100,7 +100,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final control = find.byKey(const ValueKey('developer-ui-style-control'));
-    expect(find.byType(MenuAnchor), findsNWidgets(2));
+    expect(find.byType(MenuAnchor), findsNWidgets(3));
     expect(
       find.descendant(of: control, matching: find.text('Automatic')),
       findsOneWidget,

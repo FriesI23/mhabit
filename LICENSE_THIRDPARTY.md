@@ -1415,3 +1415,40 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+## Running Services Monitor — support cards and coffee animation
+
+[Stars](https://github.com/biplobsd/running_services_monitor/blob/772e266fb7dd95c76a64b74d10b33af8b95122ab/lib/screens/widgets/support/bouncing_stars.dart) · [Support cards](https://github.com/biplobsd/running_services_monitor/blob/772e266fb7dd95c76a64b74d10b33af8b95122ab/lib/screens/widgets/support/tip_slide_card.dart) · [Carousel](https://github.com/biplobsd/running_services_monitor/blob/772e266fb7dd95c76a64b74d10b33af8b95122ab/lib/screens/widgets/support/support_slider.dart) · [Coffee GIF](https://github.com/biplobsd/running_services_monitor/blob/772e266fb7dd95c76a64b74d10b33af8b95122ab/assets/giphy.gif)
+
+The support carousel star styling, card layout, width limit, and tonal icon
+buttons are based on revision `772e266fb7dd95c76a64b74d10b33af8b95122ab`;
+stars use a finite sequential Flutter animation.
+
+`assets/images/app-support-coffee.gif` is derived from that revision's
+`assets/giphy.gif`. Only the NETSCAPE2.0 looping extension was removed for
+single-cycle playback; all 100 image frames and their 50 ms durations are
+unchanged.
+
+```text
+MIT License
+
+Copyright (c) 2025 Biplob Kumar Sutradhar
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```

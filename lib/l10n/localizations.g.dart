@@ -3668,6 +3668,90 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Preview'**
   String get habitDisplay_groupModifyConfirm_previewTitle;
+
+  /// No description provided for @appSupport_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Support Table Habit'**
+  String get appSupport_title;
+
+  /// Shared support message for all distribution channels. Keep this text independent of the destination platform.
+  ///
+  /// In en, this message translates to:
+  /// **'Your support helps improve Table Habit and reach more people.'**
+  String get appSupport_message;
+
+  /// Short button label that opens the GitHub repository for the user to manually click Star. Opening the link does not automatically star the repository.
+  ///
+  /// In en, this message translates to:
+  /// **'Star on GitHub'**
+  String get appSupport_starOnGitHub;
+
+  /// Support button that opens the published app's Google Play page so the user can leave a review.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate on Google Play'**
+  String get appSupport_rateOnGooglePlay;
+
+  /// Support button that opens the App Store write-review page on iOS and macOS.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate on the App Store'**
+  String get appSupport_rateOnAppStore;
+
+  /// Support button that opens the published app's Microsoft Store rating and review page.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate on Microsoft Store'**
+  String get appSupport_openOnMicrosoftStore;
+
+  /// Support button that opens the app's Flathub page so the user can sign in and add it to favorites. Opening the page does not add a favorite automatically.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite on Flathub'**
+  String get appSupport_favoriteOnFlathub;
+
+  /// No description provided for @appSupport_later.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me later'**
+  String get appSupport_later;
+
+  /// No description provided for @appSupport_never.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t remind me again'**
+  String get appSupport_never;
+
+  /// Failure message shared by project and store links.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to complete this action. Please try again.'**
+  String get appSupport_linkFailed;
+
+  /// No description provided for @appSupport_participateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contribute to Table Habit'**
+  String get appSupport_participateTitle;
+
+  /// No description provided for @appSupport_participateMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore the source code, contribute, or share issues and ideas.'**
+  String get appSupport_participateMessage;
+
+  /// No description provided for @appSupport_page.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {page} of {count}'**
+  String appSupport_page(int page, int count);
+
+  /// No description provided for @appSupport_saveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The reminder could not be saved. Please try again.'**
+  String get appSupport_saveFailed;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

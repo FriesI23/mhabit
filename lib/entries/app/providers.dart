@@ -37,6 +37,7 @@ import '../../providers/support/global.dart';
 import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_notify_config.dart';
 import '../../providers/workflow/app_reminder.dart';
+import '../../providers/workflow/app_support.dart';
 import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/group_manager.dart';
 import '../../providers/workflow/habit_widget.dart';
@@ -45,9 +46,40 @@ import '../../providers/workflow/habits_file_importer.dart';
 import '../../providers/workflow/habits_manager.dart';
 import '../../providers/workflow/thirdparty_file_importer.dart';
 import '../../reminders/notification_channel.dart';
+import '../../routes/app_navigation_coordinator.dart';
+import '../../routes/app_navigation_scroll_controller.dart';
 import '../../storage/db_helper_provider.dart';
 import '../../storage/profile_provider.dart';
 import '../../widgets/provider.dart';
+
+/// Exposes entry-owned navigation objects without transferring their ownership.
+class AppNavigationProviders extends SingleChildStatelessWidget {
+  const AppNavigationProviders({
+    super.key,
+    required this.coordinator,
+    this.builder,
+    super.child,
+  });
+
+  final AppNavigationCoordinator coordinator;
+
+  /// Wraps the complete navigation UI below these providers.
+  final TransitionBuilder? builder;
+
+  @override
+  Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
+    providers: [
+      ChangeNotifierProvider<AppNavigationCoordinator>.value(
+        value: coordinator,
+      ),
+      Provider<AppNavigationScrollController>.value(
+        value: coordinator.scrollController,
+      ),
+    ],
+    builder: builder,
+    child: child,
+  );
+}
 
 class AppProviders extends SingleChildStatelessWidget {
   const AppProviders({super.key, super.child});
@@ -163,6 +195,13 @@ class AppProviders extends SingleChildStatelessWidget {
   ];
 
   Iterable<SingleChildWidget> _buildRootAdjacentSupportProviders() => [
+    ViewModelProxyProvider<ProfileViewModel, AppSupportOwner>(
+      lazy: false,
+      create: (_) => AppSupportOwner(),
+      update: (context, profile, previous) => previous
+        ..updateProfile(profile)
+        ..init(),
+    ),
     ViewModelProxyProvider2<Global, ProfileViewModel, AppDeveloperViewModel>(
       create: (context) => AppDeveloperViewModel(
         global: context.read<Global>(),

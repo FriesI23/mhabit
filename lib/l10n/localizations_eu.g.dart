@@ -2316,4 +2316,52 @@ class L10nEu extends L10n {
 
   @override
   String get habitDisplay_groupModifyConfirm_previewTitle => 'Preview';
+
+  @override
+  String get appSupport_title => 'Support Table Habit';
+
+  @override
+  String get appSupport_message =>
+      'Your support helps improve Table Habit and reach more people.';
+
+  @override
+  String get appSupport_starOnGitHub => 'Star on GitHub';
+
+  @override
+  String get appSupport_rateOnGooglePlay => 'Rate on Google Play';
+
+  @override
+  String get appSupport_rateOnAppStore => 'Rate on the App Store';
+
+  @override
+  String get appSupport_openOnMicrosoftStore => 'Rate on Microsoft Store';
+
+  @override
+  String get appSupport_favoriteOnFlathub => 'Favorite on Flathub';
+
+  @override
+  String get appSupport_later => 'Remind me later';
+
+  @override
+  String get appSupport_never => 'Don\'t remind me again';
+
+  @override
+  String get appSupport_linkFailed =>
+      'Unable to complete this action. Please try again.';
+
+  @override
+  String get appSupport_participateTitle => 'Contribute to Table Habit';
+
+  @override
+  String get appSupport_participateMessage =>
+      'Explore the source code, contribute, or share issues and ideas.';
+
+  @override
+  String appSupport_page(int page, int count) {
+    return 'Page $page of $count';
+  }
+
+  @override
+  String get appSupport_saveFailed =>
+      'The reminder could not be saved. Please try again.';
 }

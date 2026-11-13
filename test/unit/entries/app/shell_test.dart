@@ -28,6 +28,7 @@ import 'package:mhabit/pages/habit_detail/_widgets/habit_detail_appbar_actions.d
 import 'package:mhabit/pages/habits_display/navigation_chrome.dart';
 import 'package:mhabit/providers/app_ui/app_launch_entry.dart';
 import 'package:mhabit/providers/app_ui/app_theme.dart';
+import 'package:mhabit/providers/workflow/app_support.dart';
 import 'package:mhabit/routes/app_flow_page.dart';
 import 'package:mhabit/routes/app_material_page.dart';
 import 'package:mhabit/routes/app_navigation_branch.dart';
@@ -39,6 +40,10 @@ import 'package:mhabit/theme/color.dart';
 import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
+
+import '../../../support/stub/about_info.dart';
+
+import '../../../support/stub/shared_preferences.dart';
 
 class _RecordingLaunchEntryViewModel extends AppLaunchEntryViewModel {
   final List<AppEntrys> entries = [];
@@ -341,6 +346,8 @@ GoRouter _buildRouter(
   Widget settingsPage = const _StubPage('settings page'),
   Widget? groupManagePage,
   Widget debuggerPage = const _StubPage('debugger page'),
+  TransitionBuilder? startupBuilder,
+  List<NavigatorObserver> rootObservers = const [],
 }) {
   final branchObservers = [...observers];
   final branches = [
@@ -431,6 +438,7 @@ GoRouter _buildRouter(
           Provider<HabitDisplayNavigationChrome>.value(
             value: habitChrome,
             child: AppNavigationShell(
+              startupBuilder: startupBuilder,
               coordinator: coordinator,
               chromeController: chromeController,
               auxiliaryChromeBuilder: (context) => [
@@ -453,7 +461,7 @@ GoRouter _buildRouter(
         return navigationShell;
       },
     );
-  return routerBuilder.build(home: home);
+  return routerBuilder.build(home: home, observers: rootObservers);
 }
 
 Future<void> _tapBranch(WidgetTester tester, int index) async {
@@ -3079,6 +3087,120 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('group manage page'), findsNothing);
+      expect(find.text('settings page'), findsOneWidget);
+    },
+  );
+
+  for (final branch in AppNavigationBranch.values) {
+    testWidgets('reset then cold start prompts on real nested $branch root', (
+      tester,
+    ) async {
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      final previous = PreferencesTestStore.instance;
+      PreferencesTestStore.instance = InMemoryPreferencesStore.empty();
+      addTearDown(() => PreferencesTestStore.instance = previous);
+      final before = createTestAppSupportOwner();
+      await before.resetReminderForNextLaunch();
+      before.dispose();
+      final owner = createTestAppSupportOwner(
+        loadInfo: () async => stubAboutInfo(),
+      );
+      addTearDown(owner.dispose);
+      await owner.init();
+      final root = AdaptiveBranchRouteObserver();
+      root.onStackChanged = () {
+        if (root.depth > 1) owner.skipReminderForSession();
+      };
+      var prompts = 0;
+      final checks = <String>[];
+      late BuildContext shellContext;
+      late GoRouter router;
+      router = _buildRouter(
+        [AdaptiveBranchRouteObserver(), AdaptiveBranchRouteObserver()],
+        home: branch.rootRoute,
+        rootObservers: [root],
+        startupBuilder: (context, child) => ChangeNotifierProvider.value(
+          value: owner,
+          child: AppSupportReminder(
+            canShowDialog: (context) {
+              final navigation = context.read<AppNavigationCoordinator>();
+              checks.add(
+                'root=${root.depth}, flow=${navigation.appFlowObserver.depth}, branch=${navigation.branchObservers[branch.navigationIndex].routeNameStack}, route=${router.currentRouteName}',
+              );
+              return root.depth == 1 &&
+                  router.currentRouteName == branch.rootRouteName &&
+                  navigation.isAtPrimaryBranchRoot(branch);
+            },
+            showSupportDialog:
+                ({required context, required info, controller}) async {
+                  prompts++;
+                  shellContext = context;
+                  return AppSupportResult.remindLater;
+                },
+            child: child!,
+          ),
+        ),
+      );
+      addTearDown(router.dispose);
+      await _pumpApp(
+        tester,
+        router: router,
+        launchEntry: _RecordingLaunchEntryViewModel(),
+      );
+      await tester.pumpAndSettle();
+      expect(prompts, 1, reason: checks.join(' / '));
+      expect(root.depth, 1);
+      final modal = showAdaptiveModalDialog<void>(
+        context: shellContext,
+        barrierDismissible: true,
+        builder: (_) => const AdaptiveDialog(title: Text('Root modal')),
+      );
+      await tester.pumpAndSettle();
+      expect(root.depth, 2);
+      Navigator.of(shellContext, rootNavigator: true).pop();
+      await modal;
+      await tester.pumpAndSettle();
+      expect(root.depth, 1);
+      router.push('/settings');
+      await tester.pumpAndSettle();
+      expect(root.depth, 1);
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(root.depth, 1);
+    });
+  }
+
+  testWidgets(
+    'startup wrapper shares shell navigation providers and captures navigation input',
+    (tester) async {
+      _setSurface(tester, const Size(700, 600));
+      final observers = [
+        AdaptiveBranchRouteObserver(),
+        AdaptiveBranchRouteObserver(),
+      ];
+      AppNavigationCoordinator? navigation;
+      var pointerEvents = 0;
+      final router = _buildRouter(
+        observers,
+        startupBuilder: (context, child) {
+          navigation = context.read<AppNavigationCoordinator>();
+          expect(
+            context.read<AppNavigationScrollController>(),
+            same(navigation!.scrollController),
+          );
+          return Listener(onPointerDown: (_) => pointerEvents++, child: child);
+        },
+      );
+      addTearDown(router.dispose);
+      await _pumpApp(
+        tester,
+        router: router,
+        launchEntry: _RecordingLaunchEntryViewModel(),
+      );
+      expect(navigation, isNotNull);
+      await tester.tap(find.byIcon(Icons.settings_outlined));
+      await tester.pumpAndSettle();
+      expect(pointerEvents, 1);
       expect(find.text('settings page'), findsOneWidget);
     },
   );

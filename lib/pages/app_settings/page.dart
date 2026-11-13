@@ -24,6 +24,7 @@ import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 
 import '../../common/consts.dart';
+import '../../common/distribution.dart';
 import '../../common/enums.dart';
 import '../../common/exceptions.dart';
 import '../../common/flavor.dart';
@@ -52,6 +53,7 @@ import '../../providers/app_ui/habits_record_scroll_behavior.dart';
 import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_reminder.dart';
 import '../../providers/workflow/app_settings.dart';
+import '../../providers/workflow/app_support.dart';
 import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/group_manager.dart';
 import '../../providers/workflow/habits_file_exporter.dart';
@@ -105,6 +107,7 @@ class _Page extends StatefulWidget {
 
 class _PageState extends State<_Page> with XShare {
   final ScrollController _scrollController = ScrollController();
+  AppSupportDialogController? _supportPreview;
 
   /// Whether the current platform supports opening the system language
   /// settings screen.
@@ -130,6 +133,7 @@ class _PageState extends State<_Page> with XShare {
   @override
   void dispose() {
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    _supportPreview?.cancel();
     _scrollController.dispose();
     super.dispose();
   }
@@ -442,6 +446,60 @@ class _PageState extends State<_Page> with XShare {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+  void _showSupportMessage(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(buildSnackBarWithDismiss(context, content: Text(message)));
+  }
+
+  Future<void> _resetSupportReminder() async {
+    if (!mounted || !context.read<AppDeveloperViewModel>().isInDevelopMode) {
+      return;
+    }
+    final support = context.read<AppSupportOwner>();
+    if (support.developerActionInProgress) return;
+    final saved = await support.resetReminderForNextLaunch();
+    if (!mounted) return;
+    _showSupportMessage(
+      saved
+          ? 'Support reminder reset. Restart the app to test the automatic dialog.'
+          : 'Could not reset the support reminder. Check logs and retry.',
+    );
+  }
+
+  Future<void> _previewSupportDialog() async {
+    if (!mounted || !context.read<AppDeveloperViewModel>().isInDevelopMode) {
+      return;
+    }
+    final support = context.read<AppSupportOwner>();
+    if (support.developerActionInProgress) return;
+    final shown = await support.previewDialog(
+      canShowDialog: () =>
+          mounted &&
+          context.read<AppDeveloperViewModel>().isInDevelopMode &&
+          ModalRoute.of(context)?.isCurrent == true &&
+          !Navigator.of(context, rootNavigator: true).canPop(),
+      showSupportDialog: (info) async {
+        final dialog = AppSupportDialogController();
+        _supportPreview = dialog;
+        try {
+          return await showAppSupportDialog(
+            context: context,
+            info: info,
+            controller: dialog,
+          );
+        } finally {
+          _supportPreview = null;
+        }
+      },
+    );
+    if (mounted && !shown) {
+      _showSupportMessage(
+        'Could not show the support dialog. Check logs and retry.',
+      );
+    }
+  }
+
   void _onDevelopModeSwitchTilePressed(bool value) async {
     if (!mounted) return;
     context.read<AppDeveloperViewModel>().switchDevelopMode(value);
@@ -465,6 +523,13 @@ class _PageState extends State<_Page> with XShare {
   void _onAppleSidebarStyleModeChanged(AppAppleSidebarStyleMode value) {
     if (!mounted) return;
     context.read<AppDeveloperViewModel>().setAppleSidebarStyleMode(value);
+  }
+
+  void _onAppSupportDistributionChanged(AppDistribution value) {
+    if (!mounted || !context.read<AppDeveloperViewModel>().isInDevelopMode) {
+      return;
+    }
+    context.read<AppSupportOwner>().setDistribution(value);
   }
 
   void _onExportDBTilePressed(BuildContext context) async {
@@ -937,22 +1002,25 @@ class _PageState extends State<_Page> with XShare {
     );
 
     Widget buildDevelopSubGroup(BuildContext context) =>
-        Selector<
+        Selector2<
           AppDeveloperViewModel,
+          AppSupportOwner,
           (
             bool,
             bool,
             AppAdaptiveStyleMode,
             TextDirection?,
             AppAppleSidebarStyleMode,
+            AppDistribution,
           )
         >(
-          selector: (context, vm) => (
+          selector: (context, vm, support) => (
             vm.isInDevelopMode,
             vm.displayDebugMenu,
             vm.adaptiveStyleMode,
             vm.textDirectionOverride,
             vm.appleSidebarStyleMode,
+            support.distribution,
           ),
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) {
@@ -962,6 +1030,7 @@ class _PageState extends State<_Page> with XShare {
               adaptiveStyleMode,
               textDirectionOverride,
               appleSidebarStyleMode,
+              appSupportDistribution,
             ) = value;
             return AppSettingDevelopSubGroup(
               isInDevelopMode: isInDevelopMode,
@@ -975,6 +1044,10 @@ class _PageState extends State<_Page> with XShare {
               onAppleSidebarStyleModeChanged: _onAppleSidebarStyleModeChanged,
               onExportDBTilePressed: _onExportDBTilePressed,
               onClearDBTilePressed: _onClearDBTilePressed,
+              appSupportDistribution: appSupportDistribution,
+              onAppSupportDistributionChanged: _onAppSupportDistributionChanged,
+              onResetSupportReminderPressed: _resetSupportReminder,
+              onPreviewAppSupportPressed: _previewSupportDialog,
             );
           },
         );
@@ -1027,6 +1100,7 @@ class _PageState extends State<_Page> with XShare {
                   buildReminderSubGroup(context),
                   buildBackupAndRestoreSubGroup(context),
                   buildOthersSubGroup(context),
+                  const AppSettingSupportSection(),
                   buildDevelopSubGroup(context),
                   buildChinaIPC(context),
                 ],

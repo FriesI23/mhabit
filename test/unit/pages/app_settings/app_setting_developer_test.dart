@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/common/distribution.dart';
 import 'package:mhabit/models/app_adaptive_style_mode.dart';
 import 'package:mhabit/models/app_apple_sidebar_style_mode.dart';
 import 'package:mhabit/pages/app_settings/widgets.dart';
@@ -28,6 +29,10 @@ void main() {
       var sidebarModeCalls = 0;
       var exportCalls = 0;
       var clearCalls = 0;
+      var supportResets = 0;
+      var supportShows = 0;
+      var supportDistribution = AppDistribution.github;
+      var supportDistributionCalls = 0;
       late StateSetter update;
       await tester.pumpWidget(
         MaterialApp(
@@ -55,6 +60,15 @@ void main() {
                       textDirection: direction ?? TextDirection.ltr,
                       child: AppSettingDevelopSubGroup(
                         isInDevelopMode: active,
+                        appSupportDistribution: supportDistribution,
+                        onAppSupportDistributionChanged: enabled
+                            ? (value) => setState(() {
+                                supportDistribution = value;
+                                supportDistributionCalls++;
+                              })
+                            : null,
+                        onResetSupportReminderPressed: () => supportResets++,
+                        onPreviewAppSupportPressed: () => supportShows++,
                         isDisplayDebugMenuSelect: debug,
                         adaptiveStyleMode: mode,
                         appleSidebarStyleMode: sidebarMode,
@@ -106,7 +120,7 @@ void main() {
             )
             .children
             .length,
-        platform == TargetPlatform.android ? 5 : 6,
+        platform == TargetPlatform.android ? 8 : 9,
       );
       await tester.tap(
         find.byType(
@@ -126,7 +140,7 @@ void main() {
       await select('developer-ui-style-control', 'Apple');
       expect(mode, AppAdaptiveStyleMode.apple);
       expect(modeCalls, 1);
-      expect(find.byType(CupertinoMenuAnchor), findsNWidgets(3));
+      expect(find.byType(CupertinoMenuAnchor), findsNWidgets(4));
       await select('developer-apple-sidebar-style-control', 'OS 27');
       expect(sidebarMode, AppAppleSidebarStyleMode.os27);
       expect(sidebarModeCalls, 1);
@@ -141,6 +155,11 @@ void main() {
       await select('developer-text-direction-control', 'Auto');
       expect(direction, isNull);
       expect(directionCalls, 2);
+      await select('developer-app-support-channel-control', 'Google Play');
+      expect(supportDistribution, AppDistribution.googlePlay);
+      await select('developer-app-support-channel-control', 'Default (GitHub)');
+      expect(supportDistribution, AppDistribution.github);
+      expect(supportDistributionCalls, 2);
       await tester.tap(find.text('Export DataBase'));
       await tester.tap(find.text('Clear DataBase'));
       expect(exportCalls, 1);
@@ -151,6 +170,38 @@ void main() {
       await tester.tap(find.text('Clear DataBase'));
       expect(exportCalls, 1);
       expect(clearCalls, 1);
+      for (final key in [
+        'developer-reset-app-support',
+        'developer-show-app-support',
+      ]) {
+        final tile = find.byKey(ValueKey(key));
+        await tester.ensureVisible(tile);
+        await tester.tap(tile);
+      }
+      expect(supportResets, 1);
+      expect(supportShows, 1);
+      update(() => enabled = true);
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<AdaptiveChoiceListTile<AppDistribution>>(
+              find.byWidgetPredicate(
+                (widget) => widget is AdaptiveChoiceListTile<AppDistribution>,
+              ),
+            )
+            .onChanged,
+        isNotNull,
+      );
+      for (final key in [
+        'developer-reset-app-support',
+        'developer-show-app-support',
+      ]) {
+        final tile = find.byKey(ValueKey(key));
+        expect(tester.widget<AdaptiveListTile>(tile).onTap, isNotNull);
+        await tester.tap(tile);
+      }
+      expect(supportResets, 2);
+      expect(supportShows, 2);
       update(() => active = false);
       await tester.pumpAndSettle();
       expect(find.text('Show debug menu').hitTestable(), findsNothing);

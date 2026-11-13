@@ -2175,6 +2175,50 @@ class L10nZh extends L10n {
 
   @override
   String get habitDisplay_groupModifyConfirm_previewTitle => '预览';
+
+  @override
+  String get appSupport_title => '支持 Table Habit';
+
+  @override
+  String get appSupport_message => '你的支持能帮助 Table Habit 持续改进，让更多人发现它。';
+
+  @override
+  String get appSupport_starOnGitHub => 'GitHub Star';
+
+  @override
+  String get appSupport_rateOnGooglePlay => '前往 Google Play 评价';
+
+  @override
+  String get appSupport_rateOnAppStore => '前往 App Store 评价';
+
+  @override
+  String get appSupport_openOnMicrosoftStore => '前往 Microsoft Store 评价';
+
+  @override
+  String get appSupport_favoriteOnFlathub => '在 Flathub 收藏';
+
+  @override
+  String get appSupport_later => '稍后提醒';
+
+  @override
+  String get appSupport_never => '不再提醒';
+
+  @override
+  String get appSupport_linkFailed => '操作未能完成，请重试。';
+
+  @override
+  String get appSupport_participateTitle => '参与项目';
+
+  @override
+  String get appSupport_participateMessage => '查看源码、参与开发，或反馈问题与建议。';
+
+  @override
+  String appSupport_page(int page, int count) {
+    return '第 $page 张，共 $count 张';
+  }
+
+  @override
+  String get appSupport_saveFailed => '无法保存提醒状态，请重试。';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).

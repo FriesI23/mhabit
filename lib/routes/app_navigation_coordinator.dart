@@ -19,6 +19,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
+import '../providers/support/commons.dart';
 import 'app_navigation_branch.dart';
 import 'app_navigation_scroll_controller.dart';
 import 'app_router.dart';
@@ -114,7 +115,8 @@ class _NavigationStackController {
 /// One instance is created by each app entry together with its branch
 /// observers. It owns no process-global state and exposes derived navigation
 /// state to the app shell without coupling that shell to individual app flows.
-class AppNavigationCoordinator extends ChangeNotifier {
+class AppNavigationCoordinator extends ChangeNotifier
+    implements ProviderMounted {
   /// Creates an app navigation coordinator.
   AppNavigationCoordinator({
     required this.branchObservers,
@@ -123,14 +125,14 @@ class AppNavigationCoordinator extends ChangeNotifier {
     required int initialIndex,
   }) : _selectedIndex = initialIndex {
     _transactions = _NavigationTransactionController(
-      isDisposed: () => _disposed,
+      isDisposed: () => !mounted,
       onDestinationSwitchChanged: _setDestinationSwitchInProgress,
       syncState: (selectedIndex) =>
           _synchronize(selectedIndexOverride: selectedIndex),
     );
     _appFlowStack = _NavigationStackController(
       observer: appFlowObserver,
-      isDisposed: () => _disposed,
+      isDisposed: () => !mounted,
     );
     for (final observer in branchObservers) {
       observer.onStackChanged = _handleStackChanged;
@@ -152,16 +154,35 @@ class AppNavigationCoordinator extends ChangeNotifier {
   StatefulNavigationShell? _navigationShell;
   int _selectedIndex;
   String? _appFlowTopRouteName;
+  String? _selectedBranchTopRouteName;
   bool _compactRouteVisible = true;
   bool _destinationSwitchInProgress = false;
   bool _notificationScheduled = false;
-  bool _disposed = false;
+  bool _mounted = true;
+
+  @override
+  bool get mounted => _mounted;
 
   /// Commands registered by the mounted branch root pages.
   final scrollController = AppNavigationScrollController();
 
   /// Index of the currently selected primary branch.
   int get selectedIndex => _selectedIndex;
+
+  /// Whether [branch]'s actual root is visible with no app flow above it.
+  ///
+  /// Stack depth alone is insufficient: a replacement can put a detail page
+  /// at depth one while retaining the selected branch.
+  bool isAtPrimaryBranchRoot(AppNavigationBranch branch) {
+    final observer = _branchObserverAt(branch.navigationIndex);
+    return mounted &&
+        !_destinationSwitchInProgress &&
+        _selectedIndex == branch.navigationIndex &&
+        appFlowObserver.depth == 1 &&
+        appShellFlowVisibilityPolicy(appFlowObserver.routeNameStack) &&
+        observer?.depth == 1 &&
+        observer?.topRouteName == branch.rootRouteName;
+  }
 
   /// Name of the route currently presented by the app-flow navigator.
   String? get appFlowTopRouteName => _appFlowTopRouteName;
@@ -176,7 +197,7 @@ class AppNavigationCoordinator extends ChangeNotifier {
 
   /// Attaches go_router's stateful navigation shell.
   void attachTabShell(StatefulNavigationShell navigationShell) {
-    if (_disposed) return;
+    if (!mounted) return;
     _navigationShell = navigationShell;
     _synchronize(scheduleNotification: true);
   }
@@ -212,8 +233,10 @@ class AppNavigationCoordinator extends ChangeNotifier {
     if (!_transactions.tryBegin(destinationSwitch: destinationSwitch)) return;
     try {
       if (destinationSwitch) {
+        // PopScope must rebuild with the destination-switch policy before
+        // maybePop evaluates the current app-flow root.
         await SchedulerBinding.instance.endOfFrame;
-        if (_disposed) return;
+        if (!mounted) return;
       }
       _transactions.holdUpdates();
 
@@ -222,7 +245,7 @@ class AppNavigationCoordinator extends ChangeNotifier {
         return;
       }
       if (!await _appFlowStack.popToRoot()) return;
-      if (_disposed) return;
+      if (!mounted) return;
 
       final context = appChromeNavigatorKey.currentContext;
       if (context == null || !context.mounted) return;
@@ -259,13 +282,14 @@ class AppNavigationCoordinator extends ChangeNotifier {
             AppNavigationBranch.fromNavigationIndex(index).rootRouteName;
     try {
       if (destinationSwitch) {
+        // Publish the destination-switch policy to PopScope before popping.
         await SchedulerBinding.instance.endOfFrame;
-        if (_disposed) return;
+        if (!mounted) return;
       }
       _transactions.holdUpdates();
 
       if (!await _appFlowStack.popToRoot()) return;
-      if (_disposed) return;
+      if (!mounted) return;
       if (reselect && _navigationShell != null) {
         if (wasAtRoot) {
           scrollController.scrollToTop(
@@ -274,7 +298,7 @@ class AppNavigationCoordinator extends ChangeNotifier {
         } else if (observer != null && observer.depth > 1) {
           await _NavigationStackController(
             observer: observer,
-            isDisposed: () => _disposed,
+            isDisposed: () => !mounted,
           ).popToRoot();
         }
         return;
@@ -320,21 +344,24 @@ class AppNavigationCoordinator extends ChangeNotifier {
     bool scheduleNotification = false,
     int? selectedIndexOverride,
   }) {
-    if (_transactions.isHoldingUpdates) return;
+    if (!mounted || _transactions.isHoldingUpdates) return;
     final previousIndex = _selectedIndex;
     final nextIndex =
         selectedIndexOverride ??
         _navigationShell?.currentIndex ??
         _selectedIndex;
     final nextAppFlowTopRouteName = appFlowObserver.topRouteName;
+    final nextBranchTopRouteName = _branchObserverAt(nextIndex)?.topRouteName;
     _selectedIndex = nextIndex;
     final nextVisible = _routeVisibilityAt(nextIndex);
     if (nextIndex == previousIndex &&
         nextAppFlowTopRouteName == _appFlowTopRouteName &&
+        nextBranchTopRouteName == _selectedBranchTopRouteName &&
         nextVisible == _compactRouteVisible) {
       return;
     }
     _appFlowTopRouteName = nextAppFlowTopRouteName;
+    _selectedBranchTopRouteName = nextBranchTopRouteName;
     _compactRouteVisible = nextVisible;
     if (!scheduleNotification) {
       notifyListeners();
@@ -342,9 +369,12 @@ class AppNavigationCoordinator extends ChangeNotifier {
     }
     if (_notificationScheduled) return;
     _notificationScheduled = true;
+    // Navigator can emit multiple stack events while building its routes.
+    // Derived state above is current immediately; coalesce only UI publication
+    // until the synchronous Navigator operation has finished.
     scheduleMicrotask(() {
       _notificationScheduled = false;
-      if (!_disposed && !_transactions.isHoldingUpdates) {
+      if (mounted && !_transactions.isHoldingUpdates) {
         notifyListeners();
       }
     });
@@ -352,8 +382,8 @@ class AppNavigationCoordinator extends ChangeNotifier {
 
   @override
   void dispose() {
-    if (_disposed) return;
-    _disposed = true;
+    if (!mounted) return;
+    _mounted = false;
     _navigationShell = null;
     scrollController.clear();
     for (final observer in branchObservers) {

@@ -31,6 +31,7 @@ import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/app_apple_sidebar_style_mode.dart';
 import '../../models/app_entry.dart';
+import '../../models/app_sync_server.dart';
 import '../../models/app_sync_tasks.dart';
 import '../../models/app_theme_color.dart';
 import '../../models/habit_date.dart';
@@ -58,6 +59,7 @@ import '../../providers/app_ui/app_launch_entry.dart';
 import '../../providers/app_ui/app_theme.dart';
 import '../../providers/support/animation_scale_sync.dart';
 import '../../providers/workflow/app_reminder.dart';
+import '../../providers/workflow/app_support.dart';
 import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/habits_manager.dart';
 import '../../reminders/notification_channel.dart';
@@ -70,6 +72,7 @@ import '../../routes/helpers/habit_create_helper.dart';
 import '../../routes/helpers/habit_detail_helper.dart';
 import '../../routes/helpers/habit_edit_helper.dart';
 import '../../routes/helpers/habits_status_changer_helper.dart';
+import '../../routes/navigator_helpers.dart' show GoRouterNavigationState;
 import '../../storage/db_helper_builder.dart';
 import '../../storage/profile/handlers.dart';
 import '../../storage/profile_builder.dart';
@@ -107,6 +110,7 @@ class AppEntry extends StatelessWidget {
     HabitCellGestureModeProfileHandler.new,
     InputFillCacheProfileHandler.new,
     AppFlagsProfileHandler.new,
+    AppSupportReminderProfileHandler.new,
     CustomColorHistoryProfileHandler.new,
     CollectLogswitcherProfileHandler.new,
     LoggingLevelProfileHandler.new,
@@ -156,6 +160,7 @@ class _AppEntryState extends State<_AppEntry> {
   late final AppNavigationChromeController _navigationChromeController;
   late final HabitDisplayNavigationChrome _habitDisplayNavigationChrome;
   late final GoRouter _router;
+  final _supportRoutes = AdaptiveBranchRouteObserver();
 
   @override
   void initState() {
@@ -165,6 +170,10 @@ class _AppEntryState extends State<_AppEntry> {
       AppEntrys.habitToday => AppNavigationBranch.today,
       AppEntrys.undefined ||
       AppEntrys.habitDisplay => AppNavigationBranch.habits,
+    };
+    final support = context.read<AppSupportOwner>();
+    _supportRoutes.onStackChanged = () {
+      if (_supportRoutes.depth > 1) support.skipReminderForSession();
     };
     _navigationChromeController = AppNavigationChromeController();
     _habitDisplayNavigationChrome = HabitDisplayNavigationChrome(
@@ -258,15 +267,19 @@ class _AppEntryState extends State<_AppEntry> {
                   (viewModel) => viewModel.enabled,
                 );
             return ChangelogBanner(
-              child: AppPostInit(
-                child: AppNavigationShell(
-                  coordinator: _navigationCoordinator,
-                  chromeController: _navigationChromeController,
-                  auxiliaryChromeBuilder: _buildAuxiliaryChrome,
-                  appleSidebarStyleMode: appleSidebarStyleMode,
-                  appleCollapsedSidebarEnabled: appleCollapsedSidebarEnabled,
-                  child: child,
+              child: AppNavigationShell(
+                coordinator: _navigationCoordinator,
+                chromeController: _navigationChromeController,
+                auxiliaryChromeBuilder: _buildAuxiliaryChrome,
+                appleSidebarStyleMode: appleSidebarStyleMode,
+                appleCollapsedSidebarEnabled: appleCollapsedSidebarEnabled,
+                startupBuilder: (context, child) => _AppStartup(
+                  initialBranch: initialBranch,
+                  rootRoutes: _supportRoutes,
+                  router: _router,
+                  child: child!,
                 ),
+                child: child,
               ),
             );
           },
@@ -275,7 +288,7 @@ class _AppEntryState extends State<_AppEntry> {
             return navigationShell;
           },
         ))
-        .build(home: initialBranch.rootRoute);
+        .build(home: initialBranch.rootRoute, observers: [_supportRoutes]);
   }
 
   List<AppNavigationAuxiliaryChrome> _buildAuxiliaryChrome(
@@ -388,6 +401,63 @@ class _AppEntryState extends State<_AppEntry> {
   }
 }
 
+/// Keeps startup coordination below shell providers without rebuilding the shell.
+class _AppStartup extends StatelessWidget {
+  const _AppStartup({
+    required this.initialBranch,
+    required this.rootRoutes,
+    required this.router,
+    required this.child,
+  });
+
+  final AppNavigationBranch initialBranch;
+  final AdaptiveBranchRouteObserver rootRoutes;
+  final GoRouter router;
+  final Widget child;
+
+  bool _canShowSupportDialog(BuildContext context) {
+    final syncSettings = context.read<AppSyncSettingsAccess>();
+    final syncStatus = context.read<AppSyncStatusSource>().syncStatus;
+    return rootRoutes.depth == 1 &&
+        router.currentRouteName == initialBranch.rootRouteName &&
+        context.read<AppNavigationCoordinator>().isAtPrimaryBranchRoot(
+          initialBranch,
+        ) &&
+        context.read<AppSupportOwner>().canShowReminderWithSync(
+          enabled: syncSettings.enabled,
+          server: syncSettings.serverConfig,
+          processing: syncStatus?.isProcessing ?? false,
+        ) &&
+        !ChangelogBanner.of(context).controller.isShowing;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Subscribe for cancellation; asynchronous checks read live state above.
+    context.select<AppNavigationCoordinator, bool>(
+      (navigation) => navigation.isAtPrimaryBranchRoot(initialBranch),
+    );
+    context
+        .select<AppSyncSettingsAccess, ({bool enabled, AppSyncServer? server})>(
+          (syncSettings) => (
+            enabled: syncSettings.enabled,
+            server: syncSettings.serverConfig,
+          ),
+        );
+    context.select<AppSyncStatusSource, bool>(
+      (statusSource) => statusSource.syncStatus?.isProcessing ?? false,
+    );
+    return ListenableBuilder(
+      listenable: ChangelogBanner.of(context).controller,
+      builder: (context, child) => AppSupportReminder(
+        canShowDialog: _canShowSupportDialog,
+        child: child!,
+      ),
+      child: AppPostInit(child: child),
+    );
+  }
+}
+
 class _AppFlowRootPopScope extends StatelessWidget {
   const _AppFlowRootPopScope({required this.onRootPop, required this.child});
 
@@ -433,6 +503,7 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
   Future<bool> _onWebDavAppSyncUserConfirmNeedCheck(
     WebDavConfigTaskChecklist checklist,
   ) {
+    context.maybeRead<AppSupportOwner>()?.skipReminderForSession();
     return showAdaptiveModalDialog<bool>(
       context: context,
       barrierDismissible: true,
@@ -447,6 +518,7 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _syncL10n(L10n.of(context));
+    if (!_didHandlePostInit) _handlePostInit(context);
   }
 
   @override
@@ -481,6 +553,7 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
     final lastVersion = handler?.get();
 
     if (lastVersion != currentVersion) {
+      context.maybeRead<AppSupportOwner>()?.skipReminderForSession();
       handler?.set(currentVersion);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
@@ -490,10 +563,7 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
   }
 
   @override
-  Widget buildWithChild(BuildContext context, Widget? child) {
-    if (!_didHandlePostInit) _handlePostInit(context);
-    return child!;
-  }
+  Widget buildWithChild(BuildContext context, Widget? child) => child!;
 }
 
 final class _AppSyncPostInitBridge {

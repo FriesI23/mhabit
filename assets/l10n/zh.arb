@@ -1573,5 +1573,50 @@
             }
         }
     },
-    "habitDisplay_groupModifyConfirm_previewTitle": "预览"
+    "habitDisplay_groupModifyConfirm_previewTitle": "预览",
+    "appSupport_title": "支持 Table Habit",
+    "appSupport_message": "你的支持能帮助 Table Habit 持续改进，让更多人发现它。",
+    "@appSupport_message": {
+        "description": "Shared support message for all distribution channels. Keep this text independent of the destination platform."
+    },
+    "appSupport_starOnGitHub": "GitHub Star",
+    "@appSupport_starOnGitHub": {
+        "description": "Short button label that opens the GitHub repository for the user to manually click Star. Opening the link does not automatically star the repository."
+    },
+    "appSupport_rateOnGooglePlay": "前往 Google Play 评价",
+    "@appSupport_rateOnGooglePlay": {
+        "description": "Support button that opens the published app's Google Play page so the user can leave a review."
+    },
+    "appSupport_rateOnAppStore": "前往 App Store 评价",
+    "@appSupport_rateOnAppStore": {
+        "description": "Support button that opens the App Store write-review page on iOS and macOS."
+    },
+    "appSupport_openOnMicrosoftStore": "前往 Microsoft Store 评价",
+    "@appSupport_openOnMicrosoftStore": {
+        "description": "Support button that opens the published app's Microsoft Store rating and review page."
+    },
+    "appSupport_favoriteOnFlathub": "在 Flathub 收藏",
+    "@appSupport_favoriteOnFlathub": {
+        "description": "Support button that opens the app's Flathub page so the user can sign in and add it to favorites. Opening the page does not add a favorite automatically."
+    },
+    "appSupport_later": "稍后提醒",
+    "appSupport_never": "不再提醒",
+    "appSupport_linkFailed": "操作未能完成，请重试。",
+    "@appSupport_linkFailed": {
+        "description": "Failure message shared by project and store links."
+    },
+    "appSupport_participateTitle": "参与项目",
+    "appSupport_participateMessage": "查看源码、参与开发，或反馈问题与建议。",
+    "appSupport_page": "第 {page} 张，共 {count} 张",
+    "@appSupport_page": {
+        "placeholders": {
+            "page": {
+                "type": "int"
+            },
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "appSupport_saveFailed": "无法保存提醒状态，请重试。"
 }
