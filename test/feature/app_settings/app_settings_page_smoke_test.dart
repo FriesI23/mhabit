@@ -31,6 +31,8 @@ import 'package:mhabit/common/distribution.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/entries/app/navigation_destination.dart';
 import 'package:mhabit/l10n/localizations.dart';
+import 'package:mhabit/models/app_adaptive_style_mode.dart';
+import 'package:mhabit/models/app_apple_sidebar_style_mode.dart';
 import 'package:mhabit/models/app_sync_tasks.dart';
 import 'package:mhabit/models/group_export.dart';
 import 'package:mhabit/models/habit_export.dart';
@@ -61,8 +63,10 @@ import 'package:mhabit/providers/workflow/group_manager.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/routes/app_router.dart';
 import 'package:mhabit/storage/db_helper_provider.dart';
+import 'package:mhabit/storage/profile/handlers/adaptive_style_override.dart';
 import 'package:mhabit/storage/profile/handlers/app_language.dart';
 import 'package:mhabit/storage/profile/handlers/app_support.dart';
+import 'package:mhabit/storage/profile/handlers/apple_sidebar_style_mode.dart';
 import 'package:mhabit/storage/profile/handlers/display_calendar_scroll_mode.dart';
 import 'package:mhabit/storage/profile/handlers/habit_grouping.dart';
 import 'package:mhabit/storage/profile_provider.dart';
@@ -175,6 +179,8 @@ Future<ProfileViewModel> _loadProfile() async {
     AppSupportReminderProfileHandler.new,
     HabitGroupingExperimentalFeature.new,
     DisplayCalendarScrollModeProfileHandler.new,
+    AdaptiveStyleOverrideProfileHandler.new,
+    AppleSidebarStyleModeProfileHandler.new,
   ]);
   await profile.init();
   return profile;
@@ -232,12 +238,15 @@ void main() {
 
   for (final platform in [
     TargetPlatform.android,
+    TargetPlatform.windows,
+    TargetPlatform.linux,
     TargetPlatform.iOS,
     TargetPlatform.macOS,
   ]) {
-    testWidgets('AppSettingPage language and scroll flow on $platform', (
-      tester,
-    ) async {
+    final testName = 'AppSettingPage language and scroll flow on $platform';
+    testWidgets(testName, (tester) async {
+      final applePlatform =
+          platform == TargetPlatform.iOS || platform == TargetPlatform.macOS;
       final previousPreferences = PreferencesTestStore.instance;
       addTearDown(() => PreferencesTestStore.instance = previousPreferences);
       final profile = await _loadProfile();
@@ -375,36 +384,47 @@ void main() {
           ],
           child: MaterialApp.router(
             routerConfig: router,
-            builder: (context, child) => MediaQuery(
-              data: MediaQuery.of(context).copyWith(disableAnimations: true),
-              child: ValueListenableBuilder<TextDirection?>(
-                valueListenable: shellDirection,
-                builder: (context, direction, _) {
-                  if (direction == null) return child!;
-                  return Overlay.wrap(
-                    child: Directionality(
-                      textDirection: direction,
-                      child: AdaptiveNavigationShell(
-                        selectedIndex: 0,
-                        selectedAuxiliaryIndex: 0,
-                        compactRouteVisible: false,
-                        destinations: [
-                          AppNavigationDestinations.habits(label: 'Habits'),
-                          AppNavigationDestinations.today(label: 'Today'),
-                        ],
-                        auxiliaryDestinations: [
-                          AppNavigationDestinations.settings(label: 'Settings'),
-                        ],
-                        onDestinationSelected: (_) {},
-                        onAuxiliaryDestinationSelected: (_) {},
-                        appleCollapsedSidebarEnabled: context
-                            .watch<AppAppleCollapsedSidebarViewModel>()
-                            .enabled,
-                        child: child!,
-                      ),
-                    ),
-                  );
-                },
+            builder: (context, child) => Consumer<AppThemeViewModel>(
+              builder: (context, theme, _) => AppAdaptiveUiTheme(
+                data: AppAdaptiveUiTheme.of(
+                  context,
+                ).copyWith(style: theme.adaptiveStyleOverride),
+                child: MediaQuery(
+                  data: MediaQuery.of(
+                    context,
+                  ).copyWith(disableAnimations: true),
+                  child: ValueListenableBuilder<TextDirection?>(
+                    valueListenable: shellDirection,
+                    builder: (context, direction, _) {
+                      if (direction == null) return child!;
+                      return Overlay.wrap(
+                        child: Directionality(
+                          textDirection: direction,
+                          child: AdaptiveNavigationShell(
+                            selectedIndex: 0,
+                            selectedAuxiliaryIndex: 0,
+                            compactRouteVisible: false,
+                            destinations: [
+                              AppNavigationDestinations.habits(label: 'Habits'),
+                              AppNavigationDestinations.today(label: 'Today'),
+                            ],
+                            auxiliaryDestinations: [
+                              AppNavigationDestinations.settings(
+                                label: 'Settings',
+                              ),
+                            ],
+                            onDestinationSelected: (_) {},
+                            onAuxiliaryDestinationSelected: (_) {},
+                            appleCollapsedSidebarEnabled: context
+                                .watch<AppAppleCollapsedSidebarViewModel>()
+                                .enabled,
+                            child: child!,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
             theme: ThemeData(platform: platform),
@@ -418,14 +438,56 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(find.text('Settings'), findsOneWidget);
       expect(find.byType(AdaptiveSliverAppBar), findsOneWidget);
-      if (platform == TargetPlatform.android) {
+      if (!applePlatform) {
         expect(find.byType(WindowControlSliverAppBar), findsOneWidget);
       }
       expect(find.byType(CustomScrollView), findsOneWidget);
+      final uiControl = find.byKey(const ValueKey('settings-ui-style-control'));
+      final sidebarControl = find.byKey(
+        const ValueKey('settings-apple-sidebar-style-control'),
+      );
+      final display = find.byKey(const ValueKey('settings-display'));
+      expect(
+        tester.widget<AdaptiveListSection>(display).children.first,
+        isA<WindowSizeClassLayoutBuilder>(),
+      );
+      Future<void> chooseStyle(String label) async {
+        await Scrollable.ensureVisible(
+          tester.element(uiControl),
+          alignment: 0.5,
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(uiControl);
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(label).last);
+        await tester.pumpAndSettle();
+        expect(router.routeInformationProvider.value.uri.path, '/');
+        expect(developer.isInDevelopMode, isFalse);
+        expect(tester.takeException(), isNull);
+      }
+
+      expect(theme.appleSidebarStyleMode, AppAppleSidebarStyleMode.automatic);
+      await chooseStyle('Apple');
+      expect(sidebarControl, findsOneWidget);
+      await Scrollable.ensureVisible(
+        tester.element(sidebarControl),
+        alignment: 0.5,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(sidebarControl);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Edge').last);
+      await tester.pumpAndSettle();
+      expect(theme.appleSidebarStyleMode, AppAppleSidebarStyleMode.os27);
+      await chooseStyle('Material');
+      expect(sidebarControl, findsNothing);
+      await chooseStyle('Automatic');
+      expect(theme.adaptiveStyleMode, AppAdaptiveStyleMode.automatic);
+
       final collapsedSidebarTile = find.byKey(
         const ValueKey('settings-apple-collapsed-sidebar'),
       );
-      if (platform == TargetPlatform.android) {
+      if (!applePlatform) {
         expect(collapsedSidebarTile, findsNothing);
       } else {
         expect(collapsedSidebarTile, findsOneWidget);
@@ -449,14 +511,14 @@ void main() {
         await tester.pump();
         expect(collapsedSidebar.changes, 1);
         expect(collapsedSidebar.value, platform != TargetPlatform.iOS);
-        await tester.drag(find.byType(CustomScrollView), const Offset(0, 1000));
-        await tester.pumpAndSettle();
       }
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, 1000));
+      await tester.pumpAndSettle();
       final adaptiveAppBar = tester.widget<AdaptiveSliverAppBar>(
         find.byType(AdaptiveSliverAppBar),
       );
       expect(adaptiveAppBar.automaticallyImplyLeading, isFalse);
-      if (platform == TargetPlatform.android) {
+      if (!applePlatform) {
         final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
         expect(appBar.automaticallyImplyLeading, isFalse);
         expect(appBar.leading, isA<AdaptiveBackButton>());
@@ -528,7 +590,7 @@ void main() {
         find.descendant(
           of: groupTile,
           matching: find.byIcon(
-            platform == TargetPlatform.android
+            !applePlatform
                 ? Icons.chevron_right
                 : CupertinoIcons.chevron_forward,
           ),
@@ -564,9 +626,7 @@ void main() {
 
       final compact = find.descendant(
         of: find.byKey(const ValueKey('settings-compact-ui')),
-        matching: find.byType(
-          platform == TargetPlatform.android ? Switch : CupertinoSwitch,
-        ),
+        matching: find.byType(!applePlatform ? Switch : CupertinoSwitch),
       );
       await tester.scrollUntilVisible(
         compact,
@@ -612,13 +672,11 @@ void main() {
       expect(
         find.descendant(
           of: languageTile,
-          matching: find.byType(
-            platform == TargetPlatform.android ? ListTile : CupertinoListTile,
-          ),
+          matching: find.byType(!applePlatform ? ListTile : CupertinoListTile),
         ),
         findsOneWidget,
       );
-      if (platform != TargetPlatform.android) {
+      if (applePlatform) {
         expect(
           find.ancestor(
             of: languageTile,
@@ -682,9 +740,7 @@ void main() {
       await tester.tap(
         find.descendant(
           of: calendarByPage,
-          matching: find.byType(
-            platform == TargetPlatform.android ? Switch : CupertinoSwitch,
-          ),
+          matching: find.byType(!applePlatform ? Switch : CupertinoSwitch),
         ),
       );
       await tester.pumpAndSettle();
@@ -729,9 +785,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       final timePicker = find.byType(
-        platform == TargetPlatform.android
-            ? TimePickerDialog
-            : CupertinoDatePicker,
+        !applePlatform ? TimePickerDialog : CupertinoDatePicker,
       );
       expect(timePicker, findsOneWidget);
       Navigator.of(tester.element(timePicker)).pop();
@@ -803,7 +857,7 @@ void main() {
           of: others,
           matching: find.byIcon(CupertinoIcons.chevron_forward),
         ),
-        platform == TargetPlatform.android ? findsNothing : findsNWidgets(3),
+        !applePlatform ? findsNothing : findsNWidgets(3),
       );
       final developmentTile = find.descendant(
         of: others,
@@ -817,9 +871,7 @@ void main() {
       await tester.tap(
         find.descendant(
           of: developmentTile,
-          matching: find.byType(
-            platform == TargetPlatform.android ? Switch : CupertinoSwitch,
-          ),
+          matching: find.byType(!applePlatform ? Switch : CupertinoSwitch),
         ),
       );
       await tester.pumpAndSettle();
@@ -941,7 +993,7 @@ void main() {
             matching: find.text(label),
           ),
           matching: find.byWidgetPredicate(
-            (widget) => platform == TargetPlatform.android
+            (widget) => !applePlatform
                 ? widget is FilledButton
                 : widget is CupertinoButton,
           ),
@@ -1115,8 +1167,8 @@ void main() {
           await collapsedSidebar.setEnabled(enabled);
           await tester.pumpAndSettle();
           expect(settingsScroll.offset, offsetBeforeSwitch);
-          expectBack(platform != TargetPlatform.android && !enabled);
-          if (platform != TargetPlatform.android) {
+          expectBack(applePlatform && !enabled);
+          if (applePlatform) {
             final toggle = find.byKey(
               const ValueKey('cupertino-sidebar-toggle'),
             );
@@ -1153,12 +1205,12 @@ void main() {
         expectBack(true);
         tester.view.physicalSize = const Size(700, 900);
         await tester.pumpAndSettle();
-        expectBack(platform != TargetPlatform.android);
+        expectBack(applePlatform);
         tester.view.physicalSize = const Size(1200, 900);
         await tester.pumpAndSettle();
         // Explicit collapse survives wider windows, including on Settings.
-        expectBack(platform != TargetPlatform.android);
-        if (platform != TargetPlatform.android) {
+        expectBack(applePlatform);
+        if (applePlatform) {
           final toggle = find.byKey(const ValueKey('cupertino-sidebar-toggle'));
           await tester.tap(toggle);
           await tester.pumpAndSettle();
@@ -1176,7 +1228,7 @@ void main() {
         }
         tester.view.physicalSize = const Size(700, 900);
         await tester.pumpAndSettle();
-        expectBack(platform != TargetPlatform.android);
+        expectBack(applePlatform);
       }
 
       // Exercise ordinary Reset configs through the page and production proxy
@@ -1294,7 +1346,7 @@ void main() {
         unawaited(router.push<void>('/'));
         await tester.pumpAndSettle();
         // Apple exercises the missing medium Back; Material uses compact.
-        if (platform == TargetPlatform.android) {
+        if (!applePlatform) {
           tester.view.physicalSize = const Size(400, 900);
         }
         await tester.pumpAndSettle();
@@ -1304,6 +1356,6 @@ void main() {
         tester.view.physicalSize = const Size(700, 900);
         await tester.pumpAndSettle();
       }
-    });
+    }, variant: TargetPlatformVariant({platform}));
   }
 }

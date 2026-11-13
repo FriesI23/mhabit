@@ -111,7 +111,13 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ],
 
   "cs": [
@@ -145,7 +151,13 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ],
 
   "de": [
@@ -387,7 +399,13 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ],
 
   "es": [
@@ -555,7 +573,13 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ],
 
   "eu": [
@@ -1148,7 +1172,13 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ],
 
   "fa": [
@@ -1410,7 +1440,13 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ],
 
   "fr": [
@@ -1615,7 +1651,13 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ],
 
   "he": [
@@ -1639,7 +1681,13 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ],
 
   "hu": [
@@ -1761,7 +1809,13 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ],
 
   "it": [
@@ -1987,7 +2041,13 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ],
 
   "ja": [
@@ -2125,7 +2185,13 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ],
 
   "nb": [
@@ -2716,7 +2782,13 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ],
 
   "nl": [
@@ -3314,7 +3386,13 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ],
 
   "pl": [
@@ -3456,7 +3534,13 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ],
 
   "pt": [
@@ -3731,7 +3815,13 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ],
 
   "ru": [
@@ -3872,7 +3962,13 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ],
 
   "tr": [
@@ -3993,7 +4089,13 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ],
 
   "uk": [
@@ -4064,7 +4166,13 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ],
 
   "vi": [
@@ -4186,7 +4294,13 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ],
 
   "zh_Hant": [
@@ -4284,6 +4398,12 @@
     "appSupport_participateTitle",
     "appSupport_participateMessage",
     "appSupport_page",
-    "appSupport_saveFailed"
+    "appSupport_saveFailed",
+    "appSetting_uiStyle_titleText",
+    "appSetting_uiStyle_material",
+    "appSetting_uiStyle_apple",
+    "appSetting_appleSidebarStyle_titleText",
+    "appSetting_appleSidebarStyle_inset",
+    "appSetting_appleSidebarStyle_edge"
   ]
 }

@@ -15,14 +15,19 @@
 import 'dart:ui' show Color;
 
 import 'package:flutter/foundation.dart';
+import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../common/consts.dart';
+import '../../models/app_adaptive_style_mode.dart';
+import '../../models/app_apple_sidebar_style_mode.dart';
 import '../../models/app_theme_color.dart';
 import '../../storage/profile/handlers.dart';
 import '../../storage/profile_provider.dart';
 import '../../theme/color.dart';
 
 class AppThemeViewModel extends ChangeNotifier with ProfileHandlerLoadedMixin {
+  AdaptiveStyleOverrideProfileHandler? _adaptiveStyleOverride;
+  AppleSidebarStyleModeProfileHandler? _appleSidebarStyleMode;
   AppThemeTypeProfileHandler? _theme;
   AppThemeColorProfileHandler? _themeColor;
   AppThemeMainColorProfileHandler? _mainColor;
@@ -32,12 +37,44 @@ class AppThemeViewModel extends ChangeNotifier with ProfileHandlerLoadedMixin {
 
   @override
   void updateProfile(ProfileViewModel newProfile) {
+    final previousStyle = (adaptiveStyleMode, appleSidebarStyleMode);
     super.updateProfile(newProfile);
+    _adaptiveStyleOverride = newProfile
+        .getHandler<AdaptiveStyleOverrideProfileHandler>();
+    _appleSidebarStyleMode = newProfile
+        .getHandler<AppleSidebarStyleModeProfileHandler>();
     _theme = newProfile.getHandler<AppThemeTypeProfileHandler>();
     _themeColor = newProfile.getHandler<AppThemeColorProfileHandler>();
     _mainColor = newProfile.getHandler<AppThemeMainColorProfileHandler>();
     _calOccupy = newProfile
         .getHandler<DisplayCalendartBarOccupyPrtProfileHandler>();
+    if (previousStyle != (adaptiveStyleMode, appleSidebarStyleMode)) {
+      notifyListeners();
+    }
+  }
+
+  AppAdaptiveStyleMode get adaptiveStyleMode =>
+      _adaptiveStyleOverride?.get() ?? AppAdaptiveStyleMode.automatic;
+
+  AdaptiveStyle? get adaptiveStyleOverride => switch (adaptiveStyleMode) {
+    AppAdaptiveStyleMode.automatic => null,
+    AppAdaptiveStyleMode.material => AdaptiveStyle.material,
+    AppAdaptiveStyleMode.apple => AdaptiveStyle.apple,
+  };
+
+  Future<void> setAdaptiveStyleMode(AppAdaptiveStyleMode mode) async {
+    if (adaptiveStyleMode == mode) return;
+    await _adaptiveStyleOverride?.set(mode);
+    notifyListeners();
+  }
+
+  AppAppleSidebarStyleMode get appleSidebarStyleMode =>
+      _appleSidebarStyleMode?.get() ?? AppAppleSidebarStyleMode.automatic;
+
+  Future<void> setAppleSidebarStyleMode(AppAppleSidebarStyleMode mode) async {
+    if (appleSidebarStyleMode == mode) return;
+    await _appleSidebarStyleMode?.set(mode);
+    notifyListeners();
   }
 
   //#region app theme

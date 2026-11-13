@@ -126,6 +126,7 @@ class AppEntry extends StatelessWidget {
     AppLastChangelogVersionProfileHandler.new,
     NaturalSortExperimentalFeature.new,
     AdaptiveStyleOverrideProfileHandler.new,
+    AppleSidebarStyleModeProfileHandler.new,
     AppleCollapsedSidebarProfileHandler.new,
   ];
 
@@ -259,7 +260,7 @@ class _AppEntryState extends State<_AppEntry> {
           observers: [appFlowObserver],
           builder: (context, state, child) {
             final appleSidebarStyleMode = context
-                .select<AppDeveloperViewModel, AppAppleSidebarStyleMode>(
+                .select<AppThemeViewModel, AppAppleSidebarStyleMode>(
                   (viewModel) => viewModel.appleSidebarStyleMode,
                 );
             final appleCollapsedSidebarEnabled = context
@@ -353,7 +354,7 @@ class _AppEntryState extends State<_AppEntry> {
             (vm) => vm.disableAnimations,
           );
           final adaptiveStyleOverride = context
-              .select<AppDeveloperViewModel, AdaptiveStyle?>(
+              .select<AppThemeViewModel, AdaptiveStyle?>(
                 (vm) => vm.adaptiveStyleOverride,
               );
           final textDirectionOverride = context

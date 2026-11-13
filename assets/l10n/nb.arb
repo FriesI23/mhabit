@@ -38,5 +38,6 @@
     "changelog_view_full": "View Full Changelog",
     "@changelog_view_full": {
         "description": "Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content."
-    }
+    },
+    "appSetting_uiStyle_automatic": "Auto"
 }

@@ -2386,4 +2386,26 @@ class L10nCs extends L10n {
   @override
   String get appSupport_saveFailed =>
       'The reminder could not be saved. Please try again.';
+
+  @override
+  String get appSetting_uiStyle_titleText => 'UI style';
+
+  @override
+  String get appSetting_uiStyle_automatic => 'Automaticky';
+
+  @override
+  String get appSetting_uiStyle_material => 'Material';
+
+  @override
+  String get appSetting_uiStyle_apple => 'Apple';
+
+  @override
+  String get appSetting_appleSidebarStyle_titleText =>
+      'Apple Sidebar appearance';
+
+  @override
+  String get appSetting_appleSidebarStyle_inset => 'Inset';
+
+  @override
+  String get appSetting_appleSidebarStyle_edge => 'Edge';
 }

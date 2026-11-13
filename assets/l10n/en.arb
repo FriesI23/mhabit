@@ -446,7 +446,7 @@
     },
     "habitDisplay_groupModifyConfirm_bodyRemoveGroup": "Habits will have their group removed",
     "@habitDisplay_groupModifyConfirm_bodyRemoveGroup": {},
-    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {{count} habit will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group} other{ and {remainingGroupCount} more groups}} to \"{toGroup}\"} other {{count} habits will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group} other{ and {remainingGroupCount} more groups}} to \"{toGroup}\"}}",
+    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {{count} habit will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group ({totalGroupCount} groups in total)} other{ and {remainingGroupCount} more groups ({totalGroupCount} groups in total)}} to \"{toGroup}\"} other {{count} habits will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group ({totalGroupCount} groups in total)} other{ and {remainingGroupCount} more groups ({totalGroupCount} groups in total)}} to \"{toGroup}\"}}",
     "@habitDisplay_groupModifyConfirm_bodyChangeStat": {
         "placeholders": {
             "count": {
@@ -2065,5 +2065,19 @@
         }
     },
     "appSupport_saveFailed": "The reminder could not be saved. Please try again.",
-    "@appSupport_saveFailed": {}
+    "@appSupport_saveFailed": {},
+    "appSetting_uiStyle_titleText": "UI style",
+    "@appSetting_uiStyle_titleText": {},
+    "appSetting_uiStyle_automatic": "Automatic",
+    "@appSetting_uiStyle_automatic": {},
+    "appSetting_uiStyle_material": "Material",
+    "@appSetting_uiStyle_material": {},
+    "appSetting_uiStyle_apple": "Apple",
+    "@appSetting_uiStyle_apple": {},
+    "appSetting_appleSidebarStyle_titleText": "Apple Sidebar appearance",
+    "@appSetting_appleSidebarStyle_titleText": {},
+    "appSetting_appleSidebarStyle_inset": "Inset",
+    "@appSetting_appleSidebarStyle_inset": {},
+    "appSetting_appleSidebarStyle_edge": "Edge",
+    "@appSetting_appleSidebarStyle_edge": {}
 }

@@ -50,7 +50,7 @@ class AppNavigationShell extends StatelessWidget {
   final AppNavigationChromeController chromeController;
   final Widget child;
 
-  /// Automatic or developer-forced Apple Sidebar generation.
+  /// Automatic or user-selected Apple Sidebar appearance.
   final AppAppleSidebarStyleMode appleSidebarStyleMode;
 
   /// Whether a hidden Apple Sidebar exposes destinations in the top toolbar.

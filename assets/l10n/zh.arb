@@ -1618,5 +1618,12 @@
             }
         }
     },
-    "appSupport_saveFailed": "无法保存提醒状态，请重试。"
+    "appSupport_saveFailed": "无法保存提醒状态，请重试。",
+    "appSetting_uiStyle_titleText": "界面风格",
+    "appSetting_uiStyle_automatic": "自动",
+    "appSetting_uiStyle_material": "Material",
+    "appSetting_uiStyle_apple": "Apple",
+    "appSetting_appleSidebarStyle_titleText": "Apple 侧边栏外观",
+    "appSetting_appleSidebarStyle_inset": "内嵌",
+    "appSetting_appleSidebarStyle_edge": "贴边"
 }

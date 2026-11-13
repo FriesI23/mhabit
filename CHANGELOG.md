@@ -4,6 +4,10 @@
 
 ## Unreleased
 
+- Feature: choose and remember UI style and Apple Sidebar appearance in Display
+  settings
+- Fix: preserve FAB Hero transitions after switching UI styles and returning to
+  habit pages
 - Feature: show donation entries on every platform and distribution
 - Feature: support cards keep GitHub Star and add rating links for Google Play,
   App Store and Microsoft Store, or a Flathub favorites link

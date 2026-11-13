@@ -730,5 +730,6 @@
     "habitDisplay_groupType_manual": "ترتیب من",
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
-    }
+    },
+    "appSetting_uiStyle_automatic": "خودکار"
 }

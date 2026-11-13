@@ -1295,5 +1295,6 @@
             }
         }
     },
-    "habitDisplay_groupModifyConfirm_previewTitle": "預覽"
+    "habitDisplay_groupModifyConfirm_previewTitle": "預覽",
+    "appSetting_uiStyle_automatic": "自動"
 }

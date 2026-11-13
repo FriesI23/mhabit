@@ -329,10 +329,6 @@
             "remainingGroupCount": {
                 "type": "int",
                 "description": "Number of omitted source group names; zero means the list is complete"
-            },
-            "totalGroupCount": {
-                "type": "int",
-                "description": "Total number of source groups, including displayed and omitted groups"
             }
         }
     },
@@ -1339,5 +1335,6 @@
     "habitDisplay_groupType_manual": "Свій порядок",
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
-    }
+    },
+    "appSetting_uiStyle_automatic": "Авто"
 }

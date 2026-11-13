@@ -14,178 +14,28 @@
 
 import 'package:flutter/widgets.dart' show TextDirection;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mhabit/models/app_adaptive_style_mode.dart';
-import 'package:mhabit/models/app_apple_sidebar_style_mode.dart';
 import 'package:mhabit/providers/app_ui/app_developer.dart';
 import 'package:mhabit/providers/support/global.dart';
-import 'package:mhabit/storage/profile/handlers.dart';
-import 'package:mhabit/storage/profile_provider.dart';
-import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-Future<ProfileViewModel> _loadProfile({
-  Map<String, Object> values = const {},
-  bool resetValues = true,
-}) async {
-  if (resetValues) SharedPreferences.setMockInitialValues(values);
-  final profile = ProfileViewModel([AdaptiveStyleOverrideProfileHandler.new]);
-  await profile.init();
-  return profile;
-}
 
 void main() {
-  test('Apple Sidebar modes resolve automatic and forced generations', () {
-    expect(
-      AppAppleSidebarStyleMode.automatic.resolve(const AppleSystemVersion(26)),
-      AppleSidebarStyle.inset,
-    );
-    expect(
-      AppAppleSidebarStyleMode.automatic.resolve(const AppleSystemVersion(27)),
-      AppleSidebarStyle.edge,
-    );
-    expect(
-      AppAppleSidebarStyleMode.os26.resolve(const AppleSystemVersion(99)),
-      AppleSidebarStyle.inset,
-    );
-    expect(AppAppleSidebarStyleMode.os27.resolve(null), AppleSidebarStyle.edge);
+  test('developer mode and debug menu remain independent', () {
+    final viewModel = AppDeveloperViewModel(global: Global());
+    addTearDown(viewModel.dispose);
+    viewModel.switchDevelopMode(true);
+    viewModel.switchDisplayDebugMenu(true);
+    expect(viewModel.showDebugMenuOnDisplayView, isTrue);
+    viewModel.switchDevelopMode(false);
+    expect(viewModel.showDebugMenuOnDisplayView, isFalse);
+    expect(viewModel.displayDebugMenu, isTrue);
   });
 
-  group('AppDeveloperViewModel adaptive style', () {
-    test('defaults missing and unknown values to automatic', () async {
-      for (final values in [
-        <String, Object>{},
-        <String, Object>{'adaptiveStyleOverride': -1},
-        <String, Object>{'adaptiveStyleOverride': 99},
-      ]) {
-        final profile = await _loadProfile(values: values);
-        final viewModel = AppDeveloperViewModel(
-          global: Global(),
-          profile: profile,
-        );
-
-        expect(viewModel.adaptiveStyleMode, AppAdaptiveStyleMode.automatic);
-        expect(viewModel.adaptiveStyleOverride, isNull);
-
-        viewModel.dispose();
-        profile.dispose();
-      }
-    });
-
-    test('persists all modes and maps them to adaptive styles', () async {
-      final profile = await _loadProfile();
-      final viewModel = AppDeveloperViewModel(
-        global: Global(),
-        profile: profile,
-      );
-      final preferences = await SharedPreferences.getInstance();
-
-      await viewModel.setAdaptiveStyleMode(AppAdaptiveStyleMode.material);
-      expect(viewModel.adaptiveStyleOverride, AdaptiveStyle.material);
-      expect(preferences.getInt('adaptiveStyleOverride'), 1);
-
-      await viewModel.setAdaptiveStyleMode(AppAdaptiveStyleMode.apple);
-      expect(viewModel.adaptiveStyleOverride, AdaptiveStyle.apple);
-      expect(preferences.getInt('adaptiveStyleOverride'), 2);
-
-      await viewModel.setAdaptiveStyleMode(AppAdaptiveStyleMode.automatic);
-      expect(viewModel.adaptiveStyleOverride, isNull);
-      expect(preferences.getInt('adaptiveStyleOverride'), 0);
-
-      viewModel.dispose();
-      profile.dispose();
-    });
-
-    test(
-      'restores the stored mode after rebuilding profile and view model',
-      () async {
-        final firstProfile = await _loadProfile();
-        final firstViewModel = AppDeveloperViewModel(
-          global: Global(),
-          profile: firstProfile,
-        );
-        await firstViewModel.setAdaptiveStyleMode(AppAdaptiveStyleMode.apple);
-        firstViewModel.dispose();
-        firstProfile.dispose();
-
-        final secondProfile = await _loadProfile(resetValues: false);
-        final secondViewModel = AppDeveloperViewModel(
-          global: Global(),
-          profile: secondProfile,
-        );
-
-        expect(secondViewModel.adaptiveStyleMode, AppAdaptiveStyleMode.apple);
-        expect(secondViewModel.adaptiveStyleOverride, AdaptiveStyle.apple);
-
-        secondViewModel.dispose();
-        secondProfile.dispose();
-      },
-    );
-
-    test('profile reset restores automatic', () async {
-      final profile = await _loadProfile();
-      final viewModel = AppDeveloperViewModel(
-        global: Global(),
-        profile: profile,
-      );
-      await viewModel.setAdaptiveStyleMode(AppAdaptiveStyleMode.material);
-
-      await profile.clear();
-      await profile.reload();
-      viewModel.updateProfile(profile);
-
-      expect(viewModel.adaptiveStyleMode, AppAdaptiveStyleMode.automatic);
-      expect(viewModel.adaptiveStyleOverride, isNull);
-
-      viewModel.dispose();
-      profile.dispose();
-    });
-
-    test(
-      'develop mode only controls visibility, not the saved override',
-      () async {
-        final profile = await _loadProfile();
-        final global = Global();
-        final viewModel = AppDeveloperViewModel(
-          global: global,
-          profile: profile,
-        );
-        await viewModel.setAdaptiveStyleMode(AppAdaptiveStyleMode.apple);
-
-        viewModel.switchDevelopMode(false);
-
-        expect(viewModel.isInDevelopMode, isFalse);
-        expect(viewModel.adaptiveStyleOverride, AdaptiveStyle.apple);
-
-        viewModel.dispose();
-        profile.dispose();
-      },
-    );
-  });
-
-  test('runtime-only developer overrides reset with the view model', () async {
-    final profile = await _loadProfile();
-    final firstViewModel = AppDeveloperViewModel(
-      global: Global(),
-      profile: profile,
-    );
-
-    firstViewModel.setTextDirectionOverride(TextDirection.rtl);
-    firstViewModel.setAppleSidebarStyleMode(AppAppleSidebarStyleMode.os27);
-    expect(firstViewModel.textDirectionOverride, TextDirection.rtl);
-    expect(firstViewModel.appleSidebarStyleMode, AppAppleSidebarStyleMode.os27);
-    firstViewModel.dispose();
-
-    final secondViewModel = AppDeveloperViewModel(
-      global: Global(),
-      profile: profile,
-    );
-    expect(secondViewModel.textDirectionOverride, isNull);
-    expect(
-      secondViewModel.appleSidebarStyleMode,
-      AppAppleSidebarStyleMode.automatic,
-    );
-
-    secondViewModel.dispose();
-    profile.dispose();
+  test('text direction remains a runtime-only developer override', () {
+    final first = AppDeveloperViewModel(global: Global());
+    first.setTextDirectionOverride(TextDirection.rtl);
+    expect(first.textDirectionOverride, TextDirection.rtl);
+    first.dispose();
+    final second = AppDeveloperViewModel(global: Global());
+    addTearDown(second.dispose);
+    expect(second.textDirectionOverride, isNull);
   });
 }
