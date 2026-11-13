@@ -269,6 +269,7 @@ class AppSupportReminder extends StatefulWidget {
     super.key,
     required this.canShowDialog,
     required this.child,
+    this.fallbackForeground,
     this.showSupportDialog = showAppSupportDialog,
   });
 
@@ -276,6 +277,10 @@ class AppSupportReminder extends StatefulWidget {
   /// Callers subscribe to reactive dependencies with Provider so changes also
   /// rebuild this host and permanently cancel this startup's opportunity.
   final bool Function(BuildContext context) canShowDialog;
+
+  /// Native foreground evidence while Flutter has no lifecycle state yet.
+  /// Once a lifecycle state arrives, it always takes precedence.
+  final ValueListenable<bool>? fallbackForeground;
   final Widget child;
   final Future<AppSupportResult> Function({
     required BuildContext context,
@@ -296,24 +301,22 @@ class _AppSupportReminderState extends State<AppSupportReminder> {
   bool _firstFrameComplete = false;
   late bool _hasEnteredForeground;
 
+  bool get _isForeground {
+    final lifecycle = WidgetsBinding.instance.lifecycleState;
+    return lifecycle == null
+        ? (widget.fallbackForeground?.value ?? false)
+        : lifecycle == AppLifecycleState.resumed;
+  }
+
   @override
   void initState() {
     super.initState();
     _owner = context.read<AppSupportOwner>();
-    _hasEnteredForeground =
-        WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
+    _hasEnteredForeground = _isForeground;
     _lifecycle = AppLifecycleListener(
-      onStateChange: (state) {
-        if (state == AppLifecycleState.resumed) {
-          if (!_hasEnteredForeground) {
-            _hasEnteredForeground = true;
-            _tryShowReminder();
-          }
-        } else if (_hasEnteredForeground) {
-          _owner.skipReminderForSession();
-        }
-      },
+      onStateChange: (_) => _onForegroundChanged(),
     );
+    widget.fallbackForeground?.addListener(_onForegroundChanged);
     HardwareKeyboard.instance.addHandler(_onKey);
     _owner.addListener(_tryShowReminder);
     _owner.init();
@@ -323,6 +326,17 @@ class _AppSupportReminderState extends State<AppSupportReminder> {
       _firstFrameComplete = true;
       _tryShowReminder();
     }, debugLabel: 'AppSupportReminder.ready');
+  }
+
+  void _onForegroundChanged() {
+    if (_isForeground) {
+      if (!_hasEnteredForeground) {
+        _hasEnteredForeground = true;
+        _tryShowReminder();
+      }
+    } else if (_hasEnteredForeground) {
+      _owner.skipReminderForSession();
+    }
   }
 
   bool _onKey(KeyEvent event) {
@@ -338,7 +352,7 @@ class _AppSupportReminderState extends State<AppSupportReminder> {
         !_owner.inited ||
         !_hasEnteredForeground ||
         _reminderCheckStarted ||
-        WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
+        !_isForeground) {
       return;
     }
     _reminderCheckStarted = true;
@@ -356,6 +370,11 @@ class _AppSupportReminderState extends State<AppSupportReminder> {
   @override
   void didUpdateWidget(AppSupportReminder oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.fallbackForeground != widget.fallbackForeground) {
+      oldWidget.fallbackForeground?.removeListener(_onForegroundChanged);
+      widget.fallbackForeground?.addListener(_onForegroundChanged);
+      _onForegroundChanged();
+    }
     _skipReminderIfUnsafe();
   }
 
@@ -367,9 +386,7 @@ class _AppSupportReminderState extends State<AppSupportReminder> {
 
   Future<void> _showReminderIfEligible() => _owner.showReminderIfEligible(
     canShowDialog: () =>
-        mounted &&
-        WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed &&
-        widget.canShowDialog(context),
+        mounted && _isForeground && widget.canShowDialog(context),
     onReminderSaveFailed: () {
       if (!mounted) return;
       ScaffoldMessenger.maybeOf(context)?.showSnackBar(
@@ -389,6 +406,7 @@ class _AppSupportReminderState extends State<AppSupportReminder> {
 
   @override
   void dispose() {
+    widget.fallbackForeground?.removeListener(_onForegroundChanged);
     _owner.removeListener(_tryShowReminder);
     _owner.skipReminderForSession();
     _dialog.cancel();

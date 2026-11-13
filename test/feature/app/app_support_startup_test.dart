@@ -3,6 +3,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -73,6 +74,12 @@ class _PresentationSafety extends ChangeNotifier {
     safe = true;
     notifyListeners();
   }
+}
+
+class _Foreground extends ValueNotifier<bool> {
+  _Foreground(super.value);
+
+  bool get isObserved => hasListeners;
 }
 
 void main() {
@@ -166,6 +173,253 @@ void main() {
       expect(prompts, 1);
     },
   );
+
+  group('native foreground fallback', () {
+    setUp(() {
+      // Reproduce a desktop engine that has not sent any lifecycle message.
+      TestWidgetsFlutterBinding.ensureInitialized().resetInternalState();
+    });
+
+    Widget app(
+      AppSupportOwner owner,
+      VoidCallback onPrompt, {
+      ValueListenable<bool>? foreground,
+    }) => MaterialApp(
+      home: ChangeNotifierProvider.value(
+        value: owner,
+        child: AppSupportReminder(
+          fallbackForeground: foreground,
+          canShowDialog: (_) => true,
+          showSupportDialog:
+              ({required context, required info, controller}) async {
+                onPrompt();
+                return AppSupportResult.remindLater;
+              },
+          child: const Scaffold(),
+        ),
+      ),
+    );
+
+    for (final initialForeground in [null, false, true]) {
+      testWidgets('unknown lifecycle with native $initialForeground', (
+        tester,
+      ) async {
+        expect(tester.binding.lifecycleState, isNull);
+        final preferences = _preferences()..ready.complete();
+        final foreground = initialForeground == null
+            ? null
+            : ValueNotifier(initialForeground);
+        if (foreground != null) addTearDown(foreground.dispose);
+        var infoLoads = 0;
+        final owner = createTestAppSupportOwner(
+          loadPreferences: SharedPreferences.getInstance,
+          now: () => _now,
+          loadInfo: () async {
+            infoLoads++;
+            return stubAboutInfo();
+          },
+        );
+        addTearDown(owner.dispose);
+        var prompts = 0;
+        await tester.pumpWidget(
+          app(owner, () => prompts++, foreground: foreground),
+        );
+        await tester.pumpAndSettle();
+        expect(prompts, initialForeground == true ? 1 : 0);
+        expect(infoLoads, initialForeground == true ? 1 : 0);
+        if (initialForeground != true) {
+          expect(await preferences.saved, _initializedValues());
+          if (foreground == null) {
+            tester.binding.handleAppLifecycleStateChanged(
+              AppLifecycleState.resumed,
+            );
+          } else {
+            foreground.value = true;
+          }
+          await tester.pumpAndSettle();
+        }
+        expect(prompts, 1);
+        expect(infoLoads, 1);
+        expect(await preferences.saved, _laterValues());
+        expect(
+          tester.binding.lifecycleState,
+          initialForeground == null ? AppLifecycleState.resumed : isNull,
+        );
+      });
+    }
+
+    for (final loading in ['preferences', 'configuration']) {
+      testWidgets('native blur while $loading load never catches up', (
+        tester,
+      ) async {
+        final preferences = _preferences();
+        if (loading == 'configuration') preferences.ready.complete();
+        final info = Completer<AboutInfo>();
+        final foreground = ValueNotifier(true);
+        addTearDown(foreground.dispose);
+        var infoLoads = 0;
+        final owner = createTestAppSupportOwner(
+          loadPreferences: SharedPreferences.getInstance,
+          now: () => _now,
+          loadInfo: () {
+            infoLoads++;
+            return info.future;
+          },
+        );
+        addTearDown(owner.dispose);
+        var prompts = 0;
+        await tester.pumpWidget(
+          app(owner, () => prompts++, foreground: foreground),
+        );
+        await tester.pumpAndSettle();
+        expect(infoLoads, loading == 'configuration' ? 1 : 0);
+        foreground.value = false;
+        foreground.value = true;
+        if (!preferences.ready.isCompleted) preferences.ready.complete();
+        info.complete(stubAboutInfo());
+        await tester.pumpAndSettle();
+        expect(prompts, 0);
+        expect(await preferences.saved, _initializedValues());
+      });
+    }
+
+    for (final lifecycle in AppLifecycleState.values) {
+      testWidgets('real $lifecycle takes priority over native foreground', (
+        tester,
+      ) async {
+        tester.binding.handleAppLifecycleStateChanged(lifecycle);
+        final preferences = _preferences()..ready.complete();
+        final info = Completer<AboutInfo>();
+        final foreground = ValueNotifier(true);
+        addTearDown(foreground.dispose);
+        final owner = createTestAppSupportOwner(
+          loadPreferences: SharedPreferences.getInstance,
+          now: () => _now,
+          loadInfo: () => info.future,
+        );
+        addTearDown(owner.dispose);
+        var prompts = 0;
+        await tester.pumpWidget(
+          app(owner, () => prompts++, foreground: foreground),
+        );
+        // Mount the host even when the real lifecycle has disabled frames.
+        tester.binding.scheduleForcedFrame();
+        await tester.pump();
+        foreground.value = false;
+        foreground.value = true;
+        info.complete(stubAboutInfo());
+        await tester.pump();
+        expect(prompts, lifecycle == AppLifecycleState.resumed ? 1 : 0);
+        expect(
+          await preferences.saved,
+          lifecycle == AppLifecycleState.resumed
+              ? _laterValues()
+              : _initializedValues(),
+        );
+      });
+    }
+
+    testWidgets('real lifecycle takes over an active native fallback', (
+      tester,
+    ) async {
+      final preferences = _preferences()..ready.complete();
+      final info = Completer<AboutInfo>();
+      final foreground = ValueNotifier(true);
+      addTearDown(foreground.dispose);
+      var infoLoads = 0;
+      final owner = createTestAppSupportOwner(
+        loadPreferences: SharedPreferences.getInstance,
+        now: () => _now,
+        loadInfo: () {
+          infoLoads++;
+          return info.future;
+        },
+      );
+      addTearDown(owner.dispose);
+      var prompts = 0;
+      await tester.pumpWidget(
+        app(owner, () => prompts++, foreground: foreground),
+      );
+      await tester.pumpAndSettle();
+      expect(infoLoads, 1);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      info.complete(stubAboutInfo());
+      await tester.pumpAndSettle();
+      expect(prompts, 0);
+      expect(await preferences.saved, _initializedValues());
+    });
+
+    testWidgets('replacing the native source ignores the old source', (
+      tester,
+    ) async {
+      final preferences = _preferences()..ready.complete();
+      final info = Completer<AboutInfo>();
+      final first = _Foreground(false);
+      final current = _Foreground(true);
+      addTearDown(first.dispose);
+      addTearDown(current.dispose);
+      final owner = createTestAppSupportOwner(
+        loadPreferences: SharedPreferences.getInstance,
+        now: () => _now,
+        loadInfo: () => info.future,
+      );
+      addTearDown(owner.dispose);
+      var prompts = 0;
+      await tester.pumpWidget(app(owner, () => prompts++, foreground: first));
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(app(owner, () => prompts++, foreground: current));
+      await tester.pumpAndSettle();
+      expect(first.isObserved, isFalse);
+      first.value = true;
+      first.value = false;
+      info.complete(stubAboutInfo());
+      await tester.pumpAndSettle();
+      expect(prompts, 1);
+      expect(await preferences.saved, _laterValues());
+      await tester.pumpWidget(const SizedBox());
+      expect(current.isObserved, isFalse);
+      current.value = false;
+      expect(tester.takeException(), isNull);
+    });
+
+    for (final replacement in [false, null]) {
+      testWidgets('replacing active native source with $replacement skips', (
+        tester,
+      ) async {
+        final preferences = _preferences()..ready.complete();
+        final info = Completer<AboutInfo>();
+        final first = _Foreground(true);
+        final current = replacement == null ? null : _Foreground(replacement);
+        addTearDown(first.dispose);
+        if (current != null) addTearDown(current.dispose);
+        final owner = createTestAppSupportOwner(
+          loadPreferences: SharedPreferences.getInstance,
+          now: () => _now,
+          loadInfo: () => info.future,
+        );
+        addTearDown(owner.dispose);
+        var prompts = 0;
+        await tester.pumpWidget(app(owner, () => prompts++, foreground: first));
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          app(owner, () => prompts++, foreground: current),
+        );
+        if (current != null) {
+          current.value = true;
+        } else {
+          tester.binding.handleAppLifecycleStateChanged(
+            AppLifecycleState.resumed,
+          );
+        }
+        info.complete(stubAboutInfo());
+        await tester.pumpAndSettle();
+        expect(first.isObserved, isFalse);
+        expect(prompts, 0);
+        expect(await preferences.saved, _initializedValues());
+      });
+    }
+  });
 
   for (final conflict in [
     'changelog',

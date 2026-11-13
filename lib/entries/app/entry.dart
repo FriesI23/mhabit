@@ -20,6 +20,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
@@ -440,6 +441,9 @@ class _AppStartup extends StatelessWidget {
       listenable: ChangelogBanner.of(context).controller,
       builder: (context, child) => AppSupportReminder(
         canShowDialog: _canShowSupportDialog,
+        fallbackForeground: context
+            .maybeRead<DesktopWindowTitleBar>()
+            ?.foreground,
         child: child!,
       ),
       child: AppPostInit(child: child),
