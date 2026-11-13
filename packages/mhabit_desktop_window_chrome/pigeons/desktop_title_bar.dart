@@ -36,3 +36,9 @@ abstract class DesktopTitleBarHostApi {
   /// Unavailable platform appearance controls are ignored.
   void reset();
 }
+
+/// Reports committed native Windows visibility and activation changes.
+@FlutterApi()
+abstract class DesktopTitleBarFlutterApi {
+  void foregroundChanged(bool foreground);
+}

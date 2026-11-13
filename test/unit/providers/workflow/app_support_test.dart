@@ -6,7 +6,6 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/async.dart';
 import 'package:mhabit/common/distribution.dart';
-import 'package:mhabit/models/app_sync_server.dart';
 import 'package:mhabit/providers/support/about_info.dart';
 import 'package:mhabit/providers/support/commons.dart';
 import 'package:mhabit/providers/workflow/app_support.dart';
@@ -374,63 +373,18 @@ void main() {
     );
   }
 
-  test('owner blocks prompting for unconfirmed sync and ongoing work', () {
-    final owner = createOwner();
-    final server = AppWebDavSyncServer.newServer(
-      identity: 'test',
-      path: 'https://example.com',
-    );
-    expect(
-      owner.canShowReminderWithSync(
-        enabled: true,
-        server: server,
-        processing: false,
-      ),
-      isFalse,
-    );
-    expect(
-      owner.canShowReminderWithSync(
-        enabled: false,
-        server: server,
-        processing: false,
-      ),
-      isTrue,
-    );
-    expect(
-      owner.canShowReminderWithSync(
-        enabled: true,
-        server: server.copyWith(configed: true),
-        processing: false,
-      ),
-      isTrue,
-    );
-    expect(
-      owner.canShowReminderWithSync(
-        enabled: false,
-        server: null,
-        processing: true,
-      ),
-      isFalse,
-    );
-    owner.skipReminderForSession();
-    expect(
-      owner.canShowReminderWithSync(
-        enabled: false,
-        server: null,
-        processing: false,
-      ),
-      isFalse,
-    );
-    owner.dispose();
-    expect(
-      owner.canShowReminderWithSync(
-        enabled: false,
-        server: null,
-        processing: false,
-      ),
-      isFalse,
-    );
-  });
+  test(
+    'owner allows idle sync and blocks ongoing work or skipped sessions',
+    () {
+      final owner = createOwner();
+      expect(owner.canShowReminderWithSync(processing: false), isTrue);
+      expect(owner.canShowReminderWithSync(processing: true), isFalse);
+      owner.skipReminderForSession();
+      expect(owner.canShowReminderWithSync(processing: false), isFalse);
+      owner.dispose();
+      expect(owner.canShowReminderWithSync(processing: false), isFalse);
+    },
+  );
 
   for (final blocked in [true, false]) {
     test(

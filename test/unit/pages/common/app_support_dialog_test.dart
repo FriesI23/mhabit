@@ -22,21 +22,38 @@ import '../../../support/stub/about_info.dart';
 
 import '../../../support/stub/shared_preferences.dart';
 
+class _SupportRouteObserver extends NavigatorObserver {
+  TransitionRoute<dynamic>? supportRoute;
+  bool routeCompleted = false;
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    if (route.settings.name == 'app-support' &&
+        route is TransitionRoute<dynamic>) {
+      supportRoute = route;
+      unawaited(route.completed.then<void>((_) => routeCompleted = true));
+    }
+  }
+}
+
 void main() {
   Future<BuildContext> mountOwner(
     WidgetTester tester,
     AppSupportOwner owner, {
     AdaptiveStyle style = AdaptiveStyle.material,
     double scale = 1,
+    bool disableAnimations = true,
+    NavigatorObserver? observer,
   }) async {
     late BuildContext caller;
     await tester.pumpWidget(
       MaterialApp(
+        navigatorObservers: [?observer],
         localizationsDelegates: L10n.localizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         builder: (context, child) => MediaQuery(
           data: MediaQuery.of(context).copyWith(
-            disableAnimations: true,
+            disableAnimations: disableAnimations,
             textScaler: TextScaler.linear(scale),
           ),
           child: child!,
@@ -283,8 +300,227 @@ void main() {
     await tester.pumpAndSettle();
     final controller = AppSupportDialogController();
     controller.cancel();
+    await controller.cancelAndWait();
+    await controller.cancelAndWait();
+    await AppSupportDialogController().cancelAndWait();
     expect(tester.binding.hasScheduledFrame, isFalse);
     expect(tester.takeException(), isNull);
+  });
+
+  group('waiting for support route cancellation', () {
+    setUp(() {
+      final previous = PreferencesTestStore.instance;
+      PreferencesTestStore.instance = InMemoryPreferencesStore.empty();
+      addTearDown(() => PreferencesTestStore.instance = previous);
+      TestWidgetsFlutterBinding.ensureInitialized()
+          .handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    });
+
+    AppSupportOwner createOwner() {
+      final owner = createTestAppSupportOwner(
+        loadInfo: () async => stubAboutInfo(),
+      );
+      addTearDown(owner.dispose);
+      return owner;
+    }
+
+    for (final style in AdaptiveStyle.values) {
+      testWidgets('$style cancellation before first build waits for removal', (
+        tester,
+      ) async {
+        final observer = _SupportRouteObserver();
+        final caller = await mountOwner(
+          tester,
+          createOwner(),
+          style: style,
+          observer: observer,
+        );
+        final controller = AppSupportDialogController();
+        final interaction = showAppSupportDialog(
+          context: caller,
+          info: stubAboutInfo(),
+          controller: controller,
+          hideDonate: true,
+        );
+        expect(observer.supportRoute, isNotNull);
+        expect(find.byType(AdaptiveDialog), findsNothing);
+        var cancellationComplete = false;
+        var routeCompleteAtCancellation = false;
+        final cancellation = controller.cancelAndWait().then((_) {
+          cancellationComplete = true;
+          routeCompleteAtCancellation = observer.routeCompleted;
+        });
+        final repeated = controller.cancelAndWait();
+        await tester.idle();
+        expect(cancellationComplete, isFalse);
+        expect(observer.routeCompleted, isFalse);
+        await tester.pumpAndSettle();
+        await Future.wait([cancellation, repeated]);
+        expect(routeCompleteAtCancellation, isTrue);
+        expect(await interaction, AppSupportResult.cancelled);
+        expect(find.byType(AdaptiveDialog, skipOffstage: false), findsNothing);
+        expect(Navigator.of(caller, rootNavigator: true).canPop(), isFalse);
+        expect(tester.takeException(), isNull);
+      });
+
+      testWidgets('$style cancellation waits for an outgoing transition', (
+        tester,
+      ) async {
+        final observer = _SupportRouteObserver();
+        final caller = await mountOwner(
+          tester,
+          createOwner(),
+          style: style,
+          observer: observer,
+          disableAnimations: false,
+        );
+        final controller = AppSupportDialogController();
+        final interaction = showAppSupportDialog(
+          context: caller,
+          info: stubAboutInfo(),
+          controller: controller,
+          hideDonate: true,
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Remind me later'));
+        await tester.pump();
+        expect(observer.routeCompleted, isFalse);
+        var cancellationComplete = false;
+        var routeCompleteAtCancellation = false;
+        controller.cancel();
+        final cancellation = controller.cancelAndWait().then((_) {
+          cancellationComplete = true;
+          routeCompleteAtCancellation = observer.routeCompleted;
+        });
+        await tester.idle();
+        expect(cancellationComplete, isFalse);
+        await tester.pumpAndSettle();
+        await cancellation;
+        expect(routeCompleteAtCancellation, isTrue);
+        expect(await interaction, AppSupportResult.cancelled);
+        expect(find.byType(AdaptiveDialog, skipOffstage: false), findsNothing);
+        expect(tester.takeException(), isNull);
+      });
+
+      for (final selection in [
+        AppSupportAction.githubStar,
+        AppSupportAction.donate,
+      ]) {
+        testWidgets('$style cancellation does not await pending $selection', (
+          tester,
+        ) async {
+          final caller = await mountOwner(tester, createOwner(), style: style);
+          final controller = AppSupportDialogController();
+          final pending = Completer<bool>();
+          var actionStarted = false;
+          var interactionComplete = false;
+          final interaction = showAppSupportDialog(
+            context: caller,
+            info: stubAboutInfo(),
+            controller: controller,
+            hideDonate: false,
+            openUrl: (_) {
+              actionStarted = true;
+              return pending.future;
+            },
+            showDonation: (_) async {
+              actionStarted = true;
+              await pending.future;
+            },
+          );
+          unawaited(interaction.then<void>((_) => interactionComplete = true));
+          await tester.pumpAndSettle();
+          if (selection == AppSupportAction.donate) {
+            await tester.tap(find.byKey(const ValueKey('app-support-page-1')));
+            await tester.pumpAndSettle();
+          }
+          await tester.tap(action(selection));
+          await tester.pumpAndSettle();
+          expect(actionStarted, isTrue);
+          expect(find.byType(AdaptiveDialog), findsNothing);
+          await controller.cancelAndWait();
+          expect(pending.isCompleted, isFalse);
+          expect(interactionComplete, isFalse);
+          pending.complete(true);
+          await tester.pumpAndSettle();
+          expect(await interaction, AppSupportResult.cancelled);
+          expect(tester.takeException(), isNull);
+        });
+      }
+    }
+
+    testWidgets('presentation failure releases cancellation waiters', (
+      tester,
+    ) async {
+      late BuildContext caller;
+      await tester.pumpWidget(
+        Builder(
+          builder: (context) {
+            caller = context;
+            return const SizedBox();
+          },
+        ),
+      );
+      final controller = AppSupportDialogController();
+      await expectLater(
+        showAppSupportDialog(
+          context: caller,
+          info: stubAboutInfo(),
+          controller: controller,
+        ),
+        throwsA(isA<FlutterError>()),
+      );
+      await controller.cancelAndWait();
+      expect(tester.binding.hasScheduledFrame, isFalse);
+    });
+
+    testWidgets('Reminder descendants cancel the active startup controller', (
+      tester,
+    ) async {
+      final date = DateTime.utc(2000).millisecondsSinceEpoch;
+      PreferencesTestStore.instance = InMemoryPreferencesStore.withData({
+        'appSupport_minimumDate': date,
+        'appSupport_launches': 9,
+        'appSupport_doNotOpenAgain': false,
+      });
+      final owner = createOwner();
+      late AppSupportDialogController controller;
+      await tester.pumpWidget(
+        ChangeNotifierProvider.value(
+          value: owner,
+          child: MaterialApp(
+            localizationsDelegates: L10n.localizationsDelegates,
+            supportedLocales: L10n.supportedLocales,
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(disableAnimations: true),
+              child: child!,
+            ),
+            home: AppSupportReminder(
+              canShowDialog: (_) => true,
+              child: Builder(
+                builder: (context) {
+                  controller = context.read<AppSupportDialogController>();
+                  return const Scaffold();
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(AdaptiveDialog), findsOneWidget);
+      final cancellation = controller.cancelAndWait();
+      await tester.pumpAndSettle();
+      await cancellation;
+      expect(find.byType(AdaptiveDialog, skipOffstage: false), findsNothing);
+      expect((await SharedPreferences.getInstance()).getAll(), {
+        'appSupport_minimumDate': date,
+        'appSupport_launches': 10,
+        'appSupport_doNotOpenAgain': false,
+      });
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+    });
   });
 
   for (final style in AdaptiveStyle.values) {

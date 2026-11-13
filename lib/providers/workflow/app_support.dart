@@ -7,7 +7,6 @@ import '../../common/async.dart';
 import '../../common/distribution.dart';
 import '../../logging/helper.dart';
 import '../../models/app_support.dart';
-import '../../models/app_sync_server.dart';
 import '../../storage/profile/handlers.dart';
 import '../../storage/profile_provider.dart';
 import '../../utils/app_clock.dart';
@@ -173,19 +172,12 @@ class AppSupportOwner extends ChangeNotifier
   /// Whether a developer reset or preview is already running.
   bool get developerActionInProgress => _developerActionInProgress;
 
-  /// Whether this session can show a reminder given the current synchronization state.
+  /// Whether this session can show a reminder while synchronization is idle.
   ///
-  /// Unconfirmed WebDAV setup may still open its own dialog asynchronously.
-  /// Reminder timing is checked separately by [checkReminderEligibility].
-  bool canShowReminderWithSync({
-    required bool enabled,
-    required AppSyncServer? server,
-    required bool processing,
-  }) =>
-      mounted &&
-      !_reminderSkipped &&
-      !processing &&
-      !(enabled && server is AppWebDavSyncServer && !server.configed);
+  /// The entry gives an actual sync confirmation priority over this reminder.
+  /// Configuration alone does not imply a pending confirmation dialog.
+  bool canShowReminderWithSync({required bool processing}) =>
+      mounted && !_reminderSkipped && !processing;
 
   Future<AboutInfo?> _loadDialogInfo() async {
     final info = await _loadInfo();

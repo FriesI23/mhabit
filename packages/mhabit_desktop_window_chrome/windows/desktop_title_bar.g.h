@@ -50,6 +50,7 @@ template<class T> class ErrorOr {
 
  private:
   friend class DesktopTitleBarHostApi;
+  friend class DesktopTitleBarFlutterApi;
   ErrorOr() = default;
   T TakeValue() && { return std::get<T>(std::move(v_)); }
 
@@ -121,5 +122,24 @@ class DesktopTitleBarHostApi {
  protected:
   DesktopTitleBarHostApi() = default;
 };
+// Reports committed native Windows visibility and activation changes.
+//
+// Generated class from Pigeon that represents Flutter messages that can be called from C++.
+class DesktopTitleBarFlutterApi {
+ public:
+  DesktopTitleBarFlutterApi(::flutter::BinaryMessenger* binary_messenger);
+  DesktopTitleBarFlutterApi(
+    ::flutter::BinaryMessenger* binary_messenger,
+    const std::string& message_channel_suffix);
+  static const ::flutter::StandardMessageCodec& GetCodec();
+  void ForegroundChanged(
+    bool foreground,
+    std::function<void(void)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
+ private:
+  ::flutter::BinaryMessenger* binary_messenger_;
+  std::string message_channel_suffix_;
+};
+
 }  // namespace mhabit_desktop_window_chrome
 #endif  // PIGEON_DESKTOP_TITLE_BAR_G_H_

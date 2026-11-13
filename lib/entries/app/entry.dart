@@ -20,6 +20,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
+import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
@@ -31,7 +32,6 @@ import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/app_apple_sidebar_style_mode.dart';
 import '../../models/app_entry.dart';
-import '../../models/app_sync_server.dart';
 import '../../models/app_sync_tasks.dart';
 import '../../models/app_theme_color.dart';
 import '../../models/habit_date.dart';
@@ -416,7 +416,6 @@ class _AppStartup extends StatelessWidget {
   final Widget child;
 
   bool _canShowSupportDialog(BuildContext context) {
-    final syncSettings = context.read<AppSyncSettingsAccess>();
     final syncStatus = context.read<AppSyncStatusSource>().syncStatus;
     return rootRoutes.depth == 1 &&
         router.currentRouteName == initialBranch.rootRouteName &&
@@ -424,8 +423,6 @@ class _AppStartup extends StatelessWidget {
           initialBranch,
         ) &&
         context.read<AppSupportOwner>().canShowReminderWithSync(
-          enabled: syncSettings.enabled,
-          server: syncSettings.serverConfig,
           processing: syncStatus?.isProcessing ?? false,
         ) &&
         !ChangelogBanner.of(context).controller.isShowing;
@@ -437,13 +434,6 @@ class _AppStartup extends StatelessWidget {
     context.select<AppNavigationCoordinator, bool>(
       (navigation) => navigation.isAtPrimaryBranchRoot(initialBranch),
     );
-    context
-        .select<AppSyncSettingsAccess, ({bool enabled, AppSyncServer? server})>(
-          (syncSettings) => (
-            enabled: syncSettings.enabled,
-            server: syncSettings.serverConfig,
-          ),
-        );
     context.select<AppSyncStatusSource, bool>(
       (statusSource) => statusSource.syncStatus?.isProcessing ?? false,
     );
@@ -451,6 +441,9 @@ class _AppStartup extends StatelessWidget {
       listenable: ChangelogBanner.of(context).controller,
       builder: (context, child) => AppSupportReminder(
         canShowDialog: _canShowSupportDialog,
+        fallbackForeground: context
+            .maybeRead<DesktopWindowTitleBar>()
+            ?.foreground,
         child: child!,
       ),
       child: AppPostInit(child: child),
@@ -502,8 +495,10 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
 
   Future<bool> _onWebDavAppSyncUserConfirmNeedCheck(
     WebDavConfigTaskChecklist checklist,
-  ) {
+  ) async {
     context.maybeRead<AppSupportOwner>()?.skipReminderForSession();
+    await context.maybeRead<AppSupportDialogController>()?.cancelAndWait();
+    if (!mounted) return false;
     return showAdaptiveModalDialog<bool>(
       context: context,
       barrierDismissible: true,

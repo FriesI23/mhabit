@@ -41,7 +41,7 @@ abstract interface class DesktopWindowTitleBarApi {
 }
 
 /// Serializes appearance changes while leaving all caption interaction native.
-class DesktopWindowTitleBar {
+class DesktopWindowTitleBar implements DesktopTitleBarFlutterApi {
   DesktopWindowTitleBar({DesktopWindowTitleBarApi? api})
     : _api = api ?? DesktopWindowTitleBarApi();
 
@@ -54,15 +54,26 @@ class DesktopWindowTitleBar {
   bool? _lastCustomColorsApplied;
   int _revision = 0;
   int _titleRevision = 0;
+  final _foreground = ValueNotifier(false);
+  bool _listeningForForeground = false;
+  int _foregroundRevision = 0;
 
   bool get supported => _api.supported;
 
+  /// Native Windows visibility and focus, for missing Flutter lifecycle state.
+  /// Other platforms continue using the framework's lifecycle notifications.
+  ValueListenable<bool>? get foreground =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.windows && supported
+      ? _foreground
+      : null;
+
   /// Runner keeps the window hidden until placement and the first frame exist.
   Future<void> show() async {
-    if (!supported) return;
+    if (_disposed || !supported) return;
     await windowManager.ensureInitialized();
     await windowManager.show();
     await windowManager.focus();
+    await _refreshForeground();
   }
 
   /// Whether the last native response confirmed that custom colors were applied.
@@ -75,13 +86,42 @@ class DesktopWindowTitleBar {
       throw ArgumentError.value(minimumSize, 'minimumSize');
     }
     if (_initialized || _disposed || !supported) return;
+    if (foreground != null && !_listeningForForeground) {
+      DesktopTitleBarFlutterApi.setUp(this);
+      _listeningForForeground = true;
+    }
     try {
       await _api
           .initialize(minimumSize: minimumSize)
           .timeout(const Duration(seconds: 2));
+      if (_disposed) return;
       _initialized = true;
     } catch (error) {
       debugPrint('Native title bar initialization failed: $error');
+    }
+    await _refreshForeground();
+  }
+
+  @override
+  void foregroundChanged(bool foreground) {
+    if (_disposed || !_listeningForForeground) return;
+    ++_foregroundRevision;
+    _foreground.value = foreground;
+  }
+
+  Future<void> _refreshForeground() async {
+    if (_disposed || !_listeningForForeground) return;
+    final revision = ++_foregroundRevision;
+    try {
+      final visible = await windowManager.isVisible();
+      if (_disposed || revision != _foregroundRevision) return;
+      final focused = visible && await windowManager.isFocused();
+      if (_disposed || revision != _foregroundRevision) return;
+      _foreground.value = focused;
+    } catch (_) {
+      if (!_disposed && revision == _foregroundRevision) {
+        _foreground.value = false;
+      }
     }
   }
 
@@ -131,6 +171,13 @@ class DesktopWindowTitleBar {
     if (_disposed) return;
     _disposed = true;
     ++_revision;
+    ++_foregroundRevision;
+    if (_listeningForForeground) {
+      DesktopTitleBarFlutterApi.setUp(null);
+      _listeningForForeground = false;
+    }
+    _foreground.value = false;
+    _foreground.dispose();
     await _pending;
     if (!_initialized || !supported) return;
     try {

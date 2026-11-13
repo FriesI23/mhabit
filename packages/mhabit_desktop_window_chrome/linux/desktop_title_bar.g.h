@@ -91,6 +91,90 @@ void mhabit_desktop_title_bar_host_api_set_method_handlers(FlBinaryMessenger* me
  */
 void mhabit_desktop_title_bar_host_api_clear_method_handlers(FlBinaryMessenger* messenger, const gchar* suffix);
 
+G_DECLARE_FINAL_TYPE(MhabitDesktopTitleBarFlutterApiForegroundChangedResponse, mhabit_desktop_title_bar_flutter_api_foreground_changed_response, MHABIT, DESKTOP_TITLE_BAR_FLUTTER_API_FOREGROUND_CHANGED_RESPONSE, GObject)
+
+/**
+ * mhabit_desktop_title_bar_flutter_api_foreground_changed_response_is_error:
+ * @response: a #MhabitDesktopTitleBarFlutterApiForegroundChangedResponse.
+ *
+ * Checks if a response to DesktopTitleBarFlutterApi.foregroundChanged is an error.
+ *
+ * Returns: a %TRUE if this response is an error.
+ */
+gboolean mhabit_desktop_title_bar_flutter_api_foreground_changed_response_is_error(MhabitDesktopTitleBarFlutterApiForegroundChangedResponse* response);
+
+/**
+ * mhabit_desktop_title_bar_flutter_api_foreground_changed_response_get_error_code:
+ * @response: a #MhabitDesktopTitleBarFlutterApiForegroundChangedResponse.
+ *
+ * Get the error code for this response.
+ *
+ * Returns: an error code or %NULL if not an error.
+ */
+const gchar* mhabit_desktop_title_bar_flutter_api_foreground_changed_response_get_error_code(MhabitDesktopTitleBarFlutterApiForegroundChangedResponse* response);
+
+/**
+ * mhabit_desktop_title_bar_flutter_api_foreground_changed_response_get_error_message:
+ * @response: a #MhabitDesktopTitleBarFlutterApiForegroundChangedResponse.
+ *
+ * Get the error message for this response.
+ *
+ * Returns: an error message.
+ */
+const gchar* mhabit_desktop_title_bar_flutter_api_foreground_changed_response_get_error_message(MhabitDesktopTitleBarFlutterApiForegroundChangedResponse* response);
+
+/**
+ * mhabit_desktop_title_bar_flutter_api_foreground_changed_response_get_error_details:
+ * @response: a #MhabitDesktopTitleBarFlutterApiForegroundChangedResponse.
+ *
+ * Get the error details for this response.
+ *
+ * Returns: (allow-none): an error details or %NULL.
+ */
+FlValue* mhabit_desktop_title_bar_flutter_api_foreground_changed_response_get_error_details(MhabitDesktopTitleBarFlutterApiForegroundChangedResponse* response);
+
+/**
+ * MhabitDesktopTitleBarFlutterApi:
+ *
+ * Reports committed native Windows visibility and activation changes.
+ */
+
+G_DECLARE_FINAL_TYPE(MhabitDesktopTitleBarFlutterApi, mhabit_desktop_title_bar_flutter_api, MHABIT, DESKTOP_TITLE_BAR_FLUTTER_API, GObject)
+
+/**
+ * mhabit_desktop_title_bar_flutter_api_new:
+ * @messenger: an #FlBinaryMessenger.
+ * @suffix: (allow-none): a suffix to add to the API or %NULL for none.
+ *
+ * Creates a new object to access the DesktopTitleBarFlutterApi API.
+ *
+ * Returns: a new #MhabitDesktopTitleBarFlutterApi
+ */
+MhabitDesktopTitleBarFlutterApi* mhabit_desktop_title_bar_flutter_api_new(FlBinaryMessenger* messenger, const gchar* suffix);
+
+/**
+ * mhabit_desktop_title_bar_flutter_api_foreground_changed:
+ * @api: a #MhabitDesktopTitleBarFlutterApi.
+ * @foreground: parameter for this method.
+ * @cancellable: (allow-none): a #GCancellable or %NULL.
+ * @callback: (scope async): (allow-none): a #GAsyncReadyCallback to call when the call is complete or %NULL to ignore the response.
+ * @user_data: (closure): user data to pass to @callback.
+ *
+ */
+void mhabit_desktop_title_bar_flutter_api_foreground_changed(MhabitDesktopTitleBarFlutterApi* api, gboolean foreground, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer user_data);
+
+/**
+ * mhabit_desktop_title_bar_flutter_api_foreground_changed_finish:
+ * @api: a #MhabitDesktopTitleBarFlutterApi.
+ * @result: a #GAsyncResult.
+ * @error: (allow-none): #GError location to store the error occurring, or %NULL to ignore.
+ *
+ * Completes a mhabit_desktop_title_bar_flutter_api_foreground_changed() call.
+ *
+ * Returns: a #MhabitDesktopTitleBarFlutterApiForegroundChangedResponse or %NULL on error.
+ */
+MhabitDesktopTitleBarFlutterApiForegroundChangedResponse* mhabit_desktop_title_bar_flutter_api_foreground_changed_finish(MhabitDesktopTitleBarFlutterApi* api, GAsyncResult* result, GError** error);
+
 G_END_DECLS
 
 #endif  // PIGEON_DESKTOP_TITLE_BAR_G_H_
