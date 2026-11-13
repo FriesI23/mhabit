@@ -150,7 +150,7 @@ Future<_Fixture> _createFixture({bool empty = false}) async {
   final experimental = AppExperimentalFeatureViewModel()
     ..updateProfile(profile);
   final language = AppLanguageViewModel()..updateProfile(profile);
-  final developer = AppDeveloperViewModel(global: Global(), profile: profile);
+  final developer = AppDeveloperViewModel(global: Global());
   final eventBus = AppEventBus();
   final groups = [
     const GroupDBCell(

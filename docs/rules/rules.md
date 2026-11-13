@@ -397,6 +397,10 @@ them; keep rows with independent actions separate from single-action controls.
 ## Theme And Localization
 
 - Theme setup is owned by app entry and theme-related view models.
+- `AppThemeViewModel` owns the persisted UI style and Apple Sidebar appearance.
+  UI style is a regular display setting on every platform. Sidebar appearance is
+  shown in display settings whenever `AdaptiveStyle.of(context)` resolves to
+  Apple, on every platform, and defaults to automatic.
 - If a change affects theme behavior, check both the app entry wiring and the
   profile-backed theme handlers before adding new state.
 - Keep custom color behavior inside the existing theme model and generated color

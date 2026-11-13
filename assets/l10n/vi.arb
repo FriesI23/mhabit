@@ -1163,5 +1163,6 @@
     "habitDisplay_groupType_manual": "Thứ tự của tôi",
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
-    }
+    },
+    "appSetting_uiStyle_automatic": "Tự động"
 }

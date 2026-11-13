@@ -931,7 +931,7 @@ abstract class L10n {
   /// No description provided for @habitDisplay_groupModifyConfirm_bodyChangeStat.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1 {{count} habit will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group} other{ and {remainingGroupCount} more groups}} to \"{toGroup}\"} other {{count} habits will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group} other{ and {remainingGroupCount} more groups}} to \"{toGroup}\"}}'**
+  /// **'{count, plural, =1 {{count} habit will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group ({totalGroupCount} groups in total)} other{ and {remainingGroupCount} more groups ({totalGroupCount} groups in total)}} to \"{toGroup}\"} other {{count} habits will change from \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ and 1 more group ({totalGroupCount} groups in total)} other{ and {remainingGroupCount} more groups ({totalGroupCount} groups in total)}} to \"{toGroup}\"}}'**
   String habitDisplay_groupModifyConfirm_bodyChangeStat(
     int count,
     String fromGroup,
@@ -3752,6 +3752,48 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'The reminder could not be saved. Please try again.'**
   String get appSupport_saveFailed;
+
+  /// No description provided for @appSetting_uiStyle_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'UI style'**
+  String get appSetting_uiStyle_titleText;
+
+  /// No description provided for @appSetting_uiStyle_automatic.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic'**
+  String get appSetting_uiStyle_automatic;
+
+  /// No description provided for @appSetting_uiStyle_material.
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get appSetting_uiStyle_material;
+
+  /// No description provided for @appSetting_uiStyle_apple.
+  ///
+  /// In en, this message translates to:
+  /// **'Apple'**
+  String get appSetting_uiStyle_apple;
+
+  /// No description provided for @appSetting_appleSidebarStyle_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Apple Sidebar appearance'**
+  String get appSetting_appleSidebarStyle_titleText;
+
+  /// No description provided for @appSetting_appleSidebarStyle_inset.
+  ///
+  /// In en, this message translates to:
+  /// **'Inset'**
+  String get appSetting_appleSidebarStyle_inset;
+
+  /// No description provided for @appSetting_appleSidebarStyle_edge.
+  ///
+  /// In en, this message translates to:
+  /// **'Edge'**
+  String get appSetting_appleSidebarStyle_edge;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

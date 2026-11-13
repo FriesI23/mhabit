@@ -7,5 +7,6 @@
     "appName": "🚧(nl) - Table Habit",
     "common_appThemeMode_light": "Licht",
     "common_appThemeMode_dark": "Donker",
-    "common_appThemeMode_followSystem": "Automatisch"
+    "common_appThemeMode_followSystem": "Automatisch",
+    "appSetting_uiStyle_automatic": "Automatisch"
 }

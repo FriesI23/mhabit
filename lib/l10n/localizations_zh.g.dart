@@ -2219,6 +2219,27 @@ class L10nZh extends L10n {
 
   @override
   String get appSupport_saveFailed => '无法保存提醒状态，请重试。';
+
+  @override
+  String get appSetting_uiStyle_titleText => '界面风格';
+
+  @override
+  String get appSetting_uiStyle_automatic => '自动';
+
+  @override
+  String get appSetting_uiStyle_material => 'Material';
+
+  @override
+  String get appSetting_uiStyle_apple => 'Apple';
+
+  @override
+  String get appSetting_appleSidebarStyle_titleText => 'Apple 侧边栏外观';
+
+  @override
+  String get appSetting_appleSidebarStyle_inset => '内嵌';
+
+  @override
+  String get appSetting_appleSidebarStyle_edge => '贴边';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -4022,4 +4043,7 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get habitDisplay_groupModifyConfirm_previewTitle => '預覽';
+
+  @override
+  String get appSetting_uiStyle_automatic => '自動';
 }

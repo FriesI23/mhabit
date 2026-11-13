@@ -34,8 +34,6 @@ import '../../extensions/adaptive_style_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../logging/logger_stack.dart';
-import '../../models/app_adaptive_style_mode.dart';
-import '../../models/app_apple_sidebar_style_mode.dart';
 import '../../models/app_event.dart';
 import '../../models/app_reminder_config.dart';
 import '../../models/custom_date_format.dart';
@@ -510,19 +508,9 @@ class _PageState extends State<_Page> with XShare {
     context.read<AppDeveloperViewModel>().switchDisplayDebugMenu(value);
   }
 
-  void _onAdaptiveStyleModeChanged(AppAdaptiveStyleMode value) {
-    if (!mounted) return;
-    context.read<AppDeveloperViewModel>().setAdaptiveStyleMode(value);
-  }
-
   void _onTextDirectionOverrideChanged(TextDirection? value) {
     if (!mounted) return;
     context.read<AppDeveloperViewModel>().setTextDirectionOverride(value);
-  }
-
-  void _onAppleSidebarStyleModeChanged(AppAppleSidebarStyleMode value) {
-    if (!mounted) return;
-    context.read<AppDeveloperViewModel>().setAppleSidebarStyleMode(value);
   }
 
   void _onAppSupportDistributionChanged(AppDistribution value) {
@@ -670,6 +658,9 @@ class _PageState extends State<_Page> with XShare {
             ),
           ),
         ),
+        const AppSettingUiStyleTile(),
+        if (AdaptiveStyle.of(context) == AdaptiveStyle.apple)
+          const AppSettingAppleSidebarStyleTile(),
         if (AdaptiveStyle.of(context) == AdaptiveStyle.apple)
           Selector<AppAppleCollapsedSidebarViewModel, bool>(
             selector: (context, vm) => vm.enabled,
@@ -1005,21 +996,12 @@ class _PageState extends State<_Page> with XShare {
         Selector2<
           AppDeveloperViewModel,
           AppSupportOwner,
-          (
-            bool,
-            bool,
-            AppAdaptiveStyleMode,
-            TextDirection?,
-            AppAppleSidebarStyleMode,
-            AppDistribution,
-          )
+          (bool, bool, TextDirection?, AppDistribution)
         >(
           selector: (context, vm, support) => (
             vm.isInDevelopMode,
             vm.displayDebugMenu,
-            vm.adaptiveStyleMode,
             vm.textDirectionOverride,
-            vm.appleSidebarStyleMode,
             support.distribution,
           ),
           shouldRebuild: (previous, next) => previous != next,
@@ -1027,21 +1009,15 @@ class _PageState extends State<_Page> with XShare {
             final (
               isInDevelopMode,
               displayDebugMenu,
-              adaptiveStyleMode,
               textDirectionOverride,
-              appleSidebarStyleMode,
               appSupportDistribution,
             ) = value;
             return AppSettingDevelopSubGroup(
               isInDevelopMode: isInDevelopMode,
               isDisplayDebugMenuSelect: displayDebugMenu,
-              adaptiveStyleMode: adaptiveStyleMode,
               textDirectionOverride: textDirectionOverride,
-              appleSidebarStyleMode: appleSidebarStyleMode,
               onDisplayDebugMenuSelectChanged: _onDisplayDebugMenuSelectChanged,
-              onAdaptiveStyleModeChanged: _onAdaptiveStyleModeChanged,
               onTextDirectionOverrideChanged: _onTextDirectionOverrideChanged,
-              onAppleSidebarStyleModeChanged: _onAppleSidebarStyleModeChanged,
               onExportDBTilePressed: _onExportDBTilePressed,
               onClearDBTilePressed: _onClearDBTilePressed,
               appSupportDistribution: appSupportDistribution,

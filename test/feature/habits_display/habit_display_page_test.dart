@@ -42,6 +42,7 @@ import 'package:mhabit/models/habit_group.dart';
 import 'package:mhabit/models/habit_repo_actions.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/common/widgets.dart';
+import 'package:mhabit/pages/habit_detail/_widgets/habit_detail_fab.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/_providers/habits_grouping.dart';
 import 'package:mhabit/pages/habits_display/_providers/habits_today.dart';
@@ -562,6 +563,140 @@ void _expectPinnedPageToolbar(WidgetTester tester, AdaptiveStyle style) {
 }
 
 void main() {
+  testWidgets('tablet UI style changes behind Settings keep FAB Heroes valid', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(900, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final profile = await _loadProfile();
+    final access = _LoadedHabitsDisplayAccess(habitCount: 2);
+    final sync = _FakeAppSyncWorkflowAccess();
+    final style = ValueNotifier<AdaptiveStyle>(AdaptiveStyle.material);
+    late final GoRouter router;
+    addTearDown(() {
+      router.dispose();
+      style.dispose();
+      sync.dispose();
+      profile.dispose();
+    });
+    await _pumpHabitsTabPage(
+      tester,
+      profile: profile,
+      access: access,
+      sync: sync,
+      useBranchPage: true,
+      provideOuterHabitSummary: false,
+      appBuilder: (home) {
+        router = GoRouter(
+          routes: [
+            GoRoute(path: '/', builder: (_, _) => home),
+            GoRoute(
+              path: '/detail',
+              builder: (_, _) => const Scaffold(
+                body: Text('Detail route'),
+                floatingActionButton: HabitDetailFAB(),
+              ),
+            ),
+            GoRoute(
+              path: '/today',
+              builder: (_, _) => const AdaptiveNavScope(
+                form: NavigationShellForm.expandedSide,
+                barHeight: 0,
+                navHeight: 0,
+                child: TodayPage(),
+              ),
+            ),
+            GoRoute(
+              path: '/settings',
+              builder: (_, _) => const Scaffold(body: Text('Settings route')),
+            ),
+          ],
+        );
+        return MaterialApp.router(
+          theme: ThemeData(platform: TargetPlatform.android),
+          localizationsDelegates: L10n.localizationsDelegates,
+          supportedLocales: L10n.supportedLocales,
+          routerConfig: router,
+          builder: (context, child) => ValueListenableBuilder<AdaptiveStyle>(
+            valueListenable: style,
+            builder: (context, value, _) => AppAdaptiveUiTheme(
+              data: AppAdaptiveUiTheme.of(context).copyWith(style: value),
+              child: child!,
+            ),
+          ),
+        );
+      },
+    );
+    await _pumpPageChrome(tester);
+    expect(find.byType(ScrollingFAB), findsOneWidget);
+    unawaited(router.push<void>('/settings'));
+    await _pumpPageChrome(tester);
+    style.value = AdaptiveStyle.apple;
+    await tester.pump();
+    expect(find.byType(ScrollingFAB, skipOffstage: false), findsNothing);
+    style.value = AdaptiveStyle.material;
+    await tester.pump();
+    expect(find.byType(ScrollingFAB, skipOffstage: false), findsOneWidget);
+    router.pop();
+    await _pumpPageChrome(tester);
+    expect(find.byType(ScrollingFAB), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    final sourceHero = tester.widget<Hero>(
+      find.descendant(
+        of: find.byType(ScrollingFAB),
+        matching: find.byType(Hero),
+      ),
+    );
+    unawaited(router.push<void>('/detail'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+    final detailHero = find.descendant(
+      of: find.byType(HabitDetailFAB),
+      matching: find.byType(Hero),
+    );
+    expect(tester.widget<Hero>(detailHero).tag, sourceHero.tag);
+    // A matched Hero is replaced by a placeholder during the flight.
+    expect(
+      find.descendant(of: detailHero, matching: find.byType(RawMaterialButton)),
+      findsNothing,
+    );
+    await _pumpPageChrome(tester);
+    expect(
+      find.descendant(of: detailHero, matching: find.byType(RawMaterialButton)),
+      findsOneWidget,
+    );
+    router.pop();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+    final returningHero = find.descendant(
+      of: find.byType(ScrollingFAB),
+      matching: find.byType(Hero),
+    );
+    expect(
+      find.descendant(
+        of: returningHero,
+        matching: find.byType(RawMaterialButton),
+      ),
+      findsNothing,
+    );
+    await _pumpPageChrome(tester);
+    expect(find.byType(ScrollingFAB).hitTestable(), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    router.go('/today');
+    await _pumpPageChrome(tester);
+    expect(find.byType(TodayTabPage), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    router.go('/');
+    await _pumpPageChrome(tester);
+    expect(find.byType(HabitsTabPage), findsOneWidget);
+    expect(find.byType(ScrollingFAB), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   for (final today in [true, false]) {
     testWidgets(
       'desktop Apple toolbar survives sidebar toggles: today=$today',

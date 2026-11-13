@@ -517,15 +517,17 @@ class L10nPl extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       remainingGroupCount,
       locale: localeName,
-      other: ' and $remainingGroupCount more groups',
-      one: ' and 1 more group',
+      other:
+          ' and $remainingGroupCount more groups ($totalGroupCount groups in total)',
+      one: ' and 1 more group ($totalGroupCount groups in total)',
       zero: '',
     );
     String _temp1 = intl.Intl.pluralLogic(
       remainingGroupCount,
       locale: localeName,
-      other: ' and $remainingGroupCount more groups',
-      one: ' and 1 more group',
+      other:
+          ' and $remainingGroupCount more groups ($totalGroupCount groups in total)',
+      one: ' and 1 more group ($totalGroupCount groups in total)',
       zero: '',
     );
     String _temp2 = intl.Intl.pluralLogic(
@@ -2401,4 +2403,26 @@ class L10nPl extends L10n {
   @override
   String get appSupport_saveFailed =>
       'The reminder could not be saved. Please try again.';
+
+  @override
+  String get appSetting_uiStyle_titleText => 'UI style';
+
+  @override
+  String get appSetting_uiStyle_automatic => 'Automatyczny';
+
+  @override
+  String get appSetting_uiStyle_material => 'Material';
+
+  @override
+  String get appSetting_uiStyle_apple => 'Apple';
+
+  @override
+  String get appSetting_appleSidebarStyle_titleText =>
+      'Apple Sidebar appearance';
+
+  @override
+  String get appSetting_appleSidebarStyle_inset => 'Inset';
+
+  @override
+  String get appSetting_appleSidebarStyle_edge => 'Edge';
 }

@@ -112,27 +112,6 @@ class _HabitsPageBodyState extends State<_HabitsPageBody> {
     vm.addNewData(HabitSummaryData.fromDBQueryCell(result));
   }
 
-  Widget? _buildFloatingActionButton(
-    BuildContext context,
-    AdaptiveNavScope scope,
-    HabitDisplayContextualChrome chrome,
-    ValueChanged<HabitDBCell> onCreated,
-  ) {
-    return switch (AdaptiveStyle.of(context)) {
-      AdaptiveStyle.material => ValueListenableBuilder<bool>(
-        valueListenable: scope.visible,
-        builder: (context, visible, child) => HabitDisplayMaterialFab(
-          hidden: chrome.hideFloatingActionButton,
-          forceVisible: chrome.suppressShellChrome,
-          bottomNavVisible: visible,
-          bottomNavHeight: scope.barHeight,
-          onCreated: onCreated,
-        ),
-      ),
-      AdaptiveStyle.apple => null,
-    };
-  }
-
   Future<bool> _handleWillPop() async {
     final state = _habitsTabKey.currentState;
     if (state != null) {
@@ -152,7 +131,6 @@ class _HabitsPageBodyState extends State<_HabitsPageBody> {
   Widget _build() => Selector<HabitSummaryViewModel, bool>(
     selector: (context, vm) => vm.isInEditMode,
     builder: (context, isInEditMode, _) {
-      final scope = AdaptiveNavScope.of(context);
       final chrome = context.resolveHabitDisplayContextualChrome(
         isSelectionMode: isInEditMode,
       );
@@ -175,11 +153,9 @@ class _HabitsPageBodyState extends State<_HabitsPageBody> {
               onHabitCreated: _handleHabitCreated,
               contextualChrome: chrome,
             ),
-            floatingActionButton: _buildFloatingActionButton(
-              context,
-              scope,
-              chrome,
-              _handleHabitCreated,
+            floatingActionButton: _HabitsFloatingActionButton(
+              chrome: chrome,
+              onCreated: _handleHabitCreated,
             ),
             bottomNavigationBar: chrome.showSelectionBottomToolbar
                 ? _habitsTabKey.currentState?.buildSelectionBottomToolbar()
@@ -189,6 +165,37 @@ class _HabitsPageBodyState extends State<_HabitsPageBody> {
       );
     },
   );
+}
+
+// Keep Scaffold's FAB child stable across styles. Its exit animation can
+// retain an old Material FAB while the route is covered, duplicating the
+// default Hero when the style switches back before navigation resumes.
+class _HabitsFloatingActionButton extends StatelessWidget {
+  const _HabitsFloatingActionButton({
+    required this.chrome,
+    required this.onCreated,
+  });
+
+  final HabitDisplayContextualChrome chrome;
+  final ValueChanged<HabitDBCell> onCreated;
+
+  @override
+  Widget build(BuildContext context) {
+    final scope = AdaptiveNavScope.of(context);
+    return switch (AdaptiveStyle.of(context)) {
+      AdaptiveStyle.material => ValueListenableBuilder<bool>(
+        valueListenable: scope.visible,
+        builder: (context, visible, child) => HabitDisplayMaterialFab(
+          hidden: chrome.hideFloatingActionButton,
+          forceVisible: chrome.suppressShellChrome,
+          bottomNavVisible: visible,
+          bottomNavHeight: scope.barHeight,
+          onCreated: onCreated,
+        ),
+      ),
+      AdaptiveStyle.apple => const SizedBox.shrink(),
+    };
+  }
 }
 
 /// Branch root page for the today tab.

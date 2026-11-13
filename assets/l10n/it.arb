@@ -808,5 +808,6 @@
     "habitDisplay_groupType_manual": "Personale",
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
-    }
+    },
+    "appSetting_uiStyle_automatic": "Auto"
 }
