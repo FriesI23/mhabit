@@ -1,0 +1,8 @@
+{
+    "@@locale": "eo",
+    "localeScriptName": "Esperanto",
+    "@localeScriptName": {
+        "description": "The human-readable name of the language used for the locale."
+    },
+    "appName": "🚧(eo) - Table Habit"
+}

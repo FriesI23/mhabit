@@ -121,8 +121,10 @@ void main() {
   final themeModeLabels = <Locale, (String, String, String)>{
     const Locale('ar'): ('فاتح', 'داكن', 'تلقائي'),
     const Locale('cs'): ('Světlý', 'Tmavý', 'Automaticky'),
+    const Locale('cy'): ('Light', 'Dark', 'Auto'),
     const Locale('de'): ('Hell', 'Dunkel', 'Automatisch'),
     const Locale('en'): ('Light', 'Dark', 'Auto'),
+    const Locale('eo'): ('Light', 'Dark', 'Auto'),
     const Locale('es'): ('Claro', 'Oscuro', 'Automático'),
     const Locale('eu'): ('Argia', 'Iluna', 'Automatikoa'),
     const Locale('fa'): ('روشن', 'تیره', 'خودکار'),

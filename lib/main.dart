@@ -17,6 +17,7 @@ import 'dart:io';
 
 import 'package:flutter/widgets.dart'
     show WidgetsBinding, WidgetsFlutterBinding, runApp;
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart'
     show DesktopWindowChrome, DesktopWindowTitleBar;
 import 'package:native_natural_sort/native_natural_sort.dart';
@@ -47,6 +48,8 @@ Future<void> main() async {
     WidgetsFlutterBinding.ensureInitialized();
   }
 
+  // Load standard date data before eo to support DateFormat without a locale.
+  await initializeDateFormatting();
   await loadLinuxBundledFont();
   await AppLoggerMananger(t: AppLoggerHandlerType.debugging).init();
   await AppInfo().init();

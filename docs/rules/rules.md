@@ -409,6 +409,9 @@ them; keep rows with independent actions separate from single-action controls.
   generated localization outputs.
 - Use the existing normalization and generation workflow when changing l10n:
   `make normalize-l10n`, then `make gen` or the narrower needed step.
+- Esperanto uses `l10n_esperanto` delegates in `lib/common/consts.dart`.
+  `lib/main.dart` initializes standard `intl` date tables before custom locale
+  data is loaded. Keep the ARB and Widget snapshot locale as `eo`.
 - Widget strings live in `ios/HabitWidget/Extension/*.lproj/Localizable.strings`
   with bare PascalCase `HomeWidget*` keys. `make gen` fills missing entries through
   `configs/l10n_strings_refs.json` without replacing existing translations.

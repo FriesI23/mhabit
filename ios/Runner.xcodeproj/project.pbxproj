@@ -95,6 +95,7 @@
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		14D1AFC844EB34C5687BA4EC /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
 		17E6BE3BB37CA61725E29059 /* HabitWidgetActionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitWidgetActionIntent.swift; sourceTree = "<group>"; };
+		243827169B3D42D0E8A64B26 /* cy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cy; path = "cy.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
 		2CFFB5B10B104ED7B1FFDC5C /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Localizable.strings; sourceTree = "<group>"; };
 		33BCA58DC6DFDAA77036CF90 /* HabitWidgetHold.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HabitWidgetHold.swift; sourceTree = "<group>"; };
 		384F54AB812BDD4EB96C01CF /* HabitWidgetConfiguredView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HabitWidgetConfiguredView.swift; sourceTree = "<group>"; };
@@ -107,11 +108,14 @@
 		5D9AD5DA2D87D46D23C66AA4 /* HabitWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitWidget.swift; sourceTree = "<group>"; };
 		5EA49B5DE45D46E9F24EFCDD /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/Localizable.strings; sourceTree = "<group>"; };
 		65855DC60CDCEB1A66C947B9 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/Localizable.strings; sourceTree = "<group>"; };
+		6BA43EFA17B7521A9414C9E8 /* cy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cy; path = "cy.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
+		6D6370865377DA3212665724 /* eo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eo; path = "eo.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
 		70E854A3666EE6E92B5988C1 /* HabitWidgetConfiguredProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HabitWidgetConfiguredProvider.swift; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7587878829DCCBEE5A44A727 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		768428CAC5E214423DE8311E /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		7685981E9B94DC3D2819B781 /* eo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eo; path = eo.lproj/Localizable.strings; sourceTree = "<group>"; };
 		7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		78E0A7A72DC9AD7400C4905E /* FlutterGeneratedPluginSwiftPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FlutterGeneratedPluginSwiftPackage; path = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
@@ -139,11 +143,13 @@
 		AEF6B944645E134A45360513 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B2053B967BE2BE8B87A51972 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BCCE89FA0B5F29DC7A40897E /* snapshot-v2.json */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.json; name = "snapshot-v2.json"; path = "../../test/fixtures/habit_widget/snapshot-v2.json"; sourceTree = "<group>"; };
+		BFD71AD0544D4376A74BBF3A /* cy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cy; path = cy.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C21537D83BDB4ACE0BB89FEE /* HabitWidgetIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HabitWidgetIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9266E95598AA1B6FBDF4CC5 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CD206CF3E791C273766A1421 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CD4AC7131BAB09737F3DD4F1 /* HabitWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HabitWidget.entitlements; sourceTree = "<group>"; };
 		D500197753C0633995A9E4FA /* HabitWidgetSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitWidgetSnapshot.swift; sourceTree = "<group>"; };
+		D50EF2DAE759457D776794E9 /* eo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eo; path = "eo.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
 		D8BEDCF8E31C6A5CB9222A5F /* HabitWidgetIntegrationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HabitWidgetIntegrationTests.swift; sourceTree = "<group>"; };
 		D91BB4AA2DABBE0000E91D6C /* dev-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "dev-Info.plist"; sourceTree = "<group>"; };
 		D91BB4AB2DABBE0700E91D6C /* generic-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "generic-Info.plist"; sourceTree = "<group>"; };
@@ -460,6 +466,8 @@
 				en,
 				ar,
 				cs,
+				cy,
+				eo,
 				de,
 				es,
 				fa,
@@ -647,6 +655,8 @@
 				768428CAC5E214423DE8311E /* ja */,
 				65855DC60CDCEB1A66C947B9 /* nb */,
 				2CFFB5B10B104ED7B1FFDC5C /* nl */,
+				BFD71AD0544D4376A74BBF3A /* cy */,
+				7685981E9B94DC3D2819B781 /* eo */,
 				8D1407422C5478E9BEA7329D /* pl */,
 				7E53B6A2093016F215DBC9BD /* pt */,
 				A1663232702F62A20268C913 /* ru */,
@@ -700,6 +710,8 @@
 				D9B660282F06A19900E2373D /* hu */,
 				D97345BF2FB5633E002015C2 /* eu */,
 				DA2828012FC0A00100D17C01 /* nl */,
+				243827169B3D42D0E8A64B26 /* cy */,
+				6D6370865377DA3212665724 /* eo */,
 			);
 			name = "dev-InfoPlist.strings";
 			sourceTree = "<group>";
@@ -730,6 +742,8 @@
 				D9B660292F06A19900E2373D /* hu */,
 				D97345C02FB5633E002015C2 /* eu */,
 				DA2828022FC0A00100D17C01 /* nl */,
+				6BA43EFA17B7521A9414C9E8 /* cy */,
+				D50EF2DAE759457D776794E9 /* eo */,
 			);
 			name = "generic-InfoPlist.strings";
 			sourceTree = "<group>";

@@ -68,6 +68,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0EB0CDB1FD7A3291484FE2BA /* eo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eo; path = "eo.lproj/store-InfoPlist.strings"; sourceTree = "<group>"; };
 		331C80D5294CF71000263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		331C80D7294CF71000263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
 		333000ED22D3DE5D00554162 /* Warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Warnings.xcconfig; sourceTree = "<group>"; };
@@ -84,9 +85,12 @@
 		33E51913231747F40026EE4D /* DebugProfile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DebugProfile.entitlements; sourceTree = "<group>"; };
 		33E51914231749380026EE4D /* Release.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = Release.entitlements; sourceTree = "<group>"; };
 		33E5194F232828860026EE4D /* AppInfo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppInfo.xcconfig; sourceTree = "<group>"; };
+		3BA17CC677CD9E6362AE5C70 /* eo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eo; path = "eo.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
+		486A9BA6883814F46EE622AA /* cy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cy; path = "cy.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
 		78E0A7A72DC9AD7400C4905E /* FlutterGeneratedPluginSwiftPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FlutterGeneratedPluginSwiftPackage; path = ephemeral/Packages/FlutterGeneratedPluginSwiftPackage; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		B8D2AF43BF920F165F0C4ECC /* cy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cy; path = "cy.lproj/store-InfoPlist.strings"; sourceTree = "<group>"; };
 		D91AE9C92EC0A0F0002F940A /* generic-InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "generic-InfoPlist.strings"; path = "en.lproj/store-InfoPlist.strings"; sourceTree = "<group>"; };
 		D91AE9CA2EC0A0F0002F940A /* generic-InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "generic-InfoPlist.strings"; path = "zh-Hans.lproj/store-InfoPlist.strings"; sourceTree = "<group>"; };
 		D91AE9DB2EC0A61B002F940A /* store-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "store-Info.plist"; path = "Runner/store-Info.plist"; sourceTree = "<group>"; };
@@ -99,9 +103,6 @@
 		D97345C12FB56395002015C2 /* eu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eu; path = "eu.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
 		D97345C22FB56395002015C2 /* eu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eu; path = "eu.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
 		D97345C32FB56395002015C2 /* eu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eu; path = "eu.lproj/store-InfoPlist.strings"; sourceTree = "<group>"; };
-		DA2828032FC0A00100D17C01 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = "nl.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
-		DA2828042FC0A00100D17C01 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = "nl.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
-		DA2828052FC0A00100D17C01 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = "nl.lproj/store-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9B660252F06A14000E2373D /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = "hu.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9B660262F06A14000E2373D /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = "hu.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9B660272F06A14100E2373D /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = "hu.lproj/store-InfoPlist.strings"; sourceTree = "<group>"; };
@@ -156,6 +157,11 @@
 		D9D35CF92EDC73340006DF01 /* zh */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh; path = "zh.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9D35CFA2EDC73350006DF01 /* zh */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh; path = "zh.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9D35CFB2EDC73350006DF01 /* zh */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh; path = "zh.lproj/store-InfoPlist.strings"; sourceTree = "<group>"; };
+		D9DA23F1E82180FF316AF130 /* cy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cy; path = "cy.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
+		DA2828032FC0A00100D17C01 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = "nl.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
+		DA2828042FC0A00100D17C01 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = "nl.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
+		DA2828052FC0A00100D17C01 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = "nl.lproj/store-InfoPlist.strings"; sourceTree = "<group>"; };
+		EEAA9B0955373060C9009BE7 /* eo */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eo; path = "eo.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -354,6 +360,8 @@
 				ar,
 				"zh-Hant",
 				cs,
+				cy,
+				eo,
 				fr,
 				de,
 				he,
@@ -374,7 +382,7 @@
 			);
 			mainGroup = 33CC10E42044A3C60003C045;
 			packageReferences = (
-				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */,
+				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */,
 			);
 			productRefGroup = 33CC10EE2044A3C60003C045 /* Products */;
 			projectDirPath = "";
@@ -522,6 +530,8 @@
 				D9B660272F06A14100E2373D /* hu */,
 				D97345C32FB56395002015C2 /* eu */,
 				DA2828052FC0A00100D17C01 /* nl */,
+				B8D2AF43BF920F165F0C4ECC /* cy */,
+				0EB0CDB1FD7A3291484FE2BA /* eo */,
 			);
 			name = "store-InfoPlist.strings";
 			sourceTree = "<group>";
@@ -551,6 +561,8 @@
 				D9B660252F06A14000E2373D /* hu */,
 				D97345C12FB56395002015C2 /* eu */,
 				DA2828032FC0A00100D17C01 /* nl */,
+				D9DA23F1E82180FF316AF130 /* cy */,
+				EEAA9B0955373060C9009BE7 /* eo */,
 			);
 			name = "dev-InfoPlist.strings";
 			sourceTree = "<group>";
@@ -580,6 +592,8 @@
 				D9B660262F06A14000E2373D /* hu */,
 				D97345C22FB56395002015C2 /* eu */,
 				DA2828042FC0A00100D17C01 /* nl */,
+				486A9BA6883814F46EE622AA /* cy */,
+				3BA17CC677CD9E6362AE5C70 /* eo */,
 			);
 			name = "generic-InfoPlist.strings";
 			sourceTree = "<group>";
@@ -688,6 +702,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = LRNWK7KUZ7;
 				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -818,6 +833,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = LRNWK7KUZ7;
 				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -840,6 +856,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = LRNWK7KUZ7;
 				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -931,6 +948,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = LRNWK7KUZ7;
 				INFOPLIST_FILE = "Runner/store-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1023,6 +1041,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = LRNWK7KUZ7;
 				INFOPLIST_FILE = "Runner/store-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1114,6 +1133,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = LRNWK7KUZ7;
 				INFOPLIST_FILE = "Runner/store-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1212,6 +1232,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = LRNWK7KUZ7;
 				INFOPLIST_FILE = "Runner/dev-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1311,6 +1332,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = LRNWK7KUZ7;
 				INFOPLIST_FILE = "Runner/generic-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1402,6 +1424,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = LRNWK7KUZ7;
 				INFOPLIST_FILE = "Runner/dev-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1493,6 +1516,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = LRNWK7KUZ7;
 				INFOPLIST_FILE = "Runner/generic-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1583,6 +1607,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = LRNWK7KUZ7;
 				INFOPLIST_FILE = "Runner/dev-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1674,6 +1699,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = LRNWK7KUZ7;
 				INFOPLIST_FILE = "Runner/generic-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1787,7 +1813,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */ = {
+		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage;
 		};
