@@ -466,7 +466,7 @@
             }
         }
     },
-    "appSetting_changeLanguage_followSystem_noLocale_text": "Del sistema",
+    "appSetting_changeLanguage_followSystem_noLocale_text": "Seguir Sistema",
     "appSetting_changeLanguageTile_titleText": "Idioma",
     "appSetting_changeLanguageDialog_titleText": "Seleccionar el idioma",
     "appSetting_dateDisplayFormat_titleText": "Formato de visualización de la fecha ({formatTemplate})",
@@ -520,7 +520,7 @@
             }
         }
     },
-    "appSetting_importDialog_completeTitle": "Importación completada {count}",
+    "appSetting_importDialog_completeTitle": "Importación completa de {count} hábitos",
     "@appSetting_importDialog_completeTitle": {
         "placeholders": {
             "count": {
@@ -1029,5 +1029,140 @@
     "habitDisplay_groupType_manual": "Orden propio",
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
+    },
+    "habitEdit_colorPicker_historySectionLabel": "Usado Recientemente",
+    "habitEdit_colorPicker_cancel": "Cancelar",
+    "habitEdit_colorPicker_tintToggleLabel": "Tinte del tema",
+    "habitEdit_colorPicker_tintedLabel": "Con Tinte",
+    "habitEdit_colorPicker_untintedLabel": "Sin tinte",
+    "habitEdit_colorPicker_tintToggleOnHint": "El tinte puede hacer que el color final difiera del que seleccionaste.",
+    "habitEdit_colorPicker_tintToggleOffHint": "Algunos colores pueden dificultar la lectura del texto en los temas claro u oscuro",
+    "habitDisplay_notFoundImage_text_01": "No se encontraron hábitos que coincidan",
+    "@habitDisplay_notFoundImage_text_01": {
+        "description": "Displayed when no habits match the current search"
+    },
+    "habitDisplay_notFoundImage_text_02": "No se encontraron hábitos que coincidan con \"{keyword}\"",
+    "@habitDisplay_notFoundImage_text_02": {
+        "description": "Displayed when no habits match the specified keyword",
+        "placeholders": {
+            "keyword": {
+                "type": "String",
+                "description": "Search keyword"
+            }
+        }
+    },
+    "habitDisplay_statisticsAction_label": "Estadísticas",
+    "habitDisplay_displayFilterAction_label": "Mostrar Filtros",
+    "habitDisplay_groupType_createDate": "Por Fecha de Creación",
+    "habitDisplay_groupType_habitCount": "Por Número de Hábitos",
+    "habitDisplay_groupTypeDialog_title": "Ordenar Grupos",
+    "habitDisplay_groupTypeDialog_none": "Sin Agrupar",
+    "habitDisplay_editPopMenu_groupModify": "Modificar Grupo",
+    "habitDisplay_groupModifyDialog_title": "Modificar Grupo",
+    "habitDisplay_groupModifyDialog_removeGroup": "Eliminar Grupo",
+    "habitDisplay_groupModifyDialog_emptyGroups": "No hay grupos disponibles",
+    "habitDisplay_groupModifyDialog_alreadyInGroup": "Los hábitos seleccionados ya están en este grupo",
+    "habitDisplay_groupModifyDialog_createGroup": "Crear Grupo",
+    "habitDisplay_groupModifyDialog_saveAndApply": "Guardar y Aplicar",
+    "@habitDisplay_groupModifyDialog_saveAndApply": {
+        "description": "Deprecated. Use habitEdit_saveButton_text instead."
+    },
+    "habitDisplay_groupModifyConfirm_titleNew": "Mover al Grupo",
+    "habitDisplay_groupModifyConfirm_titleMixed": "Confirmar Cambio de Grupo",
+    "habitDisplay_groupModifyConfirm_bodyNewGroup": "Los hábitos de {groupName} se moverán a este grupo",
+    "@habitDisplay_groupModifyConfirm_bodyNewGroup": {
+        "placeholders": {
+            "groupName": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_tab_habits_label": "Hábitos",
+    "habitToday_card_subtitle_text": "Lo has mantenido por {days} días",
+    "@habitToday_card_subtitle_text": {
+        "placeholders": {
+            "days": {
+                "type": "int",
+                "description": "Days since the chosen start date"
+            }
+        }
+    },
+    "habitToday_card_donePlusButton_label": "Hecho+",
+    "@habitToday_card_donePlusButton_label": {
+        "description": "Button label for completing today's habit with dialog"
+    },
+    "habitToday_card_skipPlusButton_label": "Saltar+",
+    "@habitToday_card_skipPlusButton_label": {
+        "description": "Button label for skipping today's habit with dialog"
+    },
+    "appSetting_expandTimerDelay_default": "Por Defecto",
+    "appSetting_expandTimerDelay_fast": "Rápido",
+    "appSetting_expandTimerDelay_slow": "Lento",
+    "appSetting_appThemeColorTile_titleText": "Color del Tema",
+    "appSetting_appThemeModeTile_titleText": "Modo del Tema",
+    "appSetting_appThemeColorChosenDiloag_titleText": "Elige el Color del Tema",
+    "appSetting_appThemeColorChosenDialog_subTitleText_android": "Usar el color principal del Fondo de Pantalla (Android 12+)",
+    "appSetting_appThemeColorChosenDialog_subTitleText_linux": "Usar el color de fondo seleccionado en el tema GTK+",
+    "appSetting_appThemeColorChosenDialog_subTitleText_macos": "Usar el color del tema del sistema",
+    "appSetting_changeLanguageDialog_currentLanguage_text": "Idioma actual: {localeName}",
+    "@appSetting_changeLanguageDialog_currentLanguage_text": {
+        "placeholders": {
+            "localeName": {
+                "type": "String",
+                "example": "English"
+            }
+        }
+    },
+    "appSetting_languageSubgroupText": "Idioma",
+    "appSetting_openSystemLanguageTile_titleText": "Ajustes de Idioma del Sistema",
+    "appSetting_openSystemLanguageTile_dialogTitle": "Abrir Ajustes de Idioma del Sistema",
+    "appSetting_appleCollapsedSidebarSwitcher_titleText": "Mostrar barra lateral horizontal",
+    "appSetting_appleCollapsedSidebarSwitcher_subtitleText": "Mostrar las opciones de navegación en la barra superior cuando la barra lateral esté oculta.",
+    "appSetting_importDialog_option_includeHabits": "Incluir hábitos",
+    "appSetting_importDialog_option_includeGroups": "Incluir grupos",
+    "appSetting_importDialog_tile_includeHabits": "Incluir {count} hábitos",
+    "@appSetting_importDialog_tile_includeHabits": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "appSetting_importDialog_tile_includeGroups": "Incluir {count} grupos",
+    "@appSetting_importDialog_tile_includeGroups": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "3"
+            }
+        }
+    },
+    "appSetting_importConfirmDialog_sourceLabel": "Fuente: {provider}",
+    "@appSetting_importConfirmDialog_sourceLabel": {
+        "placeholders": {
+            "provider": {
+                "type": "String",
+                "description": "Third-party provider display name"
+            }
+        }
+    },
+    "appSetting_thirdPartyImport_error_fileReadError": "No se pudo leer el archivo seleccionado.",
+    "appSetting_thirdPartyImport_error_noHabitsFound": "No se encontraron hábitos en el archivo importado.",
+    "appSetting_thirdPartyImport_error_parseError": "Error al procesar el archivo importado",
+    "appSetting_thirdPartyImport_error_unknown": "Se produjo un error inesperado durante la importación.",
+    "appSetting_thirdPartyImport_titleText": "Importar desde aplicaciones de terceros",
+    "appSetting_thirdPartyImport_subtitleText": "Importar hábitos de otras aplicaciones de seguimiento de hábitos.",
+    "appSetting_thirdPartyImport_provider_loopName": "Loop Habit Tracker",
+    "appSetting_thirdPartyImport_provider_versionHint": "Compatible con CSV (probado hasta <ver/>)",
+    "appSetting_importDialog_completeTitleGroups": "Importación completa de {count} grupos",
+    "@appSetting_importDialog_completeTitleGroups": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
     }
 }
