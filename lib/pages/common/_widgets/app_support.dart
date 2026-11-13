@@ -311,7 +311,7 @@ class _AppSupportReminderState extends State<AppSupportReminder> {
   void _tryShowReminder() {
     if (!mounted ||
         !_firstFrameComplete ||
-        !_owner.initialized ||
+        !_owner.inited ||
         !_hasEnteredForeground ||
         _reminderCheckStarted ||
         WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {

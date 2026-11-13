@@ -760,10 +760,13 @@ void main() {
         await tester.pumpAndSettle();
         await first.resetReminderForNextLaunch();
         await tester.pumpAndSettle();
+        final updatedOwners = <AppSupportOwner>[];
+        first.addListener(() => updatedOwners.add(first));
+        second.addListener(() => updatedOwners.add(second));
         await tester.tap(find.text('Star on GitHub'));
         await tester.pumpAndSettle();
         expect(second.reminderClosed, isTrue);
-        expect(first.reminderClosed, isFalse);
+        expect(updatedOwners, [second]);
         expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
         expect(tester.takeException(), isNull);
       },
@@ -851,13 +854,14 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text(l10n.appSupport_saveFailed), findsOneWidget);
         expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
-        expect(owner.reminderClosed, isFalse);
+        expect((await preferences.saved)['appSupport_doNotOpenAgain'], isFalse);
         failSave = false;
         await tester.tap(find.text('Star on GitHub'));
         await tester.pumpAndSettle();
         expect(find.text(l10n.appSupport_saveFailed), findsNothing);
         expect(find.text('Star on GitHub').hitTestable(), findsOneWidget);
         expect(owner.reminderClosed, isTrue);
+        expect((await preferences.saved)['appSupport_doNotOpenAgain'], isTrue);
       },
     );
 

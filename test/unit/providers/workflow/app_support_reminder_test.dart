@@ -5,6 +5,8 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/providers/workflow/app_support.dart';
+import 'package:mhabit/storage/profile/handlers.dart';
+import 'package:mhabit/storage/profile_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../support/stub/shared_preferences.dart';
@@ -19,6 +21,8 @@ final class _ControlledPreferences extends InMemoryPreferencesStore {
 
   bool failWrites = false;
   bool failBooleanWrites = false;
+  bool returnFalseOnWrite = false;
+  bool persistBeforeWaiting = false;
   Completer<void>? pendingWrite;
   Completer<void>? writeStarted;
 
@@ -32,7 +36,13 @@ final class _ControlledPreferences extends InMemoryPreferencesStore {
 
   @override
   Future<bool> setValue(String type, String key, Object value) async {
+    if (persistBeforeWaiting) {
+      final saved = await super.setValue(type, key, value);
+      await _beforeWrite();
+      return saved;
+    }
     await _beforeWrite();
+    if (returnFalseOnWrite) return false;
     if (key == 'flutter.appSupportReminder' && failBooleanWrites) {
       throw StateError('boolean write failed');
     }
@@ -74,6 +84,64 @@ void main() {
       expect(profile.getString('windowState'), 'updated');
       expect(profile.reminderBool(_closedKey), isTrue);
       expect(profile.getString('unrelated'), 'keep');
+    },
+  );
+
+  for (final result in [
+    AppSupportResult.githubOpened,
+    AppSupportResult.storeOpened,
+  ]) {
+    test('Settings $result uses fresh history after reset configs', () async {
+      final profile = ProfileViewModel([AppSupportReminderProfileHandler.new]);
+      addTearDown(profile.dispose);
+      final owner = AppSupportOwner(profile: profile, now: () => _today);
+      addTearDown(owner.dispose);
+      final initialization = owner.init();
+      expect(await initialization, isTrue);
+      expect(await owner.recordSettingsSupportResult(), isTrue);
+      expect(owner.reminderClosed, isTrue);
+
+      // Reset configs clears preferences and replaces the profile handlers.
+      expect(await profile.clear(), isTrue);
+      await profile.reload();
+      owner.updateProfile(profile);
+      expect(identical(owner.init(), initialization), isTrue);
+      expect(owner.reminderClosed, isFalse);
+      expect(owner.checkReminderEligibility(canShowDialog: true), isFalse);
+      final handler = profile.getHandler<AppSupportReminderProfileHandler>()!;
+      expect(handler.get(), isNull);
+
+      expect(await owner.recordSettingsSupportResult(result), isTrue);
+      expect(handler.get(), (
+        minimumDate: _today.add(const Duration(days: 7)),
+        launches: result == AppSupportResult.storeOpened ? -10 : 0,
+        closed: result == AppSupportResult.githubOpened,
+      ));
+    });
+  }
+
+  test(
+    'deleted history is read immediately without profile rebinding',
+    () async {
+      final profile = ProfileViewModel([AppSupportReminderProfileHandler.new]);
+      addTearDown(profile.dispose);
+      final owner = AppSupportOwner(profile: profile, now: () => _today);
+      addTearDown(owner.dispose);
+      expect(await owner.init(), isTrue);
+      expect(await owner.recordSettingsSupportResult(), isTrue);
+      expect(owner.reminderClosed, isTrue);
+
+      expect(await profile.clear(), isTrue);
+      expect(owner.reminderClosed, isFalse);
+      expect(
+        await owner.recordSettingsSupportResult(AppSupportResult.storeOpened),
+        isTrue,
+      );
+      expect(profile.getHandler<AppSupportReminderProfileHandler>()!.get(), (
+        minimumDate: _today.add(const Duration(days: 7)),
+        launches: -10,
+        closed: false,
+      ));
     },
   );
 
@@ -264,7 +332,7 @@ void main() {
   });
 
   test(
-    'failed Settings persistence can retry without publishing closure',
+    'failed Settings persistence reports failure and retries the write',
     () async {
       final preferences = _ControlledPreferences({
         _dateKey: DateTime.utc(2000).millisecondsSinceEpoch,
@@ -274,19 +342,101 @@ void main() {
       PreferencesTestStore.instance = preferences;
       final owner = createOwner();
       await owner.init();
+      var notifications = 0;
+      owner.addListener(() => notifications++);
       preferences.failBooleanWrites = true;
       expect(await owner.recordSettingsSupportResult(), isFalse);
-      expect(owner.reminderClosed, isFalse);
+      expect(owner.reminderClosed, isTrue);
       expect((await preferences.saved)[_closedKey], isFalse);
+      expect(notifications, 0);
       preferences.failBooleanWrites = false;
       expect(await owner.recordSettingsSupportResult(), isTrue);
       expect(owner.reminderClosed, isTrue);
-      expect(
-        (await SharedPreferences.getInstance()).reminderBool(_closedKey),
-        isTrue,
-      );
+      expect((await preferences.saved)[_closedKey], isTrue);
+      expect(notifications, 1);
     },
   );
+
+  for (final throwOnFailure in [false, true]) {
+    test(
+      'reset history retries a failed save and restores after cache recreation '
+      'with throwOnFailure=$throwOnFailure',
+      () async {
+        final preferences = _ControlledPreferences({
+          _dateKey: DateTime.utc(2000).millisecondsSinceEpoch,
+          _launchesKey: 9,
+          _closedKey: false,
+        });
+        PreferencesTestStore.instance = preferences;
+        final profile = ProfileViewModel([
+          AppSupportReminderProfileHandler.new,
+        ]);
+        addTearDown(() {
+          if (profile.mounted) profile.dispose();
+        });
+        final owner = AppSupportOwner(profile: profile, now: () => _today);
+        addTearDown(owner.dispose);
+        expect(await owner.init(), isTrue);
+        expect(await owner.recordSettingsSupportResult(), isTrue);
+        expect(owner.reminderClosed, isTrue);
+
+        expect(await profile.clear(), isTrue);
+        await profile.reload();
+        owner.updateProfile(profile);
+        expect(owner.reminderClosed, isFalse);
+        var notifications = 0;
+        owner.addListener(() => notifications++);
+
+        preferences
+          ..failWrites = throwOnFailure
+          ..returnFalseOnWrite = !throwOnFailure;
+        expect(await owner.recordSettingsSupportResult(), isFalse);
+        expect(owner.reminderClosed, isTrue);
+        expect(await preferences.saved, isEmpty);
+        expect(notifications, 0);
+
+        preferences
+          ..failWrites = false
+          ..returnFalseOnWrite = false;
+        expect(await owner.recordSettingsSupportResult(), isTrue);
+        expect((await preferences.saved)[_closedKey], isTrue);
+        expect(notifications, 1);
+
+        final previousPreferences = await SharedPreferences.getInstance();
+        owner.dispose();
+        profile.dispose();
+        // Preserve the platform backend while discarding the process-local cache.
+        SharedPreferences.resetStatic();
+        expect(
+          identical(await SharedPreferences.getInstance(), previousPreferences),
+          isFalse,
+        );
+        final restoredProfile = ProfileViewModel([
+          AppSupportReminderProfileHandler.new,
+        ]);
+        addTearDown(restoredProfile.dispose);
+        final restoredOwner = AppSupportOwner(
+          profile: restoredProfile,
+          now: () => _today.add(const Duration(days: 8)),
+        );
+        addTearDown(restoredOwner.dispose);
+        expect(await restoredOwner.init(), isTrue);
+        expect(restoredOwner.reminderClosed, isTrue);
+        expect(
+          restoredProfile.getHandler<AppSupportReminderProfileHandler>()!.get(),
+          (
+            minimumDate: _today.add(const Duration(days: 7)),
+            launches: 1,
+            closed: true,
+          ),
+        );
+        expect(
+          restoredOwner.checkReminderEligibility(canShowDialog: true),
+          isFalse,
+        );
+      },
+    );
+  }
 
   test(
     'explicit store saves serialize and keep the legacy negative counter',
@@ -316,6 +466,80 @@ void main() {
         -10,
       );
       expect(owner.reminderClosed, isFalse);
+    },
+  );
+
+  test(
+    'profile reload rejects a late save completion without publishing old state',
+    () async {
+      final preferences = _ControlledPreferences({
+        _dateKey: DateTime.utc(2000).millisecondsSinceEpoch,
+        _launchesKey: 9,
+        _closedKey: false,
+      });
+      PreferencesTestStore.instance = preferences;
+      final profile = ProfileViewModel([AppSupportReminderProfileHandler.new]);
+      addTearDown(profile.dispose);
+      final owner = AppSupportOwner(profile: profile, now: () => _today);
+      addTearDown(owner.dispose);
+      expect(await owner.init(), isTrue);
+      preferences
+        ..persistBeforeWaiting = true
+        ..pendingWrite = Completer<void>()
+        ..writeStarted = Completer<void>();
+      var notifications = 0;
+      owner.addListener(() => notifications++);
+
+      final save = owner.recordSettingsSupportResult();
+      await preferences.writeStarted!.future;
+      // The write has reached storage, but its completion is still pending.
+      expect((await preferences.saved)[_closedKey], isTrue);
+      expect(await profile.clear(), isTrue);
+      await profile.reload();
+      owner.updateProfile(profile);
+      expect(owner.reminderClosed, isFalse);
+
+      preferences.pendingWrite!.complete();
+      expect(await save, isFalse);
+      expect(owner.reminderClosed, isFalse);
+      expect(notifications, 0);
+      expect(await preferences.saved, isEmpty);
+    },
+  );
+
+  test(
+    'profile reload rejects writes queued against the previous handler',
+    () async {
+      final preferences = _ControlledPreferences({
+        _dateKey: DateTime.utc(2000).millisecondsSinceEpoch,
+        _launchesKey: 9,
+        _closedKey: false,
+      });
+      PreferencesTestStore.instance = preferences;
+      final profile = ProfileViewModel([AppSupportReminderProfileHandler.new]);
+      addTearDown(profile.dispose);
+      final owner = AppSupportOwner(profile: profile, now: () => _today);
+      addTearDown(owner.dispose);
+      expect(await owner.init(), isTrue);
+      preferences
+        ..persistBeforeWaiting = true
+        ..pendingWrite = Completer<void>()
+        ..writeStarted = Completer<void>();
+
+      final inFlight = owner.recordSettingsSupportResult(
+        AppSupportResult.storeOpened,
+      );
+      await preferences.writeStarted!.future;
+      final queued = owner.recordSettingsSupportResult();
+      expect(await profile.clear(), isTrue);
+      await profile.reload();
+      owner.updateProfile(profile);
+
+      preferences.pendingWrite!.complete();
+      expect(await inFlight, isFalse);
+      expect(await queued, isFalse);
+      expect(owner.reminderClosed, isFalse);
+      expect(await preferences.saved, isEmpty);
     },
   );
 
@@ -350,7 +574,7 @@ void main() {
     PreferencesTestStore.instance = preferences;
     final owner = createOwner();
     expect(await owner.init(), isFalse);
-    expect(owner.initialized, isFalse);
+    expect(owner.inited, isFalse);
     expect(owner.checkReminderEligibility(canShowDialog: true), isFalse);
   });
 }

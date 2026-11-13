@@ -9,6 +9,31 @@ import 'package:mhabit/storage/profile/handlers.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../support/stub/shared_preferences.dart';
+
+final class _FailingPreferences extends InMemoryPreferencesStore {
+  _FailingPreferences({required this.throwOnFailure}) : super.empty();
+
+  final bool throwOnFailure;
+  bool failWrites = false;
+  int reads = 0;
+
+  @override
+  Future<Map<String, Object>> getAll() {
+    reads++;
+    return super.getAll();
+  }
+
+  @override
+  Future<bool> setValue(String type, String key, Object value) async {
+    if (failWrites) {
+      if (throwOnFailure) throw StateError('write failed');
+      return false;
+    }
+    return super.setValue(type, key, value);
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -35,6 +60,53 @@ void main() {
     expect(await handler.remove(), isTrue);
     expect(handler.get(), isNull);
   });
+
+  for (final throwOnFailure in [false, true]) {
+    for (final hasHistory in [false, true]) {
+      test(
+        'failed write preserves backend with history=$hasHistory and retries '
+        'with throwOnFailure=$throwOnFailure',
+        () async {
+          final previousStore = PreferencesTestStore.instance;
+          final store = _FailingPreferences(throwOnFailure: throwOnFailure);
+          PreferencesTestStore.instance = store;
+          addTearDown(() => PreferencesTestStore.instance = previousStore);
+          final preferences = await SharedPreferences.getInstance();
+          final handler = AppSupportReminderProfileHandler(preferences);
+          final previousHistory = (
+            minimumDate: DateTime.utc(2026, 11, 12),
+            launches: 10,
+            closed: false,
+          );
+          if (hasHistory) {
+            expect(await handler.set(previousHistory), isTrue);
+          }
+          final newHistory = (
+            minimumDate: DateTime.utc(2026, 11, 19),
+            launches: 0,
+            closed: true,
+          );
+          final previousBackend = await store.getAll();
+          final readsBeforeFailure = store.reads;
+
+          store.failWrites = true;
+          if (throwOnFailure) {
+            await expectLater(handler.set(newHistory), throwsStateError);
+          } else {
+            expect(await handler.set(newHistory), isFalse);
+          }
+          expect(handler.get(), newHistory);
+          expect(store.reads, readsBeforeFailure);
+          expect(await store.getAll(), previousBackend);
+
+          store.failWrites = false;
+          expect(await handler.set(newHistory), isTrue);
+          await preferences.reload();
+          expect(handler.get(), newHistory);
+        },
+      );
+    }
+  }
 
   test(
     'owner uses the registered handler alongside other profile settings',

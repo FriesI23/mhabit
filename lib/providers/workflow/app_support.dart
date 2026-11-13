@@ -94,7 +94,7 @@ extension AppSupportActionNavigation on AppSupportAction {
 /// Owns the reminder for one foreground app lifetime, independently of routes.
 ///
 /// Stores reminder dates, launch counts and dismissal in the profile preferences.
-/// Serializes event writes and Reset, publishes reliably saved state,
+/// Serializes event writes and Reset, reads history from the profile,
 /// and keeps explicit Settings support separate from the automatic reminder guard.
 class AppSupportOwner extends ChangeNotifier
     with ProfileHandlerLoadedMixin
@@ -115,37 +115,36 @@ class AppSupportOwner extends ChangeNotifier
   final DateTime Function() _now;
   final Future<AboutInfo> Function() _loadInfo;
   AppDistribution _distribution = defaultAppDistribution;
-  DateTime? _nextReminderDate;
-  int _launchCount = 0;
-  Future<bool>? _initialization;
+  Future<bool>? _initFuture;
   Future<void>? _reminderCheck;
-  bool _initialized = false;
+  bool _inited = false;
   bool _reminderEligibilityChecked = false;
   bool _reminderSkipped = false;
   bool _reminderSaveAttempted = false;
   bool _mounted = true;
   bool _developerActionInProgress = false;
   bool _initializationComplete = false;
-  bool _reminderClosed = false;
   Future<void> _pendingPreferenceWrites = Future.value();
 
   @override
   void updateProfile(ProfileViewModel newProfile) {
     super.updateProfile(newProfile);
-    _reminder = newProfile.getHandler<AppSupportReminderProfileHandler>();
+    final reminder = newProfile.getHandler<AppSupportReminderProfileHandler>();
+    if (_inited && !identical(_reminder, reminder)) skipReminderForSession();
+    _reminder = reminder;
   }
 
   @override
   bool get mounted => _mounted;
 
   /// Whether initialization succeeded. Provider subscribers can now check UI safety.
-  bool get initialized => _initialized;
+  bool get inited => _inited;
 
   /// Includes failed initialization, so persistent content can still be shown.
   bool get initializationComplete => _initializationComplete;
 
-  /// Last reliably saved permanent dismissal state.
-  bool get reminderClosed => _reminderClosed;
+  /// Permanent dismissal in the current profile, or false when it is absent.
+  bool get reminderClosed => _reminder?.get()?.closed ?? false;
 
   /// The current process's support channel, initialized from the build value.
   AppDistribution get distribution => _distribution;
@@ -160,8 +159,9 @@ class AppSupportOwner extends ChangeNotifier
   }
 
   Future<bool> _queuePreferenceWrite(Future<bool> Function() action) {
+    final reminder = _reminder;
     final result = _pendingPreferenceWrites.then<bool>(
-      (_) => !mounted ? false : action(),
+      (_) => !mounted || !identical(reminder, _reminder) ? false : action(),
     );
     _pendingPreferenceWrites = result.then<void>(
       (_) {},
@@ -250,7 +250,7 @@ class AppSupportOwner extends ChangeNotifier
 
   /// Shares success or failure and counts this foreground launch only once.
   @override
-  Future<bool> init() => _initialization ??= _init();
+  Future<bool> init() => _initFuture ??= _init();
 
   Future<bool> _init() async {
     if (!mounted) return false;
@@ -266,7 +266,7 @@ class AppSupportOwner extends ChangeNotifier
         return false;
       }
       if (!mounted) return false;
-      _initialized = true;
+      _inited = true;
       return true;
     } catch (error, stackTrace) {
       appLog.load.warn(
@@ -337,19 +337,19 @@ class AppSupportOwner extends ChangeNotifier
   bool checkReminderEligibility({required bool canShowDialog}) {
     if (_reminderEligibilityChecked) return false;
     _reminderEligibilityChecked = true;
-    return !_reminderSkipped &&
-        canShowDialog &&
-        _initialized &&
-        !_reminderClosed &&
-        _launchCount >= _requiredLaunches &&
-        _now().isAfter(_nextReminderDate!);
+    if (_reminderSkipped || !canShowDialog || !_inited) return false;
+    final history = _reminder?.get();
+    return history != null &&
+        !history.closed &&
+        history.launches >= _requiredLaunches &&
+        _now().isAfter(history.minimumDate);
   }
 
   /// Saves the automatic reminder's result at most once per session.
   ///
   /// A failed save counts as the session's attempt and is not retried here.
   Future<bool> recordReminderResult(AppSupportResult result) async {
-    if (!mounted || !_initialized || _reminderSaveAttempted) return false;
+    if (!mounted || !_inited || _reminderSaveAttempted) return false;
     if (!_changesReminderHistory(result)) return false;
     _reminderSaveAttempted = true;
     return _saveReminderResult(result);
@@ -362,7 +362,7 @@ class AppSupportOwner extends ChangeNotifier
     AppSupportResult result = AppSupportResult.githubOpened,
   ]) async {
     skipReminderForSession();
-    if (!mounted || !_initialized) return false;
+    if (!mounted || !_inited) return false;
     if (result != AppSupportResult.githubOpened &&
         result != AppSupportResult.storeOpened) {
       return false;
@@ -379,16 +379,17 @@ class AppSupportOwner extends ChangeNotifier
   Future<bool> _saveReminderResult(AppSupportResult result) =>
       _queuePreferenceWrite(() async {
         try {
-          if (_reminderClosed && result == AppSupportResult.githubOpened) {
-            return true;
-          }
+          final history = _reminder!.get();
           final restartCooldown =
               result == AppSupportResult.storeOpened ||
               result == AppSupportResult.remindLater;
           return await _saveReminderHistory(
-            restartCooldown ? _now().add(_reminderDelay) : _nextReminderDate!,
-            restartCooldown ? _launchCount - _requiredLaunches : _launchCount,
-            _reminderClosed ||
+            restartCooldown
+                ? _now().add(_reminderDelay)
+                : history?.minimumDate ?? _now().add(_reminderDelay),
+            (history?.launches ?? 0) -
+                (restartCooldown ? _requiredLaunches : 0),
+            (history?.closed ?? false) ||
                 result == AppSupportResult.githubOpened ||
                 result == AppSupportResult.stopReminding,
           );
@@ -402,22 +403,20 @@ class AppSupportOwner extends ChangeNotifier
         }
       });
 
-  /// Publishes state only after the complete reminder history has been saved.
+  /// Notifies listeners only after the complete reminder history has been saved.
   Future<bool> _saveReminderHistory(
     DateTime minimumDate,
     int launches,
     bool closed,
   ) async {
-    final saved = await _reminder!.set((
+    final reminder = _reminder!;
+    final saved = await reminder.set((
       minimumDate: minimumDate,
       launches: launches,
       closed: closed,
     ));
-    if (!saved || !mounted) return false;
-    _nextReminderDate = minimumDate;
-    _launchCount = launches;
-    _reminderClosed = closed;
-    if (_initialized) notifyListeners();
+    if (!saved || !mounted || !identical(reminder, _reminder)) return false;
+    if (_inited) notifyListeners();
     return true;
   }
 
@@ -425,6 +424,7 @@ class AppSupportOwner extends ChangeNotifier
   void dispose() {
     if (!mounted) return;
     _mounted = false;
+    _reminder = null;
     skipReminderForSession();
     super.dispose();
   }

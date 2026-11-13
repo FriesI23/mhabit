@@ -160,7 +160,7 @@ void main() {
       expect(preferences.reads, 1);
       expect(preferences.writes, 0);
       expect(owner.initializationComplete, isTrue);
-      expect(owner.initialized, isFalse);
+      expect(owner.inited, isFalse);
       expect(owner.checkReminderEligibility(canShowDialog: true), isFalse);
     },
   );
@@ -173,11 +173,11 @@ void main() {
       final owner = createOwner();
       final result = owner.init();
       await preferences.writeStarted!.future;
-      expect(owner.initialized, isFalse);
+      expect(owner.inited, isFalse);
       expect(owner.initializationComplete, isFalse);
       preferences.pendingWrite!.complete();
       expect(await result, isTrue);
-      expect(owner.initialized, isTrue);
+      expect(owner.inited, isTrue);
     },
   );
 
@@ -195,7 +195,7 @@ void main() {
       preferences.pendingRead!.complete();
       expect(await result, isFalse);
       expect(lifetime.mounted, isFalse);
-      expect(owner.initialized, isFalse);
+      expect(owner.inited, isFalse);
       expect(preferences.writes, 0);
       expect(notifications, 0);
       expect(
@@ -644,7 +644,7 @@ void main() {
         );
         expect(shows, 1);
         expect(failures, 1);
-        expect(owner.reminderClosed, isFalse);
+        expect((await preferences.saved)['appSupport_doNotOpenAgain'], isFalse);
       },
     );
   }
