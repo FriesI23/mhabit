@@ -27,7 +27,7 @@ class L10nEs extends L10n {
   String get habitEdit_colorPicker_title => 'Escoge un color';
 
   @override
-  String get habitEdit_colorPicker_historySectionLabel => 'Recently used';
+  String get habitEdit_colorPicker_historySectionLabel => 'Usado Recientemente';
 
   @override
   String habitEdit_colorPicker_customSectionLabel(String tinted) {
@@ -40,24 +40,24 @@ class L10nEs extends L10n {
   }
 
   @override
-  String get habitEdit_colorPicker_cancel => 'Cancel';
+  String get habitEdit_colorPicker_cancel => 'Cancelar';
 
   @override
-  String get habitEdit_colorPicker_tintToggleLabel => 'Tint to theme';
+  String get habitEdit_colorPicker_tintToggleLabel => 'Tinte del tema';
 
   @override
-  String get habitEdit_colorPicker_tintedLabel => 'Tinted';
+  String get habitEdit_colorPicker_tintedLabel => 'Con Tinte';
 
   @override
-  String get habitEdit_colorPicker_untintedLabel => 'Not tinted';
+  String get habitEdit_colorPicker_untintedLabel => 'Sin tinte';
 
   @override
   String get habitEdit_colorPicker_tintToggleOnHint =>
-      'Tinting may shift the final color away from the one you picked.';
+      'El tinte puede hacer que el color final difiera del que seleccionaste.';
 
   @override
   String get habitEdit_colorPicker_tintToggleOffHint =>
-      'Some colors may reduce text readability in light or dark theme.';
+      'Algunos colores pueden dificultar la lectura del texto en los temas claro u oscuro';
 
   @override
   String get habitEdit_habitTypeDialog_title => 'Tipo de hábito';
@@ -274,11 +274,12 @@ class L10nEs extends L10n {
       'Un viaje de cientos de kilómetros empieza con un único paso';
 
   @override
-  String get habitDisplay_notFoundImage_text_01 => 'No matching habits found';
+  String get habitDisplay_notFoundImage_text_01 =>
+      'No se encontraron hábitos que coincidan';
 
   @override
   String habitDisplay_notFoundImage_text_02(String keyword) {
-    return 'No matching habits for \"$keyword\"';
+    return 'No se encontraron hábitos que coincidan con \"$keyword\"';
   }
 
   @override
@@ -398,10 +399,10 @@ class L10nEs extends L10n {
       'Hábitos principales: Cambios en 30 días';
 
   @override
-  String get habitDisplay_statisticsAction_label => 'Statistics';
+  String get habitDisplay_statisticsAction_label => 'Estadísticas';
 
   @override
-  String get habitDisplay_displayFilterAction_label => 'Display Filter';
+  String get habitDisplay_displayFilterAction_label => 'Mostrar Filtros';
 
   @override
   String get habitDisplay_displayFilter_inProgress => 'En progreso';
@@ -441,13 +442,13 @@ class L10nEs extends L10n {
   String get habitDisplay_groupType_colorType => 'Por color';
 
   @override
-  String get habitDisplay_groupType_createDate => 'By Creation Date';
+  String get habitDisplay_groupType_createDate => 'Por Fecha de Creación';
 
   @override
-  String get habitDisplay_groupType_habitCount => 'By Habit Count';
+  String get habitDisplay_groupType_habitCount => 'Por Número de Hábitos';
 
   @override
-  String get habitDisplay_groupTypeDialog_title => 'Group Sort';
+  String get habitDisplay_groupTypeDialog_title => 'Ordenar Grupos';
 
   @override
   String get habitDisplay_groupTypeDialog_confirm => 'confirmar';
@@ -456,41 +457,41 @@ class L10nEs extends L10n {
   String get habitDisplay_groupTypeDialog_cancel => 'cancelar';
 
   @override
-  String get habitDisplay_groupTypeDialog_none => 'Flat';
+  String get habitDisplay_groupTypeDialog_none => 'Sin Agrupar';
 
   @override
-  String get habitDisplay_editPopMenu_groupModify => 'Modify Group';
+  String get habitDisplay_editPopMenu_groupModify => 'Modificar Grupo';
 
   @override
-  String get habitDisplay_groupModifyDialog_title => 'Modify Group';
+  String get habitDisplay_groupModifyDialog_title => 'Modificar Grupo';
 
   @override
-  String get habitDisplay_groupModifyDialog_removeGroup => 'Remove Group';
+  String get habitDisplay_groupModifyDialog_removeGroup => 'Eliminar Grupo';
 
   @override
   String get habitDisplay_groupModifyDialog_emptyGroups =>
-      'No groups available';
+      'No hay grupos disponibles';
 
   @override
   String get habitDisplay_groupModifyDialog_alreadyInGroup =>
-      'Selected habits are already in this group';
+      'Los hábitos seleccionados ya están en este grupo';
 
   @override
-  String get habitDisplay_groupModifyDialog_createGroup => 'Create Group';
+  String get habitDisplay_groupModifyDialog_createGroup => 'Crear Grupo';
 
   @override
-  String get habitDisplay_groupModifyDialog_saveAndApply => 'Save & Apply';
+  String get habitDisplay_groupModifyDialog_saveAndApply => 'Guardar y Aplicar';
 
   @override
-  String get habitDisplay_groupModifyConfirm_titleNew => 'Move to Group';
+  String get habitDisplay_groupModifyConfirm_titleNew => 'Mover al Grupo';
 
   @override
   String get habitDisplay_groupModifyConfirm_titleMixed =>
-      'Confirm Group Change';
+      'Confirmar Cambio de Grupo';
 
   @override
   String habitDisplay_groupModifyConfirm_bodyNewGroup(String groupName) {
-    return '$groupName habits will be moved to this group';
+    return 'Los hábitos de $groupName se moverán a este grupo';
   }
 
   @override
@@ -648,7 +649,7 @@ class L10nEs extends L10n {
   String get habitDisplay_searchFilter_clearFilter => 'Limpiar filtros';
 
   @override
-  String get habitDisplay_tab_habits_label => 'Habits';
+  String get habitDisplay_tab_habits_label => 'Hábitos';
 
   @override
   String get habitDisplay_tab_today_label => 'Hoy';
@@ -661,14 +662,14 @@ class L10nEs extends L10n {
 
   @override
   String habitToday_card_subtitle_text(int days) {
-    return 'Kept it up for $days days';
+    return 'Lo has mantenido por $days días';
   }
 
   @override
-  String get habitToday_card_donePlusButton_label => 'Done+';
+  String get habitToday_card_donePlusButton_label => 'Hecho+';
 
   @override
-  String get habitToday_card_skipPlusButton_label => 'Skip+';
+  String get habitToday_card_skipPlusButton_label => 'Saltar+';
 
   @override
   String get habitDetail_editButton_tooltip => 'Editar';
@@ -965,35 +966,35 @@ class L10nEs extends L10n {
       'Set how long to hover over a collapsed group header before it auto-expands during drag-and-drop.';
 
   @override
-  String get appSetting_expandTimerDelay_default => 'Default';
+  String get appSetting_expandTimerDelay_default => 'Por Defecto';
 
   @override
-  String get appSetting_expandTimerDelay_fast => 'Fast';
+  String get appSetting_expandTimerDelay_fast => 'Rápido';
 
   @override
-  String get appSetting_expandTimerDelay_slow => 'Slow';
+  String get appSetting_expandTimerDelay_slow => 'Lento';
 
   @override
-  String get appSetting_appThemeColorTile_titleText => 'Theme Color';
+  String get appSetting_appThemeColorTile_titleText => 'Color del Tema';
 
   @override
-  String get appSetting_appThemeModeTile_titleText => 'Theme Mode';
+  String get appSetting_appThemeModeTile_titleText => 'Modo del Tema';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText =>
-      'Choose Theme Color';
+      'Elige el Color del Tema';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_android =>
-      'Use wallpaper\'s main color (Android 12+)';
+      'Usar el color principal del Fondo de Pantalla (Android 12+)';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_linux =>
-      'Use GTK+ theme\'s selected background color';
+      'Usar el color de fondo seleccionado en el tema GTK+';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_macos =>
-      'Use system theme color';
+      'Usar el color del tema del sistema';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_windows =>
@@ -1016,7 +1017,7 @@ class L10nEs extends L10n {
 
   @override
   String get appSetting_changeLanguage_followSystem_noLocale_text =>
-      'Del sistema';
+      'Seguir Sistema';
 
   @override
   String get appSetting_changeLanguageTile_titleText => 'Idioma';
@@ -1029,19 +1030,19 @@ class L10nEs extends L10n {
   String appSetting_changeLanguageDialog_currentLanguage_text(
     String localeName,
   ) {
-    return 'Current language: $localeName';
+    return 'Idioma actual: $localeName';
   }
 
   @override
-  String get appSetting_languageSubgroupText => 'Language';
+  String get appSetting_languageSubgroupText => 'Idioma';
 
   @override
   String get appSetting_openSystemLanguageTile_titleText =>
-      'System Language Settings';
+      'Ajustes de Idioma del Sistema';
 
   @override
   String get appSetting_openSystemLanguageTile_dialogTitle =>
-      'Open System Language Settings';
+      'Abrir Ajustes de Idioma del Sistema';
 
   @override
   String get appSetting_openSystemLanguageTile_macosDialogContent =>
@@ -1070,11 +1071,11 @@ class L10nEs extends L10n {
 
   @override
   String get appSetting_appleCollapsedSidebarSwitcher_titleText =>
-      'Show horizontal Sidebar';
+      'Mostrar barra lateral horizontal';
 
   @override
   String get appSetting_appleCollapsedSidebarSwitcher_subtitleText =>
-      'Show navigation destinations in the top bar while the Sidebar is hidden.';
+      'Mostrar las opciones de navegación en la barra superior cuando la barra lateral esté oculta.';
 
   @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
@@ -1113,11 +1114,12 @@ class L10nEs extends L10n {
       'Importar hábitos desde el archivo json.';
 
   @override
-  String get appSetting_thirdPartyImport_titleText => 'Import from third-party';
+  String get appSetting_thirdPartyImport_titleText =>
+      'Importar desde aplicaciones de terceros';
 
   @override
   String get appSetting_thirdPartyImport_subtitleText =>
-      'Import habits from other habit tracker apps';
+      'Importar hábitos de otras aplicaciones de seguimiento de hábitos.';
 
   @override
   String get appSetting_thirdPartyImport_provider_loopName =>
@@ -1125,7 +1127,7 @@ class L10nEs extends L10n {
 
   @override
   String get appSetting_thirdPartyImport_provider_versionHint =>
-      'Supports CSV (tested up to <ver/>)';
+      'Compatible con CSV (probado hasta <ver/>)';
 
   @override
   String appSetting_importDialog_confirmTitle(int count) {
@@ -1137,41 +1139,41 @@ class L10nEs extends L10n {
       'Nota: La importación no elimina los hábitos existentes.';
 
   @override
-  String get appSetting_importDialog_option_includeHabits => 'Include habits';
+  String get appSetting_importDialog_option_includeHabits => 'Incluir hábitos';
 
   @override
-  String get appSetting_importDialog_option_includeGroups => 'Include groups';
+  String get appSetting_importDialog_option_includeGroups => 'Incluir grupos';
 
   @override
   String appSetting_importDialog_tile_includeHabits(int count) {
-    return 'Include $count habits';
+    return 'Incluir $count hábitos';
   }
 
   @override
   String appSetting_importDialog_tile_includeGroups(int count) {
-    return 'Include $count groups';
+    return 'Incluir $count grupos';
   }
 
   @override
   String appSetting_importConfirmDialog_sourceLabel(String provider) {
-    return 'Source: $provider';
+    return 'Fuente: $provider';
   }
 
   @override
   String get appSetting_thirdPartyImport_error_fileReadError =>
-      'Failed to read the selected file.';
+      'No se pudo leer el archivo seleccionado.';
 
   @override
   String get appSetting_thirdPartyImport_error_noHabitsFound =>
-      'No habits found in the import file.';
+      'No se encontraron hábitos en el archivo importado.';
 
   @override
   String get appSetting_thirdPartyImport_error_parseError =>
-      'Failed to parse import file';
+      'Error al procesar el archivo importado';
 
   @override
   String get appSetting_thirdPartyImport_error_unknown =>
-      'An unexpected error occurred during import.';
+      'Se produjo un error inesperado durante la importación.';
 
   @override
   String get appSetting_importDialog_confirm_confirmText => 'confirmar';
@@ -1189,12 +1191,12 @@ class L10nEs extends L10n {
 
   @override
   String appSetting_importDialog_completeTitle(int count) {
-    return 'Importación completada $count';
+    return 'Importación completa de $count hábitos';
   }
 
   @override
   String appSetting_importDialog_completeTitleGroups(int count) {
-    return 'Completed import $count groups';
+    return 'Importación completa de $count grupos';
   }
 
   @override

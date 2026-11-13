@@ -8,6 +8,13 @@
     "habitEdit_saveButton_text": "Guardar",
     "habitEdit_habitName_hintText": "Nombre del hábito",
     "habitEdit_colorPicker_title": "Escoge un color",
+    "habitEdit_colorPicker_historySectionLabel": "Usado Recientemente",
+    "habitEdit_colorPicker_cancel": "Cancelar",
+    "habitEdit_colorPicker_tintToggleLabel": "Tinte del tema",
+    "habitEdit_colorPicker_tintedLabel": "Con Tinte",
+    "habitEdit_colorPicker_untintedLabel": "Sin tinte",
+    "habitEdit_colorPicker_tintToggleOnHint": "El tinte puede hacer que el color final difiera del que seleccionaste.",
+    "habitEdit_colorPicker_tintToggleOffHint": "Algunos colores pueden dificultar la lectura del texto en los temas claro u oscuro",
     "habitEdit_habitTypeDialog_title": "Tipo de hábito",
     "habitEdit_habitType_positiveText": "Positivo",
     "habitEdit_habitType_negativeText": "Negativo",
@@ -178,6 +185,20 @@
     "habitEdit_modify_datetime_prefix": "Modificado: ",
     "habitDisplay_fab_text": "Nuevo hábito",
     "habitDisplay_emptyImage_text_01": "Un viaje de cientos de kilómetros empieza con un único paso",
+    "habitDisplay_notFoundImage_text_01": "No se encontraron hábitos que coincidan",
+    "@habitDisplay_notFoundImage_text_01": {
+        "description": "Displayed when no habits match the current search"
+    },
+    "habitDisplay_notFoundImage_text_02": "No se encontraron hábitos que coincidan con \"{keyword}\"",
+    "@habitDisplay_notFoundImage_text_02": {
+        "description": "Displayed when no habits match the specified keyword",
+        "placeholders": {
+            "keyword": {
+                "type": "String",
+                "description": "Search keyword"
+            }
+        }
+    },
     "habitDisplay_archiveHabitsConfirmDialog_title": "¿Quieres archivar los hábitos seleccionados?",
     "habitDisplay_archiveHabitsConfirmDialog_confirm": "confirmar",
     "habitDisplay_archiveHabitsConfirmDialog_cancel": "cancelar",
@@ -255,6 +276,8 @@
     "habitDisplay_statsMenu_inProgresTileText": "En progreso",
     "habitDisplay_statsMenu_archivedTileText": "Archivados",
     "habitDisplay_statsMenu_popularitySubgroupText": "Hábitos principales: Cambios en 30 días",
+    "habitDisplay_statisticsAction_label": "Estadísticas",
+    "habitDisplay_displayFilterAction_label": "Mostrar Filtros",
     "habitDisplay_displayFilter_inProgress": "En progreso",
     "habitDisplay_displayFilter_archived": "Archivados",
     "habitDisplay_displayFilter_completed": "Completados",
@@ -267,8 +290,33 @@
     "habitDisplay_mainMenu_settingTileText": "Ajustes",
     "habitDisplay_groupType_name": "Por nombre",
     "habitDisplay_groupType_colorType": "Por color",
+    "habitDisplay_groupType_createDate": "Por Fecha de Creación",
+    "habitDisplay_groupType_habitCount": "Por Número de Hábitos",
+    "habitDisplay_groupTypeDialog_title": "Ordenar Grupos",
     "habitDisplay_groupTypeDialog_confirm": "confirmar",
     "habitDisplay_groupTypeDialog_cancel": "cancelar",
+    "habitDisplay_groupTypeDialog_none": "Sin Agrupar",
+    "habitDisplay_editPopMenu_groupModify": "Modificar Grupo",
+    "habitDisplay_groupModifyDialog_title": "Modificar Grupo",
+    "habitDisplay_groupModifyDialog_removeGroup": "Eliminar Grupo",
+    "habitDisplay_groupModifyDialog_emptyGroups": "No hay grupos disponibles",
+    "habitDisplay_groupModifyDialog_alreadyInGroup": "Los hábitos seleccionados ya están en este grupo",
+    "habitDisplay_groupModifyDialog_createGroup": "Crear Grupo",
+    "habitDisplay_groupModifyDialog_saveAndApply": "Guardar y Aplicar",
+    "@habitDisplay_groupModifyDialog_saveAndApply": {
+        "description": "Deprecated. Use habitEdit_saveButton_text instead."
+    },
+    "habitDisplay_groupModifyConfirm_titleNew": "Mover al Grupo",
+    "habitDisplay_groupModifyConfirm_titleMixed": "Confirmar Cambio de Grupo",
+    "habitDisplay_groupModifyConfirm_bodyNewGroup": "Los hábitos de {groupName} se moverán a este grupo",
+    "@habitDisplay_groupModifyConfirm_bodyNewGroup": {
+        "placeholders": {
+            "groupName": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
     "habitDisplay_sort_reverseText": "Deshacer",
     "habitDisplay_sortDirection_asc": "(Asc)",
     "habitDisplay_sortDirection_Desc": "(Desc)",
@@ -289,8 +337,26 @@
     "habitDisplay_searchFilter_habitType_groupTitle": "Tipo de hábito",
     "habitDisplay_searchFilter_tooltips": "Mostrar filtros",
     "habitDisplay_searchFilter_clearFilter": "Limpiar filtros",
+    "habitDisplay_tab_habits_label": "Hábitos",
     "habitDisplay_tab_today_label": "Hoy",
     "habitToday_appBar_title": "Hoy",
+    "habitToday_card_subtitle_text": "Lo has mantenido por {days} días",
+    "@habitToday_card_subtitle_text": {
+        "placeholders": {
+            "days": {
+                "type": "int",
+                "description": "Days since the chosen start date"
+            }
+        }
+    },
+    "habitToday_card_donePlusButton_label": "Hecho+",
+    "@habitToday_card_donePlusButton_label": {
+        "description": "Button label for completing today's habit with dialog"
+    },
+    "habitToday_card_skipPlusButton_label": "Saltar+",
+    "@habitToday_card_skipPlusButton_label": {
+        "description": "Button label for skipping today's habit with dialog"
+    },
     "habitDetail_editButton_tooltip": "Editar",
     "habitDetail_editPopMenu_unarchive": "Desarchivar",
     "habitDetail_editPopMenu_archive": "Archivar",
@@ -454,6 +520,15 @@
     "appSetting_changeRecordStatusOpTile_subtitleText": "Modificar el comportamiento del clic para cambiar el estado de los registros diarios en la página principal.",
     "appSetting_openRecordStatusDialogOpTile_titleText": "Abrir registro detallado",
     "appSetting_openRecordStatusDialogOpTile_subtitleText": "Modifique el comportamiento del clic para abrir la ventana emergente detallada de los registros diarios en la página principal.",
+    "appSetting_expandTimerDelay_default": "Por Defecto",
+    "appSetting_expandTimerDelay_fast": "Rápido",
+    "appSetting_expandTimerDelay_slow": "Lento",
+    "appSetting_appThemeColorTile_titleText": "Color del Tema",
+    "appSetting_appThemeModeTile_titleText": "Modo del Tema",
+    "appSetting_appThemeColorChosenDiloag_titleText": "Elige el Color del Tema",
+    "appSetting_appThemeColorChosenDialog_subTitleText_android": "Usar el color principal del Fondo de Pantalla (Android 12+)",
+    "appSetting_appThemeColorChosenDialog_subTitleText_linux": "Usar el color de fondo seleccionado en el tema GTK+",
+    "appSetting_appThemeColorChosenDialog_subTitleText_macos": "Usar el color del tema del sistema",
     "appSetting_firstDayOfWeek_titleText": "Primer dia de la semana",
     "appSetting_firstDayOfWeekDialog_titleText": "Mostrar el primer día de la semana",
     "appSetting_firstDayOfWeekDialog_defaultText": " (Por defecto)",
@@ -466,9 +541,21 @@
             }
         }
     },
-    "appSetting_changeLanguage_followSystem_noLocale_text": "Del sistema",
+    "appSetting_changeLanguage_followSystem_noLocale_text": "Seguir Sistema",
     "appSetting_changeLanguageTile_titleText": "Idioma",
     "appSetting_changeLanguageDialog_titleText": "Seleccionar el idioma",
+    "appSetting_changeLanguageDialog_currentLanguage_text": "Idioma actual: {localeName}",
+    "@appSetting_changeLanguageDialog_currentLanguage_text": {
+        "placeholders": {
+            "localeName": {
+                "type": "String",
+                "example": "English"
+            }
+        }
+    },
+    "appSetting_languageSubgroupText": "Idioma",
+    "appSetting_openSystemLanguageTile_titleText": "Ajustes de Idioma del Sistema",
+    "appSetting_openSystemLanguageTile_dialogTitle": "Abrir Ajustes de Idioma del Sistema",
     "appSetting_dateDisplayFormat_titleText": "Formato de visualización de la fecha ({formatTemplate})",
     "@appSetting_dateDisplayFormat_titleText": {
         "placeholders": {
@@ -482,6 +569,8 @@
     "appSetting_dateDisplayFormat_subTitleText": "El formato de fecha configurado se aplicará a la visualización de la fecha en la página de detalles del hábito.",
     "appSetting_compactUISwitcher_titleText": "Habilitar la interfaz de usuario compacta en la página de hábitos",
     "appSetting_compactUISwitcher_subtitleText": "Permitir que la tabla de control de hábitos muestre más contenido, pero algunos UI y texto pueden aparecer más pequeños.",
+    "appSetting_appleCollapsedSidebarSwitcher_titleText": "Mostrar barra lateral horizontal",
+    "appSetting_appleCollapsedSidebarSwitcher_subtitleText": "Mostrar las opciones de navegación en la barra superior cuando la barra lateral esté oculta.",
     "appSetting_collapsed_calendar_bararea_titleText": "Ajuste de la zona de validación de hábitos.",
     "appSetting_collapsed_calendar_bararea_subtitleText": "Ajusta el porcentaje para tener más o menos espacio en el área de validación de hábitos.",
     "appSetting_collapsed_calendar_bararea_defaultText": "Por defecto",
@@ -495,6 +584,10 @@
     "appSetting_export_subtitleText": "Hábitos exportados en formato JSON. Este archivo se puede volver a importar.",
     "appSetting_import_titleText": "Importar",
     "appSetting_import_subtitleText": "Importar hábitos desde el archivo json.",
+    "appSetting_thirdPartyImport_titleText": "Importar desde aplicaciones de terceros",
+    "appSetting_thirdPartyImport_subtitleText": "Importar hábitos de otras aplicaciones de seguimiento de hábitos.",
+    "appSetting_thirdPartyImport_provider_loopName": "Loop Habit Tracker",
+    "appSetting_thirdPartyImport_provider_versionHint": "Compatible con CSV (probado hasta <ver/>)",
     "appSetting_importDialog_confirmTitle": "¿Confirmar la importación de {count} hábitos?",
     "@appSetting_importDialog_confirmTitle": {
         "placeholders": {
@@ -505,6 +598,39 @@
         }
     },
     "appSetting_importDialog_confirmSubtitle": "Nota: La importación no elimina los hábitos existentes.",
+    "appSetting_importDialog_option_includeHabits": "Incluir hábitos",
+    "appSetting_importDialog_option_includeGroups": "Incluir grupos",
+    "appSetting_importDialog_tile_includeHabits": "Incluir {count} hábitos",
+    "@appSetting_importDialog_tile_includeHabits": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "appSetting_importDialog_tile_includeGroups": "Incluir {count} grupos",
+    "@appSetting_importDialog_tile_includeGroups": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "3"
+            }
+        }
+    },
+    "appSetting_importConfirmDialog_sourceLabel": "Fuente: {provider}",
+    "@appSetting_importConfirmDialog_sourceLabel": {
+        "placeholders": {
+            "provider": {
+                "type": "String",
+                "description": "Third-party provider display name"
+            }
+        }
+    },
+    "appSetting_thirdPartyImport_error_fileReadError": "No se pudo leer el archivo seleccionado.",
+    "appSetting_thirdPartyImport_error_noHabitsFound": "No se encontraron hábitos en el archivo importado.",
+    "appSetting_thirdPartyImport_error_parseError": "Error al procesar el archivo importado",
+    "appSetting_thirdPartyImport_error_unknown": "Se produjo un error inesperado durante la importación.",
     "appSetting_importDialog_confirm_confirmText": "confirmar",
     "appSetting_importDialog_confirm_cancelText": "cancelar",
     "appSetting_importDialog_importingTitle": "Importado {completeCount}/{totalCount}",
@@ -520,8 +646,17 @@
             }
         }
     },
-    "appSetting_importDialog_completeTitle": "Importación completada {count}",
+    "appSetting_importDialog_completeTitle": "Importación completa de {count} hábitos",
     "@appSetting_importDialog_completeTitle": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_importDialog_completeTitleGroups": "Importación completa de {count} grupos",
+    "@appSetting_importDialog_completeTitleGroups": {
         "placeholders": {
             "count": {
                 "type": "int",
