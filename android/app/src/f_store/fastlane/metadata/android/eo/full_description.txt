@@ -1,0 +1,14 @@
+“Table Habit” estas aplikaĵo, kiu helpas vin formi kaj spuri viajn proprajn kutimetojn. Ĝi enhavas kompletan aron da kreskokurboj kaj diagramoj por helpi vin formi kutimojn pli efike.
+
+Krome, ĝi estas tute libera programo kaj havas la jenajn funkciojn:
+
+- Poentosistemo por helpi la evoluigon de viaj kutimetoj.
+- Subteno de ambaŭ pozitivaj kaj negativaj kutimoj.
+- Facile uzebla interfaco por marki kutimojn.
+- Rapida serĉilo kaj filtrilo por trovi pasintajn kutimojn.
+- Malsamaj koloroj por distingi diversajn kutimojn.
+- Facila eksporto kaj importo de kutimoj per homlegebla formato (JSON).
+- Adapto al Material3 kaj Dynamic Color por Android 12 kaj pli novaj versioj.
+- Adapto al horizontala orientiĝo kaj grandekranaj aparatoj.
+- Sinkronigo per WebDAV.
+- Sen reklamoj.
