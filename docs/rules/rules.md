@@ -51,6 +51,8 @@ existing architecture and tooling contracts.
 ## Repository Workflow
 
 - This repo uses the vendored Flutter SDK under `.flutter/`.
+- When upgrading `.flutter/`, also update the Flutter badge URL and alt text in
+  `README.md` to match the pinned SDK version.
 - Prefer the repo `Makefile` entrypoints instead of ad-hoc commands when an
   equivalent target already exists.
 - Standard commands:
