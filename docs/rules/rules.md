@@ -162,7 +162,9 @@ not require Docker.
   notification, and timezone initialization there before `runApp`.
 - Configure the macOS app category through Runner's Application Category setting
   in Xcode. Runner configurations enable `GENERATE_INFOPLIST_FILE` to merge
-  Xcode's Info.plist values with each flavor's source plist.
+  Xcode's Info.plist values with each flavor's source plist. Keep Runner's
+  `CURRENT_PROJECT_VERSION` and `MARKETING_VERSION` mapped to
+  `FLUTTER_BUILD_NUMBER` and `FLUTTER_BUILD_NAME`, as in iOS.
 - `lib/entries/app/entry.dart` owns high-level app assembly. It wires profile
   loading, database loading, provider injection, dynamic color, and the app
   shell.
