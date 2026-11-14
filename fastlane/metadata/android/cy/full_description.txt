@@ -1,0 +1,14 @@
+Mae “Table Habit” yn ap sy’n eich helpu i feithrin ac olrhain eich micro-arferion eich hun. Mae’n cynnwys set gyflawn o gromliniau twf a siartiau i’ch helpu i feithrin arferion yn fwy effeithiol.
+
+Ymhellach, mae’r ap hwn yn god agored yn llwyr ac yn cynnwys y nodweddion canlynol:
+
+- System sgorio i helpu i ddatblygu eich micro-arferion eich hun.
+- Cefnogaeth ar gyfer arferion cadarnhaol a negyddol.
+- Rhyngwyneb hawdd ei ddefnyddio ar gyfer ticio arferion.
+- Chwilio a hidlo cyflym i helpu i ddod o hyd i arferion blaenorol.
+- Defnyddio lliwiau gwahanol i wahaniaethu rhwng arferion amrywiol.
+- Allforio a mewnforio arferion yn hawdd gan ddefnyddio fformat y gellir ei ddarllen gan bobl (JSON).
+- Wedi’i addasu ar gyfer Material3 a Dynamic Color ar Android 12 a fersiynau diweddarach.
+- Wedi’i addasu ar gyfer modd tirlun a dyfeisiau â sgriniau mawr.
+- Cefnogaeth ar gyfer cysoni rhwydwaith drwy WebDAV.
+- Dim hysbysebion yn yr ap hwn.
