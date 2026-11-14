@@ -1,0 +1,8 @@
+- Feature: support cards, donation/store links and later/never reminders (#707)
+- Feature: save UI style and Sidebar appearance (#709)
+- Fix: restore browsing after empty search (#703)
+- Fix: mixed WebDAV authentication (#705)
+- Fix: Loop history with non-Latin names and record notes (#706)
+- Fix: startup reminders (#708)
+- Fix: habit-page transitions after style changes (#709)
+- Update Arabic, Spanish and store translations
