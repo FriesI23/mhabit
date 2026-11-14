@@ -158,6 +158,9 @@ not require Docker.
 
 - `lib/main.dart` owns startup ordering. Keep binding, logging, app info,
   notification, and timezone initialization there before `runApp`.
+- Configure the macOS app category through Runner's Application Category setting
+  in Xcode. Runner configurations enable `GENERATE_INFOPLIST_FILE` to merge
+  Xcode's Info.plist values with each flavor's source plist.
 - `lib/entries/app/entry.dart` owns high-level app assembly. It wires profile
   loading, database loading, provider injection, dynamic color, and the app
   shell.
@@ -409,6 +412,9 @@ them; keep rows with independent actions separate from single-action controls.
   generated localization outputs.
 - Use the existing normalization and generation workflow when changing l10n:
   `make normalize-l10n`, then `make gen` or the narrower needed step.
+- Esperanto uses `l10n_esperanto` delegates in `lib/common/consts.dart`.
+  `lib/main.dart` initializes standard `intl` date tables before custom locale
+  data is loaded. Keep the ARB and Widget snapshot locale as `eo`.
 - Widget strings live in `ios/HabitWidget/Extension/*.lproj/Localizable.strings`
   with bare PascalCase `HomeWidget*` keys. `make gen` fills missing entries through
   `configs/l10n_strings_refs.json` without replacing existing translations.

@@ -19,6 +19,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show Icons;
 import 'package:flutter/widgets.dart' show LocalizationsDelegate;
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:l10n_esperanto/l10n_esperanto.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart'
     show CustomBreakpoints;
 
@@ -95,7 +96,11 @@ const appSupportedLocales = [
   Locale.fromSubtags(languageCode: 'en'),
   Locale.fromSubtags(languageCode: 'ar'),
   Locale.fromSubtags(languageCode: 'cs'),
+  // TODO(l10n::cy): remove kDebugMode below after translation
+  if (kDebugMode) Locale.fromSubtags(languageCode: 'cy'),
   Locale.fromSubtags(languageCode: 'de'),
+  // TODO(l10n::eo): remove kDebugMode below after translation
+  if (kDebugMode) Locale.fromSubtags(languageCode: 'eo'),
   Locale.fromSubtags(languageCode: 'es'),
   // TODO(l10n::eu): remove kDebugMode below after translation
   if (kDebugMode) Locale.fromSubtags(languageCode: 'eu'),
@@ -124,6 +129,8 @@ const appLocalizationsDelegates = <LocalizationsDelegate>[
   GlobalMaterialLocalizations.delegate,
   GlobalWidgetsLocalizations.delegate,
   GlobalCupertinoLocalizations.delegate,
+  MaterialLocalizationsEo.delegate,
+  CupertinoLocalizationsEo.delegate,
 ];
 //#endregion
 
