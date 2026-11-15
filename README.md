@@ -19,7 +19,7 @@
   <a href="https://github.com/FriesI23/mhabit/actions/workflows/release-app.yml"><img src="https://img.shields.io/github/actions/workflow/status/FriesI23/mhabit/release-app.yml?style=flat-square&label=CI" alt="Build status"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/FriesI23/mhabit?style=flat-square&color=blue" alt="Apache 2.0 License"></a>
   <br>
-  <img src="https://img.shields.io/badge/Flutter-3.35.7-02569B?style=flat-square&logo=Flutter&logoColor=white" alt="Built with Flutter 3.35.7">
+  <img src="https://img.shields.io/badge/Flutter-3.44.9-02569B?style=flat-square&logo=Flutter&logoColor=white" alt="Built with Flutter 3.44.9">
   <img src="https://img.shields.io/badge/WebDAV-supported-brightgreen?style=flat-square" alt="WebDAV sync supported">
   <a href="https://hosted.weblate.org/engage/mhabit/"><img src="https://hosted.weblate.org/widget/mhabit/app/svg-badge.svg" alt="Translation status"></a>
   <a href="https://discord.gg/medWsVYpb4"><img src="https://img.shields.io/badge/Discord-7289DA?style=flat-square&logo=discord&logoColor=white" alt="Discord community"></a>

@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/consts.dart';
-import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/app_settings/_widgets/app_language_changer.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
@@ -28,8 +27,8 @@ void main() {
               brightness: size.width < 600 ? Brightness.light : Brightness.dark,
             ),
             locale: const Locale('de'),
-            localizationsDelegates: L10n.localizationsDelegates,
-            supportedLocales: L10n.supportedLocales,
+            localizationsDelegates: appLocalizationsDelegates,
+            supportedLocales: appSupportedLocales,
             builder: (context, child) => MediaQuery(
               data: MediaQuery.of(
                 context,
@@ -99,6 +98,17 @@ void main() {
         expect(result?.choosenLanguage, const Locale('en'));
         expect(completions, 1);
         await open();
+        final esperanto = find.byKey(const ValueKey('language-option-eo'));
+        await Scrollable.ensureVisible(
+          tester.element(esperanto),
+          alignment: 0.5,
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(esperanto);
+        await tester.pumpAndSettle();
+        expect(result?.choosenLanguage, const Locale('eo'));
+        expect(completions, 2);
+        await open();
         final system = find.byKey(const ValueKey('language-option-system'));
         await Scrollable.ensureVisible(tester.element(system), alignment: 0.5);
         await tester.pumpAndSettle();
@@ -106,7 +116,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(result, isNotNull);
         expect(result!.choosenLanguage, isNull);
-        expect(completions, 2);
+        expect(completions, 3);
         await open();
         await tester.tap(
           platform == TargetPlatform.android
@@ -115,7 +125,7 @@ void main() {
         );
         await tester.pumpAndSettle();
         expect(result, isNull);
-        expect(completions, 3);
+        expect(completions, 4);
         expect(tester.takeException(), isNull);
       });
     }

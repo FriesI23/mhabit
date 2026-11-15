@@ -61,6 +61,11 @@
             "name": "peterczegledy",
             "url": "https://github.com/peterczegledy",
             "comment": "Hungarian translation contribution"
+        },
+        {
+            "id": 13,
+            "name": "Jon Stevenson",
+            "comment": "Esperanto and Welsh store metadata translation contribution"
         }
     ],
     "contributors": [ 1, 2, 3, 4, 5, 6, 7, 8, 9,
@@ -103,6 +108,7 @@
                 "email": "pavel.borecki@gmail.com"
             }
         ],
+        "cy": [ 13 ],
         "de": [
             3,
             {
@@ -148,6 +154,9 @@
             {
                 "name": "Angel",
                 "email": "angel.vinas@gmx.es"
+            },
+            {
+                "name": "Jesus Calle"
             }
 
         ],
@@ -158,6 +167,7 @@
                 "url": "https://github.com/3Lord3"
             }
         ],
+        "eo": [ 13 ],
         "eu": [
             {
                 "name": "Txopi",

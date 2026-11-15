@@ -3,7 +3,9 @@
 	<locale android:name="en" />
 	<locale android:name="ar" />
 	<locale android:name="cs" />
+	<locale android:name="cy" />
 	<locale android:name="de" />
+	<locale android:name="eo" />
 	<locale android:name="es" />
 	<locale android:name="eu" />
 	<locale android:name="fa" />

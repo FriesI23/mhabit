@@ -2,25 +2,16 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## Unreleased
+## 1.27.19+208-pre
 
-- Feature: choose and remember UI style and Apple Sidebar appearance in Display
-  settings
-- Fix: preserve FAB Hero transitions after switching UI styles and returning to
-  habit pages
-- Feature: show donation entries on every platform and distribution
-- Feature: support cards keep GitHub Star and add rating links for Google Play,
-  App Store and Microsoft Store, or a Flathub favorites link
-- Fix: refresh support cards and open previews when the support channel changes
-- Fix: keep background support controls visually enabled while a dialog is open
-- Feature: shared support cards with animated star and coffee headers, code icons,
-  filled icon buttons, automatic paging and clickable dots; Settings centers the
-  width-limited card, and optional reminders retain later/permanent dismissal
-
-- Fix: preserve Loop import history for habits with non-Latin names and retain
-  record notes (#639)
-- Fix: restore WebDAV sync with mixed authentication challenges, including
-  Fastmail (#690)
+- Feature: support cards, donation/store links and later/never reminders (#707)
+- Feature: save UI style and Sidebar appearance (#709)
+- Fix: restore browsing after empty search (#703)
+- Fix: mixed WebDAV authentication (#705)
+- Fix: Loop history with non-Latin names and record notes (#706)
+- Fix: startup reminders (#708)
+- Fix: habit-page transitions after style changes (#709)
+- Update Arabic, Spanish and store translations
 
 ## 1.27.18+207
 
