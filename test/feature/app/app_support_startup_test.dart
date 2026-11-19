@@ -5,9 +5,10 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/providers/support/about_info.dart';
@@ -18,7 +19,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 
 import '../../support/stub/about_info.dart';
-
 import '../../support/stub/shared_preferences.dart';
 
 final _now = DateTime.utc(2026, 11, 12);
@@ -654,7 +654,7 @@ void main() {
               data: MediaQuery.of(context).copyWith(disableAnimations: true),
               child: child!,
             ),
-            localizationsDelegates: L10n.localizationsDelegates,
+            localizationsDelegates: appLocalizationsDelegates,
             supportedLocales: L10n.supportedLocales,
             home: StatefulBuilder(
               builder: (context, setState) {
@@ -713,9 +713,11 @@ void main() {
           ),
           child: AppSupportReminder(
             canShowDialog: (_) => true,
-            showSupportDialog:
-                ({required context, required info, controller}) =>
-                    result.future,
+            showSupportDialog: ({
+              required context,
+              required info,
+              controller,
+            }) => result.future,
             child: const Scaffold(),
           ),
         ),

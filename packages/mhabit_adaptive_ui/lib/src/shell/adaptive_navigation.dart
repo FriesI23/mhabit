@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart' show MaterialLocalizations;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
     hide AdaptiveNavigationDestination, NavigationDestinationIcons;
+import 'package:material_ui/material_ui.dart' show MaterialLocalizations;
 
 import '../adaptive/adaptive_navigation_destination.dart';
 import '../adaptive_style.dart';

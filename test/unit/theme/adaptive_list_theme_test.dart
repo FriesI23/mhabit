@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/extensions/custom_color_extensions.dart';
 import 'package:mhabit/models/app_theme_color.dart';
 import 'package:mhabit/models/habit_color_type.dart';
@@ -68,9 +68,8 @@ void main() {
                   MaterialApp(
                     theme: theme,
                     builder: (context, child) => AppAdaptiveUiTheme(
-                      data: AppAdaptiveUiTheme.of(
-                        context,
-                      ).copyWith(style: style),
+                      data: AppAdaptiveUiTheme.of(context)
+                          .copyWith(style: style),
                       child: child!,
                     ),
                     home: Scaffold(
@@ -136,16 +135,16 @@ void main() {
                   );
                   expect(tile.onTap, isNotNull);
                   expect(
-                    DefaultTextStyle.of(
-                      tester.element(find.text('Language')),
-                    ).style.color,
+                    DefaultTextStyle.of(tester.element(find.text('Language')))
+                        .style
+                        .color,
                     expected(CupertinoColors.label, colors.onSurface),
                   );
                   for (final text in ['Header', 'Current language']) {
                     expect(
-                      DefaultTextStyle.of(
-                        tester.element(find.text(text)),
-                      ).style.color,
+                      DefaultTextStyle.of(tester.element(find.text(text)))
+                          .style
+                          .color,
                       expected(
                         CupertinoColors.secondaryLabel,
                         colors.onSurfaceVariant,

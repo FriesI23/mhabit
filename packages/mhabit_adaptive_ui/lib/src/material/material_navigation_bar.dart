@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../adaptive/adaptive_navigation_destination.dart';
 
@@ -70,13 +70,11 @@ class MaterialAdaptiveNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = Theme.of(
-      context,
-    ).colorScheme.surfaceContainer.withValues(alpha: 0.8);
+    final backgroundColor = Theme.of(context).colorScheme.surfaceContainer
+        .withValues(alpha: 0.8);
     return NavigationBarTheme(
-      data: NavigationBarTheme.of(
-        context,
-      ).copyWith(backgroundColor: backgroundColor),
+      data: NavigationBarTheme.of(context)
+          .copyWith(backgroundColor: backgroundColor),
       child: NavigationBar(
         selectedIndex: selectedIndex,
         destinations: [

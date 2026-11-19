@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart'
+import 'package:cupertino_ui/cupertino_ui.dart'
     show CupertinoUserInterfaceLevel, CupertinoUserInterfaceLevelData;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
 import 'package:provider/provider.dart';
@@ -38,9 +38,8 @@ typedef AppRootThemeBuilder = ThemeData Function(BuildContext context);
 CupertinoUserInterfaceLevelData appWindowInterfaceLevel(BuildContext context) =>
     switch (defaultTargetPlatform) {
       TargetPlatform.iOS =>
-        AdaptiveWindowControlLayoutScope.maybeOf(
-                  context,
-                )?.hasWindowControlAvoidance ==
+        AdaptiveWindowControlLayoutScope.maybeOf(context)
+                    ?.hasWindowControlAvoidance ==
                 true
             ? CupertinoUserInterfaceLevelData.elevated
             : CupertinoUserInterfaceLevelData.base,

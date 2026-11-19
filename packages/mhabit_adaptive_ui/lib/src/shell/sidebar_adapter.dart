@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart' show Theme;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
+import 'package:material_ui/material_ui.dart' show Theme;
 
 import '../adaptive/adaptive_navigation_destination.dart' as app;
 import '../breakpoints/window_size_class.dart';
@@ -11,8 +11,11 @@ import '../window_control/occlusion_layout.dart';
 import '../window_control/occlusion_toolbar.dart';
 import '../window_control/window_control_layout.dart';
 
-typedef CupertinoSidebarToolbarMiddleBuilder =
-    Widget Function(BuildContext context, Widget middle, double progress);
+typedef CupertinoSidebarToolbarMiddleBuilder = Widget Function(
+  BuildContext context,
+  Widget middle,
+  double progress,
+);
 
 /// Centers for a shared Sidebar slot, relative to the available toolbar region.
 ///
@@ -169,9 +172,8 @@ class _CupertinoSidebarToolbarMiddleLayoutState
         WindowSize.of(context).width >= WindowSizeClass.medium &&
         TickerMode.valuesOf(context).enabled &&
         _routesAcrossNavigators(context).every((route) => route.isCurrent);
-    final controller = CupertinoSidebarPresentationScope.maybeOf(
-      context,
-    )?.collapsedBarController;
+    final controller = CupertinoSidebarPresentationScope.maybeOf(context)
+        ?.collapsedBarController;
     if (eligible && controller != null) {
       _scheduleVisibility(controller, widget.enabled);
     }

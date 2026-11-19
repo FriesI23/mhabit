@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/entries/common/app_root_view.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
@@ -109,38 +109,36 @@ void main() {
       );
     });
 
-    testWidgets(
-      '$style root keeps other devices on the style defaults',
-      (tester) async {
-        await tester.pumpWidget(
-          AppRootView.withDefault(
-            adaptiveStyleOverride: style,
-            child: Builder(
-              builder: (context) {
-                expect(AppAdaptiveUiTheme.of(context).breakpoints, isNull);
-                expect(
-                  Breakpoints.of(context),
-                  same(
-                    style == AdaptiveStyle.apple
-                        ? const AppleBreakpoints()
-                        : const MaterialBreakpoints(),
-                  ),
-                );
-                return const SizedBox.shrink();
-              },
-            ),
+    testWidgets('$style root keeps other devices on the style defaults', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        AppRootView.withDefault(
+          adaptiveStyleOverride: style,
+          child: Builder(
+            builder: (context) {
+              expect(AppAdaptiveUiTheme.of(context).breakpoints, isNull);
+              expect(
+                Breakpoints.of(context),
+                same(
+                  style == AdaptiveStyle.apple
+                      ? const AppleBreakpoints()
+                      : const MaterialBreakpoints(),
+                ),
+              );
+              return const SizedBox.shrink();
+            },
           ),
-        );
-        expect(
-          tester
-              .widget<AdaptiveWindowControlLayout>(
-                find.byType(AdaptiveWindowControlLayout),
-              )
-              .allowTopToolbarReclamation,
-          isFalse,
-        );
-      },
-      variant: TargetPlatformVariant.all(),
-    );
+        ),
+      );
+      expect(
+        tester
+            .widget<AdaptiveWindowControlLayout>(
+              find.byType(AdaptiveWindowControlLayout),
+            )
+            .allowTopToolbarReclamation,
+        isFalse,
+      );
+    }, variant: TargetPlatformVariant.all());
   }
 }

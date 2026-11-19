@@ -87,9 +87,8 @@ void registerWebDavSyncExtrasLiveTest({
       HttpOverrides.global = serverCertificate == null
           ? null
           : _FixtureHttpOverrides(serverCertificate);
-      final root = Uri.parse(
-        serverEndpoint!,
-      ).resolve('sync-extras-${DateTime.now().microsecondsSinceEpoch}/');
+      final root = Uri.parse(serverEndpoint!)
+          .resolve('sync-extras-${DateTime.now().microsecondsSinceEpoch}/');
       final config = AppWebDavSyncServer.newServer(
         identity: 'sync-extras-live',
         path: root.toString(),
@@ -219,9 +218,9 @@ void registerWebDavSyncExtrasLiveTest({
             whereArgs: [uuid],
           );
           expect(rows, hasLength(1));
-          final extras =
-              jsonDecode(rows.single['sync_extras']! as String)
-                  as Map<String, dynamic>;
+          final extras = jsonDecode(
+            rows.single['sync_extras']! as String,
+          ) as Map<String, dynamic>;
           expect(extras[key], value);
         }
 

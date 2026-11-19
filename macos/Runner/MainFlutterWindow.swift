@@ -2,10 +2,10 @@ import Cocoa
 import FlutterMacOS
 import macos_window_utils
 import mhabit_desktop_window_chrome
-import window_manager
 
 class MainFlutterWindow: NSWindow {
   private(set) var chrome: DesktopWindowChromePlugin?
+  private var hiddenAtLaunch = false
 
   override func zoom(_ sender: Any?) {
     chrome?.persistence?.suspend()
@@ -34,7 +34,10 @@ class MainFlutterWindow: NSWindow {
 
   override func order(_ place: NSWindow.OrderingMode, relativeTo otherWin: Int) {
     super.order(place, relativeTo: otherWin)
-    hiddenWindowAtLaunch()
+    if !hiddenAtLaunch {
+      hiddenAtLaunch = true
+      setIsVisible(false)
+    }
   }
 
   override func awakeFromNib() {

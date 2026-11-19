@@ -1,7 +1,7 @@
 import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_daily_goal.dart';

@@ -14,9 +14,10 @@
 
 import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
-import 'package:flutter/cupertino.dart' show CupertinoCheckbox;
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoCheckbox;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/app_settings/_widgets/app_setting_clear_cache.dart';
 import 'package:mhabit/widgets/widgets.dart';
@@ -47,14 +48,13 @@ void main() {
             await tester.pumpWidget(
               MaterialApp(
                 theme: ThemeData(platform: TargetPlatform.android),
-                localizationsDelegates: L10n.localizationsDelegates,
+                localizationsDelegates: appLocalizationsDelegates,
                 supportedLocales: L10n.supportedLocales,
                 builder: (context, child) => ValueListenableBuilder(
                   valueListenable: features,
                   builder: (context, value, child) => MediaQuery(
-                    data: MediaQuery.of(
-                      context,
-                    ).copyWith(displayFeatures: value),
+                    data: MediaQuery.of(context)
+                        .copyWith(displayFeatures: value),
                     child: Directionality(
                       textDirection: direction,
                       child: child!,
@@ -155,9 +155,8 @@ void main() {
                   (action) =>
                       action.label ==
                       (clearCache
-                          ? L10n.of(
-                              context,
-                            )!.appSetting_clearCacheDialog_confirmText
+                          ? L10n.of(context)!
+                                .appSetting_clearCacheDialog_confirmText
                           : 'Confirm'),
                 )
                 .onPressed!();
@@ -252,9 +251,9 @@ void main() {
         'Cancel',
         'Confirm',
       ]);
-      final action = adaptiveDialogActions(
-        tester,
-      ).firstWhere((action) => action.label == 'Confirm').onPressed!;
+      final action = adaptiveDialogActions(tester)
+          .firstWhere((action) => action.label == 'Confirm')
+          .onPressed!;
       action();
       action();
       await tester.pumpAndSettle();
@@ -266,9 +265,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(result, false);
       await open();
-      final staleAction = adaptiveDialogActions(
-        tester,
-      ).firstWhere((action) => action.label == 'Confirm').onPressed!;
+      final staleAction = adaptiveDialogActions(tester)
+          .firstWhere((action) => action.label == 'Confirm')
+          .onPressed!;
       await tester.tapAt(const Offset(5, 5));
       staleAction();
       await tester.pumpAndSettle();
@@ -300,12 +299,11 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             theme: ThemeData(platform: platform),
-            localizationsDelegates: L10n.localizationsDelegates,
+            localizationsDelegates: appLocalizationsDelegates,
             supportedLocales: L10n.supportedLocales,
             builder: (context, child) => MediaQuery(
-              data: MediaQuery.of(
-                context,
-              ).copyWith(textScaler: const TextScaler.linear(2)),
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: const TextScaler.linear(2)),
               child: Directionality(
                 textDirection: TextDirection.rtl,
                 child: child!,
@@ -366,7 +364,7 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             theme: ThemeData(platform: platform),
-            localizationsDelegates: L10n.localizationsDelegates,
+            localizationsDelegates: appLocalizationsDelegates,
             supportedLocales: L10n.supportedLocales,
             home: TestAdaptiveUiTheme(
               update: (parentTheme) => parentTheme.copyWith(style: style),

@@ -39,8 +39,7 @@ class AdaptiveWindowInteractionRegion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      AdaptiveWindowInteractionBinding.maybeOf(
-        context,
-      )?.wrapInteractionRegion(child) ??
+      AdaptiveWindowInteractionBinding.maybeOf(context)
+          ?.wrapInteractionRegion(child) ??
       child;
 }

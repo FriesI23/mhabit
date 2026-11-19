@@ -1,6 +1,6 @@
 import 'dart:ui' show DisplayFeature;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The device environment for adaptive decisions: window geometry, platform
 /// and display features.

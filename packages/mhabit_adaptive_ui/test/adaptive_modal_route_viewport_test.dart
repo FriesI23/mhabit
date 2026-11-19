@@ -1,7 +1,7 @@
 import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_adaptive_modal.dart';
 import 'package:mhabit_adaptive_ui/src/material/material_adaptive_modal.dart';

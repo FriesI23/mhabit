@@ -106,6 +106,39 @@ void main() {
     final owner = ThirdPartyImportOwner();
     const provider = ThirdPartyProvider.loopHabitTracker;
 
+    test('damaged compressed history reports parseError', () async {
+      await expectLater(
+        owner.parseThirdPartyFile(
+          provider,
+          buildLoopSampleZipWithDamagedRecords(),
+        ),
+        throwsA(
+          isA<ThirdPartyImportException>().having(
+            (e) => e.type,
+            'type',
+            ThirdPartyImportErrorType.parseError,
+          ),
+        ),
+      );
+    });
+
+    test('truncated ZIP reports parseError', () async {
+      final bytes = buildLoopSampleZip();
+      await expectLater(
+        owner.parseThirdPartyFile(
+          provider,
+          Uint8List.sublistView(bytes, 0, bytes.length ~/ 2),
+        ),
+        throwsA(
+          isA<ThirdPartyImportException>().having(
+            (e) => e.type,
+            'type',
+            ThirdPartyImportErrorType.parseError,
+          ),
+        ),
+      );
+    });
+
     test(
       'ZIP without Habits.csv → ThirdPartyImportException(parseError)',
       () async {

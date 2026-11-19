@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
@@ -122,9 +122,8 @@ class _PageState extends State<_Page> {
       confirmed = true;
     }
     if (!mounted || !confirmed) return;
-    Navigator.of(
-      context,
-    ).pop<AppSyncServerEditorResult>(AppSyncServerEditorResult.update(form));
+    Navigator.of(context)
+        .pop<AppSyncServerEditorResult>(AppSyncServerEditorResult.update(form));
   }
 
   bool shouldShowCancelConfirmDialog(AppSyncServerFormViewModel vm) =>
@@ -313,9 +312,8 @@ class _PageAdvancedSection extends StatelessWidget {
           Text(l10n?.appSync_serverEditor_advance_titleText ?? "Advanced"),
     ),
     leading: const Icon(MdiIcons.dotsHorizontal),
-    tilePadding: ExpansionTileTheme.of(
-      context,
-    ).tilePadding?.add(const EdgeInsets.symmetric(vertical: 4.0)),
+    tilePadding: ExpansionTileTheme.of(context).tilePadding
+        ?.add(const EdgeInsets.symmetric(vertical: 4.0)),
     shape: const Border(),
     initiallyExpanded: expanded ?? false,
     onExpansionChanged: onExpansionChanged,

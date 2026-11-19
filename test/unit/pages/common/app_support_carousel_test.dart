@@ -3,10 +3,11 @@
 
 import 'dart:ui' show SemanticsAction, Tristate;
 
-import 'package:flutter/cupertino.dart' show CupertinoButton;
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoButton;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/common/widgets.dart';
 import 'package:mhabit/providers/support/about_info.dart';
@@ -70,7 +71,7 @@ void main() {
           brightness: brightness,
           colorSchemeSeed: Colors.purple,
         ),
-        localizationsDelegates: L10n.localizationsDelegates,
+        localizationsDelegates: appLocalizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         locale: locale,
         builder: (context, child) => MediaQuery(
@@ -196,6 +197,13 @@ void main() {
             expect(
               tester.getBottomLeft(hero).dy,
               lessThan(tester.getTopLeft(find.text(title).first).dy),
+            );
+            expect(
+              tester
+                  .getSemantics(find.text(title).first)
+                  .getSemanticsData()
+                  .headingLevel,
+              1,
             );
             final bounds = tester.getRect(find.byType(PageView));
             for (final label in labels) {

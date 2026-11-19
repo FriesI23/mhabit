@@ -115,9 +115,8 @@ final class _AppSyncPasswordStore {
   }
 
   Future<void> writePassword(String identity, {required String? value}) {
-    return const FlutterSecureStorage(
-      mOptions: MacOsOptions(),
-    ).write(key: _passwordKey(identity), value: value);
+    return const FlutterSecureStorage(mOptions: MacOsOptions())
+        .write(key: _passwordKey(identity), value: value);
   }
 
   String _passwordKey(String identity) => 'sync-pwd-$identity';
@@ -432,10 +431,8 @@ class AppSyncOwner
         default:
           postTask = null;
       }
-      return Future.wait([
-        removeOldPasswordTask,
-        ?postTask,
-      ]).then((results) => results.every((e) => e));
+      return Future.wait([removeOldPasswordTask, ?postTask])
+          .then((results) => results.every((e) => e));
     }
 
     return doSave().then((value) {
@@ -926,9 +923,8 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
       case AppSyncServerType.webdav:
         switch (config) {
           case AppWebDavSyncServer():
-            return shouldSyncInWebDav(
-              config,
-            ).then((result) => result && basicCheck());
+            return shouldSyncInWebDav(config)
+                .then((result) => result && basicCheck());
           default:
             throw UnimplementedError(
               "<${config.runtimeType}> isn't support yet, got $config",

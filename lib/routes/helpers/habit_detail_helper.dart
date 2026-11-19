@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../common/types.dart';
 import '../../models/habit_color.dart';
@@ -28,7 +28,7 @@ import '../app_router.dart';
 /// via [HabitDetailExtra.new] and consumers unwrap via the [color]/[summaryAdapter]
 /// accessors — the raw record is never exposed.
 extension type const HabitDetailExtra._(
-  ({HabitColor? color, summary.HabitDetailAdapter? summaryAdapter}) _value
+  ({HabitColor? color, summary.HabitDetailAdapter? summaryAdapter}) _value,
 ) {
   const HabitDetailExtra({
     HabitColor? color,

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:material_ui/material_ui.dart';
 
 import '../../common/app_info.dart';
 import '../../extensions/asset_bundle_extensions.dart';
@@ -289,9 +289,8 @@ class _ChangelogBannerState extends State<_ChangelogBanner>
             leading: const Icon(Icons.celebration_outlined),
             forceActionsBelow: true,
             content: Text(
-              L10n.of(
-                context,
-              )!.changelog_banner_title(widget.controller.version),
+              L10n.of(context)!
+                  .changelog_banner_title(widget.controller.version),
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             actionArea: OverflowBar(

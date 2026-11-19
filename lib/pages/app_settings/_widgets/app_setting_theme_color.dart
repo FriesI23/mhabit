@@ -16,7 +16,7 @@ import 'dart:io';
 
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
@@ -275,9 +275,9 @@ class _InternalChosenOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    final color = Theme.of(
-      context,
-    ).extension<CustomColors>()?.getBuiltInColor(colorType);
+    final color = Theme.of(context)
+        .extension<CustomColors>()
+        ?.getBuiltInColor(colorType);
     return Semantics(
       selected: isSelected,
       child: AdaptiveListTile(
@@ -287,9 +287,9 @@ class _InternalChosenOption extends StatelessWidget {
           child: ColoredBox(color: color ?? Colors.transparent),
         ),
         trailing: isSelected ? const AdaptiveCheckmark() : null,
-        onTap: () => Navigator.of(
-          context,
-        ).pop(InternalAppThemeColor(colorType: colorType)),
+        onTap: () =>
+            Navigator.of(context)
+                .pop(InternalAppThemeColor(colorType: colorType)),
       ),
     );
   }

@@ -3,9 +3,10 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/app_settings/widgets.dart';
 import 'package:mhabit/providers/app_ui/app_theme.dart';
@@ -42,7 +43,7 @@ void main() {
           value: viewModel,
           child: MaterialApp(
             theme: ThemeData(platform: platform),
-            localizationsDelegates: L10n.localizationsDelegates,
+            localizationsDelegates: appLocalizationsDelegates,
             supportedLocales: L10n.supportedLocales,
             home: Scaffold(
               body: SingleChildScrollView(
@@ -175,7 +176,7 @@ void main() {
           value: viewModel,
           child: MaterialApp(
             locale: entry.$1,
-            localizationsDelegates: L10n.localizationsDelegates,
+            localizationsDelegates: appLocalizationsDelegates,
             supportedLocales: L10n.supportedLocales,
             home: const Scaffold(body: AppSettingThemeModeTile()),
           ),
@@ -198,7 +199,7 @@ void main() {
       ChangeNotifierProvider<AppThemeViewModel>.value(
         value: viewModel,
         child: const MaterialApp(
-          localizationsDelegates: L10n.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: L10n.supportedLocales,
           home: Scaffold(body: AppSettingThemeModeTile()),
         ),
@@ -234,7 +235,7 @@ void main() {
         value: viewModel,
         child: MaterialApp(
           theme: ThemeData(platform: TargetPlatform.iOS),
-          localizationsDelegates: L10n.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: L10n.supportedLocales,
           home: const Scaffold(
             body: AppSettingThemeModeTile(useSideBySideLayout: true),

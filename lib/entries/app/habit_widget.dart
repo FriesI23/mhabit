@@ -61,7 +61,7 @@ final class HabitWidgetPostInitBridge
 
   /// Invalidates foreground caches after a native background operation.
   @override
-  void changed() => _onExternalChange();
+  Future<void> changed() async => _onExternalChange();
 
   /// Requests publication for events that can change the display projection.
   @override

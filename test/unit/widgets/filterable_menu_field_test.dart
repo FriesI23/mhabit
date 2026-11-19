@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/widgets/_widgets/filterable_menu_field.dart';
 
 /// Helper that wraps [child] in a [MaterialApp] + [Scaffold].

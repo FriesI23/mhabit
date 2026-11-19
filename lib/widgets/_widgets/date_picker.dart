@@ -19,8 +19,8 @@
 
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../l10n/localizations.dart';
 import 'date_picker_custom.dart';
@@ -656,9 +656,8 @@ class _DatePickerHeader extends StatelessWidget {
             .clamp(maxScaleFactor: maxHeaderTextScaleFactor)
             .scale(_fontSizeToScale) /
         _fontSizeToScale;
-    final double scaledFontSize = MediaQuery.textScalerOf(
-      context,
-    ).scale(titleStyle?.fontSize ?? 32);
+    final double scaledFontSize = MediaQuery.textScalerOf(context)
+        .scale(titleStyle?.fontSize ?? 32);
     final double headerScaleFactor = textScaleFactor > 1
         ? textScaleFactor
         : 1.0;
@@ -687,9 +686,8 @@ class _DatePickerHeader extends StatelessWidget {
           ? 3
           : 2,
       overflow: TextOverflow.ellipsis,
-      textScaler: MediaQuery.textScalerOf(
-        context,
-      ).clamp(maxScaleFactor: textScaleFactor),
+      textScaler: MediaQuery.textScalerOf(context)
+          .clamp(maxScaleFactor: textScaleFactor),
     );
 
     final double fontScaleAdjustedHeaderHeight = headerScaleFactor > 1.3

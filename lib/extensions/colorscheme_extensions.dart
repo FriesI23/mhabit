@@ -14,7 +14,7 @@
 
 import 'dart:ui' show Color;
 
-import 'package:flutter/material.dart' show ColorScheme;
+import 'package:material_ui/material_ui.dart' show ColorScheme;
 
 extension CustomColorScheme on ColorScheme {
   Color get outlineOpacity64 => outline.withValues(alpha: 0.64);

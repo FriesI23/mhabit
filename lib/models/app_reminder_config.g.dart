@@ -10,7 +10,8 @@ part of 'app_reminder_config.dart';
 
 abstract class _$AppReminderConfigCWProxy {
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -31,7 +32,8 @@ class _$AppReminderConfigCWProxyImpl implements _$AppReminderConfigCWProxy {
   final AppReminderConfig _value;
 
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart

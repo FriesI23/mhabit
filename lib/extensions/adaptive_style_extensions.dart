@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart'
+import 'package:cupertino_ui/cupertino_ui.dart'
     show CupertinoTheme, kMinInteractiveDimensionCupertino;
-import 'package:flutter/material.dart' show BuildContext, Color, Theme;
+import 'package:material_ui/material_ui.dart' show BuildContext, Color, Theme;
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 extension AppAdaptiveStyle on AdaptiveStyle {

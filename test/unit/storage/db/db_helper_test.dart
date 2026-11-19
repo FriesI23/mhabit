@@ -101,38 +101,35 @@ void main() {
       },
     );
 
-    test(
-      'DBHelperViewModel picks up a changed databaseFactory path for new helpers',
-      () async {
-        final overrideDir = await Directory.systemTemp.createTemp(
-          'mhabit_db_helper_override_',
-        );
-        final firstHelper = DBHelperViewModel();
-        final firstExpectedPath = path.join(
-          await databaseFactory.getDatabasesPath(),
-          appDBName,
-        );
+    test('DBHelperViewModel picks up a changed databaseFactory path for new helpers', () async {
+      final overrideDir = await Directory.systemTemp.createTemp(
+        'mhabit_db_helper_override_',
+      );
+      final firstHelper = DBHelperViewModel();
+      final firstExpectedPath = path.join(
+        await databaseFactory.getDatabasesPath(),
+        appDBName,
+      );
 
-        addTearDown(() async {
-          firstHelper.dispose();
-          await _deleteTempDir(overrideDir);
-        });
+      addTearDown(() async {
+        firstHelper.dispose();
+        await _deleteTempDir(overrideDir);
+      });
 
-        await firstHelper.init();
-        await databaseFactory.setDatabasesPath(overrideDir.path);
+      await firstHelper.init();
+      await databaseFactory.setDatabasesPath(overrideDir.path);
 
-        final secondHelper = DBHelperViewModel();
-        final secondExpectedPath = path.join(overrideDir.path, appDBName);
+      final secondHelper = DBHelperViewModel();
+      final secondExpectedPath = path.join(overrideDir.path, appDBName);
 
-        addTearDown(secondHelper.dispose);
+      addTearDown(secondHelper.dispose);
 
-        await secondHelper.init();
+      await secondHelper.init();
 
-        expect(firstHelper.local.db.path, firstExpectedPath);
-        expect(secondHelper.local.db.path, secondExpectedPath);
-        expect(firstHelper.local.db.path, isNot(secondHelper.local.db.path));
-      },
-    );
+      expect(firstHelper.local.db.path, firstExpectedPath);
+      expect(secondHelper.local.db.path, secondExpectedPath);
+      expect(firstHelper.local.db.path, isNot(secondHelper.local.db.path));
+    });
   });
 
   group('DB v4→v5 migration — custom_color + custom_color_tinted columns', () {
@@ -227,8 +224,7 @@ void main() {
       await expectLater(
         applyMigration,
         returnsNormally,
-        reason:
-            'second migration pass should be a no-op, not throw duplicate column',
+        reason: 'second migration pass should be a no-op, not throw duplicate column',
       );
     });
 
@@ -398,8 +394,7 @@ CREATE TABLE IF NOT EXISTS ${TableName.groups} (
       await expectLater(
         applyMigration,
         returnsNormally,
-        reason:
-            'second migration pass should be a no-op, not throw duplicate column',
+        reason: 'second migration pass should be a no-op, not throw duplicate column',
       );
     });
 

@@ -1,9 +1,10 @@
 import 'package:adaptive_actions/cupertino.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' show MaterialApp, Scaffold, ThemeData;
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
     show CupertinoSidebar;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart'
+    show MaterialApp, Scaffold, ThemeData;
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_search_toolbar.dart';
 

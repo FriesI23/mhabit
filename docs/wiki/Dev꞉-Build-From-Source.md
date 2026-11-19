@@ -123,13 +123,14 @@ Build outputs located at:
 
 ### Building for Linux Desktop
 
-1. Installing the following packages for [SQFlite database][sqflite-ffi-linux]
-   and [`flutter_secure_storage`][fss-linux]:
+1. Install the following packages for [SQFlite database][sqflite-ffi-linux],
+   [`flutter_secure_storage`][fss-linux], and the native window build hook:
 
    ```shell
    sudo apt-get -y install \
       lld-14 libsqlite3-0 libsqlite3-dev \
-      libsecret-1-dev libjsoncpp-dev
+      libsecret-1-dev libjsoncpp-dev \
+      libgtk-3-dev libx11-dev libxi-dev
    ```
 
 2. Please follow this [official guide][flutter-linux] to initialize your

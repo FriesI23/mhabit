@@ -1,14 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
-import 'package:window_manager/window_manager.dart';
 
+import '../desktop_window_runtime.dart';
 import 'desktop_window_persistence_api.dart';
 import 'desktop_window_state_store.dart';
 
 /// Coordinates persistence only. Native adapters own geometry and state rules;
 /// the existing window owner remains responsible for displaying the window.
-class DesktopWindowPersistenceController<T extends Object> with WindowListener {
+class DesktopWindowPersistenceController<T extends Object>
+    with DesktopWindowListener {
   /// The adapter selects native or store-backed persistence; this owner
   /// coordinates scheduling and lifecycle for either implementation.
   DesktopWindowPersistenceController({
@@ -43,7 +44,9 @@ class DesktopWindowPersistenceController<T extends Object> with WindowListener {
   Future<void> _initialize(String name, Size minimumSize) async {
     try {
       if (_adapter.managesClose) {
-        await windowManager.ensureInitialized().timeout(operationTimeout);
+        await DesktopWindowRuntime.instance.ensureInitialized().timeout(
+          operationTimeout,
+        );
       }
       await _adapter.initialize(
         name,
@@ -56,11 +59,13 @@ class DesktopWindowPersistenceController<T extends Object> with WindowListener {
     }
     if (_disposed) return;
     // Restore/storage failures must not prevent tracking or showing defaults.
-    windowManager.addListener(this);
+    DesktopWindowRuntime.instance.addListener(this);
     _ready = true;
     if (_adapter.managesClose) {
       try {
-        await windowManager.setPreventClose(true).timeout(operationTimeout);
+        await DesktopWindowRuntime.instance
+            .setPreventClose(true)
+            .timeout(operationTimeout);
         _closeHookActive = true;
       } catch (error) {
         debugPrint('Window placement close hook failed: $error');
@@ -97,10 +102,6 @@ class DesktopWindowPersistenceController<T extends Object> with WindowListener {
   void onWindowMove() => _schedule();
   @override
   void onWindowResize() => _schedule();
-  @override
-  void onWindowMoved() => _schedule();
-  @override
-  void onWindowResized() => _schedule();
 
   @override
   void onWindowClose() {
@@ -116,15 +117,16 @@ class DesktopWindowPersistenceController<T extends Object> with WindowListener {
     } on TimeoutException {
       debugPrint('Window placement close flush timed out');
     } finally {
-      // Restore native closing semantics after the bounded save. Do not use
-      // destroy(): on Windows window_manager implements it as PostQuitMessage.
+      // Restore runner-owned closing semantics after the bounded save.
       try {
-        await windowManager.setPreventClose(false).timeout(operationTimeout);
+        await DesktopWindowRuntime.instance
+            .setPreventClose(false)
+            .timeout(operationTimeout);
         _closeHookActive = false;
-        await windowManager.close().timeout(operationTimeout);
+        await DesktopWindowRuntime.instance.close().timeout(operationTimeout);
       } catch (error) {
         debugPrint('Window placement native close failed: $error');
-        await windowManager.destroy();
+        await DesktopWindowRuntime.instance.destroy();
       }
     }
   }
@@ -140,10 +142,12 @@ class DesktopWindowPersistenceController<T extends Object> with WindowListener {
       debugPrint('Window placement dispose flush timed out');
     }
     _disposed = true;
-    windowManager.removeListener(this);
+    DesktopWindowRuntime.instance.removeListener(this);
     try {
       if (_closeHookActive) {
-        await windowManager.setPreventClose(false).timeout(operationTimeout);
+        await DesktopWindowRuntime.instance
+            .setPreventClose(false)
+            .timeout(operationTimeout);
         _closeHookActive = false;
       }
       await _adapter.dispose().timeout(operationTimeout);

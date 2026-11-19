@@ -15,9 +15,9 @@
 import 'package:adaptive_actions/core.dart';
 import 'package:adaptive_actions/cupertino.dart'
     show CupertinoActionPresentation;
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoIcons;
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 

@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 
 import '../adaptive/adaptive_dialog.dart' show AdaptiveDialogAction;
 import '../app_adaptive_ui_theme.dart';

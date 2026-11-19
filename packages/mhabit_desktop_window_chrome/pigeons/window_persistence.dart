@@ -5,8 +5,7 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/persistence/window_persistence_api.g.dart',
-    swiftOut:
-        'macos/mhabit_desktop_window_chrome/Sources/mhabit_desktop_window_chrome/WindowPersistence.g.swift',
+    swiftOut: 'macos/mhabit_desktop_window_chrome/Sources/mhabit_desktop_window_chrome/WindowPersistence.g.swift',
     swiftOptions: SwiftOptions(errorClassName: 'WindowPersistenceError'),
     cppHeaderOut: 'windows/window_persistence.g.h',
     cppSourceOut: 'windows/window_persistence.g.cpp',

@@ -7,8 +7,8 @@
 //     http://www.apache.org/licenses/LICENSE-2.0
 
 import 'package:adaptive_actions/core.dart';
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoIcons;
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../extensions/adaptive_style_extensions.dart';

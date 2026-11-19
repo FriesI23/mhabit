@@ -59,9 +59,8 @@ final class AppleSystemVersion implements Comparable<AppleSystemVersion> {
     final plain = tryParse(source);
     if (plain != null) return plain;
 
-    final match = RegExp(
-      r'\bVersion\s+(\d+)(?:\.(\d+))?(?:\.(\d+))?',
-    ).firstMatch(source);
+    final match = RegExp(r'\bVersion\s+(\d+)(?:\.(\d+))?(?:\.(\d+))?')
+        .firstMatch(source);
     if (match == null) return null;
     return AppleSystemVersion(
       int.parse(match.group(1)!),

@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 
 /// Adapts sidebar toolbar geometry to a Cupertino navigation bar.

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../adaptive_style.dart';
 import '../app_adaptive_ui_theme.dart';
@@ -58,9 +58,8 @@ Future<T?> showAdaptiveSheet<T>({
   );
   if (presentationOverride == null) {
     final effectiveBarrierDismissible = barrierDismissible ?? true;
-    final barrierLabel = MaterialLocalizations.of(
-      context,
-    ).modalBarrierDismissLabel;
+    final barrierLabel = MaterialLocalizations.of(context)
+        .modalBarrierDismissLabel;
     return switch (style) {
       AdaptiveStyle.apple => showCupertinoAdaptiveModalRoute<T>(
         context: context,
@@ -103,9 +102,8 @@ Future<T?> showAdaptiveSheet<T>({
     };
   }
   final presentation = presentationOverride;
-  final barrierLabel = MaterialLocalizations.of(
-    context,
-  ).modalBarrierDismissLabel;
+  final barrierLabel = MaterialLocalizations.of(context)
+      .modalBarrierDismissLabel;
 
   Widget buildRouteContent(ScrollController? scrollController) => themes.wrap(
     AdaptiveComponentTheme(

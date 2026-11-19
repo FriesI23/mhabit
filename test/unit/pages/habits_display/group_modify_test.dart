@@ -15,14 +15,15 @@
 import 'dart:async';
 import 'dart:ui' show Tristate;
 
-import 'package:flutter/cupertino.dart'
+import 'package:cupertino_ui/cupertino_ui.dart'
     show
         CupertinoActivityIndicator,
         CupertinoListTile,
         CupertinoSwitch,
         CupertinoTextField;
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/group.dart';
 import 'package:mhabit/models/habit_color.dart';
@@ -244,7 +245,7 @@ void main() {
       ];
       await tester.pumpWidget(
         MaterialApp(
-          localizationsDelegates: L10n.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: L10n.supportedLocales,
           locale: const Locale('en'),
           home: Scaffold(
@@ -473,9 +474,8 @@ void main() {
                 builder: (context, child) => Directionality(
                   textDirection: TextDirection.rtl,
                   child: MediaQuery(
-                    data: MediaQuery.of(
-                      context,
-                    ).copyWith(textScaler: const TextScaler.linear(2)),
+                    data: MediaQuery.of(context)
+                        .copyWith(textScaler: const TextScaler.linear(2)),
                     child: child!,
                   ),
                 ),

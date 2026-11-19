@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 Widget _host({
@@ -325,9 +325,8 @@ void main() {
     );
     final materialContext = tester.element(find.byType(TextButton));
     expect(
-      Theme.of(
-        materialContext,
-      ).textButtonTheme.style?.foregroundColor?.resolve(<WidgetState>{}),
+      Theme.of(materialContext).textButtonTheme.style?.foregroundColor
+          ?.resolve(<WidgetState>{}),
       const Color(0xFF123456),
     );
 

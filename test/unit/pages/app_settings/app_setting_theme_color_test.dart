@@ -1,8 +1,9 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart' show CupertinoThemeData;
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoThemeData;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/app_theme_color.dart';
 import 'package:mhabit/models/habit_form.dart';
@@ -50,12 +51,11 @@ void main() {
                 ),
               ),
               locale: const Locale('de'),
-              localizationsDelegates: L10n.localizationsDelegates,
+              localizationsDelegates: appLocalizationsDelegates,
               supportedLocales: L10n.supportedLocales,
               builder: (context, child) => MediaQuery(
-                data: MediaQuery.of(
-                  context,
-                ).copyWith(textScaler: TextScaler.linear(debug ? 2 : 1)),
+                data: MediaQuery.of(context)
+                    .copyWith(textScaler: TextScaler.linear(debug ? 2 : 1)),
                 child: Directionality(
                   textDirection: debug ? TextDirection.rtl : TextDirection.ltr,
                   child: child!,

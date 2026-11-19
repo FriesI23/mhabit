@@ -14,9 +14,10 @@
 
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/extensions/adaptive_style_extensions.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/app_sync_options.dart';
@@ -88,16 +89,13 @@ Widget _host({
     child: MaterialApp(
       theme: platform == null ? null : ThemeData(platform: platform),
       locale: locale,
-      localizationsDelegates: locale == null
-          ? null
-          : L10n.localizationsDelegates,
+      localizationsDelegates: locale == null ? null : appLocalizationsDelegates,
       supportedLocales: L10n.supportedLocales,
       builder: (context, child) => Directionality(
         textDirection: direction,
         child: MediaQuery(
-          data: MediaQuery.of(
-            context,
-          ).copyWith(textScaler: TextScaler.linear(textScale)),
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: TextScaler.linear(textScale)),
           child: child!,
         ),
       ),

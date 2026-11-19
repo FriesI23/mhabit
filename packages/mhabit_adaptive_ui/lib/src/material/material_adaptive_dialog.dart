@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../adaptive/adaptive_dialog.dart' show AdaptiveDialogAction;
 import '../app_adaptive_ui_theme.dart';

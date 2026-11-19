@@ -354,9 +354,9 @@ class FetchDataFromServerTask<T> implements AppSyncSubTask<T> {
     path: path,
     client: client,
     responseHandler: (response) => _responseHandler(response, path).then(
-      (value) => WebDavSyncHabitData.fromJson(
-        value.data,
-      ).copyWith(etag: etag ?? value.etag),
+      (value) =>
+          WebDavSyncHabitData.fromJson(value.data)
+              .copyWith(etag: etag ?? value.etag),
     ),
   );
 
@@ -369,9 +369,9 @@ class FetchDataFromServerTask<T> implements AppSyncSubTask<T> {
     path: path,
     client: client,
     responseHandler: (response) => _responseHandler(response, path).then(
-      (value) => WebDavSyncGroupData.fromJson(
-        value.data,
-      ).copyWith(etag: etag ?? value.etag),
+      (value) =>
+          WebDavSyncGroupData.fromJson(value.data)
+              .copyWith(etag: etag ?? value.etag),
     ),
   );
 

@@ -10,7 +10,8 @@ part of 'sync.dart';
 
 abstract class _$SyncDBCellCWProxy {
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -40,7 +41,8 @@ class _$SyncDBCellCWProxyImpl implements _$SyncDBCellCWProxy {
   final SyncDBCell _value;
 
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -129,9 +131,9 @@ SyncDBCell _$SyncDBCellFromJson(Map<String, dynamic> json) => SyncDBCell(
   id: (json['id_'] as num?)?.toInt(),
   createT: (json['create_t'] as num?)?.toInt(),
   modifyT: (json['modify_t'] as num?)?.toInt(),
-  habitUUID: json['habit_uuid'] as String?,
-  recordUUID: json['record_uuid'] as String?,
-  groupUUID: json['group_uuid'] as String?,
+  habitUUID: json['habit_uuid'] as HabitUUID?,
+  recordUUID: json['record_uuid'] as HabitUUID?,
+  groupUUID: json['group_uuid'] as HabitUUID?,
   dirty: (json['dirty'] as num?)?.toInt(),
   dirtyTotal: (json['dirty_total'] as num?)?.toInt(),
   lastConfigUUID: json['last_config_uuid'] as String?,

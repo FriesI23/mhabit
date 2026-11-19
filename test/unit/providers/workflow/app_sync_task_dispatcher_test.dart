@@ -215,43 +215,37 @@ void main() {
       expect(task.config.isSameConfig(config), isTrue);
     });
 
-    test(
-      'buildNewTask hydrates webdav password and inflates timeout for first sync',
-      () async {
-        final config = _buildWebDavConfig(
-          password: 'config-secret',
-          timeout: const Duration(seconds: 3),
-        );
-        final harness = await _buildHarness(storedPassword: 'stored-secret');
-        addTearDown(harness.dispose);
+    test('buildNewTask hydrates webdav password and inflates timeout for first sync', () async {
+      final config = _buildWebDavConfig(
+        password: 'config-secret',
+        timeout: const Duration(seconds: 3),
+      );
+      final harness = await _buildHarness(storedPassword: 'stored-secret');
+      addTearDown(harness.dispose);
 
-        final task =
-            await harness.dispatcher.buildNewTask(config) as WebDavAppSyncTask;
+      final task =
+          await harness.dispatcher.buildNewTask(config) as WebDavAppSyncTask;
 
-        expect(task.config.password, 'stored-secret');
-        expect(task.config.timeout, const Duration(seconds: 30));
-        expect(harness.owner.lastReadPasswordIdentity, config.identity);
-      },
-    );
+      expect(task.config.password, 'stored-secret');
+      expect(task.config.timeout, const Duration(seconds: 30));
+      expect(harness.owner.lastReadPasswordIdentity, config.identity);
+    });
 
-    test(
-      'buildNewTask keeps configured timeout and config password after initial sync',
-      () async {
-        final config = _buildWebDavConfig(
-          password: 'config-secret',
-          timeout: const Duration(seconds: 3),
-        ).copyWith(configed: true);
-        final harness = await _buildHarness();
-        addTearDown(harness.dispose);
+    test('buildNewTask keeps configured timeout and config password after initial sync', () async {
+      final config = _buildWebDavConfig(
+        password: 'config-secret',
+        timeout: const Duration(seconds: 3),
+      ).copyWith(configed: true);
+      final harness = await _buildHarness();
+      addTearDown(harness.dispose);
 
-        final task =
-            await harness.dispatcher.buildNewTask(config) as WebDavAppSyncTask;
+      final task =
+          await harness.dispatcher.buildNewTask(config) as WebDavAppSyncTask;
 
-        expect(task.config.password, 'config-secret');
-        expect(task.config.timeout, const Duration(seconds: 3));
-        expect(harness.owner.lastReadPasswordIdentity, config.identity);
-      },
-    );
+      expect(task.config.password, 'config-secret');
+      expect(task.config.timeout, const Duration(seconds: 3));
+      expect(harness.owner.lastReadPasswordIdentity, config.identity);
+    });
 
     test(
       'shouldSyncInWebDav returns false when connectivity is none',

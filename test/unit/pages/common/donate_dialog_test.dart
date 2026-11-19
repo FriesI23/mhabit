@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/enums.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/common/_widgets/donate_dialog.dart';
@@ -89,22 +90,19 @@ void main() {
     },
   );
 
-  test(
-    'DonateConfig reports no available methods for entirely empty configuration',
-    () {
-      const config = DonateConfig(
-        info: AboutInfo.empty(),
-        alipayQRCodePath: '',
-        wechatPayQRCodePath: '',
-      );
-      expect(
-        config.hasAvailableMethod(
-          DonateWay.values.map((way) => '@${way.name}').join(','),
-        ),
-        isFalse,
-      );
-    },
-  );
+  test('DonateConfig reports no available methods for entirely empty configuration', () {
+    const config = DonateConfig(
+      info: AboutInfo.empty(),
+      alipayQRCodePath: '',
+      wechatPayQRCodePath: '',
+    );
+    expect(
+      config.hasAvailableMethod(
+        DonateWay.values.map((way) => '@${way.name}').join(','),
+      ),
+      isFalse,
+    );
+  });
 
   for (final brightness in Brightness.values) {
     testWidgets('Crypto icon contrast and disabled Apple color $brightness', (
@@ -397,13 +395,12 @@ Widget _host(
 }) => TestAdaptiveUiTheme(
   update: (parentTheme) => parentTheme.copyWith(style: style),
   child: MaterialApp(
-    localizationsDelegates: L10n.localizationsDelegates,
+    localizationsDelegates: appLocalizationsDelegates,
     supportedLocales: L10n.supportedLocales,
     locale: const Locale('de'),
     builder: (context, child) => MediaQuery(
-      data: MediaQuery.of(
-        context,
-      ).copyWith(textScaler: const TextScaler.linear(2)),
+      data: MediaQuery.of(context)
+          .copyWith(textScaler: const TextScaler.linear(2)),
       child: Directionality(textDirection: TextDirection.rtl, child: child!),
     ),
     home: Scaffold(

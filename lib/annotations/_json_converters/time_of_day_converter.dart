@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart' show TimeOfDay;
 import 'package:json_annotation/json_annotation.dart';
+import 'package:material_ui/material_ui.dart' show TimeOfDay;
 
 class TimeOfDayConverter
     implements JsonConverter<TimeOfDay, Map<String, dynamic>> {

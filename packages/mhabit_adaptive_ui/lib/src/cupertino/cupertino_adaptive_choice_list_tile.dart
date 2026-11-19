@@ -5,7 +5,8 @@
 
 import 'dart:math' as math;
 
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
+
 import '../adaptive/adaptive_choice_list_tile.dart'
     show AdaptiveChoiceLayout, AdaptiveChoiceListTileConfig;
 import '../adaptive/adaptive_list_tile.dart';
@@ -69,9 +70,8 @@ class CupertinoAdaptiveChoiceListTile<T extends Object>
   @override
   Widget build(BuildContext context) {
     final segmented = labels.length <= config.maxSegmentCount;
-    final style = CupertinoTheme.of(
-      context,
-    ).textTheme.textStyle.copyWith(fontSize: 14);
+    final style = CupertinoTheme.of(context).textTheme.textStyle
+        .copyWith(fontSize: 14);
     final scaler = MediaQuery.textScalerOf(context);
     final direction = Directionality.of(context);
     final labelWidth = _measureLabelWidth(style, scaler, direction);

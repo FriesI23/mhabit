@@ -1,5 +1,5 @@
 import 'package:adaptive_actions/material.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Material renderer adapter for adaptive app-bar actions.
 class MaterialAppBarActions<T extends Object> extends StatelessWidget {

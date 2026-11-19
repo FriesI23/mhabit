@@ -349,9 +349,8 @@ END
       'record_value': 1,
     });
 
-    final records = await RecordDBHelper(
-      _TestDBHelper(db),
-    ).loadRecords(habitUUID);
+    final records = await RecordDBHelper(_TestDBHelper(db))
+        .loadRecords(habitUUID);
 
     expect(records.single.uuid, 'record-uuid');
   });

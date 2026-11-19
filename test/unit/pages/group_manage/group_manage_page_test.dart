@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'package:adaptive_actions/core.dart';
-import 'package:flutter/cupertino.dart'
+import 'package:cupertino_ui/cupertino_ui.dart'
     show
         CupertinoButton,
         CupertinoCheckbox,
@@ -23,9 +23,10 @@ import 'package:flutter/cupertino.dart'
         CupertinoMenuAnchor;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/group.dart';
@@ -239,13 +240,12 @@ Future<GroupManageViewModel> _pumpPage(
         builder: (context, child) => Directionality(
           textDirection: textDirection,
           child: MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(textScaler: TextScaler.linear(textScale)),
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: TextScaler.linear(textScale)),
             child: child!,
           ),
         ),
-        localizationsDelegates: L10n.localizationsDelegates,
+        localizationsDelegates: appLocalizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         home: const GroupManagePage(),
       ),
@@ -360,9 +360,9 @@ void main() {
           expect(
             groupSurface().color,
             isNot(
-              Theme.of(
-                tester.element(find.byType(Scaffold)),
-              ).colorScheme.surface,
+              Theme.of(tester.element(find.byType(Scaffold)))
+                  .colorScheme
+                  .surface,
             ),
           );
 
@@ -593,12 +593,10 @@ void main() {
           Future<void> requestDelete(String uuid) async {
             vm.enterSelectionMode(uuid);
             await tester.pumpAndSettle();
-            final action = _actionRoots(
-              tester,
-            ).singleWhere((a) => a.metadata.label == 'Delete');
-            _actionsWidget(
-              tester,
-            ).onInvoke(tester.element(_adaptiveActions), action.payload);
+            final action = _actionRoots(tester)
+                .singleWhere((a) => a.metadata.label == 'Delete');
+            _actionsWidget(tester)
+                .onInvoke(tester.element(_adaptiveActions), action.payload);
             await tester.pumpAndSettle();
           }
 
@@ -622,9 +620,8 @@ void main() {
             await tester.pump();
           }
           final label = platform == TargetPlatform.iOS && skip
-              ? L10n.of(
-                  tester.element(adaptiveDialogFinder),
-                )!.confirmDialog_confirmAndSkip_text('Delete')
+              ? L10n.of(tester.element(adaptiveDialogFinder))!
+                    .confirmDialog_confirmAndSkip_text('Delete')
               : 'Delete';
           final actions = adaptiveDialogActions(tester);
           final submit = actions.firstWhere((a) => a.label == label).onPressed!;
@@ -677,7 +674,14 @@ void main() {
             _actionRoots(tester).last.placementPolicy.placement,
             ActionPlacement.automatic,
           );
-          expect(find.byTooltip('Create group'), findsOneWidget);
+          // Use a widget predicate because byTooltip only recognizes SDK Tooltip
+          // widgets when semantics are excluded.
+          expect(
+            find.byWidgetPredicate(
+              (widget) => widget is Tooltip && widget.message == 'Create group',
+            ),
+            findsOneWidget,
+          );
           expect(find.bySemanticsLabel('Create group'), findsOneWidget);
           semantics.dispose();
           final create = find
@@ -954,12 +958,10 @@ void main() {
       'Delete',
     ]);
 
-    final selectAllAction = _actionRoots(
-      tester,
-    ).singleWhere((action) => action.metadata.label == 'Select all');
-    _actionsWidget(
-      tester,
-    ).onInvoke(tester.element(_adaptiveActions), selectAllAction.payload);
+    final selectAllAction = _actionRoots(tester)
+        .singleWhere((action) => action.metadata.label == 'Select all');
+    _actionsWidget(tester)
+        .onInvoke(tester.element(_adaptiveActions), selectAllAction.payload);
     await tester.pump(const Duration(milliseconds: 300));
 
     expect(vm.selectedCount, fixture.groupUUIDs.length);
@@ -1002,9 +1004,8 @@ void main() {
     vm.enterSelectionModeWithoutNotification();
     await tester.pump(const Duration(milliseconds: 300));
 
-    final deleteAction = _actionRoots(
-      tester,
-    ).singleWhere((action) => action.metadata.label == 'Delete');
+    final deleteAction = _actionRoots(tester)
+        .singleWhere((action) => action.metadata.label == 'Delete');
     expect(vm.selectedCount, 0);
     expect(deleteAction.isEnabled, isFalse);
   });

@@ -15,7 +15,8 @@ Future<void> main() async {
     minimumSize: appDesktopWindowMinimumSize,
   );
   await api.configure(fused: true);
-  runApp(const SizedBox.shrink());
+  // Paint a full-size surface so resize synchronization sees the target size.
+  runApp(const SizedBox.expand(child: ColoredBox(color: Color(0xFF000000))));
   await WidgetsBinding.instance.endOfFrame;
   await api.show();
 }

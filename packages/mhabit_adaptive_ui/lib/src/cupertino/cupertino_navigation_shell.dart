@@ -1,9 +1,9 @@
 import 'dart:math' as math;
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' show Theme;
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
     hide AdaptiveNavigationDestination, NavigationDestinationIcons;
+import 'package:material_ui/material_ui.dart' show Theme;
 
 import '../adaptive/adaptive_navigation_destination.dart';
 import '../breakpoints/window_size_class.dart';

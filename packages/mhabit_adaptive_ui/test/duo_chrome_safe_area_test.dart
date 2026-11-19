@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoIcons;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 void main() {
@@ -29,53 +29,48 @@ void main() {
 
   for (final style in AppleSidebarStyle.values) {
     for (final direction in TextDirection.values) {
-      testWidgets(
-        '$style footer keeps primary width with $direction insets',
-        (tester) async {
-          tester.view.physicalSize = const Size(1000, 650);
-          tester.view.devicePixelRatio = 1;
-          addTearDown(tester.view.reset);
-          await tester.pumpWidget(
-            MaterialApp(
-              theme: ThemeData(platform: TargetPlatform.iOS),
-              builder: (context, child) => Directionality(
-                textDirection: direction,
-                child: MediaQuery(
-                  data: MediaQuery.of(context).copyWith(
-                    padding: direction == TextDirection.ltr
-                        ? const EdgeInsets.only(right: 84)
-                        : const EdgeInsets.only(left: 84),
-                  ),
-                  child: child!,
+      testWidgets('$style footer keeps primary width with $direction insets', (
+        tester,
+      ) async {
+        tester.view.physicalSize = const Size(1000, 650);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(platform: TargetPlatform.iOS),
+            builder: (context, child) => Directionality(
+              textDirection: direction,
+              child: MediaQuery(
+                data: MediaQuery.of(context).copyWith(
+                  padding: direction == TextDirection.ltr
+                      ? const EdgeInsets.only(right: 84)
+                      : const EdgeInsets.only(left: 84),
                 ),
-              ),
-              home: AdaptiveNavigationShell(
-                selectedIndex: 0,
-                destinations: destinations,
-                auxiliaryDestinations: settings,
-                onDestinationSelected: (_) {},
-                onAuxiliaryDestinationSelected: (_) {},
-                appleSidebarStyle: style,
-                child: const Scaffold(body: Text('Page')),
+                child: child!,
               ),
             ),
-          );
-          await tester.pumpAndSettle();
-          final primary = find.byKey(
-            const ValueKey('cupertino-sidebar-destination-0'),
-          );
-          final auxiliary = find.byKey(
-            const ValueKey('cupertino-sidebar-auxiliary-destination-0'),
-          );
-          expect(
-            tester.getSize(auxiliary).width,
-            tester.getSize(primary).width,
-          );
-          expect(tester.getSize(auxiliary).height, greaterThanOrEqualTo(44));
-          expect(tester.takeException(), isNull);
-        },
-        variant: const TargetPlatformVariant({TargetPlatform.iOS}),
-      );
+            home: AdaptiveNavigationShell(
+              selectedIndex: 0,
+              destinations: destinations,
+              auxiliaryDestinations: settings,
+              onDestinationSelected: (_) {},
+              onAuxiliaryDestinationSelected: (_) {},
+              appleSidebarStyle: style,
+              child: const Scaffold(body: Text('Page')),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        final primary = find.byKey(
+          const ValueKey('cupertino-sidebar-destination-0'),
+        );
+        final auxiliary = find.byKey(
+          const ValueKey('cupertino-sidebar-auxiliary-destination-0'),
+        );
+        expect(tester.getSize(auxiliary).width, tester.getSize(primary).width);
+        expect(tester.getSize(auxiliary).height, greaterThanOrEqualTo(44));
+        expect(tester.takeException(), isNull);
+      }, variant: const TargetPlatformVariant({TargetPlatform.iOS}));
     }
   }
 

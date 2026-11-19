@@ -411,9 +411,8 @@ class WebDavAppSyncTaskExecutor
     );
     if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
 
-    final mergedResult = syncInfoMergerBuilder(
-      this,
-    ).convert((local: localHabits, server: serverHabits));
+    final mergedResult = syncInfoMergerBuilder(this)
+        .convert((local: localHabits, server: serverHabits));
     appLog.appsynctask.debug(
       this,
       ex: ["merge habits completed", mergedResult.length],

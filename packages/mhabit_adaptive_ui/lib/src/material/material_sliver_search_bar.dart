@@ -1,15 +1,18 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:material_ui/material_ui.dart';
+
 import '../breakpoints/window_size_class.dart';
 import '../window_control/material_app_bar.dart';
 import '../window_control/occlusion_sliver_toolbar.dart';
 import 'material_expandable_search_bar.dart';
 import 'material_sliver_search_bar_layout.dart';
 
-typedef MaterialSearchActionsBuilder =
-    Widget Function(BuildContext context, double primaryCapacity);
+typedef MaterialSearchActionsBuilder = Widget Function(
+  BuildContext context,
+  double primaryCapacity,
+);
 
 /// Material-only visual configuration for [MaterialSliverSearchBar].
 class MaterialSliverSearchBarStyle {

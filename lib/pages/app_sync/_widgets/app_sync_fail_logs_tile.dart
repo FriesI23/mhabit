@@ -16,9 +16,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:async/async.dart';
-import 'package:flutter/cupertino.dart' show CupertinoColors;
+import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoColors;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:share_plus/share_plus.dart';
 

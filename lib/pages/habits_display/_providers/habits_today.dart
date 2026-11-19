@@ -269,9 +269,9 @@ class HabitsTodayViewModel extends ChangeNotifier
   }
 
   FutureOr<void> _resortData() {
-    List<HabitSortCache> defaultSort() => _applyFilter(
-      _data.sort(_sortType, _sortDirection),
-    ).toHabitSummarySortCacheList();
+    List<HabitSortCache> defaultSort() =>
+        _applyFilter(_data.sort(_sortType, _sortDirection))
+            .toHabitSummarySortCacheList();
 
     final canNaturalSort =
         _sortType == HabitDisplaySortType.name &&

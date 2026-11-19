@@ -1,7 +1,7 @@
 // Copyright 2026 Fries_I23
 // Licensed under the Apache License, Version 2.0.
 
-import 'package:flutter/material.dart' show Brightness;
+import 'package:material_ui/material_ui.dart' show Brightness;
 
 import '../../extensions/custom_color_extensions.dart';
 import '../../logging/helper.dart';

@@ -13,8 +13,8 @@
 // limitations under the License.
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A generic text field with a dropdown menu overlay, similar to [DropdownMenu]
 /// but with full control over the trigger widget layout and menu children.

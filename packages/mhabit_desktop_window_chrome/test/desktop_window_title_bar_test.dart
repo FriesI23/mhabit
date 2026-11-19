@@ -5,6 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
 import 'package:mhabit_desktop_window_chrome/src/desktop_title_bar_api.g.dart';
+import 'package:mhabit_desktop_window_chrome/src/desktop_window_runtime.dart';
+
+import 'support/fake_desktop_window_runtime.dart';
 
 class _Api implements DesktopWindowTitleBarApi {
   @override
@@ -47,76 +50,68 @@ const dark = DesktopTitleBarAppearance(
 void main() {
   final binding = TestWidgetsFlutterBinding.ensureInitialized();
   for (final platform in [TargetPlatform.windows, TargetPlatform.linux]) {
-    test(
-      '$platform adapter sends resolved ARGB and applies the minimum',
-      () async {
-        debugDefaultTargetPlatformOverride = platform;
-        addTearDown(() => debugDefaultTargetPlatformOverride = null);
-        const windowChannel = MethodChannel('window_manager');
-        const prefix =
-            'dev.flutter.pigeon.mhabit_desktop_window_chrome.DesktopTitleBarHostApi';
-        const codec = DesktopTitleBarHostApi.pigeonChannelCodec;
-        Map<Object?, Object?>? minimum;
-        List<Object?>? payload;
-        var resets = 0;
-        String? title;
-        binding.defaultBinaryMessenger.setMockMethodCallHandler(windowChannel, (
-          call,
-        ) async {
-          if (call.method == 'setTitle') {
-            title = (call.arguments as Map)['title'] as String;
-          }
-          if (call.method == 'setMinimumSize') {
-            minimum = call.arguments as Map<Object?, Object?>;
-          }
-          if (call.method == 'isVisible' || call.method == 'isFocused') {
-            return false;
-          }
-          return null;
-        });
+    test('$platform adapter sends resolved ARGB and applies the minimum', () async {
+      debugDefaultTargetPlatformOverride = platform;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      const prefix =
+          'dev.flutter.pigeon.mhabit_desktop_window_chrome.DesktopTitleBarHostApi';
+      const codec = DesktopTitleBarHostApi.pigeonChannelCodec;
+      Map<Object?, Object?>? minimum;
+      List<Object?>? payload;
+      var resets = 0;
+      String? title;
+      DesktopWindowRuntime.debugOverride = FakeDesktopWindowRuntime((
+        call,
+      ) async {
+        if (call.method == 'setTitle') {
+          title = (call.arguments as Map)['title'] as String;
+        }
+        if (call.method == 'setMinimumSize') {
+          minimum = call.arguments as Map<Object?, Object?>;
+        }
+        if (call.method == 'isVisible' || call.method == 'isFocused') {
+          return false;
+        }
+        return null;
+      });
+      binding.defaultBinaryMessenger.setMockMessageHandler(
+        '$prefix.setAppearance',
+        (message) async {
+          payload = codec.decodeMessage(message) as List<Object?>;
+          return codec.encodeMessage([true]);
+        },
+      );
+      binding.defaultBinaryMessenger.setMockMessageHandler('$prefix.reset', (
+        _,
+      ) async {
+        resets++;
+        return codec.encodeMessage([null]);
+      });
+      addTearDown(() {
+        DesktopWindowRuntime.debugOverride = null;
         binding.defaultBinaryMessenger.setMockMessageHandler(
           '$prefix.setAppearance',
-          (message) async {
-            payload = codec.decodeMessage(message) as List<Object?>;
-            return codec.encodeMessage([true]);
-          },
+          null,
         );
-        binding.defaultBinaryMessenger.setMockMessageHandler('$prefix.reset', (
-          _,
-        ) async {
-          resets++;
-          return codec.encodeMessage([null]);
-        });
-        addTearDown(() {
-          binding.defaultBinaryMessenger.setMockMethodCallHandler(
-            windowChannel,
-            null,
-          );
-          binding.defaultBinaryMessenger.setMockMessageHandler(
-            '$prefix.setAppearance',
-            null,
-          );
-          binding.defaultBinaryMessenger.setMockMessageHandler(
-            '$prefix.reset',
-            null,
-          );
-        });
-        final owner = DesktopWindowTitleBar();
-        await owner.initialize(minimumSize: const Size(350, 520));
-        await owner.setTitle('桌上习惯');
-        expect(title, '桌上习惯');
-        await owner.applyAppearance(dark);
-        expect(minimum!['width'], 350.0);
-        expect(minimum!['height'], 520.0);
-        expect(payload, [0xFF112233, 0xFFF2F2F2, true]);
-        await owner.dispose();
-        expect(resets, 1);
-      },
-    );
+        binding.defaultBinaryMessenger.setMockMessageHandler(
+          '$prefix.reset',
+          null,
+        );
+      });
+      final owner = DesktopWindowTitleBar();
+      await owner.initialize(minimumSize: const Size(350, 520));
+      await owner.setTitle('桌上习惯');
+      expect(title, '桌上习惯');
+      await owner.applyAppearance(dark);
+      expect(minimum!['width'], 350.0);
+      expect(minimum!['height'], 520.0);
+      expect(payload, [0xFF112233, 0xFFF2F2F2, true]);
+      await owner.dispose();
+      expect(resets, 1);
+    });
   }
 
   group('Windows native foreground', () {
-    const windowChannel = MethodChannel('window_manager');
     const foregroundChannel =
         'dev.flutter.pigeon.mhabit_desktop_window_chrome.'
         'DesktopTitleBarFlutterApi.foregroundChanged';
@@ -150,7 +145,7 @@ void main() {
       pendingFocus = null;
       focusStarted = null;
       calls = [];
-      binding.defaultBinaryMessenger.setMockMethodCallHandler(windowChannel, (
+      DesktopWindowRuntime.debugOverride = FakeDesktopWindowRuntime((
         call,
       ) async {
         calls.add(call.method);
@@ -182,10 +177,7 @@ void main() {
         pending.complete(false);
       }
       await owner.dispose();
-      binding.defaultBinaryMessenger.setMockMethodCallHandler(
-        windowChannel,
-        null,
-      );
+      DesktopWindowRuntime.debugOverride = null;
       debugDefaultTargetPlatformOverride = null;
     });
 

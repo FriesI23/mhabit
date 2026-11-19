@@ -85,9 +85,8 @@ void main() {
         AppSupportReminderProfileHandler(preferences).get()?.launches,
         isNull,
       );
-      await AppSupportReminderProfileHandler(
-        preferences,
-      ).set((minimumDate: DateTime.utc(1970), launches: 10, closed: false));
+      await AppSupportReminderProfileHandler(preferences)
+          .set((minimumDate: DateTime.utc(1970), launches: 10, closed: false));
       await fixture.saveStage(AppSupportNativeStage.later);
       final nextProcess = AppSupportNativePreferences(
         (await SharedPreferences.getInstance()),
@@ -103,9 +102,8 @@ void main() {
     'interrupted first run cannot overwrite the original snapshot',
     () async {
       await fixture.begin();
-      await AppSupportReminderProfileHandler(
-        preferences,
-      ).set((minimumDate: DateTime.utc(1970), launches: 99, closed: false));
+      await AppSupportReminderProfileHandler(preferences)
+          .set((minimumDate: DateTime.utc(1970), launches: 99, closed: false));
       expect(await fixture.readStage(), isNull);
       await fixture.begin();
       await fixture.restore();

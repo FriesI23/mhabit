@@ -15,8 +15,7 @@
 import 'dart:async';
 
 import 'package:adaptive_actions/cupertino.dart';
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoIcons;
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
     show
         AdaptiveNavigationController,
@@ -27,6 +26,7 @@ import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
         SidebarLeadingScope;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ios_window_control_layout/ios_window_control_layout.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/shell/sidebar_adapter.dart'
     show SidebarTopToolbarLayoutOverrideResolver;
@@ -246,9 +246,8 @@ Widget _host(_Fixture fixture) => MaterialApp(
             ListenableBuilder(
               listenable: fixture,
               builder: (context, _) {
-                fixture.region = SidebarLeadingScope.maybeOf(
-                  context,
-                )?.toolbarRegion;
+                fixture.region = SidebarLeadingScope.maybeOf(context)
+                    ?.toolbarRegion;
                 return _header(fixture);
               },
             ),
@@ -390,9 +389,8 @@ void main() {
                 content: const SizedBox.shrink(),
                 child: Builder(
                   builder: (context) {
-                    acceptedRegion = SidebarLeadingScope.maybeOf(
-                      context,
-                    )?.toolbarRegion;
+                    acceptedRegion = SidebarLeadingScope.maybeOf(context)
+                        ?.toolbarRegion;
                     topToolbarLayoutOverride =
                         SidebarTopToolbarLayoutOverrideResolver(
                           context: context,
@@ -468,36 +466,34 @@ void main() {
   }
 
   for (final header in [_Header.fixed, _Header.select]) {
-    testWidgets(
-      '$header uses the same accepted row and restores its footer',
-      (tester) async {
-        _configure(tester);
-        final fixture = _Fixture(
-          style: AppleSidebarStyle.edge,
-          direction: TextDirection.rtl,
-          header: header,
-        );
-        addTearDown(fixture.dispose);
-        await tester.pumpWidget(_host(fixture));
-        await tester.pumpAndSettle();
-        _expectAccepted(tester, fixture, capsule: header == _Header.fixed);
-        if (header == _Header.select) {
-          expect(find.byKey(_capsule).hitTestable(), findsNothing);
-        }
-        for (final key
-            in header == _Header.fixed
-                ? [_action]
-                : [
-                    const ValueKey('cupertino-select-all-top'),
-                    const ValueKey('cupertino-select-done'),
-                  ]) {
-          final rect = tester.getRect(find.byKey(key));
-          expect(rect.center.dy, closeTo(50, .01));
-          expect(rect.overlaps(_status), isFalse);
-        }
-      },
-      variant: TargetPlatformVariant.only(TargetPlatform.iOS),
-    );
+    testWidgets('$header uses the same accepted row and restores its footer', (
+      tester,
+    ) async {
+      _configure(tester);
+      final fixture = _Fixture(
+        style: AppleSidebarStyle.edge,
+        direction: TextDirection.rtl,
+        header: header,
+      );
+      addTearDown(fixture.dispose);
+      await tester.pumpWidget(_host(fixture));
+      await tester.pumpAndSettle();
+      _expectAccepted(tester, fixture, capsule: header == _Header.fixed);
+      if (header == _Header.select) {
+        expect(find.byKey(_capsule).hitTestable(), findsNothing);
+      }
+      for (final key
+          in header == _Header.fixed
+              ? [_action]
+              : [
+                  const ValueKey('cupertino-select-all-top'),
+                  const ValueKey('cupertino-select-done'),
+                ]) {
+        final rect = tester.getRect(find.byKey(key));
+        expect(rect.center.dy, closeTo(50, .01));
+        expect(rect.overlaps(_status), isFalse);
+      }
+    }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
   }
 
   testWidgets(

@@ -16,14 +16,20 @@ import '../../../models/habit_date.dart';
 import '../../../models/habit_detail_chart.dart';
 import '../../../utils/habit_date.dart';
 
-typedef HabitDetailChartHelperDateFetcherCb<T> =
-    HabitDate Function(HabitDate initDate, int firstday);
+typedef HabitDetailChartHelperDateFetcherCb<T> = HabitDate Function(
+  HabitDate initDate,
+  int firstday,
+);
 
-typedef HabitDetailChartHelperDateBuilderCb<T> =
-    HabitDate Function(HabitDateRangeCalculator calc, bool isLast);
+typedef HabitDetailChartHelperDateBuilderCb<T> = HabitDate Function(
+  HabitDateRangeCalculator calc,
+  bool isLast,
+);
 
-typedef HabitDetailChartHelperDataOffsetCb =
-    HabitDate Function(HabitDate date, bool reversed);
+typedef HabitDetailChartHelperDataOffsetCb = HabitDate Function(
+  HabitDate date,
+  bool reversed,
+);
 
 const HabitDetailChartHelper scoreChartHelp = HabitDetailScoreChartHelper();
 

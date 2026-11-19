@@ -48,7 +48,7 @@ if (flutterVersionName == null) {
 
 def customCompileSdkVersion = localProperties.getProperty('flutter.compileSdkVersion')
 if (customCompileSdkVersion == null) {
-    customCompileSdkVersion = Math.max(35, flutter.compileSdkVersion)
+    customCompileSdkVersion = Math.max(37, flutter.compileSdkVersion)
 } else {
     customCompileSdkVersion = customCompileSdkVersion.toInteger()
 }

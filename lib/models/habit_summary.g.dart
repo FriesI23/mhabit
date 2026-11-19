@@ -10,7 +10,8 @@ part of 'habit_summary.dart';
 
 abstract class _$HabitSummaryRecordCWProxy {
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -33,7 +34,8 @@ class _$HabitSummaryRecordCWProxyImpl implements _$HabitSummaryRecordCWProxy {
   final HabitSummaryRecord _value;
 
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart

@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:adaptive_actions/core.dart';
-import 'package:flutter/cupertino.dart' show CupertinoPageRoute;
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoPageRoute;
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ios_window_control_layout/ios_window_control_layout.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/window_control/occlusion_layout.dart';
 import 'package:mhabit_adaptive_ui/src/window_control/occlusion_toolbar.dart';
@@ -561,29 +561,27 @@ void main() {
       );
     }
 
-    testWidgets(
-      '$style keeps its bottom below the reclaimed toolbar',
-      (tester) async {
-        _configure(tester);
-        await tester.pumpWidget(
-          _host(
-            style: style,
-            geometry: _geometry(),
-            header: _bar(
-              style,
-              bottom: const PreferredSize(
-                preferredSize: Size.fromHeight(28),
-                child: SizedBox(key: _bottom, height: 28),
-              ),
+    testWidgets('$style keeps its bottom below the reclaimed toolbar', (
+      tester,
+    ) async {
+      _configure(tester);
+      await tester.pumpWidget(
+        _host(
+          style: style,
+          geometry: _geometry(),
+          header: _bar(
+            style,
+            bottom: const PreferredSize(
+              preferredSize: Size.fromHeight(28),
+              child: SizedBox(key: _bottom, height: 28),
             ),
           ),
-        );
-        expect(tester.getTopLeft(find.byKey(_bottom)).dy, 82);
-        expect(tester.getTopLeft(find.byKey(_body)).dy, 110);
-        _expectToolbarSafe(tester);
-      },
-      variant: TargetPlatformVariant.only(TargetPlatform.iOS),
-    );
+        ),
+      );
+      expect(tester.getTopLeft(find.byKey(_bottom)).dy, 82);
+      expect(tester.getTopLeft(find.byKey(_body)).dy, 110);
+      _expectToolbarSafe(tester);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
     for (final fallback in [
       'disabled',
@@ -600,50 +598,48 @@ void main() {
       'window controls',
       'missing corners',
     ]) {
-      testWidgets(
-        '$style keeps legacy top Safe Area for $fallback',
-        (tester) async {
-          _configure(tester);
-          final geometry = switch (fallback) {
-            'unavailable' => null,
-            'empty' => _geometry(regions: const []),
-            'stale' => _geometry(size: const Size(951, 669)),
-            'center camera' => _geometry(
-              regions: const [Rect.fromLTWH(285, 0, 100, 82)],
-            ),
-            'full width' => _geometry(
-              regions: const [Rect.fromLTWH(0, 0, 669, 82)],
-            ),
-            'lower camera' => _geometry(
-              regions: const [Rect.fromLTWH(525, 160, 144, 82)],
-            ),
-            'incomplete camera' => _geometry(
-              regions: const [Rect.fromLTWH(620, 0, 49, 40)],
-            ),
-            'interior obstruction' => _geometry(
-              regions: const [_status, Rect.fromLTWH(280, 24, 64, 32)],
-            ),
-            'overflow obstruction' => _geometry(
-              regions: const [_status, Rect.fromLTWH(560, 40, 80, 64)],
-            ),
-            _ => _geometry(),
-          };
-          await tester.pumpWidget(
-            _host(
-              style: style,
-              header: _bar(style),
-              geometry: geometry,
-              allow: fallback != 'disabled',
-              knownViewport: fallback != 'unknown viewport',
-              windowControls: fallback == 'window controls',
-              corners: fallback == 'missing corners' ? null : BorderRadius.zero,
-            ),
-          );
-          expect(tester.getTopLeft(find.byKey(_body)).dy, 82 + _height(style));
-          expect(tester.takeException(), isNull);
-        },
-        variant: TargetPlatformVariant.only(TargetPlatform.iOS),
-      );
+      testWidgets('$style keeps legacy top Safe Area for $fallback', (
+        tester,
+      ) async {
+        _configure(tester);
+        final geometry = switch (fallback) {
+          'unavailable' => null,
+          'empty' => _geometry(regions: const []),
+          'stale' => _geometry(size: const Size(951, 669)),
+          'center camera' => _geometry(
+            regions: const [Rect.fromLTWH(285, 0, 100, 82)],
+          ),
+          'full width' => _geometry(
+            regions: const [Rect.fromLTWH(0, 0, 669, 82)],
+          ),
+          'lower camera' => _geometry(
+            regions: const [Rect.fromLTWH(525, 160, 144, 82)],
+          ),
+          'incomplete camera' => _geometry(
+            regions: const [Rect.fromLTWH(620, 0, 49, 40)],
+          ),
+          'interior obstruction' => _geometry(
+            regions: const [_status, Rect.fromLTWH(280, 24, 64, 32)],
+          ),
+          'overflow obstruction' => _geometry(
+            regions: const [_status, Rect.fromLTWH(560, 40, 80, 64)],
+          ),
+          _ => _geometry(),
+        };
+        await tester.pumpWidget(
+          _host(
+            style: style,
+            header: _bar(style),
+            geometry: geometry,
+            allow: fallback != 'disabled',
+            knownViewport: fallback != 'unknown viewport',
+            windowControls: fallback == 'window controls',
+            corners: fallback == 'missing corners' ? null : BorderRadius.zero,
+          ),
+        );
+        expect(tester.getTopLeft(find.byKey(_body)).dy, 82 + _height(style));
+        expect(tester.takeException(), isNull);
+      }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
     }
 
     testWidgets(
@@ -1005,65 +1001,63 @@ void main() {
         wideExtent: 128.0,
       ),
     ]) {
-      testWidgets(
-        '$variant applies the shared floor to ${config.name}',
-        (tester) async {
-          _configure(tester);
-          final scroll = ScrollController();
-          addTearDown(scroll.dispose);
-          final bottomHeight = config.bottomHeight;
-          await tester.pumpWidget(
-            _host(
-              style: AdaptiveStyle.material,
-              header: _materialHeader(
-                variant,
-                toolbarHeight: config.toolbarHeight,
-                collapsedHeight: config.collapsedHeight,
-                floating: config.floating,
-                bottom: bottomHeight == null
-                    ? null
-                    : PreferredSize(
-                        preferredSize: Size.fromHeight(bottomHeight),
-                        child: SizedBox(
-                          key: _bottom,
-                          width: double.infinity,
-                          height: bottomHeight,
-                        ),
+      testWidgets('$variant applies the shared floor to ${config.name}', (
+        tester,
+      ) async {
+        _configure(tester);
+        final scroll = ScrollController();
+        addTearDown(scroll.dispose);
+        final bottomHeight = config.bottomHeight;
+        await tester.pumpWidget(
+          _host(
+            style: AdaptiveStyle.material,
+            header: _materialHeader(
+              variant,
+              toolbarHeight: config.toolbarHeight,
+              collapsedHeight: config.collapsedHeight,
+              floating: config.floating,
+              bottom: bottomHeight == null
+                  ? null
+                  : PreferredSize(
+                      preferredSize: Size.fromHeight(bottomHeight),
+                      child: SizedBox(
+                        key: _bottom,
+                        width: double.infinity,
+                        height: bottomHeight,
                       ),
-              ),
-              geometry: _geometry(),
-              topToolbarAlignmentHeight: config.alignmentHeight,
-              scrollController: scroll,
+                    ),
             ),
+            geometry: _geometry(),
+            topToolbarAlignmentHeight: config.alignmentHeight,
+            scrollController: scroll,
+          ),
+        );
+        scroll.jumpTo(400);
+        await tester.pumpAndSettle();
+        final sliver = tester.renderObject<RenderSliver>(
+          find.byType(SliverAppBar),
+        );
+        final expectedExtent = variant == 'small'
+            ? config.smallExtent
+            : config.wideExtent;
+        expect(sliver.geometry!.maxScrollObstructionExtent, expectedExtent);
+        expect(sliver.geometry!.paintExtent, expectedExtent);
+        if (bottomHeight != null && bottomHeight > 0) {
+          final footer = tester.getRect(find.byKey(_bottom));
+          expect(footer.top, greaterThanOrEqualTo(_status.bottom));
+          expect(footer.left, 0);
+          expect(footer.right, _size.width);
+        }
+        if (config.collapsedHeight == 128) {
+          expect(
+            tester
+                .widget<SliverAppBar>(find.byType(SliverAppBar))
+                .collapsedHeight,
+            128,
           );
-          scroll.jumpTo(400);
-          await tester.pumpAndSettle();
-          final sliver = tester.renderObject<RenderSliver>(
-            find.byType(SliverAppBar),
-          );
-          final expectedExtent = variant == 'small'
-              ? config.smallExtent
-              : config.wideExtent;
-          expect(sliver.geometry!.maxScrollObstructionExtent, expectedExtent);
-          expect(sliver.geometry!.paintExtent, expectedExtent);
-          if (bottomHeight != null && bottomHeight > 0) {
-            final footer = tester.getRect(find.byKey(_bottom));
-            expect(footer.top, greaterThanOrEqualTo(_status.bottom));
-            expect(footer.left, 0);
-            expect(footer.right, _size.width);
-          }
-          if (config.collapsedHeight == 128) {
-            expect(
-              tester
-                  .widget<SliverAppBar>(find.byType(SliverAppBar))
-                  .collapsedHeight,
-              128,
-            );
-          }
-          _expectToolbarSafe(tester);
-        },
-        variant: TargetPlatformVariant.only(TargetPlatform.iOS),
-      );
+        }
+        _expectToolbarSafe(tester);
+      }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
     }
   }
 
@@ -1116,50 +1110,44 @@ void main() {
     }
   }
 
-  testWidgets(
-    'non-pinned Material header retains its top Safe Area',
-    (tester) async {
+  testWidgets('non-pinned Material header retains its top Safe Area', (
+    tester,
+  ) async {
+    _configure(tester);
+    await tester.pumpWidget(
+      _host(
+        style: AdaptiveStyle.material,
+        header: _bar(AdaptiveStyle.material, pinned: false),
+        geometry: _geometry(),
+      ),
+    );
+    expect(tester.getTopLeft(find.byKey(_body)).dy, 146);
+    expect(tester.takeException(), isNull);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
+  for (final localTop in ['minimum', 'consumer']) {
+    testWidgets('Apple retains a larger $localTop top inset', (tester) async {
       _configure(tester);
       await tester.pumpWidget(
         _host(
-          style: AdaptiveStyle.material,
-          header: _bar(AdaptiveStyle.material, pinned: false),
+          style: AdaptiveStyle.apple,
+          header: _bar(
+            AdaptiveStyle.apple,
+            minimumTopInset: localTop == 'minimum' ? 50 : null,
+          ),
           geometry: _geometry(),
+          padding: localTop == 'consumer'
+              ? const EdgeInsets.only(top: 132, bottom: 34)
+              : _safeArea,
+          corners: BorderRadius.circular(36),
         ),
       );
-      expect(tester.getTopLeft(find.byKey(_body)).dy, 146);
-      expect(tester.takeException(), isNull);
-    },
-    variant: TargetPlatformVariant.only(TargetPlatform.iOS),
-  );
-
-  for (final localTop in ['minimum', 'consumer']) {
-    testWidgets(
-      'Apple retains a larger $localTop top inset',
-      (tester) async {
-        _configure(tester);
-        await tester.pumpWidget(
-          _host(
-            style: AdaptiveStyle.apple,
-            header: _bar(
-              AdaptiveStyle.apple,
-              minimumTopInset: localTop == 'minimum' ? 50 : null,
-            ),
-            geometry: _geometry(),
-            padding: localTop == 'consumer'
-                ? const EdgeInsets.only(top: 132, bottom: 34)
-                : _safeArea,
-            corners: BorderRadius.circular(36),
-          ),
-        );
-        expect(tester.getTopLeft(find.byKey(_body)).dy, 94);
-        final leading = tester.getRect(find.byKey(_leading));
-        expect(leading.top, 50);
-        expect(leading.bottom, 94);
-        _expectToolbarSafe(tester);
-      },
-      variant: TargetPlatformVariant.only(TargetPlatform.iOS),
-    );
+      expect(tester.getTopLeft(find.byKey(_body)).dy, 94);
+      final leading = tester.getRect(find.byKey(_leading));
+      expect(leading.top, 50);
+      expect(leading.bottom, 94);
+      _expectToolbarSafe(tester);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
   }
 
   testWidgets(
@@ -1205,62 +1193,58 @@ void main() {
     );
   }
 
-  testWidgets(
-    'Apple selection commands share the reclaimed top row',
-    (tester) async {
-      _configure(tester);
-      await tester.pumpWidget(
-        _host(
-          style: AdaptiveStyle.apple,
-          geometry: _geometry(),
-          header: CupertinoSliverSelectAppBar<String>(
-            title: const Text('Selected 0'),
-            selectAllLabel: 'Select All',
-            doneLabel: 'Done',
-            onSelectAll: () {},
-            onDone: () {},
-            collection: ActionCollection<String>(roots: const []),
-            onInvoke: (_, _) {},
-          ),
+  testWidgets('Apple selection commands share the reclaimed top row', (
+    tester,
+  ) async {
+    _configure(tester);
+    await tester.pumpWidget(
+      _host(
+        style: AdaptiveStyle.apple,
+        geometry: _geometry(),
+        header: CupertinoSliverSelectAppBar<String>(
+          title: const Text('Selected 0'),
+          selectAllLabel: 'Select All',
+          doneLabel: 'Done',
+          onSelectAll: () {},
+          onDone: () {},
+          collection: ActionCollection<String>(roots: const []),
+          onInvoke: (_, _) {},
         ),
-      );
-      expect(tester.getTopLeft(find.byKey(_body)).dy, 82);
-      for (final key in [
-        const ValueKey('cupertino-select-all-top'),
-        const ValueKey('cupertino-select-done'),
-      ]) {
-        final finder = find.byKey(key);
-        final rect = tester.getRect(finder);
-        expect(rect.overlaps(_status), isFalse);
-        expect(rect.right, lessThanOrEqualTo(_status.left));
-        expect(finder.hitTestable(), findsOneWidget);
-      }
-      expect(tester.takeException(), isNull);
-    },
-    variant: TargetPlatformVariant.only(TargetPlatform.iOS),
-  );
+      ),
+    );
+    expect(tester.getTopLeft(find.byKey(_body)).dy, 82);
+    for (final key in [
+      const ValueKey('cupertino-select-all-top'),
+      const ValueKey('cupertino-select-done'),
+    ]) {
+      final finder = find.byKey(key);
+      final rect = tester.getRect(finder);
+      expect(rect.overlaps(_status), isFalse);
+      expect(rect.right, lessThanOrEqualTo(_status.left));
+      expect(finder.hitTestable(), findsOneWidget);
+    }
+    expect(tester.takeException(), isNull);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
-  testWidgets(
-    'non-primary Material toolbar keeps caller-owned top geometry',
-    (tester) async {
-      _configure(tester);
-      await tester.pumpWidget(
-        _host(
-          style: AdaptiveStyle.material,
-          geometry: _geometry(),
-          header: const WindowControlSliverAppBar(
-            primary: false,
-            pinned: true,
-            toolbarHeight: 64,
-            title: Text('Local toolbar'),
-          ),
+  testWidgets('non-primary Material toolbar keeps caller-owned top geometry', (
+    tester,
+  ) async {
+    _configure(tester);
+    await tester.pumpWidget(
+      _host(
+        style: AdaptiveStyle.material,
+        geometry: _geometry(),
+        header: const WindowControlSliverAppBar(
+          primary: false,
+          pinned: true,
+          toolbarHeight: 64,
+          title: Text('Local toolbar'),
         ),
-      );
-      expect(tester.getTopLeft(find.byKey(_body)).dy, 64);
-      expect(tester.takeException(), isNull);
-    },
-    variant: TargetPlatformVariant.only(TargetPlatform.iOS),
-  );
+      ),
+    );
+    expect(tester.getTopLeft(find.byKey(_body)).dy, 64);
+    expect(tester.takeException(), isNull);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
   testWidgets(
     'floating Material search preserves the full protected band after scrolling',

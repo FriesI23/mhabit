@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'dart:ui' show lerpDouble;
 
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
 
 import '../adaptive/adaptive_navigation_destination.dart';

@@ -36,11 +36,10 @@ import '../../storage/db_helper_provider.dart';
 import '../support/commons.dart';
 import 'app_notify_config.dart';
 
-typedef BeforeHabitRecordReminderUpdateCb =
-    FutureOr<void> Function(
-      HabitSummaryData habit,
-      List<ChangeRecordStatusResult> records,
-    );
+typedef BeforeHabitRecordReminderUpdateCb = FutureOr<void> Function(
+  HabitSummaryData habit,
+  List<ChangeRecordStatusResult> records,
+);
 
 enum HabitReminderTriggerReason {
   /// Full refresh from the app startup production path.
@@ -424,9 +423,9 @@ class HabitsManager
       action.status,
     );
     final result = action.resolve();
-    final updatedHabits = {
-      for (final item in result) item.data.uuid: item.data,
-    }.values.toList(growable: false);
+    final updatedHabits = {for (final item in result) item.data.uuid: item.data}
+        .values
+        .toList(growable: false);
     await _processHabitReminderTrigger(
       HabitReminderTrigger.mutation(loadedHabits: updatedHabits),
     );

@@ -22,5 +22,6 @@ enum NavigationShellForm {
 }
 
 /// Resolves style-neutral shell space from the current window classes.
-typedef NavigationShellFormResolver =
-    NavigationShellForm Function(WindowSize windowSize);
+typedef NavigationShellFormResolver = NavigationShellForm Function(
+  WindowSize windowSize,
+);

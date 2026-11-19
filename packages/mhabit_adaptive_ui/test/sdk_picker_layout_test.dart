@@ -1,7 +1,7 @@
 import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
-import 'package:flutter/material.dart' as native;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart' as native;
 import 'package:mhabit_adaptive_ui/material.dart';
 
 const _window = Size(951, 669);
@@ -184,9 +184,8 @@ void main() {
       expect(builderSize, const Size(455.5, 669));
       _expectInPane(tester, const Rect.fromLTWH(495.5, 0, 455.5, 669));
       expect(
-        DatePickerTheme.of(
-          tester.element(find.byType(DatePickerDialog)),
-        ).headerBackgroundColor,
+        DatePickerTheme.of(tester.element(find.byType(DatePickerDialog)))
+            .headerBackgroundColor,
         Colors.teal,
       );
       expect(find.text('Keep date'), findsOneWidget);

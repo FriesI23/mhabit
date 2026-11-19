@@ -34,6 +34,28 @@ import 'package:archive/archive.dart';
 Uint8List loadLoopRealZip() =>
     File('test/support/loop_habits_csv_v2.3.1.zip').readAsBytesSync();
 
+/// Builds a ZIP whose first habit has a damaged compressed history entry.
+Uint8List buildLoopSampleZipWithDamagedRecords() {
+  final bytes = buildLoopSampleZip();
+  final data = ByteData.sublistView(bytes);
+  for (var offset = 0; offset + 30 < bytes.length; offset++) {
+    if (data.getUint32(offset, Endian.little) != 0x04034b50) continue;
+    final nameLength = data.getUint16(offset + 26, Endian.little);
+    final extraLength = data.getUint16(offset + 28, Endian.little);
+    final name = String.fromCharCodes(
+      bytes.sublist(offset + 30, offset + 30 + nameLength),
+    );
+    if (name != '001 Meditate/Checkmarks.csv') continue;
+    if (data.getUint16(offset + 8, Endian.little) != 8) {
+      throw StateError('Expected a deflated Checkmarks.csv entry.');
+    }
+    // Keep the ZIP headers intact but give raw deflate a reserved block type.
+    bytes[offset + 30 + nameLength + extraLength] = 0x07;
+    return bytes;
+  }
+  throw StateError('Checkmarks.csv entry not found in the sample ZIP.');
+}
+
 /// Sample Loop CSV export ZIP for the Loop Habit Tracker CSV format.
 ///
 /// Habits:

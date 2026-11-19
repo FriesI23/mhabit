@@ -11,9 +11,9 @@ class CupertinoFocusHaloClip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final overflow = AppAdaptiveUiTheme.of(
-      context,
-    ).cupertinoFocusTheme.haloPaintOutset;
+    final overflow = AppAdaptiveUiTheme.of(context)
+        .cupertinoFocusTheme
+        .haloPaintOutset;
     return ClipRect(
       clipper: _CupertinoFocusHaloRectClipper(overflow),
       child: child,

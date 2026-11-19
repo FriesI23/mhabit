@@ -1,10 +1,10 @@
 import 'dart:math' as math;
 
 import 'package:adaptive_actions/cupertino.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' show Theme;
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/rendering.dart' show SliverConstraints;
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
+import 'package:material_ui/material_ui.dart' show Theme;
 
 import '../adaptive/adaptive_app_bar_actions.dart';
 import '../breakpoints/window_size_class.dart';
@@ -275,9 +275,9 @@ class _CupertinoSliverSearchBarState<T extends Object>
                     topOffset: topPadding,
                   ),
                   child: DefaultTextStyle(
-                    style: CupertinoTheme.of(
-                      context,
-                    ).textTheme.navTitleTextStyle,
+                    style: CupertinoTheme.of(context)
+                        .textTheme
+                        .navTitleTextStyle,
                     child: CupertinoSearchToolbar(
                       topToolbarLayoutOverride: topToolbarLayoutOverride,
                       title: widget.keyword.isEmpty

@@ -102,9 +102,9 @@ void main() {
   test(
     'Windows state preserves native DPI and workspace coordinates',
     () async {
-      final adapter =
-          createAdapter(TargetPlatform.windows)
-              as StoredWindowPersistenceAdapter;
+      final adapter = createAdapter(
+        TargetPlatform.windows,
+      ) as StoredWindowPersistenceAdapter;
       snapshot = _windowsState;
       final state = await adapter.captureState();
       expect(state, _windowsState);

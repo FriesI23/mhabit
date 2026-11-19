@@ -10,7 +10,8 @@ part of 'habit_export.dart';
 
 abstract class _$RecordExportDataCWProxy {
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -35,7 +36,8 @@ class _$RecordExportDataCWProxyImpl implements _$RecordExportDataCWProxy {
   final RecordExportData _value;
 
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -93,7 +95,8 @@ extension $RecordExportDataCopyWith on RecordExportData {
 
 abstract class _$HabitExportDataCWProxy {
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -131,7 +134,8 @@ class _$HabitExportDataCWProxyImpl implements _$HabitExportDataCWProxy {
   final HabitExportData _value;
 
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
