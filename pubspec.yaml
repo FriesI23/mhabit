@@ -294,7 +294,7 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  # Android-only field
+  # Shared by platforms that support Flutter flavors, including Windows.
   default-flavor: f_generic
 
   # To add assets to your application, add an assets section, like this:

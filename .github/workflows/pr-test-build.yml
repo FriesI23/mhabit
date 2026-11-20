@@ -61,7 +61,7 @@ jobs:
             ```
             /build                 same as `/build auto`
             /build auto            build only platforms whose paths changed
-            /build all             build all platforms (android, ios, linux, macos) unconditionally
+            /build all             build all platforms (android, ios, linux, macos, windows) unconditionally
             /build <platforms>     build only the given platforms, comma- or space-separated
                                    e.g. /build android,ios
             /build stop            cancel an in-progress build
@@ -196,6 +196,11 @@ jobs:
               - 'linux/**'
             macos:
               - 'macos/**'
+            windows:
+              - 'windows/**'
+              - 'scripts/build_msix*.cmd'
+              - '.github/actions/build_windows*/**'
+              - '.github/actions/package_windows_msix/**'
 
       - name: Parse explicit platform list
         id: platforms
@@ -205,7 +210,7 @@ jobs:
         run: |
           RAW_PARAMS=$(printf '%s' "$COMMENT_BODY" | sed -E 's#^/build[[:space:]]*##')
           ARGS=$(printf '%s' "$RAW_PARAMS" | tr ',|' ' ' | tr '[:upper:]' '[:lower:]')
-          for p in android ios linux macos; do
+          for p in android ios linux macos windows; do
             if echo " $ARGS " | grep -qw "$p"; then
               echo "$p=true" >> "$GITHUB_OUTPUT"
             else
@@ -243,6 +248,12 @@ jobs:
               (steps.mode.outputs.mode == 'all' && 'true') ||
               (steps.mode.outputs.mode == 'auto' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.macos == 'true')) ||
               steps.platforms.outputs.macos
+            }}
+          WINDOWS: >-
+            ${{
+              (steps.mode.outputs.mode == 'all' && 'true') ||
+              (steps.mode.outputs.mode == 'auto' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.windows == 'true')) ||
+              steps.platforms.outputs.windows
             }}
         run: bash .github/scripts/pr-test-build-resolve-platforms.sh
 

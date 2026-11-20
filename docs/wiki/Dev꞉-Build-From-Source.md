@@ -174,12 +174,13 @@ flutter pub get
 flutter build windows
 ```
 
-Default build outputs are located at `build\windows\x64\runner` (e.g. `build\windows\x64\runner\Release`)
+Default build outputs are located at `build/windows/<arch>/f_generic/runner/Release`
+(`x64` or `arm64`).
 
 > To build `msix` package, refer to `scripts\build_msix.cmd`
-> and `.github\workflows\app-release.yml#jobs.build-windows-msix`.
+> and `.github/workflows/release-app.yml#jobs.build-windows-msix`.
 
-This project implement a variable-based approach to simulate Windows flavors.
+Windows uses Flutter's native flavors, with `f_generic` selected by default.
 Following flavors are allowed:
 
 - `f_dev`
@@ -190,9 +191,7 @@ Following flavors are allowed:
   - command:
 
     ```pwsh
-    $env:APP_FLAVOR_WIN='f_dev'
-    flutter build windows <other optional args>
-    Remove-Item Env:\APP_FLAVOR_WIN
+    flutter build windows --flavor f_dev <other optional args>
     ```
 
 - `f_generic`
@@ -209,9 +208,7 @@ Following flavors are allowed:
     ```
 
     ```pwsh
-    $env:APP_FLAVOR_WIN='f_generic'
-    flutter build windows <other optional args>
-    Remove-Item Env:\APP_FLAVOR_WIN
+    flutter build windows --flavor f_generic <other optional args>
     ```
 
 <!-- refs -->

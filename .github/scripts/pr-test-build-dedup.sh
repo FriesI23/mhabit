@@ -22,7 +22,7 @@ elif [ -n "$PARAM_NORM" ] && [ "$PARAM_NORM" != "auto" ] && ! echo " $PARAM_NORM
   # An explicit target list (anything other than empty/auto/all) must name
   # at least one real platform, or nothing will actually build.
   VALID_TARGET=false
-  for p in android ios linux macos; do
+  for p in android ios linux macos windows; do
     echo " $PARAM_NORM " | grep -qw "$p" && VALID_TARGET=true
   done
   [ "$VALID_TARGET" = false ] && MODE="invalid"
@@ -34,7 +34,7 @@ Usage: /build [target]
 
   /build                 same as `/build auto`
   /build auto            build only platforms whose paths changed
-  /build all             build all platforms (android, ios, linux, macos) unconditionally
+  /build all             build all platforms (android, ios, linux, macos, windows) unconditionally
   /build <platforms>     build only the given platforms, comma- or space-separated
                          e.g. /build android,ios
   /build stop            cancel an in-progress build
@@ -52,7 +52,7 @@ HELP_EOF
 fi
 
 if [ "$MODE" = "invalid" ]; then
-  MSG="⚠️ No recognized platform in \`/build $RAW_PARAMS\` — nothing would be built. Valid targets: \`android\`, \`ios\`, \`linux\`, \`macos\`, \`all\`, \`auto\` (or no argument). Comment \`/build help\` for full usage."
+  MSG="⚠️ No recognized platform in \`/build $RAW_PARAMS\` — nothing would be built. Valid targets: \`android\`, \`ios\`, \`linux\`, \`macos\`, \`windows\`, \`all\`, \`auto\` (or no argument). Comment \`/build help\` for full usage."
   echo "proceed=false" >> "$GITHUB_OUTPUT"
   {
     echo "message<<EOF"

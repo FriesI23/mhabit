@@ -1,0 +1,66 @@
+name: Package Windows MSIX
+description: Package an existing native Windows bundle as a signed MSIX installer.
+
+inputs:
+  arch:
+    description: Architecture of the existing bundle (x64 or arm64).
+    required: true
+  bundle-path:
+    description: Path to the native Windows Release bundle.
+    required: true
+  app-sign-key-pfx:
+    description: Base64 encoded PFX certificate for Windows signing.
+    required: true
+  app-sign-key-pfx-password:
+    description: Password for the signing certificate.
+    required: true
+
+outputs:
+  msix-path:
+    description: Path to the generated MSIX file.
+    value: ${{ steps.output.outputs.msix-path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Extract Certificate
+      env:
+        CERTIFICATE_BASE64: ${{ inputs.app-sign-key-pfx }}
+      run: echo "$CERTIFICATE_BASE64" | base64 --decode > windows/certificate/publish.pfx
+      shell: bash
+    - name: Package MSIX
+      env:
+        TARGET_ARCH: ${{ inputs.arch }}
+        BUNDLE_PATH: ${{ inputs.bundle-path }}
+        CERTIFICATE_PASSWORD: ${{ inputs.app-sign-key-pfx-password }}
+      run: |
+        $bundle = Join-Path $PWD $env:BUNDLE_PATH
+        $inputPath = Join-Path $PWD 'build/windows/runner/Release'
+        # MSIX 3.18 only probes legacy input paths. Use its architecture-neutral
+        # fallback so repeated architecture detection also works for arm64.
+        if (Test-Path "build/windows/$env:TARGET_ARCH/runner") { throw 'Clear legacy Windows build outputs before packaging' }
+        New-Item -ItemType Directory -Force -Path (Split-Path $inputPath) | Out-Null
+        New-Item -ItemType Junction -Path $inputPath -Target $bundle -ErrorAction Stop | Out-Null
+        try {
+          .flutter\bin\dart run msix:create `
+            --build-windows false `
+            --architecture $env:TARGET_ARCH `
+            --output-path $bundle `
+            --output-name "mhabit_$env:TARGET_ARCH" `
+            --certificate-path windows\certificate\publish.pfx `
+            --certificate-password $env:CERTIFICATE_PASSWORD `
+            --signtool-options "/td SHA256" `
+            --install-certificate false
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        } finally {
+          # Delete only the junction, preserving the native flavor bundle.
+          [System.IO.Directory]::Delete($inputPath)
+        }
+      shell: pwsh
+    - id: output
+      env:
+        OUTPUT_PATH: ${{ inputs.bundle-path }}/mhabit_${{ inputs.arch }}.msix
+      run: |
+        md5sum "$OUTPUT_PATH"
+        echo "msix-path=$OUTPUT_PATH" >> "$GITHUB_OUTPUT"
+      shell: bash

@@ -51,6 +51,9 @@ existing architecture and tooling contracts.
 ## Repository Workflow
 
 - This repo uses the vendored Flutter SDK under `.flutter/`.
+- Windows uses native Flutter flavors (`f_generic` by default) and
+  `build/windows/<arch>/<flavor>/runner/<configuration>/`; keep MSIX compatibility
+  in existing CMD/CI entrypoints.
 - Use `pubspec.lock` to assess dependency upgrades. Preserve existing version
   ranges when they already admit the resolved version, and keep shared dependency
   constraints consistent across the app and workspace packages.
