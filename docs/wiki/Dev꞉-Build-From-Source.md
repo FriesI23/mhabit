@@ -148,16 +148,16 @@ Build outputs located at:
 
 4. In project folder, run `flutter pub get`
 
-5. Then run `flutter build linux`, once finished you should see:
+5. Then run `flutter build linux --release --flavor f_generic`, once finished you should see:
 
    ```shell
    Building Linux application...
-   ✓ Built build/linux/<arch>/release/bundle/mhabit
+   ✓ Built build/linux/<arch>/f_generic/release/bundle/mhabit
    ```
 
 6. Enjoy by running the output binary:
-   - x86_64: `build/linux/x64/release/bundle/mhabit`
-   - aarch64: `build/linux/arm64/release/bundle/mhabit`
+   - x86_64: `build/linux/x64/f_generic/release/bundle/mhabit`
+   - aarch64: `build/linux/arm64/f_generic/release/bundle/mhabit`
 
 > To build `flatpak` package, refer to `scripts/build_flatpak_pre.sh`, `scripts/build_flatpak.sh`
 > and `.github/workflows/app-release.yml#jobs.build-linux||build-linux-flatpak`.
