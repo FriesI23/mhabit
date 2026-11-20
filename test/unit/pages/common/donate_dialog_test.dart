@@ -191,7 +191,6 @@ void main() {
         await tester.tap(find.text('Open'));
         await tester.pumpAndSettle();
         expect(find.bySubtype<AdaptiveModal>(), findsOneWidget);
-        expect(find.byType(AdaptiveModalMaterialBridge), findsNothing);
         expect(
           find.byType(AdaptiveListSection),
           findsNWidgets(width == 320 ? 5 : 4),

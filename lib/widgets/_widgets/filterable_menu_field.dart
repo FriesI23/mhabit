@@ -183,9 +183,9 @@ class _FilterableMenuFieldState<T> extends State<FilterableMenuField<T>> {
   @override
   Widget build(BuildContext context) {
     return MenuAnchor(
-      // FIXME: Flutter 3.44 may calculate the final menu item Interval.end as
+      // FIXME: material_ui 1.11.1 may calculate the final menu item Interval.end as
       // slightly greater than 1.0 and trigger a curves.dart assertion in
-      // debug mode. Restore the animation in debug mode once the framework
+      // debug mode. Restore the animation in debug mode once the package
       // clamps the staggered animation interval.
       animated: !kDebugMode,
       controller: _effectiveMenuController,

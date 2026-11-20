@@ -54,8 +54,8 @@ Future<AppSyncServerEditorResult?> naviToAppSyncServerEditorDialog({
   final appSync = context.read<AppSyncSettingsAccess>();
   return showAdaptiveSheet<AppSyncServerEditorResult>(
     context: context,
-    // TODO(mhabit-adaptive-dialog): Remove the forced Material style with Group Edit/Modify
-    // after the adaptive UI package provides the required form controls.
+    // TODO(mhabit-adaptive-dialog): Remove the forced Material style once this
+    // editor's form controls have Cupertino implementations.
     styleOverride: AdaptiveStyle.material,
     presentationOverride: presentationOverride,
     barrierDismissible: false,

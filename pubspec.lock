@@ -12,10 +12,11 @@ packages:
   adaptive_actions:
     dependency: "direct main"
     description:
-      path: "../../../../adaptive_actions"
-      relative: true
-    source: path
-    version: "0.7.1"
+      name: adaptive_actions
+      sha256: d94f31fff410c47abe620d0779f5b22f3b83a4fb4b0de755f6c000095114b4f0
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.8.1"
   analyzer:
     dependency: "direct dev"
     description:
@@ -566,12 +567,13 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_adaptive_sidebar:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
-      path: "../../../../flutter_adaptive_sidebar"
-      relative: true
-    source: path
-    version: "0.4.0"
+      name: flutter_adaptive_sidebar
+      sha256: ccf8d20809e3dc8f2010d7666748a0b65d54954ee6b74f7653cb1fdf8b4f4725
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.1"
   flutter_gen:
     dependency: "direct dev"
     description:
@@ -806,10 +808,11 @@ packages:
   great_list_view_plus:
     dependency: "direct main"
     description:
-      path: "../../../../great_list_view_plus"
-      relative: true
-    source: path
-    version: "0.3.0"
+      name: great_list_view_plus
+      sha256: "78768b6c8b73c2e183a6ffa38a5702b3dcf8e28ab3d29e9515be1ec1756cba2e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.1"
   hashcodes:
     dependency: transitive
     description:
@@ -1605,10 +1608,11 @@ packages:
   simple_heatmap_calendar:
     dependency: "direct main"
     description:
-      path: "../../../../simple_heatmap_calendar"
-      relative: true
-    source: path
-    version: "0.4.0"
+      name: simple_heatmap_calendar
+      sha256: "0415db6b3a533288ef9e197c851608a3480fdad18d0b04f8573e4d283c0fbcf4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.1"
   simple_icons:
     dependency: "direct main"
     description:

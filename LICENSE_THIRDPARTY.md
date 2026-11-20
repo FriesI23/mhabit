@@ -501,12 +501,15 @@ SOFTWARE.
 
 ## great_list_view_plus
 
+[Pub](https://pub.dev/packages/great_list_view_plus)
+
 [Source](https://github.com/FriesI23/great_list_view_plus)
 
 ```text
 MIT License
 
 Copyright (c) 2020 Belsole Davide
+Copyright (c) 2026 Fries_I23
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -594,7 +597,7 @@ SOFTWARE.
 ```text
 MIT License
 
-Copyright (c) 2023 Fries_I23
+Copyright (c) 2023-2026 Fries_I23
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
