@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/entries/app_error/entry.dart';
 import 'package:mhabit/entries/common/app_root_view.dart';
+import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/providers/app_ui/app_window_appearance.dart';
 import 'package:mhabit/widgets/_widgets/app_window_title_bar_binding.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
@@ -56,7 +57,7 @@ void main() {
   });
 
   testWidgets(
-    'native title follows localized app name without duplicate submissions',
+    'Flutter and native titles stay consistent across locale changes',
     (tester) async {
       final api = _Api();
       final owner = DesktopWindowTitleBar(api: api);
@@ -73,6 +74,7 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
+        expect(tester.widget<Title>(find.byType(Title)).title, api.titles.last);
       }
 
       await pump(const Locale('en'));
@@ -81,7 +83,13 @@ void main() {
       await pump(
         const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
       );
-      expect(api.titles, ['Table Habit', '桌上习惯', '桌上習慣']);
+      final englishName = lookupL10n(const Locale('en')).appName;
+      expect(
+        api.titles,
+        defaultTargetPlatform == TargetPlatform.windows
+            ? [englishName]
+            : [englishName, '桌上习惯', '桌上習慣'],
+      );
       expect(tester.takeException(), isNull);
     },
     variant: const TargetPlatformVariant({

@@ -24,10 +24,10 @@ import 'package:provider/provider.dart';
 import '../../common/app_info.dart';
 import '../../common/consts.dart';
 import '../../common/global.dart';
+import '../../common/window_title.dart';
 import '../../extensions/adaptive_style_extensions.dart';
 import '../../extensions/app_info_extensions.dart';
 import '../../extensions/desktop_window_chrome_extensions.dart';
-import '../../l10n/localizations.dart';
 import '../../models/app_desktop_bar_mode.dart';
 import '../../widgets/_widgets/app_window_title_bar_binding.dart';
 import '../../widgets/widgets.dart';
@@ -166,8 +166,7 @@ class _AppRootMaterialApp extends StatelessWidget {
     );
   }
 
-  String _onGenerateTitle(BuildContext context) =>
-      L10n.of(context)?.appName ?? appName;
+  String _onGenerateTitle(BuildContext context) => appWindowTitle(context);
 
   @override
   Widget build(BuildContext context) {
