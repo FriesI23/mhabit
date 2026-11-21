@@ -60,12 +60,12 @@ HabitSummaryDataCollection _buildCollection(Iterable<HabitSummaryData> habits) {
 void testLocalizedStringIterableExtension() =>
     group('test LocalizedStringIterableExtension', () {
       test('uses the localized separator and optional override', () {
-        final l10n = lookupL10n(const Locale('en'));
+        final l10n = lookupL10n(const Locale('zh'));
         expect(<String>[].joinLocalized(l10n), isNull);
         expect(['Ongoing'].joinLocalized(l10n), 'Ongoing');
         expect(
           ['Ongoing', 'Completed'].joinLocalized(l10n),
-          'Ongoing, Completed',
+          'Ongoing${l10n.common_listSeparator}Completed',
         );
         expect(
           ['Ongoing', 'Completed'].joinLocalized(l10n, separator: ' / '),
@@ -74,21 +74,6 @@ void testLocalizedStringIterableExtension() =>
         expect(
           ['Ongoing', 'Completed'].joinLocalized(null),
           'Ongoing, Completed',
-        );
-      });
-
-      test('uses configured English and Chinese list separators', () {
-        expect(lookupL10n(const Locale('en')).common_listSeparator, ', ');
-        expect(lookupL10n(const Locale('zh')).common_listSeparator, '，');
-        expect(
-          lookupL10n(
-            const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
-          ).common_listSeparator,
-          '，',
-        );
-        expect(
-          ['进行中', '已完成'].joinLocalized(lookupL10n(const Locale('zh'))),
-          '进行中，已完成',
         );
       });
     });

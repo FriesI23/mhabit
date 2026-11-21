@@ -433,6 +433,9 @@ them; keep rows with independent actions separate from single-action controls.
   generated `L10n.localizationsDelegates` still references the SDK design
   localizations; keep the generated output intact and maintain the standalone
   design delegates in `lib/common/consts.dart`.
+- Use a representative locale when testing localized UI behavior. Add locale
+  cases when they exercise distinct behavior, such as script resolution or
+  fallback. Keep exact translations out of multilingual test expectations.
 - Use the existing normalization and generation workflow when changing l10n:
   `make normalize-l10n`, then `make gen` or the narrower needed step.
 - Esperanto uses `l10n_esperanto` delegates in `lib/common/consts.dart`.

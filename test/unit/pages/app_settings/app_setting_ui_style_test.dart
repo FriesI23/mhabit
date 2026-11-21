@@ -66,15 +66,6 @@ void main() {
           );
           await tester.pumpAndSettle();
           final l10n = lookupL10n(locale);
-          final chinese = locale.languageCode == 'zh';
-          expect(
-            l10n.appSetting_uiStyle_titleText,
-            chinese ? '界面风格' : 'UI style',
-          );
-          expect(
-            l10n.appSetting_appleSidebarStyle_titleText,
-            chinese ? 'Apple 侧边栏外观' : 'Apple Sidebar appearance',
-          );
           expect(find.text(l10n.appSetting_uiStyle_titleText), findsOneWidget);
           expect(
             find.text(l10n.appSetting_appleSidebarStyle_titleText),

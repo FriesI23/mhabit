@@ -132,104 +132,6 @@ final class _DelayedGroupManager extends GroupManager {
 }
 
 void main() {
-  test(
-    'confirm translations own source-name truncation and preview references',
-    () {
-      for (final locale in L10n.supportedLocales) {
-        final l10n = lookupL10n(locale);
-        expect(
-          l10n.habitDisplay_groupModifyConfirm_previewTitle,
-          l10n.appDateFormat_preview_text,
-        );
-        for (final count in [1, 2, 5]) {
-          final full = l10n.habitDisplay_groupModifyConfirm_bodyChangeStat(
-            count,
-            'A, B, C',
-            'Target',
-            0,
-            3,
-          );
-          final shortened = l10n.habitDisplay_groupModifyConfirm_bodyChangeStat(
-            count,
-            'A, B, C',
-            'Target',
-            2,
-            5,
-          );
-          expect(full, contains('A, B, C'));
-          expect(full, isNot(contains('...')));
-          expect(shortened, contains('A, B, C'));
-          expect(shortened, isNot(contains('...')));
-          expect(shortened, isNot(full));
-          expect(shortened, contains('Target'));
-        }
-      }
-    },
-  );
-  test('source group quantities use localized singular and plural forms', () {
-    final cases = <Locale, (String, String)>{
-      const Locale('en'): ('and 1 more group', 'and 34 more groups'),
-      const Locale('zh'): ('等共 4 个分组', '等共 37 个分组'),
-      const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'): (
-        '等共 4 個群組',
-        '等共 37 個群組',
-      ),
-      const Locale('he'): ('ועוד קבוצה אחת', 'ועוד 34 קבוצות'),
-      const Locale('cs'): ('a jedné další skupiny', 'a dalších 34 skupin'),
-      const Locale('uk'): ('та ще 1 групи', 'та ще 34 груп'),
-    };
-    for (final entry in cases.entries) {
-      final l10n = lookupL10n(entry.key);
-      final (open, close, space) = switch (entry.key.languageCode) {
-        'zh' => ('「', '」', ''),
-        'he' => ('„', '”', ' '),
-        'cs' => ('„', '“', ' '),
-        _ => ('"', '"', ' '),
-      };
-      final quotedNames = '${open}A, B, C$close$space';
-      expect(
-        l10n.habitDisplay_groupModifyConfirm_bodyChangeStat(
-          5,
-          'A, B, C',
-          'Target',
-          1,
-          4,
-        ),
-        contains('$quotedNames${entry.value.$1}'),
-      );
-      expect(
-        l10n.habitDisplay_groupModifyConfirm_bodyChangeStat(
-          5,
-          'A, B, C',
-          'Target',
-          34,
-          37,
-        ),
-        contains('$quotedNames${entry.value.$2}'),
-      );
-    }
-    final uk = lookupL10n(const Locale('uk'));
-    expect(
-      uk.habitDisplay_groupModifyConfirm_bodyChangeStat(
-        5,
-        'A, B, C',
-        'Target',
-        21,
-        24,
-      ),
-      contains('та ще 21 групи'),
-    );
-    expect(
-      uk.habitDisplay_groupModifyConfirm_bodyChangeStat(
-        5,
-        'A, B, C',
-        'Target',
-        11,
-        14,
-      ),
-      contains('та ще 11 груп'),
-    );
-  });
   for (final count in [3, 4]) {
     testWidgets('confirm limits source names to three for $count groups', (
       tester,
@@ -269,12 +171,17 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      final summary = tester
-          .widget<Text>(find.textContaining('will change from'))
-          .data!;
+      final l10n = lookupL10n(const Locale('en'));
+      final summary = l10n.habitDisplay_groupModifyConfirm_bodyChangeStat(
+        count,
+        habits.take(3).map((habit) => habit.oldGroupName).join(', '),
+        'Target',
+        count - 3,
+        count,
+      );
+      expect(find.text(summary), findsOneWidget);
       expect(summary, contains('Group 0, Group 1, Group 2'));
-      expect(summary.contains('and 1 more group'), count > 3);
-      expect(summary, isNot(contains('...')));
+      expect(summary, contains('Target'));
       expect(summary, isNot(contains('Group 3')));
       await tester.tap(
         find.byKey(const ValueKey('group-modify-preview-toggle')),

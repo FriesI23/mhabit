@@ -266,18 +266,10 @@ void main() {
   ) async {
     final controller = TextEditingController(text: 'Habit');
     addTearDown(controller.dispose);
-    final cases = <({TargetPlatform? platform, Locale locale, String label})>[
-      (platform: null, locale: const Locale('zh'), label: '保存'),
-      (platform: TargetPlatform.iOS, locale: const Locale('zh'), label: '保存'),
-      (platform: null, locale: const Locale('fr'), label: 'Sauvegarder'),
-      (
-        platform: TargetPlatform.iOS,
-        locale: const Locale('fr'),
-        label: 'Sauvegarder',
-      ),
-    ];
+    const locale = Locale('fr');
+    final saveLabel = lookupL10n(locale).habitEdit_saveButton_text;
 
-    for (final testCase in cases) {
+    for (final platform in [null, TargetPlatform.iOS]) {
       await tester.pumpWidget(
         _host(
           HabitEditAppBar(
@@ -289,13 +281,13 @@ void main() {
             showInFullscreenDialog: false,
             onSaveButtonPressed: () {},
           ),
-          platform: testCase.platform,
-          locale: testCase.locale,
+          platform: platform,
+          locale: locale,
         ),
       );
       await tester.pumpAndSettle();
 
-      final label = tester.widget<Text>(find.text(testCase.label));
+      final label = tester.widget<Text>(find.text(saveLabel));
       expect(label.maxLines, 1);
       expect(label.softWrap, isFalse);
       expect(tester.takeException(), isNull);

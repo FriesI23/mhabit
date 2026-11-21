@@ -1,1 +1,9 @@
 /* Localized strings. Values may be maintained manually. */
+HomeWidgetToday = "Hodiaŭ";
+HomeWidgetComplete = "Farite";
+HomeWidgetUndo = "MALFARI";
+HomeWidgetAllDone = "VI SUKCESIS";
+HomeWidgetCompleted = "Finita";
+HomeWidgetAchieved = "Finita";
+HomeWidgetNotAchieved = "Neplenumita";
+HomeWidgetSkipped = "Preterlasi";
