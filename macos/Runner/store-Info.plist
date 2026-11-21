@@ -24,6 +24,11 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<!-- FIXME: Temporary Skia fallback for https://github.com/flutter/flutter/pull/192522.
+	     Remove this override once the pinned Flutter SDK includes the fix and
+	     Impeller passes fullscreen entry, exit, and window resizing on macOS. -->
+	<key>FLTEnableImpeller</key>
+	<false/>
 	<key>LSMinimumSystemVersion</key>
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
 	<key>NSHumanReadableCopyright</key>
