@@ -48,7 +48,7 @@ if (flutterVersionName == null) {
 
 def customCompileSdkVersion = localProperties.getProperty('flutter.compileSdkVersion')
 if (customCompileSdkVersion == null) {
-    customCompileSdkVersion = Math.max(35, flutter.compileSdkVersion)
+    customCompileSdkVersion = Math.max(37, flutter.compileSdkVersion)
 } else {
     customCompileSdkVersion = customCompileSdkVersion.toInteger()
 }
@@ -83,8 +83,6 @@ android {
 
     defaultConfig {
         multiDexEnabled true
-        /* groovylint-disable-next-line LineLength */
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId 'io.github.friesi23.mhabit'
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.

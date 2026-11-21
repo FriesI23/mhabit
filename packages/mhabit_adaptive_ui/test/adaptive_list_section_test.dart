@@ -1,9 +1,9 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_adaptive_list_tile.dart';
 import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_list_section.dart';
@@ -176,9 +176,9 @@ void main() {
           override ?? Colors.blue,
         );
         expect(
-          DefaultTextStyle.of(
-            tester.element(find.text('Default subtitle')),
-          ).style.color,
+          DefaultTextStyle.of(tester.element(find.text('Default subtitle')))
+              .style
+              .color,
           scheme.onSurfaceVariant,
         );
         expect(
@@ -253,9 +253,9 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(
-        DefaultTextStyle.of(
-          tester.element(find.text('Apple override')),
-        ).style.color,
+        DefaultTextStyle.of(tester.element(find.text('Apple override')))
+            .style
+            .color,
         override ?? Colors.green,
       );
       expect(

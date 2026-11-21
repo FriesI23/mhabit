@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
@@ -173,6 +173,7 @@ class _GroupManageGridState extends State<GroupManageGrid> {
         !DeviceContext.of(context).platform.isMobileOperatingSystem;
 
     return SliverReorderableAnimatedList<HabitGroupData>.grid(
+      buildDefaultDragHandles: false,
       scrollDirection: _GroupManageDragHandler.scrollDirection,
       items: _handler.items,
       isSameItem: _GroupManageDragHandler.isSameItem,
@@ -270,6 +271,7 @@ class _GroupManageListState extends State<GroupManageList> {
         !DeviceContext.of(context).platform.isMobileOperatingSystem;
 
     return SliverReorderableAnimatedList<HabitGroupData>(
+      buildDefaultDragHandles: false,
       scrollDirection: _GroupManageDragHandler.scrollDirection,
       items: _handler.items,
       isSameItem: _GroupManageDragHandler.isSameItem,

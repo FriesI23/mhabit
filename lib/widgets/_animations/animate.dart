@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 // Copyright  flutterchina wendux
 // see: https://github.com/flutterchina/flutter_in_action_2nd

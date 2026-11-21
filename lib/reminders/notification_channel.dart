@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart' show Colors;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     hide
         AndroidNotificationDetails,
@@ -21,6 +20,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart'
         NotificationDetails,
         WindowsNotificationDetails;
 import 'package:json_annotation/json_annotation.dart';
+import 'package:material_ui/material_ui.dart' show Colors;
 
 import '../common/app_info.dart';
 import '../l10n/localizations.dart';

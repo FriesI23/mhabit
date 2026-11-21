@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' show Theme;
+import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:material_ui/material_ui.dart' show Theme;
 
 import '../adaptive/adaptive_list_theme.dart';
 import '../adaptive/list_section_row_scope.dart';
@@ -151,9 +151,8 @@ class _WrappingText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => DefaultTextStyle(
-    style: DefaultTextStyle.of(
-      context,
-    ).style.copyWith(fontSize: fontSize, color: color),
+    style: DefaultTextStyle.of(context).style
+        .copyWith(fontSize: fontSize, color: color),
     softWrap: true,
     overflow: TextOverflow.clip,
     child: child,

@@ -7,8 +7,8 @@
 //     https://www.apache.org/licenses/LICENSE-2.0
 
 import 'package:adaptive_actions/adaptive_actions.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../../common/consts.dart';
 import '../../../../l10n/localizations.dart';
@@ -179,11 +179,10 @@ final class HabitDisplayOptionsActionsData<T extends Object> {
   appleMenuForAction;
 }
 
-typedef HabitDisplayOptionsActionsBuilder<T extends Object> =
-    Widget Function(
-      BuildContext context,
-      HabitDisplayOptionsActionsData<T> data,
-    );
+typedef HabitDisplayOptionsActionsBuilder<T extends Object> = Widget Function(
+  BuildContext context,
+  HabitDisplayOptionsActionsData<T> data,
+);
 
 class HabitDisplayOptionsActions<T extends Object> extends StatelessWidget {
   const HabitDisplayOptionsActions({

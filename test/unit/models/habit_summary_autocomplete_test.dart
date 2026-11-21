@@ -100,30 +100,27 @@ void main() {
       expect(data.isRecordAutoComplated(_date(1, 9)), isTrue);
     });
 
-    test(
-      'weekly frequency ignores non-qualifying and future records when frequency is not met',
-      () {
-        _setNow(DateTime.utc(2026, 1, 20));
-        final data =
-            _buildHabitSummaryData(
-              frequency: const HabitFrequency.weekly(freq: 2),
-            )..initRecords([
-              _buildRecord(uuid: 'record-1', month: 1, day: 6),
-              _buildRecord(
-                uuid: 'record-2',
-                month: 1,
-                day: 8,
-                status: HabitRecordStatus.skip,
-              ),
-              _buildRecord(uuid: 'record-3', month: 1, day: 27),
-            ]);
+    test('weekly frequency ignores non-qualifying and future records when frequency is not met', () {
+      _setNow(DateTime.utc(2026, 1, 20));
+      final data =
+          _buildHabitSummaryData(
+            frequency: const HabitFrequency.weekly(freq: 2),
+          )..initRecords([
+            _buildRecord(uuid: 'record-1', month: 1, day: 6),
+            _buildRecord(
+              uuid: 'record-2',
+              month: 1,
+              day: 8,
+              status: HabitRecordStatus.skip,
+            ),
+            _buildRecord(uuid: 'record-3', month: 1, day: 27),
+          ]);
 
-        data.reCalculateAutoComplateRecords(firstDay: DateTime.monday);
+      data.reCalculateAutoComplateRecords(firstDay: DateTime.monday);
 
-        expect(_autoMarkedDates(data), isEmpty);
-        expect(data.isRecordAutoComplated(_date(1, 9)), isFalse);
-      },
-    );
+      expect(_autoMarkedDates(data), isEmpty);
+      expect(data.isRecordAutoComplated(_date(1, 9)), isFalse);
+    });
 
     test(
       'monthly frequency marks the full qualifying month after start date',
@@ -146,30 +143,27 @@ void main() {
       },
     );
 
-    test(
-      'monthly frequency does not mark when qualifying records are insufficient',
-      () {
-        _setNow(DateTime.utc(2026, 2, 20));
-        final data =
-            _buildHabitSummaryData(
-              frequency: const HabitFrequency.monthly(freq: 2),
-              startDate: _date(1, 15),
-            )..initRecords([
-              _buildRecord(uuid: 'record-1', month: 1, day: 16),
-              _buildRecord(
-                uuid: 'record-2',
-                month: 1,
-                day: 28,
-                status: HabitRecordStatus.skip,
-              ),
-            ]);
+    test('monthly frequency does not mark when qualifying records are insufficient', () {
+      _setNow(DateTime.utc(2026, 2, 20));
+      final data =
+          _buildHabitSummaryData(
+            frequency: const HabitFrequency.monthly(freq: 2),
+            startDate: _date(1, 15),
+          )..initRecords([
+            _buildRecord(uuid: 'record-1', month: 1, day: 16),
+            _buildRecord(
+              uuid: 'record-2',
+              month: 1,
+              day: 28,
+              status: HabitRecordStatus.skip,
+            ),
+          ]);
 
-        data.reCalculateAutoComplateRecords(firstDay: DateTime.monday);
+      data.reCalculateAutoComplateRecords(firstDay: DateTime.monday);
 
-        expect(_autoMarkedDates(data), isEmpty);
-        expect(data.isRecordAutoComplated(_date(1, 20)), isFalse);
-      },
-    );
+      expect(_autoMarkedDates(data), isEmpty);
+      expect(data.isRecordAutoComplated(_date(1, 20)), isFalse);
+    });
 
     test('custom frequency extends the marking window within bounds', () {
       _setNow(DateTime.utc(2026, 1, 20));
@@ -217,43 +211,37 @@ void main() {
       expect(data.firstUntrackedDate, _date(1, 20));
     });
 
-    test(
-      'getFirstUnTrackedDate follows the last explicit record when there are no auto marks',
-      () {
-        _setNow(DateTime.utc(2026, 1, 20));
-        final data = _buildHabitSummaryData()
-          ..addRecord(_buildRecord(uuid: 'record-1', month: 1, day: 12));
+    test('getFirstUnTrackedDate follows the last explicit record when there are no auto marks', () {
+      _setNow(DateTime.utc(2026, 1, 20));
+      final data = _buildHabitSummaryData()
+        ..addRecord(_buildRecord(uuid: 'record-1', month: 1, day: 12));
 
-        expect(data.firstUntrackedDate, _date(1, 13));
-      },
-    );
+      expect(data.firstUntrackedDate, _date(1, 13));
+    });
 
-    test(
-      'getFirstUnTrackedDate follows the latest explicit record when it is later than auto marks',
-      () {
-        _setNow(DateTime.utc(2026, 1, 20));
-        final data =
-            _buildHabitSummaryData(
-              frequency: HabitFrequency.custom(days: 4, freq: 2),
-              startDate: _date(1, 10),
-            )..initRecords([
-              _buildRecord(uuid: 'record-1', month: 1, day: 10),
-              _buildRecord(uuid: 'record-2', month: 1, day: 12),
-              _buildRecord(
-                uuid: 'record-3',
-                month: 1,
-                day: 20,
-                status: HabitRecordStatus.skip,
-              ),
-            ]);
+    test('getFirstUnTrackedDate follows the latest explicit record when it is later than auto marks', () {
+      _setNow(DateTime.utc(2026, 1, 20));
+      final data =
+          _buildHabitSummaryData(
+            frequency: HabitFrequency.custom(days: 4, freq: 2),
+            startDate: _date(1, 10),
+          )..initRecords([
+            _buildRecord(uuid: 'record-1', month: 1, day: 10),
+            _buildRecord(uuid: 'record-2', month: 1, day: 12),
+            _buildRecord(
+              uuid: 'record-3',
+              month: 1,
+              day: 20,
+              status: HabitRecordStatus.skip,
+            ),
+          ]);
 
-        data.reCalculateAutoComplateRecords(firstDay: DateTime.monday);
+      data.reCalculateAutoComplateRecords(firstDay: DateTime.monday);
 
-        expect(_autoMarkedDates(data), [
-          for (var day = 10; day <= 13; day++) _date(1, day),
-        ]);
-        expect(data.firstUntrackedDate, _date(1, 21));
-      },
-    );
+      expect(_autoMarkedDates(data), [
+        for (var day = 10; day <= 13; day++) _date(1, day),
+      ]);
+      expect(data.firstUntrackedDate, _date(1, 21));
+    });
   });
 }

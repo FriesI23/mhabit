@@ -16,7 +16,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
@@ -145,15 +145,17 @@ class TodayTabPageState extends State<TodayTabPage>
     super.build(context);
     final appbarHeight = AdaptiveStyle.of(context).appToolbarHeight;
 
-    final body = CustomScrollView(
-      controller: _verticalScrollController,
-      physics: const AlwaysScrollableScrollPhysics(),
-      slivers: [
-        _Appbar(toolbarHeight: appbarHeight),
-        const _HabitsGroupView(),
-        const _DevelopTile(),
-        buildBottomPlaceHolder(context),
-      ],
+    final body = ReorderableListLocalizations(
+      child: CustomScrollView(
+        controller: _verticalScrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          _Appbar(toolbarHeight: appbarHeight),
+          const _HabitsGroupView(),
+          const _DevelopTile(),
+          buildBottomPlaceHolder(context),
+        ],
+      ),
     );
     final image = _TodayDoneImage(
       changedAnimateDuration: const Duration(milliseconds: 300),
@@ -441,6 +443,7 @@ class _HabitGridState extends State<_HabitGrid> {
 
     final today = DateChangeProvider.of(context).dateTime;
     return SliverReorderableAnimatedList<HabitSortCache>.grid(
+      buildDefaultDragHandles: false,
       scrollDirection: Axis.vertical,
       items: habits,
       isSameItem: (a, b) => a.isSameItem(b),
@@ -563,6 +566,7 @@ class _HabitListState extends State<_HabitList> {
 
     final today = DateChangeProvider.of(context).dateTime;
     return SliverReorderableAnimatedList<HabitSortCache>(
+      buildDefaultDragHandles: false,
       scrollDirection: Axis.vertical,
       items: habits,
       isSameItem: (a, b) => a.isSameItem(b),

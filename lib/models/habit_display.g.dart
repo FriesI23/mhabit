@@ -16,7 +16,8 @@ abstract class _$HabitsDisplayFilterCWProxy {
   HabitsDisplayFilter allowCompleteHabits(bool allowCompleteHabits);
 
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `HabitsDisplayFilter(...).copyWith.fieldName(value)`.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields. To update a single field use `HabitsDisplayFilter(...).copyWith.fieldName(value)`.
   ///
   /// Example:
   /// ```dart
@@ -49,7 +50,8 @@ class _$HabitsDisplayFilterCWProxyImpl implements _$HabitsDisplayFilterCWProxy {
       call(allowCompleteHabits: allowCompleteHabits);
 
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `HabitsDisplayFilter(...).copyWith.fieldName(value)`.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields. To update a single field use `HabitsDisplayFilter(...).copyWith.fieldName(value)`.
   ///
   /// Example:
   /// ```dart
@@ -94,7 +96,8 @@ extension $HabitsDisplayFilterCopyWith on HabitsDisplayFilter {
 
 abstract class _$HabitDisplayOpConfigCWProxy {
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -115,7 +118,8 @@ class _$HabitDisplayOpConfigCWProxyImpl
   final HabitDisplayOpConfig _value;
 
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -153,7 +157,8 @@ extension $HabitDisplayOpConfigCopyWith on HabitDisplayOpConfig {
 
 abstract class _$HabitDisplaySearchOptionsCWProxy {
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -176,7 +181,8 @@ class _$HabitDisplaySearchOptionsCWProxyImpl
   final HabitDisplaySearchOptions _value;
 
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart

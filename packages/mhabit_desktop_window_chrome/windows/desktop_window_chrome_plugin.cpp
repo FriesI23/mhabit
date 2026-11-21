@@ -54,14 +54,10 @@ class DesktopWindowChromePlugin
         });
   }
 
-  /// Removes message handlers before the title-bar adapter restores defaults.
   ~DesktopWindowChromePlugin() override {
     registrar_->UnregisterTopLevelWindowProcDelegate(delegate_id_);
-    DesktopTitleBarHostApi::SetUp(registrar_->messenger(), nullptr);
-    mhabit_window_persistence::WindowPersistenceHostApi::SetUp(
-        registrar_->messenger(), nullptr);
-    mhabit_window_persistence::WindowsWindowPersistenceHostApi::SetUp(
-        registrar_->messenger(), nullptr);
+    // The registrar clears the channel handlers during engine shutdown.
+    // Unregistering them here would call through a detached messenger.
   }
 
   /// Applies packed ARGB colors to the current top-level HWND.

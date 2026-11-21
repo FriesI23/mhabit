@@ -1,7 +1,7 @@
 import 'dart:ui' show PointerDeviceKind, Tristate;
 
 import 'package:adaptive_actions/core.dart';
-import 'package:flutter/cupertino.dart'
+import 'package:cupertino_ui/cupertino_ui.dart'
     show
         CupertinoButton,
         CupertinoColors,
@@ -13,7 +13,6 @@ import 'package:flutter/cupertino.dart'
         CupertinoSliverNavigationBar,
         CupertinoThemeData;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
     show
@@ -23,7 +22,7 @@ import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
         CupertinoSidebarStyle,
         CupertinoSidebarToolbarGeometry;
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_navigation_primary_action.dart';
 import 'package:mhabit_adaptive_ui/src/shell/navigation_scroll_wish_policy.dart';
@@ -679,9 +678,8 @@ void main() {
               bodyBuilder: (context, form, onSelected, child) {
                 final padding = MediaQuery.paddingOf(context);
                 final viewPadding = MediaQuery.viewPaddingOf(context);
-                final owner = AdaptiveWindowControlLayoutScope.maybeOf(
-                  context,
-                )!.owner;
+                final owner = AdaptiveWindowControlLayoutScope.maybeOf(context)!
+                    .owner;
                 return Stack(
                   key: const ValueKey('custom-shell-body'),
                   children: [
@@ -2155,9 +2153,9 @@ void main() {
         Navigator.of(detailContext).pop();
         await tester.pumpAndSettle();
         expect(
-          AdaptiveNavScope.of(
-            tester.element(find.text('detail page')),
-          ).visible.value,
+          AdaptiveNavScope.of(tester.element(find.text('detail page')))
+              .visible
+              .value,
           isFalse,
         );
       },
@@ -2206,9 +2204,9 @@ void main() {
       router.push('/habits/detail');
       await tester.pumpAndSettle();
       expect(
-        AdaptiveNavScope.of(
-          tester.element(find.text('detail page')),
-        ).visible.value,
+        AdaptiveNavScope.of(tester.element(find.text('detail page')))
+            .visible
+            .value,
         isFalse,
       );
 
@@ -2217,9 +2215,9 @@ void main() {
 
       expect(find.text('today page'), findsOneWidget);
       expect(
-        AdaptiveNavScope.of(
-          tester.element(find.text('today page')),
-        ).visible.value,
+        AdaptiveNavScope.of(tester.element(find.text('today page')))
+            .visible
+            .value,
         isTrue,
       );
     });
@@ -2428,9 +2426,8 @@ void main() {
       await tester.pump();
 
       expect(
-        MediaQuery.textScalerOf(
-          tester.element(find.text('habits page')),
-        ).scale(100),
+        MediaQuery.textScalerOf(tester.element(find.text('habits page')))
+            .scale(100),
         125,
       );
       expect(
@@ -2826,9 +2823,8 @@ void main() {
           NavigationDestinationLabelBehavior.alwaysHide,
         );
         expect(
-          AdaptiveNavScope.of(
-            tester.element(find.text('habits page')),
-          ).barHeight,
+          AdaptiveNavScope.of(tester.element(find.text('habits page')))
+              .barHeight,
           64.0,
         );
 
@@ -3043,9 +3039,8 @@ void main() {
           64.0,
         );
         expect(
-          AdaptiveNavScope.of(
-            tester.element(find.text('habits page')),
-          ).barHeight,
+          AdaptiveNavScope.of(tester.element(find.text('habits page')))
+              .barHeight,
           64.0,
         );
 
@@ -3424,9 +3419,8 @@ void main() {
           MaterialApp.router(
             routerConfig: router,
             builder: (context, child) => AppAdaptiveUiTheme(
-              data: AppAdaptiveUiTheme.of(
-                context,
-              ).copyWith(style: AdaptiveStyle.material),
+              data: AppAdaptiveUiTheme.of(context)
+                  .copyWith(style: AdaptiveStyle.material),
               child: child!,
             ),
           ),

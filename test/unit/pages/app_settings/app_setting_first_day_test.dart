@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/utils.dart';
 import 'package:mhabit/l10n/localizations.dart';
@@ -31,12 +31,11 @@ void main() {
               brightness: size.width < 600 ? Brightness.light : Brightness.dark,
             ),
             locale: const Locale('de'),
-            localizationsDelegates: L10n.localizationsDelegates,
+            localizationsDelegates: appLocalizationsDelegates,
             supportedLocales: L10n.supportedLocales,
             builder: (context, child) => MediaQuery(
-              data: MediaQuery.of(
-                context,
-              ).copyWith(textScaler: const TextScaler.linear(2)),
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: const TextScaler.linear(2)),
               child: Directionality(
                 textDirection: size.width < 600
                     ? TextDirection.rtl
@@ -72,9 +71,8 @@ void main() {
           tester.element(find.byType(AppSettingFirstDaySelectDialog)),
         )!;
         final defaultLabel =
-            intl.DateFormat.EEEE(
-              l10n.localeName,
-            ).format(getProtoDateWithFirstDay(defaultFirstDay)) +
+            intl.DateFormat.EEEE(l10n.localeName)
+                .format(getProtoDateWithFirstDay(defaultFirstDay)) +
             l10n.appSetting_firstDayOfWeekDialog_defaultText;
         expect(find.text(defaultLabel), findsOneWidget);
         for (var day = 1; day <= 7; day++) {

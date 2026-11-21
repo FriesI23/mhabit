@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 class DebuggerCardActionData {
@@ -99,9 +99,9 @@ class _MaterialDebuggerCard extends StatelessWidget {
                             : () => action.onPressed!(actionContext),
                         style: action.destructive
                             ? TextButton.styleFrom(
-                                foregroundColor: Theme.of(
-                                  context,
-                                ).colorScheme.error,
+                                foregroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .error,
                               )
                             : null,
                         child: Text(action.label),

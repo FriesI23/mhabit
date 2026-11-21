@@ -3,9 +3,10 @@
 
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart' show CupertinoButton;
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoButton;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/distribution.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/app_settings/widgets.dart';
@@ -17,7 +18,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../support/adaptive_ui_theme.dart';
-
 import '../../../support/stub/shared_preferences.dart';
 
 const _info = AboutInfo(
@@ -67,7 +67,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         navigatorKey: navigatorKey,
-        localizationsDelegates: L10n.localizationsDelegates,
+        localizationsDelegates: appLocalizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         builder: (context, child) => MediaQuery(
           data: MediaQuery.of(context).copyWith(disableAnimations: true),

@@ -127,9 +127,8 @@ class _NotiThrottle {
 
   bool regr(String identity, {required Duration delay}) {
     if (isThrottled(identity)) return false;
-    _trottleMap[identity] = Future.delayed(
-      delay,
-    ).whenComplete(() => _trottleMap.remove(identity));
+    _trottleMap[identity] = Future.delayed(delay)
+        .whenComplete(() => _trottleMap.remove(identity));
     return true;
   }
 

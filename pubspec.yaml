@@ -22,8 +22,8 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.27.20+209
 
 environment:
-  sdk: ">=3.12.0 <4.0.0"
-  flutter: ">=3.44.0"
+  sdk: ">=3.13.0 <4.0.0"
+  flutter: "3.47.9"
 
 workspace:
   - tools
@@ -157,30 +157,32 @@ mhabit_color_builder:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  adaptive_actions: ^0.7.1
+  adaptive_actions: ^0.8.1
+  cupertino_ui: ^1.1.7
+  material_ui: ^1.11.1
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  intl: ^0.20.2
-  l10n_esperanto: ^2.0.14
+  intl: ^0.20.3
+  l10n_esperanto: ^3.0.0
 
   # UI Components
-  flex_color_picker: ^3.8.0
-  great_list_view: ^0.2.3
+  flex_color_picker: ^4.0.0
+  great_list_view_plus: ^0.3.0
   animated_reorderable_list: ^1.3.0
   fl_chart: "^1.1.1"
-  simple_heatmap_calendar: ^0.4.0
+  simple_heatmap_calendar: ^0.5.1
 
   # Extra Features
-  dynamic_color: ^1.9.0
+  dynamic_color: ^2.1.0
   linked_scroll_controller: ^0.2.0
   sliver_tools: ^0.2.9
   share_plus: ^13.1.0
   file_selector: ^1.0.3
   path_provider: ^2.0.14
   device_info_plus: ^13.1.0
-  flutter_local_notifications: ^22.3.0
+  flutter_local_notifications: ^23.0.2
   flutter_svg: ^2.0.4
   flutter_timezone: ^5.0.1
   home_widget: ^0.10.0
@@ -188,7 +190,7 @@ dependencies:
   markdown_widget: ^2.3.2+8
   url_launcher: ^6.1.10
   package_info_plus: ^10.1.0
-  copy_with_extension: ^17.0.0
+  copy_with_extension: ^18.0.1
   json_annotation: ^4.12.0
   win2iana_tz_converter: ^0.1.3
   open_file: ^4.0.0
@@ -196,10 +198,7 @@ dependencies:
   simple_webdav_client: ^0.3.0
   retry: ^3.1.2
   connectivity_plus: ^7.0.0
-  data_saver:
-    git:
-      url: https://github.com/FriesI23/data_saver.git
-      ref: flutter-344-spm
+  data_saver: ^0.5.0
   app_settings: ^9.0.0
   native_natural_sort: ^0.1.4
 
@@ -207,7 +206,7 @@ dependencies:
   named_html_color: ^0.0.3+1
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^2.0.0
   flutter_material_design_icons: ^3.1.0+7447
   simple_icons: ^16.23.0
 
@@ -220,7 +219,7 @@ dependencies:
   crypto: ^3.0.2
   timezone: ^0.11.0
   nested: ^1.0.0
-  go_router: ^17.0.0
+  go_router: ^18.1.4
   async: ^2.11.0
   pool: ^1.5.1
   rxdart: ^0.28.0
@@ -261,18 +260,19 @@ dev_dependencies:
 
   # Testing
   flutter_lints: ^6.0.0
-  test: ^1.21.4
+  test: ^1.31.1
   test_cov_console: ^0.2.2
   mockito: ^5.4.4
   shared_preferences_platform_interface: ^2.4.2
+  worker_manager: ^7.2.9
 
   # Code Generation
-  pigeon: 27.3.0
-  analyzer: ^12.1.0
+  pigeon: 30.0.4
+  analyzer: ^13.3.0
   build_runner: ^2.3.3
   mhabit_color_builder: any
   mhabit_proxy_builder: any
-  copy_with_extension_gen: ^17.0.0
+  copy_with_extension_gen: ^18.0.1
   flutter_gen: ^5.2.0
   flutter_gen_runner: ^5.2.0
   json_serializable: ^6.6.1
@@ -294,7 +294,7 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  # Android-only field
+  # Shared by platforms that support Flutter flavors, including Windows.
   default-flavor: f_generic
 
   # To add assets to your application, add an assets section, like this:

@@ -1,10 +1,10 @@
 import 'dart:ui' show Tristate;
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import 'harness/adaptive_ui_theme.dart';
@@ -265,9 +265,8 @@ void main() {
                   barrierDismissible: true,
                   routeSettings: const RouteSettings(name: '/dialog'),
                   builder: (context) => MediaQuery(
-                    data: MediaQuery.of(
-                      context,
-                    ).copyWith(textScaler: const TextScaler.linear(2)),
+                    data: MediaQuery.of(context)
+                        .copyWith(textScaler: const TextScaler.linear(2)),
                     child: Directionality(
                       textDirection: TextDirection.rtl,
                       child: StatefulBuilder(

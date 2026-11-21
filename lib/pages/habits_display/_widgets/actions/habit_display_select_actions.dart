@@ -7,9 +7,9 @@
 //     http://www.apache.org/licenses/LICENSE-2.0
 
 import 'package:adaptive_actions/cupertino.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' show BuildContext, Icons, Widget;
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:material_ui/material_ui.dart' show BuildContext, Icons, Widget;
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
@@ -82,8 +82,10 @@ final class HabitDisplaySelectActionsData {
   final CupertinoAppBarActionsConfig<HabitDisplaySelectAction> apple;
 }
 
-typedef HabitDisplaySelectActionsBuilder =
-    Widget Function(BuildContext context, HabitDisplaySelectActionsData data);
+typedef HabitDisplaySelectActionsBuilder = Widget Function(
+  BuildContext context,
+  HabitDisplaySelectActionsData data,
+);
 
 class HabitDisplaySelectActions extends StatelessWidget {
   const HabitDisplaySelectActions({

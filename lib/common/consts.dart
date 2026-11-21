@@ -15,11 +15,15 @@
 
 import 'dart:ui' show Color, Locale, Size;
 
+import 'package:cupertino_ui/cupertino_ui.dart'
+    show GlobalCupertinoLocalizations;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart' show Icons;
 import 'package:flutter/widgets.dart' show LocalizationsDelegate;
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart'
+    show GlobalWidgetsLocalizations;
 import 'package:l10n_esperanto/l10n_esperanto.dart';
+import 'package:material_ui/material_ui.dart'
+    show GlobalMaterialLocalizations, Icons;
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart'
     show CustomBreakpoints;
 

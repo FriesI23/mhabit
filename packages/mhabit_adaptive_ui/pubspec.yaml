@@ -5,21 +5,23 @@ publish_to: none
 resolution: workspace
 
 environment:
-  sdk: ">=3.12.0 <4.0.0"
-  flutter: ">=3.44.0"
+  sdk: ">=3.13.0 <4.0.0"
+  flutter: ">=3.47.0"
 
 dependencies:
-  adaptive_actions: ^0.7.1
-  copy_with_extension: ^17.0.0
+  adaptive_actions: ^0.8.1
+  copy_with_extension: ^18.0.1
+  cupertino_ui: ^1.1.7
+  material_ui: ^1.11.1
   flutter:
     sdk: flutter
-  flutter_adaptive_sidebar: ^0.4.0
+  flutter_adaptive_sidebar: ^0.5.1
   foldable: ^1.0.5
   ios_window_control_layout: ^0.6.0
   sliver_tools: ^0.2.9
 
 dev_dependencies:
   build_runner: ^2.3.3
-  copy_with_extension_gen: ^17.0.0
+  copy_with_extension_gen: ^18.0.1
   flutter_test:
     sdk: flutter

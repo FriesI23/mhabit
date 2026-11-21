@@ -104,9 +104,9 @@ void main() {
   }
 
   Future<RecordDBCell?> current(String id) async =>
-      (await records.loadRecordsExportData([
-        habitId(id),
-      ])).where((record) => record.recordDate == today.epochDay).firstOrNull;
+      (await records.loadRecordsExportData([habitId(id)]))
+          .where((record) => record.recordDate == today.epochDay)
+          .firstOrNull;
 
   Future<void> saveRecord(
     String id,
@@ -478,78 +478,75 @@ void main() {
     });
   }
 
-  test(
-    'record states respect lifecycle and undo preserves missing-record semantics',
-    () async {
-      await addHabit(
-        'archived-negative',
-        type: HabitType.negative,
-        goal: 0,
-        extraGoal: 3,
-        status: HabitStatus.archived,
-      );
-      await addHabit(
-        'future-negative',
-        type: HabitType.negative,
-        goal: 0,
-        extraGoal: 3,
-        start: today.addDays(1),
-      );
-      await addHabit(
-        'unknown-negative',
-        type: HabitType.negative,
-        goal: 0,
-        extraGoal: 3,
-        status: HabitStatus.unknown,
-      );
-      for (final name in [
-        'archived-negative',
-        'future-negative',
-        'unknown-negative',
-      ]) {
-        await saveRecord(name, 0);
-      }
-      final snapshot = await service.publishSnapshot();
-      final byName = {for (final habit in snapshot.catalog) habit.name: habit};
-      expect(
-        byName['archived-negative']!.recordState,
-        HabitWidgetRecordState.achieved,
-      );
-      expect(byName['archived-negative']!.canUndo, isTrue);
-      expect(byName['archived-negative']!.automaticEligible, isFalse);
-      expect(
-        byName['future-negative']!.recordState,
-        HabitWidgetRecordState.unknown,
-      );
-      expect(byName['future-negative']!.canComplete, isFalse);
-      expect(byName['future-negative']!.canUndo, isFalse);
-      expect(
-        byName['unknown-negative']!.recordState,
-        HabitWidgetRecordState.unknown,
-      );
-      expect(byName['unknown-negative']!.canComplete, isFalse);
-      expect(byName['unknown-negative']!.canUndo, isFalse);
-      expect(snapshot.activeCount, 0);
-      expect(snapshot.completedCount, 0);
-      expect(
-        await service.perform(
-          await command(
-            'archived-negative',
-            HabitWidgetAction.undo,
-            source: HabitWidgetSource.fixed,
-          ),
+  test('record states respect lifecycle and undo preserves missing-record semantics', () async {
+    await addHabit(
+      'archived-negative',
+      type: HabitType.negative,
+      goal: 0,
+      extraGoal: 3,
+      status: HabitStatus.archived,
+    );
+    await addHabit(
+      'future-negative',
+      type: HabitType.negative,
+      goal: 0,
+      extraGoal: 3,
+      start: today.addDays(1),
+    );
+    await addHabit(
+      'unknown-negative',
+      type: HabitType.negative,
+      goal: 0,
+      extraGoal: 3,
+      status: HabitStatus.unknown,
+    );
+    for (final name in [
+      'archived-negative',
+      'future-negative',
+      'unknown-negative',
+    ]) {
+      await saveRecord(name, 0);
+    }
+    final snapshot = await service.publishSnapshot();
+    final byName = {for (final habit in snapshot.catalog) habit.name: habit};
+    expect(
+      byName['archived-negative']!.recordState,
+      HabitWidgetRecordState.achieved,
+    );
+    expect(byName['archived-negative']!.canUndo, isTrue);
+    expect(byName['archived-negative']!.automaticEligible, isFalse);
+    expect(
+      byName['future-negative']!.recordState,
+      HabitWidgetRecordState.unknown,
+    );
+    expect(byName['future-negative']!.canComplete, isFalse);
+    expect(byName['future-negative']!.canUndo, isFalse);
+    expect(
+      byName['unknown-negative']!.recordState,
+      HabitWidgetRecordState.unknown,
+    );
+    expect(byName['unknown-negative']!.canComplete, isFalse);
+    expect(byName['unknown-negative']!.canUndo, isFalse);
+    expect(snapshot.activeCount, 0);
+    expect(snapshot.completedCount, 0);
+    expect(
+      await service.perform(
+        await command(
+          'archived-negative',
+          HabitWidgetAction.undo,
+          source: HabitWidgetSource.fixed,
         ),
-        _hasOutcome(HabitWidgetActionResult.applied),
-      );
-      expect((await current('archived-negative'))!.deleted, isTrue);
-      expect(
-        publisher.snapshot!.catalog
-            .firstWhere((habit) => habit.name == 'archived-negative')
-            .recordState,
-        HabitWidgetRecordState.unrecorded,
-      );
-    },
-  );
+      ),
+      _hasOutcome(HabitWidgetActionResult.applied),
+    );
+    expect((await current('archived-negative'))!.deleted, isTrue);
+    expect(
+      publisher.snapshot!.catalog
+          .firstWhere((habit) => habit.name == 'archived-negative')
+          .recordState,
+      HabitWidgetRecordState.unrecorded,
+    );
+  });
 
   test('stale day, archived and future habits cannot be mutated', () async {
     await addHabit('active');
@@ -572,41 +569,38 @@ void main() {
     expect(publisher.snapshot!.day, today.addDays(1));
   });
 
-  test(
-    'fixed archived completion and undo preserve archive and reminder ownership',
-    () async {
-      await addHabit('archive', status: HabitStatus.archived);
-      final receipt = await service.perform(
-        await command(
-          'archive',
-          HabitWidgetAction.complete,
-          source: HabitWidgetSource.fixed,
-        ),
-      );
-      expect(receipt.outcome, HabitWidgetActionResult.applied);
-      expect(receipt.recordVersion, await revision('archive'));
-      expect(receipt.committedAt, now.toUtc());
-      expect(receipt.snapshotPublished, isTrue);
-      final done = (await current('archive'))!;
-      final undo = await service.perform(
-        await command(
-          'archive',
-          HabitWidgetAction.undo,
-          source: HabitWidgetSource.fixed,
-        ),
-      );
-      expect(undo.outcome, HabitWidgetActionResult.applied);
-      expect(undo.recordVersion, await revision('archive'));
-      expect(undo.recordVersion, isNot(receipt.recordVersion));
-      expect((await current('archive'))!.deleted, isTrue);
-      expect((await current('archive'))!.uuid, done.uuid);
-      expect(
-        publisher.snapshot!.catalog.single.state,
-        HabitWidgetHabitState.archived,
-      );
-      expect(manager.reminderRefreshCount, 2);
-    },
-  );
+  test('fixed archived completion and undo preserve archive and reminder ownership', () async {
+    await addHabit('archive', status: HabitStatus.archived);
+    final receipt = await service.perform(
+      await command(
+        'archive',
+        HabitWidgetAction.complete,
+        source: HabitWidgetSource.fixed,
+      ),
+    );
+    expect(receipt.outcome, HabitWidgetActionResult.applied);
+    expect(receipt.recordVersion, await revision('archive'));
+    expect(receipt.committedAt, now.toUtc());
+    expect(receipt.snapshotPublished, isTrue);
+    final done = (await current('archive'))!;
+    final undo = await service.perform(
+      await command(
+        'archive',
+        HabitWidgetAction.undo,
+        source: HabitWidgetSource.fixed,
+      ),
+    );
+    expect(undo.outcome, HabitWidgetActionResult.applied);
+    expect(undo.recordVersion, await revision('archive'));
+    expect(undo.recordVersion, isNot(receipt.recordVersion));
+    expect((await current('archive'))!.deleted, isTrue);
+    expect((await current('archive'))!.uuid, done.uuid);
+    expect(
+      publisher.snapshot!.catalog.single.state,
+      HabitWidgetHabitState.archived,
+    );
+    expect(manager.reminderRefreshCount, 2);
+  });
 
   test(
     'fixed sources still reject future, deleted, unknown and missing targets',
@@ -628,55 +622,49 @@ void main() {
     },
   );
 
-  test(
-    'receipt contains the exact committed record and sync version before another edit',
-    () async {
-      await addHabit('race');
-      String? committedVersion;
-      manager.onRefresh = () async {
-        committedVersion = await revision('race');
-        await records.updateRecord(
-          (await current('race'))!.copyWith(reason: 'external edit'),
-        );
-      };
-      final receipt = await service.perform(
-        await command('race', HabitWidgetAction.complete),
+  test('receipt contains the exact committed record and sync version before another edit', () async {
+    await addHabit('race');
+    String? committedVersion;
+    manager.onRefresh = () async {
+      committedVersion = await revision('race');
+      await records.updateRecord(
+        (await current('race'))!.copyWith(reason: 'external edit'),
       );
-      expect(receipt.outcome, HabitWidgetActionResult.applied);
-      expect(receipt.recordVersion, committedVersion);
-      expect(receipt.recordVersion, isNot(await revision('race')));
-      expect(
-        publisher.snapshot!.catalog.single.expectedRecord,
-        await revision('race'),
-      );
-    },
-  );
+    };
+    final receipt = await service.perform(
+      await command('race', HabitWidgetAction.complete),
+    );
+    expect(receipt.outcome, HabitWidgetActionResult.applied);
+    expect(receipt.recordVersion, committedVersion);
+    expect(receipt.recordVersion, isNot(await revision('race')));
+    expect(
+      publisher.snapshot!.catalog.single.expectedRecord,
+      await revision('race'),
+    );
+  });
 
-  test(
-    'publication failure retains the commit and cannot cause duplicate completion',
-    () async {
-      await addHabit('publish');
-      final request = await command('publish', HabitWidgetAction.complete);
-      publisher.failPublish = true;
-      final receipt = await service.perform(request);
-      expect(receipt.outcome, HabitWidgetActionResult.applied);
-      expect(receipt.recordVersion, await revision('publish'));
-      expect(receipt.committedAt, now.toUtc());
-      expect(receipt.snapshotPublished, isFalse);
-      final duplicate = await service.perform(request);
-      expect(duplicate.outcome, HabitWidgetActionResult.stale);
-      expect(duplicate.recordVersion, isNull);
-      expect(duplicate.committedAt, isNull);
-      expect(await recordDirty((await current('publish'))!.uuid!), 1);
-      publisher.failPublish = false;
-      final refreshed = await service.perform(
-        Uri.parse('tablehabit-widget://refresh'),
-      );
-      expect(refreshed.outcome, HabitWidgetActionResult.unchanged);
-      expect(refreshed.snapshotPublished, isTrue);
-      expect(publisher.snapshot!.catalog.single.completed, isTrue);
-    },
-  );
+  test('publication failure retains the commit and cannot cause duplicate completion', () async {
+    await addHabit('publish');
+    final request = await command('publish', HabitWidgetAction.complete);
+    publisher.failPublish = true;
+    final receipt = await service.perform(request);
+    expect(receipt.outcome, HabitWidgetActionResult.applied);
+    expect(receipt.recordVersion, await revision('publish'));
+    expect(receipt.committedAt, now.toUtc());
+    expect(receipt.snapshotPublished, isFalse);
+    final duplicate = await service.perform(request);
+    expect(duplicate.outcome, HabitWidgetActionResult.stale);
+    expect(duplicate.recordVersion, isNull);
+    expect(duplicate.committedAt, isNull);
+    expect(await recordDirty((await current('publish'))!.uuid!), 1);
+    publisher.failPublish = false;
+    final refreshed = await service.perform(
+      Uri.parse('tablehabit-widget://refresh'),
+    );
+    expect(refreshed.outcome, HabitWidgetActionResult.unchanged);
+    expect(refreshed.snapshotPublished, isTrue);
+    expect(publisher.snapshot!.catalog.single.completed, isTrue);
+  });
 
   test(
     'a queued action continues after a failed snapshot publication',
@@ -745,44 +733,40 @@ void main() {
     },
   );
 
-  test(
-    'same-second widget undo and redo acknowledge different committed revisions',
-    () async {
-      await addHabit('receipts');
-      await helper.local.db.execute(
-        'DROP TRIGGER auto_update_mh_records_modify_t',
-      );
-      final first = await service.perform(
-        await command('receipts', HabitWidgetAction.complete),
-      );
-      final oldUndo = await command('receipts', HabitWidgetAction.undo);
-      final undo = await service.perform(oldUndo);
-      final redo = await service.perform(
-        await command('receipts', HabitWidgetAction.complete),
-      );
-      expect(
-        {first.recordVersion, undo.recordVersion, redo.recordVersion}.length,
-        3,
-      );
-      expect([
-        first.committedAt,
-        undo.committedAt,
-        redo.committedAt,
-      ], everyElement(now.toUtc()));
-      expect(
-        (await service.perform(oldUndo)).outcome,
-        HabitWidgetActionResult.stale,
-      );
-    },
-  );
+  test('same-second widget undo and redo acknowledge different committed revisions', () async {
+    await addHabit('receipts');
+    await helper.local.db.execute(
+      'DROP TRIGGER auto_update_mh_records_modify_t',
+    );
+    final first = await service.perform(
+      await command('receipts', HabitWidgetAction.complete),
+    );
+    final oldUndo = await command('receipts', HabitWidgetAction.undo);
+    final undo = await service.perform(oldUndo);
+    final redo = await service.perform(
+      await command('receipts', HabitWidgetAction.complete),
+    );
+    expect(
+      {first.recordVersion, undo.recordVersion, redo.recordVersion}.length,
+      3,
+    );
+    expect([
+      first.committedAt,
+      undo.committedAt,
+      redo.committedAt,
+    ], everyElement(now.toUtc()));
+    expect(
+      (await service.perform(oldUndo)).outcome,
+      HabitWidgetActionResult.stale,
+    );
+  });
 
   test('skipped records are not silently completed or removed', () async {
     await addHabit('skip');
     await service.perform(await command('skip', HabitWidgetAction.complete));
     await records.updateRecord(
-      (await current(
-        'skip',
-      ))!.copyWith(recordType: HabitRecordStatus.skip.dbCode),
+      (await current('skip'))!
+          .copyWith(recordType: HabitRecordStatus.skip.dbCode),
     );
     for (final action in HabitWidgetAction.values) {
       expect(
@@ -886,13 +870,9 @@ BEGIN SELECT RAISE(ABORT, 'test sync failure'); END
     await addHabit('unknown', status: HabitStatus.unknown, position: 3);
     await addHabit('deleted', status: HabitStatus.deleted, position: 4);
     final snapshot = await service.publishSnapshot();
-    final expected =
-        jsonDecode(
-              File(
-                'test/fixtures/habit_widget/snapshot-v2.json',
-              ).readAsStringSync(),
-            )
-            as Map<String, dynamic>;
+    final expected = jsonDecode(
+      File('test/fixtures/habit_widget/snapshot-v2.json').readAsStringSync(),
+    ) as Map<String, dynamic>;
     // Civil-day boundaries follow the host timezone; all remaining bytes of
     // the projection use the same fixture that XCTest decodes.
     expected['generatedAt'] = now.toUtc().toIso8601String();
@@ -921,9 +901,8 @@ BEGIN SELECT RAISE(ABORT, 'test sync failure'); END
       );
       await service.perform(await command('skip', HabitWidgetAction.complete));
       await records.updateRecord(
-        (await current(
-          'skip',
-        ))!.copyWith(recordType: HabitRecordStatus.skip.dbCode),
+        (await current('skip'))!
+            .copyWith(recordType: HabitRecordStatus.skip.dbCode),
       );
       final snapshot = await service.publishSnapshot();
       final byName = {for (final habit in snapshot.catalog) habit.name: habit};
@@ -945,190 +924,176 @@ BEGIN SELECT RAISE(ABORT, 'test sync failure'); END
     },
   );
 
-  test(
-    'incomplete writes zero, preserves metadata, and requires undo before replacing it',
-    () async {
-      await addHabit('incomplete', goal: 10);
-      await saveRecord('incomplete', 4);
-      await records.updateRecord(
-        (await current(
-          'incomplete',
-        ))!.copyWith(reason: 'Keep note', syncExtras: '{"futureField":true}'),
-      );
-      final original = (await current('incomplete'))!;
-      final request = await command(
-        'incomplete',
-        HabitWidgetAction.markIncomplete,
-      );
-      final response = await service.perform(request);
-      expect(response.outcome, HabitWidgetActionResult.applied);
-      final saved = (await current('incomplete'))!;
-      expect(saved.uuid, original.uuid);
-      expect(saved.recordValue, 0);
-      expect(saved.recordType, HabitRecordStatus.done.dbCode);
-      expect(saved.deleted, isFalse);
-      expect(saved.reason, original.reason);
-      expect(saved.syncExtras, original.syncExtras);
-      final projected = publisher.snapshot!.catalog.single;
-      expect(projected.recordState, HabitWidgetRecordState.notAchieved);
-      expect(projected.automaticEligible, isTrue);
-      expect(projected.automaticPending, isFalse);
-      expect(projected.canComplete, isFalse);
-      expect(projected.canMarkIncomplete, isFalse);
-      expect(projected.canUndo, isTrue);
-      expect(publisher.snapshot!.completedCount, 0);
-      expect(response.recordVersion, await revision('incomplete'));
+  test('incomplete writes zero, preserves metadata, and requires undo before replacing it', () async {
+    await addHabit('incomplete', goal: 10);
+    await saveRecord('incomplete', 4);
+    await records.updateRecord(
+      (await current('incomplete'))!
+          .copyWith(reason: 'Keep note', syncExtras: '{"futureField":true}'),
+    );
+    final original = (await current('incomplete'))!;
+    final request = await command(
+      'incomplete',
+      HabitWidgetAction.markIncomplete,
+    );
+    final response = await service.perform(request);
+    expect(response.outcome, HabitWidgetActionResult.applied);
+    final saved = (await current('incomplete'))!;
+    expect(saved.uuid, original.uuid);
+    expect(saved.recordValue, 0);
+    expect(saved.recordType, HabitRecordStatus.done.dbCode);
+    expect(saved.deleted, isFalse);
+    expect(saved.reason, original.reason);
+    expect(saved.syncExtras, original.syncExtras);
+    final projected = publisher.snapshot!.catalog.single;
+    expect(projected.recordState, HabitWidgetRecordState.notAchieved);
+    expect(projected.automaticEligible, isTrue);
+    expect(projected.automaticPending, isFalse);
+    expect(projected.canComplete, isFalse);
+    expect(projected.canMarkIncomplete, isFalse);
+    expect(projected.canUndo, isTrue);
+    expect(publisher.snapshot!.completedCount, 0);
+    expect(response.recordVersion, await revision('incomplete'));
+    expect(
+      (await service.perform(request)).outcome,
+      HabitWidgetActionResult.stale,
+    );
+    final version = await revision('incomplete');
+    for (final action in [
+      HabitWidgetAction.markIncomplete,
+      HabitWidgetAction.complete,
+    ]) {
       expect(
-        (await service.perform(request)).outcome,
+        (await service.perform(await command('incomplete', action))).outcome,
+        HabitWidgetActionResult.unchanged,
+      );
+      expect(await revision('incomplete'), version);
+    }
+    expect(
+      (await service.perform(
+        await command('incomplete', HabitWidgetAction.undo),
+      )).outcome,
+      HabitWidgetActionResult.applied,
+    );
+    expect((await current('incomplete'))!.deleted, isTrue);
+    expect(publisher.snapshot!.catalog.single.automaticPending, isTrue);
+    expect(
+      (await service.perform(
+        await command('incomplete', HabitWidgetAction.markIncomplete),
+      )).outcome,
+      HabitWidgetActionResult.applied,
+    );
+    expect((await current('incomplete'))!.uuid, original.uuid);
+    expect((await current('incomplete'))!.recordValue, 0);
+    expect((await current('incomplete'))!.deleted, isFalse);
+  });
+
+  test('incomplete permissions and existing results are checked inside the transaction', () async {
+    await addHabit('new-zero', goal: 10);
+    await addHabit('archived-zero', goal: 10, status: HabitStatus.archived);
+    await addHabit(
+      'negative-zero',
+      type: HabitType.negative,
+      goal: 0,
+      extraGoal: 3,
+    );
+    await addHabit('future-zero', start: today.addDays(1));
+    await addHabit('deleted-zero', status: HabitStatus.deleted);
+    await addHabit('unknown-zero', status: HabitStatus.unknown);
+    await addHabit('skip-zero');
+    await addHabit('done-zero');
+    await saveRecord('skip-zero', 0, status: HabitRecordStatus.skip);
+    await saveRecord('done-zero', 1);
+    for (final name in ['new-zero', 'archived-zero']) {
+      final source = name == 'archived-zero'
+          ? HabitWidgetSource.fixed
+          : HabitWidgetSource.automatic;
+      expect(
+        (await service.perform(
+          await command(name, HabitWidgetAction.markIncomplete, source: source),
+        )).outcome,
+        HabitWidgetActionResult.applied,
+      );
+      expect((await current(name))!.recordValue, 0);
+      expect(
+        publisher.snapshot!.catalog.firstWhere((h) => h.name == name).canUndo,
+        isTrue,
+      );
+    }
+    for (final name in [
+      'archived-zero',
+      'future-zero',
+      'deleted-zero',
+      'unknown-zero',
+      'missing-zero',
+    ]) {
+      expect(
+        (await service.perform(
+          await command(name, HabitWidgetAction.markIncomplete),
+        )).outcome,
         HabitWidgetActionResult.stale,
       );
-      final version = await revision('incomplete');
-      for (final action in [
-        HabitWidgetAction.markIncomplete,
-        HabitWidgetAction.complete,
-      ]) {
-        expect(
-          (await service.perform(await command('incomplete', action))).outcome,
-          HabitWidgetActionResult.unchanged,
-        );
-        expect(await revision('incomplete'), version);
-      }
+    }
+    expect(
+      (await service.perform(
+        await command('negative-zero', HabitWidgetAction.markIncomplete),
+      )).outcome,
+      HabitWidgetActionResult.invalid,
+    );
+    expect(await current('negative-zero'), isNull);
+    for (final name in ['skip-zero', 'done-zero']) {
+      final version = await revision(name);
       expect(
         (await service.perform(
-          await command('incomplete', HabitWidgetAction.undo),
-        )).outcome,
-        HabitWidgetActionResult.applied,
-      );
-      expect((await current('incomplete'))!.deleted, isTrue);
-      expect(publisher.snapshot!.catalog.single.automaticPending, isTrue);
-      expect(
-        (await service.perform(
-          await command('incomplete', HabitWidgetAction.markIncomplete),
-        )).outcome,
-        HabitWidgetActionResult.applied,
-      );
-      expect((await current('incomplete'))!.uuid, original.uuid);
-      expect((await current('incomplete'))!.recordValue, 0);
-      expect((await current('incomplete'))!.deleted, isFalse);
-    },
-  );
-
-  test(
-    'incomplete permissions and existing results are checked inside the transaction',
-    () async {
-      await addHabit('new-zero', goal: 10);
-      await addHabit('archived-zero', goal: 10, status: HabitStatus.archived);
-      await addHabit(
-        'negative-zero',
-        type: HabitType.negative,
-        goal: 0,
-        extraGoal: 3,
-      );
-      await addHabit('future-zero', start: today.addDays(1));
-      await addHabit('deleted-zero', status: HabitStatus.deleted);
-      await addHabit('unknown-zero', status: HabitStatus.unknown);
-      await addHabit('skip-zero');
-      await addHabit('done-zero');
-      await saveRecord('skip-zero', 0, status: HabitRecordStatus.skip);
-      await saveRecord('done-zero', 1);
-      for (final name in ['new-zero', 'archived-zero']) {
-        final source = name == 'archived-zero'
-            ? HabitWidgetSource.fixed
-            : HabitWidgetSource.automatic;
-        expect(
-          (await service.perform(
-            await command(
-              name,
-              HabitWidgetAction.markIncomplete,
-              source: source,
-            ),
-          )).outcome,
-          HabitWidgetActionResult.applied,
-        );
-        expect((await current(name))!.recordValue, 0);
-        expect(
-          publisher.snapshot!.catalog.firstWhere((h) => h.name == name).canUndo,
-          isTrue,
-        );
-      }
-      for (final name in [
-        'archived-zero',
-        'future-zero',
-        'deleted-zero',
-        'unknown-zero',
-        'missing-zero',
-      ]) {
-        expect(
-          (await service.perform(
-            await command(name, HabitWidgetAction.markIncomplete),
-          )).outcome,
-          HabitWidgetActionResult.stale,
-        );
-      }
-      expect(
-        (await service.perform(
-          await command('negative-zero', HabitWidgetAction.markIncomplete),
-        )).outcome,
-        HabitWidgetActionResult.invalid,
-      );
-      expect(await current('negative-zero'), isNull);
-      for (final name in ['skip-zero', 'done-zero']) {
-        final version = await revision(name);
-        expect(
-          (await service.perform(
-            await command(name, HabitWidgetAction.markIncomplete),
-          )).outcome,
-          HabitWidgetActionResult.unchanged,
-        );
-        expect(await revision(name), version);
-      }
-      expect(manager.reminderRefreshCount, 2);
-    },
-  );
-
-  test(
-    'incomplete commit survives publication failure and concurrent duplicates commit once',
-    () async {
-      await addHabit('zero-race', goal: 10);
-      final request = await command(
-        'zero-race',
-        HabitWidgetAction.markIncomplete,
-      );
-      final other = HabitWidgetService(
-        database: helper.local,
-        habitsAccess: manager,
-        publisher: publisher,
-        now: () => now,
-      );
-      publisher.failPublish = true;
-      final results = await Future.wait([
-        service.perform(request),
-        other.perform(request),
-      ]);
-      expect(
-        results.map((r) => r.outcome),
-        unorderedEquals([
-          HabitWidgetActionResult.applied,
-          HabitWidgetActionResult.stale,
-        ]),
-      );
-      final applied = results.singleWhere(
-        (r) => r.outcome == HabitWidgetActionResult.applied,
-      );
-      expect(applied.snapshotPublished, isFalse);
-      expect(applied.recordVersion, await revision('zero-race'));
-      expect(applied.committedAt, isNotNull);
-      expect(await recordDirty((await current('zero-race'))!.uuid!), 1);
-      publisher.failPublish = false;
-      expect(
-        (await service.perform(
-          await command('zero-race', HabitWidgetAction.markIncomplete),
+          await command(name, HabitWidgetAction.markIncomplete),
         )).outcome,
         HabitWidgetActionResult.unchanged,
       );
-      expect(publisher.snapshot!.catalog.single.automaticPending, isFalse);
-    },
-  );
+      expect(await revision(name), version);
+    }
+    expect(manager.reminderRefreshCount, 2);
+  });
+
+  test('incomplete commit survives publication failure and concurrent duplicates commit once', () async {
+    await addHabit('zero-race', goal: 10);
+    final request = await command(
+      'zero-race',
+      HabitWidgetAction.markIncomplete,
+    );
+    final other = HabitWidgetService(
+      database: helper.local,
+      habitsAccess: manager,
+      publisher: publisher,
+      now: () => now,
+    );
+    publisher.failPublish = true;
+    final results = await Future.wait([
+      service.perform(request),
+      other.perform(request),
+    ]);
+    expect(
+      results.map((r) => r.outcome),
+      unorderedEquals([
+        HabitWidgetActionResult.applied,
+        HabitWidgetActionResult.stale,
+      ]),
+    );
+    final applied = results.singleWhere(
+      (r) => r.outcome == HabitWidgetActionResult.applied,
+    );
+    expect(applied.snapshotPublished, isFalse);
+    expect(applied.recordVersion, await revision('zero-race'));
+    expect(applied.committedAt, isNotNull);
+    expect(await recordDirty((await current('zero-race'))!.uuid!), 1);
+    publisher.failPublish = false;
+    expect(
+      (await service.perform(
+        await command('zero-race', HabitWidgetAction.markIncomplete),
+      )).outcome,
+      HabitWidgetActionResult.unchanged,
+    );
+    expect(publisher.snapshot!.catalog.single.automaticPending, isFalse);
+  });
 
   test('command parser rejects malformed or ambiguous actions', () {
     final valid = HabitWidgetCommand(

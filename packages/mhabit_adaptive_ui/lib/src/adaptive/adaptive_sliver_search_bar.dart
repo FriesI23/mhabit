@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:adaptive_actions/core.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../adaptive_style.dart';
 import '../cupertino/cupertino_sliver_search_bar.dart';

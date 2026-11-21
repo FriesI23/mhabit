@@ -5,13 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
 import 'package:mhabit_desktop_window_chrome/src/desktop_window_chrome_api.g.dart';
+import 'package:mhabit_desktop_window_chrome/src/desktop_window_runtime.dart';
 
 import 'support/expect_chrome_failure.dart';
+import 'support/fake_desktop_window_runtime.dart';
 
 void main() {
   final binding = TestWidgetsFlutterBinding.ensureInitialized();
   const packageChannel = MethodChannel('macos_window_utils/window_manipulator');
-  const windowChannel = MethodChannel('window_manager');
   const prefix =
       'dev.flutter.pigeon.mhabit_desktop_window_chrome.DesktopChromeHostApi';
   const codec = DesktopChromeHostApi.pigeonChannelCodec;
@@ -36,9 +37,7 @@ void main() {
       expect(call.arguments, {'enableWindowDelegate': false});
       return null;
     });
-    binding.defaultBinaryMessenger.setMockMethodCallHandler(windowChannel, (
-      call,
-    ) async {
+    DesktopWindowRuntime.debugOverride = FakeDesktopWindowRuntime((call) async {
       calls.add(call.method);
       if (call.method == 'setMinimumSize') {
         minimumArguments = call.arguments as Map<Object?, Object?>;
@@ -89,10 +88,7 @@ void main() {
       packageChannel,
       null,
     );
-    binding.defaultBinaryMessenger.setMockMethodCallHandler(
-      windowChannel,
-      null,
-    );
+    DesktopWindowRuntime.debugOverride = null;
     for (final method in ['configure', 'geometry', 'dispose']) {
       binding.defaultBinaryMessenger.setMockMessageHandler(
         '$prefix.$method',
@@ -139,27 +135,24 @@ void main() {
     },
   );
 
-  test(
-    'hot restart retains fusion without waiting for a standard resize',
-    () async {
-      // The native owner survives a Dart restart. Resetting its decoration before
-      // runApp can wait for a resized frame that the new isolate cannot supply.
-      standardResize = Completer<void>();
-      addTearDown(() => standardResize!.complete());
-      final chrome = DesktopWindowChrome(
-        minimumSize: const Size(350, 520),
-        geometryTimeout: const Duration(milliseconds: 20),
-      );
-      addTearDown(() => dispose(chrome));
-      await chrome.initialize();
-      expect(chrome.available, isTrue);
-      expect(chrome.geometry, isNotNull);
-      expect(minimumArguments!['width'], 350);
-      expect(minimumArguments!['height'], 520);
-      expect(calls, isNot(contains('configure:false')));
-      expect(calls, contains('configure:true'));
-    },
-  );
+  test('hot restart retains fusion without waiting for a standard resize', () async {
+    // The native owner survives a Dart restart. Resetting its decoration before
+    // runApp can wait for a resized frame that the new isolate cannot supply.
+    standardResize = Completer<void>();
+    addTearDown(() => standardResize!.complete());
+    final chrome = DesktopWindowChrome(
+      minimumSize: const Size(350, 520),
+      geometryTimeout: const Duration(milliseconds: 20),
+    );
+    addTearDown(() => dispose(chrome));
+    await chrome.initialize();
+    expect(chrome.available, isTrue);
+    expect(chrome.geometry, isNotNull);
+    expect(minimumArguments!['width'], 350);
+    expect(minimumArguments!['height'], 520);
+    expect(calls, isNot(contains('configure:false')));
+    expect(calls, contains('configure:true'));
+  });
 
   test(
     'minimum initialization failure still shows a standard window',

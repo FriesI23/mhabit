@@ -399,9 +399,9 @@ class DatabaseToV4MigrateHelper {
         for (var cell in result.map(HabitDBCell.fromJson)) {
           batch.insert(
             TableName.sync,
-            SyncDBCell.genFromHabit(
-              cell,
-            ).copyWith(dirtyTotal: habitDirtyMap[cell.uuid] ?? 1).toJson(),
+            SyncDBCell.genFromHabit(cell)
+                .copyWith(dirtyTotal: habitDirtyMap[cell.uuid] ?? 1)
+                .toJson(),
             conflictAlgorithm: ConflictAlgorithm.ignore,
           );
         }

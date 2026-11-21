@@ -9,9 +9,7 @@ part of 'app_notify_config.dart';
 // **************************************************************************
 
 AppNotifyConfig _$AppNotifyConfigFromJson(Map<String, dynamic> json) =>
-    AppNotifyConfig._(
-      channels: channelsFromJson(json['channels'] as Map<String, dynamic>),
-    );
+    AppNotifyConfig._(channels: channelsFromJson(json['channels'] as JsonMap));
 
 Map<String, dynamic> _$AppNotifyConfigToJson(AppNotifyConfig instance) =>
     <String, dynamic>{'channels': channelsToJson(instance.channels)};

@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/widgets/widgets.dart';
 
@@ -26,7 +27,7 @@ Widget _buildTestApp({
   String fullChangelog = _fullChangelog,
 }) {
   return MaterialApp(
-    localizationsDelegates: L10n.localizationsDelegates,
+    localizationsDelegates: appLocalizationsDelegates,
     supportedLocales: L10n.supportedLocales,
     home: ChangelogBanner(
       child: Scaffold(
@@ -54,7 +55,7 @@ Widget _buildTestApp({
 
 Widget _buildIdleApp() {
   return const MaterialApp(
-    localizationsDelegates: L10n.localizationsDelegates,
+    localizationsDelegates: appLocalizationsDelegates,
     supportedLocales: L10n.supportedLocales,
     home: ChangelogBanner(
       child: Scaffold(
@@ -193,7 +194,7 @@ void main() {
     testWidgets('ChangelogBanner.of throws when no ancestor', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          localizationsDelegates: L10n.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: L10n.supportedLocales,
           home: Builder(
             builder: (context) => TextButton(
@@ -213,7 +214,7 @@ void main() {
       ChangelogBannerState? captured;
       await tester.pumpWidget(
         MaterialApp(
-          localizationsDelegates: L10n.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: L10n.supportedLocales,
           home: ChangelogBanner(
             child: Builder(

@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
+
 import '../app_adaptive_ui_theme.dart';
 
 /// App-owned foreground policy for neutral Cupertino icon buttons.
@@ -88,9 +89,9 @@ class NeutralCupertinoButton extends StatelessWidget {
   Widget build(BuildContext context) => CupertinoTheme(
     data: CupertinoTheme.of(context).copyWith(
       primaryColor:
-          AppAdaptiveUiTheme.of(
-            context,
-          ).cupertinoButtonTheme.neutralForegroundColor ??
+          AppAdaptiveUiTheme.of(context)
+              .cupertinoButtonTheme
+              .neutralForegroundColor ??
           CupertinoColors.label,
     ),
     child: CupertinoButton(
@@ -128,9 +129,9 @@ class NeutralCupertinoButtonBuilder extends StatelessWidget {
   Widget build(BuildContext context) => CupertinoTheme(
     data: CupertinoTheme.of(context).copyWith(
       primaryColor:
-          AppAdaptiveUiTheme.of(
-            context,
-          ).cupertinoButtonTheme.neutralForegroundColor ??
+          AppAdaptiveUiTheme.of(context)
+              .cupertinoButtonTheme
+              .neutralForegroundColor ??
           CupertinoColors.label,
     ),
     child: Builder(builder: builder),

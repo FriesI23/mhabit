@@ -10,7 +10,8 @@ part of 'group.dart';
 
 abstract class _$GroupDBCellCWProxy {
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -41,7 +42,8 @@ class _$GroupDBCellCWProxyImpl implements _$GroupDBCellCWProxy {
   final GroupDBCell _value;
 
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -143,7 +145,7 @@ GroupDBCell _$GroupDBCellFromJson(Map<String, dynamic> json) => GroupDBCell(
   customColor: (json['custom_color'] as num?)?.toInt(),
   customColorTinted: (json['custom_color_tinted'] as num?)?.toInt(),
   status: (json['status'] as num?)?.toInt(),
-  sortPosition: json['sort_position'] as num?,
+  sortPosition: json['sort_position'] as GroupSortPosition?,
   syncExtras: json['sync_extras'] as String?,
 );
 

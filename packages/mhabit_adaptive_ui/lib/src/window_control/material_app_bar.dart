@@ -1,9 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../material/material_app_bar_background.dart';
 import '../shell/sidebar_adapter.dart';
@@ -161,9 +161,8 @@ class WindowControlAppBar extends StatelessWidget
       automaticallyImplyLeading: slots.automaticallyImplyLeading,
       title: title == null
           ? null
-          : AdaptiveWindowInteractionBinding.maybeOf(
-                  context,
-                )?.wrapInteractionRegion(title) ??
+          : AdaptiveWindowInteractionBinding.maybeOf(context)
+                    ?.wrapInteractionRegion(title) ??
                 title,
       actions: slots.actions,
       automaticallyImplyActions: slots.automaticallyImplyActions,
@@ -528,9 +527,8 @@ class WindowControlSliverAppBar extends StatelessWidget {
     final sidebarLeading = SidebarLeadingScope.maybeOf(context);
     final effectiveTitle = title == null
         ? null
-        : AdaptiveWindowInteractionBinding.maybeOf(
-                context,
-              )?.wrapInteractionRegion(title) ??
+        : AdaptiveWindowInteractionBinding.maybeOf(context)
+                  ?.wrapInteractionRegion(title) ??
               title;
     final effectiveCenterTitle = sidebarLeading == null ? centerTitle : false;
     final effectiveFlexibleSpace = _centeredSidebarAnchorFlexibleSpace(
@@ -859,9 +857,8 @@ _MaterialToolbarSlots _resolveMaterialToolbarSlots(
 
   if (effectiveLeading != null) {
     effectiveLeading =
-        AdaptiveWindowInteractionBinding.maybeOf(
-          context,
-        )?.wrapInteractionRegion(effectiveLeading) ??
+        AdaptiveWindowInteractionBinding.maybeOf(context)
+            ?.wrapInteractionRegion(effectiveLeading) ??
         effectiveLeading;
   }
 
@@ -915,9 +912,8 @@ _MaterialToolbarSlots _resolveMaterialToolbarSlots(
     actions: effectiveActions
         ?.map(
           (child) =>
-              AdaptiveWindowInteractionBinding.maybeOf(
-                context,
-              )?.wrapInteractionRegion(child) ??
+              AdaptiveWindowInteractionBinding.maybeOf(context)
+                  ?.wrapInteractionRegion(child) ??
               child,
         )
         .toList(),

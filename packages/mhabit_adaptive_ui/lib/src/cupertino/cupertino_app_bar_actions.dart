@@ -1,5 +1,5 @@
 import 'package:adaptive_actions/cupertino.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 
 import 'adaptive_cupertino_focus_decoration.dart';
 import 'cupertino_neutral_button.dart';
@@ -121,12 +121,11 @@ class CupertinoAppBarActions<T extends Object> extends StatelessWidget {
   }
 }
 
-typedef _PrimaryActionDecorator<T extends Object> =
-    Widget Function(
-      BuildContext context,
-      AdaptiveAction<T> action,
-      Widget child,
-    );
+typedef _PrimaryActionDecorator<T extends Object> = Widget Function(
+  BuildContext context,
+  AdaptiveAction<T> action,
+  Widget child,
+);
 
 class _CupertinoAppBarActionButton<T extends Object> extends StatelessWidget {
   const _CupertinoAppBarActionButton({

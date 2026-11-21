@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../adaptive/list_section_row_scope.dart';
 import '../adaptive_style.dart';

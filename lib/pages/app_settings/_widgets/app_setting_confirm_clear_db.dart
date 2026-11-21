@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 Future<AppSettingConfirmClearDBOp?> showAppSettingConfirmClearDBDiloag({
@@ -73,9 +73,9 @@ class _AppSettingConfirmClearDBDiloag
       actions: [
         AdaptiveDialogAction(
           label: "cancel",
-          onPressed: () => Navigator.maybeOf(
-            context,
-          )?.maybePop(AppSettingConfirmClearDBOp.cancel),
+          onPressed: () =>
+              Navigator.maybeOf(context)
+                  ?.maybePop(AppSettingConfirmClearDBOp.cancel),
         ),
         AdaptiveDialogAction(
           label: "confirm",

@@ -347,42 +347,39 @@ void main() {
       },
     );
 
-    test(
-      'onEditRecordCompleted pushes HabitDataChangedEvent via AppEventSubscriptions',
-      () async {
-        final detailData = _buildHabitDetailData();
-        final access = _FakeHabitDetailAccess(seedData: detailData);
-        final bus = AppEventBus();
-        final vm = HabitDetailViewModel()
-          ..attachAccess(access)
-          ..updateAppEvent(bus);
-        final events = <HabitDataChangedEvent>[];
-        bus.on<HabitDataChangedEvent>().listen(events.add);
+    test('onEditRecordCompleted pushes HabitDataChangedEvent via AppEventSubscriptions', () async {
+      final detailData = _buildHabitDetailData();
+      final access = _FakeHabitDetailAccess(seedData: detailData);
+      final bus = AppEventBus();
+      final vm = HabitDetailViewModel()
+        ..attachAccess(access)
+        ..updateAppEvent(bus);
+      final events = <HabitDataChangedEvent>[];
+      bus.on<HabitDataChangedEvent>().listen(events.add);
 
-        await vm.loadData(detailData.data.uuid, listen: false);
-        vm.onEditRecordCompleted();
+      await vm.loadData(detailData.data.uuid, listen: false);
+      vm.onEditRecordCompleted();
 
-        await Future<void>.delayed(Duration.zero);
-        expect(
-          events.length,
-          1,
-          reason: 'onEditRecordCompleted should push one HabitDataChangedEvent',
-        );
-        final event = events.single;
-        expect(
-          event.isInTrace(
-            AppEventPageSource.habitDetail,
-            AppEventFunctionSource.recordChanged,
-          ),
-          isTrue,
-          reason: 'trace must include habitDetail.recordChanged',
-        );
-        expect(event.uuidList, [detailData.data.uuid]);
-        expect(event.changeType, HabitDataChangeType.updated);
-        vm.dispose();
-        bus.dispose();
-      },
-    );
+      await Future<void>.delayed(Duration.zero);
+      expect(
+        events.length,
+        1,
+        reason: 'onEditRecordCompleted should push one HabitDataChangedEvent',
+      );
+      final event = events.single;
+      expect(
+        event.isInTrace(
+          AppEventPageSource.habitDetail,
+          AppEventFunctionSource.recordChanged,
+        ),
+        isTrue,
+        reason: 'trace must include habitDetail.recordChanged',
+      );
+      expect(event.uuidList, [detailData.data.uuid]);
+      expect(event.changeType, HabitDataChangeType.updated);
+      vm.dispose();
+      bus.dispose();
+    });
 
     test('onCalendarRecordChanged pushes HabitRecordsChangedEvent', () async {
       final detailData = _buildHabitDetailData();

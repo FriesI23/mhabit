@@ -84,9 +84,8 @@ void main() {
     test("delegates to helper.group.loadAllGroupsSyncInfo", () async {
       final groupHelper = MockSyncGroupDBHelper();
       final helper = _FakeSyncDBHelper(groupHelper);
-      when(
-        groupHelper.loadAllGroupsSyncInfo(),
-      ).thenAnswer((_) async => [SyncDBCell(groupUUID: 'g1')]);
+      when(groupHelper.loadAllGroupsSyncInfo())
+          .thenAnswer((_) async => [SyncDBCell(groupUUID: 'g1')]);
 
       final task = QueryGroupsFromDBTask(helper: helper);
       final result = await task.run(_FakeAppSyncContext());

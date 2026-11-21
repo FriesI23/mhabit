@@ -6,8 +6,8 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/pages/app_error/page.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 

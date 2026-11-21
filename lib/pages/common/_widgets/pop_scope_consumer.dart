@@ -14,7 +14,7 @@
 
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 
 /// Interface for ViewModels whose pop-ability depends on internal state.

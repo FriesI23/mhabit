@@ -165,6 +165,8 @@ jobs:
         variant:
           - arch: x64
             runner: windows-2022
+          - arch: arm64
+            runner: windows-11-arm
     runs-on: ${{ matrix.variant.runner }}
     steps:
       - uses: actions/checkout@v7
@@ -257,6 +259,7 @@ jobs:
             fi
             if [[ "$TARGET" == "all" || "$TARGET" == "windows" ]]; then
               echo "- mhabit-windows-x64-msix"
+              echo "- mhabit-windows-arm64-msix"
             fi
             if [[ "$TARGET" == "all" || "$TARGET" == "linux" ]]; then
               echo "- mhabit-x86_64.flatpak"

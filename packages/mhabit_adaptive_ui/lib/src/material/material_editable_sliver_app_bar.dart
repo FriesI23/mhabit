@@ -1,5 +1,5 @@
 import 'package:copy_with_extension/copy_with_extension.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../window_control/material_app_bar.dart';
 
@@ -147,9 +147,8 @@ class _MaterialEditableFlexibleSpace extends StatelessWidget {
     final collapsedHeight = settings.minExtent - topPadding;
     final scrollUnderHeight = settings.maxExtent - settings.minExtent;
     final isCollapsed = settings.isScrolledUnder ?? false;
-    final titleStyle = Theme.of(
-      context,
-    ).textTheme.titleLarge!.copyWith(color: foregroundColor);
+    final titleStyle = Theme.of(context).textTheme.titleLarge!
+        .copyWith(color: foregroundColor);
     return Column(
       children: [
         Padding(

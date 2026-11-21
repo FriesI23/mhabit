@@ -67,8 +67,7 @@ extension HabitSummaryDataIterableExtension on Iterable<HabitSummaryData> {
   List<HabitSortCache<dynamic>> toHabitSummarySortCacheList({
     bool growable = true,
   }) {
-    return map(
-      (e) => HabitSummaryDataSortCache(data: e),
-    ).toList(growable: growable);
+    return map((e) => HabitSummaryDataSortCache(data: e))
+        .toList(growable: growable);
   }
 }

@@ -1,11 +1,11 @@
 import 'dart:ui' show Tristate;
 
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, debugDefaultTargetPlatformOverride;
-import 'package:flutter/material.dart' show FloatingActionButton, Icons, Theme;
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:material_ui/material_ui.dart'
+    show FloatingActionButton, Icons, Theme;
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_adaptive_navigation_bar.dart';
 import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_navigation_primary_action.dart';
@@ -339,12 +339,10 @@ void main() {
 
       final selectedIcon = find.byKey(const ValueKey('today-apple-selected'));
       final unselectedIcon = find.byKey(const ValueKey('habits-apple'));
-      final selectedIconColor = IconTheme.of(
-        tester.element(selectedIcon),
-      ).color!;
-      final unselectedIconColor = IconTheme.of(
-        tester.element(unselectedIcon),
-      ).color!;
+      final selectedIconColor = IconTheme.of(tester.element(selectedIcon))
+          .color!;
+      final unselectedIconColor = IconTheme.of(tester.element(unselectedIcon))
+          .color!;
       final selectedLabelColor = tester
           .widget<Text>(find.text('Today'))
           .style!

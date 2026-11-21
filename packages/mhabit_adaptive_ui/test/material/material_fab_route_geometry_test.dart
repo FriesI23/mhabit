@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ios_window_control_layout/ios_window_control_layout.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
-
 import 'package:mhabit_adaptive_ui/src/window_control/occlusion_layout.dart';
 
 import '../harness/adaptive_ui_theme.dart';
@@ -120,9 +119,8 @@ void main() {
             builder: (context, child) => Directionality(
               textDirection: direction,
               child: MediaQuery(
-                data: MediaQuery.of(
-                  context,
-                ).copyWith(padding: _safe, viewPadding: _safe),
+                data: MediaQuery.of(context)
+                    .copyWith(padding: _safe, viewPadding: _safe),
                 child: AdaptiveWindowControlLayoutScope(
                   horizontalAvoidance: EdgeInsets.zero,
                   verticalAvoidance: EdgeInsets.zero,
@@ -465,9 +463,8 @@ void main() {
         MaterialApp(
           theme: ThemeData(platform: TargetPlatform.iOS),
           builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(padding: safe, viewPadding: safe),
+            data: MediaQuery.of(context)
+                .copyWith(padding: safe, viewPadding: safe),
             child: AdaptiveOcclusionLayout(
               geometry: IosOcclusionGeometry(
                 viewBounds: Offset.zero & size,

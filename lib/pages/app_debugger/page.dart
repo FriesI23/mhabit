@@ -16,8 +16,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:open_file/open_file.dart' show OpenFile;
 import 'package:provider/provider.dart';
@@ -158,9 +158,8 @@ class _PageState extends State<_Page> with XShare {
   void _onShareDebugZip(BuildContext context) async {
     final zipFilePath = await widget.debugBundleBuilder();
     if (!context.mounted) return;
-    final subject = L10n.of(
-      context,
-    )?.debug_downladDebugZip_subject(debuggerZipFile);
+    final subject = L10n.of(context)
+        ?.debug_downladDebugZip_subject(debuggerZipFile);
     trySaveFiles(
       [XFile(zipFilePath)],
       defaultTargetPlatform,

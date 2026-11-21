@@ -15,7 +15,7 @@
 import 'dart:async';
 
 import 'package:adaptive_actions/core.dart';
-import 'package:flutter/cupertino.dart'
+import 'package:cupertino_ui/cupertino_ui.dart'
     show
         CupertinoAlertDialog,
         CupertinoButton,
@@ -25,10 +25,11 @@ import 'package:flutter/cupertino.dart'
         CupertinoPopupSurface,
         CupertinoSliverNavigationBar,
         CupertinoTextField;
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/extensions/adaptive_style_extensions.dart';
 import 'package:mhabit/l10n/localizations.dart';
@@ -340,7 +341,7 @@ Future<void> _pumpTodayTabPage(
       ],
       child: MaterialApp(
         theme: ThemeData(platform: platform),
-        localizationsDelegates: L10n.localizationsDelegates,
+        localizationsDelegates: appLocalizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         builder: (context, child) => AppAdaptiveUiTheme(
           data: AppAdaptiveUiTheme.of(context).copyWith(style: style),
@@ -459,7 +460,7 @@ Future<HabitSummaryViewModel> _pumpHabitsTabPage(
       appBuilder?.call(home) ??
       MaterialApp(
         theme: ThemeData(platform: platform),
-        localizationsDelegates: L10n.localizationsDelegates,
+        localizationsDelegates: appLocalizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         builder: (context, child) => AppAdaptiveUiTheme(
           data: AppAdaptiveUiTheme.of(context).copyWith(style: style),
@@ -615,7 +616,7 @@ void main() {
         );
         return MaterialApp.router(
           theme: ThemeData(platform: TargetPlatform.android),
-          localizationsDelegates: L10n.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: L10n.supportedLocales,
           routerConfig: router,
           builder: (context, child) => ValueListenableBuilder<AdaptiveStyle>(
@@ -2290,7 +2291,7 @@ void main() {
       platform: TargetPlatform.iOS,
       appBuilder: (home) => MaterialApp(
         theme: ThemeData(platform: TargetPlatform.iOS),
-        localizationsDelegates: L10n.localizationsDelegates,
+        localizationsDelegates: appLocalizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         home: ValueListenableBuilder<AdaptiveStyle>(
           valueListenable: style,
@@ -2448,7 +2449,7 @@ void main() {
         );
         return MaterialApp.router(
           theme: ThemeData(platform: TargetPlatform.iOS),
-          localizationsDelegates: L10n.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: L10n.supportedLocales,
           routerConfig: router,
         );
@@ -2519,7 +2520,7 @@ void main() {
         );
         return MaterialApp.router(
           theme: ThemeData(platform: TargetPlatform.iOS),
-          localizationsDelegates: L10n.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: L10n.supportedLocales,
           routerConfig: router,
         );
@@ -2600,7 +2601,7 @@ void main() {
         );
         return MaterialApp.router(
           theme: ThemeData(platform: TargetPlatform.android),
-          localizationsDelegates: L10n.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: L10n.supportedLocales,
           routerConfig: router,
         );

@@ -11,7 +11,10 @@ import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart'
         DesktopWindowStateFormat,
         DesktopWindowStateStore,
         WindowsWindowState;
+import 'package:mhabit_desktop_window_chrome/src/desktop_window_runtime.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../packages/mhabit_desktop_window_chrome/test/support/fake_desktop_window_runtime.dart';
 
 final _state = WindowsWindowState(
   left: -1200,
@@ -38,6 +41,7 @@ void main() {
   late DesktopWindowPersistence windows;
 
   setUp(() {
+    DesktopWindowRuntime.debugOverride = FakeDesktopWindowRuntime();
     SharedPreferences.setMockInitialValues({'profile.setting': 'before'});
     adapter = WindowAdapter();
     windows = DesktopWindowPersistence.forTesting(adapter: adapter);
@@ -48,6 +52,7 @@ void main() {
 
   tearDown(() async {
     await windows.dispose();
+    DesktopWindowRuntime.debugOverride = null;
     FlutterError.onError = previousErrorHandler;
   });
 

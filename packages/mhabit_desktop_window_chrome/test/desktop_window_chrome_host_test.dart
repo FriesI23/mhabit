@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:macos_window_utils/widgets/macos_toolbar_passthrough.dart';
 import 'package:macos_window_utils/window_manipulator.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
 
 import 'support/fakes.dart';
@@ -85,24 +85,22 @@ void main() {
     variant: TargetPlatformVariant.only(TargetPlatform.macOS),
   );
 
-  testWidgets(
-    'unsupported platform does not install package targets',
-    (tester) async {
-      final chrome = DesktopWindowChrome(api: FakeDesktopWindowChromeApi());
-      addTearDown(chrome.dispose);
-      await chrome.initialize();
-      await tester.pumpWidget(
-        DesktopWindowChromeHost(
-          controller: chrome,
-          child: const DesktopWindowInteractionRegion(
-            child: SizedBox(width: 44, height: 44),
-          ),
+  testWidgets('unsupported platform does not install package targets', (
+    tester,
+  ) async {
+    final chrome = DesktopWindowChrome(api: FakeDesktopWindowChromeApi());
+    addTearDown(chrome.dispose);
+    await chrome.initialize();
+    await tester.pumpWidget(
+      DesktopWindowChromeHost(
+        controller: chrome,
+        child: const DesktopWindowInteractionRegion(
+          child: SizedBox(width: 44, height: 44),
         ),
-      );
-      await tester.pumpAndSettle();
-      expect(find.byType(MacosToolbarPassthrough), findsNothing);
-      expect(calls, isEmpty);
-    },
-    variant: TargetPlatformVariant.only(TargetPlatform.linux),
-  );
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(MacosToolbarPassthrough), findsNothing);
+    expect(calls, isEmpty);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.linux));
 }

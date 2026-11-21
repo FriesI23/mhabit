@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:macos_window_utils/window_manipulator.dart';
-import 'package:window_manager/window_manager.dart';
 
 import 'desktop_window_chrome_api.g.dart';
+import 'desktop_window_runtime.dart';
 
 /// Receives platform-independent window state and geometry notifications.
 ///
@@ -161,7 +161,7 @@ final class DesktopWindowChromeGeometry {
 }
 
 class _MacOSWindowChromeApi
-    with WindowListener
+    with DesktopWindowListener
     implements DesktopWindowChromeApi, DesktopChromeFlutterApi {
   static Future<void>? _packageInitialization;
   final DesktopChromeHostApi _host = DesktopChromeHostApi();
@@ -178,29 +178,31 @@ class _MacOSWindowChromeApi
     if (_events != null) return;
     _events = events;
     DesktopChromeFlutterApi.setUp(this);
-    await windowManager.ensureInitialized();
+    await DesktopWindowRuntime.instance.ensureInitialized();
     try {
       await (_packageInitialization ??= WindowManipulator.initialize(
         enableWindowDelegate: false,
       ));
     } finally {
       // Package/bridge failure must still retain the app's standard-window size.
-      if (minimumSize != null) await windowManager.setMinimumSize(minimumSize);
+      if (minimumSize != null) {
+        await DesktopWindowRuntime.instance.setMinimumSize(minimumSize);
+      }
     }
-    windowManager.addListener(this);
+    DesktopWindowRuntime.instance.addListener(this);
   }
 
   @override
   Future<void> show() async {
     // Initialization may have failed before window_manager was ready. Retry its
     // idempotent setup so the standard-window fallback can still be displayed.
-    await windowManager.ensureInitialized();
-    await windowManager.show();
-    await windowManager.focus();
+    await DesktopWindowRuntime.instance.ensureInitialized();
+    await DesktopWindowRuntime.instance.show();
+    await DesktopWindowRuntime.instance.focus();
   }
 
   @override
-  Future<bool> isFullScreen() => windowManager.isFullScreen();
+  Future<bool> isFullScreen() => DesktopWindowRuntime.instance.isFullScreen();
 
   @override
   Future<void> configure({required bool fused}) => _host.configure(fused);
@@ -221,9 +223,9 @@ class _MacOSWindowChromeApi
   }
 
   @override
-  void geometryChanged() => _events?.geometryChanged();
+  Future<void> geometryChanged() async => _events?.geometryChanged();
   @override
-  void willEnterFullScreen() => _events?.willEnterFullScreen();
+  Future<void> willEnterFullScreen() async => _events?.willEnterFullScreen();
   @override
   void onWindowEnterFullScreen() => _events?.onWindowEnterFullScreen();
   @override
@@ -232,7 +234,7 @@ class _MacOSWindowChromeApi
   @override
   Future<void> dispose() async {
     _events = null;
-    windowManager.removeListener(this);
+    DesktopWindowRuntime.instance.removeListener(this);
     DesktopChromeFlutterApi.setUp(null);
     await _host.dispose();
   }

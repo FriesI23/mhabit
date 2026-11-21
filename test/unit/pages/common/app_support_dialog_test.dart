@@ -3,11 +3,12 @@
 
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart'
+import 'package:cupertino_ui/cupertino_ui.dart'
     show CupertinoAlertDialog, CupertinoButton, CupertinoDialogAction;
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/distribution.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/common/widgets.dart';
@@ -19,7 +20,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../support/adaptive_ui_theme.dart';
 import '../../../support/stub/about_info.dart';
-
 import '../../../support/stub/shared_preferences.dart';
 
 class _SupportRouteObserver extends NavigatorObserver {
@@ -49,7 +49,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         navigatorObservers: [?observer],
-        localizationsDelegates: L10n.localizationsDelegates,
+        localizationsDelegates: appLocalizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         builder: (context, child) => MediaQuery(
           data: MediaQuery.of(context).copyWith(
@@ -489,7 +489,7 @@ void main() {
         ChangeNotifierProvider.value(
           value: owner,
           child: MaterialApp(
-            localizationsDelegates: L10n.localizationsDelegates,
+            localizationsDelegates: appLocalizationsDelegates,
             supportedLocales: L10n.supportedLocales,
             builder: (context, child) => MediaQuery(
               data: MediaQuery.of(context).copyWith(disableAnimations: true),
@@ -539,7 +539,7 @@ void main() {
               navigatorKey: navigator,
               theme: ThemeData(brightness: brightness),
               locale: locale,
-              localizationsDelegates: L10n.localizationsDelegates,
+              localizationsDelegates: appLocalizationsDelegates,
               supportedLocales: L10n.supportedLocales,
               builder: (context, child) => MediaQuery(
                 data: MediaQuery.of(context).copyWith(

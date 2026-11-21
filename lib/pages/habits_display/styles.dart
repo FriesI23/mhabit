@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/animation.dart' show Curves;
-import 'package:great_list_view/great_list_view.dart'
+import 'package:great_list_view_plus/great_list_view_plus.dart'
     show DefaultAnimatedListAnimator;
 
 const kCommonEvalation = 2.0;

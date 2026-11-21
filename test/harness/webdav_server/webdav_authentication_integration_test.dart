@@ -104,9 +104,8 @@ void main() {
         () async {
           final http = transport();
           try {
-            final response = await (await http.getUrl(
-              endpoint('mixed', 18342),
-            )).close();
+            final response = await (await http.getUrl(endpoint('mixed', 18342)))
+                .close();
             expect(response.statusCode, 401);
             final challenges =
                 response.headers[HttpHeaders.wwwAuthenticateHeader]!;

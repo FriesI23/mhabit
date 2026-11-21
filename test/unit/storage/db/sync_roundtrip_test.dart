@@ -376,52 +376,55 @@ void main() {
       expect(restored.toJson().containsKey('unknown_group_id'), isFalse);
     });
 
-    test('second download with partial unknown prunes removed fields', () async {
-      // First download: two unknown fields.
-      final firstDownload = WebDavSyncHabitData.fromJson({
-        ..._basePayload('partial-prune-uuid', 'Partial Prune'),
-        'sessionId': 'server-session-1',
-        'removed_field': 'will-go',
-        'kept_field': 99,
-      });
-      await syncHelper.syncHabitDataToDb(firstDownload);
+    test(
+      'second download with partial unknown prunes removed fields',
+      () async {
+        // First download: two unknown fields.
+        final firstDownload = WebDavSyncHabitData.fromJson({
+          ..._basePayload('partial-prune-uuid', 'Partial Prune'),
+          'sessionId': 'server-session-1',
+          'removed_field': 'will-go',
+          'kept_field': 99,
+        });
+        await syncHelper.syncHabitDataToDb(firstDownload);
 
-      // Second download: 'removed_field' is gone from server, 'kept_field' remains.
-      final secondDownload = WebDavSyncHabitData.fromJson({
-        ..._basePayload('partial-prune-uuid', 'Partial Prune'),
-        'sessionId': 'server-session-2',
-        'kept_field': 99,
-      });
-      await syncHelper.syncHabitDataToDb(secondDownload);
+        // Second download: 'removed_field' is gone from server, 'kept_field' remains.
+        final secondDownload = WebDavSyncHabitData.fromJson({
+          ..._basePayload('partial-prune-uuid', 'Partial Prune'),
+          'sessionId': 'server-session-2',
+          'kept_field': 99,
+        });
+        await syncHelper.syncHabitDataToDb(secondDownload);
 
-      final rows = await viewModel.local.db.rawQuery(
-        'SELECT sync_extras FROM mh_habits WHERE uuid = ?',
-        ['partial-prune-uuid'],
-      );
-      expect(rows, hasLength(1));
-      final extrasJson = rows.first['sync_extras'] as String?;
-      expect(extrasJson, isNotNull);
-      final extras = jsonDecode(extrasJson!) as Map<String, dynamic>;
-      expect(extras, hasLength(1));
-      expect(extras['kept_field'], 99);
-      expect(extras.containsKey('removed_field'), isFalse);
+        final rows = await viewModel.local.db.rawQuery(
+          'SELECT sync_extras FROM mh_habits WHERE uuid = ?',
+          ['partial-prune-uuid'],
+        );
+        expect(rows, hasLength(1));
+        final extrasJson = rows.first['sync_extras'] as String?;
+        expect(extrasJson, isNotNull);
+        final extras = jsonDecode(extrasJson!) as Map<String, dynamic>;
+        expect(extras, hasLength(1));
+        expect(extras['kept_field'], 99);
+        expect(extras.containsKey('removed_field'), isFalse);
 
-      final restored = await syncHelper.loadHabitDataFromBb(
-        'partial-prune-uuid',
-        withRecords: false,
-        configId: 'test-config',
-        sessionId: 'test-session',
-      );
+        final restored = await syncHelper.loadHabitDataFromBb(
+          'partial-prune-uuid',
+          withRecords: false,
+          configId: 'test-config',
+          sessionId: 'test-session',
+        );
 
-      expect(restored, isNotNull);
-      expect(restored!.unknown, isNotNull);
-      expect(restored.unknown!.containsKey('removed_field'), isFalse);
-      expect(restored.unknown!['kept_field'], 99);
+        expect(restored, isNotNull);
+        expect(restored!.unknown, isNotNull);
+        expect(restored.unknown!.containsKey('removed_field'), isFalse);
+        expect(restored.unknown!['kept_field'], 99);
 
-      final restoredJson = restored.toJson();
-      expect(restoredJson.containsKey('removed_field'), isFalse);
-      expect(restoredJson['kept_field'], 99);
-    });
+        final restoredJson = restored.toJson();
+        expect(restoredJson.containsKey('removed_field'), isFalse);
+        expect(restoredJson['kept_field'], 99);
+      },
+    );
 
     test(
       'record unknown fields survive DB and local edits, then clear',
@@ -774,27 +777,24 @@ void main() {
       },
     );
 
-    test(
-      'loadGroupDataFromDb returns stored sessionId when clean and configId matches',
-      () async {
-        final groupData = WebDavSyncGroupData.fromJson(
-          _baseGroupPayload('group-clean-uuid', 'Group Clean'),
-        ).copyWith(etag: 'etag-1', sessionId: 'stored-server-session');
-        await syncHelper.group.syncGroupDataToDb(
-          groupData,
-          configId: 'cfg',
-          sessionId: 'session',
-        );
+    test('loadGroupDataFromDb returns stored sessionId when clean and configId matches', () async {
+      final groupData = WebDavSyncGroupData.fromJson(
+        _baseGroupPayload('group-clean-uuid', 'Group Clean'),
+      ).copyWith(etag: 'etag-1', sessionId: 'stored-server-session');
+      await syncHelper.group.syncGroupDataToDb(
+        groupData,
+        configId: 'cfg',
+        sessionId: 'session',
+      );
 
-        // Load with matching configId and clean state should return stored sessionId
-        final loaded = await syncHelper.group.loadGroupDataFromDb(
-          'group-clean-uuid',
-          configId: 'cfg', // matching configId
-          sessionId: 'passed-session-but-should-ignore',
-        );
-        expect(loaded, isNotNull);
-        expect(loaded!.sessionId, 'stored-server-session');
-      },
-    );
+      // Load with matching configId and clean state should return stored sessionId
+      final loaded = await syncHelper.group.loadGroupDataFromDb(
+        'group-clean-uuid',
+        configId: 'cfg', // matching configId
+        sessionId: 'passed-session-but-should-ignore',
+      );
+      expect(loaded, isNotNull);
+      expect(loaded!.sessionId, 'stored-server-session');
+    });
   });
 }

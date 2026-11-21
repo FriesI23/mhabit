@@ -8,8 +8,8 @@
 
 import 'package:adaptive_actions/cupertino.dart';
 import 'package:adaptive_actions/material.dart';
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoIcons;
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../../../extensions/adaptive_navigation_context_extensions.dart';
@@ -98,8 +98,10 @@ final class HabitDisplaySearchActionsData {
   final CupertinoAppBarActionsConfig<HabitDisplaySearchAction> apple;
 }
 
-typedef HabitDisplaySearchActionsBuilder =
-    Widget Function(BuildContext context, HabitDisplaySearchActionsData data);
+typedef HabitDisplaySearchActionsBuilder = Widget Function(
+  BuildContext context,
+  HabitDisplaySearchActionsData data,
+);
 
 final class HabitDisplaySearchConfig {
   const HabitDisplaySearchConfig({

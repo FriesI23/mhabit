@@ -74,10 +74,10 @@ modules:
       arch:
         x86_64:
           env:
-            BUNDLE_PATH: build/linux/x64/release/bundle
+            BUNDLE_PATH: build/linux/x64/f_generic/release/bundle
         aarch64:
           env:
-            BUNDLE_PATH: build/linux/arm64/release/bundle
+            BUNDLE_PATH: build/linux/arm64/f_generic/release/bundle
     build-commands:
       - install -D $BUNDLE_PATH/mhabit /app/bin/mhabit
       - install -Dm644 assets/logo/macos.svg /app/share/icons/hicolor/scalable/apps/io.github.friesi23.mhabit.svg

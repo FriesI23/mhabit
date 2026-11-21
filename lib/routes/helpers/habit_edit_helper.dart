@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../common/types.dart';
 import '../../models/habit_form.dart';
@@ -33,7 +33,7 @@ const _kRouteQueryHabitId = 'habitId';
 /// as a query parameter in the URL for observability and future deep-link
 /// support.
 extension type const HabitEditExtra._(
-  ({HabitUUID habitId, HabitForm initForm}) _value
+  ({HabitUUID habitId, HabitForm initForm}) _value,
 ) {
   const HabitEditExtra({
     required HabitUUID habitId,

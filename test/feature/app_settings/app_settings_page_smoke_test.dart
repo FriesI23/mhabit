@@ -14,18 +14,18 @@
 
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart'
+import 'package:cupertino_ui/cupertino_ui.dart'
     show
         CupertinoButton,
         CupertinoDatePicker,
         CupertinoIcons,
         CupertinoListTile,
         CupertinoSwitch;
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/distribution.dart';
 import 'package:mhabit/common/types.dart';
@@ -218,7 +218,7 @@ void main() {
       ListenableProvider<AppSyncStatusSource>.value(
         value: syncAccess,
         child: MaterialApp(
-          localizationsDelegates: L10n.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: L10n.supportedLocales,
           home: PageStorage(
             bucket: bucket,
@@ -386,13 +386,11 @@ void main() {
             routerConfig: router,
             builder: (context, child) => Consumer<AppThemeViewModel>(
               builder: (context, theme, _) => AppAdaptiveUiTheme(
-                data: AppAdaptiveUiTheme.of(
-                  context,
-                ).copyWith(style: theme.adaptiveStyleOverride),
+                data: AppAdaptiveUiTheme.of(context)
+                    .copyWith(style: theme.adaptiveStyleOverride),
                 child: MediaQuery(
-                  data: MediaQuery.of(
-                    context,
-                  ).copyWith(disableAnimations: true),
+                  data: MediaQuery.of(context)
+                      .copyWith(disableAnimations: true),
                   child: ValueListenableBuilder<TextDirection?>(
                     valueListenable: shellDirection,
                     builder: (context, direction, _) {
@@ -428,7 +426,7 @@ void main() {
               ),
             ),
             theme: ThemeData(platform: platform),
-            localizationsDelegates: L10n.localizationsDelegates,
+            localizationsDelegates: appLocalizationsDelegates,
             supportedLocales: L10n.supportedLocales,
           ),
         ),
@@ -823,16 +821,14 @@ void main() {
           expect(find.byType(ExporterConfirmDialog), findsOneWidget);
           expect(exportAccess.habitLoads, 1);
           expect(exportAccess.groupLoads, 1);
-          Navigator.of(
-            tester.element(find.byType(ExporterConfirmDialog)),
-          ).pop();
+          Navigator.of(tester.element(find.byType(ExporterConfirmDialog)))
+              .pop();
         } else if (index == 2) {
           expect(find.text('Loop Habit Tracker'), findsOneWidget);
           Navigator.of(tester.element(find.text('Loop Habit Tracker'))).pop();
         } else {
-          final cancel = L10n.of(
-            tester.element(backup),
-          )!.appSetting_resetConfigDialog_cancelText;
+          final cancel = L10n.of(tester.element(backup))!
+              .appSetting_resetConfigDialog_cancelText;
           await tester.tap(find.text(cancel).hitTestable());
         }
         await tester.pumpAndSettle();

@@ -125,73 +125,61 @@ void main() {
       },
     );
 
-    test(
-      'getYMDFormatterForFreqChart falls back to system formatter when chart config is disabled',
-      () {
-        const config = CustomDateYmdHmsConfig(
-          ymdFormat: YearMonthDayFormtEnum.dayMonthYear,
-          splitChar: DateSplitCharEnum.dash,
-          twelveHoursOn: false,
-          useSystemFormat: false,
-          applyFreqChart: false,
-        );
+    test('getYMDFormatterForFreqChart falls back to system formatter when chart config is disabled', () {
+      const config = CustomDateYmdHmsConfig(
+        ymdFormat: YearMonthDayFormtEnum.dayMonthYear,
+        splitChar: DateSplitCharEnum.dash,
+        twelveHoursOn: false,
+        useSystemFormat: false,
+        applyFreqChart: false,
+      );
 
-        final formatter = config.getYMDFormatterForFreqChart('en_US');
+      final formatter = config.getYMDFormatterForFreqChart('en_US');
 
-        expect(formatter.pattern, 'M/d/y');
-      },
-    );
+      expect(formatter.pattern, 'M/d/y');
+    });
 
-    test(
-      'getYMDFormatterForFreqChart uses configured formatter when chart config is enabled',
-      () {
-        const config = CustomDateYmdHmsConfig(
-          ymdFormat: YearMonthDayFormtEnum.dayMonthYear,
-          splitChar: DateSplitCharEnum.dash,
-          twelveHoursOn: false,
-          useSystemFormat: false,
-          applyFreqChart: true,
-        );
+    test('getYMDFormatterForFreqChart uses configured formatter when chart config is enabled', () {
+      const config = CustomDateYmdHmsConfig(
+        ymdFormat: YearMonthDayFormtEnum.dayMonthYear,
+        splitChar: DateSplitCharEnum.dash,
+        twelveHoursOn: false,
+        useSystemFormat: false,
+        applyFreqChart: true,
+      );
 
-        final formatter = config.getYMDFormatterForFreqChart('en_US');
+      final formatter = config.getYMDFormatterForFreqChart('en_US');
 
-        expect(formatter.pattern, 'd-M-yyyy');
-      },
-    );
+      expect(formatter.pattern, 'd-M-yyyy');
+    });
 
-    test(
-      'getYMFormatterForHeatmapCal falls back to system formatter when heatmap config is disabled',
-      () {
-        const config = CustomDateYmdHmsConfig(
-          ymdFormat: YearMonthDayFormtEnum.yearMonthDay,
-          splitChar: DateSplitCharEnum.dash,
-          twelveHoursOn: false,
-          useSystemFormat: false,
-          applyHeatmapCal: false,
-        );
+    test('getYMFormatterForHeatmapCal falls back to system formatter when heatmap config is disabled', () {
+      const config = CustomDateYmdHmsConfig(
+        ymdFormat: YearMonthDayFormtEnum.yearMonthDay,
+        splitChar: DateSplitCharEnum.dash,
+        twelveHoursOn: false,
+        useSystemFormat: false,
+        applyHeatmapCal: false,
+      );
 
-        final formatter = config.getYMFormatterForHeatmapCal('en_US');
+      final formatter = config.getYMFormatterForHeatmapCal('en_US');
 
-        expect(formatter.pattern, 'MMM y');
-      },
-    );
+      expect(formatter.pattern, 'MMM y');
+    });
 
-    test(
-      'getYMFormatterForHeatmapCal uses configured formatter when heatmap config is enabled',
-      () {
-        const config = CustomDateYmdHmsConfig(
-          ymdFormat: YearMonthDayFormtEnum.yearMonthDay,
-          splitChar: DateSplitCharEnum.dot,
-          twelveHoursOn: false,
-          useSystemFormat: false,
-          useLeadingZero: true,
-          applyHeatmapCal: true,
-        );
+    test('getYMFormatterForHeatmapCal uses configured formatter when heatmap config is enabled', () {
+      const config = CustomDateYmdHmsConfig(
+        ymdFormat: YearMonthDayFormtEnum.yearMonthDay,
+        splitChar: DateSplitCharEnum.dot,
+        twelveHoursOn: false,
+        useSystemFormat: false,
+        useLeadingZero: true,
+        applyHeatmapCal: true,
+      );
 
-        final formatter = config.getYMFormatterForHeatmapCal('en_US');
+      final formatter = config.getYMFormatterForHeatmapCal('en_US');
 
-        expect(formatter.pattern, 'yyyy.MM');
-      },
-    );
+      expect(formatter.pattern, 'yyyy.MM');
+    });
   });
 }

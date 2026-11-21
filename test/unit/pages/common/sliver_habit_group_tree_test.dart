@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/extensions/custom_color_extensions.dart';
 import 'package:mhabit/models/habit_color.dart';
@@ -140,9 +140,9 @@ void main() {
             expected,
           );
           expect(
-            DefaultTextStyle.of(
-              tester.element(find.text('Colored')),
-            ).style.color,
+            DefaultTextStyle.of(tester.element(find.text('Colored')))
+                .style
+                .color,
             expected,
           );
           expect(

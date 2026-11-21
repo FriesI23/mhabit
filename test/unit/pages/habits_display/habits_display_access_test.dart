@@ -331,39 +331,36 @@ void main() {
       },
     );
 
-    test(
-      'HabitSummaryViewModel keeps committed UI state when post-commit work fails',
-      () async {
-        final seedData = _buildHabitSummaryData();
-        final barrier = Completer<void>();
-        final access = _FakeHabitsDisplayAccess(seedData: seedData)
-          ..afterCommitBarrier = barrier.future;
-        final vm = HabitSummaryViewModel()
-          ..attachAccess(access)
-          ..attachGroupManager(_StubGroupManager());
-        await vm.loadData(listen: false);
-        var notifications = 0;
-        vm.addListener(() => notifications += 1);
+    test('HabitSummaryViewModel keeps committed UI state when post-commit work fails', () async {
+      final seedData = _buildHabitSummaryData();
+      final barrier = Completer<void>();
+      final access = _FakeHabitsDisplayAccess(seedData: seedData)
+        ..afterCommitBarrier = barrier.future;
+      final vm = HabitSummaryViewModel()
+        ..attachAccess(access)
+        ..attachGroupManager(_StubGroupManager());
+      await vm.loadData(listen: false);
+      var notifications = 0;
+      vm.addListener(() => notifications += 1);
 
-        final operation = vm.changeRecordStatus(seedData.uuid, HabitDate.now());
-        await Future<void>.delayed(Duration.zero);
+      final operation = vm.changeRecordStatus(seedData.uuid, HabitDate.now());
+      await Future<void>.delayed(Duration.zero);
 
-        expect(notifications, 1);
-        expect(
-          seedData.getRecordByDate(HabitDate.now())?.status,
-          HabitRecordStatus.done,
-        );
+      expect(notifications, 1);
+      expect(
+        seedData.getRecordByDate(HabitDate.now())?.status,
+        HabitRecordStatus.done,
+      );
 
-        barrier.completeError(StateError('reminder failed'));
-        await expectLater(operation, throwsStateError);
-        expect(notifications, 1);
-        expect(
-          seedData.getRecordByDate(HabitDate.now())?.status,
-          HabitRecordStatus.done,
-        );
-        vm.dispose();
-      },
-    );
+      barrier.completeError(StateError('reminder failed'));
+      await expectLater(operation, throwsStateError);
+      expect(notifications, 1);
+      expect(
+        seedData.getRecordByDate(HabitDate.now())?.status,
+        HabitRecordStatus.done,
+      );
+      vm.dispose();
+    });
 
     test('undoing a skip broadcasts no effective record', () async {
       final seedData = _buildHabitSummaryData();

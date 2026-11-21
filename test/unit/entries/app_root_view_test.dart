@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/entries/common/app_root_view.dart';
 import 'package:mhabit/models/app_theme_color.dart';
 import 'package:mhabit/theme/app_theme_builder.dart';
@@ -307,9 +307,8 @@ void main() {
           );
           expect(initialLayout?.verticalAvoidance, isNot(EdgeInsets.zero));
           expect(initialLayout?.hasWindowControlAvoidance, isFalse);
-          final baseBarBackground = CupertinoTheme.of(
-            context,
-          ).barBackgroundColor;
+          final baseBarBackground = CupertinoTheme.of(context)
+              .barBackgroundColor;
 
           hasHorizontalAvoidance = true;
           tester.binding.handleMetricsChanged();
@@ -368,9 +367,8 @@ void main() {
           context = tester.element(find.byKey(probeKey));
           expect(tester.state(find.byKey(probeKey)), same(probeState));
           expect(
-            AdaptiveWindowControlLayoutScope.maybeOf(
-              context,
-            )?.hasWindowControlAvoidance,
+            AdaptiveWindowControlLayoutScope.maybeOf(context)
+                ?.hasWindowControlAvoidance,
             isFalse,
           );
           expect(Theme.of(context).scaffoldBackgroundColor, baseBackground);
@@ -405,9 +403,8 @@ void main() {
           context = tester.element(find.byKey(probeKey));
           expect(tester.state(find.byKey(probeKey)), same(probeState));
           expect(
-            AdaptiveWindowControlLayoutScope.maybeOf(
-              context,
-            )?.hasWindowControlAvoidance,
+            AdaptiveWindowControlLayoutScope.maybeOf(context)
+                ?.hasWindowControlAvoidance,
             isFalse,
           );
           expect(Theme.of(context).scaffoldBackgroundColor, baseBackground);
@@ -441,9 +438,8 @@ void main() {
           context = tester.element(find.byKey(probeKey));
           expect(tester.state(find.byKey(probeKey)), same(probeState));
           expect(
-            AdaptiveWindowControlLayoutScope.maybeOf(
-              context,
-            )?.hasWindowControlAvoidance,
+            AdaptiveWindowControlLayoutScope.maybeOf(context)
+                ?.hasWindowControlAvoidance,
             isTrue,
           );
           expect(Theme.of(context).scaffoldBackgroundColor, elevatedBackground);
@@ -540,9 +536,8 @@ void main() {
             themeMode: ThemeMode.dark,
             darkThemeBuilder: (context) {
               if (defaultTargetPlatform == TargetPlatform.iOS &&
-                  AdaptiveWindowControlLayoutScope.maybeOf(
-                        context,
-                      )?.hasWindowControlAvoidance ==
+                  AdaptiveWindowControlLayoutScope.maybeOf(context)
+                          ?.hasWindowControlAvoidance ==
                       true) {
                 throw StateError(
                   'macOS must not select the iOS elevated theme',

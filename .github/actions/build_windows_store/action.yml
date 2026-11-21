@@ -8,29 +8,24 @@ description: >
   signed: with --store, the msix tool skips signing entirely because the
   Microsoft Store re-signs the package on ingestion. No signing secret
   input is needed here.
-  Build output is located in `build\windows\x64\runner\Release`.
+  Build output is located in `build\windows\<arch>\f_store\runner\Release`.
 
 outputs:
   msix-path:
     description: Path to generated Store MSIX file
-    value: ${{ steps.output.outputs.msix-path }}
+    value: ${{ steps.build.outputs.msix-path }}
 
 runs:
   using: composite
   steps:
     - uses: ./.github/actions/setup_flutter
     - name: Build Store MSIX
+      id: build
       run: scripts\build_msix_store.cmd
       shell: cmd
-    - id: output
+    - name: Check Store MSIX
+      env:
+        OUTPUT_PATH: ${{ steps.build.outputs.msix-path }}
       run: |
-        shopt -s nullglob
-        matches=(build/windows/x64/runner/Release/mhabit_*_store.msix)
-        if [ "${#matches[@]}" -ne 1 ]; then
-          echo "Expected exactly one Store MSIX, found ${#matches[@]}: ${matches[*]}" >&2
-          exit 1
-        fi
-        OUTPUT_PATH="${matches[0]}"
         md5sum "$OUTPUT_PATH"
-        echo "msix-path=$OUTPUT_PATH" >> "$GITHUB_OUTPUT"
       shell: bash

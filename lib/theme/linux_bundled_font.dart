@@ -20,8 +20,10 @@ import 'package:flutter/foundation.dart';
 const linuxBundledFontFamily = 'mhabit Noto Sans CJK SC';
 const linuxBundledFontPath = '/app/share/fonts/NotoSansCJKsc-Regular.otf';
 
-typedef LinuxFontRegistrar =
-    Future<void> Function(Uint8List bytes, String family);
+typedef LinuxFontRegistrar = Future<void> Function(
+  Uint8List bytes,
+  String family,
+);
 
 /// Registers the Flatpak-bundled font directly with Flutter's font collection.
 ///

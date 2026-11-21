@@ -3,13 +3,14 @@ import 'dart:convert';
 import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as flutter_local_notifications
     show NotificationDetails;
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/common/app_info.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/entries/app/entry.dart';
 import 'package:mhabit/l10n/localizations.dart';
@@ -388,7 +389,7 @@ void main() {
           child: MaterialApp(
             theme: ThemeData(platform: TargetPlatform.macOS),
             navigatorObservers: [routes],
-            localizationsDelegates: L10n.localizationsDelegates,
+            localizationsDelegates: appLocalizationsDelegates,
             supportedLocales: L10n.supportedLocales,
             builder: (context, child) => MediaQuery(
               data: MediaQuery.of(context).copyWith(disableAnimations: true),
@@ -483,7 +484,7 @@ void main() {
           ],
           child: MaterialApp(
             navigatorObservers: [routes],
-            localizationsDelegates: L10n.localizationsDelegates,
+            localizationsDelegates: appLocalizationsDelegates,
             supportedLocales: L10n.supportedLocales,
             home: const AppPostInit(child: Scaffold(body: Text('App'))),
           ),
@@ -558,7 +559,7 @@ void main() {
                   ),
                   child: child!,
                 ),
-                localizationsDelegates: L10n.localizationsDelegates,
+                localizationsDelegates: appLocalizationsDelegates,
                 supportedLocales: L10n.supportedLocales,
                 home: const AppPostInit(child: Scaffold(body: Text('App'))),
               ),
@@ -703,7 +704,7 @@ void main() {
             ],
             child: const MaterialApp(
               locale: Locale('en'),
-              localizationsDelegates: L10n.localizationsDelegates,
+              localizationsDelegates: appLocalizationsDelegates,
               supportedLocales: L10n.supportedLocales,
               home: AppPostInit(child: SizedBox.shrink()),
             ),

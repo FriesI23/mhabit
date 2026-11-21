@@ -22,8 +22,9 @@ import '../../models/loop_import.dart';
 import '../../models/thirdparty_import.dart';
 import '../support/commons.dart';
 
-typedef ThirdPartyFilePicker =
-    Future<XFile?> Function({required List<XTypeGroup> acceptedTypeGroups});
+typedef ThirdPartyFilePicker = Future<XFile?> Function({
+  required List<XTypeGroup> acceptedTypeGroups,
+});
 
 Future<XFile?> _openThirdPartyFile({
   required List<XTypeGroup> acceptedTypeGroups,

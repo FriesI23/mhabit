@@ -1,12 +1,12 @@
-import 'package:flutter/cupertino.dart'
+import 'package:cupertino_ui/cupertino_ui.dart'
     show
         CupertinoColors,
         CupertinoDynamicColor,
         CupertinoTextThemeData,
         CupertinoThemeData;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/extensions/custom_color_extensions.dart';
 import 'package:mhabit/models/app_theme_color.dart';

@@ -1,12 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
 import 'package:provider/provider.dart';
 
-import '../../common/consts.dart';
-import '../../l10n/localizations.dart';
+import '../../common/window_title.dart';
 import '../../providers/app_ui/app_window_appearance.dart';
 
 /// Synchronizes window-level appearance with the native title bar.
@@ -60,7 +59,7 @@ class _AppWindowTitleBarBindingState extends State<AppWindowTitleBarBinding> {
 
   @override
   Widget build(BuildContext context) {
-    final title = L10n.of(context)?.appName ?? appName;
+    final title = appWindowTitle(context);
     if (_title != title) {
       _title = title;
       _schedule();

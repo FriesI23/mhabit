@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_daily_goal.dart';
@@ -52,21 +52,18 @@ void main() {
       expect(extra.initForm, same(form));
     });
 
-    test(
-      'habitId and initForm.editParams.uuid can differ (assert lives in push, not extra)',
-      () {
-        // The extra container itself does not enforce consistency;
-        // that check lives in pushHabitEdit / unpackHabitEdit.
-        const extraHabitId = 'extra-habit-uuid';
-        const formHabitId = 'form-habit-uuid';
-        final form = _editForm(uuid: formHabitId);
-        final extra = HabitEditExtra(habitId: extraHabitId, initForm: form);
+    test('habitId and initForm.editParams.uuid can differ (assert lives in push, not extra)', () {
+      // The extra container itself does not enforce consistency;
+      // that check lives in pushHabitEdit / unpackHabitEdit.
+      const extraHabitId = 'extra-habit-uuid';
+      const formHabitId = 'form-habit-uuid';
+      final form = _editForm(uuid: formHabitId);
+      final extra = HabitEditExtra(habitId: extraHabitId, initForm: form);
 
-        expect(extra.habitId, extraHabitId);
-        expect(extra.initForm.editParams?.uuid, formHabitId);
-        expect(extra.habitId, isNot(equals(formHabitId)));
-      },
-    );
+      expect(extra.habitId, extraHabitId);
+      expect(extra.initForm.editParams?.uuid, formHabitId);
+      expect(extra.habitId, isNot(equals(formHabitId)));
+    });
   });
 
   group('unpackHabitEdit', () {

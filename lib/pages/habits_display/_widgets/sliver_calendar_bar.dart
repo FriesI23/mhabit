@@ -14,8 +14,8 @@
 
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../common/types.dart';
 import '../../../utils/app_clock.dart';

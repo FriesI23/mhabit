@@ -12,16 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:io';
-
-import 'package:flutter/services.dart' as services;
-
-String? get appFlavor {
-  if (Platform.isWindows) {
-    return const String.fromEnvironment('APP_FLAVOR_WIN') != ''
-        ? const String.fromEnvironment('APP_FLAVOR_WIN')
-        : services.appFlavor;
-  } else {
-    return services.appFlavor;
-  }
-}
+export 'package:flutter/services.dart' show appFlavor;

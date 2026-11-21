@@ -489,9 +489,8 @@ void main() {
     test('startDate is earliest record date', () {
       // Meditate: 2025-01-23 is earliest
       final json = jsonList[0];
-      final expectedEpoch = HabitDate.dateTime(
-        DateTime.parse('2025-01-23'),
-      ).epochDay;
+      final expectedEpoch = HabitDate.dateTime(DateTime.parse('2025-01-23'))
+          .epochDay;
       expect(json[HabitExportDataKey.startDate], expectedEpoch);
     });
 
@@ -647,9 +646,8 @@ void main() {
     });
 
     test('AT_LEAST (default) → normal type, dailyGoal=targetValue', () {
-      final jsonList = LoopCsvImporter.fromZipBytes(
-        buildLoopSampleZip(),
-      ).toExportJson();
+      final jsonList = LoopCsvImporter.fromZipBytes(buildLoopSampleZip())
+          .toExportJson();
 
       final json = jsonList[1];
       expect(json[HabitExportDataKey.type], HabitType.normal.dbCode);
@@ -698,9 +696,8 @@ void main() {
 
   group('LoopCsvImporter.annotateJson', () {
     test('prefixes desc with [From: Loop Habit Tracker]', () {
-      final jsonList = LoopCsvImporter.fromZipBytes(
-        buildLoopSampleZip(),
-      ).toExportJson();
+      final jsonList = LoopCsvImporter.fromZipBytes(buildLoopSampleZip())
+          .toExportJson();
       LoopCsvImporter.dummy.annotateJson(jsonList);
 
       for (final json in jsonList) {
@@ -723,9 +720,8 @@ void main() {
     });
 
     test('preserves original desc after prefix', () {
-      final jsonList = LoopCsvImporter.fromZipBytes(
-        buildLoopSampleZip(),
-      ).toExportJson();
+      final jsonList = LoopCsvImporter.fromZipBytes(buildLoopSampleZip())
+          .toExportJson();
       const originalDesc = 'this is a test description';
 
       LoopCsvImporter.dummy.annotateJson(jsonList);
@@ -743,6 +739,15 @@ void main() {
   //#region error handling
 
   group('LoopCsvImporter error handling', () {
+    test('rejects damaged history instead of returning empty records', () {
+      expect(
+        () => LoopCsvImporter.fromZipBytes(
+          buildLoopSampleZipWithDamagedRecords(),
+        ),
+        throwsFormatException,
+      );
+    });
+
     test('throws ThirdPartyImportException when Habits.csv missing', () {
       final archive = Archive();
       archive.addFile(ArchiveFile('other.txt', 0, []));

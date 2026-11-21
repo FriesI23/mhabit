@@ -1,10 +1,10 @@
 import 'package:adaptive_actions/cupertino.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
     show CupertinoSidebar;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ios_window_control_layout/ios_window_control_layout.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/cupertino/cupertino_search_toolbar.dart';
 import 'package:mhabit_adaptive_ui/src/window_control/occlusion_layout.dart';
@@ -47,9 +47,8 @@ Widget _host({
 }) => MaterialApp(
   theme: ThemeData(platform: TargetPlatform.iOS),
   builder: (context, navigator) => MediaQuery(
-    data: MediaQuery.of(
-      context,
-    ).copyWith(padding: padding, viewPadding: padding),
+    data: MediaQuery.of(context)
+        .copyWith(padding: padding, viewPadding: padding),
     child: AdaptiveWindowControlLayoutScope(
       horizontalAvoidance: EdgeInsets.zero,
       verticalAvoidance: EdgeInsets.zero,

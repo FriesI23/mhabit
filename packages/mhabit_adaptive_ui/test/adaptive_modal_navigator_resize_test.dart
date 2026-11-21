@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show BoxParentData, RenderAnimatedSize;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:foldable/foldable.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import 'harness/adaptive_ui_theme.dart';

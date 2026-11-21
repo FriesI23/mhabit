@@ -10,10 +10,7 @@ part of 'app_theme_color.dart';
 
 Map<String, dynamic> _$SystemAppThemeColorToJson(
   SystemAppThemeColor instance,
-) => <String, dynamic>{
-  'type': _$AppThemeColorTypeEnumMap[instance.type]!,
-  'hash_code': instance.hashCode,
-};
+) => <String, dynamic>{'type': _$AppThemeColorTypeEnumMap[instance.type]!};
 
 const _$AppThemeColorTypeEnumMap = {
   AppThemeColorType.system: 1,
@@ -24,17 +21,11 @@ const _$AppThemeColorTypeEnumMap = {
 
 Map<String, dynamic> _$PrimaryAppThemeColorToJson(
   PrimaryAppThemeColor instance,
-) => <String, dynamic>{
-  'type': _$AppThemeColorTypeEnumMap[instance.type]!,
-  'hash_code': instance.hashCode,
-};
+) => <String, dynamic>{'type': _$AppThemeColorTypeEnumMap[instance.type]!};
 
 Map<String, dynamic> _$DynamicAppThemeColorToJson(
   DynamicAppThemeColor instance,
-) => <String, dynamic>{
-  'type': _$AppThemeColorTypeEnumMap[instance.type]!,
-  'hash_code': instance.hashCode,
-};
+) => <String, dynamic>{'type': _$AppThemeColorTypeEnumMap[instance.type]!};
 
 InternalAppThemeColor _$InternalAppThemeColorFromJson(
   Map<String, dynamic> json,

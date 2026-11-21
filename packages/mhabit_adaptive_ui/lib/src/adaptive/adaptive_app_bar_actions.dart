@@ -2,15 +2,17 @@ import 'dart:math' as math;
 
 import 'package:adaptive_actions/cupertino.dart';
 import 'package:adaptive_actions/material.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../adaptive_style.dart';
 import '../cupertino/cupertino_app_bar_actions.dart';
 import '../material/material_app_bar_actions.dart';
 
 /// Receives an invoked action together with the button that anchored it.
-typedef AdaptiveAppBarActionCallback<T extends Object> =
-    void Function(BuildContext anchorContext, T value);
+typedef AdaptiveAppBarActionCallback<T extends Object> = void Function(
+  BuildContext anchorContext,
+  T value,
+);
 
 /// Decorates one renderer-owned primary action button.
 typedef AdaptiveAppBarPrimaryActionDecorator<T extends Object> =

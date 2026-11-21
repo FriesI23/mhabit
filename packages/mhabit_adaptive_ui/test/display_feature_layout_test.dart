@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:foldable/foldable.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import 'harness/adaptive_ui_theme.dart';
@@ -149,52 +149,48 @@ void main() {
       variant: TargetPlatformVariant.only(TargetPlatform.iOS),
     );
 
-    testWidgets(
-      'iOS $style reuses the existing adaptive sheet route',
-      (tester) async {
-        source.initial = _snapshot(HingeStatus.partiallyOpen);
-        await mount(tester, style, adaptiveSheet: true);
-        await tester.tap(find.text('Open'));
-        await tester.pumpAndSettle();
-        expect(
-          tester.getRect(find.text('Question')).right,
-          lessThanOrEqualTo(490),
-        );
-        final foldedCenter = tester.getCenter(find.text('Question')).dx;
-        source.eventsController.add(_snapshot(HingeStatus.fullyOpen));
-        await tester.pumpAndSettle();
-        expect(
-          tester.getCenter(find.text('Question')).dx,
-          greaterThan(foldedCenter),
-        );
-        expect(tester.takeException(), isNull);
-      },
-      variant: TargetPlatformVariant.only(TargetPlatform.iOS),
-    );
+    testWidgets('iOS $style reuses the existing adaptive sheet route', (
+      tester,
+    ) async {
+      source.initial = _snapshot(HingeStatus.partiallyOpen);
+      await mount(tester, style, adaptiveSheet: true);
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+      expect(
+        tester.getRect(find.text('Question')).right,
+        lessThanOrEqualTo(490),
+      );
+      final foldedCenter = tester.getCenter(find.text('Question')).dx;
+      source.eventsController.add(_snapshot(HingeStatus.fullyOpen));
+      await tester.pumpAndSettle();
+      expect(
+        tester.getCenter(find.text('Question')).dx,
+        greaterThan(foldedCenter),
+      );
+      expect(tester.takeException(), isNull);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
-    testWidgets(
-      'Android $style keeps its native features and routes',
-      (tester) async {
-        const features = [
-          DisplayFeature(
-            bounds: Rect.fromLTWH(490, 0, 0, 800),
-            type: DisplayFeatureType.fold,
-            state: DisplayFeatureState.postureHalfOpened,
-          ),
-        ];
-        await mount(tester, style, features: features);
-        expect(find.byType(FoldableProvider), findsNothing);
-        expect(source.queries, 0);
-        await tester.tap(find.text('Open'));
-        await tester.pumpAndSettle();
-        expect(
-          tester.getRect(find.text('Question')).right,
-          lessThanOrEqualTo(490),
-        );
-        expect(tester.takeException(), isNull);
-      },
-      variant: TargetPlatformVariant.only(TargetPlatform.android),
-    );
+    testWidgets('Android $style keeps its native features and routes', (
+      tester,
+    ) async {
+      const features = [
+        DisplayFeature(
+          bounds: Rect.fromLTWH(490, 0, 0, 800),
+          type: DisplayFeatureType.fold,
+          state: DisplayFeatureState.postureHalfOpened,
+        ),
+      ];
+      await mount(tester, style, features: features);
+      expect(find.byType(FoldableProvider), findsNothing);
+      expect(source.queries, 0);
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+      expect(
+        tester.getRect(find.text('Question')).right,
+        lessThanOrEqualTo(490),
+      );
+      expect(tester.takeException(), isNull);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.android));
 
     testWidgets(
       'iOS $style feeds existing dialog routes without replacing state',
@@ -230,19 +226,15 @@ void main() {
     );
   }
 
-  testWidgets(
-    'unsupported iOS retains the existing window',
-    (tester) async {
-      source.initial = FoldableData.unsupported;
-      await mount(tester, AdaptiveStyle.apple);
-      await tester.tap(find.text('Open'));
-      await tester.pumpAndSettle();
-      expect(
-        MediaQuery.displayFeaturesOf(tester.element(find.text('Question'))),
-        isEmpty,
-      );
-      expect(tester.takeException(), isNull);
-    },
-    variant: TargetPlatformVariant.only(TargetPlatform.iOS),
-  );
+  testWidgets('unsupported iOS retains the existing window', (tester) async {
+    source.initial = FoldableData.unsupported;
+    await mount(tester, AdaptiveStyle.apple);
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+    expect(
+      MediaQuery.displayFeaturesOf(tester.element(find.text('Question'))),
+      isEmpty,
+    );
+    expect(tester.takeException(), isNull);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 }

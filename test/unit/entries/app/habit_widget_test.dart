@@ -3,9 +3,10 @@
 
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/entries/app/habit_widget.dart';
 import 'package:mhabit/entries/habit_widget/habit_widget_api.g.dart';
 import 'package:mhabit/l10n/localizations.dart';
@@ -152,7 +153,7 @@ void main() {
             ChangeNotifierProvider<AppEventBus>.value(value: events),
           ],
           child: const MaterialApp(
-            localizationsDelegates: L10n.localizationsDelegates,
+            localizationsDelegates: appLocalizationsDelegates,
             supportedLocales: L10n.supportedLocales,
             home: _BridgeHost(),
           ),
@@ -227,7 +228,7 @@ void main() {
       ],
       child: MaterialApp(
         locale: locale,
-        localizationsDelegates: L10n.localizationsDelegates,
+        localizationsDelegates: appLocalizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         home: const _BridgeHost(),
       ),

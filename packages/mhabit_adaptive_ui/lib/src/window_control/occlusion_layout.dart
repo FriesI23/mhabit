@@ -1,9 +1,9 @@
 import 'dart:math' as math;
 import 'dart:ui' show FlutterView;
 
-import 'package:flutter/material.dart' show FloatingActionButtonAnimator;
 import 'package:flutter/widgets.dart';
 import 'package:ios_window_control_layout/ios_window_control_layout.dart';
+import 'package:material_ui/material_ui.dart' show FloatingActionButtonAnimator;
 
 /// Shares native geometry and the FAB animation policy for one Flutter view.
 ///

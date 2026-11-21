@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
@@ -49,9 +49,8 @@ class AppSettingFirstDayTile extends StatelessWidget {
           ? Text(l10n.appSetting_firstDayOfWeek_titleText)
           : const Text("First day of week"),
       subtitle: Text(
-        DateFormat.EEEE(
-          l10n?.localeName,
-        ).format(getProtoDateWithFirstDay(firstDay)),
+        DateFormat.EEEE(l10n?.localeName)
+            .format(getProtoDateWithFirstDay(firstDay)),
       ),
       onTap: onPressed,
     );

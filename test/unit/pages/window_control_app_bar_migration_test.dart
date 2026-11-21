@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/extensions/adaptive_style_extensions.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/habit_color.dart';
@@ -33,7 +34,7 @@ Widget _host(
 }) => MaterialApp(
   theme: platform == null ? null : ThemeData(platform: platform),
   locale: locale,
-  localizationsDelegates: L10n.localizationsDelegates,
+  localizationsDelegates: appLocalizationsDelegates,
   supportedLocales: L10n.supportedLocales,
   builder: (context, child) => AppAdaptiveUiTheme(
     data: AppAdaptiveUiTheme.of(context).copyWith(style: style),

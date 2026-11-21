@@ -10,7 +10,8 @@ part of 'habit.dart';
 
 abstract class _$HabitDBCellCWProxy {
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -51,7 +52,8 @@ class _$HabitDBCellCWProxyImpl implements _$HabitDBCellCWProxy {
   final HabitDBCell _value;
 
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -196,7 +198,7 @@ HabitDBCell _$HabitDBCellFromJson(Map<String, dynamic> json) => HabitDBCell(
   type: (json['type_'] as num?)?.toInt(),
   createT: (json['create_t'] as num?)?.toInt(),
   modifyT: (json['modify_t'] as num?)?.toInt(),
-  uuid: json['uuid'] as String?,
+  uuid: json['uuid'] as HabitUUID?,
   status: (json['status'] as num?)?.toInt(),
   name: json['name'] as String?,
   desc: json['desc'] as String?,
@@ -212,7 +214,7 @@ HabitDBCell _$HabitDBCellFromJson(Map<String, dynamic> json) => HabitDBCell(
   targetDays: (json['target_days'] as num?)?.toInt(),
   remindCustom: json['remind_cutsom'] as String?,
   remindQuestion: json['remind_question'] as String?,
-  sortPosition: json['sort_position'] as num?,
+  sortPosition: json['sort_position'] as HabitSortPostion?,
   syncExtras: json['sync_extras'] as String?,
   groupId: json['group_id'] as String?,
 );

@@ -1,8 +1,8 @@
 // Copyright 2026 Fries_I23
 // Licensed under the Apache License, Version 2.0.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/providers/support/commons.dart';
 import 'package:mhabit/routes/app_navigation_branch.dart';
 import 'package:mhabit/routes/app_navigation_coordinator.dart';

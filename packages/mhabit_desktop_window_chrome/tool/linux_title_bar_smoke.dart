@@ -5,11 +5,11 @@ import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
-import 'package:window_manager/window_manager.dart';
+import 'package:window_manager/window_manager.dart' as native;
 
-Future<void> _waitFor(Future<bool> Function() predicate) async {
+Future<void> _waitFor(bool Function() predicate) async {
   for (var attempt = 0; attempt < 50; attempt++) {
-    if (await predicate()) return;
+    if (predicate()) return;
     await Future<void>.delayed(const Duration(milliseconds: 100));
   }
   throw StateError('Window state did not settle');
@@ -23,13 +23,14 @@ Future<void> main() async {
     if (!Platform.isLinux || !titleBar.supported) {
       throw StateError('This smoke test requires Linux');
     }
+    final window = native.WindowManager.instance.getCurrent();
+    if (window == null) throw StateError('The desktop window is not available');
     if (systemAppearance) {
-      await windowManager.ensureInitialized();
-      await windowManager.setMinimumSize(const Size(350, 520));
+      window.minimumSize = const Size(350, 520).toNative();
     } else {
       await titleBar.initialize(minimumSize: const Size(350, 520));
     }
-    await windowManager.setTitle('mhabit Linux title bar smoke');
+    window.title = 'mhabit Linux title bar smoke';
     runApp(
       const Directionality(
         textDirection: TextDirection.ltr,
@@ -40,6 +41,7 @@ Future<void> main() async {
       ),
     );
     await WidgetsBinding.instance.endOfFrame;
+    await titleBar.show();
     if (!systemAppearance) {
       await titleBar.applyAppearance(
         const DesktopTitleBarAppearance(
@@ -68,19 +70,19 @@ Future<void> main() async {
     } else {
       stdout.writeln('SMOKE CONTROL: no native title bar appearance calls');
     }
-    await windowManager.setSize(const Size(700, 650));
-    await windowManager.maximize();
-    await _waitFor(windowManager.isMaximized);
-    await windowManager.unmaximize();
-    await _waitFor(() async => !await windowManager.isMaximized());
-    await windowManager.setSize(const Size(350, 520));
+    window.setSize(const Size(700, 650).toNative(), false);
+    window.maximize();
+    await _waitFor(() => window.isMaximized);
+    window.unmaximize();
+    await _waitFor(() => !window.isMaximized);
+    window.setSize(const Size(350, 520).toNative(), false);
     await titleBar.dispose();
     await titleBar.dispose();
     await Future<void>.delayed(const Duration(milliseconds: 500));
     stdout.writeln(
       'SMOKE PASS: resize, maximize/restore, reset; closing window',
     );
-    await windowManager.close();
+    window.close();
   } catch (error, stack) {
     stderr.writeln('SMOKE FAIL: $error\n$stack');
     await titleBar.dispose();

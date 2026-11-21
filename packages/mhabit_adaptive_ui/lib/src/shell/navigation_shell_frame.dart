@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../breakpoints/window_size_class.dart';
 import '../window_control/occlusion_layout.dart';
@@ -14,25 +14,28 @@ import 'navigation_shell_form.dart';
 const Duration navigationShellAnimationDuration = Duration(milliseconds: 250);
 
 /// Composes branch content and navigation chrome for the current form.
-typedef NavigationShellBodyBuilder =
-    Widget Function(
-      BuildContext context,
-      NavigationShellForm form,
-      ValueChanged<int> onDestinationSelected,
-      Widget child,
-    );
+typedef NavigationShellBodyBuilder = Widget Function(
+  BuildContext context,
+  NavigationShellForm form,
+  ValueChanged<int> onDestinationSelected,
+  Widget child,
+);
 
 /// Selects the window-control owner for the current shell form.
 typedef NavigationShellWindowControlOwnerResolver =
     WindowControlLayoutOwner Function(NavigationShellForm form);
 
 /// Lets a renderer contribute its surface without exposing its visual style.
-typedef NavigationShellSurfaceColorResolver =
-    Color? Function(BuildContext context, NavigationShellForm form);
+typedef NavigationShellSurfaceColorResolver = Color? Function(
+  BuildContext context,
+  NavigationShellForm form,
+);
 
 /// Builds compact navigation or floating action chrome from shell state.
-typedef NavigationShellChromeBuilder =
-    Widget Function(BuildContext context, NavigationShellChromeState state);
+typedef NavigationShellChromeBuilder = Widget Function(
+  BuildContext context,
+  NavigationShellChromeState state,
+);
 
 /// Read-only chrome state supplied to themed shell builders.
 @immutable
@@ -476,9 +479,8 @@ class _NavigationShellBodyHost extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MediaQuery(
-    data: MediaQuery.of(
-      context,
-    ).copyWith(padding: ambientPadding, viewPadding: ambientViewPadding),
+    data: MediaQuery.of(context)
+        .copyWith(padding: ambientPadding, viewPadding: ambientViewPadding),
     child: Builder(
       builder: (context) =>
           bodyBuilder(context, form, onDestinationSelected, child),

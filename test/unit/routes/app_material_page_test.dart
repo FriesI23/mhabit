@@ -13,9 +13,9 @@
 // limitations under the License.
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/routes/app_material_page.dart';
 
 Future<void> _commitPredictiveBack(WidgetTester tester) async {
@@ -167,12 +167,10 @@ void main() {
         ),
       );
 
-      final detailRoute =
-          const AppMaterialPage<void>(
-                name: 'detail',
-                child: Text('detail page'),
-              ).createRoute(rootPageContext)
-              as PageRoute<void>;
+      final detailRoute = const AppMaterialPage<void>(
+        name: 'detail',
+        child: Text('detail page'),
+      ).createRoute(rootPageContext) as PageRoute<void>;
       branchNavigatorKey.currentState!.push<void>(detailRoute);
       await tester.pumpAndSettle();
 

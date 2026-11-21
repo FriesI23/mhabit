@@ -10,7 +10,8 @@ part of 'today_done_image.dart';
 
 abstract class _$TodayDoneImageStyleCWProxy {
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -31,7 +32,8 @@ class _$TodayDoneImageStyleCWProxyImpl implements _$TodayDoneImageStyleCWProxy {
   final TodayDoneImageStyle _value;
 
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart

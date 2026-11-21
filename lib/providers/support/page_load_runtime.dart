@@ -88,13 +88,13 @@ final class PageLoadRuntime {
 
     final loadSession = _loadSession = CancelableCompleter<void>();
     _currentLoadSessionId = ++_nextLoadSessionId;
-    Future.sync(
-      () => loadData(loadSession),
-    ).catchError((e, s) => onError(loadSession, e, s)).whenComplete(() {
-      if (!loadSession.isCompleted && !loadSession.isCanceled) {
-        loadSession.complete();
-      }
-    });
+    Future.sync(() => loadData(loadSession))
+        .catchError((e, s) => onError(loadSession, e, s))
+        .whenComplete(() {
+          if (!loadSession.isCompleted && !loadSession.isCanceled) {
+            loadSession.complete();
+          }
+        });
 
     return loadSession.operation.valueOrCancellation();
   }

@@ -13,8 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -457,7 +456,6 @@ class _PageState extends State<_Page>
     Widget buildHeatmap(BuildContext context) {
       final viewmodel = context.read<HabitDetailViewModel>();
 
-      final localeString = Localizations.localeOf(context).toLanguageTag();
       final endedDate = HabitDate.now();
       var startDate = endedDate.subtract(const Duration(days: 365 * 10));
       if (viewmodel.habitStartDate.isBefore(startDate)) {
@@ -549,20 +547,20 @@ class _PageState extends State<_Page>
                   viewmodel.habitType?.dbCode ?? 0,
                 ) ??
                 '',
-            heatmapWeekLabelValueBuilder: (context, protoDate, defaultFormat) {
+            heatmapWeekLabelValueBuilder: (context, protoDate, defaultText) {
               final themeData = Theme.of(context);
               return FittedBox(
                 child: Text(
-                  DateFormat(defaultFormat, localeString).format(protoDate),
+                  defaultText,
                   style: TextStyle(color: themeData.colorScheme.outlineVariant),
                 ),
               );
             },
-            heatmapMonthLabelItemBuilder: (context, date, defaultFormat) {
+            heatmapMonthLabelItemBuilder: (context, date, defaultText) {
               final themeData = Theme.of(context);
               final textTheme = themeData.textTheme;
               return Text(
-                DateFormat(defaultFormat, localeString).format(date),
+                defaultText,
                 style: textTheme.labelSmall?.copyWith(
                   color: themeData.colorScheme.outline,
                 ),

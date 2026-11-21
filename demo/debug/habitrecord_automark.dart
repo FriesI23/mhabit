@@ -15,7 +15,7 @@
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_form.dart';

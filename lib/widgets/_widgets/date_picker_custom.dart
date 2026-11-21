@@ -14,8 +14,8 @@
 //
 // Custom helpers extracted from the upstream date picker to host habit-specific tweaks.
 
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../extensions/textscale_extensions.dart';
 import '../../l10n/localizations.dart';

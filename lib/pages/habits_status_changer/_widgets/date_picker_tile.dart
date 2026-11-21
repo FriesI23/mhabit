@@ -79,7 +79,7 @@ class _DatePickerTileState extends State<DatePickerTile> {
 
   void _onDatePressed(HabitDate date) async {
     if (!mounted) return;
-    // TODO(mhabit-adaptive-dialog): Adapt the SDK date picker separately;
+    // TODO(mhabit-adaptive-dialog): Adapt the Material date picker separately;
     // preserve date bounds, draft selection and DateTime/null handling.
     final result = await showDatePicker(
       context: context,

@@ -15,8 +15,8 @@
 import 'dart:math' as math;
 
 import 'package:animated_check/animated_check.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:material_ui/material_ui.dart';
 
 class HabitProgressIndicator extends StatefulWidget {
   final double value;
@@ -120,7 +120,9 @@ class _HabitProgressIndicator extends State<HabitProgressIndicator>
       strokeWidth: widget.strokeWidth != null
           ? math.max(widget.strokeWidth! - 2, 1)
           : widget.strokeWidth,
-      color: widget.color,
+      // FIXME(flutter-ui-compat): Drop this fallback once animated_check reads
+      // the standalone Material theme instead of the SDK Theme.
+      color: widget.color ?? Theme.of(context).primaryColor,
     );
   }
 

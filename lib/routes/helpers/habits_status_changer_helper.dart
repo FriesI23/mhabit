@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../common/types.dart';
 import '../app_router.dart';
@@ -29,7 +29,7 @@ const _kRouteQueryHabitId = 'habitId';
 /// IDs (programmatic navigation). When null, the unpacker falls back to
 /// the [_kRouteQueryHabitId] query parameters (deeplink navigation).
 extension type const HabitsStatusChangerExtra._(
-  ({List<HabitUUID>? uuidList}) _value
+  ({List<HabitUUID>? uuidList}) _value,
 ) {
   const HabitsStatusChangerExtra({List<HabitUUID>? uuidList})
     : this._((uuidList: uuidList));

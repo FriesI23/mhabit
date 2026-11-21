@@ -37,19 +37,24 @@ extension HabitGroupSortExtension on List<HabitGroupData> {
   ) {
     final sorted = toList();
     final comparator = switch (type) {
-      HabitGroupOrderType.name =>
-        (HabitGroupData a, HabitGroupData b) => a.name.compareTo(b.name),
-      HabitGroupOrderType.colorType =>
-        (HabitGroupData a, HabitGroupData b) =>
-            a.color.compareToNullable(b.color),
+      HabitGroupOrderType.name => (
+        HabitGroupData a,
+        HabitGroupData b,
+      ) => a.name.compareTo(b.name),
+      HabitGroupOrderType.colorType => (
+        HabitGroupData a,
+        HabitGroupData b,
+      ) => a.color.compareToNullable(b.color),
       // Comparator is intentionally reversed (b, a) so that the default
       // asc direction puts the newest group first.
-      HabitGroupOrderType.createDate =>
-        (HabitGroupData a, HabitGroupData b) =>
-            b.createT.compareToNullable(a.createT),
-      HabitGroupOrderType.manual =>
-        (HabitGroupData a, HabitGroupData b) =>
-            a.sortPosition.compareTo(b.sortPosition),
+      HabitGroupOrderType.createDate => (
+        HabitGroupData a,
+        HabitGroupData b,
+      ) => b.createT.compareToNullable(a.createT),
+      HabitGroupOrderType.manual => (
+        HabitGroupData a,
+        HabitGroupData b,
+      ) => a.sortPosition.compareTo(b.sortPosition),
     };
     sorted.sort(comparator);
     if (direction == HabitDisplaySortDirection.desc &&

@@ -1,7 +1,8 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart' hide showDatePicker, showTimePicker;
-import 'package:flutter/material.dart' as material;
+import 'package:material_ui/material_ui.dart'
+    hide showDatePicker, showTimePicker;
+import 'package:material_ui/material_ui.dart' as material;
 
 import '../adaptive/adaptive_modal_viewport.dart';
 

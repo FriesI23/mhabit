@@ -14,9 +14,10 @@
 
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/thirdparty_import.dart';
 import 'package:mhabit/pages/app_settings/_widgets/thirdparty_import_provider_dialog.dart';
@@ -57,12 +58,11 @@ void main() {
             MaterialApp(
               theme: ThemeData(platform: platform, brightness: brightness),
               locale: const Locale('de'),
-              localizationsDelegates: L10n.localizationsDelegates,
+              localizationsDelegates: appLocalizationsDelegates,
               supportedLocales: L10n.supportedLocales,
               builder: (context, child) => MediaQuery(
-                data: MediaQuery.of(
-                  context,
-                ).copyWith(textScaler: const TextScaler.linear(2)),
+                data: MediaQuery.of(context)
+                    .copyWith(textScaler: const TextScaler.linear(2)),
                 child: Directionality(
                   textDirection: TextDirection.rtl,
                   child: child!,

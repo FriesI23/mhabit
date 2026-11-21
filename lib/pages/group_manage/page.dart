@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
@@ -289,38 +289,40 @@ class _GroupManageBody extends StatelessWidget {
     }
 
     return WindowSizeClassLayoutBuilder(
-      builder: (context, windowSize, child) => CustomScrollView(
-        slivers: [
-          GroupManageSliverAppBar(
-            onCreate: onCreate,
-            onEdit: onEdit,
-            onSortOpen: onSortOpen,
-            onBatchDelete: onBatchDelete,
-          ),
-          if (groupsEmpty)
-            const EnhancedSafeArea.withDefault(
-              top: false,
-              withSliver: true,
-              child: SliverFillRemaining(
-                hasScrollBody: false,
-                child: _GroupManageEmptyState(),
-              ),
-            )
-          else
-            EnhancedSafeArea.withDefault(
-              top: false,
-              withSliver: true,
-              child: SliverMainAxisGroup(
-                slivers: [
-                  _GroupManageContent(
-                    widthClass: windowSize.width,
-                    onEdit: onEdit,
-                    onDelete: onDelete,
-                  ),
-                ],
-              ),
+      builder: (context, windowSize, child) => ReorderableListLocalizations(
+        child: CustomScrollView(
+          slivers: [
+            GroupManageSliverAppBar(
+              onCreate: onCreate,
+              onEdit: onEdit,
+              onSortOpen: onSortOpen,
+              onBatchDelete: onBatchDelete,
             ),
-        ],
+            if (groupsEmpty)
+              const EnhancedSafeArea.withDefault(
+                top: false,
+                withSliver: true,
+                child: SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: _GroupManageEmptyState(),
+                ),
+              )
+            else
+              EnhancedSafeArea.withDefault(
+                top: false,
+                withSliver: true,
+                child: SliverMainAxisGroup(
+                  slivers: [
+                    _GroupManageContent(
+                      widthClass: windowSize.width,
+                      onEdit: onEdit,
+                      onDelete: onDelete,
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -344,9 +346,8 @@ class _GroupManageEmptyState extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             l10n?.groupManage_emptyState_text ?? 'No groups yet',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Theme.of(context).colorScheme.outline,
-            ),
+            style: Theme.of(context).textTheme.bodyLarge
+                ?.copyWith(color: Theme.of(context).colorScheme.outline),
             textAlign: TextAlign.center,
           ),
         ],

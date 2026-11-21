@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 Widget _host({
@@ -145,9 +145,8 @@ void main() {
                   child: record('replacement'),
                 ),
                 AppAdaptiveUiTheme(
-                  data: AppAdaptiveUiTheme.of(
-                    context,
-                  ).copyWith(style: AdaptiveStyle.material),
+                  data: AppAdaptiveUiTheme.of(context)
+                      .copyWith(style: AdaptiveStyle.material),
                   child: record('derived'),
                 ),
               ],
