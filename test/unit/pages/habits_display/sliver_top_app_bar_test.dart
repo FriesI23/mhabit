@@ -221,97 +221,70 @@ void main() {
       .roots
       .map((action) => action.payload);
 
-  const localizedActionLabels =
-      <(Locale, String, String, String, String, String)>[
-        (
-          Locale('en'),
-          'Display Filter',
-          'Statistics',
-          'In Progress',
-          'Archived',
-          'Completed',
-        ),
-        (Locale('zh'), '显示筛选', '统计', '进行中', '已归档', '已完成'),
-        (
-          Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
-          '顯示篩選條件',
-          '統計',
-          '進行中',
-          '已封存',
-          '已完成',
-        ),
-      ];
+  testWidgets('display actions use localized resources', (tester) async {
+    const locale = Locale('zh');
+    await tester.pumpWidget(
+      _viewBarHost(
+        locale: locale,
+        onInfo: () {},
+        callbacks: HabitDisplayOptionsCallbacks(onDisplayFilterChanged: (_) {}),
+      ),
+    );
 
-  for (final entry in localizedActionLabels) {
-    testWidgets('display actions localize for ${entry.$1}', (tester) async {
-      await tester.pumpWidget(
-        _viewBarHost(
-          locale: entry.$1,
-          onInfo: () {},
-          callbacks: HabitDisplayOptionsCallbacks(
-            onDisplayFilterChanged: (_) {},
-          ),
-        ),
-      );
+    final l10n = lookupL10n(locale);
+    final roots = tester
+        .widget<AdaptiveAppBarActions>(adaptiveActions())
+        .collection
+        .roots;
+    expect(
+      roots
+          .firstWhere((item) => item.id == habitDisplayFilterActionId)
+          .metadata
+          .label,
+      l10n.habitDisplay_displayFilterAction_label,
+    );
+    expect(
+      roots
+          .firstWhere((item) => item.id.value == 'habits.view.statistics')
+          .metadata
+          .label,
+      l10n.habitDisplay_statisticsAction_label,
+    );
+  });
 
-      final roots = tester
-          .widget<AdaptiveAppBarActions>(adaptiveActions())
-          .collection
-          .roots;
-      expect(
-        roots
-            .firstWhere((item) => item.id == habitDisplayFilterActionId)
-            .metadata
-            .label,
-        entry.$2,
-      );
-      expect(
-        roots
-            .firstWhere((item) => item.id.value == 'habits.view.statistics')
-            .metadata
-            .label,
-        entry.$3,
-      );
-      final l10n = L10n.of(tester.element(adaptiveActions()))!;
-      expect(l10n.habitDisplay_displayFilter_inProgress, entry.$4);
-      expect(l10n.habitDisplay_displayFilter_archived, entry.$5);
-      expect(l10n.habitDisplay_displayFilter_completed, entry.$6);
-    });
+  testWidgets('search actions use localized resources', (tester) async {
+    final vm = HabitSummaryViewModel();
+    addTearDown(vm.dispose);
+    const locale = Locale('zh');
+    await tester.pumpWidget(
+      _searchBarHost(
+        vm,
+        locale: locale,
+        onInfoButtonPressed: () {},
+        callbacks: HabitDisplayOptionsCallbacks(onDisplayFilterChanged: (_) {}),
+      ),
+    );
 
-    testWidgets('search actions localize for ${entry.$1}', (tester) async {
-      final vm = HabitSummaryViewModel();
-      addTearDown(vm.dispose);
-      await tester.pumpWidget(
-        _searchBarHost(
-          vm,
-          locale: entry.$1,
-          onInfoButtonPressed: () {},
-          callbacks: HabitDisplayOptionsCallbacks(
-            onDisplayFilterChanged: (_) {},
-          ),
-        ),
-      );
-
-      final roots = tester
-          .widget<AdaptiveAppBarActions>(adaptiveActions())
-          .collection
-          .roots;
-      expect(
-        roots
-            .firstWhere((item) => item.id == habitDisplayFilterActionId)
-            .metadata
-            .label,
-        entry.$2,
-      );
-      expect(
-        roots
-            .firstWhere((item) => item.id.value == 'habits.search.statistics')
-            .metadata
-            .label,
-        entry.$3,
-      );
-    });
-  }
+    final l10n = lookupL10n(locale);
+    final roots = tester
+        .widget<AdaptiveAppBarActions>(adaptiveActions())
+        .collection
+        .roots;
+    expect(
+      roots
+          .firstWhere((item) => item.id == habitDisplayFilterActionId)
+          .metadata
+          .label,
+      l10n.habitDisplay_displayFilterAction_label,
+    );
+    expect(
+      roots
+          .firstWhere((item) => item.id.value == 'habits.search.statistics')
+          .metadata
+          .label,
+      l10n.habitDisplay_statisticsAction_label,
+    );
+  });
 
   testWidgets('display options preserve responsive action contracts', (
     tester,

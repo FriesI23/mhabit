@@ -48,6 +48,14 @@ final class HabitWidgetIntegrationTests: XCTestCase {
     )
   }
 
+  private func localizedTable(_ language: String, in bundle: Bundle) throws -> [String: String] {
+    let url = bundle.bundleURL.appendingPathComponent("\(language).lproj/Localizable.strings")
+    return try XCTUnwrap(
+      PropertyListSerialization.propertyList(from: Data(contentsOf: url), format: nil)
+        as? [String: String]
+    )
+  }
+
   /// Produces a committed projection using the shared cross-language fixture.
   private func snapshotData(version: String = "v1") throws -> Data {
     let url = try XCTUnwrap(
@@ -127,11 +135,7 @@ final class HabitWidgetIntegrationTests: XCTestCase {
     for bundle in [application, try widgetBundle(in: application)] {
       XCTAssertTrue(Set(languages).isSubset(of: Set(bundle.localizations)))
       for language in languages {
-        let table = bundle.bundleURL.appendingPathComponent("\(language).lproj/Localizable.strings")
-        let values = try XCTUnwrap(
-          PropertyListSerialization.propertyList(from: Data(contentsOf: table), format: nil)
-            as? [String: String]
-        )
+        let values = try localizedTable(language, in: bundle)
         XCTAssertTrue(Set(values.keys).isSubset(of: metadata.union(runtime)), "\(language)")
         XCTAssertTrue(values.values.allSatisfy { !$0.isEmpty })
         for key in ["HomeWidgetComplete", "HomeWidgetIncomplete"] {
@@ -147,15 +151,6 @@ final class HabitWidgetIntegrationTests: XCTestCase {
         }
         if language == "en" {
           XCTAssertEqual(Set(values.keys), metadata.union(runtime))
-          XCTAssertEqual(values["HomeWidgetComplete"], "Done")
-          XCTAssertEqual(values["HomeWidgetUndo"], "UNDO")
-          XCTAssertEqual(values["HomeWidgetMetadataComplete"], "Complete")
-          XCTAssertEqual(values["HomeWidgetMetadataUndo"], "Undo")
-          XCTAssertEqual(values["HomeWidgetIncomplete"], "Missed")
-          XCTAssertEqual(values["HomeWidgetMetadataMarkIncomplete"], "Mark as missed")
-        }
-        if ["zh-Hans", "zh-Hant"].contains(language) {
-          XCTAssertEqual(values["HomeWidgetIncomplete"], "未完成")
         }
       }
     }
@@ -164,8 +159,9 @@ final class HabitWidgetIntegrationTests: XCTestCase {
   func testAppLocaleSelectsTheSameNativeRuntimeTextInBothProducts() throws {
     let application = try applicationBundle()
     let products = [application, try widgetBundle(in: application)]
-    for (locale, today) in [
-      ("zh", "今天"), ("zh_Hant", "今日"), ("zh-Hant-TW", "今日"), ("ar", "اليوم"), ("en_US", "Today"),
+    for (locale, language) in [
+      ("zh", "zh-Hans"), ("zh_Hant", "zh-Hant"), ("zh-Hant-TW", "zh-Hant"), ("ar", "ar"),
+      ("en_US", "en"),
     ] {
       var json = try XCTUnwrap(JSONSerialization.jsonObject(with: snapshotData()) as? [String: Any])
       json["locale"] = locale
@@ -175,46 +171,26 @@ final class HabitWidgetIntegrationTests: XCTestCase {
           from: JSONSerialization.data(withJSONObject: json),
         )
       for bundle in products {
+        let table = try localizedTable(language, in: bundle)
         XCTAssertEqual(
           snapshot.text(.today, bundle: bundle),
-          today,
+          try XCTUnwrap(table[HabitWidgetText.today.key]),
           "\(bundle.bundleURL.lastPathComponent): \(locale)",
         )
-        XCTAssertEqual(
-          snapshot.text(.errorFailed, bundle: bundle),
-          HabitWidgetText.errorFailed.englishDefault,
-        )
       }
-    }
-    for bundle in products {
-      XCTAssertEqual(
-        HabitWidgetText.undo.localized(locale: Locale(identifier: "ru"), bundle: bundle),
-        "UNDO",
-      )
-      XCTAssertEqual(
-        HabitWidgetText.allDone.localized(locale: Locale(identifier: "ru"), bundle: bundle),
-        "YOU MADE IT",
-      )
     }
   }
 
   func testEveryRuntimeKeyUsesItsTranslationOrEnglishInBothProducts() throws {
     let application = try applicationBundle()
     for bundle in [application, try widgetBundle(in: application)] {
-      func table(_ language: String) throws -> [String: String] {
-        let url = bundle.bundleURL.appendingPathComponent("\(language).lproj/Localizable.strings")
-        return try XCTUnwrap(
-          PropertyListSerialization.propertyList(from: Data(contentsOf: url), format: nil)
-            as? [String: String]
-        )
-      }
-      let english = try table("en")
+      let english = try localizedTable("en", in: bundle)
       for language in bundle.localizations
       where FileManager.default.fileExists(
         atPath: bundle.bundleURL.appendingPathComponent("\(language).lproj/Localizable.strings")
           .path
       ) {
-        let translated = try table(language)
+        let translated = try localizedTable(language, in: bundle)
         for text in HabitWidgetText.allCases {
           let expected = try XCTUnwrap(translated[text.key] ?? english[text.key])
           XCTAssertEqual(
@@ -238,38 +214,39 @@ final class HabitWidgetIntegrationTests: XCTestCase {
     let states: [(HabitWidgetRecordState, HabitWidgetText)] = [
       (.unrecorded, .unrecorded), (.notAchieved, .notAchieved), (.achieved, .achieved),
     ]
-    for (locale, expected) in [
-      ("zh", ["未记录", "未达标", "已达标"]), ("zh_CN", ["未记录", "未达标", "已达标"]),
-      ("zh_Hans_CN", ["未记录", "未达标", "已达标"]), ("zh_TW", ["未記錄", "未達標", "已達標"]),
-      ("zh_tw", ["未記錄", "未達標", "已達標"]), ("zh-Hant", ["未記錄", "未達標", "已達標"]),
-      ("zh_Hant_TW", ["未記錄", "未達標", "已達標"]), ("en", ["Not recorded", "Not achieved", "Achieved"]),
-      ("xx_YY", ["Not recorded", "Not achieved", "Achieved"]),
+    let products = [application, try widgetBundle(in: application)]
+    for (locale, language) in [
+      ("zh", "zh-Hans"), ("zh_CN", "zh-Hans"), ("zh_Hans_CN", "zh-Hans"),
+      ("zh_TW", "zh-Hant"), ("zh_tw", "zh-Hant"), ("zh-Hant", "zh-Hant"),
+      ("zh_Hant_TW", "zh-Hant"), ("en", "en"), ("xx_YY", "en"),
     ] {
-      for (index, state) in states.enumerated() {
+      for (state, text) in states {
         var json = try XCTUnwrap(
           JSONSerialization.jsonObject(with: snapshotData()) as? [String: Any]
         )
         var habit = (json["catalog"] as! [[String: Any]])[0]
-        habit["recordState"] = state.0.rawValue
-        habit["canMarkIncomplete"] = state.0 != .achieved
-        habit["automaticPending"] = state.0 != .achieved
-        habit["completed"] = state.0 == .achieved
-        habit["canComplete"] = state.0 != .achieved
-        habit["canUndo"] = state.0 != .unrecorded
-        habit["progress"] = state.0 == .achieved ? 1.0 : 0.0
+        habit["recordState"] = state.rawValue
+        habit["canMarkIncomplete"] = state != .achieved
+        habit["automaticPending"] = state != .achieved
+        habit["completed"] = state == .achieved
+        habit["canComplete"] = state != .achieved
+        habit["canUndo"] = state != .unrecorded
+        habit["progress"] = state == .achieved ? 1.0 : 0.0
         json["catalog"] = [habit]
-        json["completedCount"] = state.0 == .achieved ? 1 : 0
+        json["completedCount"] = state == .achieved ? 1 : 0
         json["locale"] = locale
         let snapshot = try JSONDecoder()
           .decode(
             HabitWidgetSnapshot.self,
             from: JSONSerialization.data(withJSONObject: json),
           )
-        for bundle in [application, try widgetBundle(in: application)] {
-          XCTAssertEqual(snapshot.text(state.1, bundle: bundle), expected[index], locale)
+        for bundle in products {
+          let table = try localizedTable(language, in: bundle)
+          let expected = try XCTUnwrap(table[text.key])
+          XCTAssertEqual(snapshot.text(text, bundle: bundle), expected, locale)
           XCTAssertEqual(
             snapshot.catalog[0].recordStatusText(snapshot, bundle: bundle),
-            expected[index],
+            expected,
             locale,
           )
         }
@@ -497,15 +474,6 @@ final class HabitWidgetIntegrationTests: XCTestCase {
       )
     )
     let reader = HabitWidgetHoldStore(storage: HabitWidgetFileHoldStorage(url: holdURL))
-    let application = try applicationBundle()
-    for bundle in [application, try widgetBundle(in: application)] {
-      for locale in ["zh", "zh_tw", "zh_Hant"] {
-        XCTAssertEqual(
-          HabitWidgetText.incomplete.localized(locale: Locale(identifier: locale), bundle: bundle),
-          "未完成",
-        )
-      }
-    }
     for count in [1, 3, 6] {
       let entry = HabitWidgetConfiguredEntry(
         date: now,

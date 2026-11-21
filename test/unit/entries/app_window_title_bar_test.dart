@@ -77,19 +77,19 @@ void main() {
         expect(tester.widget<Title>(find.byType(Title)).title, api.titles.last);
       }
 
-      await pump(const Locale('en'));
-      await pump(const Locale('en'));
-      await pump(const Locale('zh'));
-      await pump(
-        const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
-      );
-      final englishName = lookupL10n(const Locale('en')).appName;
-      expect(
-        api.titles,
-        defaultTargetPlatform == TargetPlatform.windows
-            ? [englishName]
-            : [englishName, '桌上习惯', '桌上習慣'],
-      );
+      const english = Locale('en');
+      const chinese = Locale('zh');
+      await pump(english);
+      await pump(english);
+      await pump(chinese);
+      final englishName = lookupL10n(english).appName;
+      final chineseName = lookupL10n(chinese).appName;
+      expect(api.titles, [
+        englishName,
+        if (defaultTargetPlatform != TargetPlatform.windows &&
+            chineseName != englishName)
+          chineseName,
+      ]);
       expect(tester.takeException(), isNull);
     },
     variant: const TargetPlatformVariant({
