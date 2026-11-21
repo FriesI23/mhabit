@@ -1,4 +1,9 @@
-# Pre-Released: pre-v1.27.21+210
+# Pre-Released: pre-v1.27.22+211
+
+> [!WARNING]
+> On macOS, [beta build 210](https://github.com/FriesI23/mhabit/releases/tag/pre-v1.27.21%2B210)
+> may crash when entering full screen or resizing the window. If you encounter
+> either issue, upgrade to this beta (build 211).
 
 ## ✨ Features
 
@@ -11,6 +16,7 @@
 - Restore reliable first-frame rendering and window lifecycle handling on
   Windows. Use the English app name in the title bar to avoid garbled text
   (#715)
+- Temporarily use Skia for rendering on macOS.
 
 ## 🌐 Localization
 
@@ -26,4 +32,4 @@
 - Enable Windows ARM64 release builds alongside x64, report failed artifact
   uploads, and fix precheck handling in manual builds (#716)
 
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.20+209...pre-v1.27.21+210)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.20+209...pre-v1.27.22+211)

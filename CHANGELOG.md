@@ -2,11 +2,12 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.27.21+210-pre
+## 1.27.22+211-pre
 
 - Feature: enable Esperanto in release builds (#717)
 - Fix: report corrupt Loop ZIP backups as import errors (#715)
 - Fix: show the app window reliably at startup (#715)
+- Fix: prevent a crash when entering full screen or resizing the window
 
 ## 1.27.20+209
 
