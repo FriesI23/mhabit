@@ -30,8 +30,7 @@ void main() {
   group('CustomColorHistoryProfileHandler', () {
     test('decodes the {argb, tinted} map format', () async {
       SharedPreferences.setMockInitialValues({
-        'customColorHistory':
-            '[{"argb":4292714768,"tinted":false},{"argb":4289510092,"tinted":true}]',
+        'customColorHistory': '[{"argb":4292714768,"tinted":false},{"argb":4289510092,"tinted":true}]',
       });
       final pref = await SharedPreferences.getInstance();
       final handler = CustomColorHistoryProfileHandler(pref);

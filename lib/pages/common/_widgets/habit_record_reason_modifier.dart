@@ -13,8 +13,8 @@
 // limitations under the License.
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../common/consts.dart';
 import '../../../extensions/colorscheme_extensions.dart';

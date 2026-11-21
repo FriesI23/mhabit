@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/pages/common/_widgets/group_edit_form.dart';
 import 'package:mhabit/pages/group_manage/_widgets/group_edit_dialog.dart';

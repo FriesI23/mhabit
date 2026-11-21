@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:window_manager/window_manager.dart';
 
 import 'desktop_title_bar_api.g.dart';
+import 'desktop_window_runtime.dart';
 
 /// Resolved window-level colors. Page-local themes must not supply these.
 @immutable
@@ -70,9 +70,9 @@ class DesktopWindowTitleBar implements DesktopTitleBarFlutterApi {
   /// Runner keeps the window hidden until placement and the first frame exist.
   Future<void> show() async {
     if (_disposed || !supported) return;
-    await windowManager.ensureInitialized();
-    await windowManager.show();
-    await windowManager.focus();
+    await DesktopWindowRuntime.instance.ensureInitialized();
+    await DesktopWindowRuntime.instance.show();
+    await DesktopWindowRuntime.instance.focus();
     await _refreshForeground();
   }
 
@@ -113,9 +113,10 @@ class DesktopWindowTitleBar implements DesktopTitleBarFlutterApi {
     if (_disposed || !_listeningForForeground) return;
     final revision = ++_foregroundRevision;
     try {
-      final visible = await windowManager.isVisible();
+      final visible = await DesktopWindowRuntime.instance.isVisible();
       if (_disposed || revision != _foregroundRevision) return;
-      final focused = visible && await windowManager.isFocused();
+      final focused =
+          visible && await DesktopWindowRuntime.instance.isFocused();
       if (_disposed || revision != _foregroundRevision) return;
       _foreground.value = focused;
     } catch (_) {
@@ -199,8 +200,10 @@ class _NativeTitleBarApi implements DesktopWindowTitleBarApi {
 
   @override
   Future<void> initialize({Size? minimumSize}) async {
-    await windowManager.ensureInitialized();
-    if (minimumSize != null) await windowManager.setMinimumSize(minimumSize);
+    await DesktopWindowRuntime.instance.ensureInitialized();
+    if (minimumSize != null) {
+      await DesktopWindowRuntime.instance.setMinimumSize(minimumSize);
+    }
   }
 
   @override
@@ -212,7 +215,8 @@ class _NativeTitleBarApi implements DesktopWindowTitleBarApi {
       );
 
   @override
-  Future<void> setTitle(String title) => windowManager.setTitle(title);
+  Future<void> setTitle(String title) =>
+      DesktopWindowRuntime.instance.setTitle(title);
 
   @override
   Future<void> reset() => _host.reset();

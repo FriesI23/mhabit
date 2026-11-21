@@ -3,7 +3,6 @@
 #include <optional>
 
 #include "flutter/generated_plugin_registrant.h"
-#include "flutter_surface_refresh.h"
 
 FlutterWindow::FlutterWindow(const flutter::DartProject &project)
     : project_(project) {}
@@ -23,6 +22,7 @@ bool FlutterWindow::OnCreate() {
       frame.right - frame.left, frame.bottom - frame.top, project_);
   // Ensure that basic setup of the controller was successful.
   if (!flutter_controller_->engine() || !flutter_controller_->view()) {
+    flutter_controller_.reset();
     return false;
   }
   RegisterPlugins(flutter_controller_->engine());
@@ -30,6 +30,8 @@ bool FlutterWindow::OnCreate() {
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
 
   // Dart restores native placement before showing the first rendered frame.
+  // Do not resize the child here or on show: a rapid size round trip can leave
+  // Flutter waiting for a stale resize target and prevent frames from presenting.
 
   // Ensure a frame is pending for Dart's first-frame display gate. This is a
   // no-op if the first frame has not completed yet.
@@ -60,19 +62,8 @@ FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
     }
   }
 
-  switch (message) {
-  case WM_SHOWWINDOW:
-    if (wparam && !has_shown_ && flutter_controller_) {
-      has_shown_ = true;
-      // Dart waits for rasterized content before showing the window. Refresh
-      // the native surface now, after hidden placement restoration has finished.
-      RefreshFlutterSurface(hwnd,
-                            flutter_controller_->view()->GetNativeWindow());
-    }
-    break;
-  case WM_FONTCHANGE:
+  if (message == WM_FONTCHANGE && flutter_controller_) {
     flutter_controller_->engine()->ReloadSystemFonts();
-    break;
   }
 
   return Win32Window::MessageHandler(hwnd, message, wparam, lparam);

@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/entries/common/app_root_view.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/app_adaptive_style_mode.dart';
@@ -46,9 +46,8 @@ void main() {
                   adaptiveStyleOverride: value.adaptiveStyleOverride,
                   child: Builder(
                     builder: (context) => MediaQuery(
-                      data: MediaQuery.of(
-                        context,
-                      ).copyWith(textScaler: const TextScaler.linear(2)),
+                      data: MediaQuery.of(context)
+                          .copyWith(textScaler: const TextScaler.linear(2)),
                       child: const Scaffold(
                         body: SingleChildScrollView(
                           child: AdaptiveListSection(

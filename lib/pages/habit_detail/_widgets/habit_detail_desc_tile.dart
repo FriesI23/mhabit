@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
@@ -33,9 +33,8 @@ class HabitDetailDescTile extends StatelessWidget {
         .select<HabitDetailViewModel, (String, HabitColor?)>(
           (vm) => (vm.habitDesc, vm.habitColor),
         );
-    final TextScaler textScaler = MediaQuery.textScalerOf(
-      context,
-    ).clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3);
+    final TextScaler textScaler = MediaQuery.textScalerOf(context)
+        .clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3);
     final descMinHeight = textScaler.scale(kHabitDetailFreqChartTitleHeight);
 
     return HabitDetailTileList(

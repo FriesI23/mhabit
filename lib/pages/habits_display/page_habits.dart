@@ -16,9 +16,9 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:great_list_view/great_list_view.dart';
+import 'package:great_list_view_plus/great_list_view_plus.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';

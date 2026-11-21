@@ -1,8 +1,8 @@
 // Copyright 2026 Fries_I23
 // Licensed under the Apache License, Version 2.0.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/common/app_info.dart';
 import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/entries/app/entry.dart';
@@ -72,7 +72,7 @@ void main() {
           ListenableProvider<AppReminderAccess>.value(value: reminder),
         ],
         child: MaterialApp(
-          localizationsDelegates: L10n.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: L10n.supportedLocales,
           home: ValueListenableBuilder<int>(
             valueListenable: rebuild,

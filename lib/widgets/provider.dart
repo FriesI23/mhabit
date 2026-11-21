@@ -15,44 +15,68 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
-typedef ViewModelProxyProviderBuilder<T, R> =
-    R Function(BuildContext context, T value, R previous);
+typedef ViewModelProxyProviderBuilder<T, R> = R Function(
+  BuildContext context,
+  T value,
+  R previous,
+);
 
-typedef ViewModelProxyProviderShouldPost<T, R> =
-    bool Function(BuildContext context, T value, R previous);
+typedef ViewModelProxyProviderShouldPost<T, R> = bool Function(
+  BuildContext context,
+  T value,
+  R previous,
+);
 
-typedef ViewModelProxyProviderBuilder2<T1, T2, R> =
-    R Function(BuildContext context, T1 value1, T2 value2, R previous);
+typedef ViewModelProxyProviderBuilder2<T1, T2, R> = R Function(
+  BuildContext context,
+  T1 value1,
+  T2 value2,
+  R previous,
+);
 
-typedef ViewModelProxyProviderShouldPost2<T1, T2, R> =
-    bool Function(BuildContext context, T1 value1, T2 value2, R previous);
+typedef ViewModelProxyProviderShouldPost2<T1, T2, R> = bool Function(
+  BuildContext context,
+  T1 value1,
+  T2 value2,
+  R previous,
+);
 
-typedef ViewModelProxyProviderBuilder3<T1, T2, T3, R> =
-    R Function(
-      BuildContext context,
-      T1 value1,
-      T2 value2,
-      T3 value3,
-      R previous,
-    );
+typedef ViewModelProxyProviderBuilder3<T1, T2, T3, R> = R Function(
+  BuildContext context,
+  T1 value1,
+  T2 value2,
+  T3 value3,
+  R previous,
+);
 
-typedef ViewModelProxyProviderShouldPost3<T1, T2, T3, R> =
-    bool Function(
-      BuildContext context,
-      T1 value1,
-      T2 value2,
-      T3 value3,
-      R previous,
-    );
+typedef ViewModelProxyProviderShouldPost3<T1, T2, T3, R> = bool Function(
+  BuildContext context,
+  T1 value1,
+  T2 value2,
+  T3 value3,
+  R previous,
+);
 
-typedef ViewModelProxyProviderPostCallback<T, R> =
-    void Function(Duration t, T value, R vm);
+typedef ViewModelProxyProviderPostCallback<T, R> = void Function(
+  Duration t,
+  T value,
+  R vm,
+);
 
-typedef ViewModelProxyProviderPostCallback2<T1, T2, R> =
-    void Function(Duration t, T1 value1, T2 value2, R vm);
+typedef ViewModelProxyProviderPostCallback2<T1, T2, R> = void Function(
+  Duration t,
+  T1 value1,
+  T2 value2,
+  R vm,
+);
 
-typedef ViewModelProxyProviderPostCallback3<T1, T2, T3, R> =
-    void Function(Duration t, T1 value1, T2 value2, T3 value3, R vm);
+typedef ViewModelProxyProviderPostCallback3<T1, T2, T3, R> = void Function(
+  Duration t,
+  T1 value1,
+  T2 value2,
+  T3 value3,
+  R vm,
+);
 
 class ViewModelProxyProvider<T, R extends ChangeNotifier?>
     extends ChangeNotifierProxyProvider<T, R> {

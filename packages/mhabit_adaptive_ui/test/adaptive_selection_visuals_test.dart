@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import 'harness/adaptive_ui_theme.dart';
@@ -92,9 +92,8 @@ void main() {
         if (style == AdaptiveStyle.apple) {
           expect(
             icon.color,
-            CupertinoTheme.of(
-              tester.element(find.byType(AdaptiveCheckmark)),
-            ).primaryColor,
+            CupertinoTheme.of(tester.element(find.byType(AdaptiveCheckmark)))
+                .primaryColor,
           );
         }
         expect(find.byType(CupertinoButton), findsNothing);

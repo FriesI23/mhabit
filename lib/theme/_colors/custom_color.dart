@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_color_annotation/mhabit_color_annotation.dart';
 
 part 'custom_color.g.dart';

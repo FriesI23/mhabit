@@ -1,9 +1,9 @@
 import 'dart:math' as math;
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' show Theme;
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/rendering.dart' show SliverConstraints;
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
+import 'package:material_ui/material_ui.dart' show Theme;
 
 import '../breakpoints/window_size_class.dart';
 import '../shell/sidebar_adapter.dart';

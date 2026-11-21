@@ -1,7 +1,7 @@
 // Copyright 2026 Fries_I23
 // Licensed under the Apache License, Version 2.0.
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 

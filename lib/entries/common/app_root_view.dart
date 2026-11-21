@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart'
+import 'package:cupertino_ui/cupertino_ui.dart'
     show CupertinoUserInterfaceLevel, CupertinoUserInterfaceLevelData;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
 import 'package:provider/provider.dart';
@@ -24,10 +24,10 @@ import 'package:provider/provider.dart';
 import '../../common/app_info.dart';
 import '../../common/consts.dart';
 import '../../common/global.dart';
+import '../../common/window_title.dart';
 import '../../extensions/adaptive_style_extensions.dart';
 import '../../extensions/app_info_extensions.dart';
 import '../../extensions/desktop_window_chrome_extensions.dart';
-import '../../l10n/localizations.dart';
 import '../../models/app_desktop_bar_mode.dart';
 import '../../widgets/_widgets/app_window_title_bar_binding.dart';
 import '../../widgets/widgets.dart';
@@ -38,9 +38,8 @@ typedef AppRootThemeBuilder = ThemeData Function(BuildContext context);
 CupertinoUserInterfaceLevelData appWindowInterfaceLevel(BuildContext context) =>
     switch (defaultTargetPlatform) {
       TargetPlatform.iOS =>
-        AdaptiveWindowControlLayoutScope.maybeOf(
-                  context,
-                )?.hasWindowControlAvoidance ==
+        AdaptiveWindowControlLayoutScope.maybeOf(context)
+                    ?.hasWindowControlAvoidance ==
                 true
             ? CupertinoUserInterfaceLevelData.elevated
             : CupertinoUserInterfaceLevelData.base,
@@ -167,8 +166,7 @@ class _AppRootMaterialApp extends StatelessWidget {
     );
   }
 
-  String _onGenerateTitle(BuildContext context) =>
-      L10n.of(context)?.appName ?? appName;
+  String _onGenerateTitle(BuildContext context) => appWindowTitle(context);
 
   @override
   Widget build(BuildContext context) {

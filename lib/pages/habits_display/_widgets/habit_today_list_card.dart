@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../extensions/custom_color_extensions.dart';
 import '../../../l10n/localizations.dart';
@@ -172,9 +172,8 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
       onValueWithPressed: widget.buttonCallbacked?.onValueWithPressed,
     );
 
-    final textScaler = MediaQuery.textScalerOf(
-      context,
-    ).clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3);
+    final textScaler = MediaQuery.textScalerOf(context)
+        .clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3);
     final extra = ExpandedSection(
       expand: _effectiveExpanded || widget.showDescInfo == true,
       child: Padding(
@@ -201,9 +200,8 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
       children: [
         Expanded(
           child: ScrollConfiguration(
-            behavior: ScrollConfiguration.of(
-              context,
-            ).copyWith(scrollbars: _effectiveExpanded),
+            behavior: ScrollConfiguration.of(context)
+                .copyWith(scrollbars: _effectiveExpanded),
             child: SingleChildScrollView(
               controller: _scrollController,
               physics: _effectiveExpanded

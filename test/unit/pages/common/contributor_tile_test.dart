@@ -1,8 +1,8 @@
 import 'package:adaptive_actions/cupertino.dart' show AdaptiveCupertinoTooltip;
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/models/contributor.dart';
 import 'package:mhabit/pages/common/_widgets/contributor_tile.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
@@ -61,9 +61,8 @@ void main() {
             builder: (context, child) => Directionality(
               textDirection: direction,
               child: MediaQuery(
-                data: MediaQuery.of(
-                  context,
-                ).copyWith(textScaler: const TextScaler.linear(2)),
+                data: MediaQuery.of(context)
+                    .copyWith(textScaler: const TextScaler.linear(2)),
                 child: child!,
               ),
             ),

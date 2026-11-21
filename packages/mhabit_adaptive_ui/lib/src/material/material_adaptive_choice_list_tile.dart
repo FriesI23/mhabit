@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../adaptive/adaptive_choice_list_tile.dart'
     show AdaptiveChoiceLayout, AdaptiveChoiceListTileConfig;

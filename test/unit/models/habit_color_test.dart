@@ -36,25 +36,21 @@ void main() {
       expect(color, const CustomHabitColor(0xFF123456));
     });
 
-    test(
-      'returns CustomHabitColor even when customColor happens to match a built-in seed',
-      () {
-        // 0xFF6750A4 is the source for cc1; the identity must remain custom.
-        const matchingArgb = 0xFF6750A4;
-        final color = HabitColor.fromRaw(
-          colorType: HabitColorType.cc1,
-          customColor: matchingArgb,
-        );
-        expect(color, isA<CustomHabitColor>());
-        expect(color, isNot(const HabitColor.builtIn(HabitColorType.cc1)));
-        expect(
-          color,
-          const CustomHabitColor(matchingArgb),
-          reason:
-              'a custom color numerically equal to a built-in seed must stay CustomHabitColor',
-        );
-      },
-    );
+    test('returns CustomHabitColor even when customColor happens to match a built-in seed', () {
+      // 0xFF6750A4 is the source for cc1; the identity must remain custom.
+      const matchingArgb = 0xFF6750A4;
+      final color = HabitColor.fromRaw(
+        colorType: HabitColorType.cc1,
+        customColor: matchingArgb,
+      );
+      expect(color, isA<CustomHabitColor>());
+      expect(color, isNot(const HabitColor.builtIn(HabitColorType.cc1)));
+      expect(
+        color,
+        const CustomHabitColor(matchingArgb),
+        reason: 'a custom color numerically equal to a built-in seed must stay CustomHabitColor',
+      );
+    });
 
     test('colorType parameter is ignored when customColor is non-null', () {
       final color = HabitColor.fromRaw(

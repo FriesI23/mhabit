@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/habit_daily_record_form.dart';
 import 'package:mhabit/models/habit_form.dart';
@@ -49,7 +50,7 @@ void main() {
           await tester.pumpWidget(
             MaterialApp(
               theme: ThemeData(platform: platform),
-              localizationsDelegates: L10n.localizationsDelegates,
+              localizationsDelegates: appLocalizationsDelegates,
               supportedLocales: L10n.supportedLocales,
               home: Scaffold(
                 body: Builder(
@@ -120,9 +121,9 @@ void main() {
           if (outcome == 'barrier') {
             await tester.tapAt(const Offset(5, 5));
           } else {
-            adaptiveDialogActions(
-              tester,
-            ).elementAt(outcome == 'confirm' ? 1 : 0).onPressed!();
+            adaptiveDialogActions(tester)
+                .elementAt(outcome == 'confirm' ? 1 : 0)
+                .onPressed!();
           }
           await tester.pumpAndSettle();
           expect(deletions, outcome == 'confirm' ? 1 : 0);

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_heatmap_calendar/simple_heatmap_calendar.dart';
 
@@ -220,6 +220,12 @@ class _HabitEditReplacementRecordCalendarDialog
       startDate: _vm.habitStartDate,
       endedDate: HabitDate.now(),
       withUTC: true,
+      weekLabelFormatter: (date, locale) =>
+          DateFormat('ccc', locale.toString()).format(date),
+      monthLabelFormatter: (date, locale, {required showYear}) => configvm
+          .config
+          .getYMFormatterForHeatmapCal(locale.toString())
+          .format(date),
       colorMap: buildHeatmapColorMap(context),
       valueColorMap: buildHeatmapValueColorMap(context),
       selectedMap: _vm.heatmapDateToColorMap,
@@ -241,25 +247,19 @@ class _HabitEditReplacementRecordCalendarDialog
         onCellPressed: onHeatmapCellPressed,
         onCellLongPressed: onHeatmapCellLongPressed,
       ),
-      weekLabelValueBuilder: (context, protoDate, defaultFormat) {
+      weekLabelValueBuilder: (context, protoDate, defaultText) {
         return FittedBox(
-          child: L10nBuilder(
-            builder: (context, l10n) => Text(
-              DateFormat('ccc', l10n?.localeName).format(protoDate),
-              style: TextStyle(color: themeData.colorScheme.outlineVariant),
-            ),
+          child: Text(
+            defaultText,
+            style: TextStyle(color: themeData.colorScheme.outlineVariant),
           ),
         );
       },
-      monthLabelItemBuilder: (context, date, defaultFormat) {
-        return L10nBuilder(
-          builder: (context, l10n) => Text(
-            configvm.config
-                .getYMFormatterForHeatmapCal(l10n?.localeName)
-                .format(date),
-            style: textTheme.labelLarge?.copyWith(
-              color: themeData.colorScheme.outline,
-            ),
+      monthLabelItemBuilder: (context, date, defaultText) {
+        return Text(
+          defaultText,
+          style: textTheme.labelLarge?.copyWith(
+            color: themeData.colorScheme.outline,
           ),
         );
       },

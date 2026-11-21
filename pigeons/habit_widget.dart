@@ -118,7 +118,7 @@ abstract class HabitWidgetDisplayHostApi {
 @FlutterApi()
 abstract class HabitWidgetBackgroundApi {
   /// Completes after persistence and the publication attempt finish.
-  @async
+  @asyncCallback
   HabitWidgetResponse perform(HabitWidgetRequest request);
 }
 
@@ -126,5 +126,6 @@ abstract class HabitWidgetBackgroundApi {
 @FlutterApi()
 abstract class HabitWidgetForegroundApi {
   /// Invalidates foreground caches after a completed background action.
+  @asyncCallback
   void changed();
 }

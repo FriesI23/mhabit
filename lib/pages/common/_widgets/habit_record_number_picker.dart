@@ -13,9 +13,9 @@
 // limitations under the License.
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../common/consts.dart';
 import '../../../common/re.dart';
@@ -187,9 +187,8 @@ class _HabitRecordCustomNumberPickerDialog
   void _onTextFieldValueChanged(String value) {
     final newDailyGoal =
         num.tryParse(value) ??
-        HabitDailyGoalContainer(
-          type: widget.recordForm.habitType,
-        ).defaultDailyGoal;
+        HabitDailyGoalContainer(type: widget.recordForm.habitType)
+            .defaultDailyGoal;
     final currentValue = _result;
     _result = onDailyGoalTextInputChanged(
       newDailyGoal,
@@ -393,9 +392,8 @@ class _HabitRecordTextField extends StatelessWidget {
     final textTheme = themeData.textTheme;
     final l10n = L10n.of(context);
 
-    final TextScaler textScaler = MediaQuery.textScalerOf(
-      context,
-    ).clamp(maxScaleFactor: 1.3);
+    final TextScaler textScaler = MediaQuery.textScalerOf(context)
+        .clamp(maxScaleFactor: 1.3);
 
     final increaseButton = _NumberStepButton(
       onUpdate: onIncreaseButtonPressed,
@@ -435,9 +433,8 @@ class _HabitRecordTextField extends StatelessWidget {
       ),
     );
 
-    final defaultDailyGoal = HabitDailyGoalContainer(
-      type: habitType,
-    ).defaultDailyGoal;
+    final defaultDailyGoal = HabitDailyGoalContainer(type: habitType)
+        .defaultDailyGoal;
     final textField = TextField(
       controller: inputController,
       decoration: InputDecoration(

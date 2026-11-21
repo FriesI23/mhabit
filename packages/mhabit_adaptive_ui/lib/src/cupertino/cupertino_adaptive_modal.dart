@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart' show MaterialLocalizations, Theme;
+import 'package:material_ui/material_ui.dart' show MaterialLocalizations, Theme;
 
 import '../adaptive/adaptive_icon_button.dart';
 import '../adaptive/adaptive_modal_content.dart';

@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' show Theme;
+import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:material_ui/material_ui.dart' show Theme;
 
 import '../adaptive/adaptive_list_theme.dart';
 import '../adaptive/list_section_row_scope.dart';
@@ -57,7 +57,7 @@ class CupertinoAdaptiveListSection extends StatelessWidget {
             Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
               child: Semantics(
-                header: true,
+                headingLevel: 1,
                 child: DefaultTextStyle(
                   style: CupertinoTheme.of(context).textTheme.textStyle
                       .copyWith(

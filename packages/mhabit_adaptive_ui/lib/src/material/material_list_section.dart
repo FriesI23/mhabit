@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../adaptive/adaptive_list_theme.dart';
 import '../adaptive/list_section_row_scope.dart';
@@ -33,7 +33,7 @@ class MaterialAdaptiveListSection extends StatelessWidget {
             Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
               child: Semantics(
-                header: true,
+                headingLevel: 1,
                 child: DefaultTextStyle(
                   style: Theme.of(context).textTheme.titleSmall!.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,

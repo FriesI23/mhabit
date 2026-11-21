@@ -17,8 +17,10 @@ import 'package:provider/provider.dart';
 
 import '../../providers/app_ui/app_experimental_feature.dart';
 
-typedef ExperimentalFeatureSelector =
-    bool Function(BuildContext context, AppExperimentalFeatureViewModel vm);
+typedef ExperimentalFeatureSelector = bool Function(
+  BuildContext context,
+  AppExperimentalFeatureViewModel vm,
+);
 
 /// A [Selector]-based gate that conditionally renders widgets based on
 /// an experimental feature flag.

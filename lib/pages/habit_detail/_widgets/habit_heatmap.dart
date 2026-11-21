@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_heatmap_calendar/simple_heatmap_calendar.dart';
 
@@ -42,13 +43,13 @@ class HabitHeatmap extends StatelessWidget {
   final Widget? Function(
     BuildContext context,
     DateTime protoDate,
-    String defaultFormat,
+    String defaultText,
   )?
   heatmapWeekLabelValueBuilder;
   final Widget? Function(
     BuildContext context,
     DateTime date,
-    String defaultFormat,
+    String defaultText,
   )?
   heatmapMonthLabelItemBuilder;
   final Widget? Function(
@@ -98,6 +99,12 @@ class HabitHeatmap extends StatelessWidget {
         startDate: startDate,
         endedDate: endedDate,
         withUTC: true,
+        weekLabelFormatter: (date, locale) =>
+            DateFormat('ccccc', locale.toString()).format(date),
+        monthLabelFormatter: (date, locale, {required showYear}) => DateFormat(
+          showYear ? 'yMMM' : 'MMM',
+          locale.toString(),
+        ).format(date),
         colorMap: colorMap,
         valueColorMap: valueColorMap,
         selectedMap: selectedMap,

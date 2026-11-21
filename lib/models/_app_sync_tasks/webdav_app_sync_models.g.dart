@@ -10,7 +10,8 @@ part of 'webdav_app_sync_models.dart';
 
 abstract class _$WebDavSyncRecordDataCWProxy {
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -41,7 +42,8 @@ class _$WebDavSyncRecordDataCWProxyImpl
   final WebDavSyncRecordData _value;
 
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -125,7 +127,8 @@ extension $WebDavSyncRecordDataCopyWith on WebDavSyncRecordData {
 
 abstract class _$WebDavSyncHabitDataCWProxy {
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -171,7 +174,8 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
   final WebDavSyncHabitData _value;
 
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -336,7 +340,8 @@ extension $WebDavSyncHabitDataCopyWith on WebDavSyncHabitData {
 
 abstract class _$WebDavSyncGroupDataCWProxy {
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -371,7 +376,8 @@ class _$WebDavSyncGroupDataCWProxyImpl implements _$WebDavSyncGroupDataCWProxy {
   final WebDavSyncGroupData _value;
 
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -491,8 +497,8 @@ WebDavSyncRecordData _$WebDavSyncRecordDataFromJson(
   recordValue: json['record_value'] as num?,
   createT: (json['create_t'] as num?)?.toInt(),
   modifyT: (json['modify_t'] as num?)?.toInt(),
-  uuid: json['uuid'] as String?,
-  parentUUID: json['parent_uuid'] as String?,
+  uuid: json['uuid'] as HabitRecordUUID?,
+  parentUUID: json['parent_uuid'] as HabitUUID?,
   reason: json['reason'] as String?,
   isDeleted: json['is_deleted'] as bool? ?? false,
   sessionId: json['sessionId'] as String?,
@@ -535,7 +541,7 @@ WebDavSyncHabitData _$WebDavSyncHabitDataFromJson(Map<String, dynamic> json) =>
       reminderQuest: json['reminder_quest'] as String?,
       startDate: (json['start_date'] as num?)?.toInt(),
       targetDays: (json['target_days'] as num?)?.toInt(),
-      sortPostion: json['sort_position'] as num?,
+      sortPostion: json['sort_position'] as HabitSortPostion?,
       groupId: json['group_id'] as String?,
       sessionId: json['sessionId'] as String?,
       records: json['records'] == null
@@ -585,7 +591,7 @@ WebDavSyncGroupData _$WebDavSyncGroupDataFromJson(Map<String, dynamic> json) =>
       customColor: (json['custom_color'] as num?)?.toInt(),
       customColorTinted: (json['custom_color_tinted'] as num?)?.toInt(),
       status: (json['status'] as num?)?.toInt(),
-      sortPosition: json['sort_position'] as num?,
+      sortPosition: json['sort_position'] as GroupSortPosition?,
       sessionId: json['sessionId'] as String?,
     );
 

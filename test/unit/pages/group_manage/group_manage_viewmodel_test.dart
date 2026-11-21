@@ -228,22 +228,19 @@ void main() {
       },
     );
 
-    test(
-      'effectiveSortType: skips habitCount and falls back to default',
-      () async {
-        await manager.createGroup(name: 'A');
+    test('effectiveSortType: skips habitCount and falls back to default', () async {
+      await manager.createGroup(name: 'A');
 
-        final handler = profile.getHandler<DisplayGroupModeProfileHandler>();
-        await handler?.set((HabitDisplayGroupType.habitCount, null));
-        vm.updateProfile(profile);
+      final handler = profile.getHandler<DisplayGroupModeProfileHandler>();
+      await handler?.set((HabitDisplayGroupType.habitCount, null));
+      vm.updateProfile(profile);
 
-        await vm.loadGroups(listen: false);
+      await vm.loadGroups(listen: false);
 
-        expect(vm.sortType, isNull);
-        // habitCount is extrinsic → fromGroupType returns null → skip to default
-        expect(vm.effectiveSortType, defaultGroupType);
-      },
-    );
+      expect(vm.sortType, isNull);
+      // habitCount is extrinsic → fromGroupType returns null → skip to default
+      expect(vm.effectiveSortType, defaultGroupType);
+    });
   });
 
   group('GroupManageViewModel event-driven reload', () {

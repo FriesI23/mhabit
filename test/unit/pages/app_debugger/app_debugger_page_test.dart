@@ -15,12 +15,12 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart'
+import 'package:cupertino_ui/cupertino_ui.dart'
     show CupertinoButton, CupertinoIcons, CupertinoNavigationBar;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/app_debugger/page.dart';
@@ -53,14 +53,13 @@ Future<void> _pumpPage(
       value: viewModel,
       child: MaterialApp(
         theme: ThemeData(platform: platform),
-        localizationsDelegates: L10n.localizationsDelegates,
+        localizationsDelegates: appLocalizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         builder: (context, child) => Directionality(
           textDirection: direction,
           child: MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(textScaler: TextScaler.linear(textScale)),
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: TextScaler.linear(textScale)),
             child: child!,
           ),
         ),
@@ -71,9 +70,8 @@ Future<void> _pumpPage(
   await tester.pump();
   if (pushPage) {
     unawaited(
-      Navigator.of(
-        tester.element(find.text('Origin')),
-      ).push<void>(MaterialPageRoute(builder: (_) => page)),
+      Navigator.of(tester.element(find.text('Origin')))
+          .push<void>(MaterialPageRoute(builder: (_) => page)),
     );
     await tester.pumpAndSettle();
   }
@@ -181,7 +179,15 @@ void main() {
         final semantics = tester.ensureSemantics();
         expect(find.bySemanticsLabel('Share debug bundle'), findsOneWidget);
         semantics.dispose();
-        expect(find.byTooltip('Share debug bundle'), findsOneWidget);
+        // Use a widget predicate because byTooltip only recognizes SDK Tooltip
+        // widgets when semantics are excluded.
+        expect(
+          find.byWidgetPredicate(
+            (widget) =>
+                widget is Tooltip && widget.message == 'Share debug bundle',
+          ),
+          findsOneWidget,
+        );
         expect(find.byType(FloatingActionButton), findsNothing);
         expect(find.byType(FixedPagePlaceHolder), findsNothing);
         expect(find.byIcon(CupertinoIcons.ellipsis), findsNothing);

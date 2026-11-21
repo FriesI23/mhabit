@@ -211,15 +211,13 @@ jobs:
     needs:
       - pre-build
     strategy:
-      # symbol `g_once_init_enter_pointer`` was introduced in glib>=2.80,
-      # fallback build host to ubuntu-22.04 for better compatibility.
-      # refs: https://github.com/cirruslabs/docker-images-flutter/issues/337.
+      fail-fast: false
       matrix:
         variant:
           - arch: x64
             runner: windows-2022
-          # - arch: arm64
-          #   runner: windows-11-arm
+          - arch: arm64
+            runner: windows-11-arm
     runs-on: ${{ matrix.variant.runner }}
     steps:
       - uses: actions/checkout@v7
@@ -234,6 +232,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
+          artifactErrorsFailBuild: true
           omitBodyDuringUpdate: true
           omitDraftDuringUpdate: true
           omitNameDuringUpdate: true
@@ -301,6 +300,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
+          artifactErrorsFailBuild: true
           omitBodyDuringUpdate: true
           omitDraftDuringUpdate: true
           omitNameDuringUpdate: true

@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/app_sync_options.dart';
 import 'package:mhabit/pages/app_sync/_widgets/app_sync_fetch_interval.dart';
@@ -29,12 +30,11 @@ void main() {
                 brightness: largeText ? Brightness.dark : Brightness.light,
               ),
               locale: const Locale('de'),
-              localizationsDelegates: L10n.localizationsDelegates,
+              localizationsDelegates: appLocalizationsDelegates,
               supportedLocales: L10n.supportedLocales,
               builder: (context, child) => MediaQuery(
-                data: MediaQuery.of(
-                  context,
-                ).copyWith(textScaler: TextScaler.linear(largeText ? 2 : 1)),
+                data: MediaQuery.of(context)
+                    .copyWith(textScaler: TextScaler.linear(largeText ? 2 : 1)),
                 child: Directionality(
                   textDirection: largeText
                       ? TextDirection.rtl

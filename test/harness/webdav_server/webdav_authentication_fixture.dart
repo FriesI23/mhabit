@@ -87,9 +87,8 @@ class WebDavAuthenticationFixture {
     await _createCertificates();
     _started = true;
     final up = await _compose(['up', '-d']);
-    await File(
-      '${_results.path}/compose-up.log',
-    ).writeAsString('${up.stdout}\n${up.stderr}');
+    await File('${_results.path}/compose-up.log')
+        .writeAsString('${up.stdout}\n${up.stderr}');
     for (final entry in {
       'basic': 18341,
       'mixed': 18342,
@@ -98,9 +97,8 @@ class WebDavAuthenticationFixture {
       await _waitUntilReady(endpoint(entry.key, entry.value));
     }
     final images = await _compose(['images', '--format', 'json']);
-    await File(
-      '${_results.path}/images.json',
-    ).writeAsString('${images.stdout}');
+    await File('${_results.path}/images.json')
+        .writeAsString('${images.stdout}');
     final digests = await _run('docker', [
       'image',
       'inspect',
@@ -109,9 +107,8 @@ class WebDavAuthenticationFixture {
       '--format',
       '{{.Id}} {{json .RepoDigests}}',
     ]);
-    await File(
-      '${_results.path}/image-digests.txt',
-    ).writeAsString('${digests.stdout}');
+    await File('${_results.path}/image-digests.txt')
+        .writeAsString('${digests.stdout}');
   }
 
   Future<void> _createCertificates() async {
@@ -201,9 +198,8 @@ extendedKeyUsage=serverAuth
           final response = await (await client.getUrl(uri)).close();
           final status = response.statusCode;
           if (uri.port == endpoint('mixed', 18342).port) {
-            await File(
-              '${_results.path}/mixed-401-headers.txt',
-            ).writeAsString(response.headers.toString());
+            await File('${_results.path}/mixed-401-headers.txt')
+                .writeAsString(response.headers.toString());
           }
           await response.drain<void>();
           return status == HttpStatus.unauthorized;
@@ -225,9 +221,8 @@ extendedKeyUsage=serverAuth
     if (!_started) return;
     try {
       final logs = await _compose(['logs', '--no-color']);
-      await File(
-        '${_results.path}/compose.log',
-      ).writeAsString('${logs.stdout}\n${logs.stderr}');
+      await File('${_results.path}/compose.log')
+          .writeAsString('${logs.stdout}\n${logs.stderr}');
     } finally {
       await _compose(['down', '--volumes', '--remove-orphans']);
       _started = false;

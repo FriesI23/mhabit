@@ -5,19 +5,20 @@ publish_to: none
 resolution: workspace
 
 environment:
-  sdk: ">=3.12.0 <4.0.0"
-  flutter: ">=3.44.0"
+  sdk: ">=3.13.0 <4.0.0"
+  flutter: ">=3.47.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  window_manager: 0.5.2
+  window_manager: 0.6.0
   macos_window_utils: 1.9.1
 
 dev_dependencies:
+  material_ui: ^1.11.1
   flutter_test:
     sdk: flutter
-  pigeon: 27.3.0
+  pigeon: 30.0.4
 
 flutter:
   plugin:

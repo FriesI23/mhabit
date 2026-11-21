@@ -1,8 +1,7 @@
 import 'dart:ui' show SemanticsRole, Tristate;
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:mhabit_adaptive_ui/src/material/material_navigation_bar.dart';
 
@@ -172,9 +171,8 @@ void main() {
         selectedColor,
       );
       expect(
-        IconTheme.of(
-          tester.element(find.byKey(const ValueKey('today-icon'))),
-        ).color,
+        IconTheme.of(tester.element(find.byKey(const ValueKey('today-icon'))))
+            .color,
         unselectedColor,
       );
     });

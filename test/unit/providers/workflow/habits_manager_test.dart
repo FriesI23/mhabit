@@ -229,27 +229,24 @@ void main() {
       expect(notificationService.cancelHabitReminderCallCount, 0);
     });
 
-    test(
-      'updateHabitReminders skips notification service when habit channel is disabled',
-      () async {
-        final notificationService = _FakeNotificationService();
-        final notifyConfig = _FakeAppNotifyConfigAccess(
-          notifyConfig: const AppNotifyConfig(
-            channels: {NotificationChannelId.habitReminder: false},
-          ),
-        );
-        final manager = HabitsManager(notificationService: notificationService)
-          ..attachNotifyConfig(notifyConfig)
-          ..setNotificationChannelData(NotificationChannelData());
+    test('updateHabitReminders skips notification service when habit channel is disabled', () async {
+      final notificationService = _FakeNotificationService();
+      final notifyConfig = _FakeAppNotifyConfigAccess(
+        notifyConfig: const AppNotifyConfig(
+          channels: {NotificationChannelId.habitReminder: false},
+        ),
+      );
+      final manager = HabitsManager(notificationService: notificationService)
+        ..attachNotifyConfig(notifyConfig)
+        ..setNotificationChannelData(NotificationChannelData());
 
-        await manager.updateHabitReminders([_buildHabitSummaryData()]);
+      await manager.updateHabitReminders([_buildHabitSummaryData()]);
 
-        expect(notificationService.regrHabitReminderCallCount, 0);
-        expect(notificationService.cancelHabitReminderCallCount, 0);
+      expect(notificationService.regrHabitReminderCallCount, 0);
+      expect(notificationService.cancelHabitReminderCallCount, 0);
 
-        notifyConfig.dispose();
-      },
-    );
+      notifyConfig.dispose();
+    });
 
     test('habit reminder status exposes the disabled habit channel reason', () {
       final notifyConfig = _FakeAppNotifyConfigAccess(
@@ -269,27 +266,24 @@ void main() {
       notifyConfig.dispose();
     });
 
-    test(
-      'updateHabitReminders cancels habit reminder when activated habit no longer has a reminder',
-      () async {
-        final notificationService = _FakeNotificationService();
-        final notifyConfig = _FakeAppNotifyConfigAccess(
-          notifyConfig: const AppNotifyConfig(),
-        );
-        final manager = HabitsManager(notificationService: notificationService)
-          ..attachNotifyConfig(notifyConfig)
-          ..setNotificationChannelData(NotificationChannelData());
+    test('updateHabitReminders cancels habit reminder when activated habit no longer has a reminder', () async {
+      final notificationService = _FakeNotificationService();
+      final notifyConfig = _FakeAppNotifyConfigAccess(
+        notifyConfig: const AppNotifyConfig(),
+      );
+      final manager = HabitsManager(notificationService: notificationService)
+        ..attachNotifyConfig(notifyConfig)
+        ..setNotificationChannelData(NotificationChannelData());
 
-        await manager.updateHabitReminders([
-          _buildHabitSummaryData(reminder: null),
-        ]);
+      await manager.updateHabitReminders([
+        _buildHabitSummaryData(reminder: null),
+      ]);
 
-        expect(notificationService.regrHabitReminderCallCount, 0);
-        expect(notificationService.cancelHabitReminderCallCount, 1);
+      expect(notificationService.regrHabitReminderCallCount, 0);
+      expect(notificationService.cancelHabitReminderCallCount, 1);
 
-        notifyConfig.dispose();
-      },
-    );
+      notifyConfig.dispose();
+    });
 
     test(
       'updateHabitReminders cancels habit reminder when habit is archived',
@@ -313,103 +307,94 @@ void main() {
       },
     );
 
-    test(
-      'updateHabitReminders routes enabled habit reminder through notification service',
-      () async {
-        final notificationService = _FakeNotificationService();
-        final notifyConfig = _FakeAppNotifyConfigAccess(
-          notifyConfig: const AppNotifyConfig(),
-        );
-        final channelData = NotificationChannelData();
-        final manager = HabitsManager(notificationService: notificationService)
-          ..attachNotifyConfig(notifyConfig)
-          ..setNotificationChannelData(channelData);
+    test('updateHabitReminders routes enabled habit reminder through notification service', () async {
+      final notificationService = _FakeNotificationService();
+      final notifyConfig = _FakeAppNotifyConfigAccess(
+        notifyConfig: const AppNotifyConfig(),
+      );
+      final channelData = NotificationChannelData();
+      final manager = HabitsManager(notificationService: notificationService)
+        ..attachNotifyConfig(notifyConfig)
+        ..setNotificationChannelData(channelData);
 
-        await manager.updateHabitReminders([_buildHabitSummaryData()]);
+      await manager.updateHabitReminders([_buildHabitSummaryData()]);
 
-        expect(notificationService.regrHabitReminderCallCount, 1);
-        expect(notificationService.cancelHabitReminderCallCount, 0);
-        expect(
-          notificationService.lastReminderDetails?.android?.channelId,
-          channelData.habitReminder.android?.channelId,
-        );
+      expect(notificationService.regrHabitReminderCallCount, 1);
+      expect(notificationService.cancelHabitReminderCallCount, 0);
+      expect(
+        notificationService.lastReminderDetails?.android?.channelId,
+        channelData.habitReminder.android?.channelId,
+      );
 
-        notifyConfig.dispose();
-      },
-    );
+      notifyConfig.dispose();
+    });
 
-    test(
-      'refreshHabitReminders rehydrates reconcile params before reaching the reminder sink',
-      () async {
-        final notificationService = _FakeNotificationService();
-        final notifyConfig = _FakeAppNotifyConfigAccess(
-          notifyConfig: const AppNotifyConfig(),
-        );
-        const habitUUID = 'detail-habit-1';
-        final habit = HabitSummaryData(
-          id: 2,
-          uuid: habitUUID,
-          type: HabitType.normal,
-          name: 'Detail habit',
-          desc: '',
-          color: const HabitColor.builtIn(HabitColorType.cc1),
-          dailyGoal: 1,
-          targetDays: 1,
-          frequency: HabitFrequency.daily,
-          startDate: HabitDate.dateTime(DateTime(2026, 1, 2)),
-          status: HabitStatus.activated,
-          reminder: HabitReminder.dailyMidnight,
-          reminderQuest: 'Refresh me',
-          sortPostion: 2,
-          createTime: DateTime(2026, 1, 2),
-        );
-        final manager =
-            _RefreshEntryHabitsManager(
-                notificationService: notificationService,
-                loadedHabits: [habit],
-              )
-              ..attachNotifyConfig(notifyConfig)
-              ..setNotificationChannelData(NotificationChannelData());
+    test('refreshHabitReminders rehydrates reconcile params before reaching the reminder sink', () async {
+      final notificationService = _FakeNotificationService();
+      final notifyConfig = _FakeAppNotifyConfigAccess(
+        notifyConfig: const AppNotifyConfig(),
+      );
+      const habitUUID = 'detail-habit-1';
+      final habit = HabitSummaryData(
+        id: 2,
+        uuid: habitUUID,
+        type: HabitType.normal,
+        name: 'Detail habit',
+        desc: '',
+        color: const HabitColor.builtIn(HabitColorType.cc1),
+        dailyGoal: 1,
+        targetDays: 1,
+        frequency: HabitFrequency.daily,
+        startDate: HabitDate.dateTime(DateTime(2026, 1, 2)),
+        status: HabitStatus.activated,
+        reminder: HabitReminder.dailyMidnight,
+        reminderQuest: 'Refresh me',
+        sortPostion: 2,
+        createTime: DateTime(2026, 1, 2),
+      );
+      final manager =
+          _RefreshEntryHabitsManager(
+              notificationService: notificationService,
+              loadedHabits: [habit],
+            )
+            ..attachNotifyConfig(notifyConfig)
+            ..setNotificationChannelData(NotificationChannelData());
 
-        await manager.refreshHabitReminders(
-          params: HabitReminderRefreshParams.habitUUID(habitUUID),
-        );
+      await manager.refreshHabitReminders(
+        params: HabitReminderRefreshParams.habitUUID(habitUUID),
+      );
 
-        expect(manager.lastLoadedHabitUUIDs, [habitUUID]);
-        expect(notificationService.regrHabitReminderCallCount, 1);
-        expect(notificationService.cancelHabitReminderCallCount, 0);
+      expect(manager.lastLoadedHabitUUIDs, [habitUUID]);
+      expect(notificationService.regrHabitReminderCallCount, 1);
+      expect(notificationService.cancelHabitReminderCallCount, 0);
 
-        notifyConfig.dispose();
-      },
-    );
+      notifyConfig.dispose();
+    });
 
-    test(
-      'repairHabitReminders reuses loaded habits without entering the reload path',
-      () async {
-        final notificationService = _FakeNotificationService();
-        final notifyConfig = _FakeAppNotifyConfigAccess(
-          notifyConfig: const AppNotifyConfig(),
-        );
-        final loadedHabit = _buildHabitSummaryData();
-        final manager =
-            _RefreshEntryHabitsManager(
-                notificationService: notificationService,
-                loadedHabits: const [],
-              )
-              ..attachNotifyConfig(notifyConfig)
-              ..setNotificationChannelData(NotificationChannelData());
+    test('repairHabitReminders reuses loaded habits without entering the reload path', () async {
+      final notificationService = _FakeNotificationService();
+      final notifyConfig = _FakeAppNotifyConfigAccess(
+        notifyConfig: const AppNotifyConfig(),
+      );
+      final loadedHabit = _buildHabitSummaryData();
+      final manager =
+          _RefreshEntryHabitsManager(
+              notificationService: notificationService,
+              loadedHabits: const [],
+            )
+            ..attachNotifyConfig(notifyConfig)
+            ..setNotificationChannelData(NotificationChannelData());
 
-        await manager.repairHabitReminders(
-          params: HabitReminderRepairParams.loadedHabits([loadedHabit]),
-        );
+      await manager.repairHabitReminders(
+        params: HabitReminderRepairParams.loadedHabits([loadedHabit]),
+      );
 
-        expect(manager.lastLoadedHabitUUIDs, isNull);
-        expect(notificationService.regrHabitReminderCallCount, 1);
-        expect(notificationService.cancelHabitReminderCallCount, 0);
+      expect(manager.lastLoadedHabitUUIDs, isNull);
+      expect(notificationService.regrHabitReminderCallCount, 1);
+      expect(notificationService.cancelHabitReminderCallCount, 0);
 
-        notifyConfig.dispose();
-      },
-    );
+      notifyConfig.dispose();
+    });
 
     test(
       'refreshHabitReminders loads all habits for startup triggers',
@@ -497,81 +482,74 @@ void main() {
       },
     );
 
-    test(
-      'saveNewHabitAndUpdateReminder keeps owner-local save follow-up off the reload path',
-      () async {
-        final habitUUID = 'save-habit-${DateTime.now().microsecondsSinceEpoch}';
-        final notificationService = _FakeNotificationService();
-        final notifyConfig = _FakeAppNotifyConfigAccess(
-          notifyConfig: const AppNotifyConfig(),
-        );
-        final dbHelper = DBHelperViewModel();
-        await dbHelper.init();
-        final manager =
-            _RefreshEntryHabitsManager(
-                notificationService: notificationService,
-                loadedHabits: const [],
-              )
-              ..updateDBHelper(dbHelper)
-              ..attachNotifyConfig(notifyConfig)
-              ..setNotificationChannelData(NotificationChannelData());
+    test('saveNewHabitAndUpdateReminder keeps owner-local save follow-up off the reload path', () async {
+      final habitUUID = 'save-habit-${DateTime.now().microsecondsSinceEpoch}';
+      final notificationService = _FakeNotificationService();
+      final notifyConfig = _FakeAppNotifyConfigAccess(
+        notifyConfig: const AppNotifyConfig(),
+      );
+      final dbHelper = DBHelperViewModel();
+      await dbHelper.init();
+      final manager =
+          _RefreshEntryHabitsManager(
+              notificationService: notificationService,
+              loadedHabits: const [],
+            )
+            ..updateDBHelper(dbHelper)
+            ..attachNotifyConfig(notifyConfig)
+            ..setNotificationChannelData(NotificationChannelData());
 
-        final saved = await manager.saveNewHabitAndUpdateReminder(
-          _buildHabitDBCell(uuid: habitUUID),
-        );
+      final saved = await manager.saveNewHabitAndUpdateReminder(
+        _buildHabitDBCell(uuid: habitUUID),
+      );
 
-        expect(saved?.uuid, habitUUID);
-        expect(manager.loadHabitSummaryCallCount, 0);
-        expect(notificationService.regrHabitReminderCallCount, 1);
-        expect(notificationService.cancelHabitReminderCallCount, 0);
+      expect(saved?.uuid, habitUUID);
+      expect(manager.loadHabitSummaryCallCount, 0);
+      expect(notificationService.regrHabitReminderCallCount, 1);
+      expect(notificationService.cancelHabitReminderCallCount, 0);
 
-        dbHelper.dispose();
-        notifyConfig.dispose();
-      },
-    );
+      dbHelper.dispose();
+      notifyConfig.dispose();
+    });
 
-    test(
-      'changeHabitStatus keeps owner-local status follow-up off the reload path',
-      () async {
-        final habitUUID =
-            'status-habit-${DateTime.now().microsecondsSinceEpoch}';
-        final notificationService = _FakeNotificationService();
-        final notifyConfig = _FakeAppNotifyConfigAccess(
-          notifyConfig: const AppNotifyConfig(),
-        );
-        final dbHelper = DBHelperViewModel();
-        await dbHelper.init();
-        final manager =
-            _RefreshEntryHabitsManager(
-                notificationService: notificationService,
-                loadedHabits: null,
-              )
-              ..updateDBHelper(dbHelper)
-              ..attachNotifyConfig(notifyConfig)
-              ..setNotificationChannelData(NotificationChannelData());
-        await manager.habitDBHelper.insertNewHabit(
-          _buildHabitDBCell(uuid: habitUUID),
-        );
+    test('changeHabitStatus keeps owner-local status follow-up off the reload path', () async {
+      final habitUUID = 'status-habit-${DateTime.now().microsecondsSinceEpoch}';
+      final notificationService = _FakeNotificationService();
+      final notifyConfig = _FakeAppNotifyConfigAccess(
+        notifyConfig: const AppNotifyConfig(),
+      );
+      final dbHelper = DBHelperViewModel();
+      await dbHelper.init();
+      final manager =
+          _RefreshEntryHabitsManager(
+              notificationService: notificationService,
+              loadedHabits: null,
+            )
+            ..updateDBHelper(dbHelper)
+            ..attachNotifyConfig(notifyConfig)
+            ..setNotificationChannelData(NotificationChannelData());
+      await manager.habitDBHelper.insertNewHabit(
+        _buildHabitDBCell(uuid: habitUUID),
+      );
 
-        final loaded = await manager.loadHabitSummaryCollectionData(
-          habitUUIDs: [habitUUID],
-        );
-        final previousLoadCallCount = manager.loadHabitSummaryCallCount;
+      final loaded = await manager.loadHabitSummaryCollectionData(
+        habitUUIDs: [habitUUID],
+      );
+      final previousLoadCallCount = manager.loadHabitSummaryCallCount;
 
-        final results = await manager.changeHabitStatus(
-          action: ChangeMultiHabitStatusAction([
-            loaded.getHabitByUUID(habitUUID)!,
-          ], status: HabitStatus.archived),
-        );
+      final results = await manager.changeHabitStatus(
+        action: ChangeMultiHabitStatusAction([
+          loaded.getHabitByUUID(habitUUID)!,
+        ], status: HabitStatus.archived),
+      );
 
-        expect(results.single.data.status, HabitStatus.archived);
-        expect(manager.loadHabitSummaryCallCount, previousLoadCallCount);
-        expect(notificationService.cancelHabitReminderCallCount, 1);
-        expect(notificationService.regrHabitReminderCallCount, 0);
+      expect(results.single.data.status, HabitStatus.archived);
+      expect(manager.loadHabitSummaryCallCount, previousLoadCallCount);
+      expect(notificationService.cancelHabitReminderCallCount, 1);
+      expect(notificationService.regrHabitReminderCallCount, 0);
 
-        dbHelper.dispose();
-        notifyConfig.dispose();
-      },
-    );
+      dbHelper.dispose();
+      notifyConfig.dispose();
+    });
   });
 }

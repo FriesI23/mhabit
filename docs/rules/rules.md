@@ -51,6 +51,12 @@ existing architecture and tooling contracts.
 ## Repository Workflow
 
 - This repo uses the vendored Flutter SDK under `.flutter/`.
+- Windows uses native Flutter flavors (`f_generic` by default) and
+  `build/windows/<arch>/<flavor>/runner/<configuration>/`; keep MSIX compatibility
+  in existing CMD/CI entrypoints.
+- Use `pubspec.lock` to assess dependency upgrades. Preserve existing version
+  ranges when they already admit the resolved version, and keep shared dependency
+  constraints consistent across the app and workspace packages.
 - When upgrading `.flutter/`, also update the Flutter badge URL and alt text in
   `README.md` to match the pinned SDK version.
 - Prefer the repo `Makefile` entrypoints instead of ad-hoc commands when an
@@ -193,6 +199,10 @@ not require Docker.
   - `lib/providers/workflow/` for business workflow owners and access seams.
   - `lib/providers/support/` for support objects that are shared but not page
     features.
+- Desktop window chrome, title-bar state, and persistence share the internal
+  `DesktopWindowRuntime` in `packages/mhabit_desktop_window_chrome/`. Keep
+  `window_manager` native handles and event requests inside that package;
+  application owners should use its existing platform-independent interfaces.
 - Page-local provider/view model code belongs close to its page under
   `lib/pages/**/_providers/` when the behavior is local to that page family.
 - Models and domain-like data structures live in `lib/models/`.
@@ -353,6 +363,11 @@ not require Docker.
 
 ## Flutter Style
 
+- Use `material_ui` and `cupertino_ui` for application design widgets, themes,
+  routes, and component localizations. Keep foundation, widgets, services, and
+  rendering imports on the Flutter SDK. Confine legacy design imports and
+  compatibility scopes to the shared Markdown and reorder adapters; do not
+  bridge the app shell to hide mismatched public UI types.
 - Keep widgets immutable when possible.
 - Use small, composable widgets and view models, but do not split code just to
   satisfy an arbitrary size rule.
@@ -414,6 +429,10 @@ them; keep rows with independent actions separate from single-action controls.
   pipeline.
 - Flutter localization is generated. Edit the source localization inputs, not the
   generated localization outputs.
+- Use `appLocalizationsDelegates` for application and test hosts. Flutter 3.47's
+  generated `L10n.localizationsDelegates` still references the SDK design
+  localizations; keep the generated output intact and maintain the standalone
+  design delegates in `lib/common/consts.dart`.
 - Use the existing normalization and generation workflow when changing l10n:
   `make normalize-l10n`, then `make gen` or the narrower needed step.
 - Esperanto uses `l10n_esperanto` delegates in `lib/common/consts.dart`.

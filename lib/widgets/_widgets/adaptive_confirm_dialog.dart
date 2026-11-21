@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart' show CupertinoCheckbox;
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoCheckbox;
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../../extensions/target_platform_extensions.dart';
@@ -296,9 +296,8 @@ class _MobileCupertinoConfirmDialog extends StatelessWidget {
               confirmAction,
               AdaptiveDialogAction(
                 label:
-                    L10n.of(
-                      context,
-                    )?.confirmDialog_confirmAndSkip_text(confirmLabel) ??
+                    L10n.of(context)
+                        ?.confirmDialog_confirmAndSkip_text(confirmLabel) ??
                     "$confirmLabel, and don't ask again",
                 isDestructiveAction: isDestructiveAction,
                 onPressed: () => onConfirm(true),

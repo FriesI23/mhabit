@@ -1,7 +1,7 @@
 import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/habit_color.dart';
@@ -167,9 +167,8 @@ void main() {
           final calendar = find.byType(CalendarDatePicker);
           expect(calendar, findsOneWidget);
           expect(
-            MaterialLocalizations.of(
-              tester.element(calendar),
-            ).firstDayOfWeekIndex,
+            MaterialLocalizations.of(tester.element(calendar))
+                .firstDayOfWeekIndex,
             DateTime.monday,
           );
           expect(

@@ -79,7 +79,7 @@ jobs:
     name: Build Android APK
     needs:
       - precheck-gate
-    if: ${{ inputs.target == 'all' || inputs.target == 'android' }}
+    if: ${{ !cancelled() && needs.precheck-gate.result == 'success' && (inputs.target == 'all' || inputs.target == 'android') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -110,7 +110,7 @@ jobs:
     name: Build Unsigned iOS IPA
     needs:
       - precheck-gate
-    if: ${{ inputs.target == 'all' || inputs.target == 'ios' }}
+    if: ${{ !cancelled() && needs.precheck-gate.result == 'success' && (inputs.target == 'all' || inputs.target == 'ios') }}
     runs-on: xcode-27
     steps:
       - uses: actions/checkout@v7
@@ -130,7 +130,7 @@ jobs:
     name: Build macOS DMG
     needs:
       - precheck-gate
-    if: ${{ inputs.target == 'all' || inputs.target == 'macos' }}
+    if: ${{ !cancelled() && needs.precheck-gate.result == 'success' && (inputs.target == 'all' || inputs.target == 'macos') }}
     runs-on: xcode-27
     steps:
       - uses: actions/checkout@v7
@@ -159,12 +159,14 @@ jobs:
     name: Build Windows MSIX Installer
     needs:
       - precheck-gate
-    if: ${{ inputs.target == 'all' || inputs.target == 'windows' }}
+    if: ${{ !cancelled() && needs.precheck-gate.result == 'success' && (inputs.target == 'all' || inputs.target == 'windows') }}
     strategy:
       matrix:
         variant:
           - arch: x64
             runner: windows-2022
+          - arch: arm64
+            runner: windows-11-arm
     runs-on: ${{ matrix.variant.runner }}
     steps:
       - uses: actions/checkout@v7
@@ -187,7 +189,7 @@ jobs:
     name: Build Linux Flatpak
     needs:
       - precheck-gate
-    if: ${{ inputs.target == 'all' || inputs.target == 'linux' }}
+    if: ${{ !cancelled() && needs.precheck-gate.result == 'success' && (inputs.target == 'all' || inputs.target == 'linux') }}
     strategy:
       matrix:
         variant:
@@ -257,6 +259,7 @@ jobs:
             fi
             if [[ "$TARGET" == "all" || "$TARGET" == "windows" ]]; then
               echo "- mhabit-windows-x64-msix"
+              echo "- mhabit-windows-arm64-msix"
             fi
             if [[ "$TARGET" == "all" || "$TARGET" == "linux" ]]; then
               echo "- mhabit-x86_64.flatpak"

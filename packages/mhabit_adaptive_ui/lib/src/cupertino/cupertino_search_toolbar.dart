@@ -1,9 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:adaptive_actions/cupertino.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' show Easing;
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart';
+import 'package:material_ui/material_ui.dart' show Easing;
 
 import '../adaptive/adaptive_app_bar_actions.dart';
 import '../shell/sidebar_adapter.dart';
@@ -17,8 +17,10 @@ import 'cupertino_toolbar_padding.dart';
 
 const double _toolbarItemExtent = kMinInteractiveDimensionCupertino;
 
-typedef CupertinoSearchOverflowPressed =
-    void Function(bool searchExpanded, VoidCallback openOverflowMenu);
+typedef CupertinoSearchOverflowPressed = void Function(
+  bool searchExpanded,
+  VoidCallback openOverflowMenu,
+);
 
 class CupertinoSearchToolbar<T extends Object> extends StatelessWidget {
   final Widget title;
@@ -376,11 +378,10 @@ final class _CupertinoSearchToolbarMetrics {
   }
 }
 
-typedef _CupertinoSearchToolbarMetricsBuilder =
-    Widget Function(
-      BuildContext context,
-      _CupertinoSearchToolbarMetrics metrics,
-    );
+typedef _CupertinoSearchToolbarMetricsBuilder = Widget Function(
+  BuildContext context,
+  _CupertinoSearchToolbarMetrics metrics,
+);
 
 final class _CupertinoSearchToolbarMetricsLayout extends StatefulWidget {
   final double availableWidth;

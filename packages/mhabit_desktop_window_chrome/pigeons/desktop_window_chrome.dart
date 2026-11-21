@@ -6,8 +6,7 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/desktop_window_chrome_api.g.dart',
-    swiftOut:
-        'macos/mhabit_desktop_window_chrome/Sources/mhabit_desktop_window_chrome/DesktopWindowChrome.g.swift',
+    swiftOut: 'macos/mhabit_desktop_window_chrome/Sources/mhabit_desktop_window_chrome/DesktopWindowChrome.g.swift',
     dartPackageName: 'mhabit_desktop_window_chrome',
   ),
 )
@@ -62,7 +61,7 @@ class ChromeGeometry {
   });
 }
 
-/// Plugin-owned geometry and decoration bridge; window_manager owns window lifecycle.
+/// Plugin-owned geometry and decoration; the runtime owns window lifecycle.
 @HostApi()
 abstract class DesktopChromeHostApi {
   /// Queries layout readiness and native geometry without changing the window.
@@ -73,7 +72,7 @@ abstract class DesktopChromeHostApi {
   void configure(bool fused);
 
   /// Removes layout changes, observers and message handlers.
-  /// Does not close the window or replace its window_manager delegate.
+  /// Does not close the window or replace native lifecycle listeners.
   void dispose();
 }
 
@@ -81,9 +80,11 @@ abstract class DesktopChromeHostApi {
 @FlutterApi()
 abstract class DesktopChromeFlutterApi {
   /// Requests a fresh query after native viewport or button geometry changes.
+  @asyncCallback
   void geometryChanged();
 
   /// Sent after native decoration is restored, before fullscreen entry begins.
   /// Flutter must clear ordinary-window avoidance before the system animation.
+  @asyncCallback
   void willEnterFullScreen();
 }

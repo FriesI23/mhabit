@@ -1,13 +1,15 @@
 import 'dart:async';
 import 'dart:ui' show Tristate;
 
-import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoTheme;
+import 'package:cupertino_ui/cupertino_ui.dart'
+    show CupertinoIcons, CupertinoTheme;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/entries/app/navigation_chrome.dart';
 import 'package:mhabit/entries/app/navigation_destination.dart';
 import 'package:mhabit/entries/app/shell.dart';
@@ -306,9 +308,8 @@ class _PrimaryActionRegressionPage extends StatelessWidget {
       ),
     );
     if (!context.mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Task returned')));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Task returned')));
   }
 
   @override
@@ -557,7 +558,7 @@ Future<void> _pumpApp(
       ],
       child: MaterialApp.router(
         routerConfig: router,
-        localizationsDelegates: localized ? L10n.localizationsDelegates : null,
+        localizationsDelegates: localized ? appLocalizationsDelegates : null,
         supportedLocales: localized
             ? L10n.supportedLocales
             : const [Locale("en", "US")],
@@ -876,9 +877,8 @@ void main() {
             await tester.pumpAndSettle();
             expect(find.text('Task returned'), findsOneWidget);
             expect(pageAction, findsOneWidget);
-            ScaffoldMessenger.of(
-              tester.element(pageAction),
-            ).hideCurrentSnackBar();
+            ScaffoldMessenger.of(tester.element(pageAction))
+                .hideCurrentSnackBar();
             await tester.pumpAndSettle();
             await tester.drag(
               find.byType(CustomScrollView).last,
@@ -1139,7 +1139,7 @@ void main() {
             ],
             child: MaterialApp(
               theme: ThemeData(platform: testCase.platform),
-              localizationsDelegates: L10n.localizationsDelegates,
+              localizationsDelegates: appLocalizationsDelegates,
               supportedLocales: L10n.supportedLocales,
               home: AppNavigationShell(
                 coordinator: coordinator,
@@ -1217,9 +1217,8 @@ void main() {
         expect(coordinator.selectedIndex, 1);
         expect(launchEntry.entries, isEmpty);
         if (testCase.platform == TargetPlatform.iOS) {
-          final primaryColor = CupertinoTheme.of(
-            tester.element(settings),
-          ).primaryColor;
+          final primaryColor = CupertinoTheme.of(tester.element(settings))
+              .primaryColor;
           expect(
             _sideDestinationFill(tester, action)?.toARGB32(),
             primaryColor.withValues(alpha: 1).toARGB32(),
@@ -1260,18 +1259,18 @@ void main() {
     router.push('/habits/detail');
     await tester.pumpAndSettle();
     expect(
-      AdaptiveNavScope.of(
-        tester.element(find.text('detail page')),
-      ).visible.value,
+      AdaptiveNavScope.of(tester.element(find.text('detail page')))
+          .visible
+          .value,
       isFalse,
     );
 
     router.pop();
     await tester.pumpAndSettle();
     expect(
-      AdaptiveNavScope.of(
-        tester.element(find.text('habits page')),
-      ).visible.value,
+      AdaptiveNavScope.of(tester.element(find.text('habits page')))
+          .visible
+          .value,
       isTrue,
     );
   });
@@ -1380,9 +1379,8 @@ void main() {
     );
     await tester.pumpAndSettle();
     unawaited(
-      GoRouter.of(
-        tester.element(find.text('settings page')),
-      ).pushNamed(AppRoute.settingsAbout.name),
+      GoRouter.of(tester.element(find.text('settings page')))
+          .pushNamed(AppRoute.settingsAbout.name),
     );
     await tester.pumpAndSettle();
     expect(find.text('about page'), findsOneWidget);
@@ -2138,9 +2136,9 @@ void main() {
       AppRoute.habitDetail.name,
     ]);
     expect(
-      AdaptiveNavScope.of(
-        tester.element(find.text('detail page')),
-      ).visible.value,
+      AdaptiveNavScope.of(tester.element(find.text('detail page')))
+          .visible
+          .value,
       isFalse,
     );
 
@@ -2332,9 +2330,9 @@ void main() {
     router.push('/habits/detail');
     await tester.pumpAndSettle();
     expect(
-      AdaptiveNavScope.of(
-        tester.element(find.text('detail page')),
-      ).visible.value,
+      AdaptiveNavScope.of(tester.element(find.text('detail page')))
+          .visible
+          .value,
       isFalse,
     );
 
@@ -2343,9 +2341,9 @@ void main() {
 
     expect(find.text('today page'), findsOneWidget);
     expect(
-      AdaptiveNavScope.of(
-        tester.element(find.text('today page')),
-      ).visible.value,
+      AdaptiveNavScope.of(tester.element(find.text('today page')))
+          .visible
+          .value,
       isTrue,
     );
   });
@@ -2473,9 +2471,9 @@ void main() {
 
     expect(find.text('create page'), findsOneWidget);
     expect(
-      AdaptiveNavScope.of(
-        tester.element(find.text('create page')),
-      ).visible.value,
+      AdaptiveNavScope.of(tester.element(find.text('create page')))
+          .visible
+          .value,
       isFalse,
     );
 
@@ -2485,9 +2483,9 @@ void main() {
     expect(find.text('habits page'), findsOneWidget);
     expect(await result, 'created');
     expect(
-      AdaptiveNavScope.of(
-        tester.element(find.text('habits page')),
-      ).visible.value,
+      AdaptiveNavScope.of(tester.element(find.text('habits page')))
+          .visible
+          .value,
       isTrue,
     );
   });

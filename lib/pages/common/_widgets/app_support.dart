@@ -4,12 +4,12 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:flutter/cupertino.dart' show CupertinoButton;
+import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoButton;
 import 'package:flutter/foundation.dart'
     show ValueListenable, listEquals, precisionErrorTolerance;
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_icons/simple_icons.dart';
@@ -1022,7 +1022,7 @@ class _AppSupportCard extends StatelessWidget {
             _buildHero(context),
             const SizedBox(height: 10),
             Semantics(
-              header: true,
+              headingLevel: 1,
               child: Text(
                 title,
                 style: Theme.of(context).textTheme.titleMedium,

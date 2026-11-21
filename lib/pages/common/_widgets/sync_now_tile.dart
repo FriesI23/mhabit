@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoIcons;
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
 
@@ -72,9 +72,9 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
         final lastEndedTime = lastSyncTask?.endedTime;
         final lastEndedTimeStr = lastEndedTime != null
             ? (l10n?.appSync_nowTile_dateFormat(lastEndedTime, lastEndedTime) ??
-                  DateFormat.yMd(
-                    l10n?.localeName,
-                  ).add_jms().format(lastEndedTime))
+                  DateFormat.yMd(l10n?.localeName)
+                      .add_jms()
+                      .format(lastEndedTime))
             : null;
 
         Widget buildLastSyncText() => Text(

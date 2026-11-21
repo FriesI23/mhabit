@@ -14,10 +14,11 @@
 
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart' show CupertinoCheckbox;
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoCheckbox;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/app_settings/_widgets/app_setting_open_system_language_tile.dart';
 import 'package:mhabit/providers/app_ui/app_caches.dart';
@@ -69,7 +70,7 @@ void main() {
               value: caches,
               child: MaterialApp(
                 theme: ThemeData(platform: TargetPlatform.macOS),
-                localizationsDelegates: L10n.localizationsDelegates,
+                localizationsDelegates: appLocalizationsDelegates,
                 supportedLocales: L10n.supportedLocales,
                 home: TestAdaptiveUiTheme(
                   update: (parentTheme) => parentTheme.copyWith(style: style),
@@ -102,9 +103,8 @@ void main() {
                 : actions.firstWhere(
                     (a) =>
                         a.label ==
-                        L10n.of(
-                          tester.element(adaptiveDialogFinder),
-                        )!.confirmDialog_confirm_text('open'),
+                        L10n.of(tester.element(adaptiveDialogFinder))!
+                            .confirmDialog_confirm_text('open'),
                   );
             action.onPressed!();
             action.onPressed!();

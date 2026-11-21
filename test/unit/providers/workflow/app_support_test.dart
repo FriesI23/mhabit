@@ -272,9 +272,8 @@ void main() {
       if (skip == 'initialization') preferences.failReads = true;
       if (skip == 'ineligible') {
         final storage = await SharedPreferences.getInstance();
-        await AppSupportReminderProfileHandler(
-          storage,
-        ).set((minimumDate: DateTime.utc(2000), launches: 0, closed: false));
+        await AppSupportReminderProfileHandler(storage)
+            .set((minimumDate: DateTime.utc(2000), launches: 0, closed: false));
       }
       final owner = createOwner(
         loadInfo: () async {

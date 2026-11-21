@@ -7,7 +7,8 @@
 // on completion or failure. It does not open a browser or access habit data.
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/distribution.dart';
 import 'package:mhabit/common/flavor.dart';
 import 'package:mhabit/l10n/localizations.dart';
@@ -81,7 +82,7 @@ Future<void> main() async {
   runApp(
     MaterialApp(
       locale: const Locale('en'),
-      localizationsDelegates: L10n.localizationsDelegates,
+      localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: L10n.supportedLocales,
       home: Scaffold(
         key: scaffoldKey,

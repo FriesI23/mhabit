@@ -222,7 +222,7 @@ class LoopCsvImporter implements ThirdPartyImporter {
   /// - `{position03d} {name}/Checkmarks.csv` per habit
   /// - `{position03d}/Checkmarks.csv` when filename sanitization removes the name
   factory LoopCsvImporter.fromZipBytes(Uint8List bytes) {
-    final archive = ZipDecoder().decodeBytes(bytes);
+    final archive = ZipDecoder().decodeBytes(bytes, throwOnError: true);
 
     // 1. Locate and parse Habits.csv
     final habitsCsv = archive.findFile('Habits.csv');

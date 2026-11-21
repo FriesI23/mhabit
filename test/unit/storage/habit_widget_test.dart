@@ -163,15 +163,12 @@ void main() {
     },
   );
 
-  test(
-    'native enqueue failure reports publication failure after the saved snapshot',
-    () async {
-      rejected = 'nativePublished';
-      await expectLater(
-        HomeWidgetPublisher().publish(snapshot),
-        throwsA(isA<PlatformException>()),
-      );
-      expect(events, ['setAppGroupId', 'saveWidgetData', 'nativePublished']);
-    },
-  );
+  test('native enqueue failure reports publication failure after the saved snapshot', () async {
+    rejected = 'nativePublished';
+    await expectLater(
+      HomeWidgetPublisher().publish(snapshot),
+      throwsA(isA<PlatformException>()),
+    );
+    expect(events, ['setAppGroupId', 'saveWidgetData', 'nativePublished']);
+  });
 }

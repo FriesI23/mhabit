@@ -123,13 +123,14 @@ Build outputs located at:
 
 ### Building for Linux Desktop
 
-1. Installing the following packages for [SQFlite database][sqflite-ffi-linux]
-   and [`flutter_secure_storage`][fss-linux]:
+1. Install the following packages for [SQFlite database][sqflite-ffi-linux],
+   [`flutter_secure_storage`][fss-linux], and the native window build hook:
 
    ```shell
    sudo apt-get -y install \
       lld-14 libsqlite3-0 libsqlite3-dev \
-      libsecret-1-dev libjsoncpp-dev
+      libsecret-1-dev libjsoncpp-dev \
+      libgtk-3-dev libx11-dev libxi-dev
    ```
 
 2. Please follow this [official guide][flutter-linux] to initialize your
@@ -147,16 +148,16 @@ Build outputs located at:
 
 4. In project folder, run `flutter pub get`
 
-5. Then run `flutter build linux`, once finished you should see:
+5. Then run `flutter build linux --release --flavor f_generic`, once finished you should see:
 
    ```shell
    Building Linux application...
-   ✓ Built build/linux/<arch>/release/bundle/mhabit
+   ✓ Built build/linux/<arch>/f_generic/release/bundle/mhabit
    ```
 
 6. Enjoy by running the output binary:
-   - x86_64: `build/linux/x64/release/bundle/mhabit`
-   - aarch64: `build/linux/arm64/release/bundle/mhabit`
+   - x86_64: `build/linux/x64/f_generic/release/bundle/mhabit`
+   - aarch64: `build/linux/arm64/f_generic/release/bundle/mhabit`
 
 > To build `flatpak` package, refer to `scripts/build_flatpak_pre.sh`, `scripts/build_flatpak.sh`
 > and `.github/workflows/app-release.yml#jobs.build-linux||build-linux-flatpak`.
@@ -173,12 +174,13 @@ flutter pub get
 flutter build windows
 ```
 
-Default build outputs are located at `build\windows\x64\runner` (e.g. `build\windows\x64\runner\Release`)
+Default build outputs are located at `build/windows/<arch>/f_generic/runner/Release`
+(`x64` or `arm64`).
 
 > To build `msix` package, refer to `scripts\build_msix.cmd`
-> and `.github\workflows\app-release.yml#jobs.build-windows-msix`.
+> and `.github/workflows/release-app.yml#jobs.build-windows-msix`.
 
-This project implement a variable-based approach to simulate Windows flavors.
+Windows uses Flutter's native flavors, with `f_generic` selected by default.
 Following flavors are allowed:
 
 - `f_dev`
@@ -189,9 +191,7 @@ Following flavors are allowed:
   - command:
 
     ```pwsh
-    $env:APP_FLAVOR_WIN='f_dev'
-    flutter build windows <other optional args>
-    Remove-Item Env:\APP_FLAVOR_WIN
+    flutter build windows --flavor f_dev <other optional args>
     ```
 
 - `f_generic`
@@ -208,9 +208,7 @@ Following flavors are allowed:
     ```
 
     ```pwsh
-    $env:APP_FLAVOR_WIN='f_generic'
-    flutter build windows <other optional args>
-    Remove-Item Env:\APP_FLAVOR_WIN
+    flutter build windows --flavor f_generic <other optional args>
     ```
 
 <!-- refs -->

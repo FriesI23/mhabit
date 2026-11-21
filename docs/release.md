@@ -1,4 +1,4 @@
-# Pre-Released: pre-v1.27.19+208
+# Released: v1.27.20+209
 
 ## ✨ Features
 
@@ -25,6 +25,8 @@
   styles (#709)
 - Keep the macOS app category consistent with the category selected in Xcode
   (#711)
+- Preserve the release version and build number in macOS app bundles for
+  App Store Connect uploads
 
 ## 🌐 Localization
 
@@ -33,7 +35,7 @@
 - Update Spanish translation, thanks to Jesus Calle's contribution on Weblate
   (#710)
 - Update Welsh translation, thanks to Jon Stevenson's contribution on Weblate
-  (store metadata, #710)
+  (store metadata, #710, #713)
 - Update Esperanto translation, thanks to Jon Stevenson's contribution on Weblate
   (store metadata, #710)
 - Prepare Welsh and Esperanto app locales, currently available only in debug
@@ -45,4 +47,4 @@
 - Add links to related projects and refresh donor and translator credits
 - Refresh the Flutter version badge and document SDK upgrade rules
 
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.18+207...pre-v1.27.19+208)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.18+207...v1.27.20+209)

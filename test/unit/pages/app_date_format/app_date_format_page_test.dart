@@ -6,8 +6,9 @@
 //
 //     https://www.apache.org/licenses/LICENSE-2.0
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/custom_date_format.dart';
 import 'package:mhabit/pages/app_date_format/page.dart';
@@ -34,7 +35,7 @@ void main() {
           value: viewModel,
           child: MaterialApp(
             theme: ThemeData(platform: platform),
-            localizationsDelegates: L10n.localizationsDelegates,
+            localizationsDelegates: appLocalizationsDelegates,
             supportedLocales: L10n.supportedLocales,
             home: Builder(
               builder: (context) => Scaffold(
@@ -106,7 +107,7 @@ void main() {
       ChangeNotifierProvider<AppCustomDateYmdHmsConfigViewModel>.value(
         value: viewModel,
         child: const MaterialApp(
-          localizationsDelegates: L10n.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: L10n.supportedLocales,
           home: AppDateFormatPage(),
         ),
@@ -129,7 +130,7 @@ void main() {
       ChangeNotifierProvider<AppCustomDateYmdHmsConfigViewModel>.value(
         value: viewModel,
         child: MaterialApp(
-          localizationsDelegates: L10n.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: L10n.supportedLocales,
           home: Builder(
             builder: (context) => Scaffold(
@@ -174,7 +175,7 @@ void main() {
       ChangeNotifierProvider<AppCustomDateYmdHmsConfigViewModel>.value(
         value: viewModel,
         child: const MaterialApp(
-          localizationsDelegates: L10n.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: L10n.supportedLocales,
           home: AppDateFormatPage(),
         ),

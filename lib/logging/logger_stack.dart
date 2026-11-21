@@ -49,9 +49,8 @@ class LoggerStackTrace implements StackTrace {
   final int columnNumber;
 
   static (String, int, int) _getFileInfoFromFrame(String trace) {
-    final match = RegExp(
-      r'([A-Za-z0-9_]+\.dart):(\d+)(?::(\d+))?\)?',
-    ).firstMatch(trace);
+    final match = RegExp(r'([A-Za-z0-9_]+\.dart):(\d+)(?::(\d+))?\)?')
+        .firstMatch(trace);
     return (
       match?.group(1) ?? 'unknown.dart',
       int.tryParse(match?.group(2) ?? '') ?? 0,

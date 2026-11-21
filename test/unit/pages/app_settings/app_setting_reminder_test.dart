@@ -3,11 +3,12 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/app_reminder_config.dart';
 import 'package:mhabit/pages/app_settings/widgets.dart';
@@ -35,14 +36,13 @@ void main() {
           await tester.pumpWidget(
             MaterialApp(
               theme: ThemeData(platform: platform),
-              localizationsDelegates: L10n.localizationsDelegates,
+              localizationsDelegates: appLocalizationsDelegates,
               supportedLocales: L10n.supportedLocales,
               builder: (context, child) => Directionality(
                 textDirection: direction,
                 child: MediaQuery(
-                  data: MediaQuery.of(
-                    context,
-                  ).copyWith(textScaler: const TextScaler.linear(2)),
+                  data: MediaQuery.of(context)
+                      .copyWith(textScaler: const TextScaler.linear(2)),
                   child: child!,
                 ),
               ),
@@ -192,7 +192,7 @@ void main() {
         MaterialApp.router(
           routerConfig: router,
           theme: ThemeData(platform: platform),
-          localizationsDelegates: L10n.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: L10n.supportedLocales,
         ),
       );

@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
 import 'package:ios_window_control_layout/ios_window_control_layout.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'occlusion_layout.dart';
 
@@ -35,15 +35,14 @@ class AdaptiveWindowTopSafeArea extends StatelessWidget {
     // Windowed iPadOS chrome shares the traffic-light row. Applying vertical
     // adaptation globally would push that row below the window controls.
     final hasWindowControls =
-        AdaptiveWindowControlLayoutScope.maybeOf(
-          context,
-        )?.hasWindowControlAvoidance ==
+        AdaptiveWindowControlLayoutScope.maybeOf(context)
+            ?.hasWindowControlAvoidance ==
         true;
     final extraTop = hasWindowControls
         ? 0.0
-        : AdaptiveWindowControlLayoutScope.safeAreaGeometryOf(
-                context,
-              )?.verticalAvoidance.top ??
+        : AdaptiveWindowControlLayoutScope.safeAreaGeometryOf(context)
+                  ?.verticalAvoidance
+                  .top ??
               0.0;
     final media = MediaQuery.of(context);
     final viewTop = media.viewPadding.top + extraTop;

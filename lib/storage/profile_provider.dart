@@ -24,8 +24,9 @@ import '../logging/helper.dart';
 import '../providers/support/commons.dart';
 import 'profile/profile_helper.dart';
 
-typedef ProfileHandlerBuilder<T extends ProfileHelperHandler> =
-    T Function(SharedPreferences pref);
+typedef ProfileHandlerBuilder<T extends ProfileHelperHandler> = T Function(
+  SharedPreferences pref,
+);
 
 class ProfileViewModel extends ChangeNotifier
     implements ProviderMounted, AsyncInitialization {

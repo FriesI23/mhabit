@@ -2,7 +2,7 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.27.19+208-pre
+## 1.27.20+209
 
 - Feature: support cards, donation/store links and later/never reminders (#707)
 - Feature: save UI style and Sidebar appearance (#709)

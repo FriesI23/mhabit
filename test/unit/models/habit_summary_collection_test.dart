@@ -358,40 +358,37 @@ void main() {
       expect(collection.getHabitByUUID(habit.uuid), isNull);
     });
 
-    test(
-      'fromDBQueryResult keeps valid records and ignores orphan or pre-start-date records',
-      () {
-        final collection = HabitSummaryDataCollection.fromDBQueryResult(
-          [_buildHabitDBCell(uuid: 'habit-1', startDate: _date(1, 10))],
-          [
-            _buildRecordDBCell(
-              uuid: 'record-before-start',
-              parentUUID: 'habit-1',
-              date: _date(1, 9),
-            ),
-            _buildRecordDBCell(
-              uuid: 'record-valid',
-              parentUUID: 'habit-1',
-              date: _date(1, 12),
-            ),
-            _buildRecordDBCell(
-              uuid: 'record-orphan',
-              parentUUID: 'habit-missing',
-              date: _date(1, 12),
-            ),
-          ],
-        );
+    test('fromDBQueryResult keeps valid records and ignores orphan or pre-start-date records', () {
+      final collection = HabitSummaryDataCollection.fromDBQueryResult(
+        [_buildHabitDBCell(uuid: 'habit-1', startDate: _date(1, 10))],
+        [
+          _buildRecordDBCell(
+            uuid: 'record-before-start',
+            parentUUID: 'habit-1',
+            date: _date(1, 9),
+          ),
+          _buildRecordDBCell(
+            uuid: 'record-valid',
+            parentUUID: 'habit-1',
+            date: _date(1, 12),
+          ),
+          _buildRecordDBCell(
+            uuid: 'record-orphan',
+            parentUUID: 'habit-missing',
+            date: _date(1, 12),
+          ),
+        ],
+      );
 
-        final loaded = collection.getHabitByUUID('habit-1');
+      final loaded = collection.getHabitByUUID('habit-1');
 
-        expect(collection.length, 1);
-        expect(loaded, isNotNull);
-        expect(loaded!.recordCount, 1);
-        expect(loaded.getRecordByUUID('record-valid')?.date, _date(1, 12));
-        expect(loaded.getRecordByUUID('record-before-start'), isNull);
-        expect(loaded.getRecordByUUID('record-orphan'), isNull);
-      },
-    );
+      expect(collection.length, 1);
+      expect(loaded, isNotNull);
+      expect(loaded!.recordCount, 1);
+      expect(loaded.getRecordByUUID('record-valid')?.date, _date(1, 12));
+      expect(loaded.getRecordByUUID('record-before-start'), isNull);
+      expect(loaded.getRecordByUUID('record-orphan'), isNull);
+    });
   });
 
   group('HabitSummaryData derived state', () {

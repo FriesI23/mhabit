@@ -28,18 +28,13 @@ class _DeviceInfo implements AppInfo {
 }
 
 void main() {
-  testWidgets(
-    'Duo layout requires both iOS and a recognized device',
-    (_) async {
-      expect(
-        const _DeviceInfo(isIPhoneDuo: true).usesIPhoneDuoLayout,
-        !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS,
-      );
-      expect(
-        const _DeviceInfo(isIPhoneDuo: false).usesIPhoneDuoLayout,
-        isFalse,
-      );
-    },
-    variant: TargetPlatformVariant.all(),
-  );
+  testWidgets('Duo layout requires both iOS and a recognized device', (
+    _,
+  ) async {
+    expect(
+      const _DeviceInfo(isIPhoneDuo: true).usesIPhoneDuoLayout,
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS,
+    );
+    expect(const _DeviceInfo(isIPhoneDuo: false).usesIPhoneDuoLayout, isFalse);
+  }, variant: TargetPlatformVariant.all());
 }

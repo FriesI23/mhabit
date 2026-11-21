@@ -151,43 +151,37 @@ void main() {
     },
   );
 
-  test(
-    'invalid viewport and button bounds clear geometry and recover before deadline',
-    () async {
-      final api = FakeDesktopWindowChromeApi();
-      final chrome = DesktopWindowChrome(api: api);
-      addTearDown(chrome.dispose);
-      await chrome.initialize();
-      for (final invalid in [
-        snapshotGeometry(width: 0),
-        snapshotGeometry(width: double.nan),
-        snapshotGeometry(height: double.infinity),
-        snapshotGeometry(buttons: const [Rect.fromLTWH(7, -2, 14, 14)]),
-      ]) {
-        api.snapshot = invalid;
-        await chrome.refresh();
-        expect(chrome.geometry != null && !chrome.isFullScreen, isFalse);
-      }
-      api.snapshot = snapshotGeometry();
+  test('invalid viewport and button bounds clear geometry and recover before deadline', () async {
+    final api = FakeDesktopWindowChromeApi();
+    final chrome = DesktopWindowChrome(api: api);
+    addTearDown(chrome.dispose);
+    await chrome.initialize();
+    for (final invalid in [
+      snapshotGeometry(width: 0),
+      snapshotGeometry(width: double.nan),
+      snapshotGeometry(height: double.infinity),
+      snapshotGeometry(buttons: const [Rect.fromLTWH(7, -2, 14, 14)]),
+    ]) {
+      api.snapshot = invalid;
       await chrome.refresh();
-      expect(chrome.geometry!.buttons.last.right, 61);
-    },
-  );
+      expect(chrome.geometry != null && !chrome.isFullScreen, isFalse);
+    }
+    api.snapshot = snapshotGeometry();
+    await chrome.refresh();
+    expect(chrome.geometry!.buttons.last.right, 61);
+  });
 
-  test(
-    'initialization failure restores native standard chrome with no Flutter reservation',
-    () async {
-      final api = FakeDesktopWindowChromeApi()..failInitialize = true;
-      final chrome = DesktopWindowChrome(api: api);
-      addTearDown(chrome.dispose);
-      await expectChromeFailure(
-        chrome.initialize,
-        'Bad state: plugin unavailable',
-      );
-      expect(chrome.geometry, isNull);
-      expect(api.configurations, [false]);
-    },
-  );
+  test('initialization failure restores native standard chrome with no Flutter reservation', () async {
+    final api = FakeDesktopWindowChromeApi()..failInitialize = true;
+    final chrome = DesktopWindowChrome(api: api);
+    addTearDown(chrome.dispose);
+    await expectChromeFailure(
+      chrome.initialize,
+      'Bad state: plugin unavailable',
+    );
+    expect(chrome.geometry, isNull);
+    expect(api.configurations, [false]);
+  });
 
   test('bounded query timeout restores native style', () async {
     final api = FakeDesktopWindowChromeApi()..request = Completer();
@@ -240,24 +234,21 @@ void main() {
     },
   );
 
-  test(
-    'dispose prevents stale query publication and cleans native subscription once',
-    () async {
-      final api = FakeDesktopWindowChromeApi();
-      final chrome = DesktopWindowChrome(api: api);
-      await chrome.initialize();
-      final query = Completer<DesktopWindowChromeGeometry>();
-      api.request = query;
-      final pending = chrome.refresh();
-      await Future<void>.delayed(Duration.zero);
-      chrome.dispose();
-      query.complete(snapshotGeometry(right: true));
-      await pending;
-      await Future<void>.delayed(Duration.zero);
-      expect(chrome.geometry!.buttons.last.right, 61);
-      expect(api.disposalCount, 1);
-    },
-  );
+  test('dispose prevents stale query publication and cleans native subscription once', () async {
+    final api = FakeDesktopWindowChromeApi();
+    final chrome = DesktopWindowChrome(api: api);
+    await chrome.initialize();
+    final query = Completer<DesktopWindowChromeGeometry>();
+    api.request = query;
+    final pending = chrome.refresh();
+    await Future<void>.delayed(Duration.zero);
+    chrome.dispose();
+    query.complete(snapshotGeometry(right: true));
+    await pending;
+    await Future<void>.delayed(Duration.zero);
+    expect(chrome.geometry!.buttons.last.right, 61);
+    expect(api.disposalCount, 1);
+  });
 
   test(
     'geometry notification during configuration does not deadlock',

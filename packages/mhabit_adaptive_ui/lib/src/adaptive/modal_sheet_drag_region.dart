@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Controls the extent and direct-drag lifecycle of an automatic modal sheet.
 ///

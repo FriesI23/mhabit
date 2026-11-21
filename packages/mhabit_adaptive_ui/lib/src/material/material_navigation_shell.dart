@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_sidebar/flutter_adaptive_sidebar.dart'
     hide AdaptiveNavigationDestination, NavigationDestinationIcons;
+import 'package:material_ui/material_ui.dart';
 
 import '../adaptive/adaptive_navigation_destination.dart';
 import '../breakpoints/breakpoints.dart';

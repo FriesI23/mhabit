@@ -1,7 +1,7 @@
 name: Build Windows
 description: >
   General Windows build process.
-  Build outputs are located in `build\windows\<arch>\runner\Release`.
+  Build outputs are located in `build\windows\<arch>\f_generic\runner\Release`.
   Requires Flutter installed on the runner.
 
 inputs:
@@ -9,38 +9,48 @@ inputs:
     description: Target architecture of the MSIX package. Can be "x64" or "arm64".
     required: false
     default: x64
+  package-msix:
+    description: Package the native bundle as a signed MSIX installer.
+    required: false
+    default: 'true'
   app-sign-key-pfx:
     description: Base64 encoded PFX certificate for Windows signing
-    required: true
+    required: false
   app-sign-key-pfx-password:
     description: Password for the PFX certificate used for signing MSIX
-    required: true
+    required: false
 
 outputs:
+  path:
+    description: Path to the native Windows bundle
+    value: ${{ steps.build-bundle.outputs.path }}
   msix-path:
     description: Path to generated MSIX file
-    value: ${{ steps.output.outputs.msix-path }}
+    value: ${{ steps.package-msix.outputs.msix-path }}
 
 runs:
   using: composite
   steps:
-    - name: Exposed Certificate
-      run: echo "${{ inputs.app-sign-key-pfx }}" | base64 --decode > windows/certificate/publish.pfx
-      shell: bash
-    - name: Build MSIX
-      run: |
-        .flutter\bin\dart run msix:create `
-          --architecture ${{ inputs.arch }} `
-          --output-name mhabit_${{ inputs.arch }} `
-          --certificate-path windows\certificate\publish.pfx `
-          --certificate-password '${{ inputs.app-sign-key-pfx-password }}' `
-          --signtool-options "/td SHA256" `
-          --install-certificate false
-      shell: pwsh
-    - id: output
+    - name: Build Windows
+      id: build-bundle
       env:
-        OUTPUT_PATH: build/windows/${{ inputs.arch }}/runner/Release/mhabit_${{ inputs.arch }}.msix
+        TARGET_ARCH: ${{ inputs.arch }}
       run: |
-        md5sum $OUTPUT_PATH
-        echo "msix-path=$OUTPUT_PATH" >> "$GITHUB_OUTPUT"
-      shell: bash
+        if ($env:TARGET_ARCH -notin @('x64', 'arm64')) { throw 'Unsupported architecture' }
+        $dartVersion = (.flutter\bin\dart --version 2>&1 | Out-String)
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        if (-not $dartVersion.Contains("windows_$env:TARGET_ARCH")) { throw 'Flutter SDK architecture must match the requested package architecture' }
+        .flutter\bin\flutter build windows --release --flavor f_generic
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        if (-not (Test-Path "build/windows/$env:TARGET_ARCH/f_generic/runner/Release/mhabit.exe")) { throw 'Runner architecture must match the requested package architecture' }
+        "path=build/windows/$env:TARGET_ARCH/f_generic/runner/Release" >> $env:GITHUB_OUTPUT
+      shell: pwsh
+    - name: Package MSIX
+      id: package-msix
+      if: inputs.package-msix == 'true'
+      uses: ./.github/actions/package_windows_msix
+      with:
+        arch: ${{ inputs.arch }}
+        bundle-path: ${{ steps.build-bundle.outputs.path }}
+        app-sign-key-pfx: ${{ inputs.app-sign-key-pfx }}
+        app-sign-key-pfx-password: ${{ inputs.app-sign-key-pfx-password }}

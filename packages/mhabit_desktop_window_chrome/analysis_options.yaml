@@ -1,1 +1,6 @@
+analyzer:
+  exclude:
+    - windows/**
+    - macos/**
+    - linux/**
 include: ../../analysis_options.yaml

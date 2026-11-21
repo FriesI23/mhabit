@@ -66,9 +66,6 @@ jobs:
         shell: pwsh
         env:
           MSIX_PATH: ${{ steps.build.outputs.msix-path }}
-        # FIXME: Remove this workaround after the upstream fix is released:
-        # https://github.com/microsoft/msstore-cli/issues/162
-        # Workaround: pass --uploadTimeout 300 explicitly.
         run: >
           msstore publish $env:MSIX_PATH
           -id ${{ vars.MSSTORE_PRODUCT_ID }}

@@ -10,7 +10,8 @@ part of 'record.dart';
 
 abstract class _$RecordDBCellCWProxy {
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -40,7 +41,8 @@ class _$RecordDBCellCWProxyImpl implements _$RecordDBCellCWProxy {
   final RecordDBCell _value;
 
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
+  /// Omitted fields keep their values; explicit `null` clears nullable fields.
+  /// The public API rejects `null` for non-nullable fields.
   ///
   /// Example:
   /// ```dart
@@ -133,8 +135,8 @@ RecordDBCell _$RecordDBCellFromJson(Map<String, dynamic> json) => RecordDBCell(
   recordValue: json['record_value'] as num?,
   createT: (json['create_t'] as num?)?.toInt(),
   modifyT: (json['modify_t'] as num?)?.toInt(),
-  uuid: json['uuid'] as String?,
-  parentUUID: json['parent_uuid'] as String?,
+  uuid: json['uuid'] as HabitRecordUUID?,
+  parentUUID: json['parent_uuid'] as HabitUUID?,
   reason: json['reason'] as String?,
   isDeleted: (json['is_deleted'] as num?)?.toInt(),
   syncExtras: json['sync_extras'] as String?,

@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import 'harness/adaptive_ui_theme.dart';
@@ -304,8 +304,7 @@ void main() {
                                     ),
                                   ),
                                   TextSpan(
-                                    text:
-                                        'whose entire contents must remain readable at large text sizes.',
+                                    text: 'whose entire contents must remain readable at large text sizes.',
                                   ),
                                 ],
                               ),
@@ -367,13 +366,17 @@ void main() {
     expect(find.text('Empty'), findsNothing);
     expect(find.byType(CupertinoListTile), findsOneWidget);
     expect(find.byType(ListTile), findsOneWidget);
-    expect(
-      tester
-          .getSemantics(find.text('Material heading'))
-          .getSemanticsData()
-          .flagsCollection
-          .isHeader,
-      isTrue,
-    );
+    for (final title in ['Heading', 'Material heading']) {
+      expect(
+        tester.getSemantics(find.text(title)).getSemanticsData().headingLevel,
+        1,
+      );
+    }
+    for (final title in ['Row', 'Material row']) {
+      expect(
+        tester.getSemantics(find.text(title)).getSemanticsData().headingLevel,
+        0,
+      );
+    }
   });
 }

@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:adaptive_actions/cupertino.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ios_window_control_layout/ios_window_control_layout.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 
 import '../harness/adaptive_ui_theme.dart';
@@ -272,9 +272,8 @@ void main() {
           await tester.pump(const Duration(milliseconds: 16));
           expect(queries, greaterThan(1));
           expect(
-            IosWindowControlLayout.read(
-              _pageKey.currentContext!,
-            ).occlusionGeometry,
+            IosWindowControlLayout.read(_pageKey.currentContext!)
+                .occlusionGeometry,
             isNotNull,
           );
           final after = tester.getRect(find.byKey(_search));
@@ -433,9 +432,8 @@ void main() {
           await _event(tester, error: error);
           await tester.pump(const Duration(milliseconds: 16));
           expect(
-            IosWindowControlLayout.of(
-              _pageKey.currentContext!,
-            ).occlusionGeometry,
+            IosWindowControlLayout.of(_pageKey.currentContext!)
+                .occlusionGeometry,
             isNull,
             reason: 'Invalid geometry must not be cached to preserve layout',
           );
@@ -477,9 +475,8 @@ void main() {
           await _event(tester);
           await tester.pump(const Duration(milliseconds: 16));
           expect(
-            IosWindowControlLayout.of(
-              _pageKey.currentContext!,
-            ).occlusionGeometry,
+            IosWindowControlLayout.of(_pageKey.currentContext!)
+                .occlusionGeometry,
             isNull,
           );
           final invalidOrdinary = tester.getRect(find.byKey(_search));

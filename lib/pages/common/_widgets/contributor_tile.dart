@@ -13,9 +13,10 @@
 // limitations under the License.
 
 import 'package:adaptive_actions/cupertino.dart' show AdaptiveCupertinoTooltip;
-import 'package:flutter/cupertino.dart' show CupertinoButton, CupertinoTheme;
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart'
+    show CupertinoButton, CupertinoTheme;
 import 'package:intl/locale.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 

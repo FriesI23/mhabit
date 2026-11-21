@@ -1,17 +1,12 @@
 name: Build Test App
 
-# Single parameterized replacement for the four near-identical
-# _build_test_{android,ios,linux,macos}.yml files. Each platform's build
-# mechanism (inline script vs. composite action, required secrets, runner
-# OS) stays exactly as it was in the platform-specific file — only the
-# surrounding structure (checkout/setup/upload + the PR comment, which used
-# to be a separate comment-build-<platform> job) is shared.
+# Shared platform build, artifact upload, and PR result comments.
 
 on:
   workflow_call:
     inputs:
       platform:
-        description: Platform to build (android, ios, linux, macos)
+        description: Platform to build (android, ios, linux, macos, windows)
         type: string
         required: true
       ref:
@@ -45,6 +40,8 @@ jobs:
           case "$PLATFORM" in
             linux)
               MATRIX='[{"platform":"linux","arch":"x64","runner":"ubuntu-22.04"},{"platform":"linux","arch":"arm64","runner":"ubuntu-22.04-arm"}]' ;;
+            windows)
+              MATRIX='[{"platform":"windows","arch":"x64","runner":"windows-2022"},{"platform":"windows","arch":"arm64","runner":"windows-11-arm"}]' ;;
             ios|macos)
               MATRIX="[{\"platform\":\"$PLATFORM\",\"arch\":\"\",\"runner\":\"xcode-27\"}]" ;;
             *)
@@ -62,12 +59,14 @@ jobs:
     environment: ${{ inputs.environment }}
     steps:
       - id: meta
+        shell: bash
         run: |
           case "${{ inputs.platform }}" in
             android) echo "label=Android" >> "$GITHUB_OUTPUT" ;;
             ios) echo "label=iOS" >> "$GITHUB_OUTPUT" ;;
             linux) echo "label=Linux (${{ matrix.arch }})" >> "$GITHUB_OUTPUT" ;;
             macos) echo "label=macOS" >> "$GITHUB_OUTPUT" ;;
+            windows) echo "label=Windows (${{ matrix.arch }})" >> "$GITHUB_OUTPUT" ;;
           esac
 
       - uses: actions/checkout@v7
@@ -104,6 +103,13 @@ jobs:
         with:
           arch: ${{ matrix.arch }}
 
+      - if: inputs.platform == 'windows'
+        id: build-windows
+        uses: ./.github/actions/build_windows
+        with:
+          arch: ${{ matrix.arch }}
+          package-msix: 'false'
+
       - if: inputs.platform == 'macos'
         id: build-macos
         uses: ./.github/actions/build_macos
@@ -119,6 +125,7 @@ jobs:
 
       - id: artifact
         if: success()
+        shell: bash
         run: |
           case "${{ inputs.platform }}" in
             android) echo "name=app-release.apk" >> "$GITHUB_OUTPUT"
@@ -129,6 +136,8 @@ jobs:
                      echo "path=${{ steps.build-linux.outputs.path }}" >> "$GITHUB_OUTPUT" ;;
             macos)   echo "name=app-release.app" >> "$GITHUB_OUTPUT"
                      echo "path=${{ steps.build-macos.outputs.path }}" >> "$GITHUB_OUTPUT" ;;
+            windows) echo "name=windows-bundle-${{ matrix.arch }}" >> "$GITHUB_OUTPUT"
+                     echo "path=${{ steps.build-windows.outputs.path }}" >> "$GITHUB_OUTPUT" ;;
           esac
 
       - id: upload

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'package:adaptive_actions/material.dart';
-import 'package:flutter/cupertino.dart'
+import 'package:cupertino_ui/cupertino_ui.dart'
     show
         CupertinoButton,
         CupertinoIcons,
@@ -23,10 +23,11 @@ import 'package:flutter/cupertino.dart'
         CupertinoPopupSurface,
         CupertinoSearchTextField,
         CupertinoSliverNavigationBar;
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/extensions/adaptive_style_extensions.dart';
 import 'package:mhabit/l10n/localizations.dart';
@@ -84,7 +85,7 @@ Widget _searchBarHost(
       theme: ThemeData(platform: platform),
       locale: locale,
       restorationScopeId: 'app',
-      localizationsDelegates: L10n.localizationsDelegates,
+      localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: L10n.supportedLocales,
       home: AdaptiveNavScope(
         form: compact
@@ -111,7 +112,7 @@ Widget _viewBarHost({
 }) => MaterialApp(
   theme: ThemeData(platform: platform),
   locale: locale,
-  localizationsDelegates: L10n.localizationsDelegates,
+  localizationsDelegates: appLocalizationsDelegates,
   supportedLocales: L10n.supportedLocales,
   home: AdaptiveNavScope(
     form: compact
@@ -531,7 +532,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(platform: TargetPlatform.iOS),
-        localizationsDelegates: L10n.localizationsDelegates,
+        localizationsDelegates: appLocalizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         home: AdaptiveNavigationShell(
           selectedIndex: 0,
@@ -610,7 +611,7 @@ void main() {
         value: vm,
         child: MaterialApp(
           theme: ThemeData(platform: TargetPlatform.iOS),
-          localizationsDelegates: L10n.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: L10n.supportedLocales,
           home: AdaptiveNavigationShell(
             selectedIndex: 0,
@@ -831,9 +832,8 @@ void main() {
         .firstWhere((a) => a.id == habitDisplayFilterActionId);
     expect(filterAction.children, isEmpty);
     expect(
-      const ToggleHabitDisplayFilter(
-        HabitDisplayFilterTarget.inProgress,
-      ).applyTo(onlyInProgress),
+      const ToggleHabitDisplayFilter(HabitDisplayFilterTarget.inProgress)
+          .applyTo(onlyInProgress),
       isNull,
     );
 
@@ -878,8 +878,10 @@ void main() {
       (action) => action.id == habitDisplayGroupActionId,
     );
     expect(
-      (appBarActions.material!.iconBuilder!(context, filterAction) as Icon)
-          .icon,
+      (appBarActions.material!.iconBuilder!(
+        context,
+        filterAction,
+      ) as Icon).icon,
       Icons.checklist_rounded,
     );
     expect(
@@ -968,7 +970,7 @@ void main() {
       StatefulBuilder(
         builder: (context, setHostState) => MaterialApp(
           theme: ThemeData(platform: TargetPlatform.iOS),
-          localizationsDelegates: L10n.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: L10n.supportedLocales,
           home: CustomScrollView(
             slivers: [
@@ -1107,7 +1109,7 @@ void main() {
     var opened = false;
     await tester.pumpWidget(
       MaterialApp(
-        localizationsDelegates: L10n.localizationsDelegates,
+        localizationsDelegates: appLocalizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         home: AdaptiveNavScope(
           form: NavigationShellForm.compact,
@@ -1186,7 +1188,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         locale: const Locale('zh'),
-        localizationsDelegates: L10n.localizationsDelegates,
+        localizationsDelegates: appLocalizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         home: Scaffold(
           body: CustomScrollView(
@@ -1479,7 +1481,7 @@ void main() {
         ],
         child: MaterialApp(
           theme: ThemeData(platform: TargetPlatform.iOS),
-          localizationsDelegates: L10n.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: L10n.supportedLocales,
           home: CustomScrollView(
             slivers: [
@@ -1570,7 +1572,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(platform: TargetPlatform.iOS),
-        localizationsDelegates: L10n.localizationsDelegates,
+        localizationsDelegates: appLocalizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         home: CustomScrollView(
           slivers: [
@@ -1632,7 +1634,7 @@ void main() {
       MaterialApp(
         theme: ThemeData(platform: TargetPlatform.iOS),
         locale: const Locale('fr'),
-        localizationsDelegates: L10n.localizationsDelegates,
+        localizationsDelegates: appLocalizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         home: CustomScrollView(
           slivers: [

@@ -26,8 +26,11 @@ import 'habits_manager.dart';
 
 enum ImportItemStatus { pending, running, succeeded, failed }
 
-typedef ImportItemStatusListener =
-    void Function(int index, ImportItemStatus previous, ImportItemStatus next);
+typedef ImportItemStatusListener = void Function(
+  int index,
+  ImportItemStatus previous,
+  ImportItemStatus next,
+);
 
 /// Observable progress for one import batch; execution belongs to the runner.
 /// The consumer owns disposal; disposing detaches observation, not storage work.

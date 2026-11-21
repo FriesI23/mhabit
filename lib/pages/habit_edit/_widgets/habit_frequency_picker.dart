@@ -14,8 +14,8 @@
 
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../common/consts.dart';
 import '../../../common/utils.dart';
@@ -239,9 +239,8 @@ class _HabitFrequencyTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
     final textTheme = themeData.textTheme;
-    final textScaler = MediaQuery.textScalerOf(
-      context,
-    ).clamp(maxScaleFactor: 1.3);
+    final textScaler = MediaQuery.textScalerOf(context)
+        .clamp(maxScaleFactor: 1.3);
 
     return SizedBox(
       height: textScaler.scale(_kDefaultHabitFreqTextFieldHeight),

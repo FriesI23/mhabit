@@ -14,13 +14,17 @@
 
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/extensions/adaptive_style_extensions.dart';
 import 'package:mhabit/l10n/localizations.dart';
+import 'package:mhabit/models/custom_date_format.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_detail.dart';
@@ -29,10 +33,15 @@ import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/models/habit_reminder.dart';
 import 'package:mhabit/models/habit_repo_actions.dart';
 import 'package:mhabit/models/habit_summary.dart';
+import 'package:mhabit/pages/common/_widgets/habit_record_number_picker.dart';
 import 'package:mhabit/pages/habit_detail/_providers/habit_detail.dart';
 import 'package:mhabit/pages/habit_detail/page.dart';
 import 'package:mhabit/pages/habit_detail/widgets.dart'
-    show HabitDetailAppBarAction, HabitDetailFreqChart, HabitHeatmap;
+    show
+        HabitDetailAppBarAction,
+        HabitDetailFreqChart,
+        HabitEditReplacementRecordCalendarDialog,
+        HabitHeatmap;
 import 'package:mhabit/providers/app_ui/app_custom_date_format.dart';
 import 'package:mhabit/providers/app_ui/app_developer.dart';
 import 'package:mhabit/providers/app_ui/app_first_day.dart';
@@ -41,10 +50,13 @@ import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:mhabit/theme/color.dart';
+import 'package:mhabit/utils/app_clock.dart';
 import 'package:mhabit/widgets/widgets.dart';
 import 'package:mhabit_adaptive_ui/mhabit_adaptive_ui.dart';
 import 'package:provider/provider.dart';
+import 'package:quiver/time.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:simple_heatmap_calendar/simple_heatmap_calendar.dart';
 
 import '../../support/adaptive_dialog.dart';
 import '../../support/stub/habits_display_access.dart';
@@ -55,6 +67,7 @@ final class _FakeHabitDetailAccess extends StubHabitDetailAccess {
   int loadDetailDataCallCount = 0;
   int statusChangeCalls = 0;
   final List<HabitStatus> requestedStatuses = [];
+  final List<ChangeRecordStatusResult> recordChanges = [];
   Completer<Iterable<ChangeHabitStatusResult>>? statusChangeCompleter;
 
   @override
@@ -83,6 +96,33 @@ final class _FakeHabitDetailAccess extends StubHabitDetailAccess {
     }
     return seedData;
   }
+
+  @override
+  Future<Iterable<ChangeRecordStatusResult>> changeHabitRecordStatus({
+    required ChangeRecordStatusAction<HabitDate> preAction,
+    ChangeRecordStatusAction<ChangeRecordStatusResult> Function(
+      List<ChangeRecordStatusResult> results,
+    )?
+    postActionBuilder,
+    BeforeHabitRecordReminderUpdateCb? beforeReminderUpdate,
+    FutureOr<void> Function(ChangeRecordStatusResult result)? extraResolver,
+  }) async {
+    final initial = preAction.resolve();
+    final results = postActionBuilder?.call(initial).resolve() ?? initial;
+    recordChanges.addAll(results);
+    await beforeReminderUpdate?.call(seedData.data, results);
+    for (final result in results) {
+      await extraResolver?.call(result);
+    }
+    return results;
+  }
+}
+
+final class _CustomDateFormat extends AppCustomDateYmdHmsConfigViewModel {
+  _CustomDateFormat(this.config);
+
+  @override
+  final CustomDateYmdHmsConfig config;
 }
 
 final class _PendingHabitDetailAccess extends StubHabitDetailAccess {
@@ -163,9 +203,13 @@ Future<void> _pumpHabitDetailPage(
   bool wrapWithAdaptiveShell = false,
   TargetPlatform? platform,
   bool withAppLocalizations = false,
+  Locale? locale,
+  CustomDateYmdHmsConfig? dateConfig,
 }) async {
-  final customDate = AppCustomDateYmdHmsConfigViewModel()
-    ..updateProfile(profile);
+  final customDate = dateConfig == null
+      ? AppCustomDateYmdHmsConfigViewModel()
+      : _CustomDateFormat(dateConfig);
+  customDate.updateProfile(profile);
   final firstDay = AppFirstDayViewModel()..updateProfile(profile);
   final developer = AppDeveloperViewModel(global: Global());
   final appEvent = AppEventBus();
@@ -190,9 +234,10 @@ Future<void> _pumpHabitDetailPage(
         ChangeNotifierProvider<AppEventBus>.value(value: appEvent),
       ],
       child: MaterialApp(
+        locale: locale,
         theme: ThemeData(platform: platform, extensions: [lightCustomColors]),
         localizationsDelegates: withAppLocalizations
-            ? L10n.localizationsDelegates
+            ? appLocalizationsDelegates
             : null,
         supportedLocales: withAppLocalizations
             ? L10n.supportedLocales
@@ -239,6 +284,82 @@ Future<void> _pumpHabitDetailPage(
 }
 
 void main() {
+  for (final (locale, month) in [
+    (const Locale('en'), 1),
+    (const Locale('zh'), 2),
+  ]) {
+    testWidgets('detail Heatmap consumes localized label text $locale', (
+      tester,
+    ) async {
+      await initializeDateFormatting();
+      final oldClock = AppClock().clock;
+      AppClock().setClock(Clock(() => DateTime.utc(2026, month, 10)));
+      addTearDown(() => AppClock().setClock(oldClock));
+      tester.view.physicalSize = const Size(600, 1400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final profile = await _loadProfile();
+      final detail = _buildHabitDetailData();
+      final rebuild = ValueNotifier(0);
+      addTearDown(() {
+        rebuild.dispose();
+        profile.dispose();
+      });
+      await _pumpHabitDetailPage(
+        tester,
+        profile: profile,
+        access: _FakeHabitDetailAccess(seedData: detail),
+        rebuildToken: rebuild,
+        habitUUID: detail.data.uuid,
+        withAppLocalizations: true,
+        locale: locale,
+      );
+      await tester.pumpAndSettle();
+      final heatmap = find.byType(HabitHeatmap);
+      await tester.ensureVisible(heatmap);
+      await tester.pumpAndSettle();
+      final monthLabels = find.descendant(
+        of: heatmap,
+        matching: find.byType(MonthLabelItem),
+      );
+      expect(monthLabels, findsWidgets);
+      for (final element in monthLabels.evaluate()) {
+        final item = element.widget as MonthLabelItem;
+        final expected = DateFormat(
+          item.date.month == DateTime.january ? 'yMMM' : 'MMM',
+          locale.toString(),
+        ).format(item.date);
+        expect(
+          find.descendant(
+            of: find.byWidget(item),
+            matching: find.text(expected),
+          ),
+          findsOneWidget,
+        );
+      }
+      final weekLabels = find.descendant(
+        of: heatmap,
+        matching: find.byType(WeekLabelItem),
+      );
+      expect(weekLabels, findsNWidgets(7));
+      for (final element in weekLabels.evaluate()) {
+        final item = element.widget as WeekLabelItem;
+        final expected = DateFormat(
+          'ccccc',
+          locale.toString(),
+        ).format(item.date);
+        expect(
+          find.descendant(
+            of: find.byWidget(item),
+            matching: find.text(expected),
+          ),
+          findsOneWidget,
+        );
+      }
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   for (final platform in [
     TargetPlatform.android,
     TargetPlatform.iOS,
@@ -1176,6 +1297,110 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(AlertDialog), findsOneWidget);
+  });
+
+  testWidgets('record Heatmap keeps configured labels and cell editing', (
+    tester,
+  ) async {
+    await initializeDateFormatting();
+    final oldClock = AppClock().clock;
+    AppClock().setClock(Clock(() => DateTime.utc(2026, 1, 24)));
+    addTearDown(() => AppClock().setClock(oldClock));
+    tester.view.physicalSize = const Size(600, 1400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final profile = await _loadProfile();
+    final detail = _buildHabitDetailData();
+    detail.data.startDate = HabitDate(2026, 1, 1);
+    final access = _FakeHabitDetailAccess(seedData: detail);
+    final rebuild = ValueNotifier(0);
+    addTearDown(() {
+      rebuild.dispose();
+      profile.dispose();
+    });
+    await _pumpHabitDetailPage(
+      tester,
+      profile: profile,
+      access: access,
+      rebuildToken: rebuild,
+      habitUUID: detail.data.uuid,
+      withAppLocalizations: true,
+      locale: const Locale('zh'),
+      dateConfig: const CustomDateYmdHmsConfig(
+        ymdFormat: YearMonthDayFormtEnum.dayMonthYear,
+        splitChar: DateSplitCharEnum.dash,
+        twelveHoursOn: false,
+        useSystemFormat: false,
+        useLeadingZero: true,
+        applyHeatmapCal: true,
+      ),
+    );
+    await tester.pumpAndSettle();
+    final heatmap = find.descendant(
+      of: find.byType(HabitHeatmap),
+      matching: find.byWidgetPredicate(
+        (widget) => widget is GestureDetector && widget.onTap != null,
+      ),
+    );
+    await tester.ensureVisible(heatmap);
+    await tester.pumpAndSettle();
+    await tester.tap(heatmap);
+    await tester.pumpAndSettle();
+    final editor = find.byType(HabitEditReplacementRecordCalendarDialog);
+    expect(editor, findsOneWidget);
+    expect(
+      find.descendant(of: editor, matching: find.text('01-2026')),
+      findsOneWidget,
+    );
+    final weekLabels = find.descendant(
+      of: editor,
+      matching: find.byType(WeekLabelItem),
+    );
+    expect(weekLabels, findsNWidgets(7));
+    for (final element in weekLabels.evaluate()) {
+      final item = element.widget as WeekLabelItem;
+      expect(
+        find.descendant(
+          of: find.byWidget(item),
+          matching: find.text(DateFormat('ccc', 'zh').format(item.date)),
+        ),
+        findsOneWidget,
+      );
+    }
+    final cell = find.descendant(
+      of: editor,
+      matching: find.byWidgetPredicate(
+        (widget) =>
+            widget is HeatmapCellItem<num> &&
+            widget.date.year == 2026 &&
+            widget.date.month == 1 &&
+            widget.date.day == 24,
+      ),
+    );
+    expect(cell, findsOneWidget);
+    await tester.tap(cell);
+    await tester.pumpAndSettle();
+    expect(access.recordChanges, hasLength(1));
+    expect(access.recordChanges.single.date, HabitDate(2026, 1, 24));
+    expect(access.recordChanges.single.date.isUtc, isTrue);
+    expect(detail.data.getRecordByDate(HabitDate(2026, 1, 24))?.value, 1);
+
+    await tester.longPress(cell);
+    await tester.pumpAndSettle();
+    expect(find.byType(HabitRecordCustomNumberPickerDialog), findsOneWidget);
+    final input = find.descendant(
+      of: find.byType(HabitRecordCustomNumberPickerDialog),
+      matching: find.byType(TextField),
+    );
+    await tester.enterText(input, '2');
+    final l10n = L10n.of(tester.element(input))!;
+    await tester.tap(find.text(l10n.habitDetail_changeGoal_saveText));
+    await tester.pumpAndSettle();
+    expect(access.recordChanges, hasLength(2));
+    expect(detail.data.getRecordByDate(HabitDate(2026, 1, 24))?.value, 2);
+    expect(find.byType(HabitRecordCustomNumberPickerDialog), findsNothing);
+    expect(editor, findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('HabitDetailPage charts tolerate rapid resize key re-entry', (

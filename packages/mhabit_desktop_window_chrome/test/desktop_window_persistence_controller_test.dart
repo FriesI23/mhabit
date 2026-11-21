@@ -1,8 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit_desktop_window_chrome/mhabit_desktop_window_chrome.dart';
+import 'package:mhabit_desktop_window_chrome/src/desktop_window_runtime.dart';
+
+import 'support/fake_desktop_window_runtime.dart';
 
 final _saved = LinuxWindowState(width: 800, height: 600);
 final _ordinary = LinuxWindowState(width: 800, height: 600);
@@ -77,7 +80,7 @@ class PlacementAdapter
 }
 
 void main() {
-  final binding = TestWidgetsFlutterBinding.ensureInitialized();
+  TestWidgetsFlutterBinding.ensureInitialized();
   late MemoryStore store;
   late PlacementAdapter adapter;
   late DesktopWindowPersistenceController<LinuxWindowState> persistence;
@@ -87,13 +90,10 @@ void main() {
     store = MemoryStore();
     adapter = PlacementAdapter(store.calls);
     windowCalls = [];
-    binding.defaultBinaryMessenger.setMockMethodCallHandler(
-      const MethodChannel('window_manager'),
-      (call) async {
-        windowCalls.add('${call.method}:${call.arguments}');
-        return null;
-      },
-    );
+    DesktopWindowRuntime.debugOverride = FakeDesktopWindowRuntime((call) async {
+      windowCalls.add('${call.method}:${call.arguments}');
+      return null;
+    });
     persistence = DesktopWindowPersistenceController(
       store: store,
       adapter: adapter,
@@ -104,10 +104,7 @@ void main() {
     store.blocked?.complete();
     store.blocked = null;
     await persistence.dispose();
-    binding.defaultBinaryMessenger.setMockMethodCallHandler(
-      const MethodChannel('window_manager'),
-      null,
-    );
+    DesktopWindowRuntime.debugOverride = null;
   });
 
   Future<void> initialize() =>
@@ -117,15 +114,14 @@ void main() {
     'initializes window manager before native placement without a title bar',
     () async {
       final counts = <int>[];
-      binding.defaultBinaryMessenger.setMockMethodCallHandler(
-        const MethodChannel('window_manager'),
-        (call) async {
-          if (call.method == 'ensureInitialized') {
-            counts.add(adapter.initializations);
-          }
-          return null;
-        },
-      );
+      DesktopWindowRuntime.debugOverride = FakeDesktopWindowRuntime((
+        call,
+      ) async {
+        if (call.method == 'ensureInitialized') {
+          counts.add(adapter.initializations);
+        }
+        return null;
+      });
       await initialize();
       expect(counts, [0]);
       expect(adapter.initializations, 1);

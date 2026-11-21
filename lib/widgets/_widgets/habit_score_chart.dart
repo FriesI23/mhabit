@@ -16,8 +16,8 @@ import 'dart:math' as math;
 
 import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../common/math.dart';
 import '../../common/types.dart';
@@ -265,9 +265,8 @@ class HabitScoreChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextScaler textScaler = MediaQuery.textScalerOf(
-      context,
-    ).clamp(maxScaleFactor: 1.3);
+    final TextScaler textScaler = MediaQuery.textScalerOf(context)
+        .clamp(maxScaleFactor: 1.3);
 
     appLog.build.debug(context);
     final double maxX = (data.length - 1).toDouble();

@@ -6,7 +6,8 @@
 // launches a browser, requests native reviews, or invokes a real payment action.
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/flavor.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/logging/logger_manager.dart';
@@ -116,7 +117,7 @@ class _HostState extends State<_Host> {
   Widget build(BuildContext context) => MaterialApp(
     theme: ThemeData(brightness: _dark ? Brightness.dark : Brightness.light),
     locale: _chinese ? const Locale('zh') : const Locale('en'),
-    localizationsDelegates: L10n.localizationsDelegates,
+    localizationsDelegates: appLocalizationsDelegates,
     supportedLocales: L10n.supportedLocales,
     builder: (context, child) => MediaQuery(
       data: MediaQuery.of(context).copyWith(disableAnimations: _reduced),

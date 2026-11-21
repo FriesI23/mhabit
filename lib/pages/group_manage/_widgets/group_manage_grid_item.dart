@@ -136,9 +136,8 @@ class _MaterialGroupGridItem extends StatelessWidget {
                 onDelete: onDelete,
               ),
               titleStyle: Theme.of(context).textTheme.titleSmall!,
-              descriptionStyle: Theme.of(
-                context,
-              ).textTheme.bodySmall!.copyWith(color: colors.onSurfaceVariant),
+              descriptionStyle: Theme.of(context).textTheme.bodySmall!
+                  .copyWith(color: colors.onSurfaceVariant),
             ),
           ),
         ),

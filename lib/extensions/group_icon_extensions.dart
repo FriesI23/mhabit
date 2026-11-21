@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart' show Icons;
 import 'package:flutter/widgets.dart' show IconData;
+import 'package:material_ui/material_ui.dart' show Icons;
 
 import '../models/habit_group.dart';
 

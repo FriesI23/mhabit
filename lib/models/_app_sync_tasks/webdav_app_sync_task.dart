@@ -390,7 +390,7 @@ class WebDavAppSyncTaskExecutor
   Future<WebDavAppSyncTaskResult> doExec() async {
     // FIXME: When a strict-sync mode is introduced, group failures here
     // (e.g. 412 Precondition Failed when switching servers) should block
-    // the entire sync rather than being swallowed.
+    // the entire sync instead of allowing habit sync to continue.
     final groupResults = await groupSyncSubTask.run(this);
     if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
 
@@ -411,9 +411,8 @@ class WebDavAppSyncTaskExecutor
     );
     if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
 
-    final mergedResult = syncInfoMergerBuilder(
-      this,
-    ).convert((local: localHabits, server: serverHabits));
+    final mergedResult = syncInfoMergerBuilder(this)
+        .convert((local: localHabits, server: serverHabits));
     appLog.appsynctask.debug(
       this,
       ex: ["merge habits completed", mergedResult.length],
