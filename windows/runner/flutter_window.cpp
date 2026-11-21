@@ -22,6 +22,7 @@ bool FlutterWindow::OnCreate() {
       frame.right - frame.left, frame.bottom - frame.top, project_);
   // Ensure that basic setup of the controller was successful.
   if (!flutter_controller_->engine() || !flutter_controller_->view()) {
+    flutter_controller_.reset();
     return false;
   }
   RegisterPlugins(flutter_controller_->engine());
@@ -61,10 +62,8 @@ FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
     }
   }
 
-  switch (message) {
-  case WM_FONTCHANGE:
+  if (message == WM_FONTCHANGE && flutter_controller_) {
     flutter_controller_->engine()->ReloadSystemFonts();
-    break;
   }
 
   return Win32Window::MessageHandler(hwnd, message, wparam, lparam);
