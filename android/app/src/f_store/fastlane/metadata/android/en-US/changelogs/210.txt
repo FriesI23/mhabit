@@ -1,0 +1,3 @@
+- Feature: enable Esperanto in release builds (#717)
+- Fix: report corrupt Loop ZIP backups as import errors (#715)
+- Fix: show the app window reliably at startup (#715)

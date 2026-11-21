@@ -1,50 +1,29 @@
-# Released: v1.27.20+209
+# Pre-Released: pre-v1.27.21+210
 
 ## ✨ Features
 
-- Add shared support cards to Settings and optional startup reminders, with
-  animated headers, automatic paging and clickable page indicators. Keep GitHub
-  Star and donation actions, and offer store review or Flathub favorites links
-  for the current distribution. Remember **Remind me later** and **Don't remind
-  me again** choices (#707)
-- Choose and remember the interface style in Display settings. When using the
-  Apple style, choose automatic, inset or edge Sidebar appearance (#709)
+- Enable Esperanto in release builds and update the iOS Home Screen widget's
+  Esperanto strings (#717)
 
 ## 🐛 Fixes
 
-- Restore normal browsing after an empty search in the Apple interface (#703)
-- Restore WebDAV sync with mixed authentication challenges, including Fastmail
-  (#705)
-- Preserve Loop import history for habits with non-Latin names and retain record
-  notes (#706)
-- Refresh support cards and open previews when their channel changes, and keep
-  background support controls visually enabled while a dialog is open (#707)
-- Restore startup support reminders on Windows and Linux, and close the support
-  dialog before asking for sync confirmation (#708)
-- Preserve habit-page floating button transitions after switching interface
-  styles (#709)
-- Keep the macOS app category consistent with the category selected in Xcode
-  (#711)
-- Preserve the release version and build number in macOS app bundles for
-  App Store Connect uploads
+- Report corrupt Loop ZIP backups as import errors (#715)
+- Restore reliable first-frame rendering and window lifecycle handling on
+  Windows. Use the English app name in the title bar to avoid garbled text
+  (#715)
 
 ## 🌐 Localization
 
-- Update Arabic translation, thanks to Rostom HEO's contribution on Weblate
-  (#702)
-- Update Spanish translation, thanks to Jesus Calle's contribution on Weblate
-  (#710)
-- Update Welsh translation, thanks to Jon Stevenson's contribution on Weblate
-  (store metadata, #710, #713)
 - Update Esperanto translation, thanks to Jon Stevenson's contribution on Weblate
-  (store metadata, #710)
-- Prepare Welsh and Esperanto app locales, currently available only in debug
-  builds. Untranslated app text falls back to English (#711)
+  (#717)
 
 ## 🧹 Others
 
-- Move community planning and feedback links to GitHub Projects and Issue forms
-- Add links to related projects and refresh donor and translator credits
-- Refresh the Flutter version badge and document SDK upgrade rules
+- Upgrade to Flutter 3.47.9 and Dart 3.13.7, and migrate the adaptive interface
+  and animated lists to standalone packages (#715)
+- Adopt native Windows build flavors and align Linux and Flatpak packaging
+  with the generic distribution (#715)
+- Enable Windows ARM64 release builds alongside x64, report failed artifact
+  uploads, and fix precheck handling in manual builds (#716)
 
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.18+207...v1.27.20+209)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.27.20+209...pre-v1.27.21+210)

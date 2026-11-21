@@ -2,6 +2,12 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.27.21+210-pre
+
+- Feature: enable Esperanto in release builds (#717)
+- Fix: report corrupt Loop ZIP backups as import errors (#715)
+- Fix: show the app window reliably at startup (#715)
+
 ## 1.27.20+209
 
 - Feature: support cards, donation/store links and later/never reminders (#707)
