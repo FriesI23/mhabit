@@ -259,7 +259,7 @@ class L10nPt extends L10n {
   String get habitEdit_reminder_weekdayText_sunday => 'DOM';
 
   @override
-  String get habitEdit_desc_hintText => 'Memo, support Markdown';
+  String get habitEdit_desc_hintText => 'Memo (supports Markdown)';
 
   @override
   String get habitEdit_create_datetime_prefix => 'Criado: ';
@@ -749,7 +749,7 @@ class L10nPt extends L10n {
       locale: localeName,
       other: '',
       two: 'IMPECCABLE',
-      one: 'OVERFULFIL',
+      one: 'OVERFULFILLED',
     );
     return '$_temp0';
   }
@@ -1077,7 +1077,7 @@ class L10nPt extends L10n {
 
   @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
-      'Habits check area radio adjustment';
+      'Check-in area size';
 
   @override
   String get appSetting_collapsed_calendar_bararea_subtitleText =>
@@ -1191,7 +1191,7 @@ class L10nPt extends L10n {
 
   @override
   String appSetting_importDialog_completeTitleGroups(int count) {
-    return 'Completed import $count groups';
+    return 'Groups imported: $count';
   }
 
   @override
@@ -1416,7 +1416,7 @@ class L10nPt extends L10n {
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
     String _temp0 = intl.Intl.selectLogic(isEmpty, {
-      'true': 'No log founded',
+      'true': 'No logs found',
       'false': 'Tap to export',
       'other': 'loading...',
     });
@@ -1828,7 +1828,7 @@ class L10nPt extends L10n {
 
   @override
   String get batchCheckin_close_confirmDialog_body =>
-      'Check-in Status Changes won\'t be applied before saved';
+      'Unsaved check-in changes will be lost if you leave.';
 
   @override
   String get batchCheckin_close_confirmDialog_confirmButton_text => 'sair';
@@ -1842,7 +1842,7 @@ class L10nPt extends L10n {
 
   @override
   String get appReminder_dailyReminder_body =>
-      'click to enter app and punch in on time.';
+      'Tap to open the app and check in.';
 
   @override
   String get common_habitColorType_cc1 => 'Deep lilac';

@@ -352,7 +352,7 @@
             }
         }
     },
-    "habitDetail_summary_preBody": "{days, plural, =1{Starting tomorrow.} other{Start in {days} ngày.}}",
+    "habitDetail_summary_preBody": "{days, plural, =1{Bắt đầu vào ngày mai.} other{Bắt đầu sau {days} ngày.}}",
     "@habitDetail_summary_preBody": {
         "placeholders": {
             "days": {
@@ -370,7 +370,7 @@
             }
         }
     },
-    "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{OVERFULFIL} =2{IMPECCABLE} other{}}",
+    "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{VƯỢT MỤC TIÊU} =2{IMPECCABLE} other{}}",
     "@habitDetail_heatmap_rightHelpText": {
         "placeholders": {
             "habitType": {
@@ -716,7 +716,7 @@
     "appSync_webdav_oldServerConfirmDialog_subtitleText": "Thư mục không trống. Đồng bộ hóa sẽ hợp nhất máy chủ và thói quen cục bộ. Tiếp tục?",
     "appSync_webdav_oldServerConfirmDialog_confirmText": "Xác nhận hợp nhất",
     "appSync_exportAllLogsTile_titleText": "Xuất nhật ký đồng bộ hóa không thành công",
-    "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {No log founded} false {Tap to export} other {loading...}}",
+    "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {Không tìm thấy nhật ký} false {Tap to export} other {loading...}}",
     "@appSync_exportAllLogsTile_subtitleText": {
         "placeholders": {
             "isEmpty": {

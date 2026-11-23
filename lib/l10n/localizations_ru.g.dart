@@ -728,8 +728,10 @@ class L10nRu extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       days,
       locale: localeName,
-      other: 'Начиная через $days дней.',
-      one: 'Начиная с завтра.',
+      other: 'Начнётся через $days дней.',
+      many: 'Начнётся через $days дней.',
+      few: 'Начнётся через $days дня.',
+      one: 'Начнётся через $days день.',
     );
     return '$_temp0';
   }
@@ -1081,7 +1083,7 @@ class L10nRu extends L10n {
 
   @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
-      'Habits check area radio adjustment';
+      'Размер области отметок привычек';
 
   @override
   String get appSetting_collapsed_calendar_bararea_subtitleText =>
@@ -1196,7 +1198,7 @@ class L10nRu extends L10n {
 
   @override
   String appSetting_importDialog_completeTitleGroups(int count) {
-    return 'Completed import $count groups';
+    return 'Groups imported: $count';
   }
 
   @override
@@ -1807,7 +1809,7 @@ class L10nRu extends L10n {
 
   @override
   String get batchCheckin_save_confirmDialog_body =>
-      'Existing records will be overwritten After saving, previous records will be lost.';
+      'При сохранении отметки за выбранный день будут перезаписаны.';
 
   @override
   String get batchCheckin_save_confirmDialog_confirmButton_text => 'сохранить';
@@ -1842,7 +1844,7 @@ class L10nRu extends L10n {
 
   @override
   String get batchCheckin_close_confirmDialog_body =>
-      'Check-in Status Changes won\'t be applied before saved';
+      'При выходе несохранённые изменения отметок будут потеряны.';
 
   @override
   String get batchCheckin_close_confirmDialog_confirmButton_text => 'выход';

@@ -721,7 +721,7 @@
     "batchCheckin_close_confirmDialog_confirmButton_text": "Quitter",
     "batchCheckin_close_confirmDialog_cancelButton_text": "Annuler",
     "appReminder_dailyReminder_title": "🏝 Avez-vous gardé vos habitudes, aujourd’hui ?",
-    "appReminder_dailyReminder_body": "click to enter app and punch in on time.",
+    "appReminder_dailyReminder_body": "Touchez pour ouvrir l’application et valider vos habitudes.",
     "common_habitColorType_cc1": "Lilas profond",
     "common_habitColorType_cc2": "Rouge",
     "common_habitColorType_cc3": "Violet",

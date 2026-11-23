@@ -470,7 +470,12 @@ void main() {
 
     importer.completeHabits(success: 1, failed: 0);
     await tester.pumpAndSettle();
-    expect(find.text('Complete import 1 habits'), findsOneWidget);
+    final completion = find.byKey(const ValueKey('import-completion-summary'));
+    final l10n = L10n.of(tester.element(completion))!;
+    expect(
+      tester.widget<Text>(completion).data,
+      l10n.appSetting_importDialog_completeTitle(1),
+    );
 
     await tester.tap(find.byKey(const ValueKey('import-complete-button')));
     await tester.pumpAndSettle();
@@ -570,7 +575,12 @@ void main() {
     expect(importer.groupImportCalls, 1);
     expect(importer.habitImportCalls, 0);
     expect(importer.lastHabitsData, isEmpty);
-    expect(find.text('Completed import 1 groups'), findsOneWidget);
+    final completion = find.byKey(const ValueKey('import-completion-summary'));
+    final l10n = L10n.of(tester.element(completion))!;
+    expect(
+      tester.widget<Text>(completion).data,
+      l10n.appSetting_importDialog_completeTitleGroups(1),
+    );
   });
 }
 

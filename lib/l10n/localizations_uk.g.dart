@@ -740,8 +740,10 @@ class L10nUk extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       days,
       locale: localeName,
-      other: 'Початок через $days днів.',
-      one: 'Починаючи завтра.',
+      other: 'Почнеться через $days днів.',
+      many: 'Почнеться через $days днів.',
+      few: 'Почнеться через $days дні.',
+      one: 'Почнеться через $days день.',
     );
     return '$_temp0';
   }
@@ -1440,7 +1442,7 @@ class L10nUk extends L10n {
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
     String _temp0 = intl.Intl.selectLogic(isEmpty, {
-      'true': 'No log founded',
+      'true': 'Журналів не знайдено',
       'false': 'Tap to export',
       'other': 'loading...',
     });

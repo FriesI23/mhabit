@@ -755,7 +755,7 @@ class L10nIt extends L10n {
       locale: localeName,
       other: '',
       two: 'IMPECCABILE',
-      one: 'OVERFULFIL',
+      one: 'SUPERATO',
     );
     return '$_temp0';
   }
@@ -1197,7 +1197,7 @@ class L10nIt extends L10n {
 
   @override
   String appSetting_importDialog_completeTitleGroups(int count) {
-    return 'Completed import $count groups';
+    return 'Groups imported: $count';
   }
 
   @override
@@ -1423,7 +1423,7 @@ class L10nIt extends L10n {
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
     String _temp0 = intl.Intl.selectLogic(isEmpty, {
-      'true': 'No log founded',
+      'true': 'No logs found',
       'false': 'Tap to export',
       'other': 'loading...',
     });

@@ -316,7 +316,7 @@
             }
         }
     },
-    "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{OVERFULFIL} =2{IMPECCABILE} other{}}",
+    "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{SUPERATO} =2{IMPECCABILE} other{}}",
     "@habitDetail_heatmap_rightHelpText": {
         "placeholders": {
             "habitType": {

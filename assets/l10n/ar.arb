@@ -359,7 +359,7 @@
             }
         }
     },
-    "habitDetail_summary_preBody": "{days, plural, =1{Starting tomorrow.} other{Start in {days} أيام.}}",
+    "habitDetail_summary_preBody": "{days, plural, =1{يبدأ غدًا.} =2{يبدأ بعد يومين.} few{يبدأ بعد {days} أيام.} other{يبدأ بعد {days} يومًا.}}",
     "@habitDetail_summary_preBody": {
         "placeholders": {
             "days": {
@@ -377,7 +377,7 @@
             }
         }
     },
-    "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{OVERFULFIL} =2{IMPECCABLE} other{}}",
+    "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{تجاوز الهدف} =2{IMPECCABLE} other{}}",
     "@habitDetail_heatmap_rightHelpText": {
         "placeholders": {
             "habitType": {

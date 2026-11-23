@@ -729,8 +729,8 @@ class L10nVi extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       days,
       locale: localeName,
-      other: 'Start in $days ngày.',
-      one: 'Starting tomorrow.',
+      other: 'Bắt đầu sau $days ngày.',
+      one: 'Bắt đầu vào ngày mai.',
     );
     return '$_temp0';
   }
@@ -754,7 +754,7 @@ class L10nVi extends L10n {
       locale: localeName,
       other: '',
       two: 'IMPECCABLE',
-      one: 'OVERFULFIL',
+      one: 'VƯỢT MỤC TIÊU',
     );
     return '$_temp0';
   }
@@ -1193,7 +1193,7 @@ class L10nVi extends L10n {
 
   @override
   String appSetting_importDialog_completeTitleGroups(int count) {
-    return 'Completed import $count groups';
+    return 'Groups imported: $count';
   }
 
   @override
@@ -1423,7 +1423,7 @@ class L10nVi extends L10n {
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
     String _temp0 = intl.Intl.selectLogic(isEmpty, {
-      'true': 'No log founded',
+      'true': 'Không tìm thấy nhật ký',
       'false': 'Tap to export',
       'other': 'loading...',
     });

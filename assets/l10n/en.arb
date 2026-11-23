@@ -206,7 +206,7 @@
     "@habitEdit_reminderQuest_hintText": {},
     "habitEdit_reminder_dialogTitle": "Choose reminder type",
     "@habitEdit_reminder_dialogTitle": {},
-    "habitEdit_reminder_dialogType_whenNeeded": "When need to check in",
+    "habitEdit_reminder_dialogType_whenNeeded": "When a check-in is needed",
     "@habitEdit_reminder_dialogType_whenNeeded": {},
     "habitEdit_reminder_dialogType_daily": "Daily",
     "@habitEdit_reminder_dialogType_daily": {},
@@ -220,7 +220,7 @@
     "@habitEdit_reminder_dialogCancel": {},
     "habitEdit_reminder_cancelDialogTitle": "Confirm",
     "@habitEdit_reminder_cancelDialogTitle": {},
-    "habitEdit_reminder_cancelDialogSubtitle": "Do you confirm to remove this reminder",
+    "habitEdit_reminder_cancelDialogSubtitle": "Remove this reminder?",
     "@habitEdit_reminder_cancelDialogSubtitle": {},
     "habitEdit_reminder_cancelDialogConfirm": "confirm",
     "@habitEdit_reminder_cancelDialogConfirm": {},
@@ -232,7 +232,7 @@
     "@habitEdit_reminder_weekdayText_tuesday": {},
     "habitEdit_reminder_weekdayText_wednesday": "Wed",
     "@habitEdit_reminder_weekdayText_wednesday": {},
-    "habitEdit_reminder_weekdayText_thursday": "Tur",
+    "habitEdit_reminder_weekdayText_thursday": "Thu",
     "@habitEdit_reminder_weekdayText_thursday": {},
     "habitEdit_reminder_weekdayText_friday": "Fri",
     "@habitEdit_reminder_weekdayText_friday": {},
@@ -240,7 +240,7 @@
     "@habitEdit_reminder_weekdayText_saturday": {},
     "habitEdit_reminder_weekdayText_sunday": "Sun",
     "@habitEdit_reminder_weekdayText_sunday": {},
-    "habitEdit_desc_hintText": "Memo, support Markdown",
+    "habitEdit_desc_hintText": "Memo (supports Markdown)",
     "@habitEdit_desc_hintText": {},
     "habitEdit_create_datetime_prefix": "Created: ",
     "@habitEdit_create_datetime_prefix": {},
@@ -395,7 +395,7 @@
     "@habitDisplay_mainMenu_showArchivedTileText": {},
     "habitDisplay_mainMenu_showCompletedTileText": "Show Completed",
     "@habitDisplay_mainMenu_showCompletedTileText": {},
-    "habitDisplay_mainMenu_showActivedTileText": "Show Actived",
+    "habitDisplay_mainMenu_showActivedTileText": "Show Active",
     "@habitDisplay_mainMenu_showActivedTileText": {},
     "habitDisplay_mainMenu_settingTileText": "Settings",
     "@habitDisplay_mainMenu_settingTileText": {},
@@ -631,7 +631,7 @@
             }
         }
     },
-    "habitDetail_summary_preBody": "{days, plural, =1{Starting tomorrow.} other{Start in {days} days.}}",
+    "habitDetail_summary_preBody": "{days, plural, =1{Starting tomorrow.} other{Starts in {days} days.}}",
     "@habitDetail_summary_preBody": {
         "placeholders": {
             "days": {
@@ -649,7 +649,7 @@
             }
         }
     },
-    "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{OVERFULFIL} =2{IMPECCABLE} other{}}",
+    "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{OVERFULFILLED} =2{IMPECCABLE} other{}}",
     "@habitDetail_heatmap_rightHelpText": {
         "placeholders": {
             "habitType": {
@@ -906,7 +906,7 @@
     "@appSetting_appleCollapsedSidebarSwitcher_titleText": {},
     "appSetting_appleCollapsedSidebarSwitcher_subtitleText": "Show navigation destinations in the top bar while the Sidebar is hidden.",
     "@appSetting_appleCollapsedSidebarSwitcher_subtitleText": {},
-    "appSetting_collapsed_calendar_bararea_titleText": "Habits check area radio adjustment",
+    "appSetting_collapsed_calendar_bararea_titleText": "Check-in area size",
     "@appSetting_collapsed_calendar_bararea_titleText": {},
     "appSetting_collapsed_calendar_bararea_subtitleText": "Adjust percentage for more/less space in habits check table area.",
     "@appSetting_collapsed_calendar_bararea_subtitleText": {},
@@ -922,7 +922,7 @@
     "@appSetting_backupAndRestoreSubgroupText": {},
     "appSetting_export_titleText": "Export",
     "@appSetting_export_titleText": {},
-    "appSetting_export_subtitleText": "Exported habits as JSON format, This file can be import back.",
+    "appSetting_export_subtitleText": "Export habits to a JSON file you can import later.",
     "@appSetting_export_subtitleText": {},
     "appSetting_import_titleText": "Import",
     "@appSetting_import_titleText": {},
@@ -1003,7 +1003,7 @@
             }
         }
     },
-    "appSetting_importDialog_completeTitle": "Complete import {count} habits",
+    "appSetting_importDialog_completeTitle": "Habits imported: {count}",
     "@appSetting_importDialog_completeTitle": {
         "placeholders": {
             "count": {
@@ -1012,7 +1012,7 @@
             }
         }
     },
-    "appSetting_importDialog_completeTitleGroups": "Completed import {count} groups",
+    "appSetting_importDialog_completeTitleGroups": "Groups imported: {count}",
     "@appSetting_importDialog_completeTitleGroups": {
         "placeholders": {
             "count": {
@@ -1035,7 +1035,7 @@
     "@appSetting_resetConfigDialog_cancelText": {},
     "appSetting_resetConfigDialog_confirmText": "confirm",
     "@appSetting_resetConfigDialog_confirmText": {},
-    "appSetting_resetConfigSuccess_snackbarText": "reset app configs succeed",
+    "appSetting_resetConfigSuccess_snackbarText": "Settings reset",
     "@appSetting_resetConfigSuccess_snackbarText": {},
     "appSetting_otherSubgroupText": "Others",
     "@appSetting_otherSubgroupText": {},
@@ -1051,11 +1051,11 @@
     "@appSetting_clearCacheDialog_cancelText": {},
     "appSetting_clearCacheDialog_confirmText": "confirm",
     "@appSetting_clearCacheDialog_confirmText": {},
-    "appSetting_clearCache_snackBar_partSuccText": "Partial Cache cleared failed",
+    "appSetting_clearCache_snackBar_partSuccText": "Couldn’t fully clear the cache",
     "@appSetting_clearCache_snackBar_partSuccText": {},
     "appSetting_clearCache_snackBar_succText": "Cache cleared successfully",
     "@appSetting_clearCache_snackBar_succText": {},
-    "appSetting_clearCache_snackBar_failText": "Cache cleared failed",
+    "appSetting_clearCache_snackBar_failText": "Couldn’t clear the cache",
     "@appSetting_clearCache_snackBar_failText": {},
     "appSetting_debugger_titleText": "Debug Info",
     "@appSetting_debugger_titleText": {},
@@ -1207,7 +1207,7 @@
     "@appSync_webdav_oldServerConfirmDialog_confirmText": {},
     "appSync_exportAllLogsTile_titleText": "Export Failed Sync Logs",
     "@appSync_exportAllLogsTile_titleText": {},
-    "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {No log founded} false {Tap to export} other {loading...}}",
+    "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {No logs found} false {Tap to export} other {loading...}}",
     "@appSync_exportAllLogsTile_subtitleText": {
         "placeholders": {
             "isEmpty": {
@@ -1507,7 +1507,7 @@
     },
     "batchCheckin_save_confirmDialog_title": "Overwrite Existing Records",
     "@batchCheckin_save_confirmDialog_title": {},
-    "batchCheckin_save_confirmDialog_body": "Existing records will be overwritten After saving, previous records will be lost.",
+    "batchCheckin_save_confirmDialog_body": "Saving will overwrite existing check-ins for the selected day.",
     "@batchCheckin_save_confirmDialog_body": {},
     "batchCheckin_save_confirmDialog_confirmButton_text": "save",
     "@batchCheckin_save_confirmDialog_confirmButton_text": {},
@@ -1533,7 +1533,7 @@
     },
     "batchCheckin_close_confirmDialog_title": "Confirm Return",
     "@batchCheckin_close_confirmDialog_title": {},
-    "batchCheckin_close_confirmDialog_body": "Check-in Status Changes won't be applied before saved",
+    "batchCheckin_close_confirmDialog_body": "Unsaved check-in changes will be lost if you leave.",
     "@batchCheckin_close_confirmDialog_body": {},
     "batchCheckin_close_confirmDialog_confirmButton_text": "exit",
     "@batchCheckin_close_confirmDialog_confirmButton_text": {},
@@ -1541,7 +1541,7 @@
     "@batchCheckin_close_confirmDialog_cancelButton_text": {},
     "appReminder_dailyReminder_title": "🏝 Did you stick to your habits today?",
     "@appReminder_dailyReminder_title": {},
-    "appReminder_dailyReminder_body": "click to enter app and punch in on time.",
+    "appReminder_dailyReminder_body": "Tap to open the app and check in.",
     "@appReminder_dailyReminder_body": {},
     "common_habitColorType_cc1": "Deep lilac",
     "@common_habitColorType_cc1": {},

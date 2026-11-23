@@ -578,7 +578,7 @@
     "appSetting_resetConfigDialog_subtitleText": "Az összes beállítás alapértelmezettre állítása, az alkalmazást újra kell indítani az érvényesítéshez.",
     "appSetting_resetConfigDialog_cancelText": "mégse",
     "appSetting_resetConfigDialog_confirmText": "megerősítés",
-    "appSetting_resetConfigSuccess_snackbarText": "reset app configs succeed",
+    "appSetting_resetConfigSuccess_snackbarText": "A beállítások visszaállítva",
     "appSetting_otherSubgroupText": "Egyéb",
     "appSetting_developMode_titleText": "Fejlesztői mód",
     "appSetting_clearCache_titleText": "Gyorsítótár törlése",
