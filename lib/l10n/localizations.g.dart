@@ -419,7 +419,7 @@ abstract class L10n {
   /// No description provided for @habitEdit_reminder_dialogType_whenNeeded.
   ///
   /// In en, this message translates to:
-  /// **'When need to check in'**
+  /// **'When a check-in is needed'**
   String get habitEdit_reminder_dialogType_whenNeeded;
 
   /// No description provided for @habitEdit_reminder_dialogType_daily.
@@ -461,7 +461,7 @@ abstract class L10n {
   /// No description provided for @habitEdit_reminder_cancelDialogSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Do you confirm to remove this reminder'**
+  /// **'Remove this reminder?'**
   String get habitEdit_reminder_cancelDialogSubtitle;
 
   /// No description provided for @habitEdit_reminder_cancelDialogConfirm.
@@ -497,7 +497,7 @@ abstract class L10n {
   /// No description provided for @habitEdit_reminder_weekdayText_thursday.
   ///
   /// In en, this message translates to:
-  /// **'Tur'**
+  /// **'Thu'**
   String get habitEdit_reminder_weekdayText_thursday;
 
   /// No description provided for @habitEdit_reminder_weekdayText_friday.
@@ -521,7 +521,7 @@ abstract class L10n {
   /// No description provided for @habitEdit_desc_hintText.
   ///
   /// In en, this message translates to:
-  /// **'Memo, support Markdown'**
+  /// **'Memo (supports Markdown)'**
   String get habitEdit_desc_hintText;
 
   /// No description provided for @habitEdit_create_datetime_prefix.
@@ -809,7 +809,7 @@ abstract class L10n {
   /// No description provided for @habitDisplay_mainMenu_showActivedTileText.
   ///
   /// In en, this message translates to:
-  /// **'Show Actived'**
+  /// **'Show Active'**
   String get habitDisplay_mainMenu_showActivedTileText;
 
   /// No description provided for @habitDisplay_mainMenu_settingTileText.
@@ -1235,7 +1235,7 @@ abstract class L10n {
   /// No description provided for @habitDetail_summary_preBody.
   ///
   /// In en, this message translates to:
-  /// **'{days, plural, =1{Starting tomorrow.} other{Start in {days} days.}}'**
+  /// **'{days, plural, =1{Starting tomorrow.} other{Starts in {days} days.}}'**
   String habitDetail_summary_preBody(int days);
 
   /// No description provided for @habitDetail_heatmap_leftHelpText.
@@ -1247,7 +1247,7 @@ abstract class L10n {
   /// No description provided for @habitDetail_heatmap_rightHelpText.
   ///
   /// In en, this message translates to:
-  /// **'{habitType, plural, =1{OVERFULFIL} =2{IMPECCABLE} other{}}'**
+  /// **'{habitType, plural, =1{OVERFULFILLED} =2{IMPECCABLE} other{}}'**
   String habitDetail_heatmap_rightHelpText(int habitType);
 
   /// No description provided for @habitDetail_descDailyGoal_titleText.
@@ -1777,7 +1777,7 @@ abstract class L10n {
   /// No description provided for @appSetting_collapsed_calendar_bararea_titleText.
   ///
   /// In en, this message translates to:
-  /// **'Habits check area radio adjustment'**
+  /// **'Check-in area size'**
   String get appSetting_collapsed_calendar_bararea_titleText;
 
   /// No description provided for @appSetting_collapsed_calendar_bararea_subtitleText.
@@ -1819,7 +1819,7 @@ abstract class L10n {
   /// No description provided for @appSetting_export_subtitleText.
   ///
   /// In en, this message translates to:
-  /// **'Exported habits as JSON format, This file can be import back.'**
+  /// **'Export habits to a JSON file you can import later.'**
   String get appSetting_export_subtitleText;
 
   /// No description provided for @appSetting_import_titleText.
@@ -1948,13 +1948,13 @@ abstract class L10n {
   /// No description provided for @appSetting_importDialog_completeTitle.
   ///
   /// In en, this message translates to:
-  /// **'Complete import {count} habits'**
+  /// **'Habits imported: {count}'**
   String appSetting_importDialog_completeTitle(int count);
 
   /// No description provided for @appSetting_importDialog_completeTitleGroups.
   ///
   /// In en, this message translates to:
-  /// **'Completed import {count} groups'**
+  /// **'Groups imported: {count}'**
   String appSetting_importDialog_completeTitleGroups(int count);
 
   /// No description provided for @appSetting_importDialog_complete_closeLabel.
@@ -2002,7 +2002,7 @@ abstract class L10n {
   /// No description provided for @appSetting_resetConfigSuccess_snackbarText.
   ///
   /// In en, this message translates to:
-  /// **'reset app configs succeed'**
+  /// **'Settings reset'**
   String get appSetting_resetConfigSuccess_snackbarText;
 
   /// No description provided for @appSetting_otherSubgroupText.
@@ -2050,7 +2050,7 @@ abstract class L10n {
   /// No description provided for @appSetting_clearCache_snackBar_partSuccText.
   ///
   /// In en, this message translates to:
-  /// **'Partial Cache cleared failed'**
+  /// **'Couldn’t fully clear the cache'**
   String get appSetting_clearCache_snackBar_partSuccText;
 
   /// No description provided for @appSetting_clearCache_snackBar_succText.
@@ -2062,7 +2062,7 @@ abstract class L10n {
   /// No description provided for @appSetting_clearCache_snackBar_failText.
   ///
   /// In en, this message translates to:
-  /// **'Cache cleared failed'**
+  /// **'Couldn’t clear the cache'**
   String get appSetting_clearCache_snackBar_failText;
 
   /// No description provided for @appSetting_debugger_titleText.
@@ -2266,7 +2266,7 @@ abstract class L10n {
   /// No description provided for @appSync_exportAllLogsTile_subtitleText.
   ///
   /// In en, this message translates to:
-  /// **'{isEmpty, select, true {No log founded} false {Tap to export} other {loading...}}'**
+  /// **'{isEmpty, select, true {No logs found} false {Tap to export} other {loading...}}'**
   String appSync_exportAllLogsTile_subtitleText(String isEmpty);
 
   /// No description provided for @appSync_syncServerType_text.
@@ -2779,7 +2779,7 @@ abstract class L10n {
   /// No description provided for @batchCheckin_save_confirmDialog_body.
   ///
   /// In en, this message translates to:
-  /// **'Existing records will be overwritten After saving, previous records will be lost.'**
+  /// **'Saving will overwrite existing check-ins for the selected day.'**
   String get batchCheckin_save_confirmDialog_body;
 
   /// No description provided for @batchCheckin_save_confirmDialog_confirmButton_text.
@@ -2815,7 +2815,7 @@ abstract class L10n {
   /// No description provided for @batchCheckin_close_confirmDialog_body.
   ///
   /// In en, this message translates to:
-  /// **'Check-in Status Changes won\'t be applied before saved'**
+  /// **'Unsaved check-in changes will be lost if you leave.'**
   String get batchCheckin_close_confirmDialog_body;
 
   /// No description provided for @batchCheckin_close_confirmDialog_confirmButton_text.
@@ -2839,7 +2839,7 @@ abstract class L10n {
   /// No description provided for @appReminder_dailyReminder_body.
   ///
   /// In en, this message translates to:
-  /// **'click to enter app and punch in on time.'**
+  /// **'Tap to open the app and check in.'**
   String get appReminder_dailyReminder_body;
 
   /// No description provided for @common_habitColorType_cc1.

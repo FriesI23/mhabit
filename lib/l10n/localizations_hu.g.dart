@@ -1196,7 +1196,7 @@ class L10nHu extends L10n {
 
   @override
   String appSetting_importDialog_completeTitleGroups(int count) {
-    return 'Completed import $count groups';
+    return 'Groups imported: $count';
   }
 
   @override
@@ -1225,7 +1225,7 @@ class L10nHu extends L10n {
 
   @override
   String get appSetting_resetConfigSuccess_snackbarText =>
-      'reset app configs succeed';
+      'A beállítások visszaállítva';
 
   @override
   String get appSetting_otherSubgroupText => 'Egyéb';

@@ -719,8 +719,10 @@ class L10nAr extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       days,
       locale: localeName,
-      other: 'Start in $days أيام.',
-      one: 'Starting tomorrow.',
+      other: 'يبدأ بعد $days يومًا.',
+      few: 'يبدأ بعد $days أيام.',
+      two: 'يبدأ بعد يومين.',
+      one: 'يبدأ غدًا.',
     );
     return '$_temp0';
   }
@@ -744,7 +746,7 @@ class L10nAr extends L10n {
       locale: localeName,
       other: '',
       two: 'IMPECCABLE',
-      one: 'OVERFULFIL',
+      one: 'تجاوز الهدف',
     );
     return '$_temp0';
   }
@@ -1182,7 +1184,7 @@ class L10nAr extends L10n {
 
   @override
   String appSetting_importDialog_completeTitleGroups(int count) {
-    return 'Completed import $count groups';
+    return 'Groups imported: $count';
   }
 
   @override

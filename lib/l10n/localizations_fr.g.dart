@@ -1202,7 +1202,7 @@ class L10nFr extends L10n {
 
   @override
   String appSetting_importDialog_completeTitleGroups(int count) {
-    return 'Completed import $count groups';
+    return 'Groups imported: $count';
   }
 
   @override
@@ -1434,7 +1434,7 @@ class L10nFr extends L10n {
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
     String _temp0 = intl.Intl.selectLogic(isEmpty, {
-      'true': 'No log founded',
+      'true': 'No logs found',
       'false': 'Tap to export',
       'other': 'loading...',
     });
@@ -1862,7 +1862,7 @@ class L10nFr extends L10n {
 
   @override
   String get appReminder_dailyReminder_body =>
-      'click to enter app and punch in on time.';
+      'Touchez pour ouvrir l’application et valider vos habitudes.';
 
   @override
   String get common_habitColorType_cc1 => 'Lilas profond';

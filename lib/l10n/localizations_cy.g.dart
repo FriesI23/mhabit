@@ -206,7 +206,7 @@ class L10nCy extends L10n {
 
   @override
   String get habitEdit_reminder_dialogType_whenNeeded =>
-      'When need to check in';
+      'When a check-in is needed';
 
   @override
   String get habitEdit_reminder_dialogType_daily => 'Daily';
@@ -227,8 +227,7 @@ class L10nCy extends L10n {
   String get habitEdit_reminder_cancelDialogTitle => 'Confirm';
 
   @override
-  String get habitEdit_reminder_cancelDialogSubtitle =>
-      'Do you confirm to remove this reminder';
+  String get habitEdit_reminder_cancelDialogSubtitle => 'Remove this reminder?';
 
   @override
   String get habitEdit_reminder_cancelDialogConfirm => 'confirm';
@@ -246,7 +245,7 @@ class L10nCy extends L10n {
   String get habitEdit_reminder_weekdayText_wednesday => 'Wed';
 
   @override
-  String get habitEdit_reminder_weekdayText_thursday => 'Tur';
+  String get habitEdit_reminder_weekdayText_thursday => 'Thu';
 
   @override
   String get habitEdit_reminder_weekdayText_friday => 'Fri';
@@ -258,7 +257,7 @@ class L10nCy extends L10n {
   String get habitEdit_reminder_weekdayText_sunday => 'Sun';
 
   @override
-  String get habitEdit_desc_hintText => 'Memo, support Markdown';
+  String get habitEdit_desc_hintText => 'Memo (supports Markdown)';
 
   @override
   String get habitEdit_create_datetime_prefix => 'Created: ';
@@ -428,7 +427,7 @@ class L10nCy extends L10n {
   String get habitDisplay_mainMenu_showCompletedTileText => 'Show Completed';
 
   @override
-  String get habitDisplay_mainMenu_showActivedTileText => 'Show Actived';
+  String get habitDisplay_mainMenu_showActivedTileText => 'Show Active';
 
   @override
   String get habitDisplay_mainMenu_settingTileText => 'Settings';
@@ -721,7 +720,7 @@ class L10nCy extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       days,
       locale: localeName,
-      other: 'Start in $days days.',
+      other: 'Starts in $days days.',
       one: 'Starting tomorrow.',
     );
     return '$_temp0';
@@ -746,7 +745,7 @@ class L10nCy extends L10n {
       locale: localeName,
       other: '',
       two: 'IMPECCABLE',
-      one: 'OVERFULFIL',
+      one: 'OVERFULFILLED',
     );
     return '$_temp0';
   }
@@ -1071,7 +1070,7 @@ class L10nCy extends L10n {
 
   @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
-      'Habits check area radio adjustment';
+      'Check-in area size';
 
   @override
   String get appSetting_collapsed_calendar_bararea_subtitleText =>
@@ -1094,7 +1093,7 @@ class L10nCy extends L10n {
 
   @override
   String get appSetting_export_subtitleText =>
-      'Exported habits as JSON format, This file can be import back.';
+      'Export habits to a JSON file you can import later.';
 
   @override
   String get appSetting_import_titleText => 'Import';
@@ -1179,12 +1178,12 @@ class L10nCy extends L10n {
 
   @override
   String appSetting_importDialog_completeTitle(int count) {
-    return 'Complete import $count habits';
+    return 'Habits imported: $count';
   }
 
   @override
   String appSetting_importDialog_completeTitleGroups(int count) {
-    return 'Completed import $count groups';
+    return 'Groups imported: $count';
   }
 
   @override
@@ -1211,8 +1210,7 @@ class L10nCy extends L10n {
   String get appSetting_resetConfigDialog_confirmText => 'confirm';
 
   @override
-  String get appSetting_resetConfigSuccess_snackbarText =>
-      'reset app configs succeed';
+  String get appSetting_resetConfigSuccess_snackbarText => 'Settings reset';
 
   @override
   String get appSetting_otherSubgroupText => 'Others';
@@ -1238,14 +1236,15 @@ class L10nCy extends L10n {
 
   @override
   String get appSetting_clearCache_snackBar_partSuccText =>
-      'Partial Cache cleared failed';
+      'Couldn’t fully clear the cache';
 
   @override
   String get appSetting_clearCache_snackBar_succText =>
       'Cache cleared successfully';
 
   @override
-  String get appSetting_clearCache_snackBar_failText => 'Cache cleared failed';
+  String get appSetting_clearCache_snackBar_failText =>
+      'Couldn’t clear the cache';
 
   @override
   String get appSetting_debugger_titleText => 'Debug Info';
@@ -1408,7 +1407,7 @@ class L10nCy extends L10n {
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
     String _temp0 = intl.Intl.selectLogic(isEmpty, {
-      'true': 'No log founded',
+      'true': 'No logs found',
       'false': 'Tap to export',
       'other': 'loading...',
     });
@@ -1785,7 +1784,7 @@ class L10nCy extends L10n {
 
   @override
   String get batchCheckin_save_confirmDialog_body =>
-      'Existing records will be overwritten After saving, previous records will be lost.';
+      'Saving will overwrite existing check-ins for the selected day.';
 
   @override
   String get batchCheckin_save_confirmDialog_confirmButton_text => 'save';
@@ -1820,7 +1819,7 @@ class L10nCy extends L10n {
 
   @override
   String get batchCheckin_close_confirmDialog_body =>
-      'Check-in Status Changes won\'t be applied before saved';
+      'Unsaved check-in changes will be lost if you leave.';
 
   @override
   String get batchCheckin_close_confirmDialog_confirmButton_text => 'exit';
@@ -1834,7 +1833,7 @@ class L10nCy extends L10n {
 
   @override
   String get appReminder_dailyReminder_body =>
-      'click to enter app and punch in on time.';
+      'Tap to open the app and check in.';
 
   @override
   String get common_habitColorType_cc1 => 'Deep lilac';

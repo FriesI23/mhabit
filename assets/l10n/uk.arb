@@ -415,7 +415,7 @@
             }
         }
     },
-    "habitDetail_summary_preBody": "{days, plural, =1{Починаючи завтра.} other{Початок через {days} днів.}}",
+    "habitDetail_summary_preBody": "{days, plural, one{Почнеться через {days} день.} few{Почнеться через {days} дні.} many{Почнеться через {days} днів.} other{Почнеться через {days} днів.}}",
     "@habitDetail_summary_preBody": {
         "placeholders": {
             "days": {
@@ -834,7 +834,7 @@
     "appSync_webdav_oldServerConfirmDialog_subtitleText": "Каталог не порожній. Синхронізація об’єднає серверні та локальні звички. Продовжити?",
     "appSync_webdav_oldServerConfirmDialog_confirmText": "Підтвердити об’єднання",
     "appSync_exportAllLogsTile_titleText": "Експорт журналів невдалої синхронізації",
-    "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {No log founded} false {Tap to export} other {loading...}}",
+    "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {Журналів не знайдено} false {Tap to export} other {loading...}}",
     "@appSync_exportAllLogsTile_subtitleText": {
         "placeholders": {
             "isEmpty": {

@@ -301,7 +301,7 @@
             }
         }
     },
-    "habitDetail_summary_preBody": "{days, plural, =1{Начиная с завтра.} other{Начиная через {days} дней.}}",
+    "habitDetail_summary_preBody": "{days, plural, one{Начнётся через {days} день.} few{Начнётся через {days} дня.} many{Начнётся через {days} дней.} other{Начнётся через {days} дней.}}",
     "@habitDetail_summary_preBody": {
         "placeholders": {
             "days": {
@@ -469,7 +469,7 @@
     "appSetting_dateDisplayFormat_subTitleText": "Настроенный формат даты будет применен к отображению даты на странице «Подробности привычки».",
     "appSetting_compactUISwitcher_titleText": "Включить компактный интерфейс на странице привычек",
     "appSetting_compactUISwitcher_subtitleText": "Позволяет показывать больше контента в таблице привычек, но некоторые элементы интерфейса и текст могут оказаться меньше.",
-    "appSetting_collapsed_calendar_bararea_titleText": "Habits check area radio adjustment",
+    "appSetting_collapsed_calendar_bararea_titleText": "Размер области отметок привычек",
     "appSetting_collapsed_calendar_bararea_subtitleText": "Adjust percentage for more/less space in habits check table area.",
     "appSetting_collapsed_calendar_bararea_defaultText": "По умолчанию",
     "appSetting_reminderSubgroupText": "Напоминание и уведомление",
@@ -890,11 +890,11 @@
         }
     },
     "batchCheckin_save_confirmDialog_title": "Overwrite Existing Records",
-    "batchCheckin_save_confirmDialog_body": "Existing records will be overwritten After saving, previous records will be lost.",
+    "batchCheckin_save_confirmDialog_body": "При сохранении отметки за выбранный день будут перезаписаны.",
     "batchCheckin_save_confirmDialog_confirmButton_text": "сохранить",
     "batchCheckin_save_confirmDialog_cancelButton_text": "отмена",
     "batchCheckin_close_confirmDialog_title": "Confirm Return",
-    "batchCheckin_close_confirmDialog_body": "Check-in Status Changes won't be applied before saved",
+    "batchCheckin_close_confirmDialog_body": "При выходе несохранённые изменения отметок будут потеряны.",
     "batchCheckin_close_confirmDialog_confirmButton_text": "выход",
     "batchCheckin_close_confirmDialog_cancelButton_text": "отмена",
     "appReminder_dailyReminder_title": "🏝 Вы сегодня придерживались своих привычек?",
