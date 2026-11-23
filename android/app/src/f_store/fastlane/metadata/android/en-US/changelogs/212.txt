@@ -1,0 +1,2 @@
+- Fix: correct English UI text and the habit start countdown in Russian and
+  Ukrainian (#720)

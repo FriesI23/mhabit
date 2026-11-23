@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.27.23+212-pre
+
+- Fix: correct English UI text and the habit start countdown in Russian and
+  Ukrainian (#720)
+
 ## 1.27.22+211-pre
 
 - Feature: enable Esperanto in release builds (#717)
