@@ -1,0 +1,59 @@
+name: Dispatch Release Updates
+
+on:
+  release:
+    types: [published]
+
+permissions: {}
+
+jobs:
+  dispatch:
+    name: Dispatch ${{ matrix.channel }}
+    if: github.repository == 'FriesI23/mhabit'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - channel: Homebrew
+            repo: homebrew-brew-repo
+            workflow: update-table-habit.yml
+            stable_only: false
+          - channel: Scoop
+            repo: scoop-bucket
+            workflow: excavator.yml
+            stable_only: false
+          - channel: AltStore / SideStore
+            repo: altstore-repo
+            workflow: update.yml
+            stable_only: true
+          - channel: Flathub
+            repo: flathub-io.github.friesi23.mhabit
+            workflow: bump-version.yml
+            stable_only: true
+    steps:
+      - name: Create dispatch token
+        id: token
+        if: ${{ !matrix.stable_only || !github.event.release.prerelease }}
+        uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3
+        with:
+          client-id: ${{ vars.RELEASE_DISPATCH_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_DISPATCH_APP_PRIVATE_KEY }}
+          owner: FriesI23
+          repositories: ${{ matrix.repo }}
+          permission-actions: write
+
+      - name: Dispatch update workflow
+        if: steps.token.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          TARGET_REPO: ${{ matrix.repo }}
+          TARGET_WORKFLOW: ${{ matrix.workflow }}
+        shell: bash
+        run: |
+          target_repo="FriesI23/$TARGET_REPO"
+          run_url=$(gh workflow run "$TARGET_WORKFLOW" --repo "$target_repo" --ref master)
+          workflow_url="https://github.com/$target_repo/actions/workflows/$TARGET_WORKFLOW"
+          printf 'Triggered %s for release %s.\n\n[Open downstream Actions](%s)\n' \
+            "$target_repo" "$RELEASE_TAG" "${run_url:-$workflow_url}" >> "$GITHUB_STEP_SUMMARY"
