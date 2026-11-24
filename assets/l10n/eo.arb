@@ -183,7 +183,7 @@
     "habitEdit_reminder_dialogConfirm": "konfirmi",
     "habitEdit_reminder_dialogCancel": "nuligi",
     "habitEdit_reminder_cancelDialogTitle": "Konfirmi",
-    "habitEdit_reminder_cancelDialogSubtitle": "Ĉu vi konfirmas la forigon de ĉi tiu memorigo?",
+    "habitEdit_reminder_cancelDialogSubtitle": "Ĉu forigi ĉi tiun memorigon?",
     "habitEdit_reminder_cancelDialogConfirm": "konfirmi",
     "habitEdit_reminder_cancelDialogCancel": "nuligi",
     "habitEdit_reminder_weekdayText_monday": "Lun",
@@ -690,7 +690,7 @@
     "appSetting_compactUISwitcher_subtitleText": "Permesas al la registra tabelo de kutimoj montri pli da enhavo, sed iuj interfacaj elementoj kaj teksto povas aperi pli malgrandaj.",
     "appSetting_appleCollapsedSidebarSwitcher_titleText": "Montri horizontalan flankbreton",
     "appSetting_appleCollapsedSidebarSwitcher_subtitleText": "Montri navigaciajn cellokojn en la supra breto dum la flankbreto estas kaŝita.",
-    "appSetting_collapsed_calendar_bararea_titleText": "Proporcio de la registra tabelo",
+    "appSetting_collapsed_calendar_bararea_titleText": "Grando de la registra areo?",
     "appSetting_collapsed_calendar_bararea_subtitleText": "Alĝustigi la grandon de la registra tabelo.",
     "appSetting_collapsed_calendar_bararea_defaultText": "Defaŭlte",
     "appSetting_reminderSubgroupText": "Memorigo kaj sciigo",
@@ -765,7 +765,7 @@
             }
         }
     },
-    "appSetting_importDialog_completeTitle": "Finis importi {count} kutimojn",
+    "appSetting_importDialog_completeTitle": "Importitaj kutimoj: {count}",
     "@appSetting_importDialog_completeTitle": {
         "placeholders": {
             "count": {
@@ -774,7 +774,7 @@
             }
         }
     },
-    "appSetting_importDialog_completeTitleGroups": "Finis importi {count} grupojn",
+    "appSetting_importDialog_completeTitleGroups": "Importitaj grupoj: {count}",
     "@appSetting_importDialog_completeTitleGroups": {
         "placeholders": {
             "count": {

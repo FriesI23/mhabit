@@ -230,7 +230,7 @@ class L10nEo extends L10n {
 
   @override
   String get habitEdit_reminder_cancelDialogSubtitle =>
-      'Ĉu vi konfirmas la forigon de ĉi tiu memorigo?';
+      'Ĉu forigi ĉi tiun memorigon?';
 
   @override
   String get habitEdit_reminder_cancelDialogConfirm => 'konfirmi';
@@ -1080,7 +1080,7 @@ class L10nEo extends L10n {
 
   @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
-      'Proporcio de la registra tabelo';
+      'Grando de la registra areo?';
 
   @override
   String get appSetting_collapsed_calendar_bararea_subtitleText =>
@@ -1193,12 +1193,12 @@ class L10nEo extends L10n {
 
   @override
   String appSetting_importDialog_completeTitle(int count) {
-    return 'Finis importi $count kutimojn';
+    return 'Importitaj kutimoj: $count';
   }
 
   @override
   String appSetting_importDialog_completeTitleGroups(int count) {
-    return 'Finis importi $count grupojn';
+    return 'Importitaj grupoj: $count';
   }
 
   @override
