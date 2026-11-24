@@ -13,134 +13,135 @@ class L10nCy extends L10n {
   String get localeScriptName => 'Cymraeg';
 
   @override
-  String get appName => '🚧(cy) - Table Habit';
+  String get appName => 'Table Habit';
 
   @override
   String get common_listSeparator => ', ';
 
   @override
-  String get habitEdit_saveButton_text => 'Save';
+  String get habitEdit_saveButton_text => 'Cadw';
 
   @override
-  String get habitEdit_habitName_hintText => 'Habit Name ...';
+  String get habitEdit_habitName_hintText => 'Enw\'r arfer...';
 
   @override
-  String get habitEdit_colorPicker_title => 'Pick color';
+  String get habitEdit_colorPicker_title => 'Dewis lliw';
 
   @override
-  String get habitEdit_colorPicker_historySectionLabel => 'Recently used';
+  String get habitEdit_colorPicker_historySectionLabel =>
+      'Defnyddiwyd yn ddiweddar';
 
   @override
   String habitEdit_colorPicker_customSectionLabel(String tinted) {
     String _temp0 = intl.Intl.selectLogic(tinted, {
-      'true': 'Custom (Tinted)',
-      'false': 'Custom',
-      'other': 'Custom',
+      'true': 'Personol (arlliwiedig)',
+      'false': 'Personol',
+      'other': 'Personol',
     });
     return '$_temp0';
   }
 
   @override
-  String get habitEdit_colorPicker_cancel => 'Cancel';
+  String get habitEdit_colorPicker_cancel => 'Canslo';
 
   @override
-  String get habitEdit_colorPicker_tintToggleLabel => 'Tint to theme';
+  String get habitEdit_colorPicker_tintToggleLabel => 'Arlliwio yn ôl y thema';
 
   @override
-  String get habitEdit_colorPicker_tintedLabel => 'Tinted';
+  String get habitEdit_colorPicker_tintedLabel => 'Arlliwiedig';
 
   @override
-  String get habitEdit_colorPicker_untintedLabel => 'Not tinted';
+  String get habitEdit_colorPicker_untintedLabel => 'Heb ei arlliwio';
 
   @override
   String get habitEdit_colorPicker_tintToggleOnHint =>
-      'Tinting may shift the final color away from the one you picked.';
+      'Gall arlliwio symud y lliw terfynol i ffwrdd o\'r un a ddewisoch.';
 
   @override
   String get habitEdit_colorPicker_tintToggleOffHint =>
-      'Some colors may reduce text readability in light or dark theme.';
+      'Gall rhai lliwiau leihau darllenadwyedd testun mewn thema ysgafn neu dywyll.';
 
   @override
-  String get habitEdit_habitTypeDialog_title => 'Habit type';
+  String get habitEdit_habitTypeDialog_title => 'Math o arfer';
 
   @override
-  String get habitEdit_habitType_positiveText => 'Positive';
+  String get habitEdit_habitType_positiveText => 'Cadarnhaol';
 
   @override
-  String get habitEdit_habitType_negativeText => 'Negative';
+  String get habitEdit_habitType_negativeText => 'Negyddol';
 
   @override
   String habitEdit_habitDailyGoal_hintText(num number) {
-    return 'Daily goal, default $number';
+    return 'Nod dyddiol, $number rhagosodedig';
   }
 
   @override
   String habitEdit_habitDailyGoal_negativeHintText(num number) {
-    return 'Minimum daily threshold, default $number';
+    return 'Trothwy dyddiol lleiaf, $number rhagosodedig';
   }
 
   @override
   String habitEdit_habitDailyGoal_errorText01(num number) {
-    return 'daily goal must > $number';
+    return 'rhaid i nod dyddiol fod > $number';
   }
 
   @override
   String habitEdit_habitDailyGoal_errorText02(num number) {
-    return 'daily goal must ≤ $number';
+    return 'rhaid i nod dyddiol fod ≤ $number';
   }
 
   @override
   String habitEdit_habitDailyGoal_negativeErrorText01(num number) {
-    return 'daily goal must ≥ $number';
+    return 'rhaid i nod dyddiol fod ≥ $number';
   }
 
   @override
   String habitEdit_habitDailyGoal_negativeErrorText02(num number) {
-    return 'daily goal must ≤ $number';
+    return 'rhaid i nod dyddiol fod ≤ $number';
   }
 
   @override
-  String get habitEdit_habitDailyGoalUnit_hintText => 'Daily goal unit';
+  String get habitEdit_habitDailyGoalUnit_hintText => 'Uned y nod dyddiol';
 
   @override
   String get habitEdit_habitDailyGoalExtra_hintText =>
-      'Desired maximum daily goal';
+      'Uchafswm y nod dyddiol a ddymunir';
 
   @override
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal) {
-    return 'invalid value, must be empty or ≥ $dailyGoal';
+    return 'gwerth annilys, rhaid iddo fod yn wag neu ≥ $dailyGoal';
   }
 
   @override
   String get habitEdit_habitDailyGoalExtra_negativeHintText =>
-      'Maximum daily limit';
+      'Uchafswm terfyn dyddiol';
 
   @override
-  String get habitEdit_frequencySelector_title => 'Select frequency';
+  String get habitEdit_frequencySelector_title => 'Dewis amlder';
 
   @override
-  String get habitEdit_habitFreq_daily => 'Daily';
+  String get habitEdit_habitFreq_daily => 'Dyddiol';
 
   @override
-  String get habitEdit_habitFreq_perweek_text => '%%time%% times per week';
+  String get habitEdit_habitFreq_perweek_text => '%%time%% gwaith yr wythnos';
 
   @override
-  String get habitEdit_habitFreq_permonth_text => '%%time%% times per month';
+  String get habitEdit_habitFreq_permonth_text => '%%time%% gwaith y mis';
 
   @override
   String get habitEdit_habitFreq_predayfreq_text =>
-      '%%time%% times in %%day%% days';
+      '%%time%% gwaith mewn %%day%% diwrnod';
 
   @override
-  String get habitEdit_habitFreq_show_daily => 'Daily';
+  String get habitEdit_habitFreq_show_daily => 'Dyddiol';
 
   @override
   String habitEdit_habitFreq_show_perweek(int freq) {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: 'At least $freq times per week',
-      one: 'Per week',
+      other: 'O leiaf $freq gwaith yr wythnos',
+      one: 'Yr wythnos',
     );
     return '$_temp0';
   }
@@ -150,8 +151,8 @@ class L10nCy extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: 'At least $freq times per month',
-      one: 'Per month',
+      other: 'O leiaf $freq gwaith y mis',
+      one: 'Y mis',
     );
     return '$_temp0';
   }
@@ -161,173 +162,177 @@ class L10nCy extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: 'At least $freq times in every $days days',
-      one: 'In every $days days',
+      other: 'O leiaf $freq gwaith ym mhob $days diwrnod',
+      one: 'Ym mhob $days diwrnod',
     );
     return '$_temp0';
   }
 
   @override
   String habitEdit_targetDays_title(int targetDays) {
-    return '$targetDays days';
+    return '$targetDays diwrnod';
   }
 
   @override
-  String get habitEdit_targetDays_dialogTitle => 'Select Target Days';
+  String get habitEdit_targetDays_dialogTitle => 'Dewis diwrnodau targed';
 
   @override
-  String get habitEdit_targetDays => 'days';
+  String get habitEdit_targetDays => 'diwrnod';
 
   @override
-  String get habitEdit_reminder_hintText => 'Reminder';
+  String get habitEdit_reminder_hintText => 'Nodyn atgoffa';
 
   @override
-  String get habitEdit_reminder_freq_weekHelpText => 'Any day of week';
+  String get habitEdit_reminder_freq_weekHelpText =>
+      'Unrhyw ddiwrnod o\'r wythnos';
 
   @override
   String habitEdit_reminder_freq_week_text(String days) {
-    return '$days in every week';
+    return '$days ym mhob wythnos';
   }
 
   @override
-  String get habitEdit_reminder_freq_monthHelpText => 'Any day of month';
+  String get habitEdit_reminder_freq_monthHelpText =>
+      'Unrhyw ddiwrnod o\'r mis';
 
   @override
   String habitEdit_reminder_freq_month_text(String days) {
-    return '$days in every month';
+    return '$days ym mhob mis';
   }
 
   @override
   String get habitEdit_reminderQuest_hintText =>
-      'Question, e.g. Did you exercise today?';
+      'Cwestiwn, e.e. Wnest ti ymarfer corff heddiw?';
 
   @override
-  String get habitEdit_reminder_dialogTitle => 'Choose reminder type';
+  String get habitEdit_reminder_dialogTitle => 'Dewis math o nodyn atgoffa';
 
   @override
   String get habitEdit_reminder_dialogType_whenNeeded =>
-      'When a check-in is needed';
+      'Pan fydd angen cofnodi';
 
   @override
-  String get habitEdit_reminder_dialogType_daily => 'Daily';
+  String get habitEdit_reminder_dialogType_daily => 'Dyddiol';
 
   @override
-  String get habitEdit_reminder_dialogType_week => 'Per week';
+  String get habitEdit_reminder_dialogType_week => 'Yr wythnos';
 
   @override
-  String get habitEdit_reminder_dialogType_month => 'Per month';
+  String get habitEdit_reminder_dialogType_month => 'Y mis';
 
   @override
-  String get habitEdit_reminder_dialogConfirm => 'confirm';
+  String get habitEdit_reminder_dialogConfirm => 'cadarnhau';
 
   @override
-  String get habitEdit_reminder_dialogCancel => 'cancel';
+  String get habitEdit_reminder_dialogCancel => 'canslo';
 
   @override
-  String get habitEdit_reminder_cancelDialogTitle => 'Confirm';
+  String get habitEdit_reminder_cancelDialogTitle => 'Cadarnhau';
 
   @override
-  String get habitEdit_reminder_cancelDialogSubtitle => 'Remove this reminder?';
+  String get habitEdit_reminder_cancelDialogSubtitle =>
+      'Ydych chi\'n cadarnhau dileu\'r nodyn atgoffa hwn?';
 
   @override
-  String get habitEdit_reminder_cancelDialogConfirm => 'confirm';
+  String get habitEdit_reminder_cancelDialogConfirm => 'cadarnhau';
 
   @override
-  String get habitEdit_reminder_cancelDialogCancel => 'cancel';
+  String get habitEdit_reminder_cancelDialogCancel => 'canslo';
 
   @override
-  String get habitEdit_reminder_weekdayText_monday => 'Mon';
+  String get habitEdit_reminder_weekdayText_monday => 'Llu';
 
   @override
-  String get habitEdit_reminder_weekdayText_tuesday => 'Tue';
+  String get habitEdit_reminder_weekdayText_tuesday => 'Maw';
 
   @override
-  String get habitEdit_reminder_weekdayText_wednesday => 'Wed';
+  String get habitEdit_reminder_weekdayText_wednesday => 'Mer';
 
   @override
-  String get habitEdit_reminder_weekdayText_thursday => 'Thu';
+  String get habitEdit_reminder_weekdayText_thursday => 'Iau';
 
   @override
-  String get habitEdit_reminder_weekdayText_friday => 'Fri';
+  String get habitEdit_reminder_weekdayText_friday => 'Gwe';
 
   @override
-  String get habitEdit_reminder_weekdayText_saturday => 'Sat';
+  String get habitEdit_reminder_weekdayText_saturday => 'Sad';
 
   @override
-  String get habitEdit_reminder_weekdayText_sunday => 'Sun';
+  String get habitEdit_reminder_weekdayText_sunday => 'Sul';
 
   @override
-  String get habitEdit_desc_hintText => 'Memo (supports Markdown)';
+  String get habitEdit_desc_hintText => 'Nodyn, yn cefnogi Markdown';
 
   @override
-  String get habitEdit_create_datetime_prefix => 'Created: ';
+  String get habitEdit_create_datetime_prefix => 'Wedi\'i greu: ';
 
   @override
-  String get habitEdit_modify_datetime_prefix => 'Modified: ';
+  String get habitEdit_modify_datetime_prefix => 'Wedi\'i addasu: ';
 
   @override
-  String get habitDisplay_fab_text => 'New Habit';
+  String get habitDisplay_fab_text => 'Arfer newydd';
 
   @override
   String get habitDisplay_emptyImage_text_01 =>
-      'A journey of a thousand miles begins with a single step';
+      'Mae taith o fil o filltiroedd yn dechrau gydag un cam';
 
   @override
-  String get habitDisplay_notFoundImage_text_01 => 'No matching habits found';
+  String get habitDisplay_notFoundImage_text_01 =>
+      'Ni chanfuwyd unrhyw arferion cyfatebol';
 
   @override
   String habitDisplay_notFoundImage_text_02(String keyword) {
-    return 'No matching habits for \"$keyword\"';
+    return 'Dim arferion cyfatebol ar gyfer \"$keyword\"';
   }
 
   @override
   String get habitDisplay_archiveHabitsConfirmDialog_title =>
-      'Archive Selected Habits?';
+      'Archifo\'r arferion a ddewiswyd?';
 
   @override
-  String get habitDisplay_archiveHabitsConfirmDialog_confirm => 'confirm';
+  String get habitDisplay_archiveHabitsConfirmDialog_confirm => 'cadarnhau';
 
   @override
-  String get habitDisplay_archiveHabitsConfirmDialog_cancel => 'cancel';
+  String get habitDisplay_archiveHabitsConfirmDialog_cancel => 'canslo';
 
   @override
   String habitDisplay_archiveHabitsSuccSnackbarText(int count) {
-    return 'Archived $count habits';
+    return 'Wedi archifo $count arfer';
   }
 
   @override
   String get habitDisplay_unarchiveHabitsConfirmDialog_title =>
-      'Unarchive Selected Habits?';
+      'Dad-archifo\'r arferion a ddewiswyd?';
 
   @override
-  String get habitDisplay_unarchiveHabitsConfirmDialog_confirm => 'confirm';
+  String get habitDisplay_unarchiveHabitsConfirmDialog_confirm => 'cadarnhau';
 
   @override
-  String get habitDisplay_unarchiveHabitsConfirmDialog_cancel => 'cancel';
+  String get habitDisplay_unarchiveHabitsConfirmDialog_cancel => 'canslo';
 
   @override
   String habitDisplay_unarchiveHabitsSuccSnackbarText(int count) {
-    return 'Unarchived $count habits';
+    return 'Wedi dad-archifo $count arfer';
   }
 
   @override
   String get habitDisplay_deleteHabitsConfirmDialog_title =>
-      'Delete Selected Habits?';
+      'Dileu\'r arferion a ddewiswyd?';
 
   @override
-  String get habitDisplay_deleteHabitsConfirmDialog_confirm => 'confirm';
+  String get habitDisplay_deleteHabitsConfirmDialog_confirm => 'cadarnhau';
 
   @override
-  String get habitDisplay_deleteHabitsConfirmDialog_cancel => 'cancel';
+  String get habitDisplay_deleteHabitsConfirmDialog_cancel => 'canslo';
 
   @override
   String habitDisplay_deleteHabitsSuccSnackbarText(int count) {
-    return 'Deleted $count habits';
+    return 'Wedi dileu $count arfer';
   }
 
   @override
   String habitDisplay_deleteSingleHabitSuccSnackbarText(String name) {
-    return 'Deleted habit: \"$name\"';
+    return 'Arfer wedi\'i ddileu: \"$name\"';
   }
 
   @override
@@ -335,165 +340,168 @@ class L10nCy extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Exported $count habits.',
-      one: 'Exported habit.',
+      other: '$count arfer wedi\'u hallforio.',
+      one: 'Arfer wedi\'i allforio.',
     );
     return '$_temp0';
   }
 
   @override
   String get habitDisplay_exportAllHabitsSuccSnackbarText =>
-      'Exported All Habits';
+      'Wedi allforio pob arfer';
 
   @override
-  String get habitDisplay_editPopMenu_selectAll => 'Select All';
+  String get habitDisplay_editPopMenu_selectAll => 'Dewis y cyfan';
 
   @override
-  String get habitDisplay_selectButton_label => 'Select';
+  String get habitDisplay_selectButton_label => 'Dewis';
 
   @override
-  String get habitDisplay_doneButton_label => 'Done';
+  String get habitDisplay_doneButton_label => 'Gorffen';
 
   @override
   String habitDisplay_selectedHabits_title(int count) {
-    return 'Selected $count';
+    return 'Wedi dewis $count';
   }
 
   @override
-  String get habitDisplay_editPopMenu_export => 'Export';
+  String get habitDisplay_editPopMenu_export => 'Allforio';
 
   @override
-  String get habitDisplay_editPopMenu_delete => 'Delete';
+  String get habitDisplay_editPopMenu_delete => 'Dileu';
 
   @override
-  String get habitDisplay_editPopMenu_clone => 'Template';
+  String get habitDisplay_editPopMenu_clone => 'Templed';
 
   @override
-  String get habitDisplay_editButton_tooltip => 'Edit';
+  String get habitDisplay_editButton_tooltip => 'Golygu';
 
   @override
-  String get habitDisplay_archiveButton_tooltip => 'Archive';
+  String get habitDisplay_archiveButton_tooltip => 'Archifo';
 
   @override
-  String get habitDisplay_unarchiveButton_tooltip => 'Unarchive';
+  String get habitDisplay_unarchiveButton_tooltip => 'Dad-archifo';
 
   @override
-  String get habitDisplay_settingButton_tooltip => 'Setting';
+  String get habitDisplay_settingButton_tooltip => 'Gosodiad';
 
   @override
-  String get habitDisplay_statsMenu_statSubgroupText => 'Current';
+  String get habitDisplay_statsMenu_statSubgroupText => 'Cyfredol';
 
   @override
-  String get habitDisplay_statsMenu_completedTileText => 'Completed';
+  String get habitDisplay_statsMenu_completedTileText => 'Wedi\'u cwblhau';
 
   @override
-  String get habitDisplay_statsMenu_inProgresTileText => 'In Progress';
+  String get habitDisplay_statsMenu_inProgresTileText => 'Ar waith';
 
   @override
-  String get habitDisplay_statsMenu_archivedTileText => 'Archived';
+  String get habitDisplay_statsMenu_archivedTileText => 'Wedi\'u harchifo';
 
   @override
   String get habitDisplay_statsMenu_popularitySubgroupText =>
-      'Top Habits: Last 30 Days Changes';
+      'Arferion gorau: newidiadau\'r 30 diwrnod diwethaf';
 
   @override
-  String get habitDisplay_statisticsAction_label => 'Statistics';
+  String get habitDisplay_statisticsAction_label => 'Ystadegau';
 
   @override
-  String get habitDisplay_displayFilterAction_label => 'Display Filter';
+  String get habitDisplay_displayFilterAction_label => 'Hidlydd dangos';
 
   @override
-  String get habitDisplay_displayFilter_inProgress => 'In Progress';
+  String get habitDisplay_displayFilter_inProgress => 'Ar waith';
 
   @override
-  String get habitDisplay_displayFilter_archived => 'Archived';
+  String get habitDisplay_displayFilter_archived => 'Wedi\'u harchifo';
 
   @override
-  String get habitDisplay_displayFilter_completed => 'Completed';
+  String get habitDisplay_displayFilter_completed => 'Wedi\'u cwblhau';
 
   @override
-  String get common_appThemeMode_light => 'Light';
+  String get common_appThemeMode_light => 'Ysgafn';
 
   @override
-  String get common_appThemeMode_dark => 'Dark';
+  String get common_appThemeMode_dark => 'Tywyll';
 
   @override
-  String get common_appThemeMode_followSystem => 'Auto';
+  String get common_appThemeMode_followSystem => 'Awtomatig';
 
   @override
-  String get habitDisplay_mainMenu_showArchivedTileText => 'Show Archived';
+  String get habitDisplay_mainMenu_showArchivedTileText =>
+      'Dangos arferion wedi\'u harchifo';
 
   @override
-  String get habitDisplay_mainMenu_showCompletedTileText => 'Show Completed';
+  String get habitDisplay_mainMenu_showCompletedTileText =>
+      'Dangos arferion wedi\'u cwblhau';
 
   @override
-  String get habitDisplay_mainMenu_showActivedTileText => 'Show Active';
+  String get habitDisplay_mainMenu_showActivedTileText =>
+      'Dangos arferion ar waith';
 
   @override
-  String get habitDisplay_mainMenu_settingTileText => 'Settings';
+  String get habitDisplay_mainMenu_settingTileText => 'Gosodiadau';
 
   @override
-  String get habitDisplay_groupType_name => 'By Name';
+  String get habitDisplay_groupType_name => 'Yn ôl enw';
 
   @override
-  String get habitDisplay_groupType_colorType => 'By Color';
+  String get habitDisplay_groupType_colorType => 'Yn ôl lliw';
 
   @override
-  String get habitDisplay_groupType_createDate => 'By Creation Date';
+  String get habitDisplay_groupType_createDate => 'Yn ôl dyddiad creu';
 
   @override
-  String get habitDisplay_groupType_habitCount => 'By Habit Count';
+  String get habitDisplay_groupType_habitCount => 'Yn ôl nifer yr arferion';
 
   @override
-  String get habitDisplay_groupTypeDialog_title => 'Group Sort';
+  String get habitDisplay_groupTypeDialog_title => 'Trefnu grwpiau';
 
   @override
-  String get habitDisplay_groupTypeDialog_confirm => 'confirm';
+  String get habitDisplay_groupTypeDialog_confirm => 'cadarnhau';
 
   @override
-  String get habitDisplay_groupTypeDialog_cancel => 'cancel';
+  String get habitDisplay_groupTypeDialog_cancel => 'canslo';
 
   @override
-  String get habitDisplay_groupTypeDialog_none => 'Flat';
+  String get habitDisplay_groupTypeDialog_none => 'Heb grwpio';
 
   @override
-  String get habitDisplay_editPopMenu_groupModify => 'Modify Group';
+  String get habitDisplay_editPopMenu_groupModify => 'Addasu grŵp';
 
   @override
-  String get habitDisplay_groupModifyDialog_title => 'Modify Group';
+  String get habitDisplay_groupModifyDialog_title => 'Addasu grŵp';
 
   @override
-  String get habitDisplay_groupModifyDialog_removeGroup => 'Remove Group';
+  String get habitDisplay_groupModifyDialog_removeGroup => 'Tynnu o\'r grŵp';
 
   @override
   String get habitDisplay_groupModifyDialog_emptyGroups =>
-      'No groups available';
+      'Dim grwpiau ar gael';
 
   @override
   String get habitDisplay_groupModifyDialog_alreadyInGroup =>
-      'Selected habits are already in this group';
+      'Mae\'r arferion a ddewiswyd eisoes yn y grŵp hwn';
 
   @override
-  String get habitDisplay_groupModifyDialog_createGroup => 'Create Group';
+  String get habitDisplay_groupModifyDialog_createGroup => 'Creu grŵp';
 
   @override
-  String get habitDisplay_groupModifyDialog_saveAndApply => 'Save & Apply';
+  String get habitDisplay_groupModifyDialog_saveAndApply => 'Cadw a gweithredu';
 
   @override
-  String get habitDisplay_groupModifyConfirm_titleNew => 'Move to Group';
+  String get habitDisplay_groupModifyConfirm_titleNew => 'Symud i grŵp';
 
   @override
   String get habitDisplay_groupModifyConfirm_titleMixed =>
-      'Confirm Group Change';
+      'Cadarnhau newid grŵp';
 
   @override
   String habitDisplay_groupModifyConfirm_bodyNewGroup(String groupName) {
-    return '$groupName habits will be moved to this group';
+    return 'Bydd arferion $groupName yn cael eu symud i\'r grŵp hwn';
   }
 
   @override
   String get habitDisplay_groupModifyConfirm_bodyRemoveGroup =>
-      'Habits will have their group removed';
+      'Bydd yr arferion yn cael eu tynnu o\'u grŵp';
 
   @override
   String habitDisplay_groupModifyConfirm_bodyChangeStat(
@@ -506,26 +514,23 @@ class L10nCy extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       remainingGroupCount,
       locale: localeName,
-      other:
-          ' and $remainingGroupCount more groups ($totalGroupCount groups in total)',
-      one: ' and 1 more group ($totalGroupCount groups in total)',
+      other: ' a $remainingGroupCount grŵp arall ($totalGroupCount grŵp i gyd)',
+      one: ' ac 1 grŵp arall ($totalGroupCount grŵp i gyd)',
       zero: '',
     );
     String _temp1 = intl.Intl.pluralLogic(
       remainingGroupCount,
       locale: localeName,
-      other:
-          ' and $remainingGroupCount more groups ($totalGroupCount groups in total)',
-      one: ' and 1 more group ($totalGroupCount groups in total)',
+      other: ' a $remainingGroupCount grŵp arall ($totalGroupCount grŵp i gyd)',
+      one: ' ac 1 grŵp arall ($totalGroupCount grŵp i gyd)',
       zero: '',
     );
     String _temp2 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
       other:
-          '$count habits will change from \"$fromGroup\"$_temp0 to \"$toGroup\"',
-      one:
-          '$count habit will change from \"$fromGroup\"$_temp1 to \"$toGroup\"',
+          'Bydd $count arfer yn symud o \"$fromGroup\"$_temp0 i \"$toGroup\"',
+      one: 'Bydd $count arfer yn symud o \"$fromGroup\"$_temp1 i \"$toGroup\"',
     );
     return '$_temp2';
   }
@@ -538,8 +543,10 @@ class L10nCy extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count uncategorized habits will be added to \"$toGroup\"',
-      one: '$count uncategorized habit will be added to \"$toGroup\"',
+      other:
+          'Bydd $count arfer heb gategori yn cael eu hychwanegu at \"$toGroup\"',
+      one:
+          'Bydd $count arfer heb gategori yn cael ei ychwanegu at \"$toGroup\"',
     );
     return '$_temp0';
   }
@@ -549,8 +556,8 @@ class L10nCy extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count habits will have their groups removed',
-      one: '$count habit will have its group removed',
+      other: 'Bydd grwpiau $count arfer yn cael eu tynnu',
+      one: 'Bydd grŵp $count arfer yn cael ei dynnu',
     );
     return '$_temp0';
   }
@@ -563,8 +570,8 @@ class L10nCy extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Moved $count habits to \"$groupName\"',
-      one: 'Moved habit to \"$groupName\"',
+      other: 'Wedi symud $count arfer i \"$groupName\"',
+      one: 'Wedi symud yr arfer i \"$groupName\"',
     );
     return '$_temp0';
   }
@@ -574,145 +581,146 @@ class L10nCy extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Removed groups from $count habits',
-      one: 'Removed group from habit',
+      other: 'Wedi tynnu grwpiau o $count arfer',
+      one: 'Wedi tynnu\'r grŵp o\'r arfer',
     );
     return '$_temp0';
   }
 
   @override
   String get habitDisplay_groupModify_undoFailed =>
-      'Group has been modified elsewhere, cannot undo';
+      'Mae\'r grŵp wedi\'i addasu yn rhywle arall, ni ellir dadwneud';
 
   @override
-  String get habitDisplay_sort_reverseText => 'Reverse';
+  String get habitDisplay_sort_reverseText => 'Gwrthdroi';
 
   @override
-  String get habitDisplay_sortDirection_asc => '(Asc)';
+  String get habitDisplay_sortDirection_asc => '(esgynnol)';
 
   @override
-  String get habitDisplay_sortDirection_Desc => '(Desc)';
+  String get habitDisplay_sortDirection_Desc => '(disgynnol)';
 
   @override
-  String get habitDisplay_sortType_manual => 'My order';
+  String get habitDisplay_sortType_manual => 'Fy nhrefn';
 
   @override
-  String get habitDisplay_sortType_name => 'By Name';
+  String get habitDisplay_sortType_name => 'Yn ôl enw';
 
   @override
-  String get habitDisplay_sortType_colorType => 'By Color';
+  String get habitDisplay_sortType_colorType => 'Yn ôl lliw';
 
   @override
-  String get habitDisplay_sortType_progress => 'By Rate';
+  String get habitDisplay_sortType_progress => 'Yn ôl cyfradd llwyddiant';
 
   @override
-  String get habitDisplay_sortType_startT => 'By Start Date';
+  String get habitDisplay_sortType_startT => 'Yn ôl dyddiad dechrau';
 
   @override
-  String get habitDisplay_sortType_status => 'By Status';
+  String get habitDisplay_sortType_status => 'Yn ôl statws';
 
   @override
-  String get habitDisplay_sortTypeDialog_title => 'Sort';
+  String get habitDisplay_sortTypeDialog_title => 'Trefnu';
 
   @override
-  String get habitDisplay_sortTypeDialog_confirm => 'confirm';
+  String get habitDisplay_sortTypeDialog_confirm => 'cadarnhau';
 
   @override
-  String get habitDisplay_sortTypeDialog_cancel => 'cancel';
+  String get habitDisplay_sortTypeDialog_cancel => 'canslo';
 
   @override
-  String get habitDisplay_debug_debugSubgroup_title => '🛠️Debug';
+  String get habitDisplay_debug_debugSubgroup_title => '🛠️Dadfygio';
 
   @override
-  String get habitDisplay_searchBar_hintText => 'Search habits';
+  String get habitDisplay_searchBar_hintText => 'Chwilio arferion';
 
   @override
-  String get habitDisplay_searchFilter_ongoing => 'Ongoing';
+  String get habitDisplay_searchFilter_ongoing => 'Ar waith';
 
   @override
   String get habitDisplay_searchFilter_ongoing_desc =>
-      'Shows habits that are currently active and ongoing (not archived or deleted).';
+      'Yn dangos arferion sy\'n weithredol ac yn barhaus ar hyn o bryd (heb eu harchifo na\'u dileu).';
 
   @override
-  String get habitDisplay_searchFilter_completed => 'Completed';
+  String get habitDisplay_searchFilter_completed => 'Wedi\'u cwblhau';
 
   @override
-  String get habitDisplay_searchFilter_habitType_groupTitle => 'Habit Type';
+  String get habitDisplay_searchFilter_habitType_groupTitle => 'Math o arfer';
 
   @override
-  String get habitDisplay_searchFilter_tooltips => 'Show Filters';
+  String get habitDisplay_searchFilter_tooltips => 'Dangos yr hidlyddion';
 
   @override
-  String get habitDisplay_searchFilter_clearFilter => 'Clear Filters';
+  String get habitDisplay_searchFilter_clearFilter => 'Clirio\'r hidlyddion';
 
   @override
-  String get habitDisplay_tab_habits_label => 'Habits';
+  String get habitDisplay_tab_habits_label => 'Arferion';
 
   @override
-  String get habitDisplay_tab_today_label => 'Today';
+  String get habitDisplay_tab_today_label => 'Heddiw';
 
   @override
-  String get habitToday_appBar_title => 'Today';
+  String get habitToday_appBar_title => 'Heddiw';
 
   @override
-  String get habitToday_image_desc => 'YOU MADE IT';
+  String get habitToday_image_desc => 'LLWYDDIANT!';
 
   @override
   String habitToday_card_subtitle_text(int days) {
-    return 'Kept it up for $days days';
+    return 'Wedi dal ati am $days diwrnod';
   }
 
   @override
-  String get habitToday_card_donePlusButton_label => 'Done+';
+  String get habitToday_card_donePlusButton_label => 'Cwblhau+';
 
   @override
-  String get habitToday_card_skipPlusButton_label => 'Skip+';
+  String get habitToday_card_skipPlusButton_label => 'Hepgor+';
 
   @override
-  String get habitDetail_editButton_tooltip => 'Edit';
+  String get habitDetail_editButton_tooltip => 'Golygu';
 
   @override
-  String get habitDetail_recordCalendar_label => 'Check in';
+  String get habitDetail_recordCalendar_label => 'Cofnodi';
 
   @override
-  String get habitDetail_recordCalendar_tooltip => 'Open check-in calendar';
+  String get habitDetail_recordCalendar_tooltip => 'Agor calendr cofnodi';
 
   @override
-  String get habitDetail_editPopMenu_unarchive => 'Unarchive';
+  String get habitDetail_editPopMenu_unarchive => 'Dad-archifo';
 
   @override
-  String get habitDetail_editPopMenu_archive => 'Archive';
+  String get habitDetail_editPopMenu_archive => 'Archifo';
 
   @override
-  String get habitDetail_editPopMenu_export => 'Export';
+  String get habitDetail_editPopMenu_export => 'Allforio';
 
   @override
-  String get habitDetail_editPopMenu_delete => 'Delete';
+  String get habitDetail_editPopMenu_delete => 'Dileu';
 
   @override
-  String get habitDetail_editPopMenu_clone => 'Template';
+  String get habitDetail_editPopMenu_clone => 'Templed';
 
   @override
-  String get habitDetail_confirmDialog_confirm => 'confirm';
+  String get habitDetail_confirmDialog_confirm => 'cadarnhau';
 
   @override
-  String get habitDetail_confirmDialog_cancel => 'cancel';
+  String get habitDetail_confirmDialog_cancel => 'canslo';
 
   @override
-  String get habitDetail_archiveConfirmDialog_titleText => 'Archive Habit?';
+  String get habitDetail_archiveConfirmDialog_titleText => 'Archifo\'r arfer?';
 
   @override
-  String get habitDetail_unarchiveConfirmDialog_titleText => 'Unarchive Habit?';
+  String get habitDetail_unarchiveConfirmDialog_titleText =>
+      'Dad-archifo\'r arfer?';
 
   @override
-  String get habitDetail_deleteConfirmDialog_titleText => 'Delete Habit?';
+  String get habitDetail_deleteConfirmDialog_titleText => 'Dileu\'r arfer?';
 
   @override
-  String get habitDetail_summary_title => 'Summary';
+  String get habitDetail_summary_title => 'Crynodeb';
 
   @override
   String habitDetail_summary_body(String score, int days) {
-    return 'Current grade is $score, and it has been $days days since the start.';
+    return '$score yw\'r radd gyfredol, ac mae $days diwrnod wedi mynd heibio ers y dechrau.';
   }
 
   @override
@@ -720,8 +728,8 @@ class L10nCy extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       days,
       locale: localeName,
-      other: 'Starts in $days days.',
-      one: 'Starting tomorrow.',
+      other: 'Yn dechrau ymhen $days diwrnod.',
+      one: 'Yn dechrau yfory.',
     );
     return '$_temp0';
   }
@@ -732,8 +740,8 @@ class L10nCy extends L10n {
       habitType,
       locale: localeName,
       other: '',
-      two: 'SUBSTANDARD',
-      one: 'INCOMPLETE',
+      two: 'IS-SAFONOL',
+      one: 'ANGHYFLAWN',
     );
     return '$_temp0';
   }
@@ -744,8 +752,8 @@ class L10nCy extends L10n {
       habitType,
       locale: localeName,
       other: '',
-      two: 'IMPECCABLE',
-      one: 'OVERFULFILLED',
+      two: 'PERFFAITH',
+      one: 'WEDI RHAGORI',
     );
     return '$_temp0';
   }
@@ -755,15 +763,15 @@ class L10nCy extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       habitType,
       locale: localeName,
-      other: 'Goal',
-      two: 'Threshold',
+      other: 'Nod',
+      two: 'Trothwy',
     );
     return '$_temp0';
   }
 
   @override
   String habitDetail_descDailyGoal_unitText(String unit) {
-    return 'Unit: $unit';
+    return 'Uned: $unit';
   }
 
   @override
@@ -774,7 +782,7 @@ class L10nCy extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       habitType,
       locale: localeName,
-      other: 'Days',
+      other: 'Diwrnodau',
     );
     return '$_temp0';
   }
@@ -783,111 +791,111 @@ class L10nCy extends L10n {
   String get habitDetail_descTargetDays_unitText => 'd';
 
   @override
-  String get habitDetail_descRecordsNum_titleText => 'Records';
+  String get habitDetail_descRecordsNum_titleText => 'Cofnodion';
 
   @override
-  String get habitDetail_scoreChart_title => 'Score';
+  String get habitDetail_scoreChart_title => 'Sgôr';
 
   @override
-  String get habitDetail_scoreChartCombine_dailyText => 'Day';
+  String get habitDetail_scoreChartCombine_dailyText => 'Diwrnod';
 
   @override
-  String get habitDetail_scoreChartCombine_weeklyText => 'Week';
+  String get habitDetail_scoreChartCombine_weeklyText => 'Wythnos';
 
   @override
-  String get habitDetail_scoreChartCombine_monthlyText => 'Month';
+  String get habitDetail_scoreChartCombine_monthlyText => 'Mis';
 
   @override
-  String get habitDetail_scoreChartCombine_yearlyText => 'Year';
+  String get habitDetail_scoreChartCombine_yearlyText => 'Blwyddyn';
 
   @override
-  String get habitDetail_freqChart_freqTitle => 'Frequency';
+  String get habitDetail_freqChart_freqTitle => 'Amlder';
 
   @override
-  String get habitDetail_freqChart_historyTitle => 'History';
+  String get habitDetail_freqChart_historyTitle => 'Hanes';
 
   @override
-  String get habitDetail_freqChart_combinedTitle => 'Frequency & History';
+  String get habitDetail_freqChart_combinedTitle => 'Amlder a hanes';
 
   @override
-  String get habitDetail_freqChartCombine_weeklyText => 'Week';
+  String get habitDetail_freqChartCombine_weeklyText => 'Wythnos';
 
   @override
-  String get habitDetail_freqChartCombine_monthlyText => 'Month';
+  String get habitDetail_freqChartCombine_monthlyText => 'Mis';
 
   @override
-  String get habitDetail_freqChartCombine_yearlyText => 'Year';
+  String get habitDetail_freqChartCombine_yearlyText => 'Blwyddyn';
 
   @override
-  String get habitDetail_freqChartNaviBar_nowText => 'Now';
+  String get habitDetail_freqChartNaviBar_nowText => 'Nawr';
 
   @override
-  String get habitDetail_freqChart_expanded_hideTooltip => 'Hide History Chart';
+  String get habitDetail_freqChart_expanded_hideTooltip => 'Cuddio siart hanes';
 
   @override
-  String get habitDetail_freqChart_expanded_showTooltip => 'Show History Chart';
+  String get habitDetail_freqChart_expanded_showTooltip => 'Dangos siart hanes';
 
   @override
-  String get habitDetail_descSubgroup_title => 'Memo';
+  String get habitDetail_descSubgroup_title => 'Nodyn';
 
   @override
-  String get habitDetail_otherSubgroup_title => 'Other';
+  String get habitDetail_otherSubgroup_title => 'Arall';
 
   @override
-  String get habitDetail_habitType_title => 'Type';
+  String get habitDetail_habitType_title => 'Math';
 
   @override
-  String get habitDetail_reminderTile_title => 'Reminder';
+  String get habitDetail_reminderTile_title => 'Nodyn atgoffa';
 
   @override
-  String get habitDetail_freqTile_title => 'Repeat';
+  String get habitDetail_freqTile_title => 'Ailadrodd';
 
   @override
-  String get habitDetail_startDateTile_title => 'Start Date';
+  String get habitDetail_startDateTile_title => 'Dyddiad dechrau';
 
   @override
-  String get habitDetail_createDateTile_title => 'Created';
+  String get habitDetail_createDateTile_title => 'Wedi\'i greu';
 
   @override
-  String get habitDetail_modifyDateTile_title => 'Modified';
+  String get habitDetail_modifyDateTile_title => 'Wedi\'i addasu';
 
   @override
-  String get habitDetail_editHeatmapCal_dateButtonText => 'date';
+  String get habitDetail_editHeatmapCal_dateButtonText => 'dyddiad';
 
   @override
-  String get habitDetail_editHeatmapCal_valueButtonText => 'value';
+  String get habitDetail_editHeatmapCal_valueButtonText => 'gwerth';
 
   @override
   String get habitDetail_editHeatmapCal_backToToday_tooltipText =>
-      'back to today';
+      'yn ôl i heddiw';
 
   @override
-  String get common_loadError_text => 'Failed to load';
+  String get common_loadError_text => 'Methodd llwytho';
 
   @override
-  String get common_loadError_retryText => 'Try again';
+  String get common_loadError_retryText => 'Ceisio eto';
 
   @override
-  String get habitDetail_notFoundText => 'Load habit failed';
+  String get habitDetail_notFoundText => 'Methodd llwytho\'r arfer';
 
   @override
-  String get habitDetail_notFoundRetryText => 'Try again';
+  String get habitDetail_notFoundRetryText => 'Ceisio eto';
 
   @override
-  String get habitDetail_changeGoal_title => 'Change goal';
+  String get habitDetail_changeGoal_title => 'Newid nod';
 
   @override
   String habitDetail_changeGoal_currentChipText(String goal) {
-    return 'current: $goal';
+    return 'cyfredol: $goal';
   }
 
   @override
   String habitDetail_changeGoal_doneChipText(String goal) {
-    return 'done: $goal';
+    return 'wedi\'i gwblhau: $goal';
   }
 
   @override
-  String get habitDetail_changeGoal_undoneChipText => 'undone';
+  String get habitDetail_changeGoal_undoneChipText => 'heb ei wneud';
 
   @override
   String habitDetail_changeGoal_extraChipText(String goal) {
@@ -896,217 +904,224 @@ class L10nCy extends L10n {
 
   @override
   String habitDetail_changeGoal_helpText(String goal) {
-    return 'Daily goal, default: $goal';
+    return 'Nod dyddiol, rhagosodiad: $goal';
   }
 
   @override
-  String get habitDetail_changeGoal_cancelText => 'cancel';
+  String get habitDetail_changeGoal_cancelText => 'canslo';
 
   @override
-  String get habitDetail_changeGoal_saveText => 'save';
+  String get habitDetail_changeGoal_saveText => 'cadw';
 
   @override
-  String get habitDetail_skipReason_title => 'Skip reason';
+  String get habitDetail_skipReason_title => 'Rheswm dros hepgor';
 
   @override
-  String get habitDetail_skipReason_bodyHelpText => 'Write something here...';
+  String get habitDetail_skipReason_bodyHelpText =>
+      'Ysgrifennwch rywbeth yma...';
 
   @override
-  String get habitDetail_skipReason_cancelText => 'cancel';
+  String get habitDetail_skipReason_cancelText => 'canslo';
 
   @override
-  String get habitDetail_skipReason_saveText => 'save';
+  String get habitDetail_skipReason_saveText => 'cadw';
 
   @override
-  String get appSetting_appbar_titleText => 'Settings';
+  String get appSetting_appbar_titleText => 'Gosodiadau';
 
   @override
-  String get appSetting_displaySubgroupText => 'Display';
+  String get appSetting_displaySubgroupText => 'Golwg';
 
   @override
-  String get appSetting_operationSubgroupText => 'Operation';
+  String get appSetting_operationSubgroupText => 'Gweithrediad';
 
   @override
   String get appSetting_dragCalendarByPageTile_titleText =>
-      'Drag calendar by page';
+      'Llusgo\'r calendr fesul tudalen';
 
   @override
   String get appSetting_dragCalendarByPageTile_subtitleText =>
-      'If the switch is enabled, the app bar calendar on the home page will be dragged page by page. By default, the switch is disabled.';
+      'Os yw\'r switsh wedi\'i alluogi, bydd y calendr ym mar yr ap ar y dudalen gartref yn cael ei lusgo fesul tudalen. Yn ddiofyn, mae\'r switsh wedi\'i analluogi.';
 
   @override
   String get appSetting_changeRecordStatusOpTile_titleText =>
-      'Change Record Status';
+      'Newid statws cofnod';
 
   @override
   String get appSetting_changeRecordStatusOpTile_subtitleText =>
-      'Modify the click behavior to change the status of daily records on main page.';
+      'Addasu\'r ymddygiad clicio i newid statws cofnodion dyddiol ar y brif dudalen.';
 
   @override
   String get appSetting_openRecordStatusDialogOpTile_titleText =>
-      'Open Detailed Record';
+      'Agor cofnod manwl';
 
   @override
   String get appSetting_openRecordStatusDialogOpTile_subtitleText =>
-      'Modify the click behavior to open the detailed popup for daily records on main page.';
+      'Addasu\'r ymddygiad clicio i agor y naidlen fanwl ar gyfer cofnodion dyddiol ar y brif dudalen.';
 
   @override
-  String get appSetting_expandTimerDelayTile_titleText => 'Group expand delay';
+  String get appSetting_expandTimerDelayTile_titleText =>
+      'Oedi cyn ehangu grŵp';
 
   @override
   String get appSetting_expandTimerDelayTile_subtitleText =>
-      'Set how long to hover over a collapsed group header before it auto-expands during drag-and-drop.';
+      'Gosod pa mor hir i hofran dros bennawd grŵp sydd wedi\'i blygu cyn iddo ehangu\'n awtomatig wrth lusgo a gollwng.';
 
   @override
-  String get appSetting_expandTimerDelay_default => 'Default';
+  String get appSetting_expandTimerDelay_default => 'Rhagosodedig';
 
   @override
-  String get appSetting_expandTimerDelay_fast => 'Fast';
+  String get appSetting_expandTimerDelay_fast => 'Cyflym';
 
   @override
-  String get appSetting_expandTimerDelay_slow => 'Slow';
+  String get appSetting_expandTimerDelay_slow => 'Araf';
 
   @override
-  String get appSetting_appThemeColorTile_titleText => 'Theme Color';
+  String get appSetting_appThemeColorTile_titleText => 'Lliw\'r thema';
 
   @override
-  String get appSetting_appThemeModeTile_titleText => 'Theme Mode';
+  String get appSetting_appThemeModeTile_titleText => 'Modd y thema';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText =>
-      'Choose Theme Color';
+      'Dewis lliw\'r thema';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_android =>
-      'Use wallpaper\'s main color (Android 12+)';
+      'Defnyddio prif liw\'r papur wal (Android 12+)';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_linux =>
-      'Use GTK+ theme\'s selected background color';
+      'Defnyddio lliw cefndir a ddewiswyd yn thema GTK+';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_macos =>
-      'Use system theme color';
+      'Defnyddio lliw thema\'r system';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_windows =>
-      'Use system accent or window/glass color';
+      'Defnyddio lliw acen y system neu liw ffenestr/gwydr';
 
   @override
-  String get appSetting_firstDayOfWeek_titleText => 'First day of week';
+  String get appSetting_firstDayOfWeek_titleText => 'Diwrnod cyntaf yr wythnos';
 
   @override
   String get appSetting_firstDayOfWeekDialog_titleText =>
-      'Show first day of week';
+      'Dangos diwrnod cyntaf yr wythnos';
 
   @override
-  String get appSetting_firstDayOfWeekDialog_defaultText => ' (Default)';
+  String get appSetting_firstDayOfWeekDialog_defaultText => ' (Rhagosodedig)';
 
   @override
   String appSetting_changeLanguage_followSystem_text(String localeName) {
-    return 'Follow System ($localeName)';
+    return 'Dilyn y system ($localeName)';
   }
 
   @override
   String get appSetting_changeLanguage_followSystem_noLocale_text =>
-      'Follow System';
+      'Dilyn y system';
 
   @override
-  String get appSetting_changeLanguageTile_titleText => 'Language';
+  String get appSetting_changeLanguageTile_titleText => 'Iaith';
 
   @override
-  String get appSetting_changeLanguageDialog_titleText => 'Select Language';
+  String get appSetting_changeLanguageDialog_titleText => 'Dewis iaith';
 
   @override
   String appSetting_changeLanguageDialog_currentLanguage_text(
     String localeName,
   ) {
-    return 'Current language: $localeName';
+    return 'Iaith bresennol: $localeName';
   }
 
   @override
-  String get appSetting_languageSubgroupText => 'Language';
+  String get appSetting_languageSubgroupText => 'Iaith';
 
   @override
   String get appSetting_openSystemLanguageTile_titleText =>
-      'System Language Settings';
+      'Gosodiadau iaith y system';
 
   @override
   String get appSetting_openSystemLanguageTile_dialogTitle =>
-      'Open System Language Settings';
+      'Agor gosodiadau iaith y system';
 
   @override
   String get appSetting_openSystemLanguageTile_macosDialogContent =>
-      'Due to macOS limitations, the app language cannot be changed directly. To switch languages, follow these steps:\n\n1. Open **System Settings > General > Language & Region**\n2. Add this app in the **Applications** list and choose a language';
+      'Oherwydd cyfyngiadau macOS, ni ellir newid iaith yr ap yn uniongyrchol. I newid yr iaith, dilynwch y camau hyn:\n\n1. Agorwch **System Settings > General > Language & Region**\n2. Ychwanegwch yr ap hwn yn y rhestr **Applications** a dewiswch iaith';
 
   @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
-    return 'Date display format ($formatTemplate)';
+    return 'Fformat dangos dyddiad ($formatTemplate)';
   }
 
   @override
   String get appSetting_dateDisplayFormat_titleTemplate_followSystemText =>
-      'follow system setting';
+      'dilyn gosodiad system';
 
   @override
   String get appSetting_dateDisplayFormat_subTitleText =>
-      'Configured date format will be applied to the date display on habit detail page.';
+      'Bydd fformat dyddiad wedi\'i ffurfweddu yn cael ei gymhwyso i\'r dyddiad a ddangosir ar dudalen manylion arfer.';
 
   @override
   String get appSetting_compactUISwitcher_titleText =>
-      'Enable Compact UI on habits page';
+      'Galluogi rhyngwyneb cryno ar dudalen yr arferion';
 
   @override
   String get appSetting_compactUISwitcher_subtitleText =>
-      'Allow habits check table to display more content, but some UI and text may appear smaller.';
+      'Caniatáu i dabl cofnodi arferion arddangos mwy o gynnwys, ond gall rhai o elfennau\'r rhyngwyneb a thestun ymddangos yn llai.';
 
   @override
   String get appSetting_appleCollapsedSidebarSwitcher_titleText =>
-      'Show horizontal Sidebar';
+      'Dangos bar ochr llorweddol';
 
   @override
   String get appSetting_appleCollapsedSidebarSwitcher_subtitleText =>
-      'Show navigation destinations in the top bar while the Sidebar is hidden.';
+      'Dangos cyrchfannau llywio yn y bar uchaf tra bod y bar ochr wedi\'i guddio.';
 
   @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
-      'Check-in area size';
+      'Cymhareb y tabl cofnodi';
 
   @override
   String get appSetting_collapsed_calendar_bararea_subtitleText =>
-      'Adjust percentage for more/less space in habits check table area.';
+      'Addasu\'r ganran ar gyfer mwy/llai o le yn ardal y tabl cofnodi arferion.';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_defaultText => 'Default';
+  String get appSetting_collapsed_calendar_bararea_defaultText =>
+      'Rhagosodedig';
 
   @override
-  String get appSetting_reminderSubgroupText => 'Reminder & Notification';
+  String get appSetting_reminderSubgroupText =>
+      'Nodiadau atgoffa a hysbysiadau';
 
   @override
-  String get appSetting_dailyReminder_titleText => 'Daily reminder';
+  String get appSetting_dailyReminder_titleText => 'Nodyn atgoffa dyddiol';
 
   @override
-  String get appSetting_backupAndRestoreSubgroupText => 'Backup & restore';
+  String get appSetting_backupAndRestoreSubgroupText =>
+      'Gwneud copi wrth gefn ac adfer';
 
   @override
-  String get appSetting_export_titleText => 'Export';
+  String get appSetting_export_titleText => 'Allforio';
 
   @override
   String get appSetting_export_subtitleText =>
-      'Export habits to a JSON file you can import later.';
+      'Yn allforio arferion mewn fformat JSON. Gellir mewnforio\'r ffeil hon eto.';
 
   @override
-  String get appSetting_import_titleText => 'Import';
+  String get appSetting_import_titleText => 'Mewnforio';
 
   @override
-  String get appSetting_import_subtitleText => 'Import habits from json file.';
+  String get appSetting_import_subtitleText =>
+      'Mewnforio arferion o ffeil JSON.';
 
   @override
-  String get appSetting_thirdPartyImport_titleText => 'Import from third-party';
+  String get appSetting_thirdPartyImport_titleText =>
+      'Mewnforio o drydydd parti';
 
   @override
   String get appSetting_thirdPartyImport_subtitleText =>
-      'Import habits from other habit tracker apps';
+      'Mewnforio arferion o apiau olrhain arferion eraill';
 
   @override
   String get appSetting_thirdPartyImport_provider_loopName =>
@@ -1114,170 +1129,171 @@ class L10nCy extends L10n {
 
   @override
   String get appSetting_thirdPartyImport_provider_versionHint =>
-      'Supports CSV (tested up to <ver/>)';
+      'Yn cefnogi CSV (wedi\'i brofi hyd at <ver/>)';
 
   @override
   String appSetting_importDialog_confirmTitle(int count) {
-    return 'Confirm import $count habits?';
+    return 'Cadarnhau mewnforio $count arfer?';
   }
 
   @override
   String get appSetting_importDialog_confirmSubtitle =>
-      'Note: Import doesn\'t delete existing habits.';
+      'Nodyn: Nid yw mewnforio yn dileu arferion presennol.';
 
   @override
-  String get appSetting_importDialog_option_includeHabits => 'Include habits';
+  String get appSetting_importDialog_option_includeHabits => 'Cynnwys arferion';
 
   @override
-  String get appSetting_importDialog_option_includeGroups => 'Include groups';
+  String get appSetting_importDialog_option_includeGroups => 'Cynnwys grwpiau';
 
   @override
   String appSetting_importDialog_tile_includeHabits(int count) {
-    return 'Include $count habits';
+    return 'Cynnwys $count arfer';
   }
 
   @override
   String appSetting_importDialog_tile_includeGroups(int count) {
-    return 'Include $count groups';
+    return 'Cynnwys $count grŵp';
   }
 
   @override
   String appSetting_importConfirmDialog_sourceLabel(String provider) {
-    return 'Source: $provider';
+    return 'Ffynhonnell: $provider';
   }
 
   @override
   String get appSetting_thirdPartyImport_error_fileReadError =>
-      'Failed to read the selected file.';
+      'Methodd darllen y ffeil a ddewiswyd.';
 
   @override
   String get appSetting_thirdPartyImport_error_noHabitsFound =>
-      'No habits found in the import file.';
+      'Ni chanfuwyd unrhyw arferion yn y ffeil mewnforio.';
 
   @override
   String get appSetting_thirdPartyImport_error_parseError =>
-      'Failed to parse import file';
+      'Methodd dosrannu\'r ffeil mewnforio';
 
   @override
   String get appSetting_thirdPartyImport_error_unknown =>
-      'An unexpected error occurred during import.';
+      'Digwyddodd gwall annisgwyl wrth fewnforio.';
 
   @override
-  String get appSetting_importDialog_confirm_confirmText => 'confirm';
+  String get appSetting_importDialog_confirm_confirmText => 'cadarnhau';
 
   @override
-  String get appSetting_importDialog_confirm_cancelText => 'cancel';
+  String get appSetting_importDialog_confirm_cancelText => 'canslo';
 
   @override
   String appSetting_importDialog_importingTitle(
     int completeCount,
     int totalCount,
   ) {
-    return 'Imported $completeCount/$totalCount';
+    return 'Wedi mewnforio $completeCount/$totalCount';
   }
 
   @override
   String appSetting_importDialog_completeTitle(int count) {
-    return 'Habits imported: $count';
+    return 'Wedi gorffen mewnforio $count arfer';
   }
 
   @override
   String appSetting_importDialog_completeTitleGroups(int count) {
-    return 'Groups imported: $count';
+    return 'Wedi gorffen mewnforio $count grŵp';
   }
 
   @override
-  String get appSetting_importDialog_complete_closeLabel => 'close';
+  String get appSetting_importDialog_complete_closeLabel => 'cau';
 
   @override
-  String get appSetting_resetConfig_titleText => 'Reset configs';
+  String get appSetting_resetConfig_titleText => 'Ailosod ffurfweddiadau';
 
   @override
   String get appSetting_resetConfig_subtitleText =>
-      'Reset all configs to default.';
+      'Ailosod yr holl ffurfweddiadau i\'r rhagosodiadau.';
 
   @override
-  String get appSetting_resetConfigDialog_titleText => 'Reset configs?';
+  String get appSetting_resetConfigDialog_titleText =>
+      'Ailosod ffurfweddiadau?';
 
   @override
   String get appSetting_resetConfigDialog_subtitleText =>
-      'Reset all configs to default, must restart application to apply.';
+      'Ailosod yr holl ffurfweddiadau i\'r rhagosodiadau; rhaid ailgychwyn yr ap i\'w rhoi ar waith.';
 
   @override
-  String get appSetting_resetConfigDialog_cancelText => 'cancel';
+  String get appSetting_resetConfigDialog_cancelText => 'canslo';
 
   @override
-  String get appSetting_resetConfigDialog_confirmText => 'confirm';
+  String get appSetting_resetConfigDialog_confirmText => 'cadarnhau';
 
   @override
-  String get appSetting_resetConfigSuccess_snackbarText => 'Settings reset';
+  String get appSetting_resetConfigSuccess_snackbarText =>
+      'Wedi ailosod gosodiadau\'r ap';
 
   @override
-  String get appSetting_otherSubgroupText => 'Others';
+  String get appSetting_otherSubgroupText => 'Eraill';
 
   @override
-  String get appSetting_developMode_titleText => 'Develop Mode';
+  String get appSetting_developMode_titleText => 'Modd datblygwr';
 
   @override
-  String get appSetting_clearCache_titleText => 'Clear Cache';
+  String get appSetting_clearCache_titleText => 'Clirio\'r storfa';
 
   @override
-  String get appSetting_clearCacheDialog_titleText => 'Clear Cache';
+  String get appSetting_clearCacheDialog_titleText => 'Clirio\'r storfa';
 
   @override
   String get appSetting_clearCacheDialog_subtitleText =>
-      'After clearing cache, some custom values will be restored to defaults.';
+      'Ar ôl clirio\'r storfa, bydd rhai gwerthoedd personol yn dychwelyd i\'r rhagosodiadau.';
 
   @override
-  String get appSetting_clearCacheDialog_cancelText => 'cancel';
+  String get appSetting_clearCacheDialog_cancelText => 'canslo';
 
   @override
-  String get appSetting_clearCacheDialog_confirmText => 'confirm';
+  String get appSetting_clearCacheDialog_confirmText => 'cadarnhau';
 
   @override
   String get appSetting_clearCache_snackBar_partSuccText =>
-      'Couldn’t fully clear the cache';
+      'Methodd clirio\'r storfa yn rhannol';
 
   @override
   String get appSetting_clearCache_snackBar_succText =>
-      'Cache cleared successfully';
+      'Wedi llwyddo i glirio\'r storfa';
 
   @override
   String get appSetting_clearCache_snackBar_failText =>
-      'Couldn’t clear the cache';
+      'Methodd clirio\'r storfa';
 
   @override
-  String get appSetting_debugger_titleText => 'Debug Info';
+  String get appSetting_debugger_titleText => 'Gwybodaeth ddadfygio';
 
   @override
-  String get appSetting_about_titleText => 'About';
+  String get appSetting_about_titleText => 'Ynghylch';
 
   @override
   String get appSetting_experimentalFeatureTile_titleText =>
-      'Experimental Features';
+      'Nodweddion arbrofol';
 
   @override
-  String get appSetting_synSubgroupText => 'Sync';
+  String get appSetting_synSubgroupText => 'Cysoni';
 
   @override
-  String get appSetting_syncOption_titleText => 'Sync Options';
+  String get appSetting_syncOption_titleText => 'Opsiynau cysoni';
 
   @override
-  String get appSetting_notify_titleTile => 'Notifications';
+  String get appSetting_notify_titleTile => 'Hysbysiadau';
 
   @override
-  String get appSetting_notify_subtitleTile =>
-      'Manage notification preferences';
+  String get appSetting_notify_subtitleTile => 'Rheoli dewisiadau hysbysu';
 
   @override
   String get appSetting_notify_subtitleTile_android =>
-      'Tap to open system notification settings';
+      'Tapiwch i agor gosodiadau hysbysu\'r system';
 
   @override
-  String get appSync_nowTile_titleText => 'Sync Now';
+  String get appSync_nowTile_titleText => 'Cysoni nawr';
 
   @override
-  String get appSync_nowTile_titleText_syncing => 'Syncing';
+  String get appSync_nowTile_titleText_syncing => 'Yn cysoni';
 
   @override
   String appSync_nowTile_dateFormat(DateTime ymd, DateTime jms) {
@@ -1290,23 +1306,24 @@ class L10nCy extends L10n {
   }
 
   @override
-  String get appSync_nowTile_text_noDate => 'Last Sync: N/A';
+  String get appSync_nowTile_text_noDate => 'Cysoni diwethaf: dim eto';
 
   @override
   String appSync_nowTile_text(String dateStr) {
-    return 'Last Sync: $dateStr';
+    return 'Cysoni diwethaf: $dateStr';
   }
 
   @override
-  String get appSync_nowTile_errorText_noDate => 'Last Sync (Error): N/A';
+  String get appSync_nowTile_errorText_noDate =>
+      'Cysoni diwethaf (gwall): dim eto';
 
   @override
   String appSync_nowTile_errorText(String dateStr) {
-    return 'Last Sync (Error): $dateStr';
+    return 'Cysoni diwethaf (gwall): $dateStr';
   }
 
   @override
-  String get appSync_nowTile_syncingText => 'Syncing...';
+  String get appSync_nowTile_syncingText => 'Yn cysoni...';
 
   @override
   String appSync_nowTile_syncingText_withPrt(num prt) {
@@ -1317,26 +1334,27 @@ class L10nCy extends L10n {
         );
     final String prtString = prtNumberFormat.format(prt);
 
-    return 'Syncing: $prtString';
+    return 'Yn cysoni: $prtString';
   }
 
   @override
-  String get appSync_nowTile_cancellingText => 'Canceling...';
+  String get appSync_nowTile_cancellingText => 'Yn canslo...';
 
   @override
-  String get appSync_nowTile_cancelText_noDate => 'Last Sync (Cancelled): N/A';
+  String get appSync_nowTile_cancelText_noDate =>
+      'Cysoni diwethaf (wedi\'i ganslo): dim eto';
 
   @override
   String appSync_nowTile_cancelText(String dateStr) {
-    return 'Last Sync (Cancelled): $dateStr';
+    return 'Cysoni diwethaf (wedi\'i ganslo): $dateStr';
   }
 
   @override
-  String get appSync_failedTile_titleText => 'Check Failure Logs';
+  String get appSync_failedTile_titleText => 'Gwirio logiau methiant';
 
   @override
   String appSync_failedTile_errorText(String info) {
-    return '[Error]: $info';
+    return '[Gwall]: $info';
   }
 
   @override
@@ -1347,11 +1365,11 @@ class L10nCy extends L10n {
   @override
   String appSync_webdav_resultStatus(String status) {
     String _temp0 = intl.Intl.selectLogic(status, {
-      'success': 'Completed',
-      'cancelled': 'Canceled',
-      'failed': 'Failed',
-      'multi': 'Multiple statuses',
-      'other': 'Unknown status',
+      'success': 'Wedi\'i gwblhau',
+      'cancelled': 'Wedi\'i ganslo',
+      'failed': 'Wedi methu',
+      'multi': 'Sawl statws',
+      'other': 'Statws anhysbys',
     });
     return '$_temp0';
   }
@@ -1359,11 +1377,11 @@ class L10nCy extends L10n {
   @override
   String appSync_webdav_resultStatus_withReason(String status, String reason) {
     String _temp0 = intl.Intl.selectLogic(status, {
-      'success': 'Completed due to $reason',
-      'cancelled': 'Canceled due to $reason',
-      'failed': 'Failed due to $reason',
-      'multi': 'Multiple statuses due to $reason',
-      'other': 'Unknown status',
+      'success': 'Wedi\'i gwblhau oherwydd $reason',
+      'cancelled': 'Wedi\'i ganslo oherwydd $reason',
+      'failed': 'Wedi methu oherwydd $reason',
+      'multi': 'Sawl statws oherwydd $reason',
+      'other': 'Statws anhysbys',
     });
     return '$_temp0';
   }
@@ -1371,45 +1389,49 @@ class L10nCy extends L10n {
   @override
   String appSync_webdav_resultReason(String reason) {
     String _temp0 = intl.Intl.selectLogic(reason, {
-      'error': 'Error',
-      'userAction': 'User action required',
-      'missingHabitUuid': 'Missing habit UUID',
-      'empty': 'Empty data',
-      'other': 'Unknown reason',
+      'error': 'Gwall',
+      'userAction': 'Angen gweithred defnyddiwr',
+      'missingHabitUuid': 'UUID arfer ar goll',
+      'empty': 'Data gwag',
+      'other': 'Rheswm anhysbys',
     });
     return '$_temp0';
   }
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_titleText => 'New Location';
+  String get appSync_webdav_newServerConfirmDialog_titleText =>
+      'Lleoliad newydd';
 
   @override
   String get appSync_webdav_newServerConfirmDialog_subtitleText =>
-      'Syncing will create necessary directories and upload local habits to the server. Continue?';
+      'Bydd cysoni yn creu cyfeiriaduron angenrheidiol ac yn uwchlwytho arferion lleol i\'r gweinydd. Parhau?';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_confirmText => 'Sync Now!';
+  String get appSync_webdav_newServerConfirmDialog_confirmText =>
+      'Cysoni nawr!';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_titleText => 'Confirm Sync';
+  String get appSync_webdav_oldServerConfirmDialog_titleText =>
+      'Cadarnhau cysoni';
 
   @override
   String get appSync_webdav_oldServerConfirmDialog_subtitleText =>
-      'Directory isn\'t empty. Syncing will merge server and local habits. Continue?';
+      'Nid yw\'r cyfeiriadur yn wag. Bydd cysoni yn uno arferion y gweinydd a\'r rhai lleol. Parhau?';
 
   @override
   String get appSync_webdav_oldServerConfirmDialog_confirmText =>
-      'Confirm Merge';
+      'Cadarnhau cyfuno';
 
   @override
-  String get appSync_exportAllLogsTile_titleText => 'Export Failed Sync Logs';
+  String get appSync_exportAllLogsTile_titleText =>
+      'Allforio logiau cysoni a fethodd';
 
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
     String _temp0 = intl.Intl.selectLogic(isEmpty, {
-      'true': 'No logs found',
-      'false': 'Tap to export',
-      'other': 'loading...',
+      'true': 'Dim log wedi\'i ganfod',
+      'false': 'Tapiwch i allforio',
+      'other': 'wrthi\'n llwytho...',
     });
     return '$_temp0';
   }
@@ -1417,13 +1439,13 @@ class L10nCy extends L10n {
   @override
   String appSync_syncServerType_text(String name, String isCurrent) {
     String _temp0 = intl.Intl.selectLogic(isCurrent, {
-      'true': 'Current: ',
+      'true': 'Presennol: ',
       'other': '',
     });
     String _temp1 = intl.Intl.selectLogic(name, {
       'webdav': 'WebDAV',
-      'fake': 'Fake (Only For Debugger)',
-      'other': 'Unknown ($name)',
+      'fake': 'Ffug (dim ond ar gyfer dadfygiwr)',
+      'other': 'Anhysbys ($name)',
     });
     return '$_temp0$_temp1';
   }
@@ -1431,9 +1453,9 @@ class L10nCy extends L10n {
   @override
   String appSync_networkType_text(String type) {
     String _temp0 = intl.Intl.selectLogic(type, {
-      'mobile': 'Mobile',
+      'mobile': 'Data symudol',
       'wifi': 'Wifi',
-      'other': 'Unknown',
+      'other': 'Anhysbys',
     });
     return '$_temp0';
   }
@@ -1441,89 +1463,90 @@ class L10nCy extends L10n {
   @override
   String appSync_syncInterval_text(String name) {
     String _temp0 = intl.Intl.selectLogic(name, {
-      'manual': 'Manual',
-      'minute5': '5 Minutes',
-      'minute15': '15 Minutes',
-      'minute30': '30 Minutes',
-      'hour1': '1 Hour',
-      'other': 'Unknown',
+      'manual': 'Â llaw',
+      'minute5': '5 munud',
+      'minute15': '15 munud',
+      'minute30': '30 munud',
+      'hour1': '1 awr',
+      'other': 'Anhysbys',
     });
     return '$_temp0';
   }
 
   @override
-  String get appSync_syncIntervalTile_title => 'Fetch Interval';
+  String get appSync_syncIntervalTile_title => 'Cyfwng cysoni';
 
   @override
-  String get appSync_summaryTile_title => 'Sync Server';
+  String get appSync_summaryTile_title => 'Gweinydd cysoni';
 
   @override
   String get appSync_summaryTile_subtitle_text_notConfigured =>
-      'Not Configured';
+      'Heb ei ffurfweddu';
 
   @override
   String get appSync_exportAllLogsTile_exportSubjectText =>
-      'All recent failed sync logs';
+      'Pob log cysoni a fethodd yn ddiweddar';
 
   @override
   String get appSync_serverEditor_saveDialog_titleText =>
-      'Confirm Save Changes';
+      'Cadarnhau cadw newidiadau';
 
   @override
   String get appSync_serverEditor_saveDialog_subtitleText =>
-      'Saving will overwrite previous server configuration.';
+      'Bydd cadw yn trosysgrifennu ffurfweddiad blaenorol y gweinydd.';
 
   @override
-  String get appSync_serverEditor_exitDialog_titleText => 'Unsaved Changes';
+  String get appSync_serverEditor_exitDialog_titleText =>
+      'Newidiadau heb eu cadw';
 
   @override
   String get appSync_serverEditor_exitDialog_subtitleText =>
-      'Exiting will discard all unsaved changes.';
+      'Bydd gadael yn gwaredu pob newid heb ei gadw.';
 
   @override
-  String get appSync_serverEditor_deleteDialog_titleText => 'Confirm Delete';
+  String get appSync_serverEditor_deleteDialog_titleText => 'Cadarnhau dileu';
 
   @override
   String get appSync_serverEditor_deleteDialog_subtitleText =>
-      'Deleting will remove current server config.';
+      'Bydd hyn yn dileu ffurfweddiad cyfredol y gweinydd.';
 
   @override
-  String get appSync_serverEditor_titleText_add => 'New Sync Server';
+  String get appSync_serverEditor_titleText_add => 'Gweinydd cysoni newydd';
 
   @override
-  String get appSync_serverEditor_titleText_modify => 'Modify Sync Server';
+  String get appSync_serverEditor_titleText_modify => 'Addasu gweinydd cysoni';
 
   @override
-  String get appSync_serverEditor_advance_titleText => 'Advanced Configs';
+  String get appSync_serverEditor_advance_titleText => 'Ffurfweddiadau uwch';
 
   @override
-  String get appSync_serverEditor_pathTile_titleText => 'Path';
+  String get appSync_serverEditor_pathTile_titleText => 'Llwybr';
 
   @override
   String get appSync_serverEditor_pathTile_hintText =>
-      'Enter a valid WebDAV path here.';
+      'Rhowch lwybr WebDAV dilys yma.';
 
   @override
   String get appSync_serverEditor_pathTile_errorText_emptyPath =>
-      'Path shouldn\'t be empty!';
+      'Ni ddylai\'r llwybr fod yn wag!';
 
   @override
-  String get appSync_serverEditor_usernameTile_titleText => 'Username';
+  String get appSync_serverEditor_usernameTile_titleText => 'Enw defnyddiwr';
 
   @override
   String get appSync_serverEditor_usernameTile_hintText =>
-      'Enter username here, leave empty if not required.';
+      'Rhowch enw defnyddiwr yma, gadewch yn wag os nad oes ei angen.';
 
   @override
-  String get appSync_serverEditor_passwordTile_titleText => 'Password';
+  String get appSync_serverEditor_passwordTile_titleText => 'Cyfrinair';
 
   @override
   String get appSync_serverEditor_ignoreSSLTile_titleText =>
-      'Ignore SSL Certificate';
+      'Anwybyddu tystysgrif SSL';
 
   @override
   String get appSync_serverEditor_timeoutTile_titleText =>
-      'Sync Timeout Seconds';
+      'Terfyn amser cysoni (eiliadau)';
 
   @override
   String appSync_serverEditor_timeoutTile_hintText(int seconds, String unit) {
@@ -1531,9 +1554,9 @@ class L10nCy extends L10n {
       seconds,
       locale: localeName,
       other: '$seconds$unit',
-      zero: 'Infinite',
+      zero: 'anfeidraidd',
     );
-    return 'Default: $_temp0';
+    return 'Rhagosodedig: $_temp0';
   }
 
   @override
@@ -1541,7 +1564,7 @@ class L10nCy extends L10n {
 
   @override
   String get appSync_serverEditor_connTimeoutTile_titleText =>
-      'Network Connection Timeout Seconds';
+      'Terfyn amser cysylltiad rhwydwaith (eiliadau)';
 
   @override
   String appSync_serverEditor_connTimeoutTile_hintText(
@@ -1552,9 +1575,9 @@ class L10nCy extends L10n {
       seconds,
       locale: localeName,
       other: '$seconds$unit',
-      zero: 'Infinite',
+      zero: 'anfeidraidd',
     );
-    return 'Default: $_temp0';
+    return 'Rhagosodedig: $_temp0';
   }
 
   @override
@@ -1562,7 +1585,7 @@ class L10nCy extends L10n {
 
   @override
   String get appSync_serverEditor_connRetryCountTile_titleText =>
-      'Network Connection Retry Count';
+      'Nifer yr ailgynigion cysylltiad rhwydwaith';
 
   @override
   String appSync_serverEditor_connRetryCountTile_hintText(int count) {
@@ -1570,20 +1593,21 @@ class L10nCy extends L10n {
       count,
       locale: localeName,
       other: '$count',
-      zero: 'Retry disabled',
+      zero: 'Ailgynnig wedi\'i analluogi',
     );
-    return 'Default: $_temp0';
+    return 'Rhagosodedig: $_temp0';
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_titleText => 'Network Sync Mode';
+  String get appSync_serverEditor_netTypeTile_titleText =>
+      'Modd cysoni rhwydwaith';
 
   @override
   String appSync_serverEditor_netTypeTile_typeTooltip(String type) {
     String _temp0 = intl.Intl.selectLogic(type, {
-      'mobile': 'Sync on Cellular Network',
-      'wifi': 'Sync on Wifi',
-      'other': 'Unknown',
+      'mobile': 'Cysoni ar ddata symudol',
+      'wifi': 'Cysoni ar Wifi',
+      'other': 'Anhysbys',
     });
     return '$_temp0';
   }
@@ -1592,100 +1616,103 @@ class L10nCy extends L10n {
   String get appSync_serverEditor_netTypeTile_lowDataText => 'LowData';
 
   @override
-  String get appSync_noti_readyToSync_body => 'Preparing to sync...';
+  String get appSync_noti_readyToSync_body => 'Yn paratoi i gysoni...';
 
   @override
   String appSync_noti_syncing_title(String synced, String type) {
     String _temp0 = intl.Intl.selectLogic(synced, {
-      'synced': 'Synced ($type)',
-      'failed': 'Sync Failed ($type)',
-      'other': 'Syncing ($type)',
+      'synced': 'Wedi cysoni ($type)',
+      'failed': 'Methodd cysoni ($type)',
+      'other': 'Yn cysoni ($type)',
     });
     return '$_temp0';
   }
 
   @override
   String get appSync_serverEditor_netTypeTile_lowDataTooltip =>
-      'Sync in Low Data Mode';
+      'Cysoni yn y modd data isel';
 
   @override
   String get experimentalFeatures_warnginBanner_title =>
-      'One or more experimental features are enabled, Use with caution.';
+      'Mae un neu fwy o nodweddion arbrofol wedi\'u galluogi. Defnyddiwch yn ofalus.';
 
   @override
-  String get experimentalFeatures_habitSyncTile_titleText => 'Habit Cloud Sync';
+  String get experimentalFeatures_habitSyncTile_titleText =>
+      'Cysoni arferion yn y cwmwl';
 
   @override
   String get experimentalFeatures_habitSyncTile_subtitleText =>
-      'Once enabled, the app\'s sync option will appear in settings';
+      'Unwaith y bydd wedi\'i alluogi, bydd opsiwn cysoni\'r ap yn ymddangos yn y gosodiadau';
 
   @override
   String experimentalFeatures_warnTile_titleText(String syncName) {
-    return 'Experimental feature ($syncName) is disabled, but the function is still running.';
+    return 'Mae nodwedd arbrofol ($syncName) wedi\'i hanalluogi, ond mae\'r swyddogaeth yn dal i redeg.';
   }
 
   @override
   String experimentalFeatures_warnTile_forHabitSyncText(String menuName) {
-    return 'To completely disable, long press to access \'$menuName\' and turn it off.';
+    return 'I analluogi\'n llwyr, pwyswch yn hir i gael mynediad i \'$menuName\' a\'i ddiffodd.';
   }
 
   @override
-  String get experimentalFeatures_habitSearchTile_titleText => 'Habit Search';
+  String get experimentalFeatures_habitSearchTile_titleText =>
+      'Chwilio arferion';
 
   @override
   String get experimentalFeatures_habitSearchTile_subtitleText =>
-      'Once enabled, a search bar will appear at the top of the Habits screen and allowing to search habits.';
+      'Unwaith y bydd wedi\'i alluogi, bydd bar chwilio yn ymddangos ar frig y sgrin Arferion ac yn gadael i chi chwilio arferion.';
 
   @override
-  String get appAbout_appbarTile_titleText => 'About';
+  String get appAbout_appbarTile_titleText => 'Ynghylch';
 
   @override
   String appAbout_versionTile_titleText(String appVersion) {
-    return 'Version: $appVersion';
+    return 'Fersiwn: $appVersion';
   }
 
   @override
   String get appAbout_versionTile_changeLogPath => 'CHANGELOG.md';
 
   @override
-  String get appAbout_sourceCodeTile_titleText => 'Source code';
+  String get appAbout_sourceCodeTile_titleText => 'Cod ffynhonnell';
 
   @override
-  String get appAbout_issueTrackerTile_titleText => 'Issue tracker';
+  String get appAbout_issueTrackerTile_titleText => 'Traciwr problemau';
 
   @override
-  String get appAbout_contactEmailTile_titleText => 'Contact me';
+  String get appAbout_contactEmailTile_titleText => 'Cysylltu â mi';
 
   @override
   String get appAbout_contactEmailTile_emailBody =>
-      'Hi, I\'m glad you reached out to me.\nIf you\'re reporting a bug, please indicate the app version and describe the steps to reproduce it.\n--------------------------------------';
+      'Helo, rwy\'n falch eich bod wedi cysylltu â mi.\nOs ydych chi\'n riportio nam, nodwch fersiwn yr ap a disgrifiwch y camau i\'w atgynhyrchu.\n-----------------------------------';
 
   @override
-  String get appAbout_licenseTile_titleText => 'License';
+  String get appAbout_licenseTile_titleText => 'Trwydded';
 
   @override
-  String get appAbout_licenseTile_subtitleText => 'Apache License, Version 2.0';
+  String get appAbout_licenseTile_subtitleText =>
+      'Trwydded Apache, fersiwn 2.0';
 
   @override
   String get appAbout_licenseThirdPartyTile_titleText =>
-      'Third Party Licensing Statement';
+      'Datganiad trwyddedu trydydd parti';
 
   @override
   String get appAbout_licenseThirdPartyTile_subtitleText => 'flutter';
 
   @override
-  String get appAbout_privacyTile_titleText => 'Privacy';
+  String get appAbout_privacyTile_titleText => 'Preifatrwydd';
 
   @override
   String get appAbout_privacyTile_subTitleText =>
-      'Access the privacy policy in this app';
+      'Gweld y polisi preifatrwydd yn yr ap hwn';
 
   @override
-  String get appAbout_donateTile_titleText => 'Donate';
+  String get appAbout_donateTile_titleText => 'Rhoi rhodd';
 
   @override
   String get appAbout_donateTile_subTitleText =>
-      'I\'m a personal developer. If you like this app, please buy me a ☕.';
+      'Rwy\'n ddatblygwr annibynnol. Os ydych chi\'n hoffi\'r ap hwn, prynwch ☕ i mi.';
 
   @override
   String get appAbout_donateTile_ways =>
@@ -1704,7 +1731,7 @@ class L10nCy extends L10n {
   String get donateWay_wechatPay => 'Wechat Pay';
 
   @override
-  String get donateWay_cryptoCurrency => 'Crypto Currencies';
+  String get donateWay_cryptoCurrency => 'Arian cripto';
 
   @override
   String get donateWay_cryptoCurrency_BTC => 'BTC';
@@ -1726,81 +1753,82 @@ class L10nCy extends L10n {
 
   @override
   String appAbout_donateDialog_copiedCrypto_msg(String name) {
-    return 'Copied $name\'s Address';
+    return 'Copïwyd cyfeiriad $name';
   }
 
   @override
-  String get batchCheckin_appbar_title => 'Batch Check-in';
+  String get batchCheckin_appbar_title => 'Cofnodi swmp';
 
   @override
-  String get batchCheckin_datePicker_prevButton_tooltip => 'Previous day';
+  String get batchCheckin_datePicker_prevButton_tooltip =>
+      'Y diwrnod blaenorol';
 
   @override
-  String get batchCheckin_datePicker_nextButton_tooltip => 'Next day';
+  String get batchCheckin_datePicker_nextButton_tooltip => 'Y diwrnod nesaf';
 
   @override
-  String get batchCheckin_status_skip_text => 'Skip';
+  String get batchCheckin_status_skip_text => 'Hepgor';
 
   @override
-  String get batchCheckin_status_ok_text => 'Complete';
+  String get batchCheckin_status_ok_text => 'Cwblhau';
 
   @override
-  String get batchCheckin_status_double_text => 'x2 Hit!';
+  String get batchCheckin_status_double_text => 'Taro x2!';
 
   @override
-  String get batchCheckin_status_zero_text => 'Incomplete';
+  String get batchCheckin_status_zero_text => 'Heb ei gwblhau';
 
   @override
   String batchCheckin_habits_groupTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Habits',
-      one: 'Habit',
+      other: 'arfer',
+      one: 'arfer',
     );
-    return '$count $_temp0 selected';
+    return 'Dewiswyd $count $_temp0';
   }
 
   @override
-  String get batchCheckin_save_button_text => 'Save';
+  String get batchCheckin_save_button_text => 'Cadw';
 
   @override
-  String get batchCheckin_reset_button_text => 'Reset';
+  String get batchCheckin_reset_button_text => 'Ailosod';
 
   @override
   String batchCheckin_completed_snackbar_text(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'status of $count habits',
-      one: 'habit\'s status',
+      other: '$count arfer',
+      one: 'arfer',
     );
-    return 'Modified $_temp0';
+    return 'Newidiwyd statws $_temp0';
   }
 
   @override
   String get batchCheckin_save_confirmDialog_title =>
-      'Overwrite Existing Records';
+      'Trosysgrifo cofnodion presennol';
 
   @override
   String get batchCheckin_save_confirmDialog_body =>
-      'Saving will overwrite existing check-ins for the selected day.';
+      'Bydd cofnodion presennol yn cael eu trosysgrifo. Ar ôl cadw, bydd y cofnodion blaenorol yn cael eu colli.';
 
   @override
-  String get batchCheckin_save_confirmDialog_confirmButton_text => 'save';
+  String get batchCheckin_save_confirmDialog_confirmButton_text => 'cadw';
 
   @override
-  String get batchCheckin_save_confirmDialog_cancelButton_text => 'cancel';
+  String get batchCheckin_save_confirmDialog_cancelButton_text => 'canslo';
 
   @override
   String habitRecord_delete_buttonText(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete check-ins',
-      one: 'Delete check-in',
+      other: 'cofnodion',
+      one: 'cofnod',
     );
-    return '$_temp0';
+    return 'Dileu $_temp0';
   }
 
   @override
@@ -1808,113 +1836,116 @@ class L10nCy extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Delete $count check-ins?',
-      one: 'Delete check-in?',
+      other: '$count cofnod?',
+      one: 'cofnod?',
     );
-    return '$_temp0';
+    return 'Dileu $_temp0';
   }
 
   @override
-  String get batchCheckin_close_confirmDialog_title => 'Confirm Return';
+  String get batchCheckin_close_confirmDialog_title => 'Cadarnhau mynd yn ôl';
 
   @override
   String get batchCheckin_close_confirmDialog_body =>
-      'Unsaved check-in changes will be lost if you leave.';
+      'Ni fydd newidiadau i statws cofnodi yn cael eu cymhwyso nes iddynt gael eu cadw';
 
   @override
-  String get batchCheckin_close_confirmDialog_confirmButton_text => 'exit';
+  String get batchCheckin_close_confirmDialog_confirmButton_text => 'gadael';
 
   @override
-  String get batchCheckin_close_confirmDialog_cancelButton_text => 'cancel';
+  String get batchCheckin_close_confirmDialog_cancelButton_text => 'canslo';
 
   @override
   String get appReminder_dailyReminder_title =>
-      '🏝 Did you stick to your habits today?';
+      '🏝 A wnaethoch chi gadw at eich arferion heddiw?';
 
   @override
   String get appReminder_dailyReminder_body =>
-      'Tap to open the app and check in.';
+      'Tapiwch i agor yr ap a chofnodi mewn pryd.';
 
   @override
-  String get common_habitColorType_cc1 => 'Deep lilac';
+  String get common_habitColorType_cc1 => 'Lila dwfn';
 
   @override
-  String get common_habitColorType_cc2 => 'Red';
+  String get common_habitColorType_cc2 => 'Coch';
 
   @override
-  String get common_habitColorType_cc3 => 'Purple';
+  String get common_habitColorType_cc3 => 'Porffor';
 
   @override
-  String get common_habitColorType_cc4 => 'Royal blue';
+  String get common_habitColorType_cc4 => 'Glas brenhinol';
 
   @override
-  String get common_habitColorType_cc5 => 'Dark cyan';
+  String get common_habitColorType_cc5 => 'Cyan tywyll';
 
   @override
-  String get common_habitColorType_cc6 => 'Green';
+  String get common_habitColorType_cc6 => 'Gwyrdd';
 
   @override
-  String get common_habitColorType_cc7 => 'Amber';
+  String get common_habitColorType_cc7 => 'Ambr';
 
   @override
-  String get common_habitColorType_cc8 => 'Orange';
+  String get common_habitColorType_cc8 => 'Oren';
 
   @override
-  String get common_habitColorType_cc9 => 'Lime green';
+  String get common_habitColorType_cc9 => 'Gwyrdd leim';
 
   @override
-  String get common_habitColorType_cc10 => 'Dark orchid';
+  String get common_habitColorType_cc10 => 'Orchid tywyll';
 
   @override
-  String get common_habitColorType_custom => 'Custom';
+  String get common_habitColorType_custom => 'Personol';
 
   @override
   String common_habitColorType_default(int index) {
-    return 'Color $index';
+    return 'Lliw $index';
   }
 
   @override
   String get common_appThemeColor_system => 'System';
 
   @override
-  String get common_appThemeColor_primary => 'Primary';
+  String get common_appThemeColor_primary => 'Prif liw';
 
   @override
-  String get common_appThemeColor_dynamic => 'Dynamic';
+  String get common_appThemeColor_dynamic => 'Dynamig';
 
   @override
   String get common_customDateTimeFormatPicker_useSystemFormat_text =>
-      'Use system format';
+      'Defnyddio fformat y system';
 
   @override
-  String get common_customDateTimeFormatPicker_fmtTileText => 'Date format';
+  String get common_customDateTimeFormatPicker_fmtTileText => 'Fformat dyddiad';
 
   @override
-  String get common_customDateTimeFormatPicker_ymd_text => 'Year Month Day';
+  String get common_customDateTimeFormatPicker_ymd_text =>
+      'Blwyddyn mis diwrnod';
 
   @override
-  String get common_customDateTimeFormatPicker_mdy_text => 'Month Day Year';
+  String get common_customDateTimeFormatPicker_mdy_text =>
+      'Mis diwrnod blwyddyn';
 
   @override
-  String get common_customDateTimeFormatPicker_dmy_text => 'Day Month Year';
+  String get common_customDateTimeFormatPicker_dmy_text =>
+      'Diwrnod mis blwyddyn';
 
   @override
-  String get common_customDateTimeFormatPicker_SepTileText => 'Separator';
+  String get common_customDateTimeFormatPicker_SepTileText => 'Gwahanydd';
 
   @override
-  String get common_customDateTimeFormatPicker_sepDash_text => 'Dash';
+  String get common_customDateTimeFormatPicker_sepDash_text => 'Cysylltnod';
 
   @override
-  String get common_customDateTimeFormatPicker_sepSlash_text => 'Slash';
+  String get common_customDateTimeFormatPicker_sepSlash_text => 'Llinell oledd';
 
   @override
-  String get common_customDateTimeFormatPicker_sepSpace_text => 'Space';
+  String get common_customDateTimeFormatPicker_sepSpace_text => 'Bwlch';
 
   @override
   String get common_customDateTimeFormatPicker_sepDot_text => 'Dot';
 
   @override
-  String get common_customDateTimeFormatPicker_empty_text => 'No Separator';
+  String get common_customDateTimeFormatPicker_empty_text => 'Dim gwahanydd';
 
   @override
   String common_customDateTimeFormatPicker_sep_formatter(
@@ -1926,452 +1957,456 @@ class L10nCy extends L10n {
 
   @override
   String get common_customDateTimeFormatPicker_12Hour_text =>
-      'Use 12-hour format';
+      'Defnyddio fformat 12 awr';
 
   @override
   String get common_customDateTimeFormatPicker_monthName_text =>
-      'Use full name';
+      'Defnyddio enw llawn';
 
   @override
-  String get appDateFormat_leadingZero_text => 'Use leading zeros';
+  String get appDateFormat_leadingZero_text => 'Defnyddio seroau ar y dechrau';
 
   @override
-  String get appDateFormat_preview_text => 'Preview';
+  String get appDateFormat_preview_text => 'Rhagolwg';
 
   @override
   String get common_customDateTimeFormatPicker_applyFreqChart_text =>
-      'Apply for Freq Chart';
+      'Cymhwyso i\'r siart amlder';
 
   @override
   String get common_customDateTimeFormatPicker_applyHeapmap_text =>
-      'Apply for Calendar';
+      'Cymhwyso i\'r calendr';
 
   @override
-  String get common_customDateTimeFormatPicker_cancelButton_text => 'cancel';
+  String get common_customDateTimeFormatPicker_cancelButton_text => 'canslo';
 
   @override
-  String get common_customDateTimeFormatPicker_confirmButton_text => 'confirm';
+  String get common_customDateTimeFormatPicker_confirmButton_text =>
+      'cadarnhau';
 
   @override
-  String get common_errorPage_title => 'Oops, Crashed!';
+  String get common_errorPage_title => 'Wps, chwalodd yr ap!';
 
   @override
-  String get common_errorPage_copied => 'Copied crash information';
+  String get common_errorPage_copied => 'Copïwyd gwybodaeth am y chwalfa';
 
   @override
-  String get common_enable_text => 'Enabled';
+  String get common_enable_text => 'Wedi\'i alluogi';
 
   @override
-  String get common_dontShowAgain => 'Don\'t show again';
+  String get common_dontShowAgain => 'Peidio â dangos eto';
 
   @override
-  String get calendarPicker_clip_today => 'Today';
+  String get calendarPicker_clip_today => 'Heddiw';
 
   @override
-  String get calendarPicker_clip_tomorrow => 'Tomorrow';
+  String get calendarPicker_clip_tomorrow => 'Yfory';
 
   @override
   String calendarPicker_clip_after7Days(DateTime date) {
     final intl.DateFormat dateDateFormat = intl.DateFormat.E(localeName);
     final String dateString = dateDateFormat.format(date);
 
-    return 'Next $dateString';
+    return '$dateString nesaf';
   }
 
   @override
-  String get exportConfirmDialog_title_exportAll => 'Export all habits?';
+  String get exportConfirmDialog_title_exportAll =>
+      'Allforio\'r holl arferion?';
 
   @override
   String exportConfirmDialog_title_exportMulti(int number) {
     String _temp0 = intl.Intl.pluralLogic(
       number,
       locale: localeName,
-      other: '$number habits',
-      one: '1 habit',
-      zero: 'current habit',
+      other: '$number arfer',
+      one: '1 arfer',
+      zero: 'yr arfer presennol',
     );
-    return 'Export $_temp0?';
+    return 'Allforio $_temp0?';
   }
 
   @override
-  String get exportConfirmDialog_option_includeRecords => 'include records';
+  String get exportConfirmDialog_option_includeRecords => 'cynnwys cofnodion';
 
   @override
-  String get exportConfirmDialog_option_includeGroups => 'include groups';
+  String get exportConfirmDialog_option_includeGroups => 'cynnwys grwpiau';
 
   @override
   String exportConfirmDialog_tile_includeRecords(int count) {
-    return 'Include $count records';
+    return 'Cynnwys $count cofnod';
   }
 
   @override
   String exportConfirmDialog_tile_includeGroups(int count) {
-    return 'Include $count groups';
+    return 'Cynnwys $count grŵp';
   }
 
   @override
-  String get exportConfirmDialog_cancel_buttonText => 'cancel';
+  String get exportConfirmDialog_cancel_buttonText => 'canslo';
 
   @override
-  String get exportConfirmDialog_confirm_buttonText => 'export';
+  String get exportConfirmDialog_confirm_buttonText => 'allforio';
 
   @override
-  String get debug_logLevelTile_title => 'Logging Level';
+  String get debug_logLevelTile_title => 'Lefel logiau';
 
   @override
-  String get debug_logLevelDialog_title => 'Change Logging Level';
+  String get debug_logLevelDialog_title => 'Newid lefel logiau';
 
   @override
-  String get debug_logLevel_debug => 'Debug';
+  String get debug_logLevel_debug => 'Dadfygio';
 
   @override
-  String get debug_logLevel_info => 'Info';
+  String get debug_logLevel_info => 'Gwybodaeth';
 
   @override
-  String get debug_logLevel_warn => 'Warning';
+  String get debug_logLevel_warn => 'Rhybudd';
 
   @override
-  String get debug_logLevel_error => 'Error';
+  String get debug_logLevel_error => 'Gwall';
 
   @override
-  String get debug_logLevel_fatal => 'Fatal';
+  String get debug_logLevel_fatal => 'Angheuol';
 
   @override
-  String get debug_collectLogTile_title => 'Collecting Logs';
+  String get debug_collectLogTile_title => 'Casglu logiau';
 
   @override
   String get debug_collectLogTile_enable_subtitle =>
-      'Tap to stop logging collection.';
+      'Tapio i atal casglu logiau.';
 
   @override
   String get debug_collectLogTile_disable_subtitle =>
-      'Tap to start logging collection.';
+      'Tapio i ddechrau casglu logiau.';
 
   @override
-  String get debug_downladDebugLogs_subject => 'Downloading debugging logs';
+  String get debug_downladDebugLogs_subject => 'Lawrlwytho logiau dadfygio';
 
   @override
   String get dbeug_clearDebugLogs_complete_snackbar =>
-      'Debugging logs Cleared.';
+      'Cliriwyd y logiau dadfygio.';
 
   @override
   String get debug_downladDebugInfo_subject =>
-      'Downloading debugging information';
+      'Lawrlwytho gwybodaeth ddadfygio';
 
   @override
-  String get debug_shareDebugZip_tooltip => 'Share debug bundle';
+  String get debug_shareDebugZip_tooltip => 'Rhannu pecyn dadfygio';
 
   @override
   String debug_downladDebugZip_subject(String fileName) {
-    return 'Downloading $fileName';
+    return 'Lawrlwytho $fileName';
   }
 
   @override
-  String get debug_missingDebugLogFile_snackbar => 'Debug log doesn\'t exist.';
+  String get debug_missingDebugLogFile_snackbar =>
+      'Nid yw\'r log dadfygio yn bodoli.';
 
   @override
-  String get debug_debuggerLogCard_title => 'Logging Information';
+  String get debug_debuggerLogCard_title => 'Gwybodaeth logio';
 
   @override
   String get debug_debuggerLogCard_subtitle =>
-      'Includes local debugging log information, need to turn on the log collection switcher.';
+      'Yn cynnwys gwybodaeth log dadfygio lleol; mae angen troi\'r switsh casglu logiau ymlaen.';
 
   @override
-  String get debug_debuggerLogCard_saveButton_text => 'Download';
+  String get debug_debuggerLogCard_saveButton_text => 'Lawrlwytho';
 
   @override
-  String get debug_debuggerLogCard_clearButton_text => 'Clear';
+  String get debug_debuggerLogCard_clearButton_text => 'Clirio';
 
   @override
-  String get debug_debuggerInfoCard_title => 'Debugging Information';
+  String get debug_debuggerInfoCard_title => 'Gwybodaeth ddadfygio';
 
   @override
   String get debug_debuggerInfoCard_subtitle =>
-      'Includes app\'s debugging information.';
+      'Yn cynnwys gwybodaeth ddadfygio\'r ap.';
 
   @override
-  String get debug_debuggerInfoCard_openButton_text => 'Open';
+  String get debug_debuggerInfoCard_openButton_text => 'Agor';
 
   @override
-  String get debug_debuggerInfoCard_saveButton_text => 'Save';
+  String get debug_debuggerInfoCard_saveButton_text => 'Cadw';
 
   @override
   String get debug_debuggerInfo_notificationTitle =>
-      'Collecting App\'s Info...';
+      'Casglu gwybodaeth yr ap...';
 
   @override
   String confirmDialog_confirm_text(String type) {
     String _temp0 = intl.Intl.selectLogic(type, {
-      'save': 'Save',
-      'exit': 'Exit',
-      'delete': 'Delete',
-      'other': 'Confirm',
+      'save': 'Cadw',
+      'exit': 'Gadael',
+      'delete': 'Dileu',
+      'other': 'Cadarnhau',
     });
     return '$_temp0';
   }
 
   @override
-  String get confirmDialog_cancel_text => 'Cancel';
+  String get confirmDialog_cancel_text => 'Canslo';
 
   @override
-  String get snackbar_undoText => 'UNDO';
+  String get snackbar_undoText => 'DADWNEUD';
 
   @override
-  String get snackbar_dismissText => 'DISMISS';
+  String get snackbar_dismissText => 'CAU';
 
   @override
-  String get contributors_tile_title => 'Contributors';
+  String get contributors_tile_title => 'Cyfranwyr';
 
   @override
-  String get userAction_tap => 'Tap';
+  String get userAction_tap => 'Tapio';
 
   @override
-  String get userAction_doubleTap => 'Double';
+  String get userAction_doubleTap => 'Tapio dwbl';
 
   @override
-  String get userAction_longTap => 'Long';
+  String get userAction_longTap => 'Tapio hir';
 
   @override
-  String get channelName_habitReminder => 'Habit Reminder';
+  String get channelName_habitReminder => 'Nodyn atgoffa arferion';
 
   @override
-  String get channelName_appReminder => 'Prompt';
+  String get channelName_appReminder => 'Anogwr';
 
   @override
-  String get channelName_appDebugger => 'Debugger';
+  String get channelName_appDebugger => 'Dadfygiwr';
 
   @override
-  String get channelName_appSyncing => 'Sync Process';
+  String get channelName_appSyncing => 'Proses cysoni';
 
   @override
   String get channelDesc_appSyncing =>
-      'Used to show sync progress and non-failure results';
+      'Defnyddir i ddangos cynnydd cysoni a chanlyniadau nad ydynt yn fethiannau';
 
   @override
-  String get channelName_appSyncFailed => 'Sync Failed';
+  String get channelName_appSyncFailed => 'Methu cysoni';
 
   @override
-  String get channelDesc_appSyncFailed => 'Used to alert when sync fails';
+  String get channelDesc_appSyncFailed =>
+      'Defnyddir i rybuddio pan fydd cysoni yn methu';
 
   @override
   String changelog_banner_title(String version) {
-    return 'What\'s New in v$version';
+    return 'Beth sy\'n newydd yn fersiwn $version';
   }
 
   @override
-  String get changelog_banner_action => 'CLOSE';
+  String get changelog_banner_action => 'CAU';
 
   @override
-  String get changelog_banner_view => 'VIEW';
+  String get changelog_banner_view => 'GWELD';
 
   @override
-  String get changelog_dialog_title => 'Changelog';
+  String get changelog_dialog_title => 'Log newidiadau';
 
   @override
-  String get changelog_view_full => 'View Full Changelog';
+  String get changelog_view_full => 'Gweld y log newidiadau llawn';
 
   @override
-  String get habitGroup_uncategorized => 'No Group';
+  String get habitGroup_uncategorized => 'Dim grŵp';
 
   @override
-  String get habitDetail_groupTile_title => 'Group';
+  String get habitDetail_groupTile_title => 'Grŵp';
 
   @override
-  String get habitEdit_groupTile_title => 'Group';
+  String get habitEdit_groupTile_title => 'Grŵp';
 
   @override
-  String get habitEdit_groupPicker_hintText => 'Search or create group';
+  String get habitEdit_groupPicker_hintText => 'Chwilio am neu greu grŵp';
 
   @override
-  String get habitEdit_groupPicker_noGroup => 'No Group';
+  String get habitEdit_groupPicker_noGroup => 'Dim grŵp';
 
   @override
   String habitEdit_groupPicker_createGroup(String name) {
-    return 'Create \"$name\"';
+    return 'Creu \"$name\"';
   }
 
   @override
-  String get habitEdit_groupPicker_loading => 'Loading groups…';
+  String get habitEdit_groupPicker_loading => 'Wrthi\'n llwytho grwpiau…';
 
   @override
-  String get groupManage_appbar_title => 'Manage Groups';
+  String get groupManage_appbar_title => 'Rheoli grwpiau';
 
   @override
   String groupManage_selectionAppbar_title(int count) {
-    return '$count selected';
+    return '$count wedi\'u dewis';
   }
 
   @override
   String get groupManage_emptyState_text =>
-      'No groups yet\nTap + to create your first group';
+      'Dim grwpiau eto\nTapio + i greu eich grŵp cyntaf';
 
   @override
-  String get groupManage_deleteDialog_title => 'Delete Group';
+  String get groupManage_deleteDialog_title => 'Dileu grŵp';
 
   @override
   String groupManage_deleteDialog_content(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Habits in these $count groups will become uncategorized.',
-      one: 'Habits in this group will become uncategorized.',
+      other: 'Bydd arferion yn y $count grŵp hyn yn dod yn rhai heb gategori.',
+      one: 'Bydd arferion yn y grŵp hwn yn dod yn rhai heb gategori.',
     );
     return '$_temp0';
   }
 
   @override
-  String get groupManage_deleteDialog_confirm => 'Delete';
+  String get groupManage_deleteDialog_confirm => 'Dileu';
 
   @override
-  String get groupManage_deleteDialog_cancel => 'Cancel';
+  String get groupManage_deleteDialog_cancel => 'Canslo';
 
   @override
-  String get groupManage_deleted_snackbarText => 'Group deleted';
+  String get groupManage_deleted_snackbarText => 'Grŵp wedi\'i ddileu';
 
   @override
-  String get groupManage_undo_snackbarAction => 'Undo';
+  String get groupManage_undo_snackbarAction => 'Dadwneud';
 
   @override
-  String get groupManage_editDialog_title => 'Edit Group';
+  String get groupManage_editDialog_title => 'Golygu grŵp';
 
   @override
-  String get groupManage_createButton_tooltip => 'Create group';
+  String get groupManage_createButton_tooltip => 'Creu grŵp';
 
   @override
-  String get groupManage_createDialog_title => 'Create Group';
+  String get groupManage_createDialog_title => 'Creu grŵp';
 
   @override
-  String get groupManage_nameRequired => 'Name is required';
+  String get groupManage_nameRequired => 'Mae angen enw';
 
   @override
   String groupManage_nameTooLong(int max) {
-    return 'Name must be ≤ $max characters';
+    return 'Rhaid i\'r enw fod yn $max nod neu lai';
   }
 
   @override
-  String get groupManage_name_label => 'Name';
+  String get groupManage_name_label => 'Enw';
 
   @override
-  String get groupManage_desc_label => 'Description';
+  String get groupManage_desc_label => 'Disgrifiad';
 
   @override
   String groupManage_descTooLong(int max) {
-    return 'Description should be ≤ $max characters';
+    return 'Dylai\'r disgrifiad fod yn $max nod neu lai';
   }
 
   @override
-  String get groupManage_sortTile_text => 'Sort Groups';
+  String get groupManage_sortTile_text => 'Trefnu grwpiau';
 
   @override
-  String get groupManage_sectionTitle_text => 'Groups';
+  String get groupManage_sectionTitle_text => 'Grwpiau';
 
   @override
-  String get groupManage_createDateTile_title => 'Created';
+  String get groupManage_createDateTile_title => 'Wedi\'i greu';
 
   @override
-  String get groupManage_modifyDateTile_title => 'Modified';
+  String get groupManage_modifyDateTile_title => 'Wedi\'i addasu';
 
   @override
-  String get groupManage_icon_label => 'Icon';
+  String get groupManage_icon_label => 'Eicon';
 
   @override
-  String get groupManage_icon_none => 'None';
+  String get groupManage_icon_none => 'Dim';
 
   @override
-  String get groupManage_color_label => 'Color';
+  String get groupManage_color_label => 'Lliw';
 
   @override
-  String get groupManage_color_none => 'None';
+  String get groupManage_color_none => 'Dim';
 
   @override
-  String get groupManage_reorder_tooltip => 'Reorder groups';
+  String get groupManage_reorder_tooltip => 'Aildrefnu grwpiau';
 
   @override
-  String get groupManage_menu_edit => 'Edit';
+  String get groupManage_menu_edit => 'Golygu';
 
   @override
-  String get groupManage_menu_delete => 'Delete';
+  String get groupManage_menu_delete => 'Dileu';
 
   @override
-  String get groupManage_selectAll => 'Select all';
+  String get groupManage_selectAll => 'Dewis popeth';
 
   @override
-  String get groupHeader_menu_manage => 'Manage';
+  String get groupHeader_menu_manage => 'Rheoli';
 
   @override
-  String get groupHeader_menu_collapseAll => 'Collapse all';
+  String get groupHeader_menu_collapseAll => 'Plygu popeth';
 
   @override
-  String get groupHeader_menu_expandAll => 'Expand all';
+  String get groupHeader_menu_expandAll => 'Ehangu popeth';
 
   @override
   String get appSetting_manageGroups_subtitleText =>
-      'Create, edit, and delete habit groups';
+      'Creu, golygu, a dileu grwpiau arferion';
 
   @override
-  String get habitDisplay_groupType_manual => 'Manual';
+  String get habitDisplay_groupType_manual => 'Â llaw';
 
   @override
   String confirmDialog_confirmAndSkip_text(String action) {
-    return '$action, and don\'t ask again';
+    return '$action, a pheidio â gofyn eto';
   }
 
   @override
-  String get habitDisplay_groupModifyConfirm_previewTitle => 'Preview';
+  String get habitDisplay_groupModifyConfirm_previewTitle => 'Rhagolwg';
 
   @override
-  String get appSupport_title => 'Support Table Habit';
+  String get appSupport_title => 'Cefnogi Table Habit';
 
   @override
   String get appSupport_message =>
-      'Your support helps improve Table Habit and reach more people.';
+      'Mae eich cefnogaeth yn helpu i wella Table Habit a chyrraedd mwy o bobl.';
 
   @override
-  String get appSupport_starOnGitHub => 'Star on GitHub';
+  String get appSupport_starOnGitHub => 'Rhoi seren ar GitHub';
 
   @override
-  String get appSupport_rateOnGooglePlay => 'Rate on Google Play';
+  String get appSupport_rateOnGooglePlay => 'Graddio ar Google Play';
 
   @override
-  String get appSupport_rateOnAppStore => 'Rate on the App Store';
+  String get appSupport_rateOnAppStore => 'Graddio ar yr App Store';
 
   @override
-  String get appSupport_openOnMicrosoftStore => 'Rate on Microsoft Store';
+  String get appSupport_openOnMicrosoftStore => 'Graddio ar Microsoft Store';
 
   @override
-  String get appSupport_favoriteOnFlathub => 'Favorite on Flathub';
+  String get appSupport_favoriteOnFlathub => 'Hoffi ar Flathub';
 
   @override
-  String get appSupport_later => 'Remind me later';
+  String get appSupport_later => 'Fy atgoffa yn nes ymlaen';
 
   @override
-  String get appSupport_never => 'Don\'t remind me again';
+  String get appSupport_never => 'Peidio â\'m hatgoffa eto';
 
   @override
   String get appSupport_linkFailed =>
-      'Unable to complete this action. Please try again.';
+      'Methu cwblhau\'r weithred hon. Rhowch gynnig arall arni.';
 
   @override
-  String get appSupport_participateTitle => 'Contribute to Table Habit';
+  String get appSupport_participateTitle => 'Cyfrannu at Table Habit';
 
   @override
   String get appSupport_participateMessage =>
-      'Explore the source code, contribute, or share issues and ideas.';
+      'Archwilio\'r cod ffynhonnell, cyfrannu, neu rannu problemau a syniadau.';
 
   @override
   String appSupport_page(int page, int count) {
-    return 'Page $page of $count';
+    return 'Tudalen $page o $count';
   }
 
   @override
   String get appSupport_saveFailed =>
-      'The reminder could not be saved. Please try again.';
+      'Methwyd cadw\'r nodyn atgoffa. Rhowch gynnig arall arni.';
 
   @override
-  String get appSetting_uiStyle_titleText => 'UI style';
+  String get appSetting_uiStyle_titleText => 'Arddull y rhyngwyneb';
 
   @override
-  String get appSetting_uiStyle_automatic => 'Automatic';
+  String get appSetting_uiStyle_automatic => 'Awtomatig';
 
   @override
   String get appSetting_uiStyle_material => 'Material';
@@ -2381,11 +2416,11 @@ class L10nCy extends L10n {
 
   @override
   String get appSetting_appleSidebarStyle_titleText =>
-      'Apple Sidebar appearance';
+      'Ymddangosiad bar ochr Apple';
 
   @override
-  String get appSetting_appleSidebarStyle_inset => 'Inset';
+  String get appSetting_appleSidebarStyle_inset => 'Mewnosodedig';
 
   @override
-  String get appSetting_appleSidebarStyle_edge => 'Edge';
+  String get appSetting_appleSidebarStyle_edge => 'Ymyl';
 }

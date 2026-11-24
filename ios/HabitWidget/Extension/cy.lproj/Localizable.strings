@@ -1,1 +1,9 @@
 /* Localized strings. Values may be maintained manually. */
+HomeWidgetToday = "Heddiw";
+HomeWidgetComplete = "Gorffen";
+HomeWidgetUndo = "DADWNEUD";
+HomeWidgetAllDone = "LLWYDDIANT!";
+HomeWidgetCompleted = "Wedi'u cwblhau";
+HomeWidgetAchieved = "Wedi'u cwblhau";
+HomeWidgetNotAchieved = "Heb ei gwblhau";
+HomeWidgetSkipped = "Hepgor";
