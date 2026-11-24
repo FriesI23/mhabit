@@ -442,8 +442,10 @@ them; keep rows with independent actions separate from single-action controls.
   `lib/main.dart` initializes standard `intl` date tables before custom locale
   data is loaded. Keep the ARB and Widget snapshot locale as `eo`.
 - Widget strings live in `ios/HabitWidget/Extension/*.lproj/Localizable.strings`
-  with bare PascalCase `HomeWidget*` keys. `make gen` fills missing entries through
-  `configs/l10n_strings_refs.json` without replacing existing translations.
+  with PascalCase `HomeWidget*` keys. Use bare keys in the English source table
+  and accept quoted keys in translations saved by Weblate. `make gen` fills
+  missing entries through `configs/l10n_strings_refs.json` without replacing
+  existing translations.
   For localization, snapshots carry only the locale. Preserve script and region
   when matching Apple locale names (`zh-Hans` / `zh-Hant`).
   Runtime text falls back from the selected language to `en.lproj`, then to

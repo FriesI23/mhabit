@@ -50,9 +50,11 @@ old widget snapshots and holds are not migrated. Snapshot and hold versions are
 separate raw-value enums decoded by Codable. Accept only explicitly supported
 versions; route future supported formats at the decoding boundary.
 
-Maintain widget text in `Extension/*.lproj/Localizable.strings` with bare
-PascalCase `HomeWidget*` keys. `make gen` fills missing entries from ARB through
-`configs/l10n_strings_refs.json`, preserving existing translations.
+Maintain widget text in `Extension/*.lproj/Localizable.strings` with PascalCase
+`HomeWidget*` keys. Use bare keys in `en.lproj/Localizable.strings` and accept
+quoted keys in translations saved by Weblate. `make gen` fills missing entries
+from ARB through `configs/l10n_strings_refs.json`, preserving existing
+translations.
 Runtime text falls back from the selected language to `en.lproj`, then to
 the hardcoded English default in Swift. Keep its enum switch exhaustive.
 
