@@ -1159,7 +1159,7 @@
         }
     },
     "batchCheckin_save_confirmDialog_title": "Anstataŭigi ekzistantajn registraĵojn",
-    "batchCheckin_save_confirmDialog_body": "Ekzistantaj registraĵoj estos anstataŭigitaj. Post konservado, la antaŭaj registraĵoj perdiĝos.",
+    "batchCheckin_save_confirmDialog_body": "Konservado anstataŭigos ekzistantajn registraĵojn por la elektita tago.",
     "batchCheckin_save_confirmDialog_confirmButton_text": "konservi",
     "batchCheckin_save_confirmDialog_cancelButton_text": "nuligi",
     "habitRecord_delete_buttonText": "{count, plural, =1{Forigi registradon} other{Forigi registradojn}}",
@@ -1181,11 +1181,11 @@
         }
     },
     "batchCheckin_close_confirmDialog_title": "Konfirmi revenon",
-    "batchCheckin_close_confirmDialog_body": "Registraj statoŝanĝoj ne estos aplikitaj antaŭ konservado",
+    "batchCheckin_close_confirmDialog_body": "Nekonservitaj registraĵoŝanĝoj estos perditaj se vi foriros.",
     "batchCheckin_close_confirmDialog_confirmButton_text": "eliri",
     "batchCheckin_close_confirmDialog_cancelButton_text": "nuligi",
     "appReminder_dailyReminder_title": "🏝 Ĉu vi plenumis viajn kutimojn hodiaŭ?",
-    "appReminder_dailyReminder_body": "Alklaku por malfermi la aplikaĵon kaj registri ĝustatempe.",
+    "appReminder_dailyReminder_body": "Frapetu por malfermi la aplikaĵon kaj registri.",
     "common_habitColorType_cc1": "Profunda siringo",
     "common_habitColorType_cc2": "Ruĝa",
     "common_habitColorType_cc3": "Purpura",
