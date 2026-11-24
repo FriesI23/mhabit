@@ -2,17 +2,14 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.27.23+212-pre
+## 1.27.24+213
 
-- Fix: correct English UI text and the habit start countdown in Russian and
-  Ukrainian (#720)
-
-## 1.27.22+211-pre
-
-- Feature: enable Esperanto in release builds (#717)
 - Fix: report corrupt Loop ZIP backups as import errors (#715)
 - Fix: show the app window reliably at startup (#715)
+- Fix: correct English UI text and the habit start countdown in Russian and
+  Ukrainian (#720)
 - Fix: prevent a crash when entering full screen or resizing the window
+- Add Esperanto translation (#717)
 
 ## 1.27.20+209
 

@@ -1,8 +1,6 @@
-- Feature: support cards, donation/store links and later/never reminders (#707)
-- Feature: save UI style and Sidebar appearance (#709)
-- Fix: restore browsing after empty search (#703)
-- Fix: mixed WebDAV authentication (#705)
-- Fix: Loop history with non-Latin names and record notes (#706)
-- Fix: startup reminders (#708)
-- Fix: habit-page transitions after style changes (#709)
-- Update Arabic, Spanish and store translations
+- Fix: report corrupt Loop ZIP backups as import errors (#715)
+- Fix: show the app window reliably at startup (#715)
+- Fix: correct English UI text and the habit start countdown in Russian and
+  Ukrainian (#720)
+- Fix: prevent a crash when entering full screen or resizing the window
+- Add Esperanto translation (#717)
