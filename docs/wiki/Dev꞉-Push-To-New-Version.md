@@ -3,7 +3,7 @@
 > Steps 1–6 below can be semi-automated with an AI tool's agent/command mode
 > using the `docs/prompts/mhabit-release-flow.md` prompt. Step 7 can also be
 > done through that prompt, but it always stops to ask for explicit
-> confirmation first. Steps 8–9 and Post-1 stay manual always.
+> confirmation first. Steps 8–9 stay manual always.
 
 ## 1. Bump App Version
 
@@ -172,10 +172,17 @@ Then following steps below:
 
 Finally, verify that all artifacts exists, then click `Publish Release` button.
 
+Publishing starts [Dispatch Release Updates][action-dispatch-release-updates]
+automatically. To run an update manually, select **Run workflow** in the
+[distribution workflow](#appendix-1-automated-publish-process).
+
 ## Post-1. Update Flathub Manifest
 
 > - [x] stable
 > - [ ] beta
+
+The [Flathub update workflow][flathub-autoci] runs automatically for stable
+releases. You can also run it manually or follow the steps below.
 
 Flathub manifest is hosted at [flathub/io.github.friesi23.mhabit][flathub-repo].
 
@@ -221,21 +228,23 @@ More info see: [Flathub - Maintenance][flathub-wiki-mt].
     > - [x] stable (Table Habit)
     > - [ ] beta
 - Windows:
-  - Scoop (Third-party Bucket): [.github/workflows/ci.yml][scoop-autoci]
+  - Scoop (Third-party Bucket): [.github/workflows/excavator.yml][scoop-autoci]
     > - [x] stable (mhabit)
     > - [x] beta (mhabit-beta)
 
 <!-- refs -->
 
 [github-release]: https://github.com/FriesI23/mhabit/releases/latest
-[ghci-app-release]: https://github.com/FriesI23/mhabit/blob/main/.github/workflows/app-release.yml
+[ghci-app-release]: https://github.com/FriesI23/mhabit/actions/workflows/release-app.yml
 [fdroid-meta]: https://gitlab.com/fdroid/fdroiddata/-/blob/master/metadata/io.github.friesi23.mhabit.yml
-[action-app-release]: https://github.com/FriesI23/mhabit/actions/workflows/app-release.yml
+[action-app-release]: https://github.com/FriesI23/mhabit/actions/workflows/release-app.yml
+[action-dispatch-release-updates]: https://github.com/FriesI23/mhabit/actions/workflows/dispatch-release-updates.yml
 [flathub-repo]: https://github.com/flathub/io.github.friesi23.mhabit
 [flathub-wiki-mt]: https://docs.flathub.org/docs/for-app-authors/maintenance
-[homebrew-autoci]: https://github.com/FriesI23/homebrew-brew-repo/blob/master/.github/workflows/update-table-habit.yml
-[altstore-autoci]: https://github.com/FriesI23/altstore-repo/blob/master/.github/workflows/update.yml
-[scoop-autoci]: https://github.com/FriesI23/scoop-bucket/blob/master/.github/workflows/ci.yml
+[flathub-autoci]: https://github.com/FriesI23/flathub-io.github.friesi23.mhabit/actions/workflows/bump-version.yml
+[homebrew-autoci]: https://github.com/FriesI23/homebrew-brew-repo/actions/workflows/update-table-habit.yml
+[altstore-autoci]: https://github.com/FriesI23/altstore-repo/actions/workflows/update.yml
+[scoop-autoci]: https://github.com/FriesI23/scoop-bucket/actions/workflows/excavator.yml
 
 ---
 

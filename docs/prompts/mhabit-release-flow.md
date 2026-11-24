@@ -10,7 +10,7 @@ Call scripts/sub-prompts in order. Stop at confirmation gates. Procedural facts 
 
 `version: HEAD` = floating. Resolve: `git log -1 --format=%H -- docs/wiki/Dev꞉-Push-To-New-Version.md`. Re-read SoT each time. Fixed hash = pinned, re-validate only on user bump.
 
-SoT = `docs/wiki/Dev꞉-Push-To-New-Version.md` @ pinned commit. Covers steps 1–7 (gated at 7). Steps 8–9 + Post-1: **manual always** — never execute, point to wiki.
+SoT = `docs/wiki/Dev꞉-Push-To-New-Version.md` @ pinned commit. Covers steps 1–7 (gated at 7). After step 7, point to the wiki for Release CI verification, manual publication, and downstream follow-up.
 
 ## Files & verification paths
 
@@ -53,7 +53,7 @@ If stable-vs-pre/beta or mode (ask/plan/execute) not stated → ask via interact
 | R7d | Run `scripts/gen_flatpak_info.sh` separately if Flatpak unchanged in `git diff`. |
 | R8 | **Never delete old build-numbered files** (e.g. `171.txt`). Each is a historical record. Generators add new files alongside old ones — no pre-cleaning. If stale deletion markers appear in staging, `git restore --staged <file>` only. |
 | R9 | Stage 4 (step 7: commit+tag+push) **always gated**: stop, ask. Skip only with standing session auto-upload auth. One "yes" = one gate only. |
-| R10 | Steps 8–9 + Post-1: **manual forever**, never execute. Point to wiki. |
+| R10 | Stop after step 7. Point to the wiki for Release CI verification, manual publication, and Flathub PR review. |
 | R11 | Confirm before **every** stage transition — never auto-chain. |
 
 ## Modes
