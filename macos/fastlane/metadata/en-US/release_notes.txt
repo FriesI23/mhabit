@@ -1,6 +1,2 @@
-- Fix: report corrupt Loop ZIP backups as import errors (#715)
-- Fix: show the app window reliably at startup (#715)
-- Fix: correct English UI text and the habit start countdown in Russian and
-  Ukrainian (#720)
-- Fix: prevent a crash when entering full screen or resizing the window
-- Add Esperanto translation (#717)
+- Fix: prevent compiler differences from breaking reproducible APK builds (#725)
+- Complete the Welsh translation and update Esperanto (#721)

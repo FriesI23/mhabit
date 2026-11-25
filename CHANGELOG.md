@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.27.25+214
+
+- Fix: prevent compiler differences from breaking reproducible APK builds (#725)
+- Complete the Welsh translation and update Esperanto (#721)
+
 ## 1.27.24+213
 
 - Fix: report corrupt Loop ZIP backups as import errors (#715)

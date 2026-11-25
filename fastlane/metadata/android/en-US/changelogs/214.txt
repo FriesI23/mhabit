@@ -1,0 +1,2 @@
+- Fix: prevent compiler differences from breaking reproducible APK builds (#725)
+- Complete the Welsh translation and update Esperanto (#721)
