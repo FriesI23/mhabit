@@ -51,6 +51,8 @@ existing architecture and tooling contracts.
 ## Repository Workflow
 
 - This repo uses the vendored Flutter SDK under `.flutter/`.
+- When upgrading Flutter or an Android native dependency, check the NDK pin
+  in `android/gradle.properties`. Android CI uses it for Flutter native build hooks too.
 - Windows uses native Flutter flavors (`f_generic` by default) and
   `build/windows/<arch>/<flavor>/runner/<configuration>/`; keep MSIX compatibility
   in existing CMD/CI entrypoints.
