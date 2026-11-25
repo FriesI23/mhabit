@@ -183,7 +183,7 @@
     "habitEdit_reminder_dialogConfirm": "cadarnhau",
     "habitEdit_reminder_dialogCancel": "canslo",
     "habitEdit_reminder_cancelDialogTitle": "Cadarnhau",
-    "habitEdit_reminder_cancelDialogSubtitle": "Ydych chi'n cadarnhau dileu'r nodyn atgoffa hwn?",
+    "habitEdit_reminder_cancelDialogSubtitle": "Dileu'r nodyn atgoffa hwn?",
     "habitEdit_reminder_cancelDialogConfirm": "cadarnhau",
     "habitEdit_reminder_cancelDialogCancel": "canslo",
     "habitEdit_reminder_weekdayText_monday": "Llu",
@@ -690,7 +690,7 @@
     "appSetting_compactUISwitcher_subtitleText": "Caniatáu i dabl cofnodi arferion arddangos mwy o gynnwys, ond gall rhai o elfennau'r rhyngwyneb a thestun ymddangos yn llai.",
     "appSetting_appleCollapsedSidebarSwitcher_titleText": "Dangos bar ochr llorweddol",
     "appSetting_appleCollapsedSidebarSwitcher_subtitleText": "Dangos cyrchfannau llywio yn y bar uchaf tra bod y bar ochr wedi'i guddio.",
-    "appSetting_collapsed_calendar_bararea_titleText": "Cymhareb y tabl cofnodi",
+    "appSetting_collapsed_calendar_bararea_titleText": "Maint yr ardal cofnodi",
     "appSetting_collapsed_calendar_bararea_subtitleText": "Addasu'r ganran ar gyfer mwy/llai o le yn ardal y tabl cofnodi arferion.",
     "appSetting_collapsed_calendar_bararea_defaultText": "Rhagosodedig",
     "appSetting_reminderSubgroupText": "Nodiadau atgoffa a hysbysiadau",
@@ -765,7 +765,7 @@
             }
         }
     },
-    "appSetting_importDialog_completeTitle": "Wedi gorffen mewnforio {count} arfer",
+    "appSetting_importDialog_completeTitle": "Arferion wedi'u mewnforio: {count}",
     "@appSetting_importDialog_completeTitle": {
         "placeholders": {
             "count": {
@@ -774,7 +774,7 @@
             }
         }
     },
-    "appSetting_importDialog_completeTitleGroups": "Wedi gorffen mewnforio {count} grŵp",
+    "appSetting_importDialog_completeTitleGroups": "Grwpiau wedi'u mewnforio: {count}",
     "@appSetting_importDialog_completeTitleGroups": {
         "placeholders": {
             "count": {
@@ -1159,7 +1159,7 @@
         }
     },
     "batchCheckin_save_confirmDialog_title": "Trosysgrifo cofnodion presennol",
-    "batchCheckin_save_confirmDialog_body": "Bydd cofnodion presennol yn cael eu trosysgrifo. Ar ôl cadw, bydd y cofnodion blaenorol yn cael eu colli.",
+    "batchCheckin_save_confirmDialog_body": "Bydd cadw yn trosysgrifo'r cofnodion presennol ar gyfer y diwrnod a ddewiswyd.",
     "batchCheckin_save_confirmDialog_confirmButton_text": "cadw",
     "batchCheckin_save_confirmDialog_cancelButton_text": "canslo",
     "habitRecord_delete_buttonText": "Dileu {count, plural, =1{cofnod} other{cofnodion}}",
@@ -1181,11 +1181,11 @@
         }
     },
     "batchCheckin_close_confirmDialog_title": "Cadarnhau mynd yn ôl",
-    "batchCheckin_close_confirmDialog_body": "Ni fydd newidiadau i statws cofnodi yn cael eu cymhwyso nes iddynt gael eu cadw",
+    "batchCheckin_close_confirmDialog_body": "Bydd newidiadau cofnodi heb eu cadw yn cael eu colli os byddwch yn gadael.",
     "batchCheckin_close_confirmDialog_confirmButton_text": "gadael",
     "batchCheckin_close_confirmDialog_cancelButton_text": "canslo",
     "appReminder_dailyReminder_title": "🏝 A wnaethoch chi gadw at eich arferion heddiw?",
-    "appReminder_dailyReminder_body": "Tapiwch i agor yr ap a chofnodi mewn pryd.",
+    "appReminder_dailyReminder_body": "Tapiwch i agor yr ap a chofnodi.",
     "common_habitColorType_cc1": "Lila dwfn",
     "common_habitColorType_cc2": "Coch",
     "common_habitColorType_cc3": "Porffor",

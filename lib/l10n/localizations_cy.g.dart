@@ -231,7 +231,7 @@ class L10nCy extends L10n {
 
   @override
   String get habitEdit_reminder_cancelDialogSubtitle =>
-      'Ydych chi\'n cadarnhau dileu\'r nodyn atgoffa hwn?';
+      'Dileu\'r nodyn atgoffa hwn?';
 
   @override
   String get habitEdit_reminder_cancelDialogConfirm => 'cadarnhau';
@@ -1080,7 +1080,7 @@ class L10nCy extends L10n {
 
   @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
-      'Cymhareb y tabl cofnodi';
+      'Maint yr ardal cofnodi';
 
   @override
   String get appSetting_collapsed_calendar_bararea_subtitleText =>
@@ -1193,12 +1193,12 @@ class L10nCy extends L10n {
 
   @override
   String appSetting_importDialog_completeTitle(int count) {
-    return 'Wedi gorffen mewnforio $count arfer';
+    return 'Arferion wedi\'u mewnforio: $count';
   }
 
   @override
   String appSetting_importDialog_completeTitleGroups(int count) {
-    return 'Wedi gorffen mewnforio $count grŵp';
+    return 'Grwpiau wedi\'u mewnforio: $count';
   }
 
   @override
@@ -1812,7 +1812,7 @@ class L10nCy extends L10n {
 
   @override
   String get batchCheckin_save_confirmDialog_body =>
-      'Bydd cofnodion presennol yn cael eu trosysgrifo. Ar ôl cadw, bydd y cofnodion blaenorol yn cael eu colli.';
+      'Bydd cadw yn trosysgrifo\'r cofnodion presennol ar gyfer y diwrnod a ddewiswyd.';
 
   @override
   String get batchCheckin_save_confirmDialog_confirmButton_text => 'cadw';
@@ -1847,7 +1847,7 @@ class L10nCy extends L10n {
 
   @override
   String get batchCheckin_close_confirmDialog_body =>
-      'Ni fydd newidiadau i statws cofnodi yn cael eu cymhwyso nes iddynt gael eu cadw';
+      'Bydd newidiadau cofnodi heb eu cadw yn cael eu colli os byddwch yn gadael.';
 
   @override
   String get batchCheckin_close_confirmDialog_confirmButton_text => 'gadael';
@@ -1861,7 +1861,7 @@ class L10nCy extends L10n {
 
   @override
   String get appReminder_dailyReminder_body =>
-      'Tapiwch i agor yr ap a chofnodi mewn pryd.';
+      'Tapiwch i agor yr ap a chofnodi.';
 
   @override
   String get common_habitColorType_cc1 => 'Lila dwfn';

@@ -1811,7 +1811,7 @@ class L10nEo extends L10n {
 
   @override
   String get batchCheckin_save_confirmDialog_body =>
-      'Ekzistantaj registraĵoj estos anstataŭigitaj. Post konservado, la antaŭaj registraĵoj perdiĝos.';
+      'Konservado anstataŭigos ekzistantajn registraĵojn por la elektita tago.';
 
   @override
   String get batchCheckin_save_confirmDialog_confirmButton_text => 'konservi';
@@ -1846,7 +1846,7 @@ class L10nEo extends L10n {
 
   @override
   String get batchCheckin_close_confirmDialog_body =>
-      'Registraj statoŝanĝoj ne estos aplikitaj antaŭ konservado';
+      'Nekonservitaj registraĵoŝanĝoj estos perditaj se vi foriros.';
 
   @override
   String get batchCheckin_close_confirmDialog_confirmButton_text => 'eliri';
@@ -1860,7 +1860,7 @@ class L10nEo extends L10n {
 
   @override
   String get appReminder_dailyReminder_body =>
-      'Alklaku por malfermi la aplikaĵon kaj registri ĝustatempe.';
+      'Frapetu por malfermi la aplikaĵon kaj registri.';
 
   @override
   String get common_habitColorType_cc1 => 'Profunda siringo';
