@@ -11,6 +11,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # FIXME(#724): Once a compatible cnativeapi release includes libnativeapi/nativeapi#56,
+  # set hooks.user_defines.cnativeapi.skip_platforms to [android] in the root pubspec
+  # and verify the release APK omits libcnativeapi.so.
   window_manager: 0.6.0
   macos_window_utils: 1.9.1
 

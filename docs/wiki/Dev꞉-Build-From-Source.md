@@ -44,6 +44,22 @@ These aggregate commands skip Swift on other platforms.
 
 ### Building for Android
 
+For reproducible APKs and app bundles, select the NDK pinned in the checked-out
+tag before running Flutter. Gradle reads `app.ndkVersion` directly. Flutter
+native build hooks use `ANDROID_NDK_HOME`. With `ANDROID_HOME` set to your SDK
+directory, run these commands from the repository root:
+
+```shell
+revision=$(sed -n 's/^app\.ndkVersion=//p' android/gradle.properties)
+"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;$revision"
+export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/$revision"
+```
+
+To reproduce a GitHub split APK, start from a clean checkout on Linux. After
+`flutter pub get`, apply the JNI build-ID patch from
+`.github/actions/patch_android_jni_build_id/action.yml` in that tag, then run
+`flutter build apk --release --split-per-abi`.
+
 Following Android flavors are allowed:
 
 - `f_dev`

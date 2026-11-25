@@ -1,5 +1,5 @@
-name: Setup Java SDK
-description: setup shared JDK environment for build use.
+name: Set up Android toolchain
+description: Configure the JDK and project NDK for Android builds.
 
 runs:
   using: composite
@@ -8,3 +8,15 @@ runs:
       with:
         distribution: temurin
         java-version: 17
+    # FIXME(#724): Remove the ANDROID_NDK_HOME override once Flutter passes
+    # Gradle's selected NDK to Android native build hooks.
+    - name: Select project NDK for Flutter native build hooks
+      shell: bash
+      run: |
+        revision=$(sed -n 's/^app\.ndkVersion=//p' android/gradle.properties)
+        ndk_dir="$ANDROID_HOME/ndk/${revision:?Missing app.ndkVersion in android/gradle.properties}"
+        if [[ ! -f "$ndk_dir/source.properties" ]]; then
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;$revision"
+          test -f "$ndk_dir/source.properties"
+        fi
+        echo "ANDROID_NDK_HOME=$ndk_dir" >> "$GITHUB_ENV"

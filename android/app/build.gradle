@@ -53,7 +53,10 @@ if (customCompileSdkVersion == null) {
     customCompileSdkVersion = customCompileSdkVersion.toInteger()
 }
 
-def customNdkVersion = localProperties.getProperty('flutter.ndkVersion')
+def customNdkVersion = providers.gradleProperty('app.ndkVersion').orNull
+if (customNdkVersion == null) {
+    customNdkVersion = localProperties.getProperty('flutter.ndkVersion')
+}
 if (customNdkVersion == null) {
     customNdkVersion = '27.0.12077973'
     customNdkVersion = compareVersions(customNdkVersion, flutter.ndkVersion) > 0 ? customNdkVersion : flutter.ndkVersion
