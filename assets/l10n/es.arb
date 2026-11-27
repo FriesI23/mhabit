@@ -8,17 +8,17 @@
     "habitEdit_saveButton_text": "Guardar",
     "habitEdit_habitName_hintText": "Nombre del hábito",
     "habitEdit_colorPicker_title": "Escoge un color",
-    "habitEdit_colorPicker_historySectionLabel": "Usado Recientemente",
+    "habitEdit_colorPicker_historySectionLabel": "Usado recientemente",
     "habitEdit_colorPicker_cancel": "Cancelar",
-    "habitEdit_colorPicker_tintToggleLabel": "Tinte del tema",
-    "habitEdit_colorPicker_tintedLabel": "Con Tinte",
+    "habitEdit_colorPicker_tintToggleLabel": "Teñir según el tema",
+    "habitEdit_colorPicker_tintedLabel": "Con tinte",
     "habitEdit_colorPicker_untintedLabel": "Sin tinte",
     "habitEdit_colorPicker_tintToggleOnHint": "El tinte puede hacer que el color final difiera del que seleccionaste.",
     "habitEdit_colorPicker_tintToggleOffHint": "Algunos colores pueden dificultar la lectura del texto en los temas claro u oscuro",
     "habitEdit_habitTypeDialog_title": "Tipo de hábito",
     "habitEdit_habitType_positiveText": "Positivo",
     "habitEdit_habitType_negativeText": "Negativo",
-    "habitEdit_habitDailyGoal_hintText": "Meta diaria, estándar {number}",
+    "habitEdit_habitDailyGoal_hintText": "Meta diaria (por defecto: {number})",
     "@habitEdit_habitDailyGoal_hintText": {
         "description": "default habit daily goal",
         "placeholders": {
@@ -28,7 +28,7 @@
             }
         }
     },
-    "habitEdit_habitDailyGoal_negativeHintText": "Mínimo diario, estándar {number}",
+    "habitEdit_habitDailyGoal_negativeHintText": "Mínimo diario (por defecto: {number})",
     "@habitEdit_habitDailyGoal_negativeHintText": {
         "description": "default habit daily goal for negative habit",
         "placeholders": {
@@ -38,7 +38,7 @@
             }
         }
     },
-    "habitEdit_habitDailyGoal_errorText01": "Reto diario debe llegar a {number}",
+    "habitEdit_habitDailyGoal_errorText01": "La meta diaria debe ser > {number}",
     "@habitEdit_habitDailyGoal_errorText01": {
         "description": "minimum number for habit daily goal",
         "placeholders": {
@@ -48,7 +48,7 @@
             }
         }
     },
-    "habitEdit_habitDailyGoal_errorText02": "Reto diario debe ser menor que {number}",
+    "habitEdit_habitDailyGoal_errorText02": "La meta diaria debe ser ≤ {number}",
     "@habitEdit_habitDailyGoal_errorText02": {
         "description": "maximum number for habit daily goal",
         "placeholders": {
@@ -58,7 +58,7 @@
             }
         }
     },
-    "habitEdit_habitDailyGoal_negativeErrorText01": "Reto diario debe ser mayor que {number}",
+    "habitEdit_habitDailyGoal_negativeErrorText01": "La meta diaria debe ser ≥ {number}",
     "@habitEdit_habitDailyGoal_negativeErrorText01": {
         "description": "minimum number for negative habit daily goal",
         "placeholders": {
@@ -68,7 +68,7 @@
             }
         }
     },
-    "habitEdit_habitDailyGoal_negativeErrorText02": "La meta diaria debe ser inferior a {number}",
+    "habitEdit_habitDailyGoal_negativeErrorText02": "La meta diaria debe ser ≤ {number}",
     "@habitEdit_habitDailyGoal_negativeErrorText02": {
         "description": "maximum number for negative habit daily goal",
         "placeholders": {
@@ -79,7 +79,7 @@
         }
     },
     "habitEdit_habitDailyGoalUnit_hintText": "Unidad de meta diaria",
-    "habitEdit_habitDailyGoalExtra_hintText": "Objetivo máximo de meta diaria",
+    "habitEdit_habitDailyGoalExtra_hintText": "Meta diaria máxima deseada",
     "habitEdit_habitDailyGoalExtra_errorText": "Valor no válido, debe permanecer vacío o ser mayor o igual que {dailyGoal}",
     "@habitEdit_habitDailyGoalExtra_errorText": {
         "placeholders": {
@@ -92,7 +92,7 @@
     "habitEdit_habitDailyGoalExtra_negativeHintText": "Límite máximo diario",
     "habitEdit_frequencySelector_title": "Seleccionar frecuencia",
     "habitEdit_habitFreq_daily": "Diariamente",
-    "habitEdit_habitFreq_perweek_text": " %%time%% Veces por semana",
+    "habitEdit_habitFreq_perweek_text": "%%time%% veces por semana",
     "habitEdit_habitFreq_permonth_text": "%%time%% veces al mes",
     "habitEdit_habitFreq_predayfreq_text": "%%time%% veces en %%day%% días",
     "habitEdit_habitFreq_show_daily": "Diariamente",
@@ -140,7 +140,7 @@
     "habitEdit_targetDays": "días",
     "habitEdit_reminder_hintText": "Recordatorio",
     "habitEdit_reminder_freq_weekHelpText": "Cualquier día de la semana",
-    "habitEdit_reminder_freq_week_text": " {days} cada semana",
+    "habitEdit_reminder_freq_week_text": "{days} cada semana",
     "@habitEdit_reminder_freq_week_text": {
         "description": "Comma-separated day list used in the weekly reminder sentence.",
         "placeholders": {
@@ -151,7 +151,7 @@
         }
     },
     "habitEdit_reminder_freq_monthHelpText": "Cualquier día del mes",
-    "habitEdit_reminder_freq_month_text": " {days} cada mes",
+    "habitEdit_reminder_freq_month_text": "{days} cada mes",
     "@habitEdit_reminder_freq_month_text": {
         "description": "Comma-separated day list used in the monthly reminder sentence.",
         "placeholders": {
@@ -161,30 +161,30 @@
             }
         }
     },
-    "habitEdit_reminderQuest_hintText": "Pregunta, ej, ¿Has hecho ejercicio hoy?",
+    "habitEdit_reminderQuest_hintText": "Pregunta, p. ej., ¿Has hecho ejercicio hoy?",
     "habitEdit_reminder_dialogTitle": "Escoge el tipo de recordatorio",
-    "habitEdit_reminder_dialogType_whenNeeded": "Cuándo es necesario comprobarlo",
+    "habitEdit_reminder_dialogType_whenNeeded": "Cuándo hay que registrar",
     "habitEdit_reminder_dialogType_daily": "Diariamente",
     "habitEdit_reminder_dialogType_week": "Semanalmente",
     "habitEdit_reminder_dialogType_month": "Mensualmente",
     "habitEdit_reminder_dialogConfirm": "confirmar",
     "habitEdit_reminder_dialogCancel": "cancelar",
     "habitEdit_reminder_cancelDialogTitle": "Confirmar",
-    "habitEdit_reminder_cancelDialogSubtitle": "¿Quieres borrar este recordatorio?",
+    "habitEdit_reminder_cancelDialogSubtitle": "¿Quitar este recordatorio?",
     "habitEdit_reminder_cancelDialogConfirm": "confirmar",
     "habitEdit_reminder_cancelDialogCancel": "cancelar",
     "habitEdit_reminder_weekdayText_monday": "Lun",
     "habitEdit_reminder_weekdayText_tuesday": "Mar",
-    "habitEdit_reminder_weekdayText_wednesday": "Mie",
+    "habitEdit_reminder_weekdayText_wednesday": "Mié",
     "habitEdit_reminder_weekdayText_thursday": "Jue",
     "habitEdit_reminder_weekdayText_friday": "Vie",
     "habitEdit_reminder_weekdayText_saturday": "Sáb",
     "habitEdit_reminder_weekdayText_sunday": "Dom",
-    "habitEdit_desc_hintText": "Memo, acepta Markdown",
-    "habitEdit_create_datetime_prefix": "Creado por: ",
+    "habitEdit_desc_hintText": "Nota (admite Markdown)",
+    "habitEdit_create_datetime_prefix": "Creado: ",
     "habitEdit_modify_datetime_prefix": "Modificado: ",
     "habitDisplay_fab_text": "Nuevo hábito",
-    "habitDisplay_emptyImage_text_01": "Un viaje de cientos de kilómetros empieza con un único paso",
+    "habitDisplay_emptyImage_text_01": "Un viaje de mil millas comienza con un solo paso",
     "habitDisplay_notFoundImage_text_01": "No se encontraron hábitos que coincidan",
     "@habitDisplay_notFoundImage_text_01": {
         "description": "Displayed when no habits match the current search"
@@ -244,7 +244,7 @@
             }
         }
     },
-    "habitDisplay_exportHabitsSuccSnackbarText": "{count, plural, =1 {Hábito exportado} other {{count} hábitos exportados }}",
+    "habitDisplay_exportHabitsSuccSnackbarText": "{count, plural, =1 {Hábito exportado.} other {{count} hábitos exportados.}}",
     "@habitDisplay_exportHabitsSuccSnackbarText": {
         "placeholders": {
             "count": {
@@ -254,7 +254,7 @@
             }
         }
     },
-    "habitDisplay_exportAllHabitsSuccSnackbarText": "Hábitos exportados",
+    "habitDisplay_exportAllHabitsSuccSnackbarText": "Todos los hábitos exportados",
     "habitDisplay_editPopMenu_selectAll": "Seleccionar todo",
     "habitDisplay_selectButton_label": "Seleccionar",
     "@habitDisplay_selectButton_label": {
@@ -271,14 +271,14 @@
     "habitDisplay_archiveButton_tooltip": "Archivar",
     "habitDisplay_unarchiveButton_tooltip": "Desarchivar",
     "habitDisplay_settingButton_tooltip": "Ajustes",
-    "habitDisplay_statsMenu_statSubgroupText": "En curso",
+    "habitDisplay_statsMenu_statSubgroupText": "Actual",
     "habitDisplay_statsMenu_completedTileText": "Completados",
-    "habitDisplay_statsMenu_inProgresTileText": "En progreso",
+    "habitDisplay_statsMenu_inProgresTileText": "En curso",
     "habitDisplay_statsMenu_archivedTileText": "Archivados",
-    "habitDisplay_statsMenu_popularitySubgroupText": "Hábitos principales: Cambios en 30 días",
+    "habitDisplay_statsMenu_popularitySubgroupText": "Hábitos principales: cambios en los últimos 30 días",
     "habitDisplay_statisticsAction_label": "Estadísticas",
-    "habitDisplay_displayFilterAction_label": "Mostrar Filtros",
-    "habitDisplay_displayFilter_inProgress": "En progreso",
+    "habitDisplay_displayFilterAction_label": "Filtro de visualización",
+    "habitDisplay_displayFilter_inProgress": "En curso",
     "habitDisplay_displayFilter_archived": "Archivados",
     "habitDisplay_displayFilter_completed": "Completados",
     "common_appThemeMode_light": "Claro",
@@ -286,28 +286,28 @@
     "common_appThemeMode_followSystem": "Automático",
     "habitDisplay_mainMenu_showArchivedTileText": "Mostrar archivados",
     "habitDisplay_mainMenu_showCompletedTileText": "Mostrar completados",
-    "habitDisplay_mainMenu_showActivedTileText": "Mostrar Activos",
+    "habitDisplay_mainMenu_showActivedTileText": "Mostrar en curso",
     "habitDisplay_mainMenu_settingTileText": "Ajustes",
     "habitDisplay_groupType_name": "Por nombre",
     "habitDisplay_groupType_colorType": "Por color",
-    "habitDisplay_groupType_createDate": "Por Fecha de Creación",
-    "habitDisplay_groupType_habitCount": "Por Número de Hábitos",
-    "habitDisplay_groupTypeDialog_title": "Ordenar Grupos",
+    "habitDisplay_groupType_createDate": "Por fecha de creación",
+    "habitDisplay_groupType_habitCount": "Por número de hábitos",
+    "habitDisplay_groupTypeDialog_title": "Ordenar grupos",
     "habitDisplay_groupTypeDialog_confirm": "confirmar",
     "habitDisplay_groupTypeDialog_cancel": "cancelar",
-    "habitDisplay_groupTypeDialog_none": "Sin Agrupar",
-    "habitDisplay_editPopMenu_groupModify": "Modificar Grupo",
-    "habitDisplay_groupModifyDialog_title": "Modificar Grupo",
-    "habitDisplay_groupModifyDialog_removeGroup": "Eliminar Grupo",
+    "habitDisplay_groupTypeDialog_none": "Sin agrupar",
+    "habitDisplay_editPopMenu_groupModify": "Modificar grupo",
+    "habitDisplay_groupModifyDialog_title": "Modificar grupo",
+    "habitDisplay_groupModifyDialog_removeGroup": "Quitar del grupo",
     "habitDisplay_groupModifyDialog_emptyGroups": "No hay grupos disponibles",
     "habitDisplay_groupModifyDialog_alreadyInGroup": "Los hábitos seleccionados ya están en este grupo",
-    "habitDisplay_groupModifyDialog_createGroup": "Crear Grupo",
-    "habitDisplay_groupModifyDialog_saveAndApply": "Guardar y Aplicar",
+    "habitDisplay_groupModifyDialog_createGroup": "Crear grupo",
+    "habitDisplay_groupModifyDialog_saveAndApply": "Guardar y aplicar",
     "@habitDisplay_groupModifyDialog_saveAndApply": {
         "description": "Deprecated. Use habitEdit_saveButton_text instead."
     },
-    "habitDisplay_groupModifyConfirm_titleNew": "Mover al Grupo",
-    "habitDisplay_groupModifyConfirm_titleMixed": "Confirmar Cambio de Grupo",
+    "habitDisplay_groupModifyConfirm_titleNew": "Mover al grupo",
+    "habitDisplay_groupModifyConfirm_titleMixed": "Confirmar cambio de grupo",
     "habitDisplay_groupModifyConfirm_bodyNewGroup": "Los hábitos de {groupName} se moverán a este grupo",
     "@habitDisplay_groupModifyConfirm_bodyNewGroup": {
         "placeholders": {
@@ -317,30 +317,30 @@
             }
         }
     },
-    "habitDisplay_sort_reverseText": "Deshacer",
-    "habitDisplay_sortDirection_asc": "(Asc)",
-    "habitDisplay_sortDirection_Desc": "(Desc)",
+    "habitDisplay_sort_reverseText": "Invertir",
+    "habitDisplay_sortDirection_asc": "(Asc.)",
+    "habitDisplay_sortDirection_Desc": "(Desc.)",
     "habitDisplay_sortType_manual": "Orden propio",
     "habitDisplay_sortType_name": "Por nombre",
     "habitDisplay_sortType_colorType": "Por color",
-    "habitDisplay_sortType_progress": "Por puntuación",
-    "habitDisplay_sortType_startT": "Por día de comienzo",
+    "habitDisplay_sortType_progress": "Por tasa de éxito",
+    "habitDisplay_sortType_startT": "Por fecha de inicio",
     "habitDisplay_sortType_status": "Por estado",
     "habitDisplay_sortTypeDialog_title": "Ordenar",
     "habitDisplay_sortTypeDialog_confirm": "confirmar",
     "habitDisplay_sortTypeDialog_cancel": "cancelar",
-    "habitDisplay_debug_debugSubgroup_title": "🛠️Búsqueda de errores",
-    "habitDisplay_searchBar_hintText": "Buscar habitos",
+    "habitDisplay_debug_debugSubgroup_title": "🛠️Depuración",
+    "habitDisplay_searchBar_hintText": "Buscar hábitos",
     "habitDisplay_searchFilter_ongoing": "En curso",
-    "habitDisplay_searchFilter_ongoing_desc": "Muestra hábitos que está activos actualmente y en curso (no archivados o borrados)",
-    "habitDisplay_searchFilter_completed": "Completado",
+    "habitDisplay_searchFilter_ongoing_desc": "Muestra hábitos que están activos actualmente y en curso (no archivados ni borrados).",
+    "habitDisplay_searchFilter_completed": "Completados",
     "habitDisplay_searchFilter_habitType_groupTitle": "Tipo de hábito",
     "habitDisplay_searchFilter_tooltips": "Mostrar filtros",
     "habitDisplay_searchFilter_clearFilter": "Limpiar filtros",
     "habitDisplay_tab_habits_label": "Hábitos",
     "habitDisplay_tab_today_label": "Hoy",
     "habitToday_appBar_title": "Hoy",
-    "habitToday_card_subtitle_text": "Lo has mantenido por {days} días",
+    "habitToday_card_subtitle_text": "Lo has mantenido durante {days} días",
     "@habitToday_card_subtitle_text": {
         "placeholders": {
             "days": {
@@ -382,7 +382,7 @@
             }
         }
     },
-    "habitDetail_summary_preBody": "{days, plural, =1{Empezar mañana.} other{Empezar en {days} días. }}",
+    "habitDetail_summary_preBody": "{days, plural, =1{Empieza mañana.} other{Empieza en {days} días.}}",
     "@habitDetail_summary_preBody": {
         "placeholders": {
             "days": {
@@ -400,7 +400,7 @@
             }
         }
     },
-    "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{DEMASIADO} =2{PERFECTO}other{}}",
+    "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{SUPERADO} =2{PERFECTO}other{}}",
     "@habitDetail_heatmap_rightHelpText": {
         "placeholders": {
             "habitType": {
@@ -427,7 +427,7 @@
             }
         }
     },
-    "habitDetail_descDailyGoal_unitEmptyText": "vacío",
+    "habitDetail_descDailyGoal_unitEmptyText": "null",
     "habitDetail_descTargetDays_titleText": "{habitType, plural, other{Días}}",
     "@habitDetail_descTargetDays_titleText": {
         "placeholders": {
@@ -446,14 +446,14 @@
     "habitDetail_scoreChartCombine_yearlyText": "Año",
     "habitDetail_freqChart_freqTitle": "Frecuencia",
     "habitDetail_freqChart_historyTitle": "Historial",
-    "habitDetail_freqChart_combinedTitle": "Frencuencia e historial",
+    "habitDetail_freqChart_combinedTitle": "Frecuencia e historial",
     "habitDetail_freqChartCombine_weeklyText": "Semana",
     "habitDetail_freqChartCombine_monthlyText": "Mes",
     "habitDetail_freqChartCombine_yearlyText": "Año",
-    "habitDetail_freqChartNaviBar_nowText": "Presente",
+    "habitDetail_freqChartNaviBar_nowText": "Ahora",
     "habitDetail_freqChart_expanded_hideTooltip": "Esconder gráfico de historial",
     "habitDetail_freqChart_expanded_showTooltip": "Mostrar gráfico de historial",
-    "habitDetail_descSubgroup_title": "Memo",
+    "habitDetail_descSubgroup_title": "Nota",
     "habitDetail_otherSubgroup_title": "Otros",
     "habitDetail_habitType_title": "Tipo",
     "habitDetail_reminderTile_title": "Recordatorio",
@@ -468,7 +468,7 @@
     "habitDetail_notFoundText": "Error al cargar el hábito",
     "habitDetail_notFoundRetryText": "Volver a intentar",
     "habitDetail_changeGoal_title": "Cambiar meta",
-    "habitDetail_changeGoal_currentChipText": "Actualmente: {goal}",
+    "habitDetail_changeGoal_currentChipText": "actual: {goal}",
     "@habitDetail_changeGoal_currentChipText": {
         "placeholders": {
             "goal": {
@@ -507,32 +507,32 @@
     },
     "habitDetail_changeGoal_cancelText": "cancelar",
     "habitDetail_changeGoal_saveText": "guardar",
-    "habitDetail_skipReason_title": "Saltar razón",
+    "habitDetail_skipReason_title": "Motivo para omitir",
     "habitDetail_skipReason_bodyHelpText": "Escribe algo aquí...",
     "habitDetail_skipReason_cancelText": "cancelar",
     "habitDetail_skipReason_saveText": "guardar",
     "appSetting_appbar_titleText": "Ajustes",
-    "appSetting_displaySubgroupText": "Mostrar",
+    "appSetting_displaySubgroupText": "Visualización",
     "appSetting_operationSubgroupText": "Operación",
     "appSetting_dragCalendarByPageTile_titleText": "Arrastrar calendario por página",
-    "appSetting_dragCalendarByPageTile_subtitleText": "Si la función está habilitada, la navegación por la lista del calendario se realizará arrastrándola página por página. La posición predeterminada está inactiva.",
+    "appSetting_dragCalendarByPageTile_subtitleText": "Si está activado, el calendario de la barra superior de la página de inicio se arrastrará página a página. De forma predeterminada, está desactivado.",
     "appSetting_changeRecordStatusOpTile_titleText": "Cambiar estado del registro",
     "appSetting_changeRecordStatusOpTile_subtitleText": "Modificar el comportamiento del clic para cambiar el estado de los registros diarios en la página principal.",
     "appSetting_openRecordStatusDialogOpTile_titleText": "Abrir registro detallado",
-    "appSetting_openRecordStatusDialogOpTile_subtitleText": "Modifique el comportamiento del clic para abrir la ventana emergente detallada de los registros diarios en la página principal.",
-    "appSetting_expandTimerDelay_default": "Por Defecto",
+    "appSetting_openRecordStatusDialogOpTile_subtitleText": "Modificar el comportamiento del clic para abrir la ventana emergente detallada de los registros diarios en la página principal.",
+    "appSetting_expandTimerDelay_default": "Predeterminado",
     "appSetting_expandTimerDelay_fast": "Rápido",
     "appSetting_expandTimerDelay_slow": "Lento",
-    "appSetting_appThemeColorTile_titleText": "Color del Tema",
-    "appSetting_appThemeModeTile_titleText": "Modo del Tema",
-    "appSetting_appThemeColorChosenDiloag_titleText": "Elige el Color del Tema",
-    "appSetting_appThemeColorChosenDialog_subTitleText_android": "Usar el color principal del Fondo de Pantalla (Android 12+)",
+    "appSetting_appThemeColorTile_titleText": "Color del tema",
+    "appSetting_appThemeModeTile_titleText": "Modo del tema",
+    "appSetting_appThemeColorChosenDiloag_titleText": "Elegir el color del tema",
+    "appSetting_appThemeColorChosenDialog_subTitleText_android": "Usar el color principal del fondo de pantalla (Android 12+)",
     "appSetting_appThemeColorChosenDialog_subTitleText_linux": "Usar el color de fondo seleccionado en el tema GTK+",
     "appSetting_appThemeColorChosenDialog_subTitleText_macos": "Usar el color del tema del sistema",
-    "appSetting_firstDayOfWeek_titleText": "Primer dia de la semana",
+    "appSetting_firstDayOfWeek_titleText": "Primer día de la semana",
     "appSetting_firstDayOfWeekDialog_titleText": "Mostrar el primer día de la semana",
     "appSetting_firstDayOfWeekDialog_defaultText": " (Por defecto)",
-    "appSetting_changeLanguage_followSystem_text": "Por el sistema ({localeName})",
+    "appSetting_changeLanguage_followSystem_text": "Según el sistema ({localeName})",
     "@appSetting_changeLanguage_followSystem_text": {
         "placeholders": {
             "localeName": {
@@ -541,7 +541,7 @@
             }
         }
     },
-    "appSetting_changeLanguage_followSystem_noLocale_text": "Seguir Sistema",
+    "appSetting_changeLanguage_followSystem_noLocale_text": "Según el sistema",
     "appSetting_changeLanguageTile_titleText": "Idioma",
     "appSetting_changeLanguageDialog_titleText": "Seleccionar el idioma",
     "appSetting_changeLanguageDialog_currentLanguage_text": "Idioma actual: {localeName}",
@@ -554,8 +554,8 @@
         }
     },
     "appSetting_languageSubgroupText": "Idioma",
-    "appSetting_openSystemLanguageTile_titleText": "Ajustes de Idioma del Sistema",
-    "appSetting_openSystemLanguageTile_dialogTitle": "Abrir Ajustes de Idioma del Sistema",
+    "appSetting_openSystemLanguageTile_titleText": "Ajustes del idioma del sistema",
+    "appSetting_openSystemLanguageTile_dialogTitle": "Abrir ajustes de idioma del sistema",
     "appSetting_dateDisplayFormat_titleText": "Formato de visualización de la fecha ({formatTemplate})",
     "@appSetting_dateDisplayFormat_titleText": {
         "placeholders": {
@@ -568,11 +568,11 @@
     "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "seguir la configuración del sistema",
     "appSetting_dateDisplayFormat_subTitleText": "El formato de fecha configurado se aplicará a la visualización de la fecha en la página de detalles del hábito.",
     "appSetting_compactUISwitcher_titleText": "Habilitar la interfaz de usuario compacta en la página de hábitos",
-    "appSetting_compactUISwitcher_subtitleText": "Permitir que la tabla de control de hábitos muestre más contenido, pero algunos UI y texto pueden aparecer más pequeños.",
+    "appSetting_compactUISwitcher_subtitleText": "Permitir que la tabla de control de hábitos muestre más contenido, pero algunos elementos de la interfaz y texto pueden aparecer más pequeños.",
     "appSetting_appleCollapsedSidebarSwitcher_titleText": "Mostrar barra lateral horizontal",
     "appSetting_appleCollapsedSidebarSwitcher_subtitleText": "Mostrar las opciones de navegación en la barra superior cuando la barra lateral esté oculta.",
-    "appSetting_collapsed_calendar_bararea_titleText": "Ajuste de la zona de validación de hábitos.",
-    "appSetting_collapsed_calendar_bararea_subtitleText": "Ajusta el porcentaje para tener más o menos espacio en el área de validación de hábitos.",
+    "appSetting_collapsed_calendar_bararea_titleText": "Tamaño del área de registro",
+    "appSetting_collapsed_calendar_bararea_subtitleText": "Ajusta el porcentaje para tener más o menos espacio en el área de registro de hábitos.",
     "appSetting_collapsed_calendar_bararea_defaultText": "Por defecto",
     "appSetting_reminderSubgroupText": "Recordatorios y notificaciones",
     "@appSetting_reminderSubgroupText": {
@@ -581,7 +581,7 @@
     "appSetting_dailyReminder_titleText": "Recordatorio diario",
     "appSetting_backupAndRestoreSubgroupText": "Copia de seguridad y restauración",
     "appSetting_export_titleText": "Exportar",
-    "appSetting_export_subtitleText": "Hábitos exportados en formato JSON. Este archivo se puede volver a importar.",
+    "appSetting_export_subtitleText": "Exporta los hábitos a un archivo JSON que podrás importar más tarde.",
     "appSetting_import_titleText": "Importar",
     "appSetting_import_subtitleText": "Importar hábitos desde el archivo json.",
     "appSetting_thirdPartyImport_titleText": "Importar desde aplicaciones de terceros",
@@ -633,7 +633,7 @@
     "appSetting_thirdPartyImport_error_unknown": "Se produjo un error inesperado durante la importación.",
     "appSetting_importDialog_confirm_confirmText": "confirmar",
     "appSetting_importDialog_confirm_cancelText": "cancelar",
-    "appSetting_importDialog_importingTitle": "Importado {completeCount}/{totalCount}",
+    "appSetting_importDialog_importingTitle": "Importados {completeCount}/{totalCount}",
     "@appSetting_importDialog_importingTitle": {
         "placeholders": {
             "completeCount": {
@@ -646,7 +646,7 @@
             }
         }
     },
-    "appSetting_importDialog_completeTitle": "Importación completa de {count} hábitos",
+    "appSetting_importDialog_completeTitle": "Se importaron {count} hábitos",
     "@appSetting_importDialog_completeTitle": {
         "placeholders": {
             "count": {
@@ -655,7 +655,7 @@
             }
         }
     },
-    "appSetting_importDialog_completeTitleGroups": "Importación completa de {count} grupos",
+    "appSetting_importDialog_completeTitleGroups": "Se importaron {count} grupos",
     "@appSetting_importDialog_completeTitleGroups": {
         "placeholders": {
             "count": {
@@ -666,12 +666,12 @@
     },
     "appSetting_importDialog_complete_closeLabel": "cerrar",
     "appSetting_resetConfig_titleText": "Restablecer los ajustes",
-    "appSetting_resetConfig_subtitleText": "Restablecer todas los ajustes a los valores predeterminados.",
+    "appSetting_resetConfig_subtitleText": "Restablecer todos los ajustes a los valores predeterminados.",
     "appSetting_resetConfigDialog_titleText": "¿Restablecer los ajustes?",
-    "appSetting_resetConfigDialog_subtitleText": "Restablecer todas los ajustes a los valores predeterminados, debes reiniciar la aplicación para aplicar los cambios.",
+    "appSetting_resetConfigDialog_subtitleText": "Restablecer todos los ajustes; debes reiniciar la aplicación para aplicarlos.",
     "appSetting_resetConfigDialog_cancelText": "cancelar",
     "appSetting_resetConfigDialog_confirmText": "confirmar",
-    "appSetting_resetConfigSuccess_snackbarText": "Restablecimiento de los ajustes fue exitoso",
+    "appSetting_resetConfigSuccess_snackbarText": "Ajustes restablecidos",
     "appSetting_otherSubgroupText": "Otros",
     "appSetting_developMode_titleText": "Modo desarrollador",
     "appSetting_clearCache_titleText": "Limpiar la caché",
@@ -679,9 +679,9 @@
     "appSetting_clearCacheDialog_subtitleText": "Después de borrar la caché, algunos valores personalizados se restaurarán a los valores predeterminados.",
     "appSetting_clearCacheDialog_cancelText": "cancelar",
     "appSetting_clearCacheDialog_confirmText": "confirmar",
-    "appSetting_clearCache_snackBar_partSuccText": "Error al borrar parcialmente la memoria caché",
+    "appSetting_clearCache_snackBar_partSuccText": "No se pudo borrar toda la caché",
     "appSetting_clearCache_snackBar_succText": "Caché borrada con éxito",
-    "appSetting_clearCache_snackBar_failText": "Error al borrar la caché",
+    "appSetting_clearCache_snackBar_failText": "No se pudo borrar la caché",
     "appSetting_debugger_titleText": "Información de depuración",
     "appSetting_about_titleText": "Acerca de",
     "appSetting_experimentalFeatureTile_titleText": "Características experimentales",
@@ -750,7 +750,7 @@
             }
         }
     },
-    "appSync_failedTile_titleText": "Compruebe los registros de fallos",
+    "appSync_failedTile_titleText": "Comprobar los registros de fallos",
     "appSync_failedTile_errorText": "[Error]: {info}",
     "@appSync_failedTile_errorText": {
         "placeholders": {
@@ -803,11 +803,11 @@
         }
     },
     "appSync_webdav_newServerConfirmDialog_titleText": "Ubicación nueva",
-    "appSync_webdav_newServerConfirmDialog_subtitleText": "La sincronización creará los directorios necesarios y subirá los hábitos al servidor. ¿Continuar?",
-    "appSync_webdav_newServerConfirmDialog_confirmText": "Sincronizar ahora!",
+    "appSync_webdav_newServerConfirmDialog_subtitleText": "La sincronización creará los directorios necesarios y subirá los hábitos locales al servidor. ¿Continuar?",
+    "appSync_webdav_newServerConfirmDialog_confirmText": "¡Sincronizar ahora!",
     "appSync_webdav_oldServerConfirmDialog_titleText": "Confirmar sincronización",
-    "appSync_webdav_oldServerConfirmDialog_subtitleText": "El directorio está vacío. La sincronización mezclará los hábitos subidos y en local. ¿Continuar?",
-    "appSync_webdav_oldServerConfirmDialog_confirmText": "Confirmar mezcla",
+    "appSync_webdav_oldServerConfirmDialog_subtitleText": "El directorio no está vacío. La sincronización combinará los hábitos del servidor y los locales. ¿Continuar?",
+    "appSync_webdav_oldServerConfirmDialog_confirmText": "Confirmar combinación",
     "appSync_exportAllLogsTile_titleText": "Exportar registros de sincronización fallida",
     "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {No se encontró ningún registro} false {Toca para exportar} other {cargando...}}",
     "@appSync_exportAllLogsTile_subtitleText": {
@@ -842,7 +842,7 @@
             }
         }
     },
-    "appSync_syncInterval_text": "{name, select, manual {Manual} minute5 {5 Minutos} minute15 {15 Minutos} minute30 {30 Minutos} hour1 {1 Hora} other {Desconocido}}",
+    "appSync_syncInterval_text": "{name, select, manual {Manual} minute5 {5 minutos} minute15 {15 minutos} minute30 {30 minutos} hour1 {1 hora} other {Desconocido}}",
     "@appSync_syncInterval_text": {
         "description": "Localized display text for app sync interval",
         "placeholders": {
@@ -853,9 +853,9 @@
             }
         }
     },
-    "appSync_syncIntervalTile_title": "Obtener Intervalo",
+    "appSync_syncIntervalTile_title": "Intervalo de sincronización",
     "appSync_summaryTile_title": "Servidor de sincronización",
-    "appSync_summaryTile_subtitle_text_notConfigured": "No Configurado",
+    "appSync_summaryTile_subtitle_text_notConfigured": "No configurado",
     "appSync_exportAllLogsTile_exportSubjectText": "Todos los registros de sincronización fallida recientes",
     "appSync_serverEditor_saveDialog_titleText": "Confirmar cambios",
     "appSync_serverEditor_saveDialog_subtitleText": "Guardar sobrescribirá la configuración anterior del servidor.",
@@ -867,13 +867,13 @@
     "appSync_serverEditor_titleText_modify": "Modificar servidor de sincronización",
     "appSync_serverEditor_advance_titleText": "Configuración avanzada",
     "appSync_serverEditor_pathTile_titleText": "Ruta",
-    "appSync_serverEditor_pathTile_hintText": "Introduzca una ruta válida de WebDAV.",
+    "appSync_serverEditor_pathTile_hintText": "Introduce una ruta WebDAV válida.",
     "appSync_serverEditor_pathTile_errorText_emptyPath": "¡La ruta no puede estar vacía!",
     "appSync_serverEditor_usernameTile_titleText": "Usuario",
-    "appSync_serverEditor_usernameTile_hintText": "Ingrese el nombre de usuario aquí, deje vacío si no es necesario",
+    "appSync_serverEditor_usernameTile_hintText": "Introduce aquí el nombre de usuario; déjalo vacío si no es necesario.",
     "appSync_serverEditor_passwordTile_titleText": "Contraseña",
     "appSync_serverEditor_ignoreSSLTile_titleText": "Ignorar certificado SSL",
-    "appSync_serverEditor_timeoutTile_titleText": "Segundos de tiempo de espera de sincronización",
+    "appSync_serverEditor_timeoutTile_titleText": "Tiempo de espera de sincronización (segundos)",
     "appSync_serverEditor_timeoutTile_hintText": "Predeterminado: {seconds, plural, =0 {Infinito} other {{seconds}{unit}}}",
     "@appSync_serverEditor_timeoutTile_hintText": {
         "placeholders": {
@@ -887,8 +887,8 @@
             }
         }
     },
-    "appSync_serverEditor_timeoutTile_unitText": "sg",
-    "appSync_serverEditor_connTimeoutTile_titleText": "Segundos de tiempo de espera de conexión de red",
+    "appSync_serverEditor_timeoutTile_unitText": "s",
+    "appSync_serverEditor_connTimeoutTile_titleText": "Tiempo de espera de conexión de red (segundos)",
     "appSync_serverEditor_connTimeoutTile_hintText": "Predeterminado: {seconds, plural, =0 {Infinito} other {{seconds}{unit}}}",
     "@appSync_serverEditor_connTimeoutTile_hintText": {
         "placeholders": {
@@ -923,7 +923,7 @@
     "appAbout_licenseThirdPartyTile_subtitleText": "flutter",
     "appAbout_privacyTile_subTitleText": "Acceder a la política de privacidad",
     "appAbout_donateTile_titleText": "Donar",
-    "appAbout_donateTile_subTitleText": "Estoy desarrollando esta aplicación como hobby. Por favor cómprame un ☕.",
+    "appAbout_donateTile_subTitleText": "Soy un desarrollador independiente. Si te gusta esta aplicación, invítame a un ☕.",
     "appAbout_donateTile_ways": "@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll",
     "@appAbout_donateTile_ways": {
         "description": "Donate begin with `@` and split with `,`, available ways: paypal, buyMeACoffee, alipay, wechatPay"
@@ -932,7 +932,7 @@
     "donateWay_buyMeACoffee": "Invítame a un café",
     "donateWay_alipay": "Alipay",
     "donateWay_wechatPay": "Wechat Pay",
-    "donateWay_cryptoCurrency": "CRIPTOMONEDAS",
+    "donateWay_cryptoCurrency": "Criptomonedas",
     "donateWay_cryptoCurrency_BTC": "BTC",
     "donateWay_cryptoCurrency_ETH": "ETH",
     "donateWay_cryptoCurrency_BNB": "BNB",
@@ -952,10 +952,10 @@
     "batchCheckin_datePicker_prevButton_tooltip": "El día anterior",
     "batchCheckin_datePicker_nextButton_tooltip": "El día siguiente",
     "batchCheckin_status_skip_text": "Omitir",
-    "batchCheckin_status_ok_text": "Terminado",
+    "batchCheckin_status_ok_text": "Completado",
     "batchCheckin_status_double_text": "¡Doble éxito!",
     "batchCheckin_status_zero_text": "Incompleto",
-    "batchCheckin_habits_groupTitle": "{count} {count, plural, =1{Hábito} other{Hábitos}} seleccionados",
+    "batchCheckin_habits_groupTitle": "{count} {count, plural, =1{hábito seleccionado} other{hábitos seleccionados}}",
     "@batchCheckin_habits_groupTitle": {
         "placeholders": {
             "count": {
@@ -976,25 +976,25 @@
         }
     },
     "batchCheckin_save_confirmDialog_title": "Sobrescribir registros existentes",
-    "batchCheckin_save_confirmDialog_body": "Los registros existentes se sobrescribirán. Después de guardar, se perderán los registros anteriores.",
+    "batchCheckin_save_confirmDialog_body": "Al guardar, se sobrescribirán los registros existentes del día seleccionado.",
     "batchCheckin_save_confirmDialog_confirmButton_text": "guardar",
     "batchCheckin_save_confirmDialog_cancelButton_text": "cancelar",
-    "batchCheckin_close_confirmDialog_title": "Confirmar devolución",
-    "batchCheckin_close_confirmDialog_body": "Los cambios en el estado de la verificación solo se aplicarán después de guardarlos.",
+    "batchCheckin_close_confirmDialog_title": "Confirmar salida",
+    "batchCheckin_close_confirmDialog_body": "Los cambios no guardados en los registros se perderán si sales.",
     "batchCheckin_close_confirmDialog_confirmButton_text": "salir",
     "batchCheckin_close_confirmDialog_cancelButton_text": "cancelar",
-    "appReminder_dailyReminder_title": "🏝 ¿Sigues con tus hábitos?",
-    "appReminder_dailyReminder_body": "Haz clic para ingresar a la aplicación y registrar tu entrada a tiempo.",
+    "appReminder_dailyReminder_title": "🏝 ¿Has cumplido hoy tus hábitos?",
+    "appReminder_dailyReminder_body": "Toca para abrir la aplicación y registrar.",
     "common_habitColorType_cc1": "Lila oscuro",
     "common_habitColorType_cc2": "Rojo",
     "common_habitColorType_cc3": "Morado",
-    "common_habitColorType_cc4": "Azul",
+    "common_habitColorType_cc4": "Azul real",
     "common_habitColorType_cc5": "Cian oscuro",
     "common_habitColorType_cc6": "Verde",
     "common_habitColorType_cc7": "Ámbar",
     "common_habitColorType_cc8": "Naranja",
     "common_habitColorType_cc9": "Lima",
-    "common_habitColorType_cc10": "Morado oscuro",
+    "common_habitColorType_cc10": "Orquídea oscura",
     "common_habitColorType_default": "Color {index}",
     "@common_habitColorType_default": {
         "description": "unknown habit color type name",
@@ -1011,7 +1011,7 @@
     "common_customDateTimeFormatPicker_mdy_text": "Mes día año",
     "common_customDateTimeFormatPicker_dmy_text": "Día mes año",
     "common_customDateTimeFormatPicker_SepTileText": "Separador",
-    "common_customDateTimeFormatPicker_sepDash_text": "Guión",
+    "common_customDateTimeFormatPicker_sepDash_text": "Guion",
     "common_customDateTimeFormatPicker_sepSlash_text": "Barra oblicua",
     "common_customDateTimeFormatPicker_sepSpace_text": "Espacio",
     "common_customDateTimeFormatPicker_sepDot_text": "Punto",
@@ -1032,8 +1032,8 @@
     },
     "common_customDateTimeFormatPicker_12Hour_text": "Utilizar el formato de 12 horas",
     "common_customDateTimeFormatPicker_monthName_text": "Usar nombre completo",
-    "common_customDateTimeFormatPicker_applyFreqChart_text": "Solicitar tabla de frecuencia",
-    "common_customDateTimeFormatPicker_applyHeapmap_text": "Solicitar calendario",
+    "common_customDateTimeFormatPicker_applyFreqChart_text": "Aplicar al gráfico de frecuencia",
+    "common_customDateTimeFormatPicker_applyHeapmap_text": "Aplicar al calendario",
     "common_customDateTimeFormatPicker_cancelButton_text": "cancelar",
     "common_customDateTimeFormatPicker_confirmButton_text": "confirmar",
     "calendarPicker_clip_today": "Hoy",
@@ -1048,7 +1048,7 @@
         }
     },
     "exportConfirmDialog_title_exportAll": "¿Exportar todos los hábitos?",
-    "exportConfirmDialog_title_exportMulti": "¿Exportar {number, plural, =0{hábitos} =1{1 hábito} other{{number} hábitos}}?",
+    "exportConfirmDialog_title_exportMulti": "¿Exportar {number, plural, =0{el hábito actual} =1{1 hábito} other{{number} hábitos}}?",
     "@exportConfirmDialog_title_exportMulti": {
         "placeholders": {
             "number": {
@@ -1066,13 +1066,13 @@
     "debug_logLevel_info": "Información",
     "debug_logLevel_warn": "Advertencia",
     "debug_logLevel_error": "Error",
-    "debug_logLevel_fatal": "Fatal",
+    "debug_logLevel_fatal": "Error grave",
     "debug_collectLogTile_title": "Recopilando los registros",
-    "debug_collectLogTile_enable_subtitle": "Haz clic para detener la recopilación de registros.",
-    "debug_collectLogTile_disable_subtitle": "Haz clic para iniciar la recopilación de registros.",
-    "debug_downladDebugLogs_subject": "Descargar registros de depuración",
+    "debug_collectLogTile_enable_subtitle": "Toca para detener la recopilación de registros.",
+    "debug_collectLogTile_disable_subtitle": "Toca para iniciar la recopilación de registros.",
+    "debug_downladDebugLogs_subject": "Descargando registros de depuración",
     "dbeug_clearDebugLogs_complete_snackbar": "Registros de depuración borrados.",
-    "debug_downladDebugInfo_subject": "Descargar la información de depuración",
+    "debug_downladDebugInfo_subject": "Descargando la información de depuración",
     "debug_downladDebugZip_subject": "Descargando {fileName}",
     "@debug_downladDebugZip_subject": {
         "placeholders": {
@@ -1084,21 +1084,21 @@
     },
     "debug_missingDebugLogFile_snackbar": "El registro de depuración no existe.",
     "debug_debuggerLogCard_title": "Información del registro",
-    "debug_debuggerLogCard_subtitle": "Para incluir información de registro de depuración local, es necesario habilitar el convertidor del recopilador de registros.",
+    "debug_debuggerLogCard_subtitle": "Incluye información del registro de depuración local; hay que activar la recopilación de registros.",
     "debug_debuggerLogCard_saveButton_text": "Descargar",
     "debug_debuggerLogCard_clearButton_text": "Limpiar",
     "debug_debuggerInfoCard_title": "Información de depuración",
-    "debug_debuggerInfoCard_subtitle": "Incluir información de depuración de la aplicación.",
+    "debug_debuggerInfoCard_subtitle": "Incluye información de depuración de la aplicación.",
     "debug_debuggerInfoCard_openButton_text": "Abrir",
     "debug_debuggerInfoCard_saveButton_text": "Guardar",
     "debug_debuggerInfo_notificationTitle": "Recopilando información de la aplicación...",
     "snackbar_undoText": "DESHACER",
-    "snackbar_dismissText": "RECHAZAR",
+    "snackbar_dismissText": "CERRAR",
     "contributors_tile_title": "Colaboradores",
     "userAction_tap": "Pulsar",
     "userAction_doubleTap": "Doble",
-    "userAction_longTap": "Longitud",
-    "changelog_banner_title": "What's New in v{version}",
+    "userAction_longTap": "Larga",
+    "changelog_banner_title": "Novedades de la v{version}",
     "@changelog_banner_title": {
         "description": "Title in the MaterialBanner showing the current version changelog on first open after upgrade.",
         "placeholders": {
@@ -1108,16 +1108,16 @@
             }
         }
     },
-    "changelog_banner_action": "CLOSE",
+    "changelog_banner_action": "CERRAR",
     "@changelog_banner_action": {
         "description": "Dismiss button label on the changelog MaterialBanner."
     },
-    "changelog_banner_view": "VIEW",
+    "changelog_banner_view": "VER",
     "@changelog_banner_view": {
         "description": "View button label on the changelog MaterialBanner that opens the full changelog dialog."
     },
-    "changelog_dialog_title": "Changelog",
-    "changelog_view_full": "View Full Changelog",
+    "changelog_dialog_title": "Registro de cambios",
+    "changelog_view_full": "Ver registro de cambios completo",
     "@changelog_view_full": {
         "description": "Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content."
     },
@@ -1125,7 +1125,7 @@
     "@groupManage_deleteDialog_confirm": {
         "description": "Confirm button text for delete dialog"
     },
-    "groupManage_name_label": "Por nombre",
+    "groupManage_name_label": "Nombre",
     "@groupManage_name_label": {
         "description": "Label for the group name input field"
     },
@@ -1137,15 +1137,15 @@
     "@groupManage_modifyDateTile_title": {
         "description": "Label shown for the group modification date in the edit dialog"
     },
-    "groupManage_icon_none": "vacío",
+    "groupManage_icon_none": "Ninguno",
     "@groupManage_icon_none": {
         "description": "Tooltip for the 'no icon' option in the group icon picker"
     },
-    "groupManage_color_label": "Por color",
+    "groupManage_color_label": "Color",
     "@groupManage_color_label": {
         "description": "Section label for the color picker in group create/edit forms"
     },
-    "groupManage_color_none": "vacío",
+    "groupManage_color_none": "Ninguno",
     "@groupManage_color_none": {
         "description": "Tooltip for the 'no color' option in the group color picker"
     },
@@ -1165,5 +1165,466 @@
     "@habitDisplay_groupType_manual": {
         "description": "Group sort type: manual ordering via drag-and-drop"
     },
-    "appSetting_uiStyle_automatic": "Automático"
+    "appSetting_uiStyle_automatic": "Automático",
+    "common_listSeparator": ", ",
+    "@common_listSeparator": {
+        "description": "Separator used between items in compact localized lists."
+    },
+    "habitEdit_colorPicker_customSectionLabel": "{tinted, select, true {Personalizado (tintado)} false {Personalizado} other {Personalizado}}",
+    "@habitEdit_colorPicker_customSectionLabel": {
+        "placeholders": {
+            "tinted": {
+                "type": "String",
+                "description": "<bool>.toString()"
+            }
+        }
+    },
+    "habitDisplay_selectedHabits_title": "Seleccionados: {count}",
+    "@habitDisplay_selectedHabits_title": {
+        "description": "Apple selection AppBar title showing the number of selected habits",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of selected habits",
+                "example": "3"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyRemoveGroup": "Se quitará el grupo de los hábitos",
+    "habitDisplay_groupModifyConfirm_bodyChangeStat": "{count, plural, =1 {{count} hábito cambiará de \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ y 1 grupo más ({totalGroupCount} grupos en total)} other{ y {remainingGroupCount} grupos más ({totalGroupCount} grupos en total)}} a \"{toGroup}\"} other {{count} hábitos cambiarán de \"{fromGroup}\"{remainingGroupCount, plural, =0{} =1{ y 1 grupo más ({totalGroupCount} grupos en total)} other{ y {remainingGroupCount} grupos más ({totalGroupCount} grupos en total)}} a \"{toGroup}\"}}",
+    "@habitDisplay_groupModifyConfirm_bodyChangeStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits changing group"
+            },
+            "fromGroup": {
+                "type": "String",
+                "description": "At most the first three source group names"
+            },
+            "toGroup": {
+                "type": "String",
+                "description": "New group name"
+            },
+            "remainingGroupCount": {
+                "type": "int",
+                "description": "Number of omitted source group names; zero means the list is complete"
+            },
+            "totalGroupCount": {
+                "type": "int",
+                "description": "Total number of source groups, including displayed and omitted groups"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyAddStat": "{count, plural, =1 {{count} hábito sin categoría se agregará a \"{toGroup}\"} other {{count} hábitos sin categoría se agregarán a \"{toGroup}\"}}",
+    "@habitDisplay_groupModifyConfirm_bodyAddStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits being added"
+            },
+            "toGroup": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_bodyRemoveStat": "{count, plural, =1 {{count} hábito tendrá su grupo eliminado} other {{count} hábitos tendrán su grupo eliminado}}",
+    "@habitDisplay_groupModifyConfirm_bodyRemoveStat": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits being removed"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_nameSeparator": ", ",
+    "habitDisplay_groupModify_snackbarText": "{count, plural, =1 {Hábito movido a \"{groupName}\"} other {{count} hábitos movidos a \"{groupName}\"}}",
+    "@habitDisplay_groupModify_snackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of modified habits"
+            },
+            "groupName": {
+                "type": "String",
+                "description": "Target group name"
+            }
+        }
+    },
+    "habitDisplay_groupModify_snackbarTextRemoved": "{count, plural, =1 {Grupo eliminado de hábito} other {Grupos eliminados de {count} hábitos}}",
+    "@habitDisplay_groupModify_snackbarTextRemoved": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of habits"
+            }
+        }
+    },
+    "habitDisplay_groupModify_undoFailed": "El grupo ha sido modificado en otro lugar, no se puede deshacer",
+    "habitToday_image_desc": "¡LO HAS CONSEGUIDO!",
+    "@habitToday_image_desc": {
+        "description": "Celebratory text shown when the user completes all their habit tasks for today"
+    },
+    "habitDetail_recordCalendar_label": "Registrar",
+    "@habitDetail_recordCalendar_label": {
+        "description": "Button label for opening the habit check-in calendar"
+    },
+    "habitDetail_recordCalendar_tooltip": "Abrir calendario de registros",
+    "@habitDetail_recordCalendar_tooltip": {
+        "description": "Tooltip for opening the habit record calendar"
+    },
+    "common_loadError_text": "No se pudo cargar",
+    "appSetting_expandTimerDelayTile_titleText": "Retraso en la expansión del grupo",
+    "@appSetting_expandTimerDelayTile_titleText": {
+        "description": "Title for the group expand timer delay setting tile"
+    },
+    "appSetting_expandTimerDelayTile_subtitleText": "Establecer cuánto tiempo pasará el cursor sobre el encabezado de un grupo contraído antes de que se expanda automáticamente al arrastrar y soltar.",
+    "appSetting_appThemeColorChosenDialog_subTitleText_windows": "Usar un acento del sistema o color de ventana/vidrio",
+    "appSetting_openSystemLanguageTile_macosDialogContent": "Debido a las limitaciones de macOS, el idioma de la aplicación no se puede cambiar directamente. Para cambiar de idioma, sigue estos pasos:\n\n1. Abre **Configuración del sistema > General > Idioma y región**\n2. Añade esta aplicación a la lista **Aplicaciones** y elige un idioma",
+    "@appSetting_openSystemLanguageTile_macosDialogContent": {
+        "description": "Dialog subtitle rendered as Markdown via markdown_widget. Supports **bold** syntax and numbered lists (1. ...). See https://commonmark.org/help/ for supported Markdown features."
+    },
+    "appSync_serverEditor_connTimeoutTile_unitText": "s",
+    "appSync_serverEditor_connRetryCountTile_titleText": "Número de reintentos de conexión de red",
+    "appSync_serverEditor_connRetryCountTile_hintText": "Valor predeterminado: {count, plural, =0 {Reintentos desactivados} other {{count}}}",
+    "@appSync_serverEditor_connRetryCountTile_hintText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "10"
+            }
+        }
+    },
+    "appSync_serverEditor_netTypeTile_titleText": "Modo de sincronización de red",
+    "appSync_serverEditor_netTypeTile_typeTooltip": "{type, select, mobile {Sincronizar con red móvil} wifi {Sincronizar con Wifi} other {Desconocido}}",
+    "@appSync_serverEditor_netTypeTile_typeTooltip": {
+        "placeholders": {
+            "type": {
+                "type": "String",
+                "description": "<AppSyncServerMobileNetwork>.name"
+            }
+        }
+    },
+    "appSync_serverEditor_netTypeTile_lowDataText": "Ahorro de datos",
+    "appSync_noti_readyToSync_body": "Preparándose para sincronizar...",
+    "appSync_noti_syncing_title": "{synced, select, synced {Sincronizado ({type})} failed {Sincronización fallida ({type})} other {Sincronizando ({type})}}",
+    "@appSync_noti_syncing_title": {
+        "placeholders": {
+            "synced": {
+                "type": "String",
+                "description": "<AppSyncNotiTitleEnum>.name",
+                "example": "synced"
+            },
+            "type": {
+                "type": "String",
+                "description": "Server type, see 'appSync_syncServerType_text' field",
+                "example": "WebDAV"
+            }
+        }
+    },
+    "appSync_serverEditor_netTypeTile_lowDataTooltip": "Sincronización en modo de ahorro de datos",
+    "experimentalFeatures_warnginBanner_title": "Una o más funciones experimentales están habilitadas. Úsalas con precaución.",
+    "experimentalFeatures_habitSyncTile_titleText": "Sincronización de hábitos en la nube",
+    "experimentalFeatures_habitSyncTile_subtitleText": "Al habilitar, la opción de sincronización de la aplicación aparecerá en la configuración.",
+    "experimentalFeatures_warnTile_titleText": "La función experimental ({syncName}) está deshabilitada, pero la función aún se está ejecutando.",
+    "@experimentalFeatures_warnTile_titleText": {
+        "placeholders": {
+            "syncName": {
+                "type": "String",
+                "example": "Habit Cloud Sync",
+                "description": "Experimental Feature's name."
+            }
+        }
+    },
+    "experimentalFeatures_warnTile_forHabitSyncText": "Para desactivarla por completo, mantén pulsado para acceder a '{menuName}' y desactívala.",
+    "@experimentalFeatures_warnTile_forHabitSyncText": {
+        "placeholders": {
+            "menuName": {
+                "type": "String",
+                "example": "Sync Option"
+            }
+        }
+    },
+    "experimentalFeatures_habitSearchTile_titleText": "Búsqueda de hábitos",
+    "experimentalFeatures_habitSearchTile_subtitleText": "Al habilitar, aparecerá una barra de búsqueda en la parte superior de la pantalla de Hábitos que permitirá buscar hábitos.",
+    "appAbout_privacyTile_titleText": "Privacidad",
+    "habitRecord_delete_buttonText": "{count, plural, =1{Eliminar registro} other{Eliminar registros}}",
+    "@habitRecord_delete_buttonText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitRecord_deleteConfirmDialog_title": "{count, plural, =1{¿Eliminar registro?} other{¿Eliminar {count} registros?}}",
+    "@habitRecord_deleteConfirmDialog_title": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "common_habitColorType_custom": "Personalizado",
+    "common_appThemeColor_system": "Sistema",
+    "common_appThemeColor_primary": "Principal",
+    "common_appThemeColor_dynamic": "Dinámico",
+    "appDateFormat_leadingZero_text": "Usar ceros a la izquierda",
+    "appDateFormat_preview_text": "Vista previa",
+    "common_errorPage_title": "¡Vaya, se ha producido un error!",
+    "common_errorPage_copied": "Información del error copiada",
+    "common_enable_text": "Habilitado",
+    "common_dontShowAgain": "No volver a mostrar",
+    "exportConfirmDialog_option_includeGroups": "Incluir grupos",
+    "exportConfirmDialog_tile_includeRecords": "Incluir {count} registros",
+    "@exportConfirmDialog_tile_includeRecords": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "exportConfirmDialog_tile_includeGroups": "Incluir {count} grupos",
+    "@exportConfirmDialog_tile_includeGroups": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "3"
+            }
+        }
+    },
+    "debug_shareDebugZip_tooltip": "Compartir paquete de depuración",
+    "@debug_shareDebugZip_tooltip": {
+        "description": "Tooltip for sharing the zipped debug information and logs"
+    },
+    "confirmDialog_confirm_text": "{type, select, save {Guardar} exit {Salir} delete {Eliminar} other {Confirmar}}",
+    "@confirmDialog_confirm_text": {
+        "placeholders": {
+            "type": {
+                "type": "String",
+                "description": "AppActionVerb.name",
+                "example": "confirm"
+            }
+        }
+    },
+    "confirmDialog_cancel_text": "Cancelar",
+    "channelName_habitReminder": "Recordatorio de hábito",
+    "channelName_appReminder": "Aviso",
+    "channelName_appDebugger": "Depurador",
+    "channelName_appSyncing": "Proceso de sincronización",
+    "channelDesc_appSyncing": "Se utiliza para mostrar el progreso de la sincronización y los resultados sin errores",
+    "channelName_appSyncFailed": "Sincronización fallida",
+    "channelDesc_appSyncFailed": "Se utiliza para alertar cuando falla la sincronización",
+    "habitGroup_uncategorized": "Sin grupo",
+    "@habitGroup_uncategorized": {
+        "description": "Virtual group name for habits without a group"
+    },
+    "habitDetail_groupTile_title": "Grupo",
+    "@habitDetail_groupTile_title": {
+        "description": "Title for the group info tile on the habit detail page"
+    },
+    "habitEdit_groupTile_title": "Grupo",
+    "@habitEdit_groupTile_title": {
+        "description": "Title for the group selector tile on the habit edit page"
+    },
+    "habitEdit_groupPicker_hintText": "Buscar o crear grupo",
+    "@habitEdit_groupPicker_hintText": {
+        "description": "Placeholder text for the group picker search field"
+    },
+    "habitEdit_groupPicker_noGroup": "Sin grupo",
+    "@habitEdit_groupPicker_noGroup": {
+        "description": "Option text for selecting no group"
+    },
+    "habitEdit_groupPicker_createGroup": "Crear \"{name}\"",
+    "@habitEdit_groupPicker_createGroup": {
+        "description": "Button text to create a new group with the given name",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "Work"
+            }
+        }
+    },
+    "habitEdit_groupPicker_loading": "Cargando grupos…",
+    "@habitEdit_groupPicker_loading": {
+        "description": "Placeholder text shown in the group picker while groups are loading"
+    },
+    "groupManage_appbar_title": "Gestionar grupos",
+    "@groupManage_appbar_title": {
+        "description": "Title for the Group management page AppBar"
+    },
+    "groupManage_selectionAppbar_title": "{count} seleccionado(s)",
+    "@groupManage_selectionAppbar_title": {
+        "description": "AppBar title in selection mode, {count} = number of selected groups",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "groupManage_emptyState_text": "Aún no hay grupos\nToca + para crear tu primer grupo",
+    "@groupManage_emptyState_text": {
+        "description": "Empty state text shown when no groups exist"
+    },
+    "groupManage_deleteDialog_title": "Eliminar grupo",
+    "@groupManage_deleteDialog_title": {
+        "description": "Title for the delete confirmation dialog"
+    },
+    "groupManage_deleteDialog_content": "{count, plural, =1 {Los hábitos de este grupo pasarán a no tener categoría.} other {Los hábitos de estos {count} grupos pasarán a no tener categoría.}}",
+    "@groupManage_deleteDialog_content": {
+        "description": "Content body for the delete confirmation dialog",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of groups being deleted"
+            }
+        }
+    },
+    "groupManage_deleteDialog_cancel": "Cancelar",
+    "@groupManage_deleteDialog_cancel": {
+        "description": "Cancel button text for delete dialog"
+    },
+    "groupManage_deleted_snackbarText": "Grupo eliminado",
+    "@groupManage_deleted_snackbarText": {
+        "description": "SnackBar text after successful group deletion"
+    },
+    "groupManage_undo_snackbarAction": "Deshacer",
+    "@groupManage_undo_snackbarAction": {
+        "description": "SnackBar undo button text"
+    },
+    "groupManage_editDialog_title": "Editar grupo",
+    "@groupManage_editDialog_title": {
+        "description": "Title for the group edit dialog"
+    },
+    "groupManage_createButton_tooltip": "Crear grupo",
+    "@groupManage_createButton_tooltip": {
+        "description": "Tooltip for the create group action"
+    },
+    "groupManage_createDialog_title": "Crear grupo",
+    "@groupManage_createDialog_title": {
+        "description": "Title for the group creation dialog"
+    },
+    "groupManage_nameRequired": "El nombre es obligatorio",
+    "@groupManage_nameRequired": {
+        "description": "Validation error when group name is empty"
+    },
+    "groupManage_nameTooLong": "El nombre debe tener un máximo de {max} caracteres",
+    "@groupManage_nameTooLong": {
+        "description": "Validation error when group name exceeds max length",
+        "placeholders": {
+            "max": {
+                "type": "int"
+            }
+        }
+    },
+    "groupManage_desc_label": "Descripción",
+    "@groupManage_desc_label": {
+        "description": "Label for the group description input field"
+    },
+    "groupManage_descTooLong": "La descripción debe tener un máximo de {max} caracteres",
+    "@groupManage_descTooLong": {
+        "description": "Validation warning when group description exceeds recommended length",
+        "placeholders": {
+            "max": {
+                "type": "int"
+            }
+        }
+    },
+    "groupManage_sortTile_text": "Ordenar grupos",
+    "@groupManage_sortTile_text": {
+        "description": "Label for the sort selector entry"
+    },
+    "groupManage_sectionTitle_text": "Grupos",
+    "@groupManage_sectionTitle_text": {
+        "description": "Section header text for Groups in Settings page"
+    },
+    "groupManage_icon_label": "Icono",
+    "@groupManage_icon_label": {
+        "description": "Section label for the icon picker in group create/edit forms"
+    },
+    "groupManage_reorder_tooltip": "Reordenar grupos",
+    "@groupManage_reorder_tooltip": {
+        "description": "Tooltip for the reorder button that enters manual sort + selection mode"
+    },
+    "groupHeader_menu_manage": "Gestionar",
+    "@groupHeader_menu_manage": {
+        "description": "Menu item on Group header long-press to navigate to the group management page"
+    },
+    "groupHeader_menu_collapseAll": "Contraer todo",
+    "@groupHeader_menu_collapseAll": {
+        "description": "Menu item on Group header long-press to collapse all groups"
+    },
+    "groupHeader_menu_expandAll": "Expandir todo",
+    "@groupHeader_menu_expandAll": {
+        "description": "Menu item on Group header long-press to expand all groups"
+    },
+    "appSetting_manageGroups_subtitleText": "Crear, editar y eliminar grupos de hábitos",
+    "@appSetting_manageGroups_subtitleText": {
+        "description": "Subtitle for the Manage Groups tile in Settings"
+    },
+    "confirmDialog_confirmAndSkip_text": "{action} y no volver a preguntar",
+    "@confirmDialog_confirmAndSkip_text": {
+        "description": "Button that performs the named action now and skips this confirmation in future.",
+        "placeholders": {
+            "action": {
+                "type": "String",
+                "example": "Save"
+            }
+        }
+    },
+    "habitDisplay_groupModifyConfirm_previewTitle": "Vista previa",
+    "appSupport_title": "Apoya a Table Habit",
+    "appSupport_message": "Tu apoyo ayuda a mejorar Table Habit y a llegar a más personas.",
+    "@appSupport_message": {
+        "description": "Shared support message for all distribution channels. Keep this text independent of the destination platform."
+    },
+    "appSupport_starOnGitHub": "Marcar con una estrella en GitHub",
+    "@appSupport_starOnGitHub": {
+        "description": "Short button label that opens the GitHub repository for the user to manually click Star. Opening the link does not automatically star the repository."
+    },
+    "appSupport_rateOnGooglePlay": "Valorar en Google Play",
+    "@appSupport_rateOnGooglePlay": {
+        "description": "Support button that opens the published app's Google Play page so the user can leave a review."
+    },
+    "appSupport_rateOnAppStore": "Valorar en la App Store",
+    "@appSupport_rateOnAppStore": {
+        "description": "Support button that opens the App Store write-review page on iOS and macOS."
+    },
+    "appSupport_openOnMicrosoftStore": "Valorar en Microsoft Store",
+    "@appSupport_openOnMicrosoftStore": {
+        "description": "Support button that opens the published app's Microsoft Store rating and review page."
+    },
+    "appSupport_favoriteOnFlathub": "Marcar como favorito en Flathub",
+    "@appSupport_favoriteOnFlathub": {
+        "description": "Support button that opens the app's Flathub page so the user can sign in and add it to favorites. Opening the page does not add a favorite automatically."
+    },
+    "appSupport_later": "Recordármelo más tarde",
+    "appSupport_never": "No volver a recordármelo",
+    "appSupport_linkFailed": "No se ha podido completar esta acción. Por favor, inténtalo de nuevo.",
+    "@appSupport_linkFailed": {
+        "description": "Failure message shared by project and store links."
+    },
+    "appSupport_participateTitle": "Contribuye a Table Habit",
+    "appSupport_participateMessage": "Explora el código fuente, colabora o comparte problemas e ideas.",
+    "appSupport_page": "Página {page} de {count}",
+    "@appSupport_page": {
+        "placeholders": {
+            "page": {
+                "type": "int"
+            },
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "appSupport_saveFailed": "No se ha podido guardar el recordatorio. Por favor, inténtalo de nuevo.",
+    "appSetting_uiStyle_titleText": "Estilo de interfaz",
+    "appSetting_uiStyle_material": "Material",
+    "appSetting_uiStyle_apple": "Apple",
+    "appSetting_appleSidebarStyle_titleText": "Apariencia de la barra lateral de Apple",
+    "appSetting_appleSidebarStyle_inset": "Con margen",
+    "appSetting_appleSidebarStyle_edge": "Al borde"
 }
