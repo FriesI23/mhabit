@@ -165,6 +165,18 @@ more info see: [`Flathub - Setup`](https://flathub.org/setup)
    flatpak install --user mhabit-<arch>.flatpak -y
    ```
 
+### Flatpak starts but no window appears
+
+If Table Habit keeps running without a window after an update, a stale font
+cache in your Linux account may be the cause. Rebuilding it keeps your habits
+and settings in place. [Issue #727](https://github.com/FriesI23/mhabit/issues/727#issuecomment-7197649807)
+
+1. Stop Table Habit. If you started it from a terminal, press `Ctrl+C`.
+2. In your file manager, open `~/.cache` and rename the `fontconfig` folder
+   to an unused name such as `fontconfig.backup`.
+3. Run `fc-cache -f` in your Linux terminal as your usual user, then open
+   Table Habit again.
+
 ## Windows
 
 ### Microsoft Store
